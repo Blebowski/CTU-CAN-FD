@@ -1,0 +1,459 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass IEEEtran
+\begin_preamble
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{0pt}
+\end_preamble
+\use_default_options true
+\begin_modules
+eqs-within-sections
+figs-within-sections
+customHeadersFooters
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+CAN FLEXIBLE DATA-RATE
+\begin_inset Newline newline
+\end_inset
+
+IP CORE
+\begin_inset Newline newline
+\end_inset
+
+
+\size large
+PRODUCT BRIEF
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{fancy}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Left Header
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<row>
+<cell multirow="3" alignment="left" valignment="middle" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename E:/Skola/CVUT-FEL/LEV.bmp
+	scale 14
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Czech Technical University in Prague
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Faculty of electrical engineering 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Department of measurement
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Right Header
+Ondrej Ille
+\begin_inset Newline newline
+\end_inset
+
+August 2016
+\end_layout
+
+\begin_layout Section*
+Overview
+\end_layout
+
+\begin_layout Standard
+CAN Flexible Data-Rate IP Core connects functionality of CAN 2.0, CAN FD
+ 1.0 and ISO CAN FD specification in single light-weight IP Core.
+ It is soft-core IP Core written in VHDL with only standard IEEE libraries
+ needed.
+ The main target of usage are FPGA applications and the core is available
+ as RTL.
+ It is optimized for inference of native hardware blocks such as SRAM memories
+ and multipliers in DSP blocks.
+ Generic settings achieve a high level of flexibility before synthesis.
+ It is posible to balance the core between high amount of features and small
+ size.
+\end_layout
+
+\begin_layout Standard
+The IP Core is accessed as memory mapped peripheria via Avalon bus.
+ Easy manipulation with the core is achieved by using hardware buffers for
+ CAN frames.
+ One FIFO like RX buffer is available and two TX buffers are available.
+ Timestamps can be captured for various events on the CAN bus.
+ Additionally transmission of CAN frames can be triggered by external timestamp.
+ Asynchronous access is supported via rich interrupt settings.
+ Three Bit filters and one Range filter is available on received frames.
+\end_layout
+
+\begin_layout Standard
+The design is fully tested at RTL level as well as in real hardware with
+ Altera Cyclone IV FPGA series.
+ The automated test-framework in TCL is available within the core and it
+ provides an easy way of reproducing unit test, feature covering tests and
+ real bus simulation.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset Graphics
+	filename E:/Skola/CVUT-FEL/Testovaci Platforma/Obrazky/IP_core_linkedin.jpg
+	lyxscale 10
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Features
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+CAN 2.0, CAN FD 1.0 and ISO CAN FD
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+RTL VHDL (synthesis), TCL (testing)
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Pre-synthesis configurable features
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Avalon memory bus
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Timestamping and transmission at given time
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Optional event and error logging
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Fault confinement state manipulation
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Transceiver delay measurement
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Size 6 000 - 11 000 LUTs
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+2 000 - 12 000 SRAM memory bits
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Synchronization output with time quantum
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Variety of interrupt sources
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Filtering of received frame
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Listen-only mode, Self-test mode, 
+\begin_inset Newline newline
+\end_inset
+
+Acknowledge forbidden mode
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Up to 14 Mbit in 
+\begin_inset Quotes eld
+\end_inset
+
+Data
+\begin_inset Quotes erd
+\end_inset
+
+ bit-rate
+\begin_inset Newline newline
+\end_inset
+
+ (with 100 Mhz Core clock)
+\end_layout
+
+\begin_layout Itemize
+\paragraph_spacing onehalf
+Driver in C available
+\end_layout
+
+\end_body
+\end_document
