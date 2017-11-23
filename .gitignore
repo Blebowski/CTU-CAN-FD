@@ -1,0 +1,3 @@
+# Ignore Modelsim generated files
+*.bak
+/modelsim_project/work
