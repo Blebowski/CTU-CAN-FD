@@ -61,9 +61,9 @@ USE WORK.CANconstants.ALL;
 --                2. Added bug-fix of positive resynchronisation. Now Ph1 and prop segments are properly
 --                  differed by "if" branch! Without this it caused that if synchronisation edge came
 --                  in first time quantum of ph1, resynchronisation still did lengthen the segment only by 1!
---                  Now the segment is lengthened properly by either SJW
---    25.11.2017   Driving bus aliases converted to integer format to simplify the code. Integer signals
---                 follow the same naming without "drv_" prefix.      
+--                  Now the segment is lengthened properly by SJW
+--    25.11.2017  1. Driving bus aliases converted to integer format to simplify the code. Integer signals
+--                   follow the same naming without "drv_" prefix.  
 ----------------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
@@ -358,24 +358,35 @@ begin
       end if;
       
       if(sp_control /= sp_control_reg)then
-        --Sample type has changed we have to modify "ph1_real" and "ph2_real" accordingly...
+        --Sample type has changed we have to modify "ph2_real" accordingly...
+        -- This corresponds to moment of bit rate switching. Since the processing
+        -- of switching takes 4 clock cycles (bit destuffing, protocol control,
+        -- sp_control update, actual update of the ph2_real), compensation
+        -- of the ph2_real is needed based on Time quanta duration
         if(sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE)then
           
-          if(drv_tq_dbt="000001")then
+          -- Switching from NOMINAL to DATA. For 4 clock cycles bit time
+          -- is counted with nominal bit time instead of DATA. Compensation 
+          -- must be made.
+          if(tq_dbt=1)then
             ph2_real      <=  ph2_dbt-4;
-          elsif (drv_tq_dbt="000010") then
+          elsif (tq_dbt=2) then
             ph2_real      <=  ph2_dbt-2;
-          elsif (drv_tq_dbt="000011" or drv_tq_dbt="000100") then
+          elsif (tq_dbt=3 or tq_dbt=4) then
             ph2_real      <=  ph2_dbt-1;
           else
             ph2_real      <=  ph2_dbt;
           end if;
         else
-          if(drv_tq_dbt="000001")then
+          
+          -- Switching from DATA to NOMINAL. For 4 clock cycles bit time
+          -- is counted with DATA instead of nominal. Compensation must
+          -- be made.
+          if(tq_dbt=1)then
             ph2_real      <=  ph2_nbt+4;
-          elsif (drv_tq_dbt="000010") then
+          elsif (tq_dbt=2) then
             ph2_real      <=  ph2_nbt+2;
-          elsif (drv_tq_dbt="000011" or drv_tq_dbt="000100") then
+          elsif (tq_dbt=3 or tq_dbt=4) then
             ph2_real      <=  ph2_nbt+1;
           else
             ph2_real      <= ph2_nbt;
@@ -386,9 +397,9 @@ begin
           bt_FSM        <=  h_sync;
           FSM_Preset    <=  '1';
           --It is assumed that hard sync appears only during Nominal bit time, according to specification!
-          if(drv_tq_nbt="000001")then 
+          if(tq_nbt=1)then 
             bt_counter  <=  3;
-          elsif(drv_tq_nbt="000010")then
+          elsif(tq_nbt=2)then
             bt_counter  <=  2;
           else
             bt_counter  <=  1;
@@ -409,12 +420,12 @@ begin
                   --We have to check for minimal information processing time (4 clock cycles)
                   --Thus if we get here we cant quit PH2 immediately otherwise we woud miss
                   --some of the sampling signals! So we shorten PH2 only to its minimal possible
-                  --length which is of course dependant on time quantum duration
-                  if(drv_tq_nbt="000001")then --Presc=1
+                  --length. The length is dependent on time quantum duration
+                  if(tq_nbt=1)then --Presc=1
                     ph2_real<=4;  --This is only case not according to specification
-                  elsif (drv_tq_nbt="000010") then --Presc=2
+                  elsif (tq_nbt=2) then --Presc=2
                     ph2_real<=2;
-                  elsif (drv_tq_nbt="000011") then --Presc 3
+                  elsif (tq_nbt=3) then --Presc 3
                     ph2_real<=2;
                   else
                     ph2_real<=1;
@@ -434,12 +445,12 @@ begin
                   --We have to check for minimal information processing time (4 clock cycles)
                   --Thus if we get here we cant quit PH2 immediately otherwise we woud miss
                   --some of the sampling signals! So we shorten PH2 only to its minimal possible
-                  --length which is of course dependant on time quantum duration
-                  if(drv_tq_dbt="000001")then --Presc=1
+                  --length. The length is dependent on time quantum duration
+                  if(tq_dbt=1)then --Presc=1
                     ph2_real<=4; --This is only case not according to specification
-                  elsif (drv_tq_dbt="000010") then --Presc=2
+                  elsif (tq_dbt=2) then --Presc=2
                     ph2_real<=2;
-                  elsif (drv_tq_dbt="000011") then --Presc 3
+                  elsif (tq_dbt=3) then --Presc 3
                     ph2_real<=2;
                   else
                     ph2_real<=1;
