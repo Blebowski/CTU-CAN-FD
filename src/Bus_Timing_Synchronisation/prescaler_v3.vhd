@@ -57,11 +57,13 @@ USE WORK.CANconstants.ALL;
 --                2.Added "sp_control_reg" to cover the change of sample control. When change is registered
 --                  no synchronisation occurs but, "ph2_real" is set to actual value. This bug was revealed with
 --                  reference controller testing.
---    1.9.2016   1. Bug fix of positive resynchronisation in Data bit time. Sign was flipped! 
---               2. Added bug-fix of positive resynchronisation. Now Ph1 and prop segments are properly
+--    1.9.2016    1. Bug fix of positive resynchronisation in Data bit time. Sign was flipped! 
+--                2. Added bug-fix of positive resynchronisation. Now Ph1 and prop segments are properly
 --                  differed by "if" branch! Without this it caused that if synchronisation edge came
 --                  in first time quantum of ph1, resynchronisation still did lengthen the segment only by 1!
---                  Now the segment is lengthened properly by either SJW             
+--                  Now the segment is lengthened properly by either SJW
+--    25.11.2017   Driving bus aliases converted to integer format to simplify the code. Integer signals
+--                 follow the same naming without "drv_" prefix.      
 ----------------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
@@ -151,6 +153,21 @@ entity prescaler_v3 is
   signal drv_sjw_nbt            :   std_logic_vector(3 downto 0); --Synchronisation jump width
   signal drv_sjw_dbt            :   std_logic_vector(3 downto 0); --Synchronisation jump width
 
+  ---------------------------------------------------------------
+  --Driving bus aliases converted to integer (signed, natural) --
+  -- Integer aliases used for simplification of the code !!    --
+  ---------------------------------------------------------------
+  signal tq_nbt                 :   natural range 0 to 63;
+  signal tq_dbt                 :   natural range 0 to 63;
+  signal prs_nbt                 :   natural range 0 to 63;
+  signal prs_dbt                 :   natural range 0 to 15;
+  signal ph1_nbt                 :   natural range 0 to 63;
+  signal ph1_dbt                 :   natural range 0 to 15;
+  signal ph2_nbt                 :   natural range 0 to 63;
+  signal ph2_dbt                 :   natural range 0 to 15;
+  signal sjw_nbt                 :   natural range 0 to 15;
+  signal sjw_dbt                 :   natural range 0 to 15;
+  
   ----------------------
   --INTERNAL REGISTERS--
   ----------------------
@@ -215,6 +232,18 @@ begin
   drv_sjw_nbt       <=  drv_bus(DRV_SJW_HIGH downto DRV_SJW_LOW);
   drv_sjw_dbt       <=  drv_bus(DRV_SJW_DBT_HIGH downto DRV_SJW_DBT_LOW);
   
+  --Conversion of driving bus aliases to integer (signed) signals
+  tq_nbt            <=  to_integer(unsigned(drv_tq_nbt));
+  tq_dbt            <=  to_integer(unsigned(drv_tq_dbt));
+  prs_nbt           <=  to_integer(unsigned(drv_prs_nbt));
+  ph1_nbt           <=  to_integer(unsigned(drv_ph1_nbt));
+  ph2_nbt           <=  to_integer(unsigned(drv_ph2_nbt));
+  prs_dbt           <=  to_integer(unsigned(drv_prs_dbt));
+  ph1_dbt           <=  to_integer(unsigned(drv_ph1_dbt));
+  ph2_dbt           <=  to_integer(unsigned(drv_ph2_dbt));
+  sjw_nbt           <=  to_integer(unsigned(drv_sjw_nbt));
+  sjw_dbt           <=  to_integer(unsigned(drv_sjw_dbt));
+ 
   --Register to output propagation
   clk_tq_nbt        <=  clk_tq_nbt_r;
   clk_tq_dbt        <=  clk_tq_dbt_r;
@@ -333,23 +362,23 @@ begin
         if(sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE)then
           
           if(drv_tq_dbt="000001")then
-            ph2_real      <=  to_integer(unsigned(drv_ph2_dbt))-4;
+            ph2_real      <=  ph2_dbt-4;
           elsif (drv_tq_dbt="000010") then
-            ph2_real      <=  to_integer(unsigned(drv_ph2_dbt))-2;
+            ph2_real      <=  ph2_dbt-2;
           elsif (drv_tq_dbt="000011" or drv_tq_dbt="000100") then
-            ph2_real      <=  to_integer(unsigned(drv_ph2_dbt))-1;
+            ph2_real      <=  ph2_dbt-1;
           else
-            ph2_real      <=  to_integer(unsigned(drv_ph2_dbt));
+            ph2_real      <=  ph2_dbt;
           end if;
         else
           if(drv_tq_dbt="000001")then
-            ph2_real      <=  to_integer(unsigned(drv_ph2_nbt))+4;
+            ph2_real      <=  ph2_nbt+4;
           elsif (drv_tq_dbt="000010") then
-            ph2_real      <=  to_integer(unsigned(drv_ph2_nbt))+2;
+            ph2_real      <=  ph2_nbt+2;
           elsif (drv_tq_dbt="000011" or drv_tq_dbt="000100") then
-            ph2_real      <=  to_integer(unsigned(drv_ph2_nbt))+1;
+            ph2_real      <=  ph2_nbt+1;
           else
-            ph2_real      <=  to_integer(unsigned(drv_ph2_nbt));
+            ph2_real      <= ph2_nbt;
           end if;
         end if;
         
@@ -371,12 +400,12 @@ begin
             
             if(sp_control=NOMINAL_SAMPLE)then
              
-              if(bt_counter<(drv_ph2_nbt-to_integer(unsigned(drv_sjw_nbt))))then
+              if(bt_counter<(ph2_nbt-sjw_nbt))then
                 --Resync bigger than SJW, resync. max SJW
-                ph2_real<=to_integer(unsigned(drv_ph2_nbt))-to_integer(unsigned(drv_sjw_nbt));
+                ph2_real<=ph2_nbt-sjw_nbt;
               else
                 --Resync smaller than SJW
-                if(bt_counter*to_integer(unsigned(drv_tq_nbt))<4)then 
+                if(bt_counter*tq_nbt<4)then 
                   --We have to check for minimal information processing time (4 clock cycles)
                   --Thus if we get here we cant quit PH2 immediately otherwise we woud miss
                   --some of the sampling signals! So we shorten PH2 only to its minimal possible
@@ -397,11 +426,11 @@ begin
             
             else
                
-              if(bt_counter<(drv_ph2_dbt-to_integer(unsigned(drv_sjw_dbt))))then
-                ph2_real<=to_integer(unsigned(drv_ph2_dbt))-to_integer(unsigned(drv_sjw_dbt));
+              if(bt_counter<(ph2_dbt-sjw_dbt))then
+                ph2_real<=ph2_dbt-sjw_dbt;
               else
                  --Resync smaller than SJW
-                if(bt_counter*to_integer(unsigned(drv_tq_dbt))<4)then 
+                if(bt_counter*tq_dbt<4)then 
                   --We have to check for minimal information processing time (4 clock cycles)
                   --Thus if we get here we cant quit PH2 immediately otherwise we woud miss
                   --some of the sampling signals! So we shorten PH2 only to its minimal possible
@@ -428,36 +457,36 @@ begin
             if(bt_FSM=prop)then
               if(sp_control=NOMINAL_SAMPLE)then
             
-                if(bt_counter>to_integer(unsigned(drv_sjw_nbt)))then
-                  ph1_real<=to_integer(unsigned(drv_ph1_nbt))+to_integer(unsigned(drv_sjw_nbt));
+                if(bt_counter>sjw_nbt)then
+                  ph1_real<=ph1_nbt+sjw_nbt;
                 else
-                  ph1_real<=to_integer(unsigned(drv_ph1_nbt))+bt_counter;
+                  ph1_real<=ph1_nbt+bt_counter;
                 end if;
               
               else
             
-                if(bt_counter>to_integer(unsigned(drv_sjw_dbt)))then
-                  ph1_real<=to_integer(unsigned(drv_ph1_dbt))+to_integer(unsigned(drv_sjw_dbt));
+                if(bt_counter>sjw_dbt)then
+                  ph1_real<=ph1_dbt+sjw_dbt;
                 else
-                  ph1_real<=to_integer(unsigned(drv_ph1_dbt))+bt_counter;
+                  ph1_real<=ph1_dbt+bt_counter;
                 end if;
               
               end if;
             elsif(bt_FSM=ph1)then
               if(sp_control=NOMINAL_SAMPLE)then
             
-                if(bt_counter+to_integer(unsigned(drv_ph1_nbt))>to_integer(unsigned(drv_sjw_nbt)))then
-                  ph1_real<=to_integer(unsigned(drv_ph1_nbt))+to_integer(unsigned(drv_sjw_nbt));
+                if(bt_counter+ph1_nbt>sjw_nbt)then
+                  ph1_real<=ph1_nbt+sjw_nbt;
                 else
-                  ph1_real<=to_integer(unsigned(drv_ph1_nbt))+bt_counter;
+                  ph1_real<=ph1_nbt+bt_counter;
                 end if;
               
               else
             
-                if(bt_counter+to_integer(unsigned(drv_ph1_dbt))>to_integer(unsigned(drv_sjw_dbt)))then
-                  ph1_real<=to_integer(unsigned(drv_ph1_dbt))+to_integer(unsigned(drv_sjw_dbt));
+                if(bt_counter+ph1_dbt>sjw_dbt)then
+                  ph1_real<=ph1_dbt+sjw_dbt;
                 else
-                  ph1_real<=to_integer(unsigned(drv_ph1_dbt))+bt_counter;
+                  ph1_real<=ph1_dbt+bt_counter;
                 end if;
               
               end if; 
@@ -482,18 +511,18 @@ begin
             if(tq_edge='1')then
               --Logic for state switching if some of segments have zero length
               if(sp_control=NOMINAL_SAMPLE)then
-                if(to_integer(unsigned(drv_prs_nbt))>0)then
+                if(prs_nbt>0)then
                   bt_FSM<=prop;
-                elsif (to_integer(unsigned(drv_ph1_nbt))>0)then  
+                elsif (ph1_nbt>0)then  
                   bt_FSM<=ph1;
                 else
                   bt_FSM<=ph2;
                   FSM_Preset<='1';
                 end if;
               else
-                if(to_integer(unsigned(drv_prs_dbt))>0)then
+                if(prs_dbt>0)then
                   bt_FSM<=prop;
-                elsif (to_integer(unsigned(drv_ph1_dbt))>0)then  
+                elsif (ph1_dbt>0)then  
                   bt_FSM<=ph1;
                 else
                   bt_FSM<=ph2;
@@ -506,18 +535,18 @@ begin
             end if;
             
              if(sp_control=NOMINAL_SAMPLE)then
-               ph2_real<=to_integer(unsigned(drv_ph2_nbt));
-               ph1_real<=to_integer(unsigned(drv_ph1_nbt));
+               ph2_real<=ph2_nbt;
+               ph1_real<=ph1_nbt;
              else
-               ph2_real<=to_integer(unsigned(drv_ph2_dbt));
-               ph1_real<=to_integer(unsigned(drv_ph1_dbt));
+               ph2_real<=ph2_dbt;
+               ph1_real<=ph1_dbt;
              end if; 
             
         when prop =>
             if(tq_edge='1')then
              if(sp_control=NOMINAL_SAMPLE)then
-                if(bt_counter=to_integer(unsigned(drv_prs_nbt)) or bt_counter>to_integer(unsigned(drv_prs_nbt)))then
-                  if (to_integer(unsigned(drv_ph1_nbt))>0)then
+                if(bt_counter=prs_nbt or bt_counter>prs_nbt)then
+                  if (ph1_nbt>0)then
                     bt_FSM<=ph1;
                   else 
                     bt_FSM<=ph2;
@@ -528,8 +557,8 @@ begin
                   bt_counter<=bt_counter+1;
                 end if;  
              else
-               if(bt_counter=to_integer(unsigned(drv_prs_dbt)) or  bt_counter>to_integer(unsigned(drv_prs_dbt)))then
-                  if (to_integer(unsigned(drv_ph1_dbt))>0)then
+               if(bt_counter=prs_dbt or  bt_counter>prs_dbt)then
+                  if (ph1_dbt>0)then
                     bt_FSM<=ph1;
                   else 
                     bt_FSM<=ph2;
@@ -606,7 +635,7 @@ begin
                   end if;
                 end if;
                              
-                if((bt_counter>=to_integer(unsigned(drv_prs_nbt))+to_integer(unsigned(drv_ph1_nbt))) and 
+                if((bt_counter>=prs_nbt+ph1_nbt) and 
                     ((sync_nbt_r='0') and (sync_dbt_r='0')) )then --This condition is to satisfy that correct sync signal will be generated!
                     bt_FSM<=ph2;
                     bt_counter<=1;
