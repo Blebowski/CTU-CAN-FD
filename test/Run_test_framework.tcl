@@ -31,18 +31,24 @@ puts "----------------------------------"
 
 #Check if environment variables are existing
 quietly set exist_var [info exist ITERATIONS]
-quietly set BASE_DIR "../../../CAN_FD_IP_Core/"
-quietly set BASE_TEST "../../../CAN_FD_IP_Core/Testing_scripts"
+
+# IP Core standalone relative location
+quietly set BASE_DIR "../"
+quietly set BASE_TEST "../test"
+
+# Test platform relative location
+#quietly set BASE_DIR "../../../CAN_FD_IP_Core/"
+#quietly set BASE_TEST "../../../CAN_FD_IP_Core/test"
 
 # Create the environment if not yet existant
 if { $exist_var == 0 } {
 	puts "Enviroment variables not found -> Setting up environment"
 	puts ""
-	do [file join $BASE_DIR Testing_scripts/set_env.tcl]
+	do [file join $BASE_TEST set_env.tcl]
 }
 
 #Include the library functions
-source [file join $BASE_DIR Testing_scripts/lib/test_lib.tcl]
+source [file join $BASE_TEST lib/test_lib.tcl]
 
 puts ""
 puts "Welcome in CAN FD IP Core TCL test framework"
