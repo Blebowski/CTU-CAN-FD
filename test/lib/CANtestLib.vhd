@@ -33,6 +33,9 @@ use work.CANconstants.all;
 --    27.5.2016   Created file
 --    13.1.2017   Added formatting of identifier in CAN_send_frame, CAN_read_frame to fit the native
 --                decimal interpretation (the same way as in C driver)
+--    27.11.2017  Added "reset_test" function fix. Implemented reset synchroniser to avoid async reset in
+--                the core. As consequnce after the core reset is released, the core has to wait at least TWO clock
+--                cycles till the reset is synchronised and deasserted.
 -------------------------------------------------------------------------------------------------------------
 
 
@@ -536,7 +539,8 @@ procedure reset_test
     end loop;
     res_n     <= '1';
     status    <= running;
-    error_ctr <= 0; 
+    error_ctr <= 0;
+    wait for 250 ns;
   end procedure;
 
 ---------------------------------------------------------------------------------------

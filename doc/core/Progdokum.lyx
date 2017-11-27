@@ -1908,11 +1908,34 @@ clk_sys
 \series default
 .
  Every other time period is derived from clk_sys (Time quantum, Bit time...).
- Every register has 
+ The main core reset 
+\begin_inset Quotes eld
+\end_inset
+
+res_n
+\begin_inset Quotes erd
+\end_inset
+
+ is an 
 \series bold
 asynchronous reset
 \series default
-, res_n, which is active low, by default.
+ (active low) and it is internally synchronised by two flip-flop synchroniser
+ to avoid possible problems with reset recovery time.
+ After 
+\begin_inset Quotes eld
+\end_inset
+
+res_n
+\begin_inset Quotes erd
+\end_inset
+
+ is released 
+\series bold
+at least two clock cycles
+\series default
+ must elapse before the core is accessed, otherwise write to the Core will
+ have no effect and read will return zero values.
  The design is intended to be latch-free.
  
 \end_layout

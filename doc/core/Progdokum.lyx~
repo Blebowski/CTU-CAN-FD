@@ -1,7 +1,9 @@
-#LyX 2.1 created this file. For more info see http://www.lyx.org/
-\lyxformat 474
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
 \begin_document
 \begin_header
+\save_transient_properties true
+\origin unavailable
 \textclass book
 \begin_preamble
 \usepackage{fancyhdr}
@@ -18,16 +20,16 @@ customHeadersFooters
 \language_package default
 \inputencoding auto
 \fontencoding global
-\font_roman default
-\font_sans default
-\font_typewriter lmtt
-\font_math auto
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "lmtt" "default"
+\font_math "auto" "auto"
 \font_default_family sfdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
-\font_sf_scale 100
-\font_tt_scale 100
+\font_sf_scale 100 100
+\font_tt_scale 100 100
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -211,7 +213,7 @@ Department of measurement
 
 
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/Testovaci Platforma/Obrazky/CAN_LOGO.jpg
+	filename E:/Skola/CVUT-FEL/CAN_FD_IP_Core/doc/pics/CAN_LOGO.jpg
 	lyxscale 10
 	scale 9
 
@@ -219,7 +221,7 @@ Department of measurement
 
 
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/Testovaci Platforma/Obrazky/CAN_FD_LOGO.jpg
+	filename ../pics/CAN_FD_LOGO.jpg
 	lyxscale 15
 	scale 10
 
@@ -227,7 +229,7 @@ Department of measurement
 
 
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/Testovaci Platforma/Obrazky/CAN_FD_ISO.jpg
+	filename ../pics/CAN_FD_ISO.jpg
 	lyxscale 40
 	scale 20
 
@@ -245,7 +247,7 @@ Department of measurement
 \size larger
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="2">
-<features rotate="0" tabularvalignment="top">
+<features tabularvalignment="top">
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="0pt">
 <row>
@@ -548,7 +550,8 @@ CANoe program (with CAN/USB converter) for post-synthesis verification by
 \end_layout
 
 \begin_layout Itemize
-LyX v.2.1.2 to write documentation.
+\SpecialChar LyX
+ v.2.1.2 to write documentation.
 \end_layout
 
 \begin_layout Itemize
@@ -664,7 +667,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="14" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1374,7 +1377,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1457,7 +1460,7 @@ Event logger is/is not synthesized.
 Refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
-reference "sub:2.3.10-Event-logger"
+reference "subsec:2.3.10-Event-logger"
 
 \end_inset
 
@@ -1506,7 +1509,7 @@ Size of receive buffer in 32 bit words.
 Refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
-reference "sub:2.3.10-RX-buffer-1"
+reference "subsec:2.3.10-RX-buffer-1"
 
 \end_inset
 
@@ -1556,7 +1559,7 @@ TXT buffer size: 8 bytes (Normal)/64 bytes(FD).
 Refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
-reference "sub:2.3.10-TXT-buffer-1-1"
+reference "subsec:2.3.10-TXT-buffer-1-1"
 
 \end_inset
 
@@ -1686,7 +1689,7 @@ Size of the event logger memory in number of events.
 Refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
-reference "sub:2.3.10-Event-logger"
+reference "subsec:2.3.10-Event-logger"
 
 \end_inset
 
@@ -1780,7 +1783,7 @@ key "key-20"
  With small modifications of Memory registers module (refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:2.5.9-Memory-registers"
+reference "subsec:2.5.9-Memory-registers"
 
 \end_inset
 
@@ -1799,7 +1802,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="2" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1905,11 +1908,33 @@ clk_sys
 \series default
 .
  Every other time period is derived from clk_sys (Time quantum, Bit time...).
- Every register has 
+ The main core reset 
+\begin_inset Quotes eld
+\end_inset
+
+res_n
+\begin_inset Quotes erd
+\end_inset
+
+ is an 
 \series bold
 asynchronous reset
 \series default
-, res_n, which is active low, by default.
+ (active low) and it is internally synchronised by two flip-flop synchroniser
+ to avoid possible problems with reset recovery time.
+ After 
+\begin_inset Quotes eld
+\end_inset
+
+res_n
+\begin_inset Quotes erd
+\end_inset
+
+ is released 
+\series bold
+at least two clock cycles
+\series default
+ must elapse before the core is accessed.
  The design is intended to be latch-free.
  
 \end_layout
@@ -1965,7 +1990,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/Ip_core.emf
+	filename ../pics/Ip_core.emf
 	lyxscale 20
 	scale 22
 
@@ -2038,7 +2063,7 @@ Memory registers
  (
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:2.5.9-Memory-registers"
+reference "subsec:2.5.9-Memory-registers"
 
 \end_inset
 
@@ -2123,7 +2148,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/CAN_Core.emf
+	filename ../pics/CAN_Core.emf
 	lyxscale 20
 	scale 22
 
@@ -2172,7 +2197,7 @@ name "fig:CAN-Core-block"
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="34" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -2395,6 +2420,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -3876,7 +3906,7 @@ Force OP_State to be reciever
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="40" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -5789,7 +5819,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/PC_Control.emf
+	filename ../pics/PC_Control.emf
 	lyxscale 20
 	scale 18
 
@@ -5833,7 +5863,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/OP_Control.emf
+	filename ../pics/OP_Control.emf
 	lyxscale 20
 	scale 18
 
@@ -5882,7 +5912,7 @@ name "fig:OP_control"
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="20" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -6105,6 +6135,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -6927,7 +6962,7 @@ Operational State
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="11" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -7150,6 +7185,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -7521,7 +7561,7 @@ Stuff error ocurred and is validated
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="28" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -8861,7 +8901,7 @@ Fault confinement state
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -9084,6 +9124,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -9168,7 +9213,7 @@ on via data_halt signal.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="14" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -9850,7 +9895,7 @@ Destuffed bits counter modulo 8
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="19" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -10073,6 +10118,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -10854,7 +10904,7 @@ Destuffed bits counter modulo 8
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="16" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -11077,6 +11127,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -11721,7 +11776,7 @@ CRC 21 result
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="16" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -11944,6 +11999,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -12542,7 +12602,7 @@ Bit rate shift bit to be stored
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -12989,7 +13049,7 @@ Bit rate shift bit for Protocol Control
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="22" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -13212,6 +13272,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -14126,7 +14191,7 @@ Secondary sampling point del.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -14386,7 +14451,7 @@ Bit error is detected
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="26" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -14609,6 +14674,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -14632,7 +14702,7 @@ sample_control
 \begin_inset Quotes erd
 \end_inset
 
- signal Nominal bit time or Data bit time is used\SpecialChar \@.
+ signal Nominal bit time or Data bit time is used\SpecialChar endofsentence
 
 \end_layout
 
@@ -15700,7 +15770,7 @@ Synchronization type (No sync, hard, resync)
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="15" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -15923,6 +15993,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -16481,7 +16556,7 @@ Identifier is matching the filters
 2.5.5 Receive buffer (RX) 
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:2.3.10-RX-buffer-1"
+name "subsec:2.3.10-RX-buffer-1"
 
 \end_inset
 
@@ -16493,7 +16568,7 @@ name "sub:2.3.10-RX-buffer-1"
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -16716,6 +16791,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -16831,7 +16911,7 @@ rec_message_valid
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="26" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -16903,6 +16983,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -18144,7 +18229,7 @@ Acual read row of data from RX Buffer
 2.5.6 Transmit buffer - Time (TXT) 
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:2.3.10-TXT-buffer-1-1"
+name "subsec:2.3.10-TXT-buffer-1-1"
 
 \end_inset
 
@@ -18156,7 +18241,7 @@ name "sub:2.3.10-TXT-buffer-1-1"
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -18379,6 +18464,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -18457,7 +18547,7 @@ Transmit buffer is a memory which contains one CAN frame to be transmitted.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="12" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -18528,6 +18618,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -19080,7 +19175,7 @@ Buffer can be emptied, data are loaded to CAN Core
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="18" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -19303,6 +19398,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -19999,7 +20099,7 @@ Identifier to be transmitted
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -20493,7 +20593,7 @@ Timestamp
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="22" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -20716,6 +20816,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -21629,7 +21734,7 @@ Interrupt vector
 2.5.9 Memory registers
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:2.5.9-Memory-registers"
+name "subsec:2.5.9-Memory-registers"
 
 \end_inset
 
@@ -21641,7 +21746,7 @@ name "sub:2.5.9-Memory-registers"
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="40" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -21864,6 +21969,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -23590,7 +23700,7 @@ Interrupt vector
 2.5.10 Event logger (optional) 
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:2.3.10-Event-logger"
+name "subsec:2.3.10-Event-logger"
 
 \end_inset
 
@@ -23602,7 +23712,7 @@ name "sub:2.3.10-Event-logger"
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="21" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -23825,6 +23935,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -24845,7 +24960,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -25008,7 +25123,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/Testovaci Platforma/Obrazky/Minimal_IPT.png
+	filename ../pics/Minimal_IPT.png
 	lyxscale 20
 	scale 60
 
@@ -25083,7 +25198,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/14Mbit_20m_Star.png
+	filename ../pics/14Mbit_20m_Star.png
 	lyxscale 20
 	scale 60
 
@@ -25179,7 +25294,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="40" columns="6">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -28262,6 +28377,10 @@ The register contains an identifier of CAN FD IP function.
  It is used to determine whether CAN IP function is mapped correctly on
  its base address.
  
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -28269,7 +28388,7 @@ The register contains an identifier of CAN FD IP function.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="0pt">
 <row>
@@ -28380,6 +28499,10 @@ Type: Read / Write
 \begin_layout Standard
 MODE register (part of MODE_REG) sets special operating modes of the controller.
  All bits are active in logic 1.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -28387,7 +28510,7 @@ MODE register (part of MODE_REG) sets special operating modes of the controller.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="9">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -28733,6 +28856,10 @@ Type: Write
 Writing logic 1 gives a command to the controller.
  The meaning of command is different for every bit.
  This register is automatically erased when a command is finished.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -28740,7 +28867,7 @@ Writing logic 1 gives a command to the controller.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="6">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -28961,6 +29088,10 @@ Type: Read
 Register signals various states of CAN controller which are not mutually
  exclusive.
  Every bit is active in logic 1.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -28968,7 +29099,7 @@ Register signals various states of CAN controller which are not mutually
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="9">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -29302,6 +29433,10 @@ Register with enable bit of the controller.The configuration of retransmission
  limit for failed frames is also located in this register.
  Furthermore configuration of ISO FD CAN or CAN FD 1.0 is done here.
  Every bit is active in logic 1.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -29309,7 +29444,7 @@ Register with enable bit of the controller.The configuration of retransmission
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="6">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -29555,6 +29690,10 @@ Type: Read - automatically erased after read
 This register contains interrupt vector of interrupts that were generated
  since the last read.
  
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -29562,7 +29701,7 @@ This register contains interrupt vector of interrupts that were generated
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="13">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -30004,6 +30143,10 @@ Type: Read / Write
 \begin_layout Standard
 Register enables interrupts by different sources.
  Logic 1 in each bit means interrupt is allowed
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -30011,7 +30154,7 @@ Register enables interrupts by different sources.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="13">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -30470,6 +30613,10 @@ Type: Read / Write
 \begin_layout Standard
 The length of bit time segments for Nominal bit time in Time quanta.
  Note that SYNC segment always lasts one Time quanta.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -30477,7 +30624,7 @@ The length of bit time segments for Nominal bit time in Time quanta.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -30639,6 +30786,10 @@ Type: Read / Write
 \begin_layout Standard
 Length of bit time segments for Data bit time in Time quanta.
  Note that SYNC segment always lasts one Time quanta.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -30646,7 +30797,7 @@ Length of bit time segments for Data bit time in Time quanta.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="7">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -30911,7 +31062,7 @@ Type: Read
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -31043,6 +31194,10 @@ Type: Read/Write
 
 \begin_layout Standard
 Synchronisation jump width registers for both Nominal and Data bit times.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31050,7 +31205,7 @@ Synchronisation jump width registers for both Nominal and Data bit times.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -31180,6 +31335,10 @@ Type: Read / Write
 \begin_layout Standard
 Baud rate Prescaler register for Nominal bit time.
  Specifies time quanta duration and synchronization jump width
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31187,7 +31346,7 @@ Baud rate Prescaler register for Nominal bit time.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -31313,6 +31472,10 @@ Type: Read / Write
 \begin_layout Standard
 Baud rate Prescaler register for Data bit time.
  Specifies time quanta duration and synchronization jump width.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31320,7 +31483,7 @@ Baud rate Prescaler register for Data bit time.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -31467,6 +31630,10 @@ Error warning limit register.
  Note that according to CAN specification this value is fixed at 96 and
  should not be configurable! The configuration of this value is one of the
  extra features of this IP Core.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31474,7 +31641,7 @@ Error warning limit register.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -31578,6 +31745,10 @@ Error passive limit.
  extra features of this IP Core.
  Note that IP Core always turns to bus_off state once any error counter
  reaches 255! 
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31585,7 +31756,7 @@ Error passive limit.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -31685,6 +31856,10 @@ Fault confinement state of the node.
  This state can be manipulated by writing into registers RXC/TXC and ERP_LIMIT
  of ERP register.
  When these counters are set Fault confinement state changes automatically.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31692,7 +31867,7 @@ Fault confinement state of the node.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -31903,6 +32078,10 @@ During read the bit meaning is according to RXC register.
 
 \begin_layout Standard
 RXC:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31910,7 +32089,7 @@ RXC:
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -31987,6 +32166,10 @@ RXC_VAL Receive error counter.
 
 \begin_layout Standard
 CTR_PRES:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -31994,7 +32177,7 @@ CTR_PRES:
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -32188,7 +32371,7 @@ Type: Read
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -32315,6 +32498,10 @@ When reading from register bit meaning is according to ERR_NORM register.
 
 \begin_layout Standard
 ERR_NORM:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -32322,7 +32509,7 @@ ERR_NORM:
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -32400,6 +32587,10 @@ ERR_NORM_VAL Number of errors in the Nominal bit time.
 
 \begin_layout Standard
 CTR_PRES_SPECIAL:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -32407,7 +32598,7 @@ CTR_PRES_SPECIAL:
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -32599,7 +32790,7 @@ Type: Read
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -32703,6 +32894,10 @@ Bit mask for acceptance filters.
  The identifier format is the same as transmitted and received identifier
  format.
  BASE Identifier is 11 LSB and Identifier extension are bits 28-12!
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -32710,7 +32905,7 @@ Bit mask for acceptance filters.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -32841,6 +33036,10 @@ The bit value for acceptance filters.
  Filters A,B,C are available.
  The identifier format is same as transmitted and received identifier format.
  BASE Identifier is 11 LSB, Identifier extension is on bits 28-12!
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -32848,7 +33047,7 @@ The bit value for acceptance filters.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -32981,6 +33180,10 @@ Lower threshold of the Range filter.
  However, actual decimal value of the Identifier is that BASE identifier
  is at MSB bits and 18 LSB bits is identifier extension.
  The unsigned binary value of the identifier must be written into this register!
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -32988,7 +33191,7 @@ Lower threshold of the Range filter.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -33120,6 +33323,10 @@ Upper threshold of the Range filter.
  at MSB bits and 18 LSB bits is identifier extension.
  The unsigned binary value of actual value of identifier must be written
  into this register!
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -33127,7 +33334,7 @@ Upper threshold of the Range filter.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -33253,6 +33460,10 @@ Type: Read / Write
 \begin_layout Standard
 Every filter can be set to accept only selected frame types.
  Every bit active in logic 1.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -33260,7 +33471,7 @@ Every filter can be set to accept only selected frame types.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -33481,7 +33692,7 @@ label{sec:RX_STATUS}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -33635,6 +33846,10 @@ label{sec:RX_MC}
 \begin_layout Standard
 Register with the number of CAN Frames in RX buffer.
  Note that one frame takes 5 to 20 32-bit words in buffer memory.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -33642,7 +33857,7 @@ Register with the number of CAN Frames in RX buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -33738,7 +33953,7 @@ label{sec:RX_MF}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -33855,7 +34070,7 @@ label{sec:RX_BUFF_SIZE}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -33952,7 +34167,7 @@ label{sec:RX_WPP}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -34049,7 +34264,7 @@ label{sec:RX_RPP}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -34176,6 +34391,10 @@ TIMESTAMP_U
 
  etc.
  In detail bits of each word have following meaning:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -34183,7 +34402,7 @@ TIMESTAMP_U
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="13">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -35476,7 +35695,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/RX_Buffer.emf
+	filename ../pics/RX_Buffer.emf
 	lyxscale 20
 	scale 12
 
@@ -35535,7 +35754,7 @@ Type: Read
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -35643,7 +35862,7 @@ Type: Read
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -35804,6 +36023,10 @@ This register controls the frame inserton into the TX buffers (The frame
  All bits are active in logic 1.
  Once a frame is committed into the buffer it is transmitted as soon as
  it passes TX Arbitrator.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -35811,7 +36034,7 @@ This register controls the frame inserton into the TX buffers (The frame
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="6">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -36039,6 +36262,10 @@ Registers TX_DATA_1 to TX_DATA_20 contain frame to be inserted into transmit
  buffers.
  The data in these registers must have the following format in order to
  be properly sent:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -36046,7 +36273,7 @@ Registers TX_DATA_1 to TX_DATA_20 contain frame to be inserted into transmit
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="10" columns="13">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -37359,7 +37586,7 @@ Type: Read / Write
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -37459,7 +37686,7 @@ Type: Read / Write
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -37560,6 +37787,10 @@ Register for configuration of event logging triggering conditions.
  If Event logger is in Ready state and any of triggering conditions appear
  it starts recording the events on the bus (moves to Running state).
  Logic 1 in each bit means this triggering condition is valid.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -37567,7 +37798,7 @@ Register for configuration of event logging triggering conditions.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="9">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -38428,6 +38659,10 @@ Type: Read / Write
 \begin_layout Standard
 Register for configuring which events to capture by event logger into the
  ogger FIFO memory when event logger is running.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -38435,7 +38670,7 @@ Register for configuring which events to capture by event logger into the
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="9" columns="9">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -39333,7 +39568,7 @@ label{sec:LOG_STAT}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="7">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -39595,7 +39830,7 @@ label{sec:LOG_WPP}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -39691,7 +39926,7 @@ label{sec:LOG_RPP}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -39790,6 +40025,10 @@ Type: Write - Automatically erased
 Register for controlling the state machine of Event logger and read pointer
  position.
  Every bit is active in logic 1.
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -39797,7 +40036,7 @@ Register for controlling the state machine of Event logger and read pointer
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="6">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -40024,6 +40263,10 @@ Type: Read
 \begin_layout Standard
 Upper 32 bits of Event logger memory at read pointer position.
  
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -40031,7 +40274,7 @@ Upper 32 bits of Event logger memory at read pointer position.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -40151,7 +40394,7 @@ label{sec:EVENT_TS(15:0)}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -40247,7 +40490,7 @@ label{sec:EVENT_INFO}
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -40382,7 +40625,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="22" columns="3">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -41064,7 +41307,7 @@ name "tab:Event-details-register"
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="6" columns="9">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -41667,6 +41910,10 @@ Type: Read
 \begin_layout Standard
 Register for reading out state of the controller.
  This register is only for debugging purposes!
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -41674,7 +41921,7 @@ Register for reading out state of the controller.
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="6">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -41861,7 +42108,7 @@ Default value
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -42090,6 +42337,10 @@ Type: Read
 
 \begin_layout Standard
 Register for fun :)
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -42097,7 +42348,7 @@ Register for fun :)
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="3" columns="2">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -42338,6 +42589,10 @@ CAN_test_wrapper
 \series default
 .
  Both entities are described in the following table:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -42345,7 +42600,7 @@ CAN_test_wrapper
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="14" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -42568,6 +42823,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -43065,7 +43325,7 @@ Error counter of the test
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="14" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -43288,6 +43548,11 @@ width "95col%"
 special "none"
 height "1in"
 height_special "totalheight"
+thickness "0.4pt"
+separation "3pt"
+shadowsize "4pt"
+framecolor "black"
+backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
@@ -44015,7 +44280,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/UNIT_scheme.emf
+	filename ../pics/UNIT_scheme.emf
 	lyxscale 20
 	scale 15
 
@@ -44468,7 +44733,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/Feature_env.emf
+	filename ../pics/Feature_env.emf
 	lyxscale 20
 	scale 15
 
@@ -44681,7 +44946,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/Testovaci Platforma/Obrazky/Feature_config.png
+	filename ../pics/Feature_config.png
 	lyxscale 20
 
 \end_inset
@@ -45157,7 +45422,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/sanity_env.emf
+	filename ../pics/sanity_env.emf
 	lyxscale 20
 	scale 20
 
@@ -45194,7 +45459,7 @@ name "fig:sanity_diagram-1-1-1-1-1"
 4.7.1 Transciever delay
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:4.7.1-Transciever-delay"
+name "subsec:4.7.1-Transciever-delay"
 
 \end_inset
 
@@ -45215,7 +45480,7 @@ transceiver
  In order to find out how to configure transceiver delays refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.6-Sanity-test"
+reference "subsec:4.7.6-Sanity-test"
 
 \end_inset
 
@@ -45226,7 +45491,7 @@ reference "sub:4.7.6-Sanity-test"
 4.7.2 Real bus topology
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:4.7.2-Real-bus"
+name "subsec:4.7.2-Real-bus"
 
 \end_inset
 
@@ -45251,6 +45516,10 @@ bus_delay_sr
 Bus matrix
 \series default
 :
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -45320,6 +45589,10 @@ reference "fig:bus_topology-1"
 
 .
  Bus matrix for Bus topology is:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -45347,7 +45620,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/Testovaci Platforma/Obrazky/bt.emf
+	filename ../pics/bt.emf
 	lyxscale 20
 	scale 20
 
@@ -45394,6 +45667,10 @@ reference "fig:star_topology-1-1"
 
 .
  Bus matrix for Star topology is :
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -45421,7 +45698,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/star_topology.emf
+	filename ../pics/star_topology.emf
 	lyxscale 20
 	scale 9
 
@@ -45468,6 +45745,10 @@ reference "fig:tree_topology-1-1-1"
 
 .
  Bus matrix for Tree topology is :
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -45495,7 +45776,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/tree_topology.emf
+	filename ../pics/tree_topology.emf
 	lyxscale 20
 	scale 20
 
@@ -45542,6 +45823,10 @@ reference "fig:ring_topology-1-1-1-1"
 
 .
  Bus matrix for Ring topology is :
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -45569,7 +45854,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/ring_topology.emf
+	filename ../pics/ring_topology.emf
 	lyxscale 20
 	scale 13
 
@@ -45609,6 +45894,10 @@ Custom
 \begin_layout Standard
 In custom topolgy user/tester can set arbitrary values to Bus matrix.
  Bus matrix in custom topology is:
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -45629,7 +45918,7 @@ l_{3} & l_{5} & l_{6} & 0
 4.7.3 Oscillator tolerance
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:4.7.3-Oscillator-tollerance"
+name "subsec:4.7.3-Oscillator-tollerance"
 
 \end_inset
 
@@ -45683,7 +45972,7 @@ ns
  to 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.6-Sanity-test"
+reference "subsec:4.7.6-Sanity-test"
 
 \end_inset
 
@@ -45694,7 +45983,7 @@ reference "sub:4.7.6-Sanity-test"
 4.7.4 Noise generation
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:4.7.4-Noise-generation"
+name "subsec:4.7.4-Noise-generation"
 
 \end_inset
 
@@ -45747,7 +46036,7 @@ Each configuration parameter corresponds to VHDL signal.
  To find out exactly how to configure these parameters refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.6-Sanity-test"
+reference "subsec:4.7.6-Sanity-test"
 
 \end_inset
 
@@ -45758,7 +46047,7 @@ reference "sub:4.7.6-Sanity-test"
 4.7.5 Traffic emulation and data consitency evaluation
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:4.7.5-Traffic-emulation"
+name "subsec:4.7.5-Traffic-emulation"
 
 \end_inset
 
@@ -45801,7 +46090,7 @@ Compare TX Memories and RX Memories contents for data consistency.
 4.7.6 Sanity test configuration
 \begin_inset CommandInset label
 LatexCommand label
-name "sub:4.7.6-Sanity-test"
+name "subsec:4.7.6-Sanity-test"
 
 \end_inset
 
@@ -45820,7 +46109,7 @@ sanity/sanity_config.tcl
  Each iteration consists of sequence from 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.5-Traffic-emulation"
+reference "subsec:4.7.5-Traffic-emulation"
 
 \end_inset
 
@@ -45838,6 +46127,10 @@ reference "sub:4.7.5-Traffic-emulation"
 list
 \series default
  
+\begin_inset Separator latexpar
+\end_inset
+
+
 \end_layout
 
 \begin_deeper
@@ -45911,7 +46204,7 @@ ring
  For more information about topologies refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.2-Real-bus"
+reference "subsec:4.7.2-Real-bus"
 
 \end_inset
 
@@ -45932,7 +46225,7 @@ l6 Length of the bus segments.
  Please refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.2-Real-bus"
+reference "subsec:4.7.2-Real-bus"
 
 \end_inset
 
@@ -45955,7 +46248,7 @@ td4 Transciever delays of each node in multiples of 10 ns (e.g.
  Refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.1-Transciever-delay"
+reference "subsec:4.7.1-Transciever-delay"
 
 \end_inset
 
@@ -45975,7 +46268,7 @@ e4 Oscillator errors (maximal tollerance) of each node in ppm.
  Refer to
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "sub:4.7.3-Oscillator-tollerance"
+reference "subsec:4.7.3-Oscillator-tollerance"
 
 \end_inset
 
@@ -46068,7 +46361,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/Sanity_cfg.png
+	filename ../pics/Sanity_cfg.png
 	lyxscale 20
 
 \end_inset
@@ -46208,7 +46501,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="20" columns="7">
-<features rotate="0" tabularvalignment="top">
+<features tabularvalignment="top">
 <column alignment="center" valignment="middle" width="1.8cm">
 <column alignment="center" valignment="middle" width="1.8cm">
 <column alignment="center" valignment="middle" width="2cm">
@@ -47655,7 +47948,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/0p5MB_2MB.png
+	filename ../pics/0p5MB_2MB.png
 	lyxscale 20
 	scale 70
 
@@ -47699,9 +47992,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../../Obrazky/Test_setup/IMG_20160902_174031.jpg
+	filename ../pics/Test_setup/IMG_20160902_174031.jpg
 	lyxscale 20
-	scale 20
+	scale 19
 	rotateAngle 270
 
 \end_inset
@@ -47799,7 +48092,7 @@ Appendix A - Driving bus signals
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="34" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -49415,7 +49708,7 @@ Store message in registers into TXT 1 buffer
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="45" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -51548,7 +51841,7 @@ Signal is not used
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="46" columns="5">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -53732,7 +54025,7 @@ Appendix B - Status bus signals
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="31" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -54927,7 +55220,7 @@ Command to store input frame for transcieve
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="37" columns="4">
-<features rotate="0" tabularvalignment="middle">
+<features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">

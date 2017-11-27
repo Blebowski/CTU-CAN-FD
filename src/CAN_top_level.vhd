@@ -33,7 +33,7 @@ use work.CANcomponents.ALL;
 --    22.6.2016   1. Added rec_esi signal for error state propagation into the RX buffer.
 --                2. Added explicit architecture selection for each component (RTL)
 --    24.8.2016   Added "use_logger" generic to the registers module.
---
+--    28.11.2017  Added "rst_sync_comp" reset synchroniser. 
 -------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------
@@ -105,7 +105,8 @@ entity CAN_top_level is
   ---------------------
   --Internal signals --
   ---------------------
-  signal res_n_int            :     std_logic;
+  signal res_n_int            :     std_logic;  -- Overal reset (External+Reset by memory access)
+  signal res_n_sync           :     std_logic;  -- Synchronised reset
   
   signal drv_bus              :     std_logic_vector(1023 downto 0);
   signal stat_bus             :     std_logic_vector(511 downto 0);
@@ -237,9 +238,17 @@ architecture rtl of CAN_top_level is
     for core_top_comp   : core_top      use entity work.core_top(rtl); 
     for prescaler_comp  : prescaler_v3  use entity work.prescaler_v3(rtl); 
     for bus_sync_comp   : busSync       use entity work.busSync(rtl);
+    for rst_sync_comp   : rst_sync      use entity work.rst_sync(rtl);
     --for log_comp : CAN_logger use entity work.CAN_logger(rtl);
 
 begin
+  
+  rst_sync_comp:rst_sync
+  port map(
+       clk                =>  clk_sys,
+       arst_n             =>  res_n,
+       rst_n              =>  res_n_sync
+  );
   
   reg_comp:registers
   generic map(
@@ -249,7 +258,7 @@ begin
   )
   port map(
      clk_sys              =>  clk_sys,
-     res_n                =>  res_n,
+     res_n                =>  res_n_sync,
      res_out              =>  res_n_int,
      data_in              =>  data_in,
      data_out             =>  data_out,

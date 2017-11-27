@@ -29,6 +29,7 @@ USE WORK.CANconstants.ALL;
 -- Revision History:
 --
 --    15.11.2017   Created file
+--    27.11.2017   Added "rst_sync" asynchronous rest synchroniser circuit
 -------------------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------------------
@@ -764,6 +765,17 @@ end component;
     signal error_state_out        :out  error_state_type
   );
  end component;
+
+  ---------------------------------------
+  --Asynchronous resset synchroniser   --
+  ---------------------------------------
+  component rst_sync is
+    port (
+        signal clk    : in  std_logic;
+        signal arst_n : in  std_logic;
+        signal rst_n  : out std_logic
+    );
+  end component;
 
 
    
