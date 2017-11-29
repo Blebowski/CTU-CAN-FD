@@ -30,6 +30,8 @@ USE WORK.CANconstants.ALL;
 --
 --    15.11.2017   Created file
 --    27.11.2017   Added "rst_sync" asynchronous rest synchroniser circuit
+--    29.11.2017   Removed "rec_data" between Protocol control and RX Buffer, replaced with rec_dram_word and
+--                 rec_dram_addr as part of resource optimization.
 -------------------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------------------
@@ -147,7 +149,6 @@ package CANcomponents is
     signal res_n                :in   std_logic; --Async. reset
     
     signal rec_ident_in         :in   std_logic_vector(28 downto 0); --Message Identifier
-    signal rec_data_in          :in   std_logic_vector(511 downto 0); --Message Data (up to 64 bytes);
     signal rec_dlc_in           :in   std_logic_vector(3 downto 0); --Data length code
     signal rec_ident_type_in    :in   std_logic; --Recieved identifier type (0-BASE Format, 1-Extended Format);
     signal rec_frame_type_in    :in   std_logic; --Recieved frame type (0-Normal CAN, 1- CAN FD)
@@ -156,6 +157,9 @@ package CANcomponents is
     signal rec_brs              :in   std_logic; --Whenever frame was recieved with BIT Rate shift 
     signal rec_esi              :in   std_logic;                        --Recieved error state indicator
     signal rec_message_ack      :out  std_logic; --Acknowledge for CAN Core about accepted data
+    
+    signal rec_dram_word        :in  std_logic_vector(31 downto 0);
+    signal rec_dram_addr        :out natural range 0 to 15;
     
     signal rx_buf_size          :out  std_logic_vector(7 downto 0); --Actual size of synthetised message buffer (in 32 bit words)
     signal rx_full              :out  std_logic; --Signal whenever buffer is full
@@ -345,7 +349,6 @@ package CANcomponents is
     signal tran_data_ack_out    :out  std_logic; --Acknowledge from CAN core that acutal message was stored into internal buffer for transmitting   
  
     signal rec_ident_out        :out  std_logic_vector(28 downto 0); --Message Identifier
-    signal rec_data_out         :out  std_logic_vector(511 downto 0); --Message Data (up to 64 bytes);
     signal rec_dlc_out          :out  std_logic_vector(3 downto 0); --Data length code
     signal rec_ident_type_out   :out  std_logic; --Recieved identifier type (0-BASE Format, 1-Extended Format);
     signal rec_frame_type_out   :out  std_logic; --Recieved frame type (0-Normal CAN, 1- CAN FD)
@@ -354,6 +357,8 @@ package CANcomponents is
     signal rec_esi_out          :out  std_logic; --Error state indicator
     signal rec_message_valid_out:out  std_logic;
     signal rec_message_ack_out  :in   std_logic; --Acknowledge for CAN Core about accepted data
+    signal rec_dram_word_out    :out  std_logic_vector(31 downto 0);
+    signal rec_dram_addr_out    :in   natural range 0 to 15;
     
     signal arbitration_lost_out :out  std_logic; --Arbitration was lost input
     signal wake_up_valid        :out  std_logic; --Wake up appeared
@@ -655,7 +660,6 @@ end component;
     signal tran_data_ack          :out  std_logic; --Acknowledge that the frame was stored
     signal br_shifted             :out  std_logic; --Bit Rate Was Shifted
     
-    signal rec_data               :out  std_logic_vector(511 downto 0);
     signal rec_ident              :out  std_logic_vector(28 downto 0);
     signal rec_dlc                :out  std_logic_vector(3 downto 0);
     signal rec_is_rtr             :out  std_logic;
@@ -664,6 +668,10 @@ end component;
     signal rec_brs                :out  std_logic;
     signal rec_crc                :out  std_logic_vector(20 downto 0); --Recieved CRC value
     signal rec_esi                :out  std_logic; --Recieved Error state indicator
+    
+    --Added interface for aux SRAM
+    signal rec_dram_word          :out  std_logic_vector(31 downto 0);
+    signal rec_dram_addr          :in   natural range 0 to 15;
       
     signal OP_state               :in   oper_mode_type; --Operation mode state
     signal arbitration_lost       :out  std_logic; --Signal for Operational mode state mahine about loosing arbitration

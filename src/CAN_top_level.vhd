@@ -167,6 +167,10 @@ entity CAN_top_level is
   signal rec_message_ack      :     std_logic; --Acknowledge for CAN Core about accepted data
   signal rec_esi              :     std_logic;
   
+  signal rec_dram_word        :     std_logic_vector(31 downto 0);
+  signal rec_dram_addr        :     natural range 0 to 15;
+  
+  
   --RX Buffer <--> Message filters
   signal out_ident_valid      :     std_logic; --Signal whenever identifier matches the filter identifiers
   
@@ -300,7 +304,6 @@ begin
      clk_sys              =>  clk_sys,
      res_n                =>  res_n_int,
      rec_ident_in         =>  rec_ident_in,
-     rec_data_in          =>  rec_data_in,
      rec_dlc_in           =>  rec_dlc_in,
      rec_ident_type_in    =>  rec_ident_type_in,
      rec_frame_type_in    =>  rec_frame_type_in,
@@ -309,6 +312,8 @@ begin
      rec_brs              =>  rec_brs,
      rec_esi              =>  rec_esi,
      rec_message_ack      =>  rec_message_ack,
+     rec_dram_word        =>  rec_dram_word,
+     rec_dram_addr        =>  rec_dram_addr,
      rx_buf_size          =>  rx_buf_size,
      rx_full              =>  rx_full,
      rx_empty             =>  rx_empty,
@@ -429,7 +434,6 @@ begin
      tran_frame_valid_in  =>  tran_frame_valid_out,
      tran_data_ack_out    =>  tran_data_ack,
      rec_ident_out        =>  rec_ident_in,
-     rec_data_out         =>  rec_data_in,
      rec_dlc_out          =>  rec_dlc_in,
      rec_ident_type_out   =>  rec_ident_type_in,
      rec_frame_type_out   =>  rec_frame_type_in,
@@ -438,6 +442,8 @@ begin
      rec_esi_out          =>  rec_esi,
      rec_message_valid_out=>  rec_message_valid,
      rec_message_ack_out  =>  rec_message_ack,
+     rec_dram_word_out    =>  rec_dram_word,
+     rec_dram_addr_out    =>  rec_dram_addr,
      arbitration_lost_out =>  arbitration_lost,
      wake_up_valid        =>  wake_up_valid,
      tx_finished          =>  tx_finished,

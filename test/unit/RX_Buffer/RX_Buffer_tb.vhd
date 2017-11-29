@@ -66,7 +66,6 @@ architecture rx_buf_unit_test of CAN_test is
     signal clk_sys              :   std_logic:='0';                       --System clock
     signal res_n                :   std_logic:='0';                         --Async. reset
     signal rec_ident_in         :   std_logic_vector(28 downto 0);    --Message Identifier
-    signal rec_data_in          :   std_logic_vector(511 downto 0);   --Message Data (up to 64 bytes);
     signal rec_dlc_in           :   std_logic_vector(3 downto 0);     --Data length code
     signal rec_ident_type_in    :   std_logic:='0';                                      --Recieved identifier type (0-BASE Format, 1-Extended Format);
     signal rec_frame_type_in    :   std_logic:='0';                                      --Recieved frame type (0-Normal CAN, 1- CAN FD)
@@ -76,6 +75,9 @@ architecture rx_buf_unit_test of CAN_test is
     signal rec_message_valid    :   std_logic:='0';                                      --Output from acceptance filters (out_ident_valid) if message fits the filters   
     signal timestamp            :   std_logic_vector(63 downto 0):=(OTHERS =>'0');
     signal drv_bus              :   std_logic_vector(1023 downto 0):=(OTHERS =>'0');   --Driving bus from registers 
+
+    signal rec_dram_word        :   std_logic_vector(31 downto 0);
+    signal rec_dram_addr        :   natural range 0 to 15;
 
     signal rec_message_ack_b      :   std_logic:='0';                          --Acknowledge for CAN Core about accepted data    
     signal rx_buf_size_b          :   std_logic_vector(7 downto 0):=(OTHERS =>'0');     --Actual size of synthetised message buffer (in 32 bit words)
@@ -201,8 +203,8 @@ architecture rx_buf_unit_test of CAN_test is
     if(data_overrun_b='1')then
       was_inserted:=false;
     else  
-      was_inserted:=true;
-    end if;
+      was_inserted:=true; 
+   end if;
     
     -----------------------------------------------------------------------
     --When frame was truly inserted then add it to the common input memory
@@ -331,7 +333,8 @@ begin
      clk_sys                    =>  clk_sys,
      res_n                      =>  res_n ,
      rec_ident_in               =>  rec_ident_in,
-     rec_data_in                =>  rec_data_in,
+     rec_dram_word              =>  rec_dram_word,
+     rec_dram_addr              =>  rec_dram_addr,   
      rec_dlc_in                 =>  rec_dlc_in,
      rec_ident_type_in          =>  rec_ident_type_in,
      rec_frame_type_in          =>  rec_frame_type_in,
@@ -368,7 +371,8 @@ begin
 --     clk_sys                    =>  clk_sys,
 --     res_n                      =>  res_n ,
 --     rec_ident_in               =>  rec_ident_in,
---     rec_data_in                =>  rec_data_in,
+--     rec_dram_word              =>  rec_dram_word,
+--     rec_dram_addr              =>  rec_dram_addr,     
 --     rec_dlc_in                 =>  rec_dlc_in,
 --     rec_ident_type_in          =>  rec_ident_type_in,
 --     rec_frame_type_in          =>  rec_frame_type_in,
@@ -397,7 +401,6 @@ begin
   --Connect input frame to stimuli generator
   -------------------------------------------
   rec_ident_in          <=  input_frame.rec_ident_in;
-  rec_data_in           <=  input_frame.rec_data_in;
   rec_dlc_in            <=  input_frame.rec_dlc_in;
   rec_ident_type_in     <=  input_frame.rec_ident_type_in;
   rec_frame_type_in     <=  input_frame.rec_frame_type_in;
@@ -405,6 +408,10 @@ begin
   rec_brs               <=  input_frame.rec_brs;
   rec_esi               <=  input_frame.rec_esi;
   rec_message_valid     <=  input_frame.rec_message_valid;
+  
+  -- Change to RAM usage for internal data of Protocol control!
+  -- Only 32 bytes of data are provided at a time !!!
+  rec_dram_word         <=  input_frame.rec_data_in((rec_dram_addr+1)*32-1 downto rec_dram_addr*32); 
   
   ---------------------------------
   --Clock and timestamp generation
@@ -520,7 +527,6 @@ begin
   end process;
   
   
-  
   ---------------------------------
   -- Data reader
   ---------------------------------
@@ -546,7 +552,7 @@ begin
           sanity_counter:=sanity_counter+1;
           
           --There is nothing to read from the buffers...
-          if(sanity_counter=30)then
+          if(sanity_counter=50)then
             sanity_check := false;
             process_error(read_errs,error_beh,exit_imm_d);
             log("There is nothing to read for too long!",error_l,log_level);
