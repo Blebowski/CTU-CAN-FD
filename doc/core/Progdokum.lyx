@@ -2197,7 +2197,7 @@ name "fig:CAN-Core-block"
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="34" columns="5">
+<lyxtabular version="3" rows="35" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -3240,7 +3240,7 @@ Acknowledge for TXT Buffers, frame is stored
 \begin_inset Text
 
 \begin_layout Plain Layout
-rec_data
+rec_dram_word
 \end_layout
 
 \end_inset
@@ -3249,7 +3249,7 @@ rec_data
 \begin_inset Text
 
 \begin_layout Plain Layout
-512
+32
 \end_layout
 
 \end_inset
@@ -3276,7 +3276,54 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Recieved data
+Recieved data on the output of internal RAM
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+rec_dram_addr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Address pointer for internal RAM
 \end_layout
 
 \end_inset
@@ -16839,7 +16886,7 @@ rec_message_valid
  input signal is in logic 1 first word is stored.
  In following up to 19 clock cycles remaining words are stored.
  This requires the received data to be valid for at least 20 clock cycles
- (register in CAN Core).
+ (RAM in CAN Core).
  Since frame is validated at the end of EOF field, until received data are
  erased by the next frame, bus is in the intermission field.
  Having minimum 7 clock cycles per nominal bit time this gives minimum 21
@@ -16911,7 +16958,7 @@ rec_message_valid
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="26" columns="5">
+<lyxtabular version="3" rows="27" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -17378,7 +17425,7 @@ Recieved identifier
 \begin_inset Text
 
 \begin_layout Plain Layout
-rec_data_in
+rec_dram_word
 \end_layout
 
 \end_inset
@@ -17387,7 +17434,7 @@ rec_data_in
 \begin_inset Text
 
 \begin_layout Plain Layout
-512
+32
 \end_layout
 
 \end_inset
@@ -17396,7 +17443,7 @@ rec_data_in
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+in
 \end_layout
 
 \end_inset
@@ -17414,7 +17461,54 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Recieved data
+Recieved data from Protocol control RAM
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+rec_dram_addr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Address pointer for Protocol control RAM
 \end_layout
 
 \end_inset
