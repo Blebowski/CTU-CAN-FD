@@ -53,6 +53,9 @@ use work.CANconstants.all;
 --                Now memory registers set drv_read_start only for ONE clock cycle per each access. So it is enough to
 --                check whether signal is active! Thisway it is not necessary to add empty clock cycles between consecutive
 --                reads from RX_DATA register!
+--    29.11.2017  Changed hadnling of received data. "rec_data_in" replaced by "rec_dram_word" and "rec_dram_addr" as part of
+--                resource optimizations. Data are not available in parallel at input of the RX buffer but addressed in
+--                internal RAM of Protocol controller.
 --
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -87,7 +90,6 @@ entity rxBuffer is
     --CAN Core interface (rec. data,validity, acknowledge)-
     -------------------------------------------------------
     signal rec_ident_in         :in std_logic_vector(28 downto 0);    --Message Identifier
-    signal rec_data_in          :in std_logic_vector(511 downto 0);   --Message Data (up to 64 bytes);
     signal rec_dlc_in           :in std_logic_vector(3 downto 0);     --Data length code
     signal rec_ident_type_in    :in std_logic;                        --Recieved identifier type (0-BASE Format, 1-Extended Format);
     signal rec_frame_type_in    :in std_logic;                        --Recieved frame type (0-Normal CAN, 1- CAN FD)
@@ -97,6 +99,10 @@ entity rxBuffer is
     
     signal rec_message_ack      :out std_logic;                       --Acknowledge for CAN Core about accepted data
     signal rec_message_valid    :in std_logic;                        --Output from acceptance filters (out_ident_valid) if message fits the filters
+    
+    --Added interface for aux SRAM
+    signal rec_dram_word        :in  std_logic_vector(31 downto 0);
+    signal rec_dram_addr        :out natural range 0 to 15;
     
     ------------------------------------
     --Status signals of recieve buffer--
@@ -174,13 +180,16 @@ begin
   rx_read_buff          <= memory(read_pointer) when (memory_valid(read_pointer)='1') 
                            else (OTHERS => '0');  --Read data from SRAM memory (1 port, async read)
   
+  -- Address for the Receive data RAM in the CAN Core!
+  -- Comparator is temporary before the data order will be reversed!
+  rec_dram_addr         <= 18-copy_counter when (copy_counter>2 and copy_counter<19) else 0;
   
   ------------------------------------------------------------------
   --Storing data from CANCore and loading data into reading buffer--
   ------------------------------------------------------------------
   memory_acess:process(clk_sys,res_n)
     variable data_length    : natural range 0 to 16;        --Length variable for frame stored into reading buffer (in 32 bit words)
-    variable mem_free       : natural range 0 to buff_size; --Amount of free words
+    variable mem_free       : natural range 0 to buff_size:= buff_size; --Amount of free words
     variable message_count  : natural range 0 to 255;       --Message Count already stored  
  begin     
     if (res_n=ACT_RESET) or (drv_erase_rx='1') then
@@ -354,8 +363,9 @@ begin
       
       elsif(copy_counter<data_size)then -- Here the data words are stored
         
-        --Note: copy_counter is at least 3 here!! (3 to 18), therefore we have to decrease it by 3 -> increase the index by 96
-        memory(write_pointer)           <= rec_data_in(607-((copy_counter)*32) downto 576-((copy_counter)*32));
+        --Optimized implementation of the storing with auxiliarly receive data RAM
+        memory(write_pointer)           <= rec_dram_word;
+        
         memory_valid(write_pointer)     <= '1';
         write_pointer                   <= (write_pointer+1) mod buff_size;
         copy_counter                    <= copy_counter+1;

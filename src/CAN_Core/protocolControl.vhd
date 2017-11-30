@@ -89,6 +89,15 @@ use work.CANconstants.all;
 --    12.1.2017   1. Added CRC fix for ISO FD CAN. CRC was stopped before the stuff count field. Due to this
 --                Stuff count was not included into CRC which made the calculated CRC always wrong!
 --                2. Fixed CRC length for small FD frames to be always 17 instead of 15!
+--    29.11.2017  1. Optimized storing of received data. Data stored into 16*32 RAM (array) after each byte was
+--                   received. Since RX Buffer is reading the data serially, it does not need to have
+--                   the data available in parallel! Removed signal "rec_data_r" and replaced it with "rec_dram".
+--                   RX buffer now provides address signal which combinationally reads the data on RAM output!
+--                   This approach saved approx. 1000 LC combinationals of Altera device. No RAM was inferred,
+--                   and the memory was stored in LUT combinational memory! An additional effect of this change
+--                   is that Received Data are not erased in the SOF of next frame and thus it stays on the output
+--                   of CAN Core until it is rewritten by next data.
+--
 -------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------
@@ -126,7 +135,6 @@ entity protocolControl is
     -------------------------
     --Recieved data output --
     -------------------------
-    signal rec_data               :out  std_logic_vector(511 downto 0);
     signal rec_ident              :out  std_logic_vector(28 downto 0);
     signal rec_dlc                :out  std_logic_vector(3 downto 0);
     signal rec_is_rtr             :out  std_logic;
@@ -135,6 +143,10 @@ entity protocolControl is
     signal rec_brs                :out  std_logic;
     signal rec_crc                :out  std_logic_vector(20 downto 0); --Recieved CRC value
     signal rec_esi                :out  std_logic; --Recieved Error state indicator
+    
+    --Added interface for aux SRAM
+    signal rec_dram_word          :out  std_logic_vector(31 downto 0);
+    signal rec_dram_addr          :in   natural range 0 to 15;
     
     --------------------------------
     --Operation mode FSM Interface--
@@ -302,7 +314,6 @@ entity protocolControl is
   ---------------------------
   --Recieved data registers--
   ---------------------------
-  signal rec_data_r               :     std_logic_vector(511 downto 0);
   signal rec_ident_r              :     std_logic_vector(28 downto 0);
   signal rec_dlc_r                :     std_logic_vector(3 downto 0);
  	signal rec_is_rtr_r             :     std_logic;
@@ -348,6 +359,15 @@ entity protocolControl is
   signal data_pointer             :     natural range 0 to 511; --Pointer for transcieving the data
   signal stl_pointer              :     natural range 0 to 3; --Pointer for transcieving the stuf length field
   signal data_size                :     natural range 0 to 511;
+  
+  -- Signals for optimalization of data reception usage
+  -- Refer to Revision comment: 29.11.2017
+  type rec_data_RAM_type is array (0 to 15) of std_logic_vector(31 downto 0); 
+  
+  signal rec_data_sr              :     std_logic_vector(7 downto 0); --Shift register for data reception
+  signal rec_dram_ptr             :     natural range 0 to 7; --Register for counting received bytes in shift register
+  signal rec_dram_bind            :     natural range 0 to 3; --Byte index into RAM
+  signal rec_dram                 :     rec_data_RAM_type;
   
   -----------------------
   --CRC field registers--
@@ -448,7 +468,6 @@ begin
   sync_control          <=  sync_control_r;
   
   --Recieved data registers to output propagation
-  rec_data              <=  rec_data_r;
   rec_ident             <=  rec_ident_r;
   rec_dlc               <=  rec_dlc_r;
   rec_is_rtr            <=  rec_is_rtr_r;
@@ -485,6 +504,11 @@ begin
    -------------------------------------
    stuff_parity <= '0' when (dst_ctr mod 2)=0 else
                    '1';  
+  
+   -------------------------------------
+   -- Output of receive data RAM
+   ------------------------------------- 
+   rec_dram_word <= rec_dram(rec_dram_addr);
   
   ---------------------------------------
   ---------------------------------------
@@ -563,12 +587,16 @@ begin
       data_size               <=  0;
       
       --Nulling recieve registers
-      rec_data_r              <=  (OTHERS=>'0');
       rec_ident_r             <=  (OTHERS=>'0');
       rec_dlc_r               <=  (OTHERS=>'0');
       rec_is_rtr_r            <=  '0';
       rec_ident_type_r        <=  '0';
       rec_frame_type_r        <=  '0';
+      
+      -- Receive data RAM
+      rec_dram_ptr            <= 0;
+      rec_dram_bind           <= 0;
+      rec_data_sr             <= (OTHERS => '0');
       
       --Presetting the sampling point control
       sp_control_r            <=  NOMINAL_SAMPLE;
@@ -610,7 +638,6 @@ begin
        fixed_destuff_r        <=  fixed_destuff_r;
        destuff_length_r       <=  destuff_length_r;
        stuff_error_enable_r   <=  stuff_error_enable_r;
-       rec_data_r             <=  rec_data_r;
        rec_ident_r            <=  rec_ident_r;
        rec_dlc_r              <=  rec_dlc_r;
        rec_is_rtr_r           <=  rec_is_rtr_r;
@@ -686,6 +713,10 @@ begin
     
        rx_parity              <=  rx_parity;
        rx_count_grey          <=  rx_count_grey;
+    
+       rec_data_sr            <=  rec_data_sr;
+       rec_dram_ptr           <=  rec_dram_ptr;
+       rec_dram_bind          <=  rec_dram_bind;
     
     if(drv_ena='0')then
       PC_State                <=  off;
@@ -781,7 +812,6 @@ begin
                 crc_enable_r              <=  '1';
                 
                 --Erasing the recieved data registers
-                rec_data_r                <=  (OTHERS =>'0');
                 rec_ident_r               <=  (OTHERS =>'0');
                 rec_dlc_r                 <=  (OTHERS =>'0');
  	              rec_is_rtr_r              <=  '0';
@@ -1258,10 +1288,17 @@ begin
                            PC_State               <=  error;
                            FSM_preset             <=  '1';
             end case;
+            
             data_pointer    <=  511;
+            
             if(OP_State=transciever and tran_frame_type=FD_CAN)then
              sync_control_r <=  NO_SYNC; --Transmitter shall not synchronize in data phase of CAN FD Frame!
             end if;
+            
+            --Receive RAM signals
+            rec_dram_ptr            <= 0;
+            rec_dram_bind           <= 0;
+            rec_data_sr             <= (OTHERS => '0');
           else
 
             if(OP_State=transciever)then
@@ -1273,9 +1310,31 @@ begin
             end if;
             
             if(rec_trig='1')then --Recieving data (also transmitter recieves the same data)
-              rec_data_r(data_pointer)  <=  data_rx;
+              
+              -- Shift register and storing to local RAM
+              rec_data_sr               <=  rec_data_sr(6 downto 0)&data_rx; 
+              rec_dram_ptr              <=  (rec_dram_ptr+1) mod 8;
+              
+              -- If the whole byte was received
+              if (rec_dram_ptr=7) then
+                rec_dram_bind <= (rec_dram_bind+1) mod 4;
+                case rec_dram_bind is
+                  when  0 =>
+                    rec_dram(data_pointer/32) <= rec_data_sr(6 downto 0)&data_rx&"000000000000000000000000";
+                  when  1 =>
+                    rec_dram(data_pointer/32)(23 downto 0) <= rec_data_sr(6 downto 0)&data_rx&"0000000000000000";
+                  when  2 =>
+                    rec_dram(data_pointer/32)(15 downto 0) <= rec_data_sr(6 downto 0)&data_rx&"00000000";
+                  when  3 =>
+                    rec_dram(data_pointer/32)(7 downto 0) <= rec_data_sr(6 downto 0)&data_rx;
+                  when others =>
+                      report "Unknown state" severity error;
+                      PC_State <= error;
+                end case;   
+              end if;
               
               if(data_pointer>511-data_size)then
+              --if(data_pointer>0)then
                 data_pointer            <=  data_pointer-1;
               else
                 PC_State      <=  crc;

@@ -91,7 +91,6 @@ entity core_top is
     --Recieve Buffer and Message Filter Interface--
     -----------------------------------------------
     signal rec_ident_out          :out  std_logic_vector(28 downto 0); --Message Identifier
-    signal rec_data_out           :out  std_logic_vector(511 downto 0); --Message Data (up to 64 bytes);
     signal rec_dlc_out            :out  std_logic_vector(3 downto 0); --Data length code
     signal rec_ident_type_out     :out  std_logic; --Recieved identifier type (0-BASE Format, 1-Extended Format);
     signal rec_frame_type_out     :out  std_logic; --Recieved frame type (0-Normal CAN, 1- CAN FD)
@@ -100,6 +99,8 @@ entity core_top is
     signal rec_esi_out  	         :out  std_logic; --Error state indicator
     signal rec_message_valid_out  :out  std_logic; --Output from acceptance filters (out_ident_valid) if message fits the filters
     signal rec_message_ack_out    :in   std_logic; --Acknowledge for CAN Core about accepted data
+    signal rec_dram_word_out      :out  std_logic_vector(31 downto 0);
+    signal rec_dram_addr_out      :in   natural range 0 to 15;
     
     -------------------------------
     --Interrupt Manager Interface--
@@ -264,7 +265,6 @@ entity core_top is
     signal dec_one                :     std_logic;
     
    --Protocol control signals
-   signal rec_data                :     std_logic_vector(511 downto 0);
    signal rec_ident               :     std_logic_vector(28 downto 0);
    signal rec_dlc                 :     std_logic_vector(3 downto 0);
    signal rec_is_rtr              :     std_logic;
@@ -274,6 +274,8 @@ entity core_top is
    signal rec_crc                 :     std_logic_vector(20 downto 0); --Recieved CRC value
    signal rec_esi                 :     std_logic; --Recieved Error state indicator
    signal ack_recieved_out        :     std_logic;
+   signal rec_dram_word           :     std_logic_vector(31 downto 0);
+   signal rec_dram_addr           :     natural range 0 to 15;
    
    --CRC Interfaces  
    signal crc_enable              :     std_logic; --Transition from 0 to 1 erases the CRC and operation holds as long as enable=1
@@ -344,13 +346,14 @@ begin
   sync_control          <=  sync_control_int;
   
   rec_ident_out         <=  rec_ident;
-  rec_data_out          <=  rec_data;
   rec_dlc_out           <=  rec_dlc;
   rec_ident_type_out    <=  rec_ident_type;
   rec_frame_type_out    <=  rec_frame_type;
   rec_is_rtr_out        <=  rec_is_rtr;
   rec_brs_out           <=  rec_brs;
   rec_esi_out           <=  rec_esi;
+  rec_dram_word_out     <=  rec_dram_word;
+  rec_dram_addr         <=  rec_dram_addr_out;
   
   rec_message_valid_out <=  rec_valid; --Confirmation about valid recieved data for RX Buffer
   --rec_message_ack_out --NOTE: HandShake protocol with acknowledge not used in the end
@@ -419,7 +422,6 @@ begin
      tran_frame_valid_in=>  tran_frame_valid_in,
      tran_data_ack      =>  tran_data_ack,
     
-     rec_data           =>  rec_data,
      rec_ident          =>  rec_ident,
      rec_dlc            =>  rec_dlc,
      rec_is_rtr         =>  rec_is_rtr,
@@ -428,6 +430,8 @@ begin
      rec_brs            =>  rec_brs,
      rec_crc            =>  rec_crc,
      rec_esi            =>  rec_esi,
+     rec_dram_word      =>  rec_dram_word,
+     rec_dram_addr      =>  rec_dram_addr,
     
      OP_state           =>  OP_state,
      arbitration_lost   =>  arbitration_lost,
@@ -440,7 +444,7 @@ begin
      CRC_Error              =>  CRC_Error,
      ack_Error              =>  ack_Error,
      unknown_state_Error    =>  unknown_state_Error,
-     bit_stuff_Error_valid  =>bit_stuff_Error_valid,
+     bit_stuff_Error_valid  =>  bit_stuff_Error_valid,
        
      inc_one            =>  inc_one,
      inc_eight          =>  inc_eight,
