@@ -33,7 +33,9 @@ use work.CANcomponents.ALL;
 --    22.6.2016   1. Added rec_esi signal for error state propagation into the RX buffer.
 --                2. Added explicit architecture selection for each component (RTL)
 --    24.8.2016   Added "use_logger" generic to the registers module.
---    28.11.2017  Added "rst_sync_comp" reset synchroniser. 
+--    28.11.2017  Added "rst_sync_comp" reset synchroniser.
+--    30.11.2017  Changed TXT buffer to registers interface. The user is now directly accessing the buffer
+--                by avalon access.
 -------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------
@@ -128,6 +130,8 @@ entity CAN_top_level is
   signal tran_data_in         :     std_logic_vector(639 downto 0);  --Transcieve data (Common for TX Buffer and TXT Buffer)  
   signal txt1_disc            :     std_logic; --Info that message store into buffer from driving registers failed because buffer is full
   signal txt2_disc            :     std_logic; --Info that message store into buffer from driving registers failed because buffer is full 
+  signal tran_data            :     std_logic_vector(31 downto 0);  --Data into the RAM of TXT Buffer
+  signal tran_addr            :     std_logic_vector(4 downto 0);  --Address in the RAM of TXT buffer  
   
   --Registers <--> event logger
   signal loger_act_data       :     std_logic_vector(63 downto 0);
@@ -283,6 +287,8 @@ begin
      rx_message_disc      =>  rx_message_disc,
      rx_data_overrun      =>  rx_data_overrun,
      tran_data_in         =>  tran_data_in,
+     tran_data            =>  tran_data,
+     tran_addr            =>  tran_addr,
      txt2_empty           =>  txt2_buffer_empty,
      txt2_disc            =>  txt2_disc,
      txt1_empty           =>  txt1_buffer_empty,
@@ -337,12 +343,11 @@ begin
        clk_sys            =>  clk_sys,
        res_n              =>  res_n_int,
        drv_bus            =>  drv_bus,
-       tran_data_in       =>  tran_data_in,
-       
+       tran_data          =>  tran_data,
+       tran_addr          =>  tran_addr,
        txt_empty          =>  txt1_buffer_empty,
-       txt_disc           =>  txt1_disc,
        txt_buffer_out     =>  txt1_buffer_in,
-       txt_data_ack       =>  txt1_buffer_ack
+       txt_data_ack       =>  txt1_buffer_ack 
       );  
 
   txt2_buf_comp:txtBuffer
@@ -354,12 +359,11 @@ begin
        clk_sys            =>  clk_sys,
        res_n              =>  res_n_int,
        drv_bus            =>  drv_bus,
-       tran_data_in       =>  tran_data_in,
-       
+       tran_data          =>  tran_data,
+       tran_addr          =>  tran_addr,
        txt_empty          =>  txt2_buffer_empty,
-       txt_disc           =>  txt2_disc,
        txt_buffer_out     =>  txt2_buffer_in,
-       txt_data_ack       =>  txt2_buffer_ack
+       txt_data_ack       =>  txt2_buffer_ack   
       );                
   
   tx_arb_comp:txArbitrator

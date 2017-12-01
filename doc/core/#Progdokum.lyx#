@@ -36085,7 +36085,6 @@ Default value
 
 \begin_layout Description
 TXT_1_EMPTY Active when Transmit buffer 1 is empty.
- 
 \end_layout
 
 \begin_layout Description
@@ -36116,6 +36115,7 @@ Type: Read / Write
 \begin_layout Standard
 This register controls the access into TX buffers.
  All bits are active in logic 1.
+ 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -36282,22 +36282,17 @@ Default value
 \end_layout
 
 \begin_layout Description
-TXTX_ALLOW Allow transmitting frames from TXT buffer X (1 or 2).
- Content of TX Buffer (1 or 2) is validated by 0 to 1 transition on these
- bits.
- 
+TXT2_ALLOW Allow transmitting frames from TXT buffer 2.
 \end_layout
 
 \begin_layout Description
-BUF_DIR Buffer to which the transmit data should be stored.
- To insert data for transmission first set TXTX_ALLOW to 0, then set BUF_DIR
- to select TXT_BUFFER buffer.
- As next write the data into buffer by executing accesses into TX_DATA_X
- registers.
- As last step, validate the content of the buffer by setting TXTX_ALLOW
- to 1.
- TXT_1_EMPTY bit of TX_STAT register is automatically cleared by this action.
- 
+TXT1_ALLOW Allow transmitting frames from TXT buffer 1.
+\end_layout
+
+\begin_layout Description
+BUF_DIR Buffer to which the access into TX_DATA_X registers be stored.
+ Logic 0 - Buffer 1.
+ Logic 1 - Buffer 2
 \end_layout
 
 \begin_layout Section
@@ -36322,8 +36317,8 @@ Type: Write
 \end_layout
 
 \begin_layout Standard
-Acesses from TX_DATA_1 to TX_DATA_20 reflect into accesses into TXT buffer.
- Destination TXT buffer is selected by BUF_DIR bit in TX_SETTINGS register.
+Registers TX_DATA_1 to TX_DATA_20 contain frame to be inserted into transmit
+ buffers.
  The data in these registers must have the following format in order to
  be properly sent:
 \begin_inset Separator latexpar
@@ -48124,6 +48119,14 @@ tranBuffer
 \end_inset
 
  and TXT_Buffer to be synthesized into RAM elements, not to LUTs.
+\end_layout
+
+\begin_layout Itemize
+Actual implementation stores Transmitted frame in 3 following pipeline stages:
+ Memory registers, TXT Buffers and TranBuffer.
+ This requires up to 3*640 memory bits! It might be beneficial to optimize
+ the architecture in such a manner that one of the stages will be ommited!
+ E.g user would be directly writing into TXT_Buffer and not to the registers.
 \end_layout
 
 \begin_layout Itemize

@@ -29,15 +29,15 @@ use work.CANconstants.all;
 -- Revision History:
 --
 --    July 2015   Created file
---
+--    30.11.2017  Changed the buffer implementation from parallel into 32*20 buffer of data. Reading so far
+--                left parallel. User is directly accessing the buffer and storing the data to it.
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
 -- Purpose:
---  Transmit message buffer. RAM type memory. Storing by command on drv bus. All the data stored at once --
---  Erasing by activating signal txt_data_ack. Possible to store and erase at the same cycle without     --
---  losing the data. If buffer is full and new data are commited then data are not written but lost.     --
---  txt_disc output is active in this case !                                                             --
+--  Transmit message buffer. Access to TX_DATA_REG of user registers is combinationally mapped
+--  to the TXT Buffers. User is storing the data directly into the TX buffer. Once the user allows to
+--  transmitt from the buffer, content of the buffer is validated and "empty" is cleared.
 ---------------------------------------------------------------------------------------------------------
 
 entity txtBuffer is
@@ -56,19 +56,20 @@ entity txtBuffer is
       --Driving Registers Interface--
       -------------------------------
       signal drv_bus        :in   std_logic_vector(1023 downto 0);  --Driving bus
-      signal tran_data_in   :in   std_logic_vector(639 downto 0);   --Input data frame (Format B value of transcieve register of driving registers) 
+      
+      signal tran_data      :in   std_logic_vector(31 downto 0);  --Data into the RAM of TXT Buffer
+      signal tran_addr      :in   std_logic_vector(4 downto 0);  --Address in the RAM of TXT buffer  
       
       ------------------     
       --Status signals--
       ------------------
       signal txt_empty      :out  std_logic;                       --Logic 1 signals empty TxTime buffer
-      signal txt_disc       :out  std_logic;                       --Info that message store into buffer from driving registers failed because buffer is full
-            
+          
       ------------------------------------
       --CAN Core and TX Arbiter Interface-
       ------------------------------------
       signal txt_buffer_out :out  std_logic_vector(639 downto 0);  --Output value of message in the buffer  
-      signal txt_data_ack   :in   std_logic                         --Signal from TX Arbiter that data were sent and buffer can be erased     
+      signal txt_data_ack   :in   std_logic                        --Signal from TX Arbiter that data were sent and buffer can be erased     
       );
              
 end entity;
@@ -79,205 +80,69 @@ architecture rtl of txtBuffer is
   ----------------------
   --Internal registers--
   ----------------------
-  type memory is array(0 to 0) of 
-      std_logic_vector(639 downto 0);
-  
-  --Modification for SRAM inferrence, only attempt
-  --type RAM_memory is array(0 to 0) of std_logic_vector(127 downto 0);
-  --signal data_memory:RAM_memory;
-  
-  type short_memory is array(0 to 0) of 
-      std_logic_vector(639 downto 448);
-   
-  signal txt_empty_reg    :std_logic;                           --Register of empty buffer
-  signal prev_store       :std_logic;                           --Registred value of store command for edge detection
+  type memory is array(0 to 19) of 
+      std_logic_vector(31 downto 0);
 
   ------------------
   --Signal aliases--
   ------------------
-  signal drv_erase_txt    :std_logic;                           --Command for erasing time transcieve buffer
-  signal drv_store_txt    :std_logic;                           --Command for storing data from tran_data_in into txt_buffer
+  signal txt_buffer       : memory;                              -- Time transcieve buffer  
+  signal tran_wr          : std_logic_vector(1 downto 0);        -- Store into TXT buffer 1 or 2 
+  signal txt_empty_reg    : std_logic;                           -- Status of the register
   
-  constant empty          :std_logic_vector(447 downto 0):=(OTHERS=>'0');
+  signal drv_allow        : std_logic;                           
+  signal drv_allow_reg    : std_logic;                           -- Registered value for the detection 0-1 transition and signalling that the buffer is full
   
-  signal txt_buffer       :memory;                              --Time transcieve buffer
-  signal txt_buffer_s     :short_memory;                        --Time transcieve buffer
-    
 begin
     
-    drv_erase_txt     <= drv_bus(DRV_ERASE_TXT1_INDEX) when ID=1 else
-                         drv_bus(DRV_ERASE_TXT2_INDEX) when ID=2 else 
-                         '0';
-    drv_store_txt     <= drv_bus(DRV_STORE_TXT1_INDEX) when ID=1 else
-                         drv_bus(DRV_STORE_TXT2_INDEX) when ID=2 else 
-                         '0';
+    --Write signals for buffer
+    tran_wr           <= drv_bus(DRV_TXT2_WR)&drv_bus(DRV_TXT1_WR);
     txt_empty         <= txt_empty_reg;
     
- GEN:if(useFDsize=true)generate
+    --Driving bus aliases
+    drv_allow         <= drv_bus(DRV_ALLOW_TXT1_INDEX) when ID=1 else
+                         drv_bus(DRV_ALLOW_TXT2_INDEX) when ID=2 else
+                        '0';
     
     --Output assignment and aliases
-    --txt_buffer_out  <= txt_buffer(0);
-    txt_buffer_out    <= txt_buffer(0);
-    txt_buffer_s(0)   <= (OTHERS=>'0');
-    
-  mem_acess:process(clk_sys,res_n)
-  variable aux:std_logic_vector(1 downto 0); --Auxiliarly variable
-  begin
-  if (res_n=ACT_RESET) then
-      txt_buffer(0)   <= (OTHERS=>'0');
-      txt_disc        <= '0';
-      txt_empty_reg   <= '1';
-      prev_store      <= '0';
-  elsif rising_edge(clk_sys) then
-    
-      --Registering the store value for edge detection
-      prev_store      <= drv_erase_txt; 
-      
-      ------------------------------------------------------------
-      --Decoding the control signals for storing and erasing the
-      --buffer into auxiliarly variable
-      ------------------------------------------------------------
-      if((drv_erase_txt='1') or (txt_data_ack='1'))then
-        if(drv_store_txt='1' and prev_store='0')then
-          aux         := "11";
-        else
-          aux         := "01";
-        end if; 
-      else
-        if(drv_store_txt='1' and prev_store='0')then
-          aux:="10";
-        else
-          aux:="00";
-        end if; 
-      end if;  
-      
-      -----------------------------------------
-      --Storing and erasing the memory buffer--
-      -----------------------------------------
-      case aux is
-        
-        --No write, No discard
-        when "00" =>  
-            txt_buffer      <= txt_buffer;
-            txt_disc        <= '0';
-            txt_empty_reg   <= txt_empty_reg;
-        
-        --No write, discard
-        when "01" =>  
-            txt_buffer(0)   <= (OTHERS=>'0');
-            txt_empty_reg   <= '1';
-            txt_disc        <= '0';
-        
-        --Write, No discard
-        when "10" =>  
-            if(txt_empty_reg='0')then
-              txt_buffer    <= txt_buffer;
-              txt_disc      <= '1';
-            else
-              txt_buffer(0) <= tran_data_in;
-              txt_disc<='0';
-            end if;
-              txt_empty_reg <= '0';
-        
-        --Write, and discard    
-        when "11" =>  
-            if(txt_empty_reg='0')then --If write and discard is at same then old data discarded new data stored
-              txt_empty_reg <= '0';
-              txt_disc      <= '0';
-              txt_buffer(0) <= tran_data_in;         
-            else
-              txt_empty_reg <= '0';
-              txt_buffer(0) <= tran_data_in;
-              txt_disc      <= '0';
-            end if;
-          
-        when others =>
-             txt_buffer     <= txt_buffer;
-             txt_empty_reg  <= txt_empty_reg;
-             txt_disc       <= '0';
-             
-      end case;          
-    end if;  
-  end process mem_acess;
-     
-  end generate GEN; 
-   
-  GEN2:if(useFDsize=false)generate
+    -- So far reading of the data from buffer is parelell. It will be modified to reading by word...
+    txt_buffer_out  <= txt_buffer(0)&txt_buffer(1)&txt_buffer(2)&txt_buffer(3)&
+                       txt_buffer(4)&txt_buffer(5)&txt_buffer(6)&txt_buffer(7)&txt_buffer(8)&
+                       txt_buffer(9)&txt_buffer(10)&txt_buffer(11)&txt_buffer(12)&txt_buffer(13)&
+                       txt_buffer(14)&txt_buffer(15)&txt_buffer(16)&txt_buffer(17)&txt_buffer(18)&txt_buffer(19);
   
-    --Output assignment and aliases
-    txt_buffer_out          <= txt_buffer_s(0)&empty; 
-    txt_buffer(0)           <= (OTHERS=>'0');
-    
-    mem_acess:process(clk_sys,res_n)
-    variable aux:std_logic_vector(1 downto 0); --Auxiliarly variable
+    --------------------------------------------------------------------------------
+    -- Main buffer comment
+    --------------------------------------------------------------------------------
+    tx_buf_proc:process(res_n,clk_sys)
     begin
-    if res_n=ACT_RESET then
-        txt_buffer_s(0)     <= (OTHERS=>'0');
-        txt_disc            <= '0';
-        txt_empty_reg       <= '1';
-        prev_store          <= '0';
-    elsif rising_edge(clk_sys) then
-      
-        --Registering the store value for edge detection
-        prev_store<=drv_erase_txt; 
+      if (res_n = ACT_RESET) then
         
-        ------------------------------------------------------------
-        --Decoding the control signals for storing and erasing the
-        --buffer into auxiliarly variable
-        ------------------------------------------------------------
-        if((drv_erase_txt='1') or (txt_data_ack='1'))then
-          if(drv_store_txt='1' and prev_store='0')then
-            aux             := "11";
-          else
-            aux             := "01";
-          end if; 
-        else
-          if(drv_store_txt='1' and prev_store='0')then
-            aux             := "10";
-          else
-            aux             := "00";
-          end if; 
-        end if;  
+        -- synthesis translate_off
+          txt_buffer <= (OTHERS => (OTHERS => '0'));
+        -- synthesis translate_on
         
-        -----------------------------------------
-        --Storing and erasing the memory buffer--
-        -----------------------------------------
-        case aux is
-          when "00" =>  --No write, No discard
-              txt_buffer_s      <= txt_buffer_s;
-              txt_disc          <= '0';
-              txt_empty_reg     <= txt_empty_reg;
-          when "01" =>  --No write, discard
-              txt_buffer_s(0)   <= (OTHERS=>'0');
-              txt_empty_reg     <= '1';
-              txt_disc          <= '0';
-          when "10" =>  --Write, no discard
-              if(txt_empty_reg='0')then
-                txt_buffer_s    <= txt_buffer_s;
-                txt_disc        <= '1';
-              else
-                txt_buffer_s(0) <= tran_data_in(639 downto 448);
-                txt_disc        <= '0';
-              end if;
-                txt_empty_reg   <= '0';
-          when "11" =>  --Write, and discard
-              if(txt_empty_reg='0')then --If write and discard is at same then old data discarded new data stored
-                txt_empty_reg   <= '0';
-                txt_disc        <= '0';
-                txt_buffer_s(0) <= tran_data_in(639 downto 448);
-              else
-                txt_empty_reg   <= '0';
-                txt_buffer_s(0) <= tran_data_in(639 downto 448);
-                txt_disc        <= '0';
-              end if;  
-          when others =>
-               txt_buffer_s     <= txt_buffer_s;
-               txt_empty_reg    <= txt_empty_reg;
-               txt_disc         <= '0';
-        end case;
-                  
-      end if;  
-    end process mem_acess;
-   end generate GEN2;      
+          txt_empty_reg <= '1';
+      elsif (rising_edge(clk_sys))then
+        
+        --Registering the previous allow value
+        drv_allow_reg <= drv_allow;
+        
+        --Updating the value of empty either from Registers or TX Arbitrator
+        if (txt_data_ack='1') then
+          txt_empty_reg <= '1';  
+        elsif (drv_allow_reg='0' and drv_allow='1') then -- 0-1 on drv_allow signals validation of the buffer content!
+          txt_empty_reg <= '0';
+        else 
+          txt_empty_reg <= txt_empty_reg;
+        end if;
+        
+        --Store the data into the Buffer during the access
+        if (tran_wr(ID-1)='1') then
+          txt_buffer(to_integer(unsigned(tran_addr))) <= tran_data;
+        end if;
+        
+      end if;
+    end process;
   
 end architecture;

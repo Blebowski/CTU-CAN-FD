@@ -51,7 +51,10 @@ use work.CANconstants.all;
 --                HW developer can set the size to e.g. 32 and use_logger to false!
 --    1.9.2016    Moved SJW values to separate register! Now SJW has 4 bits instead of two bits! This is
 --                compliant with CAN FD specification.
---
+--    30.11.2017  Changed implementation of TX_DATA registers. Registers removed and access into these
+--                registers is now directly accessing RAM in TXT buffer. Note that buffer must be
+--                first forbidden in TX_SETTINGS register so that half written frame is not committed to
+--                CAN Core for transmission. Added BUF_DIR bit and removed TXT1_COMMIT and TXT2_COMMIT bits
 -------------------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------------------
@@ -124,16 +127,24 @@ entity registers is
     --TXT1 and TXT2 Buffer Interface--
     ----------------------------------
     --Transcieve data (Common for TX Buffer and TXT Buffer)
-    signal tran_data_in         :out  std_logic_vector(639 downto 0); 
+    signal tran_data_in         :out  std_logic_vector(639 downto 0);
+    
+    --------------------------------------------------------
+    -- Optimized, direct interface to TXT1 and TXT2 buffers
+    --------------------------------------------------------
+    signal tran_data            :out  std_logic_vector(31 downto 0);  --Data into the RAM of TXT Buffer
+    signal tran_addr            :out  std_logic_vector(4 downto 0);  --Address in the RAM of TXT buffer  
     
     signal txt1_empty           :in   std_logic;                      --Logic 1 signals empty TxTime buffer
     signal txt1_disc            :in   std_logic;                      --Info that frame store into buffer from
-                                                                      -- driving registers failed because buffer is full
-                                                                      
+                                                                      -- driving registers failed because buffer is full                                                                  
     signal txt2_empty           :in   std_logic;                      --Logic 1 signals empty TxTime buffer
     signal txt2_disc            :in   std_logic;                      --Info that frame store into buffer from 
                                                                       -- driving registers failed because buffer is full
     
+    ----------------------------------
+    -- Bus synchroniser interface
+    ----------------------------------
     signal trv_delay_out        :in   std_logic_vector(15 downto 0);
     
     --------------------------
@@ -229,6 +240,10 @@ entity registers is
   signal txt1_commit            :     std_logic;
   signal txt2_commit            :     std_logic;
   
+  signal txt_bufdir             :     std_logic; --TXT write direction register
+  signal tran_wr                :     std_logic_vector(1 downto 0);   --Store into TXT buffer 1 or 2
+  signal tran_aux_addr          :     std_logic_vector(23 downto 0);
+    
   --Recieve transcieve message counters
   signal rx_ctr_set             :     std_logic;
   signal tx_ctr_set             :     std_logic;
@@ -392,8 +407,8 @@ architecture rtl of registers is
     filter_C_ctrl           <=  (OTHERS=>'0');
     filter_ran_ctrl         <=  (OTHERS=>'0');
     
-    txt1_arbit_allow        <=  ALLOW_BUFFER;
-    txt2_arbit_allow        <=  ALLOW_BUFFER;
+    txt1_arbit_allow        <=  FORBID_BUFFER;
+    txt2_arbit_allow        <=  FORBID_BUFFER;
     
     log_cmd                 <=  (OTHERS =>'0');
     log_trig_config         <=  (OTHERS =>'0');
@@ -411,7 +426,26 @@ begin
   res_out                   <=  res_n and int_reset; 
   --data_out                  <=  (OTHERS=>'0');
  
+  --------------------------------------------------------
+  -- Propagation of Avalon address to TXT Buffer RAM
+  --------------------------------------------------------
+  tran_data             <= data_in;
   
+  --Temporary substraction until the address will be moved to bit aligned location! 
+  tran_aux_addr         <= std_logic_vector(unsigned(adress(13 downto 0))-(unsigned(TX_DATA_1_ADR)*4));   
+  tran_addr             <= tran_aux_addr(6 downto 2);  
+  
+  --------------------------------------------------------
+  -- Decoding of TXT buffer signals...
+  --------------------------------------------------------
+  tran_wr               <= "00" when (adress(13 downto 0)>(TX_DATA_20_ADR&"00")) or 
+                                      (adress(13 downto 0)<(TX_DATA_1_ADR&"00")) or (scs='0') or (swr='0') else
+                           "01" when txt_bufdir=TXT1_DIR else
+                           "10" when txt_bufdir=TXT2_DIR else
+                           "00"; 
+  -- TXT1 buffer corresponds to index 0, TXT2 buffer to index 1
+   
+   
   --------------------------------------------------------
   -- Main memory access process
   --------------------------------------------------------
@@ -438,11 +472,11 @@ begin
        mode_reg          ,int_ena_reg            
       );
       
-      tx_data_reg(5)        <=  (OTHERS=>'0');
-      tx_data_reg(4)        <=  (OTHERS=>'0');
-      tx_data_reg(3)        <=  (OTHERS=>'0');
-      tx_data_reg(2)        <=  (OTHERS=>'0');
-      tx_data_reg(1)        <=  (OTHERS=>'0');
+     -- tx_data_reg(5)        <=  (OTHERS=>'0');
+--      tx_data_reg(4)        <=  (OTHERS=>'0');
+--      tx_data_reg(3)        <=  (OTHERS=>'0');
+--      tx_data_reg(2)        <=  (OTHERS=>'0');
+--      tx_data_reg(1)        <=  (OTHERS=>'0');
       
       RX_buff_read_first    <= false;
       aux_data              <=  (OTHERS=>'0');
@@ -469,11 +503,11 @@ begin
          mode_reg          ,int_ena_reg            
        ) ;
        
-      tx_data_reg(5)        <=  (OTHERS=>'0');
-      tx_data_reg(4)        <=  (OTHERS=>'0');
-      tx_data_reg(3)        <=  (OTHERS=>'0');
-      tx_data_reg(2)        <=  (OTHERS=>'0');
-      tx_data_reg(1)        <=  (OTHERS=>'0');
+      --tx_data_reg(5)        <=  (OTHERS=>'0');
+      --tx_data_reg(4)        <=  (OTHERS=>'0');
+      --tx_data_reg(3)        <=  (OTHERS=>'0');
+      --tx_data_reg(2)        <=  (OTHERS=>'0');
+      --tx_data_reg(1)        <=  (OTHERS=>'0');
       
       RX_buff_read_first    <= false;
       aux_data              <=  (OTHERS=>'0');
@@ -647,32 +681,13 @@ begin
     			when TX_SETTINGS_ADR => 
     					  txt1_arbit_allow         <=  data_in(0);
     					  txt2_arbit_allow         <=  data_in(1);
-    					  txt1_commit              <=  data_in(2); 
-    					  txt2_commit              <=  data_in(3); 
+    					  txt_bufdir               <=  data_in(3);
     					  
     			----------------------------------------------------
     			--TX Data registers
     			----------------------------------------------------		  
-    			when TX_DATA_1_ADR => tx_data_reg(5)(127 downto 96)    <=  data_in;
-    			when TX_DATA_2_ADR => tx_data_reg(5)(95 downto 64)     <=  data_in;
-    			when TX_DATA_3_ADR => tx_data_reg(5)(63 downto 32)     <=  data_in;
-    			when TX_DATA_4_ADR => tx_data_reg(5)(31 downto 0)      <=  data_in;
-    			when TX_DATA_5_ADR => tx_data_reg(4)(127 downto 96)    <=  data_in;
-    			when TX_DATA_6_ADR => tx_data_reg(4)(95 downto 64)     <=  data_in;
-    			when TX_DATA_7_ADR => tx_data_reg(4)(63 downto 32)     <=  data_in;
-    			when TX_DATA_8_ADR => tx_data_reg(4)(31 downto 0)      <=  data_in;
-    			when TX_DATA_9_ADR => tx_data_reg(3)(127 downto 96)    <=  data_in;
-    			when TX_DATA_10_ADR => tx_data_reg(3)(95 downto 64)    <=  data_in;
-    			when TX_DATA_11_ADR => tx_data_reg(3)(63 downto 32)    <=  data_in;
-    			when TX_DATA_12_ADR => tx_data_reg(3)(31 downto 0)     <=  data_in;
-    			when TX_DATA_13_ADR => tx_data_reg(2)(127 downto 96)   <=  data_in;
-    			when TX_DATA_14_ADR => tx_data_reg(2)(95 downto 64)    <=  data_in;
-    			when TX_DATA_15_ADR => tx_data_reg(2)(63 downto 32)    <=  data_in;
-    			when TX_DATA_16_ADR => tx_data_reg(2)(31 downto 0)     <=  data_in;
-    			when TX_DATA_17_ADR => tx_data_reg(1)(127 downto 96)   <=  data_in;
-    			when TX_DATA_18_ADR => tx_data_reg(1)(95 downto 64)    <=  data_in;
-    			when TX_DATA_19_ADR => tx_data_reg(1)(63 downto 32)    <=  data_in;
-    			when TX_DATA_20_ADR => tx_data_reg(1)(31 downto 0)     <=  data_in;
+       -- Decoding of TXT buffer signals is combinational, due to this reason
+       -- access into this location was replaced with combinational decoder!
     			
     			--------------------------------------
     			--Recieve frame counter presetting
@@ -909,6 +924,7 @@ begin
     					  data_out                     <=  (OTHERS =>'0');
     					  data_out(0)                  <=  txt1_arbit_allow;
     					  data_out(1)                  <=  txt2_arbit_allow;
+    					  data_out(2)                  <=  txt_bufdir;
     					
     					------------------------------------------------------- 
  			    --Frame counters registers
@@ -1083,9 +1099,8 @@ begin
   
   --TXT Buffer and TX Buffer
   drv_bus(DRV_ERASE_TXT1_INDEX)                     <=  '0';--TODO: Add chance to erase also TXT Buffer
-  drv_bus(DRV_STORE_TXT1_INDEX)                     <=  txt1_commit;
-  
-  drv_bus(DRV_STORE_TXT2_INDEX)                     <=  txt2_commit;
+  drv_bus(DRV_TXT1_WR)                              <=  tran_wr(0);
+  drv_bus(DRV_TXT2_WR)                              <=  tran_wr(1);
   drv_bus(DRV_ERASE_TXT2_INDEX)                     <=  '0'; --TODO: Add chance to erase also TX Buffer
   
   --TX Arbitrator

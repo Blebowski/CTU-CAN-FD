@@ -32,6 +32,7 @@ USE WORK.CANconstants.ALL;
 --    27.11.2017   Added "rst_sync" asynchronous rest synchroniser circuit
 --    29.11.2017   Removed "rec_data" between Protocol control and RX Buffer, replaced with rec_dram_word and
 --                 rec_dram_addr as part of resource optimization.
+--    30.11.2017   Updated "txt_buffer" for direct access to buffer
 -------------------------------------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------------------
@@ -118,6 +119,9 @@ package CANcomponents is
     signal rx_data_overrun      :in   std_logic; --Some data were discarded, register
     
     signal tran_data_in         :out  std_logic_vector(639 downto 0);  --Transcieve data (Common for TX Buffer and TXT Buffer)
+    
+    signal tran_data            :out  std_logic_vector(31 downto 0);  --Data into the RAM of TXT Buffer
+    signal tran_addr            :out  std_logic_vector(4 downto 0);  --Address in the RAM of TXT buffer  
     
     signal txt1_empty           :in   std_logic; --Logic 1 signals empty TxTime buffer
     signal txt1_disc            :in   std_logic; --Info that message store into buffer from driving registers failed because buffer is full
@@ -211,24 +215,21 @@ package CANcomponents is
   ----------------------
   --TXT Buffer module --
   ---------------------- 
-  component txtBuffer is 
-    generic  (
-      constant ID               :     natural:=1;
-      constant useFDsize        :     boolean:=false
+  component txtBuffer is
+    generic(
+      constant ID           :natural :=1;
+      constant useFDsize    :boolean :=false
     );
     PORT(
-      signal clk_sys            :in   std_logic;
-      signal res_n              :in   std_logic; --Async reset
-
-      signal drv_bus            :in   std_logic_vector(1023 downto 0); --Driving bus
-      signal tran_data_in       :in   std_logic_vector(639 downto 0); --Input data frame (Format B value of transcieve register of driving registers) 
-      
-      signal txt_empty          :out  std_logic; --Logic 1 signals empty TxTime buffer
-      signal txt_disc           :out  std_logic; --Info that message store into buffer from driving registers failed because buffer is full
-            
-      signal txt_buffer_out     :out  std_logic_vector(639 downto 0); --Output value of message in the buffer  
-      signal txt_data_ack       :in   std_logic --Signal from TX Arbiter that data were sent and buffer can be erased     
-      );
+      signal clk_sys        :in   std_logic;
+      signal res_n          :in   std_logic;                        --Async reset
+      signal drv_bus        :in   std_logic_vector(1023 downto 0);  --Driving bus
+      signal tran_data      :in   std_logic_vector(31 downto 0);  --Data into the RAM of TXT Buffer
+      signal tran_addr      :in   std_logic_vector(4 downto 0);  --Address in the RAM of TXT buffer  
+      signal txt_empty      :out  std_logic;                       --Logic 1 signals empty TxTime buffer        
+      signal txt_buffer_out :out  std_logic_vector(639 downto 0);  --Output value of message in the buffer  
+      signal txt_data_ack   :in   std_logic                        --Signal from TX Arbiter that data were sent and buffer can be erased     
+      );     
   end component;  
   
   -------------------------
