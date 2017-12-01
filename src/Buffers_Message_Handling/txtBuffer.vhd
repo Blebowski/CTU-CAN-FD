@@ -106,10 +106,21 @@ begin
     
     --Output assignment and aliases
     -- So far reading of the data from buffer is parelell. It will be modified to reading by word...
-    txt_buffer_out  <= txt_buffer(0)&txt_buffer(1)&txt_buffer(2)&txt_buffer(3)&
-                       txt_buffer(4)&txt_buffer(5)&txt_buffer(6)&txt_buffer(7)&txt_buffer(8)&
-                       txt_buffer(9)&txt_buffer(10)&txt_buffer(11)&txt_buffer(12)&txt_buffer(13)&
-                       txt_buffer(14)&txt_buffer(15)&txt_buffer(16)&txt_buffer(17)&txt_buffer(18)&txt_buffer(19);
+    sizegen_fd: if (useFDsize=true) generate
+      txt_buffer_out  <= txt_buffer(0)&txt_buffer(1)&txt_buffer(2)&txt_buffer(3)&
+                         txt_buffer(4)&txt_buffer(5)&txt_buffer(6)&txt_buffer(7)&txt_buffer(8)&
+                         txt_buffer(9)&txt_buffer(10)&txt_buffer(11)&txt_buffer(12)&txt_buffer(13)&
+                         txt_buffer(14)&txt_buffer(15)&txt_buffer(16)&txt_buffer(17)&txt_buffer(18)&txt_buffer(19);
+    end generate;
+    
+    --Since RAM is read only by TX Arbitrator and CAN Core, we can just disconnect the outputs
+    -- if we dont want to synthesize the Full FD support. Synthesizer will then remove part of the
+    -- memory/registers since there will be no fan-out.
+    sizegen_nofd: if (useFDsize=false) generate
+      txt_buffer_out(639 downto 448) <= txt_buffer(0)&txt_buffer(1)&txt_buffer(2)&txt_buffer(3)&
+                                        txt_buffer(4)&txt_buffer(5);
+      txt_buffer_out(446 downto 0) <= (OTHERS => '0');
+    end generate;
   
     --------------------------------------------------------------------------------
     -- Main buffer comment
@@ -118,6 +129,7 @@ begin
     begin
       if (res_n = ACT_RESET) then
         
+        -- In order to use RAM for the buffer, async reset cannot be done!
         -- synthesis translate_off
           txt_buffer <= (OTHERS => (OTHERS => '0'));
         -- synthesis translate_on
