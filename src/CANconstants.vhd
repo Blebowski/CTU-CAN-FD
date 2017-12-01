@@ -125,6 +125,10 @@ package CANconstants is
   constant ALLOW_BUFFER : std_logic := '1'; 
   constant FORBID_BUFFER : std_logic := '0'; 
   
+  --Definition of register directions for TXT1 and TXT2 buffers
+  constant TXT1_DIR:std_logic:='0';
+  constant TXT2_DIR:std_logic:='1';
+  
   --CRC polynomials
   constant CRC15_POL :     std_logic_vector(15 downto 0):=std_logic_vector'(X"C599");
   constant CRC17_POL :     std_logic_vector(19 downto 0):=std_logic_vector'(X"3685B");
@@ -324,11 +328,11 @@ package CANconstants is
   
   --TXT Buffer
   constant DRV_ERASE_TXT2_INDEX:natural:=356;
-  constant DRV_STORE_TXT2_INDEX:natural:=357;
+  constant DRV_TXT1_WR:natural:=357;
   
   --TX Buffer
   constant DRV_ERASE_TXT1_INDEX:natural:=366;
-  constant DRV_STORE_TXT1_INDEX:natural:=367;
+  constant DRV_TXT2_WR:natural:=367;
   
   --TX Arbitrator
   constant DRV_ALLOW_TXT1_INDEX:natural:=361;

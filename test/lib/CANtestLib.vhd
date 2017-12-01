@@ -1096,56 +1096,78 @@ procedure process_error
   variable ident_vect      :          std_logic_vector(28 downto 0):=(OTHERS => '0');
   variable length          :          natural;
   variable iter_limit      :          natural;
+  variable aux_out         :          boolean;
   begin
    outcome := true;
    
-   --Frame format word
-   w_data:= "0000000000000000000000"&frame.brs&'1'&frame.frame_format&frame.ident_type&
-             frame.rtr&'0'&frame.dlc;
-   CAN_write(w_data,TX_DATA_1_ADR,ID,mem_bus);          
-   
-   --Timestamp
-   w_data:= frame.timestamp(63 downto 32);  
-   CAN_write(w_data,TX_DATA_2_ADR,ID,mem_bus);
-   w_data:= frame.timestamp(31 downto 0);  
-   CAN_write(w_data,TX_DATA_3_ADR,ID,mem_bus);
-      
-   --Identifier
-   if(frame.ident_type='1')then
-      ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
-      w_data:= "000"&ident_vect(17 downto 0)&ident_vect(28 downto 18);
-   else
-      ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
-      w_data:= "000000000000000000000"&ident_vect(10 downto 0);
-   end if;
-   
-   CAN_write(w_data,TX_DATA_4_ADR,ID,mem_bus);
-   
-   --Data words
-   decode_dlc_v(frame.dlc,length);
-   for i in 0 to (length-1)/4 loop
-     w_data:= frame.data(511-i*32 downto 480-i*32);
-     CAN_write(w_data,TX_DATA_5_ADR+i,ID,mem_bus);
-   end loop;
-   
-   --Read whether there is place in the TXT buffers
-   -- and if yes then commit to the buffer
+   --Read whether there is place in the TXT buffer
    CAN_read(w_data,TX_STATUS_ADR,ID,mem_bus);
    if(w_data(buf_nr-1)='1')then
-      w_data:=(OTHERS => '0');
-      if(buf_nr=1)then
-        w_data(0) := '1';
-        w_data(1) := '1';
-        w_data(2) := '1';
-      else
-        w_data(3) := '1';
-        w_data(0) := '1';
-        w_data(1) := '1';
-      end if;
-      CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus);
+     outcome:=true;
+     aux_out:=true;
    else
      outcome:=false;
+     aux_out:=false;
+     report "Unable to send the frame, TX buffer not empty" severity error;
    end if;
+   
+   --Access to the buffer is done only if it is signalled as empty
+   if (aux_out=true) then
+     
+     --Set the buffer to access (direction) and forbid the buffer transmission!
+     CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
+     if (buf_nr=1) then
+        w_data(2) := '0';
+        w_data(0) := '0';
+     elsif (buf_nr=2) then
+        w_data(2) := '1';
+        w_data(1) := '0';
+     else
+       report "Unsupported TX buffer number" severity error;
+     end if;
+     CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus); 
+        
+     --Frame format word
+     w_data:= "0000000000000000000000"&frame.brs&'1'&frame.frame_format&frame.ident_type&
+               frame.rtr&'0'&frame.dlc;
+     CAN_write(w_data,TX_DATA_1_ADR,ID,mem_bus);          
+     
+     --Timestamp
+     w_data:= frame.timestamp(63 downto 32);  
+     CAN_write(w_data,TX_DATA_2_ADR,ID,mem_bus);
+     w_data:= frame.timestamp(31 downto 0);  
+     CAN_write(w_data,TX_DATA_3_ADR,ID,mem_bus);
+        
+     --Identifier
+     if(frame.ident_type='1')then
+        ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
+        w_data:= "000"&ident_vect(17 downto 0)&ident_vect(28 downto 18);
+     else
+        ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
+        w_data:= "000000000000000000000"&ident_vect(10 downto 0);
+     end if;
+     
+     CAN_write(w_data,TX_DATA_4_ADR,ID,mem_bus);
+     
+     --Data words
+     decode_dlc_v(frame.dlc,length);
+     for i in 0 to (length-1)/4 loop
+       w_data:= frame.data(511-i*32 downto 480-i*32);
+       CAN_write(w_data,TX_DATA_5_ADR+i,ID,mem_bus);
+     end loop;
+     
+     --Signal that the frame is valid by allowing the buffer
+     CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
+     if (buf_nr=1) then
+        w_data(0) := '1';
+     elsif (buf_nr=2) then
+        w_data(1) := '1';
+     else
+       report "Unsupported TX buffer number" severity error;
+     end if;
+     CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus);
+     
+  end if;
    
   end procedure;
   

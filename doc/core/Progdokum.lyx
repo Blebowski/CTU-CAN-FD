@@ -36085,6 +36085,7 @@ Default value
 
 \begin_layout Description
 TXT_1_EMPTY Active when Transmit buffer 1 is empty.
+ 
 \end_layout
 
 \begin_layout Description
@@ -36109,15 +36110,12 @@ label{sec:TX_SETTINGS}
 \end_layout
 
 \begin_layout Description
-Type: Read / Write - Partially automatically erased
+Type: Read / Write
 \end_layout
 
 \begin_layout Standard
-This register controls the frame inserton into the TX buffers (The frame
- to be transmitted in registers TX_DATA_1 to TX_DATA_20).
+This register controls the access into TX buffers.
  All bits are active in logic 1.
- Once a frame is committed into the buffer it is transmitted as soon as
- it passes TX Arbitrator.
 \begin_inset Separator latexpar
 \end_inset
 
@@ -36128,9 +36126,8 @@ This register controls the frame inserton into the TX buffers (The frame
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="6">
+<lyxtabular version="3" rows="3" columns="5">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -36150,16 +36147,7 @@ Bit offset
 \begin_inset Text
 
 \begin_layout Plain Layout
-31-4
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3
+31-3
 \end_layout
 
 \end_inset
@@ -36215,7 +36203,7 @@ Reserved
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT_2_COMMIT
+BUF_DIR
 \end_layout
 
 \end_inset
@@ -36224,16 +36212,7 @@ TXT_2_COMMIT
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT_1_COMMIT
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT_2_ALLOW
+TXT2_ALLOW
 \end_layout
 
 \end_inset
@@ -36242,7 +36221,7 @@ TXT_2_ALLOW
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT_1_ALLOW
+TXT1_ALLOW
 \end_layout
 
 \end_inset
@@ -36263,15 +36242,6 @@ Default value
 
 \begin_layout Plain Layout
 -
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0
 \end_layout
 
 \end_inset
@@ -36312,23 +36282,22 @@ Default value
 \end_layout
 
 \begin_layout Description
-TXT_2_ALLOW Allow transmitting frames from TXT buffer 2.
+TXTX_ALLOW Allow transmitting frames from TXT buffer X (1 or 2).
+ Content of TX Buffer (1 or 2) is validated by 0 to 1 transition on these
+ bits.
+ 
 \end_layout
 
 \begin_layout Description
-TXT_1_ALLOW Allow transmitting frames from TXT buffer 1.
-\end_layout
-
-\begin_layout Description
-TXT_2_COMMIT When active value is written into this bit, frame in registers
- TX_DATA_1 to TX_DATA_20 are inserted into Transmit buffer 2.
- Afterward, this value is automatically erased.
-\end_layout
-
-\begin_layout Description
-TXT_1_COMMIT When active value is written into this bit, frame in registers
- TX_DATA_1 to TX_DATA_20 are inserted into Transmit buffer 1.
- Afterward, this value is automatically erased.
+BUF_DIR Buffer to which the transmit data should be stored.
+ To insert data for transmission first set TXTX_ALLOW to 0, then set BUF_DIR
+ to select TXT_BUFFER buffer.
+ As next write the data into buffer by executing accesses into TX_DATA_X
+ registers.
+ As last step, validate the content of the buffer by setting TXTX_ALLOW
+ to 1.
+ TXT_1_EMPTY bit of TX_STAT register is automatically cleared by this action.
+ 
 \end_layout
 
 \begin_layout Section
@@ -36353,8 +36322,8 @@ Type: Write
 \end_layout
 
 \begin_layout Standard
-Registers TX_DATA_1 to TX_DATA_20 contain frame to be inserted into transmit
- buffers.
+Acesses from TX_DATA_1 to TX_DATA_20 reflect into accesses into TXT buffer.
+ Destination TXT buffer is selected by BUF_DIR bit in TX_SETTINGS register.
  The data in these registers must have the following format in order to
  be properly sent:
 \begin_inset Separator latexpar
@@ -47962,7 +47931,6 @@ The main purpose of this testing is to reveal errors which were not covered
  In order to achieve this reference controllers are used for communication.
  Without reference controller there is always a chance that error will be
  compensated by receiving node thus error remains undetected.
- 
 \end_layout
 
 \begin_layout Standard
@@ -48155,14 +48123,6 @@ tranBuffer
 \end_inset
 
  and TXT_Buffer to be synthesized into RAM elements, not to LUTs.
-\end_layout
-
-\begin_layout Itemize
-Actual implementation stores Transmitted frame in 3 following pipeline stages:
- Memory registers, TXT Buffers and TranBuffer.
- This requires up to 3*640 memory bits! It might be beneficial to optimize
- the architecture in such a manner that one of the stages will be ommited!
- E.g user would be directly writing into TXT_Buffer and not to the registers.
 \end_layout
 
 \begin_layout Itemize
