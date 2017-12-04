@@ -1376,7 +1376,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="4">
+<lyxtabular version="3" rows="9" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1645,6 +1645,82 @@ natural
 ID of the controller.
  Unique identifier in case of more instances of the IP core.
  Address(19:16) to which the IP core is mapped.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sup_filtX
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Core should support Mask Identifier FilterX (A,B,C) on received frames.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sup_range
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Core should support Range Identifier Filter
 \end_layout
 
 \end_inset
@@ -32988,7 +33064,20 @@ Bit mask for acceptance filters.
  Filters A, B, C are available.
  The identifier format is the same as transmitted and received identifier
  format.
- BASE Identifier is 11 LSB and Identifier extension are bits 28-12!
+ BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note
+ that filter support is available by default but it can be left out from
+ synthesis (to save logic) by setting 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filt=false
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If the particular filter is not supported, writes to this register have
+ no effect and read will return all zeroes.
+ 
 \begin_inset Separator latexpar
 \end_inset
 
@@ -47931,7 +48020,6 @@ The main purpose of this testing is to reveal errors which were not covered
  In order to achieve this reference controllers are used for communication.
  Without reference controller there is always a chance that error will be
  compensated by receiving node thus error remains undetected.
- 
 \end_layout
 
 \begin_layout Standard
