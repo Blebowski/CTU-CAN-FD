@@ -82,6 +82,10 @@ entity registers is
   generic(
     constant compType              :std_logic_vector(3 downto 0)    := CAN_COMPONENT_TYPE;
     constant use_logger            :boolean                         := true; --Whenever event logger is present
+    constant sup_filtA             :boolean                         := true; --Optional synthesis of received message filters
+    constant sup_filtB             :boolean                         := true; -- By default the behaviour is as if all the filters are present
+    constant sup_filtC             :boolean                         := true;
+    constant sup_range             :boolean                         := true;
     constant ID                    :natural                         := 1 --ID of the component
   );
   port(
@@ -394,18 +398,29 @@ architecture rtl of registers is
     erp                     <=  std_logic_vector(to_unsigned(128,erp'length));
     
     --Message filters
-    filter_A_mask           <=  (OTHERS=>'0');
-    filter_B_mask           <=  (OTHERS=>'0');
-    filter_C_mask           <=  (OTHERS=>'0');
-    filter_A_value          <=  (OTHERS=>'0');
-    filter_B_value          <=  (OTHERS=>'0');
-    filter_C_value          <=  (OTHERS=>'0');
-    filter_ran_low          <=  (OTHERS=>'0');
-    filter_ran_high         <=  (OTHERS=>'0'); 
-    filter_A_ctrl           <=  (OTHERS=>'1'); --Only filter A is enabled to pass all message types with any identifier
-    filter_B_ctrl           <=  (OTHERS=>'0');
-    filter_C_ctrl           <=  (OTHERS=>'0');
-    filter_ran_ctrl         <=  (OTHERS=>'0');
+    if (sup_filtA = true) then
+      filter_A_mask           <=  (OTHERS=>'0');
+      filter_A_value          <=  (OTHERS=>'0');
+      filter_A_ctrl           <=  (OTHERS=>'1'); --Only filter A is enabled to pass all message types with any identifier
+    end if;
+    
+    if (sup_filtB = true) then
+      filter_B_mask           <=  (OTHERS=>'0');
+      filter_B_value          <=  (OTHERS=>'0');
+      filter_B_ctrl           <=  (OTHERS=>'0');
+    end if;
+    
+    if (sup_filtB = true) then
+      filter_C_mask           <=  (OTHERS=>'0');
+      filter_C_value          <=  (OTHERS=>'0');
+      filter_C_ctrl           <=  (OTHERS=>'0');
+    end if;
+    
+    if (sup_range = true) then
+      filter_ran_low          <=  (OTHERS=>'0');
+      filter_ran_high         <=  (OTHERS=>'0'); 
+      filter_ran_ctrl         <=  (OTHERS=>'0');
+    end if;
     
     txt1_arbit_allow        <=  FORBID_BUFFER;
     txt2_arbit_allow        <=  FORBID_BUFFER;
@@ -514,18 +529,31 @@ begin
 
 	else
 		--Internal registers holding its value
-		filter_A_mask             <=  filter_A_mask;
-		filter_B_mask             <=  filter_B_mask;
-		filter_C_mask             <=  filter_C_mask;
-		filter_A_value            <=  filter_A_value;
-		filter_B_value            <=  filter_B_value;
-		filter_C_value            <=  filter_C_value;
-		filter_ran_low            <=  filter_ran_low;
-		filter_ran_high           <=  filter_ran_high;
-		filter_A_ctrl             <=  filter_A_ctrl;
-		filter_B_ctrl             <=  filter_B_ctrl;
-		filter_C_ctrl             <=  filter_C_ctrl;
-		filter_ran_ctrl           <=  filter_ran_ctrl;
+		
+		 --Message filters
+    if (sup_filtA = true) then
+      filter_A_mask           <=  filter_A_mask;
+      filter_A_value          <=  filter_A_value;
+      filter_A_ctrl           <=  filter_A_ctrl;
+    end if;
+    
+    if (sup_filtB = true) then
+      filter_B_mask           <=  filter_B_mask;
+      filter_B_value          <=  filter_B_value;
+      filter_B_ctrl           <=  filter_B_ctrl;
+    end if;
+    
+    if (sup_filtB = true) then
+      filter_C_mask           <=  filter_C_mask;
+      filter_C_value          <=  filter_C_value;
+      filter_C_ctrl           <=  filter_C_ctrl;
+    end if;
+    
+    if (sup_range = true) then
+      filter_ran_low          <=  filter_ran_low;
+      filter_ran_high         <=  filter_ran_high;
+      filter_ran_ctrl         <=  filter_ran_ctrl;
+    end if;
 		
 		int_ena_reg               <=  int_ena_reg;
 		retr_lim_ena              <=  retr_lim_ena;
@@ -661,19 +689,51 @@ begin
     		 ----------------------------------------------------	   
     			--Acceptance filters
     			----------------------------------------------------	
-    			when FILTER_A_VAL_ADR    => filter_A_mask    <=  data_in(28 downto 0);
-    			when FILTER_A_MASK_ADR   => filter_A_value   <=  data_in(28 downto 0);     
-    			when FILTER_B_VAL_ADR    => filter_B_mask    <=  data_in(28 downto 0);     
-    			when FILTER_B_MASK_ADR   => filter_B_value   <=  data_in(28 downto 0);     
-    			when FILTER_C_VAL_ADR    => filter_C_mask    <=  data_in(28 downto 0);     
-    			when FILTER_C_MASK_ADR   => filter_C_value   <=  data_in(28 downto 0);     
-    			when FILTER_RAN_LOW_ADR  => filter_ran_low   <=  data_in(28 downto 0);
-    			when FILTER_RAN_HIGH_ADR => filter_ran_high  <=  data_in(28 downto 0);
-    			when FILTER_CONTROL_ADR  => 
-    					  filter_A_ctrl            <=  data_in(3 downto 0);
-    					  filter_B_ctrl            <=  data_in(7 downto 4);
-    					  filter_C_ctrl            <=  data_in(11 downto 8);
-    					  filter_ran_ctrl          <=  data_in(15 downto 12);
+    			when FILTER_A_VAL_ADR    => 
+    			       if (sup_filtA = true) then
+    			         filter_A_mask    <=  data_in(28 downto 0);
+  			        end if;
+    			when FILTER_A_MASK_ADR   =>
+    			       if (sup_filtA = true) then
+    			         filter_A_value   <=  data_in(28 downto 0);
+			        end if;     
+    			when FILTER_B_VAL_ADR    => 
+    			     if (sup_filtB = true) then
+    			       filter_B_mask    <=  data_in(28 downto 0);
+  			       end if;  
+    			when FILTER_B_MASK_ADR   => 
+    			     if (sup_filtB = true) then
+    			       filter_B_value   <=  data_in(28 downto 0);
+			      end if;   
+    			when FILTER_C_VAL_ADR    =>
+    			     if (sup_filtC = true) then
+    			       filter_C_mask    <=  data_in(28 downto 0);
+			      end if;   
+    			when FILTER_C_MASK_ADR   =>
+    			     if (sup_filtC = true) then
+    			       filter_C_value   <=  data_in(28 downto 0);
+			      end if;    
+    			when FILTER_RAN_LOW_ADR  => 
+    			     if (sup_range = true) then
+    			       filter_ran_low   <=  data_in(28 downto 0);
+  			       end if;
+    			when FILTER_RAN_HIGH_ADR => 
+			      if (sup_range = true) then
+			       filter_ran_high  <=  data_in(28 downto 0);
+			      end if;
+    			when FILTER_CONTROL_ADR  =>
+   			      if (sup_filtA = true) then 
+    					     filter_A_ctrl            <=  data_in(3 downto 0);
+					  end if;
+					  if (sup_filtB = true) then 
+    					     filter_B_ctrl            <=  data_in(7 downto 4);
+  					  end if;
+  					  if (sup_filtC = true) then 
+    					     filter_C_ctrl            <=  data_in(11 downto 8);
+  				    end if;	     
+					  if (sup_range = true) then 
+    					     filter_ran_ctrl          <=  data_in(15 downto 12);
+					  end if;
     			
     			----------------------------------------------------
     			--TX Settings register
@@ -836,29 +896,61 @@ begin
     					--Acceptance filters  
     					----------------------------------------------------------
     			   when FILTER_A_VAL_ADR => 
-    			     data_out(28 downto 0)       <=  filter_A_mask;
-						data_out(31 downto 29)      <=  (OTHERS=>'0');
-    			   when FILTER_A_MASK_ADR => 
-    			     data_out(28 downto 0)       <=  filter_A_value;
-						data_out(31 downto 29)      <=  (OTHERS=>'0');     
-    			   when FILTER_B_VAL_ADR => 
-    			     data_out(28 downto 0)       <=  filter_B_mask;
-    						data_out(31 downto 29)      <=  (OTHERS=>'0');
-    			   when FILTER_B_MASK_ADR => 
-    			     data_out(28 downto 0)       <=  filter_B_value;
-    						data_out(31 downto 29)      <=  (OTHERS=>'0');   
+    			     if (sup_filtA = true) then 
+    			       data_out(28 downto 0)       <=  filter_A_mask;
+						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+						else
+						  data_out <= (OTHERS => '0');  
+						end if;
+    			   when FILTER_A_MASK_ADR =>
+    			     if (sup_filtA = true) then  
+    			       data_out(28 downto 0)       <=  filter_A_value;
+						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+						else
+						  data_out <= (OTHERS => '0');  
+						end if;  
+    			   when FILTER_B_VAL_ADR =>
+    			     if (sup_filtB = true) then 
+    			       data_out(28 downto 0)       <=  filter_B_mask;
+    						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+						else
+						  data_out <= (OTHERS => '0');  
+						end if; 
+    			   when FILTER_B_MASK_ADR =>
+    			     if (sup_filtB = true) then  
+    			       data_out(28 downto 0)       <=  filter_B_value;
+    						  data_out(31 downto 29)      <=  (OTHERS=>'0'); 
+						else
+						  data_out <= (OTHERS => '0');  
+						end if;   
     			   when FILTER_C_VAL_ADR =>
-    			     data_out(28 downto 0)       <=  filter_C_mask;
-    						data_out(31 downto 29)      <=  (OTHERS=>'0');    
+			      if (sup_filtC = true) then 
+    			       data_out(28 downto 0)       <=  filter_C_mask;
+    						  data_out(31 downto 29)      <=  (OTHERS=>'0'); 
+						else
+						  data_out <= (OTHERS => '0');  
+						end if;    
     			   when FILTER_C_MASK_ADR =>
-    			     data_out(28 downto 0)       <=  filter_C_value;
-    						data_out(31 downto 29)      <=  (OTHERS=>'0');     
+    			     if (sup_filtC = true) then 
+    			       data_out(28 downto 0)       <=  filter_C_value;
+    						  data_out(31 downto 29)      <=  (OTHERS=>'0'); 
+						else
+						  data_out <= (OTHERS => '0');  
+						end if;     
     			   when FILTER_RAN_LOW_ADR =>
-    			     data_out(28 downto 0)       <=  filter_ran_low;
-    						data_out(31 downto 29)      <=  (OTHERS=>'0');
+    			     if (sup_range = true) then 
+    			       data_out(28 downto 0)       <=  filter_ran_low;
+    						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+						else
+						  data_out <= (OTHERS => '0');  
+						end if; 
     			   when FILTER_RAN_HIGH_ADR =>
-    			     data_out(28 downto 0)       <=  filter_ran_high;
-    						data_out(31 downto 29)      <=  (OTHERS=>'0');
+    			     if (sup_range = true) then 
+    			       data_out(28 downto 0)       <=  filter_ran_high;
+    						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+						else
+						  data_out <= (OTHERS => '0');  
+						end if; 
     					
     					-------------------------------------------------------	
 					--Acceptance filter configuration register

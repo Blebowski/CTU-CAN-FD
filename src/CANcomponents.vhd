@@ -57,6 +57,10 @@ package CANcomponents is
                                                 --Dont turn off unless external synchronisation chain is put on input of FPGA by
                                                 --synthetiser
       constant ID             :natural  range 0 to 15:=1; --ID (bits  19-16 of adress) 
+      constant sup_filtA      :boolean := true;    --Optional synthesis of received message filters
+      constant sup_filtB      :boolean := true;    -- By default the behaviour is as if all the filters are present
+      constant sup_filtC      :boolean := true;
+      constant sup_range      :boolean := true;
       constant logger_size    :natural --range 0 to 512:=8
   );
   port(
@@ -90,6 +94,10 @@ package CANcomponents is
   generic(
     constant compType           :     std_logic_vector(3 downto 0):= CAN_COMPONENT_TYPE;
     constant use_logger         :     boolean                     := true; --Whenever event logger is present
+    constant sup_filtA          :     boolean                     := true; --Optional synthesis of received message filters
+    constant sup_filtB          :     boolean                     := true; -- By default the behaviour is as if all the filters are present
+    constant sup_filtC          :     boolean                     := true;
+    constant sup_range          :     boolean                     := true;
     constant ID                 :     natural --ID of the component
   );
   port(
@@ -277,6 +285,13 @@ package CANcomponents is
   --Message filter module--
   -------------------------
   component messageFilter is
+  generic
+  (
+    constant sup_filtA      :boolean := true;    --Optional synthesis of received message filters
+    constant sup_filtB      :boolean := true;    -- By default the behaviour is as if all the filters are present
+    constant sup_filtC      :boolean := true;
+    constant sup_range      :boolean := true
+  );
   PORT(
     signal clk_sys              :in   std_logic; --System clock
     signal res_n                :in   std_logic; --Async reset
