@@ -48,7 +48,14 @@ use work.ID_transfer.all;
 ------------------------------------------------------------------------------------------------------------
 
 entity messageFilter is
-  PORT(
+  generic
+  (
+    constant sup_filtA      :boolean := true;    --Optional synthesis of received message filters
+    constant sup_filtB      :boolean := true;    -- By default the behaviour is as if all the filters are present
+    constant sup_filtC      :boolean := true;
+    constant sup_range      :boolean := true
+  );
+  port(
     ----------
     --INPUTS--
     ----------
@@ -142,30 +149,45 @@ begin
         "0000" when others;
    
    --Filter A input frame type filtering 
-   int_filter_A_valid <= '1' when ( ( --Identifier matches the bits and mask
-                                      (rec_ident_in AND drv_filter_A_mask)  =
-                                      (drv_filter_A_bits AND drv_filter_A_mask)                 
-                                    ) 
-                                    AND
-                                    ( --Frame type Matches defined frame type
-                                      not((drv_filter_A_ctrl AND int_data_type)="0000")         
-                                    )  
-                                  )                 
-                             else '0'; 
+   gen_filtA_pos: if (sup_filtA=true) generate
+     int_filter_A_valid <= '1' when ( ( --Identifier matches the bits and mask
+                                        (rec_ident_in AND drv_filter_A_mask)  =
+                                        (drv_filter_A_bits AND drv_filter_A_mask)                 
+                                      ) 
+                                      AND
+                                      ( --Frame type Matches defined frame type
+                                        not((drv_filter_A_ctrl AND int_data_type)="0000")         
+                                      )  
+                                    )                 
+                               else '0';
+   end generate;
+            
+   gen_filtA_neg: if (sup_filtA=false) generate
+     int_filter_A_valid <= '0';
+   end generate;       
+                          
   
    --Filter B input frame type filtering 
-   int_filter_B_valid <= '1' when ( ( --Identifier matches the bits and mask
-                                      (rec_ident_in AND drv_filter_B_mask)  =  
-                                      (drv_filter_B_bits AND drv_filter_B_mask)                 
-                                    ) 
-                                    AND 
-                                    ( --Frame type Matches defined frame type
-                                      not((drv_filter_B_ctrl AND int_data_type)="0000")         
+   gen_filtB_pos: if (sup_filtB=true) generate
+     int_filter_B_valid <= '1' when ( ( --Identifier matches the bits and mask
+                                        (rec_ident_in AND drv_filter_B_mask)  =  
+                                        (drv_filter_B_bits AND drv_filter_B_mask)                 
+                                      ) 
+                                      AND 
+                                      ( --Frame type Matches defined frame type
+                                        not((drv_filter_B_ctrl AND int_data_type)="0000")         
+                                      )
                                     )
-                                  )
-                             else '0'; 
+                               else '0';
+   end generate;
+   
+    gen_filtB_neg: if (sup_filtB=false) generate
+     int_filter_B_valid <= '0';
+   end generate; 
+   
   
   --Filter C input frame type filtering 
+  gen_filtC_pos: if (sup_filtC=true) generate
    int_filter_C_valid <= '1' when ( ( --Identifier matches the bits and mask
                                       (rec_ident_in AND drv_filter_C_mask)  =
                                       (drv_filter_C_bits AND drv_filter_C_mask)                 
@@ -176,19 +198,30 @@ begin
                                     )
                                   )
                           else '0';
+  end generate;
+  
+   gen_filtC_neg: if (sup_filtC=false) generate
+     int_filter_C_valid <= '0';
+   end generate;
                            
   --Range filter for identifiers
-  ID_reg_to_decimal(rec_ident_in,rec_ident_dec);
-  int_filter_ran_valid  <= '1' when ( --Identifier matches the range set
-                                      ( rec_ident_dec<=to_integer(unsigned(drv_filter_ran_hi_th)) )
-                                      AND
-                                      ( rec_ident_dec>=to_integer(unsigned(drv_filter_ran_lo_th)) )   
-                                    )
-                                    AND 
-                                    ( --Frame type Matches defined frame type
-                                      not((drv_filter_ran_ctrl AND int_data_type)="0000")             
-                                    )
-                          else '0';
+  gen_filtRan_pos: if (sup_range=true) generate
+    ID_reg_to_decimal(rec_ident_in,rec_ident_dec);
+    int_filter_ran_valid  <= '1' when ( --Identifier matches the range set
+                                        ( rec_ident_dec<=to_integer(unsigned(drv_filter_ran_hi_th)) )
+                                        AND
+                                        ( rec_ident_dec>=to_integer(unsigned(drv_filter_ran_lo_th)) )   
+                                      )
+                                      AND 
+                                      ( --Frame type Matches defined frame type
+                                        not((drv_filter_ran_ctrl AND int_data_type)="0000")             
+                                      )
+                            else '0';
+  end generate;
+  
+   gen_filtRan_neg: if (sup_range=false) generate
+     int_filter_ran_valid <= '0';
+   end generate;
   
             
   --If received message is valid and at least one of
@@ -203,7 +236,6 @@ begin
                             ) when drv_filters_ena='1'
                             else rec_ident_valid;
                             
-  
   
   ---------------------------------------------------
   --To avoid long combinational paths, valid filter

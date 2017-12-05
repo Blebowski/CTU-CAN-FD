@@ -31,6 +31,11 @@ use work.CANconstants.all;
 --    July 2015   Created file
 --    30.11.2017  Changed the buffer implementation from parallel into 32*20 buffer of data. Reading so far
 --                left parallel. User is directly accessing the buffer and storing the data to it.
+--    04.12.2017  Buffer split to "Frame metadata" (txt_buffer_info) and "Data" (txt_buffer_data). Frame 
+--                metadata consists of first 4 words (Frame format, Timestamps and Identifier). Frame metadata
+--                are available combinationally at all times. Frame data are accessed directly from CAN Core 
+--                by new pointer "txt_data_addr". txt_buffer_data is synthesized as RAM memory and significant
+--                reource reduction was achieved.
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
@@ -68,8 +73,17 @@ entity txtBuffer is
       ------------------------------------
       --CAN Core and TX Arbiter Interface-
       ------------------------------------
-      signal txt_buffer_out :out  std_logic_vector(639 downto 0);  --Output value of message in the buffer  
-      signal txt_data_ack   :in   std_logic                        --Signal from TX Arbiter that data were sent and buffer can be erased     
+      
+      --Signal from TX Arbiter that data were transmitted and buffer can be erased
+      signal txt_data_ack   :in   std_logic;                        
+      
+      -- Frame to be transmitted
+      signal txt_data_word      :out  std_logic_vector(31 downto 0);
+      signal txt_data_addr      :in   natural range 0 to 15;
+      --First 4 words (frame format, timestamps, identifier) are available combinationally, 
+      --to be able instantly decide on higher priority frame
+      signal txt_frame_info_out :out  std_logic_vector(127 downto 0)  
+      
       );
              
 end entity;
@@ -80,13 +94,17 @@ architecture rtl of txtBuffer is
   ----------------------
   --Internal registers--
   ----------------------
-  type memory is array(0 to 19) of 
+  type frame_data_memory is array(0 to 15) of 
+      std_logic_vector(31 downto 0);
+  type frame_info_memory is array (0 to 3) of
       std_logic_vector(31 downto 0);
 
   ------------------
   --Signal aliases--
   ------------------
-  signal txt_buffer       : memory;                              -- Time transcieve buffer  
+  signal txt_buffer_data  : frame_data_memory;                              -- Time transcieve buffer - Data memory
+  signal txt_buffer_info  : frame_info_memory;                   -- Frame format, Timestamps and Identifier
+   
   signal tran_wr          : std_logic_vector(1 downto 0);        -- Store into TXT buffer 1 or 2 
   signal txt_empty_reg    : std_logic;                           -- Status of the register
   
@@ -104,24 +122,12 @@ begin
                          drv_bus(DRV_ALLOW_TXT2_INDEX) when ID=2 else
                         '0';
     
-    --Output assignment and aliases
-    -- So far reading of the data from buffer is parelell. It will be modified to reading by word...
-    sizegen_fd: if (useFDsize=true) generate
-      txt_buffer_out  <= txt_buffer(0)&txt_buffer(1)&txt_buffer(2)&txt_buffer(3)&
-                         txt_buffer(4)&txt_buffer(5)&txt_buffer(6)&txt_buffer(7)&txt_buffer(8)&
-                         txt_buffer(9)&txt_buffer(10)&txt_buffer(11)&txt_buffer(12)&txt_buffer(13)&
-                         txt_buffer(14)&txt_buffer(15)&txt_buffer(16)&txt_buffer(17)&txt_buffer(18)&txt_buffer(19);
-    end generate;
+    --Output data are given by the address from the Core
+    txt_data_word <= txt_buffer_data(txt_data_addr);
     
-    --Since RAM is read only by TX Arbitrator and CAN Core, we can just disconnect the outputs
-    -- if we dont want to synthesize the Full FD support. Synthesizer will then remove part of the
-    -- memory/registers since there will be no fan-out.
-    sizegen_nofd: if (useFDsize=false) generate
-      txt_buffer_out(639 downto 448) <= txt_buffer(0)&txt_buffer(1)&txt_buffer(2)&txt_buffer(3)&
-                                        txt_buffer(4)&txt_buffer(5);
-      txt_buffer_out(446 downto 0) <= (OTHERS => '0');
-    end generate;
-  
+    --First 4 words of the Frame are available constantly...
+    txt_frame_info_out <= txt_buffer_info(0)&txt_buffer_info(1)&txt_buffer_info(2)&txt_buffer_info(3);
+    
     --------------------------------------------------------------------------------
     -- Main buffer comment
     --------------------------------------------------------------------------------
@@ -129,11 +135,13 @@ begin
     begin
       if (res_n = ACT_RESET) then
         
-        -- In order to use RAM for the buffer, async reset cannot be done!
-        -- synthesis translate_off
-          txt_buffer <= (OTHERS => (OTHERS => '0'));
-        -- synthesis translate_on
+          -- In order to use RAM for the buffer, async reset cannot be done!
+          -- synthesis translate_off
+          txt_buffer_data <= (OTHERS => (OTHERS => '0'));
+          -- synthesis translate_on
         
+          -- Frame info is stored in registers
+          txt_buffer_info <= (OTHERS => (OTHERS => '0'));
           txt_empty_reg <= '1';
       elsif (rising_edge(clk_sys))then
         
@@ -151,7 +159,11 @@ begin
         
         --Store the data into the Buffer during the access
         if (tran_wr(ID-1)='1') then
-          txt_buffer(to_integer(unsigned(tran_addr))) <= tran_data;
+          if (tran_addr<4) then
+            txt_buffer_info(to_integer(unsigned(tran_addr))) <= tran_data;
+          else  
+            txt_buffer_data(to_integer(unsigned(tran_addr-4))) <= tran_data; 
+          end if;
         end if;
         
       end if;
