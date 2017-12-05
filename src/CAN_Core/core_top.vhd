@@ -77,7 +77,7 @@ entity core_top is
     ---------------------------
     --Tx Arbitrator interface--
     ---------------------------
-    signal tran_data_in           :in   std_logic_vector(511 downto 0);
+    signal tran_data_in           :in   std_logic_vector(31 downto 0);
     signal tran_ident_in          :in   std_logic_vector(28 downto 0);
     signal tran_dlc_in            :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr_in         :in   std_logic;
@@ -86,7 +86,8 @@ entity core_top is
     signal tran_brs_in            :in   std_logic; --Frame should be transcieved with BRS value
     signal tran_frame_valid_in    :in   std_logic; --Signal for CAN Core that frame on the output is valid and can be stored for transmitting
     signal tran_data_ack_out      :out  std_logic; --Acknowledge from CAN core that acutal message was stored into internal buffer for transmitting   
- 
+    signal txt_buf_ptr            :out  natural range 0 to 15; --Pointer to TXT buffer memory
+    
     -----------------------------------------------
     --Recieve Buffer and Message Filter Interface--
     -----------------------------------------------
@@ -225,7 +226,6 @@ entity core_top is
    signal alc                     :     std_logic_vector(4 downto 0);
    
    --Transcieve buffer output
-   signal tran_data               :     std_logic_vector(511 downto 0);
    signal tran_ident              :     std_logic_vector(28 downto 0);
    signal tran_dlc                :     std_logic_vector(3 downto 0);
    signal tran_is_rtr             :     std_logic;
@@ -362,7 +362,6 @@ begin
   port map(
      clk_sys            =>  clk_sys,
      res_n              =>  res_n,
-     tran_data_in       =>  tran_data_in,
      tran_ident_in      =>  tran_ident_in,
      tran_dlc_in        =>  tran_dlc_in,
      tran_is_rtr_in     =>  tran_is_rtr_in,
@@ -371,7 +370,6 @@ begin
      tran_brs_in        =>  tran_brs_in,
      frame_store        =>  frame_Store,
        
-     tran_data          =>  tran_data,
      tran_ident         =>  tran_ident,
      tran_dlc           =>  tran_dlc,
      tran_is_rtr        =>  tran_is_rtr,
@@ -407,7 +405,7 @@ begin
      PC_State_out       =>  PC_State,
      alc                =>  alc,
          
-     tran_data          =>  tran_data,
+     tran_data          =>  tran_data_in,
      tran_ident         =>  tran_ident,
      tran_dlc           =>  tran_dlc,
      tran_is_rtr        =>  tran_is_rtr,
@@ -415,6 +413,7 @@ begin
      tran_frame_type    =>  tran_frame_type,
      tran_brs           =>  tran_brs,
      br_shifted         =>  br_shifted_int,
+     txt_buf_ptr        =>  txt_buf_ptr,
      
      hard_sync_edge     =>  hard_sync_edge,
      

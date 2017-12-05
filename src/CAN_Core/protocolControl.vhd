@@ -97,6 +97,8 @@ use work.CANconstants.all;
 --                   and the memory was stored in LUT combinational memory! An additional effect of this change
 --                   is that Received Data are not erased in the SOF of next frame and thus it stays on the output
 --                   of CAN Core until it is rewritten by next data.
+--    4.12.2017   Added support for addressing of transmitted data directly from TXT buffer with "txt_buf_ptr",
+--                instead of fetching data from "Tran Buffer" in CAN Core.
 --
 -------------------------------------------------------------------------------------------------------------
 
@@ -120,7 +122,7 @@ entity protocolControl is
     -------------------------------
     --Transcieve buffer interface--
     -------------------------------
-    signal tran_data              :in   std_logic_vector(511 downto 0);
+    signal tran_data              :in   std_logic_vector(31 downto 0);
     signal tran_ident             :in   std_logic_vector(28 downto 0);
     signal tran_dlc               :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr            :in   std_logic;
@@ -131,6 +133,7 @@ entity protocolControl is
     signal frame_store            :out  std_logic; --Store frame from TX Arbitrator to the Transcieve Buffer
     signal tran_frame_valid_in    :in   std_logic; --Valid frame ready to be stored into Transcieeve Buffer
     signal tran_data_ack          :out  std_logic; --Acknowledge that the frame was stored
+    signal txt_buf_ptr            :out  natural range 0 to 15; --Pointer to TXT buffer memory
     
     -------------------------
     --Recieved data output --
@@ -369,6 +372,8 @@ entity protocolControl is
   signal rec_dram_bind            :     natural range 0 to 3; --Byte index into RAM
   signal rec_dram                 :     rec_data_RAM_type;
   
+  signal txt_buf_ptr_r            :     natural range 0 to 15; --Pointer directly to TXT buffer to get the data
+  
   -----------------------
   --CRC field registers--
   -----------------------
@@ -478,6 +483,8 @@ begin
   rec_esi               <=  rec_esi_r;
   ack_recieved_out      <=  ack_recieved;
   
+  --Pointer into TXT Buffer
+  txt_buf_ptr           <=  txt_buf_ptr_r;
   
   -----------------------
   --Auxiliarly vectors
@@ -598,6 +605,9 @@ begin
       rec_dram_bind           <= 0;
       rec_data_sr             <= (OTHERS => '0');
       
+      -- Pointer directly to TXT Buffer RAM
+      txt_buf_ptr_r             <= 0;
+      
       --Presetting the sampling point control
       sp_control_r            <=  NOMINAL_SAMPLE;
       ssp_reset_r             <=  '0';
@@ -619,7 +629,7 @@ begin
       
       rx_parity               <=  '0';
       rx_count_grey           <=  (OTHERS =>'0');
-      
+       
     elsif rising_edge(clk_sys)then
         
       -----------------------------------------------------
@@ -717,6 +727,8 @@ begin
        rec_data_sr            <=  rec_data_sr;
        rec_dram_ptr           <=  rec_dram_ptr;
        rec_dram_bind          <=  rec_dram_bind;
+        
+       txt_buf_ptr_r          <=  txt_buf_ptr_r;
     
     if(drv_ena='0')then
       PC_State                <=  off;
@@ -1299,11 +1311,23 @@ begin
             rec_dram_ptr            <= 0;
             rec_dram_bind           <= 0;
             rec_data_sr             <= (OTHERS => '0');
+            
+            -- Pointer directly to TXT Buffer
+            txt_buf_ptr_r           <= 0;
+            
           else
 
             if(OP_State=transciever)then
               if(tran_trig='1')then
-                data_tx_r <=  tran_data(data_pointer);
+              
+                --data_tx_r <=  tran_data(data_pointer);
+                data_tx_r <= tran_data(data_pointer mod 32);
+                
+                --Move to the next word
+                if ((data_pointer mod 32) = 0) then
+                  txt_buf_ptr_r <= (txt_buf_ptr_r+1) mod 16;
+                end if;
+                
               end if;
             else
               data_tx_r   <=  RECESSIVE;

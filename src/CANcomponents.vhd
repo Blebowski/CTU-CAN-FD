@@ -228,16 +228,18 @@ package CANcomponents is
       constant ID           :natural :=1;
       constant useFDsize    :boolean :=false
     );
-    PORT(
+    port(
       signal clk_sys        :in   std_logic;
       signal res_n          :in   std_logic;                        --Async reset
       signal drv_bus        :in   std_logic_vector(1023 downto 0);  --Driving bus
       signal tran_data      :in   std_logic_vector(31 downto 0);  --Data into the RAM of TXT Buffer
       signal tran_addr      :in   std_logic_vector(4 downto 0);  --Address in the RAM of TXT buffer  
-      signal txt_empty      :out  std_logic;                       --Logic 1 signals empty TxTime buffer        
-      signal txt_buffer_out :out  std_logic_vector(639 downto 0);  --Output value of message in the buffer  
-      signal txt_data_ack   :in   std_logic                        --Signal from TX Arbiter that data were sent and buffer can be erased     
-      );     
+      signal txt_empty      :out  std_logic;                       --Logic 1 signals empty TxTime buffer
+      signal txt_data_ack   :in   std_logic;                        
+      signal txt_data_word      :out  std_logic_vector(31 downto 0);
+      signal txt_data_addr      :in   natural range 0 to 15;
+      signal txt_frame_info_out :out  std_logic_vector(127 downto 0)       
+      );   
   end component;  
   
   -------------------------
@@ -246,38 +248,53 @@ package CANcomponents is
   component txArbitrator is 
   port( 
     ------------------------
+    -- Clock and reset    
+    ------------------------
+    signal clk_sys                :in  std_logic;
+    signal res_n                  :in  std_logic;
+    
+    ------------------------
     --TX Buffers interface--
     ------------------------
     --TXT Buffer 1
-    signal txt1_buffer_in       :in   std_logic_vector(639 downto 0); --Time TX1 buffer input
-    signal txt1_buffer_ack      :out  std_logic; --Time buffer acknowledge that message can be erased
-    signal txt1_buffer_empty    :in   std_logic; --No message in Time TX Buffer
+    signal txt1buf_info_in        :in  std_logic_vector(639 downto 512);     --Time TX1 buffer input
+    signal txt1buf_data_in        :in  std_logic_vector(31 downto 0);       --Time TX1 buffer input
+    signal txt1_buffer_empty      :in  std_logic;                          --No message in Time TX Buffer
+    signal txt1_buffer_ack        :out std_logic;                          --Time buffer acknowledge that 
+                                                                           -- message can be erased
     
     --TXT Buffer 2
-    signal txt2_buffer_in       :in   std_logic_vector(639 downto 0); --Time TX1 buffer input
-    signal txt2_buffer_empty    :in   std_logic; --No message in Time TX Buffer
-    signal txt2_buffer_ack      :out  std_logic; --Acknowledge for message that it can erased
-  
+    signal txt2buf_info_in        :in  std_logic_vector(639 downto 512);   --Time TX2 buffer input
+    signal txt2buf_data_in        :in  std_logic_vector(31 downto 0);      --Time TX2 buffer input
+    signal txt2_buffer_empty      :in  std_logic;                          --No message in Time TX Buffer
+    signal txt2_buffer_ack        :out std_logic;                          --Time buffer acknowledge that 
+                                                                           -- message can be erased
     -----------------------
     --CAN Core Interface---
     -----------------------
-    signal tran_data_out        :out  std_logic_vector(511 downto 0); --TX Message data
-    signal tran_ident_out       :out  std_logic_vector(28 downto 0); --TX Identifier 
-    signal tran_dlc_out         :out  std_logic_vector(3 downto 0); --TX Data length code
-    signal tran_is_rtr          :out  std_logic; --TX is remote frame
-    signal tran_ident_type_out  :out  std_logic; --TX Identifier type (0-Basic,1-Extended);
-    signal tran_frame_type_out  :out  std_logic; --TX Frame type
-    signal tran_brs_out         :out  std_logic; --Bit rate shift for CAN FD frames
+    signal tran_data_word_out     :out std_logic_vector(31 downto 0);    --TX Message data
+    signal tran_ident_out         :out std_logic_vector(28 downto 0);     --TX Identifier 
+    signal tran_dlc_out           :out std_logic_vector(3 downto 0);      --TX Data length code
+    signal tran_is_rtr            :out std_logic;                         --TX is remote frame
+    signal tran_ident_type_out    :out std_logic;                         --TX Identifier type (0-Basic,1-Extended);
+    signal tran_frame_type_out    :out std_logic;                         --TX Frame type
+    signal tran_brs_out           :out std_logic;                         --Bit rate shift for CAN FD frames
+    signal tran_frame_valid_out   :out std_logic;                         --Signal for CAN Core that frame on the 
+                                                                          -- output is valid and can be stored for transmitting
+    -- Acknowledge from CAN core that frame transmission started and 
+    -- that frame informations were stored
+    signal tran_data_ack          :in  std_logic; 
     
-    signal tran_frame_valid_out :out  std_logic; --Signal for CAN Core that frame on the output is valid and can be stored for transmitting
-    signal tran_data_ack        :in   std_logic; --Acknowledge from CAN core that acutal message was stored into internal buffer for transmitting   
-      
+    -- Acknowledge that CAN core that frame was succesfully transmitted
+    -- and can be erased.                         
+    signal tran_valid             :in  std_logic; 
+    
     ---------------------
     --Driving interface--
     ---------------------
-    signal drv_bus              :in   std_logic_vector(1023 downto 0); --Driving bus from registers
-    signal timestamp            :in   std_logic_vector(63 downto 0) --TimeStamp value
-    
+    signal drv_bus                :in std_logic_vector(1023 downto 0);    --Driving bus from registers
+    signal timestamp              :in std_logic_vector(63 downto 0)       --TimeStamp value
+        
   );
   end component;
   
@@ -354,7 +371,7 @@ package CANcomponents is
     signal drv_bus              :in   std_logic_vector(1023 downto 0);    
     signal stat_bus             :out  std_logic_vector(511 downto 0);
     
-    signal tran_data_in         :in   std_logic_vector(511 downto 0);
+    signal tran_data_in         :in   std_logic_vector(31 downto 0);
     signal tran_ident_in        :in   std_logic_vector(28 downto 0);
     signal tran_dlc_in          :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr_in       :in   std_logic;
@@ -363,7 +380,8 @@ package CANcomponents is
     signal tran_brs_in          :in   std_logic; --Frame should be transcieved with BRS value
     signal tran_frame_valid_in  :in   std_logic; --Signal for CAN Core that frame on the output is valid and can be stored for transmitting
     signal tran_data_ack_out    :out  std_logic; --Acknowledge from CAN core that acutal message was stored into internal buffer for transmitting   
- 
+    signal txt_buf_ptr          :out  natural range 0 to 15; --Pointer to TXT buffer memory
+    
     signal rec_ident_out        :out  std_logic_vector(28 downto 0); --Message Identifier
     signal rec_dlc_out          :out  std_logic_vector(3 downto 0); --Data length code
     signal rec_ident_type_out   :out  std_logic; --Recieved identifier type (0-BASE Format, 1-Extended Format);
@@ -571,7 +589,6 @@ end component;
     signal clk_sys                :in   std_logic; --System clock
     signal res_n                  :in   std_logic;
     
-    signal tran_data_in           :in   std_logic_vector(511 downto 0);
     signal tran_ident_in          :in   std_logic_vector(28 downto 0);
     signal tran_dlc_in            :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr_in         :in   std_logic;
@@ -581,7 +598,6 @@ end component;
     
     signal frame_store            :in   std_logic; --Store the data on input
     
-    signal tran_data              :out  std_logic_vector(511 downto 0);
     signal tran_ident             :out  std_logic_vector(28 downto 0);
     signal tran_dlc               :out  std_logic_vector(3 downto 0);
     signal tran_is_rtr            :out  std_logic;
@@ -663,13 +679,14 @@ end component;
     signal PC_State_out           :out  protocol_type;
     signal alc                    :out  std_logic_vector(4 downto 0);
     
-    signal tran_data              :in   std_logic_vector(511 downto 0);
+    signal tran_data              :in   std_logic_vector(31 downto 0);
     signal tran_ident             :in   std_logic_vector(28 downto 0);
     signal tran_dlc               :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr            :in   std_logic;
     signal tran_ident_type        :in   std_logic;
     signal tran_frame_type        :in   std_logic;
     signal tran_brs               :in   std_logic; 
+    signal txt_buf_ptr            :out  natural range 0 to 15; --Pointer to TXT buffer memory
     
     signal frame_store            :out  std_logic; --Store frame from TX Arbitrator to the Transcieve Buffer
     signal tran_frame_valid_in    :in   std_logic; --Valid frame ready to be stored into Transcieeve Buffer

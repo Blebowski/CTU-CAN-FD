@@ -29,15 +29,16 @@ use work.CANconstants.all;
 -- Revision History:
 --
 --    July 2015   Created file
+--    04.12.2017  Removed "tran_data_in" and "tran_data_reg" from the buffer
 -------------------------------------------------------------------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------
 -- Purpose:
---  Buffer of CAN core for storing transcieve data. Message data and parameters are stored  from ---
---  output of TXArbitrator circuit when bus is idle and transmit can start or SOF of other frame ---
---  is detected. Data stored in the buffer stay until it is rewritten by another message.        ---
---  Message is stored until sucessfully transmitted or retransmitt limit is reached              ---
---------------------------------------------------------------------------------------------------
+--  Buffer of CAN core for storing transcieve data. Frame informations (DLC,Identifier, etc. are stored 
+--  from output of TXArbitrator circuit when bus is idle and transmit can start or SOF of other frame
+--  is detected. Data stored in the buffer stay until it is rewritten by another message.       
+--  Message is stored until sucessfully transmitted or retransmitt limit is reached.            
+-----------------------------------------------------------------------------------------------------------
 
 entity tranBuffer is 
   port(
@@ -50,7 +51,6 @@ entity tranBuffer is
     --------------------------
     --TX Arbitrator Interface-
     --------------------------
-    signal tran_data_in         :in   std_logic_vector(511 downto 0);
     signal tran_ident_in        :in   std_logic_vector(28 downto 0);
     signal tran_dlc_in          :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr_in       :in   std_logic;
@@ -66,7 +66,6 @@ entity tranBuffer is
     --------------------------------
     --Stored data register outputs--
     --------------------------------
-    signal tran_data            :out  std_logic_vector(511 downto 0);
     signal tran_ident           :out  std_logic_vector(28 downto 0);
     signal tran_dlc             :out  std_logic_vector(3 downto 0);
     signal tran_is_rtr          :out  std_logic;
@@ -79,7 +78,6 @@ entity tranBuffer is
   ----------------------
   --Internal registers--
   ----------------------
-  signal tran_data_reg:std_logic_vector(511 downto 0);
   signal tran_ident_reg: std_logic_vector(28 downto 0);
   signal tran_dlc_reg: std_logic_vector(3 downto 0);
   signal tran_is_rtr_reg: std_logic;
@@ -92,7 +90,6 @@ end entity;
 
 architecture rtl of tranBuffer is 
 begin
-  tran_data               <=  tran_data_reg;
   tran_ident              <=  tran_ident_reg;
   tran_dlc                <=  tran_dlc_reg;
   tran_is_rtr             <=  tran_is_rtr_reg;
@@ -103,7 +100,6 @@ begin
   data_store:process(clk_sys,res_n)
   begin
   if res_n=ACT_RESET then
-    tran_data_reg         <=  (OTHERS =>'0');
     tran_ident_reg        <=  (OTHERS =>'0');
     tran_dlc_reg          <=  (OTHERS =>'0');
     tran_is_rtr_reg       <=  '0';
@@ -112,7 +108,6 @@ begin
     tran_brs_reg          <=  '0';
   elsif rising_edge(clk_sys)then 
     if(frame_store='1')then
-      tran_data_reg       <=  tran_data_in;
       tran_ident_reg      <=  tran_ident_in;
       tran_dlc_reg        <=  tran_dlc_in;
       tran_is_rtr_reg     <=  tran_is_rtr_in;
@@ -120,7 +115,6 @@ begin
       tran_frame_type_reg <=  tran_frame_type_in;
       tran_brs_reg        <=  tran_brs_in;
     else
-      tran_data_reg       <=  tran_data_reg;
       tran_ident_reg      <=  tran_ident_reg;
       tran_dlc_reg        <=  tran_dlc_reg;
       tran_is_rtr_reg     <=  tran_is_rtr_reg;

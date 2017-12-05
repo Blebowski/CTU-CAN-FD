@@ -2195,7 +2195,7 @@ File: core_top.vhd
 \end_layout
 
 \begin_layout Standard
-CAN Core covers the functionality of serial data transmission according
+CAN Core implements the functionality of serial data transmission according
  to CAN FD standard.
  Storing frame to be transmitted, storing received frame, transmission,
  reception, arbitration, bit stuffing, bit destuffing, CRC calculation,
@@ -11899,7 +11899,7 @@ CRC 21 result
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="16" columns="5">
+<lyxtabular version="3" rows="15" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -12132,15 +12132,9 @@ status open
 
 \begin_layout Plain Layout
 Auxiliary component for storing the frame to be transmitted.
- Circuit stores input frame when logic 1 is detected on 
-\begin_inset Quotes eld
-\end_inset
-
-frame_store
-\begin_inset Quotes erd
-\end_inset
-
- input.
+ Identifier, DLC, Frame type (Base, FD), Frame format (Basic, Extended)
+ are stored here.
+ Data field is not stored here.
 \end_layout
 
 \end_inset
@@ -12380,53 +12374,6 @@ std_logic
 
 \begin_layout Plain Layout
 Asynchronous reset
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-tran_data_in
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-512
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-in
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic_vector
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Data to be stored
 \end_layout
 
 \end_inset
@@ -12725,7 +12672,7 @@ Bit rate shift bit to be stored
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="5">
+<lyxtabular version="3" rows="8" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -12823,53 +12770,6 @@ std_logic
 
 \begin_layout Plain Layout
 Store the frame on input
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-tran_data
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-512
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-out
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic_vector
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Data for Protocol Control
 \end_layout
 
 \end_inset
@@ -18643,12 +18543,43 @@ backgroundcolor "none"
 status open
 
 \begin_layout Plain Layout
-Transmit buffer is a memory which contains one CAN frame to be transmitted.
- It is accessed via committing content of TX_DATA_1 to TX_DATA_20 registers
- into either TXT buffer 1 or TXT buffer 2 (two instances).
- If the buffer is full and data are committed new data are not stored in
- the buffer.
- To avoid this situation buffer status can be read.
+Transmit buffer is a RAM memory which contains one CAN frame to be transmitted.
+ It is mappped to access between TX_DATA_1 and TX_DATA_20 registers.
+ During the access, the buffer must be forbidden (TXT_X_ALLOW bit of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[sec:TX_SETTINGS]{TX
+\backslash
+textunderscore SET}
+\end_layout
+
+\end_inset
+
+) so that CAN Core will not access it.
+ After CAN frame was stored, setting TXT_X_ALLOW bit to 1 validates content
+ of the buffer and CAN Core will transmitt the frame.
+ The buffer content will be invalidated by setting TXT_X_EMPTY of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[sec:TX_STATUS]{TX
+\backslash
+textunderscore STAT}
+\end_layout
+
+\end_inset
+
+ by CAN Core.
+ This signals the CAN Frame was transmitted.
  In order to save LUTs on FPGA, it is possible to synthesize buffer which
  only supports frame length up to 8 bytes (via generic useFDsize=false).
  
@@ -18717,7 +18648,7 @@ Transmit buffer is a memory which contains one CAN frame to be transmitted.
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="12" columns="5">
+<lyxtabular version="3" rows="14" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -18808,10 +18739,9 @@ reduced
 
  buffer is synthesized it is still possible to insert frame dlc with length
  up to 64 bytes.
- However data 9 to 64 will be lost and only zeroes will loaded to CAN Core
- and then transmitted.
- Transmit buffer implementation allows synthesis of the buffer only to LUTs.
- It is intended for future to infer SRAM memory (FPGA resource).
+ However data 9 to 64 will be lost and only zeroes will be loaded to CAN
+ Core and then transmitted.
+ Transmitt buffer is synthesized into native RAM memory on FPGA.
 \end_layout
 
 \end_inset
@@ -19100,7 +19030,7 @@ Driving bus from memory registers
 \begin_inset Text
 
 \begin_layout Plain Layout
-tran_data_in
+tran_data
 \end_layout
 
 \end_inset
@@ -19109,7 +19039,7 @@ tran_data_in
 \begin_inset Text
 
 \begin_layout Plain Layout
-640
+32
 \end_layout
 
 \end_inset
@@ -19137,6 +19067,61 @@ std_logic_vector
 
 \begin_layout Plain Layout
 Data (from registers) to be stored into the buffer
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tran_addr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Address (from registers) in the buffer for 
+\begin_inset Quotes eld
+\end_inset
+
+tran_data
+\begin_inset Quotes erd
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -19194,7 +19179,7 @@ Buffer is empty
 \begin_inset Text
 
 \begin_layout Plain Layout
-txt_disc
+txt_data_ack
 \end_layout
 
 \end_inset
@@ -19212,7 +19197,7 @@ txt_disc
 \begin_inset Text
 
 \begin_layout Plain Layout
-out
+in
 \end_layout
 
 \end_inset
@@ -19230,7 +19215,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-Frame was discarded due to store into full buffer.
+Buffer can be emptied, data are loaded to CAN Core
 \end_layout
 
 \end_inset
@@ -19241,7 +19226,7 @@ Frame was discarded due to store into full buffer.
 \begin_inset Text
 
 \begin_layout Plain Layout
-txt_buffer_out
+txt_data_word
 \end_layout
 
 \end_inset
@@ -19250,7 +19235,7 @@ txt_buffer_out
 \begin_inset Text
 
 \begin_layout Plain Layout
-640
+32
 \end_layout
 
 \end_inset
@@ -19277,7 +19262,54 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Output of the buffer
+Output word from TXT Buffer to TX Arbitrator
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txt_data_addr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0-15
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Address into TXT Buffer from CAN Core
 \end_layout
 
 \end_inset
@@ -19288,7 +19320,7 @@ Output of the buffer
 \begin_inset Text
 
 \begin_layout Plain Layout
-txt_data_ack
+txt_frame_info_out
 \end_layout
 
 \end_inset
@@ -19297,7 +19329,7 @@ txt_data_ack
 \begin_inset Text
 
 \begin_layout Plain Layout
-1
+128
 \end_layout
 
 \end_inset
@@ -19306,7 +19338,7 @@ txt_data_ack
 \begin_inset Text
 
 \begin_layout Plain Layout
-in
+out
 \end_layout
 
 \end_inset
@@ -19315,7 +19347,7 @@ in
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic
+std_logic_vector
 \end_layout
 
 \end_inset
@@ -19324,7 +19356,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-Buffer can be emptied, data are loaded to CAN Core
+Metadata of Frame in TXT (frame format, DLC...)
 \end_layout
 
 \end_inset
@@ -19345,7 +19377,7 @@ Buffer can be emptied, data are loaded to CAN Core
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="18" columns="5">
+<lyxtabular version="3" rows="20" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -19579,18 +19611,15 @@ status open
 \begin_layout Plain Layout
 TX Arbitrator circuit covers the functionality of frame selection between
  TXT buffer 1 and TXT buffer 2.
- Additionally it implements the functionality of propagating a frame to
- CAN Core at a specific time.
- If external time stamp value is lower than time stamp specified in a frame,
- then a frame is propagated to CAN Core.
- If timestamps in both TXT buffers are lower than external time stamp then
- the one with the lower time stamp is propagated to CAN Core for transmission.
- When both timestamps are the same and lower than external time stamp, frame
- with lower identifier (ID_BASE&ID_EXT) is propagated to output.
- If both timestamps are equal and both identifiers are equal then frame
- from Buffer 1 is propagated.
- Additionally, circuit can be configured to forbid propagation from each
- of the TXT Buffers.
+ The frame is selected only if the value of external Timestamp is higher
+ than value in TX_DATA_2 and TX_DATA_3 words of the buffer.
+ Thus the Frame is only selected at the moment when external timestamp has
+ elapsed the reuqired transmission time.
+ The circuit combinationally propagates the metadata about the frame (Frame
+ format, DLC, Frame type, Identifier) on the output.
+ The frame is selected combinationally and once the CAN Core acknowledges
+ that metadata were stored in TranBuffer, it waits until the frame transmission
+ has finished and commands the TXT Buffer to erase the actual frame.
 \end_layout
 
 \end_inset
@@ -19887,7 +19916,7 @@ Driving bus from memory registers
 \begin_inset Text
 
 \begin_layout Plain Layout
-txt1_buffer_in
+txt1buf_info_in
 \end_layout
 
 \end_inset
@@ -19896,7 +19925,7 @@ txt1_buffer_in
 \begin_inset Text
 
 \begin_layout Plain Layout
-640
+128
 \end_layout
 
 \end_inset
@@ -19923,7 +19952,54 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Input Frame from Buffer 1
+Input Frame Metadata from Buffer 1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txt1buf_data_in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Input Frame Data from Buffer 1
 \end_layout
 
 \end_inset
@@ -20028,7 +20104,7 @@ Acknowledge to Buffer 1
 \begin_inset Text
 
 \begin_layout Plain Layout
-txt2_buffer_in
+txt2buf_info_in
 \end_layout
 
 \end_inset
@@ -20037,7 +20113,7 @@ txt2_buffer_in
 \begin_inset Text
 
 \begin_layout Plain Layout
-640
+128
 \end_layout
 
 \end_inset
@@ -20064,7 +20140,54 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Input Frame from Buffer 2
+Input Frame Metadata from Buffer 1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+txt2buf_data_in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+32
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Input Frame Data from Buffer 1
 \end_layout
 
 \end_inset
@@ -20169,7 +20292,7 @@ Acknowledge to Buffer 2
 \begin_inset Text
 
 \begin_layout Plain Layout
-tran_data_out
+tran_data_word_out
 \end_layout
 
 \end_inset
@@ -20178,7 +20301,7 @@ tran_data_out
 \begin_inset Text
 
 \begin_layout Plain Layout
-512
+32
 \end_layout
 
 \end_inset
@@ -20269,7 +20392,7 @@ Identifier to be transmitted
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="10" columns="5">
+<lyxtabular version="3" rows="11" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -20696,6 +20819,53 @@ std_logic
 
 \begin_layout Plain Layout
 Frame is loaded in the CAN Core
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tran_valid
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame was succesfully transmitted
 \end_layout
 
 \end_inset
@@ -33219,7 +33389,19 @@ Type: Read / Write
 The bit value for acceptance filters.
  Filters A,B,C are available.
  The identifier format is same as transmitted and received identifier format.
- BASE Identifier is 11 LSB, Identifier extension is on bits 28-12!
+ BASE Identifier is 11 LSB, Identifier extension is on bits 28-12! Note
+ that filter support is available by default but it can be left out from
+ synthesis (to save logic) by setting 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filt=false
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If the particular filter is not supported, writes to this register have
+ no effect and read will return all zeroes.
 \begin_inset Separator latexpar
 \end_inset
 
@@ -33364,6 +33546,18 @@ Lower threshold of the Range filter.
  However, actual decimal value of the Identifier is that BASE identifier
  is at MSB bits and 18 LSB bits is identifier extension.
  The unsigned binary value of the identifier must be written into this register!
+ Note that filter support is available by default but it can be left out
+ from synthesis (to save logic) by setting 
+\begin_inset Quotes eld
+\end_inset
+
+sup_ran=false
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If the particular filter is not supported, writes to this register have
+ no effect and read will return all zeroes.
 \begin_inset Separator latexpar
 \end_inset
 
@@ -33506,7 +33700,18 @@ Upper threshold of the Range filter.
  However, actual decimal value of identifier is that BASE Identifier is
  at MSB bits and 18 LSB bits is identifier extension.
  The unsigned binary value of actual value of identifier must be written
- into this register!
+ into this register! Note that filter support is available by default but
+ it can be left out from synthesis (to save logic) by setting 
+\begin_inset Quotes eld
+\end_inset
+
+sup_ran=false
+\begin_inset Quotes erd
+\end_inset
+
+.
+ If the particular filter is not supported, writes to this register have
+ no effect and read will return all zeroes.
 \begin_inset Separator latexpar
 \end_inset
 

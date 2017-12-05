@@ -37,6 +37,10 @@ use work.ID_transfer.all;
 --                in unit test simulator was throwing out milions of warnings!
 --    23.6.2016   Added less or equal to the case when both timestamps and both identifiers are equal.
 --                Thisway identifier from Buffer 1 instead of Buffer 2 is propagated!
+--    4.12.2017   Added support for split "Data" and "Metadata" into TXT Buffer. Added state machine
+--                "tx_arb_fsm". The state machine waits for CAN Core to finish the transmission before
+--                signalling the TXT Buffer to erase. Output data word is selected based on stored 
+--                value of "mess_src" from the time of decision between TXT1 and TXT2 buffer. 
 --
 -------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -47,23 +51,30 @@ use work.ID_transfer.all;
 --  for CAN Core when the time Stamp of message is higher than actual timestamp! This realises the func- 
 --  tionality of sending the message in exact time! When both timeStamp are equal and then message with  
 --  lower identifier is selected!                                                                        
---                                                                                                               
---  Both input buffers may be set to "not allowed" by driving bus.                                       
+--                                                                                                                                                  
 -----------------------------------------------------------------------------------------------------------
 
 entity txArbitrator is 
   port( 
     ------------------------
+    -- Clock and reset    
+    ------------------------
+    signal clk_sys                :in  std_logic;
+    signal res_n                  :in  std_logic;
+    
+    ------------------------
     --TX Buffers interface--
     ------------------------
     --TXT Buffer 1
-    signal txt1_buffer_in         :in  std_logic_vector(639 downto 0);     --Time TX1 buffer input
+    signal txt1buf_info_in        :in  std_logic_vector(639 downto 512);     --Time TX1 buffer input
+    signal txt1buf_data_in        :in  std_logic_vector(31 downto 0);       --Time TX1 buffer input
     signal txt1_buffer_empty      :in  std_logic;                          --No message in Time TX Buffer
     signal txt1_buffer_ack        :out std_logic;                          --Time buffer acknowledge that 
                                                                            -- message can be erased
     
     --TXT Buffer 2
-    signal txt2_buffer_in         :in  std_logic_vector(639 downto 0);     --Time TX1 buffer input
+    signal txt2buf_info_in        :in  std_logic_vector(639 downto 512);   --Time TX2 buffer input
+    signal txt2buf_data_in        :in  std_logic_vector(31 downto 0);      --Time TX2 buffer input
     signal txt2_buffer_empty      :in  std_logic;                          --No message in Time TX Buffer
     signal txt2_buffer_ack        :out std_logic;                          --Time buffer acknowledge that 
                                                                            -- message can be erased
@@ -71,7 +82,7 @@ entity txArbitrator is
     -----------------------
     --CAN Core Interface---
     -----------------------
-    signal tran_data_out          :out std_logic_vector(511 downto 0);    --TX Message data
+    signal tran_data_word_out     :out std_logic_vector(31 downto 0);    --TX Message data
     signal tran_ident_out         :out std_logic_vector(28 downto 0);     --TX Identifier 
     signal tran_dlc_out           :out std_logic_vector(3 downto 0);      --TX Data length code
     signal tran_is_rtr            :out std_logic;                         --TX is remote frame
@@ -80,9 +91,14 @@ entity txArbitrator is
     signal tran_brs_out           :out std_logic;                         --Bit rate shift for CAN FD frames
     signal tran_frame_valid_out   :out std_logic;                         --Signal for CAN Core that frame on the 
                                                                           -- output is valid and can be stored for transmitting
+    -- Acknowledge from CAN core that frame transmission started and 
+    -- that frame informations were stored
+    signal tran_data_ack          :in  std_logic; 
     
-    signal tran_data_ack          :in  std_logic;                         --Acknowledge from CAN core that acutal message was 
-                                                                          -- stored into internal buffer for transmitting   
+    -- Acknowledge that CAN core that frame was succesfully transmitted
+    -- and can be erased.                         
+    signal tran_valid             :in  std_logic; 
+    
     ---------------------
     --Driving interface--
     ---------------------
@@ -96,6 +112,7 @@ entity txArbitrator is
   --------------------
   signal valid_join               :std_logic_vector(1 downto 0);          --Joined signal for valid signals from buffers
   signal mess_src                 :std_logic;                             --Message source (0-normal buffer, 1-Time based buffer)
+  signal mess_src_reg             :std_logic;                             -- Message source of the actually transmitted frame
   
   -------------------
   --Internal aliases-
@@ -136,6 +153,8 @@ entity txArbitrator is
   signal mt1_lt_ts                 :boolean;
   signal mt2_lt_ts                 :boolean;
   
+  --State machine for following when the frame was already transmitted!
+  signal tx_arb_fsm                 :tx_arb_state_type;
   
 end entity;
 
@@ -151,12 +170,12 @@ begin
                                ((not txt2_buffer_empty) and (drv_allow_txt2)); 
   
   --Transmit time of TXT Buffer messages (from both buffers)
-  mess_time1                <= txt1_buffer_in(TXT_TSUPP_HIGH downto TXT_TSLOW_LOW);
-  mess_time2                <= txt2_buffer_in(TXT_TSUPP_HIGH downto TXT_TSLOW_LOW); 
+  mess_time1                <= txt1buf_info_in(TXT_TSUPP_HIGH downto TXT_TSLOW_LOW);
+  mess_time2                <= txt2buf_info_in(TXT_TSUPP_HIGH downto TXT_TSLOW_LOW); 
   
   --Transmit identifiers
-  ident1                    <= txt1_buffer_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW);
-  ident2                    <= txt2_buffer_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW);
+  ident1                    <= txt1buf_info_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW);
+  ident2                    <= txt2buf_info_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW);
   
   --Comparator methods for 64 bit vectors
    mt1_lt_mt2 <= less_than(mess_time1,mess_time2);
@@ -235,7 +254,7 @@ begin
 	
 	----------------------------------------------------------------------
   ----------------------------------------------------------------------
-  ----Multiplexing data from buffers into message lines to CAN Core ----
+  ---- Multiplexing data from buffers into message lines to CAN Core ---
   ----------------------------------------------------------------------
   ----------------------------------------------------------------------
   
@@ -243,23 +262,23 @@ begin
   --Frame format word--
   ---------------------
   --Data length Code
-  tran_dlc_out              <= txt1_buffer_in(611 downto 608)   when mess_src='0' else 
-                               txt2_buffer_in(611 downto 608);
+  tran_dlc_out              <= txt1buf_info_in(611 downto 608)   when mess_src='0' else 
+                               txt2buf_info_in(611 downto 608);
   --RTR Frame                       
-  tran_is_rtr               <= txt1_buffer_in(613)              when mess_src='0' else 
-                               txt2_buffer_in(613);
+  tran_is_rtr               <= txt1buf_info_in(613)              when mess_src='0' else 
+                               txt2buf_info_in(613);
   --Identifier Type
-  tran_ident_type_out       <= txt1_buffer_in(614)              when mess_src='0' else 
-                               txt2_buffer_in(614);
+  tran_ident_type_out       <= txt1buf_info_in(614)              when mess_src='0' else 
+                               txt2buf_info_in(614);
   --Frame Type
-  tran_frame_type_out       <= txt1_buffer_in(615)              when mess_src='0' else
-                               txt2_buffer_in(615);
+  tran_frame_type_out       <= txt1buf_info_in(615)              when mess_src='0' else
+                               txt2buf_info_in(615);
   --Bit rate shift
-  tran_brs_out              <= txt1_buffer_in(617)              when mess_src='0' else 
-                               txt2_buffer_in(617);
+  tran_brs_out              <= txt1buf_info_in(617)              when mess_src='0' else 
+                               txt2buf_info_in(617);
                                
   -----------------------------------------------------------------------                             
-  --NOTE: TimeStamp Words skipped since timeStamp prioritization is 
+  --NOTE: TimeStamp Words skipped since Timestamp prioritization is 
   --       already achieved by comparing actual and message timestamps
   --       inside TxArbitrator.
   -----------------------------------------------------------------------
@@ -267,18 +286,70 @@ begin
   ----------------------------------
   --Identifier word and data words--
   ----------------------------------
-  tran_ident_out            <= txt1_buffer_in(540 downto 512)   when mess_src='0' else 
-                               txt2_buffer_in(540 downto 512);
-  tran_data_out             <= txt1_buffer_in(511 downto 0)     when mess_src='0' else 
-                               txt2_buffer_in(511 downto 0);
+  tran_ident_out            <= txt1buf_info_in(540 downto 512) when mess_src='0' else 
+                               txt2buf_info_in(540 downto 512);
   
-  -------------------------------------------------------------
-  --Confirmation for TX or TXT Buffer that message was stored--
-  -- the in CAN Core and it can be erased from TXT buffer    --
-  -------------------------------------------------------------
-  txt1_buffer_ack           <= '1' when ((tran_data_ack='1') AND (mess_src='0')) else 
-                               '0';
-  txt2_buffer_ack           <= '1' when ((tran_data_ack='1') AND (mess_src='1')) else 
-                               '0'; 
+  --Data which goes to the CAN Core has to be decided on message source
+  -- which was sampled when frame info was stored into Core. This way even if
+  -- the other buffer is modified, the data source remain correct for the whole
+  -- duration of transmission!
+  tran_data_word_out <=  txt1buf_data_in when mess_src_reg='0' else
+                         txt2buf_data_in when mess_src_reg='1' else
+                         (OTHERS => '0');
+  
+  --------------------------------------------------------------------------------
+  -- State machine for deciding whether the frame transmission finished and
+  -- it can be already erased.
+  --------------------------------------------------------------------------------
+  proc_txarb_fsm:process(clk_sys,res_n)
+  begin
+    if (res_n=ACT_RESET) then
+      tx_arb_fsm <= arb_idle;
+      mess_src_reg <= '0';
+    elsif rising_edge(clk_sys) then
+        
+        tx_arb_fsm <= tx_arb_fsm;
+        mess_src_reg <= mess_src_reg;
+        
+        --By default we dont give acknowledge to any buffer
+        txt1_buffer_ack <= '0';
+        txt2_buffer_ack <= '0';
+        
+      case tx_arb_fsm is 
+      
+      --------------------------------------------------------------------------------
+      -- Waiting for Protocol control to give command that it stored the 4 words with
+      -- information and start the transmission...
+      --------------------------------------------------------------------------------
+      when arb_idle =>
+        if (tran_data_ack='1') then
+          tx_arb_fsm <= arb_trans;
+          mess_src_reg <= mess_src; -- Store when frame info is loaded to the Core
+        end if;
+        
+      --------------------------------------------------------------------------------
+      -- Waiting for signal that frame transmission ended succesfully and buffer can
+      -- be erased!
+      --------------------------------------------------------------------------------
+      when arb_trans =>
+        if (tran_valid = '1')then
+          tx_arb_fsm <= arb_idle;
+          
+          if (mess_src_reg = '0') then 
+            txt1_buffer_ack <= '1';
+          elsif (mess_src_reg = '1') then
+            txt2_buffer_ack <= '1';
+          else
+            txt1_buffer_ack <= '0';
+            txt2_buffer_ack <= '0';
+          end if;
+          
+        end if;
+      when others =>
+        report "Error - Unknow TX Arbitrator state" severity error;
+      end case;
+      
+    end if;
+  end process;
   
 end architecture;

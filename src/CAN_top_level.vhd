@@ -145,15 +145,18 @@ entity CAN_top_level is
   signal log_state_out        :     logger_state_type;
     
   --TX Arbitrator <--> TX Buffer, TXT Buffer
-  signal txt1_buffer_in       :     std_logic_vector(639 downto 0); --Time TX buffer input
   signal txt1_buffer_ack      :     std_logic; --Time buffer acknowledge that message can be erased
   signal txt1_buffer_empty    :     std_logic; --No message in Time TX Buffer
-  signal txt2_buffer_in       :     std_logic_vector(639 downto 0); --Time TX buffer input
   signal txt2_buffer_ack      :     std_logic; --Time buffer acknowledge that message can be erased
   signal txt2_buffer_empty    :     std_logic; --No message in Time TX Buffer
   
+  signal txt1_data_word       :     std_logic_vector(31 downto 0);
+  signal txt1_frame_info      :     std_logic_vector(127 downto 0);
+  signal txt2_data_word       :     std_logic_vector(31 downto 0);
+  signal txt2_frame_info      :     std_logic_vector(127 downto 0);
+  
   --TX Arbitrator <--> CAN Core
-  signal tran_data_out        :     std_logic_vector(511 downto 0); --TX Message data
+  signal tran_data_out        :     std_logic_vector(31 downto 0); --TX Message data
   signal tran_ident_out       :     std_logic_vector(28 downto 0); --TX Identifier 
   signal tran_dlc_out         :     std_logic_vector(3 downto 0); --TX Data length code
   signal tran_is_rtr          :     std_logic; --TX is remote frame
@@ -162,6 +165,7 @@ entity CAN_top_level is
   signal tran_brs_out         :     std_logic; --Bit rate shift for CAN FD frames
   signal tran_frame_valid_out :     std_logic; --Signal for CAN Core that frame on the output is valid and can be stored for transmitting
   signal tran_data_ack        :     std_logic; --Acknowledge from CAN core that acutal message was stored into internal buffer for transmitting
+  signal txt_buf_ptr          :     natural range 0 to 15; --Pointer to TXT buffer memory  
   
   --RX Buffer <--> CAN Core
   signal rec_ident_in         :     std_logic_vector(28 downto 0); --Message Identifier
@@ -354,8 +358,10 @@ begin
        tran_data          =>  tran_data,
        tran_addr          =>  tran_addr,
        txt_empty          =>  txt1_buffer_empty,
-       txt_buffer_out     =>  txt1_buffer_in,
-       txt_data_ack       =>  txt1_buffer_ack 
+       txt_data_ack       =>  txt1_buffer_ack,
+       txt_data_word      =>  txt1_data_word,
+       txt_data_addr      =>  txt_buf_ptr,
+       txt_frame_info_out =>  txt1_frame_info 
       );  
 
   txt2_buf_comp:txtBuffer
@@ -370,19 +376,28 @@ begin
        tran_data          =>  tran_data,
        tran_addr          =>  tran_addr,
        txt_empty          =>  txt2_buffer_empty,
-       txt_buffer_out     =>  txt2_buffer_in,
-       txt_data_ack       =>  txt2_buffer_ack   
+       txt_data_ack       =>  txt2_buffer_ack,
+       txt_data_word      =>  txt2_data_word,
+       txt_data_addr      =>  txt_buf_ptr,
+       txt_frame_info_out =>  txt2_frame_info
       );                
   
   tx_arb_comp:txArbitrator
   port map( 
-     txt1_buffer_in       =>  txt1_buffer_in,
+     clk_sys              =>  clk_sys,
+     res_n                =>  res_n,
+
+     txt1buf_info_in      =>  txt1_frame_info,
+     txt1buf_data_in      =>  txt1_data_word,
      txt1_buffer_ack      =>  txt1_buffer_ack,
      txt1_buffer_empty    =>  txt1_buffer_empty,
-     txt2_buffer_in       =>  txt2_buffer_in,
+     
+     txt2buf_info_in      =>  txt2_frame_info,
+     txt2buf_data_in      =>  txt2_data_word,
      txt2_buffer_empty    =>  txt2_buffer_empty,
      txt2_buffer_ack      =>  txt2_buffer_ack,
-     tran_data_out        =>  tran_data_out,
+     
+     tran_data_word_out   =>  tran_data_out,
      tran_ident_out       =>  tran_ident_out,
      tran_dlc_out         =>  tran_dlc_out,
      tran_is_rtr          =>  tran_is_rtr,
@@ -391,6 +406,8 @@ begin
      tran_brs_out         =>  tran_brs_out,
      tran_frame_valid_out =>  tran_frame_valid_out,
      tran_data_ack        =>  tran_data_ack,
+     tran_valid           =>  tx_finished,
+     
      drv_bus              =>  drv_bus,
      timestamp            =>  timestamp
   );
@@ -451,6 +468,7 @@ begin
      tran_brs_in          =>  tran_brs_out,
      tran_frame_valid_in  =>  tran_frame_valid_out,
      tran_data_ack_out    =>  tran_data_ack,
+     txt_buf_ptr          =>  txt_buf_ptr,
      rec_ident_out        =>  rec_ident_in,
      rec_dlc_out          =>  rec_dlc_in,
      rec_ident_type_out   =>  rec_ident_type_in,

@@ -228,7 +228,12 @@ package CANconstants is
     ready,
     running
   ); 
-    
+  
+  -- TX arbitrator state type
+  type tx_arb_state_type is (
+    arb_idle,
+    arb_trans
+  );
   
   ----------------------------
   --Driving bus signal ranges-
