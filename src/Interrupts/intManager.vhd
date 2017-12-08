@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -29,27 +29,31 @@ USE WORK.CANconstants.ALL;
 -- Revision History:
 --
 --    July 2015   Created file
---    4.6.2016    Interrupt active, interrupt length added to keep interrupt active for dedicated amount of
---                clock cycles! Each interrupt which comes in between is stored into interrupt mask but not
+--    4.6.2016    Interrupt active, interrupt length added to keep interrupt ac-
+--                tive for dedicated amount of clock cycles! Each interrupt 
+--                which comes in between is stored into interrupt mask but not
 --                fired as  separate interrupt!!! 
---    6.6.2016    Added edge detection to interrupt sources! This is to make sure that one long active inte
---                rupt source will fire only one interrupt and not fire interrupts consecutively! THen it
---                could happend that interrupt handler is interrupted by another interrupt from the same
---                source signal representing same event... Fast CPU might get cycled in many interrupt hand
---                ler calls. 
+--    6.6.2016    Added edge detection to interrupt sources! This is to be sure
+--                that one long active interrupt source will fire only one in-
+--                terrupt and not fire interrupts consecutively! THen it could
+--                happend that interrupt handler is interrupted by another in-
+--                terrupt from the same source signal representing same event...
+--                Fast CPU might get cycled in many interrupt handler calls. 
 --    27.6.2016   Added bug fix of RX Buffer full interrupt
 --
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Provides interrupt on int_out output. Interrupt sources are configurable from drv_bus. Interrupt vector   
---  provides sources of last interrupts. It is erased from driving bus by  drv_int_vect_erase               
--------------------------------------------------------------------------------------------------------------  
+--  Provides interrupt on int_out output. Interrupt sources are configurable
+--  from drv_bus. Interrupt vector provides sources of last interrupts. It is 
+--  erased from driving bus by  drv_int_vect_erase
+--------------------------------------------------------------------------------
 
 entity intManager is
   GENERIC(
-    constant int_length:natural range 0 to 10:=5 --Lenght in clock cycles how long will interrupt stay active
+		--Length in clock cycles how long will interrupt stay active
+    constant int_length:natural range 0 to 10:=5
     );
   PORT(
     --------------------------
@@ -61,16 +65,29 @@ entity intManager is
     ---------------------
     --Interrupt sources -
     ---------------------
-    signal error_valid            :in   std_logic; --Valid Error appeared for interrupt
-    signal error_passive_changed  :in   std_logic; --Error pasive /Error acitve functionality changed
-    signal error_warning_limit    :in   std_logic; --Error warning limit reached
-    signal arbitration_lost       :in   std_logic; --Arbitration was lost input
-    signal wake_up_valid          :in   std_logic; --Wake up appeared
-    signal tx_finished            :in   std_logic; --Message stored in CAN Core was sucessfully transmitted
-    signal br_shifted             :in   std_logic; --Bit Rate Was Shifted
+    --Valid Error appeared for interrupt
+    signal error_valid            :in   std_logic;
+    
+    --Error pasive /Error acitve functionality changed
+    signal error_passive_changed  :in   std_logic;
+    
+    --Error warning limit reached
+    signal error_warning_limit    :in   std_logic;
+    
+    --Arbitration was lost input
+    signal arbitration_lost       :in   std_logic;
+    
+    --Wake up appeared
+    signal wake_up_valid          :in   std_logic;
+    
+    --Message stored in CAN Core was sucessfully transmitted
+    signal tx_finished            :in   std_logic;
+    
+    --Bit Rate Was Shifted
+    signal br_shifted             :in   std_logic;
     
     --Rx Buffer
-    signal rx_message_disc        :in   std_logic; --Income message was discarded
+    signal rx_message_disc        :in   std_logic; --Income frame was discarded
     signal rec_message_valid      :in   std_logic; --Message recieved!
     --Note : use the "out_ident_valid" signal of messageFilters. Therefore only
     --interrupt is started for signals which pass income filters
@@ -95,19 +112,44 @@ entity intManager is
   -----------------------
   --Driving bus aliases--
   -----------------------
-  signal drv_bus_err_int_ena      :     std_logic; --Bus Error interrupt enable
-  signal drv_arb_lst_int_ena      :     std_logic; --Arbitrarion lost interrupt enable
-  signal drv_err_pas_int_ena      :     std_logic; --Error state changed interrupt enable
-  signal drv_wake_int_ena         :     std_logic; --Wake up interrupt enable
-  signal drv_dov_int_ena          :     std_logic; --Data OverRun interrupt enable
-  signal drv_err_war_int_ena      :     std_logic; --Error warning limit reached
-  signal drv_tx_int_ena           :     std_logic; --Frame sucessfully transcieved
-  signal drv_rx_int_ena           :     std_logic; --Frame sucessfully recieved
-  signal drv_log_fin_int_ena      :     std_logic; --Event logging finished interrupt enable
-  signal drv_rx_full_int_ena      :     std_logic; --Recieve buffer full interrupt enable
-  signal drv_brs_int_ena          :     std_logic; --Bit Rate Shift interrupt enable  
+  
+  --Bus Error interrupt enable
+  signal drv_bus_err_int_ena      :     std_logic;
+  
+  --Arbitrarion lost interrupt enable
+  signal drv_arb_lst_int_ena      :     std_logic;
+  
+  --Error state changed interrupt enable
+  signal drv_err_pas_int_ena      :     std_logic;
+  
+  --Wake up interrupt enable
+  signal drv_wake_int_ena         :     std_logic;
+  
+  --Data OverRun interrupt enable
+  signal drv_dov_int_ena          :     std_logic;
+  
+  --Error warning limit reached
+  signal drv_err_war_int_ena      :     std_logic;
+  
+  --Frame sucessfully transcieved
+  signal drv_tx_int_ena           :     std_logic;
+  
+  --Frame sucessfully recieved
+  signal drv_rx_int_ena           :     std_logic;
+  
+  --Event logging finished interrupt enable
+  signal drv_log_fin_int_ena      :     std_logic;
+  
+  --Recieve buffer full interrupt enable
+  signal drv_rx_full_int_ena      :     std_logic;
+  
+  --Bit Rate Shift interrupt enable  
+  signal drv_brs_int_ena          :     std_logic;
 
-  signal drv_int_vect_erase       :     std_logic; --Logic 1 erases interrupt vector
+	--Logic 1 erases interrupt vector
+  signal drv_int_vect_erase       :     std_logic;
+  
+  -- Erase previous vector value
   signal drv_int_vect_erase_prev  :     std_logic;
   
   ----------------------------------
@@ -116,14 +158,17 @@ entity intManager is
   constant int_vector_length      :     natural:=11;
   
   --Interrupt vector register
-  signal int_vector_reg           :     std_logic_vector(int_vector_length-1 downto 0);
+  signal int_vector_reg           : 		std_logic_vector(int_vector_length-1 
+																												 downto 0);
   
   --Interrupt register Vector mask 
-  signal int_mask                 :     std_logic_vector(int_vector_length-1 downto 0);
+  signal int_mask                 :     std_logic_vector(int_vector_length-1
+																												 downto 0);
   
   --Registered value of interrupt
   signal int_out_reg              :     std_logic; 
-  constant zero_mask              :     std_logic_vector(int_vector_length-1 downto 0):=(OTHERS=>'0');
+  constant zero_mask              :     std_logic_vector(int_vector_length-1
+																												 downto 0):=(OTHERS=>'0');
   
   signal interrupt_active         :     std_logic;
   signal interrupt_counter        :     natural;
@@ -131,17 +176,37 @@ entity intManager is
   -------------------------------------------------
   --Registers for edge detection on source signals
   -------------------------------------------------
-    signal error_valid_r              :   std_logic; --Valid Error appeared for interrupt
-    signal error_passive_changed_r    :   std_logic; --Error pasive /Error acitve functionality changed
-    signal error_warning_limit_r      :   std_logic; --Error warning limit reached
-    signal arbitration_lost_r         :   std_logic; --Arbitration was lost input
-    signal wake_up_valid_r            :   std_logic; --Wake up appeared
-    signal tx_finished_r              :   std_logic; --Message stored in CAN Core was sucessfully transmitted
-    signal br_shifted_r               :   std_logic; --Bit Rate Was Shifted
-    signal rx_message_disc_r          :   std_logic; --Income message was discarded
-    signal rec_message_valid_r        :   std_logic; --Message recieved!
-    signal rx_full_r                  :   std_logic;
-    signal loger_finished_r           :   std_logic;  --Event logging finsihed
+  
+  --Valid Error appeared for interrupt
+  signal error_valid_r              :   std_logic;
+  
+  --Error pasive /Error acitve functionality changed
+  signal error_passive_changed_r    :   std_logic;
+  
+  --Error warning limit reached
+  signal error_warning_limit_r      :   std_logic;
+  
+  --Arbitration was lost input
+  signal arbitration_lost_r         :   std_logic;
+  
+  --Wake up appeared
+  signal wake_up_valid_r            :   std_logic;
+  
+  --Message stored in CAN Core was sucessfully transmitted
+  signal tx_finished_r              :   std_logic;
+  
+  --Bit Rate Was Shifted
+  signal br_shifted_r               :   std_logic;
+  
+  --Income message was discarded
+  signal rx_message_disc_r          :   std_logic;
+  
+  --Message recieved!
+  signal rec_message_valid_r        :   std_logic;
+  signal rx_full_r                  :   std_logic;
+  
+  --Event logging finsihed
+  signal loger_finished_r           :   std_logic;
   
   
 end entity;
@@ -168,18 +233,39 @@ begin
   int_out                     <=  int_out_reg;
   
   --Interrupt register masking and enabling
-  int_mask(BUS_ERR_INT)       <=  drv_bus_err_int_ena   and error_valid             and (not error_valid_r);
-  int_mask(ARB_LST_INT)       <=  drv_arb_lst_int_ena   and arbitration_lost        and (not arbitration_lost_r);
-  int_mask(ERR_PAS_INT)       <=  drv_err_pas_int_ena   and error_passive_changed   and (not error_passive_changed_r);
-  int_mask(WAKE_INT)          <=  drv_wake_int_ena      and wake_up_valid           and (not wake_up_valid_r);
-  int_mask(DOV_INT)           <=  drv_dov_int_ena       and rx_message_disc         and (not rx_message_disc_r);
-  int_mask(ERR_WAR_INT)       <=  drv_err_war_int_ena   and error_warning_limit     and (not error_warning_limit_r);
-  int_mask(TX_INT)            <=  drv_tx_int_ena        and tx_finished             and (not tx_finished_r);
-  int_mask(RX_INT)            <=  drv_rx_int_ena        and rec_message_valid       and (not rec_message_valid_r);
-  int_mask(LOG_FIN_INT)       <=  drv_log_fin_int_ena   and loger_finished          and (not loger_finished_r);
+  int_mask(BUS_ERR_INT)       <=  drv_bus_err_int_ena   and 
+																	error_valid           and 
+																	(not error_valid_r);
+  int_mask(ARB_LST_INT)       <=  drv_arb_lst_int_ena   and 
+																	arbitration_lost      and 
+																	(not arbitration_lost_r);
+  int_mask(ERR_PAS_INT)       <=  drv_err_pas_int_ena   and 
+																	error_passive_changed and 
+																	(not error_passive_changed_r);
+  int_mask(WAKE_INT)          <=  drv_wake_int_ena      and 
+																	wake_up_valid         and 
+																	(not wake_up_valid_r);
+  int_mask(DOV_INT)           <=  drv_dov_int_ena       and 
+																	rx_message_disc       and 
+																	(not rx_message_disc_r);
+  int_mask(ERR_WAR_INT)       <=  drv_err_war_int_ena   and 
+																	error_warning_limit   and 
+																	(not error_warning_limit_r);
+  int_mask(TX_INT)            <=  drv_tx_int_ena        and 
+																	tx_finished           and 
+																	(not tx_finished_r);
+  int_mask(RX_INT)            <=  drv_rx_int_ena        and 
+																	rec_message_valid     and 
+																	(not rec_message_valid_r);
+  int_mask(LOG_FIN_INT)       <=  drv_log_fin_int_ena   and 
+																	loger_finished        and 
+																	(not loger_finished_r);
   
-  int_mask(RX_FULL_INT)       <=  drv_rx_full_int_ena   and rx_full and (not rx_full_r);
-  --Note: also rec_message_valid has to be compared otherwise interrupt would start always when the buffer is full 
+  int_mask(RX_FULL_INT)       <=  drv_rx_full_int_ena   and 
+																	rx_full and (not rx_full_r);
+  
+  --Note: also rec_message_valid has to be compared otherwise interrupt 
+  --would start always when the buffer is full 
   int_mask(BRS_INT)           <=  drv_brs_int_ena       and br_shifted; 
   
   int_out_reg                 <= '1' when interrupt_active = '1' else '0';
