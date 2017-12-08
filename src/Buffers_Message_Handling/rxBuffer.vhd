@@ -4,7 +4,7 @@ use IEEE.numeric_std.ALL;
 use ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -29,55 +29,73 @@ use work.CANconstants.all;
 -- Revision History:
 --
 --    July 2015   Created file
---    18.12.2015  RX Buffer inference from Flip-flops changed to native SRAM memory on FPGA. Dual port memory used for
---                this purpose (sync write and async read). Memory is automatically recongized by sythetizer. Erase 
---                of buffer needed to be removed, because SRAM cant be erased all at once, due to this SRAM wasnt
---                inferred before. To achieve "erase like" behaviour simple workaround was implemented. Additional
---                vector "memory_valid" is kept. This vector is erased at once (FF based) and when write into
---                memory is performed this bit is set to logic '1' for appropriate field. Async read returns data from
---                memory when valid bit is set, and all zeroes if it is not. Due to this, from user point of view
---                memory acts as erased after initialization.
---                Due to this  "RAM initialiser" IP function or State machine does not have to be used. Memory is thus
---                available directly after async reset.
---                Disadvantage is that one memory vector of the same size as memory need to be kept!
---    2.6.2016    Added data_size set to 0 at start time to avoid possible storing of invalid frame
---    3.6.2016    1.Bug fix of mem_free variable. Variable was decreased by frame size at arrival of new frame! This is
---                  not expected behaviour since it takes up to 20 clock cycles to store the frame and mem_free is now
---                  reduced by one with each word stored!
---                2.Detected and fixed incorrect behaviour during data overrun! Wrong setting of copy_counter caused
---                  part of the frame to be stored during data_overrun
---    21.6.2016   Added limit of 512 to the RX Buffer size! Thisway it is compliant with memory map width of readable size
---    22.6.2016   1.Added RTR frame detection. Any RTR frame is recieved no data words are stored!!!
+--    18.12.2015  RX Buffer inference from Flip-flops changed to native SRAM me-
+--                mory on FPGA. Dual port memory used for this purpose (sync 
+--                write and async read). Memory is automatically recongized by
+--                synthetizer. Erase of buffer needed to be removed, because 
+--                SRAM cant be erased all at once, due to this SRAM wasnt in-
+--                ferred before. To achieve "erase like" behaviour simple work-
+--                around was implemented. Additional vector "memory_valid" is 
+--                kept. This vector is erased at once (FF based) and when write
+--                into memory is performed this bit is set to logic '1' for app-
+--                ropriate field. Async read returns data from memory when valid
+--                bit is set, and all zeroes if it is not. Due to this, from user
+--                point of view memory acts as erased after initialization.
+--                Due to this  "RAM initialiser" IP function or State machine
+--                does not have to be used. Memory is thus available directly
+--                after async reset.
+--                Disadvantage is that one memory vector of the same size as 
+--                memory need to be kept!
+--    2.6.2016    Added data_size set to 0 at start time to avoid possible 
+--                storing of invalid frame
+--    3.6.2016    1.Bug fix of mem_free variable. Variable was decreased by frame
+--                  size at arrival of new frame! This is not expected behaviour
+--                  since it takes up to 20 clock cycles to store the frame and 
+--                  mem_free is now reduced by one with each word stored!
+--                2.Detected and fixed incorrect behaviour during data overrun! 
+--                  Wrong setting of copy_counter caused part of the frame to be
+--                  stored during data_overrun
+--    21.6.2016   Added limit of 512 to the RX Buffer size! Thisway it is comp-
+--                liant with memory map width of readable size
+--    22.6.2016   1.Added RTR frame detection. Any RTR frame is recieved no data
+--                  words are stored!!!
 --                2.Added rec_esi bit stored into the buffer!
---    15.7.2016    Changed handling of moving to  next word in RX buffer RX_DATA. Falling edge detection removed
---                Now memory registers set drv_read_start only for ONE clock cycle per each access. So it is enough to
---                check whether signal is active! Thisway it is not necessary to add empty clock cycles between consecutive
+--    15.7.2016   Changed handling of moving to next word in RX buffer RX_DATA.
+--                Falling edge detection removed Now memory registers set 
+--                "drv_read_start" only for ONE clock cycle per each access. So
+--                it is enough to check whether signal is active! Thisway it is
+--                not necessary to add empty clock cycles between consecutive
 --                reads from RX_DATA register!
---    29.11.2017  Changed hadnling of received data. "rec_data_in" replaced by "rec_dram_word" and "rec_dram_addr" as part of
---                resource optimizations. Data are not available in parallel at input of the RX buffer but addressed in
---                internal RAM of Protocol controller.
+--    29.11.2017  Changed hadnling of received data. "rec_data_in" replaced by 
+--                "rec_dram_word" and "rec_dram_addr" as part of resource opti-
+--                mizations. Data are not available in parallel at input of the
+--                RX buffer but addressed in internal RAM of Protocol control.
 --
------------------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Recieve buffer for messages. RAM memory type of N*32 bit words. Reading of data from registers done  --
---  word by word. In registers reading implemented in the way that one read moves to the next word.      --
---  Storing the message into the buffer is sequential operation started with valid rec_message_valid for --
---  one clock cycle. In following up to 20 clock cycles recieved data has to be valid to be fully stored --
+--  Recieve buffer for messages. RAM memory type of N*32 bit words. Reading of 
+--  data from registers done word by word. In registers reading implemented in 
+--  the way that one read moves to the next word. Storing the message into the
+--  buffer is sequential operation started with valid rec_message_valid for one
+--  clock cycle. In following up to 20 clock cycles recieved data has to be va-
+--  lid to be fully stored
 --
---  Note:This is guaranteed from CAN Core. rec_message_valid is active in the end of EOF field. Intermi  --
---  ssion field follows with 11 bit times (minimum 55 clock cycles) where recieved data are not changed, --
---  only overload condition may be signallised!                                                          --
------------------------------------------------------------------------------------------------------------
+--  Note:This is guaranteed from CAN Core. rec_message_valid is active in the 
+--  end of EOF field. Intermission field follows with 11 bit times (minimum 55 
+--  clock cycles) where recieved data are not changed, only overload condition 
+--  may be signallised!
+--------------------------------------------------------------------------------
 
 entity rxBuffer is
   GENERIC(
+  
+			--Maximal number of 32 bit words to store (Minimal value=16, one 64 bytes
+			--message length) Only 2^k are allowed as buff_size. Memory adressing is
+			--in modular arithmetic, synthesis of modulo by number other than 2^k is
+			-- not supported!!!
       buff_size                 :natural range 4 to 512 :=32 
-      
-       --Maximal number of 32 bit words to store (Minimal value=16, one 64 bytes message length)
-       --Only 2^k are allowed as buff_size. Memory adressing is in modular arithmetic,
-       --synthesis of modulo by number other than 2^k is not supported!!!
   );
   PORT(
     -------------------
@@ -87,73 +105,137 @@ entity rxBuffer is
     signal res_n                :in std_logic; --Async. reset
     
     -------------------------------------------------------
-    --CAN Core interface (rec. data,validity, acknowledge)-
+    --CAN Core interface (rec. data,validity, acknowledge)
     -------------------------------------------------------
-    signal rec_ident_in         :in std_logic_vector(28 downto 0);    --Message Identifier
-    signal rec_dlc_in           :in std_logic_vector(3 downto 0);     --Data length code
-    signal rec_ident_type_in    :in std_logic;                        --Recieved identifier type (0-BASE Format, 1-Extended Format);
-    signal rec_frame_type_in    :in std_logic;                        --Recieved frame type (0-Normal CAN, 1- CAN FD)
-    signal rec_is_rtr           :in std_logic;                        --Recieved frame is RTR Frame(0-No, 1-Yes)
-    signal rec_brs              :in std_logic;                        --Whenever frame was recieved with BIT Rate shift 
-    signal rec_esi              :in std_logic;                        --Recieved error state indicator
     
-    signal rec_message_ack      :out std_logic;                       --Acknowledge for CAN Core about accepted data
-    signal rec_message_valid    :in std_logic;                        --Output from acceptance filters (out_ident_valid) if message fits the filters
+    --Message Identifier
+    signal rec_ident_in         :in std_logic_vector(28 downto 0);
+    
+    --Data length code
+    signal rec_dlc_in           :in std_logic_vector(3 downto 0);
+    
+    --Recieved identifier type (0-BASE Format, 1-Extended Format);
+    signal rec_ident_type_in    :in std_logic;
+    
+    --Recieved frame type (0-Normal CAN, 1- CAN FD)
+    signal rec_frame_type_in    :in std_logic;
+    
+    --Recieved frame is RTR Frame(0-No, 1-Yes)
+    signal rec_is_rtr           :in std_logic;
+    
+    --Whenever frame was recieved with BIT Rate shift 
+    signal rec_brs              :in std_logic;
+    
+    --Recieved error state indicator
+    signal rec_esi              :in std_logic;
+    
+    --Acknowledge for CAN Core about accepted data
+    signal rec_message_ack      :out std_logic;
+    
+    --Output from acceptance filters (out_ident_valid) if message fits filters
+    signal rec_message_valid    :in std_logic;
     
     --Added interface for aux SRAM
     signal rec_dram_word        :in  std_logic_vector(31 downto 0);
     signal rec_dram_addr        :out natural range 0 to 15;
     
     ------------------------------------
-    --Status signals of recieve buffer--
+    --Status signals of recieve buffer
     ------------------------------------
-    signal rx_buf_size          :out std_logic_vector(7 downto 0);    --Actual size of synthetised message buffer (in 32 bit words)
-    signal rx_full              :out std_logic;                       --Signal whenever buffer is full
-    signal rx_empty             :out std_logic;                       --Signal whenever buffer is empty
-    signal rx_message_count     :out std_logic_vector(7 downto 0);    --Number of messaged stored in recieve buffer
-    signal rx_mem_free          :out std_logic_vector(7 downto 0);    --Number of free 32 bit wide ''windows''
-    signal rx_read_pointer_pos  :out std_logic_vector(7 downto 0);    --Position of read pointer
-    signal rx_write_pointer_pos :out std_logic_vector(7 downto 0);    --Position of write pointer
-    signal rx_message_disc      :out std_logic;                       --Message was discarded since Memory is full
-    signal rx_data_overrun      :out std_logic;                       --Some data were discarded, register
+    
+    --Actual size of synthetised message buffer (in 32 bit words)
+    signal rx_buf_size          :out std_logic_vector(7 downto 0);
+    
+    --Signal whenever buffer is full
+    signal rx_full              :out std_logic;
+    
+    --Signal whenever buffer is empty
+    signal rx_empty             :out std_logic;
+    
+    --Number of messaged stored in recieve buffer
+    signal rx_message_count     :out std_logic_vector(7 downto 0);
+    
+    --Number of free 32 bit wide words
+    signal rx_mem_free          :out std_logic_vector(7 downto 0);
+    
+    --Position of read pointer
+    signal rx_read_pointer_pos  :out std_logic_vector(7 downto 0);
+    
+    --Position of write pointer
+    signal rx_write_pointer_pos :out std_logic_vector(7 downto 0);
+    
+    --Message was discarded since Memory is full
+    signal rx_message_disc      :out std_logic;
+    
+    --Some data were discarded, register
+    signal rx_data_overrun      :out std_logic;
     
     signal timestamp            :in std_logic_vector(63 downto 0);
     
     ------------------------------------
     --User registers interface
-    ------------------------------------  
-    signal rx_read_buff         :out std_logic_vector(31 downto 0);   --Actually loaded data for reading
-    signal drv_bus              :in std_logic_vector(1023 downto 0)   --Driving bus from registers
+    ------------------------------------
+    
+    --Actually loaded data for reading
+    signal rx_read_buff         :out std_logic_vector(31 downto 0);
+    
+    --Driving bus from registers
+    signal drv_bus              :in std_logic_vector(1023 downto 0)
   );
     
   -----------------------------
-  --Driving bus signal aliases-
-  ----------------------------- 
-  signal drv_erase_rx           :std_logic;                           --Erase command from driving registers
-  signal drv_ovr_rx             :std_logic;                           --OverRun behaviour (0 - Discard new message if full , 1 - Rewrite the oldest message)
-  signal drv_read_start         :std_logic;                           --Command to load increase the reading pointer
-  signal drv_clr_ovr            :std_logic;                           --Clear data OverRun Flag
+  --Driving bus signal aliases
+  -----------------------------
+	
+	--Erase command from driving registers
+  signal drv_erase_rx           :std_logic;
+  
+  --OverRun behaviour (0 - Discard new message if full,
+  --									 1 - Rewrite the oldest message)
+  signal drv_ovr_rx             :std_logic;
+  
+  --Command to load increase the reading pointer
+  signal drv_read_start         :std_logic;
+  
+  --Clear data OverRun Flag
+  signal drv_clr_ovr            :std_logic;
   
   ------------------
-  --FIFO  Memory   -
+  --FIFO  Memory   
   ------------------
-  constant data_width           :natural := 32;                       --Word data width
+  constant data_width           :natural := 32;  --Word data width
   
-  type rx_memory is array(0 to buff_size-1) of std_logic_vector(data_width-1 downto 0); --Memory type
+  type rx_memory is array(0 to buff_size-1) of 
+										std_logic_vector(data_width-1 downto 0); --Memory type
   
-  signal memory                 :rx_memory;  --Memory declaration inferred in SRAM
-  signal memory_valid           :std_logic_vector(0 to buff_size-1);  --Vector if data word in memory is valid.
-                                                                      --SRAM cant be erased at reset, this vector can! (because is DQ-FF based)
-                                                                      --Workaround strategy for erasing memory!
+  --Memory declaration inferred in SRAM
+  signal memory                 :rx_memory;
   
-  signal message_mark           :std_logic_vector(buff_size -1 downto 0); --Mark of new message('1') positions-
-  signal read_pointer           :natural range 0 to buff_size-1;          --Read Pointer for data
-  signal write_pointer          :natural range 0 to buff_size-1;          --Write pointer
-  signal prev_read              :std_logic;                               --Registered value of read command for eedge detection. 
-  --Note :1->0 edge detection is used here, to move to the next data when the previous read is finished!
+  --Vector if data word in memory is valid. SRAM cant be erased at reset, this 
+  --vector can! (because is DQ-FF based) Workaround strategy for erasing memory!
+  signal memory_valid           :std_logic_vector(0 to buff_size-1);
   
-  signal data_overrun_r         :std_logic;                               --Recieved message was lost because RX Buffer was full
-  signal copy_counter           :natural range 0 to 20;                   --Counter used for copying Recieved data to recieve buffer
+  --Mark of new message('1') positions
+  signal message_mark           :std_logic_vector(buff_size -1 downto 0);
+  
+  --Read Pointer for data
+  signal read_pointer           :natural range 0 to buff_size-1;
+  
+  --Write pointer
+  signal write_pointer          :natural range 0 to buff_size-1;
+  
+  --Registered value of read command for eedge detection. 
+  signal prev_read              :std_logic;
+  --Note :1->0 edge detection is used here, to move to the next 
+  --data when the previous read is finished!
+  
+  --Recieved message was lost because RX Buffer was full
+  signal data_overrun_r         :std_logic;
+  
+  --Counter used for copying Recieved data to recieve buffer
+  signal copy_counter           :natural range 0 to 20;
+  
+  -- Internal data size decoded from received frame
   signal data_size              :natural range 0 to 32; 
   
 end entity;
@@ -169,28 +251,40 @@ begin
   rx_buf_size           <= std_logic_vector(to_unsigned(buff_size,8));
   
   --Propagating status registers on output
-  rx_read_pointer_pos   <= std_logic_vector(to_unsigned(read_pointer,8)); --Output information about pointer position
+  rx_read_pointer_pos   <= std_logic_vector(to_unsigned(read_pointer,8));
   rx_write_pointer_pos  <= std_logic_vector(to_unsigned(write_pointer,8));
   rx_data_overrun       <= data_overrun_r;
   
-  --TODO: check if timing analysis will stay still over 50 Mhz with following logic. 
-  --This integrates into one combinational path memory read + MUX, possibly dangerous for Timing performance
+  --TODO: check if timing analysis will stay still over 50 Mhz with following 
+  --logic. This integrates into one combinational path memory read + MUX,
+  -- possibly dangerous for Timing performance
   
-  --Buffer output is propagated only if memory entry is marked as valid, 
+  --Buffer output is propagated only if memory entry is marked as valid,
+  --Read data from SRAM memory (1 port, async read)
   rx_read_buff          <= memory(read_pointer) when (memory_valid(read_pointer)='1') 
-                           else (OTHERS => '0');  --Read data from SRAM memory (1 port, async read)
+                           else (OTHERS => '0');  
   
-  -- Address for the Receive data RAM in the CAN Core!
-  -- Comparator is temporary before the data order will be reversed!
-  rec_dram_addr         <= 18-copy_counter when (copy_counter>2 and copy_counter<19) else 0;
+  -- Address for the Receive data RAM in the CAN Core! Comparator is temporary 
+  -- before the data order will be reversed!
+  rec_dram_addr         <= 18-copy_counter when (copy_counter>2
+																								 and
+																								 copy_counter<19)
+																					 else
+													 0;
   
-  ------------------------------------------------------------------
-  --Storing data from CANCore and loading data into reading buffer--
-  ------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  --Storing data from CANCore and loading data into reading buffer
+  ------------------------------------------------------------------------------
   memory_acess:process(clk_sys,res_n)
-    variable data_length    : natural range 0 to 16;        --Length variable for frame stored into reading buffer (in 32 bit words)
-    variable mem_free       : natural range 0 to buff_size:= buff_size; --Amount of free words
-    variable message_count  : natural range 0 to 255;       --Message Count already stored  
+		
+		--Length variable for frame stored into reading buffer (in 32 bit words)
+    variable data_length    : natural range 0 to 16;
+    
+    --Amount of free words
+    variable mem_free       : natural range 0 to buff_size:= buff_size;
+    
+    --Message Count already stored
+    variable message_count  : natural range 0 to 255;
  begin     
     if (res_n=ACT_RESET) or (drv_erase_rx='1') then
       write_pointer     <= 0;
@@ -228,19 +322,24 @@ begin
        data_overrun_r   <= data_overrun_r;
       end if;
       
-      ------------------------------------------------------------
+      --------------------------------------------------------------------------
       --Moving to next word by reading (if there is sth to read)
-      ------------------------------------------------------------ 
+      --------------------------------------------------------------------------
       if (    (drv_read_start='1')  and 
          (not (read_pointer=write_pointer and mem_free=buff_size)) )then 
-             
-        read_pointer                <= (read_pointer+1) mod buff_size; --Increase the reading pointer
         
-        --Test erase when moved further!!!
-        memory_valid(read_pointer)  <= '0'; --Mark the actual field as invalid, since we want the behaviour of FIFO from user
-                                            --perspective to be that data are automatically erased after reading...
+        --Increase the reading pointer
+        read_pointer                <= (read_pointer+1) mod buff_size;
         
-        message_mark(read_pointer)  <= '0'; --If begin of new message then nulling
+        --Mark the actual field as invalid, since we want the behaviour of FIFO 
+        --from user perspective to be that data are automatically erased after
+        --reading...
+        memory_valid(read_pointer)  <= '0'; 
+        
+        --If begin of new message then nulling
+        message_mark(read_pointer)  <= '0';
+        
+        -- Increase amount of free memory
         mem_free                    := mem_free+1;
          
         --If new message was moved then decrease number of messages
@@ -251,15 +350,15 @@ begin
       end if;
        
       
-      ----------------------------
-      --Storing recieved message--
-      ----------------------------
+      --------------------------------------------------------------------------
+      --Storing recieved message	
+      --------------------------------------------------------------------------
       if(rec_message_valid='1')then
           rec_message_ack <= '1'; --Acknowledge message reception for CAN Core
           
-          --If frame is RTR we dont CARE about recieved DLC, that can be arbitrary
-          -- due to the rtr preffered behaviour! RTR frame, automatically no data
-          -- are stored!!!
+          --If frame is RTR we dont CARE about recieved DLC, that can be arbit-
+          --rary due to the rtr preffered behaviour! RTR frame, automatically no
+          --data are stored!!!
           if(rec_is_rtr='1' and rec_frame_type_in='0')then
             data_length := 0;
           else
@@ -292,10 +391,15 @@ begin
             
             --Writing Frame format Word
             rx_message_disc             <= '0';
-            memory(write_pointer)       <= "000000000000000000000"&rec_esi&rec_brs&'1'&rec_frame_type_in&rec_ident_type_in&rec_is_rtr&'0'&rec_dlc_in;
+            memory(write_pointer)       <= "000000000000000000000"&
+																						rec_esi&rec_brs&
+																						'1'&rec_frame_type_in&
+																						rec_ident_type_in&
+																						rec_is_rtr&
+																						'0'&rec_dlc_in;
             memory_valid(write_pointer) <= '1';
             
-           --Increasing write pointer -- TODO: think if modulo can be discarded for synthesis
+           --Increasing write pointer
            write_pointer                <= (write_pointer+1) mod buff_size;
            --mem_free                   := mem_free-4-data_length;
            mem_free                     := mem_free-1;
@@ -337,9 +441,9 @@ begin
           
       elsif(copy_counter<3)then  --Here only Identifier and Timestamp is stored
         
-        --------------------------------------------------------------
-        --copy_counter decodes which part of received frame to store--
-        --------------------------------------------------------------
+        ------------------------------------------------------------------------
+        --copy_counter decodes which part of received frame to store
+        ------------------------------------------------------------------------
         if(copy_counter=0)then
             memory(write_pointer)       <= timestamp(63 downto 32);
             memory_valid(write_pointer) <= '1';
@@ -363,7 +467,8 @@ begin
       
       elsif(copy_counter<data_size)then -- Here the data words are stored
         
-        --Optimized implementation of the storing with auxiliarly receive data RAM
+        --Optimized implementation of the storing with auxiliarly receive 
+        --data RAM
         memory(write_pointer)           <= rec_dram_word;
         
         memory_valid(write_pointer)     <= '1';
@@ -381,7 +486,8 @@ begin
         data_size                       <= 0;
       end if;
   
-  rx_mem_free                           <= std_logic_vector(to_unsigned(mem_free,8));
+  rx_mem_free                           <= std_logic_vector(
+																					 to_unsigned(mem_free,8));
   
   --Assigning output whenever memory is full
   if (mem_free=0) then 
@@ -398,7 +504,8 @@ begin
   end if;
   
   --Propagating message count to output
-  rx_message_count                      <= std_logic_vector(to_unsigned(message_count,8));
+  rx_message_count                      <= std_logic_vector(
+																					 to_unsigned(message_count,8));
 
   end if;
 end process memory_acess;
