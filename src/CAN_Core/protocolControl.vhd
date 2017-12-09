@@ -135,7 +135,8 @@ use work.CANconstants.all;
 --    4.12.2017   Added support for addressing of transmitted data directly from
 --                TXT buffer with "txt_buf_ptr", instead of fetching data from 
 --                "Tran Buffer" in CAN Core.
---
+--    9.12.2017   Change reception of CRC from direct addressing to shift regis-
+--                ter. Saved approx. 60 LUTs.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
