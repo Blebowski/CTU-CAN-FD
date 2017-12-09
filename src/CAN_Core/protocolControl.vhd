@@ -46,35 +46,35 @@ use work.CANconstants.all;
 --                but more clear behaviour
 --    21.6.2016   1.Arbitration_lost pulled low every cycle except setting in 
 --	                Arbitration field. Before arbitration_lost always kept its 
---									previous value! Due to that when arbitration was lost in last
---									possible bit (same identifier BASE vs EXTENDED), then 
---									"arbitration_lost" remained set for whole duration of 
---									transmittion!!!
+--	                previous value! Due to that when arbitration was lost in last
+--                  possible bit (same identifier BASE vs EXTENDED), then 
+--                  "arbitration_lost" remained set for whole duration of 
+--                  transmittion!!!
 --                2.Added delay_control_trans register as bugfix. When arbitra-
---									tion was lost in last bit as described in previous case, 
---									OP_State did not manage to be acutalize and thus FSMpreset 
---									branch was executed for transmitter! THus control_pointer 
---									was set totally wrong, and reciever was confused... Error 
---									frame was later on detected OK. This error in some cases 
---									behaved just like CRC error! Now transition from arbitration
---									to control is always done one clock cycle later than imme-
---									diately after rec_trig! It is OK, there is plenty of time, 
---									since we are still in NOMINAL bit time at this point! 
---									delay_control_trans register is used for this delay!
+--                  tion was lost in last bit as described in previous case, 
+--                  OP_State did not manage to be acutalize and thus FSMpreset 
+--                  branch was executed for transmitter! THus control_pointer 
+--                  was set totally wrong, and reciever was confused... Error 
+--                  frame was later on detected OK. This error in some cases 
+--                  behaved just like CRC error! Now transition from arbitration
+--                  to control is always done one clock cycle later than imme-
+--                  diately after rec_trig! It is OK, there is plenty of time, 
+--                  since we are still in NOMINAL bit time at this point! 
+--                  delay_control_trans register is used for this delay!
 --    22.6.2016   Bug fix. Added detection of recieved RTR and recived frame 
---								type to setting dlc_int register. Previous behaviour caused 
---								that when RTR frame with DLC e.g. 12 was transmitted (no data
+--                type to setting dlc_int register. Previous behaviour caused 
+--                that when RTR frame with DLC e.g. 12 was transmitted (no data
 --                field but, DLC =12, as special feature of RTR preffered beha-
---								viour), then reciever accepted this dlc and ignored the fact 
---								there is going to be no data phase. CRC length decision was
---         				then made based on this recieved value and reciever did expect
---								longer CRC field (17 or 21) than there actually was! Thus it 
---								did not send the acknowledge and error ocurred!
+--                viour), then reciever accepted this dlc and ignored the fact 
+--                there is going to be no data phase. CRC length decision was
+--                then made based on this recieved value and reciever did expect
+--                longer CRC field (17 or 21) than there actually was! Thus it 
+--                did not send the acknowledge and error ocurred!
 --    23.6.2016   1. Added is_idle_r<='1' when transmittion is aborted. OP State
---									 should be immediately idle not after the end of the inter-
---									 frame space, since transmittion was aborted and node shhould
+--                   should be immediately idle not after the end of the inter-
+--                   frame space, since transmittion was aborted and node shhould
 --                   be now as if there was no activity one the bus for long 
---					         time...
+--                   time...
 --                2. RTR prefered behaviour bug fix. Active bit was flippped. 
 --                   Correctly active in logic 1
 --    24.6.2016   Bug fix in self test mode. Reciever did not check 
@@ -742,13 +742,13 @@ begin
       stuff_enable_r          <=  '0';
       fixed_stuff_r           <=  '0';
       stuff_length_r          <=  std_logic_vector(
-																	to_unsigned(BASE_STUFF_LENGTH,3));
+                                  to_unsigned(BASE_STUFF_LENGTH,3));
             
       --Configuring Bit Destuffing
       destuff_enable_r        <=  '0';
       fixed_destuff_r         <=  '0';
       destuff_length_r        <=  std_logic_vector(
-																	to_unsigned(BASE_STUFF_LENGTH,3));
+                                  to_unsigned(BASE_STUFF_LENGTH,3));
       stuff_error_enable_r    <=  '0';
       
       inc_one_r               <=  '0';
@@ -957,8 +957,8 @@ begin
       FSM_preset              <=  '1';
       if(OP_State=reciever)then
 				
-				--Bit Error or Stuff Error detected by reciever (Control,data,CRC) , 
-				-- Increase by one
+        --Bit Error or Stuff Error detected by reciever (Control,data,CRC) , 
+        -- Increase by one
         inc_one_r             <=  '1';
         
       elsif(OP_State=transciever and PC_State=arbitration)then
@@ -1004,7 +1004,7 @@ begin
               	     	   stuff_enable_r    <=  '1';
                         fixed_stuff_r     <=  '0';
                         stuff_length_r    <=  std_logic_vector(
-																							to_unsigned(BASE_STUFF_LENGTH,3));
+                                              to_unsigned(BASE_STUFF_LENGTH,3));
             	         else
           	             set_reciever_r    <=  '1';
                       end if;
@@ -1015,7 +1015,7 @@ begin
           	     	   stuff_enable_r        <=  '1';
                     fixed_stuff_r         <=  '0';
                     stuff_length_r        <=  std_logic_vector(
-																							to_unsigned(BASE_STUFF_LENGTH,3));
+                                              to_unsigned(BASE_STUFF_LENGTH,3));
                   end if;
                 else 
                   set_reciever_r          <=  '1';
@@ -1044,7 +1044,7 @@ begin
                 destuff_enable_r          <=  '1';
                 fixed_destuff_r           <=  '0';
                 destuff_length_r          <=  std_logic_vector(
-																							to_unsigned(BASE_STUFF_LENGTH,3));
+                                              to_unsigned(BASE_STUFF_LENGTH,3));
                 stuff_error_enable_r      <=  '1'; 
               
                 --Clearing arbitration transcieve pointer for transcieving
@@ -1168,7 +1168,7 @@ begin
                   end if;
                   if(arbitration_lost_r='1')then
                     alc_r           <=  std_logic_vector(
-																				to_unsigned(9-tran_pointer,5));
+                                        to_unsigned(9-tran_pointer,5));
                   end if;
                   --Note: possible optimalization, using tran_pointer from 
                   --			0 to 10 instead of from 10 to 0
@@ -1210,8 +1210,8 @@ begin
                         arb_two_bits(1)   <=  data_rx;
                         tran_pointer      <=  0;
                    when 0 => --Second bit of two is sampled (IDE)
-												--IDE bit value decides whenever we go to control 
-												--field or extended identifier
+                        --IDE bit value decides whenever we go to control 
+                        --field or extended identifier
                         if(data_rx=DOMINANT)then
                           
                           --Bug fix 21.6.2016
@@ -1244,7 +1244,7 @@ begin
                  
                  if(arbitration_lost_r='1')then
                     alc_r         <=  std_logic_vector(
-																			to_unsigned(1-tran_pointer,5));
+                                      to_unsigned(1-tran_pointer,5));
                   end if;
             when ext_id=>
                  if(tran_trig='1')then
@@ -1287,7 +1287,7 @@ begin
                  end if;
                  if(rec_trig='1')then
                  
-										--Storing the last bit of arbitration field
+                    --Storing the last bit of arbitration field
                     arb_one_bit   <=  data_rx;
                     
                     --Bug fix 21.6.2016
@@ -1409,7 +1409,7 @@ begin
                   -- of FD frame appears!!
                   if(control_pointer=7)then --EDL bit
 										
-										--Clearing the shift register for output data
+                    --Clearing the shift register for output data
                     ssp_reset_r           <=  '1';
                     
                     trv_delay_calib_r     <=  '1';
@@ -1447,13 +1447,13 @@ begin
                 
                 if(FSM_preset='1')then --Detecting first bit in control field
 									
-									--EDL bit -> CAN FD Frame, r0 bit ->CAN Frame
+                  --EDL bit -> CAN FD Frame, r0 bit ->CAN Frame
                   rec_frame_type_r  <=  data_rx;
                   
                   if(data_rx=RECESSIVE)then --IF is FD Frame
                   
-											--If FD Frames are supported,go on, otherwise 
-											-- throw Form error
+                      --If FD Frames are supported,go on, otherwise 
+                      -- throw Form error
                       if(drv_CAN_fd_ena='1')then
                         control_pointer   <=  6; --r0,BRS,ESI,4DLC bits
                         rec_is_rtr_r      <=  '0';
@@ -1637,19 +1637,19 @@ begin
                 rec_dram_bind <= (rec_dram_bind+1) mod 4;
                 case rec_dram_bind is
                   when  0 =>
-                    rec_dram(data_pointer/32) <= rec_data_sr(6 downto 0)&
-										                             data_rx&
-										                             "000000000000000000000000";
+                    rec_dram(data_pointer/32) <= rec_data_sr(6 downto 0) &
+                                                 data_rx &
+                                                 "000000000000000000000000";
                   when  1 =>
                     rec_dram(data_pointer/32)(23 downto 0) <= 
-											                        rec_data_sr(6 downto 0)&
-											                        data_rx&
-											                        "0000000000000000";
+                                                rec_data_sr(6 downto 0) &
+                                                data_rx &
+                                                "0000000000000000";
                   when  2 =>
                     rec_dram(data_pointer/32)(15 downto 0) <= 
-										                          rec_data_sr(6 downto 0)&
-										                          data_rx&
-										                          "00000000";
+                                                rec_data_sr(6 downto 0) &
+                                                data_rx &
+                                                "00000000";
                   when  3 =>
                     rec_dram(data_pointer/32)(7 downto 0) <= 
                                               rec_data_sr(6 downto 0)&
@@ -1705,7 +1705,7 @@ begin
               fixed_stuff_r     <=  '1';
               fixed_destuff_r   <=  '1';
               stuff_length_r    <=  std_logic_vector(
-							                      to_unsigned(FD_STUFF_LENGTH,3));
+                                    to_unsigned(FD_STUFF_LENGTH,3));
               destuff_length_r  <=  std_logic_vector(
                                     to_unsigned(FD_STUFF_LENGTH,3));
               fixed_CRC_FD      <=  '1';
@@ -1791,9 +1791,9 @@ begin
         end if;
       
       
-      ----------------------------------------------------
+      --------------------------------------------------------------------------
       --CRC Delimiter, Acknowledge and Acknowledge delim
-      ----------------------------------------------------
+      --------------------------------------------------------------------------
       when delim_ack =>
           if(FSM_Preset='1')then
             control_pointer   <=  0;
@@ -1894,7 +1894,7 @@ begin
                 
                   --CRC delimiter bit
                   when 0 => data_tx_r       <=  RECESSIVE;
-														--Switching the bit rate back
+                            --Switching the bit rate back
                             --sp_control_r  <=  NOMINAL_SAMPLE;
                             --
                   
@@ -1983,8 +1983,8 @@ begin
             end if;           
             if(rec_trig='1')then
             
-						 --Detection of dominant bit during EOF means error, 
-						 --or Overload condition 
+             --Detection of dominant bit during EOF means error, 
+             --or Overload condition 
              if(data_rx=DOMINANT)then
                  --if(control_pointer>1)then
                   PC_State      <=  error;  
@@ -2118,7 +2118,7 @@ begin
                           -- mitted anyway. If we were transmitter of previous 
                           -- message and we have nothing more to transmitt and 
                           -- we turn reciever, we dont want SOF to be
-			                    -- tranmsmitted by reciever!!
+                         -- tranmsmitted by reciever!!
                           set_reciever_r      <=  '1';
                       
                       else
@@ -2273,8 +2273,9 @@ begin
                               if(data_rx=RECESSIVE)then
                                 err_frame_state <=  err_delim;
                                 control_pointer <=  6; 
-                                --Note: this has to be 6 not 7 (duration of err_delim is 8) 
-                                --because one bit is sent recessive and detected
+                                --Note: this has to be 6 not 7 (duration of 
+                                -- err_delim is 8) because one bit is sent 
+                                -- recessive and detected
                                 
                                --We accepted 13-th consecutive DOMINANT bit -> 
                                -- Error again??
@@ -2357,9 +2358,9 @@ begin
             end if;
       
       
-      --------------------------------------------------
+      --------------------------------------------------------------------------
       --Overload frame
-      --------------------------------------------------     
+      --------------------------------------------------------------------------
       when overload =>  
             if(FSM_Preset='1')then
               FSM_Preset        <=  '0';
