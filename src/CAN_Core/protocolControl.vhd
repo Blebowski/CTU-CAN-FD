@@ -1777,7 +1777,7 @@ begin
                 end if;
                 
                 if(rec_trig='1')then
-                   rec_crc_r(data_pointer)  <=  data_rx;
+                    rec_crc_r <= rec_crc_r(19 downto 0)&data_rx;
                     if(data_pointer=0)then
                       PC_State              <=  delim_ack;
                       FSM_Preset            <=  '1';
