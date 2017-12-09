@@ -226,7 +226,8 @@ entity core_top is
    signal alc                     :     std_logic_vector(4 downto 0);
    
    --Transcieve buffer output
-   signal tran_ident              :     std_logic_vector(28 downto 0);
+   signal tran_ident_base         :     std_logic_vector(10 downto 0);
+   signal tran_ident_ext          :     std_logic_vector(17 downto 0);
    signal tran_dlc                :     std_logic_vector(3 downto 0);
    signal tran_is_rtr             :     std_logic;
    signal tran_ident_type         :     std_logic;
@@ -370,7 +371,9 @@ begin
      tran_brs_in        =>  tran_brs_in,
      frame_store        =>  frame_Store,
        
-     tran_ident         =>  tran_ident,
+     tran_ident_base    =>  tran_ident_base,
+     tran_ident_ext     =>  tran_ident_ext,
+     
      tran_dlc           =>  tran_dlc,
      tran_is_rtr        =>  tran_is_rtr,
      tran_ident_type    =>  tran_ident_type,
@@ -406,7 +409,8 @@ begin
      alc                =>  alc,
          
      tran_data          =>  tran_data_in,
-     tran_ident         =>  tran_ident,
+     tran_ident_base    =>  tran_ident_base,
+     tran_ident_ext     =>  tran_ident_ext,
      tran_dlc           =>  tran_dlc,
      tran_is_rtr        =>  tran_is_rtr,
      tran_ident_type    =>  tran_ident_type,
@@ -659,11 +663,11 @@ begin
  ---------------------
  --CRC Multiplexing --
  ---------------------
- crc15<=crc15_wbs_tx when (OP_State = transciever and tran_frame_type = FD_CAN)         else
-        crc15_nbs_tx when (OP_State = transciever and tran_frame_type = NORMAL_CAN)     else
-        crc15_wbs_rx when (OP_State = reciever    and rec_frame_type  = FD_CAN)         else
-        crc15_nbs_rx when (OP_State = reciever    and rec_frame_type  = NORMAL_CAN)     else
-        "000000000000000";
+  crc15<=crc15_wbs_tx when (OP_State = transciever and tran_frame_type = FD_CAN)         else
+         crc15_nbs_tx when (OP_State = transciever and tran_frame_type = NORMAL_CAN)     else
+         crc15_wbs_rx when (OP_State = reciever    and rec_frame_type  = FD_CAN)         else
+         crc15_nbs_rx when (OP_State = reciever    and rec_frame_type  = NORMAL_CAN)     else
+         "000000000000000";
               
   crc17<=crc17_wbs_tx when (OP_State  = transciever and tran_frame_type = FD_CAN)         else
          crc17_nbs_tx when (OP_State  = transciever and tran_frame_type = NORMAL_CAN)     else
@@ -834,7 +838,7 @@ begin
  stat_bus(STAT_BDS_LENGTH_HIGH downto STAT_BDS_LENGTH_LOW)  <=  bds_length;
  
  --Transcieve data interface
- stat_bus(STAT_TRAN_IDENT_HIGH downto STAT_TRAN_IDENT_LOW)  <=  tran_ident;
+ stat_bus(STAT_TRAN_IDENT_HIGH downto STAT_TRAN_IDENT_LOW)  <=  tran_ident_ext&tran_ident_base;
  stat_bus(STAT_TRAN_DLC_HIGH downto STAT_TRAN_DLC_LOW)      <=  tran_dlc;
  stat_bus(STAT_TRAN_IS_RTR_INDEX)                           <=  tran_is_rtr;
  stat_bus(STAT_TRAN_IDENT_TYPE_INDEX)                       <=  tran_ident_type;
