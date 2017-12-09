@@ -135,8 +135,14 @@ use work.CANconstants.all;
 --    4.12.2017   Added support for addressing of transmitted data directly from
 --                TXT buffer with "txt_buf_ptr", instead of fetching data from 
 --                "Tran Buffer" in CAN Core.
---    9.12.2017   Change reception of CRC from direct addressing to shift regis-
---                ter. Saved approx. 60 LUTs.
+--    9.12.2017   1. Change reception of CRC from direct addressing to shift re-
+--                   gister. Saved approx. 60 LUTs.
+--                2. Split the "rec_ident_in" into two separate shift registers
+--                   "rec_ident_base_sr" and "rec_ident_ext_sr". Base and exten-
+--                   ded identifiers are not addressed by "tran_pointer" anymore
+--                   but received in shift registers. The output value is com-
+--                   bined from these two shift registers, thus interface to RX
+--                   buffer remained unchanged! Saved approx 100 LUTs.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -456,12 +462,14 @@ entity protocolControl is
   ---------------------------
   --Recieved data registers--
   ---------------------------
-  signal rec_ident_r              :     std_logic_vector(28 downto 0);
   signal rec_dlc_r                :     std_logic_vector(3 downto 0);
  	signal rec_is_rtr_r             :     std_logic;
   signal rec_ident_type_r         :     std_logic;
   signal rec_frame_type_r         :     std_logic;
-  signal rec_brs_r        	      :     std_logic;
+  signal rec_brs_r        	       :     std_logic;
+  
+  signal rec_ident_ext_sr         :     std_logic_vector(17 downto 0);
+  signal rec_ident_base_sr        :     std_logic_vector(10 downto 0);
   
   --Recieved CRC value
   signal rec_crc_r                :     std_logic_vector(20 downto 0);
@@ -667,7 +675,7 @@ begin
   sync_control          <=  sync_control_r;
   
   --Recieved data registers to output propagation
-  rec_ident             <=  rec_ident_r;
+  rec_ident             <=  rec_ident_ext_sr&rec_ident_base_sr;
   rec_dlc               <=  rec_dlc_r;
   rec_is_rtr            <=  rec_is_rtr_r;
   rec_ident_type        <=  rec_ident_type_r;
@@ -792,7 +800,8 @@ begin
       data_size               <=  0;
       
       --Nulling recieve registers
-      rec_ident_r             <=  (OTHERS=>'0');
+      rec_ident_base_sr       <=  (OTHERS=>'0');
+      rec_ident_ext_sr        <=  (OTHERS=>'0');
       rec_dlc_r               <=  (OTHERS=>'0');
       rec_is_rtr_r            <=  '0';
       rec_ident_type_r        <=  '0';
@@ -846,7 +855,8 @@ begin
        fixed_destuff_r        <=  fixed_destuff_r;
        destuff_length_r       <=  destuff_length_r;
        stuff_error_enable_r   <=  stuff_error_enable_r;
-       rec_ident_r            <=  rec_ident_r;
+       rec_ident_base_sr      <=  rec_ident_base_sr;
+       rec_ident_ext_sr       <=  rec_ident_ext_sr;
        rec_dlc_r              <=  rec_dlc_r;
        rec_is_rtr_r           <=  rec_is_rtr_r;
        rec_ident_type_r       <=  rec_ident_type_r;
@@ -1058,7 +1068,8 @@ begin
                 crc_enable_r              <=  '1';
                 
                 --Erasing the recieved data registers
-                rec_ident_r               <=  (OTHERS =>'0');
+                rec_ident_base_sr         <=  (OTHERS =>'0');
+                rec_ident_ext_sr          <=  (OTHERS =>'0');
                 rec_dlc_r                 <=  (OTHERS =>'0');
  	              rec_is_rtr_r              <=  '0';
                 rec_ident_type_r          <=  '0';
@@ -1165,7 +1176,9 @@ begin
                     else
                       tran_pointer  <=  tran_pointer-1;
                     end if;
-                    rec_ident_r(tran_pointer)<=data_rx; --Storing recieved data
+                    
+                    --Replaced direct addressing with Shift register
+                    rec_ident_base_sr <= rec_ident_base_sr(9 downto 0)&data_rx;
                   end if;
                   if(arbitration_lost_r='1')then
                     alc_r           <=  std_logic_vector(
@@ -1266,7 +1279,8 @@ begin
                     end if;
                     
                     --Storing recieved extended identifier
-                    rec_ident_r(tran_pointer)<=data_rx;
+                    --Replaced direct addressing with shift register
+                    rec_ident_ext_sr <= rec_ident_ext_sr(16 downto 0)&data_rx;
                     
                   end if;    
                   
