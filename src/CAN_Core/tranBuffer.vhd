@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -30,15 +30,16 @@ use work.CANconstants.all;
 --
 --    July 2015   Created file
 --    04.12.2017  Removed "tran_data_in" and "tran_data_reg" from the buffer
--------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Buffer of CAN core for storing transcieve data. Frame informations (DLC,Identifier, etc. are stored 
---  from output of TXArbitrator circuit when bus is idle and transmit can start or SOF of other frame
---  is detected. Data stored in the buffer stay until it is rewritten by another message.       
---  Message is stored until sucessfully transmitted or retransmitt limit is reached.            
------------------------------------------------------------------------------------------------------------
+--  Buffer of CAN core for storing transcieve info. Frame informations (DLC,
+--  Identifier, etc. are stored from output of TXArbitrator circuit when bus is 
+--  idle and transmit can start or SOF of other frame is detected. Data stored 
+--  in the buffer stay until it is rewritten by another message. Message is 
+--  stored until sucessfully transmitted or retransmitt limit is reached.
+--------------------------------------------------------------------------------
 
 entity tranBuffer is 
   port(
@@ -54,8 +55,12 @@ entity tranBuffer is
     signal tran_ident_in        :in   std_logic_vector(28 downto 0);
     signal tran_dlc_in          :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr_in       :in   std_logic;
-    signal tran_ident_type_in   :in   std_logic; --TX Identifier type (0-Basic,1-Extended);
-    signal tran_frame_type_in   :in   std_logic; --TX Frame type (0-CAN Normal, 1-CAN FD)
+    
+    --TX Identifier type (0-Basic,1-Extended);
+    signal tran_ident_type_in   :in   std_logic;
+    
+    --TX Frame type (0-CAN Normal, 1-CAN FD)
+    signal tran_frame_type_in   :in   std_logic;
     signal tran_brs_in          :in   std_logic;
     
     --------------------

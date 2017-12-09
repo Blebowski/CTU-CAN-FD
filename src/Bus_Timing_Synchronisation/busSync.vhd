@@ -5,7 +5,7 @@ USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
 
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -30,27 +30,35 @@ USE WORK.CANconstants.ALL;
 -- Revision History:
 --
 --    July 2015   Created file
---    19.12.2015  Added tripple sampling mode. Furthermore sampling is disabled when 
---                whole controller is disabled
---    15.6.2016   1.edge_tx_valid signal now provides edge detection only from RECESSIVE to DOMINANT
---                  values! In CAN FD standard EDL and r0 bits are used for TRD measurment! When busSync is
---                  configured to start on TX edge and finish on RX edge.
---                2.Changed trv_delay size to cover mostly 127 clock cycles! Changed shift register sizes
---                  to 130 to avoid missing secondary sample signals!!
---                3.Fixed tripple sampling mode selection from three. Added missing signals
---                4. trv_to_restart signal added to make it impossible to restart trv delay measurment
---                   without rising edge on trv_delay calib signal. This removes a bug when trv_delay_calib
---                   is forgottern active and circuit keeps measuring on every edge...
---    27.6.2016   Bug fix added. Transciever delaye measurment conditions switched. Now starting edge is the
---                most prioritized logic. Thus transciever delay counter is always erased with TX edge!
---                 'elsif(edge_tx_valid='1')' swapped with 'if(trv_running='1')'. Thisway if more TX edge would
---                come before first RX edge is sampled, shorter time would be measured! Note that this is 
---                OK since in CAN spec. EDL bit is in nominal bit time and no other edge can be transmitted
---                before it is recieved (condition of original CAN)
+--    19.12.2015  Added tripple sampling mode. Furthermore sampling is disabled
+--                when whole controller is disabled
+--    15.6.2016   1.edge_tx_valid signal now provides edge detection only from 
+--                  RECESSIVE to DOMINANT values! In CAN FD standard EDL and r0
+--                  bits are used for TRD measurment! When busSync is configured
+--                  to start on TX edge and finish on RX edge.
+--                2.Changed trv_delay size to cover mostly 127 clock cycles!
+--                  Changed shift register sizes to 130 to avoid missing secon-
+--                  dary sample signals!!
+--                3.Fixed tripple sampling mode selection from three. Added 
+--                  missing signals
+--                4. trv_to_restart signal added to make it impossible to res-
+--                   tart trv delay measurment without rising edge on trv_delay
+--                   calib signal. This removes a bug when trv_delay_calib
+--                   is forgottern active and circuit keeps measuring on every 
+--                   edge...
+--    27.6.2016   Bug fix. Transciever delay measurment conditions switched. Now
+--                starting edge is the most prioritized logic. Thus transciever
+--                delay counter is always erased with TX edge!
+--                'elsif(edge_tx_valid='1')' swapped with 'if(trv_running='1')'.
+--                Thisway if more TX edge would come before first RX edge is
+--                sampled, shorter time would be measured! Note that this is OK
+--                since in CAN spec. EDL bit is in nominal bit time and no other
+--                edge can be transmitted before it is recieved (condition of 
+--                original CAN)
 --
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  1. Implements Generic Synchronisation chain for incoming data
 --  2. Detects appropriate edge for synchronisation!!
@@ -60,15 +68,18 @@ USE WORK.CANconstants.ALL;
 --    b) In secondary sample point for Transciever of CAN FD Data Phase
 --  5. Detect bit Error by comparing transmitted values and Sampled values!
 --
---Note: this bit error detection used in the end only for data phase transciever of CAN FD Phase!
---      In other cases bit error is detected inside CAN-Core by comparing transmitted and recieved bit.
--------------------------------------------------------------------------------------------------------------
+--Note: this bit error detection used in the end only for data phase transciever 
+--      of CAN FD Phase! In other cases bit error is detected inside CAN-Core by
+--      comparing transmitted and recieved bit.
+--------------------------------------------------------------------------------
 
 entity busSync is 
   GENERIC (
-      use_Sync:boolean:=false --Whenever Synchronisation chain should be used for sampled data from the bus. 
-                             --Turn off only when Synthetizer puts synchronisation chain automatically on the
-                             --output pins! Otherwise metastability issues will occur!
+			
+			--Whenever Synchronisation chain should be used for sampled data from the 
+			--bus. Turn off only when Synthetizer puts synchronisation chain automa-
+			--tically on the output pins! Otherwise metastability issues will occur!
+      use_Sync:boolean:=false 
     );  
   PORT(
     -------------------------
@@ -80,8 +91,8 @@ entity busSync is
     ---------------------------
     --Physical layer interface-
     ---------------------------
-    signal CAN_rx                   :in   std_logic; --CAN data input from transciever
-    signal CAN_tx                   :out  std_logic; --CAN data output to transciever  
+    signal CAN_rx                   :in   std_logic;
+    signal CAN_tx                   :out  std_logic;
     
     -------------------------------
     --Driving registers interface--
@@ -91,24 +102,36 @@ entity busSync is
     -----------------------
     --Prescaler interface--
     ----------------------- 
-    signal sample_nbt               :in   std_logic; --Sample command for nominal bit time
-    signal sample_dbt               :in   std_logic; --Sample command for data bit tim    
-    signal sync_edge                :out  std_logic; --Synchronisation edge appeared
-        
+    
+    --Sample command for nominal bit time
+    signal sample_nbt               :in   std_logic;
+    
+    --Sample command for data bit tim
+    signal sample_dbt               :in   std_logic;
+    
+    --Synchronisation edge appeared
+    signal sync_edge                :out  std_logic;
+    
+    
     ----------------------
     --CAN Core Interface--
     ----------------------
-    signal data_tx                  :in   std_logic; --Transcieve data value
-    signal data_rx                  :out  std_logic; --Recieved data value
+    
+    --Transcieve data value
+    signal data_tx                  :in   std_logic;
+    
+    --Recieved data value
+    signal data_rx                  :out  std_logic;
     
     --Sample point control
-    signal sp_control               :in   std_logic_vector(1 downto 0);
-    --00:sample_nbt used for sampling (Nominal bit time sampling, Transciever and Reciever)
+		--00:sample_nbt used for sampling (Nominal bit time sampling,
+		--   Transciever and Reciever)
     --01:sample_dbt used for sampling (Data bit time sampling, only Reciever)
-    --10:Sampling with transciever delay compensation (Data bit time, transciever)
+    --10:Sampling with transciever delay compensation (Data bit time,transciever)
+    signal sp_control               :in   std_logic_vector(1 downto 0);
         
-    --Clear the Shift register at the  beginning of Data Phase!!!          
-    signal ssp_reset                :in   std_logic; 
+    --Clear the Shift register at the  beginning of Data Phase!!!
+    signal ssp_reset                :in   std_logic;
     
     --Calibration command for transciever delay compenstation (counter)
     signal trv_delay_calib          :in   std_logic; 
@@ -116,10 +139,10 @@ entity busSync is
     --Bit Error detection enable (Ex. disabled when recieving data)
     signal bit_err_enable           :in   std_logic; 
     
-    --Secondary sample signal outputs
-    signal sample_sec_out           :out  std_logic; --Secondary sample signal 
-    signal sample_sec_del_1_out     :out  std_logic; --Bit destuffing trigger for secondary sample point
-    signal sample_sec_del_2_out     :out  std_logic; --Rec trig for secondary sample point
+    --Secondary sample signal and delayed signals by 1 and 2 clock cycles
+    signal sample_sec_out           :out  std_logic;
+    signal sample_sec_del_1_out     :out  std_logic;
+    signal sample_sec_del_2_out     :out  std_logic;
     
     signal trv_delay_out            :out  std_logic_vector(15 downto 0);
     
@@ -134,31 +157,38 @@ entity busSync is
    -----------------------
    --Driving bus aliases--
    -----------------------
-   signal drv_sam                   :     std_logic; --Tripple sampling (as SJA1000)
-   signal drv_ena                   :     std_logic; --Enable of the whole driver
+   
+   --Tripple sampling (as SJA1000)
+   signal drv_sam                   :     std_logic;
+   
+   --Enable of the whole driver
+   signal drv_ena                   :     std_logic;
 
-   ----------------------------------
+   -----------------------------------------------------------------------------
    --Internal registers and signals--
-   ----------------------------------
-   --Synchhronisation chain
-   signal sync_Chain_1              :     std_logic; --1. Synchronisation chain register
-   signal sync_Chain_2              :     std_logic; --2. Synchronisation chain register
-   signal sync_Data                 :     std_logic; --Synchronised data value
+   -----------------------------------------------------------------------------
+   
+   --Synchronisation chain for data input (first,second and output register)
+   signal sync_Chain_1              :     std_logic;
+   signal sync_Chain_2              :     std_logic;
+   signal sync_Data                 :     std_logic;
    
    --Shift registers length
    constant shift_length            :     natural:=130;
    
-   --Bus sampling and edge detection
-   signal prev_Sample               :     std_logic; --Previously sampled value on CAN bus
+   --Bus sampling and edge detection, Previously sampled value on CAN bus
+   signal prev_Sample               :     std_logic;
    
-   --Majority value from all three sampled values in tripple sampling shift register
+   --Majority value from all three sampled values in tripple sampling shift 
+   --register
    signal trs_majority              :     std_logic; 
    
    --Secondary sampling signal (sampling with transciever delay compensation)
    signal sample_sec                :     std_logic; 
    
-   signal sample_sec_del_1          :     std_logic; --Secondary sample signal one clk_sys delayed
-   signal sample_sec_del_2          :     std_logic; --Secondary sample signal two clk_sys delayed
+   --Secondary sample signal 1 and 2 clk_sys cycles delayed
+   signal sample_sec_del_1          :     std_logic;
+   signal sample_sec_del_2          :     std_logic;
    
    --Shift Register for storing the TX data for secondary sample point
    signal ssp_shift                 :     std_logic_vector(shift_length-1 downto 0); 
@@ -166,17 +196,26 @@ entity busSync is
    --Shift Register for generating secondary sampling signal
    signal sample_sec_shift          :     std_logic_vector(shift_length-1 downto 0); 
    
-   signal edge_rx_det               :     std_logic; --Register for edge detection
-   signal edge_rx_valid             :     std_logic; --Appropriate edge appeared at recieved data
-   signal edge_tx_det               :     std_logic; --Edge Appeared at transcieved data
-   signal edge_tx_valid             :     std_logic; --Edge appeared at transcieved data
+   --Register for edge detection
+   signal edge_rx_det               :     std_logic;
    
-   signal trs_reg                   :     std_logic_vector(2 downto 0); --Tripple sampling shift register
+   --Appropriate edge appeared at recieved data
+   signal edge_rx_valid             :     std_logic;
+   
+   --Edge Appeared at transcieved data
+   signal edge_tx_det               :     std_logic;
+   
+   --Edge appeared at transcieved data
+   signal edge_tx_valid             :     std_logic;
+   
+   --Tripple sampling shift register
+   signal trs_reg                   :     std_logic_vector(2 downto 0);
    
   --Bit Error register
   signal bit_Error_reg              :     std_logic;
    
-  --Note: Bit Error is set up at sample point for whole bit time until next sample point!!!!!
+  --Note: Bit Error is set up at sample point for whole bit 
+  -- time until next sample point!!!!!
   
   --Transciever delay value (in clk_sys clock periods)
   --Length of this vector corresponds to maximal measurable length of TRD!!!
@@ -225,9 +264,9 @@ begin
                 '1' when trs_reg="111" else
                 '1'; --When unknown rather climb to recessive 
   
-  --------------------------------------
+  ------------------------------------------------------------------------------
   --Synchronisation chain
-  --------------------------------------
+  ------------------------------------------------------------------------------
   sync_chain_proc:process(res_n,clk_sys)
   begin
     if(res_n='0')then
@@ -239,11 +278,11 @@ begin
     end if;
   end process sync_chain_proc; 
  
- ---------------------------------------------------------
+  ------------------------------------------------------------------------------
   --Data Edge detection (for one clk_sys period)
   --Note: Sucessful samplng of previous bit is necessary 
   --      (prev_Sample register)
-  --------------------------------------------------------
+  ------------------------------------------------------------------------------
   edge_proc:process(res_n,clk_sys)
   begin
   if(res_n=ACT_RESET)then
@@ -281,9 +320,9 @@ begin
    sync_edge            <=  edge_rx_valid;
    
    
-  -----------------------------------------------------
+  ------------------------------------------------------------------------------
   --Measuring transciever delay compenstaion
-  -----------------------------------------------------
+  ------------------------------------------------------------------------------
   trv_delay_proc:process(res_n,clk_sys)
   begin
     if(res_n='0')then    
@@ -318,9 +357,9 @@ begin
   end process trv_delay_proc;
   
   
-  ----------------------------------------------------
+  ------------------------------------------------------------------------------
   --Generating shifted sampling signal (sample_sec)
-  ----------------------------------------------------
+  ------------------------------------------------------------------------------
   ssp_gen_proc:process(res_n,clk_sys)
   begin
   if(res_n='0')then
@@ -331,25 +370,33 @@ begin
     sample_sec_del_2    <=  '0';
   elsif rising_edge(clk_sys)then  
     if(ssp_reset='1')then
-      sample_sec_shift  <=  (OTHERS=>'0');  --Erasing secondary sampling signal shift register
-      ssp_shift         <=  (OTHERS=>RECESSIVE); --Erasing Shift register for ssp bit error detection
+			
+			--Erasing secondary sampling signal shift register
+      sample_sec_shift  <=  (OTHERS=>'0');
+      
+      --Erasing Shift register for ssp bit error detection
+      ssp_shift         <=  (OTHERS=>RECESSIVE);
     else
-      sample_sec_shift  <=  sample_sec_shift(shift_length-2 downto 0)&sample_dbt; --Shifting DBT sampling signal
-      sample_sec        <=  sample_sec_shift(to_integer(unsigned(trv_delay))); --Shifted signal with trv_delay
-      sample_sec_del_1  <=  sample_sec_shift(to_integer(unsigned(trv_delay+1))); 
-      sample_sec_del_2  <=  sample_sec_shift(to_integer(unsigned(trv_delay+2))); 
-      ssp_shift         <=  ssp_shift(shift_length-2 downto 0)&data_tx; --Storing TX data 
+			--Shifting DBT sampling signal
+      sample_sec_shift  <=  sample_sec_shift(shift_length-2 downto 0)&sample_dbt;
+      
+      --Shifted signal with trv_delay
+      sample_sec        <=  sample_sec_shift(to_integer(unsigned(trv_delay)));
+      sample_sec_del_1  <=  sample_sec_shift(to_integer(unsigned(trv_delay+1)));
+      sample_sec_del_2  <=  sample_sec_shift(to_integer(unsigned(trv_delay+2)));
+      
+      --Storing TX data
+      ssp_shift         <=  ssp_shift(shift_length-2 downto 0)&data_tx;
     end if;
   end if;
   end process;
   
 
-------------------------------------------------------------------------
---Separate process for tripple sampling with simple shift register
---Sampling is continous into shift register of lenth 3. If this option
---is desired then majority out of whole shift register is selected
---as sampled value!
-------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+--Separate process for tripple sampling with simple shift register. Sampling is
+--continous into shift register of lenth 3. If this option is desired then majo-
+--rity out of whole shift register is selected as sampled value!
+--------------------------------------------------------------------------------
   tripple_sam_proc:process(res_n,clk_sys)
   begin
    if(res_n = ACT_RESET) then
@@ -362,9 +409,9 @@ begin
   end process;  
   
 
-------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --Sampling of the bus values and bit Error Detection
-------------------------------------------------------------------------
+--------------------------------------------------------------------------------
   sample_proc:process(res_n,clk_sys)
   begin
   if(res_n='0')then
@@ -373,10 +420,13 @@ begin
   elsif rising_edge(clk_sys)then
    if(drv_ena=ENABLED)then
     case sp_control is
-     when NOMINAL_SAMPLE => --Sampling with nominal bit time (normal CAN, transciever, reciever)
+    
+     --Sampling with nominal bit time (normal CAN, transciever, reciever)
+     when NOMINAL_SAMPLE =>
         if(sample_nbt='1')then
 
-          --Tripple sampling option selects the majority from last three sampled values
+          --Tripple sampling option selects the majority from last three 
+          --sampled values
           if(drv_sam='1')then
             prev_Sample<=trs_majority;           
             if(trs_majority=data_tx) or (bit_err_enable='0') then 
@@ -409,12 +459,18 @@ begin
           bit_Error_reg<=bit_Error_reg;
           prev_Sample<=prev_Sample; 
         end if;
-     when SECONDARY_SAMPLE => --Sampling with transciever delay compensation (CAN FD, transciever)
+        
+     --Sampling with transciever delay compensation (CAN FD, transciever)
+     when SECONDARY_SAMPLE =>
         if(sample_sec='1')then
           prev_Sample<=sync_Data;
           
-          --Bit Error comparison differs in this case, not actual transmitted bit is compared, but delayed bit is compared (in ssp_shift register)
-          if(sync_Data=ssp_shift(to_integer(unsigned(trv_delay))) or (bit_err_enable='0'))then
+          --Bit Error comparison differs in this case, not actual transmitted 
+          --bit is compared, but delayed bit is compared (in ssp_shift register)
+          if(sync_Data=ssp_shift(to_integer(unsigned(trv_delay))) 
+						 or
+						(bit_err_enable='0'))
+					then
             bit_Error_reg<='0';
           else
             bit_Error_reg<='1';
