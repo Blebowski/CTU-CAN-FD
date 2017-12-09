@@ -247,7 +247,6 @@ begin
   --Registers to output propagation
   sample_sec_out        <=  sample_sec;
   sample_sec_del_1_out  <=  sample_sec_del_1;
-  
   sample_sec_del_2_out  <=  sample_sec_del_2;
   
   --Bit Error propagation
@@ -366,8 +365,6 @@ begin
     sample_sec          <=  '0';
     sample_sec_shift    <=  (OTHERS=>'0');
     ssp_shift           <=  (OTHERS=>RECESSIVE);
-    sample_sec_del_1    <=  '0';
-    sample_sec_del_2    <=  '0';
   elsif rising_edge(clk_sys)then  
     if(ssp_reset='1')then
 			
@@ -382,15 +379,27 @@ begin
       
       --Shifted signal with trv_delay
       sample_sec        <=  sample_sec_shift(to_integer(unsigned(trv_delay)));
-      sample_sec_del_1  <=  sample_sec_shift(to_integer(unsigned(trv_delay+1)));
-      sample_sec_del_2  <=  sample_sec_shift(to_integer(unsigned(trv_delay+2)));
-      
+       
       --Storing TX data
       ssp_shift         <=  ssp_shift(shift_length-2 downto 0)&data_tx;
     end if;
   end if;
   end process;
   
+--------------------------------------------------------------------------------
+-- Delay process for secondary sampling singal
+--------------------------------------------------------------------------------
+del_samsec_proc:process(res_n,clk_sys)
+begin
+  if (res_n = ACT_RESET) then
+    sample_sec_del_1 <= '0';  
+    sample_sec_del_2 <= '0';    
+  elsif (rising_edge(clk_sys))then
+    sample_sec_del_1 <= sample_sec;
+    sample_sec_del_2 <= sample_sec_del_1;  
+  end if;
+end process;
+
 
 --------------------------------------------------------------------------------
 --Separate process for tripple sampling with simple shift register. Sampling is
