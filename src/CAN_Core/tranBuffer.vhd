@@ -71,7 +71,8 @@ entity tranBuffer is
     --------------------------------
     --Stored data register outputs--
     --------------------------------
-    signal tran_ident           :out  std_logic_vector(28 downto 0);
+    signal tran_ident_base      :out  std_logic_vector(10 downto 0);
+    signal tran_ident_ext       :out  std_logic_vector(17 downto 0);
     signal tran_dlc             :out  std_logic_vector(3 downto 0);
     signal tran_is_rtr          :out  std_logic;
     signal tran_ident_type      :out  std_logic;
@@ -83,7 +84,8 @@ entity tranBuffer is
   ----------------------
   --Internal registers--
   ----------------------
-  signal tran_ident_reg: std_logic_vector(28 downto 0);
+  signal tran_ident_base_reg: std_logic_vector(10 downto 0);
+  signal tran_ident_ext_reg: std_logic_vector(17 downto 0);
   signal tran_dlc_reg: std_logic_vector(3 downto 0);
   signal tran_is_rtr_reg: std_logic;
   signal tran_ident_type_reg: std_logic;
@@ -95,7 +97,8 @@ end entity;
 
 architecture rtl of tranBuffer is 
 begin
-  tran_ident              <=  tran_ident_reg;
+  tran_ident_base         <=  tran_ident_base_reg;
+  tran_ident_ext          <=  tran_ident_ext_reg;
   tran_dlc                <=  tran_dlc_reg;
   tran_is_rtr             <=  tran_is_rtr_reg;
   tran_ident_type         <=  tran_ident_type_reg;
@@ -105,7 +108,8 @@ begin
   data_store:process(clk_sys,res_n)
   begin
   if res_n=ACT_RESET then
-    tran_ident_reg        <=  (OTHERS =>'0');
+    tran_ident_base_reg   <=  (OTHERS =>'0');
+    tran_ident_ext_reg    <=  (OTHERS =>'0');
     tran_dlc_reg          <=  (OTHERS =>'0');
     tran_is_rtr_reg       <=  '0';
     tran_ident_type_reg   <=  '0';
@@ -113,14 +117,16 @@ begin
     tran_brs_reg          <=  '0';
   elsif rising_edge(clk_sys)then 
     if(frame_store='1')then
-      tran_ident_reg      <=  tran_ident_in;
+      tran_ident_base_reg <=  tran_ident_in(10 downto 0);
+      tran_ident_ext_reg  <=  tran_ident_in(28 downto 11);
       tran_dlc_reg        <=  tran_dlc_in;
       tran_is_rtr_reg     <=  tran_is_rtr_in;
       tran_ident_type_reg <=  tran_ident_type_in;
       tran_frame_type_reg <=  tran_frame_type_in;
       tran_brs_reg        <=  tran_brs_in;
     else
-      tran_ident_reg      <=  tran_ident_reg;
+      tran_ident_base_reg <=  tran_ident_base_reg;
+      tran_ident_ext_reg  <=  tran_ident_ext_reg;
       tran_dlc_reg        <=  tran_dlc_reg;
       tran_is_rtr_reg     <=  tran_is_rtr_reg;
       tran_ident_type_reg <=  tran_ident_type_reg;

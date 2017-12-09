@@ -168,7 +168,8 @@ entity protocolControl is
     --Transcieve buffer interface--
     -------------------------------
     signal tran_data              :in   std_logic_vector(31 downto 0);
-    signal tran_ident             :in   std_logic_vector(28 downto 0);
+    signal tran_ident_base        :in   std_logic_vector(10 downto 0);
+    signal tran_ident_ext         :in   std_logic_vector(17 downto 0);
     signal tran_dlc               :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr            :in   std_logic;
     signal tran_ident_type        :in   std_logic;
@@ -501,6 +502,10 @@ entity protocolControl is
   -- This is to fix lost of arbitration in last bit!!!
   signal delay_control_trans      :     std_logic; 
   
+  --Transceive identifier shift registers
+  signal tran_ident_base_sr       :     std_logic_vector(10 downto 0);
+  signal tran_ident_ext_sr        :     std_logic_vector(17 downto 0);  
+  
   --------------------------
   --Control field registers-
   --------------------------
@@ -799,6 +804,9 @@ begin
       alc_r                   <=  (OTHERS=>'0');
       data_size               <=  0;
       
+      tran_ident_base_sr      <= (OTHERS => '0');
+      tran_ident_ext_sr       <= (OTHERS => '0');
+      
       --Nulling recieve registers
       rec_ident_base_sr       <=  (OTHERS=>'0');
       rec_ident_ext_sr        <=  (OTHERS=>'0');
@@ -813,7 +821,7 @@ begin
       rec_data_sr             <= (OTHERS => '0');
       
       -- Pointer directly to TXT Buffer RAM
-      txt_buf_ptr_r             <= 0;
+      txt_buf_ptr_r           <= 0;
       
       --Presetting the sampling point control
       sp_control_r            <=  NOMINAL_SAMPLE;
@@ -867,6 +875,9 @@ begin
        tran_pointer           <=  tran_pointer;
        arb_state              <=  arb_state;--Arbitration control state machine
        arb_two_bits           <=  arb_two_bits;
+       
+       tran_ident_base_sr     <= tran_ident_base_sr;
+       tran_ident_ext_sr      <= tran_ident_ext_sr;
        
        --Stored value of bit behind Identifier extension (RTR,r1)
        arb_one_bit            <=  arb_one_bit;
@@ -1063,7 +1074,12 @@ begin
                 
                 --The index in tran_ident in where MSB bit of the 
                 --base ident is 10
-                tran_pointer              <=  10; 
+                tran_pointer              <=  10;
+                
+                --Load the Identifier transmission shift registers
+                tran_ident_base_sr        <= tran_ident_base;
+                tran_ident_ext_sr         <= tran_ident_ext;
+                
                 arb_state                 <=  base_id;
                 crc_enable_r              <=  '1';
                 
@@ -1163,7 +1179,11 @@ begin
             when base_id =>
                   if(tran_trig='1')then
                     if(OP_state=transciever)then
-                      data_tx_r     <=  tran_ident(tran_pointer);
+                      
+                      --Direct addressing replaced by shift register
+                      data_tx_r          <= tran_ident_base_sr(10);
+                      tran_ident_base_sr <= tran_ident_base_sr(9 downto 0)&'0';
+                      --data_tx_r     <=  tran_ident(tran_pointer);
                     else
                       data_tx_r     <=  RECESSIVE;
                     end if;
@@ -1263,7 +1283,12 @@ begin
             when ext_id=>
                  if(tran_trig='1')then
                     if(OP_state=transciever)then
-                      data_tx_r   <=  tran_ident(tran_pointer);
+                      
+                      --Replaced direct access by shift register
+                      data_tx_r          <= tran_ident_ext_sr(17);
+                      tran_ident_ext_sr  <= tran_ident_ext_sr(16 downto 0)&'0';
+                      
+                      --data_tx_r   <=  tran_ident(tran_pointer);
                     else
                       data_tx_r   <=  RECESSIVE;
                     end if;
