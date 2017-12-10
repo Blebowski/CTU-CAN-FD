@@ -61,6 +61,7 @@ package CANcomponents is
       constant sup_filtB      : boolean               := true;
       constant sup_filtC      : boolean               := true;
       constant sup_range      : boolean               := true;
+      constant tx_time_sup    : boolean               := true;
       constant logger_size    : natural --range 0 to 512:=8
       );
     port(
@@ -227,6 +228,9 @@ package CANcomponents is
   -- TXT Arbitrator module
   ------------------------------------------------------------------------------
   component txArbitrator is
+    generic(
+      tx_time_sup : boolean := true
+    );
     port(
       signal clk_sys              : in  std_logic;
       signal res_n                : in  std_logic;
