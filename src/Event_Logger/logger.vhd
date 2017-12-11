@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -29,38 +29,47 @@ USE WORK.CANconstants.ALL;
 -- Revision History:
 --
 --    July 2015   Created file
---    18.12.2015  Logger memory inference changed from FF to SRAM, dual port. Async Read, sync write. 
---                Assumed automatical recognition by synthetiser. Memory_valid vector added as workaround 
---                for erasing whole logger memory at once. This vector is erased at once and when write to 
---                memory is performed according bit of the vector is set. When memory is read then its 
---                content is returned only if according bit of memory_valid vector is set.  Oterwise zeroes 
---                are returned.
---    16.5.2016   1. Added function for filling the memory of logger. More generic approach now available.
+--    18.12.2015  Logger memory inference changed from FF to SRAM, dual port. 
+--                Async Read, sync write. Assumed automatical recognition by 
+--                synthetiser. Memory_valid vector added as workaround for era-
+--                sing whole logger memory at once. This vector is erased at once
+--                and when write to memory is performed according bit of the 
+--                vector is set. When memory is read then its content is retur-
+--                ned only if according bit of memory_valid vector is set.  
+--                Otherwise zeroes are returned.
+--    16.5.2016   1. Added function for filling the memory of logger. More gene-
+--                   ric approach now available.
 --                2. Fixed wrong data during logging of Data Overrun event
---                3. Added PC_State signal for more comprehensible implementation of conditions
---    26.5.2016   Added edge detection on error signals! Thus each error is logged only once as expected!
+--                3. Added PC_State signal for more comprehensible implementa-
+--                   tion of conditions
+--    26.5.2016   Added edge detection on error signals! Thus each error is 
+--                logged only once as expected!
 --
---    16.6.2016   Completely changed event logging mechanism! Added so called event harvesting. Edge is 
---                detected on each event source and stored into event_captured register. In next N clock
---                cycles, N events are added into logger memory where N is amount of bits in event_captured
---                in logic 1 (Number of simultaneos events). 
---                When multiple events are marked in event_captured, they are stored cycle by cycle from
---                lowest index events to highest index events! Once event is truly stored into the buffer
---                event captured bit is cleared! This mechanism is called "Event Harvesting"! Harvest pointer
---                is combinationally decoded based on what content is in event_captured! 
---                Additionaly with Event harvesting CAN controller reached better timing analysis and less
---                LUT usage with same settings!
+--    16.6.2016   Completely changed event logging mechanism! Added so called 
+--                event harvesting. Edge is detected on each event source and 
+--                stored into event_captured register. In next N clock cycles, 
+--                N events are added into logger memory where N is amount of 
+--                bits in event_captured in logic 1 (Number of simultaneos events). 
+--                When multiple events are marked in event_captured, they are 
+--                stored cycle by cycle from lowest index events to highest index
+--                events! Once event is truly stored into the buffer event cap-
+--                tured bit is cleared! This mechanism is called "Event 
+--                Harvesting"! Harvest pointer is combinationally decoded based 
+--                on what content is in event_captured!  Additionaly with Event 
+--                harvesting CAN controller reached better timing analysis and 
+--                less LUT usage with same settings!
 --
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Event logger - supporting logging of events like : SOF start, Arbitration start, Arbitration lost, 
---  Message was validly recieved, transcieved etc...  Operates as FIFO memory. Recording is started by 
---  trigger condition which is also presettable. Only one event at time can be recoded. See IP function 
---  documentation to see which events can't be recorded simultaneously. When event occurs it saves     
---  code of the event and input timeStamp.          
--------------------------------------------------------------------------------------------------------------
+--  Event logger - supporting logging of events like : SOF start, Arbitration 
+--  start, Arbitration lost, Message was validly recieved, transcieved etc...  
+--  Operates as FIFO memory. Recording is started by trigger condition which is 
+--  also presettable. Only one event at time can be recoded. See IP function 
+--  documentation to see which events can't be recorded simultaneously. When 
+--  event occurs it saves code of the event and input timeStamp.          
+--------------------------------------------------------------------------------
 
 entity CAN_logger is 
   generic(
@@ -87,7 +96,10 @@ entity CAN_logger is
     -------------------
     --Status signals --
     -------------------
-    signal loger_finished       :out  std_logic; --Logger finished interrrupt output
+    
+    --Logger finished interrrupt output
+    signal loger_finished       :out  std_logic;
+     
     signal loger_act_data       :out  std_logic_vector(63 downto 0);
     signal log_write_pointer    :out  std_logic_vector(7 downto 0);
     signal log_read_pointer     :out  std_logic_vector(7 downto 0);
@@ -235,49 +247,110 @@ begin
    drv_log_cmd_down             <=  drv_bus(DRV_LOG_CMD_DOWN_INDEX);
    
    --Memory propagation only if given field is valid
-   loger_act_data               <=  memory(read_pointer) when (memory_valid(read_pointer)='1') 
-                                                         else 
+   loger_act_data               <=  memory(read_pointer) 
+                                        when (memory_valid(read_pointer)='1') 
+                                        else 
                                     (OTHERS => '0');
   
    --Protocol control state from driving bus
-   PC_state                     <= protocol_type'VAL
-                                  (to_integer(unsigned
-                                   (
-                                    stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))
-                                   )
-                                  );
+   PC_state           <= protocol_type'VAL
+                        (to_integer(unsigned
+                         (
+                          stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))
+                         )
+                        );
   
   
   -----------------------------------------------------------------
   --Here we join the event sources into input vector
   -----------------------------------------------------------------  
-  event_inputs (0)            <= '1' when ((drv_cap_sof='1')   and PC_state=sof )                             else '0';
-  event_inputs (1)            <= '1' when (drv_cap_arb_lost='1' and stat_bus(STAT_ARB_LOST_INDEX)='1')        else '0';
-  event_inputs (2)            <= '1' when (drv_cap_rec_valid='1' and stat_bus(STAT_REC_VALID_INDEX)='1')      else '0';
-  event_inputs (3)            <= '1' when (drv_cap_tran_valid='1') and stat_bus(STAT_TRAN_VALID_INDEX)='1'    else '0';
-  event_inputs (4)            <= '1' when (drv_cap_ovl='1') and (PC_state=overload)                           else '0';
-  event_inputs (5)            <= drv_cap_error  and ( stat_bus(STAT_BIT_ERROR_VALID_INDEX)      or 
-                                                      stat_bus(STAT_FORM_ERROR_INDEX)           or
-                                                      stat_bus(STAT_CRC_ERROR_INDEX)            or 
-                                                      stat_bus(STAT_ACK_ERROR_INDEX)            or
-                                                      stat_bus(STAT_STUFF_ERROR_INDEX)      
-                                                    );
+  event_inputs (0)            <= '1' when ((drv_cap_sof='1') and PC_state=sof )                            
+                                     else 
+                                 '0';
+  event_inputs (1)            <= '1' when (drv_cap_arb_lost='1' and 
+                                           stat_bus(STAT_ARB_LOST_INDEX)='1')
+                                     else 
+                                 '0';
+  event_inputs (2)            <= '1' when (drv_cap_rec_valid='1' and 
+                                           stat_bus(STAT_REC_VALID_INDEX)='1')
+                                     else
+                                 '0';
+  event_inputs (3)            <= '1' when (drv_cap_tran_valid='1') and 
+                                           stat_bus(STAT_TRAN_VALID_INDEX)='1'
+                                     else
+                                 '0';
+  event_inputs (4)            <= '1' when (drv_cap_ovl='1') and 
+                                          (PC_state=overload) 
+                                     else
+                                 '0';
+  event_inputs (5)            <= drv_cap_error  
+                                 and ( stat_bus(STAT_BIT_ERROR_VALID_INDEX)   or 
+                                       stat_bus(STAT_FORM_ERROR_INDEX)        or
+                                       stat_bus(STAT_CRC_ERROR_INDEX)         or 
+                                       stat_bus(STAT_ACK_ERROR_INDEX)         or
+                                       stat_bus(STAT_STUFF_ERROR_INDEX)      
+                                     );
                                  
-  event_inputs (6)            <= '1' when (drv_cap_brs='1') and stat_bus(STAT_TRAN_BRS_INDEX)='1'             else '0';
-  event_inputs (7)            <= '1' when (drv_cap_arb_start='1') and (PC_state=arbitration)                  else '0';
-  event_inputs (8)            <= '1' when (drv_cap_contr_start='1') and (PC_state=control)                    else '0';
-  event_inputs (9)            <= '1' when (drv_cap_data_start='1')  and (PC_state=data)                       else '0';
-  event_inputs (10)           <= '1' when (drv_cap_crc_start='1') and (PC_state=crc)                          else '0';
-  event_inputs (11)           <= '1' when (drv_cap_ack_rec='1') and stat_bus(STAT_ACK_RECIEVED_OUT_INDEX)='1' else '0';
-  event_inputs (12)           <= '1' when (drv_cap_ack_n_rec='1') and stat_bus(STAT_ACK_ERROR_INDEX)='1'      else '0';
-  event_inputs (13)           <= '1' when (drv_cap_ewl_reached='1') and stat_bus(STAT_EWL_REACHED_INDEX)='1'  else '0';
-  event_inputs (14)           <= '1' when (drv_cap_erp_changed='1') and stat_bus(STAT_ERP_CHANGED_INDEX)='1'  else '0';
-  event_inputs (15)           <= '1' when (drv_cap_tran_start='1') and stat_bus(STAT_SET_TRANSC_INDEX)='1'    else '0';
-  event_inputs (16)           <= '1' when (drv_cap_rec_start='1') and stat_bus(STAT_SET_REC_INDEX)='1'        else '0';
-  event_inputs (17)           <= '1' when (drv_cap_sync_edge='1' and sync_edge='1')                           else '0';
-  event_inputs (18)           <= '1' when (drv_cap_stuffed='1') and (stat_bus(STAT_DATA_HALT_INDEX)='1')      else '0';
-  event_inputs (19)           <= '1' when (drv_cap_destuffed='1') and (stat_bus(STAT_DESTUFFED_INDEX)='1')    else '0';
-  event_inputs (20)           <= '1' when (drv_cap_ovr='1') and (data_overrun='1')                            else '0';
+  event_inputs (6)            <= '1' when (drv_cap_brs='1') and 
+                                           stat_bus(STAT_TRAN_BRS_INDEX)='1'
+                                     else
+                                 '0';
+  event_inputs (7)            <= '1' when (drv_cap_arb_start='1') and 
+                                          (PC_state=arbitration)
+                                     else
+                                 '0';
+  event_inputs (8)            <= '1' when (drv_cap_contr_start='1') and 
+                                          (PC_state=control)
+                                     else
+                                 '0';
+  event_inputs (9)            <= '1' when (drv_cap_data_start='1')  and 
+                                          (PC_state=data)
+                                     else
+                                 '0';
+  event_inputs (10)           <= '1' when (drv_cap_crc_start='1') and 
+                                          (PC_state=crc)
+                                     else
+                                 '0';
+  event_inputs (11)           <= '1' when (drv_cap_ack_rec='1') and 
+                                          stat_bus(STAT_ACK_RECIEVED_OUT_INDEX)='1' 
+                                     else
+                                 '0';
+  event_inputs (12)           <= '1' when (drv_cap_ack_n_rec='1') and 
+                                           stat_bus(STAT_ACK_ERROR_INDEX)='1'
+                                     else
+                                 '0';
+  event_inputs (13)           <= '1' when (drv_cap_ewl_reached='1') and 
+                                           stat_bus(STAT_EWL_REACHED_INDEX)='1'
+                                     else
+                                 '0';
+  event_inputs (14)           <= '1' when (drv_cap_erp_changed='1') and 
+                                          stat_bus(STAT_ERP_CHANGED_INDEX)='1'
+                                     else
+                                 '0';
+  event_inputs (15)           <= '1' when (drv_cap_tran_start='1') and 
+                                           stat_bus(STAT_SET_TRANSC_INDEX)='1'
+                                     else
+                                 '0';
+  event_inputs (16)           <= '1' when (drv_cap_rec_start='1') and 
+                                           stat_bus(STAT_SET_REC_INDEX)='1' 
+                                     else
+                                 '0';
+  event_inputs (17)           <= '1' when (drv_cap_sync_edge='1' and 
+                                           sync_edge='1')                           
+                                     else
+                                 '0';
+  event_inputs (18)           <= '1' when (drv_cap_stuffed='1') and 
+                                          (stat_bus(STAT_DATA_HALT_INDEX)='1') 
+                                     else
+                                 '0';
+  event_inputs (19)           <= '1' when (drv_cap_destuffed='1') and
+                                          (stat_bus(STAT_DESTUFFED_INDEX)='1')
+                                     else
+                                 '0';
+  event_inputs (20)           <= '1' when (drv_cap_ovr='1') and 
+                                          (data_overrun='1') 
+                                     else
+                                 '0';
   
   --We register the input vector
   in_vect_reg_proc:process(res_n,clk_sys)
@@ -347,13 +420,17 @@ begin
   -----------------------------------------------------------------
   --Event details decoding!
   -----------------------------------------------------------------
-  ev_details <= "000"&error_type_vect when harvest_pointer=5              else
-                "0000"&bit_type_vect  when harvest_pointer=6              else
+  ev_details <= "000"&error_type_vect 
+                      when harvest_pointer=5 else
+                "0000"&bit_type_vect  
+                      when harvest_pointer=6 else
                  "0000"&stat_bus(STAT_FIXED_STUFF_INDEX)&
-                 stat_bus(STAT_BS_LENGTH_HIGH downto STAT_BS_LENGTH_LOW)  when harvest_pointer=18 else
+                 stat_bus(STAT_BS_LENGTH_HIGH downto STAT_BS_LENGTH_LOW)  
+                      when harvest_pointer=18 else
                  "0000"&stat_bus(STAT_FIXED_DESTUFF_INDEX)&
-                 stat_bus(STAT_BDS_LENGTH_HIGH downto STAT_BDS_LENGTH_LOW)  when harvest_pointer=19 else
-                  (OTHERS => '0');
+                 stat_bus(STAT_BDS_LENGTH_HIGH downto STAT_BDS_LENGTH_LOW)  
+                      when harvest_pointer=19 else
+                 (OTHERS => '0');
       
   -----------------------------------------------------------------
   --Process for event harvesting
@@ -395,10 +472,13 @@ begin
                 if (event_edge(i) = '1')then
                   event_captured(i) <= '1';
                   
-                  --Here some additional stuff need to be stored in special event types
+                  --Here some additional stuff need to be stored 
+                  --in special event types
                   if(i = 5) then
-                    error_type_vect   <=  stat_bus(STAT_FORM_ERROR_INDEX)&stat_bus(STAT_ACK_ERROR_INDEX)&
-                                          stat_bus(STAT_CRC_ERROR_INDEX)&stat_bus(STAT_STUFF_ERROR_INDEX)&
+                    error_type_vect   <=  stat_bus(STAT_FORM_ERROR_INDEX)&
+                                          stat_bus(STAT_ACK_ERROR_INDEX)&
+                                          stat_bus(STAT_CRC_ERROR_INDEX)&
+                                          stat_bus(STAT_STUFF_ERROR_INDEX)&
                                           stat_bus(STAT_BIT_ERROR_VALID_INDEX);
                   end if;                  
                   
@@ -416,18 +496,20 @@ begin
               end if;
           end loop;
           
-          --Here browse (harwest) trough the event_captured and 
-          -- store it into the actuall logger memory!!! We do it
-          -- sequentially from lowest indices up to highest indices
-          -- Here harvest_pointer is used. This pointer is decoded
-          -- by priority decoder and allows sequential processing
-          -- of many events happening simulateously!!
+          --Here browse (harwest) trough the event_captured and store it into 
+          --the actuall logger memory!!! We do it sequentially from lowest 
+          --indices up to highest indices Here harvest_pointer is used. This 
+          --pointer is decoded by priority decoder and allows sequential proce-
+          --ssing of many events happening simulateously!!
           if(harvest_pointer<event_amount) then
             event_captured(harvest_pointer) <= '0';
             memory_valid(write_pointer)     <= '1';
             
             --Here store the data into logger
-            memory(write_pointer)           <= timestamp(47 downto 0)&ev_details&std_logic_vector(to_unsigned(harvest_pointer+1,8));
+            memory(write_pointer)           <= timestamp(47 downto 0)&
+                                               ev_details&
+                                               std_logic_vector(
+                                               to_unsigned(harvest_pointer+1,8));
             write_pointer                   <= (write_pointer+1) mod memory_size;
           end if;          
           
@@ -480,20 +562,34 @@ begin
                   log_state     <=  running;
              end if;  
              
-             if( (((drv_trig_arb_lost    = '1') and stat_bus(STAT_ARB_LOST_INDEX)    = '1')       ) or
-                 (((drv_trig_rec_valid   = '1') and stat_bus(STAT_REC_VALID_INDEX)   = '1')       ) or
-                 (((drv_trig_tran_valid  = '1') and stat_bus(STAT_TRAN_VALID_INDEX)  = '1')       ) or
-                 (((drv_trig_ovl         = '1') and (PC_state                        =  overload))) or
-                 (((drv_trig_brs         = '1') and stat_bus(STAT_TRAN_BRS_INDEX)    = '1')       ) or
-                 (((drv_trig_ack_n_rec   = '1') and stat_bus(STAT_ACK_ERROR_INDEX)   = '1')       ) or
-                 (((drv_trig_ewl_reached = '1') and stat_bus(STAT_EWL_REACHED_INDEX) = '1')       ) or
-                 (((drv_trig_erp_changed = '1') and stat_bus(STAT_ERP_CHANGED_INDEX) = '1')       ) or
-                 (((drv_trig_tran_start  = '1') and stat_bus(STAT_SET_TRANSC_INDEX)  = '1')       ) or
-                 (((drv_trig_rec_start   = '1') and stat_bus(STAT_SET_REC_INDEX)     = '1')       ) or
+             if( (((drv_trig_arb_lost    = '1') and 
+                   stat_bus(STAT_ARB_LOST_INDEX)    = '1')       ) or
+                 (((drv_trig_rec_valid   = '1') and
+                    stat_bus(STAT_REC_VALID_INDEX)   = '1')       ) or
+                 (((drv_trig_tran_valid  = '1') and 
+                    stat_bus(STAT_TRAN_VALID_INDEX)  = '1')       ) or
+                 (((drv_trig_ovl         = '1') and 
+                   (PC_state                        =  overload))) or
+                 (((drv_trig_brs         = '1') and 
+                   stat_bus(STAT_TRAN_BRS_INDEX)    = '1')       ) or
+                 (((drv_trig_ack_n_rec   = '1') and 
+                   stat_bus(STAT_ACK_ERROR_INDEX)   = '1')       ) or
+                 (((drv_trig_ewl_reached = '1') and 
+                   stat_bus(STAT_EWL_REACHED_INDEX) = '1')       ) or
+                 (((drv_trig_erp_changed = '1') and 
+                   stat_bus(STAT_ERP_CHANGED_INDEX) = '1')       ) or
+                 (((drv_trig_tran_start  = '1') and 
+                   stat_bus(STAT_SET_TRANSC_INDEX)  = '1')       ) or
+                 (((drv_trig_rec_start   = '1') and 
+                   stat_bus(STAT_SET_REC_INDEX)     = '1')       ) or
                   --Note: Two writes have to be done now to command bit
-                 (((drv_trig_user_write  = '1') and drv_log_cmd_str                  = '1')       ) or 
-                 (((drv_trig_error       = '1') and stat_bus(STAT_ERROR_VALID_INDEX) = '1')       ) or 
-                 (((drv_trig_ack_rec     = '1') and stat_bus(STAT_ACK_RECIEVED_OUT_INDEX)='1')    )
+                 (((drv_trig_user_write  = '1') and 
+                 
+                   drv_log_cmd_str                  = '1')       ) or 
+                 (((drv_trig_error       = '1') and 
+                   stat_bus(STAT_ERROR_VALID_INDEX) = '1')       ) or 
+                 (((drv_trig_ack_rec     = '1') and 
+                   stat_bus(STAT_ACK_RECIEVED_OUT_INDEX)='1')    )
                 )then
                    log_state    <=  running;   
              end if;
@@ -506,7 +602,9 @@ begin
           loger_finished        <=  '0';
           
           --Stop the logging when abort command or buffer full
-          if((drv_log_cmd_abt            = '1') or (write_pointer = memory_size-1))then
+          if((drv_log_cmd_abt            = '1') or 
+             (write_pointer = memory_size-1))
+          then
             log_state           <=  config;
             if(write_pointer = memory_size-1)then
               loger_finished    <=  '1';

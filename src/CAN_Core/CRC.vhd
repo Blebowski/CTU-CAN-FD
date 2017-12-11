@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -29,28 +29,31 @@ use work.CANconstants.all;
 -- Revision History:
 --
 --    June 2015   Created file
---    28.5.2016   Starting polynomial changed for crc 17 and crc 21. Highest bit is now fixed in logic one
---                to be compliant with CAN ISO FD. It will be needed to implement both ways still since ISO
---                and non-ISO FD will be changable via configuration bit! 
---    4.6.2016    Added drv_is_fd to cover differencce in highest bit of crc17 and crc21 polynomial             
--------------------------------------------------------------------------------------------------------------
+--    28.5.2016   Starting polynomial changed for crc 17 and crc 21. Highest bit
+--                is now fixed in logic one to be compliant with CAN ISO FD. It
+--                will be needed to implement both ways still since ISO and 
+--                non-ISO FD will be changable via configuration bit! 
+--    4.6.2016    Added drv_is_fd to cover differencce in highest bit of crc17
+--                and crc21 polynomial             
+--------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  CRC Checking for CAN flexible data Rate. Three CRC are calculated simultaneously. Serial Data input. ---
---  Operation starts with enable transition from 0 to 1. Valid input data has to be present then.         --
---  Circuit processes the data on trig signal in logic 1. Circuit operation finishes when 1 to 0 transiti --
---  on on enable signal appears. The output CRC is valid then. CRC stays valid until following 0 to 1 ena --
---  ble transition. This also erases CRC registers.
+--  CRC Checking for CAN flexible data Rate. Three CRC are calculated simulta-
+--  neously. Serial Data input. Operation starts with enable transition from 0 
+--  to 1. Valid input data has to be present then. Circuit processes the data on
+--  trig signal in logic 1. Circuit operation finishes when 1 to 0 transition on
+--  enable signal appears. The output CRC is valid then. CRC stays valid until
+--  following 0 to 1 enable transition. This also erases CRC registers.
 --
 --  Refer to CAN 2.0 or CAN FD Specification for CRC calculation algorythm                                                   -- 
-----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 entity canCRC is
   generic(
-    constant crc15_pol :     std_logic_vector(15 downto 0):=std_logic_vector'(X"C599");
-    constant crc17_pol :     std_logic_vector(19 downto 0):=std_logic_vector'(X"3685B");
-    constant crc21_pol :     std_logic_vector(23 downto 0):=std_logic_vector'(X"302899")  
+    constant crc15_pol :     std_logic_vector(15 downto 0):=x"C599";
+    constant crc17_pol :     std_logic_vector(19 downto 0):=x"3685B";
+    constant crc21_pol :     std_logic_vector(23 downto 0):=x"302899"  
   );
   port(
     ----------
@@ -65,8 +68,9 @@ entity canCRC is
     signal res_n      :in   std_logic; --Asynchronous reset
     
     signal enable     :in   std_logic; 
-    --By transition from 0 to 1 on enable sampled on clk_sys rising edge (and with trig='1')
-    --operation is started. First bit of data already has to be on data_in input.
+    --By transition from 0 to 1 on enable sampled on clk_sys rising edge 
+    --(and with trig='1') operation is started. First bit of data already has 
+    --to be on data_in input.
     --Circuit works as long as enable=1.
     
     signal drv_bus    :in   std_logic_vector(1023 downto 0);
@@ -86,8 +90,11 @@ entity canCRC is
   signal crc17_reg    :     std_logic_vector(16 downto 0);
   signal crc21_reg    :     std_logic_vector(20 downto 0);
   
-  signal start_reg    :     std_logic; --Holds previous value of enable input. Detects 0 to 1 transition
-  signal drv_fd_type  :     std_logic; --ISO CAN FD or NON ISO CAN FD Value
+  --Holds previous value of enable input. Detects 0 to 1 transition
+  signal start_reg    :     std_logic;
+  
+  --ISO CAN FD or NON ISO CAN FD Value
+  signal drv_fd_type  :     std_logic; 
   
 end entity;
 
@@ -206,7 +213,7 @@ begin
     crc21_reg         <= (OTHERS=>'0');
     crc21_reg(20)     <= '1';
     crc21_nxt         := '0';
-  elsif rising_edge(clk_sys)then --TODO think of optimization IF clocks are synthetized via AND gate!!!
+  elsif rising_edge(clk_sys)then
    
    --Erase the CRC value at the begining of
    --calculation

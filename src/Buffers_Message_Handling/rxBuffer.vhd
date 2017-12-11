@@ -91,10 +91,10 @@ use work.CANconstants.all;
 entity rxBuffer is
   GENERIC(
   
-			--Maximal number of 32 bit words to store (Minimal value=16, one 64 bytes
-			--message length) Only 2^k are allowed as buff_size. Memory adressing is
-			--in modular arithmetic, synthesis of modulo by number other than 2^k is
-			-- not supported!!!
+      --Maximal number of 32 bit words to store (Minimal value=16, one 64 bytes
+      --message length) Only 2^k are allowed as buff_size. Memory adressing is
+      --in modular arithmetic, synthesis of modulo by number other than 2^k is
+      -- not supported!!!
       buff_size                 :natural range 4 to 512 :=32 
   );
   PORT(
@@ -206,7 +206,7 @@ entity rxBuffer is
   constant data_width           :natural := 32;  --Word data width
   
   type rx_memory is array(0 to buff_size-1) of 
-										std_logic_vector(data_width-1 downto 0); --Memory type
+                    std_logic_vector(data_width-1 downto 0); --Memory type
   
   --Memory declaration inferred in SRAM
   signal memory                 :rx_memory;
@@ -267,10 +267,10 @@ begin
   -- Address for the Receive data RAM in the CAN Core! Comparator is temporary 
   -- before the data order will be reversed!
   rec_dram_addr         <= 18-copy_counter when (copy_counter>2
-																								 and
-																								 copy_counter<19)
-																					 else
-													 0;
+	                                             and
+                                                 copy_counter<19)
+                                           else
+                           0;
   
   ------------------------------------------------------------------------------
   --Storing data from CANCore and loading data into reading buffer
@@ -392,11 +392,11 @@ begin
             --Writing Frame format Word
             rx_message_disc             <= '0';
             memory(write_pointer)       <= "000000000000000000000"&
-																						rec_esi&rec_brs&
-																						'1'&rec_frame_type_in&
-																						rec_ident_type_in&
-																						rec_is_rtr&
-																						'0'&rec_dlc_in;
+		                                    rec_esi&rec_brs&
+                                            '1'&rec_frame_type_in&
+                                            rec_ident_type_in&
+                                            rec_is_rtr&
+                                            '0'&rec_dlc_in;
             memory_valid(write_pointer) <= '1';
             
            --Increasing write pointer
@@ -487,7 +487,7 @@ begin
       end if;
   
   rx_mem_free                           <= std_logic_vector(
-																					 to_unsigned(mem_free,8));
+                                            to_unsigned(mem_free,8));
   
   --Assigning output whenever memory is full
   if (mem_free=0) then 
@@ -505,7 +505,7 @@ begin
   
   --Propagating message count to output
   rx_message_count                      <= std_logic_vector(
-																					 to_unsigned(message_count,8));
+                                            to_unsigned(message_count,8));
 
   end if;
 end process memory_acess;

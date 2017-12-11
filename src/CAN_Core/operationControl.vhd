@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -29,14 +29,16 @@ use work.CANconstants.all;
 -- Revision History:
 --
 --    June 2015  Created file
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
----------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Operation control state machine, handling whenever unit is Transciever, Reciever, Bus is idle or   ---
---  Integrating. Simple logic implemented for integrating and possible to set machine into transciever --
---  or reciever state by set_transciever, set_reciever signals. (in start of frame, lost of arbitration)--
----------------------------------------------------------------------------------------------------------
+--  Operation control state machine, handling whenever unit is Transciever, 
+--  Reciever, Bus is idle or Integrating. Simple logic implemented for integra-
+--  ting and possible to set machine into transciever or reciever state by 
+--  set_transciever, set_reciever signals. (in start of frame, lost of 
+--  arbitration)
+--------------------------------------------------------------------------------
 
 entity operationControl is
   PORT(
@@ -53,8 +55,13 @@ entity operationControl is
       signal arbitration_lost     :in   std_logic;
       signal PC_State             :in   protocol_type;
       signal tran_data_valid_in   :in   std_logic;
-      signal set_transciever      :in   std_logic; --Set OP_State FSM into transciever state (Used at SOF)
-      signal set_reciever         :in   std_logic; --Set OP_State FSM into reciever state
+      
+      --Set OP_State FSM into transciever state (Used at SOF)
+      signal set_transciever      :in   std_logic; 
+      
+       --Set OP_State FSM into reciever state
+      signal set_reciever         :in   std_logic;
+      
       signal is_idle              :in   std_logic; --Unit is idle
     
       --Bit time triggering signals
@@ -70,7 +77,9 @@ entity operationControl is
     --Internal registers--
     ----------------------
     signal OP_State_r:oper_mode_type; --Operational mode
-    signal integ_counter:natural range 0 to 11; --Counter to INTEGRATING_DURATION, to switch from integrating to bus idle
+    
+    --Counter to INTEGRATING_DURATION, to switch from integrating to bus idle
+    signal integ_counter:natural range 0 to 11; 
     signal drv_ena:std_logic;
     
 end entity;

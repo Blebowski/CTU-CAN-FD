@@ -46,7 +46,8 @@ use work.ID_transfer.all;
 --                Buffer to erase. Output data word is selected based on stored 
 --                value of "mess_src" from the time of decision between TXT1 and
 --                TXT2 buffer.
---
+--    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
+--                time and save some LUTs.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -59,7 +60,10 @@ use work.ID_transfer.all;
 --  equal and then message with lower identifier is selected!                                                                                                                                                  
 --------------------------------------------------------------------------------
 
-entity txArbitrator is 
+entity txArbitrator is
+  generic(
+    tx_time_sup : boolean := true
+  );
   port( 
     ------------------------
     -- Clock and reset    
@@ -228,9 +232,17 @@ begin
   ident2              <= txt2buf_info_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW);
   
   --Comparator methods for 64 bit vectors
-   mt1_lt_mt2         <= less_than(mess_time1,mess_time2);
-   mt1_lt_ts          <= less_than(mess_time1,timestamp);
-   mt2_lt_ts          <= less_than(mess_time2,timestamp);
+  tx_gen_true:if (tx_time_sup=true) generate
+    mt1_lt_mt2         <= less_than(mess_time1,mess_time2);
+    mt1_lt_ts          <= less_than(mess_time1,timestamp);
+    mt2_lt_ts          <= less_than(mess_time2,timestamp);
+  end generate;
+  
+  tx_gen_false:if (tx_time_sup=false) generate
+    mt1_lt_mt2  <= true;
+    mt1_lt_ts   <= true;
+    mt2_lt_ts   <= true;
+  end generate;
   
   ------------------------------------------------------------------------------
   --Message can be transmitted when transmitt timestamp is lower than the actual
@@ -297,9 +309,9 @@ begin
   --at least one of the frames is valid
   ------------------------------------------------------------------------------
 	tran_frame_valid_out      <= '1' when (ts_valid="10" or 
-																				 ts_valid="01" or
-																				 ts_valid="11")
-																	else 
+                                           ts_valid="01" or
+                                           ts_valid="11")
+                                     else 
 	                             '0';
 	
 	------------------------------------------------------------------------------

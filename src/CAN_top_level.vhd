@@ -38,6 +38,8 @@ use work.CANcomponents.ALL;
 --    28.11.2017  Added "rst_sync_comp" reset synchroniser.
 --    30.11.2017  Changed TXT buffer to registers interface. The user is now 
 --                directly accessing the buffer by avalon access.
+--    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
+--                time and save some LUTs.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -81,6 +83,7 @@ entity CAN_top_level is
     constant sup_filtB      : boolean                := true;
     constant sup_filtC      : boolean                := true;
     constant sup_range      : boolean                := true;
+    constant tx_time_sup    : boolean                := true;
     constant logger_size    : natural range 0 to 512 := 8
     );
   port(
@@ -575,6 +578,9 @@ begin
       );
 
   tx_arb_comp : txArbitrator
+    generic map(
+      tx_time_sup       => tx_time_sup 
+    )
     port map(
       clk_sys => clk_sys,
       res_n   => res_n,
@@ -796,6 +802,6 @@ begin
 										 clk_tq_dbt;
 
   OP_State <= oper_mode_type'val(to_integer(unsigned(
-								stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));
+					 stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));
   
 end architecture;

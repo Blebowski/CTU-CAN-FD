@@ -175,29 +175,29 @@ architecture rtl of messageFilter is
 begin
     --Driving signal aliases
     drv_filter_A_mask           <= drv_bus(DRV_FILTER_A_MASK_HIGH downto
-																					 DRV_FILTER_A_MASK_LOW);
+                                           DRV_FILTER_A_MASK_LOW);
     drv_filter_A_ctrl           <= drv_bus(DRV_FILTER_A_CTRL_HIGH downto
-																					 DRV_FILTER_A_CTRL_LOW);
+                                           DRV_FILTER_A_CTRL_LOW);
     drv_filter_A_bits           <= drv_bus(DRV_FILTER_A_BITS_HIGH downto
-																					 DRV_FILTER_A_BITS_LOW);
+                                           DRV_FILTER_A_BITS_LOW);
     drv_filter_B_mask           <= drv_bus(DRV_FILTER_B_MASK_HIGH downto
-																					 DRV_FILTER_B_MASK_LOW);
+                                           DRV_FILTER_B_MASK_LOW);
     drv_filter_B_ctrl           <= drv_bus(DRV_FILTER_B_CTRL_HIGH downto
-																					 DRV_FILTER_B_CTRL_LOW);
+                                           DRV_FILTER_B_CTRL_LOW);
     drv_filter_B_bits           <= drv_bus(DRV_FILTER_B_BITS_HIGH downto
-																					 DRV_FILTER_B_BITS_LOW);
+                                           DRV_FILTER_B_BITS_LOW);
     drv_filter_C_mask           <= drv_bus(DRV_FILTER_C_MASK_HIGH downto
-																					 DRV_FILTER_C_MASK_LOW);
+                                           DRV_FILTER_C_MASK_LOW);
     drv_filter_C_ctrl           <= drv_bus(DRV_FILTER_C_CTRL_HIGH downto
-																					 DRV_FILTER_C_CTRL_LOW);
+                                           DRV_FILTER_C_CTRL_LOW);
     drv_filter_C_bits           <= drv_bus(DRV_FILTER_C_BITS_HIGH downto
-																					 DRV_FILTER_C_BITS_LOW);
+                                           DRV_FILTER_C_BITS_LOW);
     drv_filter_ran_ctrl         <= drv_bus(DRV_FILTER_RAN_CTRL_HIGH downto
-																					 DRV_FILTER_RAN_CTRL_LOW);
+                                           DRV_FILTER_RAN_CTRL_LOW);
     drv_filter_ran_lo_th        <= drv_bus(DRV_FILTER_RAN_LO_TH_HIGH downto
-																					 DRV_FILTER_RAN_LO_TH_LOW);
+                                           DRV_FILTER_RAN_LO_TH_LOW);
     drv_filter_ran_hi_th        <= drv_bus(DRV_FILTER_RAN_HI_TH_HIGH downto
-																					 DRV_FILTER_RAN_HI_TH_LOW);
+                                           DRV_FILTER_RAN_HI_TH_LOW);
     drv_filters_ena             <= drv_bus(DRV_FILTERS_ENA_INDEX);
     
     --Input frame type internal signal
@@ -279,7 +279,7 @@ begin
     int_filter_ran_valid  <= '1' when (--Identifier matches the range set
                                        (rec_ident_dec
                                         <=
-																				to_integer(unsigned(drv_filter_ran_hi_th)))
+                                      to_integer(unsigned(drv_filter_ran_hi_th)))
                                        AND
                                        (rec_ident_dec
                                        >=

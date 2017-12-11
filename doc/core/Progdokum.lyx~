@@ -1376,7 +1376,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="9" columns="4">
+<lyxtabular version="3" rows="10" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1721,6 +1721,44 @@ true
 
 \begin_layout Plain Layout
 Core should support Range Identifier Filter
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tx_time_sup
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Core should supprt frame transmisison at exact time
 \end_layout
 
 \end_inset
@@ -19615,7 +19653,28 @@ TX Arbitrator circuit covers the functionality of frame selection between
  than value in TX_DATA_2 and TX_DATA_3 words of the buffer.
  Thus the Frame is only selected at the moment when external timestamp has
  elapsed the reuqired transmission time.
- The circuit combinationally propagates the metadata about the frame (Frame
+ Support of this behaviour is configurable via 
+\begin_inset Quotes eld
+\end_inset
+
+tx_time_sup
+\begin_inset Quotes erd
+\end_inset
+
+ generic.
+ If set to 
+\begin_inset Quotes eld
+\end_inset
+
+false
+\begin_inset Quotes erd
+\end_inset
+
+ frame is transmitted as soon as inserted to the TXT Buffer.
+\end_layout
+
+\begin_layout Plain Layout
+The circuit combinationally propagates the metadata about the frame (Frame
  format, DLC, Frame type, Identifier) on the output.
  The frame is selected combinationally and once the CAN Core acknowledges
  that metadata were stored in TranBuffer, it waits until the frame transmission
@@ -37888,8 +37947,17 @@ BRS Bit-rate shift.
 \end_layout
 
 \begin_layout Description
-TS_VAL An External timestamp value when controller should attempt to start
- frame transmission.
+TS_VAL These word have meaning only if 
+\begin_inset Quotes eld
+\end_inset
+
+tx_time_sup=true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ An External timestamp value when controller should attempt to start frame
+ transmission.
  If bus is Idle then transmission will start within next bit time.
  Otherwise, it will start as soon as bus is idle.
  If the frame should be transmitted immediately all zeroes must be written
@@ -44994,6 +45062,8 @@ TX_Arbitrator
 \end_layout
 
 \begin_layout Standard
+
+\color red
 TX_Arbitrator testbench independently generates inputs to the TX Arbitrator
  in input_gen process.
  Since the whole circuit is only combinational it provides immediate (in
@@ -45026,6 +45096,8 @@ TX_Buffer
 \end_layout
 
 \begin_layout Standard
+
+\color red
 TXT buffer unit test instantiates two DUTs with IDs 1 and 2 as in CAN FD
  IP.
  The difference is that one TXT buffer is set to support FD frames, the
