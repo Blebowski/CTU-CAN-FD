@@ -46,7 +46,8 @@ use work.ID_transfer.all;
 --                Buffer to erase. Output data word is selected based on stored 
 --                value of "mess_src" from the time of decision between TXT1 and
 --                TXT2 buffer.
---
+--    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
+--                time and save some LUTs.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------

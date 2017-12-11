@@ -38,6 +38,8 @@ use work.CANcomponents.ALL;
 --    28.11.2017  Added "rst_sync_comp" reset synchroniser.
 --    30.11.2017  Changed TXT buffer to registers interface. The user is now 
 --                directly accessing the buffer by avalon access.
+--    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
+--                time and save some LUTs.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
