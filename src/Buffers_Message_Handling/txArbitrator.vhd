@@ -309,9 +309,9 @@ begin
   --at least one of the frames is valid
   ------------------------------------------------------------------------------
 	tran_frame_valid_out      <= '1' when (ts_valid="10" or 
-																				 ts_valid="01" or
-																				 ts_valid="11")
-																	else 
+                                           ts_valid="01" or
+                                           ts_valid="11")
+                                     else 
 	                             '0';
 	
 	------------------------------------------------------------------------------

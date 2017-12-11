@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -30,32 +30,35 @@ USE WORK.CANconstants.ALL;
 --
 --    June 2015  Created file
 --    July 2015  Created second version of the bitstuffing circuit
---    19.5.2016  same_bits counter erased when edge detection on fixed_stuff detected. Avoids inserting
---               stuff bit in CRC field after less than stuff_count bits when last bits of data field
---               were equal!
---    6.6.2016   Added fixed stuff bit at the transition from non fixed stuff to fixed stuff! Thisway
---               bit stuffing also covers the one fixed stuff bit in the beginning of CRC phase!!
---               Added bit stuffing counter to count the dynamic stuff bits in ISO FD.
+--    19.5.2016  same_bits counter erased when edge detection on fixed_stuff 
+--               detected. Avoids inserting stuff bit in CRC field after less 
+--               than stuff_count bits when last bits of data field were equal!
+--    6.6.2016   Added fixed stuff bit at the transition from non fixed stuff to
+--               fixed stuff! Thisway bit stuffing also covers the one fixed 
+--               stuff bit in the beginning of CRC phase!! Added bit stuffing 
+--               counter to count the dynamic stuff bits in ISO FD.
 --    13.6.2016  Added mod 8 into same_bits counter increase
---    12.1.2017  Changed priority of fixed bit-stuffing processing. Fixed bit stuffing should always have
---               higher priority than non-fixed bit-stuffing and thus be before in the If-elsif condition!
---               This is due to possible conflic of normal and fixed bit stuffing in the start of FD CRC.
---               Fixed bit-stuff should win!
--------------------------------------------------------------------------------------------------------------
+--    12.1.2017  Changed priority of fixed bit-stuffing processing. Fixed bit 
+--               stuffing should always have higher priority than non-fixed 
+--               bit-stuffing and thus be before in the If-elsif condition!
+--               This is due to possible conflic of normal and fixed bit stuffing
+--               in the start of FD CRC. Fixed bit-stuff should win!
+--------------------------------------------------------------------------------
 
----------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Simple bit stuffing circuit with HandShake protocol. When bit is stuffed transciever --
---  (CAN Core) has to stop transcieving for one bit time. data_halt output is set to logic--
---  1 when bit is stuffed.
------------------------------------------------------------------------------------------
+--  Simple bit stuffing circuit with HandShake protocol. When bit is stuffed 
+--  transciever (CAN Core) has to stop transcieving for one bit time. data_halt 
+--  output is set to logic 1 when bit is stuffed.
+--------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------------------------------------
---Second version of bit Stuffing circuit. Enables configurable stuff length. Operation starts when     ---
---enable='1'. Valid data already has to be on data_in then. Operates with triggering signal tran_trig_1 --
---Fixed Stuffing method can be used by setting logic on fixed_stuff input. In fixed stuff inverse bit   --
---is inserted after every stuff_length bits, even if their polarity is not equal!                       --
----------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Second version of bit Stuffing circuit. Enables configurable stuff length. 
+-- Operation starts when enable='1'. Valid data already has to be on data_in 
+-- then. Operates with triggering signal tran_trig_1 Fixed Stuffing method can 
+-- be used by setting logic on fixed_stuff input. In fixed stuff inverse bit is 
+-- inserted after every stuff_length bits, even if their polarity is not equal!                     
+--------------------------------------------------------------------------------
 
 entity bitStuffing_v2 is 
   port(
@@ -68,17 +71,25 @@ entity bitStuffing_v2 is
     ---------------------------------
     --Prescaler interface - sampling-
     ---------------------------------
-    --Trigger signal for propagating the data (one clk_sys delayed behind beginning of bit time) 
+    --Trigger signal for propagating the data 
+    --(one clk_sys delayed behind beginning of bit time) 
     signal tran_trig_1    :in   std_logic; 
     
     -----------------------
     --CAN Core interface --
     -----------------------
-    signal enable         :in   std_logic;    --Enabling the operation of the circuit
+    
+    --Enabling the operation of the circuit
+    signal enable         :in   std_logic; 
+    
     signal data_in        :in   std_logic;    --Data Input sampled 
-    signal fixed_stuff    :in   std_logic;    --Whenever fixed bit stuffing should be used (CAN FD Option)
-    signal data_halt      :out  std_logic;    --Logic 1 signals stuffed bit for CAN Core. CAN Core has 
-                                              --to halt the data sending for one bit-time  
+    
+    --Whenever fixed bit stuffing should be used (CAN FD Option)
+    signal fixed_stuff    :in   std_logic;    
+    
+    --Logic 1 signals stuffed bit for CAN Core. CAN Core has to halt the 
+    --data sending for one bit-time 
+    signal data_halt      :out  std_logic;    
     
     --Length of Bit Stuffing
     signal length         :in   std_logic_vector(2 downto 0); 
@@ -96,15 +107,23 @@ entity bitStuffing_v2 is
         
   );
   
-  --Note: Bit Stufffing has no driving bus aliases, bit stuffing function cant be user controlled
+  --Note: Bit Stufffing has no driving bus aliases, bit stuffing 
+  --function cant be user controlled
   
   ----------------------
   --Internal Registers--
   ----------------------
-  signal same_bits        :     natural range 0 to 7;   --Number of equal consequent bits
-  signal prev_bit         :     std_logic;              --Value of previously transcieved bit
+  
+  --Number of equal consequent bits
+  signal same_bits        :     natural range 0 to 7; 
+  
+  --Value of previously transcieved bit
+  signal prev_bit         :     std_logic;             
   signal halt_reg         :     std_logic;              --Halt for CAN Core
-  signal fixed_prev       :     std_logic;              --Registered value of fixed stuffing
+  
+  --Registered value of fixed stuffing
+  signal fixed_prev       :     std_logic;
+               
   signal stuff_ctr        :     natural range 0 to 7;
   signal enable_prev      :     std_logic;
 
@@ -155,12 +174,13 @@ begin
         --If number of bits was reached
         elsif(same_bits=unsigned(length) and fixed_stuff='0')  or
           (same_bits=unsigned(length)+1 and fixed_stuff='1')
-          --Fixed stuff is must be plus one since also the stuffed bit is counted!
-          --In normal bit stuffing when bit is stuffed same_bits is erased and counted
-          --from first bit after stuffed bit!
+          --Fixed stuff is must be plus one since also the stuffed bit is 
+          --counted! In normal bit stuffing when bit is stuffed same_bits is 
+          --erased and counted from first bit after stuffed bit!
         then 
-        
-          same_bits     <=  1; --Since the inverted bit also counts as bit starting value is not zero  but one
+          --Since the inverted bit also counts as bit starting value is not 
+          --zero  but one
+          same_bits     <=  1; 
           prev_bit      <=  not prev_bit;
           halt_reg      <=  '1';
           
@@ -194,7 +214,8 @@ begin
      same_bits          <=  1;
      halt_reg           <=  '0';
      
-     --When circuit is disabled it passes the data on trigger signal from input to output without Stuffing!
+     --When circuit is disabled it passes the data on trigger signal from input 
+     --to output without Stuffing!
      if(tran_trig_1='1')then 
        prev_bit         <=  data_in;
      else

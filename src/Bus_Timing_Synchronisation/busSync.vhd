@@ -76,9 +76,9 @@ USE WORK.CANconstants.ALL;
 entity busSync is 
   GENERIC (
 			
-			--Whenever Synchronisation chain should be used for sampled data from the 
-			--bus. Turn off only when Synthetizer puts synchronisation chain automa-
-			--tically on the output pins! Otherwise metastability issues will occur!
+      --Whenever Synchronisation chain should be used for sampled data from the 
+      --bus. Turn off only when Synthetizer puts synchronisation chain automa-
+      --tically on the output pins! Otherwise metastability issues will occur!
       use_Sync:boolean:=false 
     );  
   PORT(

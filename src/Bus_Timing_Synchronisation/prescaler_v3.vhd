@@ -31,9 +31,9 @@ USE WORK.CANconstants.ALL;
 --    June 2015   Version 1 of circuit
 --    July 2015   Version 2 and 3 of circuit
 --    19.12.2015  Added minimal information processing time protection. It is no
---								longer possible to shorten PH2 segment less than 4 clock cycles.
+--	              longer possible to shorten PH2 segment less than 4 clock cycles.
 --                No sampling signals are left out in this case!
-
+--
 --    14.6.2016   1.Added reset state into the bit time FSM. As long as reset is
 --                  active bt_FSM is kept in reset. First clock cyle it comes out 
 --                  reset sync is set. This removes the error that Sync sequence
@@ -328,7 +328,7 @@ begin
   
   --Internal aliases
   tq_dur            <= to_integer(unsigned(drv_tq_nbt))
-											 when (sp_control=NOMINAL_SAMPLE) else 
+	                    when (sp_control=NOMINAL_SAMPLE) else 
                        to_integer(unsigned(drv_tq_dbt));
   
    
@@ -502,7 +502,7 @@ begin
                     ph2_real<=1;
                   end if;
                 else
-									--This causes finish of ph2 in next time quantum
+                  --This causes finish of ph2 in next time quantum
                   ph2_real<=bt_counter;
                 end if;
               end if;
@@ -520,7 +520,7 @@ begin
                   --So we shorten PH2 only to its minimal possible length. The 
                   --length is dependent on time quantum duration
                   if(tq_dbt=1)then --Presc=1
-										--This is only case not according to specification
+                    --This is only case not according to specification
                     ph2_real<=4;
                   elsif (tq_dbt=2) then --Presc=2
                     ph2_real<=2;
@@ -541,8 +541,8 @@ begin
           --form positive resynchronisation. Also when dominant bit was just
           --send on the bus, no positive resynchronization is performed
           elsif((data_tx=RECESSIVE)
-							  and
-							  (not(OP_State=transciever and sp_control=SECONDARY_SAMPLE)))
+                 and
+                (not(OP_State=transciever and sp_control=SECONDARY_SAMPLE)))
 					then
             if(bt_FSM=prop)then
               if(sp_control=NOMINAL_SAMPLE)then
@@ -723,7 +723,10 @@ begin
                   FSM_Preset<='0';
                 elsif(hard_sync_valid='1' and  FSM_Preset='0')then
                   hard_sync_valid<='0';
-                elsif(hard_sync_valid='0' and  FSM_Preset='0' and FSM_Preset_2='0')then 
+                elsif(hard_sync_valid='0' and  
+                      FSM_Preset='0'      and
+                      FSM_Preset_2='0')
+                then 
                 --One cycle has to be between sync signal! Otherwise PC control 
                 --wont be able to react on hard sync valid!
                   --Here sync signal is finally set!
@@ -766,25 +769,25 @@ begin
       sample_nbt_del_1_r<='0';
       sample_dbt_del_1_r<='0';
     elsif rising_edge(clk_sys)then
-      if(sync_nbt_r='1')then sync_nbt_del_1_r<='1';
-												else sync_nbt_del_1_r<='0';
+      if (sync_nbt_r='1') then sync_nbt_del_1_r<='1';
+                         else sync_nbt_del_1_r<='0';
 			end if;
-      if(sync_dbt_r='1')then sync_dbt_del_1_r<='1';
-												else sync_dbt_del_1_r<='0';
+      if (sync_dbt_r='1') then sync_dbt_del_1_r<='1';
+                         else sync_dbt_del_1_r<='0';
 			end if;
       
-      if(sample_nbt_r='1')then sample_nbt_del_1_r<='1';
-													else sample_nbt_del_1_r<='0';
+      if (sample_nbt_r='1') then sample_nbt_del_1_r<='1';
+                            else sample_nbt_del_1_r<='0';
 			end if;
-      if(sample_dbt_r='1')then sample_dbt_del_1_r<='1';
-													else sample_dbt_del_1_r<='0';
+      if (sample_dbt_r='1') then sample_dbt_del_1_r<='1';
+	                        else sample_dbt_del_1_r<='0';
 			end if;
     
-      if(sample_nbt_del_1_r='1')then sample_nbt_del_2_r<='1';
-																else sample_nbt_del_2_r<='0';
+      if (sample_nbt_del_1_r='1') then sample_nbt_del_2_r<='1';
+                                  else sample_nbt_del_2_r<='0';
 			end if;
-      if(sample_dbt_del_1_r='1')then sample_dbt_del_2_r<='1';
-																else sample_dbt_del_2_r<='0';
+      if (sample_dbt_del_1_r='1') then sample_dbt_del_2_r<='1';
+                                  else sample_dbt_del_2_r<='0';
 		  end if;
     
     end if;

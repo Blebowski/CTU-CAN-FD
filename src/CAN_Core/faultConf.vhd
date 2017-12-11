@@ -4,7 +4,7 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
 --
@@ -29,26 +29,28 @@ USE WORK.CANconstants.ALL;
 -- Revision History:
 --
 --    June 2015  Created file
---    19.6.2016  Modified counters for error couting in both FD and NORMAL mode. Counters extended to 
---               16 bits wide, to match the format in the registers!
---    27.6.2016  Bug fix. Changed error warning limit reached detection to greater than and equal instead
---                of only equal.
---    30.6.2016  Bug fix. Added equal or greater to fault confinement error passive state. According
---               to CAN spec. error counter value equal or greater than 128 is error passive,
---               not only greater than!
+--    19.6.2016  Modified counters for error couting in both FD and NORMAL mode.
+--               Counters extended to 16 bits wide, to match the format in the 
+--               registers!
+--    27.6.2016  Bug fix. Changed error warning limit reached detection to greater
+--               than and equal instead of only equal.
+--    30.6.2016  Bug fix. Added equal or greater to fault confinement error 
+--               passive state. According to CAN spec. error counter value equal
+--               or greater than 128 is error passive, not only greater than!
 --
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Circuit handling Fault Confinement. Bit Error is also detected in this circuit. Error counters   
---  increment is handled here by signals inc_one, inc_eight, dec_one. Logic for signalling this incre
---  ments is in Protocol control. RX TX counters for fault confinement are availiable. Two more coun
---  ters are availiable to distinguish between errors in Data phase and normal phase.                
---  All counters are pressetable from driving bus. Treshold for signalling error warning limit and    
---  transition to error_pssive are also parameters given by driving bus. Default values are compliant 
---  with CAN FD standard.
--------------------------------------------------------------------------------------------------------------
+--  Circuit handling Fault Confinement. Bit Error is also detected in this cir-
+--  cuit. Error counters increment is handled here by signals inc_one, inc_eight,
+--  dec_one. Logic for signalling this increments is in Protocol control. RX TX
+--  counters for fault confinement are availiable. Two more counters are avai-
+--  liable to distinguish between errors in Data phase and normal phase. All 
+--  counters are pressetable from driving bus. Treshold for signalling error war-
+--  ning limit and transition to error_pssive are also parameters given by dri-
+--  ving bus. Default values are compliant with CAN FD standard.
+--------------------------------------------------------------------------------
 
 entity faultConf is 
   PORT(
@@ -64,14 +66,18 @@ entity faultConf is
     -----------------
     --Error inputs --
     -----------------
-    signal stuff_Error            :in   std_logic; --Stuffing Error from bit destuffing
+    
+    --Stuffing Error from bit destuffing
+    signal stuff_Error            :in   std_logic;
       
     ----------------------------------
     --Error signalling for interrupt--
     ----------------------------------
     signal error_valid            :out  std_logic; --At least one error appeared
     signal error_passive_changed  :out  std_logic; --Error passive state changed
-    signal error_warning_limit    :out  std_logic; --Error warning limit was reached
+    
+    --Error warning limit was reached
+    signal error_warning_limit    :out  std_logic; 
     
     ----------------------
     --OP State interface--
@@ -84,8 +90,8 @@ entity faultConf is
     --Recieved data. Valid with the same signal as rec_trig in CAN Core
     signal data_rx                :in   std_logic; 
     
-    --Transcieved data by CAN Core. 
-    --valid with one clk_sys delay from tran_trig! The same trigger signal as Bit-Stuffing!
+    --Transcieved data by CAN Core. Valid with one clk_sys delay from tran_trig!
+    --The same trigger signal as Bit-Stuffing!
     signal data_tx                :in   std_logic;   
     signal rec_trig               :in   std_logic; --Recieve data trigger
     
@@ -99,11 +105,16 @@ entity faultConf is
     signal sp_control             :in   std_logic_vector(1 downto 0);  
     signal form_Error             :in   std_logic; --Form Error from PC State
     signal CRC_Error              :in   std_logic; --CRC Error from PC State
-    signal ack_Error              :in   std_logic; --Acknowledge Error from PC State
-    signal unknown_state_Error    :in   std_logic; --Some of the state machines, or signals 
-                                                   --reached unknown state!! Shouldnt happend!!
-    signal bit_stuff_Error_valid  :out  std_logic; --Error signal for PC control FSM from fault
-                                                   -- confinement unit (Bit error or Stuff Error appeared)
+    signal ack_Error              :in   std_logic; --Acknowledge Error from PC
+    
+    --Some of the state machines, or signals 
+    --reached unknown state!! Shouldnt happend!!
+    signal unknown_state_Error    :in   std_logic; 
+    
+    --Error signal for PC control FSM from fault
+    -- confinement unit (Bit error or Stuff Error appeared)
+    signal bit_stuff_Error_valid  :out  std_logic;
+     
     signal bit_Error_out          :out  std_logic;
     
     --Note: This new interface is used for error incrementation, decrementation!!
@@ -112,7 +123,9 @@ entity faultConf is
     signal dec_one                :in   std_logic;
         
     signal enable                 :in   std_logic; --Enable for error counting
-    signal bit_Error_sec_sam      :in   std_logic; --Bit Error detected with secondary sampling point at busSync.vhd
+    
+    --Bit Error detected with secondary sampling point at busSync.vhd
+    signal bit_Error_sec_sam      :in   std_logic; 
     
     -------------------
     --Status outputs --
@@ -137,8 +150,11 @@ entity faultConf is
  signal bit_stuff_Error_valid_r   :     std_logic; 
  
  --Internal bit Error detection (out of BusSync)
- --Note:Bit Error detection functionality moved from busSync.vhd to this module due to compactness reasons!
- --Note 2: Only bit error detection in busSync.vhd  is for secondary sample point!!
+ --Note:Bit Error detection functionality moved from busSync.vhd to this module 
+ --     due to compactness reasons!
+ --
+ --Note 2: Only bit error detection in busSync.vhd  is for 
+ --        secondary sample point!!
   signal bit_Error_int            :     std_logic;   
  
  --Error state
@@ -149,14 +165,20 @@ entity faultConf is
  signal rx_counter                :     natural range 0 to 511;
  signal err_counter_norm          :     natural range 0 to 65535;
  signal err_counter_fd            :     natural range 0 to 65535;
- --Note: Maximal increase of error counter is 8. Before bus off state the highest value of Error counter is 255.
- --Therefore 303 is the biggest possible value of the counter after switching to bus off!
- --303 is 9 bits. 9 bits cover up to 512 range!!
+ --Note: Maximal increase of error counter is 8. Before bus off state the 
+ --      highest value of Error counter is 255. Therefore 303 is the biggest 
+ --      possible value of the counter after switching to bus off! 303 is 9 bits.
+ --      9 bits cover up to 512 range!!
  
  --Interrupt registers
- signal ewl_reached               :     std_logic; 
- signal error_warning_limit_reg   :     std_logic; --Registred value of error warning limit reached
- signal erp_prev_state            :     error_state_type; --Value of previous fault conf state to detect changes
+ signal ewl_reached               :     std_logic;
+ 
+ --Registred value of error warning limit reached 
+ signal error_warning_limit_reg   :     std_logic;
+ 
+ --Value of previous fault conf state to detect changes
+ signal erp_prev_state            :     error_state_type;
+ 
  signal erp_changed_reg           :     std_logic;
  signal error_valid_reg           :     std_logic; 
  
@@ -194,19 +216,27 @@ begin
   --Fault confinement state propagation
   error_state_out         <=  error_state;
   
-  --Interrupt outputs 
-  error_warning_limit     <=  error_warning_limit_reg; --Error warning limit reached
-  error_passive_changed   <=  erp_changed_reg; --Error passive state changed
-  error_valid             <=  error_valid_reg; --At least one valid error appeared
+  ----------------------------------
+  -- Interrupt Outputs
+  ----------------------------------
+  
+  --Error warning limit reached
+  error_warning_limit     <=  error_warning_limit_reg;
+  
+  --Error passive state changed
+  error_passive_changed   <=  erp_changed_reg; 
+  
+  --At least one valid error appeared
+  error_valid             <=  error_valid_reg; 
   
   --Bit Error or stuff error register to output propagation
   bit_stuff_Error_valid   <=  bit_stuff_Error_valid_r;
   bit_Error_out           <=  bit_Error_int;
   
   --Detecting bit Error
-  bit_Error_int           <=  bit_Error_sec_sam when sp_control=SECONDARY_SAMPLE                  else
-                              '1'               when ((rec_trig='1') and (not(data_tx=data_rx)))  else 
-                              '0';
+  bit_Error_int   <=  bit_Error_sec_sam when sp_control=SECONDARY_SAMPLE else
+                      '1'  when ((rec_trig='1') and (not(data_tx=data_rx))) else 
+                      '0';
   
   joined_ctr              <=  inc_one&inc_eight&dec_one;
   
@@ -395,10 +425,17 @@ begin
       end if;
       
       --Error warning limit transition detection
-      if((tx_counter>=unsigned(drv_ewl) or rx_counter>=unsigned(drv_ewl)) and ewl_reached='0')then
+      if((tx_counter>=unsigned(drv_ewl) 
+          or 
+          rx_counter>=unsigned(drv_ewl)) 
+         and 
+         ewl_reached='0')
+      then
         ewl_reached                         <=  '1';
         error_warning_limit_reg             <=  '1';
-      elsif((tx_counter<unsigned(drv_ewl)) and (rx_counter<unsigned(drv_ewl)) )then
+      elsif((tx_counter<unsigned(drv_ewl)) and 
+            (rx_counter<unsigned(drv_ewl)) )
+      then
         ewl_reached                         <=  '0';
         error_warning_limit_reg             <=  '0';
       else

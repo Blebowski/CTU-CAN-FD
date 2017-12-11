@@ -802,6 +802,6 @@ begin
 										 clk_tq_dbt;
 
   OP_State <= oper_mode_type'val(to_integer(unsigned(
-								stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));
+					 stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));
   
 end architecture;
