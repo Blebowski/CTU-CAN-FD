@@ -3,6 +3,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
+use work.brs_comp_package.all;
 
 --------------------------------------------------------------------------------
 --
@@ -85,6 +86,8 @@ USE WORK.CANconstants.ALL;
 --    25.11.2017  1. Driving bus aliases converted to integer format to simplify
 --                   the code. Integer signals follow the same naming without 
 --                   "drv_" prefix.
+--    12.12.2017  Added "brs_comp" compensation for the compensation of phase2
+--                During the bit where bit rate switch occured.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -282,7 +285,7 @@ entity prescaler_v3 is
   
   --Duration of ph2 segment after synchronisation
   signal ph2_real               :   integer range -63 to 63;
-
+  
 end entity;
 
 
@@ -337,7 +340,6 @@ begin
 	                    when (sp_control=NOMINAL_SAMPLE) else 
                        to_integer(unsigned(drv_tq_dbt));
   
-   
   --------------------------------
   --Time quantum counter process--
   --------------------------------
@@ -391,8 +393,7 @@ begin
              '1'  when (sp_control=DATA_SAMPLE) and (drv_tq_dbt="000001") else
              '1'  when (tq_counter=1) else
              '0';
-
-
+             
   bt_proc:process(clk_sys,res_n)
   begin
     if(res_n=ACT_RESET)then
@@ -429,41 +430,8 @@ begin
       end if;
       
       if(sp_control /= sp_control_reg)then
-        --Sample type has changed we have to modify "ph2_real" accordingly...
-        -- This corresponds to moment of bit rate switching. Since the processing
-        -- of switching takes 4 clock cycles (bit destuffing, protocol control,
-        -- sp_control update, actual update of the ph2_real), compensation
-        -- of the ph2_real is needed based on Time quanta(TQ) duration
-        if(sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE)then
-          
-          -- Switching from NOMINAL to DATA. For 4 clock cycles bit time
-          -- is counted with nominal bit time instead of DATA. Compensation 
-          -- must be made.       
-          if(tq_dbt=1)then            
-            ph2_real      <=  ph2_dbt-4;
-          elsif (tq_dbt=2) then
-            ph2_real      <=  ph2_dbt-2;
-          elsif (tq_dbt=3 or tq_dbt=4) then
-            ph2_real      <=  ph2_dbt-1;
-          else
-            ph2_real      <=  ph2_dbt;
-          end if;
-        else
-          
-          -- Switching from DATA to NOMINAL. For 4 clock cycles bit time
-          -- is counted with DATA instead of nominal. Compensation must
-          -- be made.
-          if(tq_dbt=1)then
-            ph2_real      <=  ph2_nbt+4;
-          elsif (tq_dbt=2) then
-            ph2_real      <=  ph2_nbt+2;
-          elsif (tq_dbt=3 or tq_dbt=4) then
-            ph2_real      <=  ph2_nbt+1;
-          else
-            ph2_real      <= ph2_nbt;
-          end if;
-        end if;
-        
+          -- Perform Ph2 compensation
+          brs_comp(tq_nbt,tq_dbt,sp_control,ph2_nbt,ph2_dbt,ph2_real);
       elsif(sync_edge='1' and 
 					 (sync_control=HARD_SYNC) and
 					 (bt_FSM /= h_sync))
