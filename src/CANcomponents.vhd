@@ -97,7 +97,7 @@ package CANcomponents is
   ------------------------------------------------------------------------------
   -- Registers
   ------------------------------------------------------------------------------
-  component registers is
+  component canfd_registers is
     generic(
       constant compType   : std_logic_vector(3 downto 0) := CAN_COMPONENT_TYPE;
       constant use_logger : boolean                      := true;

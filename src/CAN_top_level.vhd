@@ -46,6 +46,8 @@ use work.CANcomponents.ALL;
 --                directly accessing the buffer by avalon access.
 --    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
 --                time and save some LUTs.
+--    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid 
+--                possible name conflicts.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -442,7 +444,7 @@ architecture rtl of CAN_top_level is
   ----------------------------------------------------
   -- Defining explicit architectures for used entites
   ----------------------------------------------------
-  for reg_comp       : registers use entity work.registers(rtl);
+  for reg_comp       : canfd_registers use entity work.canfd_registers(rtl);
   for rx_buf_comp    : rxBuffer use entity work.rxBuffer(rtl);
   for txt1_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
   for txt2_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
@@ -464,7 +466,7 @@ begin
       rst_n  => res_n_sync
       );
 
-  reg_comp : registers
+  reg_comp : canfd_registers
     generic map(
       compType   => CAN_COMPONENT_TYPE,
       use_logger => use_logger,
