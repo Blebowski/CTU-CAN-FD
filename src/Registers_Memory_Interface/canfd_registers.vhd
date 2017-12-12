@@ -71,6 +71,8 @@ use work.CANconstants.all;
 --                TX_SETTINGS register so that half written frame is not commi-
 --                tted to CAN Core for transmission. Added BUF_DIR bit and remo-
 --                ved TXT1_COMMIT and TXT2_COMMIT bits
+--    12.12.2017  Renamed entity to  "canfd_registers" instead of "registers"
+--                to avoid possible name conflicts.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -96,7 +98,7 @@ use work.CANconstants.all;
 --------------------------------------------------------------------------------
 
 
-entity registers is
+entity canfd_registers is
   generic(
     constant compType     :std_logic_vector(3 downto 0)    := CAN_COMPONENT_TYPE;
     
@@ -347,7 +349,7 @@ entity registers is
 end entity;
 
 
-architecture rtl of registers is
+architecture rtl of canfd_registers is
 
   --------------------------------------------
   -- Default value assignment to registers --
