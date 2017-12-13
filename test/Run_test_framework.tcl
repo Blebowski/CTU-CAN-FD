@@ -26,6 +26,9 @@
 ## Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 ## protocol license from Bosch.
 ##
+################################################################################
+
+################################################################################
 ## Description:
 ## 			CAN FD IP Core testbench TCL framework for automatic 
 ##			test execution

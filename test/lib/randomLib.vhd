@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,11 +26,7 @@ USE ieee.std_logic_unsigned.All;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    30.5.2016   Created file
--------------------------------------------------------------------------------------------------------------
-
+--------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------------------------------------
 --  Purpose:
@@ -44,7 +34,16 @@ USE ieee.std_logic_unsigned.All;
 --    Gaussian RNG is also implemented for advanced noise generation
 --
 -------------------------------------------------------------------------------------------------------------
+-- Revision History:
+--
+--    30.5.2016   Created file
+-------------------------------------------------------------------------------------------------------------
 
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
 
 package randomLib is
   

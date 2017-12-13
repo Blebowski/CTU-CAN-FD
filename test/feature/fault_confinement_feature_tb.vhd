@@ -1,12 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -35,17 +26,27 @@ USE work.randomLib.All;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    30.6.2016   Created file
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  Feature test for setting error counters from user and its appropriate fault
 --  confinement state manipulation!
 --                                      
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Revision History:
+--
+--    30.6.2016   Created file
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+USE work.CANtestLib.All;
+USE work.randomLib.All;
 
 
 package fault_conf_feature is

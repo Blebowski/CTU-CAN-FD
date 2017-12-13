@@ -1,12 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -35,13 +26,9 @@ USE work.randomLib.All;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    23.6.2016   Created file
---
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  TX arbitration and time transmittion feature test
 -- 
@@ -69,7 +56,19 @@ USE work.randomLib.All;
 --      4. Wait until actual and also second frame are sucesfully transmitted.
 --
 -----------------------------------------------------------------------------------------------------------------
+-- Revision History:
+--    23.6.2016   Created file
+--
+-----------------------------------------------------------------------------------------------------------------
 
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+USE work.CANtestLib.All;
+USE work.randomLib.All;
 
 package tx_arb_time_tran_feature is
   

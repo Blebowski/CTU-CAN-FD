@@ -1,10 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,14 +26,23 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
 --------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------------------------------
 --Simple testbench for CAN top level entity. Refer to top_level_2_tb.vhd. There are all supported tests with --
 --whole interfacing connection!                                                                              --
 ---------------------------------------------------------------------------------------------------------------
+-- Revision History:
+--
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
+
 
 entity CAN_top_level_tb is
 end entity;

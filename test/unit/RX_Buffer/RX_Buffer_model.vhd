@@ -1,15 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-USE work.CANtestLib.All;
-use work.CANcomponents.ALL;
-USE work.randomLib.All;
-
-use work.ID_transfer.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -38,19 +26,31 @@ use work.ID_transfer.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    1.6.2016   Created file - First implementation of the model!!
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  Behavioral model of RX_Buffer. Implements architecture of RX_Buffer entity but in
 --  behavioral way, not RTL. This model is intended to be used in RX_buffer automated
 --  testbench.             
 --  Not yet tested and debugged. Only first implementation                               
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Revision History:
+--
+--    1.6.2016   Created file - First implementation of the model!!
+--------------------------------------------------------------------------------
 
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+USE work.CANtestLib.All;
+use work.CANcomponents.ALL;
+USE work.randomLib.All;
+
+use work.ID_transfer.all;
 
 architecture behav of rxBuffer is
   

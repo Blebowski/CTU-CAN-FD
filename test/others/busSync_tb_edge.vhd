@@ -1,11 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANcomponents.ALL;
-USE WORK.CANconstants.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -34,16 +26,25 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
--- 
---  July 2015  Original version
--------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 ---------------------------------------------------------------------------------------
 -- Purpose:
 --  Testbench is testing busSync.vhd circuit. This testbench verifies generic synchroni--
 --  sation chain from CAN Physical layer Input and edge detection on incoming data.    --
 ---------------------------------------------------------------------------------------
+-- Revision History:
+-- 
+--  July 2015  Original version
+-------------------------------------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANcomponents.ALL;
+USE WORK.CANconstants.ALL;
 
 entity busSync_tb_edge is
 end entity;

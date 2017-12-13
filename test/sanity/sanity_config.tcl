@@ -4,21 +4,31 @@
 ##
 ## Copyright (C) 2015 Ondrej Ille <ondrej.ille@gmail.com>
 ##
-## This program is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License
-## as published by the Free Software Foundation; either version 2
-## of the License, or (at your option) any later version.
+## Permission is hereby granted, free of charge, to any person obtaining a copy 
+## of this software and associated documentation files (the "Software"), to deal
+## in the Software without restriction, including without limitation the rights
+## to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+## copies of the Software, and to permit persons to whom the Software is 
+## furnished to do so, subject to the following conditions:
 ##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
+## The above copyright notice and this permission notice shall be included in 
+## all copies or substantial portions of the Software.
 ##
-## The CAN protocol is developed by Robert Bosch GmbH and     
-## protected by patents. Anybody who wants to implement this    
-## IP core on silicon has to obtain a CAN protocol license
-## from Bosch.
-##  
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+## IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+## AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+## FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+## IN THE SOFTWARE.
+##
+## The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
+## Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+## protocol license from Bosch.
+##
+################################################################################
+
+################################################################################
 ## Description:
 ## 			Sanity test configuration file
 ################################################################################
@@ -29,41 +39,41 @@ quietly set SAN_CFG [ list  [ list star 10 10 10 10 0.0 0.0 \
 									70.0 5.0 300000.0 100000.0 \
 									4 1 8 8 8 3 3 1 5 2 \
 									"1Mb/10Mb 20 m Star" 5
-							] \
-							[ list star 10 10 10 10 0.0 0.0 \
+							] 
+							##[ list star 10 10 10 10 0.0 0.0 \
 									10 10 10 10 \
 									0 5 10 15 \
 									70.0 5.0 300000.0 100000.0 \
 									8 2 9 5 5 4 9 5 5 4 \
 									"500kBit/2Mb 20 m Star" 5
-							] \
-							[ list bus 10 10 10 0 0.0 0.0 \
+							##] \
+							##[ list bus 10 10 10 0 0.0 0.0 \
 									10 10 10 10 \
 									0 5 10 15 \
 									70.0 5.0 300000.0 100000.0 \
 									4 1 8 8 8 3 0 3 3 3 \
 									"1Mb/14,2Mb 40 m Bus" 5
-							] \
-							[ list star 15 15 15 15 0.0 0.0 \
+							##] \
+							##[ list star 15 15 15 15 0.0 0.0 \
 									20 20 20 20 \
 									20 40 60 100 \
 									70.0 5.0 300000.0 100000.0 \
 									10 2 3 3 3 2 3 3 3 2 \
 									"1Mb/5Mb 30 m Star" 5
-							] \
-							[ list bus 13 13 13 0.0 0.0 0.0 \
+							##] \
+							##[ list bus 13 13 13 0.0 0.0 0.0 \
 									20 20 20 20 \
 									20 40 60 100 \
 									70.0 5.0 500000.0 100000.0 \
 									10 2 3 3 3 2 3 3 3 2 \
 									"1Mb/5Mb 40 m Bus" 5
-							] \
-							[ list bus 13 13 13 0.0 0.0 0.0 \
+							##] \
+							##[ list bus 13 13 13 0.0 0.0 0.0 \
 									20 20 20 20 \
 									10 15 25 30 \
 									75.0 5.0 500000.0 200000.0 \
 									10 5 3 3 3 2 3 3 3 2 \
 									"1Mb/2Mb 40 m Bus" 5
-							]
+							##]
 			]
 

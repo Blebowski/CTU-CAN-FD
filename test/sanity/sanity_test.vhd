@@ -1,3 +1,50 @@
+--------------------------------------------------------------------------------
+--
+-- CAN with Flexible Data-Rate IP Core 
+--
+-- Copyright (C) 2015 Ondrej Ille <ondrej.ille@gmail.com>
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy 
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is 
+-- furnished to do so, subject to the following conditions:
+--
+-- The above copyright notice and this permission notice shall be included in 
+-- all copies or substantial portions of the Software.
+--
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+-- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+-- IN THE SOFTWARE.
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+-- protocol license from Bosch.
+--
+--------------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------------------------------------------
+-- Purpose:
+--  Sanity test implementation
+--                                       
+-----------------------------------------------------------------------------------------------------------------
+-- Revision History:
+--
+--    7.7.2016   Created file
+--    23.9.2017  Added bugfix for proper identifier correction. Identifier layout change from 13.1.2017 caused
+--               that identifier correction did not avoid collisions due to assumption of old identifier layout.
+-----------------------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------------------------------------------
+-- Test implementation                                            
+-----------------------------------------------------------------------------------------------------------------
+
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
@@ -7,46 +54,6 @@ use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
-
--------------------------------------------------------------------------------------------------------------
---
--- CAN with Flexible Data-Rate IP Core 
---
--- Copyright (C) 2015 Ondrej Ille <ondrej.ille@gmail.com>
---
--- This program is free software; you can redistribute it and/or
--- modify it under the terms of the GNU General Public License
--- as published by the Free Software Foundation; either version 2
--- of the License, or (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- The CAN protocol is developed by Robert Bosch GmbH and     
--- protected by patents. Anybody who wants to implement this    
--- IP core on silicon has to obtain a CAN protocol license
--- from Bosch.
---
---
--- Revision History:
---
---    7.7.2016   Created file
---    23.9.2017  Added bugfix for proper identifier correction. Identifier layout change from 13.1.2017 caused
---               that identifier correction did not avoid collisions due to assumption of old identifier layout.
------------------------------------------------------------------------------------------------------------------
-
------------------------------------------------------------------------------------------------------------------
--- Purpose:
---  Sanity test implementation
---                                       
------------------------------------------------------------------------------------------------------------------
-
-
------------------------------------------------------------------------------------------------------------------
--- Test implementation                                            
------------------------------------------------------------------------------------------------------------------
 
 architecture sanity_test of CAN_test is
 
@@ -673,7 +680,7 @@ begin
     ----------------------------------------------
     --Note that we keep reserve of up to 60 words, thats
     -- exactly how much we need to fit 3 times longest frame...
-    tx_full(i) <= true when tx_mem_pointers(i)+230>=tx_mems(i)'length else false;
+    tx_full(i) <= true when tx_mem_pointers(i)+245>=tx_mems(i)'length else false;
     
   end generate access_gen;
 
