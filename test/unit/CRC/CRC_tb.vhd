@@ -1,15 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
-use work.ID_transfer.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -38,12 +26,9 @@ use work.ID_transfer.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    4.6.2016   Created file
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for the CRC circuit.
 --  Unit test generates bit sequence 10 to 620 bits long as well as random drv_fd_type setting. Then it precal-
@@ -52,12 +37,28 @@ use work.ID_transfer.all;
 --  for processing input data. After the calculation, software precalculated CRC and CRC from DUT are compared!
 --  If mismatch occurs error is detected and test fails. 
 --  Whole procedure is repeated "iterations" times.                          
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Revision History:
+--
+--    4.6.2016   Created file
+--------------------------------------------------------------------------------
 
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Test implementation                                            
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+use work.CANcomponents.ALL;
+USE work.CANtestLib.All;
+USE work.randomLib.All;
+
+use work.ID_transfer.all;
 
 architecture CRC_unit_test of CAN_test is
   

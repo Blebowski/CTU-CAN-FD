@@ -1,10 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,10 +26,6 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    July 2015   Created file
---
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -63,6 +52,10 @@ USE WORK.CANconstants.ALL;
 --  Another approach is to provide extra signal from protocol control which
 --  would be set at the beginning of the "switching bit" and prescaler would
 --  use hard-coded value of time quanta during ph1 and ph2 bit times.
+--------------------------------------------------------------------------------
+-- Revision History:
+--    July 2015   Created file
+--
 --------------------------------------------------------------------------------
 
 Library ieee;

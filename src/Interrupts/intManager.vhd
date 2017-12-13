@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,8 +26,15 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Provides interrupt on int_out output. Interrupt sources are configurable
+--  from drv_bus. Interrupt vector provides sources of last interrupts. It is 
+--  erased from driving bus by  drv_int_vect_erase
+--------------------------------------------------------------------------------
 -- Revision History:
---
 --    July 2015   Created file
 --    4.6.2016    Interrupt active, interrupt length added to keep interrupt ac-
 --                tive for dedicated amount of clock cycles! Each interrupt 
@@ -49,12 +50,11 @@ USE WORK.CANconstants.ALL;
 --
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Provides interrupt on int_out output. Interrupt sources are configurable
---  from drv_bus. Interrupt vector provides sources of last interrupts. It is 
---  erased from driving bus by  drv_int_vect_erase
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
 
 entity intManager is
   GENERIC(

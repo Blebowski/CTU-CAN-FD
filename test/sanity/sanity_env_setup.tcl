@@ -4,21 +4,31 @@
 ##
 ## Copyright (C) 2015 Ondrej Ille <ondrej.ille@gmail.com>
 ##
-## This program is free software; you can redistribute it and/or
-## modify it under the terms of the GNU General Public License
-## as published by the Free Software Foundation; either version 2
-## of the License, or (at your option) any later version.
+## Permission is hereby granted, free of charge, to any person obtaining a copy 
+## of this software and associated documentation files (the "Software"), to deal
+## in the Software without restriction, including without limitation the rights
+## to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+## copies of the Software, and to permit persons to whom the Software is 
+## furnished to do so, subject to the following conditions:
 ##
-## This program is distributed in the hope that it will be useful,
-## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-## GNU General Public License for more details.
+## The above copyright notice and this permission notice shall be included in 
+## all copies or substantial portions of the Software.
 ##
-## The CAN protocol is developed by Robert Bosch GmbH and     
-## protected by patents. Anybody who wants to implement this    
-## IP core on silicon has to obtain a CAN protocol license
-## from Bosch.
-##  
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+## IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+## AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+## FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+## IN THE SOFTWARE.
+##
+## The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
+## Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+## protocol license from Bosch.
+##
+################################################################################
+
+################################################################################
 ## Description:
 ## 			Feature environment waveform setup script
 ################################################################################
@@ -149,11 +159,17 @@ add wave -group "Operation states" \
 	-label "Node 3" $TCOMP/comp_gen__3/node_1_comp/core_top_comp/OP_State \
 	-label "Node 4" $TCOMP/comp_gen__4/node_1_comp/core_top_comp/OP_State
 	
-add wave -group "Identifiers" \
-	-label "Node 1" $TCOMP/comp_gen__1/node_1_comp/core_top_comp/tran_ident \
-	-label "Node 2" $TCOMP/comp_gen__2/node_1_comp/core_top_comp/tran_ident \
-	-label "Node 3" $TCOMP/comp_gen__3/node_1_comp/core_top_comp/tran_ident \
-	-label "Node 4" $TCOMP/comp_gen__4/node_1_comp/core_top_comp/tran_ident
+add wave -group "Identifiers (Base part)" \
+	-label "Node 1" $TCOMP/comp_gen__1/node_1_comp/core_top_comp/tran_ident_base \
+	-label "Node 2" $TCOMP/comp_gen__2/node_1_comp/core_top_comp/tran_ident_base \
+	-label "Node 3" $TCOMP/comp_gen__3/node_1_comp/core_top_comp/tran_ident_base \
+	-label "Node 4" $TCOMP/comp_gen__4/node_1_comp/core_top_comp/tran_ident_base \
+
+add wave -group "Identifiers (Extended part)" \
+	-label "Node 1" $TCOMP/comp_gen__1/node_1_comp/core_top_comp/tran_ident_ext \
+	-label "Node 2" $TCOMP/comp_gen__2/node_1_comp/core_top_comp/tran_ident_ext \
+	-label "Node 3" $TCOMP/comp_gen__3/node_1_comp/core_top_comp/tran_ident_ext \
+	-label "Node 4" $TCOMP/comp_gen__4/node_1_comp/core_top_comp/tran_ident_ext \
 
 add wave -group "RTR flag" \
 	-label "Node 1" $TCOMP/comp_gen__1/node_1_comp/core_top_comp/tran_is_rtr \

@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,9 +26,18 @@ USE ieee.std_logic_unsigned.All;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
 -- Revision History:
 --
 --------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
 
 entity timeStampGen_Tb is
 end entity;

@@ -1,11 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-use work.CANcomponents.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -34,11 +26,7 @@ use work.CANcomponents.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---  July 2015  Original version
--------------------------------------------------------------------------------------------------------------
-
+--------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------
 -- Purpose:
@@ -50,6 +38,20 @@ use work.CANcomponents.ALL;
 --  TX Data. Bit error is signalised for both : first 3 bits (sampling with sample_nbt) ---
 --  and for rest of the bits in data phase (sampling with secondary sample point)       ---
 -----------------------------------------------------------------------------------------
+-- Revision History:
+--
+--  July 2015  Original version
+-------------------------------------------------------------------------------------------------------------
+
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
+use work.CANcomponents.ALL;
+
 
 entity busSync_tb_sample is
 end entity;

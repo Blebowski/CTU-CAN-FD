@@ -1,15 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
-use work.ID_transfer.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -38,19 +26,31 @@ use work.ID_transfer.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    6.6.2016   Created file
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for the Interrupt manager.
 --  Random interrupt source signals are generated in the testbench. Periodically random setting of interrupt
 --  generator is used. After setting is set, test waits and evaluates whether interrupt prediction (int_test_ctr)
 --  matches the actual number of interrupts measured on the int_out rising and falling edges. Also interrupt
 --  vector is read and compared with modeled interrupt vector.                                              
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Revision History:
+--    6.6.2016   Created file
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+use work.CANcomponents.ALL;
+USE work.CANtestLib.All;
+USE work.randomLib.All;
+
+use work.ID_transfer.all;
 
 architecture int_man_unit_test of CAN_test is
     

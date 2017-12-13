@@ -1,10 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,8 +26,17 @@ use work.CANcomponents.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Top level entity of CAN Core covering whole functionality of CAN FD Protocol
+--  Instantiates: 1*protocol_control, 1*operation_control, 1*bitStuffing_v2,    
+--  1*bitDestuffing, 2*CRC, 1* tranBuffer                                       
+--  Logic for switching sampling and synchronisation signals implemented here   
+--  stat_bus assignment implemented here!                                       
+--------------------------------------------------------------------------------
 -- Revision History:
---
 --    July 2015  Created file
 --    4.6.2016   Added drv_bus connection to the crc circuit to cover the diffe-
 --               rence between ISO FD and NON ISO FD. CRC polynomial changed to 
@@ -63,14 +65,12 @@ use work.CANcomponents.ALL;
 --               being used!
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Top level entity of CAN Core covering whole functionality of CAN FD Protocol
---  Instantiates: 1*protocol_control, 1*operation_control, 1*bitStuffing_v2,    
---  1*bitDestuffing, 2*CRC, 1* tranBuffer                                       
---  Logic for switching sampling and synchronisation signals implemented here   
---  stat_bus assignment implemented here!                                       
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+use work.CANcomponents.ALL;
 
 entity core_top is
   PORT(

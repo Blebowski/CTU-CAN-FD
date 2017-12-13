@@ -1,10 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-use work.ID_transfer.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,8 +26,18 @@ use work.ID_transfer.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Circuit for selecting the valid message for CAN Core from two TXT buffer in-
+--   puts. Circuit compares the timestamp of the message with input timestamp
+--   (actual time) and allows the message to be propagated to the CAN Core when 
+--  the time Stamp of message is higher than actual timestamp! This realises the
+--  functionality of sending the message in exact time! When both timeStamp are 
+--  equal and then message with lower identifier is selected!                                                                                                                                                  
+--------------------------------------------------------------------------------
 -- Revision History:
---
 --    July 2015   Created file
 --    17.1.2016   Added ID change from register value to decimal value for case 
 --                when identifier needs to decide about priority message (Time 
@@ -56,15 +59,12 @@ use work.ID_transfer.all;
 --                time and save some LUTs.
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Circuit for selecting the valid message for CAN Core from two TXT buffer in-
---   puts. Circuit compares the timestamp of the message with input timestamp
---   (actual time) and allows the message to be propagated to the CAN Core when 
---  the time Stamp of message is higher than actual timestamp! This realises the
---  functionality of sending the message in exact time! When both timeStamp are 
---  equal and then message with lower identifier is selected!                                                                                                                                                  
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+use work.ID_transfer.all;
 
 entity txArbitrator is
   generic(

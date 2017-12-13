@@ -1,10 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,8 +26,22 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  1. Implements Generic Synchronisation chain for incoming data
+--  2. Detects appropriate edge for synchronisation!!
+--  3. Measure Transciever delay compensation on command
+--  4. Sample bus values in sample point of Bit time:
+--    a) By normal sampling, at position of sample point (Transciever,reciever)
+--    b) In secondary sample point for Transciever of CAN FD Data Phase
+--  5. Detect bit Error by comparing transmitted values and Sampled values!
 --
+--Note: this bit error detection used in the end only for data phase transciever 
+--      of CAN FD Phase! In other cases bit error is detected inside CAN-Core by
+--      comparing transmitted and recieved bit.
+--------------------------------------------------------------------------------
 --    July 2015   Created file
 --    19.12.2015  Added tripple sampling mode. Furthermore sampling is disabled
 --                when whole controller is disabled
@@ -64,20 +71,11 @@ USE WORK.CANconstants.ALL;
 --
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  1. Implements Generic Synchronisation chain for incoming data
---  2. Detects appropriate edge for synchronisation!!
---  3. Measure Transciever delay compensation on command
---  4. Sample bus values in sample point of Bit time:
---    a) By normal sampling, at position of sample point (Transciever,reciever)
---    b) In secondary sample point for Transciever of CAN FD Data Phase
---  5. Detect bit Error by comparing transmitted values and Sampled values!
---
---Note: this bit error detection used in the end only for data phase transciever 
---      of CAN FD Phase! In other cases bit error is detected inside CAN-Core by
---      comparing transmitted and recieved bit.
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
 
 entity busSync is 
   GENERIC (

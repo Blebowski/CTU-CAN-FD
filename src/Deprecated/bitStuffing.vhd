@@ -1,7 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -30,9 +26,6 @@ USE IEEE.numeric_std.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---
 --------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------------------------
@@ -44,6 +37,13 @@ USE IEEE.numeric_std.ALL;
 --Fixed stuff input controls whenever fixed bitStuffing(after length bits of any value reverse bit is inserted) --
 --'1' fixed stuff is used, '0' fixed stuff is not used. Fixed stuff for CRC of CAN FD Frames ---------------------
 ------------------------------------------------------------------------------------------------------------------
+-- Revision History:
+--
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
 
 --NOTE: Circuit is deprecated, simpler implementation without interal buffer was used!
 

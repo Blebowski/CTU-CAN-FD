@@ -26,6 +26,9 @@
 ## Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 ## protocol license from Bosch.
 ##
+################################################################################
+
+################################################################################
 ## Description:
 ## 			Feature test configuration file
 ################################################################################

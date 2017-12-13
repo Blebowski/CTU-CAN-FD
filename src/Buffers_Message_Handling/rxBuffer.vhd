@@ -1,9 +1,3 @@
-Library ieee;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.ALL;
-use ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,8 +26,23 @@ use work.CANconstants.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Recieve buffer for messages. RAM memory type of N*32 bit words. Reading of 
+--  data from registers done word by word. In registers reading implemented in 
+--  the way that one read moves to the next word. Storing the message into the
+--  buffer is sequential operation started with valid rec_message_valid for one
+--  clock cycle. In following up to 20 clock cycles recieved data has to be va-
+--  lid to be fully stored
 --
+--  Note:This is guaranteed from CAN Core. rec_message_valid is active in the 
+--  end of EOF field. Intermission field follows with 11 bit times (minimum 55 
+--  clock cycles) where recieved data are not changed, only overload condition 
+--  may be signallised!
+--------------------------------------------------------------------------------
+-- Revision History:
 --    July 2015   Created file
 --    18.12.2015  RX Buffer inference from Flip-flops changed to native SRAM me-
 --                mory on FPGA. Dual port memory used for this purpose (sync 
@@ -79,20 +88,11 @@ use work.CANconstants.all;
 --
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Recieve buffer for messages. RAM memory type of N*32 bit words. Reading of 
---  data from registers done word by word. In registers reading implemented in 
---  the way that one read moves to the next word. Storing the message into the
---  buffer is sequential operation started with valid rec_message_valid for one
---  clock cycle. In following up to 20 clock cycles recieved data has to be va-
---  lid to be fully stored
---
---  Note:This is guaranteed from CAN Core. rec_message_valid is active in the 
---  end of EOF field. Intermission field follows with 11 bit times (minimum 55 
---  clock cycles) where recieved data are not changed, only overload condition 
---  may be signallised!
---------------------------------------------------------------------------------
+Library ieee;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.ALL;
+use ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
 
 entity rxBuffer is
   GENERIC(

@@ -26,6 +26,9 @@
 ## Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 ## protocol license from Bosch.
 ##
+################################################################################
+
+################################################################################
 ## 			Protocol control unit test handling script
 ################################################################################
 global TCOMP

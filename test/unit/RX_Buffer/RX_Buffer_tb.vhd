@@ -1,15 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
-use work.ID_transfer.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -38,15 +26,9 @@ use work.ID_transfer.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    1.6.2016   Created file
---   22.6.2016   Updated testbench to cover also the modified functionality of RX Buffer. Now ESI bit is also stored
---                and compared. Also RTR frame of CAN normal frame does not store any data words into the buffer.
---               
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for the RX Buffer circuit.
 --
@@ -61,11 +43,28 @@ use work.ID_transfer.all;
 --  buffer! Additional process, status_controller (now stalled) checks at operation time difference between
 --  RX_Buffer and its model! It it intended that data read from the model are stored into third memory and mismatch
 --  check will be done between all three memories. However this is not yet used in this unit test!                                      
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Revision History:
+--    1.6.2016   Created file
+--   22.6.2016   Updated testbench to cover also the modified functionality of RX Buffer. Now ESI bit is also stored
+--                and compared. Also RTR frame of CAN normal frame does not store any data words into the buffer.
+--               
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Test implementation                                           
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+use work.CANcomponents.ALL;
+USE work.CANtestLib.All;
+USE work.randomLib.All;
+use work.ID_transfer.all;
 
 architecture rx_buf_unit_test of CAN_test is
   

@@ -1,12 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -35,17 +26,25 @@ USE work.randomLib.All;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    21.6.2016   Created file
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 -----------------------------------------------------------------------------------------------------------------
 -- Purpose:
 --  Forbidding FD frames feature test implementation
 --                                      
 -----------------------------------------------------------------------------------------------------------------
+-- Revision History:
+--    21.6.2016   Created file
+-----------------------------------------------------------------------------------------------------------------
 
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+USE work.CANtestLib.All;
+USE work.randomLib.All;
 
 package forbid_fd_feature is
   

@@ -1,15 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
-use work.ID_transfer.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -38,14 +26,9 @@ use work.ID_transfer.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    13.6.2016   Created file
---    22.6.2016   Modified tb to be compliant with latest bugfixes in protocol control!
---
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for Protocol Control. The architecture of this test is depicted in picture below. It is inherited
 --  from original Protocol Control testbench created during the implementation of the CAN FD IP Core. This 
@@ -101,11 +84,27 @@ use work.ID_transfer.all;
 --    Especially this was reason to implemnt CAN Frame buildup as SW(behavioral) procedure!
 --
 -----------------------------------------------------------------------------------------------------------------
+-- Revision History:
+--    13.6.2016   Created file
+--    22.6.2016   Modified tb to be compliant with latest bugfixes in protocol control!
+--
+-----------------------------------------------------------------------------------------------------------------
 
 
 -----------------------------------------------------------------------------------------------------------------
 -- Test implementation                                            
 -----------------------------------------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.math_real.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+use work.CANcomponents.ALL;
+USE work.CANtestLib.All;
+USE work.randomLib.All;
+use work.ID_transfer.all;
 
 architecture Protocol_Control_unit_test of CAN_test is
     

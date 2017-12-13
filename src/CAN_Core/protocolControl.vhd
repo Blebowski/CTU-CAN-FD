@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,6 +26,15 @@ use work.CANconstants.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Protocol control state machine according to CAN FD protocol specification. 
+--  Error detection and signalling. Logic for error counters incrementing imple-
+--  mented. Possible to forbid accepting of FD Frames for reciever. ESD bit de-
+-- tected as bit error then and error_flag is sent.
+--------------------------------------------------------------------------------
 -- Revision History:
 --
 --    July 2015   Created file
@@ -151,13 +154,11 @@ use work.CANconstants.all;
 --                   buffer remained unchanged! Saved approx 100 LUTs.
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Protocol control state machine according to CAN FD protocol specification. 
---  Error detection and signalling. Logic for error counters incrementing imple-
---  mented. Possible to forbid accepting of FD Frames for reciever. ESD bit de-
--- tected as bit error then and error_flag is sent.
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
 
 entity protocolControl is
   port(

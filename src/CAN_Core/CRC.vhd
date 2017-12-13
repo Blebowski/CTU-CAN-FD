@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,15 +26,6 @@ use work.CANconstants.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    June 2015   Created file
---    28.5.2016   Starting polynomial changed for crc 17 and crc 21. Highest bit
---                is now fixed in logic one to be compliant with CAN ISO FD. It
---                will be needed to implement both ways still since ISO and 
---                non-ISO FD will be changable via configuration bit! 
---    4.6.2016    Added drv_is_fd to cover differencce in highest bit of crc17
---                and crc21 polynomial             
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -54,6 +39,22 @@ use work.CANconstants.all;
 --
 --  Refer to CAN 2.0 or CAN FD Specification for CRC calculation algorythm                                                   -- 
 --------------------------------------------------------------------------------
+-- Revision History:
+--    June 2015   Created file
+--    28.5.2016   Starting polynomial changed for crc 17 and crc 21. Highest bit
+--                is now fixed in logic one to be compliant with CAN ISO FD. It
+--                will be needed to implement both ways still since ISO and 
+--                non-ISO FD will be changable via configuration bit! 
+--    4.6.2016    Added drv_is_fd to cover differencce in highest bit of crc17
+--                and crc21 polynomial             
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+
 
 entity canCRC is
   generic(
