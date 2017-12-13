@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,6 +26,22 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Simple bit stuffing circuit with HandShake protocol. When bit is stuffed 
+--  transciever (CAN Core) has to stop transcieving for one bit time. data_halt 
+--  output is set to logic 1 when bit is stuffed.
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Second version of bit Stuffing circuit. Enables configurable stuff length. 
+-- Operation starts when enable='1'. Valid data already has to be on data_in 
+-- then. Operates with triggering signal tran_trig_1 Fixed Stuffing method can 
+-- be used by setting logic on fixed_stuff input. In fixed stuff inverse bit is 
+-- inserted after every stuff_length bits, even if their polarity is not equal!                     
+--------------------------------------------------------------------------------
 -- Revision History:
 --
 --    June 2015  Created file
@@ -51,20 +61,11 @@ USE WORK.CANconstants.ALL;
 --               in the start of FD CRC. Fixed bit-stuff should win!
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Simple bit stuffing circuit with HandShake protocol. When bit is stuffed 
---  transciever (CAN Core) has to stop transcieving for one bit time. data_halt 
---  output is set to logic 1 when bit is stuffed.
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
--- Second version of bit Stuffing circuit. Enables configurable stuff length. 
--- Operation starts when enable='1'. Valid data already has to be on data_in 
--- then. Operates with triggering signal tran_trig_1 Fixed Stuffing method can 
--- be used by setting logic on fixed_stuff input. In fixed stuff inverse bit is 
--- inserted after every stuff_length bits, even if their polarity is not equal!                     
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
 
 entity bitStuffing_v2 is 
   port(

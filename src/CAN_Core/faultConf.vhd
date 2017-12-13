@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,18 +26,6 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    June 2015  Created file
---    19.6.2016  Modified counters for error couting in both FD and NORMAL mode.
---               Counters extended to 16 bits wide, to match the format in the 
---               registers!
---    27.6.2016  Bug fix. Changed error warning limit reached detection to greater
---               than and equal instead of only equal.
---    30.6.2016  Bug fix. Added equal or greater to fault confinement error 
---               passive state. According to CAN spec. error counter value equal
---               or greater than 128 is error passive, not only greater than!
---
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -57,6 +39,24 @@ USE WORK.CANconstants.ALL;
 --  ning limit and transition to error_pssive are also parameters given by dri-
 --  ving bus. Default values are compliant with CAN FD standard.
 --------------------------------------------------------------------------------
+-- Revision History:
+--    June 2015  Created file
+--    19.6.2016  Modified counters for error couting in both FD and NORMAL mode.
+--               Counters extended to 16 bits wide, to match the format in the 
+--               registers!
+--    27.6.2016  Bug fix. Changed error warning limit reached detection to greater
+--               than and equal instead of only equal.
+--    30.6.2016  Bug fix. Added equal or greater to fault confinement error 
+--               passive state. According to CAN spec. error counter value equal
+--               or greater than 128 is error passive, not only greater than!
+--
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
 
 entity faultConf is 
   PORT(

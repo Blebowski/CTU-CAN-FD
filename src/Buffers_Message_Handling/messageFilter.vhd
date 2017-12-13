@@ -1,10 +1,3 @@
-Library ieee;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.ALL;
-use ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-use work.ID_transfer.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,16 +26,7 @@ use work.ID_transfer.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    July 2015   Created file
---    17.1.2016   Added ID change from register value to decimal value for range
---                filter comparison
---    1.6.2016    Fixed wrong enable decoding from driving bus signals! Filters
---                were disabled but
---                frame was anyway propagated to the output!
 --------------------------------------------------------------------------------
-
 
 --------------------------------------------------------------------------------
 -- Purpose:
@@ -56,6 +40,21 @@ use work.ID_transfer.all;
 --  it is considered as valid. Frame type (CAN Basic, CAN Extended, CAN FD Basic)
 --  are also selectable for filtering.
 --------------------------------------------------------------------------------
+-- Revision History:
+--    July 2015   Created file
+--    17.1.2016   Added ID change from register value to decimal value for range
+--                filter comparison
+--    1.6.2016    Fixed wrong enable decoding from driving bus signals! Filters
+--                were disabled but
+--                frame was anyway propagated to the output!
+--------------------------------------------------------------------------------
+
+Library ieee;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.ALL;
+use ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
+use work.ID_transfer.all;
 
 entity messageFilter is
   generic

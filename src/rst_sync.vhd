@@ -1,6 +1,3 @@
-Library ieee;
-use ieee.std_logic_1164.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -29,16 +26,19 @@ use ieee.std_logic_1164.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    27.11.2017   Created file
---
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Asynchronouse reset synchroniser to avoid problems with Reset recovery time.
 --------------------------------------------------------------------------------
+-- Revision History:
+--    27.11.2017   Created file
+--
+--------------------------------------------------------------------------------
+
+Library ieee;
+use ieee.std_logic_1164.all;
 
 entity rst_sync is
   port (

@@ -1,6 +1,3 @@
-Library ieee;
-use ieee.std_logic_1164.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -29,17 +26,20 @@ use ieee.std_logic_1164.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    June 2015   Created file
---    08.12.2017  Code formatting. Replaced hexadecimal values with shorter
---                notation
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Package with Constants, types and other defintions for CAN FD IP Core.
 --------------------------------------------------------------------------------
+-- Revision History:
+--    June 2015   Created file
+--    08.12.2017  Code formatting. Replaced hexadecimal values with shorter
+--                notation
+--------------------------------------------------------------------------------
+
+Library ieee;
+use ieee.std_logic_1164.all;
 
 package CANconstants is
 

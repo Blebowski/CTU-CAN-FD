@@ -1,9 +1,3 @@
-library ieee;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-use ieee.std_logic_unsigned.all;
-use WORK.CANconstants.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,8 +26,18 @@ use WORK.CANconstants.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+--Purpose:
+--  Bit destuffing circuit. Data sampled always with valid trig_spl_1 signal. 
+--  Length of bitStuffing controlled via stuff_length input. Stuff error signa-
+--  lises Error when the stuff rule is not valid (stuff_lenght+1) consecutive   
+--  bits of the same polarity. Signal destuffed  indicates that current output
+--  bit is not valid data bit, but is destuffed bit taken out from input data
+--  stream!                                                                  
+--------------------------------------------------------------------------------
 -- Revision History:
---
 --    July 2015   Created file
 --    19.5.2016   1. Added Stuff bit counter to cover ISO FD extra field!
 --                2. Edge detection 0->1 added at fixed_stuff input. Once edge 
@@ -62,16 +66,11 @@ use WORK.CANconstants.all;
 --               ffing in the start of FD CRC. Fixed bit-destuff should win!
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
---Purpose:
---  Bit destuffing circuit. Data sampled always with valid trig_spl_1 signal. 
---  Length of bitStuffing controlled via stuff_length input. Stuff error signa-
---  lises Error when the stuff rule is not valid (stuff_lenght+1) consecutive   
---  bits of the same polarity. Signal destuffed  indicates that current output
---  bit is not valid data bit, but is destuffed bit taken out from input data
---  stream!                                                                  
---------------------------------------------------------------------------------
-
+library ieee;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+use WORK.CANconstants.all;
 
 entity bitDestuffing is
   port(

@@ -1,9 +1,3 @@
-library ieee;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-use ieee.std_logic_unsigned.all;
-use WORK.CANconstants.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,8 +26,16 @@ use WORK.CANconstants.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Package for components declarations to avoid writing component declarations 
+--  every time into architecture itself. Do not use comments on signals in this 
+--  file, comment the signal in the entity declaration!
+--------------------------------------------------------------------------------
 -- Revision History:
---
 --    15.11.2017   Created file
 --    27.11.2017   Added "rst_sync" asynchronous rest synchroniser circuit
 --    29.11.2017   Removed "rec_data" between Protocol control and RX Buffer, 
@@ -42,12 +44,11 @@ use WORK.CANconstants.all;
 --    30.11.2017   Updated "txt_buffer" for direct access to buffer
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Package for components declarations to avoid writing component declarations 
---  every time into architecture itself. Do not use comments on signals in this 
---  file, comment the signal in the entity declaration!
---------------------------------------------------------------------------------
+library ieee;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+use WORK.CANconstants.all;
 
 package CANcomponents is
 

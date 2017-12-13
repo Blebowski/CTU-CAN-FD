@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,10 +26,6 @@ use work.CANconstants.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    July 2015   Created file
---    04.12.2017  Removed "tran_data_in" and "tran_data_reg" from the buffer
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -46,6 +36,16 @@ use work.CANconstants.all;
 --  in the buffer stay until it is rewritten by another message. Message is 
 --  stored until sucessfully transmitted or retransmitt limit is reached.
 --------------------------------------------------------------------------------
+-- Revision History:
+--    July 2015   Created file
+--    04.12.2017  Removed "tran_data_in" and "tran_data_reg" from the buffer
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
 
 entity tranBuffer is 
   port(

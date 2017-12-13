@@ -1,10 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-use work.CANcomponents.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,21 +26,6 @@ use work.CANcomponents.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    July 2015   Created file
---    22.6.2016   1. Added rec_esi signal for error state propagation into 
---                   RX buffer.
---                2. Added explicit architecture selection for each component
---                   (RTL)
---    24.8.2016   Added "use_logger" generic to the registers module.
---    28.11.2017  Added "rst_sync_comp" reset synchroniser.
---    30.11.2017  Changed TXT buffer to registers interface. The user is now 
---                directly accessing the buffer by avalon access.
---    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
---                time and save some LUTs.
---    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid 
---                possible name conflicts.
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -64,6 +42,28 @@ use work.CANcomponents.ALL;
 --      1x Tx Arbitrator
 --      1x Acceptance filters
 --------------------------------------------------------------------------------
+-- Revision History:
+--    July 2015   Created file
+--    22.6.2016   1. Added rec_esi signal for error state propagation into 
+--                   RX buffer.
+--                2. Added explicit architecture selection for each component
+--                   (RTL)
+--    24.8.2016   Added "use_logger" generic to the registers module.
+--    28.11.2017  Added "rst_sync_comp" reset synchroniser.
+--    30.11.2017  Changed TXT buffer to registers interface. The user is now 
+--                directly accessing the buffer by avalon access.
+--    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
+--                time and save some LUTs.
+--    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid 
+--                possible name conflicts.
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
+use work.CANcomponents.ALL;
 
 entity CAN_top_level is
   generic(

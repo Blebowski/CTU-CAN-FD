@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-use work.CANconstants.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,8 +26,30 @@ use work.CANconstants.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Memory registers which control functionality of CAN FD core. Memory inter-
+--  face is 32 bit avalon compatible. Registers create drv_bus signal which is 
+--  used in whole CAN FD IP function to control all modules. Memory Reads and 
+--  writes to any location need to be executed as one read, write. No extended 
+--  cycles are allowed.                                                                                                  
+--  Write to register as following:
+--    1. SCS<='1' , data_in<=valid_data, adress<=valid_adress
+--    2. SWR<='0' , wait at least one clock cycle
+--    3. SWR<='1' SCS<='0'
+--  Read from register as following:
+--    1. SCS<='1' , adress<=valid_adress
+--    2. SRD<='0' , wait at least one clock cycle
+--    3. Capture valid data on data_out output
+--    4. SWR<='1' SCS<='0'
+--------------------------------------------------------------------------------
+--Note: All control signals which command any event execution which lasts one 
+--      clock cycle has negative edge detection. Therefore once srd or swr is 
+--      active to finish the read or write it has to become inactive!--
+--------------------------------------------------------------------------------
 -- Revision History:
--- 
 --    July 2015   Created file
 --    19.12.2015  RETR register changed for settings register, added configura-
 --                tion options for enabling and disabling whole controller, and 
@@ -75,28 +91,11 @@ use work.CANconstants.all;
 --                to avoid possible name conflicts.
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Memory registers which control functionality of CAN FD core. Memory inter-
---  face is 32 bit avalon compatible. Registers create drv_bus signal which is 
---  used in whole CAN FD IP function to control all modules. Memory Reads and 
---  writes to any location need to be executed as one read, write. No extended 
---  cycles are allowed.                                                                                                  
---  Write to register as following:
---    1. SCS<='1' , data_in<=valid_data, adress<=valid_adress
---    2. SWR<='0' , wait at least one clock cycle
---    3. SWR<='1' SCS<='0'
---  Read from register as following:
---    1. SCS<='1' , adress<=valid_adress
---    2. SRD<='0' , wait at least one clock cycle
---    3. Capture valid data on data_out output
---    4. SWR<='1' SCS<='0'
---------------------------------------------------------------------------------
---Note: All control signals which command any event execution which lasts one 
---      clock cycle has negative edge detection. Therefore once srd or swr is 
---      active to finish the read or write it has to become inactive!--
---------------------------------------------------------------------------------
-
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+use work.CANconstants.all;
 
 entity canfd_registers is
   generic(

@@ -1,8 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -31,9 +26,6 @@ USE ieee.std_logic_unsigned.All;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
--- Revision History:
---
---    17.1.2016   Created file
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -43,6 +35,14 @@ USE ieee.std_logic_unsigned.All;
 --  tering data based on identifier decimal value. When acessing CAN Controller
 --  from software driver should take care of this conversion!
 --------------------------------------------------------------------------------
+-- Revision History:
+--    17.1.2016   Created file
+--------------------------------------------------------------------------------
+
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
 
 package ID_transfer is
 

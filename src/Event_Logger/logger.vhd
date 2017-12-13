@@ -1,9 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -32,8 +26,18 @@ USE WORK.CANconstants.ALL;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  Event logger - supporting logging of events like : SOF start, Arbitration 
+--  start, Arbitration lost, Message was validly recieved, transcieved etc...  
+--  Operates as FIFO memory. Recording is started by trigger condition which is 
+--  also presettable. Only one event at time can be recoded. See IP function 
+--  documentation to see which events can't be recorded simultaneously. When 
+--  event occurs it saves code of the event and input timeStamp.          
+--------------------------------------------------------------------------------
 -- Revision History:
---
 --    July 2015   Created file
 --    18.12.2015  Logger memory inference changed from FF to SRAM, dual port. 
 --                Async Read, sync write. Assumed automatical recognition by 
@@ -67,15 +71,11 @@ USE WORK.CANconstants.ALL;
 --
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  Event logger - supporting logging of events like : SOF start, Arbitration 
---  start, Arbitration lost, Message was validly recieved, transcieved etc...  
---  Operates as FIFO memory. Recording is started by trigger condition which is 
---  also presettable. Only one event at time can be recoded. See IP function 
---  documentation to see which events can't be recorded simultaneously. When 
---  event occurs it saves code of the event and input timeStamp.          
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
 
 entity CAN_logger is 
   generic(

@@ -1,10 +1,3 @@
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
-USE WORK.CANconstants.ALL;
-use work.brs_comp_package.all;
-
 --------------------------------------------------------------------------------
 --
 -- CAN with Flexible Data-Rate IP Core 
@@ -33,6 +26,21 @@ use work.brs_comp_package.all;
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
 --
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--  v.3 of Prescaler circuit. Due to synchronisation issues with two bit rate
+--  counters during switching bit Rates only one counter used. Due to this im-
+--  plementation *_nbt, *_dbt signals availiable only when sp_control indicates
+--  this bit rate is actual transmit/recieve bit rate! Bit timing is set from 
+--  driving bus. Contol of generated bit time is made via sp_control signal. 
+--  Synchronisation is enabled and control via sync_control input. The edge used
+--  for synchronisation is signalised by active signal sync_edge. Synchronisation
+--  type has to be valid on sync_control. When hard synchronisation appears then
+--  separate state is entered which handles correct sample and sync signals ge-
+--  neration so that no error appears during hard synchronisation!                                                                        
+--------------------------------------------------------------------------------
 -- Revision History:
 --
 --    June 2015   Version 1 of circuit
@@ -90,19 +98,12 @@ use work.brs_comp_package.all;
 --                During the bit where bit rate switch occured.
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Purpose:
---  v.3 of Prescaler circuit. Due to synchronisation issues with two bit rate
---  counters during switching bit Rates only one counter used. Due to this im-
---  plementation *_nbt, *_dbt signals availiable only when sp_control indicates
---  this bit rate is actual transmit/recieve bit rate! Bit timing is set from 
---  driving bus. Contol of generated bit time is made via sp_control signal. 
---  Synchronisation is enabled and control via sync_control input. The edge used
---  for synchronisation is signalised by active signal sync_edge. Synchronisation
---  type has to be valid on sync_control. When hard synchronisation appears then
---  separate state is entered which handles correct sample and sync signals ge-
---  neration so that no error appears during hard synchronisation!                                                                        
---------------------------------------------------------------------------------
+Library ieee;
+USE IEEE.std_logic_1164.all;
+USE IEEE.numeric_std.ALL;
+USE ieee.std_logic_unsigned.All;
+USE WORK.CANconstants.ALL;
+use work.brs_comp_package.all;
 
 entity prescaler_v3 is
   PORT(
