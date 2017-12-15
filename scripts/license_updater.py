@@ -5,7 +5,7 @@
 ##   Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
 ##   
 ##   Script for updating license in the header source codes of CAN FD IP Core.
-##   
+##   Supports following file extensions: ".vhd" , ".tcl" , ".h" , ".c"
 ##    
 ##   Arguments:
 ##		lic_path 	- File with license which should be placed to header of the
