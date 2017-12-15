@@ -1122,9 +1122,9 @@ begin
     					  data_out(15 downto 8)      <=  rx_write_pointer_pos;
     					  data_out(23 downto 16)     <=  rx_read_pointer_pos;
  					
- 				   -------------------------------------------------------
- 				   --RX_DATA register
- 				   -------------------------------------------------------
+ 				  -------------------------------------------------------
+ 				  --RX_DATA register
+ 				  -------------------------------------------------------
     			   when RX_DATA_ADR => 
     			     if(RX_buff_read_first=false)then
     					   data_out(31 downto 0)      <=  rx_read_buff;
@@ -1136,14 +1136,14 @@ begin
     					  RX_buff_read_first         <=  true;
     			   
     			   -------------------------------------------------------
-   			       --Transciever delay adress  
+			    --Transciever delay adress  
     			   -------------------------------------------------------
     			   when TRV_DELAY_ADR =>
     			      data_out(31 downto 16)     <=  (OTHERS=>'0');
     			      data_out(15 downto 0)      <=  trv_delay_out; 
  			    
- 			       -------------------------------------------------------
- 			       --TXT Buffers status
+ 			    -------------------------------------------------------
+ 			    --TXT Buffers status
     			   -------------------------------------------------------
     			   when TX_STATUS_ADR => 
     			      data_out(31 downto 2)      <=  (OTHERS=>'0');
