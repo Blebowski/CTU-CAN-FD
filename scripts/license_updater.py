@@ -26,18 +26,18 @@ import os
 import sys
 import shutil
 import re
+import io
 
 ################################################################################
 ## Global variables
 ################################################################################
-
-
 
 ## Counter for files where the license was updated
 file_counter = 0
 
 global sup_files
 global sub_folders
+global lic_text
 
 
 ################################################################################
@@ -61,6 +61,84 @@ def print_help():
 			" 		'myPrettyLicense.txt' ['.c','.vhd'] ['src','test']")
 
 
+def write_license(lic_text,comment_char,file):
+	
+	line_length = 80
+	
+	# Write the initial line (TCL, VHDL)
+	if (comment_char == "-" or comment_char == "#"):
+		for i in range(0,line_length):
+			file.write(comment_char)
+			
+	# Write the initial line (C)
+	elif (comment_char == "*"):
+		file.write("/")
+		for i in range(0,line_length-1):
+			file.write(comment_char)
+	else:
+		print("Unsuported Comment character")
+	
+	file.write("\n")
+	
+	# Write rest of the lines
+	buf = io.StringIO(lic_text)
+	while True:
+	
+		# Read the line from text of the license
+		lic_line = buf.readline()
+		if (lic_line == "<licend1234>"):
+			break
+		
+		# Write Begining of the line
+		if (comment_char == "-" or comment_char == "#"):
+			file.write(comment_char+comment_char+" ")
+		elif (comment_char=="*"):
+			file.write(" "+comment_char+" ")
+	
+		# Write Rest of the line
+		file.write(lic_line)
+		
+	# Write the final line
+	if (comment_char == "-" or comment_char == "#"):
+		for i in range(0,line_length):
+			file.write(comment_char)
+	elif (comment_char=="*"):
+		for i in range(0,line_length-1):
+			file.write(comment_char)
+		file.write("/")
+		
+	file.write("\n")
+
+
+################################################################################
+## Reads the source code from one file until two files
+################################################################################
+def write_source(source_file, dest_file,comment_sign):
+	## Read the first file line because this is always commented
+	source_file.readline()
+	
+	## Read the license lines
+	## First or second line of the source code is
+	## the "comment character"
+	line = source_file.readline()
+	while (line.startswith(comment_sign) or line[1]==comment_sign):	
+		line = source_file.readline()
+		if (len(line)==1):
+			break
+				 
+	dest_file.write("\n")
+				 
+	## Now read rest of the source code and copy to dest
+	while True:
+		char = source_file.read()
+		if (char == ""):
+			break
+		dest_file.write(char)
+		
+	
+	
+		
+
 ################################################################################
 ## Process the file and change the license header, if the file type is in the
 ## list of supported file extensions.
@@ -69,20 +147,47 @@ def process_file(filename):
 	
 	global sup_files
 	file_ext_match = False
+	ext_type = ""
+	comment_sign = ""
+	
 	for ext in sup_files:
 		if (filename.endswith(ext)):
 			file_ext_match = True
+			ext_type = ext
 	
 	if (file_ext_match == False):
 		return
 		
 	print("Processing file: "+filename)
 	
-	file = open (filename)
-	file_text = file.read()
-	print(file_text)
-		
+	## Check the comment sign based on file type
+	if (ext_type == ".c"):
+		comment_sign = "*"
+	elif (ext_type == ".h"): 
+		comment_sign = "*"
+	elif (ext_type == ".tcl"): 
+		comment_sign = "#"
+	elif (ext_type == ".vhd"): 
+		comment_sign = "-"
+	else:
+		comment_sign = "-"
 
+	## Read the file content
+	file = open (filename,"r")
+	temp_file = open ("temp.txt","wt")
+	
+	## Write the new license to the temp file
+	write_license(lic_text,comment_sign,temp_file)
+	
+	## Write rest of the file after license update
+	write_source(file,temp_file,comment_sign)
+	temp_file.close()
+	file.close()
+	
+	## Replace the original file and erase the temp file
+	os.remove(filename)
+	os.rename("temp.txt",filename)
+	
 
 ################################################################################
 ## Iterate through directory and call recursively on sub-directories.
