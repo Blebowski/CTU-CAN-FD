@@ -1,31 +1,36 @@
 --------------------------------------------------------------------------------
---
+-- 
 -- CAN with Flexible Data-Rate IP Core 
---
--- Copyright (C) 2015 Ondrej Ille <ondrej.ille@gmail.com>
---
+-- 
+-- Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
+-- 
+-- Project advisor: Jiri Novak <jnovak@fel.cvut.cz>
+-- Department of Measurement         (http://meas.fel.cvut.cz/)
+-- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
+-- Czech Technical University        (http://www.cvut.cz/)
+-- 
 -- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this software and associated documentation files (the "Software"), to deal
--- in the Software without restriction, including without limitation the rights
--- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
--- copies of the Software, and to permit persons to whom the Software is 
--- furnished to do so, subject to the following conditions:
---
+-- of this VHDL component and associated documentation files (the "Component"), 
+-- to deal in the Component without restriction, including without limitation 
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+-- and/or sell copies of the Component, and to permit persons to whom the 
+-- Component is furnished to do so, subject to the following conditions:
+-- 
 -- The above copyright notice and this permission notice shall be included in 
--- all copies or substantial portions of the Software.
---
--- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- all copies or substantial portions of the Component.
+-- 
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
 -- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
--- IN THE SOFTWARE.
---
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- IN THE COMPONENT.
+-- 
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
 -- protocol license from Bosch.
---
+-- 
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -1122,9 +1127,9 @@ begin
     					  data_out(15 downto 8)      <=  rx_write_pointer_pos;
     					  data_out(23 downto 16)     <=  rx_read_pointer_pos;
  					
- 				   -------------------------------------------------------
- 				   --RX_DATA register
- 				   -------------------------------------------------------
+ 				  -------------------------------------------------------
+ 				  --RX_DATA register
+ 				  -------------------------------------------------------
     			   when RX_DATA_ADR => 
     			     if(RX_buff_read_first=false)then
     					   data_out(31 downto 0)      <=  rx_read_buff;
@@ -1136,14 +1141,14 @@ begin
     					  RX_buff_read_first         <=  true;
     			   
     			   -------------------------------------------------------
-   			       --Transciever delay adress  
+			    --Transciever delay adress  
     			   -------------------------------------------------------
     			   when TRV_DELAY_ADR =>
     			      data_out(31 downto 16)     <=  (OTHERS=>'0');
     			      data_out(15 downto 0)      <=  trv_delay_out; 
  			    
- 			       -------------------------------------------------------
- 			       --TXT Buffers status
+ 			    -------------------------------------------------------
+ 			    --TXT Buffers status
     			   -------------------------------------------------------
     			   when TX_STATUS_ADR => 
     			      data_out(31 downto 2)      <=  (OTHERS=>'0');
