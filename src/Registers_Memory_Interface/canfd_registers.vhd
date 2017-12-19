@@ -315,9 +315,7 @@ entity canfd_registers is
   
   --Store into TXT buffer 1 or 2
   signal tran_wr                :     std_logic_vector(1 downto 0);   
-  
-  signal tran_aux_addr          :     std_logic_vector(23 downto 0);
-    
+     
   --Recieve transcieve message counters
   signal rx_ctr_set             :     std_logic;
   signal tx_ctr_set             :     std_logic;
@@ -349,6 +347,9 @@ entity canfd_registers is
   --Reading from RX buffer, detection of first cycle to move the pointer
   signal RX_buff_read_first     :     boolean;
   signal aux_data               :     std_logic_Vector(31 downto 0);
+  
+  --One of the TX Buffers is accessed
+  signal txt_buf_access         :     boolean;
   
 end entity;
 
@@ -530,19 +531,21 @@ begin
   --------------------------------------------------------
   tran_data             <= data_in;
   
-  --Temporary substraction until the address will be moved to bit aligned location! 
-  tran_aux_addr         <= std_logic_vector(unsigned(
-                           adress(13 downto 0))-(unsigned(TX_DATA_1_ADR)*4));   
-  tran_addr             <= tran_aux_addr(6 downto 2);  
+  --Since TX_DATA registers are in separate region, which
+  -- is aligned it is enough to take the lowest bits to 
+  -- create the address offset
+  tran_addr             <= adress(6 downto 2);
   
   --------------------------------------------------------
   -- Decoding of TXT buffer signals...
   --------------------------------------------------------
-  tran_wr               <= "00" when (adress(13 downto 0)>(TX_DATA_20_ADR&"00")) or 
-                                      (adress(13 downto 0)<(TX_DATA_1_ADR&"00")) or 
-                                      (scs='0') or (swr='0') else
-                           "01" when txt_bufdir=TXT1_DIR else
-                           "10" when txt_bufdir=TXT2_DIR else
+  txt_buf_access   <= true when (adress(13 downto 10) = TX_DATA_REGION and scs='1'
+                                and swr='1')
+                           else
+                      false;
+                          
+  tran_wr               <= "01" when (txt_bufdir=TXT1_DIR and txt_buf_access) else
+                           "10" when (txt_bufdir=TXT2_DIR and txt_buf_access) else
                            "00"; 
   -- TXT1 buffer corresponds to index 0, TXT2 buffer to index 1
    

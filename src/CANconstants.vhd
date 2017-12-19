@@ -41,6 +41,9 @@
 --    June 2015   Created file
 --    08.12.2017  Code formatting. Replaced hexadecimal values with shorter
 --                notation
+--    19.12.2017  Moved TX_DATA registers into separate memory location
+--                TX_DATA_REGION to make the direct addressing inside the TXT
+--                buffer easier.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -681,6 +684,10 @@ package CANconstants is
   --adresses. This way lower bits will be cut and no adress alignment problems
   --will appear. The real adress(in processor) offset is 4 times value of adress
   --constant!
+  
+  --Control registers region
+  constant CTRL_REGION_ADR         : std_logic_vector(3 downto 0) := x"0";
+  
   constant DEVICE_ID_ADR           : std_logic_vector(11 downto 0) := x"000";
   constant MODE_REG_ADR            : std_logic_vector(11 downto 0) := x"001";
   constant INTERRUPT_REG_ADR       : std_logic_vector(11 downto 0) := x"002";
@@ -706,27 +713,6 @@ package CANconstants is
   constant TX_STATUS_ADR   : std_logic_vector(11 downto 0) := x"015";
   constant TX_SETTINGS_ADR : std_logic_vector(11 downto 0) := x"016";
 
-  constant TX_DATA_1_ADR  : std_logic_vector(11 downto 0) := x"017";
-  constant TX_DATA_2_ADR  : std_logic_vector(11 downto 0) := x"018";
-  constant TX_DATA_3_ADR  : std_logic_vector(11 downto 0) := x"019";
-  constant TX_DATA_4_ADR  : std_logic_vector(11 downto 0) := x"01A";
-  constant TX_DATA_5_ADR  : std_logic_vector(11 downto 0) := x"01B";
-  constant TX_DATA_6_ADR  : std_logic_vector(11 downto 0) := x"01C";
-  constant TX_DATA_7_ADR  : std_logic_vector(11 downto 0) := x"01D";
-  constant TX_DATA_8_ADR  : std_logic_vector(11 downto 0) := x"01E";
-  constant TX_DATA_9_ADR  : std_logic_vector(11 downto 0) := x"01F";
-  constant TX_DATA_10_ADR : std_logic_vector(11 downto 0) := x"020";
-  constant TX_DATA_11_ADR : std_logic_vector(11 downto 0) := x"021";
-  constant TX_DATA_12_ADR : std_logic_vector(11 downto 0) := x"022";
-  constant TX_DATA_13_ADR : std_logic_vector(11 downto 0) := x"023";
-  constant TX_DATA_14_ADR : std_logic_vector(11 downto 0) := x"024";
-  constant TX_DATA_15_ADR : std_logic_vector(11 downto 0) := x"025";
-  constant TX_DATA_16_ADR : std_logic_vector(11 downto 0) := x"026";
-  constant TX_DATA_17_ADR : std_logic_vector(11 downto 0) := x"027";
-  constant TX_DATA_18_ADR : std_logic_vector(11 downto 0) := x"028";
-  constant TX_DATA_19_ADR : std_logic_vector(11 downto 0) := x"029";
-  constant TX_DATA_20_ADR : std_logic_vector(11 downto 0) := x"02A";
-
   constant RX_COUNTER_ADR : std_logic_vector(11 downto 0) := x"02B";
   constant TX_COUNTER_ADR : std_logic_vector(11 downto 0) := x"02C";
 
@@ -740,6 +726,29 @@ package CANconstants is
 
   constant DEBUG_REG_ADR : std_logic_vector(11 downto 0) := x"035";
   constant YOLO_REG_ADR  : std_logic_vector(11 downto 0) := x"036";
+
+  constant TX_DATA_REGION : std_logic_vector(3 downto 0)  := x"1"; 
+  constant TX_DATA_1_ADR  : std_logic_vector(11 downto 0) := x"100";
+  constant TX_DATA_2_ADR  : std_logic_vector(11 downto 0) := x"101";
+  constant TX_DATA_3_ADR  : std_logic_vector(11 downto 0) := x"102";
+  constant TX_DATA_4_ADR  : std_logic_vector(11 downto 0) := x"103";
+  constant TX_DATA_5_ADR  : std_logic_vector(11 downto 0) := x"104";
+  constant TX_DATA_6_ADR  : std_logic_vector(11 downto 0) := x"105";
+  constant TX_DATA_7_ADR  : std_logic_vector(11 downto 0) := x"106";
+  constant TX_DATA_8_ADR  : std_logic_vector(11 downto 0) := x"107";
+  constant TX_DATA_9_ADR  : std_logic_vector(11 downto 0) := x"108";
+  constant TX_DATA_10_ADR : std_logic_vector(11 downto 0) := x"109";
+  constant TX_DATA_11_ADR : std_logic_vector(11 downto 0) := x"10A";
+  constant TX_DATA_12_ADR : std_logic_vector(11 downto 0) := x"10B";
+  constant TX_DATA_13_ADR : std_logic_vector(11 downto 0) := x"10C";
+  constant TX_DATA_14_ADR : std_logic_vector(11 downto 0) := x"10D";
+  constant TX_DATA_15_ADR : std_logic_vector(11 downto 0) := x"10E";
+  constant TX_DATA_16_ADR : std_logic_vector(11 downto 0) := x"10F";
+  constant TX_DATA_17_ADR : std_logic_vector(11 downto 0) := x"110";
+  constant TX_DATA_18_ADR : std_logic_vector(11 downto 0) := x"111";
+  constant TX_DATA_19_ADR : std_logic_vector(11 downto 0) := x"112";
+  constant TX_DATA_20_ADR : std_logic_vector(11 downto 0) := x"113";
+
 
   ----------------
   --Register Bits-
