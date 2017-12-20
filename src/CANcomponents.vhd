@@ -135,7 +135,6 @@ package CANcomponents is
       signal rx_write_pointer_pos : in  std_logic_vector(7 downto 0);
       signal rx_message_disc      : in  std_logic;
       signal rx_data_overrun      : in  std_logic;
-      signal tran_data_in         : out std_logic_vector(639 downto 0);
       signal tran_data            : out std_logic_vector(31 downto 0);
       signal tran_addr            : out std_logic_vector(4 downto 0);
       signal txt1_empty           : in  std_logic;

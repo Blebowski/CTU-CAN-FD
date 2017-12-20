@@ -94,6 +94,8 @@
 --                ved TXT1_COMMIT and TXT2_COMMIT bits
 --    12.12.2017  Renamed entity to  "canfd_registers" instead of "registers"
 --                to avoid possible name conflicts.
+--    20.12.2017  Removed obsolete tran_data_in signal. Removed obsolete 
+--                tx_data_reg.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -179,12 +181,6 @@ entity canfd_registers is
     
      --Some data were discarded, register 
     signal rx_data_overrun      :in   std_logic;                     
-    
-    ----------------------------------
-    --TXT1 and TXT2 Buffer Interface--
-    ----------------------------------
-    --Transcieve data (Common for TX Buffer and TXT Buffer)
-    signal tran_data_in         :out  std_logic_vector(639 downto 0);
     
     --------------------------------------------------------
     -- Optimized, direct interface to TXT1 and TXT2 buffers
@@ -581,13 +577,7 @@ begin
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
        mode_reg          ,int_ena_reg            
       );
-      
-     -- tx_data_reg(5)        <=  (OTHERS=>'0');
---      tx_data_reg(4)        <=  (OTHERS=>'0');
---      tx_data_reg(3)        <=  (OTHERS=>'0');
---      tx_data_reg(2)        <=  (OTHERS=>'0');
---      tx_data_reg(1)        <=  (OTHERS=>'0');
-      
+            
       RX_buff_read_first    <= false;
       aux_data              <=  (OTHERS=>'0');
       
@@ -618,13 +608,7 @@ begin
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
        mode_reg          ,int_ena_reg            
       );
-       
-      --tx_data_reg(5)        <=  (OTHERS=>'0');
-      --tx_data_reg(4)        <=  (OTHERS=>'0');
-      --tx_data_reg(3)        <=  (OTHERS=>'0');
-      --tx_data_reg(2)        <=  (OTHERS=>'0');
-      --tx_data_reg(1)        <=  (OTHERS=>'0');
-      
+           
       RX_buff_read_first    <= false;
       aux_data              <=  (OTHERS=>'0');
 
@@ -1312,10 +1296,7 @@ begin
   status_reg(RBS_IND)<=not rx_empty; 
   status_reg(DOS_IND)<=rx_data_overrun;
   status_reg(ET_IND) <='1' when PC_state=error else '0';
-  
-  tran_data_in<=tx_data_reg(5)&tx_data_reg(4)&tx_data_reg(3)&
-                tx_data_reg(2)&tx_data_reg(1);
-  
+   
   --Debug register
   PC_state_reg_vect(0)    <= '1' when PC_State=arbitration else '0';
   PC_state_reg_vect(1)    <= '1' when PC_State=control else '0';

@@ -61,6 +61,7 @@
 --                time and save some LUTs.
 --    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid 
 --                possible name conflicts.
+--    20.12.2017  Removed obsolete "tran_data_in" signal.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -200,10 +201,7 @@ entity CAN_top_level is
 	------------------------------------------------------------------------------
   -- Registers <--> TX Buffer, TXT Buffer
   ------------------------------------------------------------------------------
-  
-  --Transcieve data (Common for TX Buffer and TXT Buffer)  
-  signal tran_data_in : std_logic_vector(639 downto 0);
-  
+    
   --Info that message store into buffer from driving registers failed
   --because buffer is full
   signal txt1_disc    : std_logic;
@@ -503,7 +501,6 @@ begin
       rx_write_pointer_pos => rx_write_pointer_pos,
       rx_message_disc      => rx_message_disc,
       rx_data_overrun      => rx_data_overrun,
-      tran_data_in         => tran_data_in,
       tran_data            => tran_data,
       tran_addr            => tran_addr,
       txt2_empty           => txt2_buffer_empty,
