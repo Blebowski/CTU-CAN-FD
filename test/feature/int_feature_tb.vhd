@@ -60,6 +60,8 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
+use work.CANFD_register_map.all;
+
 package interrupt_feature is
   
   procedure interrupt_feature_exec(

@@ -61,6 +61,8 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
+use work.CANFD_register_map.all;
+
 package tran_delay_feature is
   
   procedure tran_delay_feature_exec(

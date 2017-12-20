@@ -103,6 +103,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
+use work.CANFD_register_map.all;
 
 entity canfd_registers is
   generic(

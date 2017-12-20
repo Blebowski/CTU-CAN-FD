@@ -56,6 +56,7 @@ USE ieee.std_logic_unsigned.All;
 USE work.randomLib.All;
 use work.CANconstants.all;
 
+use work.CANFD_register_map.all;
 
 package CANtestLib is
 -----------------------------------------------------------------------------------------
