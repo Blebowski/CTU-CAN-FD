@@ -53,6 +53,8 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
+use work.CANFD_register_map.all;
+
 package overload_feature is
   
   procedure overload_feature_exec(

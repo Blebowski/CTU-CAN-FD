@@ -75,6 +75,8 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
+use work.CANFD_register_map.all;
+
 package tx_arb_time_tran_feature is
   
   procedure tx_arb_time_tran_feature_exec(

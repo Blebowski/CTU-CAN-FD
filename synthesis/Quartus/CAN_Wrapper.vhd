@@ -60,7 +60,8 @@ entity CAN_Wrapper is
      constant  sup_filtB      : boolean:= true;                
      constant  sup_filtC      : boolean:= true;                
      constant  sup_range      : boolean:= true;               
-     constant  tx_time_sup    : boolean:= true;                
+     constant  tx_time_sup    : boolean:= true;
+     constant  sup_be         : boolean:= false;	  
      constant  logger_size    : natural:= 8  
     );
 	 port (
@@ -73,6 +74,7 @@ entity CAN_Wrapper is
      signal scs      : in  std_logic;    --Chip select
      signal srd      : in  std_logic;    --Serial read
      signal swr      : in  std_logic;    --Serial write
+	  signal sbe      : in  std_logic_vector(3 downto 0); --BE
      
 	  signal int : out std_logic;
 
@@ -211,6 +213,7 @@ begin
      sup_filtC      => sup_filtC,
      sup_range      => sup_range,
      tx_time_sup    => tx_time_sup,
+	  sup_be         => sup_be,
      logger_size    => logger_size
     )
   port map(
@@ -222,6 +225,7 @@ begin
      scs            => scs,
      srd            => srd,
      swr            => swr,
+	  sbe			     => sbe,
      int            => int,
      CAN_tx         => CAN_tx,
      CAN_rx         => CAN_rx,

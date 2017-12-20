@@ -61,6 +61,7 @@
 --                time and save some LUTs.
 --    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid 
 --                possible name conflicts.
+--    20.12.2017  Removed obsolete "tran_data_in" signal.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -97,6 +98,7 @@ entity CAN_top_level is
     constant sup_filtC      : boolean                := true;
     constant sup_range      : boolean                := true;
     constant tx_time_sup    : boolean                := true;
+    constant sup_be         : boolean                := true;
     constant logger_size    : natural range 0 to 512 := 8
     );
   port(
@@ -115,6 +117,7 @@ entity CAN_top_level is
     signal scs      : in  std_logic;    --Chip select
     signal srd      : in  std_logic;    --Serial read
     signal swr      : in  std_logic;    --Serial write
+    signal sbe      : in  std_logic_vector(3 downto 0);
     --Note: This bus is Avalon compatible!
 
     --------------------
@@ -200,10 +203,7 @@ entity CAN_top_level is
 	------------------------------------------------------------------------------
   -- Registers <--> TX Buffer, TXT Buffer
   ------------------------------------------------------------------------------
-  
-  --Transcieve data (Common for TX Buffer and TXT Buffer)  
-  signal tran_data_in : std_logic_vector(639 downto 0);
-  
+    
   --Info that message store into buffer from driving registers failed
   --because buffer is full
   signal txt1_disc    : std_logic;
@@ -479,6 +479,7 @@ begin
       sup_filtB  => sup_filtB,
       sup_filtC  => sup_filtC,
       sup_range  => sup_range,
+      sup_be     => sup_be,
       ID         => ID
       )
     port map(
@@ -491,6 +492,7 @@ begin
       scs                  => scs,
       srd                  => srd,
       swr                  => swr,
+      sbe                  => sbe,
       drv_bus              => drv_bus,
       stat_bus             => stat_bus,
       rx_read_buff         => rx_read_buff,
@@ -503,7 +505,6 @@ begin
       rx_write_pointer_pos => rx_write_pointer_pos,
       rx_message_disc      => rx_message_disc,
       rx_data_overrun      => rx_data_overrun,
-      tran_data_in         => tran_data_in,
       tran_data            => tran_data,
       tran_addr            => tran_addr,
       txt2_empty           => txt2_buffer_empty,

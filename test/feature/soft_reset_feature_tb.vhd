@@ -61,6 +61,8 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
+use work.CANFD_register_map.all;
+
 package soft_reset_feature is
   
   procedure soft_reset_feature_exec(

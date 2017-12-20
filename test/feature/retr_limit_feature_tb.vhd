@@ -51,6 +51,8 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
+use work.CANFD_register_map.all;
+
 package retr_limit_feature is
   
   procedure retr_limit_feature_exec(

@@ -76,7 +76,7 @@ architecture feature_env_test of CAN_feature_test is
   	 signal scs_1: std_logic:= '0'; --Chip select
     signal srd_1: std_logic:= '0'; --Serial read
     signal swr_1: std_logic:= '0'; --Serial write
-      
+    signal sbe_1: std_logic_vector(3 downto 0) := (OTHERS => '1'); --Byte enable
   
     --Controller 2 signals
     signal clk_sys_2          : std_logic:= '0';
@@ -93,7 +93,7 @@ architecture feature_env_test of CAN_feature_test is
   	 signal scs_2: std_logic:= '0'; --Chip select
     signal srd_2: std_logic:= '0'; --Serial read
     signal swr_2: std_logic:= '0'; --Serial write
-    
+    signal sbe_2: std_logic_vector(3 downto 0) := (OTHERS => '1'); --Byte enable
     
     --------------------------------------------------
     --------------------------------------------------
@@ -134,6 +134,7 @@ begin
     	  scs                =>  scs_1,
        srd                =>  srd_1,
        swr                =>  swr_1,
+       sbe                =>  sbe_1,
        int                =>  int_1,
        CAN_tx             =>  CAN_tx_1,
        CAN_rx             =>  CAN_rx_1,
@@ -159,6 +160,7 @@ begin
     	  scs                =>  scs_2,
        srd                =>  srd_2,
        swr                =>  swr_2,
+       sbe                =>  sbe_2,
        int                =>  int_2,
        CAN_tx             =>  CAN_tx_2,
        CAN_rx             =>  CAN_rx_2,

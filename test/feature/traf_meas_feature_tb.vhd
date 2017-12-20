@@ -60,6 +60,8 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
+use work.CANFD_register_map.all;
+
 package traf_meas_feature is
   
   procedure traf_meas_feature_exec(
