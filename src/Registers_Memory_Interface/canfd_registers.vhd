@@ -236,6 +236,10 @@ entity canfd_registers is
   ----------------------
   signal int_reset              :     std_logic:='1';
   
+  -- Internal read data for byte enabled reads
+  signal data_out_int           :     std_logic_vector(31 downto 0);
+  signal sbe_reg                :     std_logic_vector(3 downto 0);
+  
   --Command registers
   signal clear_overrun          :     std_logic;
   signal release_recieve        :     std_logic;
@@ -610,7 +614,6 @@ begin
   --Note: this works only for reset active in logic zero
   --------------------------------------------------------
   res_out                   <=  res_n and int_reset; 
-  --data_out                  <=  (OTHERS=>'0');
  
   --------------------------------------------------------
   -- Propagation of Avalon address to TXT Buffer RAM
@@ -645,7 +648,8 @@ begin
       
       --Internal synced reset
       int_reset               <=  '1';
-      data_out                <=  (OTHERS=>'0');
+      data_out_int            <=  (OTHERS=>'0');
+      sbe_reg                 <= (OTHERS => '0');
       
       --Reset the rest of registers
       reg_reset (
@@ -676,7 +680,8 @@ begin
 		
   		  --Internal synced reset
   		  int_reset               <=  not ACT_RESET;
-  	   data_out                <=  (OTHERS=>'0');
+  	   data_out_int            <= (OTHERS=>'0');
+  	   sbe_reg                 <= (OTHERS => '0');
   	   
   	    --Reset the rest of registers
       reg_reset (
@@ -765,11 +770,12 @@ begin
 		rx_ctr_set                <=  '0';
 		tx_ctr_set                <=  '0';
 		ack_forb                  <=  ack_forb;
-		data_out                  <=  (OTHERS=>'0');
+		data_out_int              <=  (OTHERS=>'0');
 		log_cmd                   <=  (OTHERS =>'0');
 		
 		RX_buff_read_first        <= false;
 		aux_data                  <=  (OTHERS=>'0');
+		sbe_reg                   <= sbe;
 		
 		--Chip select active and our device is selected (Component type and ID)
 		if((scs=ACT_CSC) and 
@@ -979,13 +985,16 @@ begin
 		  --Reading the data--
 		  --------------------
 		  if(srd=ACT_SRD)then 
+		   
+		   data_out_int      <=  (OTHERS=>'0');
+		    
     			case adress(13 downto 2) is
     			  
     			  --------------------------------------
     			  --Device ID
 			   --------------------------------------	    			  
   			   when DEVICE_ID_ADR =>     
-  			       data_out                  <=  CAN_DEVICE_ID;
+  			       data_out_int              <=  CAN_DEVICE_ID;
   			     
   			   --------------------------------------
     			  --MODE Register (Mode, Command, Status of SJA1000)
@@ -993,67 +1002,69 @@ begin
     			  when MODE_REG_ADR => 
     			     
     			     --Mode register
-    					  data_out                   <=  (OTHERS=>'0');
-    					  data_out(6)                <=  sam_norm;
-    					  data_out(7)                <=  ack_forb;
-    					  data_out(5 downto 1)       <=  mode_reg(5 downto 1);
+    					  data_out_int               <=  (OTHERS=>'0');
+    					  data_out_int(6)            <=  sam_norm;
+    					  data_out_int(7)            <=  ack_forb;
+    					  data_out_int(5 downto 1)   <=  mode_reg(5 downto 1);
     					  
     					  --Command register is write only!
     					  --(Read in these bytes wont return previous value)
     					  
     					  --Status register
-    					  data_out(23 downto 16)     <=  status_reg;
+    					  data_out_int(23 downto 16) <=  status_reg;
     					  
     					  --Retransmitt limit register
-    					  data_out(24)               <=  retr_lim_ena;
-    					  data_out(28 downto 25)     <=  retr_lim_th;
-    					  data_out(29)               <=  intLoopbackEna;
- 				    data_out(30)    					      <=  CAN_enable;
-    					  data_out(31)               <=  FD_type;
+    					  data_out_int(24)           <=  retr_lim_ena;
+    					  data_out_int(28 downto 25) <=  retr_lim_th;
+    					  data_out_int(29)           <=  intLoopbackEna;
+ 				    data_out_int(30)    					  <=  CAN_enable;
+    					  data_out_int(31)           <=  FD_type;
     					  
  				 ---------------------------------------------------------
  				 --INT_REG (Interrupt register, Interrupt enable register)
  				 ---------------------------------------------------------
     			  when INTERRUPT_REG_ADR => 
-    					  data_out                   <=  (OTHERS=>'0');
+    					  data_out_int               <=  (OTHERS=>'0');
     					  
     					  --Interrupt enable register
-    					  data_out(26 downto 16)     <=  int_ena_reg(10 downto 0);
+    					  data_out_int(26 downto 16) <=  int_ena_reg(10 downto 0);
     					  
     					   --Interrupt register
-    					  data_out(10 downto 0)      <=  int_vector;
+    					  data_out_int(10 downto 0)  <=  int_vector;
     					  
-    					  --By reading interrupt vector it is erased
-    					  interrupt_vector_erase     <=  '1'; 
+    					  --By reading interrupt vector it is erase
+    					  if (sbe(0)='1' and sbe(1)='1') then
+    					     interrupt_vector_erase     <=  '1'; 
+  			       end if;
     			  
     			  ---------------------------------------------------------
  				  --Bit timing registers
     			  ---------------------------------------------------------
  				 when TIMING_REG_ADR => 
-    					   data_out(5 downto 0)      <=  prop_norm;
-    					   data_out(10 downto 6)     <=  ph1_norm;
-    					   data_out(15 downto 11)    <=  ph2_norm;
-    					   data_out(21 downto 16)    <=  prop_fd;
-    					   data_out(26 downto 22)    <=  ph1_fd;
-    					   data_out(31 downto 27)    <=  ph2_fd;
+    					   data_out_int(5 downto 0)      <=  prop_norm;
+    					   data_out_int(10 downto 6)     <=  ph1_norm;
+    					   data_out_int(15 downto 11)    <=  ph2_norm;
+    					   data_out_int(21 downto 16)    <=  prop_fd;
+    					   data_out_int(26 downto 22)    <=  ph1_fd;
+    					   data_out_int(31 downto 27)    <=  ph2_fd;
     			  
     			  ----------------------------------------------------------
     			  --Arbitration lost capture register
                   -- Baud rate prescaler register
                   ----------------------------------------------------------
     			  when ARB_ERROR_PRESC_ADR =>
-    					   data_out                  <=  (OTHERS =>'0');
-    					   data_out(4 downto 0)      <=  
+    					   data_out_int                  <=  (OTHERS =>'0');
+    					   data_out_int(4 downto 0)      <=  
     					        stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW); 
     					   
     					   --TODO : Error code capture (data out 15 to 0)
     					   
     					   --Baud rate prescaler register
-    					   data_out(21 downto 16)    <=  brp_norm; 
+    					   data_out_int(21 downto 16)    <=  brp_norm; 
     					   
-    					   data_out(11 downto 8)    <=  sjw_norm;
-    					   data_out(29 downto 24)    <=  brp_fd;
-    					   data_out(15 downto 12)    <=  sjw_fd;
+    					   data_out_int(11 downto 8)     <=  sjw_norm;
+    					   data_out_int(29 downto 24)    <=  brp_fd;
+    					   data_out_int(15 downto 12)    <=  sjw_fd;
     					   
 				  ----------------------------------------------------------
     			  --Error warning limit, error passive treshold
@@ -1062,50 +1073,50 @@ begin
     			   when ERROR_TH_ADR =>
     			   
     			          --Error warning limit 
-    					  data_out(7 downto 0)       <=  ewl; 
+    					  data_out_int(7 downto 0)       <=  ewl; 
     					  
     					  --Error passive treshold
-    					  data_out(15 downto 8)      <=  erp; 
+    					  data_out_int(15 downto 8)      <=  erp; 
     					  
     					  --Fault confinment state
     					   if(error_state_type'VAL(to_integer(unsigned(
     					      stat_bus(STAT_ERROR_STATE_HIGH downto 
     					      STAT_ERROR_STATE_LOW))))=error_active)
     					   then
-    					     data_out(16)            <=  '1'; 
+    					     data_out_int(16)            <=  '1'; 
 					   else 
-					     data_out(16)            <=  '0'; 
+					     data_out_int(16)            <=  '0'; 
 					   end if;
 					   
     					   if(error_state_type'VAL(to_integer(unsigned(stat_bus(
     					      STAT_ERROR_STATE_HIGH downto STAT_ERROR_STATE_LOW))))
     					      =error_passive)
     					   then
-    					     data_out(17)            <=  '1';
+    					     data_out_int(17)            <=  '1';
 					   else 
-					     data_out(17)            <=  '0';
+					     data_out_int(17)            <=  '0';
 					   end if;
     					   
     					   if(error_state_type'VAL(to_integer(unsigned(stat_bus(
     					     STAT_ERROR_STATE_HIGH downto STAT_ERROR_STATE_LOW))))
     					     =bus_off)
     					   then
-    					     data_out(18)            <=  '1'; 
+    					     data_out_int(18)            <=  '1'; 
 					   else 
-					     data_out(18)            <=  '0';
+					     data_out_int(18)            <=  '0';
 					    end if;  
     					  
-    					   data_out(31 downto 19)<=(OTHERS=>'0');
+    					   data_out_int(31 downto 19)<=(OTHERS=>'0');
     			   
     			   ----------------------------------------------------------
     			   --Error counters (NORMAL)
     			   ----------------------------------------------------------
     			   when ERROR_COUNTERS_ADR => 
-    					  data_out                   <=  (OTHERS=>'0');
-    					  data_out(8 downto 0)       <=  
+    					  data_out_int                   <=  (OTHERS=>'0');
+    					  data_out_int(8 downto 0)       <=  
     					       stat_bus(STAT_RX_COUNTER_HIGH downto 
     					                STAT_RX_COUNTER_LOW);
-    					  data_out(24 downto 16)     <=  
+    					  data_out_int(24 downto 16)     <=  
     					       stat_bus(STAT_TX_COUNTER_HIGH downto 
     					                STAT_TX_COUNTER_LOW);
     					
@@ -1113,11 +1124,11 @@ begin
     					--Error counters special  
     					--------------------------------------------------------
     			   when ERROR_COUNTERS_SPEC_ADR => 
-    					  data_out                   <=  (OTHERS=>'0');
-    					  data_out(15 downto 0)      <=  
+    					  data_out_int                   <=  (OTHERS=>'0');
+    					  data_out_int(15 downto 0)      <=  
     					           stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto 
     					                    STAT_ERROR_COUNTER_NORM_LOW);
-    					  data_out(31 downto 16)     <=  
+    					  data_out_int(31 downto 16)     <=  
     					           stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto 
     					                    STAT_ERROR_COUNTER_FD_LOW);
     			   
@@ -1126,198 +1137,197 @@ begin
     					--------------------------------------------------------
     			   when FILTER_A_VAL_ADR => 
     			     if (sup_filtA = true) then 
-    			       data_out(28 downto 0)       <=  filter_A_mask;
-						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+    			       data_out_int(28 downto 0)       <=  filter_A_mask;
+						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if;
     			   when FILTER_A_MASK_ADR =>
     			     if (sup_filtA = true) then  
-    			       data_out(28 downto 0)       <=  filter_A_value;
-						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+    			       data_out_int(28 downto 0)       <=  filter_A_value;
+						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if;  
     			   when FILTER_B_VAL_ADR =>
     			     if (sup_filtB = true) then 
-    			       data_out(28 downto 0)       <=  filter_B_mask;
-    						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+    			       data_out_int(28 downto 0)       <=  filter_B_mask;
+    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if; 
     			   when FILTER_B_MASK_ADR =>
     			     if (sup_filtB = true) then  
-    			       data_out(28 downto 0)       <=  filter_B_value;
-    						  data_out(31 downto 29)      <=  (OTHERS=>'0'); 
+    			       data_out_int(28 downto 0)       <=  filter_B_value;
+    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if;   
     			   when FILTER_C_VAL_ADR =>
 			      if (sup_filtC = true) then 
-    			       data_out(28 downto 0)       <=  filter_C_mask;
-    						  data_out(31 downto 29)      <=  (OTHERS=>'0'); 
+    			       data_out_int(28 downto 0)       <=  filter_C_mask;
+    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if;    
     			   when FILTER_C_MASK_ADR =>
     			     if (sup_filtC = true) then 
-    			       data_out(28 downto 0)       <=  filter_C_value;
-    						  data_out(31 downto 29)      <=  (OTHERS=>'0'); 
+    			       data_out_int(28 downto 0)       <=  filter_C_value;
+    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if;     
     			   when FILTER_RAN_LOW_ADR =>
     			     if (sup_range = true) then 
-    			       data_out(28 downto 0)       <=  filter_ran_low;
-    						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+    			       data_out_int(28 downto 0)       <=  filter_ran_low;
+    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if; 
     			   when FILTER_RAN_HIGH_ADR =>
     			     if (sup_range = true) then 
-    			       data_out(28 downto 0)       <=  filter_ran_high;
-    						  data_out(31 downto 29)      <=  (OTHERS=>'0');
+    			       data_out_int(28 downto 0)       <=  filter_ran_high;
+    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
-						  data_out <= (OTHERS => '0');  
+						  data_out_int <= (OTHERS => '0');  
 						end if; 
     					
     			   -------------------------------------------------------
 				   --Acceptance filter configuration register
 			       -------------------------------------------------------
     			   when FILTER_CONTROL_ADR => 
-    					  data_out(3 downto 0)       <=  filter_A_ctrl;
-    					  data_out(7 downto 4)       <=  filter_B_ctrl;
-    					  data_out(11 downto 8)      <=  filter_B_ctrl;
-    					  data_out(15 downto 12)     <=  filter_ran_ctrl;
-    					  data_out(31 downto 16)     <=  (OTHERS=>'0');
+    					  data_out_int(3 downto 0)       <=  filter_A_ctrl;
+    					  data_out_int(7 downto 4)       <=  filter_B_ctrl;
+    					  data_out_int(11 downto 8)      <=  filter_B_ctrl;
+    					  data_out_int(15 downto 12)     <=  filter_ran_ctrl;
+    					  data_out_int(31 downto 16)     <=  (OTHERS=>'0');
     					
     			   -------------------------------------------------------
     			   --RX_INFO_1 register
     			   -------------------------------------------------------  
     			   when RX_INFO_1_ADR => 
-    					  data_out(31 downto 0)      <=  (OTHERS=>'0');
-    					  data_out(0)                <=  rx_empty;
-    					  data_out(1)                <=  rx_full;
-    					  data_out(15 downto 8)      <=  rx_message_count;
-    					  data_out(23 downto 16)     <=  rx_mem_free;
+    					  data_out_int(0)                <=  rx_empty;
+    					  data_out_int(1)                <=  rx_full;
+    					  data_out_int(15 downto 8)      <=  rx_message_count;
+    					  data_out_int(23 downto 16)     <=  rx_mem_free;
     			   
     			   -------------------------------------------------------
     			   --RX_INFO_2 register
     			   -------------------------------------------------------  
     			   when RX_INFO_2_ADR =>
-    					  data_out(31 downto 0)      <=  (OTHERS=>'0');
-    					  data_out(7 downto 0)       <=  rx_buf_size;
-    					  data_out(15 downto 8)      <=  rx_write_pointer_pos;
-    					  data_out(23 downto 16)     <=  rx_read_pointer_pos;
+    					  data_out_int(31 downto 0)      <=  (OTHERS=>'0');
+    					  data_out_int(7 downto 0)       <=  rx_buf_size;
+    					  data_out_int(15 downto 8)      <=  rx_write_pointer_pos;
+    					  data_out_int(23 downto 16)     <=  rx_read_pointer_pos;
  					
  				  -------------------------------------------------------
  				  --RX_DATA register
  				  -------------------------------------------------------
     			   when RX_DATA_ADR => 
     			     if(RX_buff_read_first=false)then
-    					   data_out(31 downto 0)      <=  rx_read_buff;
-    					   aux_data                   <=  rx_read_buff;
+    					   data_out_int(31 downto 0)      <=  rx_read_buff;
+    					   data_out_int                   <=  rx_read_buff;
 					  else
-					   data_out(31 downto 0)      <=  aux_data;
+					   data_out_int(31 downto 0)      <=  aux_data;
 					  end if;
 					  
-    					  RX_buff_read_first         <=  true;
+    					  RX_buff_read_first              <=  true;
     			   
     			   -------------------------------------------------------
 			    --Transciever delay adress  
     			   -------------------------------------------------------
     			   when TRV_DELAY_ADR =>
-    			      data_out(31 downto 16)     <=  (OTHERS=>'0');
-    			      data_out(15 downto 0)      <=  trv_delay_out; 
+    			      data_out_int(31 downto 16)     <=  (OTHERS=>'0');
+    			      data_out_int(15 downto 0)      <=  trv_delay_out; 
  			    
  			    -------------------------------------------------------
  			    --TXT Buffers status
     			   -------------------------------------------------------
     			   when TX_STATUS_ADR => 
-    			      data_out(31 downto 2)      <=  (OTHERS=>'0');
-    			      data_out(1)                <=  txt2_empty;
-    			      data_out(0)                <=  txt1_empty;
+    			      data_out_int(31 downto 2)      <=  (OTHERS=>'0');
+    			      data_out_int(1)                <=  txt2_empty;
+    			      data_out_int(0)                <=  txt1_empty;
     			      
  			    ------------------------------------------------------- 
  			    --TX_Settings register
  			    -------------------------------------------------------
     			   when TX_SETTINGS_ADR => 
-    					  data_out                     <=  (OTHERS =>'0');
-    					  data_out(0)                  <=  txt1_arbit_allow;
-    					  data_out(1)                  <=  txt2_arbit_allow;
-    					  data_out(2)                  <=  txt_bufdir;
+    					  data_out_int                     <=  (OTHERS =>'0');
+    					  data_out_int(0)                  <=  txt1_arbit_allow;
+    					  data_out_int(1)                  <=  txt2_arbit_allow;
+    					  data_out_int(2)                  <=  txt_bufdir;
     					
     		    ------------------------------------------------------- 
  			    --Frame counters registers
  			    -------------------------------------------------------  
     			   when RX_COUNTER_ADR => --Recieve message counter 
-    					  data_out                     <=  
+    					  data_out_int                     <=  
     					      stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW);
     					      
     			   when TX_COUNTER_ADR => --Transcieve message counter 
-    					  data_out                     <=  
+    					  data_out_int                     <=  
     					      stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW);
     			   
     			   ------------------------------------------------------- 
  			       --Logger configuration registers
  			       -------------------------------------------------------  
     			   when LOG_TRIG_CONFIG_ADR=>
-    					  data_out                     <=  log_trig_config;
+    					  data_out_int                     <=  log_trig_config;
     			   when LOG_CAPT_CONFIG_ADR=>
-    					  data_out                     <=  log_capt_config;
+    					  data_out_int                     <=  log_capt_config;
     			   when LOG_STATUS_ADR=>
     					  --Logger status
     					  if(log_state_out=config)then 
-    					     data_out(0)               <=  '1'; 
+    					     data_out_int(0)               <=  '1'; 
 					  else 
-					     data_out(0)               <=  '0'; 
+					     data_out_int(0)               <=  '0'; 
 					  end if;
 					  
     					  if(log_state_out=ready)then 
-    					     data_out(1)               <=  '1'; 
+    					     data_out_int(1)               <=  '1'; 
     					  else 
-    					     data_out(1)               <=  '0'; 
+    					     data_out_int(1)               <=  '0'; 
     					  end if;
     					  
     					  if(log_state_out=running)then 
-    					     data_out(2)               <=  '1'; 
+    					     data_out_int(2)               <=  '1'; 
     					  else 
-    					     data_out(2)               <=  '0'; 
+    					     data_out_int(2)               <=  '0'; 
     					  end if;
     					  
     					  if(use_logger=true)then
-    					     data_out(6)               <=  '1';
+    					     data_out_int(6)               <=  '1';
 					  else
-					     data_out(6)               <=  '0';
+					     data_out_int(6)               <=  '0';
 					  end if;       
     			
-    					  data_out(6 downto 3)         <=  (OTHERS =>'0');
-    					  data_out(15 downto 8)        <=  log_size;
-    					  data_out(23 downto 16)       <=  log_write_pointer;
-    					  data_out(31 downto 24)       <=  log_read_pointer;
+    					  data_out_int(6 downto 3)         <=  (OTHERS =>'0');
+    					  data_out_int(15 downto 8)        <=  log_size;
+    					  data_out_int(23 downto 16)       <=  log_write_pointer;
+    					  data_out_int(31 downto 24)       <=  log_read_pointer;
     			   when LOG_CAPT_EVENT1_ADR=>
-    					  data_out                     <=  
+    					  data_out_int                     <=  
     					      loger_act_data(63 downto 32);
     			   when LOG_CAPT_EVENT2_ADR=>
-    					  data_out                     <=  
+    					  data_out_int                     <=  
     					      loger_act_data(31 downto 0);
     			      			   
  			   ------------------------------------------------------- 
  			   --DEBUG register
  			   -------------------------------------------------------  
   			    when DEBUG_REG_ADR =>
-  			      data_out(7 downto 3)         <= (OTHERS =>'0');
-  			      data_out(2 downto 0)         <= 
+  			      data_out_int(7 downto 3)         <= (OTHERS =>'0');
+  			      data_out_int(2 downto 0)         <= 
   			          stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW);
-  			      data_out(5 downto 3)         <= 
+  			      data_out_int(5 downto 3)         <= 
   			           stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW);
-    			  data_out(12 downto 6)        <= PC_state_reg_vect;
+   			      data_out_int(12 downto 6)        <= PC_state_reg_vect;
     			   
   			   ------------------------------------------------------- 
  			   --YOOOOLOOOO REGISTER
  			   ------------------------------------------------------- 
     				 when YOLO_REG_ADR =>
-    				     data_out             <=  std_logic_vector'(X"DEADBEEF");
+    				     data_out_int             <=  std_logic_vector'(X"DEADBEEF");
     			   when others=>
     			  end case;    
 		  end if;
@@ -1327,8 +1337,11 @@ begin
   end if;  
   end process mem_acess;
   
-  --Combinational logic for incrementing read pointer in RX buffer!
- 	rx_read_start   <=  '1' when 
+  
+  -------------------------------------------------------------------------------
+  -- Combinational logic for incrementing read pointer in RX buffer!
+ 	-------------------------------------------------------------------------------
+  rx_read_start   <=  '1' when 
  	                        (srd=ACT_SRD and 
  	                         scs=ACT_CSC and   
 		                     adress(COMP_TYPE_ADRESS_HIGHER downto 
@@ -1340,6 +1353,27 @@ begin
 		                     else
 		                '0';
   
+  -------------------------------------------------------------------------------
+  -- Read data set by byte enable combinationally
+  -- Registered value of the byte enable must be taken. According to Avalon
+  -- spec. the byte enable signal does not have to be valid in the clock
+  -- cycle when the data are returned!!
+ 	-------------------------------------------------------------------------------
+  data_out(7 downto 0) <= data_out_int(7 downto 0) when sbe_reg(0)='1' 
+                                                   else
+                          (OTHERS => '0');
+  
+  data_out(15 downto 8) <= data_out_int(15 downto 8) when sbe_reg(1)='1' 
+                                                   else
+                          (OTHERS => '0');
+  
+  data_out(23 downto 16) <= data_out_int(23 downto 16) when sbe_reg(2)='1' 
+                                                   else
+                          (OTHERS => '0');
+   
+  data_out(31 downto 24) <= data_out_int(31 downto 24) when sbe_reg(3)='1' 
+                                                   else
+                          (OTHERS => '0');                       
   
   --------------------------------
   --Register logic and structure--
