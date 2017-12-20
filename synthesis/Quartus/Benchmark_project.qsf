@@ -1,0 +1,115 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2016  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel MegaCore Function License Agreement, or other 
+# applicable license agreement, including, without limitation, 
+# that your use is for the sole purpose of programming logic 
+# devices manufactured by Intel and sold by Intel or its 
+# authorized distributors.  Please refer to the applicable 
+# agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 16.1.0 Build 196 10/24/2016 SJ Lite Edition
+# Date created = 17:41:32  December 19, 2017
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		Benchmark_project_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CEFA9F27C8
+set_global_assignment -name TOP_LEVEL_ENTITY CAN_Wrapper
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 16.1.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "17:41:32  DECEMBER 19, 2017"
+set_global_assignment -name LAST_QUARTUS_VERSION "16.1.0 Lite Edition"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\registers_memory_interface"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\interrupts"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\event_logger"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\deprecated"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\can_core"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\bus_timing_synchronisation"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\buffers_message_handling"
+set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name DEVICE_FILTER_PIN_COUNT 672
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name VHDL_FILE CAN_Wrapper.vhd
+set_global_assignment -name VHDL_FILE ../../src/rst_sync.vhd
+set_global_assignment -name VHDL_FILE ../../src/Registers_Memory_Interface/canfd_registers.vhd
+set_global_assignment -name VHDL_FILE ../../src/Interrupts/intManager.vhd
+set_global_assignment -name VHDL_FILE ../../src/Event_Logger/logger.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/tranBuffer.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/protocolControl.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/operationControl.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/faultConf.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/CRC.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/core_top.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitStuffing_v2.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitDeStuffing.vhd
+set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/prescaler_v3.vhd
+set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/busSync.vhd
+set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/brs_comp.vhd
+set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txtBuffer.vhd
+set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txArbitrator.vhd
+set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/rxBuffer.vhd
+set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/messageFilter.vhd
+set_global_assignment -name VHDL_FILE ../../src/ID_transfer.vhd
+set_global_assignment -name VHDL_FILE ../../src/CANconstants.vhd
+set_global_assignment -name VHDL_FILE ../../src/CANcomponents.vhd
+set_global_assignment -name VHDL_FILE ../../src/CAN_top_level.vhd
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name TCL_SCRIPT_FILE ../../scripts/resource_benchmark.tcl
+set_parameter -name cfg_indesdfdsfx 1
+set_parameter -name cfg_index 1
+set_parameter -name dummy "Minimal FD configuration"
+set_parameter -name use_logger false
+set_parameter -name rx_buffer_size 32
+set_parameter -name use_FD_size true
+set_parameter -name use_sync true
+set_parameter -name ID 1
+set_parameter -name sup_filtA false
+set_parameter -name sup_filtB false
+set_parameter -name sup_filtC false
+set_parameter -name sup_range false
+set_parameter -name tx_time_sup false
+set_parameter -name logger_size 8
+set_parameter -name dummy "Full FD configuration + Big logger"
+set_parameter -name use_logger true
+set_parameter -name rx_buffer_size 32
+set_parameter -name use_FD_size true
+set_parameter -name use_sync true
+set_parameter -name ID 1
+set_parameter -name sup_filtA true
+set_parameter -name sup_filtB true
+set_parameter -name sup_filtC true
+set_parameter -name sup_range true
+set_parameter -name tx_time_sup true
+set_parameter -name logger_size 64
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
