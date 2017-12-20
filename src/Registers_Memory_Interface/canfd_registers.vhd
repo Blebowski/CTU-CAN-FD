@@ -120,6 +120,9 @@ entity canfd_registers is
     constant sup_filtC    :boolean                         := true;
     constant sup_range    :boolean                         := true;
     
+    --Support of byte enable signal on memory bus interface
+    constant sup_be       :boolean                         := false;
+    
     --ID of the component
     constant ID           :natural                         := 1 
   );
@@ -525,13 +528,17 @@ architecture rtl of canfd_registers is
     signal    be         : in std_logic_vector(3 downto 0)
   )is
   begin
-    if (bit_index<8 and be(0)='1') then
-      dest_reg := data_in(bit_index);
-    elsif (bit_index<16 and bit_index>7 and be(1)='1') then
-      dest_reg := data_in(bit_index);
-    elsif (bit_index<24 and bit_index>15 and be(2)='1') then
-      dest_reg := data_in(bit_index);
-    elsif (bit_index<32 and bit_index>23 and be(3)='1') then
+    if (sup_be = true) then
+      if (bit_index<8 and be(0)='1') then
+        dest_reg := data_in(bit_index);
+      elsif (bit_index<16 and bit_index>7 and be(1)='1') then
+        dest_reg := data_in(bit_index);
+      elsif (bit_index<24 and bit_index>15 and be(2)='1') then
+        dest_reg := data_in(bit_index);
+      elsif (bit_index<32 and bit_index>23 and be(3)='1') then
+        dest_reg := data_in(bit_index);
+      end if;
+    else
       dest_reg := data_in(bit_index);
     end if;
   end procedure;
@@ -547,13 +554,17 @@ architecture rtl of canfd_registers is
     signal    be           : in std_logic_vector(3 downto 0)
   )is
   begin
-    if (bit_index<8 and be(0)='1') then
-      dest_reg <= data_in(bit_index);
-    elsif (bit_index<16 and bit_index>7 and be(1)='1') then
-      dest_reg <= data_in(bit_index);
-    elsif (bit_index<24 and bit_index>15 and be(2)='1') then
-      dest_reg <= data_in(bit_index);
-    elsif (bit_index<32 and bit_index>23 and be(3)='1') then
+    if (sup_be = true) then
+      if (bit_index<8 and be(0)='1') then
+        dest_reg <= data_in(bit_index);
+      elsif (bit_index<16 and bit_index>7 and be(1)='1') then
+        dest_reg <= data_in(bit_index);
+      elsif (bit_index<24 and bit_index>15 and be(2)='1') then
+        dest_reg <= data_in(bit_index);
+      elsif (bit_index<32 and bit_index>23 and be(3)='1') then
+        dest_reg <= data_in(bit_index);
+      end if;
+    else
       dest_reg <= data_in(bit_index);
     end if;
   end procedure;

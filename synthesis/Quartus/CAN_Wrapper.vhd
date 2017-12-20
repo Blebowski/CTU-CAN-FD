@@ -60,7 +60,8 @@ entity CAN_Wrapper is
      constant  sup_filtB      : boolean:= true;                
      constant  sup_filtC      : boolean:= true;                
      constant  sup_range      : boolean:= true;               
-     constant  tx_time_sup    : boolean:= true;                
+     constant  tx_time_sup    : boolean:= true;
+     constant  sup_be         : boolean:= false;	  
      constant  logger_size    : natural:= 8  
     );
 	 port (
@@ -212,6 +213,7 @@ begin
      sup_filtC      => sup_filtC,
      sup_range      => sup_range,
      tx_time_sup    => tx_time_sup,
+	  sup_be         => sup_be,
      logger_size    => logger_size
     )
   port map(

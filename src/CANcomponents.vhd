@@ -74,6 +74,7 @@ package CANcomponents is
       constant sup_filtC      : boolean               := true;
       constant sup_range      : boolean               := true;
       constant tx_time_sup    : boolean               := true;
+      constant sup_be         : boolean               := false;
       constant logger_size    : natural --range 0 to 512:=8
       );
     port(
@@ -112,6 +113,7 @@ package CANcomponents is
       constant sup_filtB  : boolean                      := true;
       constant sup_filtC  : boolean                      := true;
       constant sup_range  : boolean                      := true;
+      constant sup_be     : boolean                      := false;
       constant ID         : natural
       );
     port(
