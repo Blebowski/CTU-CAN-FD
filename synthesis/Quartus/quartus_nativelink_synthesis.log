@@ -1,0 +1,10 @@
+Info: Using NativeLink to launch synthesis Tool
+Synthesis tool <None> is not supported by NativeLink
+Error: NativeLink flow failed to complete synthesis
+
+================The following information is provided to Debug NativeLink Script=================
+Nativelink TCL script failed with errorCode:  POSIX ENOENT {no such file or directory}
+Nativelink TCL script failed with errorInfo:  couldn't open "C:/intelFPGA_lite/16.1/quartus/bin64/tclIndex": no such file or directory
+    while executing
+"open [file join $dir tclIndex]"
+PATH Environment Variable is set to :  c:\intelfpga_lite\16.1\quartus\bin64\;c:\intelfpga_lite\16.1\quartus\bin64\;C:\altera\91sp2\quartus;C:\oraclexe\app\oracle\product\11.2.0\server\bin;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\ProgramData\Oracle\Java\javapath;C:\Program Files (x86)\CollabNet;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\MATLAB\R2014a\runtime\win64;C:\Program Files\MATLAB\R2014a\bin;C:\Program Files (x86)\RemObjects Software\Elements\bin;C:\intelFPGA_lite\16.1\quartus\bin;C:\Program Files (x86)\OpenSSH\bin;C:\Program Files (x86)\SuperSequencer\prog106x;"C:\Program Files (x86)\Graphviz2.16\Bin";C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin\;C:\Program Files\IVI Foundation\VISA\Win64\Bin\;C:\Program Files (x86)\IVI Foundation\VISA\WinNT\Bin;C:\Program Files (x86)\PuTTY\;C:\Program Files (x86)\Skype\Phone\;C:\Program Files\MiKTeX 2.9\miktex\bin\x64\;C:\Program Files (x86)\LyX 2.2\Perl\bin;C:\Cadence\SPB_16.6\openaccess\bin\win32\opt;C:\Cadence\SPB_16.6\tools\capture;C:\Cadence\SPB_16.6\tools\pspice;C:\Cadence\SPB_16.6\tools\specctra\bin;C:\Cadence\SPB_16.6\tools\fet\bin;C:\Cadence\SPB_16.6\tools\libutil\bin;C:\Cadence\SPB_16.6\tools\bin;C:\Cadence\SPB_16.6\tools\pcb\bin;C:\altera\91sp2\modelsim_ase\win32aloem
