@@ -116,6 +116,7 @@ entity CAN_top_level is
     signal scs      : in  std_logic;    --Chip select
     signal srd      : in  std_logic;    --Serial read
     signal swr      : in  std_logic;    --Serial write
+    signal sbe      : in  std_logic_vector(3 downto 0);
     --Note: This bus is Avalon compatible!
 
     --------------------
@@ -489,6 +490,7 @@ begin
       scs                  => scs,
       srd                  => srd,
       swr                  => swr,
+      sbe                  => sbe,
       drv_bus              => drv_bus,
       stat_bus             => stat_bus,
       rx_read_buff         => rx_read_buff,

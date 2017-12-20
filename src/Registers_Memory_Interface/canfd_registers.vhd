@@ -138,6 +138,7 @@ entity canfd_registers is
     signal scs                  :in   std_logic;
     signal srd                  :in   std_logic;
     signal swr                  :in   std_logic;
+    signal sbe                  :in   std_logic_vector(3 downto 0);
     --Memory interface is Avalon bus compatible!
     --In 32-bit system, every register is 0x4 higher adress. 
     --At FPGA the lowest two bits of adress are considered
@@ -512,7 +513,84 @@ architecture rtl of canfd_registers is
     log_capt_config         <=  (OTHERS =>'0');
   end procedure;
   
-
+  
+  ------------------------------------------------
+  -- Write into register of single bit with byte
+  -- enable support - variable input
+  ------------------------------------------------
+  procedure write_be_v(
+    variable  dest_reg   : out std_logic;
+    constant  bit_index  : in natural range 0 to 31;
+    variable  data_in    : in std_logic_vector(31 downto 0);
+    signal    be         : in std_logic_vector(3 downto 0)
+  )is
+  begin
+    if (bit_index<8 and be(0)='1') then
+      dest_reg := data_in(bit_index);
+    elsif (bit_index<16 and bit_index>7 and be(1)='1') then
+      dest_reg := data_in(bit_index);
+    elsif (bit_index<24 and bit_index>15 and be(2)='1') then
+      dest_reg := data_in(bit_index);
+    elsif (bit_index<32 and bit_index>23 and be(3)='1') then
+      dest_reg := data_in(bit_index);
+    end if;
+  end procedure;
+  
+  ------------------------------------------------
+  -- Write into register of single bit with byte
+  -- enable support - signal input
+  ------------------------------------------------
+  procedure write_be_s(
+    signal    dest_reg     : out std_logic;
+    constant  bit_index    : in natural range 0 to 31;
+    signal    data_in      : in std_logic_vector(31 downto 0);
+    signal    be           : in std_logic_vector(3 downto 0)
+  )is
+  begin
+    if (bit_index<8 and be(0)='1') then
+      dest_reg <= data_in(bit_index);
+    elsif (bit_index<16 and bit_index>7 and be(1)='1') then
+      dest_reg <= data_in(bit_index);
+    elsif (bit_index<24 and bit_index>15 and be(2)='1') then
+      dest_reg <= data_in(bit_index);
+    elsif (bit_index<32 and bit_index>23 and be(3)='1') then
+      dest_reg <= data_in(bit_index);
+    end if;
+  end procedure;
+  
+  ------------------------------------------------
+  -- Write into register with byte enable support
+  ------------------------------------------------
+  procedure write_be_vect(
+    signal   dest_reg    : out std_logic_vector;
+    constant low_rindex  : in natural range 31 downto 0;
+    constant high_rindex : in natural range 31 downto 0;
+    
+    signal   data_in     : in std_logic_vector(31 downto 0);
+    constant low_dindex  : in natural range 31 downto 0;
+    constant high_dindex : in natural range 31 downto 0;
+    
+    signal   be          : in std_logic_vector(3 downto 0)
+  )is
+  variable reg_val  : std_logic;
+  variable data_val : std_logic_vector(31 downto 0);
+  variable j : natural;
+  begin
+    
+    -- Check if input data range to write corresponds to register indices
+    if (high_rindex-low_rindex /= high_dindex-low_dindex) then
+      report "Mismatching data and register size";
+    end if;
+    
+    j := low_rindex;
+    for i in low_dindex to high_dindex loop
+      data_val := data_in;
+      write_be_v(reg_val,i,data_val,be);
+      dest_reg(j) <= reg_val;
+      j := j+1;
+    end loop;
+  end procedure;
+  
 
 begin
   
@@ -701,41 +779,42 @@ begin
     			---------------------------------------------------------   
     			when MODE_REG_ADR =>    
     
-    			          --RTR_PREF,FDE,AFM,STM,LOM Bits
-    					  mode_reg(5 downto 1)     <=  data_in(5 downto 1); 
+    			     --RTR_PREF,FDE,AFM,STM,LOM Bits
+    					  write_be_vect(mode_reg, 1, 5, data_in, 1, 5, sbe);
     					  
-    					   --Tripple sampling  
-    					  sam_norm                 <=  data_in(6);          
-    					  
+					  --Tripple sampling
+					  write_be_s(sam_norm, 6, data_in, sbe);
+    					  		  
     					  --Acknowledge forbidden
-    					  ack_forb                 <=  data_in(7);           
+    					  write_be_s(sam_norm, 7, data_in, sbe);       
     					  
     					  --Reset by memory access
-    					  if(data_in(0)='1')then                             
+    					  if(data_in(0)='1' and sbe(0)='1')then                              
     					   int_reset               <=  ACT_RESET; 
     					  end if;      
     					            
     					  --Command register
-    					  clear_overrun            <=  data_in(11);
-    					  release_recieve          <=  data_in(10);
-    					  abort_transmittion       <=  data_in(9);
-    					  
+    					  write_be_s(clear_overrun, 11, data_in, sbe);
+ 					  write_be_s(release_recieve, 10, data_in, sbe);
+ 					  write_be_s(abort_transmittion, 9, data_in, sbe);
+ 					 		  
     					  --Status register is read only!
     					  
     					  --Retransmitt limit register
-    					  retr_lim_ena             <=  data_in(24);
-    					  retr_lim_th              <=  data_in(28 downto 25);
-    					  intLoopbackEna           <=  data_in(29);
-    					  CAN_enable               <=  data_in(30);
-    					  FD_type                  <=  data_in(31);
+    					  write_be_s(clear_overrun, 24, data_in, sbe);     
+    					  write_be_vect(retr_lim_th, 0, 3, data_in, 25, 28, sbe);
+    					  write_be_s(intLoopbackEna, 29, data_in, sbe);     
+    					  write_be_s(CAN_enable, 30, data_in, sbe);     
+    					  write_be_s(FD_type, 31, data_in, sbe);     
     			
 			 ------------------------------------------------------------	  
  			 --INT_REG (Interrupt register, Interrupt enable register)
  			 ------------------------------------------------------------
     			when INTERRUPT_REG_ADR =>               
     			          
-    			          --Interrupt enable register
-    					  int_ena_reg(10 downto 0)<=  data_in(26 downto 16);
+ 			      --Interrupt enable register
+ 			      write_be_vect(int_ena_reg, 0, 10, data_in, 16, 26, sbe);
+    			
     					  --Interrupt register (interrupt vector) is read only! 
     					  --(By read it is also erased)  
  			 
@@ -743,12 +822,13 @@ begin
  			 --Bit timing register
  			 -----------------------        
     			when TIMING_REG_ADR => 
-    					   prop_norm               <=  data_in(5 downto 0);
-    					   ph1_norm                <=  data_in(10 downto 6);
-    					   ph2_norm                <=  data_in(15 downto 11);
-    					   prop_fd                 <=  data_in(21 downto 16);
-    					   ph1_fd                  <=  data_in(26 downto 22);
-    					   ph2_fd                  <=  data_in(31 downto 27);
+    			  
+    			      write_be_vect(prop_norm, 0, 5, data_in, 0, 5, sbe);
+    			      write_be_vect(ph1_norm, 0, 4, data_in, 6, 10, sbe);
+    			      write_be_vect(ph2_norm, 0, 4, data_in, 11, 15, sbe);
+    			      write_be_vect(prop_fd, 0, 5, data_in, 16, 21, sbe);
+    			      write_be_vect(ph1_fd, 0, 4, data_in, 22, 26, sbe);
+    			      write_be_vect(ph2_fd, 0, 4, data_in, 27, 31, sbe);
 			
 			 ----------------------------------------------------
     			--Arbitration lost capture and error code Capture  
@@ -757,94 +837,98 @@ begin
     			when ARB_ERROR_PRESC_ADR => 
     					   --Arbitration lost, Error code are read only
     					   
-    					    --Baud rate prescaler register
-    					   brp_norm                <=  data_in(21 downto 16);
-    					   sjw_norm                <=  data_in(11 downto 8);
-    					   brp_fd                  <=  data_in(29 downto 24);
-    					   sjw_fd                  <=  data_in(15 downto 12); 
+ 					   --Baud rate prescaler register
+ 					   write_be_vect(brp_norm, 0, 5, data_in, 16, 21, sbe);
+ 					   write_be_vect(sjw_norm, 0, 3, data_in, 8, 11, sbe);
+ 					   write_be_vect(brp_fd, 0, 5, data_in, 24, 29, sbe);
+ 					   write_be_vect(sjw_fd, 0, 3, data_in, 12, 15, sbe);
     			
     			---------------------------------------------------- 
   			 --Error warning limit, error passive treshold	
   			 ----------------------------------------------------	   
     			when ERROR_TH_ADR =>
 				           
-				           --Error warning limit 
-    					   ewl                     <=  data_in(7 downto 0); 
+				     --Error warning limit
+				     write_be_vect(ewl, 0, 7, data_in, 0, 7, sbe);
     					   
-    					    --Error passive treshold
-    					   erp                     <=  data_in(15 downto 8);
+ 					   --Error passive treshold
+ 					   write_be_vect(erp, 0, 7, data_in, 8, 15, sbe);
     			
     			----------------------------------------------------	   
     			--Error counters, presetting
     			----------------------------------------------------	   
     			when ERROR_COUNTERS_ADR => 
-    					  erctr_pres_value         <=  data_in(8 downto 0);
-    					  erctr_pres_mask          <=  "00"&data_in(10 downto 9);
-    			
+    			  
+    			     write_be_vect(erctr_pres_value, 0, 8, data_in, 0, 8, sbe);
+    			     write_be_vect(erctr_pres_mask, 0, 3, data_in, 9, 12, sbe);
+    			   
     			----------------------------------------------------	   
     			--Special error counters. Only erasable!
     			----------------------------------------------------	
     			when ERROR_COUNTERS_SPEC_ADR => 
-    					  erctr_pres_value         <=  (OTHERS=>'0');
-    					  erctr_pres_mask          <=  data_in(12 downto 11)&"00"; 
+    			  
+    			     if (sbe(1) = '1') then
+    					    erctr_pres_value         <=  (OTHERS=>'0');
+    					    erctr_pres_mask          <=  data_in(12 downto 11)&"00"; 
+  		        end if;
     		
     		 ----------------------------------------------------	   
     			--Acceptance filters
     			----------------------------------------------------	
     			when FILTER_A_VAL_ADR    => 
     			       if (sup_filtA = true) then
-    			         filter_A_mask    <=  data_in(28 downto 0);
+    			         write_be_vect(filter_A_value, 0, 28, data_in, 0, 28, sbe);
   			        end if;
     			when FILTER_A_MASK_ADR   =>
     			       if (sup_filtA = true) then
-    			         filter_A_value   <=  data_in(28 downto 0);
+    			         write_be_vect(filter_A_mask, 0, 28, data_in, 0, 28, sbe);
 			        end if;     
     			when FILTER_B_VAL_ADR    => 
     			     if (sup_filtB = true) then
-    			       filter_B_mask    <=  data_in(28 downto 0);
-  			       end if;  
+    			       write_be_vect(filter_B_value, 0, 28, data_in, 0, 28, sbe);
+  			       end if;
     			when FILTER_B_MASK_ADR   => 
     			     if (sup_filtB = true) then
-    			       filter_B_value   <=  data_in(28 downto 0);
-			      end if;   
+    			       write_be_vect(filter_B_mask, 0, 28, data_in, 0, 28, sbe);
+			      end if;
     			when FILTER_C_VAL_ADR    =>
     			     if (sup_filtC = true) then
-    			       filter_C_mask    <=  data_in(28 downto 0);
-			      end if;   
+    			       write_be_vect(filter_C_value, 0, 28, data_in, 0, 28, sbe);
+			      end if;
     			when FILTER_C_MASK_ADR   =>
     			     if (sup_filtC = true) then
-    			       filter_C_value   <=  data_in(28 downto 0);
-			      end if;    
+    			       write_be_vect(filter_C_mask, 0, 28, data_in, 0, 28, sbe);
+			      end if;
     			when FILTER_RAN_LOW_ADR  => 
     			     if (sup_range = true) then
-    			       filter_ran_low   <=  data_in(28 downto 0);
+    			       write_be_vect(filter_ran_low, 0, 28, data_in, 0, 28, sbe);
   			       end if;
     			when FILTER_RAN_HIGH_ADR => 
 			      if (sup_range = true) then
-			       filter_ran_high  <=  data_in(28 downto 0);
+			        write_be_vect(filter_ran_high, 0, 28, data_in, 0, 28, sbe);
 			      end if;
     			when FILTER_CONTROL_ADR  =>
-   			      if (sup_filtA = true) then 
-    					     filter_A_ctrl            <=  data_in(3 downto 0);
+   			      if (sup_filtA = true) then
+   			         write_be_vect(filter_A_ctrl, 0, 3, data_in, 0, 3, sbe);
 					  end if;
-					  if (sup_filtB = true) then 
-    					     filter_B_ctrl            <=  data_in(7 downto 4);
+					  if (sup_filtB = true) then
+					     write_be_vect(filter_B_ctrl, 0, 3, data_in, 4, 7, sbe); 
   					  end if;
-  					  if (sup_filtC = true) then 
-    					     filter_C_ctrl            <=  data_in(11 downto 8);
+  					  if (sup_filtC = true) then
+  					     write_be_vect(filter_C_ctrl, 0, 3, data_in, 8, 11, sbe);
   				    end if;	     
-					  if (sup_range = true) then 
-    					     filter_ran_ctrl          <=  data_in(15 downto 12);
+					  if (sup_range = true) then
+					     write_be_vect(filter_ran_ctrl, 0, 3, data_in, 12, 15, sbe); 
 					  end if;
     			
     			----------------------------------------------------
     			--TX Settings register
     			----------------------------------------------------
-    			when TX_SETTINGS_ADR => 
-    					  txt1_arbit_allow         <=  data_in(0);
-    					  txt2_arbit_allow         <=  data_in(1);
-    					  txt_bufdir               <=  data_in(3);
-    					  
+    			when TX_SETTINGS_ADR =>
+    			     write_be_s(txt1_arbit_allow, 0, data_in, sbe);  
+    					  write_be_s(txt2_arbit_allow, 1, data_in, sbe);  
+ 					  write_be_s(txt_bufdir, 3, data_in, sbe);  
+    								  
     			----------------------------------------------------
     			--TX Data registers
     			----------------------------------------------------		  
@@ -854,27 +938,27 @@ begin
     			--------------------------------------
     			--Recieve frame counter presetting
     			--------------------------------------
-    			when RX_COUNTER_ADR => 
-    					  ctr_val_set                <=  data_in;
+    			when RX_COUNTER_ADR =>
+    			     write_be_vect(ctr_val_set, 0, 31, data_in, 0, 31, sbe);
     					  rx_ctr_set                 <=  '1';
     					  
     			--------------------------------------
     			--Transcieve frame counter presetting
     			--------------------------------------		  
     			when TX_COUNTER_ADR => 
-    					  ctr_val_set                <=  data_in;
+            write_be_vect(ctr_val_set, 0, 31, data_in, 0, 31, sbe);
     					  tx_ctr_set                 <=  '1';
     			
     			--------------------------------------
     			--Logger configuration registers
     			--------------------------------------		  
     			when LOG_TRIG_CONFIG_ADR=>
-    					  log_trig_config            <=  data_in;
+            write_be_vect(log_trig_config, 0, 31, data_in, 0, 31, sbe);
     			when LOG_CAPT_CONFIG_ADR=>
-    					 log_capt_config             <=  data_in;
+    			     write_be_vect(log_capt_config, 0, 31, data_in, 0, 31, sbe);
     			when LOG_CMD_ADR => 
     			    --LOG_DOWN,LOG_UP,LOG_ABT,LOG_STR
-    					 log_cmd                     <=  data_in(3 downto 0);       
+    			    write_be_vect(log_cmd, 0, 3, data_in, 0, 3, sbe);     
     			when others =>
     			  
     			end case;

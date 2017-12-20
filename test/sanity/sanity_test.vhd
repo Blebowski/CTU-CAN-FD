@@ -113,6 +113,7 @@ architecture sanity_test of CAN_test is
   -- record types to components!
   type mem_vect_arr_type is array (1 to NODE_COUNT) of std_logic_vector(31 downto 0);
   type mem_contr_arr_type is array (1 to NODE_COUNT) of std_logic;
+  type mem_be_arr_type is array (1 to NODE_COUNT) of std_logic_vector(3 downto 0);
   type mem_addr_arr_type is array (1 to NODE_COUNT) of std_logic_vector(23 downto 0); 
   signal mem_aux_data_in      : mem_vect_arr_type := (OTHERS => (OTHERS => '0'));
   signal mem_aux_data_out     : mem_vect_arr_type := (OTHERS => (OTHERS => '0'));
@@ -120,6 +121,7 @@ architecture sanity_test of CAN_test is
   signal mem_aux_scs          : mem_contr_arr_type := (OTHERS => '0');
   signal mem_aux_swr          : mem_contr_arr_type := (OTHERS => '0');
   signal mem_aux_srd          : mem_contr_arr_type := (OTHERS => '0');
+  signal mem_aux_sbe          : mem_be_arr_type := (OTHERS => (OTHERS => '1')); -- By default all accesses as 32 bit
   signal mem_aux_clk          : mem_contr_arr_type := (OTHERS => '0');
   
   signal res_n_v              : std_logic_vector(1 to NODE_COUNT) := (OTHERS => '0');
@@ -424,6 +426,7 @@ begin
       	  scs              => mem_aux_scs(i),
          srd              => mem_aux_srd(i),
          swr              => mem_aux_swr(i),
+         sbe              => mem_aux_sbe(i),
          int              => int_v(i),
          CAN_tx           => CAN_tx_v(i),
          CAN_rx           => CAN_rx_v(i),

@@ -73,6 +73,7 @@ entity CAN_Wrapper is
      signal scs      : in  std_logic;    --Chip select
      signal srd      : in  std_logic;    --Serial read
      signal swr      : in  std_logic;    --Serial write
+	  signal sbe      : in  std_logic_vector(3 downto 0); --BE
      
 	  signal int : out std_logic;
 
@@ -222,6 +223,7 @@ begin
      scs            => scs,
      srd            => srd,
      swr            => swr,
+	  sbe			     => sbe,
      int            => int,
      CAN_tx         => CAN_tx,
      CAN_rx         => CAN_rx,
