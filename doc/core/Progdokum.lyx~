@@ -19749,7 +19749,7 @@ TX Arbitrator circuit covers the functionality of frame selection between
  The frame is selected only if the value of external Timestamp is higher
  than value in TX_DATA_2 and TX_DATA_3 words of the buffer.
  Thus the Frame is only selected at the moment when external timestamp has
- elapsed the reuqired transmission time.
+ elapsed the required transmission time.
  Support of this behaviour is configurable via 
 \begin_inset Quotes eld
 \end_inset
@@ -25726,6 +25726,118 @@ name "fig:Max_bitrate-1"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Section
+2.6 Transmitt frame selection
+\end_layout
+
+\begin_layout Standard
+The CAN FD Core contains two TXT buffers and TX Arbitrator circuit which
+ selects valid frame for transmission.
+ The selection of Frame which will be transmitted is divided into two cases:
+\end_layout
+
+\begin_layout Enumerate
+First Transmission of frame
+\end_layout
+
+\begin_layout Enumerate
+Retransmission after error or losing arbitration.
+\end_layout
+
+\begin_layout Subsection
+2.6.1 First Transmission of frame
+\end_layout
+
+\begin_layout Standard
+If CAN frames are inserted into the TXT buffers the frame is selected for
+ transmission with following rules:
+\end_layout
+
+\begin_layout Enumerate
+If frame is only in one TXT Buffer it is selected for transmission as soon
+ as external timestamp reaches the Timestamp value written into TX_DATA_1
+ and TX_DATA_2 words of TXT Buffer or immediately if 
+\begin_inset Quotes eld
+\end_inset
+
+tx_time_sup=false
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+If both TXT Buffers contain valid frame, then the one whose Timestamp value
+ in TX_DATA_1 and TX_DATA_2 is lower, is selected when the External Timestamp
+ reaches this value.
+ If 
+\begin_inset Quotes eld
+\end_inset
+
+tx_time_sup=false
+\begin_inset Quotes erd
+\end_inset
+
+ then the frame with lower identifier is selected immediately.
+\end_layout
+
+\begin_layout Enumerate
+If both TXT Buffers contain valid frame with equal timestamps in TX_DATA_1
+ and TX_DATA_2, the frame with lower identifier is transmitted as soon as
+ external timestamp reaches the value of frame timestamps.
+ If 
+\begin_inset Quotes eld
+\end_inset
+
+tx_time_sup=false
+\begin_inset Quotes erd
+\end_inset
+
+ then the frame with lower identifier is selected immediately.
+\end_layout
+
+\begin_layout Subsection
+2.6.2 Retransmission after error or losing arbitration
+\end_layout
+
+\begin_layout Standard
+If CAN frame is transmitted by the CAN Core and error occurs or arbitration
+ is lost, the next frame is selected with following rules:
+\end_layout
+
+\begin_layout Enumerate
+If the retrasmitt limit is set (RTR_TH and RTRLE bits of TODO register)
+ and it was reached, the frame is dropped (invalidated in TXT buffer) and
+ it is not transmitted anymore.
+\end_layout
+
+\begin_layout Enumerate
+If during the transmission of the frame no other frame was inserted into
+ other TXT buffer, the same frame is retransmitted.
+\end_layout
+
+\begin_layout Enumerate
+If during the transmission another frame was inserted into the other TXT
+ Buffer, and FRAME_SWAP bit in TODO register is set to 0, then same frame
+ as before is transmitted regardless of the frame in other TXT Buffer.
+\end_layout
+
+\begin_layout Enumerate
+If during the transmission another frame was inserted into the other TXT
+ Buffer, and FRAME_SWAP bit in TODO register is set to 1, then the frame
+ with lower identifier out of frames in TXT1 and TXT2 is selected for transmissi
+on (Assuming that its timestamp is lower than external timestamp and 
+\begin_inset Quotes eld
+\end_inset
+
+tx_time_sup=true
+\begin_inset Quotes erd
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Chapter
@@ -36699,8 +36811,9 @@ This register controls the access into TX buffers.
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="5">
+<lyxtabular version="3" rows="3" columns="6">
 <features tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -36720,7 +36833,16 @@ Bit offset
 \begin_inset Text
 
 \begin_layout Plain Layout
-31-3
+31-4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
 \end_layout
 
 \end_inset
@@ -36768,6 +36890,15 @@ Name
 
 \begin_layout Plain Layout
 Reserved
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FRAME_SWAP
 \end_layout
 
 \end_inset
@@ -36832,6 +36963,15 @@ Default value
 \begin_inset Text
 
 \begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 1
 \end_layout
 
@@ -36870,7 +37010,20 @@ BUF_DIR Buffer to which the transmit data should be stored.
  As last step, validate the content of the buffer by setting TXTX_ALLOW
  to 1.
  TXT_1_EMPTY bit of TX_STAT register is automatically cleared by this action.
- 
+\end_layout
+
+\begin_layout Description
+FRAME_SWAP If frame is inserted into either TXT buffer and the other TXT
+ buffer is empty, the frame in the first buffer is transmitted.
+ However, if during the transmission of this frame another frame is inserted
+ into the other TXT buffer and error occurs (or arbitration is lost) there
+ are two frames which can be selected for transmission (assuming Timestamps
+ of both frames are lower than external Timestamp) .
+ If FRAME_SWAP bit is set to 0 the frame which was transmitted last is rettransm
+itted.
+ If FRAME_SWAP is set to 1 the frame for transmission is selected as if
+ both frames were inserted for its first transmission as explained in section
+ TODO.
 \end_layout
 
 \begin_layout Section
@@ -41759,9 +41912,8 @@ Type: Write
 \begin_layout Standard
 Acesses from TX_DATA_1 to TX_DATA_20 reflect into accesses into TXT buffer.
  Destination TXT buffer is selected by BUF_DIR bit in TX_SETTINGS register.
- This register supports only 32 bit access.
- The data in these registers must have the following format in order to
- be properly sent:
+ This register supports only 32 bit access! The data in these registers
+ must have the following format in order to be properly sent:
 \begin_inset Separator latexpar
 \end_inset
 
@@ -43043,8 +43195,8 @@ tx_time_sup=true
  transmission.
  If bus is Idle then transmission will start within next bit time.
  Otherwise, it will start as soon as bus is idle.
- If the frame should be transmitted immediately all zeroes must be written
- into these two registers.
+ If frame transmittion should be attempted immediately after the bus is
+ idle, all zeroes must be written into these two registers.
  If 
 \begin_inset Quotes eld
 \end_inset
