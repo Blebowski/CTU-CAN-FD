@@ -2303,9 +2303,7 @@ begin
                      retr_count<to_integer(unsigned(drv_retr_th))))
                 then
                   retransmitt   <=  '1';
-                  if(retr_count<15)then
-                    retr_count  <=  retr_count+1;
-                  end if;
+                  retr_count    <=  retr_count+1 mod 16;
                   
                   if (drv_frame_swap = '1') then
                     tran_unlock_r      <= '1';  
