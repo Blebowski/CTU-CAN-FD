@@ -154,6 +154,12 @@ entity txArbitrator is
     -- error limit was reached and it can be dropped.
     signal tran_drop              :in std_logic;
     
+    -- If error occurs during the transmission, and CAN Core picks
+    -- frame again, CAN Core needs to know that different buffer is now
+    -- selected, so that it can erase the retransmitt counter (in case
+    -- retransmitt limit is enabled).
+    signal mess_src_change        :out std_logic;
+    
     ---------------------
     -- Driving interface
     ---------------------
@@ -194,6 +200,8 @@ entity txArbitrator is
   
   --Message time 1 or 2 is lower than timeStam
   signal ts_valid                 :std_logic_vector(1 downto 0);
+  
+  signal mess_src_change_reg      :std_logic;
   
   --Allow transmit of messages from tx buffers 1,2
   signal drv_allow_txt1           :std_logic;
@@ -378,6 +386,9 @@ begin
                          txt2buf_data_in when mess_src_reg='1' else
                          (OTHERS => '0');
   
+  -- TXT Buffer was changed
+  mess_src_change <= mess_src_change_reg;
+  
   ------------------------------------------------------------------------------
   -- State machine for deciding whether the frame transmission finished and
   -- it can be already erased.
@@ -387,6 +398,7 @@ begin
     if (res_n=ACT_RESET) then
       tx_arb_fsm <= arb_idle;
       mess_src_reg <= '0';
+      mess_src_change_reg <= '0';
     elsif rising_edge(clk_sys) then
         
         tx_arb_fsm <= tx_arb_fsm;
@@ -395,6 +407,8 @@ begin
         --By default we dont give acknowledge to any buffer
         txt1_buffer_ack <= '0';
         txt2_buffer_ack <= '0';
+        
+        mess_src_change_reg <= mess_src_change_reg;
         
       case tx_arb_fsm is 
       
@@ -406,6 +420,12 @@ begin
         if (tran_lock = '1') then
           tx_arb_fsm <= arb_trans;
           mess_src_reg <= mess_src; -- Store when frame info goes to the Core
+          
+          if (mess_src_reg /= mess_src) then
+             mess_src_change_reg  <= '1';
+          else
+             mess_src_change_reg  <= '0';
+          end if;
         end if;
         
       --------------------------------------------------------------------------

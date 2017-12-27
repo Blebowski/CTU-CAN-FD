@@ -296,6 +296,7 @@ entity CAN_top_level is
   --Pointer to TXT buffer memory  
   signal txt_buf_ptr          : natural range 0 to 15;
 
+  signal mess_src_change      : std_logic;
 
 	------------------------------------------------------------------------------
   --RX Buffer <--> CAN Core
@@ -628,6 +629,7 @@ begin
       tran_lock            => tran_lock,
       tran_unlock          => tran_unlock,
       tran_drop            => tran_drop,
+      mess_src_change      => mess_src_change,
       
       drv_bus   => drv_bus,
       timestamp => timestamp
@@ -691,6 +693,7 @@ begin
       tran_lock             => tran_lock,
       tran_unlock           => tran_unlock,
       tran_drop             => tran_drop,
+      mess_src_change       => mess_src_change,
       txt_buf_ptr           => txt_buf_ptr,
       rec_ident_out         => rec_ident_in,
       rec_dlc_out           => rec_dlc_in,

@@ -118,6 +118,8 @@ entity core_top is
     signal tran_unlock            :out std_logic;
     signal tran_drop              :out std_logic;
     
+    signal mess_src_change        :in std_logic;
+    
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 15; 
     
@@ -597,6 +599,8 @@ begin
      tran_unlock        =>  tran_unlock_i,
      tran_drop          =>  tran_drop_i,
      
+     mess_src_change    =>  mess_src_change,
+    
      rec_ident          =>  rec_ident,
      rec_dlc            =>  rec_dlc,
      rec_is_rtr         =>  rec_is_rtr,

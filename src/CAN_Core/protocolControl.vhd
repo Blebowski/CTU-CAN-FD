@@ -213,6 +213,8 @@ entity protocolControl is
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 15;
     
+    signal mess_src_change        :in std_logic;
+    
     -------------------------
     --Recieved data output --
     -------------------------
@@ -1153,6 +1155,17 @@ begin
             else
                 frame_store_r             <=  '0';
                 tran_lock_r               <=  '0';
+                
+                -- In case of retransmission if other message was selected
+                -- due to "frame_swap" feature, then we must null the
+                -- retransmitt counter. It is new message it should have
+                -- blank emount of "retransmitt error counts"! Note that
+                -- in case of new message from the same Buffer we dont
+                -- need to erase since "retransmitt=0" then and Protocol
+                -- control erases "retr_count" itself.
+                if (mess_src_change = '1') then
+                  retr_count <= 0;
+                end if;
                 
                 --Transcieving the data if we have what to transcieve
                 if(tran_trig='1')then
