@@ -283,11 +283,20 @@ entity CAN_top_level is
   
   --Acknowledge from CAN core that acutal message was stored into internal 
   --buffer for transmitting
-  signal tran_data_ack        : std_logic;
+   signal tran_lock           :  std_logic;
+    
+  -- Signal for TX Arbitrator that it can release the lock on the current
+  -- frame in TXT Buffer and that the frame is not transmitted anymore.
+  signal tran_unlock          :  std_logic;
+    
+  -- Signal for TX Arbitrator that the frame which was actually transmitted
+  -- can be dropped (TXT buffer can be set to empty)
+  signal tran_drop            :  std_logic;
   
   --Pointer to TXT buffer memory  
   signal txt_buf_ptr          : natural range 0 to 15;
 
+  signal mess_src_change      : std_logic;
 
 	------------------------------------------------------------------------------
   --RX Buffer <--> CAN Core
@@ -617,9 +626,11 @@ begin
       tran_frame_type_out  => tran_frame_type_out,
       tran_brs_out         => tran_brs_out,
       tran_frame_valid_out => tran_frame_valid_out,
-      tran_data_ack        => tran_data_ack,
-      tran_valid           => tx_finished,
-
+      tran_lock            => tran_lock,
+      tran_unlock          => tran_unlock,
+      tran_drop            => tran_drop,
+      mess_src_change      => mess_src_change,
+      
       drv_bus   => drv_bus,
       timestamp => timestamp
       );
@@ -679,7 +690,10 @@ begin
       tran_frame_type_in    => tran_frame_type_out,
       tran_brs_in           => tran_brs_out,
       tran_frame_valid_in   => tran_frame_valid_out,
-      tran_data_ack_out     => tran_data_ack,
+      tran_lock             => tran_lock,
+      tran_unlock           => tran_unlock,
+      tran_drop             => tran_drop,
+      mess_src_change       => mess_src_change,
       txt_buf_ptr           => txt_buf_ptr,
       rec_ident_out         => rec_ident_in,
       rec_dlc_out           => rec_dlc_in,

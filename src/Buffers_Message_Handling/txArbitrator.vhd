@@ -62,6 +62,9 @@
 --                TXT2 buffer.
 --    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
 --                time and save some LUTs.
+--   27.12.2017   Added "tran_lock", "tran_unlock", "tran_drop" signals for
+--                implementation of frame swapping feature. Replaced 
+--                "tran_data_ack" with "tran_lock" signal.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -140,13 +143,22 @@ entity txArbitrator is
     -- for transmitting
     signal tran_frame_valid_out   :out std_logic;
     
-    -- Acknowledge from CAN core that frame transmission started and 
-    -- that frame informations were stored
-    signal tran_data_ack          :in  std_logic; 
+    -- CAN Core started to transmitt the Data from TXT Buffer
+    -- TX Arbitrator should store the source buffer
+    signal tran_lock              :in std_logic;
     
-    -- Acknowledge that CAN core that frame was succesfully transmitted
-    -- and can be erased.                         
-    signal tran_valid             :in  std_logic; 
+    -- CAN Core is not anymore transmitting the Data from the TXT Buffer
+    signal tran_unlock            :in std_logic;
+    
+    -- CAN Core signalises that frame was either succesfully transmitter or 
+    -- error limit was reached and it can be dropped.
+    signal tran_drop              :in std_logic;
+    
+    -- If error occurs during the transmission, and CAN Core picks
+    -- frame again, CAN Core needs to know that different buffer is now
+    -- selected, so that it can erase the retransmitt counter (in case
+    -- retransmitt limit is enabled).
+    signal mess_src_change        :out std_logic;
     
     ---------------------
     -- Driving interface
@@ -189,6 +201,8 @@ entity txArbitrator is
   --Message time 1 or 2 is lower than timeStam
   signal ts_valid                 :std_logic_vector(1 downto 0);
   
+  signal mess_src_change_reg      :std_logic;
+  
   --Allow transmit of messages from tx buffers 1,2
   signal drv_allow_txt1           :std_logic;
   signal drv_allow_txt2           :std_logic;
@@ -219,7 +233,7 @@ entity txArbitrator is
   signal mt2_lt_ts                 :boolean;
   
   --State machine for following when the frame was already transmitted!
-  signal tx_arb_fsm                 :tx_arb_state_type;
+  signal tx_arb_fsm                :tx_arb_state_type;
   
 end entity;
 
@@ -372,6 +386,9 @@ begin
                          txt2buf_data_in when mess_src_reg='1' else
                          (OTHERS => '0');
   
+  -- TXT Buffer was changed
+  mess_src_change <= mess_src_change_reg;
+  
   ------------------------------------------------------------------------------
   -- State machine for deciding whether the frame transmission finished and
   -- it can be already erased.
@@ -381,6 +398,7 @@ begin
     if (res_n=ACT_RESET) then
       tx_arb_fsm <= arb_idle;
       mess_src_reg <= '0';
+      mess_src_change_reg <= '0';
     elsif rising_edge(clk_sys) then
         
         tx_arb_fsm <= tx_arb_fsm;
@@ -390,6 +408,8 @@ begin
         txt1_buffer_ack <= '0';
         txt2_buffer_ack <= '0';
         
+        mess_src_change_reg <= mess_src_change_reg;
+        
       case tx_arb_fsm is 
       
       --------------------------------------------------------------------------
@@ -397,9 +417,15 @@ begin
       -- with information and start the transmission...
       --------------------------------------------------------------------------
       when arb_idle =>
-        if (tran_data_ack='1') then
+        if (tran_lock = '1') then
           tx_arb_fsm <= arb_trans;
           mess_src_reg <= mess_src; -- Store when frame info goes to the Core
+          
+          if (mess_src_reg /= mess_src) then
+             mess_src_change_reg  <= '1';
+          else
+             mess_src_change_reg  <= '0';
+          end if;
         end if;
         
       --------------------------------------------------------------------------
@@ -407,19 +433,25 @@ begin
       -- can be erased!
       --------------------------------------------------------------------------
       when arb_trans =>
-        if (tran_valid = '1')then
+        if (tran_unlock = '1')then
           tx_arb_fsm <= arb_idle;
           
-          if (mess_src_reg = '0') then 
-            txt1_buffer_ack <= '1';
-          elsif (mess_src_reg = '1') then
-            txt2_buffer_ack <= '1';
+          if (tran_drop = '1') then
+            if (mess_src_reg = '0') then 
+              txt1_buffer_ack <= '1';
+            elsif (mess_src_reg = '1') then
+              txt2_buffer_ack <= '1';
+            else
+              txt1_buffer_ack <= '0';
+              txt2_buffer_ack <= '0';
+            end if;
           else
             txt1_buffer_ack <= '0';
             txt2_buffer_ack <= '0';
           end if;
-          
+            
         end if;
+        
       when others =>
         report "Error - Unknow TX Arbitrator state" severity error;
       end case;

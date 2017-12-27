@@ -265,8 +265,10 @@ package CANcomponents is
       signal tran_frame_type_out  : out std_logic;
       signal tran_brs_out         : out std_logic;
       signal tran_frame_valid_out : out std_logic;
-      signal tran_data_ack        : in  std_logic;
-      signal tran_valid           : in  std_logic;
+      signal tran_lock            : in  std_logic;
+      signal tran_unlock          : in  std_logic;
+      signal tran_drop            : in  std_logic;
+      signal mess_src_change      : out std_logic;
       signal drv_bus              : in  std_logic_vector(1023 downto 0);
       signal timestamp            : in  std_logic_vector(63 downto 0)
       );
@@ -339,7 +341,10 @@ package CANcomponents is
       signal tran_frame_type_in    : in  std_logic;
       signal tran_brs_in           : in  std_logic;
       signal tran_frame_valid_in   : in  std_logic;
-      signal tran_data_ack_out     : out std_logic;
+      signal tran_lock             : out std_logic;
+      signal tran_unlock           : out std_logic;
+      signal tran_drop             : out std_logic;
+      signal mess_src_change       : in std_logic;
       signal txt_buf_ptr           : out natural range 0 to 15;
       signal rec_ident_out         : out std_logic_vector(28 downto 0);
       signal rec_dlc_out           : out std_logic_vector(3 downto 0);
@@ -601,7 +606,10 @@ package CANcomponents is
       signal txt_buf_ptr           : out natural range 0 to 15;
       signal frame_store           : out std_logic;
       signal tran_frame_valid_in   : in  std_logic;
-      signal tran_data_ack         : out std_logic;
+      signal tran_lock             : out std_logic;
+      signal tran_unlock           : out std_logic;
+      signal tran_drop             : out std_logic;
+      signal mess_src_change       : in std_logic;
       signal br_shifted            : out std_logic;
       signal rec_ident             : out std_logic_vector(28 downto 0);
       signal rec_dlc               : out std_logic_vector(3 downto 0);

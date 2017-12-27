@@ -96,6 +96,8 @@
 --                to avoid possible name conflicts.
 --    20.12.2017  Removed obsolete tran_data_in signal. Removed obsolete 
 --                tx_data_reg.
+--    27.12.2017  Added "txt_frame_swap" bit for frame swapping after the
+--                frame retransmission.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -318,6 +320,10 @@ entity canfd_registers is
   
   signal txt_bufdir             :     std_logic; --TXT write direction register
   
+  -- Swap behaviour when frame should be retransmitted and another frame
+  -- is available in other buffer
+  signal txt_frame_swap         :     std_logic;
+  
   --Store into TXT buffer 1 or 2
   signal tran_wr                :     std_logic_vector(1 downto 0);   
      
@@ -419,6 +425,7 @@ architecture rtl of canfd_registers is
     signal CAN_enable             :out  std_logic;
     signal FD_type                :out  std_logic; 
     signal mode_reg               :out  std_logic_vector(5 downto 0);   
+    signal txt_frame_swap         :out  std_logic;
     signal int_ena_reg            :out  std_logic_vector(10 downto 0)
   ) is
   begin
@@ -518,6 +525,9 @@ architecture rtl of canfd_registers is
     log_cmd                 <=  (OTHERS =>'0');
     log_trig_config         <=  (OTHERS =>'0');
     log_capt_config         <=  (OTHERS =>'0');
+    
+    txt_frame_swap          <= '0';
+    
   end procedure;
   
   
@@ -669,7 +679,7 @@ begin
        log_capt_config    ,log_cmd                ,txt1_commit             ,
        txt2_commit        ,rx_ctr_set             ,tx_ctr_set              ,
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
-       mode_reg          ,int_ena_reg            
+       mode_reg           ,txt_frame_swap         ,int_ena_reg            
       );
             
       RX_buff_read_first    <= false;
@@ -701,7 +711,7 @@ begin
        log_capt_config    ,log_cmd                ,txt1_commit             ,
        txt2_commit        ,rx_ctr_set             ,tx_ctr_set              ,
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
-       mode_reg          ,int_ena_reg            
+       mode_reg           ,txt_frame_swap         ,int_ena_reg            
       );
            
       RX_buff_read_first    <= false;
@@ -945,6 +955,7 @@ begin
     			     write_be_s(txt1_arbit_allow, 0, data_in, sbe);  
     					  write_be_s(txt2_arbit_allow, 1, data_in, sbe);  
  					  write_be_s(txt_bufdir, 3, data_in, sbe);  
+    				    write_be_s(txt_frame_swap, 4, data_in, sbe);  
     								  
     			----------------------------------------------------
     			--TX Data registers
@@ -1050,8 +1061,8 @@ begin
     			  
     			  ----------------------------------------------------------
     			  --Arbitration lost capture register
-                  -- Baud rate prescaler register
-                  ----------------------------------------------------------
+         -- Baud rate prescaler register
+         ----------------------------------------------------------
     			  when ARB_ERROR_PRESC_ADR =>
     					   data_out_int                  <=  (OTHERS =>'0');
     					   data_out_int(4 downto 0)      <=  
@@ -1067,12 +1078,12 @@ begin
     					   data_out_int(15 downto 12)    <=  sjw_fd;
     					   
 				  ----------------------------------------------------------
-    			  --Error warning limit, error passive treshold
-                  -- Fault confinement state
-                  ----------------------------------------------------------
+    			   --Error warning limit, error passive treshold
+          -- Fault confinement state
+          ----------------------------------------------------------
     			   when ERROR_TH_ADR =>
     			   
-    			          --Error warning limit 
+    			     --Error warning limit 
     					  data_out_int(7 downto 0)       <=  ewl; 
     					  
     					  --Error passive treshold
@@ -1132,7 +1143,7 @@ begin
     					           stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto 
     					                    STAT_ERROR_COUNTER_FD_LOW);
     			   
-    			        -------------------------------------------------------- 
+    			   -------------------------------------------------------- 
     					--Acceptance filters  
     					--------------------------------------------------------
     			   when FILTER_A_VAL_ADR => 
@@ -1513,6 +1524,7 @@ begin
   --TX Arbitrator
   drv_bus(DRV_ALLOW_TXT1_INDEX)                     <=  txt1_arbit_allow;
   drv_bus(DRV_ALLOW_TXT2_INDEX)                     <=  txt2_arbit_allow;
+  drv_bus(DRV_FRAME_SWAP_INDEX)                     <=  txt_frame_swap;
   
   --Tripple sampling
   drv_bus(DRV_SAM_INDEX)                            <=  sam_norm;

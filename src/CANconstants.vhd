@@ -44,6 +44,7 @@
 --    19.12.2017  Moved TX_DATA registers into separate memory location
 --                TX_DATA_REGION to make the direct addressing inside the TXT
 --                buffer easier.
+--    27.12.2017  Added "DRV_FRAME_SWAP_INDEX" into driving bus.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -361,6 +362,7 @@ package CANconstants is
   --TX Arbitrator
   constant DRV_ALLOW_TXT1_INDEX : natural := 361;
   constant DRV_ALLOW_TXT2_INDEX : natural := 362;
+  constant DRV_FRAME_SWAP_INDEX : natural := 363;
 
   --Interrupt manager indices 
   constant DRV_BUS_ERR_INT_ENA_INDEX : natural := 376;
