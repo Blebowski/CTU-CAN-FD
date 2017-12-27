@@ -62,6 +62,9 @@
 --                TXT2 buffer.
 --    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
 --                time and save some LUTs.
+--   27.12.2017   Added "tran_lock", "tran_unlock", "tran_drop" signals for
+--                implementation of frame swapping feature. Replaced 
+--                "tran_data_ack" with "tran_lock" signal.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -140,13 +143,16 @@ entity txArbitrator is
     -- for transmitting
     signal tran_frame_valid_out   :out std_logic;
     
-    -- Acknowledge from CAN core that frame transmission started and 
-    -- that frame informations were stored
-    signal tran_data_ack          :in  std_logic; 
+    -- CAN Core started to transmitt the Data from TXT Buffer
+    -- TX Arbitrator should store the source buffer
+    signal tran_lock              :in std_logic;
     
-    -- Acknowledge that CAN core that frame was succesfully transmitted
-    -- and can be erased.                         
-    signal tran_valid             :in  std_logic; 
+    -- CAN Core is not anymore transmitting the Data from the TXT Buffer
+    signal tran_unlock            :in std_logic;
+    
+    -- CAN Core signalises that frame was either succesfully transmitter or 
+    -- error limit was reached and it can be dropped.
+    signal tran_drop              :in std_logic;
     
     ---------------------
     -- Driving interface
@@ -219,7 +225,7 @@ entity txArbitrator is
   signal mt2_lt_ts                 :boolean;
   
   --State machine for following when the frame was already transmitted!
-  signal tx_arb_fsm                 :tx_arb_state_type;
+  signal tx_arb_fsm                :tx_arb_state_type;
   
 end entity;
 
@@ -397,7 +403,7 @@ begin
       -- with information and start the transmission...
       --------------------------------------------------------------------------
       when arb_idle =>
-        if (tran_data_ack='1') then
+        if (tran_lock = '1') then
           tx_arb_fsm <= arb_trans;
           mess_src_reg <= mess_src; -- Store when frame info goes to the Core
         end if;
@@ -407,19 +413,25 @@ begin
       -- can be erased!
       --------------------------------------------------------------------------
       when arb_trans =>
-        if (tran_valid = '1')then
+        if (tran_unlock = '1')then
           tx_arb_fsm <= arb_idle;
           
-          if (mess_src_reg = '0') then 
-            txt1_buffer_ack <= '1';
-          elsif (mess_src_reg = '1') then
-            txt2_buffer_ack <= '1';
+          if (tran_drop = '1') then
+            if (mess_src_reg = '0') then 
+              txt1_buffer_ack <= '1';
+            elsif (mess_src_reg = '1') then
+              txt2_buffer_ack <= '1';
+            else
+              txt1_buffer_ack <= '0';
+              txt2_buffer_ack <= '0';
+            end if;
           else
             txt1_buffer_ack <= '0';
             txt2_buffer_ack <= '0';
           end if;
-          
+            
         end if;
+        
       when others =>
         report "Error - Unknow TX Arbitrator state" severity error;
       end case;

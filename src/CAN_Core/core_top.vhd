@@ -112,9 +112,11 @@ entity core_top is
     --stored for transmitting
     signal tran_frame_valid_in    :in   std_logic; 
     
-    --Acknowledge from CAN core that acutal message was stored into internal 
-    --buffer for transmitting   
-    signal tran_data_ack_out      :out  std_logic; 
+    -- CAN Core control signals for TX Arbitrator for manipulation with
+    -- TXT Buffers
+    signal tran_lock              :out std_logic;
+    signal tran_unlock            :out std_logic;
+    signal tran_drop              :out std_logic;
     
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 15; 
@@ -369,8 +371,11 @@ entity core_top is
    signal tran_is_rtr             :     std_logic;
    signal tran_ident_type         :     std_logic;
    signal tran_frame_type         :     std_logic;
-   signal tran_data_ack           :     std_logic;
    signal tran_brs                :     std_logic;
+   
+   signal tran_lock_i             :     std_logic;
+   signal tran_unlock_i           :     std_logic;
+   signal tran_drop_i             :     std_logic;
    
    --Command for transcieve buffer to store frame on input
    signal frame_Store             :     std_logic; 
@@ -502,6 +507,9 @@ begin
   data_tx               <=  data_tx_int;
   sp_control            <=  sp_control_int;
   sync_control          <=  sync_control_int;
+  tran_lock             <=  tran_lock_i;            
+  tran_unlock           <=  tran_unlock_i;          
+  tran_drop             <=  tran_drop_i;    
   
   rec_ident_out         <=  rec_ident;
   rec_dlc_out           <=  rec_dlc;
@@ -517,6 +525,8 @@ begin
   rec_message_valid_out <=  rec_valid; 
   --rec_message_ack_out 
   --NOTE: HandShake protocol with acknowledge not used in the end
+  
+       
   
   tran_Buf_comp:tranBuffer --Transcieve Buffer
   port map(
@@ -582,8 +592,11 @@ begin
      
      frame_store        =>  frame_store,
      tran_frame_valid_in=>  tran_frame_valid_in,
-     tran_data_ack      =>  tran_data_ack,
-    
+     
+     tran_lock          =>  tran_lock_i,
+     tran_unlock        =>  tran_unlock_i,
+     tran_drop          =>  tran_drop_i,
+     
      rec_ident          =>  rec_ident,
      rec_dlc            =>  rec_dlc,
      rec_is_rtr         =>  rec_is_rtr,
@@ -813,7 +826,6 @@ begin
   drv_lom_ena           <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
   
  --Output propagation
- tran_data_ack_out      <=  tran_data_ack;
  arbitration_lost_out   <=  arbitration_lost;
  wake_up_valid          <=  '0'; --No slepp mode implemented
  tx_finished            <=  tran_valid;
@@ -1051,7 +1063,7 @@ begin
  stat_bus(STAT_TRAN_IS_RTR_INDEX)                           <=  tran_is_rtr;
  stat_bus(STAT_TRAN_IDENT_TYPE_INDEX)                       <=  tran_ident_type;
  stat_bus(STAT_TRAN_FRAME_TYPE_INDEX)                       <=  tran_frame_type;
- stat_bus(STAT_TRAN_DATA_ACK_INDEX)                         <=  tran_data_ack;
+ stat_bus(STAT_TRAN_DATA_ACK_INDEX)                         <=  tran_lock_i;
  stat_bus(STAT_TRAN_BRS_INDEX)                              <=  tran_brs;
  stat_bus(STAT_FRAME_STORE_INDEX)                           <=  frame_Store;
 

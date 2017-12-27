@@ -157,6 +157,9 @@
 --                   but received in shift registers. The output value is com-
 --                   bined from these two shift registers, thus interface to RX
 --                   buffer remained unchanged! Saved approx 100 LUTs.
+--   27.12.2017   Added "tran_lock", "tran_unlock", "tran_drop" signals for
+--                implementation of frame swapping feature. Replaced 
+--                "tran_data_ack" with "tran_lock" signal.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -194,8 +197,18 @@ entity protocolControl is
     --Valid frame ready to be stored into Transcieeve Buffer
     signal tran_frame_valid_in    :in   std_logic;
     
-    --Acknowledge that the frame was stored
-    signal tran_data_ack          :out  std_logic;
+    -- Signal for TX Arbitrator that frame from TXT Buffer is transmitted
+    -- and it should provide the data of CAN Frame addressed by 
+    -- txt_buf_ptr. 
+    signal tran_lock              :out  std_logic;
+    
+    -- Signal for TX Arbitrator that it can release the lock on the current
+    -- frame in TXT Buffer and that the frame is not transmitted anymore.
+    signal tran_unlock            :out  std_logic;
+    
+    -- Signal for TX Arbitrator that the frame which was actually transmitted
+    -- can be dropped (TXT buffer can be set to empty)
+    signal tran_drop              :out  std_logic;
     
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 15;
@@ -389,6 +402,9 @@ entity protocolControl is
   --Type of FD Format Frame (ISO,non-ISO)
   signal drv_fd_type              :     std_logic;
   
+  --Frame swapping behaviour of TX Arbitrator
+  signal drv_frame_swap           :     std_logic;
+  
   ----------------------
   --Internal registers--
   ----------------------
@@ -417,7 +433,9 @@ entity protocolControl is
   signal arbitration_lost_r       :     std_logic; 
   signal crc_enable_r             :     std_logic;
   signal frame_store_r            :     std_logic;
-  signal tran_data_ack_r          :     std_logic;
+  signal tran_lock_r              :     std_logic;
+  signal tran_unlock_r            :     std_logic;
+  signal tran_drop_r              :     std_logic;
   signal stuff_enable_r           :     std_logic;
   signal fixed_stuff_r            :     std_logic;
   signal stuff_length_r           :     std_logic_vector(2 downto 0);
@@ -647,6 +665,7 @@ begin
   drv_ack_forb          <=  drv_bus(DRV_ACK_FORB_INDEX);
   drv_ena               <=  drv_bus(DRV_ENA_INDEX);
   drv_fd_type           <=  drv_bus(DRV_FD_TYPE_INDEX);
+  drv_frame_swap        <=  drv_bus(DRV_FRAME_SWAP_INDEX);
   
   -----------------------------------
   --Registers to output propagation--
@@ -655,7 +674,9 @@ begin
   alc                   <=  alc_r;
   data_tx       	       <=  data_tx_r;
   frame_Store           <=  frame_Store_r;
-  tran_data_ack         <=  tran_data_ack_r;
+  tran_lock             <=  tran_lock_r;
+  tran_unlock           <=  tran_unlock_r;
+  tran_drop             <=  tran_drop_r;
   arbitration_lost      <=  arbitration_lost_r;
   crc_enable            <=  crc_enable_r;
   stuff_enable          <=  stuff_enable_r;
@@ -755,7 +776,9 @@ begin
       --Configuring output registers--
       --------------------------------
       frame_Store_r           <=  '0';
-      tran_data_ack_r         <=  '0';
+      tran_lock_r             <=  '0';
+      tran_unlock_r           <=  '0';
+      tran_drop_r             <=  '0';
       --FSM starts from intermission.interm_idle state, we dont need 
       --preseting for intermission then!!! We CANT preeset then!!
       FSM_preset              <=  '0';
@@ -866,8 +889,14 @@ begin
        PC_state               <=  PC_state; --Protocol register
        data_tx_r              <=  data_tx_r; --Registered value of tx data
        arbitration_lost_r     <=  '0'; 
-       crc_enable_r           <=  crc_enable_r;
-       tran_data_ack_r        <=  tran_data_ack_r;
+       crc_enable_r           <=  crc_enable_r; 
+       
+       -- These TX arbitrator control signals are set only for one
+       -- clock cycle
+       tran_lock_r            <=  '0'; 
+       tran_unlock_r          <=  '0';
+       tran_drop_r            <=  '0';
+       
        stuff_enable_r         <=  stuff_enable_r;
        fixed_stuff_r          <=  fixed_stuff_r;
        stuff_length_r         <=  stuff_length_r;
@@ -1031,7 +1060,7 @@ begin
                       --into transcieve buffer
                       if(tran_frame_valid_in='1')then 
                 	       frame_store_r     <=  '1';
-                	       tran_data_ack_r   <=  '1';
+                	       tran_lock_r       <=  '1';
               	     	   set_transciever_r <=  '1';
               	     	   retr_count        <=  0;
               	     	   --Configuring Bit Stuffing
@@ -1043,6 +1072,16 @@ begin
           	             set_reciever_r    <=  '1';
                       end if;
                   else 
+                    
+                    
+                    -- If retransmitting and "frame_swap" feature is turned on
+                    -- We have to store the new frame that TX Arbitrator decided
+                    -- to propagate to the Core!
+                    if (drv_frame_swap = '1') then
+                      frame_store_r     <=  '1';
+              	       tran_lock_r       <=  '1';  
+                    end if;
+                    
                     set_transciever_r     <=  '1';
                     retransmitt           <=  '0';
           	     	   --Configuring Bit Stuffing
@@ -1113,8 +1152,8 @@ begin
                 
             else
                 frame_store_r             <=  '0';
-                tran_data_ack_r           <=  '0';
-          
+                tran_lock_r               <=  '0';
+                
                 --Transcieving the data if we have what to transcieve
                 if(tran_trig='1')then
                   if(OP_State=transciever or (tran_frame_valid_in='1'))then
@@ -1170,6 +1209,11 @@ begin
                       
                       --Current frame should be retransmitted!
                       retransmitt         <=  '1';
+                      if (drv_frame_swap = '1') then
+                         tran_unlock_r    <= '1';  
+                      else
+                         tran_unlock_r    <= '0';
+                      end if;
                       
                 when RECESSIVE_RECESSIVE =>
                       arbitration_lost_r  <=  '0';
@@ -2061,6 +2105,8 @@ begin
                 if(OP_State=transciever)then --Message is sucessfully transcieved
                   tran_valid_r  <=  '1';
                   dec_one_r     <=  '1';
+                  tran_unlock_r <=  '1';
+                  tran_drop_r   <=  '1';
                 end if;
                 PC_State        <=  interframe; 
                 FSM_Preset      <=  '1';
@@ -2252,16 +2298,27 @@ begin
               --If unit is transciever and Error appears then frame should be 
               -- marked to be retransmitted
               if(OP_State=transciever)then
-                 --Retransmittion limit is disabled
-                if(drv_retr_lim_ena='0') or (drv_retr_lim_ena='1' and 
-                   retr_count<to_integer(unsigned(drv_retr_th)))
+                if ((drv_retr_lim_ena='0') or --Retransmitt limit is disabled 
+                    (drv_retr_lim_ena='1' and --Enabled, but not reached
+                     retr_count<to_integer(unsigned(drv_retr_th))))
                 then
                   retransmitt   <=  '1';
                   if(retr_count<15)then
                     retr_count  <=  retr_count+1;
                   end if;
+                  
+                  if (drv_frame_swap = '1') then
+                    tran_unlock_r      <= '1';  
+                  else
+                    tran_unlock_r      <= '0';
+                  end if;
+                  
                 else
+                  
+                  --Retransmitt limit reached, drop the frame
                   retransmitt   <=  '0';
+                  tran_unlock_r <=  '1';
+                  tran_drop_r   <=  '1';
                 end if;
                 
                 --Transmitter started to transmitt error flag -> increase by 8 
@@ -2283,6 +2340,7 @@ begin
               end if;
               
             else
+              
               case  err_frame_state is
               
                 --Transmition of error flag and reception of Error 
