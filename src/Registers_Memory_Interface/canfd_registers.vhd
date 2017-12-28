@@ -907,48 +907,48 @@ begin
     			--Acceptance filters
     			----------------------------------------------------	
     			when FILTER_A_VAL_ADR    => 
-    			       if (sup_filtA = true) then
+    			       if (sup_filtA) then
     			         write_be_vect(filter_A_value, 0, 28, data_in, 0, 28, sbe);
   			        end if;
     			when FILTER_A_MASK_ADR   =>
-    			       if (sup_filtA = true) then
+    			       if (sup_filtA) then
     			         write_be_vect(filter_A_mask, 0, 28, data_in, 0, 28, sbe);
 			        end if;     
     			when FILTER_B_VAL_ADR    => 
-    			     if (sup_filtB = true) then
+    			     if (sup_filtB) then
     			       write_be_vect(filter_B_value, 0, 28, data_in, 0, 28, sbe);
   			       end if;
     			when FILTER_B_MASK_ADR   => 
-    			     if (sup_filtB = true) then
+    			     if (sup_filtB) then
     			       write_be_vect(filter_B_mask, 0, 28, data_in, 0, 28, sbe);
 			      end if;
     			when FILTER_C_VAL_ADR    =>
-    			     if (sup_filtC = true) then
+    			     if (sup_filtC) then
     			       write_be_vect(filter_C_value, 0, 28, data_in, 0, 28, sbe);
 			      end if;
     			when FILTER_C_MASK_ADR   =>
-    			     if (sup_filtC = true) then
+    			     if (sup_filtC) then
     			       write_be_vect(filter_C_mask, 0, 28, data_in, 0, 28, sbe);
 			      end if;
     			when FILTER_RAN_LOW_ADR  => 
-    			     if (sup_range = true) then
+    			     if (sup_range) then
     			       write_be_vect(filter_ran_low, 0, 28, data_in, 0, 28, sbe);
   			       end if;
     			when FILTER_RAN_HIGH_ADR => 
-			      if (sup_range = true) then
+			      if (sup_range) then
 			        write_be_vect(filter_ran_high, 0, 28, data_in, 0, 28, sbe);
 			      end if;
     			when FILTER_CONTROL_ADR  =>
-   			      if (sup_filtA = true) then
+   			      if (sup_filtA) then
    			         write_be_vect(filter_A_ctrl, 0, 3, data_in, 0, 3, sbe);
 					  end if;
-					  if (sup_filtB = true) then
+					  if (sup_filtB) then
 					     write_be_vect(filter_B_ctrl, 0, 3, data_in, 4, 7, sbe); 
   					  end if;
-  					  if (sup_filtC = true) then
+  					  if (sup_filtC) then
   					     write_be_vect(filter_C_ctrl, 0, 3, data_in, 8, 11, sbe);
   				    end if;	     
-					  if (sup_range = true) then
+					  if (sup_range) then
 					     write_be_vect(filter_ran_ctrl, 0, 3, data_in, 12, 15, sbe); 
 					  end if;
     			
@@ -1151,56 +1151,56 @@ begin
     					--Acceptance filters  
     					--------------------------------------------------------
     			   when FILTER_A_VAL_ADR => 
-    			     if (sup_filtA = true) then 
+    			     if (sup_filtA) then 
     			       data_out_int(28 downto 0)       <=  filter_A_mask;
 						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
 						  data_out_int <= (OTHERS => '0');  
 						end if;
     			   when FILTER_A_MASK_ADR =>
-    			     if (sup_filtA = true) then  
+    			     if (sup_filtA) then  
     			       data_out_int(28 downto 0)       <=  filter_A_value;
 						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
 						  data_out_int <= (OTHERS => '0');  
 						end if;  
     			   when FILTER_B_VAL_ADR =>
-    			     if (sup_filtB = true) then 
+    			     if (sup_filtB) then 
     			       data_out_int(28 downto 0)       <=  filter_B_mask;
     						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
 						  data_out_int <= (OTHERS => '0');  
 						end if; 
     			   when FILTER_B_MASK_ADR =>
-    			     if (sup_filtB = true) then  
+    			     if (sup_filtB) then  
     			       data_out_int(28 downto 0)       <=  filter_B_value;
     						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
 						else
 						  data_out_int <= (OTHERS => '0');  
 						end if;   
     			   when FILTER_C_VAL_ADR =>
-			      if (sup_filtC = true) then 
+			      if (sup_filtC) then 
     			       data_out_int(28 downto 0)       <=  filter_C_mask;
     						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
 						else
 						  data_out_int <= (OTHERS => '0');  
 						end if;    
     			   when FILTER_C_MASK_ADR =>
-    			     if (sup_filtC = true) then 
+    			     if (sup_filtC) then 
     			       data_out_int(28 downto 0)       <=  filter_C_value;
     						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
 						else
 						  data_out_int <= (OTHERS => '0');  
 						end if;     
     			   when FILTER_RAN_LOW_ADR =>
-    			     if (sup_range = true) then 
+    			     if (sup_range) then 
     			       data_out_int(28 downto 0)       <=  filter_ran_low;
     						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
 						  data_out_int <= (OTHERS => '0');  
 						end if; 
     			   when FILTER_RAN_HIGH_ADR =>
-    			     if (sup_range = true) then 
+    			     if (sup_range) then 
     			       data_out_int(28 downto 0)       <=  filter_ran_high;
     						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
 						else
