@@ -98,6 +98,7 @@
 --                tx_data_reg.
 --    27.12.2017  Added "txt_frame_swap" bit for frame swapping after the
 --                frame retransmission.
+--    28.12.2017  Added support for "tx_time_suport" and Filter Status register.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -124,6 +125,9 @@ entity canfd_registers is
     
     --Support of byte enable signal on memory bus interface
     constant sup_be       :boolean                         := false;
+    
+    --Support of Transmission at given time
+    constant tx_time_sup  : boolean                        := true;
     
     --ID of the component
     constant ID           :natural                         := 1 
@@ -1204,14 +1208,39 @@ begin
 						end if; 
     					
     			   -------------------------------------------------------
-				   --Acceptance filter configuration register
-			       -------------------------------------------------------
+				  --Acceptance filter configuration and status register
+			    -------------------------------------------------------
     			   when FILTER_CONTROL_ADR => 
     					  data_out_int(3 downto 0)       <=  filter_A_ctrl;
     					  data_out_int(7 downto 4)       <=  filter_B_ctrl;
     					  data_out_int(11 downto 8)      <=  filter_B_ctrl;
     					  data_out_int(15 downto 12)     <=  filter_ran_ctrl;
-    					  data_out_int(31 downto 16)     <=  (OTHERS=>'0');
+    					  
+    					  if (sup_filtA) then
+    					    data_out_int(16) <= '1';
+ 					  else
+ 					    data_out_int(16) <= '0';
+ 					  end if;
+ 					  
+ 					  if (sup_filtB) then
+    					    data_out_int(17) <= '1';
+ 					  else
+ 					    data_out_int(17) <= '0';
+ 					  end if;
+ 					  
+ 					  if (sup_filtC) then
+    					    data_out_int(18) <= '1';
+ 					  else
+ 					    data_out_int(18) <= '0';
+ 					  end if;
+ 					  
+ 					  if (sup_range) then
+    					    data_out_int(19) <= '1';
+ 					  else
+ 					    data_out_int(19) <= '0';
+ 					  end if;
+ 					  
+    					  data_out_int(31 downto 20)     <=  (OTHERS=>'0');
     					
     			   -------------------------------------------------------
     			   --RX_INFO_1 register
@@ -1255,9 +1284,14 @@ begin
  			    --TXT Buffers status
     			   -------------------------------------------------------
     			   when TX_STATUS_ADR => 
-    			      data_out_int(31 downto 2)      <=  (OTHERS=>'0');
+    			      data_out_int(31 downto 3)      <=  (OTHERS=>'0');
     			      data_out_int(1)                <=  txt2_empty;
     			      data_out_int(0)                <=  txt1_empty;
+    			      if (tx_time_sup) then   
+			         data_out_int(2)              <= '1';
+			       else
+			         data_out_int(3)              <= '0';
+			       end if;   
     			      
  			    ------------------------------------------------------- 
  			    --TX_Settings register

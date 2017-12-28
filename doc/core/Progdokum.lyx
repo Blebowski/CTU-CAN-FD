@@ -27313,7 +27313,21 @@ FILTER_RAN_HIGH
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[sec:FILTER_STATUS]{FILTER
+\backslash
+textunderscore STATUS}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -34465,6 +34479,275 @@ FD_EXT_FRAME If CAN FD Extended Frame should be accepted by filter (Bit
 \end_layout
 
 \begin_layout Section
+3.14 FILTER_STATUS
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+label{sec:FILTER_STATUS}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+Type: Read
+\end_layout
+
+\begin_layout Standard
+This register provides information about whether the Core is synthesized
+ with filter support.
+\begin_inset Separator latexpar
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="6">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit offset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+31-4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SUP_RANGE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SUP_FILTAC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SUP_FILTB
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SUP_FILTA
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default value
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configurable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configurable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configurable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Configurable
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+SUP_FILTA Is logic 1 when the Core was synthesized with 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filtA = true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise is logic 0.
+\end_layout
+
+\begin_layout Description
+SUP_FILTB Is logic 1 when the Core was synthesized with 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filtB = true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise is logic 0.
+\end_layout
+
+\begin_layout Description
+SUP_FILTC Is logic 1 when the Core was synthesized with 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filtC = true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise is logic 0.
+\end_layout
+
+\begin_layout Description
+SUP_RANGE Is logic 1 when the Core was synthesized with 
+\begin_inset Quotes eld
+\end_inset
+
+sup_range = true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise is logic 0.
+\end_layout
+
+\begin_layout Section
 3.14 RX_INFO_1
 \begin_inset ERT
 status open
@@ -36683,8 +36966,9 @@ Type: Read
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="4">
+<lyxtabular version="3" rows="3" columns="5">
 <features tabularvalignment="middle">
+<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -36703,7 +36987,16 @@ Bit offset
 \begin_inset Text
 
 \begin_layout Plain Layout
-31-2
+31-3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
 \end_layout
 
 \end_inset
@@ -36750,6 +37043,15 @@ Reserved
 \begin_inset Text
 
 \begin_layout Plain Layout
+TX_TIME_SUPPORT
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 TXT_2_EMPTY
 \end_layout
 
@@ -36788,6 +37090,15 @@ Default value
 \begin_inset Text
 
 \begin_layout Plain Layout
+Configurable
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 1
 \end_layout
 
@@ -36817,6 +37128,20 @@ TXT_1_EMPTY Active when Transmit buffer 1 is empty.
 
 \begin_layout Description
 TXT_2_EMPTY Active when Transmit buffer 2 is empty.
+\end_layout
+
+\begin_layout Description
+TX_TIME_SUPPORT This bit is has value of logic 1 if the core was synthesized
+ wih 
+\begin_inset Quotes eld
+\end_inset
+
+tx_time_support=true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise this bit is 0.
 \end_layout
 
 \begin_layout Section

@@ -482,14 +482,15 @@ begin
 
   reg_comp : canfd_registers
     generic map(
-      compType   => CAN_COMPONENT_TYPE,
-      use_logger => use_logger,
-      sup_filtA  => sup_filtA,
-      sup_filtB  => sup_filtB,
-      sup_filtC  => sup_filtC,
-      sup_range  => sup_range,
-      sup_be     => sup_be,
-      ID         => ID
+      compType     => CAN_COMPONENT_TYPE,
+      use_logger   => use_logger,
+      sup_filtA    => sup_filtA,
+      sup_filtB    => sup_filtB,
+      sup_filtC    => sup_filtC,
+      sup_range    => sup_range,
+      sup_be       => sup_be,
+      tx_time_sup  => tx_time_sup,
+      ID           => ID
       )
     port map(
       clk_sys              => clk_sys,

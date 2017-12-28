@@ -107,14 +107,15 @@ package CANcomponents is
   ------------------------------------------------------------------------------
   component canfd_registers is
     generic(
-      constant compType   : std_logic_vector(3 downto 0) := CAN_COMPONENT_TYPE;
-      constant use_logger : boolean                      := true;
-      constant sup_filtA  : boolean                      := true;
-      constant sup_filtB  : boolean                      := true;
-      constant sup_filtC  : boolean                      := true;
-      constant sup_range  : boolean                      := true;
-      constant sup_be     : boolean                      := false;
-      constant ID         : natural
+      constant compType    : std_logic_vector(3 downto 0) := CAN_COMPONENT_TYPE;
+      constant use_logger  : boolean                      := true;
+      constant sup_filtA   : boolean                      := true;
+      constant sup_filtB   : boolean                      := true;
+      constant sup_filtC   : boolean                      := true;
+      constant sup_range   : boolean                      := true;
+      constant sup_be      : boolean                      := false;
+      constant tx_time_sup : boolean                      := true;
+      constant ID          : natural
       );
     port(
       signal clk_sys              : in  std_logic;
