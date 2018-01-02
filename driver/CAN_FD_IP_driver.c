@@ -403,16 +403,16 @@ STATUS can_read_frame(can_node_t node,struct can_frame_t *frame)
 	frame->esi_flag 	= (IS_BIT_SET(val, ESI_BIT)) ? ERROR_PASSIVE : ERROR_ACTIVE;
 
 	val = READ_VALUE_32BIT(node, RX_DATA_REG);
-	frame->timestamp 	= (uint64_t)val << 32;
-	val = READ_VALUE_32BIT(node, RX_DATA_REG);
-	frame->timestamp  	|= val;
-
-	val = READ_VALUE_32BIT(node, RX_DATA_REG);
-
 	if (frame->ident_type == EXTENDED)
 		frame->identifier 	= IDENT_REG_TO_UNS(val);
 	else
 		frame->identifier 	= _11BIT_MASK & val;
+		
+	val = READ_VALUE_32BIT(node, RX_DATA_REG);
+	frame->timestamp  	|= val;
+	
+	val = READ_VALUE_32BIT(node, RX_DATA_REG);
+	frame->timestamp 	|= (uint64_t)val << 32;
 
 	frame->data_len = get_byte_length(frame->dlc);
 
@@ -464,17 +464,16 @@ STATUS can_send_frame(can_node_t node,struct can_frame_t *frame)
 	val  = SET_BIT(val, TBF_BIT);
 	WRITE_VALUE_32BIT(node, TX_DATA_1_REG, val);
 
-	val = (uint32_t)(frame->timestamp >> 32);
-	WRITE_VALUE_32BIT(node, TX_DATA_2_REG, val);
-
-	val = (uint32_t)frame->timestamp;
-	WRITE_VALUE_32BIT(node, TX_DATA_3_REG, val);
-
 	if (frame->ident_type == EXTENDED)
 		val = IDENT_UNS_TO_REG(frame->identifier);
 	else
 		val = (uint32_t)frame->identifier;
-
+	WRITE_VALUE_32BIT(node, TX_DATA_2_REG, val);
+	
+	val = (uint32_t)frame->timestamp;
+	WRITE_VALUE_32BIT(node, TX_DATA_3_REG, val);
+	
+	val = (uint32_t)(frame->timestamp >> 32);
 	WRITE_VALUE_32BIT(node, TX_DATA_4_REG, val);
 
 	int wrd_data_len = (frame->data_len-1)/4 + 1;

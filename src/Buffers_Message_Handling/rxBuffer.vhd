@@ -296,7 +296,7 @@ begin
     
     --Message Count already stored
     variable message_count  : natural range 0 to 255;
- begin     
+  begin     
     if (res_n=ACT_RESET) or (drv_erase_rx='1') then
       write_pointer     <= 0;
       read_pointer      <= 0;
@@ -456,17 +456,17 @@ begin
         --copy_counter decodes which part of received frame to store
         ------------------------------------------------------------------------
         if(copy_counter=0)then
-            memory(write_pointer)       <= timestamp(63 downto 32);
+            memory(write_pointer)       <= "000"&rec_ident_in;
             memory_valid(write_pointer) <= '1';
         elsif(copy_counter=1)then
             memory(write_pointer)       <= timestamp(31 downto 0);
             memory_valid(write_pointer) <= '1';
-        elsif(copy_counter=2)then   
-            memory(write_pointer)       <= "000"&rec_ident_in;
+        elsif(copy_counter=2)then
+            memory(write_pointer)       <= timestamp(63 downto 32);
             memory_valid(write_pointer) <= '1';
         else
-           memory(write_pointer)        <= memory(write_pointer);
-           memory_valid(write_pointer)  <= '1';
+            memory(write_pointer)        <= memory(write_pointer);
+            memory_valid(write_pointer)  <= '1';
         end if;
         
         write_pointer                   <= (write_pointer+1) mod buff_size;

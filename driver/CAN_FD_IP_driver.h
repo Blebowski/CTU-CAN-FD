@@ -82,11 +82,6 @@
 	#define TRV_DELAY_REG				0x50
 	#define TX_STATUS_REG				0x54
 	#define TX_SETTINGS_REG				0x58
-	#define TX_DATA_1_REG				0x5C
-	#define TX_DATA_2_REG				0x60
-	#define TX_DATA_3_REG				0x64
-	#define TX_DATA_4_REG				0x68
-	#define TX_DATA_5_REG				0x6C
 	#define RX_COUNTER_REG				0xAC
 	#define TX_COUNTER_REG				0xB0
 	#define LOG_TRIG_CONFIG_REG			0xB8
@@ -97,7 +92,12 @@
 	#define LOG_CAPT_EVENT_2_REG		0xD0
 	#define DEBUG_REG					0xD4
 	#define YOLO_REG					0xD8
-
+	#define TX_DATA_1_REG				0x100
+	#define TX_DATA_2_REG				0x104
+	#define TX_DATA_3_REG				0x108
+	#define TX_DATA_4_REG				0x10C
+	#define TX_DATA_5_REG				0x110
+	
 
 	/*
 	 * Mode register bits

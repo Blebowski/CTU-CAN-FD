@@ -47,6 +47,7 @@ USE ieee.std_logic_unsigned.All;
 use work.CANcomponents.ALL;
 USE WORK.CANconstants.ALL;
 
+use work.randomLib.all;
 
 entity prescaler_v3_tb is
 end entity;
@@ -162,7 +163,7 @@ begin
     
     --Random snchronisation signals
     for I in 1 to 100 loop
-      wait for randData(random_pointer)*1000.0  ns;
+      wait for randomLibData(random_pointer)*1000.0  ns;
       sync_edge<='1';
       wait for 10 ns;
       sync_edge<='0';

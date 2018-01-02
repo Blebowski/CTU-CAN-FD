@@ -34705,19 +34705,46 @@ sup_filtA = true
 \end_inset
 
 .
- Otherwise is logic 0
+ Otherwise is logic 0.
 \end_layout
 
 \begin_layout Description
-SUP_FILTB 
+SUP_FILTB Is logic 1 when the Core was synthesized with 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filtB = true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise is logic 0.
 \end_layout
 
 \begin_layout Description
-SUP_FILTC 
+SUP_FILTC Is logic 1 when the Core was synthesized with 
+\begin_inset Quotes eld
+\end_inset
+
+sup_filtC = true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise is logic 0.
 \end_layout
 
 \begin_layout Description
-SUP_RANGE 
+SUP_RANGE Is logic 1 when the Core was synthesized with 
+\begin_inset Quotes eld
+\end_inset
+
+sup_range = true
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Otherwise is logic 0.
 \end_layout
 
 \begin_layout Section
@@ -35856,6 +35883,125 @@ DLC
 \begin_inset Text
 
 \begin_layout Plain Layout
+IDENTIFIER
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID_EXT
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID_BASE
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
 TIMESTAMP_U
 \end_layout
 
@@ -35960,7 +36106,7 @@ TS_VAL(63:32)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -35989,88 +36135,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36088,36 +36153,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ID_EXT
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ID_BASE
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36126,7 +36162,7 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36135,7 +36171,7 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36144,7 +36180,7 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36153,7 +36189,7 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36162,7 +36198,7 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36171,7 +36207,7 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -36180,16 +36216,7 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42646,20 +42673,20 @@ TX_DATA_2
 
 \end_inset
 </cell>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-TS_VAL(63:32)
+ID_EXT
 \end_layout
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+ID_BASE
 \end_layout
 
 \end_inset
@@ -42774,7 +42801,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42783,7 +42810,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42792,7 +42819,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42801,7 +42828,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42810,7 +42837,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42819,7 +42846,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42828,7 +42855,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42837,7 +42864,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42846,7 +42873,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42855,7 +42882,7 @@ TS_VAL(31:0)
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -42884,20 +42911,11 @@ TX_DATA_4
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ID_EXT
-\end_layout
-
-\end_inset
-</cell>
 <cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-ID_BASE
+TS_VAL(63:32)
 \end_layout
 
 \end_inset
@@ -42983,7 +43001,16 @@ ID_BASE
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
