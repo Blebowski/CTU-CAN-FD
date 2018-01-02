@@ -417,9 +417,6 @@ entity protocolControl is
   --Internal loopBack enabled (for Bus monitoring mode)
   signal int_loop_back_ena_r      :     std_logic;
   
-  --If this node is suspended
-  signal is_suspended             :     std_logic;
-  
   ----------------------------------------
   --Retransmittion signals and  counters--
   ----------------------------------------
@@ -822,9 +819,7 @@ begin
       rec_esi_r               <=  '0';
       
       sof_skip                <=  '0';
-      
-      is_suspended            <=  '0';
-      
+           
       arb_two_bits            <=  (OTHERS=>'0');
       arb_one_bit             <=  '0';
       
@@ -961,7 +956,6 @@ begin
        err_frame_state        <=  err_frame_state;
        fixed_CRC_FD           <=  fixed_CRC_FD;
        fixed_CRC_FD_rec       <=  fixed_CRC_FD_rec;
-       is_suspended           <=  is_suspended;
        err_pas_bit_val        <=  err_pas_bit_val;
        data_size              <=  data_size;
        
@@ -1056,7 +1050,7 @@ begin
                 --sync_control_r        <=  RE_SYNC; 
                 
                 --(only when bus monitoring mode is disabled)
-                if(drv_bus_mon_ena='0' and is_suspended='0')then
+                if(drv_bus_mon_ena='0')then
                   if(retransmitt='0')then --If Frame shouldnt be retransmitted
                       --Store frame for transcieve if availiable 
                       --into transcieve buffer
