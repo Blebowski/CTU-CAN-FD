@@ -249,8 +249,10 @@ begin
                           ((not txt2_buffer_empty) and (drv_allow_txt2));
   
   --Transmit time of TXT Buffer messages (from both buffers)
-  mess_time1          <= txt1buf_info_in(TXT_TSUPP_HIGH downto TXT_TSLOW_LOW);
-  mess_time2          <= txt2buf_info_in(TXT_TSUPP_HIGH downto TXT_TSLOW_LOW); 
+  mess_time1          <= txt1buf_info_in(TXT_TSUPP_HIGH downto TXT_TSUPP_LOW)&
+                         txt1buf_info_in(TXT_TSLOW_HIGH downto TXT_TSLOW_LOW);
+  mess_time2          <= txt2buf_info_in(TXT_TSUPP_HIGH downto TXT_TSUPP_LOW)&
+                         txt2buf_info_in(TXT_TSLOW_HIGH downto TXT_TSLOW_LOW);
   
   --Transmit identifiers
   ident1              <= txt1buf_info_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW);
@@ -372,9 +374,9 @@ begin
   ----------------------------------
   --Identifier word and data words--
   ----------------------------------
-  tran_ident_out            <= txt1buf_info_in(540 downto 512) when mess_src='0' 
-															 else 
-                               txt2buf_info_in(540 downto 512);
+  tran_ident_out            <= txt1buf_info_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW)
+                               when mess_src='0' else 
+                               txt1buf_info_in(TXT_IDW_HIGH-3 downto TXT_IDW_LOW);
   
   ------------------------------------------------------------------------------
   --Data which goes to the CAN Core has to be decided on message source

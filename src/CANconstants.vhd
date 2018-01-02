@@ -494,14 +494,14 @@ package CANconstants is
   constant TXT_FFW_HIGH : natural := 639;
   constant TXT_FFW_LOW  : natural := 608;
 
-  constant TXT_TSUPP_HIGH : natural := 607;
-  constant TXT_TSUPP_LOW  : natural := 576;
-
+  constant TXT_IDW_HIGH : natural := 607;
+  constant TXT_IDW_LOW  : natural := 576;
+  
   constant TXT_TSLOW_HIGH : natural := 575;
   constant TXT_TSLOW_LOW  : natural := 544;
 
-  constant TXT_IDW_HIGH : natural := 543;
-  constant TXT_IDW_LOW  : natural := 512;
+  constant TXT_TSUPP_HIGH : natural := 543;
+  constant TXT_TSUPP_LOW  : natural := 512;
 
   constant TXT_DATAW_HIGH : natural := 511;
   constant TXT_DATAW_LOW  : natural := 0;

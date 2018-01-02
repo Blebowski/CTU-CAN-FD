@@ -1144,13 +1144,7 @@ procedure process_error
      w_data:= "0000000000000000000000"&frame.brs&'1'&frame.frame_format&frame.ident_type&
                frame.rtr&'0'&frame.dlc;
      CAN_write(w_data,TX_DATA_1_ADR,ID,mem_bus);          
-     
-     --Timestamp
-     w_data:= frame.timestamp(63 downto 32);  
-     CAN_write(w_data,TX_DATA_2_ADR,ID,mem_bus);
-     w_data:= frame.timestamp(31 downto 0);  
-     CAN_write(w_data,TX_DATA_3_ADR,ID,mem_bus);
-        
+           
      --Identifier
      if(frame.ident_type='1')then
         ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
@@ -1159,7 +1153,12 @@ procedure process_error
         ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
         w_data:= "000000000000000000000"&ident_vect(10 downto 0);
      end if;
+     CAN_write(w_data,TX_DATA_2_ADR,ID,mem_bus);
      
+      --Timestamp
+     w_data:= frame.timestamp(31 downto 0);  
+     CAN_write(w_data,TX_DATA_3_ADR,ID,mem_bus);
+     w_data:= frame.timestamp(63 downto 32);  
      CAN_write(w_data,TX_DATA_4_ADR,ID,mem_bus);
      
      --Data words
@@ -1205,12 +1204,6 @@ procedure process_error
     frame.brs           := r_data(9);
     decode_dlc_v(frame.dlc,frame.data_length);
     
-    --Read timestamp
-    CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);  
-    frame.timestamp(63 downto 32) := r_data;
-    CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);  
-    frame.timestamp(31 downto 0)  := r_data;
-    
     --Read identifier
     CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);
     if(frame.ident_type='1')then
@@ -1220,6 +1213,12 @@ procedure process_error
       aux_vect         := "000000000000000000"&r_data(10 downto 0);
       frame.identifier := to_integer(unsigned(aux_vect));
     end if;
+    
+    --Read timestamp
+    CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);  
+    frame.timestamp(31 downto 0)  := r_data;
+    CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);  
+    frame.timestamp(63 downto 32) := r_data;
     
     --Now read data frames
     if((frame.rtr = '0' or frame.frame_format = '1') and frame.data_length /= 0)then
