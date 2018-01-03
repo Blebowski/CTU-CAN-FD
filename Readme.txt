@@ -1,4 +1,3 @@
-
 CAN FD IP Core
 --------------
 
@@ -8,6 +7,9 @@ of Measurement.
 
 The Core supports ISO and NON-ISO versions of the protocol for synthesis into
 FPGAs. Core contains test framework written in VHDL and run with TCL scripts
-in Modelsim.
+in Modelsim Altera (or Intel) edition.
+
+The freeware version of Modelsim can be downloaded from:
+https://www.altera.com/products/design-software/model---simulation/modelsim-altera-software.html
 
 Ondrej Ille
