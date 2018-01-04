@@ -169,7 +169,7 @@ Department of measurement
 
 
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/LEV.bmp
+	filename ../pics/LEV.bmp
 	lyxscale 20
 	scale 60
 
@@ -213,7 +213,7 @@ Department of measurement
 
 
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/CAN_FD_IP_Core/doc/pics/CAN_LOGO.jpg
+	filename ../pics/CAN_LOGO.jpg
 	lyxscale 10
 	scale 9
 
@@ -256,7 +256,7 @@ Department of measurement
 
 \begin_layout Plain Layout
 \begin_inset Graphics
-	filename E:/Skola/CVUT-FEL/LEV.bmp
+	filename ../pics/LEV.bmp
 	lyxscale 20
 	scale 9
 
