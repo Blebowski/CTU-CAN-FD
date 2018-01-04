@@ -672,7 +672,7 @@ status open
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="8cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -2166,13 +2166,6 @@ use_sync
  generic.
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
 \begin_layout Section
 2.3 Block diagram
 \end_layout
@@ -2202,9 +2195,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Ip_core.emf
+	filename ../pics/IP_core_BD.pdf
 	lyxscale 20
-	scale 22
+	scale 60
 
 \end_inset
 
@@ -2360,9 +2353,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/CAN_Core.emf
+	filename ../pics/IP_core_CAN_Core.pdf
 	lyxscale 20
-	scale 22
+	scale 60
 
 \end_inset
 
@@ -6080,7 +6073,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/PC_Control.emf
 	lyxscale 20
-	scale 18
+	scale 150
 
 \end_inset
 
@@ -6124,7 +6117,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/OP_Control.emf
 	lyxscale 20
-	scale 18
+	scale 150
 
 \end_inset
 
@@ -18717,7 +18710,20 @@ textunderscore STAT}
  This signals the CAN Frame was transmitted.
  In order to save LUTs on FPGA, it is possible to synthesize buffer which
  only supports frame length up to 8 bytes (via generic useFDsize=false).
- 
+ TX_DATA_7 to TX_DATA_20 registers have no meaning then.
+ When this 
+\begin_inset Quotes eld
+\end_inset
+
+reduced
+\begin_inset Quotes erd
+\end_inset
+
+ buffer is synthesized it is still possible to insert frame dlc with length
+ up to 64 bytes.
+ However data 9 to 64 will be lost and only zeroes will be loaded to CAN
+ Core and then transmitted.
+ Transmitt buffer is synthesized into native RAM memory on FPGA.
 \end_layout
 
 \end_inset
@@ -18783,146 +18789,13 @@ textunderscore STAT}
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="14" columns="5">
+<lyxtabular version="3" rows="12" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
-<row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none" width="17cm">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Description (continued)
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none" width="17cm">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Box Frameless
-position "t"
-hor_pos "c"
-has_inner_box 1
-inner_pos "t"
-use_parbox 1
-use_makebox 0
-width "95col%"
-special "none"
-height "1in"
-height_special "totalheight"
-thickness "0.4pt"
-separation "3pt"
-shadowsize "4pt"
-framecolor "black"
-backgroundcolor "none"
-status open
-
-\begin_layout Plain Layout
-TX_DATA_7 to TX_DATA_20 registers have no meaning then.
- When this 
-\begin_inset Quotes eld
-\end_inset
-
-reduced
-\begin_inset Quotes erd
-\end_inset
-
- buffer is synthesized it is still possible to insert frame dlc with length
- up to 64 bytes.
- However data 9 to 64 will be lost and only zeroes will be loaded to CAN
- Core and then transmitted.
- Transmitt buffer is synthesized into native RAM memory on FPGA.
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
 <row>
 <cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
@@ -19512,7 +19385,7 @@ Metadata of Frame in TXT (frame format, DLC...)
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="20" columns="5">
+<lyxtabular version="3" rows="29" columns="5">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="0pt">
 <column alignment="center" valignment="top">
@@ -20491,7 +20364,7 @@ Data to be transmitted
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -20500,7 +20373,7 @@ tran_ident_out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -20509,7 +20382,7 @@ tran_ident_out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -20518,7 +20391,7 @@ out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -20527,125 +20400,11 @@ std_logic_vector
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Identifier to be transmitted
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="5">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0pt">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<row>
-<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none" width="17cm">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Ports (continued)
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Name
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Width
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Direction
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Type
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Description
+Identifier to be transmitted
 \end_layout
 
 \end_inset
@@ -36802,7 +36561,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/RX_Buffer.emf
 	lyxscale 20
-	scale 12
 
 \end_inset
 
@@ -45457,7 +45215,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/UNIT_scheme.emf
 	lyxscale 20
-	scale 15
 
 \end_inset
 
@@ -45914,7 +45671,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/Feature_env.emf
 	lyxscale 20
-	scale 15
 
 \end_inset
 
@@ -46603,7 +46359,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/sanity_env.emf
 	lyxscale 20
-	scale 20
 
 \end_inset
 
@@ -46801,7 +46556,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/bt.emf
 	lyxscale 20
-	scale 20
 
 \end_inset
 
@@ -46879,7 +46633,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/star_topology.emf
 	lyxscale 20
-	scale 9
 
 \end_inset
 
@@ -46957,7 +46710,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/tree_topology.emf
 	lyxscale 20
-	scale 20
 
 \end_inset
 
@@ -47035,7 +46787,6 @@ status open
 \begin_inset Graphics
 	filename ../pics/ring_topology.emf
 	lyxscale 20
-	scale 13
 
 \end_inset
 
