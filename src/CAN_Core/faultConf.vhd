@@ -124,7 +124,8 @@ entity faultConf is
     
     --Error signal for PC control FSM from fault
     -- confinement unit (Bit error or Stuff Error appeared)
-    signal bit_stuff_Error_valid  :out  std_logic;
+    signal bit_Error_valid        :out  std_logic;
+    signal stuff_Error_valid      :out  std_logic;
      
     signal bit_Error_out          :out  std_logic;
     
@@ -158,8 +159,9 @@ entity faultConf is
  
  --Error signal for PC control FSM from fault confinement unit 
  -- (Bit error or Stuff Error appeared)
- signal bit_stuff_Error_valid_r   :     std_logic; 
- 
+ signal bit_Error_valid_r       :  std_logic;
+ signal stuff_Error_valid_r     :  std_logic;
+   
  --Internal bit Error detection (out of BusSync)
  --Note:Bit Error detection functionality moved from busSync.vhd to this module 
  --     due to compactness reasons!
@@ -241,7 +243,9 @@ begin
   error_valid             <=  error_valid_reg; 
   
   --Bit Error or stuff error register to output propagation
-  bit_stuff_Error_valid   <=  bit_stuff_Error_valid_r;
+  bit_Error_valid         <=  bit_Error_valid_r;
+  stuff_Error_valid       <=  stuff_Error_valid_r;
+  
   bit_Error_out           <=  bit_Error_int;
   
   --Detecting bit Error
@@ -257,27 +261,32 @@ begin
   b_s_error_proc:process(clk_sys,res_n)
   begin
   if res_n=ACT_RESET then
-     bit_stuff_Error_valid_r        <=  '0'; 
-  elsif rising_edge(clk_sys)then
-    if( ( OP_State=transciever 
-          and 
-          ( 
-            PC_State=control or 
-            PC_State=data    or 
-            PC_State=crc
-          ) 
-          and 
-          (bit_Error_int='1')
-        )
-        or
-        ( (stuff_Error='1') 
-          and 
-          (not(sp_control=SECONDARY_SAMPLE))
-        )
-      )then
-          bit_stuff_Error_valid_r   <=  '1';
+    bit_Error_valid_r         <= '0';
+    stuff_Error_valid_r       <= '0';
+   elsif rising_edge(clk_sys)then
+    if( OP_State=transciever 
+        and 
+        ( 
+          PC_State=control or 
+          PC_State=data    or 
+          PC_State=crc
+        ) 
+        and 
+        (bit_Error_int='1')
+    )then
+      bit_Error_valid_r         <= '1';
     else
-          bit_stuff_Error_valid_r   <=  '0';
+      bit_Error_valid_r         <= '0';  
+    end if;
+      
+        
+    if((stuff_Error='1') 
+        and 
+       (not(sp_control=SECONDARY_SAMPLE))
+       )then
+      stuff_Error_valid   <=  '1';
+    else
+      stuff_Error_valid   <=  '0';
     end if; 
   end if;
   end process;
@@ -455,7 +464,8 @@ begin
       end if;
       
       --At least one of the errors immediately appeared
-      if(bit_stuff_Error_valid_r='1'  or 
+      if(bit_error_valid_r='1'        or
+         stuff_error_valid_r='1'      or 
          form_Error='1'               or 
          CRC_Error='1'                or 
          ack_Error='1'

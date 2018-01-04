@@ -403,7 +403,8 @@ entity core_top is
    
    --Error signal for PC control FSM from fault confinement unit (Bit error 
    --or Stuff Error appeared)
-   signal bit_stuff_Error_valid   :     std_logic;
+   signal bit_Error_valid         :     std_logic;
+   signal stuff_Error_valid       :     std_logic;
    
    signal bit_Error_out           :     std_logic;
     
@@ -623,8 +624,10 @@ begin
      CRC_Error              =>  CRC_Error,
      ack_Error              =>  ack_Error,
      unknown_state_Error    =>  unknown_state_Error,
-     bit_stuff_Error_valid  =>  bit_stuff_Error_valid,
-       
+     
+     bit_Error_valid        =>  bit_Error_valid,
+     stuff_Error_valid      =>  stuff_Error_valid,
+      
      inc_one            =>  inc_one,
      inc_eight          =>  inc_eight,
      dec_one            =>  dec_one,
@@ -692,7 +695,9 @@ begin
      CRC_Error              =>  CRC_Error,
      ack_Error              =>  ack_Error,
      unknown_state_Error    =>  unknown_state_Error,
-     bit_stuff_Error_valid  =>  bit_stuff_Error_valid,
+     
+     bit_Error_valid        => bit_Error_valid,
+     stuff_Error_valid      => stuff_Error_valid,
         
      enable                 =>  '1',
      bit_Error_sec_sam      =>  bit_Error_sec_sam,
@@ -1090,7 +1095,8 @@ begin
  stat_bus(STAT_CRC_ERROR_INDEX)                       <=  CRC_Error;
  stat_bus(STAT_ACK_ERROR_INDEX)                       <=  ack_Error;
  stat_bus(STAT_UNKNOWN_STATE_ERROR_INDEX)             <=  unknown_state_Error;
- stat_bus(STAT_BIT_STUFF_ERROR_INDEX)                 <=  bit_stuff_Error_valid;
+ stat_bus(STAT_BIT_STUFF_ERROR_INDEX)                 
+          <=  bit_Error_valid or stuff_Error_valid;
  
  stat_bus(STAT_FIRST_BIT_AFTER_INDEX)                       <=  '0';
  stat_bus(STAT_REC_VALID_INDEX)                             <=  rec_valid;

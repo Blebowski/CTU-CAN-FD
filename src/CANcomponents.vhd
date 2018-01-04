@@ -633,7 +633,8 @@ package CANcomponents is
       signal CRC_Error             : out std_logic;
       signal ack_Error             : out std_logic;
       signal unknown_state_Error   : out std_logic;
-      signal bit_stuff_Error_valid : in  std_logic;
+      signal bit_Error_valid       : in  std_logic; 
+      signal stuff_Error_valid     : in  std_logic; 
       signal inc_one               : out std_logic;
       signal inc_eight             : out std_logic;
       signal dec_one               : out std_logic;
@@ -687,7 +688,8 @@ package CANcomponents is
       signal CRC_Error             : in  std_logic;
       signal ack_Error             : in  std_logic;
       signal unknown_state_Error   : in  std_logic;
-      signal bit_stuff_Error_valid : out std_logic;
+      signal bit_Error_valid       : out std_logic;
+      signal stuff_Error_valid     : out std_logic;
       signal inc_one               : in  std_logic;
       signal inc_eight             : in  std_logic;
       signal dec_one               : in  std_logic;
