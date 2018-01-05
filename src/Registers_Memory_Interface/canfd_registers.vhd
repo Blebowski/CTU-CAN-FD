@@ -1302,6 +1302,14 @@ begin
     					  data_out_int(1)                  <=  txt2_arbit_allow;
     					  data_out_int(2)                  <=  txt_bufdir;
     					
+    					------------------------------------------------------- 
+ 			    --Error capture register
+ 			    -------------------------------------------------------
+  					when ERR_CAPT_ADR =>
+  					  data_out_int(31 downto 8)        <=  (OTHERS =>'0');
+  					  data_out_int(7 downto 0)         <=  
+  					       stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW);
+    					
     		    ------------------------------------------------------- 
  			    --Frame counters registers
  			    -------------------------------------------------------  

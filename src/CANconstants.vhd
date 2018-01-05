@@ -587,6 +587,9 @@ package CANconstants is
   constant STAT_ERROR_COUNTER_FD_HIGH   : natural := 288;
   constant STAT_ERROR_COUNTER_FD_LOW    : natural := 273;
 
+  constant STAT_ERC_LOW : natural := 100;
+  constant STAT_ERC_HIGH : natural := 107;
+
   constant STAT_ERROR_STATE_HIGH : natural := 109;
   constant STAT_ERROR_STATE_LOW  : natural := 108;
 

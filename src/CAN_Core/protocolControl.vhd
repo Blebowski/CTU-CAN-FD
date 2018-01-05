@@ -270,7 +270,8 @@ entity protocolControl is
     
     --Error signal for PC control FSM from fault confinement 
     --unit (Bit error or Stuff Error appeared)
-    signal bit_stuff_Error_valid  :in   std_logic; 
+    signal bit_Error_valid        :in   std_logic; 
+    signal stuff_Error_valid      :in   std_logic; 
     
     --Note: New Interface for fault confinement incrementation
     signal inc_one                :out  std_logic;
@@ -642,7 +643,7 @@ entity protocolControl is
   
   --Register for detection of 6 consecutive equal bits!
   signal err_pas_bit_val          :     std_logic;
-  
+
   -----------------------
   --Overload registers --
   -----------------------
@@ -1011,9 +1012,10 @@ begin
     if(drv_ena='0')then
       PC_State                <=  off;
       
-    elsif(bit_stuff_Error_valid='1')then
+    elsif(bit_Error_valid='1' or stuff_Error_valid='1')then     
       PC_State                <=  error;
       FSM_preset              <=  '1';
+      
       if(OP_State=reciever)then
 				
         --Bit Error or Stuff Error detected by reciever (Control,data,CRC) , 

@@ -83,7 +83,8 @@ package CANFD_register_map is
 
   constant TX_STATUS_ADR   : std_logic_vector(11 downto 0) := x"015";
   constant TX_SETTINGS_ADR : std_logic_vector(11 downto 0) := x"016";
-
+  constant ERR_CAPT_ADR : std_logic_vector(11 downto 0) := x"017";
+ 
   constant RX_COUNTER_ADR : std_logic_vector(11 downto 0) := x"02B";
   constant TX_COUNTER_ADR : std_logic_vector(11 downto 0) := x"02C";
 

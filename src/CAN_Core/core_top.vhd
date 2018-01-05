@@ -394,6 +394,8 @@ entity core_top is
    signal form_Error              :     std_logic; --Form Error from PC State
    signal CRC_Error               :     std_logic; --CRC Error from PC State
    
+   signal err_capt                :     std_logic_vector(7 downto 0);   
+   
    --Acknowledge Error from PC State
    signal ack_Error               :     std_logic;
    
@@ -403,7 +405,8 @@ entity core_top is
    
    --Error signal for PC control FSM from fault confinement unit (Bit error 
    --or Stuff Error appeared)
-   signal bit_stuff_Error_valid   :     std_logic;
+   signal bit_Error_valid         :     std_logic;
+   signal stuff_Error_valid       :     std_logic;
    
    signal bit_Error_out           :     std_logic;
     
@@ -623,8 +626,10 @@ begin
      CRC_Error              =>  CRC_Error,
      ack_Error              =>  ack_Error,
      unknown_state_Error    =>  unknown_state_Error,
-     bit_stuff_Error_valid  =>  bit_stuff_Error_valid,
-       
+     
+     bit_Error_valid        =>  bit_Error_valid,
+     stuff_Error_valid      =>  stuff_Error_valid,
+      
      inc_one            =>  inc_one,
      inc_eight          =>  inc_eight,
      dec_one            =>  dec_one,
@@ -692,8 +697,12 @@ begin
      CRC_Error              =>  CRC_Error,
      ack_Error              =>  ack_Error,
      unknown_state_Error    =>  unknown_state_Error,
-     bit_stuff_Error_valid  =>  bit_stuff_Error_valid,
+     
+     bit_Error_valid        => bit_Error_valid,
+     stuff_Error_valid      => stuff_Error_valid,
         
+     err_capt               => err_capt,
+     
      enable                 =>  '1',
      bit_Error_sec_sam      =>  bit_Error_sec_sam,
      
@@ -1018,8 +1027,11 @@ begin
  ------------------------------ 
  stat_bus(511 downto 370)                                  <=  (OTHERS=>'0');
  stat_bus(299 downto 289)                                  <=  (OTHERS=>'0');
- stat_bus(107 downto 90)                                   <=  (OTHERS=>'0');
- stat_bus(80)                                               <=  '0';
+ stat_bus(99 downto 90)                                    <=  (OTHERS=>'0');
+ stat_bus(80)                                              <=  '0';
+ 
+ 
+ stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW)               <= err_capt;
  
  stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW)      
         <=  std_logic_vector(to_unsigned(oper_mode_type'pos(OP_State),2));
@@ -1090,7 +1102,8 @@ begin
  stat_bus(STAT_CRC_ERROR_INDEX)                       <=  CRC_Error;
  stat_bus(STAT_ACK_ERROR_INDEX)                       <=  ack_Error;
  stat_bus(STAT_UNKNOWN_STATE_ERROR_INDEX)             <=  unknown_state_Error;
- stat_bus(STAT_BIT_STUFF_ERROR_INDEX)                 <=  bit_stuff_Error_valid;
+ stat_bus(STAT_BIT_STUFF_ERROR_INDEX)                 
+          <=  bit_Error_valid or stuff_Error_valid;
  
  stat_bus(STAT_FIRST_BIT_AFTER_INDEX)                       <=  '0';
  stat_bus(STAT_REC_VALID_INDEX)                             <=  rec_valid;
