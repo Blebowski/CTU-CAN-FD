@@ -25489,6 +25489,13 @@ name "fig:Max_bitrate-1"
 
 \begin_layout Section
 2.6 Transmitt frame selection
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:2.6-Transmitt-frame"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -37217,8 +37224,14 @@ FRAME_SWAP If frame is inserted into either TXT buffer and the other TXT
  If FRAME_SWAP bit is set to 0 the frame which was transmitted last is rettransm
 itted.
  If FRAME_SWAP is set to 1 the frame for transmission is selected as if
- both frames were inserted for its first transmission as explained in section
- TODO.
+ both frames were inserted for its first transmission as explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2.6-Transmitt-frame"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section
@@ -37410,6 +37423,7 @@ reference "tab:Err_capt_pos"
 \noindent
 \align center
 \begin_inset Float table
+placement h
 wide false
 sideways false
 status open
@@ -37577,6 +37591,7 @@ name "tab:Err_type_pos"
 \noindent
 \align center
 \begin_inset Float table
+placement h
 wide false
 sideways false
 status open
