@@ -37384,12 +37384,26 @@ b11111
 
 \begin_layout Description
 ERR_TYPE Type of error.
- Refer to table TODO.
+ Refer to table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Err_type_pos"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Description
 ERR_POS Position in the frame where the error occured.
- Reffer to table TODO.
+ Reffer to table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Err_capt_pos"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard

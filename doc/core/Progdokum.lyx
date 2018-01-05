@@ -37410,6 +37410,7 @@ reference "tab:Err_capt_pos"
 \noindent
 \align center
 \begin_inset Float table
+placement h
 wide false
 sideways false
 status open
@@ -37577,6 +37578,7 @@ name "tab:Err_type_pos"
 \noindent
 \align center
 \begin_inset Float table
+placement h
 wide false
 sideways false
 status open
