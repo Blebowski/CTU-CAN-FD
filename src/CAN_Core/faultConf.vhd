@@ -54,6 +54,7 @@
 --    30.6.2016  Bug fix. Added equal or greater to fault confinement error 
 --               passive state. According to CAN spec. error counter value equal
 --               or greater than 128 is error passive, not only greater than!
+--    05.1.2017  Added "erc_capt_r" register for last error capture.
 --
 --------------------------------------------------------------------------------
 
@@ -138,6 +139,7 @@ entity faultConf is
     
     --Bit Error detected with secondary sampling point at busSync.vhd
     signal bit_Error_sec_sam      :in   std_logic; 
+    signal err_capt               :out  std_logic_vector(7 downto 0);
     
     -------------------
     --Status outputs --
@@ -194,6 +196,9 @@ entity faultConf is
  
  signal erp_changed_reg           :     std_logic;
  signal error_valid_reg           :     std_logic; 
+ 
+ --Error code capture register as in SJA1000
+ signal erc_capt_r                :     std_logic_vector(7 downto 0);
  
  signal joined_ctr                :     std_logic_vector(2 downto 0);
  
@@ -284,9 +289,9 @@ begin
         and 
        (not(sp_control=SECONDARY_SAMPLE))
        )then
-      stuff_Error_valid   <=  '1';
+      stuff_Error_valid_r   <=  '1';
     else
-      stuff_Error_valid   <=  '0';
+      stuff_Error_valid_r   <=  '0';
     end if; 
   end if;
   end process;
@@ -478,6 +483,69 @@ begin
       
     end if;
   end process;
+  
+  -------------------------------------------------------------------
+  -- Error code capture register
+  -------------------------------------------------------------------
+  err_captr_proc:process(clk_sys,res_n)
+  begin
+    if (res_n = ACT_RESET) then
+       erc_capt_r <= "00011111";
+    elsif (rising_edge(clk_sys)) then
+      
+      ---------------------------------------------
+      --Decoding of error type into the register
+      ---------------------------------------------
+      if(bit_error_valid_r='1') then
+        erc_capt_r(7 downto 5) <= "000";
+      elsif (CRC_Error='1')then
+        erc_capt_r(7 downto 5) <= "001";
+      elsif (form_Error='1')then
+        erc_capt_r(7 downto 5) <= "010";
+      elsif (ack_Error='1')then
+        erc_capt_r(7 downto 5) <= "011";
+      elsif (stuff_error_valid_r='1')then
+        erc_capt_r(7 downto 5) <= "100";
+      else
+        erc_capt_r(7 downto 5) <= erc_capt_r(7 downto 5);
+      end if;
+      
+      ---------------------------------------------
+      --Decoding where error occured
+      ---------------------------------------------
+      if (error_valid_reg= '1') then
+        
+        case PC_State is
+        when  sof => 
+           erc_capt_r(4 downto 0)<="00000";
+        when  arbitration =>
+           erc_capt_r(4 downto 0)<="00001"; 
+        when  control =>
+           erc_capt_r(4 downto 0)<="00010"; 
+        when  data =>
+           erc_capt_r(4 downto 0)<="00011"; 
+        when  crc =>
+           erc_capt_r(4 downto 0)<="00100"; 
+        when  delim_ack =>
+           erc_capt_r(4 downto 0)<="00101"; 
+        when  eof =>
+           erc_capt_r(4 downto 0)<="00110"; 
+        when  interframe =>
+           erc_capt_r(4 downto 0)<="00111"; 
+        when  error =>
+           erc_capt_r(4 downto 0)<="01000"; 
+        when  overload =>
+           erc_capt_r(4 downto 0)<="01000"; 
+        when others =>
+           erc_capt_r(4 downto 0)<="11111"; 
+        end case;
+      else
+        erc_capt_r(4 downto 0) <= erc_capt_r(4 downto 0);
+      end if;
+      
+    end if;
+  end process;
+  
   
   
 end architecture;

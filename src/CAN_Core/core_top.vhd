@@ -394,6 +394,8 @@ entity core_top is
    signal form_Error              :     std_logic; --Form Error from PC State
    signal CRC_Error               :     std_logic; --CRC Error from PC State
    
+   signal err_capt                :     std_logic_vector(7 downto 0);   
+   
    --Acknowledge Error from PC State
    signal ack_Error               :     std_logic;
    
@@ -699,6 +701,8 @@ begin
      bit_Error_valid        => bit_Error_valid,
      stuff_Error_valid      => stuff_Error_valid,
         
+     err_capt               => err_capt,
+     
      enable                 =>  '1',
      bit_Error_sec_sam      =>  bit_Error_sec_sam,
      
@@ -1023,8 +1027,11 @@ begin
  ------------------------------ 
  stat_bus(511 downto 370)                                  <=  (OTHERS=>'0');
  stat_bus(299 downto 289)                                  <=  (OTHERS=>'0');
- stat_bus(107 downto 90)                                   <=  (OTHERS=>'0');
- stat_bus(80)                                               <=  '0';
+ stat_bus(99 downto 90)                                    <=  (OTHERS=>'0');
+ stat_bus(80)                                              <=  '0';
+ 
+ 
+ stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW)               <= err_capt;
  
  stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW)      
         <=  std_logic_vector(to_unsigned(oper_mode_type'pos(OP_State),2));

@@ -643,7 +643,7 @@ entity protocolControl is
   
   --Register for detection of 6 consecutive equal bits!
   signal err_pas_bit_val          :     std_logic;
-  
+
   -----------------------
   --Overload registers --
   -----------------------
@@ -1015,6 +1015,7 @@ begin
     elsif(bit_Error_valid='1' or stuff_Error_valid='1')then     
       PC_State                <=  error;
       FSM_preset              <=  '1';
+      
       if(OP_State=reciever)then
 				
         --Bit Error or Stuff Error detected by reciever (Control,data,CRC) , 

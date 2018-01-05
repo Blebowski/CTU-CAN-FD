@@ -695,6 +695,7 @@ package CANcomponents is
       signal dec_one               : in  std_logic;
       signal enable                : in  std_logic;
       signal bit_Error_sec_sam     : in  std_logic;
+      signal err_capt              : out std_logic_vector(7 downto 0);
       signal bit_Error_out         : out std_logic;
       signal tx_counter_out        : out std_logic_vector(8 downto 0);
       signal rx_counter_out        : out std_logic_vector(8 downto 0);
