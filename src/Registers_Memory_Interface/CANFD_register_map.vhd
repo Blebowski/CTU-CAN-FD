@@ -38,7 +38,8 @@
 --  Package with Address constants for CAN FD register map.
 --------------------------------------------------------------------------------
 -- Revision History:
---    20.12.2017	Created file
+--    20.12.2017	 Created file
+--    06.1.2018   Separated registers CTR_PRES to make the IP-XACT spec. simple
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -67,23 +68,25 @@ package CANFD_register_map is
   constant ERROR_TH_ADR            : std_logic_vector(11 downto 0) := x"005";
   constant ERROR_COUNTERS_ADR      : std_logic_vector(11 downto 0) := x"006";
   constant ERROR_COUNTERS_SPEC_ADR : std_logic_vector(11 downto 0) := x"007";
-  constant FILTER_A_VAL_ADR        : std_logic_vector(11 downto 0) := x"008";
-  constant FILTER_A_MASK_ADR       : std_logic_vector(11 downto 0) := x"009";
-  constant FILTER_B_VAL_ADR        : std_logic_vector(11 downto 0) := x"00A";
-  constant FILTER_B_MASK_ADR       : std_logic_vector(11 downto 0) := x"00B";
-  constant FILTER_C_VAL_ADR        : std_logic_vector(11 downto 0) := x"00C";
-  constant FILTER_C_MASK_ADR       : std_logic_vector(11 downto 0) := x"00D";
-  constant FILTER_RAN_LOW_ADR      : std_logic_vector(11 downto 0) := x"00E";
-  constant FILTER_RAN_HIGH_ADR     : std_logic_vector(11 downto 0) := x"00F";
-  constant FILTER_CONTROL_ADR      : std_logic_vector(11 downto 0) := x"010";
-  constant RX_INFO_1_ADR           : std_logic_vector(11 downto 0) := x"011";
-  constant RX_INFO_2_ADR           : std_logic_vector(11 downto 0) := x"012";
-  constant RX_DATA_ADR             : std_logic_vector(11 downto 0) := x"013";
-  constant TRV_DELAY_ADR           : std_logic_vector(11 downto 0) := x"014";
+  constant CTR_PRES                : std_logic_vector(11 downto 0) := x"008";
+   
+  constant FILTER_A_VAL_ADR        : std_logic_vector(11 downto 0) := x"009";
+  constant FILTER_A_MASK_ADR       : std_logic_vector(11 downto 0) := x"00A";
+  constant FILTER_B_VAL_ADR        : std_logic_vector(11 downto 0) := x"00B";
+  constant FILTER_B_MASK_ADR       : std_logic_vector(11 downto 0) := x"00C";
+  constant FILTER_C_VAL_ADR        : std_logic_vector(11 downto 0) := x"00D";
+  constant FILTER_C_MASK_ADR       : std_logic_vector(11 downto 0) := x"00E";
+  constant FILTER_RAN_LOW_ADR      : std_logic_vector(11 downto 0) := x"00F";
+  constant FILTER_RAN_HIGH_ADR     : std_logic_vector(11 downto 0) := x"010";
+  constant FILTER_CONTROL_ADR      : std_logic_vector(11 downto 0) := x"011";
+  constant RX_INFO_1_ADR           : std_logic_vector(11 downto 0) := x"012";
+  constant RX_INFO_2_ADR           : std_logic_vector(11 downto 0) := x"013";
+  constant RX_DATA_ADR             : std_logic_vector(11 downto 0) := x"014";
+  constant TRV_DELAY_ADR           : std_logic_vector(11 downto 0) := x"015";
 
-  constant TX_STATUS_ADR   : std_logic_vector(11 downto 0) := x"015";
-  constant TX_SETTINGS_ADR : std_logic_vector(11 downto 0) := x"016";
-  constant ERR_CAPT_ADR : std_logic_vector(11 downto 0) := x"017";
+  constant TX_STATUS_ADR   : std_logic_vector(11 downto 0) := x"016";
+  constant TX_SETTINGS_ADR : std_logic_vector(11 downto 0) := x"017";
+  constant ERR_CAPT_ADR : std_logic_vector(11 downto 0) := x"018";
  
   constant RX_COUNTER_ADR : std_logic_vector(11 downto 0) := x"02B";
   constant TX_COUNTER_ADR : std_logic_vector(11 downto 0) := x"02C";
