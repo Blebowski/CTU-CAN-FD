@@ -34063,7 +34063,7 @@ Default value
 \end_layout
 
 \begin_layout Description
-BIT_RAN_LOW_VAL High threshold value
+BIT_RAN_HIGH_VAL High threshold value
 \end_layout
 
 \begin_layout Section
@@ -39713,7 +39713,7 @@ C_ERR Capture when error appeared.
 \end_layout
 
 \begin_layout Description
-C_OVL Capture when error appeared.
+C_OVL Capture when overload frame appeared.
 \end_layout
 
 \begin_layout Description
