@@ -33175,7 +33175,7 @@ Default value
 \begin_layout Description
 \noindent
 \align left
-ERR_NORM_VAL Number of errors in the Data bit time.
+ERR_FD_VAL Number of errors in the Data bit time.
  
 \end_layout
 

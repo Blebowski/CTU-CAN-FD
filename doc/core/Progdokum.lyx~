@@ -32988,16 +32988,7 @@ label{sec:ERR_NORM}
 \end_layout
 
 \begin_layout Description
-Type: Read/Write
-\end_layout
-
-\begin_layout Standard
-When reading from register bit meaning is according to ERR_NORM register.
- When writing to this register bit meaning is according to CTR_PRES_SPECIAL.
-\end_layout
-
-\begin_layout Standard
-ERR_NORM:
+Type: Read
 \begin_inset Separator latexpar
 \end_inset
 
