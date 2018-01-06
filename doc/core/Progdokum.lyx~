@@ -39721,7 +39721,7 @@ C_BRS Capture when bit rate is shifted.
 \end_layout
 
 \begin_layout Description
-C_ARBS Capture when Overload frame is transmitted.
+C_ARBS Capture when Arbitration field is started.
 \end_layout
 
 \begin_layout Description

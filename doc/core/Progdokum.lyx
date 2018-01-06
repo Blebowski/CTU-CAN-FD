@@ -39757,10 +39757,6 @@ C_TRS Capture when the unit starts transmitting.
 \end_layout
 
 \begin_layout Description
-C_TRS Capture when frame transmission started.
-\end_layout
-
-\begin_layout Description
 C_RES Capture when receive of frame started.
 \end_layout
 
