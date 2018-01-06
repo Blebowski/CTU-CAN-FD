@@ -53,7 +53,7 @@
 					<ipxact:field>
 						<ipxact:name>RST</ipxact:name>
 						<ipxact:displayName>RST</ipxact:displayName>
-						<ipxact:description>Activating this bit resets the controller. It has the same eect as logic 0 on res_n input of controller</ipxact:description>
+						<ipxact:description>Activating this bit resets the controller. It has the same effect as logic 0 on res_n input of controller</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -77,8 +77,8 @@
 					<ipxact:field>
 						<ipxact:name>AFM</ipxact:name>
 						<ipxact:displayName>AFM</ipxact:displayName>
-						<ipxact:description>Acceptance lters mode. Activating this bit enables usage of acceptance lters. If disabled, every received frame
-is stored in the RX buer.</ipxact:description>
+						<ipxact:description>Acceptance filters mode. Activating this bit enables usage of acceptance filters. If disabled, every received frame
+is stored in the RX buffer.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -90,7 +90,7 @@ is stored in the RX buer.</ipxact:description>
 					<ipxact:field>
 						<ipxact:name>FDE</ipxact:name>
 						<ipxact:displayName>FDE</ipxact:displayName>
-						<ipxact:description>Enable exible data rate support. When this bit is inactive, receiving recessive EDL bit (Flexible data rate frame) causes Form error.</ipxact:description>
+						<ipxact:description>Enable flexible data rate support. When this bit is inactive, receiving recessive EDL bit (Flexible data rate frame) causes Form error.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -126,7 +126,7 @@ is stored in the RX buer.</ipxact:description>
 					<ipxact:field>
 						<ipxact:name>RTRP</ipxact:name>
 						<ipxact:displayName>RTRP</ipxact:displayName>
-						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit species
+						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies
 the behavior of controller when this situation happens. If the bit is active then all zeros are sent and inserted dlc is ignored. If a bit is inactive then inserted dlc is sent.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
@@ -174,7 +174,7 @@ the behavior of controller when this situation happens. If the bit is active the
 					<ipxact:field>
 						<ipxact:name>RRB</ipxact:name>
 						<ipxact:displayName>RRB</ipxact:displayName>
-						<ipxact:description>Release Receive buer. Writing logic 1 deletes all data from the Receive buer.</ipxact:description>
+						<ipxact:description>Release Receive buffer. Writing logic 1 deletes all data from the Receive buffer.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -186,7 +186,7 @@ the behavior of controller when this situation happens. If the bit is active the
 					<ipxact:field>
 						<ipxact:name>CDO</ipxact:name>
 						<ipxact:displayName>CDO</ipxact:displayName>
-						<ipxact:description>Clear data overrun ag. Writing logic 1 will clear overrun ag.</ipxact:description>
+						<ipxact:description>Clear data overrun flag. Writing logic 1 will clear overrun flag.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -208,7 +208,7 @@ the behavior of controller when this situation happens. If the bit is active the
 					<ipxact:field>
 						<ipxact:name>RBS</ipxact:name>
 						<ipxact:displayName>RBS</ipxact:displayName>
-						<ipxact:description>Active value of this bit means Receive buer is not empty.</ipxact:description>
+						<ipxact:description>Active value of this bit means Receive buffer is not empty.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -220,7 +220,7 @@ the behavior of controller when this situation happens. If the bit is active the
 					<ipxact:field>
 						<ipxact:name>TBS</ipxact:name>
 						<ipxact:displayName>TBS</ipxact:displayName>
-						<ipxact:description>TX buer status. Active value of this bit means both TXT buers are full and frame can not be inserted for transmission</ipxact:description>
+						<ipxact:description>TXT buffer status. Active value of this bit means both TXT buffers are full and frame can not be inserted for transmission</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -496,7 +496,7 @@ the behavior of controller when this situation happens. If the bit is active the
 				<ipxact:register>
 					<ipxact:name>INT_ENA</ipxact:name>
 					<ipxact:displayName>INT_ENA</ipxact:displayName>
-					<ipxact:description>Register enables interrupts by dierent sources. Logic 1 in each bit means interrupt is allowed</ipxact:description>
+					<ipxact:description>Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hA</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -531,7 +531,7 @@ the behavior of controller when this situation happens. If the bit is active the
 					<ipxact:field>
 						<ipxact:name>EPIE</ipxact:name>
 						<ipxact:displayName>EPIE</ipxact:displayName>
-						<ipxact:description>Node became error passive or bus o interrupt enable</ipxact:description>
+						<ipxact:description>Node became error passive or bus off interrupt enable</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -596,7 +596,7 @@ the behavior of controller when this situation happens. If the bit is active the
 					<ipxact:field>
 						<ipxact:name>RFIE</ipxact:name>
 						<ipxact:displayName>RFIE</ipxact:displayName>
-						<ipxact:description>Receive buer full interrupt enable</ipxact:description>
+						<ipxact:description>Receive buffer full interrupt enable</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -784,7 +784,7 @@ the behavior of controller when this situation happens. If the bit is active the
 				<ipxact:register>
 					<ipxact:name>BRP</ipxact:name>
 					<ipxact:displayName>BRP</ipxact:displayName>
-					<ipxact:description>Baud rate Prescaler register for Nominal bit time. Species time quanta duration.</ipxact:description>
+					<ipxact:description>Baud rate Prescaler register for Nominal bit time. Specifies time quanta duration.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h12</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -829,8 +829,8 @@ the behavior of controller when this situation happens. If the bit is active the
 					<ipxact:name>EWL</ipxact:name>
 					<ipxact:displayName>EWL</ipxact:displayName>
 					<ipxact:description>Error warning limit register. If an error warning limit is reached interrupt can be called. Error warning limit indicates
-heavily disturbed bus. Note that according to CAN specication this value is xed at 96 and should not be congurable!
-The conguration of this value is one of the extra features of this IP Core.</ipxact:description>
+heavily disturbed bus. Note that according to CAN specification this value is fixed at 96 and should not be configurable!
+The configuration of this value is one of the extra features of this IP Core.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -852,9 +852,9 @@ The conguration of this value is one of the extra features of this IP Core.</ip
 				<ipxact:register>
 					<ipxact:name>ERP</ipxact:name>
 					<ipxact:displayName>ERP</ipxact:displayName>
-					<ipxact:description>Error passive limit. When one of error counters (RXC/TXC) exceeds this value, it changes Fault connement state to
-error passive. Note that according to CAN specication this value is xed at 128 and should not be congurable! The
-conguration of this value is one of the extra features of this IP Core. Note that IP Core always turns to bus_o state
+					<ipxact:description>Error passive limit. When one of error counters (RXC/TXC) exceeds this value, it changes Fault confinement state to
+error passive. Note that according to CAN specification this value is fixed at 128 and should not be configurable! The
+configuration of this value is one of the extra features of this IP Core. Note that IP Core always turns to bus_off state
 once any error counter reaches 255!</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h15</ipxact:addressOffset>
@@ -1136,7 +1136,7 @@ triggering condition is valid.</ipxact:description>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>T_ERPC</ipxact:name>
-						<ipxact:description>Trigger on Fault connement state changed</ipxact:description>
+						<ipxact:description>Trigger on Fault confinement state changed</ipxact:description>
 						<ipxact:bitOffset>15</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1213,7 +1213,7 @@ triggering condition is valid.</ipxact:description>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>T_ARBS</ipxact:name>
-						<ipxact:description>Trigger on Arbitration led starts</ipxact:description>
+						<ipxact:description>Trigger on Arbitration field starts</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1224,7 +1224,7 @@ triggering condition is valid.</ipxact:description>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>T_CTRS</ipxact:name>
-						<ipxact:description>Trigger on Control eld starts</ipxact:description>
+						<ipxact:description>Trigger on Control field starts</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1268,7 +1268,7 @@ triggering condition is valid.</ipxact:description>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>T_DATS</ipxact:name>
-						<ipxact:description>Trigger on Data eld starts</ipxact:description>
+						<ipxact:description>Trigger on Data field starts</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1279,7 +1279,7 @@ triggering condition is valid.</ipxact:description>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>T_CRCS</ipxact:name>
-						<ipxact:description>Trigger on CRC eld starts</ipxact:description>
+						<ipxact:description>Trigger on CRC field starts</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1604,7 +1604,7 @@ controller is transceiving on the bus. During the reception this value remains f
 						<ipxact:name>DESTUFF_COUNT</ipxact:name>
 						<ipxact:description>Actual de-stuff count modulo 8 as defined in ISO FD protocol. De-Stuff count is erased in the
 beginning of the frame and increased by one with each de-stuffed bit until STUFF count field in ISO FD CRC.
-Then it stays fixed until beginning of next frame. In non-ISO FD or normal CAN de-stu bits are counted until
+Then it stays fixed until beginning of next frame. In non-ISO FD or normal CAN de-stuff bits are counted until
 the end of the frame. Note that this field is NOT grey encoded as defined in ISO FD standard. De-stuff count is
 calculated in both. Transceiver as well as receiver.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
@@ -1956,7 +1956,7 @@ is not captured).</ipxact:description>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>C_ERC</ipxact:name>
-						<ipxact:description>Capture when Fault connement state is changed.</ipxact:description>
+						<ipxact:description>Capture when Fault confinement state is changed.</ipxact:description>
 						<ipxact:bitOffset>14</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2021,7 +2021,7 @@ is not captured).</ipxact:description>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>TX_COUNTER_VAL</ipxact:name>
-						<ipxact:description>Counter for transcieved frames to enable bus trac measurement.</ipxact:description>
+						<ipxact:description>Counter for transcieved frames to enable bus traffic measurement.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -2246,10 +2246,10 @@ This register can be used for transceiver TXD to RXD delay verifcation.</ipxact:
 				<ipxact:register>
 					<ipxact:name>RX_DATA</ipxact:name>
 					<ipxact:displayName>RX_DATA</ipxact:displayName>
-					<ipxact:description>The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buer is described in Figure 7. By
+					<ipxact:description>The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By
 reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the
-buer. Next Read from this register returns next word of CAN frame. First stored word in the buer is FRAME_FORM,
-next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit
+buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM,
+next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit
 or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
@@ -2270,7 +2270,7 @@ or 32 bit), the read_pointer automatically increases. It is recomended to use 32
 				<ipxact:register>
 					<ipxact:name>RX_RPP</ipxact:name>
 					<ipxact:displayName>RX_RPP</ipxact:displayName>
-					<ipxact:description>Read pointer position in th Receive buer. When a new frame is stored write pointer is increased
+					<ipxact:description>Read pointer position in th Receive buffer. When a new frame is stored write pointer is increased
 accordingly.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4E</ipxact:addressOffset>
@@ -2280,7 +2280,7 @@ accordingly.</ipxact:description>
 					<ipxact:field>
 						<ipxact:name>RX_RPP_VAL</ipxact:name>
 						<ipxact:displayName>RX_RPP_VAL</ipxact:displayName>
-						<ipxact:description>Read pointer position in the Receive buer. When RX_DATA register is read, read pointer is
+						<ipxact:description>Read pointer position in the Receive buffer. When RX_DATA register is read, read pointer is
 increased accordingly</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
@@ -2289,7 +2289,7 @@ increased accordingly</ipxact:description>
 				<ipxact:register>
 					<ipxact:name>RX_WPP</ipxact:name>
 					<ipxact:displayName>RX_WPP</ipxact:displayName>
-					<ipxact:description>Write pointer position in th Receive buer. When a new frame is stored write pointer is increased</ipxact:description>
+					<ipxact:description>Write pointer position in th Receive buffer. When a new frame is stored write pointer is increased</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4D</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -2298,7 +2298,7 @@ increased accordingly</ipxact:description>
 					<ipxact:field>
 						<ipxact:name>RX_WPP_VALUE</ipxact:name>
 						<ipxact:displayName>RX_WPP_VALUE</ipxact:displayName>
-						<ipxact:description>Write pointer position in th Receive buer. When a new frame is stored write pointer is increased</ipxact:description>
+						<ipxact:description>Write pointer position in th Receive buffer. When a new frame is stored write pointer is increased</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2328,7 +2328,7 @@ increased accordingly</ipxact:description>
 				<ipxact:register>
 					<ipxact:name>RX_STATUS</ipxact:name>
 					<ipxact:displayName>RX_STATUS</ipxact:displayName>
-					<ipxact:description>Information register one about FIFO Receive buer.</ipxact:description>
+					<ipxact:description>Information register one about FIFO Receive buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -2337,7 +2337,7 @@ increased accordingly</ipxact:description>
 					<ipxact:field>
 						<ipxact:name>RX_EMPTY</ipxact:name>
 						<ipxact:displayName>RX_EMPTY</ipxact:displayName>
-						<ipxact:description>Receive buer is empty.</ipxact:description>
+						<ipxact:description>Receive buffer is empty.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2585,7 +2585,7 @@ increased accordingly</ipxact:description>
 					<ipxact:displayName>FILTER_RAN_LOW</ipxact:displayName>
 					<ipxact:description>Lower threshold of the Range filter. Note that 29-bit value of range threshold is not the same format as transmitted
 and received identifier! In TX_DATA_4 (transmitted identifier) BASE Identifier is at 11 LSB bits and Extension at bits
-28-12. However, actual decimal value of the Identier is that BASE identifier is at MSB bits and 18 LSB bits is identifier
+28-12. However, actual decimal value of the Identifier is that BASE identifier is at MSB bits and 18 LSB bits is identifier
 extension. The unsigned binary value of the identifier must be written into this register! Note that filter support is
 available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_ran=false&quot;. If the particular filter
 is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
@@ -2638,7 +2638,7 @@ is not supported, writes to this register have no effect and read will return al
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_C_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_C_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance lters. Logic 1 indicates this bit of Income identier is compared with
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with
 the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2680,7 +2680,7 @@ the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipx
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_B_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_B_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance lters. Logic 1 indicates this bit of Income identier is compared with
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with
 the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2706,7 +2706,7 @@ is not supported, writes to this register have no effect and read will return al
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_A_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_A_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance lters. Logic 1 indicates this bit of Income identier is compared with
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with
 the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2849,8 +2849,8 @@ the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipx
 					<ipxact:field>
 						<ipxact:name>RXC_VAL</ipxact:name>
 						<ipxact:displayName>RXC_VAL</ipxact:displayName>
-						<ipxact:description>Receive error counter. This register determines Fault conment state (Error active,Error passive, Bus o)
-according to CAN specication.</ipxact:description>
+						<ipxact:description>Receive error counter. This register determines Fault confiment state (Error active,Error passive, Bus off)
+according to CAN specification.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
