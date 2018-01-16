@@ -36,8 +36,6 @@
 ##
 ################################################################################
 
-
-
 import argparse
 import sys
 import time
@@ -45,12 +43,15 @@ import importlib.util
 import os
 import inspect
 
+################################################################################
 # File path to the local repo of the PyXact framework
+################################################################################
 PYXACT_PATH = "E:\Skola\CVUT-FEL\ipyxact"
+
 sys.path.insert(0, PYXACT_PATH)
 from ipyxact.ipyxact import Component
-
 from license_updater import *
+
 
 def parse_args():
 	parser = argparse.ArgumentParser(
@@ -66,7 +67,8 @@ def parse_args():
 	parser.add_argument('--addrMap', dest='addrMap', help=""" Name of the 
 								IP-XACT Memory map which should be used for
 								address constants generation.""")
-	parser.add_argument('--wordWidth', dest='wordWidth', help=""" Size of the
+	parser.add_argument('--wordWidth', dest='wordWidth', type=int, 
+							help=""" Size of the
 							access bus word. Register bit field offsets are
 							concatenated into word width size instead of simple
 							offset from beginning of register. (E.g. 32 bit  ->
@@ -90,11 +92,14 @@ def write_comment(of, input, prefix):
 		of.write('{}-- {}\n'.format(prefix, line))
 
 
-
-
-
-
-
+################################################################################
+# Write the header part of the VHDL package. With Basic iee.std_logic_1164 
+# include.
+# 
+# Arguments:
+#  packageName 	- name of the package
+#  comment		- comment sign to use ('-')
+################################################################################
 def write_prologue(of, packageName, comment):
 	comLine = '{:{fill}<80}\n'.format("", fill="-",)
 	purp = '-- Purpose:\n'
@@ -104,11 +109,27 @@ def write_prologue(of, packageName, comment):
 	of.write('Library ieee;\nuse ieee.std_logic_1164.all;\n\n')
 	of.write('package {} is\n\n'.format(packageName))
 
+
+################################################################################
+# Write the ending part of the package.
+#
+# Arguments:
+#
+################################################################################	
 def write_epilogue(of):
 	of.write('end package;')
 
 
-
+################################################################################
+# Write single bitfield as VHDL constant of certain register.
+#
+# Arguments:
+#  of		 	- Output file to write
+#  elem			- Bitfield element to write
+#  reg			- Register that owns the bitfield
+#  type			- type of the VHDL constant (TODO: support other than natural)
+#  busWidth		- Width of the data word for bitfield offset concatenation
+################################################################################	
 def write_reg_elem(of, elem, reg, type, busWidth):
 	#Calculate the bit index in the data word based on bus width that
 	#is used to acccess the register
@@ -128,6 +149,15 @@ def write_reg_elem(of, elem, reg, type, busWidth):
 		post = '{:>{}}'.format(post, 50-len(pref))
 		of.write(pref + post)
 
+
+################################################################################
+# Process each address block and write the register field constants within it.
+#
+# Arguments:
+#  of		 	- Output file to write
+#  memoryMap	- Memory map object to process
+#  busWidth		- Width of the bus for bit field offset concatenation!
+################################################################################	
 def write_reg_bits(of, registers, type, busWidth):
 	for reg in registers:
 		
@@ -145,11 +175,31 @@ def write_reg_bits(of, registers, type, busWidth):
 				
 		of.write('\n')
 
+
+################################################################################
+# Process each address block and write the register field constants within it.
+#
+# Arguments:
+#  of		 	- Output file to write
+#  memoryMap	- Memory map object to process
+#  busWidth		- Width of the bus for bit field offset concatenation!
+################################################################################	
 def write_memory_map_fields(of, memoryMap, busWidth):
 	for block in memoryMap.addressBlock:
 		write_reg_bits(of, block.register, "natural", busWidth)
 
 
+################################################################################
+# Write Address block offset as VHDL constant.
+#
+# TODO: Add support for naturals!
+#
+# Arguments:
+#  of		 	- Output file to write
+#  addressBlock	- Address block where to write the registers from
+#  vhdlType		- VHDL type to use for constant (std_logic_vector etc...)
+#  vhdlLen		- Length of the VHDL type - TODO: create support for 'natural'!
+################################################################################	
 def write_address_block_head(of, addressBlock, vhdlType, vhdlLen):
 	
 	# Write capital comment with name of the address Block
@@ -167,6 +217,17 @@ def write_address_block_head(of, addressBlock, vhdlType, vhdlLen):
 	post = '{:>{}}'.format(post, pref_len)
 	of.write(pref+post+"\n")
 
+
+################################################################################
+# Write register offsets as VHDL constants of defined type in from given
+# address block.
+#
+# Arguments:
+#  of		 	- Output file to write
+#  addressBlock	- Address block where to write the registers from
+#  vhdlType		- VHDL type to use for constant (std_logic_vector etc...)
+#  vhdlLen		- Length of the VHDL type - TODO: create support for 'natural'!
+################################################################################	
 def write_address_block_regs(of, addressBlock, vhdlType, vhdlLen):
 	
 	for reg in sorted(addressBlock.register, key=lambda a: a.addressOffset):
@@ -177,8 +238,19 @@ def write_address_block_regs(of, addressBlock, vhdlType, vhdlLen):
 		post = '{:>{}}'.format(post, pref_len)
 		of.write(pref+post)
 	of.write('\n\n');
+	
 		
-		
+################################################################################
+# Iterate through address blocks in the memory map and write:
+#  1. Address constant representing the highest bits defined by region size.
+#		(Assuming blocks of the same size!)
+#  2. Adresss offsets of each register within the Address block!
+#
+# Arguments:
+#  of		 	- Output file to write
+#  memoryMap	- Memory map object from ipyxact
+#  vhdlType		- VHDL type to use for constant (std_logic_vector etc...)
+################################################################################	
 def write_memory_map_addr(of, memoryMap, vhdlType):
 	#Each Address block reflects to VHDL memory region
 	for block in memoryMap.addressBlock:
@@ -220,8 +292,7 @@ if __name__ == '__main__':
 					write_memory_map_addr(of, map, "std_logic_vector")
 				if map.name == args.fieldMap:
 					print ("Writing bit fields of '%s' register map" % args.fieldMap)
-					write_memory_map_fields(of, map, 32)
+					write_memory_map_fields(of, map, args.wordWidth)
 			
 			write_epilogue(of)
-			
 			print ("Created '%s' output file" % args.outFile) 
