@@ -95,7 +95,8 @@
 --    12.12.2017  Renamed entity to  "canfd_registers" instead of "registers"
 --                to avoid possible name conflicts.
 --    20.12.2017  Removed obsolete tran_data_in signal. Removed obsolete 
---                tx_data_reg.
+--                tx_data_reg. Added supoort for byte enable signal on register
+--                writes and reads.
 --    27.12.2017  Added "txt_frame_swap" bit for frame swapping after the
 --                frame retransmission.
 --    28.12.2017  Added support for "tx_time_suport" and Filter Status register.
@@ -1498,7 +1499,7 @@ begin
   drv_bus(351)                                      <=  '0';
   drv_bus(355 downto 354)                           <=  (OTHERS=>'0');
   drv_bus(360 downto 358)                           <=  (OTHERS=>'0');
-  drv_bus(365 downto 363)                           <=  (OTHERS=>'0');
+  drv_bus(365 downto 364)                           <=  (OTHERS=>'0');
   drv_bus(370 downto 368)                           <=  (OTHERS=>'0');
   drv_bus(371)                                      <=  '0';
   drv_bus(375 downto 373)                           <=  (OTHERS=>'0');
