@@ -59,7 +59,7 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
-use work.CANFD_register_map.all;
+use work.CAN_FD_register_map.all;
 
 package abort_transmittion_feature is
   

@@ -45,7 +45,7 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-package CANFD_register_map is
+package CAN_FD_register_map is
 
   ------------------------------------------------------------------------------
   --Adress Offsets
