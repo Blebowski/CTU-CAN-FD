@@ -204,14 +204,6 @@ entity CAN_top_level is
   -- Registers <--> TX Buffer, TXT Buffer
   ------------------------------------------------------------------------------
     
-  --Info that message store into buffer from driving registers failed
-  --because buffer is full
-  signal txt1_disc    : std_logic;
-  
-  --Info that message store into buffer from driving registers failed
-  --because buffer is full 
-  signal txt2_disc    : std_logic;
-  
   --Data into the RAM of TXT Buffer
   signal tran_data    : std_logic_vector(31 downto 0);
   
@@ -518,9 +510,7 @@ begin
       tran_data            => tran_data,
       tran_addr            => tran_addr,
       txt2_empty           => txt2_buffer_empty,
-      txt2_disc            => txt2_disc,
       txt1_empty           => txt1_buffer_empty,
-      txt1_disc            => txt1_disc,
       int_vector           => int_vector,
       trv_delay_out        => trv_delay_out,
       loger_act_data       => loger_act_data,

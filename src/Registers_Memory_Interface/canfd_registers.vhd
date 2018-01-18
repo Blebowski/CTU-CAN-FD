@@ -100,6 +100,7 @@
 --    27.12.2017  Added "txt_frame_swap" bit for frame swapping after the
 --                frame retransmission.
 --    28.12.2017  Added support for "tx_time_suport" and Filter Status register.
+--    18.01.2018  Removed txt1_disc, txt2_disc obsolete signals
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -207,16 +208,8 @@ entity canfd_registers is
     --Logic 1 signals empty TxTime buffer
     signal txt1_empty           :in   std_logic;                      
     
-    --Info that frame store into buffer from driving registers failed because 
-    -- buffer is full                                                                  
-    signal txt1_disc            :in   std_logic;                      
-    
     --Logic 1 signals empty TxTime buffer
     signal txt2_empty           :in   std_logic;                      
-    
-    --Info that frame store into buffer from driving registers failed 
-    --because buffer is full
-    signal txt2_disc            :in   std_logic;                     
     
     ----------------------------------
     -- Bus synchroniser interface

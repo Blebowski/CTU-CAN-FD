@@ -143,9 +143,7 @@ package CANcomponents is
       signal tran_data            : out std_logic_vector(31 downto 0);
       signal tran_addr            : out std_logic_vector(4 downto 0);
       signal txt1_empty           : in  std_logic;
-      signal txt1_disc            : in  std_logic;
       signal txt2_empty           : in  std_logic;
-      signal txt2_disc            : in  std_logic;
       signal trv_delay_out        : in  std_logic_vector(15 downto 0);
       signal int_vector           : in  std_logic_vector(10 downto 0);
       signal loger_act_data       : in  std_logic_vector(63 downto 0);
