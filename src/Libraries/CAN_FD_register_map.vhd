@@ -96,8 +96,8 @@ package CAN_FD_register_map is
   constant LOG_CAPT_CONFIG_ADR      : std_logic_vector(11 downto 0) := x"030";
   constant LOG_STATUS_ADR           : std_logic_vector(11 downto 0) := x"031";
   constant LOG_CMD_ADR              : std_logic_vector(11 downto 0) := x"032";
-  constant LOG_CAPT_EVENT1_ADR      : std_logic_vector(11 downto 0) := x"033";
-  constant LOG_CAPT_EVENT2_ADR      : std_logic_vector(11 downto 0) := x"034";
+  constant LOG_CAPT_EVENT_1_ADR     : std_logic_vector(11 downto 0) := x"033";
+  constant LOG_CAPT_EVENT_2_ADR     : std_logic_vector(11 downto 0) := x"034";
 
   constant DEBUG_REG_ADR : std_logic_vector(11 downto 0) := x"035";
   constant YOLO_REG_ADR  : std_logic_vector(11 downto 0) := x"036";
@@ -129,14 +129,14 @@ package CAN_FD_register_map is
   --Register Bits-
   ----------------
   --Status register
-  constant BS_IND  : natural := 7;      -- Bus status
-  constant ES_IND  : natural := 6;      -- Error Status
-  constant TS_IND  : natural := 5;      -- Transmit Status
-  constant RS_IND  : natural := 4;      -- Recieve status
-  constant ET_IND  : natural := 3;      -- Transmit Buffer Status
-  constant TBS_IND : natural := 2;      -- Transmit Buffer Status
-  constant DOS_IND : natural := 1;      -- Data OverRun Status
-  constant RBS_IND : natural := 0;      -- Recieve Buffer Status
+  constant BS_IND  : natural := 23;      -- Bus status
+  constant ES_IND  : natural := 22;      -- Error Status
+  constant TS_IND  : natural := 21;      -- Transmit Status
+  constant RS_IND  : natural := 20;      -- Recieve status
+  constant ET_IND  : natural := 19;      -- Transmit Buffer Status
+  constant TBS_IND : natural := 18;      -- Transmit Buffer Status
+  constant DOS_IND : natural := 17;      -- Data OverRun Status
+  constant RBS_IND : natural := 16;      -- Recieve Buffer Status
 
   --Mode register
   constant FDE_IND      : natural := 4;  -- Flexible datarate enable

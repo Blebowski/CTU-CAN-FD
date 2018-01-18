@@ -1358,10 +1358,10 @@ begin
     					  data_out_int(15 downto 8)        <=  log_size;
     					  data_out_int(23 downto 16)       <=  log_write_pointer;
     					  data_out_int(31 downto 24)       <=  log_read_pointer;
-    			   when LOG_CAPT_EVENT1_ADR=>
+    			   when LOG_CAPT_EVENT_1_ADR=>
     					  data_out_int                     <=  
     					      loger_act_data(63 downto 32);
-    			   when LOG_CAPT_EVENT2_ADR=>
+    			   when LOG_CAPT_EVENT_2_ADR=>
     					  data_out_int                     <=  
     					      loger_act_data(31 downto 0);
     			      			   
@@ -1439,7 +1439,7 @@ begin
   --      it directly!
   
   --Status register
-  status_reg(BS_IND)<= '1' when  error_state_type'VAL(
+  status_reg(BS_IND mod 8)<= '1' when  error_state_type'VAL(
                                    to_integer(unsigned(
                                        stat_bus(STAT_ERROR_STATE_HIGH downto 
                                                 STAT_ERROR_STATE_LOW))))=bus_off 
@@ -1455,17 +1455,17 @@ begin
                                                   STAT_OP_STATE_LOW))))=idle 
                            else
                        '0';
-  status_reg(ES_IND)<='1' when (ewl<stat_bus(STAT_TX_COUNTER_HIGH downto 
+  status_reg(ES_IND mod 8)<='1' when (ewl<stat_bus(STAT_TX_COUNTER_HIGH downto 
                                              STAT_TX_COUNTER_LOW) or
                                 ewl<stat_bus(STAT_RX_COUNTER_HIGH downto 
                                              STAT_RX_COUNTER_LOW)) else '0';
                                 
-  status_reg(TS_IND)<='1' when oper_mode_type'VAL(to_integer(
+  status_reg(TS_IND mod 8)<='1' when oper_mode_type'VAL(to_integer(
                                unsigned(stat_bus(STAT_OP_STATE_HIGH downto 
                                         STAT_OP_STATE_LOW))))=transciever 
                           else
                       '0';
-  status_reg(RS_IND)<='1' when oper_mode_type'VAL(to_integer(
+  status_reg(RS_IND mod 8)<='1' when oper_mode_type'VAL(to_integer(
                                unsigned(stat_bus(STAT_OP_STATE_HIGH downto
                                                  STAT_OP_STATE_LOW))))=reciever
                           else
@@ -1473,12 +1473,12 @@ begin
   
   --When buffer is not full there is one. However still might be not enough
   -- place in buffer
-  status_reg(TBS_IND)<='1' when (txt1_empty='0' and txt2_empty='0') else '0'; 
+  status_reg(TBS_IND mod 8)<='1' when (txt1_empty='0' and txt2_empty='0') else '0'; 
   
   --When at least one message is availiable in the buffer
-  status_reg(RBS_IND)<=not rx_empty; 
-  status_reg(DOS_IND)<=rx_data_overrun;
-  status_reg(ET_IND) <='1' when PC_state=error else '0';
+  status_reg(RBS_IND mod 8)<=not rx_empty; 
+  status_reg(DOS_IND mod 8)<=rx_data_overrun;
+  status_reg(ET_IND mod 8) <='1' when PC_state=error else '0';
    
   --Debug register
   PC_state_reg_vect(0)    <= '1' when PC_State=arbitration else '0';
