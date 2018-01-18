@@ -167,6 +167,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
+use work.CAN_FD_frame_format.all;
 
 entity protocolControl is
   port(

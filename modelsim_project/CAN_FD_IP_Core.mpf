@@ -223,7 +223,7 @@ resolution = 1fs
 UserTimeUnit = default
 
 ; Default run length
-RunLength = 0 ps
+RunLength = 0 fs
 
 ; Maximum iterations that can be run without advancing simulation time
 IterationLimit = 5000
@@ -431,7 +431,7 @@ Project_File_P_6 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 v
 Project_File_7 = ../test/set_env.tcl
 Project_File_P_7 = folder test_framework last_compile 0 compile_order -1 file_type tcl group_id 0 dont_compile 1 ood 1
 Project_File_8 = ../test/sanity/sanity_test.vhd
-Project_File_P_8 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder sanity last_compile 1516295575 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 39 dont_compile 0 cover_nosub 0 vhdl_use93 2002
+Project_File_P_8 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder sanity last_compile 1516300200 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 39 dont_compile 0 cover_nosub 0 vhdl_use93 2002
 Project_File_9 = ../src/Buffers_Message_Handling/messageFilter.vhd
 Project_File_P_9 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 1 vhdl_enable0In 0 folder Buffers_Message_Handling last_compile 1514240783 vhdl_disableopt 0 vhdl_vital 0 cover_excludedefault 0 vhdl_warn1 1 vhdl_warn2 1 vhdl_explicit 1 vhdl_showsource 0 vhdl_warn3 1 cover_covercells 0 vhdl_0InOptions {} vhdl_warn4 1 voptflow 1 cover_optlevel 3 vhdl_options {} vhdl_warn5 1 toggle - ood 0 cover_noshort 0 compile_to work compile_order 0 cover_nosub 0 dont_compile 0 vhdl_use93 2002
 Project_File_10 = ../src/CAN_Core/bitDeStuffing.vhd
@@ -485,7 +485,7 @@ Project_File_P_33 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 
 Project_File_34 = ../test/unit/TX_Arbitrator/txar_unit.tcl
 Project_File_P_34 = compile_order -1 last_compile 0 folder TX_Arbitrator dont_compile 1 group_id 0 file_type tcl ood 1
 Project_File_35 = ../src/CAN_Core/protocolControl.vhd
-Project_File_P_35 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 1 vhdl_enable0In 0 folder CAN_Core last_compile 1515147309 vhdl_disableopt 0 vhdl_vital 0 cover_excludedefault 0 vhdl_warn1 1 vhdl_warn2 1 vhdl_explicit 1 vhdl_showsource 0 vhdl_warn3 1 cover_covercells 0 vhdl_0InOptions {} vhdl_warn4 1 voptflow 1 cover_optlevel 3 vhdl_options {} vhdl_warn5 1 toggle - ood 0 cover_noshort 0 compile_to work compile_order 11 cover_nosub 0 dont_compile 0 vhdl_use93 2002
+Project_File_P_35 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 1 vhdl_enable0In 0 folder CAN_Core last_compile 1516300262 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 11 dont_compile 0 cover_nosub 0 vhdl_use93 2002
 Project_File_36 = ../test/unit/Prescaler/Prescaler_tb.vhd
 Project_File_P_36 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder Prescaler last_compile 1514240783 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 50 dont_compile 0 cover_nosub 0 vhdl_use93 2002
 Project_File_37 = ../test/feature/feature_config.tcl
@@ -497,7 +497,7 @@ Project_File_P_39 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 
 Project_File_40 = ../test/others/prescaler_v3_tb.vhd
 Project_File_P_40 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder others last_compile 1515147309 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 38 dont_compile 0 cover_nosub 0 vhdl_use93 2002
 Project_File_41 = ../src/Libraries/CANconstants.vhd
-Project_File_P_41 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder Libraries last_compile 1515147309 vhdl_disableopt 0 vhdl_vital 0 cover_excludedefault 0 vhdl_warn1 1 vhdl_warn2 1 vhdl_explicit 1 vhdl_showsource 0 vhdl_warn3 1 cover_covercells 0 vhdl_0InOptions {} vhdl_warn4 1 voptflow 1 cover_optlevel 3 vhdl_options {} vhdl_warn5 1 toggle - ood 0 cover_noshort 0 compile_to work compile_order 57 cover_nosub 0 dont_compile 0 vhdl_use93 2002
+Project_File_P_41 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder Libraries last_compile 1516299927 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 57 dont_compile 0 cover_nosub 0 vhdl_use93 2002
 Project_File_42 = ../test/unit/Int_Manager/intm_unit.tcl
 Project_File_P_42 = compile_order -1 last_compile 0 folder Int_Manager dont_compile 1 group_id 0 file_type tcl ood 1
 Project_File_43 = ../test/feature/tx_arb_time_tran.vhd
@@ -519,7 +519,7 @@ Project_File_P_50 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 
 Project_File_51 = ../test/unit/Bit_Stuffing/Bit_Stuffing_tb.vhd
 Project_File_P_51 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder Bit_Stuffing last_compile 1514240783 vhdl_disableopt 0 vhdl_vital 0 cover_excludedefault 0 vhdl_warn1 1 vhdl_warn2 1 vhdl_explicit 1 vhdl_showsource 0 vhdl_warn3 1 cover_covercells 0 vhdl_0InOptions {} vhdl_warn4 1 voptflow 1 cover_optlevel 3 vhdl_options {} vhdl_warn5 1 toggle - ood 0 cover_noshort 0 compile_to work compile_order 40 cover_nosub 0 dont_compile 0 vhdl_use93 2002
 Project_File_52 = ../src/CAN_Core/core_top.vhd
-Project_File_P_52 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 1 vhdl_enable0In 0 folder CAN_Core last_compile 1515147309 vhdl_disableopt 0 vhdl_vital 0 cover_excludedefault 0 vhdl_warn1 1 vhdl_warn2 1 vhdl_explicit 1 vhdl_showsource 0 vhdl_warn3 1 cover_covercells 0 vhdl_0InOptions {} vhdl_warn4 1 voptflow 1 cover_optlevel 3 vhdl_options {} vhdl_warn5 1 toggle - ood 0 cover_noshort 0 compile_to work compile_order 7 cover_nosub 0 dont_compile 0 vhdl_use93 2002
+Project_File_P_52 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 1 vhdl_enable0In 0 folder CAN_Core last_compile 1516300281 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 7 dont_compile 0 cover_nosub 0 vhdl_use93 2002
 Project_File_53 = ../src/rst_sync.vhd
 Project_File_P_53 = vhdl_novitalcheck 0 file_type vhdl group_id 0 cover_nofec 0 vhdl_nodebug 0 vhdl_1164 1 vhdl_noload 0 vhdl_synth 0 vhdl_enable0In 0 folder sources last_compile 1514240783 vhdl_disableopt 0 cover_excludedefault 0 vhdl_vital 0 vhdl_warn1 1 vhdl_showsource 0 vhdl_explicit 1 vhdl_warn2 1 vhdl_0InOptions {} cover_covercells 0 vhdl_warn3 1 vhdl_options {} cover_optlevel 3 voptflow 1 vhdl_warn4 1 ood 0 toggle - vhdl_warn5 1 compile_to work cover_noshort 0 compile_order 52 dont_compile 0 cover_nosub 0 vhdl_use93 2002
 Project_File_54 = ../src/Buffers_Message_Handling/txtBuffer.vhd

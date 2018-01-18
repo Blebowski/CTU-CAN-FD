@@ -73,11 +73,6 @@ package CANconstants is
   constant CAN_BASE_ID_LENGTH : natural := 11;
   constant CAN_EXT_ID_LENGTH  : natural := 18;  --Length Identifier extension only
 
-  constant BASE       : std_logic := '0';
-  constant EXTENDED   : std_logic := '1';
-  constant NORMAL_CAN : std_logic := '0';
-  constant FD_CAN     : std_logic := '1';
-
   constant NO_SYNC   : std_logic_vector := "00";
   constant HARD_SYNC : std_logic_vector := "01";
   constant RE_SYNC   : std_logic_vector := "10";

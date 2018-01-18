@@ -110,6 +110,7 @@ use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 use work.ID_transfer.all;
+use work.CAN_FD_frame_format.all;
 
 architecture Protocol_Control_unit_test of CAN_test is
     
