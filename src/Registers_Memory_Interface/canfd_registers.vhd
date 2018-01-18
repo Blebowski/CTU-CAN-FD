@@ -642,7 +642,7 @@ begin
   --------------------------------------------------------
   -- Decoding of TXT buffer signals...
   --------------------------------------------------------
-  txt_buf_access   <= true when (adress(13 downto 10) = TX_DATA_REGION and scs='1'
+  txt_buf_access   <= true when (adress(13 downto 10) = TX_BUFFER_BLOCK and scs='1'
                                 and swr='1')
                            else
                       false;

@@ -2858,7 +2858,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>ALC_PRESC</ipxact:name>
+					<ipxact:name>ARB_ERROR_PRESC</ipxact:name>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3018,7 +3018,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>LOG_COMMAND</ipxact:name>
+					<ipxact:name>LOG_CMD</ipxact:name>
 					<ipxact:addressOffset>'h32</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3158,7 +3158,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>ERROR_COUNTERS_SP</ipxact:name>
+					<ipxact:name>ERROR_COUNTERS_SPEC</ipxact:name>
 					<ipxact:addressOffset>'h7</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
