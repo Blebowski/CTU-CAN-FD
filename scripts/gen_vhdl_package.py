@@ -128,18 +128,22 @@ def write_epilogue(of):
 #  elem         - Element to write the enum constants for
 #  type			- VHDL type that should define this enum
 ################################################################################	
-def write_enums(of, elem, type):
+def write_enums(of, elem, type, single_type):
 	if (elem.enumeratedValues != []):
 		
 		of.write('\n')
 		of.write('  -- "{}" field enumerated values\n'.format(elem.name))
 		for es in elem.enumeratedValues:
 			for e in sorted(es.enumeratedValue, key=lambda x: x.value):
-				hexFmt= ':0{}X'.format(math.ceil(float(elem.bitWidth)/4))
-				hexFmt='{'+hexFmt+'}'
-				eVal = hexFmt.format(e.value)
-				of.write('  constant {} : {}({} downto 0) := x"{}";\n'.format(
-							e.name, type, elem.bitWidth-1, eVal))
+				if (elem.bitWidth > 1):
+					hexFmt= ':0{}X'.format(math.ceil(float(elem.bitWidth)/4))
+					hexFmt='{'+hexFmt+'}'
+					eVal = hexFmt.format(e.value)
+					of.write('  constant {} : {}({} downto 0) := x"{}";\n'.format(
+								e.name, type, elem.bitWidth-1, eVal))
+				else:
+					of.write("  constant {} : {} := '{}';\n".format(
+								e.name, single_type, e.value))
 
 ################################################################################
 # Write single bitfield as VHDL constant of certain register.
@@ -196,7 +200,7 @@ def write_reg_bits(of, registers, type, busWidth):
 		
 		#Write the enums (iterate separately not to mix up fields and enums)
 		for elem in reg.field:
-			write_enums(of, elem, 'std_logic_vector')
+			write_enums(of, elem, 'std_logic_vector', 'std_logic')
 			
 		of.write('\n')
 
