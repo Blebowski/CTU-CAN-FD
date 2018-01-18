@@ -100,7 +100,8 @@
 --    27.12.2017  Added "txt_frame_swap" bit for frame swapping after the
 --                frame retransmission.
 --    28.12.2017  Added support for "tx_time_suport" and Filter Status register.
---    18.01.2018  Removed txt1_disc, txt2_disc obsolete signals
+--    18.01.2018  Removed txt1_disc, txt2_disc, txt1_commit and txt2_disc 
+--                obsolete signals
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -313,9 +314,6 @@ entity canfd_registers is
   signal log_capt_config        :     std_logic_vector(31 downto 0);
   signal log_cmd                :     std_logic_vector(3 downto 0);
   
-  signal txt1_commit            :     std_logic;
-  signal txt2_commit            :     std_logic;
-  
   signal txt_bufdir             :     std_logic; --TXT write direction register
   
   -- Swap behaviour when frame should be retransmitted and another frame
@@ -415,8 +413,6 @@ architecture rtl of canfd_registers is
     signal log_trig_config        :out  std_logic_vector(31 downto 0);
     signal log_capt_config        :out  std_logic_vector(31 downto 0);
     signal log_cmd                :out  std_logic_vector(3 downto 0);    
-    signal txt1_commit            :out  std_logic;
-    signal txt2_commit            :out  std_logic;
     signal rx_ctr_set             :out  std_logic;
     signal tx_ctr_set             :out  std_logic;
     signal ctr_val_set            :out  std_logic_vector(31 downto 0);
@@ -436,8 +432,6 @@ architecture rtl of canfd_registers is
     
     erctr_pres_value        <=  (OTHERS=>'0');
     erctr_pres_mask         <=  (OTHERS=>'0');
-    txt1_commit             <=  NO_ACTION;
-    txt2_commit             <=  NO_ACTION;
     ctr_val_set             <=  (OTHERS =>'0');
     rx_ctr_set              <=  NO_ACTION;
     tx_ctr_set              <=  NO_ACTION;
@@ -674,10 +668,10 @@ begin
        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
        filter_C_ctrl      ,filter_ran_ctrl        ,txt1_arbit_allow        ,
        txt2_arbit_allow   ,intLoopbackEna         ,log_trig_config         ,
-       log_capt_config    ,log_cmd                ,txt1_commit             ,
-       txt2_commit        ,rx_ctr_set             ,tx_ctr_set              ,
-       ctr_val_set        ,CAN_enable             ,FD_type                 ,         
-       mode_reg           ,txt_frame_swap         ,int_ena_reg            
+       log_capt_config    ,log_cmd                ,rx_ctr_set              ,
+       tx_ctr_set         ,ctr_val_set            ,CAN_enable              ,
+       FD_type            ,mode_reg               ,txt_frame_swap          ,
+       int_ena_reg            
       );
             
       RX_buff_read_first    <= false;
@@ -706,8 +700,8 @@ begin
        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
        filter_C_ctrl      ,filter_ran_ctrl        ,txt1_arbit_allow        ,
        txt2_arbit_allow   ,intLoopbackEna         ,log_trig_config         ,
-       log_capt_config    ,log_cmd                ,txt1_commit             ,
-       txt2_commit        ,rx_ctr_set             ,tx_ctr_set              ,
+       log_capt_config    ,log_cmd                ,
+       rx_ctr_set         ,tx_ctr_set             ,
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
        mode_reg           ,txt_frame_swap         ,int_ena_reg            
       );
@@ -772,8 +766,6 @@ begin
 		interrupt_vector_erase    <=  '0';
 		erctr_pres_value          <=  (OTHERS=>'0');
 		erctr_pres_mask           <=  "0000";
-		txt2_commit               <=  '0';
-		txt1_commit               <=  '0';
 		ctr_val_set               <=  (OTHERS =>'0');
 		rx_ctr_set                <=  '0';
 		tx_ctr_set                <=  '0';
