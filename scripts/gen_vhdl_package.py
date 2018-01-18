@@ -261,7 +261,7 @@ def write_address_block_regs(of, addressBlock, vhdlType, vhdlLen):
 	
 	for reg in sorted(addressBlock.register, key=lambda a: a.addressOffset):
 		pref = '  constant {}_ADR '.format(reg.name.upper())
-		addr = '{:03X}'.format(reg.addressOffset,fill='0')
+		addr = '{:03X}'.format(reg.addressOffset+addressBlock.baseAddress, fill='0')
 		post = ': {}({} downto 0) := x"{}";\n'.format(vhdlType, vhdlLen, addr)
 		pref_len = 80-len(pref)
 		post = '{:>{}}'.format(post, pref_len)
