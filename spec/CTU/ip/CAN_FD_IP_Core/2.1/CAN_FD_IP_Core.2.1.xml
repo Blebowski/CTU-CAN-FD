@@ -2878,7 +2878,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>ERR_COUNTERS</ipxact:name>
+					<ipxact:name>ERROR_COUNTERS</ipxact:name>
 					<ipxact:addressOffset>'h6</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -2978,7 +2978,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>YOLO_REGISTER</ipxact:name>
+					<ipxact:name>YOLO_REG</ipxact:name>
 					<ipxact:addressOffset>'h36</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -2988,7 +2988,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>DEBUG_REGISTER</ipxact:name>
+					<ipxact:name>DEBUG_REG</ipxact:name>
 					<ipxact:addressOffset>'h35</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3078,7 +3078,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>ERROR_CAPTURE</ipxact:name>
+					<ipxact:name>ERR_CAPT</ipxact:name>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
@@ -3158,7 +3158,7 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>ERR_COUNTERS_SP</ipxact:name>
+					<ipxact:name>ERROR_COUNTERS_SP</ipxact:name>
 					<ipxact:addressOffset>'h7</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
