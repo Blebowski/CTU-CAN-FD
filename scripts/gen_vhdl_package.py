@@ -136,10 +136,10 @@ def write_enums(of, elem, type, single_type):
 		for es in elem.enumeratedValues:
 			for e in sorted(es.enumeratedValue, key=lambda x: x.value):
 				if (elem.bitWidth > 1):
-					hexFmt= ':0{}X'.format(math.ceil(float(elem.bitWidth)/4))
-					hexFmt='{'+hexFmt+'}'
-					eVal = hexFmt.format(e.value)
-					of.write('  constant {} : {}({} downto 0) := x"{}";\n'.format(
+					binFmt= ':0{}b'.format(math.ceil(float(elem.bitWidth)))
+					binFmt='{'+binFmt+'}'
+					eVal = binFmt.format(e.value)
+					of.write('  constant {} : {}({} downto 0) := "{}";\n'.format(
 								e.name, type, elem.bitWidth-1, eVal))
 				else:
 					of.write("  constant {} : {} := '{}';\n".format(
