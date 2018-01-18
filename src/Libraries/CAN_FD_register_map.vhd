@@ -152,7 +152,7 @@ package CAN_FD_register_map is
   constant PH2_FD_L              : natural := 27;
   constant PH2_FD_H              : natural := 30;
   constant PROP_FD_L             : natural := 16;
-  constant PROP_FD_H             : natural := 19;
+  constant PROP_FD_H             : natural := 21;
   constant PH1_FD_L              : natural := 22;
   constant PH1_FD_H              : natural := 25;
 
@@ -183,7 +183,7 @@ package CAN_FD_register_map is
   -- Synchronisation jump width registers for both Nominal and Data bit times.
   ------------------------------------------------------------------------------
   constant SJW_L                  : natural := 8;
-  constant SJW_H                 : natural := 10;
+  constant SJW_H                 : natural := 11;
   constant SJW_FD_L              : natural := 12;
   constant SJW_FD_H              : natural := 15;
 
