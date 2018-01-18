@@ -123,7 +123,7 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RTRP</ipxact:name>
+						<ipxact:name>RTR_PREF</ipxact:name>
 						<ipxact:displayName>RTRP</ipxact:displayName>
 						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifie the behavior of controller when this situation happens. If the bit is active then all zeros are sent and inserted dlc is ignored. If a bit is inactive then inserted dlc is sent.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
@@ -1381,8 +1381,8 @@
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
-								<ipxact:name>RECS_EVNT</ipxact:name>
-								<ipxact:displayName>RECS_EVNT</ipxact:displayName>
+								<ipxact:name>RXS_EVNT</ipxact:name>
+								<ipxact:displayName>RXS_EVNT</ipxact:displayName>
 								<ipxact:description>Frame reception has started.</ipxact:description>
 								<ipxact:value>'h11</ipxact:value>
 							</ipxact:enumeratedValue>
@@ -1393,20 +1393,20 @@
 								<ipxact:value>'h1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>STUFF_EVNT</ipxact:name>
-								<ipxact:displayName>STUFF_EVNT</ipxact:displayName>
+								<ipxact:name>STUF_EVNT</ipxact:name>
+								<ipxact:displayName>STUF_EVNT</ipxact:displayName>
 								<ipxact:description>Bit was stuffed.</ipxact:description>
 								<ipxact:value>'h13</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>DOR_EVNT</ipxact:name>
-								<ipxact:displayName>DOR_EVNT</ipxact:displayName>
+								<ipxact:name>OVR_EVNT</ipxact:name>
+								<ipxact:displayName>OVR_EVNT</ipxact:displayName>
 								<ipxact:description>Data overrun appeared on RX Frame</ipxact:description>
 								<ipxact:value>'h15</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>DSTUFF_EVNT</ipxact:name>
-								<ipxact:displayName>DSTUFF_EVNT</ipxact:displayName>
+								<ipxact:name>DSTF_EVNT</ipxact:name>
+								<ipxact:displayName>DSTF_EVNT</ipxact:displayName>
 								<ipxact:description>Bit was destuffed.</ipxact:description>
 								<ipxact:value>'h14</ipxact:value>
 							</ipxact:enumeratedValue>
@@ -1417,56 +1417,56 @@
 								<ipxact:value>'h12</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>ARBL_EVNT</ipxact:name>
-								<ipxact:displayName>ARBL_EVNT</ipxact:displayName>
+								<ipxact:name>ALO_EVNT</ipxact:name>
+								<ipxact:displayName>ALO_EVNT</ipxact:displayName>
 								<ipxact:description>Arbitration lost event</ipxact:description>
 								<ipxact:value>'h2</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>RECV_EVNT</ipxact:name>
-								<ipxact:displayName>RECV_EVNT</ipxact:displayName>
+								<ipxact:name>REC_EVNT</ipxact:name>
+								<ipxact:displayName>REC_EVNT</ipxact:displayName>
 								<ipxact:description>Receive frame valird event</ipxact:description>
 								<ipxact:value>'h3</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>TRANS_EVNT</ipxact:name>
-								<ipxact:displayName>TRANS_EVNT</ipxact:displayName>
+								<ipxact:name>TXS_EVNT</ipxact:name>
+								<ipxact:displayName>TXS_EVNT</ipxact:displayName>
 								<ipxact:description>Frame transmission has started</ipxact:description>
 								<ipxact:value>'h10</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>FCSCH_EVNT</ipxact:name>
-								<ipxact:displayName>FCSCH_EVNT</ipxact:displayName>
+								<ipxact:name>ERP_EVNT</ipxact:name>
+								<ipxact:displayName>ERP_EVNT</ipxact:displayName>
 								<ipxact:description>Fault confinement state has changed</ipxact:description>
 								<ipxact:value>'hF</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>EWLR_EVNT</ipxact:name>
-								<ipxact:displayName>EWLR_EVNT</ipxact:displayName>
+								<ipxact:name>EWL_EVNT</ipxact:name>
+								<ipxact:displayName>EWL_EVNT</ipxact:displayName>
 								<ipxact:description>Error warning limit reached</ipxact:description>
 								<ipxact:value>'hE</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>ACKNR_EVNT</ipxact:name>
-								<ipxact:displayName>ACKNR_EVNT</ipxact:displayName>
+								<ipxact:name>NACK_EVNT</ipxact:name>
+								<ipxact:displayName>NACK_EVNT</ipxact:displayName>
 								<ipxact:description>Acknowledge was not received in ACK Slot</ipxact:description>
 								<ipxact:value>'hD</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>ACKR_EVNT</ipxact:name>
-								<ipxact:displayName>ACKR_EVNT</ipxact:displayName>
+								<ipxact:name>ACK_EVNT</ipxact:name>
+								<ipxact:displayName>ACK_EVNT</ipxact:displayName>
 								<ipxact:description>Acknowledge received</ipxact:description>
 								<ipxact:value>'hC</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>TRANF_EVNT</ipxact:name>
-								<ipxact:displayName>TRANF_EVNT</ipxact:displayName>
+								<ipxact:name>TRAN_EVNT</ipxact:name>
+								<ipxact:displayName>TRAN_EVNT</ipxact:displayName>
 								<ipxact:description>Transmitt frame was valid</ipxact:description>
 								<ipxact:value>'h4</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>OVRL_EVNT</ipxact:name>
-								<ipxact:displayName>OVRL_EVNT</ipxact:displayName>
+								<ipxact:name>OVLD_EVNT</ipxact:name>
+								<ipxact:displayName>OVLD_EVNT</ipxact:displayName>
 								<ipxact:description>Overload frame was transmitted</ipxact:description>
 								<ipxact:value>'h5</ipxact:value>
 							</ipxact:enumeratedValue>
@@ -1477,25 +1477,25 @@
 								<ipxact:value>'h6</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>CTRS_EVNT</ipxact:name>
-								<ipxact:displayName>CTRS_EVNT</ipxact:displayName>
+								<ipxact:name>CTRL_EVNT</ipxact:name>
+								<ipxact:displayName>CTRL_EVNT</ipxact:displayName>
 								<ipxact:description>Control field has started.</ipxact:description>
 								<ipxact:value>'h9</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>CRCS_EVNT</ipxact:name>
-								<ipxact:displayName>CRCS_EVNT</ipxact:displayName>
+								<ipxact:name>CRC_EVNT</ipxact:name>
+								<ipxact:displayName>CRC_EVNT</ipxact:displayName>
 								<ipxact:description>CRC field has started</ipxact:description>
 								<ipxact:value>'hB</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>DATS_EVNT</ipxact:name>
-								<ipxact:displayName>DATS_EVNT</ipxact:displayName>
+								<ipxact:name>DATA_EVNT</ipxact:name>
+								<ipxact:displayName>DATA_EVNT</ipxact:displayName>
 								<ipxact:description>Data field has started</ipxact:description>
 								<ipxact:value>'hA</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>ARBS_EVNT</ipxact:name>
+								<ipxact:name>ARB_EVNT</ipxact:name>
 								<ipxact:displayName>ARB_EVNT</ipxact:displayName>
 								<ipxact:description>Arbitration field started</ipxact:description>
 								<ipxact:value>'h8</ipxact:value>
