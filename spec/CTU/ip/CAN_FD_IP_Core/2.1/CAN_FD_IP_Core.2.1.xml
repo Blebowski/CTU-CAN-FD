@@ -359,7 +359,7 @@
 					<ipxact:field>
 						<ipxact:name>FD_TYPE</ipxact:name>
 						<ipxact:displayName>FD_TYPE</ipxact:displayName>
-						<ipxact:description>Selection between two possible CAN FD frame formats (0 ISO CAN FD, 1 CAN FD 1.0)</ipxact:description>
+						<ipxact:description>Selection between two possible CAN FD frame formats.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -367,6 +367,18 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ISO_FD</ipxact:name>
+								<ipxact:displayName>ISO_FD</ipxact:displayName>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>NON_ISO_FD</ipxact:name>
+								<ipxact:displayName>NON_ISO_FD</ipxact:displayName>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>

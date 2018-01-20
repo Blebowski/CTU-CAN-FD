@@ -106,10 +106,6 @@ package CANconstants is
   constant ENABLED  : std_logic := '1';
   constant DISABLED : std_logic := '0';
 
-  --Values for the type of FD frame type which whould be used
-  constant ISO_FD     : std_logic := '0';
-  constant NON_ISO_FD : std_logic := '1';
-
   --DLC Types
   type dlc_type is array (0 to 15) of std_logic_vector(3 downto 0);
   type length_type is array (0 to 15) of natural;

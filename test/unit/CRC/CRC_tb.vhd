@@ -62,6 +62,7 @@ use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.CAN_FD_register_map.all;
 
 use work.ID_transfer.all;
 
