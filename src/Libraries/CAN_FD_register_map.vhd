@@ -108,6 +108,10 @@ package CAN_FD_register_map is
   constant ENA_IND               : natural := 30;
   constant FD_TYPE_IND           : natural := 31;
 
+  -- "ENA" field enumerated values
+  constant DISABLED : std_logic := '0';
+  constant ENABLED : std_logic := '1';
+
   -- "FD_TYPE" field enumerated values
   constant ISO_FD : std_logic := '0';
   constant NON_ISO_FD : std_logic := '1';

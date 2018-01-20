@@ -347,7 +347,7 @@
 					<ipxact:field>
 						<ipxact:name>ENA</ipxact:name>
 						<ipxact:displayName>ENA</ipxact:displayName>
-						<ipxact:description>Active value means that the CAN FD controller is enabled.</ipxact:description>
+						<ipxact:description>Enable bit for the whole CAN FD Controller. When disabled it acts as if not connected to the CAN Bus.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -355,6 +355,18 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ENABLED</ipxact:name>
+								<ipxact:displayName>ENABLED</ipxact:displayName>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>DISABLED</ipxact:name>
+								<ipxact:displayName>DISABLED</ipxact:displayName>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FD_TYPE</ipxact:name>
