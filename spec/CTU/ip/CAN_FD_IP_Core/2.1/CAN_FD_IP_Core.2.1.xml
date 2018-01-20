@@ -857,6 +857,11 @@
 						<ipxact:displayName>ERP_LIMIT</ipxact:displayName>
 						<ipxact:description>Error passive limit</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>128</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -1988,6 +1993,11 @@
 						<ipxact:name>TX_COUNTER_VAL</ipxact:name>
 						<ipxact:description>Counter for transcieved frames to enable bus traffic measurement.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -2236,6 +2246,11 @@
 						<ipxact:displayName>RX_RPP_VAL</ipxact:displayName>
 						<ipxact:description>Read pointer position in the Receive buffer. When RX_DATA register is read, read pointer is increased accordingly</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -2755,6 +2770,11 @@
 						<ipxact:displayName>ERR_NORM_VAL</ipxact:displayName>
 						<ipxact:description>Number of errors in the Nominal bit time.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>16</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -3523,7 +3543,7 @@
 					<ipxact:field>
 						<ipxact:name>ESI_RESVD</ipxact:name>
 						<ipxact:displayName>ESI_RESVD</ipxact:displayName>
-						<ipxact:description>Error state indicator bit</ipxact:description>
+						<ipxact:description>Error state indicator bit for received frames. Reserved for transmitted frames.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
@@ -3765,18 +3785,8 @@
 			</ipxact:addressBlock>
 			<ipxact:addressUnitBits>32</ipxact:addressUnitBits>
 		</ipxact:memoryMap>
-		<ipxact:memoryMap>
-			<ipxact:name>CAN_FD_event_logger_format</ipxact:name>
-		</ipxact:memoryMap>
 	</ipxact:memoryMaps>
 	<ipxact:description>CAN FD IP Core from Ondrej Ille written at Czech Technical University, department of Measurement.</ipxact:description>
-	<ipxact:parameters>
-		<ipxact:parameter parameterId="uuid_1849bff0_bb10_49af_b775_c005c4c9c5c5" type="int">
-			<ipxact:name>CAN_FRAME_DATA</ipxact:name>
-			<ipxact:displayName>CAN_FRAME_DATA</ipxact:displayName>
-			<ipxact:value>0</ipxact:value>
-		</ipxact:parameter>
-	</ipxact:parameters>
 	<ipxact:vendorExtensions>
 		<kactus2:author>Ondrej Ille</kactus2:author>
 		<kactus2:version>3,5,0,0</kactus2:version>
