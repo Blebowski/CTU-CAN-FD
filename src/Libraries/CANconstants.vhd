@@ -45,6 +45,9 @@
 --                TX_DATA_REGION to make the direct addressing inside the TXT
 --                buffer easier.
 --    27.12.2017  Added "DRV_FRAME_SWAP_INDEX" into driving bus.
+--    20.1.2018   Removed CAN Frame constants FRAME_BASIC and FRAME_EXTENDED
+--                Properly only signals from CAN_FD_frame_format package
+--                BASE and EXTENDED should be used!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -58,11 +61,6 @@ package CANconstants is
   --Definition of basic logic levels for CAN bus
   constant DOMINANT  : std_logic := '0';
   constant RECESSIVE : std_logic := '1';
-
-  --Definition of frame types identifiers (Basic, Extended ), 
-  --equal to IDE bit of Arbitration field
-  constant FRAME_BASIC    : std_logic := '0';
-  constant FRAME_EXTENDED : std_logic := '1';
 
   constant INTEGRATING_DURATION : natural := 11;
   constant TRAN_BUFF_SIZE       : natural := 600;
