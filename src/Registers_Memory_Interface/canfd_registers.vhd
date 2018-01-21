@@ -802,7 +802,7 @@ begin
 					  write_be_s(sam_norm, TSM_IND, data_in, sbe);
     					  		  
     					  --Acknowledge forbidden
-    					  write_be_s(sam_norm, ACF_IND, data_in, sbe);       
+    					  write_be_s(ack_forb, ACF_IND, data_in, sbe);       
     					  
     					  --Reset by memory access
     					  if(data_in(RST_IND)='1' and sbe(0)='1')then                              
