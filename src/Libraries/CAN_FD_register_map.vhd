@@ -199,16 +199,16 @@ package CAN_FD_register_map is
   constant TIE_IND               : natural := 17;
 
   --INT_ENA reset values
-  constant EIE_RSTVAL         : std_logic := '0';
+  constant EIE_RSTVAL         : std_logic := '1';
   constant DOIE_RSTVAL        : std_logic := '0';
-  constant EPIE_RSTVAL        : std_logic := '0';
+  constant EPIE_RSTVAL        : std_logic := '1';
   constant ALIE_RSTVAL        : std_logic := '0';
   constant RIE_RSTVAL         : std_logic := '0';
   constant BEIE_RSTVAL        : std_logic := '0';
   constant LFIE_RSTVAL        : std_logic := '0';
   constant RFIE_RSTVAL        : std_logic := '0';
   constant BSIE_RSTVAL        : std_logic := '0';
-  constant TIE_RSTVAL         : std_logic := '0';
+  constant TIE_RSTVAL         : std_logic := '1';
 
   ------------------------------------------------------------------------------
   -- BTR_FD register
