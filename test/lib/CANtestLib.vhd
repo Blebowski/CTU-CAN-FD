@@ -836,7 +836,8 @@ procedure process_error
   )is
   variable int_address   :   std_logic_vector(23 downto 0);
   begin
-    int_address       := "0100"&std_logic_vector(to_unsigned(ID,4))&"00"&w_offset&"00";
+    int_address       := CAN_COMPONENT_TYPE&
+                          std_logic_vector(to_unsigned(ID,4))&"00"&w_offset&"00";
     aval_write        (w_data,int_address,mem_bus);
   end procedure;
   
@@ -851,7 +852,8 @@ procedure process_error
   )is
   variable int_address   :   std_logic_vector(23 downto 0);
   begin
-    int_address       := "0100"&std_logic_vector(to_unsigned(ID,4))&"00"&r_offset&"00";
+    int_address       := CAN_COMPONENT_TYPE&
+                          std_logic_vector(to_unsigned(ID,4))&"00"&r_offset&"00";
     aval_read        (r_data,int_address,mem_bus);
   end procedure;
   
@@ -872,19 +874,35 @@ procedure process_error
   )is
   variable data          :          std_logic_vector(31 downto 0):=(OTHERS => '0');
   begin
-    data  :=  "00"&std_logic_vector(to_unsigned(bus_timing.tq_dbt,6))&
-              "00"&std_logic_vector(to_unsigned(bus_timing.tq_nbt,6))&
-              std_logic_vector(to_unsigned(bus_timing.sjw_dbt,4))&
-              std_logic_vector(to_unsigned(bus_timing.sjw_nbt,4))&
-              "00000000";
+     
+    -- Baud rate prescaler and Synchronisation jump width         
+    data(BRP_H downto BRP_L) := 
+      std_logic_vector(to_unsigned(bus_timing.tq_nbt,6));
+    data(BRP_FD_H downto BRP_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.tq_dbt,6));
+    data(SJW_FD_H downto SJW_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.sjw_dbt,4));
+    data(SJW_H downto SJW_L) := 
+      std_logic_vector(to_unsigned(bus_timing.sjw_nbt,4));
     CAN_write(data,ARB_ERROR_PRESC_ADR,ID,mem_bus);  
     
-    data  :=  '0'&std_logic_vector(to_unsigned(bus_timing.ph2_dbt,4))&
-              '0'&std_logic_vector(to_unsigned(bus_timing.ph1_dbt,4))&
-              "00"&std_logic_vector(to_unsigned(bus_timing.prop_dbt,4))&
-              std_logic_vector(to_unsigned(bus_timing.ph2_nbt,5))&
-              std_logic_vector(to_unsigned(bus_timing.ph1_nbt,5))&
-              std_logic_vector(to_unsigned(bus_timing.prop_nbt,6));
+    data := (OTHERS => '0');
+    
+    -- PH1, PH2 and PROP for nominal and Data
+    data(PROP_H downto PROP_L) := 
+      std_logic_vector(to_unsigned(bus_timing.prop_nbt,6));
+    data(PH1_H downto PH1_L) := 
+      std_logic_vector(to_unsigned(bus_timing.ph1_nbt,5));
+    data(PH2_H downto PH2_L) := 
+      std_logic_vector(to_unsigned(bus_timing.ph2_nbt,5));
+    
+    data(PROP_FD_H downto PROP_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.prop_dbt,6));
+    data(PH1_FD_H downto PH1_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.ph1_dbt,4));
+    data(PH2_FD_H downto PH2_FD_L) :=
+      std_logic_vector(to_unsigned(bus_timing.ph2_dbt,4));
+    
     CAN_write(data,TIMING_REG_ADR,ID,mem_bus);                   
   end procedure;
   
