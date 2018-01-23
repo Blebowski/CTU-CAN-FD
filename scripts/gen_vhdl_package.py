@@ -121,7 +121,7 @@ def write_epilogue(of):
 	of.write('end package;')
 
 ################################################################################
-# Write single bitfield as VHDL constant of certain register.
+# Write possible enumeration values of the bitfield as VHDL constant.
 #
 # Arguments:
 #  of		 	- Output file to write
@@ -144,6 +144,45 @@ def write_enums(of, elem, type, single_type):
 				else:
 					of.write("  constant {} : {} := '{}';\n".format(
 								e.name, single_type, e.value))
+
+
+################################################################################
+# Write Reset (default) values of register field as VHDL contant 
+#
+# Arguments:
+#  of		 	- Output file to write
+#  elem         - Element to write the enum constants for
+#  type			- VHDL type that should define this enum
+################################################################################	
+def write_def_vals(of, elem, type, single_type):
+	if (elem.resets != None):	
+		if (elem.resets.reset != None):
+			val = " "
+			if (elem.bitWidth % 4 == 0):
+				fmt = ':0{}x'.format(math.ceil(float(elem.bitWidth/4)))
+				hpref = 'x'
+			else:
+				fmt = ':0{}b'.format(math.ceil(float(elem.bitWidth)))
+				hpref = ''
+			fmt='{'+fmt+'}'
+			
+			if (elem.bitWidth > 1):
+				aType = "{}({} downto 0)".format(type, elem.bitWidth-1)
+				apost = '"'
+				if (elem.resets.reset.value == 0):
+					val = "(OTHERS => '0')"
+			else:
+				apost = "'"
+				aType = single_type
+			
+			if (val == " "):
+				val = hpref+apost+fmt.format(elem.resets.reset.value)+apost
+				
+			pref = '  constant {}_{} '.format(elem.name.upper(), "RSTVAL")
+			post = ': {} := {};\n'.format(aType, val)
+			post = '{:>{}}'.format(post, 50-len(pref))
+			of.write(pref + post)
+				
 
 ################################################################################
 # Write single bitfield as VHDL constant of certain register.
@@ -201,6 +240,11 @@ def write_reg_bits(of, registers, type, busWidth):
 		#Write the enums (iterate separately not to mix up fields and enums)
 		for elem in reg.field:
 			write_enums(of, elem, 'std_logic_vector', 'std_logic')
+		
+		#Write reset values for each field
+		of.write('\n  --{} reset values\n'.format(reg.name))
+		for elem in reg.field:
+			write_def_vals(of, elem, 'std_logic_vector', 'std_logic')
 			
 		of.write('\n')
 
