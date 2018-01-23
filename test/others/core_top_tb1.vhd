@@ -62,6 +62,7 @@ USE ieee.math_real.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANcomponents.ALL;
 use work.CANconstants.all;
+use work.CAN_FD_frame_format.all;
 
 entity core_top_tb1 is
  end entity;

@@ -56,7 +56,7 @@ USE ieee.std_logic_unsigned.All;
 USE work.randomLib.All;
 use work.CANconstants.all;
 
-use work.CANFD_register_map.all;
+use work.CAN_FD_register_map.all;
 
 package CANtestLib is
 -----------------------------------------------------------------------------------------
@@ -1244,13 +1244,13 @@ procedure process_error
      
      --Wait until unit starts to transmitt or reciesve
      CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
-     while (r_data(16+RS_IND)='0' and r_data(16+TS_IND)='0') loop
+     while (r_data(RS_IND)='0' and r_data(TS_IND)='0') loop
        CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
      end loop;
      
      --Wait until bus is idle now
      CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
-     while (r_data(16+BS_IND)='0') loop
+     while (r_data(BS_IND)='0') loop
        CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
      end loop;
      
@@ -1268,7 +1268,7 @@ procedure process_error
   begin
       --Wait until bus is idle
      CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
-     while (r_data(16+BS_IND)='0') loop
+     while (r_data(BS_IND)='0') loop
        CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
      end loop;
   end procedure;
@@ -1287,13 +1287,13 @@ procedure process_error
      
      --Wait until unit starts to transmitt or recieve
      CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
-     while (r_data(16+RS_IND)='0' and r_data(16+TS_IND)='0') loop
+     while (r_data(RS_IND)='0' and r_data(TS_IND)='0') loop
        CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
      end loop;
      
      --Wait until error frame is not being transmitted
      CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
-     while (r_data(16+ET_IND)='0') loop
+     while (r_data(ET_IND)='0') loop
        CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
      end loop;
      

@@ -110,6 +110,7 @@ use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 use work.ID_transfer.all;
+use work.CAN_FD_frame_format.all;
 
 architecture Protocol_Control_unit_test of CAN_test is
     
@@ -333,7 +334,7 @@ architecture Protocol_Control_unit_test of CAN_test is
       end if;
       
       --Identifier comparison
-      if(tx_frame.rec_ident_type_in=FRAME_BASIC)then
+      if(tx_frame.rec_ident_type_in=BASE)then
         if(tx_frame.rec_ident_in(10 downto 0) /= rx_frame.rec_ident_in(10 downto 0))then
           log("Identifier mismatch between TX and RX frame",error_l,log_level);
           outcome:=false;

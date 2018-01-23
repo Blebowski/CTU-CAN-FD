@@ -59,7 +59,7 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
-use work.CANFD_register_map.all;
+use work.CAN_FD_register_map.all;
 
 package abort_transmittion_feature is
   
@@ -124,7 +124,7 @@ package body abort_transmittion_feature is
     --Wait until unit turns transciever
     ----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    while (r_data(16+TS_IND)='0') loop
+    while (r_data(TS_IND)='0') loop
       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     end loop;
     
@@ -183,7 +183,7 @@ package body abort_transmittion_feature is
       end loop;
     
       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-      if (r_data(16+TS_IND)='1') then
+      if (r_data(TS_IND)='1') then
         outcome:=false;
       end if;
     

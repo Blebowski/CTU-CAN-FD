@@ -15,7 +15,8 @@
 ##     subfolders	- Which sub-folders should be updated
 ##
 ##	Example of usage from IDLE shell
-##     
+##     python ./license_updater.py 'myPrettyLicense.txt' ['.c','.vhd'] 
+##				['src','test']
 ##
 ##	Revision history:
 ##		13.12.2017	Implemented the "license_updater"
@@ -61,19 +62,19 @@ def print_help():
 			" 		'myPrettyLicense.txt' ['.c','.vhd'] ['src','test']")
 
 
-def write_license(lic_text,comment_char,file):
+def write_license(lic_text, comment_char, file):
 	
 	line_length = 80
 	
 	# Write the initial line (TCL, VHDL)
 	if (comment_char == "-" or comment_char == "#"):
-		for i in range(0,line_length):
+		for i in range(0, line_length):
 			file.write(comment_char)
 			
 	# Write the initial line (C)
 	elif (comment_char == "*"):
 		file.write("/")
-		for i in range(0,line_length-1):
+		for i in range(0, line_length-1):
 			file.write(comment_char)
 	else:
 		print("Unsuported Comment character")
@@ -100,10 +101,10 @@ def write_license(lic_text,comment_char,file):
 		
 	# Write the final line
 	if (comment_char == "-" or comment_char == "#"):
-		for i in range(0,line_length):
+		for i in range(0, line_length):
 			file.write(comment_char)
 	elif (comment_char=="*"):
-		for i in range(0,line_length-1):
+		for i in range(0, line_length-1):
 			file.write(comment_char)
 		file.write("/")
 		
@@ -113,7 +114,7 @@ def write_license(lic_text,comment_char,file):
 ################################################################################
 ## Reads the source code from one file until two files
 ################################################################################
-def write_source(source_file, dest_file,comment_sign):
+def write_source(source_file, dest_file, comment_sign):
 	## Read the first file line because this is always commented
 	source_file.readline()
 	
@@ -177,17 +178,63 @@ def process_file(filename):
 	temp_file = open ("temp.txt","wt")
 	
 	## Write the new license to the temp file
-	write_license(lic_text,comment_sign,temp_file)
+	write_license(lic_text,comment_sign, temp_file)
 	
 	## Write rest of the file after license update
-	write_source(file,temp_file,comment_sign)
+	write_source(file,temp_file, comment_sign)
 	temp_file.close()
 	file.close()
 	
 	## Replace the original file and erase the temp file
 	os.remove(filename)
-	os.rename("temp.txt",filename)
+	os.rename("temp.txt", filename)
 	
+
+################################################################################
+## Parse the command line arguments and fill according global variables
+## (I know global variables are not nice, but sufficient in this case...)
+################################################################################
+def parse_args():
+	global sup_files
+	global sub_folders
+	global lic_path
+	global src_path
+	
+	src_path=os.path.dirname(os.path.abspath(__file__))	
+	
+	lic_path = sys.argv[1]
+	sup_files = sys.argv[2]
+	sup_files = sup_files.replace("[","")
+	sup_files = sup_files.replace("]","")
+	sup_files = sup_files.split(",")
+	sub_folders = sys.argv[3]
+	sub_folders = sub_folders.replace("[","")
+	sub_folders = sub_folders.replace("]","")
+	sub_folders = sub_folders.split(",")
+
+################################################################################
+## Load license and place it in global variable
+################################################################################
+def load_license(lic_path):
+	global lic_text
+	global src_path
+	
+	src_path=os.path.dirname(os.path.abspath(__file__))	
+	
+	lic_full_path=os.path.join(src_path, lic_path)
+	print(lic_full_path)
+	if (os.path.isfile(lic_full_path)):
+		lic_file = open(lic_full_path,"r")
+		lic_text = lic_file.read()
+		print ("Loading license...")
+		print ("")
+		return lic_text
+		##print ("License text")
+		##print (lic_text)
+	else:
+		print ("Invalid license file")
+		sys.exit(1)
+
 
 ################################################################################
 ## Iterate through directory and call recursively on sub-directories.
@@ -200,7 +247,7 @@ def iterate_dir(dir_path):
 	## Process files and directories in this directory
 	sub_dirs = os.listdir(dir_path)
 	for fold in sub_dirs:
-		full_dir = os.path.join(dir_path,fold)
+		full_dir = os.path.join(dir_path, fold)
 		
 		## Execute recursively on directories
 		if (os.path.isdir(full_dir)):
@@ -219,6 +266,8 @@ def main():
 	global sup_files
 	global sub_folders
 	global lic_text
+	global lic_path
+	global src_path
 	print ("")
 	
 	## Check valid input arguments
@@ -229,30 +278,11 @@ def main():
 		print(" Exiting!")
 		sys.exit(1)
 		
-    ## Command line arguments
-	lic_path = sys.argv[1]
-	sup_files = sys.argv[2]
-	sup_files = sup_files.replace("[","")
-	sup_files = sup_files.replace("]","")
-	sup_files = sup_files.split(",")
-	sub_folders = sys.argv[3]
-	sub_folders = sub_folders.replace("[","")
-	sub_folders = sub_folders.replace("]","")
-	sub_folders = sub_folders.split(",")
+    ## Parse Command line arguments
+	parse_args()
 	
 	## Check license existance and load it
-	scr_path=os.path.dirname(os.path.abspath(__file__))	
-	lic_full_path=os.path.join(scr_path,lic_path)	
-	if (os.path.isfile(lic_full_path)):
-		lic_file = open(lic_full_path,"r")
-		lic_text = lic_file.read()
-		print ("Loading license...")
-		print ("")
-		##print ("License text")
-		##print (lic_text)
-	else:
-		print ("Invalid license file")
-		sys.exit(1)
+	load_license(lic_path)
 	
 	#Check file extensions
 	for ext in sup_files:
@@ -263,8 +293,8 @@ def main():
 	
 	#Replace the license in the subfolders
 	for dir in sub_folders:
-		dir_path=os.path.join(scr_path,'..')
-		dir_path=os.path.join(dir_path,dir)
+		dir_path=os.path.join(src_path,'..')
+		dir_path=os.path.join(dir_path, dir)
 		if (os.path.isdir(dir_path)):
 			iterate_dir(dir_path)
 		else:

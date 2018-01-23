@@ -76,6 +76,8 @@ USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 use work.CANcomponents.ALL;
+use work.CAN_FD_frame_format.ALL;
+use work.CAN_FD_frame_format.all;
 
 entity core_top is
   PORT(

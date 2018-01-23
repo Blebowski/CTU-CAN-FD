@@ -62,7 +62,7 @@ use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 
-use work.CANFD_register_map.all;
+use work.CAN_FD_register_map.all;
 
 package Arbitration_feature is
   
@@ -259,13 +259,13 @@ package body Arbitration_feature is
     -- transmitt!!!
     -------------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    while r_data(16+TS_IND)='0' loop
+    while r_data(TS_IND)='0' loop
       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
       wait for 10 ns;
     end loop;
     
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    while r_data(16+TS_IND)='0' loop
+    while r_data(TS_IND)='0' loop
       CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
       wait for 10 ns;
     end loop;
@@ -343,7 +343,7 @@ package body Arbitration_feature is
     -- Wait definitely until the bus is idle
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    while r_data(16+BS_IND)='0' loop
+    while r_data(BS_IND)='0' loop
       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
       wait for 10 ns;
     end loop;

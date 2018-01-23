@@ -167,6 +167,8 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
+use work.CAN_FD_frame_format.all;
+use work.CAN_FD_register_map.all;
 
 entity protocolControl is
   port(
@@ -1381,7 +1383,7 @@ begin
             when one_bit=> --RTR bit of CAN Base, r0 bit of CAN FD
                  if(tran_trig='1')then
                     if(OP_State=transciever)then
-                      if(tran_frame_type=FD_CAN or tran_is_rtr='0')then
+                      if(tran_frame_type=FD_CAN or tran_is_rtr=NO_RTR_FRAME)then
                         data_tx_r <=  DOMINANT; 
                       else
                         data_tx_r <=  RECESSIVE;
@@ -1422,17 +1424,21 @@ begin
               --Presetting the Shift-Register for transcieving control bits
               if(FSM_preset='1')then
                   
-                  if(tran_frame_type=NORMAL_CAN and tran_is_rtr='1')then
+                  if(tran_frame_type=NORMAL_CAN and tran_is_rtr=RTR_FRAME)then
                     dlc_int <=  (OTHERS =>'0');
                   else
                     dlc_int <=  tran_dlc; --Storing Internal value of DLC 
                   end if;
                   
                   case aux_tran_frame_ident_type is
-                  when "00" => --CAN Base format
+                  
+                  --CAN Base format
+                  when NORMAL_CAN & BASE =>
                           ctrl_tran_reg(4)    <=  DOMINANT; --r0 bit
                           control_pointer     <=  4;
-                  when "10" => --CAN FD Format
+                  
+                  --CAN FD Format
+                  when FD_CAN & BASE =>
                           ctrl_tran_reg(7)    <=  RECESSIVE; --EDL Bit
                           ctrl_tran_reg(6)    <=  DOMINANT; --r0 Bit
                           ctrl_tran_reg(5)    <=  tran_brs;--BRS Bit
@@ -1442,11 +1448,15 @@ begin
                             ctrl_tran_reg(4)  <=  RECESSIVE;
                           end if;
                           control_pointer     <=  7;
-                  when "01" => --CAN Extended format
+                  
+                  --CAN Extended format
+                  when NORMAL_CAN & EXTENDED => 
                           ctrl_tran_reg(5)    <=  DOMINANT; --r1 Bit
                           ctrl_tran_reg(4)    <=  DOMINANT; --r0 Bit
                           control_pointer     <=  5;
-                  when "11" => --CAN FD Extended Format
+                          
+                  --CAN FD Extended Format
+                  when FD_CAN & EXTENDED =>
                           ctrl_tran_reg(7)    <=  RECESSIVE; --EDL Bit
                           ctrl_tran_reg(6)    <=  DOMINANT; --r0 Bit
                           ctrl_tran_reg(5)    <=  tran_brs;--BRS Bit
@@ -1456,6 +1466,7 @@ begin
                             ctrl_tran_reg(4)  <=  RECESSIVE;
                           end if;
                           control_pointer     <=  7;
+                          
                   when others=>
                           unknown_state_Error_r <=  '1'; 
                           PC_State              <=  error;
@@ -1466,7 +1477,7 @@ begin
                 --or custom DLC as usual. No data is sent in both cases in RTR 
                 --Frame.
                 if(tran_frame_type=NORMAL_CAN   and 
-									 tran_is_rtr='1'              and 
+									 tran_is_rtr=RTR_FRAME        and 
 									 drv_rtr_pref='1')
 								then
                   ctrl_tran_reg(3 downto 0) <=  (OTHERS =>'0'); 
@@ -1496,7 +1507,7 @@ begin
                   end if;
                   
                   if(control_pointer=0)then
-                    if(tran_is_rtr='1' and tran_frame_type=NORMAL_CAN) or 
+                    if(tran_is_rtr=RTR_FRAME and tran_frame_type=NORMAL_CAN) or 
 											(tran_dlc="0000")
 										then
                         PC_State            <=  crc;
@@ -1530,9 +1541,9 @@ begin
                   end if;         
                   
                   --Switching bit-Rate for FD Frames:
-                  if(control_pointer=5  and 
-								     tran_brs='1'       and
-								     tran_frame_type='1')
+                  if(control_pointer=5      and 
+								     tran_brs=BR_SHIFT      and
+								     tran_frame_type=FD_CAN)
 								  then --BRS bit of FD Frame
                     sp_control_r    <=  SECONDARY_SAMPLE;
                     br_shifted      <=  '1';
@@ -1577,7 +1588,7 @@ begin
                       end if;
                   else
                     FSM_preset<='0';
-                    if(rec_ident_type_r='1')then --Extended identifier type
+                    if(rec_ident_type_r=EXTENDED)then
                       control_pointer <=  4; --r0 bit,4 DLC
                       rec_is_rtr_r    <=  arb_one_bit;
                     else
@@ -1634,7 +1645,7 @@ begin
                       FSM_preset        <=  '1';
                       
                       --If frame is RTR Frame or dat length is zero
-                      if((rec_is_rtr_r='1' and rec_frame_type_r=NORMAL_CAN) or 
+                      if((rec_is_rtr_r=RTR_FRAME and rec_frame_type_r=NORMAL_CAN) or 
                         (rec_dlc_r(3 downto 1)="000" and data_rx='0'))then 
                         PC_State        <=  crc;
                       else
@@ -1647,7 +1658,7 @@ begin
                       --we can recieve DLC of e.g 12 bytes but frame is RTR so we
                       --should decide about CRC length from RTR flag not recieved
                       --DLC!!!
-                      if(rec_is_rtr_r='1' and rec_frame_type_r='0')then
+                      if(rec_is_rtr_r=RTR_FRAME and rec_frame_type_r=NORMAL_CAN)then
                         dlc_int             <= (OTHERS => '0');
                       else
                         dlc_int(3 downto 1) <=  rec_dlc_r(3 downto 1);
@@ -1951,7 +1962,7 @@ begin
               if(rec_trig='1')then --Monitoring data as transciever
                 case control_pointer is
                 when 0 => sp_control_r    <=  NOMINAL_SAMPLE;
-                          if(tran_brs='1' and tran_frame_type='1')then
+                          if(tran_brs=BR_SHIFT and tran_frame_type=FD_CAN)then
                             br_shifted    <=  '1';
                           end if;
                           --Note : no condition is necessary because in normal 
@@ -2048,7 +2059,7 @@ begin
                              end if;
                   when 0 =>  sp_control_r   <=  NOMINAL_SAMPLE;
                     
-                             if(rec_brs_r='1' and rec_frame_type_r='1')then
+                             if(rec_brs_r=BR_SHIFT and rec_frame_type_r=FD_CAN)then
                               br_shifted    <=  '1';
                              end if;
                    

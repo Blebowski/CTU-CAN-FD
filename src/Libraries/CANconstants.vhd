@@ -45,6 +45,9 @@
 --                TX_DATA_REGION to make the direct addressing inside the TXT
 --                buffer easier.
 --    27.12.2017  Added "DRV_FRAME_SWAP_INDEX" into driving bus.
+--    20.1.2018   Removed CAN Frame constants FRAME_BASIC and FRAME_EXTENDED
+--                Properly only signals from CAN_FD_frame_format package
+--                BASE and EXTENDED should be used!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -59,11 +62,6 @@ package CANconstants is
   constant DOMINANT  : std_logic := '0';
   constant RECESSIVE : std_logic := '1';
 
-  --Definition of frame types identifiers (Basic, Extended ), 
-  --equal to IDE bit of Arbitration field
-  constant FRAME_BASIC    : std_logic := '0';
-  constant FRAME_EXTENDED : std_logic := '1';
-
   constant INTEGRATING_DURATION : natural := 11;
   constant TRAN_BUFF_SIZE       : natural := 600;
 
@@ -72,11 +70,6 @@ package CANconstants is
 
   constant CAN_BASE_ID_LENGTH : natural := 11;
   constant CAN_EXT_ID_LENGTH  : natural := 18;  --Length Identifier extension only
-
-  constant BASE       : std_logic := '0';
-  constant EXTENDED   : std_logic := '1';
-  constant NORMAL_CAN : std_logic := '0';
-  constant FD_CAN     : std_logic := '1';
 
   constant NO_SYNC   : std_logic_vector := "00";
   constant HARD_SYNC : std_logic_vector := "01";
@@ -110,12 +103,8 @@ package CANconstants is
 
   --Values for enabling of whole controller
   --and interrupts
-  constant ENABLED  : std_logic := '1';
-  constant DISABLED : std_logic := '0';
-
-  --Values for the type of FD frame type which whould be used
-  constant ISO_FD     : std_logic := '0';
-  constant NON_ISO_FD : std_logic := '1';
+  --constant ENABLED  : std_logic := '1';
+  --constant DISABLED : std_logic := '0';
 
   --DLC Types
   type dlc_type is array (0 to 15) of std_logic_vector(3 downto 0);
