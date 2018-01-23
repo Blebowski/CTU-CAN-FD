@@ -424,9 +424,10 @@ architecture rtl of canfd_registers is
   begin
     
     --Command registers
-    clear_overrun           <=  NO_ACTION;
-    release_recieve         <=  NO_ACTION;
-    abort_transmittion      <=  NO_ACTION;
+    clear_overrun           <=  CDO_RSTVAL;
+    release_recieve         <=  RRB_RSTVAL;
+    abort_transmittion      <=  AT_RSTVAL;
+    
     interrupt_vector_erase  <=  NO_ACTION;
     
     erctr_pres_value        <=  (OTHERS=>'0');
@@ -438,54 +439,54 @@ architecture rtl of canfd_registers is
     intLoopbackEna          <=  LOOPBACK_DIS;
    
     --Enable register
-    CAN_enable              <=  DISABLED;
-    FD_type                 <=  ISO_FD;
+    CAN_enable              <=  ENA_RSTVAL;
+    FD_type                 <=  FD_TYPE_RSTVAL;
     
     --Mode register 
-    mode_reg(RST_IND)       <=  NO_ACTION;
-    mode_reg(LOM_IND)       <=  DISABLED;   --Listen only mod
-    mode_reg(STM_IND)       <=  DISABLED;   --Self test mode
-    mode_reg(AFM_IND)       <=  DISABLED;   --Acceptance filters mode 
-    mode_reg(FDE_IND)       <=  ENABLED;    --Flexible datarate enable
-    mode_reg(RTR_PREF_IND)  <=  ENABLED;    --RTR Preffered behaviour   
+    mode_reg(RST_IND)       <=  RST_RSTVAL;
+    mode_reg(LOM_IND)       <=  LOM_RSTVAL;   --Listen only mode
+    mode_reg(STM_IND)       <=  STM_RSTVAL;   --Self test mode
+    mode_reg(AFM_IND)       <=  AFM_RSTVAL;   --Acceptance filters mode 
+    mode_reg(FDE_IND)       <=  FDE_RSTVAL;    --Flexible datarate enable
+    mode_reg(RTR_PREF_IND)  <=  RTR_PREF_RSTVAL;    --RTR Preffered behaviour   
     
     --Interrupt enable register
-    int_ena_reg(RI_IND)     <=  DISABLED;
-    int_ena_reg(TI_IND)     <=  DISABLED;
-    int_ena_reg(EI_IND)     <=  ENABLED;
-    int_ena_reg(DOI_IND)    <=  ENABLED;
+    int_ena_reg(RI_IND)     <=  RIE_RSTVAL;
+    int_ena_reg(TI_IND)     <=  TIE_RSTVAL;
+    int_ena_reg(EI_IND)     <=  EIE_RSTVAL;
+    int_ena_reg(DOI_IND)    <=  DOIE_RSTVAL;
     int_ena_reg(4)          <=  DISABLED;
-    int_ena_reg(EPI_IND)    <=  ENABLED;
-    int_ena_reg(ALI_IND)    <=  DISABLED;
-    int_ena_reg(BEI_IND)    <=  DISABLED;
-    int_ena_reg(LFI_IND)    <=  DISABLED;
-    int_ena_reg(RFI_IND)    <=  DISABLED;
-    int_ena_reg(BSI_IND)    <=  DISABLED;      
+    int_ena_reg(EPI_IND)    <=  EPIE_RSTVAL;
+    int_ena_reg(ALI_IND)    <=  ALIE_RSTVAL;
+    int_ena_reg(BEI_IND)    <=  BEIE_RSTVAL;
+    int_ena_reg(LFI_IND)    <=  LFIE_RSTVAL;
+    int_ena_reg(RFI_IND)    <=  RFIE_RSTVAL;
+    int_ena_reg(BSI_IND)    <=  BSIE_RSTVAL;      
     
     --Retransmitt limit enable
-    retr_lim_ena            <=  RETR_LIM_DIS;
-    retr_lim_th             <=  (OTHERS=>'0'); --Retr. limit treshold zeroes   
+    retr_lim_ena            <=  RTRLE_RSTVAL;
+    retr_lim_th             <=  RTR_TH_RSTVAL; --Retr. limit treshold zeroes   
     
-    sjw_norm                <=  "0010";         --2
-    brp_norm                <=  "001010";       --10
-    ph1_norm                <=  "00011";        --3
-    ph2_norm                <=  "00101";        --5 
-    prop_norm               <=  "000101";       --5
+    sjw_norm                <=  SJW_RSTVAL;
+    brp_norm                <=  BRP_RSTVAL;
+    ph1_norm                <=  PH1_RSTVAL;
+    ph2_norm                <=  PH2_RSTVAL;
+    prop_norm               <=  PROP_RSTVAL;
     
-    sjw_fd                  <=  "0010";         --2
-    brp_fd                  <=  "000100";       --4
-    ph1_fd                  <=  "0011";        --3
-    ph2_fd                  <=  "0011";        --3
-    prop_fd                 <=  "000011";       --3
+    sjw_fd                  <=  SJW_FD_RSTVAL;
+    brp_fd                  <=  BRP_FD_RSTVAL;
+    ph1_fd                  <=  PH1_FD_RSTVAL;
+    ph2_fd                  <=  PH2_FD_RSTVAL;
+    prop_fd                 <=  PROP_FD_RSTVAL;
     
-    sam_norm                <=  SINGLE_SAMPLING;
-    ewl                     <=  std_logic_vector(to_unsigned(96,ewl'length));
-    erp                     <=  std_logic_vector(to_unsigned(128,erp'length));
+    sam_norm                <=  TSM_RSTVAL;
+    ewl                     <=  EWL_LIMIT_RSTVAL;
+    erp                     <=  ERP_LIMIT_RSTVAL;
     
     --Message filters
     if (sup_filtA = true) then
-      filter_A_mask           <=  (OTHERS=>'0');
-      filter_A_value          <=  (OTHERS=>'0');
+      filter_A_mask           <=  BIT_MASK_A_VAL_RSTVAL;
+      filter_A_value          <=  BIT_VAL_A_VAL_RSTVAL;
       
        --Only filter A is enabled to pass all message types with any identifier
       filter_A_ctrl           <=  (OTHERS=>'1');
@@ -493,25 +494,25 @@ architecture rtl of canfd_registers is
     end if;
     
     if (sup_filtB = true) then
-      filter_B_mask           <=  (OTHERS=>'0');
-      filter_B_value          <=  (OTHERS=>'0');
+      filter_B_mask           <=  BIT_MASK_B_VAL_RSTVAL;
+      filter_B_value          <=  BIT_MASK_B_VAL_RSTVAL;
       filter_B_ctrl           <=  (OTHERS=>'0');
     end if;
     
     if (sup_filtB = true) then
-      filter_C_mask           <=  (OTHERS=>'0');
-      filter_C_value          <=  (OTHERS=>'0');
+      filter_C_mask           <=  BIT_MASK_C_VAL_RSTVAL;
+      filter_C_value          <=  BIT_MASK_C_VAL_RSTVAL;
       filter_C_ctrl           <=  (OTHERS=>'0');
     end if;
     
     if (sup_range = true) then
-      filter_ran_low          <=  (OTHERS=>'0');
-      filter_ran_high         <=  (OTHERS=>'0'); 
+      filter_ran_low          <=  BIT_RAN_LOW_VAL_RSTVAL;
+      filter_ran_high         <=  BIT_RAN_HIGH_VAL_RSTVAL; 
       filter_ran_ctrl         <=  (OTHERS=>'0');
     end if;
     
-    txt1_arbit_allow        <=  FORBID_BUFFER;
-    txt2_arbit_allow        <=  FORBID_BUFFER;
+    txt1_arbit_allow        <=  TXT1_ALLOW_RSTVAL;
+    txt2_arbit_allow        <=  TXT2_ALLOW_RSTVAL;
     
     log_cmd                 <=  (OTHERS =>'0');
     log_trig_config         <=  (OTHERS =>'0');
@@ -1004,7 +1005,7 @@ begin
     			  --Device ID
 			   --------------------------------------	    			  
   			   when DEVICE_ID_ADR =>     
-  			       data_out_int              <=  CAN_DEVICE_ID;
+  			       data_out_int              <=  DEVICE_ID_RSTVAL;
   			     
   			   --------------------------------------
     			  --MODE Register (Mode, Command, Status of SJA1000)
