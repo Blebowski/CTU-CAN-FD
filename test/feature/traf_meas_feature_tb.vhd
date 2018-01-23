@@ -115,9 +115,9 @@ package body traf_meas_feature is
     -- Check the TX RX counters
     --------------------------------------------
     CAN_read(r_data,TX_COUNTER_ADR,ID_1,mem_bus_1);
-    tx_ctr:= to_integer(unsigned(r_data));
+    tx_ctr:= to_integer(unsigned(r_data(TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
     CAN_read(r_data,RX_COUNTER_ADR,ID_2,mem_bus_2);
-    rx_ctr:= to_integer(unsigned(r_data));
+    rx_ctr:= to_integer(unsigned(r_data(RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
     
     --------------------------------------------
     -- Generate the CAN frames to send
@@ -137,9 +137,9 @@ package body traf_meas_feature is
     -- Check the TX RX counters
     --------------------------------------------
     CAN_read(r_data,TX_COUNTER_ADR,ID_1,mem_bus_1);
-    tx_ctr_2:= to_integer(unsigned(r_data));
+    tx_ctr_2:= to_integer(unsigned(r_data(TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
     CAN_read(r_data,RX_COUNTER_ADR,ID_2,mem_bus_2);
-    rx_ctr_2:= to_integer(unsigned(r_data));
+    rx_ctr_2:= to_integer(unsigned(r_data(RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
     
     if(tx_ctr+aux+1 /= tx_ctr_2)then
       outcome:=false;
