@@ -404,8 +404,8 @@ package CAN_FD_register_map is
   constant FRAME_SWAP_IND         : natural := 3;
 
   --TX_SETTINGS reset values
-  constant TXT1_ALLOW_RSTVAL  : std_logic := '1';
-  constant TXT2_ALLOW_RSTVAL  : std_logic := '1';
+  constant TXT1_ALLOW_RSTVAL  : std_logic := '0';
+  constant TXT2_ALLOW_RSTVAL  : std_logic := '0';
   constant BUF_DIR_RSTVAL     : std_logic := '0';
   constant FRAME_SWAP_RSTVAL  : std_logic := '0';
 
