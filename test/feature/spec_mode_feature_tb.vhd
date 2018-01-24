@@ -119,21 +119,21 @@ package body spec_mode_feature is
     -- Set STM in node 1 and STM,ACF in node 2
     ---------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(2) := '1';  --Self test mode bit
+    r_data(STM_IND) := '1';  --Self test mode bit
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(7) := '1';  --Acknowledge forbidden
-    r_data(2) := '1';  --Self test mode bit
+    r_data(ACF_IND) := '1';  --Acknowledge forbidden
+    r_data(STM_IND) := '1';  --Self test mode bit
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------
     -- Check the TX RX counters
     --------------------------------------------
     CAN_read(r_data,TX_COUNTER_ADR,ID_1,mem_bus_1);
-    tx_ctr:= to_integer(unsigned(r_data));
+    tx_ctr:= to_integer(unsigned(r_data(TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
     CAN_read(r_data,RX_COUNTER_ADR,ID_2,mem_bus_2);
-    rx_ctr:= to_integer(unsigned(r_data));
+    rx_ctr:= to_integer(unsigned(r_data(RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
     
     --------------------------------------------
     -- Send frame by node 1
@@ -175,9 +175,9 @@ package body spec_mode_feature is
     -- Check the TX RX counters
     --------------------------------------------
     CAN_read(r_data,TX_COUNTER_ADR,ID_1,mem_bus_1);
-    tx_ctr_2:= to_integer(unsigned(r_data));
+    tx_ctr_2:= to_integer(unsigned(r_data(TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
     CAN_read(r_data,RX_COUNTER_ADR,ID_2,mem_bus_2);
-    rx_ctr_2:= to_integer(unsigned(r_data));
+    rx_ctr_2:= to_integer(unsigned(r_data(RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
     
     if(tx_ctr+1 /= tx_ctr_2)then
       outcome:=false;
@@ -198,13 +198,13 @@ package body spec_mode_feature is
     --  from itself but it is not on the bus!
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(2) := '1';  --Self test mode bit
+    r_data(STM_IND) := '1';  --Self test mode bit
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(7) := '0';  --Acknowledge forbidden
-    r_data(1) := '1';  -- Listen only mode
-    r_data(2) := '0';  --Self test mode bit
+    r_data(ACF_IND) := '0';  --Acknowledge forbidden
+    r_data(LOM_IND) := '1';  -- Listen only mode
+    r_data(STM_IND) := '0';  --Self test mode bit
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------
@@ -245,9 +245,9 @@ package body spec_mode_feature is
     -- Check the TX RX counters
     --------------------------------------------
     CAN_read(r_data,TX_COUNTER_ADR,ID_1,mem_bus_1);
-    tx_ctr_2:= to_integer(unsigned(r_data));
+    tx_ctr_2:= to_integer(unsigned(r_data(TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
     CAN_read(r_data,RX_COUNTER_ADR,ID_2,mem_bus_2);
-    rx_ctr_2:= to_integer(unsigned(r_data));
+    rx_ctr_2:= to_integer(unsigned(r_data(RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
     
     if(tx_ctr+2 /= tx_ctr_2)then
       outcome:=false;
@@ -266,18 +266,34 @@ package body spec_mode_feature is
     -- Turn on the AFM
     --------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(7) := '0';  --Acknowledge forbidden
-    r_data(1) := '0';  -- Listen only mode
-    r_data(2) := '0';  --Self test mode bit
-    r_data(3) := '1';  -- AFM
-    r_data(10) := '1'; --Release recieve buffer!
+    r_data(ACF_IND) := '0';  --Acknowledge forbidden
+    r_data(LOM_IND) := '0';  -- Listen only mode
+    r_data(STM_IND) := '0';  --Self test mode bit
+    r_data(AFM_IND) := '1';  -- AFM
+    r_data(RRB_IND) := '1'; --Release recieve buffer!
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------
     -- Configure AFM not to pass anything...
     --------------------------------------------
     CAN_read(r_data,FILTER_CONTROL_ADR,ID_2,mem_bus_2);
-    r_data(15 downto 0) := (OTHERS => '0'); 
+    
+    r_data(FILT_A_BASIC_IND) := '0';
+    r_data(FILT_A_FD_BAS_IND) := '0';
+    r_data(FILT_A_EXT_IND) := '0';
+    r_data(FILT_A_FD_EXT_IND) := '0';
+    r_data(FILT_B_BASIC_IND) := '0';
+    r_data(FILT_B_EXT_IND) := '0';
+    r_data(FILT_B_FD_BAS_IND) := '0';
+    r_data(FILT_B_FD_EXT_IND) := '0';
+    r_data(FILT_C_BASIC_IND) := '0';
+    r_data(FILT_C_EXT_IND) := '0';
+    r_data(FILT_C_FD_BAS_IND) := '0';
+    r_data(FILT_RANGE_FD_EXT_IND) := '0';
+    r_data(FILT_RANGE_FD_BAS_IND) := '0';
+    r_data(FILT_RANGE_EXT_IND) := '0';
+    r_data(FILT_RANGE_BASIC_IND) := '0';
+    r_data(FILT_C_FD_EXT_IND) := '0';
     CAN_write(r_data,FILTER_CONTROL_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------
@@ -292,7 +308,7 @@ package body spec_mode_feature is
     -- in the buffer
     ---------------------------------------------
     CAN_read(r_data,RX_INFO_1_ADR,ID_2,mem_bus_2);
-    if(r_data(0) /= '1')then
+    if(r_data(RX_EMPTY_IND) /= '1')then
       outcome:= false;
     end if;
     
@@ -300,7 +316,7 @@ package body spec_mode_feature is
     -- Turn off the AFM
     --------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(3) := '0';  -- AFM
+    r_data(AFM_IND) := '0';  -- AFM
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
      --------------------------------------------
@@ -310,7 +326,7 @@ package body spec_mode_feature is
     CAN_wait_frame_sent(ID_1,mem_bus_1);
     
     CAN_read(r_data,RX_INFO_1_ADR,ID_2,mem_bus_2);
-    if(r_data(0) = '1')then
+    if(r_data(RX_EMPTY_IND) = '1')then
       outcome:= false;
     end if;
     
