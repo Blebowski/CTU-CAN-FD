@@ -61,6 +61,7 @@ USE work.CANtestLib.All;
 USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package rtr_pref_feature is
   
@@ -112,22 +113,22 @@ package body rtr_pref_feature is
     --Generate CAN frame
     ----------------------------------------------
     CAN_generate_frame(rand_ctr,CAN_frame);
-    CAN_frame.rtr:='1';
-    CAN_frame.frame_format:='0';
+    CAN_frame.rtr:=RTR_FRAME;
+    CAN_frame.frame_format:=NORMAL_CAN;
     
     ----------------------------------------------
     -- Set the RTR preferred behaviour to 
     -- send the DLC all zeroes..
     ---------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(5) := '1';  --RTR preffered bit
+    r_data(RTR_PREF_IND) := '1';  --RTR preffered bit
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     ---------------------------------------------
     --Restart the content of the Node 2 RX Buffer
     ---------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(10) := '1';  --Release recieve buffer bit
+    r_data(RRB_IND) := '1';  --Release recieve buffer bit
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     ----------------------------------------------
@@ -144,7 +145,7 @@ package body rtr_pref_feature is
     --Check that recieved DLC is zero
     ---------------------------------------------
     CAN_read(r_data,RX_DATA_ADR,ID_2,mem_bus_2);
-    if(r_data(3 downto 0) /= "0000")then
+    if(r_data(DLC_H downto DLC_L) /= x"0")then
       outcome:=false;
     end if;
     
@@ -157,14 +158,14 @@ package body rtr_pref_feature is
     -- send the original DLC
     ---------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(5) := '0';  --RTR preffered bit
+    r_data(RTR_PREF_IND) := '0';  --RTR preffered bit
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     ---------------------------------------------
     --Restart the content of the Node 2 RX Buffer
     ---------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(10) := '1';  --Release recieve buffer bit
+    r_data(RRB_IND) := '1';  --Release recieve buffer bit
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     ----------------------------------------------
@@ -181,7 +182,7 @@ package body rtr_pref_feature is
     --Check that recieved DLC is matching transc.
     ---------------------------------------------
     CAN_read(r_data,RX_DATA_ADR,ID_2,mem_bus_2);
-    if(r_data(3 downto 0) /= CAN_frame.dlc)then
+    if(r_data(DLC_H downto DLC_L) /= CAN_frame.dlc)then
       outcome:=false;
     end if;
     
