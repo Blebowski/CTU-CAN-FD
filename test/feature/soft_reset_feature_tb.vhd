@@ -110,14 +110,14 @@ package body soft_reset_feature is
     --Write into the restart bit of MODE_REG
     --------------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(0) := '1';  --RTR preffered bit
+    r_data(RST_IND) := '1';
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     --------------------------------------------------
     --Continously check on expected default values!
     --------------------------------------------------
     CAN_read(r_data,DEVICE_ID_ADR,ID_1,mem_bus_1);
-    if(r_data /= x"0000CAFD")then
+    if(r_data /= DEVICE_ID_RSTVAL)then
       outcome:=false;
     end if;
     

@@ -63,6 +63,7 @@ USE work.CANtestLib.All;
 USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package Arbitration_feature is
   
@@ -174,19 +175,19 @@ package body Arbitration_feature is
       
        --Same RTR but different ident type
       --IDENT type sets the winner!
-      elsif(ident_type_1='0' and ident_type_2='1')then
+      elsif(ident_type_1=BASE and ident_type_2=EXTENDED)then
         report "Testing victory of BASE against EXTENDED";
         exp_winner:=0;
-      elsif(ident_type_1='1' and ident_type_2='0')then
+      elsif(ident_type_1=EXTENDED and ident_type_2=BASE)then
         report "Testing victory of BASE against EXTENDED";
         exp_winner:=1;
         
       --Same identifiers, different RTRs
       --RTR always selects the winner
-      elsif(is_rtr_1='0' and is_rtr_2='1')then
+      elsif(is_rtr_1=NO_RTR_FRAME and is_rtr_2=RTR_FRAME)then
         report "Testing victory of non RTR against RTR";
         exp_winner:=0;
-      elsif(is_rtr_1='1' and is_rtr_2='0')then
+      elsif(is_rtr_1=RTR_FRAME and is_rtr_2=NO_RTR_FRAME)then
         report "Testing victory of non RTR against RTR";
         exp_winner:=1;
       end if;    
@@ -197,8 +198,8 @@ package body Arbitration_feature is
       exp_winner:=0;
     end if;
     
-    if(is_rtr_1='1' or is_rtr_2='1')then
-      frame_type:='0';    --FD Frames have no RTR frames...
+    if(is_rtr_1=RTR_FRAME or is_rtr_2=RTR_FRAME)then
+      frame_type:=NORMAL_CAN;    --FD Frames have no RTR frames...
     end if;
     
     -----------------------------------------------
@@ -209,27 +210,48 @@ package body Arbitration_feature is
     --  We put DLC fixed to 4 and 8 in these cases!
     -----------------------------------------------
     --Frame format word
-    w_data := "0000000000000000000000"&brs_1&'1'&frame_type&ident_type_1&is_rtr_1&"01000";
+    w_data := (OTHERS => '0');
+    w_data(DLC_H downto DLC_L) := "1000";
+    w_data(RTR_IND) := is_rtr_1;
+    w_data(ID_TYPE_IND) := ident_type_1;
+    w_data(FR_TYPE_IND) := frame_type;
+    w_data(TBF_IND) := '1';
+    w_data(BRS_IND) := brs_1;
     CAN_write(w_data,TX_DATA_1_ADR,ID_1,mem_bus_1);
-    w_data := "0000000000000000000000"&brs_2&'1'&frame_type&ident_type_2&is_rtr_2&"00100";
+    
+    
+    w_data := (OTHERS => '0');
+    w_data(DLC_H downto DLC_L) := "0100";
+    w_data(RTR_IND) := is_rtr_2;
+    w_data(ID_TYPE_IND) := ident_type_2;
+    w_data(FR_TYPE_IND) := frame_type;
+    w_data(TBF_IND) := '1';
+    w_data(BRS_IND) := brs_2;
     CAN_write(w_data,TX_DATA_1_ADR,ID_2,mem_bus_2);
     
     --Identifier word
     id_1_vect := std_logic_vector(to_unsigned(ident1,29));
     id_2_vect := std_logic_vector(to_unsigned(ident2,29));
     
-    if (ident_type_1='0')then --Basic
-      w_data    := "000000000000000000000"&id_1_vect(28 downto 18);
-    else
-      w_data    := "000"&id_1_vect(17 downto 0)&id_1_vect(28 downto 18);
+    w_data := (OTHERS => '0');
+    w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := 
+           id_1_vect(28 downto 18);
+           
+    if (ident_type_1 = EXTENDED) then
+      w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
+           id_1_vect(17 downto 0);
     end if;
     CAN_write(w_data,TX_DATA_4_ADR,ID_1,mem_bus_1);
     
-    if (ident_type_2='0')then --Basic
-      w_data    := "000000000000000000000"&id_2_vect(28 downto 18);
-    else
-      w_data    := "000"&id_2_vect(17 downto 0)&id_2_vect(28 downto 18);
-    end if;
+
+    w_data := (OTHERS => '0');
+    w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := 
+           id_2_vect(28 downto 18);
+  
+    if (ident_type_2=EXTENDED)then --Basic
+      w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
+           id_2_vect(17 downto 0);
+    end if;    
     CAN_write(w_data,TX_DATA_4_ADR,ID_2,mem_bus_2);
     
     --Timestamp words
@@ -250,6 +272,7 @@ package body Arbitration_feature is
     -- Commit the FRAMES for transmittion into
     --  TXT Buffer 1 both!
     -----------------------------------------------
+    -- TODO: rethink for new buffer implementation
     w_data      := "00000000000000000000000000001010";
     CAN_write(w_data,TX_SETTINGS_ADR,ID_1,mem_bus_1);
     CAN_write(w_data,TX_SETTINGS_ADR,ID_2,mem_bus_2);
@@ -278,31 +301,31 @@ package body Arbitration_feature is
       
       --Unit 1 turned reciever
       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-      if(r_data(16+RS_IND)='1')then
+      if(r_data(RS_IND)='1')then
         unit_rec:=1;
       end if;
       
       --Unit 2 turned receiver
       CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-      if(r_data(16+RS_IND)='1')then
+      if(r_data(RS_IND)='1')then
         unit_rec:=2;
       end if;
       
       --Bus is idle in unit 2
       CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-      if(r_data(16+BS_IND)='1')then
+      if(r_data(BS_IND)='1')then
         unit_rec:=3;
       end if;
       
       --Error frame transmitted by unit 2
       CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-      if(r_data(16+ET_IND)='1')then
+      if(r_data(ET_IND)='1')then
         unit_rec:=3;
       end if;
       
       --Error frame transmitted by unit 1
       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-      if(r_data(16+ET_IND)='1')then
+      if(r_data(ET_IND)='1')then
         unit_rec:=3;
       end if;
       

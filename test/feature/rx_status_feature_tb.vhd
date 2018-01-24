@@ -61,6 +61,7 @@ USE work.CANtestLib.All;
 USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package rx_status_feature is
   
@@ -115,13 +116,14 @@ package body rx_status_feature is
     -- Read the size of the synthesized buffer
     -------------------------------------------
     CAN_read(r_data,RX_INFO_2_ADR,ID_1,mem_bus_1);
-    size_of_buf:= to_integer(unsigned(r_data(7 downto 0)));
+    size_of_buf:= to_integer(unsigned(
+                       r_data(RX_BUFF_SIZE_VALUE_H downto RX_BUFF_SIZE_VALUE_L)));
     
     -------------------------------------------
     --Restart the content of the buffer...
     -------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(10) := '1';  --Release recieve buffer bit
+    r_data(RRB_IND) := '1';  --Release recieve buffer bit
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     -------------------------------------------
@@ -131,20 +133,24 @@ package body rx_status_feature is
     -- as message count
     -------------------------------------------
     CAN_read(r_data,RX_INFO_1_ADR,ID_1,mem_bus_1);
-    if(r_data(1 downto 0) /= "01")then
+    if(r_data(RX_EMPTY_IND) /= '1' or r_data(RX_FULL_IND) /= '0')then
       outcome:= false;
     end if;
     
-    if(to_integer(unsigned(r_data(23 downto 16))) /= size_of_buf)then
+    if(to_integer(unsigned(r_data(RX_MF_VALUE_H downto RX_MF_VALUE_L))) 
+       /= size_of_buf)
+    then
       outcome:= false;
     end if;
     
-    if(to_integer(unsigned(r_data(15 downto 8))) /= 0)then
+    if(to_integer(unsigned(r_data(RX_MC_VALUE_H downto RX_MC_VALUE_L))) /= 0)then
       outcome:= false;
     end if;
     
     CAN_read(r_data,RX_INFO_2_ADR,ID_1,mem_bus_1);
-    if(r_data(23 downto 8) /= "0000000000000000")then
+    if((r_data(LOG_RPP_VAL_H downto LOG_RPP_VAL_L) /= x"00") or
+       (r_data(LOG_WPP_VAL_H downto LOG_WPP_VAL_L) /= x"00"))
+    then
       outcome:= false;
     end if;
     
@@ -155,7 +161,7 @@ package body rx_status_feature is
       CAN_generate_frame(rand_ctr,CAN_frame);
       
       
-      if(CAN_frame.rtr='1' and CAN_frame.frame_format='0')then
+      if(CAN_frame.rtr=RTR_FRAME and CAN_frame.frame_format=NORMAL_CAN)then
         if(in_RX_buf+4 > size_of_buf)then
           send_more:= false;
         end if;
@@ -176,7 +182,9 @@ package body rx_status_feature is
       CAN_send_frame(CAN_frame,1,ID_2,mem_bus_2,frame_sent);
       CAN_wait_frame_sent(ID_1,mem_bus_1);
       number_frms_sent:=number_frms_sent+1;
-      if((CAN_frame.rtr='1' and CAN_frame.frame_format='0') or CAN_frame.data_length=0)then
+      if((CAN_frame.rtr=RTR_FRAME and CAN_frame.frame_format=NORMAL_CAN) 
+         or CAN_frame.data_length=0)
+      then
         in_RX_buf:=in_RX_buf+4;
       else
         
@@ -196,12 +204,14 @@ package body rx_status_feature is
       
       --Check that mc was incremented and memfree is according
       CAN_read(r_data,RX_INFO_1_ADR,ID_1,mem_bus_1);
-      aux:=r_data(15 downto 8);
+      aux:=r_data(RX_MC_VALUE_H downto RX_MC_VALUE_L);
       aux2:=to_integer(unsigned(aux));
       if(number_frms_sent /= aux2 and send_more=true)then
         outcome:= false;
       end if;   
-      if(to_integer(unsigned(r_data(23 downto 16)))+in_RX_buf /= size_of_buf and send_more=true)then
+      if(to_integer(unsigned(r_data(RX_MF_VALUE_H downto RX_MF_VALUE_L)))+in_RX_buf 
+         /= size_of_buf and send_more=true)
+      then
         outcome:= false;
       end if; 
         
@@ -213,21 +223,21 @@ package body rx_status_feature is
     -- Now data oveerrun flag should be set
     --------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    if(r_data(17)='0')then
+    if(r_data(DOS_IND)='0')then
       outcome:=false;
     end if;
      
     -------------------------------------------
     -- Clear the data overrun flag
     -------------------------------------------
-    r_data(11):='1';
+    r_data(CDO_IND):='1';
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     --------------------------------------------
     -- Check that overrun flag was cleared
     --------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    if(r_data(17)='1')then
+    if(r_data(DOS_IND)='1')then
       outcome:=false;
     end if;
     

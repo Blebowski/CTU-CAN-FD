@@ -130,7 +130,7 @@ package body overload_feature is
     
     --Read overload from debug register
     CAN_read(r_data,DEBUG_REG_ADR,ID_1,mem_bus_1);
-    if(r_data(11)='0')then
+    if(r_data(PC_OVR_IND)='0')then
       outcome:=false;
     end if;
     

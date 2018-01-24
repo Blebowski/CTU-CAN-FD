@@ -57,6 +57,7 @@ USE work.randomLib.All;
 use work.CANconstants.all;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package CANtestLib is
 -----------------------------------------------------------------------------------------
@@ -836,7 +837,8 @@ procedure process_error
   )is
   variable int_address   :   std_logic_vector(23 downto 0);
   begin
-    int_address       := "0100"&std_logic_vector(to_unsigned(ID,4))&"00"&w_offset&"00";
+    int_address       := CAN_COMPONENT_TYPE&
+                          std_logic_vector(to_unsigned(ID,4))&"00"&w_offset&"00";
     aval_write        (w_data,int_address,mem_bus);
   end procedure;
   
@@ -851,7 +853,8 @@ procedure process_error
   )is
   variable int_address   :   std_logic_vector(23 downto 0);
   begin
-    int_address       := "0100"&std_logic_vector(to_unsigned(ID,4))&"00"&r_offset&"00";
+    int_address       := CAN_COMPONENT_TYPE&
+                          std_logic_vector(to_unsigned(ID,4))&"00"&r_offset&"00";
     aval_read        (r_data,int_address,mem_bus);
   end procedure;
   
@@ -872,19 +875,35 @@ procedure process_error
   )is
   variable data          :          std_logic_vector(31 downto 0):=(OTHERS => '0');
   begin
-    data  :=  "00"&std_logic_vector(to_unsigned(bus_timing.tq_dbt,6))&
-              "00"&std_logic_vector(to_unsigned(bus_timing.tq_nbt,6))&
-              std_logic_vector(to_unsigned(bus_timing.sjw_dbt,4))&
-              std_logic_vector(to_unsigned(bus_timing.sjw_nbt,4))&
-              "00000000";
+     
+    -- Baud rate prescaler and Synchronisation jump width         
+    data(BRP_H downto BRP_L) := 
+      std_logic_vector(to_unsigned(bus_timing.tq_nbt,6));
+    data(BRP_FD_H downto BRP_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.tq_dbt,6));
+    data(SJW_FD_H downto SJW_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.sjw_dbt,4));
+    data(SJW_H downto SJW_L) := 
+      std_logic_vector(to_unsigned(bus_timing.sjw_nbt,4));
     CAN_write(data,ARB_ERROR_PRESC_ADR,ID,mem_bus);  
     
-    data  :=  '0'&std_logic_vector(to_unsigned(bus_timing.ph2_dbt,4))&
-              '0'&std_logic_vector(to_unsigned(bus_timing.ph1_dbt,4))&
-              "00"&std_logic_vector(to_unsigned(bus_timing.prop_dbt,4))&
-              std_logic_vector(to_unsigned(bus_timing.ph2_nbt,5))&
-              std_logic_vector(to_unsigned(bus_timing.ph1_nbt,5))&
-              std_logic_vector(to_unsigned(bus_timing.prop_nbt,6));
+    data := (OTHERS => '0');
+    
+    -- PH1, PH2 and PROP for nominal and Data
+    data(PROP_H downto PROP_L) := 
+      std_logic_vector(to_unsigned(bus_timing.prop_nbt,6));
+    data(PH1_H downto PH1_L) := 
+      std_logic_vector(to_unsigned(bus_timing.ph1_nbt,5));
+    data(PH2_H downto PH2_L) := 
+      std_logic_vector(to_unsigned(bus_timing.ph2_nbt,5));
+    
+    data(PROP_FD_H downto PROP_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.prop_dbt,6));
+    data(PH1_FD_H downto PH1_FD_L) := 
+      std_logic_vector(to_unsigned(bus_timing.ph1_dbt,4));
+    data(PH2_FD_H downto PH2_FD_L) :=
+      std_logic_vector(to_unsigned(bus_timing.ph2_dbt,4));
+    
     CAN_write(data,TIMING_REG_ADR,ID,mem_bus);                   
   end procedure;
   
@@ -910,9 +929,9 @@ procedure process_error
   begin
     CAN_read(data,MODE_REG_ADR,ID,mem_bus);
     if turn_on then
-      data(30):= '1';
+      data(ENA_IND):= ENABLED;
     else
-      data(30):= '0';
+      data(ENA_IND):= DISABLED;
     end if;
     CAN_write(data,MODE_REG_ADR,ID,mem_bus);  
   end procedure;
@@ -930,11 +949,11 @@ procedure process_error
   begin
     CAN_read(data,MODE_REG_ADR,ID,mem_bus);
     if turn_on then
-      data(24):= '1';
+      data(RTRLE_IND):= '1';
     else
-      data(24):= '0';
+      data(RTRLE_IND):= '0';
     end if;
-    data(28 downto 25):= std_logic_vector(to_unsigned(limit,4));
+    data(RTR_TH_H downto RTR_TH_L):= std_logic_vector(to_unsigned(limit,4));
     CAN_write(data,MODE_REG_ADR,ID,mem_bus);
   end procedure;
   
@@ -961,17 +980,18 @@ procedure process_error
       rand_value := rand_value*536870911.0;
       
       --We generate only valid frame combinations to avoid problems...
-      if(frame.frame_format = '1')then
-        frame.rtr := '0';
+      -- FD frames has no RTR frame, neither the RTR field!
+      if(frame.frame_format = FD_CAN)then
+        frame.rtr := NO_RTR_FRAME;
       end if;
       
-      if(frame.frame_format = '0')then
-        frame.brs := '0';
+      if(frame.frame_format = NORMAL_CAN)then
+        frame.brs := BR_NO_SHIFT;
       end if; 
       
       --Cut the identifier if it is base!
       aux := std_logic_vector(to_unsigned(integer(rand_value),29));
-      if(frame.ident_type = '0')then
+      if(frame.ident_type = BASE)then
         aux(17 downto 0):= (OTHERS => '0');
       end if;
       frame.identifier:=to_integer(unsigned(aux));
@@ -979,7 +999,7 @@ procedure process_error
       decode_dlc_v(frame.dlc,frame.data_length);
       frame.timestamp:=(OTHERS => '0');
       
-      if(frame.rtr='1')then
+      if(frame.rtr=RTR_FRAME)then
         frame.data := (OTHERS => '0');
         frame.dlc := (OTHERS => '0');
         frame.data_length := 0;
@@ -1020,13 +1040,16 @@ procedure process_error
     
     --DLC is compared only in non-RTR frames!
     -- In RTR frames it does not necessarily have to be equal due to RTR-pref feature
-    if((frame_A.rtr = '0' or frame_A.frame_format = '1') and frame_A.dlc /= frame_B.dlc)then
+    if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN) 
+        and frame_A.dlc /= frame_B.dlc)
+    then
       outcome:=false;
     end if;
     
     if(outcome = true) then
-      if((frame_A.rtr = '0' or frame_A.frame_format = '1') and frame_A.data_length /= 0)then
-      
+      if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN) 
+        and frame_A.data_length /= 0)
+      then
         for i in 0 to (frame_A.data_length-1)/4 loop
           if(frame_A.data(511-i*32 downto 480-i*32) /=
             frame_B.data(511-i*32 downto 480-i*32) )then
@@ -1061,14 +1084,14 @@ procedure process_error
     end if;
     
     -- RTR should be te same only in normal CAN
-    if(frame_A.frame_format='0')then
+    if(frame_A.frame_format=NORMAL_CAN)then
       if(frame_A.rtr  /= frame_B.rtr)then
         outcome:= false;
       end if;
     end if;
     
     --BRS bit is compared only in FD frame
-    if(frame_A.frame_format='1')then
+    if(frame_A.frame_format=FD_CAN)then
       if(frame_A.brs /= frame_B.brs)then
         outcome:= false;
       end if;
@@ -1076,13 +1099,16 @@ procedure process_error
     
     --DLC is compared only in non-RTR frames!
     -- In RTR frames it does not necessarily have to be equal due to RTR-pref feature
-    if((frame_A.rtr = '0' or frame_A.frame_format = '1') and frame_A.dlc /= frame_B.dlc)then
+    if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
+        and frame_A.dlc /= frame_B.dlc)
+    then
       outcome:=false;
     end if;
     
     if(outcome = true) then
-      if((frame_A.rtr = '0' or frame_A.frame_format = '1') and frame_A.data_length /= 0)then
-      
+      if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
+         and frame_A.data_length /= 0)
+      then
         for i in 0 to (frame_A.data_length-1)/4 loop
           if(frame_A.data(511-i*32 downto 480-i*32) /=
             frame_B.data(511-i*32 downto 480-i*32) )then
@@ -1110,12 +1136,21 @@ procedure process_error
   variable length          :          natural;
   variable iter_limit      :          natural;
   variable aux_out         :          boolean;
+  variable buf_index       :          natural range 0 to 31;
   begin
    outcome := true;
    
    --Read whether there is place in the TXT buffer
    CAN_read(w_data,TX_STATUS_ADR,ID,mem_bus);
-   if(w_data(buf_nr-1)='1')then
+   if (buf_nr = 1) then
+     buf_index := TXT1_EMPTY_IND;
+   elsif (buf_nr = 2) then
+     buf_index := TXT2_EMPTY_IND;
+   else 
+     buf_index := 31;
+   end if;
+   
+   if(w_data(buf_index)='1')then
      outcome:=true;
      aux_out:=true;
    else
@@ -1130,28 +1165,36 @@ procedure process_error
      --Set the buffer to access (direction) and forbid the buffer transmission!
      CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
      if (buf_nr=1) then
-        w_data(2) := '0';
-        w_data(0) := '0';
+        w_data(BUF_DIR_IND) := '0';
+        w_data(TXT1_ALLOW_IND) := '0';
      elsif (buf_nr=2) then
-        w_data(2) := '1';
-        w_data(1) := '0';
+        w_data(BUF_DIR_IND) := '1';
+        w_data(TXT2_ALLOW_IND) := '0';
      else
        report "Unsupported TX buffer number" severity error;
      end if;
      CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus); 
         
      --Frame format word
-     w_data:= "0000000000000000000000"&frame.brs&'1'&frame.frame_format&frame.ident_type&
-               frame.rtr&'0'&frame.dlc;
+     w_data := (OTHERS => '0');
+     w_data(DLC_H downto DLC_L) := frame.dlc;
+     w_data(RTR_IND) := frame.rtr;
+     w_data(ID_TYPE_IND) := frame.ident_type;
+     w_data(FR_TYPE_IND) := frame.frame_format;
+     w_data(TBF_IND) := '1';
+     w_data(BRS_IND) := frame.brs;
+     w_data(ESI_RESVD_IND) := '0'; --ESI is receive only
      CAN_write(w_data,TX_DATA_1_ADR,ID,mem_bus);          
            
      --Identifier
-     if(frame.ident_type='1')then
+     w_data := (OTHERS => '0');
+     if(frame.ident_type=EXTENDED)then
         ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
-        w_data:= "000"&ident_vect(17 downto 0)&ident_vect(28 downto 18);
+        w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(28 downto 18);
+        w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := ident_vect(17 downto 0);
      else
         ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
-        w_data:= "000000000000000000000"&ident_vect(10 downto 0);
+        w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
      end if;
      CAN_write(w_data,TX_DATA_2_ADR,ID,mem_bus);
      
@@ -1171,9 +1214,9 @@ procedure process_error
      --Signal that the frame is valid by allowing the buffer
      CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
      if (buf_nr=1) then
-        w_data(0) := '1';
+        w_data(TXT1_ALLOW_IND) := '1';
      elsif (buf_nr=2) then
-        w_data(1) := '1';
+        w_data(TXT2_ALLOW_IND) := '1';
      else
        report "Unsupported TX buffer number" severity error;
      end if;
@@ -1197,20 +1240,22 @@ procedure process_error
     
     --Read Frame format word
     CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);   
-    frame.dlc           := r_data(3 downto 0);
-    frame.rtr           := r_data(5);
-    frame.ident_type    := r_data(6);
-    frame.frame_format  := r_data(7);
-    frame.brs           := r_data(9);
+    frame.dlc           := r_data(DLC_H downto DLC_L);
+    frame.rtr           := r_data(RTR_IND);
+    frame.ident_type    := r_data(ID_TYPE_IND);
+    frame.frame_format  := r_data(FR_TYPE_IND);
+    frame.brs           := r_data(BRS_IND);
     decode_dlc_v(frame.dlc,frame.data_length);
     
     --Read identifier
     CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);
-    if(frame.ident_type='1')then
-      aux_vect         := r_data(10 downto 0)&r_data(28 downto 11);
+    if(frame.ident_type=EXTENDED)then
+      aux_vect         := r_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L)&
+                          r_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
       frame.identifier := to_integer(unsigned(aux_vect));
     else
-      aux_vect         := "000000000000000000"&r_data(10 downto 0);
+      aux_vect         := "000000000000000000"&
+                          r_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
       frame.identifier := to_integer(unsigned(aux_vect));
     end if;
     
@@ -1221,8 +1266,9 @@ procedure process_error
     frame.timestamp(63 downto 32) := r_data;
     
     --Now read data frames
-    if((frame.rtr = '0' or frame.frame_format = '1') and frame.data_length /= 0)then
-      
+    if((frame.rtr = NO_RTR_FRAME or frame.frame_format = FD_CAN) 
+        and frame.data_length /= 0)
+    then  
       for i in 0 to (frame.data_length-1)/4 loop
         CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);
         frame.data(511-i*32 downto 480-i*32) := r_data;
@@ -1311,7 +1357,7 @@ procedure process_error
   variable data_length    :   natural;
  begin
    decode_dlc_v(frame.dlc,data_length);
-   if(frame.rtr='1' and frame.frame_format='0')then
+   if(frame.rtr=RTR_FRAME and frame.frame_format=NORMAL_CAN)then
      data_length:=0;
    end if;
    

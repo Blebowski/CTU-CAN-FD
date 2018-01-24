@@ -81,15 +81,19 @@ package CAN_FD_frame_format is
   constant ESI_ERR_ACTIVE : std_logic := '0';
   constant ESI_ERR_PASIVE : std_logic := '1';
 
+  --FRAME_FORM_W reset values
+
   ------------------------------------------------------------------------------
   -- IDENTIFIER_W register
   --
   -- CAN Identifier
   ------------------------------------------------------------------------------
-  constant IDENTIFIER_BASE_L      : natural := 8;
-  constant IDENTIFIER_BASE_H     : natural := 18;
-  constant IDENTIFIER_EXT_L      : natural := 20;
-  constant IDENTIFIER_EXT_H      : natural := 37;
+  constant IDENTIFIER_BASE_L      : natural := 0;
+  constant IDENTIFIER_BASE_H     : natural := 10;
+  constant IDENTIFIER_EXT_L      : natural := 11;
+  constant IDENTIFIER_EXT_H      : natural := 28;
+
+  --IDENTIFIER_W reset values
 
   ------------------------------------------------------------------------------
   -- TIMESTAMP_L_W register
@@ -97,8 +101,10 @@ package CAN_FD_frame_format is
   -- Lower 32 bits of timestamp when the frame should be transmitted or when it 
   -- was received.
   ------------------------------------------------------------------------------
-  constant TIME_STAMP_31_0_L     : natural := 16;
-  constant TIME_STAMP_31_0_H     : natural := 47;
+  constant TIME_STAMP_31_0_L      : natural := 0;
+  constant TIME_STAMP_31_0_H     : natural := 31;
+
+  --TIMESTAMP_L_W reset values
 
   ------------------------------------------------------------------------------
   -- TIMESTAMP_U_W register
@@ -106,8 +112,10 @@ package CAN_FD_frame_format is
   -- Upper 32 bits of timestamp when the frame should be transmitted or when it 
   -- was received.
   ------------------------------------------------------------------------------
-  constant TIMESTAMP_L_W_L       : natural := 24;
-  constant TIMESTAMP_L_W_H       : natural := 55;
+  constant TIMESTAMP_L_W_L        : natural := 0;
+  constant TIMESTAMP_L_W_H       : natural := 31;
+
+  --TIMESTAMP_U_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_1_4_W register
@@ -116,6 +124,8 @@ package CAN_FD_frame_format is
   constant DATA_1_TO_DATA_4_L     : natural := 0;
   constant DATA_1_TO_DATA_4_H    : natural := 31;
 
+  --DATA_1_4_W reset values
+
   ------------------------------------------------------------------------------
   -- DATA_17_20_W register
   --
@@ -123,19 +133,25 @@ package CAN_FD_frame_format is
   constant DATA_17_TO_DATA_20_L   : natural := 0;
   constant DATA_17_TO_DATA_20_H  : natural := 31;
 
+  --DATA_17_20_W reset values
+
   ------------------------------------------------------------------------------
   -- DATA_21_24_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_21_TO_DATA_24_L   : natural := 8;
-  constant DATA_21_TO_DATA_24_H  : natural := 39;
+  constant DATA_21_TO_DATA_24_L   : natural := 0;
+  constant DATA_21_TO_DATA_24_H  : natural := 31;
+
+  --DATA_21_24_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_9_12_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_9_TO_DATA_12_L   : natural := 16;
-  constant DATA_9_TO_DATA_12_H   : natural := 47;
+  constant DATA_9_TO_DATA_12_L    : natural := 0;
+  constant DATA_9_TO_DATA_12_H   : natural := 31;
+
+  --DATA_9_12_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_49_52_W register
@@ -144,75 +160,97 @@ package CAN_FD_frame_format is
   constant DATA_49_TO_DATA_52_L   : natural := 0;
   constant DATA_49_TO_DATA_52_H  : natural := 31;
 
+  --DATA_49_52_W reset values
+
   ------------------------------------------------------------------------------
   -- DATA_37_40_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_37_TO_DATA_40_L   : natural := 8;
-  constant DATA_37_TO_DATA_40_H  : natural := 39;
+  constant DATA_37_TO_DATA_40_L   : natural := 0;
+  constant DATA_37_TO_DATA_40_H  : natural := 31;
+
+  --DATA_37_40_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_25_28_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_25_TO_DATA_28_L  : natural := 16;
-  constant DATA_25_TO_DATA_28_H  : natural := 47;
+  constant DATA_25_TO_DATA_28_L   : natural := 0;
+  constant DATA_25_TO_DATA_28_H  : natural := 31;
+
+  --DATA_25_28_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_61_64_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_61_TO_DATA_64_L  : natural := 24;
-  constant DATA_61_TO_DATA_64_H  : natural := 55;
+  constant DATA_61_TO_DATA_64_L   : natural := 0;
+  constant DATA_61_TO_DATA_64_H  : natural := 31;
+
+  --DATA_61_64_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_41_44_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_41_TO_DATA_44_L  : natural := 16;
-  constant DATA_41_TO_DATA_44_H  : natural := 47;
+  constant DATA_41_TO_DATA_44_L   : natural := 0;
+  constant DATA_41_TO_DATA_44_H  : natural := 31;
+
+  --DATA_41_44_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_29_32_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_29_TO_DATA_32_L  : natural := 24;
-  constant DATA_29_TO_DATA_32_H  : natural := 55;
+  constant DATA_29_TO_DATA_32_L   : natural := 0;
+  constant DATA_29_TO_DATA_32_H  : natural := 31;
+
+  --DATA_29_32_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_13_16_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_13_TO_DATA_16_L  : natural := 24;
-  constant DATA_13_TO_DATA_16_H  : natural := 55;
+  constant DATA_13_TO_DATA_16_L   : natural := 0;
+  constant DATA_13_TO_DATA_16_H  : natural := 31;
+
+  --DATA_13_16_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_5_8_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_5_TO_DATA_8_L     : natural := 8;
-  constant DATA_5_TO_DATA_8_H    : natural := 39;
+  constant DATA_5_TO_DATA_8_L     : natural := 0;
+  constant DATA_5_TO_DATA_8_H    : natural := 31;
+
+  --DATA_5_8_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_57_60_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_57_TO_DATA_60_L  : natural := 16;
-  constant DATA_57_TO_DATA_60_H  : natural := 47;
+  constant DATA_57_TO_DATA_60_L   : natural := 0;
+  constant DATA_57_TO_DATA_60_H  : natural := 31;
+
+  --DATA_57_60_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_45_48_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_45_TO_DATA_48_L  : natural := 24;
-  constant DATA_45_TO_DATA_48_H  : natural := 55;
+  constant DATA_45_TO_DATA_48_L   : natural := 0;
+  constant DATA_45_TO_DATA_48_H  : natural := 31;
+
+  --DATA_45_48_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_53_56_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_53_TO_DATA_56_L   : natural := 8;
-  constant DATA_53_TO_DATA_56_H  : natural := 39;
+  constant DATA_53_TO_DATA_56_L   : natural := 0;
+  constant DATA_53_TO_DATA_56_H  : natural := 31;
+
+  --DATA_53_56_W reset values
 
   ------------------------------------------------------------------------------
   -- DATA_33_36_W register
@@ -220,5 +258,7 @@ package CAN_FD_frame_format is
   ------------------------------------------------------------------------------
   constant DATA_33_TO_DATA_36_L   : natural := 0;
   constant DATA_33_TO_DATA_36_H  : natural := 31;
+
+  --DATA_33_36_W reset values
 
 end package;

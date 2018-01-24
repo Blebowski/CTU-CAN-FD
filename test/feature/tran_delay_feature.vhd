@@ -62,6 +62,7 @@ USE work.CANtestLib.All;
 USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package tran_delay_feature is
   
@@ -111,9 +112,9 @@ package body tran_delay_feature is
     --Generate CAN frame
     ----------------------------------------------
     CAN_generate_frame(rand_ctr,CAN_frame);
-    CAN_frame.rtr:='0';
-    CAN_frame.frame_format:='1';
-    CAN_frame.brs:='1';
+    CAN_frame.rtr:= NO_RTR_FRAME;
+    CAN_frame.frame_format:= FD_CAN;
+    CAN_frame.brs:=BR_SHIFT;
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
     CAN_wait_frame_sent(ID_2,mem_bus_2);
     
