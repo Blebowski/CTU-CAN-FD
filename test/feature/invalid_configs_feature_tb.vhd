@@ -53,6 +53,7 @@ USE work.CANtestLib.All;
 USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package invalid_config_feature is
   
@@ -105,7 +106,7 @@ package body invalid_config_feature is
     --Release recieve buffer 2
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(10) := '1';
+    r_data(RRB_IND) := '1';
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     
@@ -113,17 +114,19 @@ package body invalid_config_feature is
     --Send NORMAL frame with BRS=1
     -----------------------------------------------
     CAN_generate_frame(rand_ctr,CAN_frame);
-    CAN_frame.frame_format:= '0';
-    CAN_frame.brs:='1';
+    CAN_frame.frame_format:= NORMAL_CAN;
+    CAN_frame.brs:=BR_SHIFT;
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
     CAN_wait_frame_sent(ID_1,mem_bus_1);
     
     
     -----------------------------------------------
     -- Read the frame format word
+    -- Detection of FD frame or Bit rate shift bit
+    -- is considered to be and error
     -----------------------------------------------
     CAN_read(r_data,RX_DATA_ADR,ID_2,mem_bus_2);
-    if(r_data(7) /= '0' or r_data(9) /= '0') then
+    if(r_data(FR_TYPE_IND) /= '0' or r_data(BRS_IND) /= '0') then
       outcome:= false;
     end if;
     
@@ -136,7 +139,7 @@ package body invalid_config_feature is
     --Release recieve buffer 2
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(10) := '1';
+    r_data(RRB_IND) := '1';
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     
@@ -144,8 +147,8 @@ package body invalid_config_feature is
     --Send FD frame with RTR=1
     -----------------------------------------------
     CAN_generate_frame(rand_ctr,CAN_frame);
-    CAN_frame.frame_format:= '1';
-    CAN_frame.rtr:='1';
+    CAN_frame.frame_format:= FD_CAN;
+    CAN_frame.rtr:=RTR_FRAME;
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
     CAN_wait_frame_sent(ID_1,mem_bus_1);
     
@@ -154,7 +157,7 @@ package body invalid_config_feature is
     -- Read the frame format word
     -----------------------------------------------
     CAN_read(r_data,RX_DATA_ADR,ID_2,mem_bus_2);
-    if(r_data(7) /= '1' or r_data(5) /= '0') then
+    if(r_data(FR_TYPE_IND) /= FD_CAN or r_data(RTR_IND) /= NO_RTR_FRAME) then
       outcome:= false;
     end if;
     
