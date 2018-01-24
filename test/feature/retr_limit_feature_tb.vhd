@@ -104,7 +104,7 @@ package body retr_limit_feature is
     --Set node  2 to forbid acknowledge
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(7) := '1';
+    r_data(ACF_IND) := '1';
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     -----------------------------------------------
