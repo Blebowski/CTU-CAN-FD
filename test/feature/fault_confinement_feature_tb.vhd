@@ -121,17 +121,20 @@ package body fault_conf_feature is
     -- Set the counter and tresholds
     -----------------------------------------------
     r_data := (OTHERS => '0');
-    r_data(15 downto 8):= std_logic_vector(to_unsigned(th_1,8));
+    r_data(ERP_LIMIT_H downto ERP_LIMIT_L):= 
+         std_logic_vector(to_unsigned(th_1,8));
     CAN_write(r_data,ERROR_TH_ADR,ID_1,mem_bus_1);
     
     r_data := (OTHERS => '0');
-    r_data(8 downto 0):= std_logic_vector(to_unsigned(txc,9));
-    r_data(9):='1';
+    r_data(CTR_PRES_VAL_H downto CTR_PRES_VAL_L):= 
+         std_logic_vector(to_unsigned(txc,9));
+    r_data(PTX_IND):='1';
     CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
     
     r_data := (OTHERS => '0');
-    r_data(8 downto 0):= std_logic_vector(to_unsigned(rxc,9));
-    r_data(10):='1';
+    r_data(CTR_PRES_VAL_H downto CTR_PRES_VAL_L):= 
+         std_logic_vector(to_unsigned(rxc,9));
+    r_data(PRX_IND):='1';
     CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
     
     
@@ -140,11 +143,11 @@ package body fault_conf_feature is
     -----------------------------------------------
     CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
     
-   if( to_integer(unsigned(r_data(8 downto 0))) /= rxc )then
+   if( to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L))) /= rxc )then
       outcome:=false;
     end if;
     
-    if( to_integer(unsigned(r_data(24 downto 16))) /= txc )then
+    if( to_integer(unsigned(r_data(TXC_VAL_H downto TXC_VAL_L))) /= txc )then
       outcome:=false;
     end if;
     
@@ -154,15 +157,24 @@ package body fault_conf_feature is
     CAN_read(r_data,ERROR_TH_ADR,ID_1,mem_bus_1);
     
     if(txc>255 or rxc>255)then
-      if(r_data(16)='1' or r_data(17)='1' or r_data(18)='0')then
+      if(r_data(ERA_IND)='1' or 
+         r_data(ERP_IND)='1' or 
+         r_data(BOF_IND)='0')
+      then
         outcome:=false;
       end if;
     elsif(txc<th_1 and rxc<th_1) then
-      if(r_data(16)='0' or r_data(17)='1' or r_data(18)='1')then
+      if(r_data(ERA_IND)='0' or
+         r_data(ERP_IND)='1' or
+         r_data(BOF_IND)='1')
+      then
         outcome:=false;
       end if;
     else
-      if(r_data(16)='1' or r_data(17)='0' or r_data(18)='1')then
+      if(r_data(ERA_IND)='1' or
+         r_data(ERP_IND)='0' or
+         r_data(BOF_IND)='1')
+      then
         outcome:=false;
       end if;
       

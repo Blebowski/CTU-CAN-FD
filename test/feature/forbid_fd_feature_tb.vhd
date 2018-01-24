@@ -52,6 +52,8 @@ USE work.CANtestLib.All;
 USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
+
 
 package forbid_fd_feature is
   
@@ -101,21 +103,21 @@ package body forbid_fd_feature is
     --First disable the FD support of Node 1
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(4) := '0';
+    r_data(FDE_IND) := '0';
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     -----------------------------------------------
     -- Read RX Error counter node 1
     -----------------------------------------------
     CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
-    ctr_1 := to_integer(unsigned(r_data(15 downto 0)));
+    ctr_1 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
     -----------------------------------------------
     --Send FD frame by node 2 and wait for error
     -- frame...
     -----------------------------------------------
     CAN_generate_frame(rand_ctr,CAN_frame);
-    CAN_frame.frame_format:= '1';
+    CAN_frame.frame_format := FD_CAN;
     CAN_send_frame(CAN_frame,1,ID_2,mem_bus_2,frame_sent);
     CAN_wait_error_transmitted(ID_2,mem_bus_2);
     CAN_wait_bus_idle(ID_2,mem_bus_2);
@@ -124,9 +126,9 @@ package body forbid_fd_feature is
     -- Read RX Error counter node 1 again
     -----------------------------------------------
     CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
-    ctr_2 := to_integer(unsigned(r_data(15 downto 0)));
+    ctr_2 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
-    --Counter should be increased by one
+    --Counter should be increased
     if( ctr_1+1+8 /= ctr_2)then
       outcome := false;
     end if;
@@ -135,7 +137,7 @@ package body forbid_fd_feature is
     -- Now send the same frame, but not the FD
     -- type. Wait until bus is idle
     -----------------------------------------------
-    CAN_frame.frame_format:= '0';
+    CAN_frame.frame_format:= NORMAL_CAN;
     CAN_send_frame(CAN_frame,1,ID_2,mem_bus_2,frame_sent);
     CAN_wait_frame_sent(ID_2,mem_bus_2);
     
@@ -143,7 +145,7 @@ package body forbid_fd_feature is
     -- Read RX Error counter node 1 again
     -----------------------------------------------
     CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
-    ctr_2 := to_integer(unsigned(r_data(15 downto 0)));
+    ctr_2 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
     --Counter should be decreased by one now due
     -- to sucesfull reception.
@@ -158,14 +160,14 @@ package body forbid_fd_feature is
     --Now enable the FD support of Node 1
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(4) := '1';
+    r_data(FDE_IND) := '1';
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     -----------------------------------------------
     -- Now again send the same frame but FD type
     -- now unit should accept the frame OK!
     -----------------------------------------------
-    CAN_frame.frame_format:= '1';
+    CAN_frame.frame_format:= FD_CAN;
     CAN_send_frame(CAN_frame,1,ID_2,mem_bus_2,frame_sent);
     CAN_wait_frame_sent(ID_2,mem_bus_2);
     
@@ -173,7 +175,7 @@ package body forbid_fd_feature is
     -- Read RX Error counter node 1 again
     -----------------------------------------------
     CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
-    ctr_2 := to_integer(unsigned(r_data(15 downto 0)));
+    ctr_2 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
     --Counter should be less than the value read now
     -- or both should be zeroes when counter
@@ -192,7 +194,8 @@ package body forbid_fd_feature is
     if(ctr_2>70)then
       report "Resetting error counters";
       r_data :=(OTHERS => '0');
-      r_data(10 downto 9) := "11";
+      r_data(PRX_IND) := '1';
+      r_data(PTX_IND) := '1';
       CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
       CAN_write(r_data,ERROR_COUNTERS_ADR,ID_2,mem_bus_2);
     end if;

@@ -61,6 +61,7 @@ USE work.CANtestLib.All;
 USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package interrupt_feature is
   
@@ -123,10 +124,10 @@ package body interrupt_feature is
     -----------------------------------------------
     report "Starting TX RX interrupt";
     r_data :=(OTHERS => '0');
-    r_data(16):='1';
+    r_data(RIE_IND):='1';
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    r_data(16):='0';
-    r_data(17):='1';
+    r_data(RIE_IND):='0';
+    r_data(TIE_IND):='1';
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
     -----------------------------------------------
@@ -143,11 +144,11 @@ package body interrupt_feature is
     CAN_read(vect_1,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
-    if(vect_1(0)='0')then
+    if(vect_1(RI_IND)='0')then
       outcome:=false;
     end if;
     
-    if(vect_2(1)='0')then
+    if(vect_2(TI_IND)='0')then
       outcome:=false;
     end if;
   
@@ -160,7 +161,7 @@ package body interrupt_feature is
     -----------------------------------------------
     report "Starting Error interrupt";
     r_data :=(OTHERS => '0');
-    r_data(23):='1';
+    r_data(BEIE_IND):='1';
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
@@ -168,7 +169,7 @@ package body interrupt_feature is
     --Send conflicting frames
     -----------------------------------------------
     CAN_frame.data(511 downto 480) := x"ABCDABCD";
-    CAN_frame.rtr:='0';
+    CAN_frame.rtr:=NO_RTR_FRAME;
     CAN_send_frame(CAN_frame,1,ID_2,mem_bus_2,frame_sent);
     CAN_frame.data(511 downto 480) := x"AAAABBBB";
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
@@ -182,11 +183,11 @@ package body interrupt_feature is
     CAN_read(vect_1,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
-    if(vect_1(7)='0')then
+    if(vect_1(BEI_IND)='0')then
       outcome:=false;
     end if;
     
-    if(vect_2(7)='0')then
+    if(vect_2(BEI_IND)='0')then
       outcome:=false;
     end if;
     CAN_wait_frame_sent(ID_1,mem_bus_1);
@@ -201,26 +202,27 @@ package body interrupt_feature is
     -----------------------------------------------
     report "Starting Data overrun recieve buffer interrupt";
     r_data :=(OTHERS => '0');
-    r_data(19):='1';
-    r_data(25):='1';
+    r_data(DOIE_IND):='1';
+    r_data(RFIE_IND):='1';
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
     --Release the recieve buffer
     CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
-    r_data(10):='1';
+    r_data(RRB_IND):='1';
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     --Size of buffer 2
     -- Note that size of RTR is 4 thus each synthesizable
     -- size of buffer is multiple of 4!
     CAN_read(r_data,RX_INFO_2_ADR,ID_2,mem_bus_2);
-    size_of_buf:= to_integer(unsigned(r_data(7 downto 0)));
+    size_of_buf:= to_integer(unsigned(r_data(
+         RX_BUFF_SIZE_VALUE_H downto RX_BUFF_SIZE_VALUE_L)));
     
     --Send RTR frames since it has fixed length...
     -- We can fill buffer in short time
-    CAN_frame.rtr:='1';
-    CAN_frame.frame_format:='0';
+    CAN_frame.rtr:=RTR_FRAME;
+    CAN_frame.frame_format:=NORMAL_CAN;
     for i in 0 to (size_of_buf/4)+1 loop
       CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
       
@@ -238,7 +240,7 @@ package body interrupt_feature is
     -----------------------------------------------
     CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
-    if(vect_2(3)='0' or vect_2(9)='0')then
+    if(vect_2(DOI_IND)='0' or vect_2(RFI_IND)='0')then
       outcome:=false;
     end if;
     wait for 30000 ns;
@@ -252,13 +254,13 @@ package body interrupt_feature is
     -----------------------------------------------
     report "Starting Bit rate shift interrupt";
     r_data :=(OTHERS => '0');
-    r_data(26):='1';
+    r_data(BSIE_IND):='1';
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
-    CAN_frame.frame_format:='1';
-    CAN_frame.rtr:='0';
-    CAN_frame.brs:='1';
+    CAN_frame.frame_format:=FD_CAN;
+    CAN_frame.rtr:=NO_RTR_FRAME;
+    CAN_frame.brs:=BR_SHIFT;
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
     
     -----------------------------------------------
@@ -272,7 +274,7 @@ package body interrupt_feature is
     -----------------------------------------------
     CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
     
-    if(vect_2(10)='0')then
+    if(vect_2(BSI_IND)='0')then
       outcome:=false;
     end if;
     
@@ -286,7 +288,7 @@ package body interrupt_feature is
     -----------------------------------------------
     report "Starting ALC interrupt";
     r_data :=(OTHERS => '0');
-    r_data(22):='1';
+    r_data(ALIE_IND):='1';
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     
     
@@ -294,10 +296,10 @@ package body interrupt_feature is
     -- Send frames by both nodes, assuming node 1
     -- loses!
     -----------------------------------------------
-    CAN_frame.frame_format:='0';
-    CAN_frame.rtr:='0';
-    CAN_frame.brs:='0';
-    CAN_frame.ident_type:='1';
+    CAN_frame.frame_format:=NORMAL_CAN;
+    CAN_frame.rtr:=NO_RTR_FRAME;
+    CAN_frame.brs:=BR_NO_SHIFT;
+    CAN_frame.ident_type:=EXTENDED;
     CAN_frame.identifier:=5;
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
     CAN_frame.identifier:=4;
@@ -307,7 +309,7 @@ package body interrupt_feature is
     
     CAN_read(vect_2,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     
-    if(vect_2(6)='0')then
+    if(vect_2(ALI_IND)='0')then
       outcome:=false;
     end if;
     
@@ -330,8 +332,8 @@ package body interrupt_feature is
     -------------------------------------------------
     report "Starting Error warning limit interrupt";
     r_data :=(OTHERS => '0');
-    r_data(21):='1';
-    r_data(18):='1';
+    r_data(EPIE_IND):='1';
+    r_data(EIE_IND):='1';
     CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
     
     ----------------------------------
@@ -339,8 +341,8 @@ package body interrupt_feature is
     -- and erase the error counters
     ----------------------------------
     r_data :=(OTHERS => '0');
-    r_data(10):='1';
-    r_data(9):='1';
+    r_data(PRX_IND):='1';
+    r_data(PTX_IND):='1';
     CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
     r_data :=(OTHERS => '0');
     r_data(7 downto 0)  := "00000101";
@@ -355,13 +357,13 @@ package body interrupt_feature is
     r_data:=mode_prev;
     
     --Disable the retransmitt limit in node 1
-    r_data(24):='0';
+    r_data(RTRLE_IND):='0';
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     --Forbid the acknowledge in node 2
     CAN_read(mode_prev_2,MODE_REG_ADR,ID_2,mem_bus_2);
     r_data:=mode_prev_2;
-    r_data(7):='1';
+    r_data(ACF_IND):='1';
     CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
     
     --Insert frame to be transmitted 
@@ -373,7 +375,7 @@ package body interrupt_feature is
     -- Detect the EWL interrupt flag
     -----------------------------------------------
     CAN_read(vect_2,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    if(vect_2(2)='0')then
+    if(vect_2(EI_IND)='0')then
       outcome:=false;
     end if;
     CAN_wait_frame_sent(ID_1,mem_bus_1);
@@ -385,7 +387,7 @@ package body interrupt_feature is
     -- Detect the ERP interrupt flag
     -----------------------------------------------
     CAN_read(vect_2,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    if(vect_2(5)='0')then
+    if(vect_2(EPI_IND)='0')then
       outcome:=false;
     end if;
     
@@ -393,7 +395,7 @@ package body interrupt_feature is
     -- Now abort the frame transmittion
     -----------------------------------------------
     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-    r_data(9):='1';
+    r_data(AT_IND):='1';
     CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
     
     ------------------------------------------------
