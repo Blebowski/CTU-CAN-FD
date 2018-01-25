@@ -28,8 +28,6 @@
 ##		packName	- Name of the VHDL package to create
 ##		outFile		- Output where to write the VHDL package.
 ##
-##	Example of usage from IDLE shell
-##     
 ##
 ##	Revision history:
 ##		16.01.2018	Implemented the script
