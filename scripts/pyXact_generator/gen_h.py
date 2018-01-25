@@ -174,7 +174,7 @@ class headerGenerator(baseGenerator):
 	
 	def write_reg(self, of, reg, outBuffer):
 		type = "uint{}_t".format(self.busWidth)
-		of.write("		//{}\n".format(reg.name))
+		of.write("		/* {} */\n".format(reg.name))
 		prevIndex = 0
 		
 		for field in sorted(reg.field, key=lambda a: a.bitOffset):
@@ -195,7 +195,7 @@ class headerGenerator(baseGenerator):
 			outBuffer.append(self.write_bitfield_gap(of, type, lower, upper, 35))
 		
 		# Append the name for the reverse order
-		outBuffer.append("		//{}\n".format(reg.name))
+		outBuffer.append("		/* {} */\n".format(reg.name))
 		
 		return outBuffer
 			
@@ -314,6 +314,6 @@ class headerGenerator(baseGenerator):
 			self.write_addrbl_head(of, block)
 			self.write_addrbl_regs(of, block)
 		
-		of.write("};\n")
+		of.write("};\n\n")
 	
 		
