@@ -17,6 +17,15 @@ from abc import ABCMeta, abstractmethod
 
 class baseGenerator(metaclass=ABCMeta):
 
+	addrMap = None
+	fieldMap = None
+	busWidth = None
+	
+	def __init__(self, addrMap, fieldMap, busWidth):
+		self.addrMap = addrMap
+		self.fieldMap = fieldMap
+		self.busWidth = busWidth
+	
 	@abstractmethod
 	def is_supported_type(self, type):
 		pass
