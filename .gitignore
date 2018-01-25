@@ -1,3 +1,4 @@
 # Ignore Modelsim generated files
 *.bak
 /modelsim_project/work
+*__pycache__*
