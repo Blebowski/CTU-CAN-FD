@@ -1089,7 +1089,7 @@
 					<ipxact:displayName>LOG_TRIG_CONFIG</ipxact:displayName>
 					<ipxact:description>Register for configuration of event logging triggering conditions. If Event logger is in Ready state and any of triggering conditions appear it starts recording the events on the bus (moves to Running state). Logic 1 in each bit means this triggering condition is valid.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hB4</ipxact:addressOffset>
+					<ipxact:addressOffset>'hB8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1296,7 +1296,7 @@
 					<ipxact:name>LOG_WPP</ipxact:name>
 					<ipxact:displayName>LOG_WPP</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hbE</ipxact:addressOffset>
+					<ipxact:addressOffset>'hC6</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1317,7 +1317,7 @@
 					<ipxact:displayName>LOG_STATUS</ipxact:displayName>
 					<ipxact:description>Status  register for Event logger.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hbC</ipxact:addressOffset>
+					<ipxact:addressOffset>'hC4</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1372,7 +1372,7 @@
 					<ipxact:name>LOG_CAPT_EVENT_2</ipxact:name>
 					<ipxact:description>Second word of the logged event details.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hc8</ipxact:addressOffset>
+					<ipxact:addressOffset>'hD0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1543,7 +1543,7 @@
 					<ipxact:displayName>LOG_CAPT_EVENT_1</ipxact:displayName>
 					<ipxact:description>First word of the logged event details.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hc4</ipxact:addressOffset>
+					<ipxact:addressOffset>'hcC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1563,7 +1563,7 @@
 					<ipxact:name>YOLO_REG</ipxact:name>
 					<ipxact:description>Register for fun :)</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hd0</ipxact:addressOffset>
+					<ipxact:addressOffset>'hD8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1584,7 +1584,7 @@
 					<ipxact:displayName>DEBUG_REGISTER</ipxact:displayName>
 					<ipxact:description>Register for reading out state of the controller. This register is only for debugging purposes!</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hCC</ipxact:addressOffset>
+					<ipxact:addressOffset>'hD4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1693,7 +1693,7 @@
 					<ipxact:displayName>LOG_COMMAND</ipxact:displayName>
 					<ipxact:description>Register for controlling the state machine of Event logger and read pointer position. Every bit is active in logic 1.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hC0</ipxact:addressOffset>
+					<ipxact:addressOffset>'hC8</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>write-only</ipxact:access>
@@ -1746,7 +1746,7 @@
 					<ipxact:name>LOG_RPP</ipxact:name>
 					<ipxact:displayName>LOG_RPP</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hbF</ipxact:addressOffset>
+					<ipxact:addressOffset>'hC7</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1767,7 +1767,7 @@
 					<ipxact:displayName>LOG_CAPT_CONFIG</ipxact:displayName>
 					<ipxact:description>Register for configuring which events to capture by event logger into the logger FIFO memory when event logger is running.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hb8</ipxact:addressOffset>
+					<ipxact:addressOffset>'hC0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
