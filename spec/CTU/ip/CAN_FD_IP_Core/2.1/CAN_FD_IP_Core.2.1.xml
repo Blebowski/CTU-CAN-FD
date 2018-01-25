@@ -63,30 +63,6 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>STM</ipxact:name>
-						<ipxact:displayName>STM</ipxact:displayName>
-						<ipxact:description>Self test mode. In this mode transmitted frame is considered valid even if acknowledge is not received.</ipxact:description>
-						<ipxact:bitOffset>2</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>AFM</ipxact:name>
-						<ipxact:displayName>AFM</ipxact:displayName>
-						<ipxact:description>Acceptance filters mode. Activating this bit enables usage of acceptance filters. If disabled, every received frame is stored in the RX buffer.</ipxact:description>
-						<ipxact:bitOffset>3</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
 						<ipxact:name>FDE</ipxact:name>
 						<ipxact:displayName>FDE</ipxact:displayName>
 						<ipxact:description>Enable flexible data rate support. When this bit is inactive, receiving recessive EDL bit (Flexible data rate frame) causes Form error.</ipxact:description>
@@ -94,18 +70,6 @@
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>1</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>LOM</ipxact:name>
-						<ipxact:displayName>LOM</ipxact:displayName>
-						<ipxact:description>Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!</ipxact:description>
-						<ipxact:bitOffset>1</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -139,6 +103,42 @@
 						<ipxact:displayName>ACF</ipxact:displayName>
 						<ipxact:description>When this bit is active acknowledge is not sent even when received CRC matches the calculated one.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>LOM</ipxact:name>
+						<ipxact:displayName>LOM</ipxact:displayName>
+						<ipxact:description>Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!</ipxact:description>
+						<ipxact:bitOffset>1</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>STM</ipxact:name>
+						<ipxact:displayName>STM</ipxact:displayName>
+						<ipxact:description>Self test mode. In this mode transmitted frame is considered valid even if acknowledge is not received.</ipxact:description>
+						<ipxact:bitOffset>2</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>AFM</ipxact:name>
+						<ipxact:displayName>AFM</ipxact:displayName>
+						<ipxact:description>Acceptance filters mode. Activating this bit enables usage of acceptance filters. If disabled, every received frame is stored in the RX buffer</ipxact:description>
+						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
