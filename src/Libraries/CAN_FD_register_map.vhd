@@ -53,7 +53,7 @@ package CAN_FD_register_map is
   constant DEVICE_ID_H           : natural := 31;
 
   --DEVICE_ID reset values
-  constant DEVICE_ID_RSTVAL : std_logic_vector(31 downto 0) := x"0000cafd";
+  constant DEVICE_ID_RSTVAL : std_logic_vector(31 downto 0) := x"0000CAFD";
 
   ------------------------------------------------------------------------------
   -- MODE register
@@ -137,16 +137,16 @@ package CAN_FD_register_map is
   constant FD_TYPE_IND           : natural := 31;
 
   -- "ENA" field enumerated values
-  constant DISABLED : std_logic := '0';
-  constant ENABLED : std_logic := '1';
+  constant DISABLED           : std_logic := '0';
+  constant ENABLED            : std_logic := '1';
 
   -- "FD_TYPE" field enumerated values
-  constant ISO_FD : std_logic := '0';
-  constant NON_ISO_FD : std_logic := '1';
+  constant ISO_FD             : std_logic := '0';
+  constant NON_ISO_FD         : std_logic := '1';
 
   --SETTINGS reset values
   constant RTRLE_RSTVAL       : std_logic := '0';
-  constant RTR_TH_RSTVAL : std_logic_vector(3 downto 0) := (OTHERS => '0');
+  constant RTR_TH_RSTVAL : std_logic_vector(3 downto 0) := x"0";
   constant INT_LOOP_RSTVAL    : std_logic := '0';
   constant ENA_RSTVAL         : std_logic := '0';
   constant FD_TYPE_RSTVAL     : std_logic := '0';
@@ -255,7 +255,7 @@ package CAN_FD_register_map is
   constant ALC_VAL_H              : natural := 4;
 
   --ALC reset values
-  constant ALC_VAL_RSTVAL : std_logic_vector(4 downto 0) := (OTHERS => '0');
+  constant ALC_VAL_RSTVAL : std_logic_vector(4 downto 0) := "00000";
 
   ------------------------------------------------------------------------------
   -- SJW register
@@ -357,7 +357,8 @@ package CAN_FD_register_map is
   constant BIT_VAL_A_VAL_H       : natural := 28;
 
   --FILTER_A_VAL reset values
-  constant BIT_VAL_A_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_VAL_A_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- FILTER_STATUS register
@@ -464,7 +465,7 @@ package CAN_FD_register_map is
   constant LOG_WPP_VAL_H         : natural := 23;
 
   --LOG_WPP reset values
-  constant LOG_WPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := (OTHERS => '0');
+  constant LOG_WPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
 
   ------------------------------------------------------------------------------
   -- LOG_STATUS register
@@ -496,32 +497,32 @@ package CAN_FD_register_map is
   constant EVENT_TYPE_H           : natural := 7;
 
   -- "EVENT_TYPE" field enumerated values
-  constant SOF_EVNT : std_logic_vector(7 downto 0) := "00000001";
-  constant ALO_EVNT : std_logic_vector(7 downto 0) := "00000010";
-  constant REC_EVNT : std_logic_vector(7 downto 0) := "00000011";
-  constant TRAN_EVNT : std_logic_vector(7 downto 0) := "00000100";
-  constant OVLD_EVNT : std_logic_vector(7 downto 0) := "00000101";
-  constant ERR_EVNT : std_logic_vector(7 downto 0) := "00000110";
-  constant BRS_EVNT : std_logic_vector(7 downto 0) := "00000111";
-  constant ARB_EVNT : std_logic_vector(7 downto 0) := "00001000";
-  constant CTRL_EVNT : std_logic_vector(7 downto 0) := "00001001";
-  constant DATA_EVNT : std_logic_vector(7 downto 0) := "00001010";
-  constant CRC_EVNT : std_logic_vector(7 downto 0) := "00001011";
-  constant ACK_EVNT : std_logic_vector(7 downto 0) := "00001100";
-  constant NACK_EVNT : std_logic_vector(7 downto 0) := "00001101";
-  constant EWL_EVNT : std_logic_vector(7 downto 0) := "00001110";
-  constant ERP_EVNT : std_logic_vector(7 downto 0) := "00001111";
-  constant TXS_EVNT : std_logic_vector(7 downto 0) := "00010000";
-  constant RXS_EVNT : std_logic_vector(7 downto 0) := "00010001";
-  constant SYNC_EVNT : std_logic_vector(7 downto 0) := "00010010";
-  constant STUF_EVNT : std_logic_vector(7 downto 0) := "00010011";
-  constant DSTF_EVNT : std_logic_vector(7 downto 0) := "00010100";
-  constant OVR_EVNT : std_logic_vector(7 downto 0) := "00010101";
+  constant SOF_EVNT : std_logic_vector(7 downto 0) := x"01";
+  constant ALO_EVNT : std_logic_vector(7 downto 0) := x"02";
+  constant REC_EVNT : std_logic_vector(7 downto 0) := x"03";
+  constant TRAN_EVNT : std_logic_vector(7 downto 0) := x"04";
+  constant OVLD_EVNT : std_logic_vector(7 downto 0) := x"05";
+  constant ERR_EVNT : std_logic_vector(7 downto 0) := x"06";
+  constant BRS_EVNT : std_logic_vector(7 downto 0) := x"07";
+  constant ARB_EVNT : std_logic_vector(7 downto 0) := x"08";
+  constant CTRL_EVNT : std_logic_vector(7 downto 0) := x"09";
+  constant DATA_EVNT : std_logic_vector(7 downto 0) := x"0A";
+  constant CRC_EVNT : std_logic_vector(7 downto 0) := x"0B";
+  constant ACK_EVNT : std_logic_vector(7 downto 0) := x"0C";
+  constant NACK_EVNT : std_logic_vector(7 downto 0) := x"0D";
+  constant EWL_EVNT : std_logic_vector(7 downto 0) := x"0E";
+  constant ERP_EVNT : std_logic_vector(7 downto 0) := x"0F";
+  constant TXS_EVNT : std_logic_vector(7 downto 0) := x"10";
+  constant RXS_EVNT : std_logic_vector(7 downto 0) := x"11";
+  constant SYNC_EVNT : std_logic_vector(7 downto 0) := x"12";
+  constant STUF_EVNT : std_logic_vector(7 downto 0) := x"13";
+  constant DSTF_EVNT : std_logic_vector(7 downto 0) := x"14";
+  constant OVR_EVNT : std_logic_vector(7 downto 0) := x"15";
 
   --LOG_CAPT_EVENT_2 reset values
-  constant EVENT_TS_15_0_RSTVAL : std_logic_vector(15 downto 0) := (OTHERS => '0');
-  constant EVENT_DETAILS_RSTVAL : std_logic_vector(7 downto 0) := (OTHERS => '0');
-  constant EVENT_TYPE_RSTVAL : std_logic_vector(7 downto 0) := (OTHERS => '0');
+  constant EVENT_TS_15_0_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  constant EVENT_DETAILS_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+  constant EVENT_TYPE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
 
   ------------------------------------------------------------------------------
   -- LOG_CAPT_EVENT_1 register
@@ -532,7 +533,8 @@ package CAN_FD_register_map is
   constant EVENT_TIME_STAMP_47_TO_16_H : natural := 31;
 
   --LOG_CAPT_EVENT_1 reset values
-  constant EVENT_TIME_STAMP_47_TO_16_RSTVAL : std_logic_vector(31 downto 0) := (OTHERS => '0');
+  constant EVENT_TIME_STAMP_47_TO_16_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- YOLO_REG register
@@ -543,7 +545,7 @@ package CAN_FD_register_map is
   constant YOLO_VAL_H            : natural := 31;
 
   --YOLO_REG reset values
-  constant YOLO_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"deadbeef";
+  constant YOLO_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"DEADBEEF";
 
   ------------------------------------------------------------------------------
   -- DEBUG_REGISTER register
@@ -564,8 +566,8 @@ package CAN_FD_register_map is
   constant PC_INT_IND            : natural := 12;
 
   --DEBUG_REGISTER reset values
-  constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := (OTHERS => '0');
-  constant DESTUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := (OTHERS => '0');
+  constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant DESTUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
   constant PC_ARB_RSTVAL      : std_logic := '0';
   constant PC_CON_RSTVAL      : std_logic := '0';
   constant PC_DAT_RSTVAL      : std_logic := '0';
@@ -599,7 +601,7 @@ package CAN_FD_register_map is
   constant LOG_RPP_VAL_H         : natural := 31;
 
   --LOG_RPP reset values
-  constant LOG_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := (OTHERS => '0');
+  constant LOG_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
 
   ------------------------------------------------------------------------------
   -- LOG_CAPT_CONFIG register
@@ -661,7 +663,8 @@ package CAN_FD_register_map is
   constant TX_COUNTER_VAL_H      : natural := 31;
 
   --TX_COUNTER reset values
-  constant TX_COUNTER_VAL_RSTVAL : std_logic_vector(31 downto 0) := (OTHERS => '0');
+  constant TX_COUNTER_VAL_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- RX_COUNTER register
@@ -672,7 +675,8 @@ package CAN_FD_register_map is
   constant RX_COUNTER_VAL_H      : natural := 31;
 
   --RX_COUNTER reset values
-  constant RX_COUNTER_VAL_RSTVAL : std_logic_vector(31 downto 0) := (OTHERS => '0');
+  constant RX_COUNTER_VAL_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- ERR_CAPT register
@@ -705,7 +709,7 @@ package CAN_FD_register_map is
 
   --ERR_CAPT reset values
   constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";
-  constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := (OTHERS => '0');
+  constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------
   -- TX_STATUS register
@@ -728,7 +732,7 @@ package CAN_FD_register_map is
   constant TRV_DELAY_VALUE_H     : natural := 15;
 
   --TRV_DELAY reset values
-  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := (OTHERS => '0');
+  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
   -- RX_DATA register
@@ -746,7 +750,7 @@ package CAN_FD_register_map is
   constant RX_DATA_H             : natural := 31;
 
   --RX_DATA reset values
-  constant RX_DATA_RSTVAL : std_logic_vector(31 downto 0) := (OTHERS => '0');
+  constant RX_DATA_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- RX_RPP register
@@ -758,7 +762,7 @@ package CAN_FD_register_map is
   constant RX_RPP_VAL_H          : natural := 23;
 
   --RX_RPP reset values
-  constant RX_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := (OTHERS => '0');
+  constant RX_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
 
   ------------------------------------------------------------------------------
   -- RX_WPP register
@@ -770,7 +774,7 @@ package CAN_FD_register_map is
   constant RX_WPP_VALUE_H        : natural := 15;
 
   --RX_WPP reset values
-  constant RX_WPP_VALUE_RSTVAL : std_logic_vector(7 downto 0) := (OTHERS => '0');
+  constant RX_WPP_VALUE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
 
   ------------------------------------------------------------------------------
   -- RX_BUFF_SIZE register
@@ -845,7 +849,8 @@ package CAN_FD_register_map is
   constant BIT_RAN_HIGH_VAL_H    : natural := 28;
 
   --FILTER_RAN_HIGH reset values
-  constant BIT_RAN_HIGH_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_RAN_HIGH_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- FILTER_RAN_LOW register
@@ -865,7 +870,8 @@ package CAN_FD_register_map is
   constant BIT_RAN_LOW_VAL_H     : natural := 28;
 
   --FILTER_RAN_LOW reset values
-  constant BIT_RAN_LOW_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_RAN_LOW_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- FILTER_C_VAL register
@@ -877,7 +883,8 @@ package CAN_FD_register_map is
   constant BIT_VAL_C_VAL_H       : natural := 28;
 
   --FILTER_C_VAL reset values
-  constant BIT_VAL_C_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_VAL_C_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- FILTER_C_MASK register
@@ -889,7 +896,8 @@ package CAN_FD_register_map is
   constant BIT_MASK_C_VAL_H      : natural := 28;
 
   --FILTER_C_MASK reset values
-  constant BIT_MASK_C_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_MASK_C_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- FILTER_B_VAL register
@@ -901,7 +909,8 @@ package CAN_FD_register_map is
   constant BIT_VAL_B_VAL_H       : natural := 28;
 
   --FILTER_B_VAL reset values
-  constant BIT_VAL_B_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_VAL_B_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- FILTER_B_MASK register
@@ -913,7 +922,8 @@ package CAN_FD_register_map is
   constant BIT_MASK_B_VAL_H      : natural := 28;
 
   --FILTER_B_MASK reset values
-  constant BIT_MASK_B_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_MASK_B_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- FILTER_A_MASK register
@@ -930,7 +940,8 @@ package CAN_FD_register_map is
   constant BIT_MASK_A_VAL_H      : natural := 28;
 
   --FILTER_A_MASK reset values
-  constant BIT_MASK_A_VAL_RSTVAL : std_logic_vector(28 downto 0) := (OTHERS => '0');
+  constant BIT_MASK_A_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- CTR_PRES register
@@ -945,7 +956,8 @@ package CAN_FD_register_map is
   constant EFD_IND               : natural := 12;
 
   --CTR_PRES reset values
-  constant CTR_PRES_VAL_RSTVAL : std_logic_vector(8 downto 0) := (OTHERS => '0');
+  constant CTR_PRES_VAL_RSTVAL
+                 : std_logic_vector(8 downto 0) := (OTHERS => '0');
   constant PTX_RSTVAL         : std_logic := '0';
   constant PRX_RSTVAL         : std_logic := '0';
   constant ENORM_RSTVAL       : std_logic := '0';
@@ -959,7 +971,7 @@ package CAN_FD_register_map is
   constant ERR_FD_VAL_H          : natural := 31;
 
   --ERR_FD reset values
-  constant ERR_FD_VAL_RSTVAL : std_logic_vector(15 downto 0) := (OTHERS => '0');
+  constant ERR_FD_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
   -- ERR_NORM register
@@ -970,7 +982,7 @@ package CAN_FD_register_map is
   constant ERR_NORM_VAL_H        : natural := 15;
 
   --ERR_NORM reset values
-  constant ERR_NORM_VAL_RSTVAL : std_logic_vector(15 downto 0) := (OTHERS => '0');
+  constant ERR_NORM_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
   -- TXC register
@@ -981,7 +993,7 @@ package CAN_FD_register_map is
   constant TXC_VAL_H             : natural := 31;
 
   --TXC reset values
-  constant TXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := (OTHERS => '0');
+  constant TXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
   -- RXC register
@@ -992,7 +1004,7 @@ package CAN_FD_register_map is
   constant RXC_VAL_H             : natural := 15;
 
   --RXC reset values
-  constant RXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := (OTHERS => '0');
+  constant RXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ----------------------------------------------------------------------------
   -- Address block: Control_Registers

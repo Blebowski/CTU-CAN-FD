@@ -58,28 +58,28 @@ package CAN_FD_frame_format is
   constant ESI_RESVD_IND         : natural := 10;
 
   -- "RTR" field enumerated values
-  constant NO_RTR_FRAME : std_logic := '0';
-  constant RTR_FRAME : std_logic := '1';
+  constant NO_RTR_FRAME       : std_logic := '0';
+  constant RTR_FRAME          : std_logic := '1';
 
   -- "ID_TYPE" field enumerated values
-  constant BASE : std_logic := '0';
-  constant EXTENDED : std_logic := '1';
+  constant BASE               : std_logic := '0';
+  constant EXTENDED           : std_logic := '1';
 
   -- "FR_TYPE" field enumerated values
-  constant NORMAL_CAN : std_logic := '0';
-  constant FD_CAN : std_logic := '1';
+  constant NORMAL_CAN         : std_logic := '0';
+  constant FD_CAN             : std_logic := '1';
 
   -- "TBF" field enumerated values
-  constant NOT_TIME_BASED : std_logic := '0';
-  constant TIME_BASED : std_logic := '1';
+  constant NOT_TIME_BASED     : std_logic := '0';
+  constant TIME_BASED         : std_logic := '1';
 
   -- "BRS" field enumerated values
-  constant BR_NO_SHIFT : std_logic := '0';
-  constant BR_SHIFT : std_logic := '1';
+  constant BR_NO_SHIFT        : std_logic := '0';
+  constant BR_SHIFT           : std_logic := '1';
 
   -- "ESI_RESVD" field enumerated values
-  constant ESI_ERR_ACTIVE : std_logic := '0';
-  constant ESI_ERR_PASIVE : std_logic := '1';
+  constant ESI_ERR_ACTIVE     : std_logic := '0';
+  constant ESI_ERR_PASIVE     : std_logic := '1';
 
   --FRAME_FORM_W reset values
 
