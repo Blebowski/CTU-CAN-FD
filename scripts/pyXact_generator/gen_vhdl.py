@@ -169,7 +169,7 @@ class vhdlGenerator(baseGenerator):
 
 	
 	def write_regs(self, of, regs, busWidth):
-		for reg in regs:
+		for reg in sorted(regs, key=lambda a: a.addressOffset):
 			self.write_reg(of, reg, busWidth)
 	
 	

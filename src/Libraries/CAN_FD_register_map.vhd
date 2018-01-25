@@ -211,24 +211,6 @@ package CAN_FD_register_map is
   constant TIE_RSTVAL         : std_logic := '1';
 
   ------------------------------------------------------------------------------
-  -- BTR_FD register
-  --
-  -- Length of bit time segments for Data bit time in Time quanta. Note that SYN
-  -- C segment always lasts one Time quanta.
-  ------------------------------------------------------------------------------
-  constant PH2_FD_L              : natural := 27;
-  constant PH2_FD_H              : natural := 30;
-  constant PROP_FD_L             : natural := 16;
-  constant PROP_FD_H             : natural := 21;
-  constant PH1_FD_L              : natural := 22;
-  constant PH1_FD_H              : natural := 25;
-
-  --BTR_FD reset values
-  constant PH2_FD_RSTVAL : std_logic_vector(3 downto 0) := x"3";
-  constant PROP_FD_RSTVAL : std_logic_vector(5 downto 0) := "000011";
-  constant PH1_FD_RSTVAL : std_logic_vector(3 downto 0) := x"3";
-
-  ------------------------------------------------------------------------------
   -- BTR register
   --
   -- The length of bit time segments for Nominal bit time in Time quanta. Note t
@@ -245,6 +227,24 @@ package CAN_FD_register_map is
   constant PROP_RSTVAL : std_logic_vector(5 downto 0) := "000101";
   constant PH1_RSTVAL : std_logic_vector(4 downto 0) := "00011";
   constant PH2_RSTVAL : std_logic_vector(4 downto 0) := "00101";
+
+  ------------------------------------------------------------------------------
+  -- BTR_FD register
+  --
+  -- Length of bit time segments for Data bit time in Time quanta. Note that SYN
+  -- C segment always lasts one Time quanta.
+  ------------------------------------------------------------------------------
+  constant PH2_FD_L              : natural := 27;
+  constant PH2_FD_H              : natural := 30;
+  constant PROP_FD_L             : natural := 16;
+  constant PROP_FD_H             : natural := 21;
+  constant PH1_FD_L              : natural := 22;
+  constant PH1_FD_H              : natural := 25;
+
+  --BTR_FD reset values
+  constant PH2_FD_RSTVAL : std_logic_vector(3 downto 0) := x"3";
+  constant PROP_FD_RSTVAL : std_logic_vector(5 downto 0) := "000011";
+  constant PH1_FD_RSTVAL : std_logic_vector(3 downto 0) := x"3";
 
   ------------------------------------------------------------------------------
   -- ALC register
@@ -343,6 +343,87 @@ package CAN_FD_register_map is
   constant ERA_RSTVAL         : std_logic := '1';
 
   ------------------------------------------------------------------------------
+  -- RXC register
+  --
+  -- Counter for received frames to enable bus traffic measurement.
+  ------------------------------------------------------------------------------
+  constant RXC_VAL_L              : natural := 0;
+  constant RXC_VAL_H             : natural := 15;
+
+  --RXC reset values
+  constant RXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+
+  ------------------------------------------------------------------------------
+  -- TXC register
+  --
+  -- Counter for transcieved frames to enable bus traffic measurement.
+  ------------------------------------------------------------------------------
+  constant TXC_VAL_L             : natural := 16;
+  constant TXC_VAL_H             : natural := 31;
+
+  --TXC reset values
+  constant TXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+
+  ------------------------------------------------------------------------------
+  -- ERR_NORM register
+  --
+  -- Error counter for nominal Bit time
+  ------------------------------------------------------------------------------
+  constant ERR_NORM_VAL_L         : natural := 0;
+  constant ERR_NORM_VAL_H        : natural := 15;
+
+  --ERR_NORM reset values
+  constant ERR_NORM_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+
+  ------------------------------------------------------------------------------
+  -- ERR_FD register
+  --
+  ------------------------------------------------------------------------------
+  constant ERR_FD_VAL_L          : natural := 16;
+  constant ERR_FD_VAL_H          : natural := 31;
+
+  --ERR_FD reset values
+  constant ERR_FD_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+
+  ------------------------------------------------------------------------------
+  -- CTR_PRES register
+  --
+  -- Register for manipulation with error counters.
+  ------------------------------------------------------------------------------
+  constant CTR_PRES_VAL_L         : natural := 0;
+  constant CTR_PRES_VAL_H         : natural := 8;
+  constant PTX_IND                : natural := 9;
+  constant PRX_IND               : natural := 10;
+  constant ENORM_IND             : natural := 11;
+  constant EFD_IND               : natural := 12;
+
+  --CTR_PRES reset values
+  constant CTR_PRES_VAL_RSTVAL
+                 : std_logic_vector(8 downto 0) := (OTHERS => '0');
+  constant PTX_RSTVAL         : std_logic := '0';
+  constant PRX_RSTVAL         : std_logic := '0';
+  constant ENORM_RSTVAL       : std_logic := '0';
+  constant EFD_RSTVAL         : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- FILTER_A_MASK register
+  --
+  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
+  -- ier format is the same as transmitted and received identifier format. BASE 
+  -- Identifier is 11 LSB and Identifier extension are bits 28-12! Note that fil
+  -- ter support is available by default but it can be left out from synthesis (
+  -- to save logic) by setting "sup_fillt=false". If the particular filter is no
+  -- t supported, writes to this register have no effect and read will return al
+  -- l zeroes.
+  ------------------------------------------------------------------------------
+  constant BIT_MASK_A_VAL_L       : natural := 0;
+  constant BIT_MASK_A_VAL_H      : natural := 28;
+
+  --FILTER_A_MASK reset values
+  constant BIT_MASK_A_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
   -- FILTER_A_VAL register
   --
   -- Bit value for acceptance filters. Filters A, B, C are available. The identi
@@ -361,6 +442,133 @@ package CAN_FD_register_map is
                  : std_logic_vector(28 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
+  -- FILTER_B_MASK register
+  --
+  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
+  -- ier format is the same as transmitted and
+  ------------------------------------------------------------------------------
+  constant BIT_MASK_B_VAL_L       : natural := 0;
+  constant BIT_MASK_B_VAL_H      : natural := 28;
+
+  --FILTER_B_MASK reset values
+  constant BIT_MASK_B_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- FILTER_B_VAL register
+  --
+  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
+  -- fier format is the same as transmitted and
+  ------------------------------------------------------------------------------
+  constant BIT_VAL_B_VAL_L        : natural := 0;
+  constant BIT_VAL_B_VAL_H       : natural := 28;
+
+  --FILTER_B_VAL reset values
+  constant BIT_VAL_B_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- FILTER_C_MASK register
+  --
+  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
+  -- ier format is the same as transmitted and
+  ------------------------------------------------------------------------------
+  constant BIT_MASK_C_VAL_L       : natural := 0;
+  constant BIT_MASK_C_VAL_H      : natural := 28;
+
+  --FILTER_C_MASK reset values
+  constant BIT_MASK_C_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- FILTER_C_VAL register
+  --
+  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
+  -- fier format is the same as transmitted and
+  ------------------------------------------------------------------------------
+  constant BIT_VAL_C_VAL_L        : natural := 0;
+  constant BIT_VAL_C_VAL_H       : natural := 28;
+
+  --FILTER_C_VAL reset values
+  constant BIT_VAL_C_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- FILTER_RAN_LOW register
+  --
+  -- Lower threshold of the Range filter. Note that 29-bit value of range thresh
+  -- old is not the same format as transmitted and received identifier! In TX_DA
+  -- TA_4 (transmitted identifier) BASE Identifier is at 11 LSB bits and Extensi
+  -- on at bits 28-12. However, actual decimal value of the Identifier is that B
+  -- ASE identifier is at MSB bits and 18 LSB bits is identifier extension. The 
+  -- unsigned binary value of the identifier must be written into this register!
+  --  Note that filter support is available by default but it can be left out fr
+  -- om synthesis (to save logic) by setting "sup_ran=false". If the particular 
+  -- filter is not supported, writes to this register have no effect and read wi
+  -- ll return all zeroes.
+  ------------------------------------------------------------------------------
+  constant BIT_RAN_LOW_VAL_L      : natural := 0;
+  constant BIT_RAN_LOW_VAL_H     : natural := 28;
+
+  --FILTER_RAN_LOW reset values
+  constant BIT_RAN_LOW_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- FILTER_RAN_HIGH register
+  --
+  -- Higher threshold of the Range filter. Note that 29-bit value of range thres
+  -- hold is not the same format as transmitted
+  ------------------------------------------------------------------------------
+  constant BIT_RAN_HIGH_VAL_L     : natural := 0;
+  constant BIT_RAN_HIGH_VAL_H    : natural := 28;
+
+  --FILTER_RAN_HIGH reset values
+  constant BIT_RAN_HIGH_VAL_RSTVAL
+                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- FILTER_CONTROL register
+  --
+  -- Every filter can be set to accept only selected frame types. Every bit acti
+  -- ve in logic 1.
+  ------------------------------------------------------------------------------
+  constant FILT_A_BASIC_IND       : natural := 0;
+  constant FILT_A_FD_BAS_IND      : natural := 2;
+  constant FILT_A_EXT_IND         : natural := 1;
+  constant FILT_A_FD_EXT_IND      : natural := 3;
+  constant FILT_B_BASIC_IND       : natural := 4;
+  constant FILT_B_EXT_IND         : natural := 5;
+  constant FILT_B_FD_BAS_IND      : natural := 6;
+  constant FILT_B_FD_EXT_IND      : natural := 7;
+  constant FILT_C_BASIC_IND       : natural := 8;
+  constant FILT_C_EXT_IND         : natural := 9;
+  constant FILT_C_FD_BAS_IND     : natural := 10;
+  constant FILT_RANGE_FD_EXT_IND : natural := 15;
+  constant FILT_RANGE_FD_BAS_IND : natural := 14;
+  constant FILT_RANGE_EXT_IND    : natural := 13;
+  constant FILT_RANGE_BASIC_IND  : natural := 12;
+  constant FILT_C_FD_EXT_IND     : natural := 11;
+
+  --FILTER_CONTROL reset values
+  constant FILT_A_BASIC_RSTVAL : std_logic := '1';
+  constant FILT_A_FD_BAS_RSTVAL : std_logic := '1';
+  constant FILT_A_EXT_RSTVAL  : std_logic := '1';
+  constant FILT_A_FD_EXT_RSTVAL : std_logic := '1';
+  constant FILT_B_BASIC_RSTVAL : std_logic := '0';
+  constant FILT_B_EXT_RSTVAL  : std_logic := '0';
+  constant FILT_B_FD_BAS_RSTVAL : std_logic := '0';
+  constant FILT_B_FD_EXT_RSTVAL : std_logic := '0';
+  constant FILT_C_BASIC_RSTVAL : std_logic := '0';
+  constant FILT_C_EXT_RSTVAL  : std_logic := '0';
+  constant FILT_C_FD_BAS_RSTVAL : std_logic := '0';
+  constant FILT_RANGE_FD_EXT_RSTVAL : std_logic := '0';
+  constant FILT_RANGE_FD_BAS_RSTVAL : std_logic := '0';
+  constant FILT_RANGE_EXT_RSTVAL : std_logic := '0';
+  constant FILT_RANGE_BASIC_RSTVAL : std_logic := '0';
+  constant FILT_C_FD_EXT_RSTVAL : std_logic := '0';
+
+  ------------------------------------------------------------------------------
   -- FILTER_STATUS register
   --
   -- This register provides information about whether the Core is synthesized wi
@@ -374,14 +582,16 @@ package CAN_FD_register_map is
   --FILTER_STATUS reset values
 
   ------------------------------------------------------------------------------
-  -- RX_MF register
+  -- RX_STATUS register
   --
-  -- Number of free (32 bit) words in RX Buffer
+  -- Information register one about FIFO Receive buffer.
   ------------------------------------------------------------------------------
-  constant RX_MF_VALUE_L         : natural := 16;
-  constant RX_MF_VALUE_H         : natural := 23;
+  constant RX_EMPTY_IND           : natural := 0;
+  constant RX_FULL_IND            : natural := 1;
 
-  --RX_MF reset values
+  --RX_STATUS reset values
+  constant RX_EMPTY_RSTVAL    : std_logic := '1';
+  constant RX_FULL_RSTVAL     : std_logic := '1';
 
   ------------------------------------------------------------------------------
   -- RX_MC register
@@ -392,6 +602,91 @@ package CAN_FD_register_map is
   constant RX_MC_VALUE_H         : natural := 15;
 
   --RX_MC reset values
+
+  ------------------------------------------------------------------------------
+  -- RX_MF register
+  --
+  -- Number of free (32 bit) words in RX Buffer
+  ------------------------------------------------------------------------------
+  constant RX_MF_VALUE_L         : natural := 16;
+  constant RX_MF_VALUE_H         : natural := 23;
+
+  --RX_MF reset values
+
+  ------------------------------------------------------------------------------
+  -- RX_BUFF_SIZE register
+  --
+  -- Size of th Receive buffer. This parameter is configurable before synthesis.
+  ------------------------------------------------------------------------------
+  constant RX_BUFF_SIZE_VALUE_L   : natural := 0;
+  constant RX_BUFF_SIZE_VALUE_H   : natural := 7;
+
+  --RX_BUFF_SIZE reset values
+
+  ------------------------------------------------------------------------------
+  -- RX_WPP register
+  --
+  -- Write pointer position in th Receive buffer. When a new frame is stored wri
+  -- te pointer is increased
+  ------------------------------------------------------------------------------
+  constant RX_WPP_VALUE_L         : natural := 8;
+  constant RX_WPP_VALUE_H        : natural := 15;
+
+  --RX_WPP reset values
+  constant RX_WPP_VALUE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+
+  ------------------------------------------------------------------------------
+  -- RX_RPP register
+  --
+  -- Read pointer position in th Receive buffer. When a new frame is stored writ
+  -- e pointer is increased accordingly.
+  ------------------------------------------------------------------------------
+  constant RX_RPP_VAL_L          : natural := 16;
+  constant RX_RPP_VAL_H          : natural := 23;
+
+  --RX_RPP reset values
+  constant RX_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+
+  ------------------------------------------------------------------------------
+  -- RX_DATA register
+  --
+  -- The recieve buffer data at read pointer position in FIFO. CAN Frame layout 
+  -- in RX buffer is described in Figure 7. By reading data from this register r
+  -- ead_pointer is automatically increased, as long as there is next data word 
+  -- stored in the buffer. Next Read from this register returns next word of CAN
+  --  frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc
+  -- . In detail bits of each word have following meaning. If any access is exec
+  -- uted (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. I
+  -- t is recomended to use 32 bit acccess on this register.
+  ------------------------------------------------------------------------------
+  constant RX_DATA_L              : natural := 0;
+  constant RX_DATA_H             : natural := 31;
+
+  --RX_DATA reset values
+  constant RX_DATA_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
+
+  ------------------------------------------------------------------------------
+  -- TRV_DELAY register
+  --
+  ------------------------------------------------------------------------------
+  constant TRV_DELAY_VALUE_L      : natural := 0;
+  constant TRV_DELAY_VALUE_H     : natural := 15;
+
+  --TRV_DELAY reset values
+  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+
+  ------------------------------------------------------------------------------
+  -- TX_STATUS register
+  --
+  -- Status of the TXT Buffers
+  ------------------------------------------------------------------------------
+  constant TXT2_EMPTY_IND         : natural := 1;
+  constant TXT1_EMPTY_IND         : natural := 0;
+  constant TX_TIME_SUPPORT_IND    : natural := 2;
+
+  --TX_STATUS reset values
+  constant TXT2_EMPTY_RSTVAL  : std_logic := '1';
+  constant TXT1_EMPTY_RSTVAL  : std_logic := '1';
 
   ------------------------------------------------------------------------------
   -- TX_SETTINGS register
@@ -409,6 +704,63 @@ package CAN_FD_register_map is
   constant TXT2_ALLOW_RSTVAL  : std_logic := '0';
   constant BUF_DIR_RSTVAL     : std_logic := '0';
   constant FRAME_SWAP_RSTVAL  : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- ERR_CAPT register
+  --
+  -- Last error frame capture.
+  ------------------------------------------------------------------------------
+  constant ERR_POS_L              : natural := 0;
+  constant ERR_POS_H              : natural := 4;
+  constant ERR_TYPE_L             : natural := 5;
+  constant ERR_TYPE_H             : natural := 7;
+
+  -- "ERR_POS" field enumerated values
+  constant ERC_POS_SOF : std_logic_vector(4 downto 0) := "00000";
+  constant ERC_POS_ARB : std_logic_vector(4 downto 0) := "00001";
+  constant ERC_POS_CTRL : std_logic_vector(4 downto 0) := "00010";
+  constant ERC_POS_DATA : std_logic_vector(4 downto 0) := "00011";
+  constant ERC_POS_CRC : std_logic_vector(4 downto 0) := "00100";
+  constant ERC_POS_ACK : std_logic_vector(4 downto 0) := "00101";
+  constant ERC_POS_INTF : std_logic_vector(4 downto 0) := "00110";
+  constant ERC_POS_ERR : std_logic_vector(4 downto 0) := "00111";
+  constant ERC_POS_OVRL : std_logic_vector(4 downto 0) := "01000";
+  constant ERC_POS_OTHER : std_logic_vector(4 downto 0) := "11111";
+
+  -- "ERR_TYPE" field enumerated values
+  constant ERC_BIT_ERR : std_logic_vector(2 downto 0) := "000";
+  constant ERC_CRC_ERR : std_logic_vector(2 downto 0) := "001";
+  constant ERC_FRM_ERR : std_logic_vector(2 downto 0) := "010";
+  constant ERC_ACK_ERR : std_logic_vector(2 downto 0) := "011";
+  constant ERC_STUF_ERR : std_logic_vector(2 downto 0) := "100";
+
+  --ERR_CAPT reset values
+  constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";
+  constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
+
+  ------------------------------------------------------------------------------
+  -- RX_COUNTER register
+  --
+  -- Counter for received frames to enable bus traffic measurement
+  ------------------------------------------------------------------------------
+  constant RX_COUNTER_VAL_L       : natural := 0;
+  constant RX_COUNTER_VAL_H      : natural := 31;
+
+  --RX_COUNTER reset values
+  constant RX_COUNTER_VAL_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
+
+  ------------------------------------------------------------------------------
+  -- TX_COUNTER register
+  --
+  -- Counter for transmitted frames to enable bus traffic measurement
+  ------------------------------------------------------------------------------
+  constant TX_COUNTER_VAL_L       : natural := 0;
+  constant TX_COUNTER_VAL_H      : natural := 31;
+
+  --TX_COUNTER reset values
+  constant TX_COUNTER_VAL_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- LOG_TRIG_CONFIG register
@@ -456,152 +808,6 @@ package CAN_FD_register_map is
   constant T_ACKR_RSTVAL      : std_logic := '0';
   constant T_DATS_RSTVAL      : std_logic := '0';
   constant T_CRCS_RSTVAL      : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_WPP register
-  --
-  ------------------------------------------------------------------------------
-  constant LOG_WPP_VAL_L         : natural := 16;
-  constant LOG_WPP_VAL_H         : natural := 23;
-
-  --LOG_WPP reset values
-  constant LOG_WPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- LOG_STATUS register
-  --
-  -- Status  register for Event logger.
-  ------------------------------------------------------------------------------
-  constant LOG_CFG_IND            : natural := 0;
-  constant LOG_RDY_IND            : natural := 1;
-  constant LOG_RUN_IND            : natural := 2;
-  constant LOG_EXIST_IND          : natural := 7;
-  constant LOG_SIZE_L             : natural := 8;
-  constant LOG_SIZE_H            : natural := 15;
-
-  --LOG_STATUS reset values
-  constant LOG_CFG_RSTVAL     : std_logic := '1';
-  constant LOG_RDY_RSTVAL     : std_logic := '0';
-  constant LOG_RUN_RSTVAL     : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_EVENT_2 register
-  --
-  -- Second word of the logged event details.
-  ------------------------------------------------------------------------------
-  constant EVENT_TS_15_0_L       : natural := 16;
-  constant EVENT_TS_15_0_H       : natural := 31;
-  constant EVENT_DETAILS_L        : natural := 8;
-  constant EVENT_DETAILS_H       : natural := 15;
-  constant EVENT_TYPE_L           : natural := 0;
-  constant EVENT_TYPE_H           : natural := 7;
-
-  -- "EVENT_TYPE" field enumerated values
-  constant SOF_EVNT : std_logic_vector(7 downto 0) := x"01";
-  constant ALO_EVNT : std_logic_vector(7 downto 0) := x"02";
-  constant REC_EVNT : std_logic_vector(7 downto 0) := x"03";
-  constant TRAN_EVNT : std_logic_vector(7 downto 0) := x"04";
-  constant OVLD_EVNT : std_logic_vector(7 downto 0) := x"05";
-  constant ERR_EVNT : std_logic_vector(7 downto 0) := x"06";
-  constant BRS_EVNT : std_logic_vector(7 downto 0) := x"07";
-  constant ARB_EVNT : std_logic_vector(7 downto 0) := x"08";
-  constant CTRL_EVNT : std_logic_vector(7 downto 0) := x"09";
-  constant DATA_EVNT : std_logic_vector(7 downto 0) := x"0A";
-  constant CRC_EVNT : std_logic_vector(7 downto 0) := x"0B";
-  constant ACK_EVNT : std_logic_vector(7 downto 0) := x"0C";
-  constant NACK_EVNT : std_logic_vector(7 downto 0) := x"0D";
-  constant EWL_EVNT : std_logic_vector(7 downto 0) := x"0E";
-  constant ERP_EVNT : std_logic_vector(7 downto 0) := x"0F";
-  constant TXS_EVNT : std_logic_vector(7 downto 0) := x"10";
-  constant RXS_EVNT : std_logic_vector(7 downto 0) := x"11";
-  constant SYNC_EVNT : std_logic_vector(7 downto 0) := x"12";
-  constant STUF_EVNT : std_logic_vector(7 downto 0) := x"13";
-  constant DSTF_EVNT : std_logic_vector(7 downto 0) := x"14";
-  constant OVR_EVNT : std_logic_vector(7 downto 0) := x"15";
-
-  --LOG_CAPT_EVENT_2 reset values
-  constant EVENT_TS_15_0_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
-  constant EVENT_DETAILS_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-  constant EVENT_TYPE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_EVENT_1 register
-  --
-  -- First word of the logged event details.
-  ------------------------------------------------------------------------------
-  constant EVENT_TIME_STAMP_47_TO_16_L : natural := 0;
-  constant EVENT_TIME_STAMP_47_TO_16_H : natural := 31;
-
-  --LOG_CAPT_EVENT_1 reset values
-  constant EVENT_TIME_STAMP_47_TO_16_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
-
-  ------------------------------------------------------------------------------
-  -- YOLO_REG register
-  --
-  -- Register for fun :)
-  ------------------------------------------------------------------------------
-  constant YOLO_VAL_L             : natural := 0;
-  constant YOLO_VAL_H            : natural := 31;
-
-  --YOLO_REG reset values
-  constant YOLO_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"DEADBEEF";
-
-  ------------------------------------------------------------------------------
-  -- DEBUG_REGISTER register
-  --
-  -- Register for reading out state of the controller. This register is only for
-  --  debugging purposes!
-  ------------------------------------------------------------------------------
-  constant STUFF_COUNT_L          : natural := 0;
-  constant STUFF_COUNT_H          : natural := 2;
-  constant DESTUFF_COUNT_L        : natural := 3;
-  constant DESTUFF_COUNT_H        : natural := 5;
-  constant PC_ARB_IND             : natural := 6;
-  constant PC_CON_IND             : natural := 7;
-  constant PC_DAT_IND             : natural := 8;
-  constant PC_CRC_IND             : natural := 9;
-  constant PC_EOF_IND            : natural := 10;
-  constant PC_OVR_IND            : natural := 11;
-  constant PC_INT_IND            : natural := 12;
-
-  --DEBUG_REGISTER reset values
-  constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
-  constant DESTUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
-  constant PC_ARB_RSTVAL      : std_logic := '0';
-  constant PC_CON_RSTVAL      : std_logic := '0';
-  constant PC_DAT_RSTVAL      : std_logic := '0';
-  constant PC_CRC_RSTVAL      : std_logic := '0';
-  constant PC_EOF_RSTVAL      : std_logic := '0';
-  constant PC_OVR_RSTVAL      : std_logic := '0';
-  constant PC_INT_RSTVAL      : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_COMMAND register
-  --
-  -- Register for controlling the state machine of Event logger and read pointer
-  --  position. Every bit is active in logic 1.
-  ------------------------------------------------------------------------------
-  constant LOG_STR_IND            : natural := 0;
-  constant LOG_ABT_IND            : natural := 1;
-  constant LOG_UP_IND             : natural := 2;
-  constant LOG_DOWN_IND           : natural := 3;
-
-  --LOG_COMMAND reset values
-  constant LOG_STR_RSTVAL     : std_logic := '0';
-  constant LOG_ABT_RSTVAL     : std_logic := '0';
-  constant LOG_UP_RSTVAL      : std_logic := '0';
-  constant LOG_DOWN_RSTVAL    : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_RPP register
-  --
-  ------------------------------------------------------------------------------
-  constant LOG_RPP_VAL_L         : natural := 24;
-  constant LOG_RPP_VAL_H         : natural := 31;
-
-  --LOG_RPP reset values
-  constant LOG_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
 
   ------------------------------------------------------------------------------
   -- LOG_CAPT_CONFIG register
@@ -655,356 +861,150 @@ package CAN_FD_register_map is
   constant C_CRCS_RSTVAL      : std_logic := '0';
 
   ------------------------------------------------------------------------------
-  -- TX_COUNTER register
+  -- LOG_STATUS register
   --
-  -- Counter for transmitted frames to enable bus traffic measurement
+  -- Status  register for Event logger.
   ------------------------------------------------------------------------------
-  constant TX_COUNTER_VAL_L       : natural := 0;
-  constant TX_COUNTER_VAL_H      : natural := 31;
+  constant LOG_CFG_IND            : natural := 0;
+  constant LOG_RDY_IND            : natural := 1;
+  constant LOG_RUN_IND            : natural := 2;
+  constant LOG_EXIST_IND          : natural := 7;
+  constant LOG_SIZE_L             : natural := 8;
+  constant LOG_SIZE_H            : natural := 15;
 
-  --TX_COUNTER reset values
-  constant TX_COUNTER_VAL_RSTVAL
+  --LOG_STATUS reset values
+  constant LOG_CFG_RSTVAL     : std_logic := '1';
+  constant LOG_RDY_RSTVAL     : std_logic := '0';
+  constant LOG_RUN_RSTVAL     : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- LOG_WPP register
+  --
+  ------------------------------------------------------------------------------
+  constant LOG_WPP_VAL_L         : natural := 16;
+  constant LOG_WPP_VAL_H         : natural := 23;
+
+  --LOG_WPP reset values
+  constant LOG_WPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+
+  ------------------------------------------------------------------------------
+  -- LOG_RPP register
+  --
+  ------------------------------------------------------------------------------
+  constant LOG_RPP_VAL_L         : natural := 24;
+  constant LOG_RPP_VAL_H         : natural := 31;
+
+  --LOG_RPP reset values
+  constant LOG_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+
+  ------------------------------------------------------------------------------
+  -- LOG_COMMAND register
+  --
+  -- Register for controlling the state machine of Event logger and read pointer
+  --  position. Every bit is active in logic 1.
+  ------------------------------------------------------------------------------
+  constant LOG_STR_IND            : natural := 0;
+  constant LOG_ABT_IND            : natural := 1;
+  constant LOG_UP_IND             : natural := 2;
+  constant LOG_DOWN_IND           : natural := 3;
+
+  --LOG_COMMAND reset values
+  constant LOG_STR_RSTVAL     : std_logic := '0';
+  constant LOG_ABT_RSTVAL     : std_logic := '0';
+  constant LOG_UP_RSTVAL      : std_logic := '0';
+  constant LOG_DOWN_RSTVAL    : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- LOG_CAPT_EVENT_1 register
+  --
+  -- First word of the logged event details.
+  ------------------------------------------------------------------------------
+  constant EVENT_TIME_STAMP_47_TO_16_L : natural := 0;
+  constant EVENT_TIME_STAMP_47_TO_16_H : natural := 31;
+
+  --LOG_CAPT_EVENT_1 reset values
+  constant EVENT_TIME_STAMP_47_TO_16_RSTVAL
                  : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
-  -- RX_COUNTER register
+  -- LOG_CAPT_EVENT_2 register
   --
-  -- Counter for received frames to enable bus traffic measurement
+  -- Second word of the logged event details.
   ------------------------------------------------------------------------------
-  constant RX_COUNTER_VAL_L       : natural := 0;
-  constant RX_COUNTER_VAL_H      : natural := 31;
+  constant EVENT_TS_15_0_L       : natural := 16;
+  constant EVENT_TS_15_0_H       : natural := 31;
+  constant EVENT_DETAILS_L        : natural := 8;
+  constant EVENT_DETAILS_H       : natural := 15;
+  constant EVENT_TYPE_L           : natural := 0;
+  constant EVENT_TYPE_H           : natural := 7;
 
-  --RX_COUNTER reset values
-  constant RX_COUNTER_VAL_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
+  -- "EVENT_TYPE" field enumerated values
+  constant SOF_EVNT : std_logic_vector(7 downto 0) := x"01";
+  constant ALO_EVNT : std_logic_vector(7 downto 0) := x"02";
+  constant REC_EVNT : std_logic_vector(7 downto 0) := x"03";
+  constant TRAN_EVNT : std_logic_vector(7 downto 0) := x"04";
+  constant OVLD_EVNT : std_logic_vector(7 downto 0) := x"05";
+  constant ERR_EVNT : std_logic_vector(7 downto 0) := x"06";
+  constant BRS_EVNT : std_logic_vector(7 downto 0) := x"07";
+  constant ARB_EVNT : std_logic_vector(7 downto 0) := x"08";
+  constant CTRL_EVNT : std_logic_vector(7 downto 0) := x"09";
+  constant DATA_EVNT : std_logic_vector(7 downto 0) := x"0A";
+  constant CRC_EVNT : std_logic_vector(7 downto 0) := x"0B";
+  constant ACK_EVNT : std_logic_vector(7 downto 0) := x"0C";
+  constant NACK_EVNT : std_logic_vector(7 downto 0) := x"0D";
+  constant EWL_EVNT : std_logic_vector(7 downto 0) := x"0E";
+  constant ERP_EVNT : std_logic_vector(7 downto 0) := x"0F";
+  constant TXS_EVNT : std_logic_vector(7 downto 0) := x"10";
+  constant RXS_EVNT : std_logic_vector(7 downto 0) := x"11";
+  constant SYNC_EVNT : std_logic_vector(7 downto 0) := x"12";
+  constant STUF_EVNT : std_logic_vector(7 downto 0) := x"13";
+  constant DSTF_EVNT : std_logic_vector(7 downto 0) := x"14";
+  constant OVR_EVNT : std_logic_vector(7 downto 0) := x"15";
+
+  --LOG_CAPT_EVENT_2 reset values
+  constant EVENT_TS_15_0_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  constant EVENT_DETAILS_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+  constant EVENT_TYPE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
 
   ------------------------------------------------------------------------------
-  -- ERR_CAPT register
+  -- DEBUG_REGISTER register
   --
-  -- Last error frame capture.
+  -- Register for reading out state of the controller. This register is only for
+  --  debugging purposes!
   ------------------------------------------------------------------------------
-  constant ERR_POS_L              : natural := 0;
-  constant ERR_POS_H              : natural := 4;
-  constant ERR_TYPE_L             : natural := 5;
-  constant ERR_TYPE_H             : natural := 7;
+  constant STUFF_COUNT_L          : natural := 0;
+  constant STUFF_COUNT_H          : natural := 2;
+  constant DESTUFF_COUNT_L        : natural := 3;
+  constant DESTUFF_COUNT_H        : natural := 5;
+  constant PC_ARB_IND             : natural := 6;
+  constant PC_CON_IND             : natural := 7;
+  constant PC_DAT_IND             : natural := 8;
+  constant PC_CRC_IND             : natural := 9;
+  constant PC_EOF_IND            : natural := 10;
+  constant PC_OVR_IND            : natural := 11;
+  constant PC_INT_IND            : natural := 12;
 
-  -- "ERR_POS" field enumerated values
-  constant ERC_POS_SOF : std_logic_vector(4 downto 0) := "00000";
-  constant ERC_POS_ARB : std_logic_vector(4 downto 0) := "00001";
-  constant ERC_POS_CTRL : std_logic_vector(4 downto 0) := "00010";
-  constant ERC_POS_DATA : std_logic_vector(4 downto 0) := "00011";
-  constant ERC_POS_CRC : std_logic_vector(4 downto 0) := "00100";
-  constant ERC_POS_ACK : std_logic_vector(4 downto 0) := "00101";
-  constant ERC_POS_INTF : std_logic_vector(4 downto 0) := "00110";
-  constant ERC_POS_ERR : std_logic_vector(4 downto 0) := "00111";
-  constant ERC_POS_OVRL : std_logic_vector(4 downto 0) := "01000";
-  constant ERC_POS_OTHER : std_logic_vector(4 downto 0) := "11111";
-
-  -- "ERR_TYPE" field enumerated values
-  constant ERC_BIT_ERR : std_logic_vector(2 downto 0) := "000";
-  constant ERC_CRC_ERR : std_logic_vector(2 downto 0) := "001";
-  constant ERC_FRM_ERR : std_logic_vector(2 downto 0) := "010";
-  constant ERC_ACK_ERR : std_logic_vector(2 downto 0) := "011";
-  constant ERC_STUF_ERR : std_logic_vector(2 downto 0) := "100";
-
-  --ERR_CAPT reset values
-  constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";
-  constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  --DEBUG_REGISTER reset values
+  constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant DESTUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant PC_ARB_RSTVAL      : std_logic := '0';
+  constant PC_CON_RSTVAL      : std_logic := '0';
+  constant PC_DAT_RSTVAL      : std_logic := '0';
+  constant PC_CRC_RSTVAL      : std_logic := '0';
+  constant PC_EOF_RSTVAL      : std_logic := '0';
+  constant PC_OVR_RSTVAL      : std_logic := '0';
+  constant PC_INT_RSTVAL      : std_logic := '0';
 
   ------------------------------------------------------------------------------
-  -- TX_STATUS register
+  -- YOLO_REG register
   --
-  -- Status of the TXT Buffers
+  -- Register for fun :)
   ------------------------------------------------------------------------------
-  constant TXT2_EMPTY_IND         : natural := 1;
-  constant TXT1_EMPTY_IND         : natural := 0;
-  constant TX_TIME_SUPPORT_IND    : natural := 2;
+  constant YOLO_VAL_L             : natural := 0;
+  constant YOLO_VAL_H            : natural := 31;
 
-  --TX_STATUS reset values
-  constant TXT2_EMPTY_RSTVAL  : std_logic := '1';
-  constant TXT1_EMPTY_RSTVAL  : std_logic := '1';
-
-  ------------------------------------------------------------------------------
-  -- TRV_DELAY register
-  --
-  ------------------------------------------------------------------------------
-  constant TRV_DELAY_VALUE_L      : natural := 0;
-  constant TRV_DELAY_VALUE_H     : natural := 15;
-
-  --TRV_DELAY reset values
-  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
-
-  ------------------------------------------------------------------------------
-  -- RX_DATA register
-  --
-  -- The recieve buffer data at read pointer position in FIFO. CAN Frame layout 
-  -- in RX buffer is described in Figure 7. By reading data from this register r
-  -- ead_pointer is automatically increased, as long as there is next data word 
-  -- stored in the buffer. Next Read from this register returns next word of CAN
-  --  frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc
-  -- . In detail bits of each word have following meaning. If any access is exec
-  -- uted (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. I
-  -- t is recomended to use 32 bit acccess on this register.
-  ------------------------------------------------------------------------------
-  constant RX_DATA_L              : natural := 0;
-  constant RX_DATA_H             : natural := 31;
-
-  --RX_DATA reset values
-  constant RX_DATA_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
-
-  ------------------------------------------------------------------------------
-  -- RX_RPP register
-  --
-  -- Read pointer position in th Receive buffer. When a new frame is stored writ
-  -- e pointer is increased accordingly.
-  ------------------------------------------------------------------------------
-  constant RX_RPP_VAL_L          : natural := 16;
-  constant RX_RPP_VAL_H          : natural := 23;
-
-  --RX_RPP reset values
-  constant RX_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- RX_WPP register
-  --
-  -- Write pointer position in th Receive buffer. When a new frame is stored wri
-  -- te pointer is increased
-  ------------------------------------------------------------------------------
-  constant RX_WPP_VALUE_L         : natural := 8;
-  constant RX_WPP_VALUE_H        : natural := 15;
-
-  --RX_WPP reset values
-  constant RX_WPP_VALUE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- RX_BUFF_SIZE register
-  --
-  -- Size of th Receive buffer. This parameter is configurable before synthesis.
-  ------------------------------------------------------------------------------
-  constant RX_BUFF_SIZE_VALUE_L   : natural := 0;
-  constant RX_BUFF_SIZE_VALUE_H   : natural := 7;
-
-  --RX_BUFF_SIZE reset values
-
-  ------------------------------------------------------------------------------
-  -- RX_STATUS register
-  --
-  -- Information register one about FIFO Receive buffer.
-  ------------------------------------------------------------------------------
-  constant RX_EMPTY_IND           : natural := 0;
-  constant RX_FULL_IND            : natural := 1;
-
-  --RX_STATUS reset values
-  constant RX_EMPTY_RSTVAL    : std_logic := '1';
-  constant RX_FULL_RSTVAL     : std_logic := '1';
-
-  ------------------------------------------------------------------------------
-  -- FILTER_CONTROL register
-  --
-  -- Every filter can be set to accept only selected frame types. Every bit acti
-  -- ve in logic 1.
-  ------------------------------------------------------------------------------
-  constant FILT_A_BASIC_IND       : natural := 0;
-  constant FILT_A_FD_BAS_IND      : natural := 2;
-  constant FILT_A_EXT_IND         : natural := 1;
-  constant FILT_A_FD_EXT_IND      : natural := 3;
-  constant FILT_B_BASIC_IND       : natural := 4;
-  constant FILT_B_EXT_IND         : natural := 5;
-  constant FILT_B_FD_BAS_IND      : natural := 6;
-  constant FILT_B_FD_EXT_IND      : natural := 7;
-  constant FILT_C_BASIC_IND       : natural := 8;
-  constant FILT_C_EXT_IND         : natural := 9;
-  constant FILT_C_FD_BAS_IND     : natural := 10;
-  constant FILT_RANGE_FD_EXT_IND : natural := 15;
-  constant FILT_RANGE_FD_BAS_IND : natural := 14;
-  constant FILT_RANGE_EXT_IND    : natural := 13;
-  constant FILT_RANGE_BASIC_IND  : natural := 12;
-  constant FILT_C_FD_EXT_IND     : natural := 11;
-
-  --FILTER_CONTROL reset values
-  constant FILT_A_BASIC_RSTVAL : std_logic := '1';
-  constant FILT_A_FD_BAS_RSTVAL : std_logic := '1';
-  constant FILT_A_EXT_RSTVAL  : std_logic := '1';
-  constant FILT_A_FD_EXT_RSTVAL : std_logic := '1';
-  constant FILT_B_BASIC_RSTVAL : std_logic := '0';
-  constant FILT_B_EXT_RSTVAL  : std_logic := '0';
-  constant FILT_B_FD_BAS_RSTVAL : std_logic := '0';
-  constant FILT_B_FD_EXT_RSTVAL : std_logic := '0';
-  constant FILT_C_BASIC_RSTVAL : std_logic := '0';
-  constant FILT_C_EXT_RSTVAL  : std_logic := '0';
-  constant FILT_C_FD_BAS_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_FD_EXT_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_FD_BAS_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_EXT_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_BASIC_RSTVAL : std_logic := '0';
-  constant FILT_C_FD_EXT_RSTVAL : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- FILTER_RAN_HIGH register
-  --
-  -- Higher threshold of the Range filter. Note that 29-bit value of range thres
-  -- hold is not the same format as transmitted
-  ------------------------------------------------------------------------------
-  constant BIT_RAN_HIGH_VAL_L     : natural := 0;
-  constant BIT_RAN_HIGH_VAL_H    : natural := 28;
-
-  --FILTER_RAN_HIGH reset values
-  constant BIT_RAN_HIGH_VAL_RSTVAL
-                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
-
-  ------------------------------------------------------------------------------
-  -- FILTER_RAN_LOW register
-  --
-  -- Lower threshold of the Range filter. Note that 29-bit value of range thresh
-  -- old is not the same format as transmitted and received identifier! In TX_DA
-  -- TA_4 (transmitted identifier) BASE Identifier is at 11 LSB bits and Extensi
-  -- on at bits 28-12. However, actual decimal value of the Identifier is that B
-  -- ASE identifier is at MSB bits and 18 LSB bits is identifier extension. The 
-  -- unsigned binary value of the identifier must be written into this register!
-  --  Note that filter support is available by default but it can be left out fr
-  -- om synthesis (to save logic) by setting "sup_ran=false". If the particular 
-  -- filter is not supported, writes to this register have no effect and read wi
-  -- ll return all zeroes.
-  ------------------------------------------------------------------------------
-  constant BIT_RAN_LOW_VAL_L      : natural := 0;
-  constant BIT_RAN_LOW_VAL_H     : natural := 28;
-
-  --FILTER_RAN_LOW reset values
-  constant BIT_RAN_LOW_VAL_RSTVAL
-                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
-
-  ------------------------------------------------------------------------------
-  -- FILTER_C_VAL register
-  --
-  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and
-  ------------------------------------------------------------------------------
-  constant BIT_VAL_C_VAL_L        : natural := 0;
-  constant BIT_VAL_C_VAL_H       : natural := 28;
-
-  --FILTER_C_VAL reset values
-  constant BIT_VAL_C_VAL_RSTVAL
-                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
-
-  ------------------------------------------------------------------------------
-  -- FILTER_C_MASK register
-  --
-  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and
-  ------------------------------------------------------------------------------
-  constant BIT_MASK_C_VAL_L       : natural := 0;
-  constant BIT_MASK_C_VAL_H      : natural := 28;
-
-  --FILTER_C_MASK reset values
-  constant BIT_MASK_C_VAL_RSTVAL
-                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
-
-  ------------------------------------------------------------------------------
-  -- FILTER_B_VAL register
-  --
-  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and
-  ------------------------------------------------------------------------------
-  constant BIT_VAL_B_VAL_L        : natural := 0;
-  constant BIT_VAL_B_VAL_H       : natural := 28;
-
-  --FILTER_B_VAL reset values
-  constant BIT_VAL_B_VAL_RSTVAL
-                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
-
-  ------------------------------------------------------------------------------
-  -- FILTER_B_MASK register
-  --
-  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and
-  ------------------------------------------------------------------------------
-  constant BIT_MASK_B_VAL_L       : natural := 0;
-  constant BIT_MASK_B_VAL_H      : natural := 28;
-
-  --FILTER_B_MASK reset values
-  constant BIT_MASK_B_VAL_RSTVAL
-                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
-
-  ------------------------------------------------------------------------------
-  -- FILTER_A_MASK register
-  --
-  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and received identifier format. BASE 
-  -- Identifier is 11 LSB and Identifier extension are bits 28-12! Note that fil
-  -- ter support is available by default but it can be left out from synthesis (
-  -- to save logic) by setting "sup_fillt=false". If the particular filter is no
-  -- t supported, writes to this register have no effect and read will return al
-  -- l zeroes.
-  ------------------------------------------------------------------------------
-  constant BIT_MASK_A_VAL_L       : natural := 0;
-  constant BIT_MASK_A_VAL_H      : natural := 28;
-
-  --FILTER_A_MASK reset values
-  constant BIT_MASK_A_VAL_RSTVAL
-                 : std_logic_vector(28 downto 0) := (OTHERS => '0');
-
-  ------------------------------------------------------------------------------
-  -- CTR_PRES register
-  --
-  -- Register for manipulation with error counters.
-  ------------------------------------------------------------------------------
-  constant CTR_PRES_VAL_L         : natural := 0;
-  constant CTR_PRES_VAL_H         : natural := 8;
-  constant PTX_IND                : natural := 9;
-  constant PRX_IND               : natural := 10;
-  constant ENORM_IND             : natural := 11;
-  constant EFD_IND               : natural := 12;
-
-  --CTR_PRES reset values
-  constant CTR_PRES_VAL_RSTVAL
-                 : std_logic_vector(8 downto 0) := (OTHERS => '0');
-  constant PTX_RSTVAL         : std_logic := '0';
-  constant PRX_RSTVAL         : std_logic := '0';
-  constant ENORM_RSTVAL       : std_logic := '0';
-  constant EFD_RSTVAL         : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- ERR_FD register
-  --
-  ------------------------------------------------------------------------------
-  constant ERR_FD_VAL_L          : natural := 16;
-  constant ERR_FD_VAL_H          : natural := 31;
-
-  --ERR_FD reset values
-  constant ERR_FD_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
-
-  ------------------------------------------------------------------------------
-  -- ERR_NORM register
-  --
-  -- Error counter for nominal Bit time
-  ------------------------------------------------------------------------------
-  constant ERR_NORM_VAL_L         : natural := 0;
-  constant ERR_NORM_VAL_H        : natural := 15;
-
-  --ERR_NORM reset values
-  constant ERR_NORM_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
-
-  ------------------------------------------------------------------------------
-  -- TXC register
-  --
-  -- Counter for transcieved frames to enable bus traffic measurement.
-  ------------------------------------------------------------------------------
-  constant TXC_VAL_L             : natural := 16;
-  constant TXC_VAL_H             : natural := 31;
-
-  --TXC reset values
-  constant TXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
-
-  ------------------------------------------------------------------------------
-  -- RXC register
-  --
-  -- Counter for received frames to enable bus traffic measurement.
-  ------------------------------------------------------------------------------
-  constant RXC_VAL_L              : natural := 0;
-  constant RXC_VAL_H             : natural := 15;
-
-  --RXC reset values
-  constant RXC_VAL_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+  --YOLO_REG reset values
+  constant YOLO_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"DEADBEEF";
 
   ----------------------------------------------------------------------------
   -- Address block: Control_Registers
