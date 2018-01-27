@@ -63,7 +63,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 	def addr_reg_lookup(self, fieldReg):
 		for block in self.addrMap.addressBlock:
 			for reg in block.register:
-				if (reg.addressOffset*4 == fieldReg.addressOffset):
+				if (reg.addressOffset * 4 == fieldReg.addressOffset):
 					return reg
 		return None
 	
@@ -76,7 +76,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 		for reg in sorted(regs, key=lambda a: a.addressOffset):
 			
 			# We hit the register aligned create new group
-			if (reg.addressOffset >= lowInd + self.busWidth/8):
+			if (reg.addressOffset >= lowInd + self.busWidth / 8):
 				lowInd = reg.addressOffset - reg.addressOffset % 4
 				regGroups.append([])
 	
@@ -104,7 +104,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 								value=reg.addressOffset*4+block.baseAddress,
 								intType="enum"))
 		
-		self.headerGen.create_enum(self.addrMap.name, decls)
+		self.headerGen.create_enum(self.addrMap.name.lower(), decls)
 	
 	
 	def write_mem_map_both(self):
@@ -135,7 +135,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 			print ("Writing bit fields of '%s' register map" % self.fieldMap.name)
 			self.write_mem_map_fields()
 	
-		self.headerGen.create_package(name, True)
+		self.headerGen.create_package(name, False)
 		
 	
 	def write_reg(self):
