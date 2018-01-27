@@ -190,7 +190,7 @@ class HeaderGenerator(BaseGenerator):
 		if (decls[0].intType == "bitfield"):
 			tmp = self.__get_type_size(decls[0].type)
 			self.__write_structure_bitfields(decls, tmp)
-			s = "s"
+			s = " s"
 		else:
 			s = ""
 			self.__write_structure_norm(decls)
