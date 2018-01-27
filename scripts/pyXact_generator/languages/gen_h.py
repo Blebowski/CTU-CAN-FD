@@ -91,7 +91,10 @@ class HeaderGenerator(BaseGenerator):
 			intSpec = ""
 		else:
 			intSpec = decl.specifier + " "
-			
+		
+		if (decl.comment != None):
+			self.write_comment(decl.comment, decl.gap, small=True)
+		
 		pref = "{}{}{}{}".format("	" * decl.gap, intSpec,
 									decl.type + " ", decl.name)
 		post = 	";\n"
@@ -122,6 +125,7 @@ class HeaderGenerator(BaseGenerator):
 			high = "_{}".format(neighbour.bitIndex - 1)
 		decl.name = "reserved{}_{}".format(high, index)
 		decl.bitIndex = index
+		decl.comment = None
 		decl.bitWidth = neighbour.bitIndex - index
 		decls.insert(decls.index(neighbour), decl)
 		return index + decl.bitWidth 

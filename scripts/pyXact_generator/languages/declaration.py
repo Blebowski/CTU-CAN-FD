@@ -23,16 +23,19 @@ class LanDeclaration(metaclass=ABCMeta):
 	name = None
 	aligLen = 50
 	gap = 0
-	
+	comment = None
 	intType = None
 	# IntType so far has: initialized, enum, bitfield
 	
 	def __init__(self, name, value, type=None, bitWidth=None, specifier=None,
-					alignLen=50, gap=0, bitIndex=None, intType=None):
+					alignLen=50, gap=0, bitIndex=None, intType=None, comment=None):
 		self.name = name
 		self.value = value
 		self.alignLen = alignLen
 		self.gap = gap
+		
+		if (comment != None):
+			self.comment = comment
 		if (type != None):
 			self.type = type
 		if (bitWidth != None):

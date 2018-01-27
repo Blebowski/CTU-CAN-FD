@@ -36,14 +36,21 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 		decls = []
 		enumDecl = []
 		for reg in regGroup:
-			for field in sorted(reg.field, key=lambda a: a.bitOffset):
+			for (i,field) in enumerate(sorted(reg.field, key=lambda a: a.bitOffset)):
+				
+				if (i == 0):
+					comment = reg.name.upper()
+				else:
+					comment = None
+				
 				decls.append(LanDeclaration(field.name.lower(), value=0, 
 							type="uint{}_t".format(self.busWidth),
 							bitWidth=field.bitWidth,
-							gap=2, alignLen=40,
+							gap=2, alignLen=40, comment=comment,
 							bitIndex=field.bitOffset + 
 									((int(reg.addressOffset)*8) % self.busWidth), 
-							intType="bitfield"))	
+							intType="bitfield"))
+			
 		enumDecl = []
 		enumDecl.append(LanDeclaration("u{}".format(self.busWidth),
 							value=0, type="uint{}_t".format(self.busWidth),
@@ -55,10 +62,8 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 	
 	def addr_reg_lookup(self, fieldReg):
 		for block in self.addrMap.addressBlock:
-			#print("Looking for addres: {} -register {}".format(fieldReg.addressOffset, fieldReg.name))
 			for reg in block.register:
 				if (reg.addressOffset*4 == fieldReg.addressOffset):
-					print("Found reg: %s" % reg.name)
 					return reg
 		return None
 	
@@ -117,6 +122,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 		self.headerGen.wr_nl()
 		
 		if (self.addrMap):
+			print ("Writing addresses of '%s' register map" % self.addrMap.name)
 			self.write_mem_map_addr()
 		
 		self.headerGen.wr_nl()
@@ -126,6 +132,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 										0, small=False)
 		
 		if (self.fieldMap):
+			print ("Writing bit fields of '%s' register map" % self.fieldMap.name)
 			self.write_mem_map_fields()
 	
 		self.headerGen.create_package(name, True)
