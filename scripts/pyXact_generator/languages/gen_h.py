@@ -157,7 +157,10 @@ class HeaderGenerator(BaseGenerator):
 		if (len(tmp) > 1):
 			self.__wr_line("#else\n")
 			for decl in sorted(tmp , key=lambda a: a.bitIndex, reverse=True):
+				backUp = decl.comment
+				decl.comment = None
 				self.write_decl(decl)
+				decl.comment = backUp
 			self.__wr_line("#endif\n")
 
 	
