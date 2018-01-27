@@ -125,7 +125,7 @@ class VhdlGenerator(BaseGenerator):
 			return False
 		self.__wr_line("type {} is record\n".format(name))
 		for decl in decls:
-			self__wr_decl("    "+decl)
+			self.write_decl(decl)
 		sefl.__wr_line("end record;\n")
 		return True
 
