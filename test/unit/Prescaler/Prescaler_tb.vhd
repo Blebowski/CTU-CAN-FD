@@ -50,7 +50,6 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
