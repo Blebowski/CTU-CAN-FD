@@ -45,7 +45,6 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
 
 
@@ -68,9 +67,10 @@ architecture behav of CAN_top_level_tb is
       signal data_in:in std_logic_vector(31 downto 0);
       signal data_out:out std_logic_vector(31 downto 0);
       signal adress:in std_logic_vector(23 downto 0);
-    	 signal scs:in std_logic; --Chip select
+      signal scs:in std_logic; --Chip select
       signal srd:in std_logic; --Serial read
       signal swr:in std_logic; --Serial write
+      signal sbe: in  std_logic_vector(3 downto 0);
       --Note: This bus is Avalon compatible!
       
       signal int:out std_logic;
@@ -95,7 +95,7 @@ architecture behav of CAN_top_level_tb is
       signal data_in: std_logic_vector(31 downto 0);
       signal data_out: std_logic_vector(31 downto 0);
       signal adress: std_logic_vector(23 downto 0);
-    	 signal scs: std_logic; --Chip select
+      signal scs: std_logic; --Chip select
       signal srd: std_logic; --Serial read
       signal swr: std_logic; --Serial write
       --Note: This bus is Avalon compatible!
@@ -121,7 +121,7 @@ architecture behav of CAN_top_level_tb is
        ) is
       begin   
         data<=data_value;
-        adress_in<=TO_STDLOGICVECTOR(X"41")&adress_value;
+        adress_in<=X"41" &adress_value;
         swr_in<='1';
         scs_in<='1';
         wait for 3*clk_per;
@@ -140,7 +140,7 @@ architecture behav of CAN_top_level_tb is
        signal srd_in: out std_logic
        ) is
       begin   
-        adress_in<=TO_STDLOGICVECTOR(X"41")&adress_value;
+        adress_in<=X"41"&adress_value;
         srd_in<='1';
         scs_in<='1';
         wait for 4*clk_per;
@@ -159,14 +159,15 @@ begin
     ID=>ID
     )
   port map(
-    	  clk_sys=>clk_sys,
+       clk_sys=>clk_sys,
        res_n=>res_n,
        data_in=>data_in,
        data_out=>data_out,
        adress=>adress,
-    	  scs=>scs,
+       scs=>scs,
        srd=>srd,
        swr=>swr,
+       sbe=>x"F",
        int=>int,
        CAN_tx=>CAN_tx,
        CAN_rx=>CAN_rx,
@@ -199,24 +200,24 @@ begin
     res_n<=not ACT_RESET;
     wait for 100 ns;
     
-    data_read(TO_STDLOGICVECTOR(X"0000"),adress,scs,srd); --Reading out identifier
-    data_read(TO_STDLOGICVECTOR(X"0004"),adress,scs,srd); --Reading out MODE_REG(MODE,COMAND,STAT,RETR)
+    data_read(X"0000",adress,scs,srd); --Reading out identifier
+    data_read(X"0004",adress,scs,srd); --Reading out MODE_REG(MODE,COMAND,STAT,RETR)
     
     --Configure : retransmit enable=1, retr_limit=3
-    data_write(TO_STDLOGICVECTOR(X"07000C10"),TO_STDLOGICVECTOR(X"0004"),data_in,adress,scs,swr);
+    data_write(X"07000C10",X"0004",data_in,adress,scs,swr);
     
     --Note: Timing and synchronisation default settings: PResc:10,5
-    data_read(TO_STDLOGICVECTOR(X"0044"),adress,scs,srd);
+    data_read(X"0044",adress,scs,srd);
     
     --DLC=4, FF=Normal, Ft=Basic, Switch BRS=No
-    data_write(TO_STDLOGICVECTOR(X"00000004"),TO_STDLOGICVECTOR(X"005C"),data_in,adress,scs,swr);
-    data_write(TO_STDLOGICVECTOR(X"00000000"),TO_STDLOGICVECTOR(X"0060"),data_in,adress,scs,swr); --TimeStamp 1
-    data_write(TO_STDLOGICVECTOR(X"00000000"),TO_STDLOGICVECTOR(X"0064"),data_in,adress,scs,swr); --TimeStamp 2
-    data_write(TO_STDLOGICVECTOR(X"000000AA"),TO_STDLOGICVECTOR(X"0068"),data_in,adress,scs,swr); --Identifier
-    data_write(TO_STDLOGICVECTOR(X"AABBCCDD"),TO_STDLOGICVECTOR(X"006C"),data_in,adress,scs,swr); --Identifier
+    data_write(X"00000004",X"005C",data_in,adress,scs,swr);
+    data_write(X"00000000",X"0060",data_in,adress,scs,swr); --TimeStamp 1
+    data_write(X"00000000",X"0064",data_in,adress,scs,swr); --TimeStamp 2
+    data_write(X"000000AA",X"0068",data_in,adress,scs,swr); --Identifier
+    data_write(X"AABBCCDD",X"006C",data_in,adress,scs,swr); --Identifier
     
     --Commit the data
-    data_write(TO_STDLOGICVECTOR(X"0000000B"),TO_STDLOGICVECTOR(X"0058"),data_in,adress,scs,swr); --Store the messages
+    data_write(X"0000000B",X"0058",data_in,adress,scs,swr); --Store the messages
     
    
     
