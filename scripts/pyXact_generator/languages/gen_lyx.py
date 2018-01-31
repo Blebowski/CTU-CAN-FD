@@ -23,200 +23,217 @@ import copy
 from pyXact_generator.gen_lib import *
 from pyXact_generator.languages.gen_base import BaseGenerator
 
-class HeaderGenerator(BaseGenerator):
+class LyxGenerator(BaseGenerator):
+	
+	####################################################################
+	# Basic Lyx styles which are assumed to be universal...
+	####################################################################
+	
+	# layouts (used with "\begin_layout")
+	stdLayouts = ["Standard", "LyX-Code", "Quotation", "Quote", "Verse",
+					"Verbatim", "Verbatim*", "Plain Layout"]
+	stdLists = ["Itemize", "List", "Description", "Labeling"]
+	stdRefPrefixes = ["Part", "Chapter", "Section", "Subsection",
+						"Subsubsection", "Paragraph", "Subparagraph"]
+	supStyles = [stdLayouts, stdLists, stdPrefixes]
+	
+	# insets (used with "\begin_inset")
+	supInsets = { "NewLine" : {"newline" : ""}, 
+					"VSpace" : {"bigskip" : "",
+								"defskip" : "",
+								"smallSkip" : "",
+								"medskip" : "",
+								"vfill" : "",
+								"cm" : ""}, 
+					"space" : {"~" : ""},
+					"Graphics" : {"filename" : "__PATH",
+									"lyxscale" : "__NUM",
+									"scale" : "__NUM",
+									"rotateAngle" : "__NUM"},
+					"Tabular" : {},
+					"Text" : {},
+					"CommandInset" : {"toc" : "", 
+										"citation" : "",
+										"ref" : "",
+										"label" : "",
+										"LatexCommand" : "__STRING",},
+					"ERT" : {"status" : "open"},
+					"Quotes" : {"eld" : "", "erd" : ""},
+					"Float" : {"table" : "",
+								"figure" : "",
+								"placement" : "__STRING",
+								"wide" : "__BOOL",
+								"sideways" : "__BOOL,
+								"status" : "open"},
+					"Caption" : {"Standard" : ""},
+					"Box" : {"Frameless" : ""} # TODO: Other arguments
+					}
+	
 	
 	def __init__(self):
 		super().__init__()
-		self.supportedTypes = ["int","char","unsigned char","signed char",
-								"short","unsigned short","long","unsigned long",
-								"uint8_t","uint16_t","uint32_t","uint64_t"]
+		self.supportedTypes = [""]
 		self.typeSizes = [32, 8, 8, 8, 16, 16, 64, 64, 8, 16, 32, 64]
-		self.commentSign = "*"
-	
-	def is_supported_type(self, type):
-		return super().is_supported_type(type)
-	
-	def __wr_line(self, line):
-		super(HeaderGenerator, self).wr_line(line)
-	
-	def wr_nl(self):
-		self.__wr_line("\n")
-	
-	def write_comm_line(self, gap=2):
-		self.__wr_line('/*{:{fill}<78}\n'.format(" " * gap, fill=self.commentSign))	
-	
-	def write_comment(self, input, gap, caption=None, small=False):
-		spltStr = split_string(input, 75 - gap)
-		if (caption != None):
-			spltStr.append("")
-			spltStr.append(caption)
-		elif (len(spltStr) == 1):
-			self.__wr_line("{}/* {} */\n".format(" " * gap, input))
-			return None
-		
-		self.__wr_line("{}/*\n".format(" " * gap))
-		for (i,line) in enumerate(spltStr):
-			self.__wr_line("{} * {}".format(" " * gap, line))
-		self.__wr_line("{}*/\n".format(" " * gap))
-
-
-	def create_enum(self, name, decls):
-		self.__wr_line("enum {} {}\n".format(name, "{"))
-		
-		# Check the maximum string length in the enum
-		maxLen = 0
-		for item in decls:
-			if (len(item.name) > maxLen):
-				maxLen = len(item.name)
-		
-		# Write the enum
-		for item in decls:
-			pref = "	{}".format(item.name)
-			if (item.value != None):
-				post = " = {},\n".format(hex(item.value))
-				post = '{:>{}}'.format(post, maxLen + 15 - len(pref))
-			else:
-				post = ",\n"
-			self.__wr_line(pref + post)
-			
-		self.__wr_line("};\n")
+		self.commentSign = "#"
 	
 	
-	def write_decl(self, decl):
-		if(self.is_supported_type(decl.type) == False):
+	def is_supported_layout(self, layout):
+		for styleGroup in LyxGenerator.supStyles:
+			for styleIter in styleGroup:
+				if (styleIter == layout):
+					return True
+		return False
+	
+	
+	def is_supported_inset(self, insetName, insetArgs):
+		if (not insetName in self.suppInsets):
 			return False
 		
-		if (decl.specifier == None):
-			intSpec = ""
-		else:
-			intSpec = decl.specifier + " "
+		validArgs = self.supInsets[insetName]
+		for insetArg, insetVal in insetArgs.items():
+			valid = False
+			for validArg, validVal in validArgs.items():
+				if ((validArg == insetArg and validVal == insetVal == "") or
+					(validArg == insetArg and validVal != "" and insetVal != "")):
+					valid = True
+					break
+	
+	def insert_layout(self, layout):
+		if (not self.is_supported_layout(layout)):
+			return False
+		self.wr_line("\begin_layout {}\n".format(layout))
+		self.append_line("\end_layout\n")
+	
+	
+	def insert_inset(self, inset, options=[]):
+		if (not self.is_supported_inset(inset)):
+			return False
 		
-		if (decl.comment != None):
-			self.write_comment(decl.comment, decl.gap, small=True)
-		
-		pref = "{}{}{}{}".format("	" * decl.gap, intSpec,
-									decl.type + " ", decl.name)
-		post = 	";\n"
-		# Initialization of declaration
-		if (decl.intType == "initialized"):
-			post = " = {};\n".format(decl.value)
-		elif (decl.intType == "enum"):
-			post = " = {},\n".format(hex(decl.value))
-		elif (decl.intType == "bitfield"):
-			post = ": {};\n".format(decl.bitWidth)
+		for option in options:
+			if (not self.is_supported_option(inset, option)):
+				return False
 			
-		if (post != ";\n"):
-			post = '{:>{}}'.format(post, decl.alignLen - len(pref))
+		self.wr_line("\begin_inset {}\n".format(inset))
+		for option in options:
+			self.wr_line("{} {}\n".format(option[0], option[1]))
+		self.append_line("\end_inset")
+	
+	
+	def insert_html_table_tag(self, tag, tagOptions=None, endTag=False):
+		if (not self.is_supported_table_tag(tag)):
+			return False
 		
-		self.__wr_line(pref + post)
-		return True
-
-
-	def __write_structure_norm(self, decls):
-		for decl in decls:
-			self.write_decl(decl)
-
-
-	def __insert_rsvd_bitfield(self, decls, neighbour, index):
-		decl = copy.copy(neighbour)
-		high = ""
-		if (neighbour.bitIndex - index > 1):
-			high = "_{}".format(neighbour.bitIndex - 1)
-		decl.name = "reserved{}_{}".format(high, index)
-		decl.bitIndex = index
-		decl.comment = None
-		decl.bitWidth = neighbour.bitIndex - index
-		decls.insert(decls.index(neighbour), decl)
-		return index + decl.bitWidth 
-
-
-	def __write_structure_bitfields(self, decls, bitFieldWidth):
+		optStr = ""
+		if (tagOptions != None):
+			for optName, optVal in tagOptions.items():
+				optStr = optStr + ' {}="{}"'.format(optName, optVal)
 		
-		# Copy the list of declarations and insert the reserved values
-		# check if we reached the full width in the end
-		# Add one dummy element at the end of the list so that we dont have
-		# to solve the special case of the interval between last element and
-		# end of the bitfield
-		tmp = copy.copy(decls)
-		index = 0
-		tmp.append(copy.copy(tmp[-1]))
-		tmp[-1].bitIndex = bitFieldWidth
-		for item in tmp:
-			if (item.bitIndex > index):
-				index = self.__insert_rsvd_bitfield(tmp, item, index)
-			else:
-				index = index + item.bitWidth
-		tmp.remove(tmp[-1])
+		self.wr_line("<{}{}>\n".format(tag, optionStr))
 		
-		# Write the bitfield values
-		if (len(tmp) > 1):
-			self.__wr_line("#ifdef __BIG_ENDIAN_BITFIELD\n")
-		for decl in sorted(tmp , key=lambda a: a.bitIndex):
-			self.write_decl(decl)
-		if (len(tmp) > 1):
-			self.__wr_line("#else\n")
-			for decl in sorted(tmp , key=lambda a: a.bitIndex, reverse=True):
-				backUp = decl.comment
-				decl.comment = None
-				self.write_decl(decl)
-				decl.comment = backUp
-			self.__wr_line("#endif\n")
+		if (endTag):
+			self.append_line("</{}>\n".format(tag))
+	
+	
+	def is_table_valid(self, options, cells):
+		# Check consistency of the table data
+		return Trues
+	
+	
+	def insert_text_options(self, textOptions):
+		isSup = False
+		for textOptKey,textOptVal in textOptions.items():
+			for supOpt in supTextOptions:
+				if (textOptKey == supOpt):
+					isSup = True
+					self.wr_line("\{} {}\n".format(textOptKey, textOptVal))
+					break
+	
+	
+	def insert_table_cell(self, cell):
+		self.insert_html_table_tag("cell", cell[0]) 
+		self.insert_inset("Text")
+		self.insert_layout("Plain Layout")
+		self.insert_text_options(cell[1])
+		self.wr_line(cell[2])
+		self.commit_append_line(3)
+
 
 	
-	def __get_type_size(self, type):
-		if (not self.is_supported_type(type)):
-			return 0
+
+
+	def insert_table(self, tableOptions, cells):
+		if (not is_table_valid(tableOptions, cells)):
+			return False
 		
-		for i,iter in enumerate(self.supportedTypes):
-			if (iter == type):
-				return self.typeSizes[i]
+		self.insert_inset("Tabular")
+		tableDimension = {"version" : "3", "rows" : '{}'.format(len(cells)), 
+						"columns" : '{}'.format(len(cells[0])}
+		self.insert_html_table_tag(self, "lyxTabular", tableDimension, True)
+		
+		for option in tableOptions:
+			self.insert_html_table_tag(option[0], tagOptions=option[1],
+											endTag=False)
+		
+		for row in cells:
+			self.insert_html_table_tag("row", True)
+			for cell in row:
+				self.insert_table_cell(cell)
+			self.commit_append_line(1)
 	
+		self.commit_append_line(1)
+
+	
+	
+
+
+	def insert_new_page(self):
+		self.insert_inset("Newpage newpage")
+		self.commit_append(1)
+	
+	
+	
+	
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	def write_comm_line(self, gap=2):
+		self.__wr_line('{:{fill}<78}\n'.format(" " * gap, fill=self.commentSign))
+		
+	def write_comment(self, input, gap, caption=None, small=False):
+		self.__wr_line('{}# {}'.format("	" * gap, input))
+		
+	def create_enum(self, name, decls):
+		pass
+	
+	def write_decl(self, decl):
+		pass
 	
 	def create_union(self, name, decls):
-		
-		self.__wr_line("{}union {} {}\n".format("	" * (decls[0].gap - 1),
-							name, "{"))
-		for decl in decls:	
-			
-			# Recursive
-			if (type(decl) == list):
-			
-				# So far hardcoded that union contains structure for register
-				# map... For future this will be changed with some kind of
-				# joined type classification
-				self.create_structure(name + "_s", decl)
-			else:
-				self.write_decl(decl)
-		
-		self.__wr_line("{}{};\n".format("	" * (decls[0].gap - 1), "}"))
+		pass
 
 	def create_structure(self, name, decls):
-		self.__wr_line("{}struct {} {}\n".format("	" * (decls[0].gap - 1),
-							name, "{"))
-		if (decls[0].intType == "bitfield"):
-			tmp = self.__get_type_size(decls[0].type)
-			self.__write_structure_bitfields(decls, tmp)
-			s = " s"
-		else:
-			s = ""
-			self.__write_structure_norm(decls)
-			
-		self.__wr_line("{}{}{};\n".format("	" * (decls[0].gap - 1), 
-							"}", s))
-		
+		pass
 				
 	def create_package(self, name, start=True):
-		if (start):
-			self.__wr_line("#ifndef __{}__\n".format(name))
-			self.__wr_line("#define __{}__\n".format(name))
-		else:
-			self.__wr_line("#endif\n")
-	
+		pass
 	
 	def create_includes(self, includeList):
-		for include in includeList:
-			self.__wr_line("#include {}\n")
-			
+		pass
+		
+		
+		
+	def create
 			
 
 	
