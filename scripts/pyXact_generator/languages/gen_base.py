@@ -42,9 +42,9 @@ class BaseGenerator(metaclass=ABCMeta):
 		self.wr_line("\n")
 	
 	def commit_append_line(self, count):
-		for i in range(1, min(count, len(self.appendText))):
+		for i in range(0, min(count, len(self.appendText))):
 			self.wr_line(self.appendText[0])
-			self.appendText.remove(0)
+			self.appendText.pop(0)
 	
 	def commit_append_lines_all(self):
 		self.commit_append_line(len(self.appendText))

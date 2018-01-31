@@ -86,7 +86,7 @@ class LyxGenerator(BaseGenerator):
 	
 	
 	def is_supported_inset(self, insetName, insetArgs):
-		if (not insetName in self.suppInsets):
+		if (not insetName in self.supInsets):
 			return False
 		
 		validArgs = self.supInsets[insetName]
@@ -101,34 +101,34 @@ class LyxGenerator(BaseGenerator):
 	def insert_layout(self, layout):
 		if (not self.is_supported_layout(layout)):
 			return False
-		self.wr_line("\begin_layout {}\n".format(layout))
-		self.append_line("\end_layout\n")
+		self.wr_line("\\begin_layout {}\n".format(layout))
+		self.append_line("\\end_layout\n")
 	
 	
 	def insert_inset(self, inset, options=[]):
-		if (not self.is_supported_inset(inset)):
-			return False
+		#if (not self.is_supported_inset(inset, options)):
+		#	return False
 		
 		for option in options:
 			if (not self.is_supported_option(inset, option)):
 				return False
 			
-		self.wr_line("\begin_inset {}\n".format(inset))
+		self.wr_line("\\begin_inset {}\n".format(inset))
 		for option in options:
 			self.wr_line("{} {}\n".format(option[0], option[1]))
-		self.append_line("\end_inset")
+		self.append_line("\\end_inset\n")
 	
 	
 	def insert_html_table_tag(self, tag, tagOptions=None, endTag=False):
-		if (not self.is_supported_table_tag(tag)):
-			return False
+		#if (not self.is_supported_table_tag(tag)):
+		#	return False
 		
 		optStr = ""
 		if (tagOptions != None):
 			for optName, optVal in tagOptions.items():
 				optStr = optStr + ' {}="{}"'.format(optName, optVal)
 		
-		self.wr_line("<{}{}>\n".format(tag, optionStr))
+		self.wr_line("<{}{}>\n".format(tag, optStr))
 		
 		if (endTag):
 			self.append_line("</{}>\n".format(tag))
@@ -145,43 +145,56 @@ class LyxGenerator(BaseGenerator):
 			for supOpt in supTextOptions:
 				if (textOptKey == supOpt):
 					isSup = True
-					self.wr_line("\{} {}\n".format(textOptKey, textOptVal))
+					self.wr_line("\\{} {}\n".format(textOptKey, textOptVal))
 					break
 	
 	
 	def insert_table_cell(self, cell):
-		self.insert_html_table_tag("cell", cell[0]) 
+		#print(cell)
+		self.insert_html_table_tag("cell", cell[0], endTag=True) 
 		self.insert_inset("Text")
+		self.wr_line("\n")
 		self.insert_layout("Plain Layout")
 		self.insert_text_options(cell[1])
 		self.wr_line(cell[2])
-		self.commit_append_line(3)
-
+		self.commit_append_line(1)
+		self.wr_line("\n")
+		self.commit_append_line(2)
+		
 
 	
 
 
 	def insert_table(self, tableOptions, cells):
-		if (not is_table_valid(tableOptions, cells)):
-			return False
+		#if (not is_table_valid(tableOptions, cells)):
+		#	return False
+		
+		self.insert_layout("Standard")
+		self.wr_line("\\noindent\n")
+		self.wr_line("\\align center\n")
 		
 		self.insert_inset("Tabular")
 		tableDimension = {"version" : "3", "rows" : '{}'.format(len(cells)), 
 						"columns" : '{}'.format(len(cells[0]))}
-		self.insert_html_table_tag(self, "lyxTabular", tableDimension, True)
+		self.insert_html_table_tag("lyxtabular", tableDimension, True)
 		
 		for option in tableOptions:
 			self.insert_html_table_tag(option[0], tagOptions=option[1],
 											endTag=False)
 		
 		for row in cells:
-			self.insert_html_table_tag("row", True)
+			self.insert_html_table_tag("row", endTag=True)
 			for cell in row:
 				self.insert_table_cell(cell)
 			self.commit_append_line(1)
 	
 		self.commit_append_line(1)
-
+		self.wr_line("\n")
+		self.commit_append_line(1)
+		self.wr_line("\n")
+		self.wr_line("\n")
+		self.commit_append_line(1)
+		
 	
 	
 

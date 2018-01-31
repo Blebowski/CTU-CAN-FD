@@ -22,6 +22,7 @@
 ##					  bitfields from first four 8-bit register are concatenated
 ##					  into 32 bit values)
 ##      chaptName   - Name of the Chapter to create
+##      lyxTemplate - Path to an empty Lyx document with document header.
 ##		outFile		- Output where to write the Lyx chapter.
 ##
 ##	Revision history:
@@ -61,7 +62,10 @@ def parse_args():
 	parser.add_argument('--chaptName', dest='packName', help="""Name of the 
 						C Header IFDEF to create""")											
 	parser.add_argument('--outFile', dest='outFile', help=""" Output where to write 
-							the VHDL package.""")											
+							the VHDL package.""")
+	parser.add_argument('--lyxTemplate', dest='lyxTemplate', help="""Path to an 
+							empty Lyx document with document header.""")	
+										
 	return parser.parse_args();
 		
 
@@ -81,5 +85,9 @@ if __name__ == '__main__':
 			lyxGen = LyxAddrGenerator(component, args.addrMap, args.fieldMap,
 										args.wordWidth)
 			lyxGen.set_of(of)
+			lyxGen.load_lyx_template(args.lyxTemplate)
 			
-			#headerGen.commit_to_file()
+			lyxGen.write_mem_map_fields()
+			lyxGen.lyxGen.commit_append_lines_all()
+			
+			lyxGen.commit_to_file()
