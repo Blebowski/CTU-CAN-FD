@@ -23,16 +23,31 @@ class BaseGenerator(metaclass=ABCMeta):
 	packageNames = None
 	packageIdentifier = "%$%$@_"
 	
+	# Text to be printed at the end of declaration which is multiline
+	# and contains more objects (like declarations) within it...
+	appendText = None
 	
 	def __init__(self):
 		self.out = []
 		self.packageNames = []
+		self.appendText = []
 	
 	def wr_line(self, line):
 		self.out.append(line)
 	
+	def append_line(self, line):
+		self.appendText.insert(0, line)
+	
 	def wr_nl(self):
 		self.wr_line("\n")
+	
+	def commit_append_line(self, count):
+		for i in range(1, min(count, len(self.appendText))):
+			self.wr_line(self.appendText[0])
+			self.appendText.remove(0)
+	
+	def commit_append_lines_all(self):
+		self.commit_append_line(len(self.appendText))
 		
 	def is_supported_type(self, type):
 		for i in self.supportedTypes:

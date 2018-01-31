@@ -39,7 +39,13 @@ class IpXactAddrGenerator(metaclass=ABCMeta):
 	
 	def set_of(self, of): 
 		self.of = of
-		
+	
+	def move_till_text(self, of, text):
+		line = "BEGIN"
+		while (line != None):
+			line = of.read()
+			if (line == text):
+				break
 
 ################################################################################
 #  Write the address map into output file
