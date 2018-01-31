@@ -84,10 +84,6 @@ if __name__ == '__main__':
 										args.wordWidth)
 			headerGen.set_of(of)
 			
-			if (args.licPath != ""):
-				lic_text = load_license(args.licPath)
-				write_license(lic_text, '*', of)
-			
 			headerGen.create_addrMap_package("CTU_CAN_FD")
 			
 			headerGen.commit_to_file()
