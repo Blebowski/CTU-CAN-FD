@@ -967,7 +967,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_A_VAL</ipxact:name>
 						<ipxact:displayName>BIT_VAL_A_VAL</ipxact:displayName>
-						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_X_MASK register are compared.</ipxact:description>
+						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_A_MASK register are compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2625,6 +2625,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_C_VAL</ipxact:name>
+						<ipxact:displayName>BIT_VAL_C_VAL</ipxact:displayName>
+						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_C_MASK register are compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2645,7 +2647,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_C_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_C_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_C_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2666,6 +2668,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_B_VAL</ipxact:name>
+						<ipxact:displayName>BIT_VAL_B_VAL</ipxact:displayName>
+						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_B_MASK register are compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2686,7 +2690,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_B_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_B_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_B_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2708,7 +2712,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_A_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_A_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_A_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2729,6 +2733,8 @@
 					<ipxact:access>write-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>CTR_PRES_VAL</ipxact:name>
+						<ipxact:displayName>CTR_PRES_VAL</ipxact:displayName>
+						<ipxact:description>Counter value to preset</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2739,6 +2745,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PTX</ipxact:name>
+						<ipxact:displayName>PTX</ipxact:displayName>
+						<ipxact:description>Preset value fromCTR_PRES_VAL to TX Error counter.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2750,6 +2758,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PRX</ipxact:name>
+						<ipxact:displayName>PRX</ipxact:displayName>
+						<ipxact:description>Preset value fromCTR_PRES_VAL to RX Error counter.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2761,6 +2771,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ENORM</ipxact:name>
+						<ipxact:displayName>ENORM</ipxact:displayName>
+						<ipxact:description>Erase Nominal bit time error counter</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2772,6 +2784,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EFD</ipxact:name>
+						<ipxact:displayName>EFD</ipxact:displayName>
+						<ipxact:description>Erase Data bit time error counter</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2791,6 +2805,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>ERR_FD_VAL</ipxact:name>
+						<ipxact:displayName>ERR_FD_VAL</ipxact:displayName>
+						<ipxact:description>Number of errors in the Data bit time.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
