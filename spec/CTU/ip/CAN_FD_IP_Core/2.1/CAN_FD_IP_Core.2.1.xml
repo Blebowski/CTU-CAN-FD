@@ -404,6 +404,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RI</ipxact:name>
+						<ipxact:displayName>RI</ipxact:displayName>
+						<ipxact:description>Frame Received interrupt</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -415,6 +417,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TI</ipxact:name>
+						<ipxact:displayName>TI</ipxact:displayName>
+						<ipxact:description>Frame transceived interrupt</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -426,6 +430,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EI</ipxact:name>
+						<ipxact:displayName>EI</ipxact:displayName>
+						<ipxact:description>Error warning limit reached interrupt</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -437,6 +443,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
+						<ipxact:displayName>DOI</ipxact:displayName>
+						<ipxact:description>Data overrun on RX Buffer Interrupt</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -448,6 +456,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EPI</ipxact:name>
+						<ipxact:displayName>EPI</ipxact:displayName>
+						<ipxact:description>Node became error passive or bus off interrupt</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -459,6 +469,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
+						<ipxact:displayName>ALI</ipxact:displayName>
+						<ipxact:description>Arbitration lost interrupt</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -470,6 +482,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
+						<ipxact:displayName>BEI</ipxact:displayName>
+						<ipxact:description>Bus Error interrupt</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -481,6 +495,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LFI</ipxact:name>
+						<ipxact:displayName>LFI</ipxact:displayName>
+						<ipxact:description>Event logging finished interrupt</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -492,6 +508,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RFI</ipxact:name>
+						<ipxact:displayName>RFI</ipxact:displayName>
+						<ipxact:description>Receive buffer full interrupt</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -503,6 +521,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
+						<ipxact:displayName>BSI</ipxact:displayName>
+						<ipxact:description>Bit-rate shifted interrupt</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -538,7 +558,7 @@
 					<ipxact:field>
 						<ipxact:name>DOIE</ipxact:name>
 						<ipxact:displayName>DOIE</ipxact:displayName>
-						<ipxact:description>Data Overrun interrupt enable</ipxact:description>
+						<ipxact:description>Data Overrun on RX Buffer interrupt enable</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -603,7 +623,7 @@
 					<ipxact:field>
 						<ipxact:name>LFIE</ipxact:name>
 						<ipxact:displayName>LFIE</ipxact:displayName>
-						<ipxact:description>Event logging interrupt enable</ipxact:description>
+						<ipxact:description>Event logging finished interrupt enable</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
