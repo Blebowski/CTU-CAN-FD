@@ -38,9 +38,7 @@ import inspect
 import math
 
 from pyXact_generator.gen_lib import *
-from pyXact_generator.ip_xact.h_addr_generator import HeaderAddrGenerator
-
-HeaderAddrGenerator
+from pyXact_generator.ip_xact.lyx_addr_generator import LyxAddrGenerator
 
 def parse_args():
 	parser = argparse.ArgumentParser(
@@ -80,10 +78,8 @@ if __name__ == '__main__':
 		
 		with open_output(args.outFile) as of:
 			
-			headerGen = HeaderAddrGenerator(component, args.addrMap, args.fieldMap,
+			lyxGen = LyxAddrGenerator(component, args.addrMap, args.fieldMap,
 										args.wordWidth)
-			headerGen.set_of(of)
+			lyxGen.set_of(of)
 			
-			headerGen.create_addrMap_package("CTU_CAN_FD")
-			
-			headerGen.commit_to_file()
+			#headerGen.commit_to_file()

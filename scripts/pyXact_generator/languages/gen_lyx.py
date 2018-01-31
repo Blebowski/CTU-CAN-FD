@@ -35,7 +35,7 @@ class LyxGenerator(BaseGenerator):
 	stdLists = ["Itemize", "List", "Description", "Labeling"]
 	stdRefPrefixes = ["Part", "Chapter", "Section", "Subsection",
 						"Subsubsection", "Paragraph", "Subparagraph"]
-	supStyles = [stdLayouts, stdLists, stdPrefixes]
+	supStyles = [stdLayouts, stdLists, stdRefPrefixes]
 	
 	# insets (used with "\begin_inset")
 	supInsets = { "NewLine" : {"newline" : ""}, 
@@ -63,7 +63,7 @@ class LyxGenerator(BaseGenerator):
 								"figure" : "",
 								"placement" : "__STRING",
 								"wide" : "__BOOL",
-								"sideways" : "__BOOL,
+								"sideways" : "__BOOL",
 								"status" : "open"},
 					"Caption" : {"Standard" : ""},
 					"Box" : {"Frameless" : ""} # TODO: Other arguments
@@ -167,7 +167,7 @@ class LyxGenerator(BaseGenerator):
 		
 		self.insert_inset("Tabular")
 		tableDimension = {"version" : "3", "rows" : '{}'.format(len(cells)), 
-						"columns" : '{}'.format(len(cells[0])}
+						"columns" : '{}'.format(len(cells[0]))}
 		self.insert_html_table_tag(self, "lyxTabular", tableDimension, True)
 		
 		for option in tableOptions:
@@ -232,8 +232,6 @@ class LyxGenerator(BaseGenerator):
 		pass
 		
 		
-		
-	def create
 			
 
 	

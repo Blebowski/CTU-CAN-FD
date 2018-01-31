@@ -38,7 +38,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 # Arguments:
 #  of		 	- Output file to write
 ################################################################################
-	@abstractmethod
 	def write_mem_map_addr(self):
 		pass
 	
@@ -49,7 +48,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 # Arguments:
 #  of		 	- Output file to write
 ################################################################################	
-	@abstractmethod
 	def write_mem_map_fields(self):
 		pass
 
@@ -60,7 +58,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 # Arguments:
 #  of		 	- Output file to write
 ################################################################################	
-	@abstractmethod
 	def write_mem_map_both(self):
 		pass
 		
@@ -70,7 +67,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 #
 # Arguments:
 ################################################################################		
-	@abstractmethod
 	def write_reg(self, reg, writeFields, writeRstVal, writeEnums): 
 		pass
 	
