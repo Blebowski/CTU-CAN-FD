@@ -82,28 +82,29 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 					fieldRst = "-"
 				
 				retVal[i][j].append(fieldName)
-				retVal[i][j].append(fieldRst)
-		
+				retVal[i][j].append(fieldRst)	
 		return retVal		
-			
-			
-
+	
+	
+	
 	def write_reg_field_table(self, reg):
 		
 		regFields = self.reg_unwrap_fields(reg)
+		
 		#print(regFields[0])
 		#print(regFields[1])
 		#print(regFields[2])
 		#print(regFields[3])
 		
 		for i in reversed(range(1, int(reg.size / 8 + 1))):
+			prevName = ""
 			tableOptions = []
 			tableOptions.append(["features", {"tabularvalignment" : "middle"}])
 			tableOptions.append(["column", {"alignment" : "center" ,
 											"valignment" : "top"}])
 			for j in range(1,9):
 				tableOptions.append(["column", {"alignment" : "center" ,
-												"valignment" : "top" ,
+												"valignment" : "top",
 												"width" : "1.4cm"}])
 			
 			tableCells = [[], [], []]
@@ -126,24 +127,32 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				tableCells[0][j].append(withLine)
 				tableCells[0][j].append({})
 				tableCells[0][j].append("{}\n".format((8 - j) + (i - 1) * 8))
-				
 			
 			# Bit name row
 			tableCells[1].append([])
 			tableCells[1][0].append(stdCellAttributes)
 			tableCells[1][0].append({})
-			tableCells[1][0].append("Bit name\n")
+			tableCells[1][0].append("Field name\n")
 			for j in range(1,9):
 				tableCells[1].append([])
-				withLine = stdCellAttributes
-				if (j == 8):
-					withLine = stdCellAttributes.copy()
-					withLine["rightline"] = "true" 
+				withLine = stdCellAttributes.copy()
+				
+				multicolumn = (prevName == regFields[i - 1][j - 1][0])
+				if (multicolumn):
+					withLine["multicolumn"] = "2"
+				else:
+					withLine["multicolumn"] = "1"
+					
 				tableCells[1][j].append(withLine)
 				tableCells[1][j].append({})
-				print("%s %s" % (i, j))
 				tableCells[1][j].append(regFields[i - 1][j - 1][0])
+				prevName = regFields[i - 1][j - 1][0]
 			
+			# Correct the right most field to have proper right panel
+			for j in reversed(range(1,9)):
+				if (tableCells[1][j][0]["multicolumn"] == "1"):
+					tableCells[1][j][0]["rightline"] = "true"
+					break	
 			
 			# Restart value row
 			tableCells[2].append([])
