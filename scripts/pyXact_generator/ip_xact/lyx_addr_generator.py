@@ -37,10 +37,66 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			self.lyxGen.insert_layout("Description")
 			self.lyxGen.wr_line("{} {}\n".format(field.name, field.description))
 			self.lyxGen.commit_append_line(1)
+
+
+	def getBit(self, val, bitIndex):
+		tmp = "{0:032b}".format(val)
+		print(tmp)
+		print("BitIndex {}".format(bitIndex))
+		return tmp[31 - bitIndex]
+		
+
+	def reg_unwrap_fields(self, reg):
+		retVal = [[], [], [], []]
+		subRegIndex = 0
+		highVal = 0
+		
+		for i in range(0, int(reg.size / 8)):
+			for j in range(0, 8):
+				retVal[i].append([])
+				
+				# Check if such a field exists
+				fieldExist = False
+				for field in sorted(reg.field, key=lambda a: a.bitOffset):
+					tmp = (7 - j) + i * 8
+					print(field.name)
+					print(tmp)
+					print(field.bitOffset)
+					print(field.bitWidth)
+					if (field.bitOffset <= tmp and
+						field.bitOffset + field.bitWidth > tmp):
+						fieldExist = True
+						break;
+				
+				# Insert the field or reserved field
+				if (fieldExist):
+					fieldName = field.name
+					if (field.resets != None and field.resets.reset != None):
+						print(field.name)
+						fieldRst = self.getBit(field.resets.reset.value, 
+											tmp - field.bitOffset)
+					else:
+						fieldRst = "X"
+				else:
+					fieldName = "Reserved"
+					fieldRst = "-"
+				
+				retVal[i][j].append(fieldName)
+				retVal[i][j].append(fieldRst)
+		
+		return retVal		
+			
 			
 
 	def write_reg_field_table(self, reg):
-		for i in range(1, int(reg.size / 8 + 1)):
+		
+		regFields = self.reg_unwrap_fields(reg)
+		#print(regFields[0])
+		#print(regFields[1])
+		#print(regFields[2])
+		#print(regFields[3])
+		
+		for i in reversed(range(1, int(reg.size / 8 + 1))):
 			tableOptions = []
 			tableOptions.append(["features", {"tabularvalignment" : "middle"}])
 			tableOptions.append(["column", {"alignment" : "center" ,
@@ -69,7 +125,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 					withLine["rightline"] = "true" 
 				tableCells[0][j].append(withLine)
 				tableCells[0][j].append({})
-				tableCells[0][j].append("{}\n".format((8 - j) + (4 - i) * 8))
+				tableCells[0][j].append("{}\n".format((8 - j) + (i - 1) * 8))
 				
 			
 			# Bit name row
@@ -85,7 +141,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 					withLine["rightline"] = "true" 
 				tableCells[1][j].append(withLine)
 				tableCells[1][j].append({})
-				tableCells[1][j].append("DUMMY\n") #TODO
+				print("%s %s" % (i, j))
+				tableCells[1][j].append(regFields[i - 1][j - 1][0])
 			
 			
 			# Restart value row
@@ -102,7 +159,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 					withLine["rightline"] = "true"
 				tableCells[2][j].append(withLine)
 				tableCells[2][j].append({})
-				tableCells[2][j].append("0\n")
+				tableCells[2][j].append(regFields[i - 1][j - 1][1])
 			
 			self.lyxGen.insert_table(tableOptions, tableCells)
 			
@@ -141,9 +198,15 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			self.lyxGen.wr_line("{}\n".format(reg.description))
 			self.lyxGen.commit_append_line(1)
 			
+			# Bit table and bit field descriptions
 			self.write_reg_field_table(reg)
-			
 			self.write_reg_field_desc(reg)
+			
+			# Separation from next register
+			self.lyxGen.insert_layout("Standard")
+			self.lyxGen.insert_inset("VSpace bigskip")
+			self.lyxGen.commit_append_line(2)
+			
 
 
 ################################################################################
