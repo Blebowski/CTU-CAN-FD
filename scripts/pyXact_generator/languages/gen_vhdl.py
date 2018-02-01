@@ -20,9 +20,9 @@ import inspect
 import math
 
 from pyXact_generator.gen_lib import *
-from pyXact_generator.languages.gen_base import BaseGenerator
+from pyXact_generator.languages.gen_lan_base import LanBaseGenerator
 
-class VhdlGenerator(BaseGenerator):
+class VhdlGenerator(LanBaseGenerator):
 	
 	
 	def __init__(self):

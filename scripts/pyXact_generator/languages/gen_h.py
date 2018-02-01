@@ -22,9 +22,9 @@ import math
 import copy
 
 from pyXact_generator.gen_lib import *
-from pyXact_generator.languages.gen_base import BaseGenerator
+from pyXact_generator.languages.gen_lan_base import LanBaseGenerator
 
-class HeaderGenerator(BaseGenerator):
+class HeaderGenerator(LanBaseGenerator):
 	
 	def __init__(self):
 		super().__init__()
@@ -33,6 +33,11 @@ class HeaderGenerator(BaseGenerator):
 								"uint8_t","uint16_t","uint32_t","uint64_t"]
 		self.typeSizes = [32, 8, 8, 8, 16, 16, 64, 64, 8, 16, 32, 64]
 		self.commentSign = "*"
+	
+
+################################################################################
+#	LanBaseGenerator inherited function
+################################################################################		
 	
 	def is_supported_type(self, type):
 		return super().is_supported_type(type)
@@ -43,8 +48,14 @@ class HeaderGenerator(BaseGenerator):
 	def wr_nl(self):
 		self.__wr_line("\n")
 	
+	
+################################################################################
+#	C syntax specific implementation function
+################################################################################			
+	
 	def write_comm_line(self, gap=2):
-		self.__wr_line('/*{:{fill}<78}\n'.format(" " * gap, fill=self.commentSign))	
+		self.__wr_line('/*{:{fill}<78}\n'.format(" " * gap, fill=self.commentSign))
+		
 	
 	def write_comment(self, input, gap, caption=None, small=False):
 		spltStr = split_string(input, 75 - gap)
@@ -116,7 +127,7 @@ class HeaderGenerator(BaseGenerator):
 	def __write_structure_norm(self, decls):
 		for decl in decls:
 			self.write_decl(decl)
-
+			
 
 	def __insert_rsvd_bitfield(self, decls, neighbour, index):
 		decl = copy.copy(neighbour)
