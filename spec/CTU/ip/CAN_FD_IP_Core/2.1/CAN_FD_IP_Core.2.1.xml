@@ -1026,6 +1026,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RX_MF_VALUE</ipxact:name>
+						<ipxact:displayName>RX_MF_VALUE</ipxact:displayName>
+						<ipxact:description>Number of free 32 bit words in the RX Buffer</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
@@ -2583,6 +2585,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>BIT_RAN_HIGH_VAL</ipxact:name>
+						<ipxact:displayName>BIT_RAN_HIGH_VAL</ipxact:displayName>
+						<ipxact:description>High threshold value</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
