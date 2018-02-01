@@ -14,16 +14,37 @@
 from abc import ABCMeta, abstractmethod
 
 class LanDeclaration(metaclass=ABCMeta):
-
+	
+	# Declaration specifier: const, volatile ...
 	specifier = None
+	
+	# Declaration type: uint32_t, std_logic ...
 	type = None
+	
+	# Declaration bit (width of std_logic_vector or bitfield)
 	bitWidth = 0
+	
+	# Declaration bit index for bitfield element declaration
 	bitIndex = None
+	
+	# Declaration value
 	value = None
+	
+	# Declaration name
 	name = None
+	
+	# Declaration alignment
 	aligLen = 50
+	
+	# Number of tabs before the declaration
 	gap = 0
+	
+	# Comment before the declaration
 	comment = None
+	
+	# Internal type to distinguish between various formats of declaration
+	# (e.g. enum element declaration has different format than structure
+	#  element declaration)
 	intType = None
 	# IntType so far has: initialized, enum, bitfield
 	
