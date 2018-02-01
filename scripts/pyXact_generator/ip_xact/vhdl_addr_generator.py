@@ -166,13 +166,14 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 		
 		self.vhdlGen.create_includes(["std_logic_1164.all"])
 		self.vhdlGen.wr_nl()
-		self.vhdlGen.create_package(name, start=True)
+		self.vhdlGen.create_package(name)
 		self.vhdlGen.wr_nl()
 		if (self.addrMap):
 			self.write_mem_map_addr()
 		if (self.fieldMap):
 			self.write_mem_map_fields()
-		self.vhdlGen.create_package(name, start=False)
+			
+		self.vhdlGen.commit_append_line(1)
 				
 
 	def write_reg(self, reg, writeFields, writeRstVal, writeEnums): 

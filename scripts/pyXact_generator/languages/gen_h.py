@@ -206,13 +206,10 @@ class HeaderGenerator(BaseGenerator):
 							"}", s))
 		
 				
-	def create_package(self, name, start=True):
-		if (start):
-			self.__wr_line("#ifndef __{}__\n".format(name))
-			self.__wr_line("#define __{}__\n".format(name))
-		else:
-			self.__wr_line("#endif\n")
-	
+	def create_package(self, name):
+		self.__wr_line("#ifndef __{}__\n".format(name))
+		self.__wr_line("#define __{}__\n".format(name))
+		self.append_line("#endif\n")
 	
 	def create_includes(self, includeList):
 		for include in includeList:

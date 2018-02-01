@@ -72,7 +72,7 @@ class BaseGenerator(metaclass=ABCMeta):
 		pass
 	
 	@abstractmethod
-	def create_package(self, name, start=True):
+	def create_package(self, name):
 		pass
 
 	@abstractmethod

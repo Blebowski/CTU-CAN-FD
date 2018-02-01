@@ -113,11 +113,9 @@ class VhdlGenerator(BaseGenerator):
 		return True
 
 
-	def create_package(self, name, start=True):
-		if (start == True):
-			self.__wr_line("package {} is\n".format(name))
-		else:
-			self.__wr_line("end package;\n")
+	def create_package(self, name):
+		self.__wr_line("package {} is\n".format(name))
+		self.append_line("end package;\n")
 
 	
 	def create_structure(self, name, decls):
