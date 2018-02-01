@@ -77,9 +77,26 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 											tmp - field.bitOffset)
 					else:
 						fieldRst = "X"
+					
+					# If the field is overllaped over several 8 bit registers
+					# add index to define it more clearly
+					if (int(field.bitOffset / 8) != 
+						int((field.bitOffset + field.bitWidth - 1) / 8)):
+						hInd = min(field.bitOffset + field.bitWidth - 1,
+									((i + 1) * 8) - 1)
+						lInd = max(field.bitOffset, (i * 8))
+						hInd = hInd - field.bitOffset
+						lInd = lInd - field.bitOffset
+						append = "[{}".format(hInd)
+						if (hInd != lInd):
+							append = append + ":{}]".format(lInd)
+						else:
+							append = append + "]"
+						fieldName = fieldName + append
 				else:
 					fieldName = "Reserved"
 					fieldRst = "-"
+				
 				
 				retVal[i][j].append(fieldName)
 				retVal[i][j].append(fieldRst)	
@@ -128,7 +145,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				tableCells[0][j].append({})
 				tableCells[0][j].append("{}\n".format((8 - j) + (i - 1) * 8))
 			
-			# Bit name row
+			# Field name row
 			tableCells[1].append([])
 			tableCells[1][0].append(stdCellAttributes)
 			tableCells[1][0].append({})
