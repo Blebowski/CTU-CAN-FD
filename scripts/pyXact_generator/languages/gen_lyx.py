@@ -162,12 +162,13 @@ class LyxGenerator(BaseGenerator):
 		self.commit_append_line(2)
 		
 
-	
 
-
-	def insert_table(self, tableOptions, cells):
+	def insert_table(self, table):
 		#if (not is_table_valid(tableOptions, cells)):
 		#	return False
+		
+		tableOptions = table[0]
+		cells = table[1]
 		
 		self.insert_layout("Standard")
 		self.wr_line("\\noindent\n")
@@ -196,8 +197,89 @@ class LyxGenerator(BaseGenerator):
 		self.commit_append_line(1)
 		
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+	def build_table_options(self, columnCount, rowCount):
+		tableOptions = []
+		tableOptions.append(["features", {"tabularvalignment" : "middle"}])
+		for i in range(0, columnCount):
+			tableOptions.append(["column", {"alignment" : "center" ,
+											"valignment" : "top"}])
+		return tableOptions
+	
+	
+	
+	def build_table_cells(self, columnCount, rowCount):
+		tableCells = []
+		stdCellAttributes = {"alignment" : "center", "valignment" : "top",
+						"topline" : "true", "leftline" : "true",
+						"usebox" : "none"}
+		
+		for row in range(0, rowCount):
+			tableCells.append([])
+			for column in range(0, columnCount):
+				
+				tableCells[row].append([])
+				actCell = tableCells[row][column]
+				
+				actCell.append(stdCellAttributes.copy())
+				if (column == columnCount - 1):
+					actCell[0]["rightline"] = "true"
+				if (row == rowCount - 1):
+					actCell[0]["bottomline"] = "true"
+				actCell.append({})
+				actCell.append("Cell x:{} y:{}".format(column, row))
+				
+		return tableCells
+				
+	
+	def build_table(self, columnCount, rowCount):
+		table = []	
+		tableOptions = self.build_table_options(columnCount, rowCount)
+		tableCells = self.build_table_cells(columnCount, rowCount)
+		table.append(tableOptions)
+		table.append(tableCells)
+		return table
+
+
+	def set_column_option(self, table, column, optKey, optVal):
+		table[0][column + 1][1][optKey] = optVal
+
+	def set_cell_option(self, table, row, column, optKey, optVal):
+		table[1][row][column][0][optKey] = optVal
+	
+	def set_cell_object(self, table, row, column, object):
+		table[1][row][column][2] = object
+
+	def set_cell_text_prop(self, table, row, column, propName, propVal):
+		table[1][row][column][1][propName] = propVal
+
 	
 
+	def set_columns_option(self, table, columns, opPairs):
+		for column,opt in zip(columns, opPairs):
+			self.set_column_option(table, column, opt[0], opt[1])
+
+	def set_cells_object(self, table, cells, objects):
+		for cell,object in zip(cells, objects):
+			self.set_cell_object(table, cell[0], cell[1], object)
+	
+	def set_cells_option(self, table, cells, opPairs):
+		for cell,opPair in zip(cells, opPairs):
+			table[1][cell[0]][cell[1]][0][opPair[0]] = opPair[1]
+
+	
 
 	def insert_new_page(self):
 		self.insert_inset("Newpage newpage")

@@ -80,10 +80,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				fieldExist = False
 				for field in sorted(reg.field, key=lambda a: a.bitOffset):
 					tmp = (7 - j) + i * 8
-					#print(field.name)
-					#print(tmp)
-					#print(field.bitOffset)
-					#print(field.bitWidth)
 					if (field.bitOffset <= tmp and
 						field.bitOffset + field.bitWidth > tmp):
 						fieldExist = True
@@ -129,86 +125,49 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		
 		regFields = self.reg_unwrap_fields(reg)
 		
-		#print(regFields[0])
-		#print(regFields[1])
-		#print(regFields[2])
-		#print(regFields[3])
-		
 		for i in reversed(range(1, int(reg.size / 8 + 1))):
-			prevName = ""
-			tableOptions = []
-			tableOptions.append(["features", {"tabularvalignment" : "middle"}])
-			tableOptions.append(["column", {"alignment" : "center" ,
-											"valignment" : "top"}])
-			for j in range(1,9):
-				tableOptions.append(["column", {"alignment" : "center" ,
-												"valignment" : "top",
-												"width" : "1.4cm"}])
+			table = self.lyxGen.build_table(9, 3)
 			
-			tableCells = [[], [], []]
+			# Set the width
+			self.lyxGen.set_columns_option(table, range(1,9),  
+							[["width", "1.4cm"]  for j in range(1, 9)])
 			
-			stdCellAttributes = {"alignment" : "center", "valignment" : "top",
-						"topline" : "true", "leftline" : "true",
-						"usebox" : "none"}
+			rows = [[row, j + 1] for j in range(8) for row in range(3)]
 			
 			# Title row
-			tableCells[0].append([])
-			tableCells[0][0].append(stdCellAttributes)
-			tableCells[0][0].append({})
-			tableCells[0][0].append("Bit offset\n")
-			for j in range(1,9):
-				tableCells[0].append([])
-				withLine = stdCellAttributes
-				if (j == 8):
-					withLine = stdCellAttributes.copy()
-					withLine["rightline"] = "true" 
-				tableCells[0][j].append(withLine)
-				tableCells[0][j].append({})
-				tableCells[0][j].append("{}\n".format((8 - j) + (i - 1) * 8))
+			self.lyxGen.set_cell_object(table, 0, 0, "Bit index")
+			bitIndexes = [str((8 * i) - j) for j in range(1,9)]
+			self.lyxGen.set_cells_object(table, [[0, j + 1] for j in range(8)],
+												bitIndexes)
 			
 			# Field name row
-			tableCells[1].append([])
-			tableCells[1][0].append(stdCellAttributes)
-			tableCells[1][0].append({})
-			tableCells[1][0].append("Field name\n")
-			for j in range(1,9):
-				tableCells[1].append([])
-				withLine = stdCellAttributes.copy()
-				
+			self.lyxGen.set_cell_object(table, 1, 0, "Field name")
+			cells = [[1, j + 1] for j in range(8)]
+			fieldNames = [regFields[i - 1][j][0] for j in range(8)]
+			self.lyxGen.set_cells_object(table, cells, fieldNames)
+			
+			# Merge the cells for common bitfields ...
+			prevName = ""
+			multiOpts = []
+			highInd = 9
+			for j in range(1, 9):
 				multicolumn = (prevName == regFields[i - 1][j - 1][0])
 				if (multicolumn):
-					withLine["multicolumn"] = "2"
+					multiOpts.append(["multicolumn", "2"])
 				else:
-					withLine["multicolumn"] = "1"
-					
-				tableCells[1][j].append(withLine)
-				tableCells[1][j].append({})
-				tableCells[1][j].append(regFields[i - 1][j - 1][0])
+					multiOpts.append(["multicolumn", "1"])
+					highInd = j
 				prevName = regFields[i - 1][j - 1][0]
-			
-			# Correct the right most field to have proper right panel
-			for j in reversed(range(1,9)):
-				if (tableCells[1][j][0]["multicolumn"] == "1"):
-					tableCells[1][j][0]["rightline"] = "true"
-					break	
+			self.lyxGen.set_cells_option(table, cells, multiOpts)
+			self.lyxGen.set_cell_option(table, 1, highInd, "rightline", "true")
 			
 			# Restart value row
-			tableCells[2].append([])
-			withLine = stdCellAttributes.copy()
-			withLine["bottomline"] = "true"	
-			tableCells[2][0].append(withLine)
-			tableCells[2][0].append({})
-			tableCells[2][0].append("Reset value\n")
-			for j in range(1,9):
-				tableCells[2].append([])
-				if (j == 8):
-					withLine = withLine.copy()
-					withLine["rightline"] = "true"
-				tableCells[2][j].append(withLine)
-				tableCells[2][j].append({})
-				tableCells[2][j].append(regFields[i - 1][j - 1][1])
-			
-			self.lyxGen.insert_table(tableOptions, tableCells)
+			self.lyxGen.set_cell_object(table, 2, 0, "Reset value")
+			cells = [[2, j + 1] for j in range(8)]
+			rstVals = [regFields[i - 1][j][1] for j in range(8)]
+			self.lyxGen.set_cells_object(table, cells, rstVals)
+					
+			self.lyxGen.insert_table(table)
 	
 
 	def write_regs(self, regs):
@@ -256,6 +215,26 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			
 
 
+	def write_mem_map_regions(self, memMap):
+		table = self.lyxGen.build_table(2, len(memMap.addressBlock) + 1)
+		
+		self.lyxGen.set_columns_option(table, range(0,2),  
+							[["width", "4cm"]  for j in range(0, 2)])
+		
+		titleCells = [[0, 0] , [0, 1]]
+		nameCells = [[i, 0] for i in range(1, len(memMap.addressBlock) + 1)]
+		addrCells = [[i, 1] for i in range(1, len(memMap.addressBlock) + 1)]
+		
+		nameVals = [block.name for block in memMap.addressBlock]
+		addrVals = [hex(block.baseAddress) for block in memMap.addressBlock]
+		titleVals = ["Memory region", "Address offset"]
+		
+		self.lyxGen.set_cells_object(table, nameCells, nameVals)
+		self.lyxGen.set_cells_object(table, addrCells, addrVals)
+		self.lyxGen.set_cells_object(table, titleCells, titleVals)
+		self.lyxGen.insert_table(table)
+		
+
 ################################################################################
 #  Write the address map into output file
 # 
@@ -263,7 +242,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 #  of		 	- Output file to write
 ################################################################################
 	def write_mem_map_addr(self):
-		pass
+		self.write_mem_map_regions(self.addrMap)
 	
 	
 ################################################################################
