@@ -70,7 +70,6 @@
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 use work.ID_transfer.all;
 

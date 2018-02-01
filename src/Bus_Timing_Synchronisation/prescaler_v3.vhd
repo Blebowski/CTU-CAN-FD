@@ -106,7 +106,6 @@
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
 USE WORK.CANconstants.ALL;
 use work.brs_comp_package.all;
 

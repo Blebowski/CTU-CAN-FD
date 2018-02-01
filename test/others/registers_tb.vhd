@@ -42,7 +42,6 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 
 entity registers_tb is
@@ -265,7 +264,7 @@ begin
   wait for 17 ns;
   res_n<=not ACT_reset;
   
-  adress<=TO_STDLOGICVECTOR(X"410000");
+  adress<=X"410000";
   scs<='1';
   srd<='1';
   wait for 20 ns;
