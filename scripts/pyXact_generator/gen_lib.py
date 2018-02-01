@@ -23,7 +23,7 @@ import math
 ################################################################################
 # File path to the local repo of the PyXact framework
 ################################################################################
-PYXACT_PATH = "E:\Skola\CVUT-FEL\ipyxact"
+PYXACT_PATH = "E:\Skola\CVUT-FEL\CAN_FD_IP_Core\scripts\pyXact_generator\ipyxact_parser"
 
 sys.path.insert(0, PYXACT_PATH)
 from ipyxact.ipyxact import Component
