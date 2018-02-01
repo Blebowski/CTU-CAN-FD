@@ -34,13 +34,17 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 
 	def reg_append_short_enums(self, field):
 		appendText = ""
-		if (len(field.enumeratedValues) < 3 and
-			len(field.enumeratedValues) > 0):
+		if (field.enumeratedValues == []):
+			return appendText
+
+		print(field.enumeratedValues[0].enumeratedValue)
+		if (len(field.enumeratedValues[0].enumeratedValue) < 3 and
+			len(field.enumeratedValues[0].enumeratedValue) > 0):
 			appendText += "("
-			sep = ","
+			sep = ", "
 			for es in field.enumeratedValues:
 				for (i,e) in enumerate(sorted(es.enumeratedValue, key=lambda x: x.value)):
-					if (i == len(field.enumeratedValues)):
+					if (i == len(field.enumeratedValues[0].enumeratedValue)):
 						sep = ""
 					appendText += "{} - {}{}".format(e.value, e.name, sep)
 			appendText += ")"
