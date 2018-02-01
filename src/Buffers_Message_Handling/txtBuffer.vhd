@@ -58,7 +58,6 @@
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-USE ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 
 entity txtBuffer is
@@ -198,10 +197,10 @@ begin
         
         --Store the data into the Buffer during the access
         if (tran_wr(ID-1)='1') then
-          if (tran_addr<4) then
+          if (to_integer(unsigned(tran_addr))<4) then
             txt_buffer_info(to_integer(unsigned(tran_addr))) <= tran_data;
           else  
-            txt_buffer_data(to_integer(unsigned(tran_addr-4))) <= tran_data;
+            txt_buffer_data(to_integer(unsigned(tran_addr))-4) <= tran_data;
           end if;
         end if;
         

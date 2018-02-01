@@ -52,7 +52,6 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
 USE work.randomLib.All;
 use work.CANconstants.all;
 
@@ -1208,7 +1207,7 @@ procedure process_error
      decode_dlc_v(frame.dlc,length);
      for i in 0 to (length-1)/4 loop
        w_data:= frame.data(511-i*32 downto 480-i*32);
-       CAN_write(w_data,TX_DATA_5_ADR+i,ID,mem_bus);
+       CAN_write(w_data,std_logic_vector(unsigned(TX_DATA_5_ADR)+i),ID,mem_bus);
      end loop;
      
      --Signal that the frame is valid by allowing the buffer
@@ -1426,7 +1425,6 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-USE ieee.std_logic_unsigned.All;
 USE work.randomLib.All;
 use work.CANconstants.all;
  USE work.CANtestLib.All;

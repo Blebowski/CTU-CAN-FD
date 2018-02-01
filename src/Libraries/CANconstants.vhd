@@ -71,14 +71,14 @@ package CANconstants is
   constant CAN_BASE_ID_LENGTH : natural := 11;
   constant CAN_EXT_ID_LENGTH  : natural := 18;  --Length Identifier extension only
 
-  constant NO_SYNC   : std_logic_vector := "00";
-  constant HARD_SYNC : std_logic_vector := "01";
-  constant RE_SYNC   : std_logic_vector := "10";
+  constant NO_SYNC   : std_logic_vector(1 downto 0) := "00";
+  constant HARD_SYNC : std_logic_vector(1 downto 0) := "01";
+  constant RE_SYNC   : std_logic_vector(1 downto 0) := "10";
 
   --CRC sources
-  constant CRC_15_SRC : std_logic_vector := "00";
-  constant CRC_17_SRC : std_logic_vector := "01";
-  constant CRC_21_SRC : std_logic_vector := "10";
+  constant CRC_15_SRC : std_logic_vector(1 downto 0) := "00";
+  constant CRC_17_SRC : std_logic_vector(1 downto 0) := "01";
+  constant CRC_21_SRC : std_logic_vector(1 downto 0) := "10";
 
   --Sample point control constants
   constant NOMINAL_SAMPLE   : std_logic_vector(1 downto 0) := "00";
@@ -86,10 +86,10 @@ package CANconstants is
   constant SECONDARY_SAMPLE : std_logic_vector(1 downto 0) := "10";
 
   --Tuples definition for older compiler (less than 2008)
-  constant DOMINANT_DOMINANT   : std_logic_vector := DOMINANT&DOMINANT;
-  constant DOMINANT_RECESSIVE  : std_logic_vector := DOMINANT&RECESSIVE;
-  constant RECESSIVE_DOMINANT  : std_logic_vector := RECESSIVE&DOMINANT;
-  constant RECESSIVE_RECESSIVE : std_logic_vector := RECESSIVE&RECESSIVE;
+  constant DOMINANT_DOMINANT   : std_logic_vector(1 downto 0) := DOMINANT&DOMINANT;
+  constant DOMINANT_RECESSIVE  : std_logic_vector(1 downto 0) := DOMINANT&RECESSIVE;
+  constant RECESSIVE_DOMINANT  : std_logic_vector(1 downto 0) := RECESSIVE&DOMINANT;
+  constant RECESSIVE_RECESSIVE : std_logic_vector(1 downto 0) := RECESSIVE&RECESSIVE;
 
   --Error flag definitions 
   constant PASSIVE_ERR_FLAG : std_logic := RECESSIVE;

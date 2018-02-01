@@ -96,7 +96,6 @@
 Library ieee;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.ALL;
-use ieee.std_logic_unsigned.All;
 use work.CANconstants.all;
 
 entity rxBuffer is
