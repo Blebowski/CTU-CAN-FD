@@ -109,9 +109,9 @@ class LyxGenerator(BaseGenerator):
 		#if (not self.is_supported_inset(inset, options)):
 		#	return False
 		
-		for option in options:
-			if (not self.is_supported_option(inset, option)):
-				return False
+		#for option in options:
+		#	if (not self.is_supported_option(inset, option)):
+		#		return False
 			
 		self.wr_line("\\begin_inset {}\n".format(inset))
 		for option in options:
