@@ -30,6 +30,9 @@ class VhdlGenerator(LanBaseGenerator):
 		self.supportedTypes = ["std_logic", "natural"]
 		self.commentSign = "-"
 	
+################################################################################
+#	LanBaseGenerator inherited function
+################################################################################		
 
 	def __wr_line(self, line):
 		super(VhdlGenerator, self).wr_line(line)
@@ -37,10 +40,35 @@ class VhdlGenerator(LanBaseGenerator):
 	def is_supported_type(self, type):
 		return super().is_supported_type(type)
 
+
+################################################################################
+#	VHDL syntax specific generation functions
+################################################################################		
+
 	def write_comm_line(self, gap=2):
+		""" 
+		Write VHDL comment line in format: (gap)---- aligned to 80 characters
+		Arguments:
+			gap		 Number of tabs before the comment line
+		"""
 		self.__wr_line('{:{fill}<80}\n'.format(" " * gap, fill=self.commentSign))
 	
+	
 	def write_comment(self, input, gap, caption=None, small=False):
+		""" 
+		Write C comment in format:
+			--------------------------------------------------------------------
+			-- caption
+			--
+			-- Comment text
+			--------------------------------------------------------------------
+		Arguments:
+			input	 Text of the comment
+			gap		 Number of tabs before the comment line
+			caption	 Text of the caption
+			small    If set to True the first and last line of above described
+					 format are ommitted
+		"""
 		if (small == False):
 			self.write_comm_line()
 		
@@ -58,6 +86,12 @@ class VhdlGenerator(LanBaseGenerator):
 			
 
 	def create_includes(self, includeList):
+		""" 
+		Create VHDL include list from "ieee" library. All the includes must
+		be from ieee library.
+		Arguments:
+			includeList		List of includes from the iee library
+		"""
 		if (includeList == None):
 			return False
 			
@@ -67,6 +101,11 @@ class VhdlGenerator(LanBaseGenerator):
 	
 
 	def write_decl(self, decl):
+		""" 
+		Create VHDL declaration of simple type.
+		Arguments:
+			decl		Declaration object
+		"""
 		if (not self.is_supported_type(decl.type)):
 			return False
 		
@@ -114,11 +153,21 @@ class VhdlGenerator(LanBaseGenerator):
 
 
 	def create_package(self, name):
+		""" 
+		Create VHDL package.
+		Arguments:
+			name		name of the package
+		"""
 		self.__wr_line("package {} is\n".format(name))
 		self.append_line("end package;\n")
 
 	
 	def create_structure(self, name, decls):
+		""" 
+		Create VHDL structure.
+		Arguments:
+			decls		Declaration structures
+		"""
 		if (not decls):
 			return False
 		self.__wr_line("type {} is record\n".format(name))
@@ -129,6 +178,11 @@ class VhdlGenerator(LanBaseGenerator):
 
 
 	def create_enum(self, name, decls):
+		""" 
+		Create VHDL structure.
+		Arguments:
+			decls		Declaration structures
+		"""
 		if (not decls):
 			return False
 		self.__wr_line("type {} is\n".format(name))

@@ -50,9 +50,8 @@ class HeaderGenerator(LanBaseGenerator):
 	
 	
 ################################################################################
-#	C syntax specific implementation function
+#	C syntax specific generation functions
 ################################################################################			
-	
 	
 	def write_comm_line(self, gap=2):
 		""" 
@@ -74,6 +73,8 @@ class HeaderGenerator(LanBaseGenerator):
 			 */
 		Arguments:
 			gap		 Number of tabs before the comment
+			caption  Caption to append to the comment in the first line
+			small	 So far no meaning for C implementation
 		"""
 		spltStr = split_string(input, 75 - gap)
 		if (caption != None):
