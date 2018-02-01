@@ -32,20 +32,37 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			self.of.write(line)	
 
 
+	def reg_append_short_enums(self, field):
+		appendText = ""
+		if (len(field.enumeratedValues) < 3 and
+			len(field.enumeratedValues) > 0):
+			appendText += "("
+			sep = ","
+			for es in field.enumeratedValues:
+				for (i,e) in enumerate(sorted(es.enumeratedValue, key=lambda x: x.value)):
+					if (i == len(field.enumeratedValues)):
+						sep = ""
+					appendText += "{} - {}{}".format(e.value, e.name, sep)
+			appendText += ")"
+		return appendText		
+
+
 	def write_reg_field_desc(self, reg):
 		for field in sorted(reg.field, key=lambda a: a.bitOffset):
 			self.lyxGen.insert_layout("Description")
-			self.lyxGen.wr_line("{} {}\n".format(field.name, field.description))
+			descText = field.description
+			descText += self.reg_append_short_enums(field)
+			self.lyxGen.wr_line("{} {}\n".format(field.name, descText))
 			self.lyxGen.commit_append_line(1)
 
 
 	def getBit(self, val, bitIndex):
 		tmp = "{0:032b}".format(val)
-		print(tmp)
-		print("BitIndex {}".format(bitIndex))
+		#print(tmp)
+		#print("BitIndex {}".format(bitIndex))
 		return tmp[31 - bitIndex]
-		
-
+	
+	
 	def reg_unwrap_fields(self, reg):
 		retVal = [[], [], [], []]
 		subRegIndex = 0
@@ -59,10 +76,10 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				fieldExist = False
 				for field in sorted(reg.field, key=lambda a: a.bitOffset):
 					tmp = (7 - j) + i * 8
-					print(field.name)
-					print(tmp)
-					print(field.bitOffset)
-					print(field.bitWidth)
+					#print(field.name)
+					#print(tmp)
+					#print(field.bitOffset)
+					#print(field.bitWidth)
 					if (field.bitOffset <= tmp and
 						field.bitOffset + field.bitWidth > tmp):
 						fieldExist = True
@@ -89,9 +106,9 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 						lInd = lInd - field.bitOffset
 						append = "[{}".format(hInd)
 						if (hInd != lInd):
-							append = append + ":{}]".format(lInd)
+							append += ":{}]".format(lInd)
 						else:
-							append = append + "]"
+							append += "]"
 						fieldName = fieldName + append
 				else:
 					fieldName = "Reserved"
@@ -103,7 +120,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		return retVal		
 	
 	
-	
+		
 	def write_reg_field_table(self, reg):
 		
 		regFields = self.reg_unwrap_fields(reg)
@@ -188,7 +205,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				tableCells[2][j].append(regFields[i - 1][j - 1][1])
 			
 			self.lyxGen.insert_table(tableOptions, tableCells)
-			
+	
 
 	def write_regs(self, regs):
 		for reg in sorted(regs, key=lambda a: a.addressOffset):
