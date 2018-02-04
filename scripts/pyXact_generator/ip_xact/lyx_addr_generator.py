@@ -46,7 +46,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			sep = ", "
 			for es in field.enumeratedValues:
 				for (i,e) in enumerate(sorted(es.enumeratedValue, key=lambda x: x.value)):
-					if (i == len(field.enumeratedValues[0].enumeratedValue)):
+					if (i == len(field.enumeratedValues[0].enumeratedValue) - 1):
 						sep = ""
 					appendText += "{} - {}{}".format(e.value, e.name, sep)
 			appendText += ")"
