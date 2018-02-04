@@ -4,7 +4,8 @@
 ##   
 ##   Copyright (C) 2018 Ondrej Ille <ondrej.ille@gmail.com>
 ##
-##   Address map generator to Lyx document with constants.  
+##   Address map generator to Lyx document from IP-XACT parsed memory map
+##	 with pyxact framework.
 ## 
 ##	Revision history:
 ##		25.01.2018	First implementation
