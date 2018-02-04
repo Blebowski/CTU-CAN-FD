@@ -24,6 +24,7 @@ class BaseGenerator(metaclass=ABCMeta):
 	
 	# Simple stack implementation for adding language constructs which require
 	# ending parts such as structures, entities, HTML tags ...
+	# Reffered to as append_stack
 	appendText = None
 	
 	def __init__(self):
