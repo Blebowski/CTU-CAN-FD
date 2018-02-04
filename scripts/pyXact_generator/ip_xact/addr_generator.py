@@ -46,6 +46,13 @@ class IpXactAddrGenerator(metaclass=ABCMeta):
 			line = of.read()
 			if (line == text):
 				break
+	
+	def addr_reg_lookup(self, fieldReg):
+		for block in self.addrMap.addressBlock:
+			for reg in block.register:
+				if (reg.addressOffset * 4 == fieldReg.addressOffset):
+					return reg
+		return None
 
 ################################################################################
 #  Write the address map into output file
