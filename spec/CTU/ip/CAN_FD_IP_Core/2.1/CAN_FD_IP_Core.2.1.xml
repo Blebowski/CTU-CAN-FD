@@ -7,7 +7,7 @@
 	<ipxact:memoryMaps>
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_8bit_regs</ipxact:name>
-			<ipxact:displayName>CAN FD registers</ipxact:displayName>
+			<ipxact:displayName>CAN FD memory map</ipxact:displayName>
 			<ipxact:description>Register map for CAN FD IP Core. The register map consists of several memory regions.</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
