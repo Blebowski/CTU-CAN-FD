@@ -150,14 +150,11 @@ class LyxGenerator(BaseGenerator):
 	
 	
 	def insert_table_cell(self, cell):
-		#print(cell)
 		self.insert_html_table_tag("cell", cell[0], endTag=True) 
 		self.insert_inset("Text")
 		self.wr_line("\n")
-		self.insert_layout("Plain Layout")
-		self.insert_text_options(cell[1])
-		self.wr_line(cell[2])
-		self.commit_append_line(1)
+		self.write_layout_text("Plain Layout", cell[2], textOptions=cell[1],
+						label=cell[3])
 		self.wr_line("\n")
 		self.commit_append_line(2)
 		
@@ -195,11 +192,51 @@ class LyxGenerator(BaseGenerator):
 		self.wr_line("\n")
 		self.wr_line("\n")
 		self.commit_append_line(1)
-		
 	
-	def write_layout_text(self, layoutType, text):
+	
+	def replace_reserved_sign(self, text):
+		retVal = ""
+		for char in text:
+			if (char == "_"):
+				retVal += "\\backslash textunderscore "
+			elif (char == """\ """):
+				retVal += "\\"
+			else:
+				retVal += char
+		return retVal
+	
+	def insert_ref(self, labelText, ref):
+		self.insert_inset("ERT")
+		self.wr_line("status open\n")
+		self.insert_layout("Plain Layout")
+		self.wr_line("\\backslash\n")
+		
+		if (ref == "label"):
+			labelStr = "{"+"{}".format(labelText)+"}"
+			self.wr_line("{}{}".format(ref, labelStr))
+		
+		if (ref == "hyperref"):
+			print(ref)
+			print()
+			refString = "{" + self.replace_reserved_sign(labelText) + "}"
+			self.wr_line("{}[{}]{}".format(ref, labelText, refString))
+	
+		self.commit_append_line(2)
+
+
+	def write_layout_text(self, layoutType, text, textOptions=None, label=None):
 		self.insert_layout(layoutType)
-		self.wr_line(text)
+		if (textOptions != None):
+			self.insert_text_options(textOptions)
+		if (label == "hyperref"):
+			self.insert_ref(text, label)
+		elif (label != None):
+			self.wr_line(text)
+			self.insert_ref(text, label)
+		else:
+			self.wr_line(text)
+		
+			
 		self.commit_append_line(1)
 	
 
@@ -241,6 +278,7 @@ class LyxGenerator(BaseGenerator):
 					actCell[0]["bottomline"] = "true"
 				actCell.append({})
 				actCell.append(defCellText)
+				actCell.append(None)
 				
 		return tableCells
 				
@@ -265,8 +303,11 @@ class LyxGenerator(BaseGenerator):
 
 	def set_cell_text_prop(self, table, row, column, propName, propVal):
 		table[1][row][column][1][propName] = propVal
-
 	
+	def set_cell_text_label(self, table, row, column, label):
+		table[1][row][column][3] = label
+
+		
 
 	def set_columns_option(self, table, columns, opPairs):
 		for column,opt in zip(columns, opPairs):
@@ -279,6 +320,10 @@ class LyxGenerator(BaseGenerator):
 	def set_cells_option(self, table, cells, opPairs):
 		for cell,opPair in zip(cells, opPairs):
 			table[1][cell[0]][cell[1]][0][opPair[0]] = opPair[1]
+	
+	def set_cells_text_label(self, table, cells, labels):
+		for cell,label in zip(cells, labels):
+			self.set_cell_text_label(table, cell[0], cell[1], label)
 
 	
 

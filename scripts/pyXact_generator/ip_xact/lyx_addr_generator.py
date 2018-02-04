@@ -141,10 +141,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 							mcVal = "1"
 							highInd = j
 						prevName = cell[2]
-						#print(cell[2])
-						#print(i)
-						#print(j)
-						#print("")
 						self.lyxGen.set_cell_option(table, i, j, "multicolumn", 
 							mcVal)
 					
@@ -195,10 +191,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		for reg in sorted(regs, key=lambda a: a.addressOffset):
 			
 			# Add the Section title
-			self.lyxGen.insert_layout("Subsection")
-			self.lyxGen.wr_line("{}\n".format(reg.name))
-			# TODO: Add Label here!
-			self.lyxGen.commit_append_line(1)
+			self.lyxGen.write_layout_text("Subsection", "{}\n".format(reg.name),
+												label="label")
 			
 			
 			# Register type, address, size and description
@@ -269,7 +263,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			cells += [[row, 3 - i]]
 		text = [reg.name for i in range(int(self.busWidth / 8))]
 		self.lyxGen.set_cells_object(table, cells, text)
-				
+		self.lyxGen.set_cells_text_label(table, cells, ["hyperref" for i in
+											range(0, len(cells))])	
 		
 	
 	def write_mem_map_reg_table(self, block):
