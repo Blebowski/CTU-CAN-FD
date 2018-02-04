@@ -47,16 +47,13 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		if (field.enumeratedValues == []):
 			return appendText
 
-		if (len(field.enumeratedValues[0].enumeratedValue) < 3 and
-			len(field.enumeratedValues[0].enumeratedValue) > 0):
-			appendText += "("
-			sep = ", "
+		if (len(field.enumeratedValues[0].enumeratedValue) > 0):
 			for es in field.enumeratedValues:
 				for (i,e) in enumerate(sorted(es.enumeratedValue, key=lambda x: x.value)):
-					if (i == len(field.enumeratedValues[0].enumeratedValue) - 1):
-						sep = ""
-					appendText += "{} - {}{}".format(e.value, e.name, sep)
-			appendText += ")"
+					appendText += "\\begin_inset Newline newline\\end_inset\n"
+					binSize = "{:0" + "{}".format(field.bitWidth) + "b}"
+					binFmt = binSize.format(e.value)
+					appendText += "0b{} - {}".format(binFmt, e.name)
 		return appendText		
 
 
