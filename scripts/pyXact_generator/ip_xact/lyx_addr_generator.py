@@ -39,7 +39,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		if (field.enumeratedValues == []):
 			return appendText
 
-		#print(field.enumeratedValues[0].enumeratedValue)
 		if (len(field.enumeratedValues[0].enumeratedValue) < 3 and
 			len(field.enumeratedValues[0].enumeratedValue) > 0):
 			appendText += "("
@@ -64,8 +63,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 
 	def getBit(self, val, bitIndex):
 		tmp = "{0:032b}".format(val)
-		#print(tmp)
-		#print("BitIndex {}".format(bitIndex))
 		return tmp[31 - bitIndex]
 	
 	
@@ -91,7 +88,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				if (fieldExist):
 					fieldName = field.name
 					if (field.resets != None and field.resets.reset != None):
-						#print(field.name)
 						fieldRst = self.getBit(field.resets.reset.value, 
 											tmp - field.bitOffset)
 					else:
@@ -216,14 +212,16 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			self.lyxGen.insert_inset("VSpace bigskip")
 			self.lyxGen.commit_append_line(2)
 			
+	
+	def write_mem_map_title(self):
+		self.lyxGen.write_layout_text("Chapter", "{}\n".format(
+											self.fieldMap.displayName))
+		
+		self.lyxGen.write_layout_text("Standard", "{}\n".format(self.fieldMap
+										.description))
 
 
 	def write_mem_map_regions(self, memMap):
-		
-		self.lyxGen.write_layout_text("Chapter", "{}\n".format(
-											memMap.displayName))
-		
-		self.lyxGen.write_layout_text("Standard", "{}\n".format(memMap.description))
 		
 		table = self.lyxGen.build_table(2, len(memMap.addressBlock) + 1)
 		self.lyxGen.set_columns_option(table, range(0,2),  
@@ -253,7 +251,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			if (mark == 1 or change == True):
 				len += 1
 			change = True if (mark == 1) else False
-		print(len)
 		return len
 		
 	
@@ -331,7 +328,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 ################################################################################	
 	def write_mem_map_fields(self):
 		for block in self.fieldMap.addressBlock:
-			self.lyxGen.insert_new_page()
+			#self.lyxGen.insert_new_page()
 			self.write_mem_map_reg_table(block)
 			self.write_regs(block)
 

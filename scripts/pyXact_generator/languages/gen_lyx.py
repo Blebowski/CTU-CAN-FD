@@ -216,8 +216,6 @@ class LyxGenerator(BaseGenerator):
 			self.wr_line("{}{}".format(ref, labelStr))
 		
 		if (ref == "hyperref"):
-			print(ref)
-			print()
 			refString = "{" + self.replace_reserved_sign(labelText) + "}"
 			self.wr_line("{}[{}]{}".format(ref, labelText, refString))
 	
