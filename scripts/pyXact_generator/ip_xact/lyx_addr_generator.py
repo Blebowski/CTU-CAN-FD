@@ -19,14 +19,22 @@ from pyXact_generator.ip_xact.addr_generator import IpXactAddrGenerator
 from pyXact_generator.languages.gen_lyx import LyxGenerator
 from pyXact_generator.languages.declaration import LanDeclaration
 
+from pyXact_generator.gen_lib import *
+
 class LyxAddrGenerator(IpXactAddrGenerator):
 
 	lyxGen = None
 	template = None
 
-	def __init__(self, pyXactComp, addrMap, fieldMap, busWidth):
-		super().__init__(pyXactComp, addrMap, fieldMap, busWidth)
+	genFieldDesc = None
+	genRegions = None
+
+	def __init__(self, pyXactComp, fieldMap, busWidth, genRegions=True,
+					genFiDesc=True):
+		super().__init__(pyXactComp, fieldMap, fieldMap, busWidth)
 		self.lyxGen = LyxGenerator()
+		self.genFieldDesc = str_arg_to_bool(genFiDesc)
+		self.genRegions = str_arg_to_bool(genRegions)
 	
 	
 	def commit_to_file(self):
@@ -204,8 +212,10 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 											reg.description))
 			
 			# Bit table and bit field descriptions
-			self.write_reg_field_table(reg)
-			self.write_reg_field_desc(reg)
+			if (self.genFieldDesc == True):
+				self.write_reg_field_table(reg)
+				self.write_reg_field_desc(reg)
+				
 			
 			# Separation from next register
 			self.lyxGen.insert_layout("Standard")
@@ -311,24 +321,18 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 
 
 ################################################################################
-#  Write the address map into output file
-# 
-# Arguments:
-#  of		 	- Output file to write
+#  Write the memory map region overview for given memory map
 ################################################################################
 	def write_mem_map_addr(self):
-		self.write_mem_map_regions(self.fieldMap)
+		if (self.genRegions):
+			self.write_mem_map_regions(self.fieldMap)
 		
 			
 ################################################################################
 # Write the bitfield map into the output file
-#
-# Arguments:
-#  of		 	- Output file to write
 ################################################################################	
 	def write_mem_map_fields(self):
 		for block in self.fieldMap.addressBlock:
-			#self.lyxGen.insert_new_page()
 			self.write_mem_map_reg_table(block)
 			self.write_regs(block)
 
@@ -340,7 +344,9 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 #  of		 	- Output file to write
 ################################################################################	
 	def write_mem_map_both(self):
-		pass
+		self.write_mem_map_title()
+		self.write_mem_map_addr()
+		self.write_mem_map_fields()
 		
 
 ################################################################################

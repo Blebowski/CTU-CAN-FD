@@ -36,4 +36,11 @@ def open_output(output):
 def split_string(input, size):
 	return [input[start:start+size] for start in range(0, len(input), size)]
 	
-	
+def str_arg_to_bool(input):
+	if (input == "yes" or
+		input == "true" or
+		input == "True" or
+		input == "y"):
+		return True
+	else:
+		return False

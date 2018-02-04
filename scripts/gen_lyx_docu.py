@@ -14,14 +14,15 @@
 ##		xactSpec    - Path to a IP-XACT specification file with register maps
 ##		adrMap      - Name of the IP-XACT Memory map which should be used for
 ##					  address constants generation.
-##      fieldMap    - Name of the IP-XACT Memory map which should be used for
-##					  bit field constants and unions generation.
+##      memMap      - Name of the IP-XACT Memory map
 ##      wordWidth   - Size of the access bus word. Register bit field offsets 
 ##					  are concatenated into word width size instead of simple
 ##					  offset from beginning of register. (E.g. 32 bit  ->  
 ##					  bitfields from first four 8-bit register are concatenated
 ##					  into 32 bit values)
-##      chaptName   - Name of the Chapter to create
+##      genRegions  - If memory map region overview should be generated
+##      genFiDesc   - If field descriptions should be generated
+##		chaptName   - Name of the Chapter to create
 ##      lyxTemplate - Path to an empty Lyx document with document header.
 ##		outFile		- Output where to write the Lyx chapter.
 ##
@@ -49,9 +50,8 @@ def parse_args():
 	parser.add_argument('--fieldMap', dest='fieldMap', help=""" Name of the
 							IP-XACT Memory map which should be used for
 							bit field constants and enums generation""")
-	parser.add_argument('--addrMap', dest='addrMap', help=""" Name of the 
-								IP-XACT Memory map which should be used for
-								address constants generation.""")
+	parser.add_argument('--memMap', dest='memMap', help=""" Name of the 
+									IP-XACT Memory map""")
 	parser.add_argument('--wordWidth', dest='wordWidth', type=int, 
 							help=""" Size of the
 							access bus word. Register bit field offsets are
@@ -59,6 +59,10 @@ def parse_args():
 							offset from beginning of register. (E.g. 32 bit  ->
 							bitfields from first four 8-bit register are
 							concatenated into 32 bit values)""")
+	parser.add_argument('--genRegions', dest='genRegions', help=""" If memory map 
+								region overview should be generated""")
+	parser.add_argument('--genFiDesc', dest='genFiDesc', help="""If field 
+								descriptions should be generated""")
 	parser.add_argument('--chaptName', dest='packName', help="""Name of the 
 						C Header IFDEF to create""")											
 	parser.add_argument('--outFile', dest='outFile', help=""" Output where to write 
@@ -82,12 +86,15 @@ if __name__ == '__main__':
 		
 		with open_output(args.outFile) as of:
 			
-			lyxGen = LyxAddrGenerator(component, args.addrMap, args.fieldMap,
-										args.wordWidth)
+			lyxGen = LyxAddrGenerator(component, args.memMap, args.wordWidth, 
+										genRegions=args.genRegions,
+										genFiDesc=args.genFiDesc)
 			lyxGen.set_of(of)
 			lyxGen.load_lyx_template(args.lyxTemplate)
 			
-			lyxGen.write_mem_map_fields()
+			# Write the documentation
+			lyxGen.write_mem_map_both()
+			
 			lyxGen.lyxGen.commit_append_lines_all()
 			
 			lyxGen.commit_to_file()
