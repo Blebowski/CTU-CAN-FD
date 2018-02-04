@@ -226,7 +226,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 	def write_mem_map_regions(self, memMap):
 		
 		self.lyxGen.write_layout_text("Chapter", "{}\n".format(
-											memMap.name))
+											memMap.displayName))
 		
 		self.lyxGen.write_layout_text("Standard", "{}\n".format(memMap.description))
 		
@@ -238,7 +238,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		nameCells = [[i, 0] for i in range(1, len(memMap.addressBlock) + 1)]
 		addrCells = [[i, 1] for i in range(1, len(memMap.addressBlock) + 1)]
 		
-		nameVals = [block.name for block in memMap.addressBlock]
+		nameVals = [block.displayName for block in memMap.addressBlock]
 		addrVals = ["0x{:03X}".format(block.baseAddress) for block in memMap.addressBlock]
 		titleVals = ["Memory region", "Address offset"]
 		
@@ -274,7 +274,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 	
 	def write_mem_map_reg_table(self, block):
 		self.lyxGen.write_layout_text("Section", "{}\n".format(
-										block.name))
+										block.displayName))
 		tableLen = self.calc_block_table_len(block)
 		table = self.lyxGen.build_table(5, tableLen + 1)
 		

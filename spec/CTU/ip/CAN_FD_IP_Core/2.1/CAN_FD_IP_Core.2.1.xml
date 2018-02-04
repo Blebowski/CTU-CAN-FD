@@ -11,7 +11,7 @@
 			<ipxact:description>Register map for CAN FD IP Core. The register map consists of several memory regions.</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
-				<ipxact:displayName>CAN FD control registers</ipxact:displayName>
+				<ipxact:displayName>Control registers</ipxact:displayName>
 				<ipxact:description>Control registers memory region.</ipxact:description>
 				<ipxact:baseAddress>'h0</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
@@ -2889,7 +2889,7 @@
 			</ipxact:addressBlock>
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer</ipxact:name>
-				<ipxact:displayName>TX Buffers</ipxact:displayName>
+				<ipxact:displayName>TX Buffer</ipxact:displayName>
 				<ipxact:description>Access to TX Buffer.</ipxact:description>
 				<ipxact:baseAddress>'h100</ipxact:baseAddress>
 				<ipxact:range>4</ipxact:range>
