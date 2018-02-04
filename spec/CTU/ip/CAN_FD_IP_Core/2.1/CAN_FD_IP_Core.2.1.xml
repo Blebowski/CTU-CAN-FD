@@ -8,7 +8,7 @@
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_8bit_regs</ipxact:name>
 			<ipxact:displayName>CAN FD memory map</ipxact:displayName>
-			<ipxact:description>Register map for CAN FD IP Core. The register map consists of several memory regions.</ipxact:description>
+			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported and byte or half word access is executed via byte enable signal. The memory is organized as big endian. Write to read only memory location will have no effect. Read from write only memory location will zeroes. The register map consists of following memory regions:</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
 				<ipxact:displayName>Control registers</ipxact:displayName>
@@ -2890,17 +2890,46 @@
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer</ipxact:name>
 				<ipxact:displayName>TX Buffer</ipxact:displayName>
-				<ipxact:description>Access to TX Buffer.</ipxact:description>
+				<ipxact:description>Access to this memory region is mapped to TXT Buffer for CAN FD frame to be transmitted. The frame layout corresponds to the layout described in chapter TODO. First adress in the region (TXT_DATA_1) is mapped to FRAME_FORMAT_W, second address (TXT_DATA_2) is mapped to IDENTIFIER_W etc. The last address (TXT_DATA_20) is mapped to DATA_61_64_W. The adresses in between are mapped accordingly. This memory region is write only and read access is not valid. Additionally this region supports only 32 bit access.</ipxact:description>
 				<ipxact:baseAddress>'h100</ipxact:baseAddress>
-				<ipxact:range>4</ipxact:range>
+				<ipxact:range>80</ipxact:range>
 				<ipxact:width>32</ipxact:width>
+				<ipxact:volatile>false</ipxact:volatile>
 				<ipxact:register>
-					<ipxact:name>TX_DATA_X</ipxact:name>
+					<ipxact:name>TX_DATA_1</ipxact:name>
+					<ipxact:displayName>TX_DATA_1</ipxact:displayName>
+					<ipxact:description>This adress corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TX_DATA_X</ipxact:name>
+						<ipxact:name>TX_DATA_1</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TX_DATA_2</ipxact:name>
+					<ipxact:displayName>TX_DATA_2</ipxact:displayName>
+					<ipxact:description>This adress corresponds to IDENTIFIER word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TX_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TX_DATA_20</ipxact:name>
+					<ipxact:displayName>TX_DATA_20</ipxact:displayName>
+					<ipxact:description>This adress corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TX_DATA_20</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3509,7 +3538,7 @@
 			<ipxact:description>CAN Frame format describtion in TXT and RX Buffer.</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>CAN_FD_Frame_format</ipxact:name>
-				<ipxact:displayName>CAN_FD_Frame_format</ipxact:displayName>
+				<ipxact:displayName>CAN FD Frame format</ipxact:displayName>
 				<ipxact:description>Register map with description of CAN Frame memory layout.</ipxact:description>
 				<ipxact:baseAddress>'h0</ipxact:baseAddress>
 				<ipxact:range>80</ipxact:range>
