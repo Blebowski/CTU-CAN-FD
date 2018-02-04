@@ -476,39 +476,18 @@ class LyxGenerator(BaseGenerator):
 		self.commit_append_line(2)
 	
 	
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	def write_comm_line(self, gap=2):
+		"""
+		Write comment line to the lyx document
+		"""
 		self.__wr_line('{:{fill}<78}\n'.format(" " * gap, fill=self.commentSign))
 		
+		
 	def write_comment(self, input, gap, caption=None, small=False):
-		self.__wr_line('{}# {}'.format("	" * gap, input))
-		
-	def create_enum(self, name, decls):
-		pass
-	
-	def write_decl(self, decl):
-		pass
-	
-	def create_union(self, name, decls):
-		pass
-
-	def create_structure(self, name, decls):
-		pass
-				
-	def create_package(self, name, start=True):
-		pass
-	
-	def create_includes(self, includeList):
-		pass
-		
+		"""
+		Write comment to the lyx document
+		"""
+		self.__wr_line('{}# {}'.format("	" * gap, input))		
 		
 			
 
