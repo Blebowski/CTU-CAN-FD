@@ -11,6 +11,8 @@
 ##
 ################################################################################
 
+import math
+
 from abc import ABCMeta, abstractmethod
 from pyXact_generator.ip_xact.addr_generator import IpXactAddrGenerator
 
@@ -37,7 +39,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		if (field.enumeratedValues == []):
 			return appendText
 
-		print(field.enumeratedValues[0].enumeratedValue)
+		#print(field.enumeratedValues[0].enumeratedValue)
 		if (len(field.enumeratedValues[0].enumeratedValue) < 3 and
 			len(field.enumeratedValues[0].enumeratedValue) > 0):
 			appendText += "("
@@ -89,7 +91,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				if (fieldExist):
 					fieldName = field.name
 					if (field.resets != None and field.resets.reset != None):
-						print(field.name)
+						#print(field.name)
 						fieldRst = self.getBit(field.resets.reset.value, 
 											tmp - field.bitOffset)
 					else:
@@ -120,7 +122,38 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		return retVal		
 	
 	
-		
+	def merge_common_fields(self, table, rowIndices, startCol=0, endCol=None):
+		prevName = ""
+		multiOpts = []
+		if (endCol == None):
+			endCol = len(table[1][0])
+		for i,row in enumerate(table[1]):
+			if (i in rowIndices):
+				highInd = 0
+				lowInd = 32
+				for j,cell in enumerate(row):
+					if (j >= startCol and j <= endCol):
+						multicolumn = (prevName == cell[2])
+						if (multicolumn):
+							mcVal = "2"
+							lowInd = j
+						else:
+							mcVal = "1"
+							highInd = j
+						prevName = cell[2]
+						#print(cell[2])
+						#print(i)
+						#print(j)
+						#print("")
+						self.lyxGen.set_cell_option(table, i, j, "multicolumn", 
+							mcVal)
+					
+					# Set the right panel if end is present
+					if (lowInd == len(row) - 1):
+						self.lyxGen.set_cell_option(table, i, highInd,
+								"rightline", "true")
+			
+
 	def write_reg_field_table(self, reg):
 		
 		regFields = self.reg_unwrap_fields(reg)
@@ -146,27 +179,15 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			fieldNames = [regFields[i - 1][j][0] for j in range(8)]
 			self.lyxGen.set_cells_object(table, cells, fieldNames)
 			
-			# Merge the cells for common bitfields ...
-			prevName = ""
-			multiOpts = []
-			highInd = 9
-			for j in range(1, 9):
-				multicolumn = (prevName == regFields[i - 1][j - 1][0])
-				if (multicolumn):
-					multiOpts.append(["multicolumn", "2"])
-				else:
-					multiOpts.append(["multicolumn", "1"])
-					highInd = j
-				prevName = regFields[i - 1][j - 1][0]
-			self.lyxGen.set_cells_option(table, cells, multiOpts)
-			self.lyxGen.set_cell_option(table, 1, highInd, "rightline", "true")
-			
 			# Restart value row
 			self.lyxGen.set_cell_object(table, 2, 0, "Reset value")
 			cells = [[2, j + 1] for j in range(8)]
 			rstVals = [regFields[i - 1][j][1] for j in range(8)]
 			self.lyxGen.set_cells_object(table, cells, rstVals)
-					
+			
+			# Merge adjacent fields with the same names
+			self.merge_common_fields(table, [1], startCol=1)
+				
 			self.lyxGen.insert_table(table)
 	
 
@@ -179,30 +200,17 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			# TODO: Add Label here!
 			self.lyxGen.commit_append_line(1)
 			
-			# Register type
-			self.lyxGen.insert_layout("Description")
-			self.lyxGen.wr_line("Type: {}\n".format(reg.access))
-			self.lyxGen.commit_append_line(1)
 			
-			# Register address
-			self.lyxGen.insert_layout("Description")
-			self.lyxGen.wr_line("Address: {}\n".format(hex(reg.addressOffset).upper()))
-			self.lyxGen.commit_append_line(1)
-			
-			# Size
-			self.lyxGen.insert_layout("Description")
-			pluralAp = ""
-			if (reg.size > 8):
-				pluralAp = "s"
-			self.lyxGen.wr_line("Size: {} byte{}\n".format(int(reg.size / 8),
-									pluralAp))
-			
-			self.lyxGen.commit_append_line(1)
-			
-			# Description
-			self.lyxGen.insert_layout("Standard")
-			self.lyxGen.wr_line("{}\n".format(reg.description))
-			self.lyxGen.commit_append_line(1)
+			# Register type, address, size and description
+			self.lyxGen.write_layout_text("Description", "Type: {}\n".format(
+												reg.access))
+			self.lyxGen.write_layout_text("Description", "Address: {}\n".format(
+										"0x{:X}".format(reg.addressOffset)))
+			pluralAp = "s" if (reg.size > 8) else ""
+			self.lyxGen.write_layout_text("Description", "Size: {} byte{}\n".format(
+										int(reg.size / 8), pluralAp))
+			self.lyxGen.write_layout_text("Standard", "{}\n".format(
+											reg.description))
 			
 			# Bit table and bit field descriptions
 			self.write_reg_field_table(reg)
@@ -216,8 +224,13 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 
 
 	def write_mem_map_regions(self, memMap):
-		table = self.lyxGen.build_table(2, len(memMap.addressBlock) + 1)
 		
+		self.lyxGen.write_layout_text("Chapter", "{}\n".format(
+											memMap.name))
+		
+		self.lyxGen.write_layout_text("Standard", "{}\n".format(memMap.description))
+		
+		table = self.lyxGen.build_table(2, len(memMap.addressBlock) + 1)
 		self.lyxGen.set_columns_option(table, range(0,2),  
 							[["width", "4cm"]  for j in range(0, 2)])
 		
@@ -226,14 +239,82 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		addrCells = [[i, 1] for i in range(1, len(memMap.addressBlock) + 1)]
 		
 		nameVals = [block.name for block in memMap.addressBlock]
-		addrVals = [hex(block.baseAddress) for block in memMap.addressBlock]
+		addrVals = ["0x{:03X}".format(block.baseAddress) for block in memMap.addressBlock]
 		titleVals = ["Memory region", "Address offset"]
 		
 		self.lyxGen.set_cells_object(table, nameCells, nameVals)
 		self.lyxGen.set_cells_object(table, addrCells, addrVals)
 		self.lyxGen.set_cells_object(table, titleCells, titleVals)
 		self.lyxGen.insert_table(table)
+	
+	
+	def calc_block_table_len(self, block):
+		marks = [0] * (int (block.range / (block.width / 8) ))
+		for reg in sorted(block.register, key=lambda x: x.addressOffset):
+			marks[int((reg.addressOffset * 8) / self.busWidth)] = 1
+		len = 0
+		change = True
+		for mark in marks:
+			if (mark == 1 or change == True):
+				len += 1
+			change = True if (mark == 1) else False
+		print(len)
+		return len
 		
+	
+	def write_mem_map_reg_single(self, table, reg, row):
+		cells = []
+		begOff = int(reg.addressOffset % 4)
+		for i in range(begOff, begOff + int(reg.size / 8)):
+			cells += [[row, 3 - i]]
+		text = [reg.name for i in range(int(self.busWidth / 8))]
+		self.lyxGen.set_cells_object(table, cells, text)
+				
+		
+	
+	def write_mem_map_reg_table(self, block):
+		self.lyxGen.write_layout_text("Section", "{}\n".format(
+										block.name))
+		tableLen = self.calc_block_table_len(block)
+		table = self.lyxGen.build_table(5, tableLen + 1)
+		
+		# Create the header
+		cells = [[0, i] for i in range(5)]
+		text = ["Bits [{}:{}]".format((i + 1) * 8 - 1, i * 8) 
+					for i in reversed(range(0, int(self.busWidth / 8)))]
+		text += ["Address offset"]
+		self.lyxGen.set_cells_object(table, cells, text)
+		
+		self.lyxGen.set_columns_option(table, range(0,4),  
+							[["width", "3cm"]  for j in range(0, 4)])
+		self.lyxGen.set_column_option(table, 4, "width", "1.5cm")
+		
+		# Pre write the addresses with "..." for reserved fields
+		cells = [[i + 1, 4] for i in range(tableLen)]
+		text = ["..." for i in range(tableLen)]
+		self.lyxGen.set_cells_object(table, cells, text)
+		
+		# Write the registers and addresses
+		row = 1
+		addr = 0
+		for reg in sorted(block.register, key=lambda x: x.addressOffset):
+				regDiff = math.floor(reg.addressOffset / 4) - addr
+				if (regDiff == 1):
+					row += 1
+				elif (regDiff > 1):
+					row += 2
+				addr += regDiff
+				self.write_mem_map_reg_single(table, reg, row)
+				self.lyxGen.set_cell_object(table, row, 4, 
+							"0x{:X}".format(4 * math.floor(reg.addressOffset / 4)))				
+		
+		self.merge_common_fields(table, [i for i in range(1, tableLen + 1)],
+									endCol=4)
+				
+		self.lyxGen.insert_table(table)
+		
+				
+
 
 ################################################################################
 #  Write the address map into output file
@@ -242,8 +323,10 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 #  of		 	- Output file to write
 ################################################################################
 	def write_mem_map_addr(self):
-		self.write_mem_map_regions(self.addrMap)
-	
+		self.write_mem_map_regions(self.fieldMap)
+		
+		for block in self.fieldMap.addressBlock:
+			self.write_mem_map_reg_table(block)
 	
 ################################################################################
 # Write the bitfield map into the output file
