@@ -197,10 +197,11 @@ class LyxGenerator(BaseGenerator):
 		self.commit_append_line(1)
 		
 	
-
-
-
-
+	def write_layout_text(self, layoutType, text):
+		self.insert_layout(layoutType)
+		self.wr_line(text)
+		self.commit_append_line(1)
+	
 
 
 
@@ -220,7 +221,7 @@ class LyxGenerator(BaseGenerator):
 	
 	
 	
-	def build_table_cells(self, columnCount, rowCount):
+	def build_table_cells(self, columnCount, rowCount, defCellText):
 		tableCells = []
 		stdCellAttributes = {"alignment" : "center", "valignment" : "top",
 						"topline" : "true", "leftline" : "true",
@@ -239,15 +240,15 @@ class LyxGenerator(BaseGenerator):
 				if (row == rowCount - 1):
 					actCell[0]["bottomline"] = "true"
 				actCell.append({})
-				actCell.append("Cell x:{} y:{}".format(column, row))
+				actCell.append(defCellText)
 				
 		return tableCells
 				
 	
-	def build_table(self, columnCount, rowCount):
+	def build_table(self, columnCount, rowCount, defCellText="Reserved"):
 		table = []	
 		tableOptions = self.build_table_options(columnCount, rowCount)
-		tableCells = self.build_table_cells(columnCount, rowCount)
+		tableCells = self.build_table_cells(columnCount, rowCount, defCellText)
 		table.append(tableOptions)
 		table.append(tableCells)
 		return table
