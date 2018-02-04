@@ -187,8 +187,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			self.lyxGen.insert_table(table)
 	
 
-	def write_regs(self, regs):
-		for reg in sorted(regs, key=lambda a: a.addressOffset):
+	def write_regs(self, block):
+		for reg in sorted(block.register, key=lambda a: a.addressOffset):
 			
 			# Add the Section title
 			self.lyxGen.write_layout_text("Subsection", "{}\n".format(reg.name),
@@ -199,7 +199,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			self.lyxGen.write_layout_text("Description", "Type: {}\n".format(
 												reg.access))
 			self.lyxGen.write_layout_text("Description", "Address: {}\n".format(
-										"0x{:X}".format(reg.addressOffset)))
+										"0x{:X}".format(reg.addressOffset +
+											block.baseAddress)))
 			pluralAp = "s" if (reg.size > 8) else ""
 			self.lyxGen.write_layout_text("Description", "Size: {} byte{}\n".format(
 										int(reg.size / 8), pluralAp))
@@ -301,7 +302,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				addr += regDiff
 				self.write_mem_map_reg_single(table, reg, row)
 				self.lyxGen.set_cell_object(table, row, 4, 
-							"0x{:X}".format(4 * math.floor(reg.addressOffset / 4)))				
+							"0x{:X}".format(4 * math.floor(reg.addressOffset / 4) +
+											 block.baseAddress))				
 		
 		self.merge_common_fields(table, [i for i in range(1, tableLen + 1)],
 									endCol=4)
@@ -331,7 +333,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		for block in self.fieldMap.addressBlock:
 			self.lyxGen.insert_new_page()
 			self.write_mem_map_reg_table(block)
-			self.write_regs(block.register)
+			self.write_regs(block)
 
 
 ################################################################################
