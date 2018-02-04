@@ -125,7 +125,7 @@ class LyxGenerator(BaseGenerator):
 		
 		optStr = ""
 		if (tagOptions != None):
-			for optName, optVal in tagOptions.items():
+			for optName, optVal in sorted(tagOptions.items()):
 				optStr = optStr + ' {}="{}"'.format(optName, optVal)
 		
 		self.wr_line("<{}{}>\n".format(tag, optStr))
@@ -141,7 +141,7 @@ class LyxGenerator(BaseGenerator):
 	
 	def insert_text_options(self, textOptions):
 		isSup = False
-		for textOptKey,textOptVal in textOptions.items():
+		for textOptKey,textOptVal in sorted(textOptions.items()):
 			for supOpt in supTextOptions:
 				if (textOptKey == supOpt):
 					isSup = True
