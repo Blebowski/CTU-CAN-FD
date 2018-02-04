@@ -281,6 +281,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 		tableLen = self.calc_block_table_len(block)
 		table = self.lyxGen.build_table(5, tableLen + 1)
 		
+		self.lyxGen.write_layout_text("Standard", block.description)
+		
 		# Create the header
 		cells = [[0, i] for i in range(5)]
 		text = ["Bits [{}:{}]".format((i + 1) * 8 - 1, i * 8) 
@@ -317,7 +319,6 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 				
 		self.lyxGen.insert_table(table)
 		
-				
 
 
 ################################################################################
