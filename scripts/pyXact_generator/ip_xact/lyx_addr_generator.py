@@ -320,9 +320,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 	def write_mem_map_addr(self):
 		self.write_mem_map_regions(self.fieldMap)
 		
-		for block in self.fieldMap.addressBlock:
-			self.write_mem_map_reg_table(block)
-	
+			
 ################################################################################
 # Write the bitfield map into the output file
 #
@@ -331,6 +329,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 ################################################################################	
 	def write_mem_map_fields(self):
 		for block in self.fieldMap.addressBlock:
+			self.lyxGen.insert_new_page()
+			self.write_mem_map_reg_table(block)
 			self.write_regs(block.register)
 
 

@@ -328,8 +328,9 @@ class LyxGenerator(BaseGenerator):
 	
 
 	def insert_new_page(self):
+		self.insert_layout("Standard")
 		self.insert_inset("Newpage newpage")
-		self.commit_append(1)
+		self.commit_append_line(2)
 	
 	
 	
