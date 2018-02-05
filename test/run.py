@@ -31,6 +31,8 @@ def recursive_kill(pid, sig=signal.SIGTERM):
 def sighandler(signo, frame):
     signal.signal(signo, signal.SIG_DFL)
     recursive_kill(os.getpid(), signo)
+    # restore the handler, because vunit swallows the resulting exception
+    signal.signal(signo, sighandler)
 
 signal.signal(signal.SIGTERM, sighandler)
 signal.signal(signal.SIGINT, sighandler)
@@ -40,15 +42,20 @@ root = dirname(__file__)
 
 ui = VUnit.from_argv()
 lib = ui.add_library("lib")
-for pattern in ['../src/**/*.vhd', '**/*/*.vhd', '*.vhd']:
+for pattern in ['../src/**/*.vhd', '**/*.vhd']:
 	p = join(root, pattern)
 	for f in glob(p, recursive=True):
 		lib.add_source_file(str(f))
 
-fil = lib.get_source_file('tb_example.vhd')
-for f in glob('**/*/*.vhd', recursive=True):
-	fil.add_dependency_on(lib.get_source_file(f))
+#ui.add_compile_option('ghdl.flags', ['--ieee=synopsys'])
 
-ui.add_compile_option('ghdl.flags', ['--ieee=synopsys'])
-#pprint([x.name for x in ui.get_source_files()])
-ui.main()
+#lib.add_compile_option("ghdl.flags", ["-fprofile-arcs"])
+#ui.set_sim_option("ghdl.elab_flags", ["-Wl,-lgcov"])
+try:
+    ui.main()
+except SystemExit as exc:
+    all_ok = exc.code == 0
+
+#if all_ok:
+#    subprocess.call(["lcov", "--capture", "--directory", ".", "--output-file",  "code_coverage.info"])
+#    subprocess.call(["genhtml", "code_coverage.info", "--output-directory", "code_html"])
