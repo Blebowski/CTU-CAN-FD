@@ -499,9 +499,9 @@ begin
   ----------------------------------------------
   bus_clk_proc:process
   begin
-    bus_clk <= '1';
-    wait for 250 ps;
     bus_clk <= '0';
+    wait for 250 ps;
+    bus_clk <= '1';
     wait for 250 ps;
   end process;
   
