@@ -7,7 +7,7 @@
 	<ipxact:memoryMaps>
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_8bit_regs</ipxact:name>
-			<ipxact:displayName>CAN FD memory map</ipxact:displayName>
+			<ipxact:displayName>3. CAN FD Core memory map</ipxact:displayName>
 			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The register map consists of following memory regions:</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
