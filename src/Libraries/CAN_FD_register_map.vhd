@@ -788,16 +788,16 @@ package CAN_FD_register_map is
   -- This register controls the access into TX buffers. All bits are active in l
   -- ogic 1.
   ------------------------------------------------------------------------------
-  constant TXT1_ALLOW_IND         : natural := 0;
-  constant TXT2_ALLOW_IND         : natural := 1;
-  constant BUF_DIR_IND            : natural := 2;
-  constant FRAME_SWAP_IND         : natural := 3;
+  constant TXT1A_IND              : natural := 0;
+  constant TXT2A_IND              : natural := 1;
+  constant BDIR_IND               : natural := 2;
+  constant FRSW_IND               : natural := 3;
 
   -- TX_SETTINGS register reset values
-  constant TXT1_ALLOW_RSTVAL  : std_logic := '0';
-  constant TXT2_ALLOW_RSTVAL  : std_logic := '0';
-  constant BUF_DIR_RSTVAL     : std_logic := '0';
-  constant FRAME_SWAP_RSTVAL  : std_logic := '0';
+  constant TXT1A_RSTVAL       : std_logic := '0';
+  constant TXT2A_RSTVAL       : std_logic := '0';
+  constant BDIR_RSTVAL        : std_logic := '0';
+  constant FRSW_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- ERR_CAPT register

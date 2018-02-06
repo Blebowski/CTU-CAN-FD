@@ -505,8 +505,8 @@ architecture rtl of canfd_registers is
       filter_ran_ctrl         <=  (OTHERS=>'0');
     end if;
     
-    txt1_arbit_allow        <=  TXT1_ALLOW_RSTVAL;
-    txt2_arbit_allow        <=  TXT2_ALLOW_RSTVAL;
+    txt1_arbit_allow        <=  TXT1A_RSTVAL;
+    txt2_arbit_allow        <=  TXT2A_RSTVAL;
     
     log_cmd                 <=  (OTHERS =>'0');
     log_trig_config         <=  (OTHERS =>'0');
@@ -943,10 +943,10 @@ begin
     			--TX Settings register
     			----------------------------------------------------
     			when TX_SETTINGS_ADR =>
-    			     write_be_s(txt1_arbit_allow, TXT1_ALLOW_IND, data_in, sbe);  
-    					  write_be_s(txt2_arbit_allow, TXT2_ALLOW_IND, data_in, sbe);  
- 					  write_be_s(txt_bufdir, BUF_DIR_IND, data_in, sbe);  
-    				    write_be_s(txt_frame_swap, FRAME_SWAP_IND, data_in, sbe);  
+    			     write_be_s(txt1_arbit_allow, TXT1A_IND, data_in, sbe);  
+    					  write_be_s(txt2_arbit_allow, TXT2A_IND, data_in, sbe);  
+ 					  write_be_s(txt_bufdir, BDIR_IND, data_in, sbe);  
+    				    write_be_s(txt_frame_swap, FRSW_IND, data_in, sbe);  
   								  
     			--------------------------------------
     			--Recieve frame counter presetting
@@ -1282,10 +1282,10 @@ begin
  			    -------------------------------------------------------
     			   when TX_SETTINGS_ADR => 
     					  data_out_int                     <=  (OTHERS =>'0');
-    					  data_out_int(TXT1_ALLOW_IND)     <=  txt1_arbit_allow;
-    					  data_out_int(TXT2_ALLOW_IND)     <=  txt2_arbit_allow;
-    					  data_out_int(BUF_DIR_IND)        <=  txt_bufdir;
-    					  data_out_int(FRAME_SWAP_IND)     <=  txt_frame_swap;
+    					  data_out_int(TXT1A_IND)          <=  txt1_arbit_allow;
+    					  data_out_int(TXT2A_IND)          <=  txt2_arbit_allow;
+    					  data_out_int(BDIR_IND)           <=  txt_bufdir;
+    					  data_out_int(FRSW_IND)           <=  txt_frame_swap;
     					
     					------------------------------------------------------- 
  			    --Error capture register
