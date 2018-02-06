@@ -54,6 +54,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
+
 use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
@@ -62,43 +63,47 @@ USE work.randomLib.All;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-architecture sanity_test of CAN_test is
+entity sanity_test is
+  port (
+    signal run            :in   boolean;                -- Input trigger, test starts running when true
+    signal iterations     :in   natural;                -- Number of iterations that test should do
+    signal log_level      :in   log_lvl_type;           -- Logging level, severity which should be shown
+    signal error_beh      :in   err_beh_type;           -- Test behaviour when error occurs: Quit, or Go on
+    signal error_tol      :in   natural;                -- Error tolerance, error counter should not
+                                                         -- exceed this value in order for the test to pass
+    signal status         :out  test_status_type;      -- Status of the test
+    signal errors         :out  natural ;              -- Amount of errors which appeared in the test
+    --TODO: Error log results
 
-  ----------------------------------------------
-  -- Test specific parameters
-  ----------------------------------------------
-  constant NODE_COUNT : natural := 4;
-  
-  ----------------------------------------------
-  -- Test configuration
-  ----------------------------------------------
-  type epsilon_type is array (1 to NODE_COUNT) of natural;
-  type trv_del_type is array (1 to NODE_COUNT) of natural;
-  
-  signal epsilon_v : epsilon_type := (0,150,300,450);
-  signal trv_del_v : trv_del_type := (5,5,5,5);
-  
-  type bus_matrix_type is array(1 to NODE_COUNT,1 to NODE_COUNT) of real;
-  signal bus_matrix : bus_matrix_type := ((0.0,10.0,20.0,30.0),(10.0,0.0,10.0,20.0),(20.0,10.0,0.0,10.0),(30.0,20.0,10.0,0.0));
-  --signal bus_matrix : bus_matrix_type := ((0.0,60.0,120.0,180.0),(60.0,0.0,60.0,120.0),(120.0,60.0,0.0,60.0),(180.0,120.0,60.0,0.0));
-  
-  -- Noise parameters
-  signal iter_am     : natural := 40;
+    ----------------------------------------------
+    -- Test configuration
+    ----------------------------------------------
+    signal epsilon_v : epsilon_type;
+    signal trv_del_v : trv_del_type;
 
-  signal nw_mean     : real := 15.0;   --Noise pulse width mean in nanaoseconds
-  signal nw_var      : real := 5.0;    --Noise pulse width variance
-  
-  signal ng_mean     : real := 10000.0; --Gap between two noise pulses mean in nanoseconds
-  signal ng_var      : real :=  6000.0; -- Gap variance
-  
-  signal topology    : string (1 to 50) :="                                                  ";
-   
-  --Default config is the same as in registers...
-  --signal timing_config : bit_time_config_type := (5,3,5,3,5,2,3,3,3,2); --TODO:CHANGE!
-  
-  --With 100 Mhz this is 1Mbit(nom)/2Mbit(Data)
-  signal timing_config : bit_time_config_type := (5,5,9,5,5,3,3,3,3,2);
-  
+    signal bus_matrix : bus_matrix_type;
+
+    -- Noise parameters
+    signal iter_am     : natural := 40;
+
+    signal nw_mean     : real;   --Noise pulse width mean in nanaoseconds
+    signal nw_var      : real;    --Noise pulse width variance
+
+    signal ng_mean     : real; --Gap between two noise pulses mean in nanoseconds
+    signal ng_var      : real; -- Gap variance
+
+    signal topology    : string (1 to 50);
+
+    signal timing_config : bit_time_config_type
+  );
+end entity;
+
+architecture behavioral of sanity_test is
+  --Internal test signals
+  signal error_ctr   :natural:=0;
+  signal loop_ctr    :natural:=0;
+  signal exit_imm    :boolean:=false;
+  signal rand_ctr    :natural range 0 to 3800 := 0;
   ----------------------------------------------
   ----------------------------------------------
   -- Internal signals
@@ -499,9 +504,9 @@ begin
   ----------------------------------------------
   bus_clk_proc:process
   begin
-    bus_clk <= '1';
-    wait for 250 ps;
     bus_clk <= '0';
+    wait for 250 ps;
+    bus_clk <= '1';
     wait for 250 ps;
   end process;
   
@@ -815,6 +820,48 @@ begin
   
   errors <= error_ctr;
   
+end architecture;
+
+architecture sanity_test of CAN_test is
+    signal epsilon_v : epsilon_type := (0,150,300,450);
+    signal trv_del_v : trv_del_type := (5,5,5,5);
+
+    signal bus_matrix : bus_matrix_type := (( 0.0,10.0,20.0,30.0),
+                                            (10.0, 0.0,10.0,20.0),
+                                            (20.0,10.0, 0.0,10.0),
+                                            (30.0,20.0,10.0, 0.0));
+    -- Noise parameters
+    signal iter_am     : natural := 40;
+    signal nw_mean     : real := 15.0;   --Noise pulse width mean in nanaoseconds
+    signal nw_var      : real := 5.0;    --Noise pulse width variance
+    signal ng_mean     : real := 10000.0; --Gap between two noise pulses mean in nanoseconds
+    signal ng_var      : real :=  6000.0; -- Gap variance
+    signal topology    : string (1 to 50) :="                                                  ";
+
+    --With 100 Mhz this is 1Mbit(nom)/2Mbit(Data)
+    signal timing_config : bit_time_config_type := (5,5,9,5,5,3,3,3,3,2);
+begin
+  i_st: entity work.sanity_test
+  port map(
+    run => run,
+    iterations => iterations,
+    log_level => log_level,
+    error_beh => error_beh,
+    error_tol => error_tol,
+    status => status,
+    errors => errors,
+
+    epsilon_v => epsilon_v,
+    trv_del_v => trv_del_v,
+    bus_matrix => bus_matrix,
+    iter_am => iter_am,
+    nw_mean => nw_mean,
+    nw_var => nw_var,
+    ng_mean => ng_mean,
+    ng_var => ng_var,
+    topology => topology,
+    timing_config => timing_config
+  );
 end architecture;
 
 

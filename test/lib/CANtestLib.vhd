@@ -198,8 +198,6 @@ type tran_delay_type is record
     rx_point            : std_logic;
 end record;
 
-
-
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 -- Constants
@@ -415,8 +413,16 @@ procedure generate_trig(
   variable bit_length     : inout  natural
  );
   
-end package;
+  -- sanity test stuff; must be in a package
+  constant NODE_COUNT : natural := 4;
+  type bus_matrix_type is array(1 to NODE_COUNT,1 to NODE_COUNT) of real;
+  type anat_t is array (integer range <>) of natural;
+  subtype anat_nc_t is anat_t (1 to NODE_COUNT);
 
+  subtype epsilon_type is anat_nc_t;
+  subtype trv_del_type is anat_nc_t;
+  subtype timing_config_t is anat_t(1 to 10);
+end package;
 
 
 package body CANtestLib is
