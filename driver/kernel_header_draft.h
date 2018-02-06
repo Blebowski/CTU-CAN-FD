@@ -348,7 +348,7 @@ union ctr_pres {
 	struct ctr_pres_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* CTR_PRES */
-		uint32_t ctr_pres_val            : 9;
+		uint32_t ctpv                    : 9;
 		uint32_t ptx                     : 1;
 		uint32_t prx                     : 1;
 		uint32_t enorm                   : 1;
@@ -360,7 +360,7 @@ union ctr_pres {
 		uint32_t enorm                   : 1;
 		uint32_t prx                     : 1;
 		uint32_t ptx                     : 1;
-		uint32_t ctr_pres_val            : 9;
+		uint32_t ctpv                    : 9;
 #endif
 	} s;
 };
@@ -482,50 +482,50 @@ union filter_control_filter_status {
 	struct filter_control_filter_status_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_CONTROL */
-		uint32_t filt_a_basic            : 1;
-		uint32_t filt_a_ext              : 1;
-		uint32_t filt_a_fd_bas           : 1;
-		uint32_t filt_a_fd_ext           : 1;
-		uint32_t filt_b_basic            : 1;
-		uint32_t filt_b_ext              : 1;
-		uint32_t filt_b_fd_bas           : 1;
-		uint32_t filt_b_fd_ext           : 1;
-		uint32_t filt_c_basic            : 1;
-		uint32_t filt_c_ext              : 1;
-		uint32_t filt_c_fd_bas           : 1;
-		uint32_t filt_c_fd_ext           : 1;
-		uint32_t filt_range_basic        : 1;
-		uint32_t filt_range_ext          : 1;
-		uint32_t filt_range_fd_bas       : 1;
-		uint32_t filt_range_fd_ext       : 1;
+		uint32_t fanb                    : 1;
+		uint32_t fane                    : 1;
+		uint32_t fafb                    : 1;
+		uint32_t fafe                    : 1;
+		uint32_t fbnb                    : 1;
+		uint32_t fbne                    : 1;
+		uint32_t fbfb                    : 1;
+		uint32_t fbfe                    : 1;
+		uint32_t fcnb                    : 1;
+		uint32_t fcne                    : 1;
+		uint32_t fcfb                    : 1;
+		uint32_t fcfe                    : 1;
+		uint32_t frnb                    : 1;
+		uint32_t frne                    : 1;
+		uint32_t frfb                    : 1;
+		uint32_t frfe                    : 1;
   /* FILTER_STATUS */
-		uint32_t sup_filta               : 1;
-		uint32_t sup_filtb               : 1;
-		uint32_t sup_filtc               : 1;
-		uint32_t sup_range               : 1;
+		uint32_t sfa                     : 1;
+		uint32_t sfb                     : 1;
+		uint32_t sfc                     : 1;
+		uint32_t sfr                     : 1;
 		uint32_t reserved_31_20         : 12;
 #else
 		uint32_t reserved_31_20         : 12;
-		uint32_t sup_range               : 1;
-		uint32_t sup_filtc               : 1;
-		uint32_t sup_filtb               : 1;
-		uint32_t sup_filta               : 1;
-		uint32_t filt_range_fd_ext       : 1;
-		uint32_t filt_range_fd_bas       : 1;
-		uint32_t filt_range_ext          : 1;
-		uint32_t filt_range_basic        : 1;
-		uint32_t filt_c_fd_ext           : 1;
-		uint32_t filt_c_fd_bas           : 1;
-		uint32_t filt_c_ext              : 1;
-		uint32_t filt_c_basic            : 1;
-		uint32_t filt_b_fd_ext           : 1;
-		uint32_t filt_b_fd_bas           : 1;
-		uint32_t filt_b_ext              : 1;
-		uint32_t filt_b_basic            : 1;
-		uint32_t filt_a_fd_ext           : 1;
-		uint32_t filt_a_fd_bas           : 1;
-		uint32_t filt_a_ext              : 1;
-		uint32_t filt_a_basic            : 1;
+		uint32_t sfr                     : 1;
+		uint32_t sfc                     : 1;
+		uint32_t sfb                     : 1;
+		uint32_t sfa                     : 1;
+		uint32_t frfe                    : 1;
+		uint32_t frfb                    : 1;
+		uint32_t frne                    : 1;
+		uint32_t frnb                    : 1;
+		uint32_t fcfe                    : 1;
+		uint32_t fcfb                    : 1;
+		uint32_t fcne                    : 1;
+		uint32_t fcnb                    : 1;
+		uint32_t fbfe                    : 1;
+		uint32_t fbfb                    : 1;
+		uint32_t fbne                    : 1;
+		uint32_t fbnb                    : 1;
+		uint32_t fafe                    : 1;
+		uint32_t fafb                    : 1;
+		uint32_t fane                    : 1;
+		uint32_t fanb                    : 1;
 #endif
 	} s;
 };
@@ -601,15 +601,15 @@ union tx_status {
 	struct tx_status_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TX_STATUS */
-		uint32_t txt1_empty              : 1;
-		uint32_t txt2_empty              : 1;
-		uint32_t tx_time_support         : 1;
+		uint32_t txt1e                   : 1;
+		uint32_t txt2e                   : 1;
+		uint32_t txts                    : 1;
 		uint32_t reserved_31_3          : 29;
 #else
 		uint32_t reserved_31_3          : 29;
-		uint32_t tx_time_support         : 1;
-		uint32_t txt2_empty              : 1;
-		uint32_t txt1_empty              : 1;
+		uint32_t txts                    : 1;
+		uint32_t txt2e                   : 1;
+		uint32_t txt1e                   : 1;
 #endif
 	} s;
 };
@@ -619,17 +619,17 @@ union tx_settings {
 	struct tx_settings_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TX_SETTINGS */
-		uint32_t txt1_allow              : 1;
-		uint32_t txt2_allow              : 1;
-		uint32_t buf_dir                 : 1;
-		uint32_t frame_swap              : 1;
+		uint32_t txt1a                   : 1;
+		uint32_t txt2a                   : 1;
+		uint32_t bdir                    : 1;
+		uint32_t frsw                    : 1;
 		uint32_t reserved_31_4          : 28;
 #else
 		uint32_t reserved_31_4          : 28;
-		uint32_t frame_swap              : 1;
-		uint32_t buf_dir                 : 1;
-		uint32_t txt2_allow              : 1;
-		uint32_t txt1_allow              : 1;
+		uint32_t frsw                    : 1;
+		uint32_t bdir                    : 1;
+		uint32_t txt2a                   : 1;
+		uint32_t txt1a                   : 1;
 #endif
 	} s;
 };

@@ -421,8 +421,10 @@ procedure generate_trig(
   constant operator2      : in std_logic_vector(11 downto 0)
   ) return std_logic_vector;
 
-
+  
+  ------------------------------------------------------------------------------
   -- sanity test stuff; must be in a package
+  ------------------------------------------------------------------------------
   constant NODE_COUNT : natural := 4;
   type bus_matrix_type is array(1 to NODE_COUNT,1 to NODE_COUNT) of real;
   type anat_t is array (integer range <>) of natural;
@@ -431,7 +433,8 @@ procedure generate_trig(
   subtype epsilon_type is anat_nc_t;
   subtype trv_del_type is anat_nc_t;
   subtype timing_config_t is anat_t(1 to 10);
-
+  
+  
 end package;
 
 
@@ -1170,9 +1173,9 @@ procedure process_error
    --Read whether there is place in the TXT buffer
    CAN_read(w_data,TX_STATUS_ADR,ID,mem_bus);
    if (buf_nr = 1) then
-     buf_index := TXT1_EMPTY_IND;
+     buf_index := TXT1E_IND;
    elsif (buf_nr = 2) then
-     buf_index := TXT2_EMPTY_IND;
+     buf_index := TXT2E_IND;
    else 
      buf_index := 31;
    end if;
@@ -1192,11 +1195,11 @@ procedure process_error
      --Set the buffer to access (direction) and forbid the buffer transmission!
      CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
      if (buf_nr=1) then
-        w_data(BUF_DIR_IND) := '0';
-        w_data(TXT1_ALLOW_IND) := '0';
+        w_data(BDIR_IND) := '0';
+        w_data(TXT1A_IND) := '0';
      elsif (buf_nr=2) then
-        w_data(BUF_DIR_IND) := '1';
-        w_data(TXT2_ALLOW_IND) := '0';
+        w_data(BDIR_IND) := '1';
+        w_data(TXT2A_IND) := '0';
      else
        report "Unsupported TX buffer number" severity error;
      end if;
@@ -1244,9 +1247,9 @@ procedure process_error
      --Signal that the frame is valid by allowing the buffer
      CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
      if (buf_nr=1) then
-        w_data(TXT1_ALLOW_IND) := '1';
+        w_data(TXT1A_IND) := '1';
      elsif (buf_nr=2) then
-        w_data(TXT2_ALLOW_IND) := '1';
+        w_data(TXT2A_IND) := '1';
      else
        report "Unsupported TX buffer number" severity error;
      end if;

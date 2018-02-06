@@ -97,10 +97,10 @@ customHeadersFooters
 
 \begin_body
 \begin_layout Chapter
-CAN FD memory map
+3. CAN FD Core memory map
 \end_layout
 \begin_layout Standard
-CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported and byte or half word access is executed via byte enable signal. The memory is organized as big endian. Write to read only memory location will have no effect. Read from write only memory location will zeroes. The register map consists of following memory regions:
+CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The register map consists of following memory regions:
 \end_layout
 \begin_layout Standard
 \noindent
@@ -3655,7 +3655,7 @@ Address: 0x4
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-MODE register sets special operating modes of the controller. All bits are active in logic 1.
+MODE register controls special operating modes of the controller.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -3901,28 +3901,42 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RST Activating this bit resets the controller. It has the same effect as logic 0 on res_n input of controller
+RST Writing logic 1 resets the controller. It has the same effect as logic 0 on res_n input of the controller.
 \end_layout
 \begin_layout Description
-LOM Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!
+LOM Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!\begin_inset Newline newline\end_inset
+		0b0  - LOM_DISABLED - Listen only mode disabled.\begin_inset Newline newline\end_inset
+		0b1  - LOM_ENABLED - Listen only mode enabled.
 \end_layout
 \begin_layout Description
-STM Self test mode. In this mode transmitted frame is considered valid even if acknowledge is not received.
+STM Self test mode. In this mode transmitted frame is considered valid even if acknowledge is not received.\begin_inset Newline newline\end_inset
+		0b0  - STM_DISABLED - Self test mode disabled.\begin_inset Newline newline\end_inset
+		0b1  - STM_ENABLED - Self test mode enabled.
 \end_layout
 \begin_layout Description
-AFM Acceptance filters mode. Activating this bit enables usage of acceptance filters. If disabled, every received frame is stored in the RX buffer
+AFM Acceptance filters mode. If this mode is enabled, acceptance filters are used on  RX Frames . If disabled, every received frame is stored in the RX buffer.\begin_inset Newline newline\end_inset
+		0b0  - AFM_DISABLED - Acceptance filter mode disabled\begin_inset Newline newline\end_inset
+		0b1  - AFM_ENABLED - Acceptance filter mode enabled
 \end_layout
 \begin_layout Description
-FDE Enable flexible data rate support. When this bit is inactive, receiving recessive EDL bit (Flexible data rate frame) causes Form error.
+FDE Enable flexible data rate support. When disabled receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.\begin_inset Newline newline\end_inset
+		0b0  - FDE_DISABLE - Flexible data-rate support disabled.\begin_inset Newline newline\end_inset
+		0b1  - FDE_ENABLE - Flexible data-rate support enabled.
 \end_layout
 \begin_layout Description
-RTR_PREF RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifie the behavior of controller when this situation happens. If the bit is active then all zeros are sent and inserted dlc is ignored. If a bit is inactive then inserted dlc is sent.
+RTR_PREF RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when this situation occurs.\begin_inset Newline newline\end_inset
+		0b0  - RTR_EXTRA - When RTR Frame is sent, all zeroes are sent at DLC.\begin_inset Newline newline\end_inset
+		0b1  - RTR_STANDARD - When RTR Frame is sent, also the DLC inserted to TX Buffer is sent.
 \end_layout
 \begin_layout Description
-TSM Triple sampling mode. Bus value is sampled three times when this bit is active. Even if this bit is set, triple sampling is used only during Nominal data rate. It is recommended to use triple sampling only at low Bit rates.
+TSM Triple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. It is recommended to use triple sampling only at low Bit rates.\begin_inset Newline newline\end_inset
+		0b0  - TSM_DISABLE - Tripple sampling mode disabled\begin_inset Newline newline\end_inset
+		0b1  - TSM_ENABLE - Tripple sampling mode enabled
 \end_layout
 \begin_layout Description
-ACF When this bit is active acknowledge is not sent even when received CRC matches the calculated one.
+ACF Acknowledge forbidden mode. When this mode is enabled, acknowledge is not sent even if received CRC matches the calculated one.\begin_inset Newline newline\end_inset
+		0b0  - ACF_DISABLED - Acknowledge forbidden mode disabled.\begin_inset Newline newline\end_inset
+		0b1  - ACF_ENABLED - Acknowledge forbidden mode enabled.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -3948,7 +3962,7 @@ Address: 0x5
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Writing logic 1 gives a command to the controller. The meaning of command is different for every bit. This register is automatically erased when a command is finished.
+Writing logic 1 into each bit gives different command to the controller. After writing logic 1, logic 0 does not have to be written.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4194,13 +4208,13 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-AT Writing logic 1 into this bit aborts actual transmission or reception
+AT Abort transmission of CAN frame.
 \end_layout
 \begin_layout Description
-RRB Release Receive buffer. Writing logic 1 deletes all data from the Receive buffer.
+RRB Release Receive buffer. This command deletes all data from the Receive buffer and restarts its memory pointers.
 \end_layout
 \begin_layout Description
-CDO Clear data overrun flag. Writing logic 1 will clear overrun flag.
+CDO Clear data overrun flag. This command will clear data overrun flag on RX Buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -4226,7 +4240,7 @@ Address: 0x6
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Register signals various states of CAN controller which are not mutually exclusive. Every bit is active in logic 1.
+Register signals various states of CAN controller. Logic 1 signals active state/flag.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4472,28 +4486,28 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RBS Active value of this bit means Receive buffer is not empty.
+RBS Receive buffer is not empty.
 \end_layout
 \begin_layout Description
-DOS Data overrun status (flag). An active value of this bit signals frame was lost due to not enough space in the Receive buffer.
+DOS Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer.
 \end_layout
 \begin_layout Description
-TBS TXT buffer status. Active value of this bit means both TXT buffers are full and frame can not be inserted for transmission
+TBS TXT buffer status. Both TXT buffers are full and frame can not be inserted for transmission.
 \end_layout
 \begin_layout Description
-ET Active value of this bit means that Error frame is beeing transmitted.
+ET Error frame is beeing transmitted at the moment.
 \end_layout
 \begin_layout Description
-RS Active value of this bit signals that controller is receiving a frame.
+RS Core is receiving a CAN Frame.
 \end_layout
 \begin_layout Description
-TS Active value of this bit signals that controller is transmitting a frame.
+TS Core is transmitting a CAN Frame.
 \end_layout
 \begin_layout Description
-ES Error status. Active value signals that error warning limit was reached at any of error counters
+ES Error status. Error warning limit was reached at any of error counters.
 \end_layout
 \begin_layout Description
-BS Bus status. Active value signals that bus is idle, the controller is integrating or bus off. Therefore this bit is active when there is no activity on the bus.
+BS Bus status. Bus is "idle", the controller is " integrating" or "bus off". Therefore this bit is active when there is no activity on the bus.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -4519,7 +4533,7 @@ Address: 0x7
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Register with enable bit of the controller.The configuration of retransmission limit for failed frames is also located in this register. Furthermore configuration of ISO FD CAN or CAN FD 1.0 is done here. Every bit is active in logic 1.
+This register enables the whole CAN FD Core, configures FD Type, Internal loopback and retransmission options.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4765,23 +4779,27 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RTRLE Active value means that limit of retransmission is enabled.
+RTRLE Retransmitt limit enable. If enabled the core only attempts to transmitt each frame up to RTR_TH times. If not succesfull the frame is dropped from TX Buffer.\begin_inset Newline newline\end_inset
+		0b0  - RTRLE_DISABLED - Retransmitt limit is disabled.\begin_inset Newline newline\end_inset
+		0b1  - RTRLE_ENABLED - Retransmitt limit is enabled.
 \end_layout
 \begin_layout Description
 RTR_TH The maximal amount of retransmission attempts
 \end_layout
 \begin_layout Description
-INT_LOOP Active value in this bit means that internal loop-back option is permanently enabled (used only for testing).
+INT_LOOP Internal loop-back option (recommended  only for testing). If internal loopback options is enabled the Core automatically receive any dominant bit it transmitts.\begin_inset Newline newline\end_inset
+		0b0  - INT_LOOP_DISABLED - Internal loop-back is disabled.\begin_inset Newline newline\end_inset
+		0b1  - INT_LOOP_ENABLED - Internal loop-back is enabled.
 \end_layout
 \begin_layout Description
 ENA Enable bit for the whole CAN FD Controller. When disabled it acts as if not connected to the CAN Bus.\begin_inset Newline newline\end_inset
-0b0 - DISABLED\begin_inset Newline newline\end_inset
-0b1 - ENABLED
+		0b0  - DISABLED - The CAN Core is disabled.\begin_inset Newline newline\end_inset
+		0b1  - ENABLED - The CAN Core is enabled.
 \end_layout
 \begin_layout Description
 FD_TYPE Selection between two possible CAN FD frame formats.\begin_inset Newline newline\end_inset
-0b0 - ISO_FD\begin_inset Newline newline\end_inset
-0b1 - NON_ISO_FD
+		0b0  - ISO_FD - The CAN Controller conforms to ISO FD specification.\begin_inset Newline newline\end_inset
+		0b1  - NON_ISO_FD - The CAN Controller conforms to NON ISO FD specification.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -5349,7 +5367,7 @@ Address: 0xA
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed
+Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -6380,13 +6398,13 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-PROP Propagation segment
+PROP Propagation segment - Nominal bit time
 \end_layout
 \begin_layout Description
-PH1 Phase 1 segment
+PH1 Phase 1 segment - Nominal bit time
 \end_layout
 \begin_layout Description
-PH2 Phase 2 segment
+PH2 Phase 2 segment - Nominal bit time
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -6901,13 +6919,13 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-PROP_FD Propagation segment
+PROP_FD Propagation segment - Data bit time
 \end_layout
 \begin_layout Description
-PH1_FD Phase 1 segment
+PH1_FD Phase 1 segment - Data bit time
 \end_layout
 \begin_layout Description
-PH2_FD Phase 2 segment
+PH2_FD Phase 2 segment - Data bit time
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -6933,7 +6951,7 @@ Address: 0x10
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Arbitration lost capture value
+Arbitration lost capture register. 
 \end_layout
 \begin_layout Standard
 \noindent
@@ -7179,7 +7197,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-ALC_VAL Arbitration lost capture value.
+ALC_VAL Arbitration lost capture value. Not supported yet. Do not use!
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -7451,10 +7469,10 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-SJW Synchronisation jump width in Nominal bit time.
+SJW Synchronisation jump width - Nominal bit time.
 \end_layout
 \begin_layout Description
-SJW_FD Synchronisation jump widh in Data bit time.
+SJW_FD Synchronisation jump widh - Data bit time.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -7480,7 +7498,7 @@ Address: 0x12
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Baud rate Prescaler register for Nominal bit time. Specifies time quanta duration.
+Baud rate Prescaler register - Nominal bit time. 
 \end_layout
 \begin_layout Standard
 \noindent
@@ -7726,7 +7744,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-BRP Baud-Rate Prescaler
+BRP Specifies time quanta duration for nominal bit time.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -7752,7 +7770,7 @@ Address: 0x13
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Baud rate Prescaler register for Data bit time. Specifies time quanta duration.
+Baud rate Prescaler register - Data bit time. 
 \end_layout
 \begin_layout Standard
 \noindent
@@ -7998,7 +8016,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-BRP_FD Baud rate Prescaler FD
+BRP_FD Specifies time quanta duration for data bit time.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -8024,7 +8042,7 @@ Address: 0x14
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Error warning limit register. If an error warning limit is reached interrupt can be called. Error warning limit indicatea heavily disturbed bus. Note that according to CAN specification this value is fixed at 96 and should not be configurable! The configuration of this value is one of the extra features of this IP Core.
+Error warning limit register.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -8270,7 +8288,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-EWL_LIMIT Error warning limit
+EWL_LIMIT Error warning limit.  If an error warning limit is reached interrupt can be called. Error warning limit indicates heavily disturbed bus. Note that according to CAN specification this value is fixed at 96 and should not be configurable! The configuration of this value is one of the extra features of this IP Core.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -8296,7 +8314,7 @@ Address: 0x15
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Error passive limit. When one of error counters (RXC/TXC) exceeds this value, it changes Fault confinement state to error passive. Note that according to CAN specification this value is fixed at 128 and should not be configurable! The configuration of this value is one of the extra features of this IP Core. Note that IP Core always turns to bus_off state once any error counter reaches 255!
+Error passive limit register.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -8542,7 +8560,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-ERP_LIMIT Error passive limit
+ERP_LIMIT Error passive limit. When one of error counters (RXC/TXC) exceeds this value, i Fault confinement state changes to error passive. Note that according to CAN specification this value is fixed at 128 and should not be configurable! The configuration of this value is one of the extra features of this IP Core. Note that IP Core always turns to bus_off state once any error counter reaches 255!
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -8568,7 +8586,7 @@ Address: 0x16
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Fault confinement state of the node. This state can be manipulated by writing into registers RXC/TXC and ERP_LIMIT of ERP register. When these counters are set Fault confinement state changes automatically.
+Fault confinement state of the node. This state can be manipulated by writes to CTR_PRES register. When these counters are set Fault confinement state changes automatically.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -11795,7 +11813,7 @@ PTX\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[8]\end_layout
+CTPV[8]\end_layout
 
 \end_inset
 </cell>
@@ -11982,7 +12000,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -11990,7 +12008,7 @@ CTR_PRES_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -11998,7 +12016,7 @@ CTR_PRES_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -12006,7 +12024,7 @@ CTR_PRES_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -12014,7 +12032,7 @@ CTR_PRES_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -12022,7 +12040,7 @@ CTR_PRES_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -12030,7 +12048,7 @@ CTR_PRES_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -12038,7 +12056,7 @@ CTR_PRES_VAL[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CTR_PRES_VAL[7:0]\end_layout
+CTPV[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -12124,19 +12142,19 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-CTR_PRES_VAL Counter value to preset
+CTPV Counter value to set.
 \end_layout
 \begin_layout Description
-PTX Preset value fromCTR_PRES_VAL to TX Error counter.
+PTX Preset value from CTR_PRES_VAL to TX Error counter.
 \end_layout
 \begin_layout Description
 PRX Preset value fromCTR_PRES_VAL to RX Error counter.
 \end_layout
 \begin_layout Description
-ENORM Erase Nominal bit time error counter
+ENORM Erase Nominal bit time error counter.
 \end_layout
 \begin_layout Description
-EFD Erase Data bit time error counter
+EFD Erase Data bit time error counter.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -20170,7 +20188,7 @@ Address: 0x44
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Every filter can be set to accept only selected frame types. Every bit active in logic 1.
+Every filter can be configured to accept only selected frame types. Every bit is active in logic 1.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -20274,7 +20292,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_RANGE_FD_EXT\end_layout
+FRFE\end_layout
 
 \end_inset
 </cell>
@@ -20282,7 +20300,7 @@ FILT_RANGE_FD_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_RANGE_FD_BAS\end_layout
+FRFB\end_layout
 
 \end_inset
 </cell>
@@ -20290,7 +20308,7 @@ FILT_RANGE_FD_BAS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_RANGE_EXT\end_layout
+FRNE\end_layout
 
 \end_inset
 </cell>
@@ -20298,7 +20316,7 @@ FILT_RANGE_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_RANGE_BASIC\end_layout
+FRNB\end_layout
 
 \end_inset
 </cell>
@@ -20306,7 +20324,7 @@ FILT_RANGE_BASIC\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_C_FD_EXT\end_layout
+FCFE\end_layout
 
 \end_inset
 </cell>
@@ -20314,7 +20332,7 @@ FILT_C_FD_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_C_FD_BAS\end_layout
+FCFB\end_layout
 
 \end_inset
 </cell>
@@ -20322,7 +20340,7 @@ FILT_C_FD_BAS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_C_EXT\end_layout
+FCNE\end_layout
 
 \end_inset
 </cell>
@@ -20330,7 +20348,7 @@ FILT_C_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_C_BASIC\end_layout
+FCNB\end_layout
 
 \end_inset
 </cell>
@@ -20517,7 +20535,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_B_FD_EXT\end_layout
+FBFE\end_layout
 
 \end_inset
 </cell>
@@ -20525,7 +20543,7 @@ FILT_B_FD_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_B_FD_BAS\end_layout
+FBFB\end_layout
 
 \end_inset
 </cell>
@@ -20533,7 +20551,7 @@ FILT_B_FD_BAS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_B_EXT\end_layout
+FBNE\end_layout
 
 \end_inset
 </cell>
@@ -20541,7 +20559,7 @@ FILT_B_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_B_BASIC\end_layout
+FBNB\end_layout
 
 \end_inset
 </cell>
@@ -20549,7 +20567,7 @@ FILT_B_BASIC\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_A_FD_EXT\end_layout
+FAFE\end_layout
 
 \end_inset
 </cell>
@@ -20557,7 +20575,7 @@ FILT_A_FD_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_A_FD_BAS\end_layout
+FAFB\end_layout
 
 \end_inset
 </cell>
@@ -20565,7 +20583,7 @@ FILT_A_FD_BAS\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_A_EXT\end_layout
+FANE\end_layout
 
 \end_inset
 </cell>
@@ -20573,7 +20591,7 @@ FILT_A_EXT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FILT_A_BASIC\end_layout
+FANB\end_layout
 
 \end_inset
 </cell>
@@ -20659,52 +20677,52 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-FILT_A_BASIC If CAN Basic Frame should be accepted by filter A.
+FANB CAN Basic Frame should be accepted by filter A.
 \end_layout
 \begin_layout Description
-FILT_A_EXT If CAN Extended Frame should be accepted by Filter A
+FANE CAN Extended Frame should be accepted by Filter A.
 \end_layout
 \begin_layout Description
-FILT_A_FD_BAS If FD CAN Basic Frame should be accepted by filter A
+FAFB CAN FD Basic Frame should be accepted by filter A.
 \end_layout
 \begin_layout Description
-FILT_A_FD_EXT If CAN FD Extended Frame should be accepted by filter A
+FAFE CAN FD Extended Frame should be accepted by filter A.
 \end_layout
 \begin_layout Description
-FILT_B_BASIC If CAN Basic Frame should be accepted by filter B.
+FBNB CAN Basic Frame should be accepted by filter B.
 \end_layout
 \begin_layout Description
-FILT_B_EXT If CAN Extended Frame should be accepted by Filter B
+FBNE CAN Extended Frame should be accepted by Filter B.
 \end_layout
 \begin_layout Description
-FILT_B_FD_BAS If FD CAN Basic Frame should be accepted by filter B
+FBFB CAN FD Basic Frame should be accepted by filter B.
 \end_layout
 \begin_layout Description
-FILT_B_FD_EXT If CAN FD Extended Frame should be accepted by filter B.
+FBFE CAN FD Extended Frame should be accepted by filter B.
 \end_layout
 \begin_layout Description
-FILT_C_BASIC If CAN Basic Frame should be accepted by filter C.
+FCNB CAN Basic Frame should be accepted by filter C.
 \end_layout
 \begin_layout Description
-FILT_C_EXT If CAN Extended Frame should be accepted by Filter C
+FCNE CAN Extended Frame should be accepted by Filter C.
 \end_layout
 \begin_layout Description
-FILT_C_FD_BAS If FD CAN Basic Frame should be accepted by filter C
+FCFB CAN FD Basic Frame should be accepted by filter C.
 \end_layout
 \begin_layout Description
-FILT_C_FD_EXT If CAN FD Extended Frame should be accepted by filter C.
+FCFE CAN FD Extended Frame should be accepted by filter C.
 \end_layout
 \begin_layout Description
-FILT_RANGE_BASIC If CAN Basic Frame should be accepted by Range filter
+FRNB CAN Basic Frame should be accepted by Range filter.
 \end_layout
 \begin_layout Description
-FILT_RANGE_EXT If CAN Extended Frame should be accepted by Range filter
+FRNE CAN Extended Frame should be accepted by Range filter.
 \end_layout
 \begin_layout Description
-FILT_RANGE_FD_BAS If FD CAN Basic Frame should be accepted by Range filter
+FRFB CAN FD Basic Frame should be accepted by Range filter.
 \end_layout
 \begin_layout Description
-FILT_RANGE_FD_EXT If CAN FD Extended Frame should be accepted by Range filter
+FRFE CAN FD Extended Frame should be accepted by Range filter.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -20730,7 +20748,7 @@ Address: 0x46
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-This register provides information about whether the Core is synthesized with fillter support.
+This register provides information if the Core is synthesized with fillter support.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -21109,7 +21127,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-SUP_RANGE\end_layout
+SFR\end_layout
 
 \end_inset
 </cell>
@@ -21117,7 +21135,7 @@ SUP_RANGE\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-SUP_FILTC\end_layout
+SFC\end_layout
 
 \end_inset
 </cell>
@@ -21125,7 +21143,7 @@ SUP_FILTC\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-SUP_FILTB\end_layout
+SFB\end_layout
 
 \end_inset
 </cell>
@@ -21133,7 +21151,7 @@ SUP_FILTB\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-SUP_FILTA\end_layout
+SFA\end_layout
 
 \end_inset
 </cell>
@@ -21219,16 +21237,16 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-SUP_FILTA Is logic 1 when the Core was synthesized with "sup_filtA = true" Otherwise is logic 0.
+SFA Logic 1 when the Core was synthesized with "sup_filtA = true" Otherwise logic 0.
 \end_layout
 \begin_layout Description
-SUP_FILTB Is logic 1 when the Core was synthesized with "sup_filtB = true" Otherwise is logic 0.
+SFB Logic 1 when the Core was synthesized with "sup_filtB = true" Otherwise logic 0.
 \end_layout
 \begin_layout Description
-SUP_FILTC Is logic 1 when the Core was synthesized with "sup_filtC = true" Otherwise is logic 0.
+SFC Logic 1 when the Core was synthesized with "sup_filtC = true" Otherwise is logic 0.
 \end_layout
 \begin_layout Description
-SUP_RANGE Is logic 1 when the Core was synthesized with "sup_range = true" Otherwise is logic 0.
+SFR Logic 1 when the Core was synthesized with "sup_range = true" Otherwise logic 0.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -24405,7 +24423,7 @@ Address: 0x58
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Status of the TXT Buffers
+Status of the TXT Buffers. 
 \end_layout
 \begin_layout Standard
 \noindent
@@ -24549,7 +24567,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX_TIME_SUPPORT\end_layout
+TXTS\end_layout
 
 \end_inset
 </cell>
@@ -24557,7 +24575,7 @@ TX_TIME_SUPPORT\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT2_EMPTY\end_layout
+TXT2E\end_layout
 
 \end_inset
 </cell>
@@ -24565,7 +24583,7 @@ TXT2_EMPTY\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT1_EMPTY\end_layout
+TXT1E\end_layout
 
 \end_inset
 </cell>
@@ -24651,13 +24669,13 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-TXT1_EMPTY Active when Transmit buffer 1 is empty.
+TXT1E Active when Transmit buffer 1 is empty.
 \end_layout
 \begin_layout Description
-TXT2_EMPTY Active when Transmit buffer 2 is empty.
+TXT2E Active when Transmit buffer 2 is empty.
 \end_layout
 \begin_layout Description
-TX_TIME_SUPPORT This bit is has value of logic 1 if the core was synthesized wih "tx_time_support=true".Otherwise this bit is 0.
+TXTS Logic 1 if the core was synthesized wih "tx_time_support=true".Otherwise logic 0.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -24819,7 +24837,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-FRAME_SWAP\end_layout
+FRSW\end_layout
 
 \end_inset
 </cell>
@@ -24827,7 +24845,7 @@ FRAME_SWAP\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-BUF_DIR\end_layout
+BDIR\end_layout
 
 \end_inset
 </cell>
@@ -24835,7 +24853,7 @@ BUF_DIR\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT2_ALLOW\end_layout
+TXT2A\end_layout
 
 \end_inset
 </cell>
@@ -24843,7 +24861,7 @@ TXT2_ALLOW\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TXT1_ALLOW\end_layout
+TXT1A\end_layout
 
 \end_inset
 </cell>
@@ -24929,16 +24947,16 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-TXT1_ALLOW Allow transmitting frames from TXT buffer 1. Content of TX Buffer1 is validated by 0 to 1 transition on these bits.
+TXT1A Allow transmitting frames from TXT buffer 1. Content of TX Buffer1 is validated by 0 to 1 transition on these bits.
 \end_layout
 \begin_layout Description
-TXT2_ALLOW Allow transmitting frames from TXT buffer 2. Content of TX Buffer2 is validated by 0 to 1 transition on these bits.
+TXT2A Allow transmitting frames from TXT buffer 2. Content of TX Buffer2 is validated by 0 to 1 transition on these bits.
 \end_layout
 \begin_layout Description
-BUF_DIR Buffer to which the transmit data should be stored. To insert data for transmission first set TXTX_ALLOW to 0, then set BUF_DIR to select TXT_BUFFER buffer. As next write the data into buffer by executing accesses into TX_DATA_X registers. As last step, validate the content of the buffer by setting TXTX_ALLOW to 1. TXT_1_EMPTY bit of TX_STAT register is automatically cleared by this action.
+BDIR Buffer to which the transmit data should be stored. To insert data for transmission first set TXT[n]A to 0, then set BDIR to select TXT buffer. As next write the data into buffer by executing accesses into TX_DATA_X registers. As last step, validate the content of the buffer by setting TXT[n] to 1. TXT[n]E bit of TX_STAT register is automatically cleared by this action.
 \end_layout
 \begin_layout Description
-FRAME_SWAP If frame is inserted into either TXT buffer and the other TXT buffer is empty, the frame in the first buffer is transmitted. However, if during the transmission of this frame another frame is inserted into the other TXT buffer and error occurs (or arbitration is lost) there are two frames which can be selected for transmission (assuming Timestamps of both frames are lower than external Timestamp) . If FRAME_SWAP bit is set to 0 the frame which was transmitted last is rettransmitted. If FRAME_SWAP is set to 1 the frame for transmission is selected as if both frames were inserted for its first transmission as explained in Section "Transmitt frame selection".
+FRSW If frame is inserted into either TXT buffer and the other TXT buffer is empty, the frame in the first buffer is transmitted. However, if during the transmission of this frame another frame is inserted into the other TXT buffer and error occurs (or arbitration is lost) there are two frames which can be selected for transmission (assuming Timestamps of both frames are lower than external Timestamp) . If FRSW bit is set to 0 the frame which was transmitted last is rettransmitted. If FRSW is set to 1 the frame for transmission is selected as if both frames were inserted for its first transmission as explained in Section "Transmitt frame selection".
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -25940,24 +25958,24 @@ Reset value\end_layout
 \end_layout
 \begin_layout Description
 ERR_POS Position of the last error.\begin_inset Newline newline\end_inset
-0b00000 - ERC_POS_SOF\begin_inset Newline newline\end_inset
-0b00001 - ERC_POS_ARB\begin_inset Newline newline\end_inset
-0b00010 - ERC_POS_CTRL\begin_inset Newline newline\end_inset
-0b00011 - ERC_POS_DATA\begin_inset Newline newline\end_inset
-0b00100 - ERC_POS_CRC\begin_inset Newline newline\end_inset
-0b00101 - ERC_POS_ACK\begin_inset Newline newline\end_inset
-0b00110 - ERC_POS_INTF\begin_inset Newline newline\end_inset
-0b00111 - ERC_POS_ERR\begin_inset Newline newline\end_inset
-0b01000 - ERC_POS_OVRL\begin_inset Newline newline\end_inset
-0b11111 - ERC_POS_OTHER
+		0b00000  - ERC_POS_SOF - Error in Start of Frame\begin_inset Newline newline\end_inset
+		0b00001  - ERC_POS_ARB - Error in Arbitration Filed\begin_inset Newline newline\end_inset
+		0b00010  - ERC_POS_CTRL - Error in Control field\begin_inset Newline newline\end_inset
+		0b00011  - ERC_POS_DATA - Error in Data Field\begin_inset Newline newline\end_inset
+		0b00100  - ERC_POS_CRC - Error in CRC Field\begin_inset Newline newline\end_inset
+		0b00101  - ERC_POS_ACK - Error in Acknowledge field or CRC delimiter\begin_inset Newline newline\end_inset
+		0b00110  - ERC_POS_INTF - Error in interframe space\begin_inset Newline newline\end_inset
+		0b00111  - ERC_POS_ERR - Error during Error frame\begin_inset Newline newline\end_inset
+		0b01000  - ERC_POS_OVRL - Error in Overload frame\begin_inset Newline newline\end_inset
+		0b11111  - ERC_POS_OTHER - Other position of error
 \end_layout
 \begin_layout Description
 ERR_TYPE Type of the last error\begin_inset Newline newline\end_inset
-0b000 - ERC_BIT_ERR\begin_inset Newline newline\end_inset
-0b001 - ERC_CRC_ERR\begin_inset Newline newline\end_inset
-0b010 - ERC_FRM_ERR\begin_inset Newline newline\end_inset
-0b011 - ERC_ACK_ERR\begin_inset Newline newline\end_inset
-0b100 - ERC_STUF_ERR
+		0b000  - ERC_BIT_ERR - Bit Error\begin_inset Newline newline\end_inset
+		0b001  - ERC_CRC_ERR - CRC Error\begin_inset Newline newline\end_inset
+		0b010  - ERC_FRM_ERR - Form Error\begin_inset Newline newline\end_inset
+		0b011  - ERC_ACK_ERR - Acknowledge Error\begin_inset Newline newline\end_inset
+		0b100  - ERC_STUF_ERR - Stuff Error
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -33427,27 +33445,27 @@ Reset value\end_layout
 \end_layout
 \begin_layout Description
 EVENT_TYPE Type of the event which was captured. Refer to 8 for bit meanings\begin_inset Newline newline\end_inset
-0b00000001 - SOF_EVNT\begin_inset Newline newline\end_inset
-0b00000010 - ALO_EVNT\begin_inset Newline newline\end_inset
-0b00000011 - REC_EVNT\begin_inset Newline newline\end_inset
-0b00000100 - TRAN_EVNT\begin_inset Newline newline\end_inset
-0b00000101 - OVLD_EVNT\begin_inset Newline newline\end_inset
-0b00000110 - ERR_EVNT\begin_inset Newline newline\end_inset
-0b00000111 - BRS_EVNT\begin_inset Newline newline\end_inset
-0b00001000 - ARB_EVNT\begin_inset Newline newline\end_inset
-0b00001001 - CTRL_EVNT\begin_inset Newline newline\end_inset
-0b00001010 - DATA_EVNT\begin_inset Newline newline\end_inset
-0b00001011 - CRC_EVNT\begin_inset Newline newline\end_inset
-0b00001100 - ACK_EVNT\begin_inset Newline newline\end_inset
-0b00001101 - NACK_EVNT\begin_inset Newline newline\end_inset
-0b00001110 - EWL_EVNT\begin_inset Newline newline\end_inset
-0b00001111 - ERP_EVNT\begin_inset Newline newline\end_inset
-0b00010000 - TXS_EVNT\begin_inset Newline newline\end_inset
-0b00010001 - RXS_EVNT\begin_inset Newline newline\end_inset
-0b00010010 - SYNC_EVNT\begin_inset Newline newline\end_inset
-0b00010011 - STUF_EVNT\begin_inset Newline newline\end_inset
-0b00010100 - DSTF_EVNT\begin_inset Newline newline\end_inset
-0b00010101 - OVR_EVNT
+		0b00000001  - SOF_EVNT - Start of Frame Event\begin_inset Newline newline\end_inset
+		0b00000010  - ALO_EVNT - Arbitration lost event\begin_inset Newline newline\end_inset
+		0b00000011  - REC_EVNT - Receive frame valird event\begin_inset Newline newline\end_inset
+		0b00000100  - TRAN_EVNT - Transmitt frame was valid\begin_inset Newline newline\end_inset
+		0b00000101  - OVLD_EVNT - Overload frame was transmitted\begin_inset Newline newline\end_inset
+		0b00000110  - ERR_EVNT - Error frame was transmitted\begin_inset Newline newline\end_inset
+		0b00000111  - BRS_EVNT - Bit rate was shifted\begin_inset Newline newline\end_inset
+		0b00001000  - ARB_EVNT - Arbitration field started\begin_inset Newline newline\end_inset
+		0b00001001  - CTRL_EVNT - Control field has started.\begin_inset Newline newline\end_inset
+		0b00001010  - DATA_EVNT - Data field has started\begin_inset Newline newline\end_inset
+		0b00001011  - CRC_EVNT - CRC field has started\begin_inset Newline newline\end_inset
+		0b00001100  - ACK_EVNT - Acknowledge received\begin_inset Newline newline\end_inset
+		0b00001101  - NACK_EVNT - Acknowledge was not received in ACK Slot\begin_inset Newline newline\end_inset
+		0b00001110  - EWL_EVNT - Error warning limit reached\begin_inset Newline newline\end_inset
+		0b00001111  - ERP_EVNT - Fault confinement state has changed\begin_inset Newline newline\end_inset
+		0b00010000  - TXS_EVNT - Frame transmission has started\begin_inset Newline newline\end_inset
+		0b00010001  - RXS_EVNT - Frame reception has started.\begin_inset Newline newline\end_inset
+		0b00010010  - SYNC_EVNT - Synchronisation edge has appeared\begin_inset Newline newline\end_inset
+		0b00010011  - STUF_EVNT - Bit was stuffed.\begin_inset Newline newline\end_inset
+		0b00010100  - DSTF_EVNT - Bit was destuffed.\begin_inset Newline newline\end_inset
+		0b00010101  - OVR_EVNT - Data overrun appeared on RX Frame
 \end_layout
 \begin_layout Description
 EVENT_DETAILS Details of the event which appeared. Refer to 8 for bit meanings.
@@ -35494,7 +35512,7 @@ Access to this memory region is mapped to TXT Buffer for CAN FD frame to be tran
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="5" version="3">
+<lyxtabular columns="5" rows="6" version="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -35718,17 +35736,77 @@ Reserved\end_layout
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x14C\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -35736,13 +35814,7 @@ hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 2
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -35750,13 +35822,7 @@ hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 2
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -35764,13 +35830,7 @@ hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 2
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 20}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -35778,7 +35838,7 @@ hyperref[TX_DATA_20]{TX\backslash textunderscore DATA\backslash textunderscore 2
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x14C\end_layout
+...\end_layout
 
 \end_inset
 </cell>

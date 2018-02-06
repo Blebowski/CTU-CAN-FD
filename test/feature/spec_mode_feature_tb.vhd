@@ -278,22 +278,22 @@ package body spec_mode_feature is
     --------------------------------------------
     CAN_read(r_data,FILTER_CONTROL_ADR,ID_2,mem_bus_2);
     
-    r_data(FILT_A_BASIC_IND) := '0';
-    r_data(FILT_A_FD_BAS_IND) := '0';
-    r_data(FILT_A_EXT_IND) := '0';
-    r_data(FILT_A_FD_EXT_IND) := '0';
-    r_data(FILT_B_BASIC_IND) := '0';
-    r_data(FILT_B_EXT_IND) := '0';
-    r_data(FILT_B_FD_BAS_IND) := '0';
-    r_data(FILT_B_FD_EXT_IND) := '0';
-    r_data(FILT_C_BASIC_IND) := '0';
-    r_data(FILT_C_EXT_IND) := '0';
-    r_data(FILT_C_FD_BAS_IND) := '0';
-    r_data(FILT_RANGE_FD_EXT_IND) := '0';
-    r_data(FILT_RANGE_FD_BAS_IND) := '0';
-    r_data(FILT_RANGE_EXT_IND) := '0';
-    r_data(FILT_RANGE_BASIC_IND) := '0';
-    r_data(FILT_C_FD_EXT_IND) := '0';
+    r_data(FANB_IND) := '0';
+    r_data(FAFB_IND) := '0';
+    r_data(FANE_IND) := '0';
+    r_data(FAFE_IND) := '0';
+    r_data(FBNB_IND) := '0';
+    r_data(FBNE_IND) := '0';
+    r_data(FBFB_IND) := '0';
+    r_data(FBFE_IND) := '0';
+    r_data(FCNB_IND) := '0';
+    r_data(FCNE_IND) := '0';
+    r_data(FCFB_IND) := '0';
+    r_data(FRNB_IND) := '0';
+    r_data(FRNE_IND) := '0';
+    r_data(FRFB_IND) := '0';
+    r_data(FRFE_IND) := '0';
+    r_data(FCFE_IND) := '0';
     CAN_write(r_data,FILTER_CONTROL_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------

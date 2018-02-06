@@ -505,8 +505,8 @@ architecture rtl of canfd_registers is
       filter_ran_ctrl         <=  (OTHERS=>'0');
     end if;
     
-    txt1_arbit_allow        <=  TXT1_ALLOW_RSTVAL;
-    txt2_arbit_allow        <=  TXT2_ALLOW_RSTVAL;
+    txt1_arbit_allow        <=  TXT1A_RSTVAL;
+    txt2_arbit_allow        <=  TXT2A_RSTVAL;
     
     log_cmd                 <=  (OTHERS =>'0');
     log_trig_config         <=  (OTHERS =>'0');
@@ -869,7 +869,7 @@ begin
     			----------------------------------------------------	   
     			when CTR_PRES_ADR => 
     			  
-    			     write_be_vect(erctr_pres_value, 0, 8, data_in, CTR_PRES_VAL_L, CTR_PRES_VAL_H, sbe);
+    			     write_be_vect(erctr_pres_value, 0, 8, data_in, CTPV_L, CTPV_H, sbe);
     			     write_be_vect(erctr_pres_mask, 0, 3, data_in, 9, 12, sbe);
     			   
     			----------------------------------------------------	   
@@ -943,10 +943,10 @@ begin
     			--TX Settings register
     			----------------------------------------------------
     			when TX_SETTINGS_ADR =>
-    			     write_be_s(txt1_arbit_allow, TXT1_ALLOW_IND, data_in, sbe);  
-    					  write_be_s(txt2_arbit_allow, TXT2_ALLOW_IND, data_in, sbe);  
- 					  write_be_s(txt_bufdir, BUF_DIR_IND, data_in, sbe);  
-    				    write_be_s(txt_frame_swap, FRAME_SWAP_IND, data_in, sbe);  
+    			     write_be_s(txt1_arbit_allow, TXT1A_IND, data_in, sbe);  
+    					  write_be_s(txt2_arbit_allow, TXT2A_IND, data_in, sbe);  
+ 					  write_be_s(txt_bufdir, BDIR_IND, data_in, sbe);  
+    				    write_be_s(txt_frame_swap, FRSW_IND, data_in, sbe);  
   								  
     			--------------------------------------
     			--Recieve frame counter presetting
@@ -1195,27 +1195,27 @@ begin
     					  data_out_int(15 downto 12)     <=  filter_ran_ctrl;
     					  
     					  if (sup_filtA) then
-    					    data_out_int(SUP_FILTA_IND) <= '1';
+    					    data_out_int(SFA_IND) <= '1';
  					  else
- 					    data_out_int(SUP_FILTA_IND) <= '0';
+ 					    data_out_int(SFA_IND) <= '0';
  					  end if;
  					  
  					  if (sup_filtB) then
-    					    data_out_int(SUP_FILTB_IND) <= '1';
+    					    data_out_int(SFB_IND) <= '1';
  					  else
- 					    data_out_int(SUP_FILTB_IND) <= '0';
+ 					    data_out_int(SFB_IND) <= '0';
  					  end if;
  					  
  					  if (sup_filtC) then
-    					    data_out_int(SUP_FILTC_IND) <= '1';
+    					    data_out_int(SFC_IND) <= '1';
  					  else
- 					    data_out_int(SUP_FILTC_IND) <= '0';
+ 					    data_out_int(SFC_IND) <= '0';
  					  end if;
  					  
  					  if (sup_range) then
-    					    data_out_int(SUP_RANGE_IND) <= '1';
+    					    data_out_int(SFR_IND) <= '1';
  					  else
- 					    data_out_int(SUP_RANGE_IND) <= '0';
+ 					    data_out_int(SFR_IND) <= '0';
  					  end if;
  					  
     					  data_out_int(31 downto 20)     <=  (OTHERS=>'0');
@@ -1269,12 +1269,12 @@ begin
     			   -------------------------------------------------------
     			   when TX_STATUS_ADR => 
     			      data_out_int(31 downto 3)      <=  (OTHERS=>'0');
-    			      data_out_int(TXT2_EMPTY_IND)   <=  txt2_empty;
-    			      data_out_int(TXT1_EMPTY_IND)   <=  txt1_empty;
+    			      data_out_int(TXT2E_IND)   <=  txt2_empty;
+    			      data_out_int(TXT1E_IND)   <=  txt1_empty;
     			      if (tx_time_sup) then   
-			         data_out_int(TX_TIME_SUPPORT_IND) <= '1';
+			         data_out_int(TXTS_IND) <= '1';
 			       else
-			         data_out_int(TX_TIME_SUPPORT_IND) <= '0';
+			         data_out_int(TXTS_IND) <= '0';
 			       end if;   
     			      
  			    ------------------------------------------------------- 
@@ -1282,10 +1282,10 @@ begin
  			    -------------------------------------------------------
     			   when TX_SETTINGS_ADR => 
     					  data_out_int                     <=  (OTHERS =>'0');
-    					  data_out_int(TXT1_ALLOW_IND)     <=  txt1_arbit_allow;
-    					  data_out_int(TXT2_ALLOW_IND)     <=  txt2_arbit_allow;
-    					  data_out_int(BUF_DIR_IND)        <=  txt_bufdir;
-    					  data_out_int(FRAME_SWAP_IND)     <=  txt_frame_swap;
+    					  data_out_int(TXT1A_IND)          <=  txt1_arbit_allow;
+    					  data_out_int(TXT2A_IND)          <=  txt2_arbit_allow;
+    					  data_out_int(BDIR_IND)           <=  txt_bufdir;
+    					  data_out_int(FRSW_IND)           <=  txt_frame_swap;
     					
     					------------------------------------------------------- 
  			    --Error capture register

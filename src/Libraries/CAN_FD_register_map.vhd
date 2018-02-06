@@ -132,8 +132,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- MODE register
   --
-  -- MODE register sets special operating modes of the controller. All bits are 
-  -- active in logic 1.
+  -- MODE register controls special operating modes of the controller.
   ------------------------------------------------------------------------------
   constant RST_IND                : natural := 0;
   constant LOM_IND                : natural := 1;
@@ -143,6 +142,34 @@ package CAN_FD_register_map is
   constant RTR_PREF_IND           : natural := 5;
   constant TSM_IND                : natural := 6;
   constant ACF_IND                : natural := 7;
+
+  -- "FDE" field enumerated values
+  constant FDE_DISABLE        : std_logic := '0';
+  constant FDE_ENABLE         : std_logic := '1';
+
+  -- "TSM" field enumerated values
+  constant TSM_DISABLE        : std_logic := '0';
+  constant TSM_ENABLE         : std_logic := '1';
+
+  -- "RTR_PREF" field enumerated values
+  constant RTR_EXTRA          : std_logic := '0';
+  constant RTR_STANDARD       : std_logic := '1';
+
+  -- "ACF" field enumerated values
+  constant ACF_DISABLED       : std_logic := '0';
+  constant ACF_ENABLED        : std_logic := '1';
+
+  -- "LOM" field enumerated values
+  constant LOM_DISABLED       : std_logic := '0';
+  constant LOM_ENABLED        : std_logic := '1';
+
+  -- "STM" field enumerated values
+  constant STM_DISABLED       : std_logic := '0';
+  constant STM_ENABLED        : std_logic := '1';
+
+  -- "AFM" field enumerated values
+  constant AFM_DISABLED       : std_logic := '0';
+  constant AFM_ENABLED        : std_logic := '1';
 
   -- MODE register reset values
   constant RST_RSTVAL         : std_logic := '0';
@@ -157,9 +184,8 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- COMMAND register
   --
-  -- Writing logic 1 gives a command to the controller. The meaning of command i
-  -- s different for every bit. This register is automatically erased when a com
-  -- mand is finished.
+  -- Writing logic 1 into each bit gives different command to the controller. Af
+  -- ter writing logic 1, logic 0 does not have to be written.
   ------------------------------------------------------------------------------
   constant AT_IND                 : natural := 9;
   constant RRB_IND               : natural := 10;
@@ -173,8 +199,8 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- STATUS register
   --
-  -- Register signals various states of CAN controller which are not mutually ex
-  -- clusive. Every bit is active in logic 1.
+  -- Register signals various states of CAN controller. Logic 1 signals active s
+  -- tate/flag.
   ------------------------------------------------------------------------------
   constant RBS_IND               : natural := 16;
   constant DOS_IND               : natural := 17;
@@ -198,10 +224,8 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- SETTINGS register
   --
-  -- Register with enable bit of the controller.The configuration of retransmiss
-  -- ion limit for failed frames is also located in this register. Furthermore c
-  -- onfiguration of ISO FD CAN or CAN FD 1.0 is done here. Every bit is active 
-  -- in logic 1.
+  -- This register enables the whole CAN FD Core, configures FD Type, Internal l
+  -- oopback and retransmission options.
   ------------------------------------------------------------------------------
   constant RTRLE_IND             : natural := 24;
   constant RTR_TH_L              : natural := 25;
@@ -209,6 +233,14 @@ package CAN_FD_register_map is
   constant INT_LOOP_IND          : natural := 29;
   constant ENA_IND               : natural := 30;
   constant FD_TYPE_IND           : natural := 31;
+
+  -- "RTRLE" field enumerated values
+  constant RTRLE_DISABLED     : std_logic := '0';
+  constant RTRLE_ENABLED      : std_logic := '1';
+
+  -- "INT_LOOP" field enumerated values
+  constant INT_LOOP_DISABLED  : std_logic := '0';
+  constant INT_LOOP_ENABLED   : std_logic := '1';
 
   -- "ENA" field enumerated values
   constant DISABLED           : std_logic := '0';
@@ -259,7 +291,7 @@ package CAN_FD_register_map is
   -- INT_ENA register
   --
   -- Register enables interrupts by different sources. Logic 1 in each bit means
-  --  interrupt is allowed
+  --  interrupt is allowed.
   ------------------------------------------------------------------------------
   constant RIE_IND               : natural := 16;
   constant TIE_IND               : natural := 17;
@@ -323,7 +355,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- ALC register
   --
-  -- Arbitration lost capture value
+  -- Arbitration lost capture register. 
   ------------------------------------------------------------------------------
   constant ALC_VAL_L              : natural := 0;
   constant ALC_VAL_H              : natural := 4;
@@ -348,8 +380,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- BRP register
   --
-  -- Baud rate Prescaler register for Nominal bit time. Specifies time quanta du
-  -- ration.
+  -- Baud rate Prescaler register - Nominal bit time. 
   ------------------------------------------------------------------------------
   constant BRP_L                 : natural := 16;
   constant BRP_H                 : natural := 21;
@@ -360,8 +391,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- BRP_FD register
   --
-  -- Baud rate Prescaler register for Data bit time. Specifies time quanta durat
-  -- ion.
+  -- Baud rate Prescaler register - Data bit time. 
   ------------------------------------------------------------------------------
   constant BRP_FD_L              : natural := 24;
   constant BRP_FD_H              : natural := 29;
@@ -372,11 +402,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- EWL register
   --
-  -- Error warning limit register. If an error warning limit is reached interrup
-  -- t can be called. Error warning limit indicatea heavily disturbed bus. Note 
-  -- that according to CAN specification this value is fixed at 96 and should no
-  -- t be configurable! The configuration of this value is one of the extra feat
-  -- ures of this IP Core.
+  -- Error warning limit register.
   ------------------------------------------------------------------------------
   constant EWL_LIMIT_L            : natural := 0;
   constant EWL_LIMIT_H            : natural := 7;
@@ -387,12 +413,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- ERP register
   --
-  -- Error passive limit. When one of error counters (RXC/TXC) exceeds this valu
-  -- e, it changes Fault confinement state to error passive. Note that according
-  --  to CAN specification this value is fixed at 128 and should not be configur
-  -- able! The configuration of this value is one of the extra features of this 
-  -- IP Core. Note that IP Core always turns to bus_off state once any error cou
-  -- nter reaches 255!
+  -- Error passive limit register.
   ------------------------------------------------------------------------------
   constant ERP_LIMIT_L            : natural := 8;
   constant ERP_LIMIT_H           : natural := 15;
@@ -403,9 +424,9 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FAULT_STATE register
   --
-  -- Fault confinement state of the node. This state can be manipulated by writi
-  -- ng into registers RXC/TXC and ERP_LIMIT of ERP register. When these counter
-  -- s are set Fault confinement state changes automatically.
+  -- Fault confinement state of the node. This state can be manipulated by write
+  -- s to CTR_PRES register. When these counters are set Fault confinement state
+  --  changes automatically.
   ------------------------------------------------------------------------------
   constant ERA_IND               : natural := 16;
   constant ERP_IND               : natural := 17;
@@ -464,16 +485,15 @@ package CAN_FD_register_map is
   --
   -- Register for manipulation with error counters.
   ------------------------------------------------------------------------------
-  constant CTR_PRES_VAL_L         : natural := 0;
-  constant CTR_PRES_VAL_H         : natural := 8;
+  constant CTPV_L                 : natural := 0;
+  constant CTPV_H                 : natural := 8;
   constant PTX_IND                : natural := 9;
   constant PRX_IND               : natural := 10;
   constant ENORM_IND             : natural := 11;
   constant EFD_IND               : natural := 12;
 
   -- CTR_PRES register reset values
-  constant CTR_PRES_VAL_RSTVAL
-                 : std_logic_vector(8 downto 0) := (OTHERS => '0');
+  constant CTPV_RSTVAL : std_logic_vector(8 downto 0) := (OTHERS => '0');
   constant PTX_RSTVAL         : std_logic := '0';
   constant PRX_RSTVAL         : std_logic := '0';
   constant ENORM_RSTVAL       : std_logic := '0';
@@ -604,54 +624,54 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_CONTROL register
   --
-  -- Every filter can be set to accept only selected frame types. Every bit acti
-  -- ve in logic 1.
+  -- Every filter can be configured to accept only selected frame types. Every b
+  -- it is active in logic 1.
   ------------------------------------------------------------------------------
-  constant FILT_A_BASIC_IND       : natural := 0;
-  constant FILT_A_EXT_IND         : natural := 1;
-  constant FILT_A_FD_BAS_IND      : natural := 2;
-  constant FILT_A_FD_EXT_IND      : natural := 3;
-  constant FILT_B_BASIC_IND       : natural := 4;
-  constant FILT_B_EXT_IND         : natural := 5;
-  constant FILT_B_FD_BAS_IND      : natural := 6;
-  constant FILT_B_FD_EXT_IND      : natural := 7;
-  constant FILT_C_BASIC_IND       : natural := 8;
-  constant FILT_C_EXT_IND         : natural := 9;
-  constant FILT_C_FD_BAS_IND     : natural := 10;
-  constant FILT_C_FD_EXT_IND     : natural := 11;
-  constant FILT_RANGE_BASIC_IND  : natural := 12;
-  constant FILT_RANGE_EXT_IND    : natural := 13;
-  constant FILT_RANGE_FD_BAS_IND : natural := 14;
-  constant FILT_RANGE_FD_EXT_IND : natural := 15;
+  constant FANB_IND               : natural := 0;
+  constant FANE_IND               : natural := 1;
+  constant FAFB_IND               : natural := 2;
+  constant FAFE_IND               : natural := 3;
+  constant FBNB_IND               : natural := 4;
+  constant FBNE_IND               : natural := 5;
+  constant FBFB_IND               : natural := 6;
+  constant FBFE_IND               : natural := 7;
+  constant FCNB_IND               : natural := 8;
+  constant FCNE_IND               : natural := 9;
+  constant FCFB_IND              : natural := 10;
+  constant FCFE_IND              : natural := 11;
+  constant FRNB_IND              : natural := 12;
+  constant FRNE_IND              : natural := 13;
+  constant FRFB_IND              : natural := 14;
+  constant FRFE_IND              : natural := 15;
 
   -- FILTER_CONTROL register reset values
-  constant FILT_A_BASIC_RSTVAL : std_logic := '1';
-  constant FILT_A_FD_BAS_RSTVAL : std_logic := '1';
-  constant FILT_A_EXT_RSTVAL  : std_logic := '1';
-  constant FILT_A_FD_EXT_RSTVAL : std_logic := '1';
-  constant FILT_B_BASIC_RSTVAL : std_logic := '0';
-  constant FILT_B_EXT_RSTVAL  : std_logic := '0';
-  constant FILT_B_FD_BAS_RSTVAL : std_logic := '0';
-  constant FILT_B_FD_EXT_RSTVAL : std_logic := '0';
-  constant FILT_C_BASIC_RSTVAL : std_logic := '0';
-  constant FILT_C_EXT_RSTVAL  : std_logic := '0';
-  constant FILT_C_FD_BAS_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_FD_EXT_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_FD_BAS_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_EXT_RSTVAL : std_logic := '0';
-  constant FILT_RANGE_BASIC_RSTVAL : std_logic := '0';
-  constant FILT_C_FD_EXT_RSTVAL : std_logic := '0';
+  constant FANB_RSTVAL        : std_logic := '1';
+  constant FAFB_RSTVAL        : std_logic := '1';
+  constant FANE_RSTVAL        : std_logic := '1';
+  constant FAFE_RSTVAL        : std_logic := '1';
+  constant FBNB_RSTVAL        : std_logic := '0';
+  constant FBNE_RSTVAL        : std_logic := '0';
+  constant FBFB_RSTVAL        : std_logic := '0';
+  constant FBFE_RSTVAL        : std_logic := '0';
+  constant FCNB_RSTVAL        : std_logic := '0';
+  constant FCNE_RSTVAL        : std_logic := '0';
+  constant FCFB_RSTVAL        : std_logic := '0';
+  constant FRFE_RSTVAL        : std_logic := '0';
+  constant FRFB_RSTVAL        : std_logic := '0';
+  constant FRNE_RSTVAL        : std_logic := '0';
+  constant FRNB_RSTVAL        : std_logic := '0';
+  constant FCFE_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- FILTER_STATUS register
   --
-  -- This register provides information about whether the Core is synthesized wi
-  -- th fillter support.
+  -- This register provides information if the Core is synthesized with fillter 
+  -- support.
   ------------------------------------------------------------------------------
-  constant SUP_FILTA_IND         : natural := 16;
-  constant SUP_FILTB_IND         : natural := 17;
-  constant SUP_FILTC_IND         : natural := 18;
-  constant SUP_RANGE_IND         : natural := 19;
+  constant SFA_IND               : natural := 16;
+  constant SFB_IND               : natural := 17;
+  constant SFC_IND               : natural := 18;
+  constant SFR_IND               : natural := 19;
 
   -- FILTER_STATUS register reset values
 
@@ -752,15 +772,15 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- TX_STATUS register
   --
-  -- Status of the TXT Buffers
+  -- Status of the TXT Buffers. 
   ------------------------------------------------------------------------------
-  constant TXT1_EMPTY_IND         : natural := 0;
-  constant TXT2_EMPTY_IND         : natural := 1;
-  constant TX_TIME_SUPPORT_IND    : natural := 2;
+  constant TXT1E_IND              : natural := 0;
+  constant TXT2E_IND              : natural := 1;
+  constant TXTS_IND               : natural := 2;
 
   -- TX_STATUS register reset values
-  constant TXT2_EMPTY_RSTVAL  : std_logic := '1';
-  constant TXT1_EMPTY_RSTVAL  : std_logic := '1';
+  constant TXT2E_RSTVAL       : std_logic := '1';
+  constant TXT1E_RSTVAL       : std_logic := '1';
 
   ------------------------------------------------------------------------------
   -- TX_SETTINGS register
@@ -768,16 +788,16 @@ package CAN_FD_register_map is
   -- This register controls the access into TX buffers. All bits are active in l
   -- ogic 1.
   ------------------------------------------------------------------------------
-  constant TXT1_ALLOW_IND         : natural := 0;
-  constant TXT2_ALLOW_IND         : natural := 1;
-  constant BUF_DIR_IND            : natural := 2;
-  constant FRAME_SWAP_IND         : natural := 3;
+  constant TXT1A_IND              : natural := 0;
+  constant TXT2A_IND              : natural := 1;
+  constant BDIR_IND               : natural := 2;
+  constant FRSW_IND               : natural := 3;
 
   -- TX_SETTINGS register reset values
-  constant TXT1_ALLOW_RSTVAL  : std_logic := '0';
-  constant TXT2_ALLOW_RSTVAL  : std_logic := '0';
-  constant BUF_DIR_RSTVAL     : std_logic := '0';
-  constant FRAME_SWAP_RSTVAL  : std_logic := '0';
+  constant TXT1A_RSTVAL       : std_logic := '0';
+  constant TXT2A_RSTVAL       : std_logic := '0';
+  constant BDIR_RSTVAL        : std_logic := '0';
+  constant FRSW_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- ERR_CAPT register

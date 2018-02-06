@@ -126,13 +126,13 @@ package body fault_conf_feature is
     CAN_write(r_data,EWL_ADR,ID_1,mem_bus_1);
     
     r_data := (OTHERS => '0');
-    r_data(CTR_PRES_VAL_H downto CTR_PRES_VAL_L):= 
+    r_data(CTPV_H downto CTPV_L):= 
          std_logic_vector(to_unsigned(txc,9));
     r_data(PTX_IND):='1';
     CAN_write(r_data,CTR_PRES_ADR,ID_1,mem_bus_1);
     
     r_data := (OTHERS => '0');
-    r_data(CTR_PRES_VAL_H downto CTR_PRES_VAL_L):= 
+    r_data(CTPV_H downto CTPV_L):= 
          std_logic_vector(to_unsigned(rxc,9));
     r_data(PRX_IND):='1';
     CAN_write(r_data,CTR_PRES_ADR,ID_1,mem_bus_1);
