@@ -485,16 +485,15 @@ package CAN_FD_register_map is
   --
   -- Register for manipulation with error counters.
   ------------------------------------------------------------------------------
-  constant CTR_PRES_VAL_L         : natural := 0;
-  constant CTR_PRES_VAL_H         : natural := 8;
+  constant CTPV_L                 : natural := 0;
+  constant CTPV_H                 : natural := 8;
   constant PTX_IND                : natural := 9;
   constant PRX_IND               : natural := 10;
   constant ENORM_IND             : natural := 11;
   constant EFD_IND               : natural := 12;
 
   -- CTR_PRES register reset values
-  constant CTR_PRES_VAL_RSTVAL
-                 : std_logic_vector(8 downto 0) := (OTHERS => '0');
+  constant CTPV_RSTVAL : std_logic_vector(8 downto 0) := (OTHERS => '0');
   constant PTX_RSTVAL         : std_logic := '0';
   constant PRX_RSTVAL         : std_logic := '0';
   constant ENORM_RSTVAL       : std_logic := '0';
