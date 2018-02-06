@@ -1215,7 +1215,7 @@ procedure process_error
         ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
         w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
      end if;
-     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, FRAME_FORM_W_ADR), ID, mem_bus);
+     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, IDENTIFIER_W_ADR), ID, mem_bus);
      
       --Timestamp
      w_data:= frame.timestamp(31 downto 0);  
