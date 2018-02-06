@@ -3664,12 +3664,11 @@
 		</ipxact:memoryMap>
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_frame_format</ipxact:name>
-			<ipxact:displayName>CAN_FD_frame_format</ipxact:displayName>
-			<ipxact:description>CAN Frame format describtion in TXT and RX Buffer.</ipxact:description>
+			<ipxact:displayName>5. CAN FD frame format</ipxact:displayName>
+			<ipxact:description>CAN Frame format describtion in as it is stored in TXT Buffers and RX Buffer.</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>CAN_FD_Frame_format</ipxact:name>
 				<ipxact:displayName>CAN FD Frame format</ipxact:displayName>
-				<ipxact:description>Register map with description of CAN Frame memory layout.</ipxact:description>
 				<ipxact:baseAddress>'h0</ipxact:baseAddress>
 				<ipxact:range>80</ipxact:range>
 				<ipxact:width>32</ipxact:width>
