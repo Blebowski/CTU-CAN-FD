@@ -51,6 +51,7 @@
 -- Revision History:
 --
 --    20.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -240,7 +241,7 @@ package body Arbitration_feature is
       w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
            id_1_vect(17 downto 0);
     end if;
-    CAN_write(w_data,TX_DATA_4_ADR,ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,IDENTIFIER_W_ADR), ID_1,mem_bus_1);
     
 
     w_data := (OTHERS => '0');
@@ -251,21 +252,25 @@ package body Arbitration_feature is
       w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
            id_2_vect(17 downto 0);
     end if;    
-    CAN_write(w_data,TX_DATA_4_ADR,ID_2,mem_bus_2);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,IDENTIFIER_W_ADR),ID_2,mem_bus_2);
     
     --Timestamp words
     w_data      := (OTHERS => '0');
-    CAN_write(w_data,TX_DATA_2_ADR,ID_1,mem_bus_1);
-    CAN_write(w_data,TX_DATA_3_ADR,ID_1,mem_bus_1);
-    CAN_write(w_data,TX_DATA_2_ADR,ID_2,mem_bus_2);
-    CAN_write(w_data,TX_DATA_3_ADR,ID_2,mem_bus_2);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_L_W_ADR),
+                ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_U_W_ADR),
+                ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_L_W_ADR),
+                ID_2,mem_bus_2);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_U_W_ADR),
+                ID_2,mem_bus_2);
     
     --Data words
     w_data      := x"ABCDABCD";
-    CAN_write(w_data,TX_DATA_5_ADR,ID_1,mem_bus_1);
-    CAN_write(w_data,TX_DATA_6_ADR,ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,DATA_1_4_W_ADR),ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,DATA_5_8_W_ADR),ID_1,mem_bus_1);
     w_data      := x"55555555";
-    CAN_write(w_data,TX_DATA_5_ADR,ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,DATA_1_4_W_ADR),ID_1,mem_bus_1);
 
     -----------------------------------------------
     -- Commit the FRAMES for transmittion into
@@ -280,15 +285,15 @@ package body Arbitration_feature is
     -- Now we have to wait until both units starts to
     -- transmitt!!!
     -------------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     while r_data(TS_IND)='0' loop
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
       wait for 10 ns;
     end loop;
     
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     while r_data(TS_IND)='0' loop
-      CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+      CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
       wait for 10 ns;
     end loop;
     
@@ -299,31 +304,31 @@ package body Arbitration_feature is
     while unit_rec=0 loop
       
       --Unit 1 turned reciever
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
       if(r_data(RS_IND)='1')then
         unit_rec:=1;
       end if;
       
       --Unit 2 turned receiver
-      CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+      CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
       if(r_data(RS_IND)='1')then
         unit_rec:=2;
       end if;
       
       --Bus is idle in unit 2
-      CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+      CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
       if(r_data(BS_IND)='1')then
         unit_rec:=3;
       end if;
       
       --Error frame transmitted by unit 2
-      CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+      CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
       if(r_data(ET_IND)='1')then
         unit_rec:=3;
       end if;
       
       --Error frame transmitted by unit 1
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
       if(r_data(ET_IND)='1')then
         unit_rec:=3;
       end if;
@@ -344,10 +349,10 @@ package body Arbitration_feature is
     -- Check what is the value in the ALC register
     ----------------------------------------------- 
     if(unit_rec=1)then
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
       
     elsif(unit_rec=2)then
-      CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+      CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
       
     end if;
     --TODO:Check the ALC value according to SJA1000!
@@ -364,9 +369,9 @@ package body Arbitration_feature is
     -----------------------------------------------
     -- Wait definitely until the bus is idle
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     while r_data(BS_IND)='0' loop
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
       wait for 10 ns;
     end loop;
     

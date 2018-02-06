@@ -661,11 +661,11 @@ begin
             
             -- Check if RX buffer is non-empty
             -- Read out frames if it is not
-            CAN_read(r_data,RX_INFO_1_ADR,n_index,mb_arr(i));
+            CAN_read(r_data,RX_STATUS_ADR,n_index,mb_arr(i));
             while (r_data(0)='0') loop
               CAN_read_frame(RX_frame,n_index,mb_arr(i));
               store_frame_to_mem(RX_frame,rx_mems(i),rx_mem_pointers(i));
-              CAN_read(r_data,RX_INFO_1_ADR,n_index,mb_arr(i));             
+              CAN_read(r_data,RX_STATUS_ADR,n_index,mb_arr(i));             
             end loop;
            
           end if;
@@ -674,7 +674,7 @@ begin
             --Check if unit is not error passive
             -- If node is error passive data consitency will be corrupted!!!
             -- that should never happend
-            CAN_read(r_data,ERROR_TH_ADR,n_index,mb_arr(i));
+            CAN_read(r_data,EWL_ADR,n_index,mb_arr(i));
             if(r_data(17)='1')then
               erp_detected(i) <= true;
             end if;

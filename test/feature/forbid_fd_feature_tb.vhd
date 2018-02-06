@@ -40,6 +40,7 @@
 -----------------------------------------------------------------------------------------------------------------
 -- Revision History:
 --    21.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 -----------------------------------------------------------------------------------------------------------------
 
 Library ieee;
@@ -101,14 +102,14 @@ package body forbid_fd_feature is
     -----------------------------------------------
     --First disable the FD support of Node 1
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(FDE_IND) := '0';
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     -----------------------------------------------
     -- Read RX Error counter node 1
     -----------------------------------------------
-    CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RXC_ADR,ID_1,mem_bus_1);
     ctr_1 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
     -----------------------------------------------
@@ -124,7 +125,7 @@ package body forbid_fd_feature is
     -----------------------------------------------
     -- Read RX Error counter node 1 again
     -----------------------------------------------
-    CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RXC_ADR,ID_1,mem_bus_1);
     ctr_2 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
     --Counter should be increased
@@ -143,7 +144,7 @@ package body forbid_fd_feature is
     -----------------------------------------------
     -- Read RX Error counter node 1 again
     -----------------------------------------------
-    CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RXC_ADR,ID_1,mem_bus_1);
     ctr_2 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
     --Counter should be decreased by one now due
@@ -158,9 +159,9 @@ package body forbid_fd_feature is
     -----------------------------------------------
     --Now enable the FD support of Node 1
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(FDE_IND) := '1';
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     -----------------------------------------------
     -- Now again send the same frame but FD type
@@ -173,7 +174,7 @@ package body forbid_fd_feature is
     -----------------------------------------------
     -- Read RX Error counter node 1 again
     -----------------------------------------------
-    CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RXC_ADR,ID_1,mem_bus_1);
     ctr_2 := to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L)));
     
     --Counter should be less than the value read now
@@ -195,8 +196,8 @@ package body forbid_fd_feature is
       r_data :=(OTHERS => '0');
       r_data(PRX_IND) := '1';
       r_data(PTX_IND) := '1';
-      CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
-      CAN_write(r_data,ERROR_COUNTERS_ADR,ID_2,mem_bus_2);
+      CAN_write(r_data,RXC_ADR,ID_1,mem_bus_1);
+      CAN_write(r_data,RXC_ADR,ID_2,mem_bus_2);
     end if;
     
     

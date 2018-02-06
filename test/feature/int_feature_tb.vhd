@@ -48,7 +48,7 @@
 -- Revision History:
 --
 --    27.6.2016   Created file
---
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -124,10 +124,10 @@ package body interrupt_feature is
     report "Starting TX RX interrupt";
     r_data :=(OTHERS => '0');
     r_data(RIE_IND):='1';
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,INT_ADR,ID_1,mem_bus_1);
     r_data(RIE_IND):='0';
     r_data(TIE_IND):='1';
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,INT_ADR,ID_2,mem_bus_2);
     
     -----------------------------------------------
     -- Send by node 2
@@ -140,8 +140,8 @@ package body interrupt_feature is
     
     CAN_wait_frame_sent(ID_2,mem_bus_2);
     
-    CAN_read(vect_1,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(vect_1,INT_ADR,ID_1,mem_bus_1);
+    CAN_read(vect_2,INT_ADR,ID_2,mem_bus_2);
     
     if(vect_1(RI_IND)='0')then
       outcome:=false;
@@ -161,8 +161,8 @@ package body interrupt_feature is
     report "Starting Error interrupt";
     r_data :=(OTHERS => '0');
     r_data(BEIE_IND):='1';
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,INT_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,INT_ADR,ID_2,mem_bus_2);
     
     -----------------------------------------------
     --Send conflicting frames
@@ -179,8 +179,8 @@ package body interrupt_feature is
     -----------------------------------------------
     -- Detect interrupt error flag
     -----------------------------------------------
-    CAN_read(vect_1,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(vect_1,INT_ADR,ID_1,mem_bus_1);
+    CAN_read(vect_2,INT_ADR,ID_2,mem_bus_2);
     
     if(vect_1(BEI_IND)='0')then
       outcome:=false;
@@ -203,18 +203,18 @@ package body interrupt_feature is
     r_data :=(OTHERS => '0');
     r_data(DOIE_IND):='1';
     r_data(RFIE_IND):='1';
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,INT_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,INT_ADR,ID_2,mem_bus_2);
     
     --Release the recieve buffer
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(RRB_IND):='1';
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     --Size of buffer 2
     -- Note that size of RTR is 4 thus each synthesizable
     -- size of buffer is multiple of 4!
-    CAN_read(r_data,RX_INFO_2_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,RX_BUFF_SIZE_ADR,ID_2,mem_bus_2);
     size_of_buf:= to_integer(unsigned(r_data(
          RX_BUFF_SIZE_VALUE_H downto RX_BUFF_SIZE_VALUE_L)));
     
@@ -237,7 +237,7 @@ package body interrupt_feature is
     -- Detect the data overrun interrupt flag
     -- and recieve buffer full flag
     -----------------------------------------------
-    CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(vect_2,INT_ADR,ID_2,mem_bus_2);
     
     if(vect_2(DOI_IND)='0' or vect_2(RFI_IND)='0')then
       outcome:=false;
@@ -254,8 +254,8 @@ package body interrupt_feature is
     report "Starting Bit rate shift interrupt";
     r_data :=(OTHERS => '0');
     r_data(BSIE_IND):='1';
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,INT_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,INT_ADR,ID_2,mem_bus_2);
     
     CAN_frame.frame_format:=FD_CAN;
     CAN_frame.rtr:=NO_RTR_FRAME;
@@ -271,7 +271,7 @@ package body interrupt_feature is
     -----------------------------------------------
     -- Detect the Bit rate shift interrupt flag
     -----------------------------------------------
-    CAN_read(vect_2,INTERRUPT_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(vect_2,INT_ADR,ID_2,mem_bus_2);
     
     if(vect_2(BSI_IND)='0')then
       outcome:=false;
@@ -288,7 +288,7 @@ package body interrupt_feature is
     report "Starting ALC interrupt";
     r_data :=(OTHERS => '0');
     r_data(ALIE_IND):='1';
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,INT_ADR,ID_1,mem_bus_1);
     
     
     -----------------------------------------------
@@ -306,7 +306,7 @@ package body interrupt_feature is
     
     wait until rising_edge(int_1);
     
-    CAN_read(vect_2,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(vect_2,INT_ADR,ID_1,mem_bus_1);
     
     if(vect_2(ALI_IND)='0')then
       outcome:=false;
@@ -333,7 +333,7 @@ package body interrupt_feature is
     r_data :=(OTHERS => '0');
     r_data(EPIE_IND):='1';
     r_data(EIE_IND):='1';
-    CAN_write(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,INT_ADR,ID_1,mem_bus_1);
     
     ----------------------------------
     -- Set the EWL, ERP to 5  and 10
@@ -342,28 +342,28 @@ package body interrupt_feature is
     r_data :=(OTHERS => '0');
     r_data(PRX_IND):='1';
     r_data(PTX_IND):='1';
-    CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,RXC_ADR,ID_1,mem_bus_1);
     r_data :=(OTHERS => '0');
     r_data(7 downto 0)  := "00000101";
     r_data(15 downto 8) := "00001010";
-    CAN_write(r_data,ERROR_TH_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,RXC_ADR,ID_1,mem_bus_1);
     
     ----------------------------------
     -- Store previous value of MODE
     -- register
     ----------------------------------
-    CAN_read(mode_prev,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(mode_prev,MODE_ADR,ID_1,mem_bus_1);
     r_data:=mode_prev;
     
     --Disable the retransmitt limit in node 1
     r_data(RTRLE_IND):='0';
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     --Forbid the acknowledge in node 2
-    CAN_read(mode_prev_2,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(mode_prev_2,MODE_ADR,ID_2,mem_bus_2);
     r_data:=mode_prev_2;
     r_data(ACF_IND):='1';
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     --Insert frame to be transmitted 
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
@@ -373,7 +373,7 @@ package body interrupt_feature is
     -----------------------------------------------
     -- Detect the EWL interrupt flag
     -----------------------------------------------
-    CAN_read(vect_2,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(vect_2,INT_ADR,ID_1,mem_bus_1);
     if(vect_2(EI_IND)='0')then
       outcome:=false;
     end if;
@@ -385,7 +385,7 @@ package body interrupt_feature is
     -----------------------------------------------
     -- Detect the ERP interrupt flag
     -----------------------------------------------
-    CAN_read(vect_2,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(vect_2,INT_ADR,ID_1,mem_bus_1);
     if(vect_2(EPI_IND)='0')then
       outcome:=false;
     end if;
@@ -393,15 +393,15 @@ package body interrupt_feature is
     -----------------------------------------------
     -- Now abort the frame transmittion
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(AT_IND):='1';
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     ------------------------------------------------
     -- Write previous MODE values
     -------------------------------------------------
-    CAN_write(mode_prev,MODE_REG_ADR,ID_1,mem_bus_1);
-    CAN_write(mode_prev_2,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(mode_prev,MODE_ADR,ID_1,mem_bus_1);
+    CAN_write(mode_prev_2,MODE_ADR,ID_2,mem_bus_2);
     
     report "Finished interrupt test";
     wait for 750000 ns;

@@ -49,7 +49,8 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    24.6.2016   Created file
------------------------------------------------------------------------------------------------------------------
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
+--------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
@@ -117,14 +118,14 @@ package body spec_mode_feature is
     ---------------------------------------
     -- Set STM in node 1 and STM,ACF in node 2
     ---------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(STM_IND) := '1';  --Self test mode bit
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(ACF_IND) := '1';  --Acknowledge forbidden
     r_data(STM_IND) := '1';  --Self test mode bit
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------
     -- Check the TX RX counters
@@ -196,15 +197,15 @@ package body spec_mode_feature is
     --  itself internally so it gets the acknowledge
     --  from itself but it is not on the bus!
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(STM_IND) := '1';  --Self test mode bit
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(ACF_IND) := '0';  --Acknowledge forbidden
     r_data(LOM_IND) := '1';  -- Listen only mode
     r_data(STM_IND) := '0';  --Self test mode bit
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------
     -- Send frame by node 1
@@ -264,13 +265,13 @@ package body spec_mode_feature is
     --------------------------------------------
     -- Turn on the AFM
     --------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(ACF_IND) := '0';  --Acknowledge forbidden
     r_data(LOM_IND) := '0';  -- Listen only mode
     r_data(STM_IND) := '0';  --Self test mode bit
     r_data(AFM_IND) := '1';  -- AFM
     r_data(RRB_IND) := '1'; --Release recieve buffer!
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     --------------------------------------------
     -- Configure AFM not to pass anything...
@@ -306,7 +307,7 @@ package body spec_mode_feature is
     -- Now check that we still dont have anything
     -- in the buffer
     ---------------------------------------------
-    CAN_read(r_data,RX_INFO_1_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,RX_STATUS_ADR,ID_2,mem_bus_2);
     if(r_data(RX_EMPTY_IND) /= '1')then
       outcome:= false;
     end if;
@@ -314,9 +315,9 @@ package body spec_mode_feature is
     --------------------------------------------
     -- Turn off the AFM
     --------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(AFM_IND) := '0';  -- AFM
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
      --------------------------------------------
     -- Send frame by node 1
@@ -324,7 +325,7 @@ package body spec_mode_feature is
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
     CAN_wait_frame_sent(ID_1,mem_bus_1);
     
-    CAN_read(r_data,RX_INFO_1_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,RX_STATUS_ADR,ID_2,mem_bus_2);
     if(r_data(RX_EMPTY_IND) = '1')then
       outcome:= false;
     end if;

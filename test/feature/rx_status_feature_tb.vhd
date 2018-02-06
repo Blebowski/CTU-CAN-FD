@@ -49,6 +49,7 @@
 -- Revision History:
 --
 --    21.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -114,16 +115,16 @@ package body rx_status_feature is
     -------------------------------------------
     -- Read the size of the synthesized buffer
     -------------------------------------------
-    CAN_read(r_data,RX_INFO_2_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RX_BUFF_SIZE_ADR,ID_1,mem_bus_1);
     size_of_buf:= to_integer(unsigned(
                        r_data(RX_BUFF_SIZE_VALUE_H downto RX_BUFF_SIZE_VALUE_L)));
     
     -------------------------------------------
     --Restart the content of the buffer...
     -------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(RRB_IND) := '1';  --Release recieve buffer bit
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     -------------------------------------------
     --Check that buffer is empty
@@ -131,7 +132,7 @@ package body rx_status_feature is
     --Check that both pointers are 0 as well
     -- as message count
     -------------------------------------------
-    CAN_read(r_data,RX_INFO_1_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RX_STATUS_ADR,ID_1,mem_bus_1);
     if(r_data(RX_EMPTY_IND) /= '1' or r_data(RX_FULL_IND) /= '0')then
       outcome:= false;
     end if;
@@ -146,7 +147,7 @@ package body rx_status_feature is
       outcome:= false;
     end if;
     
-    CAN_read(r_data,RX_INFO_2_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RX_BUFF_SIZE_ADR,ID_1,mem_bus_1);
     if((r_data(LOG_RPP_VAL_H downto LOG_RPP_VAL_L) /= x"00") or
        (r_data(LOG_WPP_VAL_H downto LOG_WPP_VAL_L) /= x"00"))
     then
@@ -202,7 +203,7 @@ package body rx_status_feature is
       end loop;
       
       --Check that mc was incremented and memfree is according
-      CAN_read(r_data,RX_INFO_1_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,RX_STATUS_ADR,ID_1,mem_bus_1);
       aux:=r_data(RX_MC_VALUE_H downto RX_MC_VALUE_L);
       aux2:=to_integer(unsigned(aux));
       if(number_frms_sent /= aux2 and send_more=true)then
@@ -221,7 +222,7 @@ package body rx_status_feature is
     --  status!
     -- Now data oveerrun flag should be set
     --------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     if(r_data(DOS_IND)='0')then
       outcome:=false;
     end if;
@@ -230,12 +231,12 @@ package body rx_status_feature is
     -- Clear the data overrun flag
     -------------------------------------------
     r_data(CDO_IND):='1';
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     --------------------------------------------
     -- Check that overrun flag was cleared
     --------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     if(r_data(DOS_IND)='1')then
       outcome:=false;
     end if;

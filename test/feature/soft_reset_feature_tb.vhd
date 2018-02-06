@@ -50,6 +50,7 @@
 --
 --    28.6.2016   Created file
 --    1.9.2016    Changed test to be compliant with latest change in register memory map!
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -108,9 +109,9 @@ package body soft_reset_feature is
     --------------------------------------------------
     --Write into the restart bit of MODE_REG
     --------------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(RST_IND) := '1';
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     --------------------------------------------------
     --Continously check on expected default values!
@@ -121,25 +122,25 @@ package body soft_reset_feature is
     end if;
     
     --Mode register
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     if(r_data /= "00000000100000000000000000110000")then
       outcome:=false;
     end if;
     
     --Interrupt registers
-    CAN_read(r_data,INTERRUPT_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,INT_ADR,ID_1,mem_bus_1);
     if(r_data /= "00000000001011000000000000000000")then
       outcome:=false;
     end if;
     
      --Timing register
-    CAN_read(r_data,TIMING_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,BTR_ADR,ID_1,mem_bus_1);
     if(r_data /= "00011000110000110010100011000101")then
       outcome:=false;
     end if;
     
      --ALC presc register
-    CAN_read(r_data,ARB_ERROR_PRESC_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,ALC_ADR,ID_1,mem_bus_1);
     if(r_data(7 downto 0) /= "00000000")then
       outcome:=false;
     end if;
@@ -151,7 +152,7 @@ package body soft_reset_feature is
     end if;
     
     --EWL register
-    CAN_read(r_data,ERROR_TH_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,EWL_ADR,ID_1,mem_bus_1);
     if(r_data(7 downto 0) /= "01100000")then --96
       outcome:=false;
     end if;
@@ -164,13 +165,13 @@ package body soft_reset_feature is
     end if;
     
     --Error registers
-    CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RXC_ADR,ID_1,mem_bus_1);
      if(r_data(31 downto 0) /= "00000000000000000000000000000000")then
       outcome:=false;
     end if;
     
     --Special Error registers
-    CAN_read(r_data,ERROR_COUNTERS_SPEC_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,ERR_NORM_ADR,ID_1,mem_bus_1);
     if(r_data(31 downto 0) /= "00000000000000000000000000000000")then
       outcome:=false;
     end if;
@@ -224,7 +225,7 @@ package body soft_reset_feature is
     end if;
     
     --RX Info 1
-    CAN_read(r_data,RX_INFO_1_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RX_STATUS_ADR,ID_1,mem_bus_1);
     if(r_data(15 downto 0) /= "0000000000000001")then
       outcome:=false;
     end if;
@@ -234,7 +235,7 @@ package body soft_reset_feature is
     
     
     --RX Info 2
-    CAN_read(r_data,RX_INFO_2_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RX_BUFF_SIZE_ADR, ID_1,mem_bus_1);
     if(r_data(7 downto 0) /= "01000000")then
       outcome:=false;
     end if;
@@ -298,7 +299,7 @@ package body soft_reset_feature is
     end if;
     
     --DEBUG
-    CAN_read(r_data,DEBUG_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,DEBUG_REGISTER_ADR,ID_1,mem_bus_1);
     if(r_data(31 downto 0) /= "00000000000000000000000000000000")then
       outcome:=false;
     end if;

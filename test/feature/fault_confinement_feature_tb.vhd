@@ -42,6 +42,7 @@
 -- Revision History:
 --
 --    30.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -122,25 +123,25 @@ package body fault_conf_feature is
     r_data := (OTHERS => '0');
     r_data(ERP_LIMIT_H downto ERP_LIMIT_L):= 
          std_logic_vector(to_unsigned(th_1,8));
-    CAN_write(r_data,ERROR_TH_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,EWL_ADR,ID_1,mem_bus_1);
     
     r_data := (OTHERS => '0');
     r_data(CTR_PRES_VAL_H downto CTR_PRES_VAL_L):= 
          std_logic_vector(to_unsigned(txc,9));
     r_data(PTX_IND):='1';
-    CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,CTR_PRES_ADR,ID_1,mem_bus_1);
     
     r_data := (OTHERS => '0');
     r_data(CTR_PRES_VAL_H downto CTR_PRES_VAL_L):= 
          std_logic_vector(to_unsigned(rxc,9));
     r_data(PRX_IND):='1';
-    CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,CTR_PRES_ADR,ID_1,mem_bus_1);
     
     
     -----------------------------------------------
     -- Read counters back
     -----------------------------------------------
-    CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,RXC_ADR,ID_1,mem_bus_1);
     
    if( to_integer(unsigned(r_data(RXC_VAL_H downto RXC_VAL_L))) /= rxc )then
       outcome:=false;
@@ -153,7 +154,7 @@ package body fault_conf_feature is
     -----------------------------------------------
     -- Read fault confinement state
     -----------------------------------------------
-    CAN_read(r_data,ERROR_TH_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,EWL_ADR,ID_1,mem_bus_1);
     
     if(txc>255 or rxc>255)then
       if(r_data(ERA_IND)='1' or 
