@@ -100,7 +100,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 		for block in self.addrMap.addressBlock:
 			for reg in sorted(block.register, key=lambda a: a.addressOffset):
 				decls.append(LanDeclaration(reg.name.upper(), 
-								value=reg.addressOffset*4+block.baseAddress,
+								value=reg.addressOffset+block.baseAddress,
 								intType="enum"))
 		
 		self.headerGen.create_enum(self.addrMap.name.lower(), decls)
