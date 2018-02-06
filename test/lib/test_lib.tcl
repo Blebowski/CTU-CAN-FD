@@ -459,7 +459,7 @@ proc run_sanity {} {
 		#Set the testbench stimulus
 		force $TCOMP/iterations $act_iter	
 		set fmt_name [format "%-50s" $act_name]
-		force $TCOMP/test_desc "${fmt_name}"
+		force $TCOMP/i_st/test_desc "${fmt_name}"
 		
 		set fmt_topology [format "%-50s" $topology]
 		force $TCOMP/topology "${fmt_topology}"
