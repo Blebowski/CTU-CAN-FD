@@ -44,7 +44,7 @@
 				<ipxact:register>
 					<ipxact:name>MODE</ipxact:name>
 					<ipxact:displayName>MODE</ipxact:displayName>
-					<ipxact:description>MODE register sets special operating modes of the controller. All bits are active in logic 1.</ipxact:description>
+					<ipxact:description>MODE register controls special operating modes of the controller.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -53,7 +53,7 @@
 					<ipxact:field>
 						<ipxact:name>RST</ipxact:name>
 						<ipxact:displayName>RST</ipxact:displayName>
-						<ipxact:description>Activating this bit resets the controller. It has the same effect as logic 0 on res_n input of controller</ipxact:description>
+						<ipxact:description>Writing logic 1 resets the controller. It has the same effect as logic 0 on res_n input of the controller.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -65,7 +65,7 @@
 					<ipxact:field>
 						<ipxact:name>FDE</ipxact:name>
 						<ipxact:displayName>FDE</ipxact:displayName>
-						<ipxact:description>Enable flexible data rate support. When this bit is inactive, receiving recessive EDL bit (Flexible data rate frame) causes Form error.</ipxact:description>
+						<ipxact:description>Enable flexible data rate support. When disabled receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -73,11 +73,25 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>FDE_ENABLE</ipxact:name>
+								<ipxact:displayName>FDE_ENABLE</ipxact:displayName>
+								<ipxact:description>Flexible data-rate support enabled.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>FDE_DISABLE</ipxact:name>
+								<ipxact:displayName>FDE_DISABLE</ipxact:displayName>
+								<ipxact:description>Flexible data-rate support disabled.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TSM</ipxact:name>
 						<ipxact:displayName>TSM</ipxact:displayName>
-						<ipxact:description>Triple sampling mode. Bus value is sampled three times when this bit is active. Even if this bit is set, triple sampling is used only during Nominal data rate. It is recommended to use triple sampling only at low Bit rates.</ipxact:description>
+						<ipxact:description>Triple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. It is recommended to use triple sampling only at low Bit rates.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -85,11 +99,25 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TSM_ENABLE</ipxact:name>
+								<ipxact:displayName>TSM_ENABLE</ipxact:displayName>
+								<ipxact:description>Tripple sampling mode enabled</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>TSM_DISABLE</ipxact:name>
+								<ipxact:displayName>TSM_DISABLE</ipxact:displayName>
+								<ipxact:description>Tripple sampling mode disabled</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RTR_PREF</ipxact:name>
 						<ipxact:displayName>RTRP</ipxact:displayName>
-						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifie the behavior of controller when this situation happens. If the bit is active then all zeros are sent and inserted dlc is ignored. If a bit is inactive then inserted dlc is sent.</ipxact:description>
+						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when this situation occurs.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -97,11 +125,25 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RTR_STANDARD</ipxact:name>
+								<ipxact:displayName>RTR_STANDARD</ipxact:displayName>
+								<ipxact:description>When RTR Frame is sent, also the DLC inserted to TX Buffer is sent.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RTR_EXTRA</ipxact:name>
+								<ipxact:displayName>RTR_EXTRA</ipxact:displayName>
+								<ipxact:description>When RTR Frame is sent, all zeroes are sent at DLC.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ACF</ipxact:name>
 						<ipxact:displayName>ACF</ipxact:displayName>
-						<ipxact:description>When this bit is active acknowledge is not sent even when received CRC matches the calculated one.</ipxact:description>
+						<ipxact:description>Acknowledge forbidden mode. When this mode is enabled, acknowledge is not sent even if received CRC matches the calculated one.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -109,6 +151,20 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ACF_ENABLED</ipxact:name>
+								<ipxact:displayName>ACF_ENABLED</ipxact:displayName>
+								<ipxact:description>Acknowledge forbidden mode enabled.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ACF_DISABLED</ipxact:name>
+								<ipxact:displayName>ACF_DISABLED</ipxact:displayName>
+								<ipxact:description>Acknowledge forbidden mode disabled.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LOM</ipxact:name>
@@ -121,6 +177,20 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>LOM_ENABLED</ipxact:name>
+								<ipxact:displayName>LOM_ENABLED</ipxact:displayName>
+								<ipxact:description>Listen only mode enabled.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>LOM_DISABLED</ipxact:name>
+								<ipxact:displayName>LOM_DISABLED</ipxact:displayName>
+								<ipxact:description>Listen only mode disabled.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>STM</ipxact:name>
@@ -133,11 +203,25 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>STM_ENABLED</ipxact:name>
+								<ipxact:displayName>STM_ENABLED</ipxact:displayName>
+								<ipxact:description>Self test mode enabled.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>STM_DISABLED</ipxact:name>
+								<ipxact:displayName>STM_DISABLED</ipxact:displayName>
+								<ipxact:description>Self test mode disabled.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>AFM</ipxact:name>
 						<ipxact:displayName>AFM</ipxact:displayName>
-						<ipxact:description>Acceptance filters mode. Activating this bit enables usage of acceptance filters. If disabled, every received frame is stored in the RX buffer</ipxact:description>
+						<ipxact:description>Acceptance filters mode. If this mode is enabled, acceptance filters are used on  RX Frames . If disabled, every received frame is stored in the RX buffer.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -145,12 +229,26 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>AFM_ENABLED</ipxact:name>
+								<ipxact:displayName>AFM_ENABLED</ipxact:displayName>
+								<ipxact:description>Acceptance filter mode enabled</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>AFM_DISABLED</ipxact:name>
+								<ipxact:displayName>AFM_DISABLED</ipxact:displayName>
+								<ipxact:description>Acceptance filter mode disabled</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>COMMAND</ipxact:name>
 					<ipxact:displayName>COMMAND</ipxact:displayName>
-					<ipxact:description>Writing logic 1 gives a command to the controller. The meaning of command is different for every bit. This register is automatically erased when a command is finished.</ipxact:description>
+					<ipxact:description>Writing logic 1 into each bit gives different command to the controller. After writing logic 1, logic 0 does not have to be written.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h5</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -159,7 +257,7 @@
 					<ipxact:field>
 						<ipxact:name>AT</ipxact:name>
 						<ipxact:displayName>AT</ipxact:displayName>
-						<ipxact:description>Writing logic 1 into this bit aborts actual transmission or reception</ipxact:description>
+						<ipxact:description>Abort transmission of CAN frame.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -171,7 +269,7 @@
 					<ipxact:field>
 						<ipxact:name>RRB</ipxact:name>
 						<ipxact:displayName>RRB</ipxact:displayName>
-						<ipxact:description>Release Receive buffer. Writing logic 1 deletes all data from the Receive buffer.</ipxact:description>
+						<ipxact:description>Release Receive buffer. This command deletes all data from the Receive buffer and restarts its memory pointers.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -183,7 +281,7 @@
 					<ipxact:field>
 						<ipxact:name>CDO</ipxact:name>
 						<ipxact:displayName>CDO</ipxact:displayName>
-						<ipxact:description>Clear data overrun flag. Writing logic 1 will clear overrun flag.</ipxact:description>
+						<ipxact:description>Clear data overrun flag. This command will clear data overrun flag on RX Buffer.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -196,7 +294,7 @@
 				<ipxact:register>
 					<ipxact:name>STATUS</ipxact:name>
 					<ipxact:displayName>STATUS</ipxact:displayName>
-					<ipxact:description>Register signals various states of CAN controller which are not mutually exclusive. Every bit is active in logic 1.</ipxact:description>
+					<ipxact:description>Register signals various states of CAN controller. Logic 1 signals active state/flag.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -205,7 +303,7 @@
 					<ipxact:field>
 						<ipxact:name>RBS</ipxact:name>
 						<ipxact:displayName>RBS</ipxact:displayName>
-						<ipxact:description>Active value of this bit means Receive buffer is not empty.</ipxact:description>
+						<ipxact:description>Receive buffer is not empty.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -217,7 +315,7 @@
 					<ipxact:field>
 						<ipxact:name>TBS</ipxact:name>
 						<ipxact:displayName>TBS</ipxact:displayName>
-						<ipxact:description>TXT buffer status. Active value of this bit means both TXT buffers are full and frame can not be inserted for transmission</ipxact:description>
+						<ipxact:description>TXT buffer status. Both TXT buffers are full and frame can not be inserted for transmission.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -229,7 +327,7 @@
 					<ipxact:field>
 						<ipxact:name>DOS</ipxact:name>
 						<ipxact:displayName>DOS</ipxact:displayName>
-						<ipxact:description>Data overrun status (flag). An active value of this bit signals frame was lost due to not enough space in the Receive buffer.</ipxact:description>
+						<ipxact:description>Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -241,7 +339,7 @@
 					<ipxact:field>
 						<ipxact:name>ET</ipxact:name>
 						<ipxact:displayName>ET</ipxact:displayName>
-						<ipxact:description>Active value of this bit means that Error frame is beeing transmitted.</ipxact:description>
+						<ipxact:description>Error frame is beeing transmitted at the moment.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -253,7 +351,7 @@
 					<ipxact:field>
 						<ipxact:name>RS</ipxact:name>
 						<ipxact:displayName>RS</ipxact:displayName>
-						<ipxact:description>Active value of this bit signals that controller is receiving a frame.</ipxact:description>
+						<ipxact:description>Core is receiving a CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -265,7 +363,7 @@
 					<ipxact:field>
 						<ipxact:name>TS</ipxact:name>
 						<ipxact:displayName>TS</ipxact:displayName>
-						<ipxact:description>Active value of this bit signals that controller is transmitting a frame.</ipxact:description>
+						<ipxact:description>Core is transmitting a CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -277,7 +375,7 @@
 					<ipxact:field>
 						<ipxact:name>ES</ipxact:name>
 						<ipxact:displayName>ES</ipxact:displayName>
-						<ipxact:description>Error status. Active value signals that error warning limit was reached at any of error counters</ipxact:description>
+						<ipxact:description>Error status. Error warning limit was reached at any of error counters.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -289,7 +387,7 @@
 					<ipxact:field>
 						<ipxact:name>BS</ipxact:name>
 						<ipxact:displayName>BS</ipxact:displayName>
-						<ipxact:description>Bus status. Active value signals that bus is idle, the controller is integrating or bus off. Therefore this bit is active when there is no activity on the bus.</ipxact:description>
+						<ipxact:description>Bus status. Bus is &quot;idle&quot;, the controller is &quot; integrating&quot; or &quot;bus off&quot;. Therefore this bit is active when there is no activity on the bus.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -302,7 +400,7 @@
 				<ipxact:register>
 					<ipxact:name>SETTINGS</ipxact:name>
 					<ipxact:displayName>SETTINGS</ipxact:displayName>
-					<ipxact:description>Register with enable bit of the controller.The configuration of retransmission limit for failed frames is also located in this register. Furthermore configuration of ISO FD CAN or CAN FD 1.0 is done here. Every bit is active in logic 1.</ipxact:description>
+					<ipxact:description>This register enables the whole CAN FD Core, configures FD Type, Internal loopback and retransmission options.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -311,7 +409,7 @@
 					<ipxact:field>
 						<ipxact:name>RTRLE</ipxact:name>
 						<ipxact:displayName>RTRLE</ipxact:displayName>
-						<ipxact:description>Active value means that limit of retransmission is enabled.</ipxact:description>
+						<ipxact:description>Retransmitt limit enable. If enabled the core only attempts to transmitt each frame up to RTR_TH times. If not succesfull the frame is dropped from TX Buffer.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -319,6 +417,20 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RTRLE_ENABLED</ipxact:name>
+								<ipxact:displayName>RTRLE_ENABLED</ipxact:displayName>
+								<ipxact:description>Retransmitt limit is enabled.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RTRLE_DISABLED</ipxact:name>
+								<ipxact:displayName>RTRLE_DISABLED</ipxact:displayName>
+								<ipxact:description>Retransmitt limit is disabled.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RTR_TH</ipxact:name>
@@ -335,7 +447,7 @@
 					<ipxact:field>
 						<ipxact:name>INT_LOOP</ipxact:name>
 						<ipxact:displayName>INT_LOOP</ipxact:displayName>
-						<ipxact:description>Active value in this bit means that internal loop-back option is permanently enabled (used only for testing).</ipxact:description>
+						<ipxact:description>Internal loop-back option (recommended  only for testing). If internal loopback options is enabled the Core automatically receive any dominant bit it transmitts.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -343,6 +455,20 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>INT_LOOP_DISABLED</ipxact:name>
+								<ipxact:displayName>INT_LOOP_DISABLED</ipxact:displayName>
+								<ipxact:description>Internal loop-back is disabled.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>INT_LOOP_ENABLED</ipxact:name>
+								<ipxact:displayName>INT_LOOP_ENABLED</ipxact:displayName>
+								<ipxact:description>Internal loop-back is enabled.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ENA</ipxact:name>
@@ -359,11 +485,13 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>ENABLED</ipxact:name>
 								<ipxact:displayName>ENABLED</ipxact:displayName>
+								<ipxact:description>The CAN Core is enabled.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>DISABLED</ipxact:name>
 								<ipxact:displayName>DISABLED</ipxact:displayName>
+								<ipxact:description>The CAN Core is disabled.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -383,11 +511,13 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>ISO_FD</ipxact:name>
 								<ipxact:displayName>ISO_FD</ipxact:displayName>
+								<ipxact:description>The CAN Controller conforms to ISO FD specification.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>NON_ISO_FD</ipxact:name>
 								<ipxact:displayName>NON_ISO_FD</ipxact:displayName>
+								<ipxact:description>The CAN Controller conforms to NON ISO FD specification.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -536,7 +666,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_ENA</ipxact:name>
 					<ipxact:displayName>INT_ENA</ipxact:displayName>
-					<ipxact:description>Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed</ipxact:description>
+					<ipxact:description>Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hA</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -685,7 +815,7 @@
 					<ipxact:field>
 						<ipxact:name>PH2_FD</ipxact:name>
 						<ipxact:displayName>PH2_FD</ipxact:displayName>
-						<ipxact:description>Phase 2 segment</ipxact:description>
+						<ipxact:description>Phase 2 segment - Data bit time</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -697,7 +827,7 @@
 					<ipxact:field>
 						<ipxact:name>PROP_FD</ipxact:name>
 						<ipxact:displayName>PROP_FD</ipxact:displayName>
-						<ipxact:description>Propagation segment</ipxact:description>
+						<ipxact:description>Propagation segment - Data bit time</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -709,7 +839,7 @@
 					<ipxact:field>
 						<ipxact:name>PH1_FD</ipxact:name>
 						<ipxact:displayName>PH1_FD</ipxact:displayName>
-						<ipxact:description>Phase 1 segment</ipxact:description>
+						<ipxact:description>Phase 1 segment - Data bit time</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -731,7 +861,7 @@
 					<ipxact:field>
 						<ipxact:name>PROP</ipxact:name>
 						<ipxact:displayName>PROP</ipxact:displayName>
-						<ipxact:description>Propagation segment</ipxact:description>
+						<ipxact:description>Propagation segment - Nominal bit time</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -743,7 +873,7 @@
 					<ipxact:field>
 						<ipxact:name>PH1</ipxact:name>
 						<ipxact:displayName>PH1</ipxact:displayName>
-						<ipxact:description>Phase 1 segment</ipxact:description>
+						<ipxact:description>Phase 1 segment - Nominal bit time</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -755,7 +885,7 @@
 					<ipxact:field>
 						<ipxact:name>PH2</ipxact:name>
 						<ipxact:displayName>PH2</ipxact:displayName>
-						<ipxact:description>Phase 2 segment</ipxact:description>
+						<ipxact:description>Phase 2 segment - Nominal bit time</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -768,7 +898,7 @@
 				<ipxact:register>
 					<ipxact:name>ALC</ipxact:name>
 					<ipxact:displayName>ALC</ipxact:displayName>
-					<ipxact:description>Arbitration lost capture value</ipxact:description>
+					<ipxact:description>Arbitration lost capture register. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -777,7 +907,7 @@
 					<ipxact:field>
 						<ipxact:name>ALC_VAL</ipxact:name>
 						<ipxact:displayName>ALC_VAL</ipxact:displayName>
-						<ipxact:description>Arbitration lost capture value.</ipxact:description>
+						<ipxact:description>Arbitration lost capture value. Not supported yet. Do not use!</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -799,7 +929,7 @@
 					<ipxact:field>
 						<ipxact:name>SJW</ipxact:name>
 						<ipxact:displayName>SJW</ipxact:displayName>
-						<ipxact:description>Synchronisation jump width in Nominal bit time.</ipxact:description>
+						<ipxact:description>Synchronisation jump width - Nominal bit time.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -811,7 +941,7 @@
 					<ipxact:field>
 						<ipxact:name>SJW_FD</ipxact:name>
 						<ipxact:displayName>SJW_FD</ipxact:displayName>
-						<ipxact:description>Synchronisation jump widh in Data bit time.</ipxact:description>
+						<ipxact:description>Synchronisation jump widh - Data bit time.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -824,7 +954,7 @@
 				<ipxact:register>
 					<ipxact:name>BRP</ipxact:name>
 					<ipxact:displayName>BRP</ipxact:displayName>
-					<ipxact:description>Baud rate Prescaler register for Nominal bit time. Specifies time quanta duration.</ipxact:description>
+					<ipxact:description>Baud rate Prescaler register - Nominal bit time. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h12</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -833,7 +963,7 @@
 					<ipxact:field>
 						<ipxact:name>BRP</ipxact:name>
 						<ipxact:displayName>BRP</ipxact:displayName>
-						<ipxact:description>Baud-Rate Prescaler</ipxact:description>
+						<ipxact:description>Specifies time quanta duration for nominal bit time.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -846,7 +976,7 @@
 				<ipxact:register>
 					<ipxact:name>BRP_FD</ipxact:name>
 					<ipxact:displayName>BRP_FD</ipxact:displayName>
-					<ipxact:description>Baud rate Prescaler register for Data bit time. Specifies time quanta duration.</ipxact:description>
+					<ipxact:description>Baud rate Prescaler register - Data bit time. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h13</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -855,7 +985,7 @@
 					<ipxact:field>
 						<ipxact:name>BRP_FD</ipxact:name>
 						<ipxact:displayName>BRP_FD</ipxact:displayName>
-						<ipxact:description>Baud rate Prescaler FD</ipxact:description>
+						<ipxact:description>Specifies time quanta duration for data bit time.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -868,7 +998,7 @@
 				<ipxact:register>
 					<ipxact:name>EWL</ipxact:name>
 					<ipxact:displayName>EWL</ipxact:displayName>
-					<ipxact:description>Error warning limit register. If an error warning limit is reached interrupt can be called. Error warning limit indicatea heavily disturbed bus. Note that according to CAN specification this value is fixed at 96 and should not be configurable! The configuration of this value is one of the extra features of this IP Core.</ipxact:description>
+					<ipxact:description>Error warning limit register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -876,8 +1006,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>EWL_LIMIT</ipxact:name>
-						<ipxact:displayName>EWL</ipxact:displayName>
-						<ipxact:description>Error warning limit</ipxact:description>
+						<ipxact:displayName>EWL_LIMIT</ipxact:displayName>
+						<ipxact:description>Error warning limit.  If an error warning limit is reached interrupt can be called. Error warning limit indicates heavily disturbed bus. Note that according to CAN specification this value is fixed at 96 and should not be configurable! The configuration of this value is one of the extra features of this IP Core.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -890,7 +1020,7 @@
 				<ipxact:register>
 					<ipxact:name>ERP</ipxact:name>
 					<ipxact:displayName>ERP</ipxact:displayName>
-					<ipxact:description>Error passive limit. When one of error counters (RXC/TXC) exceeds this value, it changes Fault confinement state to error passive. Note that according to CAN specification this value is fixed at 128 and should not be configurable! The configuration of this value is one of the extra features of this IP Core. Note that IP Core always turns to bus_off state once any error counter reaches 255!</ipxact:description>
+					<ipxact:description>Error passive limit register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h15</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -899,7 +1029,7 @@
 					<ipxact:field>
 						<ipxact:name>ERP_LIMIT</ipxact:name>
 						<ipxact:displayName>ERP_LIMIT</ipxact:displayName>
-						<ipxact:description>Error passive limit</ipxact:description>
+						<ipxact:description>Error passive limit. When one of error counters (RXC/TXC) exceeds this value, i Fault confinement state changes to error passive. Note that according to CAN specification this value is fixed at 128 and should not be configurable! The configuration of this value is one of the extra features of this IP Core. Note that IP Core always turns to bus_off state once any error counter reaches 255!</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -912,7 +1042,7 @@
 				<ipxact:register>
 					<ipxact:name>FAULT_STATE</ipxact:name>
 					<ipxact:displayName>FAULT_STATE</ipxact:displayName>
-					<ipxact:description>Fault confinement state of the node. This state can be manipulated by writing into registers RXC/TXC and ERP_LIMIT of ERP register. When these counters are set Fault confinement state changes automatically.</ipxact:description>
+					<ipxact:description>Fault confinement state of the node. This state can be manipulated by writes to CTR_PRES register. When these counters are set Fault confinement state changes automatically.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h16</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
