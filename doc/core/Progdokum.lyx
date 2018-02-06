@@ -27009,8 +27009,18 @@ filename "registerMap.lyx"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand include
+filename "CANFrameFormat.lyx"
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Chapter
-4.
+5.
  Testbench
 \end_layout
 
@@ -31033,7 +31043,7 @@ After sanity test runs with all configurations it prints out the results
 \end_layout
 
 \begin_layout Chapter
-5.
+6.
  Synthesis
 \end_layout
 
@@ -32425,7 +32435,7 @@ name "tab:Design-size-in"
 \end_layout
 
 \begin_layout Chapter
-6.
+7.
  FPGA Verification
 \end_layout
 
