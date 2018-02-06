@@ -629,7 +629,7 @@ begin
   --------------------------------------------------------
   -- Decoding of TXT buffer signals...
   --------------------------------------------------------
-  txt_buf_access   <= true when (adress(13 downto 10) = TX_BUFFER_BLOCK and scs='1'
+  txt_buf_access   <= true when (adress(11 downto 8) = TX_BUFFER_BLOCK and scs='1'
                                 and swr='1')
                            else
                       false;
@@ -788,12 +788,12 @@ begin
 		  --Writing the data--
 		  --------------------
 		  if(swr=ACT_SWR)then 
-    			case adress(13 downto 2) is
+    			case adress(11 downto 0) is
     			
     			---------------------------------------------------------  
-    			--MODE Register (Mode, Command, Status as in SJA1000)
+    			-- MODE, COMMAND and SETTINGS registers
     			---------------------------------------------------------   
-    			when MODE_REG_ADR =>    
+    			when MODE_ADR =>    
     
     			     --RTR_PREF,FDE,AFM,STM,LOM Bits
     					  write_be_vect(mode_reg, 1, 5, data_in, 1, 5, sbe);
@@ -824,9 +824,9 @@ begin
     					  write_be_s(FD_type, FD_TYPE_IND, data_in, sbe);     
     			
 			 ------------------------------------------------------------	  
- 			 --INT_REG (Interrupt register, Interrupt enable register)
+ 			 --INT and INT_ENA registers
  			 ------------------------------------------------------------
-    			when INTERRUPT_REG_ADR =>               
+    			when INT_ADR =>               
     			          
  			      --Interrupt enable register
  			      write_be_vect(int_ena_reg, 0, 10, data_in, 16, 26, sbe);
@@ -835,9 +835,9 @@ begin
     					  --(By read it is also erased)  
  			 
  			 ----------------------
- 			 --Bit timing register
+ 			 --BTR and BTR FD 
  			 -----------------------        
-    			when TIMING_REG_ADR => 
+    			when BTR_ADR => 
     			  
     			      write_be_vect(prop_norm, 0, 5, data_in, PROP_L, PROP_H, sbe);
     			      write_be_vect(ph1_norm, 0, 4, data_in, PH1_L, PH1_H, sbe);
@@ -847,10 +847,9 @@ begin
     			      write_be_vect(ph2_fd, 0, 3, data_in, PH2_FD_L, PH2_FD_H, sbe);
 			
 			 ----------------------------------------------------
-    			--Arbitration lost capture and error code Capture  
-    			--and Baud Rate prescaler		 
+    			--ALC, SJW, BRP, BRP_FD
     			----------------------------------------------------
-    			when ARB_ERROR_PRESC_ADR => 
+    			when ALC_ADR => 
     					   --Arbitration lost, Error code are read only
     					   
  					   --Baud rate prescaler register
@@ -860,9 +859,9 @@ begin
  					   write_be_vect(sjw_fd, 0, 3, data_in, SJW_FD_L, SJW_FD_H, sbe);
     			
     			---------------------------------------------------- 
-  			 --Error warning limit, error passive treshold	
+  			 -- EWL, ERP
   			 ----------------------------------------------------	   
-    			when ERROR_TH_ADR =>
+    			when EWL_ADR =>
 				           
 				     --Error warning limit
 				     write_be_vect(ewl, 0, 7, data_in, EWL_LIMIT_L, EWL_LIMIT_H, sbe);
@@ -871,17 +870,17 @@ begin
  					   write_be_vect(erp, 0, 7, data_in, ERP_LIMIT_L, ERP_LIMIT_H, sbe);
     			
     			----------------------------------------------------	   
-    			--Error counters, presetting
+    			-- CTR_PRES 
     			----------------------------------------------------	   
-    			when ERROR_COUNTERS_ADR => 
+    			when CTR_PRES_ADR => 
     			  
     			     write_be_vect(erctr_pres_value, 0, 8, data_in, CTR_PRES_VAL_L, CTR_PRES_VAL_H, sbe);
     			     write_be_vect(erctr_pres_mask, 0, 3, data_in, 9, 12, sbe);
     			   
     			----------------------------------------------------	   
-    			--Special error counters. Only erasable!
+    			-- ERR_NORM_ADR
     			----------------------------------------------------	
-    			when ERROR_COUNTERS_SPEC_ADR => 
+    			when ERR_NORM_ADR => 
     			  
     			     if (sbe(1) = '1') then
     					    erctr_pres_value         <=  (OTHERS=>'0');
@@ -953,13 +952,7 @@ begin
     					  write_be_s(txt2_arbit_allow, TXT2_ALLOW_IND, data_in, sbe);  
  					  write_be_s(txt_bufdir, BUF_DIR_IND, data_in, sbe);  
     				    write_be_s(txt_frame_swap, FRAME_SWAP_IND, data_in, sbe);  
-    								  
-    			----------------------------------------------------
-    			--TX Data registers
-    			----------------------------------------------------		  
-       -- Decoding of TXT buffer signals is combinational, due to this reason
-       -- access into this location was replaced with combinational decoder!
-    			
+  								  
     			--------------------------------------
     			--Recieve frame counter presetting
     			--------------------------------------
@@ -983,7 +976,7 @@ begin
             write_be_vect(log_trig_config, 0, 31, data_in, 0, 31, sbe);
     			when LOG_CAPT_CONFIG_ADR=>
     			     write_be_vect(log_capt_config, 0, 31, data_in, 0, 31, sbe);
-    			when LOG_CMD_ADR => 
+    			when LOG_COMMAND_ADR => 
     			    --LOG_DOWN,LOG_UP,LOG_ABT,LOG_STR
     			    write_be_vect(log_cmd, 0, 3, data_in, 0, 3, sbe);     
     			when others =>
@@ -998,7 +991,7 @@ begin
 		   
 		   data_out_int      <=  (OTHERS=>'0');
 		    
-    			case adress(13 downto 2) is
+    			case adress(11 downto 0) is
     			  
     			  --------------------------------------
     			  --Device ID
@@ -1009,7 +1002,7 @@ begin
   			   --------------------------------------
     			  --MODE Register (Mode, Command, Status of SJA1000)
 			   --------------------------------------  
-    			  when MODE_REG_ADR => 
+    			  when MODE_ADR => 
     			     
     			     --Mode register
     					  data_out_int               <=  (OTHERS=>'0');
@@ -1031,9 +1024,9 @@ begin
     					  data_out_int(FD_TYPE_IND)              <=  FD_type;
     					  
  				 ---------------------------------------------------------
- 				 --INT_REG (Interrupt register, Interrupt enable register)
+ 				 -- INT and INT_ENA
  				 ---------------------------------------------------------
-    			  when INTERRUPT_REG_ADR => 
+    			  when INT_ADR => 
     					  data_out_int               <=  (OTHERS=>'0');
     					  
     					  --Interrupt enable register
@@ -1048,9 +1041,9 @@ begin
   			       end if;
     			  
     			  ---------------------------------------------------------
- 				  --Bit timing registers
+ 				 -- BTR and BTR_FD
     			  ---------------------------------------------------------
- 				 when TIMING_REG_ADR => 
+ 				 when BTR_ADR => 
     					   data_out_int(PROP_H downto PROP_L)          <=  prop_norm;
     					   data_out_int(PH1_H downto PH1_L)            <=  ph1_norm;
     					   data_out_int(PH2_H downto PH2_L)            <=  ph2_norm;
@@ -1059,10 +1052,9 @@ begin
     					   data_out_int(PH2_FD_H downto PH2_FD_L)      <=  ph2_fd;
     			  
     			  ----------------------------------------------------------
-    			  --Arbitration lost capture register
-         -- Baud rate prescaler register
+    			  -- ALC, SJW, BRP, BRP_FD
          ----------------------------------------------------------
-    			  when ARB_ERROR_PRESC_ADR =>
+    			  when ALC_ADR =>
     					   data_out_int                                  <=  (OTHERS =>'0');
     					   data_out_int(ALC_VAL_H downto ALC_VAL_L)      <=  
     					        stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW); 
@@ -1074,10 +1066,9 @@ begin
     					   data_out_int(SJW_FD_H downto SJW_FD_L)    <=  sjw_fd;
     					   
 				  ----------------------------------------------------------
-    			   --Error warning limit, error passive treshold
-          -- Fault confinement state
+    			   -- EWL, ERP and FAULT_STATE
           ----------------------------------------------------------
-    			   when ERROR_TH_ADR =>
+    			   when EWL_ADR =>
     			   
     			     --Error warning limit 
     					  data_out_int(EWL_LIMIT_H downto EWL_LIMIT_L)    <=  ewl; 
@@ -1116,9 +1107,9 @@ begin
     					   data_out_int(31 downto 19)<=(OTHERS=>'0');
     			   
     			   ----------------------------------------------------------
-    			   --Error counters (NORMAL)
+    			   -- RXC, TXC 
     			   ----------------------------------------------------------
-    			   when ERROR_COUNTERS_ADR => 
+    			   when RXC_ADR => 
     					  data_out_int                   <=  (OTHERS=>'0');
     					  data_out_int(8 downto 0)       <=  
     					       stat_bus(STAT_RX_COUNTER_HIGH downto 
@@ -1128,9 +1119,9 @@ begin
     					                STAT_TX_COUNTER_LOW);
     					
     					-------------------------------------------------------- 
-    					--Error counters special  
+    					-- ERR_NORM, ERR_FD
     					--------------------------------------------------------
-    			   when ERROR_COUNTERS_SPEC_ADR => 
+    			   when ERR_NORM_ADR => 
     					  data_out_int                   <=  (OTHERS=>'0');
     					  data_out_int(ERR_NORM_VAL_H downto ERR_NORM_VAL_L)  <=  
     					           stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto 
@@ -1235,9 +1226,9 @@ begin
     					  data_out_int(31 downto 20)     <=  (OTHERS=>'0');
     					
     			   -------------------------------------------------------
-    			   --RX_INFO_1 register
+    			   -- RX_STATUS, RX_MC, RX_MF
     			   -------------------------------------------------------  
-    			   when RX_INFO_1_ADR => 
+    			   when RX_STATUS_ADR => 
     					  data_out_int(RX_EMPTY_IND)               <=  rx_empty;
     					  data_out_int(RX_FULL_IND)                <=  rx_full;
     					  
@@ -1247,9 +1238,9 @@ begin
     					            <=  rx_mem_free;
     			   
     			   -------------------------------------------------------
-    			   --RX_INFO_2 register
+    			   -- RX_BUFF_SIZE, RX_WPP_ADR, RX_RPP_ADR
     			   -------------------------------------------------------  
-    			   when RX_INFO_2_ADR =>
+    			   when RX_BUFF_SIZE_ADR =>
     					  data_out_int(31 downto 0)      <=  (OTHERS=>'0');
     					  data_out_int(RX_BUFF_SIZE_VALUE_H downto RX_BUFF_SIZE_VALUE_L)
     					           <= rx_buf_size;
@@ -1327,6 +1318,10 @@ begin
     					  data_out_int                     <=  log_trig_config;
     			   when LOG_CAPT_CONFIG_ADR=>
     					  data_out_int                     <=  log_capt_config;
+ 					
+ 					------------------------------------------------------- 
+ 			    --LOG_STATUS, LOG_WPP, LOG_RPP
+ 			    -------------------------------------------------------  
     			   when LOG_STATUS_ADR=>
     					  --Logger status
     					  if(log_state_out=config)then 
@@ -1369,7 +1364,7 @@ begin
  			   ------------------------------------------------------- 
  			   --DEBUG register
  			   -------------------------------------------------------  
-  			    when DEBUG_REG_ADR =>
+  			    when DEBUG_REGISTER_ADR =>
   			      data_out_int(7 downto 3)         <= (OTHERS =>'0');
   			      data_out_int(STUFF_COUNT_H downto STUFF_COUNT_L) <= 
   			          stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW);
@@ -1382,6 +1377,7 @@ begin
  			   ------------------------------------------------------- 
     				 when YOLO_REG_ADR =>
     				     data_out_int             <=  x"DEADBEEF";
+    				     
     			   when others=>
     			  end case;    
 		  end if;
@@ -1402,7 +1398,7 @@ begin
 		                            COMP_TYPE_ADRESS_LOWER)=CAN_COMPONENT_TYPE and 
 		                     adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER)=
 		                                std_logic_vector(to_unsigned(ID,4)) and
-		                     adress(13 downto 2)=RX_DATA_ADR and
+		                     adress(11 downto 0)=RX_DATA_ADR and
 		                     RX_buff_read_first = false)
 		                     else
 		                '0';
