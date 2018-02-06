@@ -1195,27 +1195,27 @@ begin
     					  data_out_int(15 downto 12)     <=  filter_ran_ctrl;
     					  
     					  if (sup_filtA) then
-    					    data_out_int(SUP_FILTA_IND) <= '1';
+    					    data_out_int(SFA_IND) <= '1';
  					  else
- 					    data_out_int(SUP_FILTA_IND) <= '0';
+ 					    data_out_int(SFA_IND) <= '0';
  					  end if;
  					  
  					  if (sup_filtB) then
-    					    data_out_int(SUP_FILTB_IND) <= '1';
+    					    data_out_int(SFB_IND) <= '1';
  					  else
- 					    data_out_int(SUP_FILTB_IND) <= '0';
+ 					    data_out_int(SFB_IND) <= '0';
  					  end if;
  					  
  					  if (sup_filtC) then
-    					    data_out_int(SUP_FILTC_IND) <= '1';
+    					    data_out_int(SFC_IND) <= '1';
  					  else
- 					    data_out_int(SUP_FILTC_IND) <= '0';
+ 					    data_out_int(SFC_IND) <= '0';
  					  end if;
  					  
  					  if (sup_range) then
-    					    data_out_int(SUP_RANGE_IND) <= '1';
+    					    data_out_int(SFR_IND) <= '1';
  					  else
- 					    data_out_int(SUP_RANGE_IND) <= '0';
+ 					    data_out_int(SFR_IND) <= '0';
  					  end if;
  					  
     					  data_out_int(31 downto 20)     <=  (OTHERS=>'0');

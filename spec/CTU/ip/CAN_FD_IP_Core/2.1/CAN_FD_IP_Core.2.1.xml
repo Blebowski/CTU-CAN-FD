@@ -1110,37 +1110,37 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_STATUS</ipxact:name>
 					<ipxact:displayName>FILTER_STATUS</ipxact:displayName>
-					<ipxact:description>This register provides information about whether the Core is synthesized with fillter support.</ipxact:description>
+					<ipxact:description>This register provides information if the Core is synthesized with fillter support.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h46</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>SUP_FILTA</ipxact:name>
+						<ipxact:name>SFA</ipxact:name>
 						<ipxact:displayName>SUP_FILTA</ipxact:displayName>
-						<ipxact:description>Is logic 1 when the Core was synthesized with &quot;sup_filtA = true&quot; Otherwise is logic 0.</ipxact:description>
+						<ipxact:description>Logic 1 when the Core was synthesized with &quot;sup_filtA = true&quot; Otherwise logic 0.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>SUP_FILTB</ipxact:name>
+						<ipxact:name>SFB</ipxact:name>
 						<ipxact:displayName>SUP_FILTB</ipxact:displayName>
-						<ipxact:description>Is logic 1 when the Core was synthesized with &quot;sup_filtB = true&quot; Otherwise is logic 0.</ipxact:description>
+						<ipxact:description>Logic 1 when the Core was synthesized with &quot;sup_filtB = true&quot; Otherwise logic 0.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>SUP_RANGE</ipxact:name>
+						<ipxact:name>SFR</ipxact:name>
 						<ipxact:displayName>SUP_RANGE</ipxact:displayName>
-						<ipxact:description>Is logic 1 when the Core was synthesized with &quot;sup_range = true&quot; Otherwise is logic 0.</ipxact:description>
+						<ipxact:description>Logic 1 when the Core was synthesized with &quot;sup_range = true&quot; Otherwise logic 0.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>SUP_FILTC</ipxact:name>
+						<ipxact:name>SFC</ipxact:name>
 						<ipxact:displayName>SUP_FILTC</ipxact:displayName>
-						<ipxact:description>Is logic 1 when the Core was synthesized with &quot;sup_filtC = true&quot; Otherwise is logic 0.</ipxact:description>
+						<ipxact:description>Logic 1 when the Core was synthesized with &quot;sup_filtC = true&quot; Otherwise is logic 0.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
@@ -2880,7 +2880,7 @@
 					<ipxact:field>
 						<ipxact:name>PTX</ipxact:name>
 						<ipxact:displayName>PTX</ipxact:displayName>
-						<ipxact:description>Preset value fromCTR_PRES_VAL to TX Error counter.</ipxact:description>
+						<ipxact:description>Preset value from CTR_PRES_VAL to TX Error counter.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2906,7 +2906,7 @@
 					<ipxact:field>
 						<ipxact:name>ENORM</ipxact:name>
 						<ipxact:displayName>ENORM</ipxact:displayName>
-						<ipxact:description>Erase Nominal bit time error counter</ipxact:description>
+						<ipxact:description>Erase Nominal bit time error counter.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2919,7 +2919,7 @@
 					<ipxact:field>
 						<ipxact:name>EFD</ipxact:name>
 						<ipxact:displayName>EFD</ipxact:displayName>
-						<ipxact:description>Erase Data bit time error counter</ipxact:description>
+						<ipxact:description>Erase Data bit time error counter.</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>

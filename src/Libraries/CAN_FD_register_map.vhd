@@ -665,13 +665,13 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_STATUS register
   --
-  -- This register provides information about whether the Core is synthesized wi
-  -- th fillter support.
+  -- This register provides information if the Core is synthesized with fillter 
+  -- support.
   ------------------------------------------------------------------------------
-  constant SUP_FILTA_IND         : natural := 16;
-  constant SUP_FILTB_IND         : natural := 17;
-  constant SUP_FILTC_IND         : natural := 18;
-  constant SUP_RANGE_IND         : natural := 19;
+  constant SFA_IND               : natural := 16;
+  constant SFB_IND               : natural := 17;
+  constant SFC_IND               : natural := 18;
+  constant SFR_IND               : natural := 19;
 
   -- FILTER_STATUS register reset values
 
