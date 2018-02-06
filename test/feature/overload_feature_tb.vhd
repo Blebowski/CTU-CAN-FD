@@ -42,6 +42,7 @@
 -- Revision History:
 --
 --    30.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -128,7 +129,7 @@ package body overload_feature is
     end if;
     
     --Read overload from debug register
-    CAN_read(r_data,DEBUG_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,DEBUG_REGISTER_ADR,ID_1,mem_bus_1);
     if(r_data(PC_OVR_IND)='0')then
       outcome:=false;
     end if;
@@ -160,7 +161,7 @@ package body overload_feature is
     end if;
     
     --Read overload from debug register
-    CAN_read(r_data,DEBUG_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,DEBUG_REGISTER_ADR,ID_1,mem_bus_1);
     if(r_data(11)='0')then
       outcome:=false;
     end if;

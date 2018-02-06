@@ -38,63 +38,65 @@
 #ifndef __CTU_CAN_FD__
 #define __CTU_CAN_FD__
 
-/* CAN_FD_32bit_regs memory map */
-enum can_fd_32bit_regs {
-	DEVICE_ID                 = 0x0,
-	MODE_REG                  = 0x4,
-	INTERRUPT_REG             = 0x8,
-	TIMING_REG                = 0xc,
-	ARB_ERROR_PRESC          = 0x10,
-	ERROR_TH                 = 0x14,
-	ERROR_COUNTERS           = 0x18,
-	ERROR_COUNTERS_SPEC      = 0x1c,
-	CTR_PRES                 = 0x20,
-	FILTER_A_VAL             = 0x24,
-	FILTER_A_MASK            = 0x28,
-	FILTER_B_VAL             = 0x2c,
-	FILTER_B_MASK            = 0x30,
-	FILTER_C_VAL             = 0x34,
-	FILTER_C_MASK            = 0x38,
-	FILTER_RAN_LOW           = 0x3c,
-	FILTER_RAN_HIGH          = 0x40,
-	FILTER_CONTROL           = 0x44,
-	RX_INFO_1                = 0x48,
-	RX_INFO_2                = 0x4c,
-	RX_DATA                  = 0x50,
-	TRV_DELAY                = 0x54,
-	TX_STATUS                = 0x58,
-	TX_SETTINGS              = 0x5c,
-	ERR_CAPT                 = 0x60,
-	RX_COUNTER               = 0xac,
-	TX_COUNTER               = 0xb0,
-	LOG_TRIG_CONFIG          = 0xb8,
-	LOG_CAPT_CONFIG          = 0xc0,
-	LOG_STATUS               = 0xc4,
-	LOG_CMD                  = 0xc8,
-	LOG_CAPT_EVENT_1         = 0xcc,
-	LOG_CAPT_EVENT_2         = 0xd0,
-	DEBUG_REG                = 0xd4,
-	YOLO_REG                 = 0xd8,
-	TX_DATA_1               = 0x100,
-	TX_DATA_2               = 0x104,
-	TX_DATA_3               = 0x108,
-	TX_DATA_4               = 0x10c,
-	TX_DATA_5               = 0x110,
-	TX_DATA_6               = 0x114,
-	TX_DATA_7               = 0x118,
-	TX_DATA_8               = 0x11c,
-	TX_DATA_9               = 0x120,
-	TX_DATA_10              = 0x124,
-	TX_DATA_11              = 0x128,
-	TX_DATA_12              = 0x12c,
-	TX_DATA_13              = 0x130,
-	TX_DATA_14              = 0x134,
-	TX_DATA_15              = 0x138,
-	TX_DATA_16              = 0x13c,
-	TX_DATA_17              = 0x140,
-	TX_DATA_18              = 0x144,
-	TX_DATA_19              = 0x148,
-	TX_DATA_20              = 0x14c,
+/* CAN_FD_8bit_regs memory map */
+enum can_fd_8bit_regs {
+	DEVICE_ID              = 0x0,
+	MODE                   = 0x4,
+	COMMAND                = 0x5,
+	STATUS                 = 0x6,
+	SETTINGS               = 0x7,
+	INT                    = 0x8,
+	INT_ENA                = 0xa,
+	BTR                    = 0xc,
+	BTR_FD                 = 0xe,
+	ALC                   = 0x10,
+	SJW                   = 0x11,
+	BRP                   = 0x12,
+	BRP_FD                = 0x13,
+	EWL                   = 0x14,
+	ERP                   = 0x15,
+	FAULT_STATE           = 0x16,
+	RXC                   = 0x18,
+	TXC                   = 0x1a,
+	ERR_NORM              = 0x1c,
+	ERR_FD                = 0x1e,
+	CTR_PRES              = 0x20,
+	FILTER_A_MASK         = 0x24,
+	FILTER_A_VAL          = 0x28,
+	FILTER_B_MASK         = 0x2c,
+	FILTER_B_VAL          = 0x30,
+	FILTER_C_MASK         = 0x34,
+	FILTER_C_VAL          = 0x38,
+	FILTER_RAN_LOW        = 0x3c,
+	FILTER_RAN_HIGH       = 0x40,
+	FILTER_CONTROL        = 0x44,
+	FILTER_STATUS         = 0x46,
+	RX_STATUS             = 0x48,
+	RX_MC                 = 0x49,
+	RX_MF                 = 0x4a,
+	RX_BUFF_SIZE          = 0x4c,
+	RX_WPP                = 0x4d,
+	RX_RPP                = 0x4e,
+	RX_DATA               = 0x50,
+	TRV_DELAY             = 0x54,
+	TX_STATUS             = 0x58,
+	TX_SETTINGS           = 0x5c,
+	ERR_CAPT              = 0x60,
+	RX_COUNTER            = 0xac,
+	TX_COUNTER            = 0xb0,
+	LOG_TRIG_CONFIG       = 0xb8,
+	LOG_CAPT_CONFIG       = 0xc0,
+	LOG_STATUS            = 0xc4,
+	LOG_WPP               = 0xc6,
+	LOG_RPP               = 0xc7,
+	LOG_COMMAND           = 0xc8,
+	LOG_CAPT_EVENT_1      = 0xcc,
+	LOG_CAPT_EVENT_2      = 0xd0,
+	DEBUG_REGISTER        = 0xd4,
+	YOLO_REG              = 0xd8,
+	TX_DATA_1            = 0x100,
+	TX_DATA_2            = 0x104,
+	TX_DATA_20           = 0x14c,
 };
 
 
@@ -107,9 +109,9 @@ union device_id {
 	} s;
 };
 
-union mode_reg {
+union mode_command_status_settings {
 	uint32_t u32;
-	struct mode_reg_s {
+	struct mode_command_status_settings_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* MODE */
 		uint32_t rst                     : 1;
@@ -172,9 +174,9 @@ union mode_reg {
 	} s;
 };
 
-union interrupt_reg {
+union int_int_ena {
 	uint32_t u32;
-	struct interrupt_reg_s {
+	struct int_int_ena_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT */
 		uint32_t ri                      : 1;
@@ -231,9 +233,9 @@ union interrupt_reg {
 	} s;
 };
 
-union timing_reg {
+union btr_btr_fd {
 	uint32_t u32;
-	struct timing_reg_s {
+	struct btr_btr_fd_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* BTR */
 		uint32_t prop                    : 6;
@@ -258,9 +260,9 @@ union timing_reg {
 	} s;
 };
 
-union arb_error_presc {
+union alc_sjw_brp_brp_fd {
 	uint32_t u32;
-	struct arb_error_presc_s {
+	struct alc_sjw_brp_brp_fd_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* ALC */
 		uint32_t alc_val                 : 5;
@@ -287,9 +289,9 @@ union arb_error_presc {
 	} s;
 };
 
-union error_th {
+union ewl_erp_fault_state {
 	uint32_t u32;
-	struct error_th_s {
+	struct ewl_erp_fault_state_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* EWL */
 		uint32_t ewl_limit               : 8;
@@ -311,9 +313,9 @@ union error_th {
 	} s;
 };
 
-union error_counters {
+union rxc_txc {
 	uint32_t u32;
-	struct error_counters_s {
+	struct rxc_txc_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RXC */
 		uint32_t rxc_val                : 16;
@@ -326,9 +328,9 @@ union error_counters {
 	} s;
 };
 
-union error_counters_spec {
+union err_norm_err_fd {
 	uint32_t u32;
-	struct error_counters_spec_s {
+	struct err_norm_err_fd_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* ERR_NORM */
 		uint32_t err_norm_val           : 16;
@@ -363,9 +365,9 @@ union ctr_pres {
 	} s;
 };
 
-union filter_a_val {
+union filter_a_mask {
 	uint32_t u32;
-	struct filter_a_val_s {
+	struct filter_a_mask_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_A_MASK */
 		uint32_t bit_mask_a_val         : 29;
@@ -377,9 +379,9 @@ union filter_a_val {
 	} s;
 };
 
-union filter_a_mask {
+union filter_a_val {
 	uint32_t u32;
-	struct filter_a_mask_s {
+	struct filter_a_val_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_A_VAL */
 		uint32_t bit_val_a_val          : 29;
@@ -391,9 +393,9 @@ union filter_a_mask {
 	} s;
 };
 
-union filter_b_val {
+union filter_b_mask {
 	uint32_t u32;
-	struct filter_b_val_s {
+	struct filter_b_mask_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_B_MASK */
 		uint32_t bit_mask_b_val         : 29;
@@ -405,9 +407,9 @@ union filter_b_val {
 	} s;
 };
 
-union filter_b_mask {
+union filter_b_val {
 	uint32_t u32;
-	struct filter_b_mask_s {
+	struct filter_b_val_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_B_VAL */
 		uint32_t bit_val_b_val          : 29;
@@ -419,9 +421,9 @@ union filter_b_mask {
 	} s;
 };
 
-union filter_c_val {
+union filter_c_mask {
 	uint32_t u32;
-	struct filter_c_val_s {
+	struct filter_c_mask_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_C_MASK */
 		uint32_t bit_mask_c_val         : 29;
@@ -433,9 +435,9 @@ union filter_c_val {
 	} s;
 };
 
-union filter_c_mask {
+union filter_c_val {
 	uint32_t u32;
-	struct filter_c_mask_s {
+	struct filter_c_val_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_C_VAL */
 		uint32_t bit_val_c_val          : 29;
@@ -475,9 +477,9 @@ union filter_ran_high {
 	} s;
 };
 
-union filter_control {
+union filter_control_filter_status {
 	uint32_t u32;
-	struct filter_control_s {
+	struct filter_control_filter_status_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_CONTROL */
 		uint32_t filt_a_basic            : 1;
@@ -528,9 +530,9 @@ union filter_control {
 	} s;
 };
 
-union rx_info_1 {
+union rx_status_rx_mc_rx_mf {
 	uint32_t u32;
-	struct rx_info_1_s {
+	struct rx_status_rx_mc_rx_mf_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RX_STATUS */
 		uint32_t rx_empty                : 1;
@@ -552,9 +554,9 @@ union rx_info_1 {
 	} s;
 };
 
-union rx_info_2 {
+union rx_buff_size_rx_wpp_rx_rpp {
 	uint32_t u32;
-	struct rx_info_2_s {
+	struct rx_buff_size_rx_wpp_rx_rpp_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RX_BUFF_SIZE */
 		uint32_t rx_buff_size_value      : 8;
@@ -766,9 +768,9 @@ union log_capt_config {
 	} s;
 };
 
-union log_status {
+union log_status_log_wpp_log_rpp {
 	uint32_t u32;
-	struct log_status_s {
+	struct log_status_log_wpp_log_rpp_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* LOG_STATUS */
 		uint32_t log_cfg                 : 1;
@@ -794,9 +796,9 @@ union log_status {
 	} s;
 };
 
-union log_cmd {
+union log_command {
 	uint32_t u32;
-	struct log_cmd_s {
+	struct log_command_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* LOG_COMMAND */
 		uint32_t log_str                 : 1;
@@ -838,9 +840,9 @@ union log_capt_event_2 {
 	} s;
 };
 
-union debug_reg {
+union debug_register {
 	uint32_t u32;
-	struct debug_reg_s {
+	struct debug_register_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* DEBUG_REGISTER */
 		uint32_t stuff_count             : 3;
@@ -873,6 +875,30 @@ union yolo_reg {
 	struct yolo_reg_s {
   /* YOLO_REG */
 		uint32_t yolo_val               : 32;
+	} s;
+};
+
+union tx_data_1 {
+	uint32_t u32;
+	struct tx_data_1_s {
+  /* TX_DATA_1 */
+		uint32_t tx_data_1              : 32;
+	} s;
+};
+
+union tx_data_2 {
+	uint32_t u32;
+	struct tx_data_2_s {
+  /* TX_DATA_2 */
+		uint32_t tx_data_2              : 32;
+	} s;
+};
+
+union tx_data_20 {
+	uint32_t u32;
+	struct tx_data_20_s {
+  /* TX_DATA_20 */
+		uint32_t tx_data_20             : 32;
 	} s;
 };
 

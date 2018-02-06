@@ -7,12 +7,12 @@
 	<ipxact:memoryMaps>
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_8bit_regs</ipxact:name>
-			<ipxact:displayName>CAN_FD_registers</ipxact:displayName>
-			<ipxact:description>Register map for CAN FD IP Core</ipxact:description>
+			<ipxact:displayName>CAN FD memory map</ipxact:displayName>
+			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported and byte or half word access is executed via byte enable signal. The memory is organized as big endian. Write to read only memory location will have no effect. Read from write only memory location will zeroes. The register map consists of following memory regions:</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
-				<ipxact:displayName>CAN FD control registers</ipxact:displayName>
-				<ipxact:description>Control registers memory map.</ipxact:description>
+				<ipxact:displayName>Control registers</ipxact:displayName>
+				<ipxact:description>Control registers memory region.</ipxact:description>
 				<ipxact:baseAddress>'h0</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
@@ -404,6 +404,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RI</ipxact:name>
+						<ipxact:displayName>RI</ipxact:displayName>
+						<ipxact:description>Frame Received interrupt</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -415,6 +417,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TI</ipxact:name>
+						<ipxact:displayName>TI</ipxact:displayName>
+						<ipxact:description>Frame transceived interrupt</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -426,6 +430,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EI</ipxact:name>
+						<ipxact:displayName>EI</ipxact:displayName>
+						<ipxact:description>Error warning limit reached interrupt</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -437,6 +443,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
+						<ipxact:displayName>DOI</ipxact:displayName>
+						<ipxact:description>Data overrun on RX Buffer Interrupt</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -448,6 +456,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EPI</ipxact:name>
+						<ipxact:displayName>EPI</ipxact:displayName>
+						<ipxact:description>Node became error passive or bus off interrupt</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -459,6 +469,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
+						<ipxact:displayName>ALI</ipxact:displayName>
+						<ipxact:description>Arbitration lost interrupt</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -470,6 +482,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
+						<ipxact:displayName>BEI</ipxact:displayName>
+						<ipxact:description>Bus Error interrupt</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -481,6 +495,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LFI</ipxact:name>
+						<ipxact:displayName>LFI</ipxact:displayName>
+						<ipxact:description>Event logging finished interrupt</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -492,6 +508,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RFI</ipxact:name>
+						<ipxact:displayName>RFI</ipxact:displayName>
+						<ipxact:description>Receive buffer full interrupt</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -503,6 +521,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
+						<ipxact:displayName>BSI</ipxact:displayName>
+						<ipxact:description>Bit-rate shifted interrupt</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -538,7 +558,7 @@
 					<ipxact:field>
 						<ipxact:name>DOIE</ipxact:name>
 						<ipxact:displayName>DOIE</ipxact:displayName>
-						<ipxact:description>Data Overrun interrupt enable</ipxact:description>
+						<ipxact:description>Data Overrun on RX Buffer interrupt enable</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -603,7 +623,7 @@
 					<ipxact:field>
 						<ipxact:name>LFIE</ipxact:name>
 						<ipxact:displayName>LFIE</ipxact:displayName>
-						<ipxact:description>Event logging interrupt enable</ipxact:description>
+						<ipxact:description>Event logging finished interrupt enable</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -947,7 +967,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_A_VAL</ipxact:name>
 						<ipxact:displayName>BIT_VAL_A_VAL</ipxact:displayName>
-						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_X_MASK register are compared.</ipxact:description>
+						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_A_MASK register are compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1006,6 +1026,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RX_MF_VALUE</ipxact:name>
+						<ipxact:displayName>RX_MF_VALUE</ipxact:displayName>
+						<ipxact:description>Number of free 32 bit words in the RX Buffer</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
@@ -2563,6 +2585,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>BIT_RAN_HIGH_VAL</ipxact:name>
+						<ipxact:displayName>BIT_RAN_HIGH_VAL</ipxact:displayName>
+						<ipxact:description>High threshold value</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2605,6 +2629,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_C_VAL</ipxact:name>
+						<ipxact:displayName>BIT_VAL_C_VAL</ipxact:displayName>
+						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_C_MASK register are compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2625,7 +2651,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_C_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_C_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_C_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2646,6 +2672,8 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>BIT_VAL_B_VAL</ipxact:name>
+						<ipxact:displayName>BIT_VAL_B_VAL</ipxact:displayName>
+						<ipxact:description>Bit Value for acceptance filters to be compared with income identifier. Only bits set in according to FILTER_B_MASK register are compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2666,7 +2694,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_B_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_B_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_B_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2688,7 +2716,7 @@
 					<ipxact:field>
 						<ipxact:name>BIT_MASK_A_VAL</ipxact:name>
 						<ipxact:displayName>BIT_MASK_A_VAL</ipxact:displayName>
-						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_X_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
+						<ipxact:description>Bit mask for acceptance filters. Logic 1 indicates this bit of Income identifier is compared with the same bit in FILTER_A_VALUE. Logic 0 indicates this bit is not compared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2709,6 +2737,8 @@
 					<ipxact:access>write-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>CTR_PRES_VAL</ipxact:name>
+						<ipxact:displayName>CTR_PRES_VAL</ipxact:displayName>
+						<ipxact:description>Counter value to preset</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2719,6 +2749,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PTX</ipxact:name>
+						<ipxact:displayName>PTX</ipxact:displayName>
+						<ipxact:description>Preset value fromCTR_PRES_VAL to TX Error counter.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2730,6 +2762,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PRX</ipxact:name>
+						<ipxact:displayName>PRX</ipxact:displayName>
+						<ipxact:description>Preset value fromCTR_PRES_VAL to RX Error counter.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2741,6 +2775,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ENORM</ipxact:name>
+						<ipxact:displayName>ENORM</ipxact:displayName>
+						<ipxact:description>Erase Nominal bit time error counter</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2752,6 +2788,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EFD</ipxact:name>
+						<ipxact:displayName>EFD</ipxact:displayName>
+						<ipxact:description>Erase Data bit time error counter</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2771,6 +2809,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>ERR_FD_VAL</ipxact:name>
+						<ipxact:displayName>ERR_FD_VAL</ipxact:displayName>
+						<ipxact:description>Number of errors in the Data bit time.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2844,6 +2884,54 @@
 						</ipxact:resets>
 						<ipxact:bitWidth>16</ipxact:bitWidth>
 						<ipxact:access>read-only</ipxact:access>
+					</ipxact:field>
+				</ipxact:register>
+			</ipxact:addressBlock>
+			<ipxact:addressBlock>
+				<ipxact:name>TX_Buffer</ipxact:name>
+				<ipxact:displayName>TX Buffer</ipxact:displayName>
+				<ipxact:description>Access to this memory region is mapped to TXT Buffer for CAN FD frame to be transmitted. The frame layout corresponds to the layout described in chapter TODO. First adress in the region (TXT_DATA_1) is mapped to FRAME_FORMAT_W, second address (TXT_DATA_2) is mapped to IDENTIFIER_W etc. The last address (TXT_DATA_20) is mapped to DATA_61_64_W. The adresses in between are mapped accordingly. This memory region is write only and read access is not valid. Additionally this region supports only 32 bit access.</ipxact:description>
+				<ipxact:baseAddress>'h100</ipxact:baseAddress>
+				<ipxact:range>256</ipxact:range>
+				<ipxact:width>32</ipxact:width>
+				<ipxact:volatile>false</ipxact:volatile>
+				<ipxact:register>
+					<ipxact:name>TX_DATA_1</ipxact:name>
+					<ipxact:displayName>TX_DATA_1</ipxact:displayName>
+					<ipxact:description>This adress corresponds to FRAME_FORM word</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h0</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TX_DATA_1</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TX_DATA_2</ipxact:name>
+					<ipxact:displayName>TX_DATA_2</ipxact:displayName>
+					<ipxact:description>This adress corresponds to IDENTIFIER word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TX_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TX_DATA_20</ipxact:name>
+					<ipxact:displayName>TX_DATA_20</ipxact:displayName>
+					<ipxact:description>This adress corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TX_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 			</ipxact:addressBlock>
@@ -3450,7 +3538,7 @@
 			<ipxact:description>CAN Frame format describtion in TXT and RX Buffer.</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>CAN_FD_Frame_format</ipxact:name>
-				<ipxact:displayName>CAN_FD_Frame_format</ipxact:displayName>
+				<ipxact:displayName>CAN FD Frame format</ipxact:displayName>
 				<ipxact:description>Register map with description of CAN Frame memory layout.</ipxact:description>
 				<ipxact:baseAddress>'h0</ipxact:baseAddress>
 				<ipxact:range>80</ipxact:range>

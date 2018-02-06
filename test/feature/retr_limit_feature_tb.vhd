@@ -40,6 +40,7 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -102,28 +103,28 @@ package body retr_limit_feature is
     -----------------------------------------------
     --Set node  2 to forbid acknowledge
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(ACF_IND) := '1';
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     -----------------------------------------------
     -- Erase error counters node 1
     -----------------------------------------------    
     r_data :=(OTHERS => '0');
     r_data(9):='1';
-    CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);    
+    CAN_write(r_data,CTR_PRES_ADR,ID_1,mem_bus_1);    
         
         
     -----------------------------------------------
     --Set node 1 retransmitt limit
     ----------------------------------------------- 
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     mode_backup:=r_data;   
     r_data(24):='1';
     rand_real_v(rand_ctr,rand_val);
     retr_th:=integer(15.0*rand_val);
     r_data(28 downto 25):= std_logic_vector(to_unsigned(retr_th,4));
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
            
     CAN_generate_frame(rand_ctr,CAN_frame);     
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent); 
@@ -138,7 +139,7 @@ package body retr_limit_feature is
     -- original transmittion does not count
     -- as retransmittion
     -----------------------------------------------  
-     CAN_read(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+     CAN_read(r_data,RXC_ADR,ID_1,mem_bus_1);
      
      if(to_integer(unsigned(r_data(31 downto 16))) /= 8*(retr_th+1))then       
        outcome:=false;
@@ -148,10 +149,10 @@ package body retr_limit_feature is
     -----------------------------------------------
     --Set node  2 to allow acknowledge again
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(7) := '0';
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);  
-    CAN_write(mode_backup,MODE_REG_ADR,ID_1,mem_bus_1); 
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);  
+    CAN_write(mode_backup,MODE_ADR,ID_1,mem_bus_1); 
     
   end procedure;
   

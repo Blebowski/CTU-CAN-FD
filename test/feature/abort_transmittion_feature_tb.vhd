@@ -48,6 +48,7 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    22.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -122,9 +123,9 @@ package body abort_transmittion_feature is
     ----------------------------------------------
     --Wait until unit turns transciever
     ----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     while (r_data(TS_IND)='0') loop
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     end loop;
     
     ----------------------------------------------
@@ -169,9 +170,9 @@ package body abort_transmittion_feature is
       ------------------------------------------------
       --Now send the command to abort the transmittion
       ------------------------------------------------
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
       r_data(9) := '1';  --Abort transmittion bit
-      CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
    
       ----------------------------------------------
       --Now wait for few clock cycles until Node aborts the
@@ -181,7 +182,7 @@ package body abort_transmittion_feature is
         wait until rising_edge(mem_bus_1.clk_sys);
       end loop;
     
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
       if (r_data(TS_IND)='1') then
         outcome:=false;
       end if;
@@ -217,8 +218,8 @@ package body abort_transmittion_feature is
       --Check that unit is now idle since it is
       -- after transmittion already
       ----------------------------------------------
-      CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
-      if (r_data(16+BS_IND)='0') then
+      CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
+      if (r_data(BS_IND)='0') then
         outcome:=false;
       end if;
     
@@ -238,7 +239,7 @@ package body abort_transmittion_feature is
     ------------------------------------------------
     r_data :=(OTHERS => '0');
     r_data(10 downto 9) := "11";
-    CAN_write(r_data,ERROR_COUNTERS_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,RXC_ADR,ID_1,mem_bus_1);
   
   end procedure;
   

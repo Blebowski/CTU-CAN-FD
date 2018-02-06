@@ -49,6 +49,7 @@
 -- Revision History:
 --
 --    23.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 -----------------------------------------------------------------------------------------------------------------
 
 Library ieee;
@@ -119,16 +120,16 @@ package body rtr_pref_feature is
     -- Set the RTR preferred behaviour to 
     -- send the DLC all zeroes..
     ---------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(RTR_PREF_IND) := '1';  --RTR preffered bit
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     ---------------------------------------------
     --Restart the content of the Node 2 RX Buffer
     ---------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(RRB_IND) := '1';  --Release recieve buffer bit
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     ----------------------------------------------
     --Insert the frame for transmittion
@@ -156,16 +157,16 @@ package body rtr_pref_feature is
     -- Set the RTR preferred behaviour to 
     -- send the original DLC
     ---------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
     r_data(RTR_PREF_IND) := '0';  --RTR preffered bit
-    CAN_write(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_write(r_data,MODE_ADR,ID_1,mem_bus_1);
     
     ---------------------------------------------
     --Restart the content of the Node 2 RX Buffer
     ---------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(RRB_IND) := '1';  --Release recieve buffer bit
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     ----------------------------------------------
     --Insert the frame for transmittion

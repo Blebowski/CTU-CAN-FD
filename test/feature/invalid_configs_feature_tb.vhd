@@ -41,6 +41,7 @@
 -- Revision History:
 --
 --    30.6.2016   Created file
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -104,9 +105,9 @@ package body invalid_config_feature is
     -----------------------------------------------
     --Release recieve buffer 2
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(RRB_IND) := '1';
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     
     -----------------------------------------------
@@ -137,9 +138,9 @@ package body invalid_config_feature is
     -----------------------------------------------
     --Release recieve buffer 2
     -----------------------------------------------
-    CAN_read(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_read(r_data,MODE_ADR,ID_2,mem_bus_2);
     r_data(RRB_IND) := '1';
-    CAN_write(r_data,MODE_REG_ADR,ID_2,mem_bus_2);
+    CAN_write(r_data,MODE_ADR,ID_2,mem_bus_2);
     
     
     -----------------------------------------------

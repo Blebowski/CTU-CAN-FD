@@ -58,6 +58,29 @@ set_global_assignment -name DEVICE_FILTER_PIN_COUNT 672
 set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 256
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_parameter -name cfg_indesdfdsfx 1
+set_parameter -name cfg_index 1
+set_parameter -name dummy "Full FD configuration + Big logger"
+set_parameter -name use_logger true
+set_parameter -name rx_buffer_size 32
+set_parameter -name use_FD_size true
+set_parameter -name use_sync true
+set_parameter -name ID 1
+set_parameter -name sup_filtA true
+set_parameter -name sup_filtB true
+set_parameter -name sup_filtC true
+set_parameter -name sup_range true
+set_parameter -name tx_time_sup true
+set_parameter -name logger_size 64
+set_global_assignment -name VHDL_FILE ../../src/Libraries/CANconstants.vhd
+set_global_assignment -name VHDL_FILE ../../src/Libraries/CANcomponents.vhd
+set_global_assignment -name VHDL_FILE ../../src/Libraries/CAN_FD_register_map.vhd
+set_global_assignment -name VHDL_FILE ../../src/Libraries/CAN_FD_frame_format.vhd
+set_global_assignment -name SDC_FILE Benchmark_project.sdc
+set_global_assignment -name SDC_FILE Benchmark_project.out.sdc
 set_global_assignment -name VHDL_FILE CAN_Wrapper.vhd
 set_global_assignment -name VHDL_FILE ../../src/rst_sync.vhd
 set_global_assignment -name VHDL_FILE ../../src/Registers_Memory_Interface/canfd_registers.vhd
@@ -79,37 +102,6 @@ set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txArbit
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/rxBuffer.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/messageFilter.vhd
 set_global_assignment -name VHDL_FILE ../../src/ID_transfer.vhd
-set_global_assignment -name VHDL_FILE ../../src/CANconstants.vhd
-set_global_assignment -name VHDL_FILE ../../src/CANcomponents.vhd
 set_global_assignment -name VHDL_FILE ../../src/CAN_top_level.vhd
-set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
-set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
-set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 set_global_assignment -name TCL_SCRIPT_FILE ../../scripts/resource_benchmark.tcl
-set_parameter -name cfg_indesdfdsfx 1
-set_parameter -name cfg_index 1
-set_parameter -name dummy "Minimal FD configuration"
-set_parameter -name use_logger false
-set_parameter -name rx_buffer_size 32
-set_parameter -name use_FD_size true
-set_parameter -name use_sync true
-set_parameter -name ID 1
-set_parameter -name sup_filtA false
-set_parameter -name sup_filtB false
-set_parameter -name sup_filtC false
-set_parameter -name sup_range false
-set_parameter -name tx_time_sup false
-set_parameter -name logger_size 8
-set_parameter -name dummy "Full FD configuration + Big logger"
-set_parameter -name use_logger true
-set_parameter -name rx_buffer_size 32
-set_parameter -name use_FD_size true
-set_parameter -name use_sync true
-set_parameter -name ID 1
-set_parameter -name sup_filtA true
-set_parameter -name sup_filtB true
-set_parameter -name sup_filtC true
-set_parameter -name sup_range true
-set_parameter -name tx_time_sup true
-set_parameter -name logger_size 64
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

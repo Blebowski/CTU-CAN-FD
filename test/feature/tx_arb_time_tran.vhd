@@ -63,7 +63,7 @@
 -----------------------------------------------------------------------------------------------------------------
 -- Revision History:
 --    23.6.2016   Created file
---
+--    06.02.2018  Modified to work with the IP-XACT generated memory map
 -----------------------------------------------------------------------------------------------------------------
 
 Library ieee;
@@ -152,9 +152,9 @@ package body tx_arb_time_tran_feature is
     -------------------------------------------
     CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
     
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      while (r_data(TS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+       CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      end loop;
     
     aux1:=to_integer(unsigned(stat_bus_1(STAT_TS_HIGH-32 downto STAT_TS_LOW)));
@@ -185,9 +185,9 @@ package body tx_arb_time_tran_feature is
     -------------------------------------------
     CAN_send_frame(CAN_frame,2,ID_1,mem_bus_1,frame_sent);
     
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      while (r_data(TS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+       CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      end loop;
     
     aux1:=to_integer(unsigned(stat_bus_1(STAT_TS_HIGH-32 downto STAT_TS_LOW)));
@@ -238,9 +238,9 @@ package body tx_arb_time_tran_feature is
     --  Check when TX started
     ------------------------------------------
     --report "Waiting until TX Starts";
-    CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+    CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      while (r_data(TS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+       CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      end loop;
      
     -------------------------------------------
@@ -295,9 +295,9 @@ package body tx_arb_time_tran_feature is
      --  Check when TX started
      ------------------------------------------
      --report "Waiting until TX Starts";
-     CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+     CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      while (r_data(TS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID_1,mem_bus_1);
+       CAN_read(r_data,MODE_ADR,ID_1,mem_bus_1);
      end loop;
      
      

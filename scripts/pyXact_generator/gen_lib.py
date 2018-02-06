@@ -23,7 +23,7 @@ import math
 ################################################################################
 # File path to the local repo of the PyXact framework
 ################################################################################
-PYXACT_PATH = "E:\Skola\CVUT-FEL\ipyxact"
+PYXACT_PATH = "E:\Skola\CVUT-FEL\CAN_FD_IP_Core\scripts\pyXact_generator\ipyxact_parser"
 
 sys.path.insert(0, PYXACT_PATH)
 from ipyxact.ipyxact import Component
@@ -36,4 +36,11 @@ def open_output(output):
 def split_string(input, size):
 	return [input[start:start+size] for start in range(0, len(input), size)]
 	
-	
+def str_arg_to_bool(input):
+	if (input == "yes" or
+		input == "true" or
+		input == "True" or
+		input == "y"):
+		return True
+	else:
+		return False

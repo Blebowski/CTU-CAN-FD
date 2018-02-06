@@ -41,3 +41,20 @@ Trace back: invalid command name ".main_pane.cs.27.pw"
     (command bound to event)
   2: ::tkerror {invalid command name ".main_pane.cs.27.pw"}
   1: ::bgerror {invalid command name ".main_pane.cs.27.pw"}
+Fri Jan 26 15:35:42 St?ední Evropa (b??ný ?as) 2018
+Trace back: can't read "_moveKind": no such variable
+    while executing
+"if {$_moveKind eq "slide"} {
+		chain $x $y
+	} else {
+		set current_label [tabcget [getSelected] -label]
+		if { ![info exists panedwindows($current_lab..."
+    (object "::.main_pane.cs.192.ts" method "::mtiwidgets::DraggableTabset::_endMove" body line 2)
+    invoked from within
+"::.main_pane.cs.192.ts _endMove 1538 11"
+    (in namespace inscope "::mtiwidgets::Tabset" script line 1)
+    invoked from within
+"namespace inscope ::mtiwidgets::Tabset {::.main_pane.cs.192.ts _endMove 1538 11}"
+    (command bound to event)
+  2: ::tkerror {can't read "_moveKind": no such variable}
+  1: ::bgerror {can't read "_moveKind": no such variable}
