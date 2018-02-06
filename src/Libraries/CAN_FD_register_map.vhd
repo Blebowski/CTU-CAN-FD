@@ -111,7 +111,7 @@ package CAN_FD_register_map is
   -- Address block: TX_Buffer
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
-  constant TX_BUFFER_BLOCK              : std_logic_vector(3 downto 0) := x"3";
+  constant TX_BUFFER_BLOCK              : std_logic_vector(3 downto 0) := x"1";
 
   constant TX_DATA_1_ADR             : std_logic_vector(11 downto 0) := x"100";
   constant TX_DATA_2_ADR             : std_logic_vector(11 downto 0) := x"104";
