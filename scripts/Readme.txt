@@ -8,3 +8,7 @@ py gen_vhdl_package.py --licPath ../LICENSE --xactSpec ../spec/CTU/ip/CAN_FD_IP_
 
 # To generate C header file
 py gen_c_header.py --licPath ../LICENSE --xactSpec ../spec/CTU/ip/CAN_FD_IP_Core/2.1/CAN_FD_IP_Core.2.1.xml --addrMap CAN_FD_32bit_regs --fieldMap CAN_FD_8bit_regs --wordWidth 32 --outFile ../driver/kernel_header_draft.h --headName CAN_FD_frame_format
+
+
+# To generate lyx docu for register map
+py gen_lyx_docu.py --xactSpec ../spec/CTU/ip/CAN_FD_IP_Core/2.1/CAN_FD_IP_Core.2.1.xml --memMap CAN_FD_8bit_regs --wordWidth 32 --lyxTemplate ../doc/core/template.lyx --outFile ../doc/core/registerMap.lyx --chaptName "Register map" --genRegions True --genFiDesc True
