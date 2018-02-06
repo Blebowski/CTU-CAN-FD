@@ -45,6 +45,8 @@
 --    27.11.2017  Added "reset_test" function fix. Implemented reset synchroniser to avoid async reset in
 --                the core. As consequnce after the core reset is released, the core has to wait at least TWO clock
 --                cycles till the reset is synchronised and deasserted.
+--    06.02.2018  Modified the library to work with generated constants from the 8 bit register map generated
+--                from IP-XACT.
 -------------------------------------------------------------------------------------------------------------
 
 
