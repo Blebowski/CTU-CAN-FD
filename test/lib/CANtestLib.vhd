@@ -238,9 +238,9 @@ procedure evaluate_test
 -----------------------------------------------------------------------------------------
 
 procedure generate_clock
-  (variable period      : in natural;       --Period in picoseconds 
-   variable duty        : in natural;       --Duty cycle of the clock
-   variable epsilon_ppm : in natural;       --Clock uncertainty in ppm
+  (constant period      : in natural;       --Period in picoseconds
+   constant duty        : in natural;       --Duty cycle of the clock
+   constant epsilon_ppm : in natural;       --Clock uncertainty in ppm
    signal   out_clk     : out std_logic     --Logic type of the clock
   );
 
@@ -520,10 +520,10 @@ end procedure;
 -- Generate clock signal with given period, uncertainty, and duty cycle
 ---------------------------------------------------------------------------------------
 procedure generate_clock
-  (variable period      : in natural;    --Period in picoseconds 
-   variable duty        : in natural;    --Duty cycle of the clock
-   variable epsilon_ppm : in natural;    --Clock uncertainty in ppm   
-  signal   out_clk     : out std_logic --Logic type of the clock
+  (constant period      : in natural;    --Period in picoseconds
+   constant duty        : in natural;    --Duty cycle of the clock
+   constant epsilon_ppm : in natural;    --Clock uncertainty in ppm
+   signal   out_clk     : out std_logic  --Logic type of the clock
   ) is
 variable real_period :real;
 variable rand_nr     :real;
