@@ -772,15 +772,15 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- TX_STATUS register
   --
-  -- Status of the TXT Buffers
+  -- Status of the TXT Buffers. 
   ------------------------------------------------------------------------------
-  constant TXT1_EMPTY_IND         : natural := 0;
-  constant TXT2_EMPTY_IND         : natural := 1;
-  constant TX_TIME_SUPPORT_IND    : natural := 2;
+  constant TXT1E_IND              : natural := 0;
+  constant TXT2E_IND              : natural := 1;
+  constant TXTS_IND               : natural := 2;
 
   -- TX_STATUS register reset values
-  constant TXT2_EMPTY_RSTVAL  : std_logic := '1';
-  constant TXT1_EMPTY_RSTVAL  : std_logic := '1';
+  constant TXT2E_RSTVAL       : std_logic := '1';
+  constant TXT1E_RSTVAL       : std_logic := '1';
 
   ------------------------------------------------------------------------------
   -- TX_SETTINGS register

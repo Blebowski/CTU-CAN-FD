@@ -2329,15 +2329,15 @@
 				<ipxact:register>
 					<ipxact:name>TX_STATUS</ipxact:name>
 					<ipxact:displayName>TX_STATUS</ipxact:displayName>
-					<ipxact:description>Status of the TXT Buffers</ipxact:description>
+					<ipxact:description>Status of the TXT Buffers. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h58</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>TXT2_EMPTY</ipxact:name>
-						<ipxact:displayName>TXT2_EMPTY</ipxact:displayName>
+						<ipxact:name>TXT2E</ipxact:name>
+						<ipxact:displayName>TXT2E</ipxact:displayName>
 						<ipxact:description>Active when Transmit buffer 2 is empty.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2348,8 +2348,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TXT1_EMPTY</ipxact:name>
-						<ipxact:displayName>TXT1_EMPTY</ipxact:displayName>
+						<ipxact:name>TXT1E</ipxact:name>
+						<ipxact:displayName>TXT1E</ipxact:displayName>
 						<ipxact:description>Active when Transmit buffer 1 is empty.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2360,9 +2360,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TX_TIME_SUPPORT</ipxact:name>
-						<ipxact:displayName>TX_TIME_SUPPORT</ipxact:displayName>
-						<ipxact:description>This bit is has value of logic 1 if the core was synthesized wih &quot;tx_time_support=true&quot;.Otherwise this bit is 0.</ipxact:description>
+						<ipxact:name>TXTS</ipxact:name>
+						<ipxact:displayName>TXTS</ipxact:displayName>
+						<ipxact:description>Logic 1 if the core was synthesized wih &quot;tx_time_support=true&quot;.Otherwise logic 0.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>

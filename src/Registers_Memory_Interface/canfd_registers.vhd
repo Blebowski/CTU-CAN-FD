@@ -1269,12 +1269,12 @@ begin
     			   -------------------------------------------------------
     			   when TX_STATUS_ADR => 
     			      data_out_int(31 downto 3)      <=  (OTHERS=>'0');
-    			      data_out_int(TXT2_EMPTY_IND)   <=  txt2_empty;
-    			      data_out_int(TXT1_EMPTY_IND)   <=  txt1_empty;
+    			      data_out_int(TXT2E_IND)   <=  txt2_empty;
+    			      data_out_int(TXT1E_IND)   <=  txt1_empty;
     			      if (tx_time_sup) then   
-			         data_out_int(TX_TIME_SUPPORT_IND) <= '1';
+			         data_out_int(TXTS_IND) <= '1';
 			       else
-			         data_out_int(TX_TIME_SUPPORT_IND) <= '0';
+			         data_out_int(TXTS_IND) <= '0';
 			       end if;   
     			      
  			    ------------------------------------------------------- 
