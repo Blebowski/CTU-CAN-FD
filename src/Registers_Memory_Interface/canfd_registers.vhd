@@ -869,7 +869,7 @@ begin
     			----------------------------------------------------	   
     			when CTR_PRES_ADR => 
     			  
-    			     write_be_vect(erctr_pres_value, 0, 8, data_in, CTR_PRES_VAL_L, CTR_PRES_VAL_H, sbe);
+    			     write_be_vect(erctr_pres_value, 0, 8, data_in, CTPV_L, CTPV_H, sbe);
     			     write_be_vect(erctr_pres_mask, 0, 3, data_in, 9, 12, sbe);
     			   
     			----------------------------------------------------	   

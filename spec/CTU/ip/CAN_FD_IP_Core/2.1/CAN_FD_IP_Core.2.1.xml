@@ -8,7 +8,7 @@
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_8bit_regs</ipxact:name>
 			<ipxact:displayName>CAN FD memory map</ipxact:displayName>
-			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported and byte or half word access is executed via byte enable signal. The memory is organized as big endian. Write to read only memory location will have no effect. Read from write only memory location will zeroes. The register map consists of following memory regions:</ipxact:description>
+			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The register map consists of following memory regions:</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
 				<ipxact:displayName>Control registers</ipxact:displayName>
@@ -2866,9 +2866,9 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>write-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>CTR_PRES_VAL</ipxact:name>
-						<ipxact:displayName>CTR_PRES_VAL</ipxact:displayName>
-						<ipxact:description>Counter value to preset</ipxact:description>
+						<ipxact:name>CTPV</ipxact:name>
+						<ipxact:displayName>CTPV</ipxact:displayName>
+						<ipxact:description>Counter value to set.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
