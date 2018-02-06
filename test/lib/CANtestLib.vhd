@@ -415,6 +415,12 @@ procedure generate_trig(
   variable bit_length     : inout  natural
  );
   
+  
+  function CAN_add_unsigned(
+  constant operator1      : in std_logic_vector(11 downto 0);
+  constant operator2      : in std_logic_vector(11 downto 0)
+  ) return std_logic_vector;
+
 end package;
 
 
@@ -484,6 +490,18 @@ begin
   wait for low_time;
   
 end procedure;
+
+
+---------------------------------------------------------------------------------------
+-- Auxiliarly function for unsigned addition of Address offsets
+---------------------------------------------------------------------------------------
+function CAN_add_unsigned(
+  constant operator1      : in std_logic_vector(11 downto 0);
+  constant operator2      : in std_logic_vector(11 downto 0)
+  ) return std_logic_vector is
+  begin
+    return std_logic_vector(unsigned(operator1) + unsigned(operator2));
+  end function;
 
 
 ---------------------------------------------------------------------------------------
@@ -837,7 +855,7 @@ procedure process_error
   variable int_address   :   std_logic_vector(23 downto 0);
   begin
     int_address       := CAN_COMPONENT_TYPE&
-                          std_logic_vector(to_unsigned(ID,4))&"00"&w_offset&"00";
+                          std_logic_vector(to_unsigned(ID,4))&"0000"&w_offset;
     aval_write        (w_data,int_address,mem_bus);
   end procedure;
   
@@ -853,7 +871,7 @@ procedure process_error
   variable int_address   :   std_logic_vector(23 downto 0);
   begin
     int_address       := CAN_COMPONENT_TYPE&
-                          std_logic_vector(to_unsigned(ID,4))&"00"&r_offset&"00";
+                          std_logic_vector(to_unsigned(ID,4))&"0000"&r_offset;
     aval_read        (r_data,int_address,mem_bus);
   end procedure;
   
@@ -884,7 +902,7 @@ procedure process_error
       std_logic_vector(to_unsigned(bus_timing.sjw_dbt,4));
     data(SJW_H downto SJW_L) := 
       std_logic_vector(to_unsigned(bus_timing.sjw_nbt,4));
-    CAN_write(data,ARB_ERROR_PRESC_ADR,ID,mem_bus);  
+    CAN_write(data,ALC_ADR,ID,mem_bus);  
     
     data := (OTHERS => '0');
     
@@ -903,7 +921,7 @@ procedure process_error
     data(PH2_FD_H downto PH2_FD_L) :=
       std_logic_vector(to_unsigned(bus_timing.ph2_dbt,4));
     
-    CAN_write(data,TIMING_REG_ADR,ID,mem_bus);                   
+    CAN_write(data,BTR_ADR,ID,mem_bus);                   
   end procedure;
   
   
@@ -926,13 +944,13 @@ procedure process_error
   )is
   variable data          :          std_logic_vector(31 downto 0):=(OTHERS => '0');
   begin
-    CAN_read(data,MODE_REG_ADR,ID,mem_bus);
+    CAN_read(data,MODE_ADR,ID,mem_bus);
     if turn_on then
       data(ENA_IND):= ENABLED;
     else
       data(ENA_IND):= DISABLED;
     end if;
-    CAN_write(data,MODE_REG_ADR,ID,mem_bus);  
+    CAN_write(data,MODE_ADR,ID,mem_bus);  
   end procedure;
   
 ------------------------------------------------------------
@@ -946,14 +964,14 @@ procedure process_error
   )is
   variable data          :          std_logic_vector(31 downto 0):=(OTHERS => '0');
   begin
-    CAN_read(data,MODE_REG_ADR,ID,mem_bus);
+    CAN_read(data,MODE_ADR,ID,mem_bus);
     if turn_on then
       data(RTRLE_IND):= '1';
     else
       data(RTRLE_IND):= '0';
     end if;
     data(RTR_TH_H downto RTR_TH_L):= std_logic_vector(to_unsigned(limit,4));
-    CAN_write(data,MODE_REG_ADR,ID,mem_bus);
+    CAN_write(data,MODE_ADR,ID,mem_bus);
   end procedure;
   
 
@@ -1195,19 +1213,22 @@ procedure process_error
         ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
         w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
      end if;
-     CAN_write(w_data,TX_DATA_2_ADR,ID,mem_bus);
+     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, FRAME_FORM_W_ADR), ID, mem_bus);
      
       --Timestamp
      w_data:= frame.timestamp(31 downto 0);  
-     CAN_write(w_data,TX_DATA_3_ADR,ID,mem_bus);
+     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_L_W_ADR), ID, mem_bus);
      w_data:= frame.timestamp(63 downto 32);  
-     CAN_write(w_data,TX_DATA_4_ADR,ID,mem_bus);
+     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_U_W_ADR), ID, mem_bus);
      
      --Data words
      decode_dlc_v(frame.dlc,length);
      for i in 0 to (length-1)/4 loop
        w_data:= frame.data(511-i*32 downto 480-i*32);
-       CAN_write(w_data,std_logic_vector(unsigned(TX_DATA_5_ADR)+i),ID,mem_bus);
+       CAN_write(w_data,
+                  std_logic_vector(unsigned(TX_DATA_1_ADR) +
+                                   unsigned(DATA_1_4_W_ADR) + i),
+                  ID,mem_bus);
      end loop;
      
      --Signal that the frame is valid by allowing the buffer
@@ -1288,15 +1309,15 @@ procedure process_error
   begin
      
      --Wait until unit starts to transmitt or reciesve
-     CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+     CAN_read(r_data,MODE_ADR,ID,mem_bus);
      while (r_data(RS_IND)='0' and r_data(TS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+       CAN_read(r_data,MODE_ADR,ID,mem_bus);
      end loop;
      
      --Wait until bus is idle now
-     CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+     CAN_read(r_data,MODE_ADR,ID,mem_bus);
      while (r_data(BS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+       CAN_read(r_data,MODE_ADR,ID,mem_bus);
      end loop;
      
   end procedure;
@@ -1312,9 +1333,9 @@ procedure process_error
   variable r_data        :          std_logic_vector(31 downto 0):=(OTHERS => '0');
   begin
       --Wait until bus is idle
-     CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+     CAN_read(r_data,MODE_ADR,ID,mem_bus);
      while (r_data(BS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+       CAN_read(r_data,MODE_ADR,ID,mem_bus);
      end loop;
   end procedure;
 
@@ -1331,15 +1352,15 @@ procedure process_error
   begin
      
      --Wait until unit starts to transmitt or recieve
-     CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+     CAN_read(r_data,MODE_ADR,ID,mem_bus);
      while (r_data(RS_IND)='0' and r_data(TS_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+       CAN_read(r_data,MODE_ADR,ID,mem_bus);
      end loop;
      
      --Wait until error frame is not being transmitted
-     CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+     CAN_read(r_data,MODE_ADR,ID,mem_bus);
      while (r_data(ET_IND)='0') loop
-       CAN_read(r_data,MODE_REG_ADR,ID,mem_bus);
+       CAN_read(r_data,MODE_ADR,ID,mem_bus);
      end loop;
      
   end procedure;
