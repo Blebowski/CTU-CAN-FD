@@ -3664,7 +3664,7 @@
 		</ipxact:memoryMap>
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_frame_format</ipxact:name>
-			<ipxact:displayName>5. CAN FD frame format</ipxact:displayName>
+			<ipxact:displayName>4. CAN FD frame format</ipxact:displayName>
 			<ipxact:description>CAN Frame format describtion in as it is stored in TXT Buffers and RX Buffer.</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>CAN_FD_Frame_format</ipxact:name>

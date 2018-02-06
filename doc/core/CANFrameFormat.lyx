@@ -97,7 +97,7 @@ customHeadersFooters
 
 \begin_body
 \begin_layout Chapter
-5. CAN FD frame format
+4. CAN FD frame format
 \end_layout
 \begin_layout Standard
 CAN Frame format describtion in as it is stored in TXT Buffers and RX Buffer.
