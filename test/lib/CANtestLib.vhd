@@ -1229,7 +1229,7 @@ procedure process_error
        w_data:= frame.data(511-i*32 downto 480-i*32);
        CAN_write(w_data,
                   std_logic_vector(unsigned(TX_DATA_1_ADR) +
-                                   unsigned(DATA_1_4_W_ADR) + i),
+                                   unsigned(DATA_1_4_W_ADR) + i * 4),
                   ID,mem_bus);
      end loop;
      
