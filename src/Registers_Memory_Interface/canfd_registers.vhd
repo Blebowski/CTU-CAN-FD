@@ -150,11 +150,6 @@ entity canfd_registers is
     signal srd                  :in   std_logic;
     signal swr                  :in   std_logic;
     signal sbe                  :in   std_logic_vector(3 downto 0);
-    --Memory interface is Avalon bus compatible!
-    --In 32-bit system, every register is 0x4 higher adress. 
-    --At FPGA the lowest two bits of adress are considered
-    --to be cut, therefore +0x04 means one bit higher adress!!
-    --Only 32 bit native access is supported!! 
       
     --Driving and Status Bus
     signal drv_bus              :out  std_logic_vector(1023 downto 0) 
