@@ -32,10 +32,11 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 	
 	
 
-	def write_reg_group(self, regGroup, addrReg):
+	def write_reg_group(self, regGroup):
 		decls = []
 		enumDecl = []
-		for reg in regGroup:
+		unName = ""
+		for (j,reg) in enumerate(regGroup):
 			for (i,field) in enumerate(sorted(reg.field, key=lambda a: a.bitOffset)):
 				
 				if (i == 0):
@@ -50,6 +51,9 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 							bitIndex=field.bitOffset + 
 									((int(reg.addressOffset)*8) % self.busWidth), 
 							intType="bitfield"))
+			unName += reg.name.lower()
+			if (j != len(regGroup) - 1):
+				unName += "_"
 			
 		enumDecl = []
 		enumDecl.append(LanDeclaration("u{}".format(self.busWidth),
@@ -57,16 +61,11 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 							gap=1))
 		enumDecl.append(decls)
 		
-		self.headerGen.create_union(addrReg.name.lower(), enumDecl)
+		self.headerGen.create_union(unName, enumDecl)
 		self.headerGen.wr_nl()
 	
 	def addr_reg_lookup(self, fieldReg):
-		for block in self.addrMap.addressBlock:
-			for reg in block.register:
-				if (reg.addressOffset * 4 == fieldReg.addressOffset):
-					return reg
-		return None
-	
+		return super().addr_reg_lookup(fieldReg)
 	
 	def write_regs(self, regs):
 		regGroups = [[]]
@@ -83,7 +82,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 			regGroups[-1].append(reg)
 			
 		for regGroup in regGroups:
-			self.write_reg_group(regGroup, self.addr_reg_lookup(regGroup[0]))
+			self.write_reg_group(regGroup)
 
 				
 	
