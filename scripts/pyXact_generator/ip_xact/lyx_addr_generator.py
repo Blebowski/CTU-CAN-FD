@@ -54,7 +54,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 					appendText += "\\begin_inset Newline newline\\end_inset\n"
 					binSize = "{:0" + "{}".format(field.bitWidth) + "b}"
 					binFmt = binSize.format(e.value)
-					appendText += "0b{}  - {}".format(binFmt, e.name)
+					appendText += "		0b{}  - {} - {}".format(binFmt, e.name, 
+						e.description)
 		return appendText		
 
 
