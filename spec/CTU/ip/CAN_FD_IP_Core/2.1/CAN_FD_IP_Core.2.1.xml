@@ -2506,16 +2506,16 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_CONTROL</ipxact:name>
 					<ipxact:displayName>FILTER_CONTROL</ipxact:displayName>
-					<ipxact:description>Every filter can be set to accept only selected frame types. Every bit active in logic 1.</ipxact:description>
+					<ipxact:description>Every filter can be configured to accept only selected frame types. Every bit is active in logic 1.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>FILT_A_BASIC</ipxact:name>
+						<ipxact:name>FANB</ipxact:name>
 						<ipxact:displayName>FILT_A_BASIC</ipxact:displayName>
-						<ipxact:description>If CAN Basic Frame should be accepted by filter A.</ipxact:description>
+						<ipxact:description>CAN Basic Frame should be accepted by filter A.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2525,9 +2525,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_A_FD_BAS</ipxact:name>
+						<ipxact:name>FAFB</ipxact:name>
 						<ipxact:displayName>FILT_A_FD_BAS</ipxact:displayName>
-						<ipxact:description>If FD CAN Basic Frame should be accepted by filter A</ipxact:description>
+						<ipxact:description>CAN FD Basic Frame should be accepted by filter A.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2537,9 +2537,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_A_EXT</ipxact:name>
+						<ipxact:name>FANE</ipxact:name>
 						<ipxact:displayName>FILT_A_EXT</ipxact:displayName>
-						<ipxact:description>If CAN Extended Frame should be accepted by Filter A</ipxact:description>
+						<ipxact:description>CAN Extended Frame should be accepted by Filter A.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2549,8 +2549,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_A_FD_EXT</ipxact:name>
-						<ipxact:description>If CAN FD Extended Frame should be accepted by filter A</ipxact:description>
+						<ipxact:name>FAFE</ipxact:name>
+						<ipxact:description>CAN FD Extended Frame should be accepted by filter A.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2560,9 +2560,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_B_BASIC</ipxact:name>
+						<ipxact:name>FBNB</ipxact:name>
 						<ipxact:displayName>FILT_B_BASIC</ipxact:displayName>
-						<ipxact:description>If CAN Basic Frame should be accepted by filter B.</ipxact:description>
+						<ipxact:description>CAN Basic Frame should be accepted by filter B.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2572,9 +2572,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_B_EXT</ipxact:name>
+						<ipxact:name>FBNE</ipxact:name>
 						<ipxact:displayName>FILT_B_EXT</ipxact:displayName>
-						<ipxact:description>If CAN Extended Frame should be accepted by Filter B</ipxact:description>
+						<ipxact:description>CAN Extended Frame should be accepted by Filter B.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2584,9 +2584,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_B_FD_BAS</ipxact:name>
+						<ipxact:name>FBFB</ipxact:name>
 						<ipxact:displayName>FILT_B_FD_BAS</ipxact:displayName>
-						<ipxact:description>If FD CAN Basic Frame should be accepted by filter B</ipxact:description>
+						<ipxact:description>CAN FD Basic Frame should be accepted by filter B.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2596,9 +2596,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_B_FD_EXT</ipxact:name>
+						<ipxact:name>FBFE</ipxact:name>
 						<ipxact:displayName>FILT_B_FD_EXT</ipxact:displayName>
-						<ipxact:description>If CAN FD Extended Frame should be accepted by filter B.</ipxact:description>
+						<ipxact:description>CAN FD Extended Frame should be accepted by filter B.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2608,9 +2608,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_C_BASIC</ipxact:name>
+						<ipxact:name>FCNB</ipxact:name>
 						<ipxact:displayName>FILT_C_BASIC</ipxact:displayName>
-						<ipxact:description>If CAN Basic Frame should be accepted by filter C.</ipxact:description>
+						<ipxact:description>CAN Basic Frame should be accepted by filter C.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2620,9 +2620,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_C_EXT</ipxact:name>
+						<ipxact:name>FCNE</ipxact:name>
 						<ipxact:displayName>FILT_C_EXT</ipxact:displayName>
-						<ipxact:description>If CAN Extended Frame should be accepted by Filter C</ipxact:description>
+						<ipxact:description>CAN Extended Frame should be accepted by Filter C.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2632,9 +2632,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_C_FD_BAS</ipxact:name>
+						<ipxact:name>FCFB</ipxact:name>
 						<ipxact:displayName>FILT_C_FD_BAS</ipxact:displayName>
-						<ipxact:description>If FD CAN Basic Frame should be accepted by filter C</ipxact:description>
+						<ipxact:description>CAN FD Basic Frame should be accepted by filter C.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2644,9 +2644,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_RANGE_FD_EXT</ipxact:name>
+						<ipxact:name>FRFE</ipxact:name>
 						<ipxact:displayName>FILT_RANGE_FD_EXT</ipxact:displayName>
-						<ipxact:description>If CAN FD Extended Frame should be accepted by Range filter</ipxact:description>
+						<ipxact:description>CAN FD Extended Frame should be accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>15</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2656,9 +2656,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_RANGE_FD_BAS</ipxact:name>
+						<ipxact:name>FRFB</ipxact:name>
 						<ipxact:displayName>FILT_RANGE_FD_BAS</ipxact:displayName>
-						<ipxact:description>If FD CAN Basic Frame should be accepted by Range filter</ipxact:description>
+						<ipxact:description>CAN FD Basic Frame should be accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>14</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2668,9 +2668,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_RANGE_EXT</ipxact:name>
+						<ipxact:name>FRNE</ipxact:name>
 						<ipxact:displayName>FILT_RANGE_EXT</ipxact:displayName>
-						<ipxact:description>If CAN Extended Frame should be accepted by Range filter</ipxact:description>
+						<ipxact:description>CAN Extended Frame should be accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>13</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2680,9 +2680,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_RANGE_BASIC</ipxact:name>
+						<ipxact:name>FRNB</ipxact:name>
 						<ipxact:displayName>FILT_RANGE_BASIC</ipxact:displayName>
-						<ipxact:description>If CAN Basic Frame should be accepted by Range filter</ipxact:description>
+						<ipxact:description>CAN Basic Frame should be accepted by Range filter.</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2692,9 +2692,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FILT_C_FD_EXT</ipxact:name>
+						<ipxact:name>FCFE</ipxact:name>
 						<ipxact:displayName>FILT_C_FD_EXT</ipxact:displayName>
-						<ipxact:description>If CAN FD Extended Frame should be accepted by filter C.</ipxact:description>
+						<ipxact:description>CAN FD Extended Frame should be accepted by filter C.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
