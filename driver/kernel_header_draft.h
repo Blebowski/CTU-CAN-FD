@@ -41,6 +41,7 @@
 /* CAN_FD_8bit_regs memory map */
 enum can_fd_8bit_regs {
 	DEVICE_ID              = 0x0,
+	VERSION                = 0x2,
 	MODE                   = 0x4,
 	COMMAND                = 0x5,
 	STATUS                 = 0x6,
@@ -101,11 +102,20 @@ enum can_fd_8bit_regs {
 
 
 /* Register descriptions: */
-union device_id {
+union device_id_version {
 	uint32_t u32;
-	struct device_id_s {
+	struct device_id_version_s {
+#ifdef __BIG_ENDIAN_BITFIELD
   /* DEVICE_ID */
-		uint32_t device_id              : 32;
+		uint32_t device_id              : 16;
+  /* VERSION */
+		uint32_t ver_minor               : 8;
+		uint32_t ver_major               : 8;
+#else
+		uint32_t ver_major               : 8;
+		uint32_t ver_minor               : 8;
+		uint32_t device_id              : 16;
+#endif
 	} s;
 };
 

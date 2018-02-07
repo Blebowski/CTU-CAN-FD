@@ -989,10 +989,15 @@ begin
     			case adress(11 downto 0) is
     			  
     			  --------------------------------------
-    			  --Device ID
+    			  --Device_ID and VERSION
 			   --------------------------------------	    			  
   			   when DEVICE_ID_ADR =>     
-  			       data_out_int              <=  DEVICE_ID_RSTVAL;
+  			       data_out_int(DEVICE_ID_H downto DEVICE_ID_L)
+  			             <=  DEVICE_ID_RSTVAL;
+  			       data_out_int(VER_MINOR_H downto VER_MINOR_L)
+  			             <=  CTU_CAN_FD_VERSION_MINOR;
+			       data_out_int(VER_MAJOR_H downto VER_MAJOR_L)
+  			             <=  CTU_CAN_FD_VERSION_MAJOR;
   			     
   			   --------------------------------------
     			  --MODE Register (Mode, Command, Status of SJA1000)
