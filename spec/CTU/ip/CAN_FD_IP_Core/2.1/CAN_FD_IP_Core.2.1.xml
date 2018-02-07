@@ -3019,8 +3019,8 @@
 			</ipxact:addressBlock>
 			<ipxact:addressBlock>
 				<ipxact:name>TX_Buffer</ipxact:name>
-				<ipxact:displayName>TX Buffer</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT Buffer for CAN FD frame to be transmitted. The frame layout corresponds to the layout described in chapter TODO. First adress in the region (TXT_DATA_1) is mapped to FRAME_FORMAT_W, second address (TXT_DATA_2) is mapped to IDENTIFIER_W etc. The last address (TXT_DATA_20) is mapped to DATA_61_64_W. The adresses in between are mapped accordingly. This memory region is write only and read access is not valid. Additionally this region supports only 32 bit access.</ipxact:description>
+				<ipxact:displayName>TXT Buffer</ipxact:displayName>
+				<ipxact:description>Access to this memory region is mapped to TXT Buffer.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXT_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXT_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXT_DATA_20) corresponds to DATA_61_64_W. The adresses in between correponds linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
 				<ipxact:baseAddress>'h100</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
