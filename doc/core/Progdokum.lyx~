@@ -104,7 +104,7 @@ customHeadersFooters
 \color black
 CTU CAN
 \noun on
- Flexible Data-rate 
+ FD 
 \begin_inset Newline newline
 \end_inset
 
@@ -147,7 +147,7 @@ Ille Ondrej
 \begin_inset VSpace defskip
 \end_inset
 
-Czech technical university in Prague
+Czech Technical University in Prague
 \begin_inset Newline newline
 \end_inset
 
@@ -155,7 +155,7 @@ Faculty of Electrical Engineering
 \begin_inset Newline newline
 \end_inset
 
-Department of measurement
+Department of Measurement
 \begin_inset Newline newline
 \end_inset
 
@@ -249,7 +249,7 @@ Department of measurement
 \begin_layout Plain Layout
 
 \size larger
-CAN FD IP Core
+CTU CAN FD IP Core
 \end_layout
 
 \end_inset
@@ -27012,7 +27012,7 @@ filename "registerMap.lyx"
 \begin_layout Standard
 \begin_inset CommandInset include
 LatexCommand include
-filename "registerMap.lyx"
+filename "CANFrameFormat.lyx"
 
 \end_inset
 

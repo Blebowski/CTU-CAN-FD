@@ -191,6 +191,12 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 	
 
 	def write_regs(self, block):
+		# Memory type blocks dont need to be described by field! We use it
+		# to express mapping to other registers and thus It means we dont 
+		# want unnecessary words described!
+		if (block.usage == "memory"):
+			return
+	
 		for reg in sorted(block.register, key=lambda a: a.addressOffset):
 			
 			# Add the Section title
@@ -333,6 +339,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 ################################################################################	
 	def write_mem_map_fields(self):
 		for block in self.fieldMap.addressBlock:
+			self.lyxGen.insert_new_page()
 			self.write_mem_map_reg_table(block)
 			self.write_regs(block)
 

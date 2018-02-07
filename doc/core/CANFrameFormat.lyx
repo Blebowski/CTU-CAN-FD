@@ -102,6 +102,10 @@ customHeadersFooters
 \begin_layout Standard
 CAN Frame format describtion in as it is stored in TXT Buffers and RX Buffer.
 \end_layout
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+\end_layout
 \begin_layout Section
 CAN FD Frame format
 \end_layout

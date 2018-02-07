@@ -104,7 +104,7 @@ customHeadersFooters
 \color black
 CTU CAN
 \noun on
- Flexible Data-rate 
+ FD 
 \begin_inset Newline newline
 \end_inset
 
@@ -147,7 +147,7 @@ Ille Ondrej
 \begin_inset VSpace defskip
 \end_inset
 
-Czech technical university in Prague
+Czech Technical University in Prague
 \begin_inset Newline newline
 \end_inset
 
@@ -155,7 +155,7 @@ Faculty of Electrical Engineering
 \begin_inset Newline newline
 \end_inset
 
-Department of measurement
+Department of Measurement
 \begin_inset Newline newline
 \end_inset
 
@@ -249,7 +249,7 @@ Department of measurement
 \begin_layout Plain Layout
 
 \size larger
-CAN FD IP Core
+CTU CAN FD IP Core
 \end_layout
 
 \end_inset
@@ -269,7 +269,7 @@ CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-Datasheet v 2.0, September 2016
+Datasheet v 2.1, TODO 2018
 \end_layout
 
 \end_inset
