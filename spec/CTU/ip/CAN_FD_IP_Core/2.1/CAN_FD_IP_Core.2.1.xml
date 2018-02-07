@@ -3024,7 +3024,8 @@
 				<ipxact:baseAddress>'h100</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
-				<ipxact:volatile>false</ipxact:volatile>
+				<ipxact:usage>memory</ipxact:usage>
+				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TX_DATA_1</ipxact:name>
 					<ipxact:displayName>TX_DATA_1</ipxact:displayName>
