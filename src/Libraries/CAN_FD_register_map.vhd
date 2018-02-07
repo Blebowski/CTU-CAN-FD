@@ -52,6 +52,7 @@ package CAN_FD_register_map is
   constant CONTROL_REGISTERS_BLOCK      : std_logic_vector(3 downto 0) := x"0";
 
   constant DEVICE_ID_ADR             : std_logic_vector(11 downto 0) := x"000";
+  constant VERSION_ADR               : std_logic_vector(11 downto 0) := x"002";
   constant MODE_ADR                  : std_logic_vector(11 downto 0) := x"004";
   constant COMMAND_ADR               : std_logic_vector(11 downto 0) := x"005";
   constant STATUS_ADR                : std_logic_vector(11 downto 0) := x"006";
@@ -121,13 +122,25 @@ package CAN_FD_register_map is
   -- DEVICE_ID register
   --
   -- The register contains an identifer of CAN FD IP function. It is used to det
-  -- ermine whether CAN IP function is mapped correctly on its base address.
+  -- ermine if CAN IP function is mapped correctly on its base address.
   ------------------------------------------------------------------------------
   constant DEVICE_ID_L            : natural := 0;
-  constant DEVICE_ID_H           : natural := 31;
+  constant DEVICE_ID_H           : natural := 15;
 
   -- DEVICE_ID register reset values
-  constant DEVICE_ID_RSTVAL : std_logic_vector(31 downto 0) := x"0000CAFD";
+  constant DEVICE_ID_RSTVAL : std_logic_vector(15 downto 0) := x"CAFD";
+
+  ------------------------------------------------------------------------------
+  -- VERSION register
+  --
+  -- Version register with IP Core version.
+  ------------------------------------------------------------------------------
+  constant VER_MINOR_L           : natural := 16;
+  constant VER_MINOR_H           : natural := 23;
+  constant VER_MAJOR_L           : natural := 24;
+  constant VER_MAJOR_H           : natural := 31;
+
+  -- VERSION register reset values
 
   ------------------------------------------------------------------------------
   -- MODE register

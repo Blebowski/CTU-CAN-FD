@@ -55,6 +55,10 @@ use ieee.std_logic_1164.all;
 
 package CANconstants is
 
+  -- IP Core version related constants
+  constant CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"01";
+  constant CTU_CAN_FD_VERSION_MAJOR : std_logic_vector(7 downto 0) := x"02";
+
   --Active value of asynchronous reset 
   constant ACT_RESET : std_logic := '0';
 

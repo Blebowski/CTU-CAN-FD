@@ -21,10 +21,10 @@
 				<ipxact:register>
 					<ipxact:name>DEVICE_ID</ipxact:name>
 					<ipxact:displayName>DEVICE ID</ipxact:displayName>
-					<ipxact:description>The register contains an identifer of CAN FD IP function. It is used to determine whether CAN IP function is mapped correctly on its base address.</ipxact:description>
+					<ipxact:description>The register contains an identifer of CAN FD IP function. It is used to determine if CAN IP function is mapped correctly on its base address.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
+					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
@@ -34,10 +34,10 @@
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>'h0000CAFD</ipxact:value>
+								<ipxact:value>'hCAFD</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:bitWidth>16</ipxact:bitWidth>
 						<ipxact:access>read-only</ipxact:access>
 					</ipxact:field>
 				</ipxact:register>
@@ -847,6 +847,30 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>4</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>VERSION</ipxact:name>
+					<ipxact:displayName>VERSION</ipxact:displayName>
+					<ipxact:description>Version register with IP Core version.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h2</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>VER_MINOR</ipxact:name>
+						<ipxact:displayName>MINOR</ipxact:displayName>
+						<ipxact:description>Minor part of the IP Core version. E.g for version 2.1 this field has value 0x01.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>VER_MAJOR</ipxact:name>
+						<ipxact:displayName>MAJOR</ipxact:displayName>
+						<ipxact:description>Minor part of the IP Core version. E.g for version 2.1 this field has value 0x02.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
