@@ -47,6 +47,7 @@
 --                cycles till the reset is synchronised and deasserted.
 --    06.02.2018  Modified the library to work with generated constants from the 8 bit register map generated
 --                from IP-XACT.
+--    09.02.2018  Added support fow RWCNT field in the SW_CAN_Frame.
 -------------------------------------------------------------------------------------------------------------
 
 
@@ -148,6 +149,8 @@ type CAN_frame_type is record
    rec_brs              : std_logic;                        --Whenever frame was recieved with BIT Rate shift 
    rec_esi              : std_logic;                        --Error state indicator
    rec_message_valid    : std_logic;                        --Output from acceptance filters (out_ident_valid) if message fits the filters
+   rec_rwcnt            : std_logic_vector(4 downto 0);     --Number of words frame takes in the RX Buffer
+                                                            -- without FRAME_FORMAT word 
 end record;
 
 
@@ -190,6 +193,7 @@ type SW_CAN_frame_type is record
    rtr                  : std_logic;                        --Recieved frame is RTR Frame(0-No, 1-Yes)
    brs                  : std_logic;                        --Whenever frame was recieved with BIT Rate shift 
    timestamp            : std_logic_vector(63 downto 0);
+   rwcnt                : natural;                          --Size in words in receive buffer.
 end record;
 
 
@@ -280,6 +284,11 @@ procedure decode_dlc(
 procedure decode_dlc_v(
     variable rec_dlc : in std_logic_vector(3 downto 0);
     variable dlc     : out natural
+  );
+
+procedure decode_dlc_rx_buff(
+    variable rec_dlc : in std_logic_vector(3 downto 0);
+    variable rwcnt   : out natural
   );
   
 procedure decode_dlc_buff(
@@ -698,7 +707,31 @@ procedure process_error
     end case;  
   end procedure;
   
-  
+  procedure decode_dlc_rx_buff(
+    variable rec_dlc : in std_logic_vector(3 downto 0);
+    variable rwcnt   : out natural
+  )is 
+  begin
+    case rec_dlc is
+    when "0000" => rwcnt:=3;
+    when "0001" => rwcnt:=4;
+    when "0010" => rwcnt:=4;
+    when "0011" => rwcnt:=4;
+    when "0100" => rwcnt:=4;  
+    when "0101" => rwcnt:=5;  
+    when "0110" => rwcnt:=5;  
+    when "0111" => rwcnt:=5;
+    when "1000" => rwcnt:=5;
+    when "1001" => rwcnt:=6;
+    when "1010" => rwcnt:=7;
+    when "1011" => rwcnt:=8;
+    when "1100" => rwcnt:=9;
+    when "1101" => rwcnt:=11;
+    when "1110" => rwcnt:=15;
+    when "1111" => rwcnt:=19;
+    when others => rwcnt:=0;
+    end case;  
+  end procedure;
   
 ---------------------------------------------------------------------------------------
 -- From recieved dlc format decode how many 32bit words will the frame take together
@@ -1035,6 +1068,10 @@ procedure process_error
         frame.data_length := 0;
       end if;
       
+      -- RWCNT is filled to have all information in the frame
+      -- as is filled by the RX Buffer.
+      decode_dlc_rx_buff(frame.dlc, frame.rwcnt);
+      
       frame.data(511-frame.data_length*8 downto 0):= (OTHERS => '0');
       
   end procedure;
@@ -1066,6 +1103,10 @@ procedure process_error
     
     if(frame_A.brs /= frame_B.brs)then
       outcome:= false;
+    end if;
+    
+    if(frame_A.rwcnt /= frame_B.rwcnt)then
+      outcome := false;
     end if;
     
     --DLC is compared only in non-RTR frames!
@@ -1125,6 +1166,11 @@ procedure process_error
       if(frame_A.brs /= frame_B.brs)then
         outcome:= false;
       end if;
+    end if;
+    
+    -- Received word count
+    if(frame_A.rwcnt /= frame_B.rwcnt)then
+      outcome := false;
     end if;
     
     --DLC is compared only in non-RTR frames!
@@ -1278,6 +1324,7 @@ procedure process_error
     frame.ident_type    := r_data(ID_TYPE_IND);
     frame.frame_format  := r_data(FR_TYPE_IND);
     frame.brs           := r_data(BRS_IND);
+    frame.rwcnt         := to_integer(unsigned(r_data(RWCNT_H downto RWCNT_L)));
     decode_dlc_v(frame.dlc,frame.data_length);
     
     --Read identifier
