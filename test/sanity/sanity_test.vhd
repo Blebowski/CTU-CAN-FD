@@ -43,6 +43,8 @@
 --    7.7.2016   Created file
 --    23.9.2017  Added bugfix for proper identifier correction. Identifier layout change from 13.1.2017 caused
 --               that identifier correction did not avoid collisions due to assumption of old identifier layout.
+--    09.2.2018  Added support fow RWCNT field in the SW_CAN_Frame. RWCNT is stored also to TX Memory. Thus when
+--               read on RX side, it should match the calculated value on TX.
 -----------------------------------------------------------------------------------------------------------------
 
 
@@ -200,7 +202,8 @@ architecture behavioral of sanity_test is
   variable ident_vect    :  std_logic_vector(28 downto 0);
   begin
     --Frame format word
-    memory(pointer) <= "000000000000000000000"&
+    memory(pointer) <= "0000000000000000"&
+                        std_logic_vector(to_unsigned(frame.rwcnt, 5))&
                         '0'& --We dont store ESI bit
                         frame.brs&
                         '1'&frame.frame_format&
@@ -255,6 +258,9 @@ architecture behavioral of sanity_test is
     frame.frame_format := memory(mem_index)(pointer)(7);
     frame.brs         := memory(mem_index)(pointer)(9);
     decode_dlc_v(frame.dlc,frame.data_length);
+    frame.rwcnt       := 
+      to_integer(unsigned(memory(mem_index)(pointer)(15 downto 11)));
+    
     pointer           := pointer+1;
     
     --Timestamp

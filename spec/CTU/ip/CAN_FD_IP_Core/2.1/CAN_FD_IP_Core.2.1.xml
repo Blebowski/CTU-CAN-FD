@@ -3230,6 +3230,13 @@
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RWCNT</ipxact:name>
+						<ipxact:displayName>RWCNT</ipxact:displayName>
+						<ipxact:description>Number of words this frame takes in the RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame WCNT=3, 64 Byte FD frame WCNT=19). In TX Buffer this field has no meaning.</ipxact:description>
+						<ipxact:bitOffset>11</ipxact:bitOffset>
+						<ipxact:bitWidth>5</ipxact:bitWidth>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>IDENTIFIER_W</ipxact:name>

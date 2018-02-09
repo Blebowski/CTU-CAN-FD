@@ -85,6 +85,8 @@ package CAN_FD_frame_format is
   constant TBF_IND                : natural := 8;
   constant BRS_IND                : natural := 9;
   constant ESI_RESVD_IND         : natural := 10;
+  constant RWCNT_L               : natural := 11;
+  constant RWCNT_H               : natural := 15;
 
   -- "RTR" field enumerated values
   constant NO_RTR_FRAME       : std_logic := '0';
