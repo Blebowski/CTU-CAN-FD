@@ -90,13 +90,18 @@
 --                "rec_dram_word" and "rec_dram_addr" as part of resource opti-
 --                mizations. Data are not available in parallel at input of the
 --                RX buffer but addressed in internal RAM of Protocol control.
---
+--    09.02.2018  1. Fixed data_size upper range threshold from 32 to 31.
+--                2. Added "frame_form_w" to assign it with generated indices
+--                3. Added combinational decoder on received DLC to frame
+--                   length in words (without frame_format word) into new signal
+--                   "data_size_comb".
 --------------------------------------------------------------------------------
 
 Library ieee;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.ALL;
 use work.CANconstants.all;
+use work.CAN_FD_frame_format.all;
 
 entity rxBuffer is
   GENERIC(
@@ -246,7 +251,15 @@ entity rxBuffer is
   signal copy_counter           :natural range 0 to 20;
   
   -- Internal data size decoded from received frame
-  signal data_size              :natural range 0 to 32; 
+  signal data_size              :natural range 0 to 31; 
+  
+  -- Combinationally decoded data size from the received frame DLC
+  -- (the size is in 32-bit word)
+  signal data_size_comb         :natural range 0 to 31;
+  
+  -- Combinational decoding of the memory words
+  signal frame_form_w           :std_logic_vector(31 downto 0);
+  
   
 end entity;
 
@@ -281,6 +294,39 @@ begin
                                                  copy_counter<19)
                                            else
                            0;
+  
+  -- Receive data size (in words) decoder
+  with rec_dlc_in select data_size_comb <=
+      3 when "0000", --Zero bits
+      4 when "0001", --1 byte
+      4 when "0010", --2 bytes
+      4 when "0011", --3 bytes
+      4 when "0100", --4 bytes
+      5 when "0101", --5 bytes
+      5 when "0110", --6 bytes
+      5 when "0111", --7 bytes
+      5 when "1000", --8 bytes
+      6 when "1001", --12 bytes
+      7 when "1010", --16 bytes
+      8 when "1011", --20 bytes
+      9 when "1100", --24 bytes
+      11 when "1101", --32 bytes
+      15 when "1110", --48 bytes
+      19 when "1111", --64 bytes
+      0  when others;
+  
+  
+  -- Frame format word assignment
+  frame_form_w(DLC_H downto DLC_L)      <= rec_dlc_in;
+  frame_form_w(RTR_IND)                 <= rec_is_rtr;
+  frame_form_w(ID_TYPE_IND)             <= rec_ident_type_in;
+  frame_form_w(FR_TYPE_IND)             <= rec_frame_type_in;
+  frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
+  frame_form_w(BRS_IND)                 <= rec_brs;
+  frame_form_w(ESI_RESVD_IND)           <= rec_esi;
+  frame_form_w(RWCNT_H downto RWCNT_L)  <=
+          std_logic_vector(to_unsigned(data_size_comb, (RWCNT_H - RWCNT_L + 1)));
+  frame_form_w(31 downto 16)            <= (OTHERS => '0');
   
   ------------------------------------------------------------------------------
   --Storing data from CANCore and loading data into reading buffer
@@ -401,12 +447,7 @@ begin
             
             --Writing Frame format Word
             rx_message_disc             <= '0';
-            memory(write_pointer)       <= "000000000000000000000"&
-		                                    rec_esi&rec_brs&
-                                            '1'&rec_frame_type_in&
-                                            rec_ident_type_in&
-                                            rec_is_rtr&
-                                            '0'&rec_dlc_in;
+            memory(write_pointer)       <= frame_form_w;
             memory_valid(write_pointer) <= '1';
             
            --Increasing write pointer
@@ -417,25 +458,7 @@ begin
            if(rec_is_rtr='1' and rec_frame_type_in='0')then
              data_size    <= 3;
            else
-             case rec_dlc_in is
-              when "0000" => data_size    <= 3; --Zero bits
-              when "0001" => data_size    <= 4; --1 byte
-              when "0010" => data_size    <= 4; --2 bytes
-              when "0011" => data_size    <= 4; --3 bytes
-              when "0100" => data_size    <= 4; --4 bytes
-              when "0101" => data_size    <= 5; --5 bytes
-              when "0110" => data_size    <= 5; --6 bytes
-              when "0111" => data_size    <= 5; --7 bytes
-              when "1000" => data_size    <= 5; --8 bytes
-              when "1001" => data_size    <= 6; --12 bytes
-              when "1010" => data_size    <= 7; --16 bytes
-              when "1011" => data_size    <= 8; --20 bytes
-              when "1100" => data_size    <= 9; --24 bytes
-              when "1101" => data_size    <= 11; --32 bytes
-              when "1110" => data_size    <= 15; --48 bytes
-              when "1111" => data_size    <= 19; --64 bytes
-              when others => data_size    <= 0;
-              end case;
+             data_size    <= data_size_comb;
           end if;
           
           --Set the copy counter to properly copy the data in next cycles
