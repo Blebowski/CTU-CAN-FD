@@ -2100,7 +2100,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RWCNT\end_layout
 
 \end_inset
 </cell>
@@ -2108,7 +2108,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RWCNT\end_layout
 
 \end_inset
 </cell>
@@ -2116,7 +2116,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RWCNT\end_layout
 
 \end_inset
 </cell>
@@ -2124,7 +2124,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RWCNT\end_layout
 
 \end_inset
 </cell>
@@ -2132,7 +2132,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RWCNT\end_layout
 
 \end_inset
 </cell>
@@ -2174,7 +2174,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2182,7 +2182,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2190,7 +2190,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2198,7 +2198,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2206,7 +2206,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+X\end_layout
 
 \end_inset
 </cell>
@@ -2516,6 +2516,10 @@ BRS Bit rate shift bit\begin_inset Newline newline\end_inset
 ESI_RESVD Error state indicator bit for received frames. Reserved for transmitted frames.\begin_inset Newline newline\end_inset
 		0b0  - ESI_ERR_ACTIVE - \begin_inset Newline newline\end_inset
 		0b1  - ESI_ERR_PASIVE - 
+\end_layout
+\begin_layout Description
+RWCNT Number of words this frame takes in the RX Buffer without FRAME_FORMAT WORD.
+(E.g RTR frame WCNT=3, 64 Byte FD frame WCNT=19)
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
