@@ -2518,8 +2518,7 @@ ESI_RESVD Error state indicator bit for received frames. Reserved for transmitte
 		0b1  - ESI_ERR_PASIVE - 
 \end_layout
 \begin_layout Description
-RWCNT Number of words this frame takes in the RX Buffer without FRAME_FORMAT WORD.
-(E.g RTR frame WCNT=3, 64 Byte FD frame WCNT=19)
+RWCNT Number of words this frame takes in the RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame WCNT=3, 64 Byte FD frame WCNT=19). In TX Buffer this field has no meaning.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
