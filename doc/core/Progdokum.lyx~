@@ -269,7 +269,7 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-Datasheet v 2.0, September 2016
+Datasheet v 2.1, TODO 2018
 \end_layout
 
 \end_inset
@@ -1409,7 +1409,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="4">
+<lyxtabular version="3" rows="10" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1543,56 +1543,6 @@ Refer to
 \begin_inset CommandInset ref
 LatexCommand nameref
 reference "subsec:2.3.10-RX-buffer-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-useFDSize
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-boolean
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-true
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT buffer size: 8 bytes (Normal)/64 bytes(FD).
- 
-\end_layout
-
-\begin_layout Plain Layout
-Refer to 
-\begin_inset CommandInset ref
-LatexCommand nameref
-reference "subsec:2.3.10-TXT-buffer-1-1"
 
 \end_inset
 

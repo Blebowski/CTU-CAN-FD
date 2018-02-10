@@ -65,7 +65,6 @@ package CANcomponents is
     generic(
       constant use_logger     : boolean               := true;
       constant rx_buffer_size : natural               := 128;
-      constant useFDSize      : boolean               := true;
       constant use_sync       : boolean               := true;
       constant ID             : natural range 0 to 15 := 1;
       constant sup_filtA      : boolean               := true;
@@ -220,8 +219,7 @@ package CANcomponents is
   ------------------------------------------------------------------------------
   component txtBuffer is
     generic(
-      constant ID        : natural := 1;
-      constant useFDsize : boolean := false
+      constant ID        : natural := 1
       );
     port(
       signal clk_sys            : in  std_logic;

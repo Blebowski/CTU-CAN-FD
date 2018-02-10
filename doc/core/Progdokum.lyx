@@ -1409,7 +1409,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="11" columns="4">
+<lyxtabular version="3" rows="10" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -1543,56 +1543,6 @@ Refer to
 \begin_inset CommandInset ref
 LatexCommand nameref
 reference "subsec:2.3.10-RX-buffer-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-useFDSize
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-boolean
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-true
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TXT buffer size: 8 bytes (Normal)/64 bytes(FD).
- 
-\end_layout
-
-\begin_layout Plain Layout
-Refer to 
-\begin_inset CommandInset ref
-LatexCommand nameref
-reference "subsec:2.3.10-TXT-buffer-1-1"
 
 \end_inset
 
@@ -18684,21 +18634,6 @@ textunderscore STAT}
 
  by CAN Core.
  This signals the CAN Frame was transmitted.
- In order to save LUTs on FPGA, it is possible to synthesize buffer which
- only supports frame length up to 8 bytes (via generic useFDsize=false).
- TX_DATA_7 to TX_DATA_20 registers have no meaning then.
- When this 
-\begin_inset Quotes eld
-\end_inset
-
-reduced
-\begin_inset Quotes erd
-\end_inset
-
- buffer is synthesized it is still possible to insert frame dlc with length
- up to 64 bytes.
- However data 9 to 64 will be lost and only zeroes will be loaded to CAN
- Core and then transmitted.
  Transmitt buffer is synthesized into native RAM memory on FPGA.
 \end_layout
 
