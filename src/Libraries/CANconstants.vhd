@@ -105,6 +105,15 @@ package CANconstants is
   constant INC_EIGHT_CON : std_logic_vector(2 downto 0) := "010";
   constant DEC_ONE_CON   : std_logic_vector(2 downto 0) := "001";
 
+  constant TXT_BUFFER_COUNT : natural := 2;
+  
+  -- TXT Buffer settings indices
+  type txt_buf_settings_type is array (1 to TXT_BUFFER_COUNT) of
+        std_logic_vector(3 downto 0);
+  constant TXTB_ALLOW_I : natural := 0;
+  constant TXTB_PRIORITY_H : natural := 3;
+  constant TXTB_PRIORITY_L : natural := 1;
+
   --Values for enabling of whole controller
   --and interrupts
   --constant ENABLED  : std_logic := '1';

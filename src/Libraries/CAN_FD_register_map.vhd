@@ -785,15 +785,19 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- TX_STATUS register
   --
-  -- Status of the TXT Buffers. 
+  -- Status of TXT Buffers. 
   ------------------------------------------------------------------------------
   constant TXT1E_IND              : natural := 0;
-  constant TXT2E_IND              : natural := 1;
-  constant TXTS_IND               : natural := 2;
+  constant TXT1TS_IND             : natural := 1;
+  constant TXT2E_IND              : natural := 2;
+  constant TXT2TS_IND             : natural := 3;
+  constant TXTS_IND              : natural := 16;
 
   -- TX_STATUS register reset values
   constant TXT2E_RSTVAL       : std_logic := '1';
   constant TXT1E_RSTVAL       : std_logic := '1';
+  constant TXT1TS_RSTVAL      : std_logic := '0';
+  constant TXT2TS_RSTVAL      : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- TX_SETTINGS register
@@ -801,16 +805,22 @@ package CAN_FD_register_map is
   -- This register controls the access into TX buffers. All bits are active in l
   -- ogic 1.
   ------------------------------------------------------------------------------
-  constant TXT1A_IND              : natural := 0;
-  constant TXT2A_IND              : natural := 1;
   constant BDIR_IND               : natural := 2;
   constant FRSW_IND               : natural := 3;
+  constant TXT1A_IND             : natural := 16;
+  constant TXT1P_L               : natural := 17;
+  constant TXT1P_H               : natural := 19;
+  constant TXT2A_IND             : natural := 20;
+  constant TXT2P_L               : natural := 21;
+  constant TXT2P_H               : natural := 23;
 
   -- TX_SETTINGS register reset values
   constant TXT1A_RSTVAL       : std_logic := '0';
   constant TXT2A_RSTVAL       : std_logic := '0';
   constant BDIR_RSTVAL        : std_logic := '0';
   constant FRSW_RSTVAL        : std_logic := '0';
+  constant TXT1P_RSTVAL : std_logic_vector(2 downto 0) := "001";
+  constant TXT2P_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------
   -- ERR_CAPT register
