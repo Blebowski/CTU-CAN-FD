@@ -350,19 +350,19 @@ begin
   --Frame format word--
   ---------------------
   --Data length Code
-  tran_dlc_out              <= txt1buf_info_in(611 downto 608)   when mess_src='0' else 
+  tran_dlc_out              <= txt1buf_info_in(611 downto 608)   when mess_src_reg='0' else 
                                txt2buf_info_in(611 downto 608);
   --RTR Frame                       
-  tran_is_rtr               <= txt1buf_info_in(613)              when mess_src='0' else 
+  tran_is_rtr               <= txt1buf_info_in(613)              when mess_src_reg='0' else 
                                txt2buf_info_in(613);
   --Identifier Type
-  tran_ident_type_out       <= txt1buf_info_in(614)              when mess_src='0' else 
+  tran_ident_type_out       <= txt1buf_info_in(614)              when mess_src_reg='0' else 
                                txt2buf_info_in(614);
   --Frame Type
-  tran_frame_type_out       <= txt1buf_info_in(615)              when mess_src='0' else
+  tran_frame_type_out       <= txt1buf_info_in(615)              when mess_src_reg='0' else
                                txt2buf_info_in(615);
   --Bit rate shift
-  tran_brs_out              <= txt1buf_info_in(617)              when mess_src='0' else 
+  tran_brs_out              <= txt1buf_info_in(617)              when mess_src_reg='0' else 
                                txt2buf_info_in(617);
                                
   ------------------------------------------------------------------------------
