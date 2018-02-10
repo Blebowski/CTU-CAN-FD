@@ -47,6 +47,7 @@ for pattern in ['../src/**/*.vhd', '**/*.vhd']:
 	for f in glob(p, recursive=True):
 		lib.add_source_file(str(f))
 
+lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
 #ui.add_compile_option('ghdl.flags', ['--ieee=synopsys'])
 
 #lib.add_compile_option("ghdl.flags", ["-fprofile-arcs"])

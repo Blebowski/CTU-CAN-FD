@@ -139,14 +139,13 @@ architecture behavioral of sanity_test is
   
   type timestamp_arr_type is array (1 to NODE_COUNT) of std_logic_vector(63 downto 0);
   signal timestamp_v          : timestamp_arr_type := (OTHERS => (OTHERS =>'0'));
-  
+
   type trv_del_shift_reg is array (1 to NODE_COUNT) of tran_delay_type;
   signal transciever          : trv_del_shift_reg := (OTHERS => ((OTHERS => RECESSIVE),(OTHERS => RECESSIVE),'1','1'));
   
   --Bus realisation shift registers
-  constant BUS_DELAY_MAX      : natural := 4999;
-  type bus_delay_type is array (1 to NODE_COUNT) of std_logic_vector(BUS_DELAY_MAX downto 0);
-  signal bus_delay_sr         : bus_delay_type := (OTHERS => (OTHERS => RECESSIVE));
+  type bus_delayed_type is array (1 to NODE_COUNT, 1 to NODE_COUNT) of std_logic;
+  signal bus_delayed          : bus_delayed_type := (OTHERS => (OTHERS => RECESSIVE));
   signal bus_clk              : std_logic := '0';
   
   --Noise registers
@@ -221,7 +220,7 @@ architecture behavioral of sanity_test is
     
     pointer           <= pointer+4;
     wait for 0 ns;
-    
+
     --Data words
     if((frame.rtr='0' or frame.frame_format='1') and (frame.data_length /= 0))then
       
@@ -411,6 +410,11 @@ architecture behavioral of sanity_test is
       mem_bus.data_out <= (OTHERS =>'Z');
       mem_bus.clk_sys  <= 'Z';       
   end procedure;
+
+  function bus_matrix_to_delay(signal bm : in real) return time is
+  begin
+    return 10.0*bm * 500 ps;
+  end function;
     
   
 begin
@@ -519,6 +523,18 @@ begin
   ----------------------------------------------
   -- Realisation of CAN bus
   ----------------------------------------------
+
+  bus_gen_delay_tx: for i in 1 to NODE_COUNT generate
+    bus_gen_delay_tx2: for j in 1 to NODE_COUNT generate
+       i_txdelay: entity work.tb_signal_delayer generic map (NSAMPLES => 16)
+         port map (
+           input => transciever(i).tx_point,
+           delay => bus_matrix_to_delay(bus_matrix(j,i)),
+           delayed => bus_delayed(i,j)
+         );
+    end generate bus_gen_delay_tx2;
+  end generate bus_gen_delay_tx;
+
   bus_gen: for i in 1 to NODE_COUNT generate
     bus_gen_proc:process
     variable rx_lvl : std_logic := RECESSIVE;
@@ -526,16 +542,12 @@ begin
     begin
       wait until rising_edge(bus_clk);
       rx_lvl := RECESSIVE;
-      
-      --Realising the delay from transciever
-      bus_delay_sr(i) <= bus_delay_sr(i)(BUS_DELAY_MAX-1 downto 0)&transciever(i).tx_point;     
-      
+
       --In one recieving node iterate trough all nodes 
       -- and AND all delayed signals.
       for j in 1 to NODE_COUNT loop
-        index  := integer(10.0*bus_matrix(j,i));
-        rx_lvl := rx_lvl AND bus_delay_sr(j)(index);
-      end loop;  
+        rx_lvl := rx_lvl AND bus_delayed(j,i);
+      end loop;
       
       --Now add the Generated noise to the recieving node
       if(noise_force(i)='1')then
