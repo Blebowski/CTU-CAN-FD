@@ -111,7 +111,9 @@ architecture behavioral of sanity_test is
   -- Internal signals
   ----------------------------------------------
   ----------------------------------------------
-  
+  type delay_matrix_type is array(1 to NODE_COUNT, 1 to NODE_COUNT) of time;
+  signal delay_matrix : delay_matrix_type;
+
   --Memory interfaces
   type mem_bus_arr_type is array (1 to NODE_COUNT) of Avalon_mem_type;
   signal mb_arr : mem_bus_arr_type;
@@ -526,10 +528,11 @@ begin
 
   bus_gen_delay_tx: for i in 1 to NODE_COUNT generate
     bus_gen_delay_tx2: for j in 1 to NODE_COUNT generate
+       delay_matrix(j,i) <= bus_matrix_to_delay(bus_matrix(j,i));
        i_txdelay: entity work.tb_signal_delayer generic map (NSAMPLES => 16)
          port map (
            input => transciever(i).tx_point,
-           delay => bus_matrix_to_delay(bus_matrix(j,i)),
+           delay => delay_matrix(j,i),
            delayed => bus_delayed(i,j)
          );
     end generate bus_gen_delay_tx2;
