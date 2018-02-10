@@ -62,6 +62,9 @@
 --    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid 
 --                possible name conflicts.
 --    20.12.2017  Removed obsolete "tran_data_in" signal.
+--     10.2.2017  Removed "useFDsize" generic. When TX Buffer goes completely
+--                to the Dual port RAM, there is no need to save memory
+--                anymore. 
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -77,10 +80,6 @@ entity CAN_top_level is
     
     -- Receive Buffer size
     constant rx_buffer_size : natural range 4 to 512 := 128; 
-    
-    -- Transcieve buffer size should be synthetised as FD Size (640 bits) 
-    -- or normal CAN (128 bits)
-    constant useFDSize      : boolean                := true;
     
     -- Whenever internal synchroniser chain should be used for incoming bus 
     -- signals. Dont turn off unless external synchronisation chain is put on
@@ -556,8 +555,7 @@ begin
 
   txt1_buf_comp : txtBuffer
     generic map(
-      ID        => 1,
-      useFDsize => useFDsize
+      ID        => 1
       )
     port map(
       clk_sys            => clk_sys,
@@ -574,8 +572,7 @@ begin
 
   txt2_buf_comp : txtBuffer
     generic map(
-      ID        => 2,
-      useFDsize => useFDsize
+      ID        => 2
       )
     port map(
       clk_sys            => clk_sys,

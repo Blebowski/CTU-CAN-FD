@@ -62,8 +62,7 @@ use work.CANconstants.all;
 
 entity txtBuffer is
     generic(
-      constant ID           :natural :=1;
-      constant useFDsize    :boolean :=false
+      constant ID           :natural :=1
     );
     PORT(
       ------------------
