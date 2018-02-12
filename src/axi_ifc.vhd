@@ -131,11 +131,11 @@ begin
   S_AXI_RDATA  <= axi_rdata;
   S_AXI_RRESP  <= axi_rresp;
   S_AXI_RVALID  <= axi_rvalid;
-  -- Implement axi_awready generation
-  -- axi_awready is asserted for one S_AXI_ACLK clock cycle when both
+
+  -- Implement axi_awready & axi_awready generation
+  -- axi_(a)wready is asserted for one S_AXI_ACLK clock cycle when both
   -- S_AXI_AWVALID and S_AXI_WVALID are asserted. axi_awready is
   -- de-asserted when reset is low.
-
   process (S_AXI_ACLK)
   begin
     if rising_edge(S_AXI_ACLK) then
@@ -144,16 +144,19 @@ begin
         aw_en <= '1';
       else
         if (axi_awready = '0' and S_AXI_AWVALID = '1' and S_AXI_WVALID = '1' and aw_en = '1') then
-          -- slave is ready to accept write address when
+          -- slave is ready to accept write address/data when
           -- there is a valid write address and write data
           -- on the write address and data bus. This design
           -- expects no outstanding transactions.
           axi_awready <= '1';
+          axi_wready <= '1';
         elsif (S_AXI_BREADY = '1' and axi_bvalid = '1') then
-            aw_en <= '1';
-            axi_awready <= '0';
+          aw_en <= '1';
+          axi_awready <= '0';
+          axi_wready <= '0';
         else
           axi_awready <= '0';
+          axi_wready <= '0';
         end if;
       end if;
     end if;
@@ -172,30 +175,6 @@ begin
         if (axi_awready = '0' and S_AXI_AWVALID = '1' and S_AXI_WVALID = '1' and aw_en = '1') then
           -- Write Address latching
           axi_awaddr <= S_AXI_AWADDR;
-        end if;
-      end if;
-    end if;
-  end process;
-
-  -- Implement axi_wready generation
-  -- axi_wready is asserted for one S_AXI_ACLK clock cycle when both
-  -- S_AXI_AWVALID and S_AXI_WVALID are asserted. axi_wready is
-  -- de-asserted when reset is low.
-
-  process (S_AXI_ACLK)
-  begin
-    if rising_edge(S_AXI_ACLK) then
-      if S_AXI_ARESETN = '0' then
-        axi_wready <= '0';
-      else
-        if (axi_wready = '0' and S_AXI_WVALID = '1' and S_AXI_AWVALID = '1' and aw_en = '1') then
-            -- slave is ready to accept write data when
-            -- there is a valid write address and write data
-            -- on the write address and data bus. This design
-            -- expects no outstanding transactions.
-            axi_wready <= '1';
-        else
-          axi_wready <= '0';
         end if;
       end if;
     end if;
