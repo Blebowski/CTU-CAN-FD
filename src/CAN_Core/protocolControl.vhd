@@ -2367,7 +2367,7 @@ begin
                     (drv_retr_lim_ena='1' and --Enabled, but not reached
                      retr_count<to_integer(unsigned(drv_retr_th))))
                 then
-                  retr_count         <=  retr_count + 1 mod 16;            
+                  retr_count         <=  (retr_count + 1) mod 16;            
                   txt_hw_cmd.unlock  <=  '1';
                   txt_hw_cmd.err     <=  '1';
                 else
