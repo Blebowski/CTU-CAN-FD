@@ -1250,6 +1250,11 @@
 						<ipxact:displayName>TXCE</ipxact:displayName>
 						<ipxact:description>Activates &quot;set_empty&quot; command. Transits frone TX Done, TX Error or TX Aborted to Done.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
@@ -1257,6 +1262,11 @@
 						<ipxact:displayName>TXCR</ipxact:displayName>
 						<ipxact:description>Activates &quot;set_ready&quot; command. Transits frone TX Done, TX Error, TX Aborted or Empty to Ready.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
@@ -1264,6 +1274,11 @@
 						<ipxact:displayName>TXCA</ipxact:displayName>
 						<ipxact:description>Activates &quot;set_abort&quot; command. Transits from Ready to TX Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to TX Aborted if current transmission is not succesfull. If the transmission is sucesfull, it has no effect.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
@@ -1271,6 +1286,11 @@
 						<ipxact:displayName>TXI1</ipxact:displayName>
 						<ipxact:description>Command is applied on TXT Buffer 1.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
@@ -1278,6 +1298,11 @@
 						<ipxact:displayName>TXI2</ipxact:displayName>
 						<ipxact:description>Command is applied on TXT Buffer 2.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>

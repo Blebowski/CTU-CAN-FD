@@ -823,6 +823,11 @@ package CAN_FD_register_map is
   constant TXI2_IND               : natural := 9;
 
   -- TX_COMMAND register reset values
+  constant TXCE_RSTVAL        : std_logic := '0';
+  constant TXCR_RSTVAL        : std_logic := '0';
+  constant TXCA_RSTVAL        : std_logic := '0';
+  constant TXI1_RSTVAL        : std_logic := '0';
+  constant TXI2_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- TX_SETTINGS register
