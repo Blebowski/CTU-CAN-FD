@@ -2464,13 +2464,13 @@
 						<ipxact:bitWidth>4</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue usage="read">
-								<ipxact:name>TXT_EMPTY</ipxact:name>
+								<ipxact:name>TXT_ETY</ipxact:name>
 								<ipxact:displayName>TXT_EMPTY</ipxact:displayName>
 								<ipxact:description>TXT Buffer is  empty.</ipxact:description>
 								<ipxact:value>'h8</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
-								<ipxact:name>TXT_OK</ipxact:name>
+								<ipxact:name>TXT_TOK</ipxact:name>
 								<ipxact:displayName>TXT_OK</ipxact:displayName>
 								<ipxact:description>Transmission from TXT Buffer finished OK.</ipxact:description>
 								<ipxact:value>'h4</ipxact:value>
@@ -2498,6 +2498,12 @@
 								<ipxact:displayName>TXT_ABTP</ipxact:displayName>
 								<ipxact:description>Transmission from TXT Buffer is in progress, stop trying at nearest error frame or arbitration lost.</ipxact:description>
 								<ipxact:value>'h3</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_RDY</ipxact:name>
+								<ipxact:displayName>TXT_RDY</ipxact:displayName>
+								<ipxact:description>TXT Buffer is ready to be selected for transmission by the CAN Core.</ipxact:description>
+								<ipxact:value>'h1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
