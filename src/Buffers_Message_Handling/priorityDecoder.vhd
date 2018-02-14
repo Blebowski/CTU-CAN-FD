@@ -62,7 +62,7 @@ entity priorityDecoder is
     -------------------------
     -- Buffer information
     -------------------------
-    signal prio       : in  txt_buf_priority_type;
+    signal prio       : in  txtb_priorities_type;
     signal prio_valid : in  std_logic_vector(buf_count - 1 downto 0);
     
     -----------------------
@@ -85,23 +85,23 @@ architecture rtl of priorityDecoder is
   -- Level 0 aliases for input signals to provide variable signal width
   type level0_priority_type  is array (7 downto 0) of
           std_logic_vector(2 downto 0);
-  signal l0_prio  : level0_priority_type;
-  signal l0_valid : std_logic_vector(7 downto 0);
+  signal l0_prio        : level0_priority_type;
+  signal l0_valid       : std_logic_vector(7 downto 0);
   
   
   -- Level 1 priorities and valid indicators
   type level1_priority_type  is array (3 downto 0) of
           std_logic_vector(2 downto 0);
-  signal l1_prio   : level1_priority_type;
-  signal l1_valid  : std_logic_vector(3 downto 0);
-  signal l1_winner : std_logic_vector(3 downto 0);
+  signal l1_prio        : level1_priority_type;
+  signal l1_valid       : std_logic_vector(3 downto 0);
+  signal l1_winner      : std_logic_vector(3 downto 0);
   
   -- Level 2 priorities and valid indicators
   type level2_priority_type  is array (1 downto 0) of
           std_logic_vector(2 downto 0);
-  signal l2_prio   : level1_priority_type;
-  signal l2_valid  : std_logic_vector(1 downto 0);
-  signal l2_winner : std_logic_vector(3 downto 0);
+  signal l2_prio        : level1_priority_type;
+  signal l2_valid       : std_logic_vector(1 downto 0);
+  signal l2_winner      : std_logic_vector(3 downto 0);
   
   -- Level 3, we dont need the priorities, we only need the
   -- outcome which of them is bigger (since there is no next stage)
