@@ -24772,12 +24772,12 @@ Reset value\end_layout
 \end_layout
 \begin_layout Description
 TX1S Status of TXT Buffer 2.\begin_inset Newline newline\end_inset
-		0b1010  - TXT_TRAN - Transmission from TXT Buffer is in progress.\begin_inset Newline newline\end_inset
-		0b1011  - TXT_ABTP - Transmission from TXT Buffer is in progress, stop trying at nearest error frame or arbitration lost.\begin_inset Newline newline\end_inset
-		0b1100100  - TXT_OK - Transmission from TXT Buffer finished OK.\begin_inset Newline newline\end_inset
-		0b1101110  - TXT_ERR - Transmission from TXT Buffer failed.\begin_inset Newline newline\end_inset
-		0b1101111  - TXT_ABT - Transmission from TXT Buffer was aborted by SW.\begin_inset Newline newline\end_inset
-		0b1111101000  - TXT_EMPTY - TXT Buffer is  empty.
+		0b0010  - TXT_TRAN - Transmission from TXT Buffer is in progress.\begin_inset Newline newline\end_inset
+		0b0011  - TXT_ABTP - Transmission from TXT Buffer is in progress, stop trying at nearest error frame or arbitration lost.\begin_inset Newline newline\end_inset
+		0b0100  - TXT_OK - Transmission from TXT Buffer finished OK.\begin_inset Newline newline\end_inset
+		0b0110  - TXT_ERR - Transmission from TXT Buffer failed.\begin_inset Newline newline\end_inset
+		0b0111  - TXT_ABT - Transmission from TXT Buffer was aborted by SW.\begin_inset Newline newline\end_inset
+		0b1000  - TXT_EMPTY - TXT Buffer is  empty.
 \end_layout
 \begin_layout Description
 TX2S Status of TXT Buffer 1.
