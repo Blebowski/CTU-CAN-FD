@@ -795,12 +795,13 @@ package CAN_FD_register_map is
   constant TX2S_H                 : natural := 7;
 
   -- "TX1S" field enumerated values
+  constant TXT_RDY : std_logic_vector(3 downto 0) := x"1";
   constant TXT_TRAN : std_logic_vector(3 downto 0) := x"2";
   constant TXT_ABTP : std_logic_vector(3 downto 0) := x"3";
-  constant TXT_OK : std_logic_vector(3 downto 0) := x"4";
+  constant TXT_TOK : std_logic_vector(3 downto 0) := x"4";
   constant TXT_ERR : std_logic_vector(3 downto 0) := x"6";
   constant TXT_ABT : std_logic_vector(3 downto 0) := x"7";
-  constant TXT_EMPTY : std_logic_vector(3 downto 0) := x"8";
+  constant TXT_ETY : std_logic_vector(3 downto 0) := x"8";
 
   -- TX_STATUS register reset values
   constant TX2S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
