@@ -1203,38 +1203,93 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TX_PRIORITY</ipxact:name>
+					<ipxact:displayName>TX_PRIORITY</ipxact:displayName>
+					<ipxact:description>Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals that buffer is selected earlier for transmission. If two buffers have equal priorities, the one with lower index is selected.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h60</ipxact:addressOffset>
+					<ipxact:size>8</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TXT1P</ipxact:name>
+						<ipxact:displayName>TXT1P</ipxact:displayName>
+						<ipxact:description>Priority of TXT Buffer 1.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXT2P</ipxact:name>
+						<ipxact:displayName>TXT2P</ipxact:displayName>
+						<ipxact:description>Priority of TXT Buffer 2.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TX_COMMAND</ipxact:name>
+					<ipxact:displayName>TX_COMMAND</ipxact:displayName>
+					<ipxact:description>Command register for TXT Buffers. Command is activated by setting TXC(E,C,R) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..8) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 deos not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h5C</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>write-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TXCE</ipxact:name>
+						<ipxact:displayName>TXCE</ipxact:displayName>
+						<ipxact:description>Activates &quot;set_empty&quot; command. Transits frone TX Done, TX Error or TX Aborted to Done.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXCR</ipxact:name>
+						<ipxact:displayName>TXCR</ipxact:displayName>
+						<ipxact:description>Activates &quot;set_ready&quot; command. Transits frone TX Done, TX Error, TX Aborted or Empty to Ready.</ipxact:description>
+						<ipxact:bitOffset>1</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXCA</ipxact:name>
+						<ipxact:displayName>TXCA</ipxact:displayName>
+						<ipxact:description>Activates &quot;set_abort&quot; command. Transits from Ready to TX Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to TX Aborted if current transmission is not succesfull. If the transmission is sucesfull, it has no effect.</ipxact:description>
+						<ipxact:bitOffset>2</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXI1</ipxact:name>
+						<ipxact:displayName>TXI1</ipxact:displayName>
+						<ipxact:description>Command is applied on TXT Buffer 1.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXI2</ipxact:name>
+						<ipxact:displayName>TXI2</ipxact:displayName>
+						<ipxact:description>Command is applied on TXT Buffer 2.</ipxact:description>
+						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>TX_SETTINGS</ipxact:name>
 					<ipxact:displayName>TX_SETTINGS</ipxact:displayName>
 					<ipxact:description>This register controls the access into TX buffers. All bits are active in logic 1.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h5C</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
+					<ipxact:addressOffset>'h5E</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>TXT1A</ipxact:name>
-						<ipxact:displayName>TXT1A</ipxact:displayName>
-						<ipxact:description>Allow transmitting frames from TXT Buffer 1. Content of TX Buffer1 is validated by 0 to 1 transition on these bits.</ipxact:description>
-						<ipxact:bitOffset>16</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>TXT2A</ipxact:name>
-						<ipxact:displayName>TXT2A</ipxact:displayName>
-						<ipxact:description>Allow transmitting frames from TXT Buffer 2. Content of TX Buffer2 is validated by 0 to 1 transition on these bits.</ipxact:description>
-						<ipxact:bitOffset>20</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BDIR</ipxact:name>
 						<ipxact:displayName>BDIR</ipxact:displayName>
@@ -1258,30 +1313,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>TXT1P</ipxact:name>
-						<ipxact:displayName>TXT1P</ipxact:displayName>
-						<ipxact:description>Priority of TXT Buffer 1.</ipxact:description>
-						<ipxact:bitOffset>17</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>3</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>TXT2P</ipxact:name>
-						<ipxact:displayName>TXT2P</ipxact:displayName>
-						<ipxact:description>Priority of TXT Buffer 2.</ipxact:description>
-						<ipxact:bitOffset>21</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>3</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -2251,7 +2282,7 @@
 					<ipxact:displayName>ERR_CAPT</ipxact:displayName>
 					<ipxact:description>Last error frame capture.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h60</ipxact:addressOffset>
+					<ipxact:addressOffset>'h64</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -2380,63 +2411,70 @@
 					<ipxact:description>Status of TXT Buffers. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h58</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
+					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>TXT2E</ipxact:name>
-						<ipxact:displayName>TXT2E</ipxact:displayName>
-						<ipxact:description>Active when Transmit buffer 2 is empty.</ipxact:description>
-						<ipxact:bitOffset>2</ipxact:bitOffset>
+						<ipxact:name>TX2S</ipxact:name>
+						<ipxact:displayName>TX1S</ipxact:displayName>
+						<ipxact:description>Status of TXT Buffer 1.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
+								<ipxact:value>1000</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TXT1E</ipxact:name>
-						<ipxact:displayName>TXT1E</ipxact:displayName>
-						<ipxact:description>Active when Transmit buffer 1 is empty.</ipxact:description>
+						<ipxact:name>TX1S</ipxact:name>
+						<ipxact:displayName>TX2S</ipxact:displayName>
+						<ipxact:description>Status of TXT Buffer 2.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
+								<ipxact:value>1000</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>TXTS</ipxact:name>
-						<ipxact:displayName>TXTS</ipxact:displayName>
-						<ipxact:description>Logic 1 if the core was synthesized wih &quot;tx_time_support=true&quot;.Otherwise logic 0.</ipxact:description>
-						<ipxact:bitOffset>16</ipxact:bitOffset>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>TXT1TS</ipxact:name>
-						<ipxact:displayName>TXT1TS</ipxact:displayName>
-						<ipxact:description>Transmission from TXT Buffer 1 was succesfull. This bit is set together with TXT1E.</ipxact:description>
-						<ipxact:bitOffset>1</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>TXT2TS</ipxact:name>
-						<ipxact:displayName>TXT2TS</ipxact:displayName>
-						<ipxact:description>Transmission from TXT Buffer 2 was succesfull. This bit is set together with TXT2E.</ipxact:description>
-						<ipxact:bitOffset>3</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_EMPTY</ipxact:name>
+								<ipxact:displayName>TXT_EMPTY</ipxact:displayName>
+								<ipxact:description>TXT Buffer is  empty.</ipxact:description>
+								<ipxact:value>1000</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_OK</ipxact:name>
+								<ipxact:displayName>TXT_OK</ipxact:displayName>
+								<ipxact:description>Transmission from TXT Buffer finished OK.</ipxact:description>
+								<ipxact:value>0100</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_ERR</ipxact:name>
+								<ipxact:displayName>TXT_ERR</ipxact:displayName>
+								<ipxact:description>Transmission from TXT Buffer failed.</ipxact:description>
+								<ipxact:value>0110</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_ABT</ipxact:name>
+								<ipxact:displayName>TXT_ABT</ipxact:displayName>
+								<ipxact:description>Transmission from TXT Buffer was aborted by SW.</ipxact:description>
+								<ipxact:value>0111</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_TRAN</ipxact:name>
+								<ipxact:displayName>TXT_TRAN</ipxact:displayName>
+								<ipxact:description>Transmission from TXT Buffer is in progress.</ipxact:description>
+								<ipxact:value>0010</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue usage="read">
+								<ipxact:name>TXT_ABTP</ipxact:name>
+								<ipxact:displayName>TXT_ABTP</ipxact:displayName>
+								<ipxact:description>Transmission from TXT Buffer is in progress, stop trying at nearest error frame or arbitration lost.</ipxact:description>
+								<ipxact:value>0011</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
