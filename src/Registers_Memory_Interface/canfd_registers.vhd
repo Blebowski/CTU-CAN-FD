@@ -202,9 +202,7 @@ entity canfd_registers is
     signal txtb_fsms            :in   txt_fsms_type;
     
     -- Buffer commands + command index
-    signal txt_buf_set_empty    :out  std_logic;
-    signal txt_buf_set_ready    :out  std_logic;
-    signal txt_buf_set_abort    :out  std_logic;
+    signal txt_sw_cmd           :out  txt_sw_cmd_type;
     signal txt_buf_cmd_index    :out  std_logic_vector(
                                       TXT_BUFFER_COUNT - 1 downto 0);
     signal txt_buf_prior_out    :out  txtb_priorities_type;
@@ -672,8 +670,8 @@ begin
        filter_B_value     ,filter_C_value         ,filter_ran_low          ,        
        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
        filter_C_ctrl      ,filter_ran_ctrl        ,
-       txt_buf_set_empty  ,txt_buf_set_ready      ,     
-       txt_buf_set_abort  ,txt_buf_cmd_index      ,      
+       txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,     
+       txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,      
        intLoopbackEna     ,log_trig_config        ,
        log_capt_config    ,log_cmd                ,rx_ctr_set              ,
        tx_ctr_set         ,ctr_val_set            ,CAN_enable              ,
@@ -706,8 +704,8 @@ begin
        filter_B_value     ,filter_C_value         ,filter_ran_low          ,        
        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
        filter_C_ctrl      ,filter_ran_ctrl        ,
-       txt_buf_set_empty  ,txt_buf_set_ready      ,     
-       txt_buf_set_abort  ,txt_buf_cmd_index      ,
+       txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,     
+       txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,      
        intLoopbackEna     ,log_trig_config        ,
        log_capt_config    ,log_cmd                ,
        rx_ctr_set         ,tx_ctr_set             ,
@@ -785,6 +783,10 @@ begin
 		RX_buff_read_first        <= false;
 		aux_data                  <=  (OTHERS=>'0');
 		sbe_reg                   <= sbe;
+		
+		txt_sw_cmd.set_ety        <= '0';
+    txt_sw_cmd.set_rdy        <= '0';
+    txt_sw_cmd.set_abt        <= '0';
 		
 		--Chip select active and our device is selected (Component type and ID)
 		if((scs=ACT_CSC) and 
@@ -958,11 +960,11 @@ begin
     			-- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
     			----------------------------------------------------
     			when TX_COMMAND_ADR =>
-    			     
+    			 
     			     -- TXT Buffers commands
-    			     write_be_s(txt_buf_set_empty, TXCE_IND, data_in, sbe);
-    			     write_be_s(txt_buf_set_ready, TXCR_IND, data_in, sbe);
-    			     write_be_s(txt_buf_set_abort, TXCA_IND, data_in, sbe);
+    			     write_be_s(txt_sw_cmd.set_ety, TXCE_IND, data_in, sbe);
+    			     write_be_s(txt_sw_cmd.set_rdy, TXCR_IND, data_in, sbe);
+    			     write_be_s(txt_sw_cmd.set_abt, TXCA_IND, data_in, sbe);
     			   
             -- Vector index for which buffer the command is active
             write_be_vect(txt_buf_cmd_index, 0, TXT_BUFFER_COUNT - 1, data_in,
