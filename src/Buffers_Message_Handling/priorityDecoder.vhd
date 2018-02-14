@@ -63,7 +63,7 @@ entity priorityDecoder is
     -- Buffer information
     -------------------------
     signal prio       : in  txt_buf_priority_type;
-    signal prio_valid : in  std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
+    signal prio_valid : in  std_logic_vector(buf_count - 1 downto 0);
     
     -----------------------
     -- Output interface
@@ -71,11 +71,11 @@ entity priorityDecoder is
     
     -- Whether selected buffer is valid 
     -- (at least one of the buffers must be non-empty and allowed)
-    signal buffer_valid   : out  boolean;
+    signal output_valid   : out  boolean;
     
     -- Index of highest priority buffer which is non-empty and allowed
     -- for transmission
-    signal buf_index      : out  natural range 0 to TXT_BUFFER_COUNT - 1
+    signal output_index      : out  natural range 0 to buf_count - 1
       
   );
 end entity;
@@ -129,10 +129,10 @@ begin
       end if;
     end process;
     
-    l0_prio(i) <= prio(i) when (i < TXT_BUFFER_COUNT)
+    l0_prio(i) <= prio(i) when (i < buf_count)
                           else
                   (OTHERS => '0');
-    l0_valid(i) <= prio_valid(i) when (i < TXT_BUFFER_COUNT)
+    l0_valid(i) <= prio_valid(i) when (i < buf_count)
                                  else
                     '0';
   end generate;
@@ -240,7 +240,7 @@ begin
   l3_valid  <= '0' when l2_valid(1 downto 0) = "00" 
                    else
                 '1';
-  buffer_valid <= true when l3_valid = '1' else false;
+  output_valid <= true when l3_valid = '1' else false;
   
   -- Priority comparator of level 3
   l3_winner  <= LOWER_TREE when l2_valid(1 downto 0) = "01" else
@@ -269,29 +269,29 @@ begin
       if (l3_winner = LOWER_TREE) then
           if (l2_winner(0) = LOWER_TREE) then
               if (l1_winner(0) = LOWER_TREE) then
-                buf_index <= 0;
+                output_index <= 0;
               else
-                buf_index <= 1;
+                output_index <= 1;
               end if;
           else
               if (l1_winner(1) = LOWER_TREE)then
-                buf_index <= 2 mod TXT_BUFFER_COUNT;
+                output_index <= 2 mod buf_count;
               else
-                buf_index <= 3 mod TXT_BUFFER_COUNT;
+                output_index <= 3 mod buf_count;
               end if;
           end if;      
       else
           if (l2_winner(1) = LOWER_TREE) then
               if (l1_winner(2) = LOWER_TREE) then
-                buf_index <= 4 mod TXT_BUFFER_COUNT;
+                output_index <= 4 mod buf_count;
               else
-                buf_index <= 5 mod TXT_BUFFER_COUNT;
+                output_index <= 5 mod buf_count;
               end if;
           else
               if (l1_winner(3) = LOWER_TREE)then
-                buf_index <= 6 mod TXT_BUFFER_COUNT;
+                output_index <= 6 mod buf_count;
               else
-                buf_index <= 7 mod TXT_BUFFER_COUNT;
+                output_index <= 7 mod buf_count;
               end if;
           end if;   
       end if;
