@@ -2421,7 +2421,7 @@
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>1000</ipxact:value>
+								<ipxact:value>'h8</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>4</ipxact:bitWidth>
@@ -2433,7 +2433,7 @@
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>1000</ipxact:value>
+								<ipxact:value>'h8</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>4</ipxact:bitWidth>
@@ -2442,37 +2442,37 @@
 								<ipxact:name>TXT_EMPTY</ipxact:name>
 								<ipxact:displayName>TXT_EMPTY</ipxact:displayName>
 								<ipxact:description>TXT Buffer is  empty.</ipxact:description>
-								<ipxact:value>1000</ipxact:value>
+								<ipxact:value>'h8</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_OK</ipxact:name>
 								<ipxact:displayName>TXT_OK</ipxact:displayName>
 								<ipxact:description>Transmission from TXT Buffer finished OK.</ipxact:description>
-								<ipxact:value>0100</ipxact:value>
+								<ipxact:value>'h4</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ERR</ipxact:name>
 								<ipxact:displayName>TXT_ERR</ipxact:displayName>
 								<ipxact:description>Transmission from TXT Buffer failed.</ipxact:description>
-								<ipxact:value>0110</ipxact:value>
+								<ipxact:value>'h6</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ABT</ipxact:name>
 								<ipxact:displayName>TXT_ABT</ipxact:displayName>
 								<ipxact:description>Transmission from TXT Buffer was aborted by SW.</ipxact:description>
-								<ipxact:value>0111</ipxact:value>
+								<ipxact:value>'h7</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_TRAN</ipxact:name>
 								<ipxact:displayName>TXT_TRAN</ipxact:displayName>
 								<ipxact:description>Transmission from TXT Buffer is in progress.</ipxact:description>
-								<ipxact:value>0010</ipxact:value>
+								<ipxact:value>'h2</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue usage="read">
 								<ipxact:name>TXT_ABTP</ipxact:name>
 								<ipxact:displayName>TXT_ABTP</ipxact:displayName>
 								<ipxact:description>Transmission from TXT Buffer is in progress, stop trying at nearest error frame or arbitration lost.</ipxact:description>
-								<ipxact:value>0011</ipxact:value>
+								<ipxact:value>'h3</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
