@@ -48,6 +48,7 @@
 --    06.02.2018  Modified the library to work with generated constants from the 8 bit register map generated
 --                from IP-XACT.
 --    09.02.2018  Added support fow RWCNT field in the SW_CAN_Frame.
+--    15.02.2018  Added support for TXT Buffer commands in CAN Send frame procedure.
 -------------------------------------------------------------------------------------------------------------
 
 
@@ -1219,89 +1220,71 @@ procedure process_error
    --Read whether there is place in the TXT buffer
    CAN_read(w_data,TX_STATUS_ADR,ID,mem_bus);
    if (buf_nr = 1) then
-     buf_index := TXT1E_IND;
+     if (w_data(TX1S_H downto TX1S_L) /= TXT_ETY) then
+       report "Unable to send the frame, TX buffer not empty" severity error;
+       return;
+     end if;  
    elsif (buf_nr = 2) then
-     buf_index := TXT2E_IND;
-   else 
-     buf_index := 31;
+     if (w_data(TX2S_H downto TX2S_L) /= TXT_ETY) then
+       report "Unable to send the frame, TX buffer not empty" severity error;
+       return;
+     end if;  
    end if;
    
-   if(w_data(buf_index)='1')then
-     outcome:=true;
-     aux_out:=true;
+   -- Set the buffer to access (direction)
+   CAN_read(w_data,TX_COMMAND_ADR,ID,mem_bus);
+   if (buf_nr=1) then
+      w_data(BDIR_IND) := '0';
+   elsif (buf_nr=2) then
+      w_data(BDIR_IND) := '1';
    else
-     outcome:=false;
-     aux_out:=false;
-     report "Unable to send the frame, TX buffer not empty" severity error;
+     report "Unsupported TX buffer number" severity error;
    end if;
+   CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus); 
+      
+   --Frame format word
+   w_data := (OTHERS => '0');
+   w_data(DLC_H downto DLC_L) := frame.dlc;
+   w_data(RTR_IND) := frame.rtr;
+   w_data(ID_TYPE_IND) := frame.ident_type;
+   w_data(FR_TYPE_IND) := frame.frame_format;
+   w_data(TBF_IND) := '1';
+   w_data(BRS_IND) := frame.brs;
+   w_data(ESI_RESVD_IND) := '0'; --ESI is receive only
+   CAN_write(w_data,TX_DATA_1_ADR,ID,mem_bus);          
+         
+   --Identifier
+   w_data := (OTHERS => '0');
+   if(frame.ident_type=EXTENDED)then
+      ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
+      w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(28 downto 18);
+      w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := ident_vect(17 downto 0);
+   else
+      ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
+      w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
+   end if;
+   CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, IDENTIFIER_W_ADR), ID, mem_bus);
    
-   --Access to the buffer is done only if it is signalled as empty
-   if (aux_out=true) then
-     
-     --Set the buffer to access (direction) and forbid the buffer transmission!
-     CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
-     if (buf_nr=1) then
-        w_data(BDIR_IND) := '0';
-        w_data(TXT1A_IND) := '0';
-     elsif (buf_nr=2) then
-        w_data(BDIR_IND) := '1';
-        w_data(TXT2A_IND) := '0';
-     else
-       report "Unsupported TX buffer number" severity error;
-     end if;
-     CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus); 
-        
-     --Frame format word
-     w_data := (OTHERS => '0');
-     w_data(DLC_H downto DLC_L) := frame.dlc;
-     w_data(RTR_IND) := frame.rtr;
-     w_data(ID_TYPE_IND) := frame.ident_type;
-     w_data(FR_TYPE_IND) := frame.frame_format;
-     w_data(TBF_IND) := '1';
-     w_data(BRS_IND) := frame.brs;
-     w_data(ESI_RESVD_IND) := '0'; --ESI is receive only
-     CAN_write(w_data,TX_DATA_1_ADR,ID,mem_bus);          
-           
-     --Identifier
-     w_data := (OTHERS => '0');
-     if(frame.ident_type=EXTENDED)then
-        ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
-        w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(28 downto 18);
-        w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := ident_vect(17 downto 0);
-     else
-        ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
-        w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
-     end if;
-     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, IDENTIFIER_W_ADR), ID, mem_bus);
-     
-      --Timestamp
-     w_data:= frame.timestamp(31 downto 0);  
-     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_L_W_ADR), ID, mem_bus);
-     w_data:= frame.timestamp(63 downto 32);  
-     CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_U_W_ADR), ID, mem_bus);
-     
-     --Data words
-     decode_dlc_v(frame.dlc,length);
-     for i in 0 to (length-1)/4 loop
-       w_data:= frame.data(511-i*32 downto 480-i*32);
-       CAN_write(w_data,
-                  std_logic_vector(unsigned(TX_DATA_1_ADR) +
-                                   unsigned(DATA_1_4_W_ADR) + i * 4),
-                  ID,mem_bus);
-     end loop;
-     
-     --Signal that the frame is valid by allowing the buffer
-     CAN_read(w_data,TX_SETTINGS_ADR,ID,mem_bus);
-     if (buf_nr=1) then
-        w_data(TXT1A_IND) := '1';
-     elsif (buf_nr=2) then
-        w_data(TXT2A_IND) := '1';
-     else
-       report "Unsupported TX buffer number" severity error;
-     end if;
-     CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus);
-     
-  end if;
+    --Timestamp
+   w_data:= frame.timestamp(31 downto 0);  
+   CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_L_W_ADR), ID, mem_bus);
+   w_data:= frame.timestamp(63 downto 32);  
+   CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_U_W_ADR), ID, mem_bus);
+   
+   --Data words
+   decode_dlc_v(frame.dlc,length);
+   for i in 0 to (length-1)/4 loop
+     w_data:= frame.data(511-i*32 downto 480-i*32);
+     CAN_write(w_data,
+                std_logic_vector(unsigned(TX_DATA_1_ADR) +
+                                 unsigned(DATA_1_4_W_ADR) + i * 4),
+                ID,mem_bus);
+   end loop;
+   
+   -- Give "Set ready" command to the buffer
+   CAN_read(w_data,TX_COMMAND_ADR,ID,mem_bus);
+   w_data(buf_nr + TXI1_IND - 1) := '1';
+   CAN_write(w_data,TX_COMMAND_ADR,ID,mem_bus);
    
   end procedure;
   
