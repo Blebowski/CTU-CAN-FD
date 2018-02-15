@@ -114,8 +114,11 @@ entity txtBuffer is
     
     --First 4 words (frame format, timestamps, identifier) are available 
     --combinationally, to be able instantly decide on higher priority frame
-    signal txt_frame_info_out     :out  std_logic_vector(639 downto 512)
+    signal txt_frame_info_out     :out  std_logic_vector(639 downto 512);
     
+    -- Signals to the TX Arbitrator that it can be selected for transmission
+    -- (used as input to priority decoder)
+    signal txt_buf_ready          :out  std_logic
     );
              
 end entity;
@@ -164,6 +167,12 @@ begin
 													 txt_buffer_meta_data(3)&
 													 txt_buffer_meta_data(2);
     
+    -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
+    txt_buf_ready       <= '1' when buf_fsm = txt_ready
+                                else
+                           '0';
+                               
+    
     -- Command buffer select signals
     hw_cbs <= '1' when txt_hw_cmd_buf_index = ID
                   else
@@ -172,7 +181,6 @@ begin
     sw_cbs <= '1' when txt_sw_buf_cmd_index(ID) = '1' 
                   else
               '0';
-    
     
     ----------------------------------------------------------------------------
     -- Buffer access process from SW
