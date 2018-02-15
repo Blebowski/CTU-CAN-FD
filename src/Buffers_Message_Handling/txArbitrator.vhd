@@ -157,6 +157,9 @@ entity txArbitrator is
     -- retransmitt limit is enabled).
     signal txtb_changed           :out std_logic;
     
+    -- Index of the TXT Buffer for which the actual HW command is valid
+    signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
+    
     
     ---------------------
     -- Driving interface
@@ -280,10 +283,20 @@ begin
   -- other buffer (higher priority) is marked as Ready, Protocol control will
   -- still access the original buffer!
   ------------------------------------------------------------------------------
-  tran_data_word_out <= txt_buf_data_in(stored_buf_index);
+  tran_data_word_out    <= txt_buf_data_in(stored_buf_index);
   
-  -- TXT Buffer was changed
-  txtb_changed <= txtb_changed_reg;
+  -- TXT Buffer was changed, this is used in Protocol control to reset the
+  -- retransmitt counter
+  txtb_changed          <= txtb_changed_reg;
+  
+  -- When Buffer is unlocked from the core (tx_arb_fsm = idle), then CAN Core
+  -- locks the buffer which is actually selected by priority decoder.
+  -- When Buffer is locked, the core must send the command to the buffer which
+  -- was previously locked!
+  txt_hw_cmd_buf_index  <= select_buf_index when (tx_arb_fsm = arb_idle)
+                                            else
+                           stored_buf_index;   
+                                          
   
   ------------------------------------------------------------------------------
   -- State machine for deciding whether the frame transmission finished and
@@ -309,13 +322,13 @@ begin
       --------------------------------------------------------------------------
       when arb_idle =>
         if (txt_hw_cmd.lock = '1') then
-          tx_arb_fsm        <= arb_trans;
-          stored_buf_index  <= select_buf_index; 
+          tx_arb_fsm            <= arb_trans;
+          stored_buf_index      <= select_buf_index; 
           
           if (stored_buf_index /= select_buf_index) then
-             txtb_changed_reg  <= '1';
+             txtb_changed_reg   <= '1';
           else
-             txtb_changed_reg  <= '0';
+             txtb_changed_reg   <= '0';
           end if;
         end if;
         
