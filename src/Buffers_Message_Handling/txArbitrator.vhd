@@ -287,7 +287,9 @@ begin
   
   -- TXT Buffer was changed, this is used in Protocol control to reset the
   -- retransmitt counter
-  txtb_changed          <= txtb_changed_reg;
+  txtb_changed          <= '1' when (stored_buf_index /= select_buf_index)
+                               else
+                           '0';
   
   -- When Buffer is unlocked from the core (tx_arb_fsm = idle), then CAN Core
   -- locks the buffer which is actually selected by priority decoder.
@@ -307,7 +309,6 @@ begin
     if (res_n=ACT_RESET) then
       tx_arb_fsm            <= arb_idle;
       stored_buf_index      <= 0;
-      txtb_changed_reg      <= '0';
     elsif rising_edge(clk_sys) then
         
         tx_arb_fsm          <= tx_arb_fsm;
@@ -323,13 +324,7 @@ begin
       when arb_idle =>
         if (txt_hw_cmd.lock = '1') then
           tx_arb_fsm            <= arb_trans;
-          stored_buf_index      <= select_buf_index; 
-          
-          if (stored_buf_index /= select_buf_index) then
-             txtb_changed_reg   <= '1';
-          else
-             txtb_changed_reg   <= '0';
-          end if;
+          stored_buf_index      <= select_buf_index;    
         end if;
         
       --------------------------------------------------------------------------
@@ -347,5 +342,6 @@ begin
       
     end if;
   end process;
+        
   
 end architecture;
