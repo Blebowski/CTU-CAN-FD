@@ -253,7 +253,7 @@ begin
    
   ------------------------------------------------------------------------------
   -- Check whether the timestamp of highest priority valid
-  -- buffer is lower than external time. This realizes the function
+  -- buffer is lower than external time. This creates the function
   -- of transmission at given time
   ------------------------------------------------------------------------------
   tran_frame_valid_out  <= '1' when ((select_buf_avail = true) and
