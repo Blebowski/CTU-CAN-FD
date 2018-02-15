@@ -239,7 +239,8 @@ package CANcomponents is
     signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
     signal txt_data_word          :out  std_logic_vector(31 downto 0);
     signal txt_data_addr          :in   natural range 0 to 15;
-    signal txt_frame_info_out     :out  std_logic_vector(639 downto 512)    
+    signal txt_frame_info_out     :out  std_logic_vector(639 downto 512);
+    signal txt_buf_ready          :out  std_logic   
     );
   end component;
 
@@ -357,10 +358,8 @@ package CANcomponents is
       signal tran_frame_type_in    : in  std_logic;
       signal tran_brs_in           : in  std_logic;
       signal tran_frame_valid_in   : in  std_logic;
-      signal tran_lock             : out std_logic;
-      signal tran_unlock           : out std_logic;
-      signal tran_drop             : out std_logic;
-      signal mess_src_change       : in std_logic;
+      signal txt_hw_cmd            : out txt_hw_cmd_type;
+      signal txtb_changed          : in  std_logic;
       signal txt_buf_ptr           : out natural range 0 to 15;
       signal rec_ident_out         : out std_logic_vector(28 downto 0);
       signal rec_dlc_out           : out std_logic_vector(3 downto 0);
@@ -622,10 +621,8 @@ package CANcomponents is
       signal txt_buf_ptr           : out natural range 0 to 15;
       signal frame_store           : out std_logic;
       signal tran_frame_valid_in   : in  std_logic;
-      signal tran_lock             : out std_logic;
-      signal tran_unlock           : out std_logic;
-      signal tran_drop             : out std_logic;
-      signal mess_src_change       : in std_logic;
+      signal txt_hw_cmd            : out txt_hw_cmd_type;
+      signal txtb_changed          : in  std_logic;
       signal br_shifted            : out std_logic;
       signal rec_ident             : out std_logic_vector(28 downto 0);
       signal rec_dlc               : out std_logic_vector(3 downto 0);
