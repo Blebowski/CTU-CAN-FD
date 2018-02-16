@@ -113,30 +113,31 @@ architecture rtl of priorityDecoder is
 
 begin
   
-  
   -------------------------
   -- Level 0 - aliases
   -------------------------
-  l0_gen: for i in 0 to 7 generate
+  l0_gen: for i in 0 to buf_count - 1 generate
     
     -- Since we cover "00" as inactive value, instead of
     -- active values "01", "10" or "11", rather make sure
     -- that input values are properly defined
     l0_val_proc:process(prio_valid)
     begin
-      if (prio_valid(2 * i) /= '0' and prio_valid(2 * i) /= '1') then
+      if (prio_valid(i) /= '0' and prio_valid(i) /= '1') then
         report "Input values not exactly defined" severity error;
       end if;
     end process;
+  
+    l0_prio(i)  <= prio(i);
+    l0_valid(i) <= prio_valid(i);
     
-    l0_prio(i) <= prio(i) when (i < buf_count)
-                          else
-                  (OTHERS => '0');
-    l0_valid(i) <= prio_valid(i) when (i < buf_count)
-                                 else
-                    '0';
   end generate;
   
+  
+  fill_zeroes_gen:if (buf_count < 8) generate
+    l0_prio(7 downto buf_count)  <= (OTHERS => (OTHERS => '0'));
+    l0_valid(7 downto buf_count) <= (OTHERS => '0');
+  end generate;
     
     
   -------------------------
@@ -148,16 +149,16 @@ begin
     variable tmp : std_logic_vector(1 downto 0) := l0_valid(2 * i + 1 downto 2 * i);
     begin
       case tmp is
-      when "01" => 
+      when "01" =>
             l1_prio(i)      <= l0_prio(2 * i);
             l1_valid(i)     <= '1'; 
             l1_winner(i)    <= LOWER_TREE;
-            
-      when "10" => 
+
+      when "10" =>
             l1_prio(i)      <= l0_prio(2 * i + 1);
             l1_valid(i)     <= '1'; 
             l1_winner(i)    <= UPPER_TREE;
-            
+
       when "11" => 
             if (unsigned(l0_prio(2 * i)) > unsigned(l0_prio(2 * i + 1))) then
               l1_prio(i)    <= l0_prio(2 * i);
@@ -167,28 +168,28 @@ begin
               l1_winner(i)  <= UPPER_TREE;
             end if;
             l1_valid(i)     <= '1';  
-             
+
       when "00" =>
             l1_valid(i)     <= '0';
             l1_prio(i)      <= l0_prio(2 * i + 1);
             l1_winner(i)    <= UPPER_TREE;
-            
+
       when others => 
             l1_valid(i)     <= '0';
             l1_prio(i)      <= l0_prio(2 * i + 1);
             l1_winner(i)    <= UPPER_TREE;
-            
+
       end case;    
     end process; 
-               
+
   end generate;
-  
+
 
   -------------------------
   -- Level 2 comparators
   -------------------------
   l2_gen: for i in 0 to 1 generate
-    
+
     l2_prio_dec_proc:process(l1_valid, l1_prio)
     variable tmp : std_logic_vector(1 downto 0) := l1_valid(2 * i + 1 downto 2 * i);
     begin
