@@ -199,7 +199,7 @@ begin
       elsif (rising_edge(clk_sys))then
         
         --Store the data into the Buffer during the access
-        if (tran_wr(ID - 1) = '1') then
+        if (tran_wr(ID) = '1') then
           if (to_integer(unsigned(tran_addr)) < 4) then
             txt_buffer_meta_data(to_integer(unsigned(tran_addr))) <= tran_data;
           else  
