@@ -1562,8 +1562,7 @@ begin
                           else
                       '0';
   
-  --When buffer is not full there is one. However still might be not enough
-  -- place in buffer
+  
   status_reg(TBS_IND mod 8)<='1' when (txtb_fsms(0) /= txt_empty and
                                        txtb_fsms(1) /= txt_empty)
                                  else
