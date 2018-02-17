@@ -80,6 +80,11 @@ if { $SILENT_SANITY == "false" } {
 		-label "Configuration name" $WRCOMP/test_desc
 }
 
+add wave -label "Global Frame counter" $WRCOMP/overal_frame_counter
+if { $SILENT_SANITY == "false" } {
+	add wave -label "Node Frame counters" $WRCOMP/frame_counters
+}
+
 if { $SILENT_SANITY == "false" } {
 	add wave -label "Timestamps" $WRCOMP/timestamp_v
 }
