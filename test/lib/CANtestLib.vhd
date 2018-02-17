@@ -1230,6 +1230,8 @@ procedure process_error
   variable aux_out         :          boolean;
   variable buf_index       :          natural range 0 to 31;
   variable buf_state       :          std_logic_vector(3 downto 0);
+  variable buf_cmd         :          std_logic_vector(2 downto 0);
+  variable bind_int        :          natural;
   begin
    outcome := true;
    buf_index := buf_nr;
@@ -1237,7 +1239,7 @@ procedure process_error
    -- Read whether Buffer is empty or Done.
    CAN_read(w_data, TX_STATUS_ADR, ID, mem_bus);
    get_tx_buf_state(ID, mem_bus, buf_index, buf_state);
-   if (buf_state /= TXT_ETY or buf_state /= TXT_TOK) then
+   if (buf_state /= TXT_ETY and buf_state /= TXT_TOK) then
       report "Unable to send the frame, TX buffer not empty" severity error;
       return;
    end if;  
@@ -1293,9 +1295,9 @@ procedure process_error
    end loop;
    
    -- Give "Set ready" command to the buffer
-   CAN_read(w_data,TX_COMMAND_ADR,ID,mem_bus);
-   w_data(buf_nr + TXI1_IND - 1) := '1';
-   CAN_write(w_data,TX_COMMAND_ADR,ID,mem_bus);
+   buf_cmd    := "010";
+   bind_int   := buf_nr - 1;
+   send_TXT_buf_cmd(buf_cmd, bind_int, ID, mem_bus);
    
   end procedure;
   
@@ -1475,7 +1477,7 @@ procedure process_error
   variable data           : std_logic_vector(31 downto 0);
   begin
     
-    if (cmd /= "001" or cmd /= "010" or cmd /= "100") then
+    if (cmd /= "001" and cmd /= "010" and cmd /= "100") then
       report "Invalid TXT Buffer command" severity error;
     end if;
     
