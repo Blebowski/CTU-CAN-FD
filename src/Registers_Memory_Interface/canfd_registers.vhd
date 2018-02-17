@@ -792,6 +792,7 @@ begin
     txt_sw_cmd.set_rdy        <= '0';
     txt_sw_cmd.set_abt        <= '0';
     txt_buf_cmd_index         <= (OTHERS => '0');
+		txt_buf_prior             <= txt_buf_prior;
 		
 		--Chip select active and our device is selected (Component type and ID)
 		if((scs=ACT_CSC) and 
