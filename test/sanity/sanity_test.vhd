@@ -45,6 +45,8 @@
 --               that identifier correction did not avoid collisions due to assumption of old identifier layout.
 --    09.2.2018  Added support fow RWCNT field in the SW_CAN_Frame. RWCNT is stored also to TX Memory. Thus when
 --               read on RX side, it should match the calculated value on TX.
+--    17.2.2018  1. Modified to support prioritized version of TXT Buffers.
+--               2. Added TXT frame counter
 -----------------------------------------------------------------------------------------------------------------
 
 
@@ -185,6 +187,11 @@ architecture behavioral of sanity_test is
   signal rand_ident_ctr       : natural range 0 to RAND_POOL_SIZE := 0;
   
   signal common_ident         : natural;
+  
+  -- Overall frame counter for the whole test
+  type frame_counter_array_type is array (1 to NODE_COUNT) of natural;
+  signal frame_counters       : frame_counter_array_type; 
+  signal overal_frame_counter : natural;
   
   ----------------------------------------------
   ----------------------------------------------
@@ -610,6 +617,13 @@ begin
   end process;
   
   
+  -----------------------------------------------
+  -- Calculation of frame counter
+  -----------------------------------------------
+  overal_frame_counter <= (frame_counters(1) + frame_counters(2) +
+                          frame_counters(3) + frame_counters(4))/3;
+  
+  
   ----------------------------------------------
   -- Node access
   -- Traffic generation and error states 
@@ -694,8 +708,11 @@ begin
               CAN_read_frame(RX_frame,n_index,mb_arr(i));
               store_frame_to_mem(RX_frame,rx_mems(i),rx_mem_pointers(i));
               CAN_read(r_data,RX_STATUS_ADR,n_index,mb_arr(i));             
+            
+              -- Count the received frames
+              frame_counters(i) <= frame_counters(i) + 1;
             end loop;
-           
+          
           end if;
         
           if(do_read_errors(n_index)=true)then            
