@@ -181,8 +181,11 @@
 --                   only then! "is_txt_locked" signal is introduced, to not
 --                   perform additional locking in SOF if lock was already per-
 --                   formed in BUS IDLE.
---   17.02.2018   Removed obsolete "frame_store", its functionality is fully
---                replaced with frame_lock
+--   17.02.2018   1. Removed obsolete "frame_store", its functionality is fully
+--                   replaced with frame_lock
+--                2. Added increment of the rettransmitt counter on arbitration
+--                   lost. This is desirable for new implementation of the
+--                   TXT Buffer finite state machine.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -1205,8 +1208,25 @@ begin
                       
                       --Current frame should be retransmitted!
                       txt_hw_cmd.unlock   <=  '1';
-                      txt_hw_cmd.arbl     <=  '1';
                       is_txt_locked       <=  '0';
+                      
+                      if ((drv_retr_lim_ena='0') or --Retransmitt limit is disabled 
+                          (drv_retr_lim_ena='1' and --Enabled, but not reached
+                           retr_count<to_integer(unsigned(drv_retr_th))))
+                      then
+                        retr_count         <=  retr_count + 1 mod 16;            
+                        txt_hw_cmd.unlock  <=  '1';
+                        txt_hw_cmd.arbl    <=  '1';
+                      else
+                  
+                        -- Retransmitt limit reached, signal transmission failure
+                        -- Erase the retransmitt counter, since the next frame
+                        -- can be from the same buffer, but it can be different frame!
+                        -- Thus retr_counter wont be erased on "txt_buf_changed"!
+                        retr_count          <=  0;
+                        txt_hw_cmd.unlock   <=  '1';
+                        txt_hw_cmd.failed   <=  '1';
+                      end if;
                       
                 when RECESSIVE_RECESSIVE =>
                       arbitration_lost_r  <=  '0';
