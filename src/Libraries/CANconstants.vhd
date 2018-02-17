@@ -105,12 +105,11 @@ package CANconstants is
   constant INC_EIGHT_CON : std_logic_vector(2 downto 0) := "010";
   constant DEC_ONE_CON   : std_logic_vector(2 downto 0) := "001";
 
-  --Values for enabling of whole controller
-  --and interrupts
-  --constant ENABLED  : std_logic := '1';
-  --constant DISABLED : std_logic := '0';
-
+  constant TXT_BUFFER_COUNT     : natural := 2;  
+  
+  ------------------------------------------------------------------------------   
   --DLC Types
+  ------------------------------------------------------------------------------
   type dlc_type is array (0 to 15) of std_logic_vector(3 downto 0);
   type length_type is array (0 to 15) of natural;
   constant dlc_codes : dlc_type := ("0000", "0001", "0010", "0011", "0100", "0101",
@@ -118,6 +117,7 @@ package CANconstants is
                                     "1100", "1101", "1110", "1111");
   constant dlc_length : length_type := (0, 1, 2, 3, 4, 5, 6, 7, 8,
                                         12, 16, 20, 24, 32, 48, 64);
+                                        
 
   constant ZERO      : std_logic := '0';
   constant NO_ACTION : std_logic := '0';
@@ -247,6 +247,50 @@ package CANconstants is
     arb_idle,
     arb_trans
     );
+  
+  -- TXT buffer state type
+  type txt_fsm_type is (
+    txt_empty,
+    txt_ready,
+    txt_tx_prog,
+    txt_ab_prog,
+    txt_ok,
+    txt_error,
+    txt_aborted
+  );
+  
+  ------------------------------------------------------------------------------
+  -- TXT Buffer types
+  ------------------------------------------------------------------------------
+  type txtb_priorities_type is array (0 to TXT_BUFFER_COUNT - 1) of
+        std_logic_vector(2 downto 0);
+  
+  type txtb_data_type is array (0 to TXT_BUFFER_COUNT - 1) of
+        std_logic_vector(31 downto 0);
+  
+  type txtb_meta_data_type is array (0 to TXT_BUFFER_COUNT - 1) of
+        std_logic_vector(639 downto 512);
+  
+  type txtb_timestamps_type is array (0 to TXT_BUFFER_COUNT - 1) of
+        std_logic_vector(63 downto 0);
+  
+  type txt_fsms_type is array (0 to TXT_BUFFER_COUNT - 1) of
+        txt_fsm_type;
+  
+  type txt_sw_cmd_type is record
+     set_rdy   : std_logic;
+     set_ety   : std_logic;
+     set_abt   : std_logic;
+  end record;
+  
+  type txt_hw_cmd_type is record
+     lock      : std_logic;
+     unlock    : std_logic;
+     valid     : std_logic;
+     err       : std_logic;
+     arbl      : std_logic;
+     failed    : std_logic;
+  end record;
 
   ------------------------------------------------------------------------------
   -- Driving bus signal ranges
@@ -353,8 +397,6 @@ package CANconstants is
   constant DRV_TXT2_WR          : natural := 367;
 
   --TX Arbitrator
-  constant DRV_ALLOW_TXT1_INDEX : natural := 361;
-  constant DRV_ALLOW_TXT2_INDEX : natural := 362;
   constant DRV_FRAME_SWAP_INDEX : natural := 363;
 
   --Interrupt manager indices 

@@ -140,8 +140,11 @@ package CANcomponents is
       signal rx_data_overrun      : in  std_logic;
       signal tran_data            : out std_logic_vector(31 downto 0);
       signal tran_addr            : out std_logic_vector(4 downto 0);
-      signal txt1_empty           : in  std_logic;
-      signal txt2_empty           : in  std_logic;
+      signal txtb_fsms            : in  txt_fsms_type;
+      signal txt_sw_cmd           : out txt_sw_cmd_type;
+      signal txt_buf_cmd_index    : out std_logic_vector(
+                                TXT_BUFFER_COUNT - 1 downto 0);
+      signal txt_buf_prior_out    :out  txtb_priorities_type;      
       signal trv_delay_out        : in  std_logic_vector(15 downto 0);
       signal int_vector           : in  std_logic_vector(10 downto 0);
       signal loger_act_data       : in  std_logic_vector(63 downto 0);
@@ -218,56 +221,74 @@ package CANcomponents is
   -- TXT Buffer module
   ------------------------------------------------------------------------------
   component txtBuffer is
-    generic(
-      constant ID        : natural := 1
-      );
-    port(
-      signal clk_sys            : in  std_logic;
-      signal res_n              : in  std_logic;
-      signal drv_bus            : in  std_logic_vector(1023 downto 0);
-      signal tran_data          : in  std_logic_vector(31 downto 0);
-      signal tran_addr          : in  std_logic_vector(4 downto 0);
-      signal txt_empty          : out std_logic;
-      signal txt_data_ack       : in  std_logic;
-      signal txt_data_word      : out std_logic_vector(31 downto 0);
-      signal txt_data_addr      : in  natural range 0 to 15;
-      signal txt_frame_info_out : out std_logic_vector(127 downto 0)
-      );
+  generic(
+    constant buf_count            :     natural range 1 to 8;
+    constant ID                   :     natural :=1
+  );
+  PORT(
+    signal clk_sys                :in   std_logic;
+    signal res_n                  :in   std_logic; --Async reset
+    signal drv_bus                :in   std_logic_vector(1023 downto 0);
+    signal tran_data              :in   std_logic_vector(31 downto 0);
+    signal tran_addr              :in   std_logic_vector(4 downto 0);
+    signal txt_sw_cmd             :in   txt_sw_cmd_type;
+    signal txt_sw_buf_cmd_index   :in   std_logic_vector(
+                                          buf_count - 1 downto 0);
+    signal txtb_state             :out  txt_fsm_type;
+    signal txt_hw_cmd             :in   txt_hw_cmd_type;  
+    signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
+    signal txt_data_word          :out  std_logic_vector(31 downto 0);
+    signal txt_data_addr          :in   natural range 0 to 15;
+    signal txt_frame_info_out     :out  std_logic_vector(639 downto 512);
+    signal txt_buf_ready          :out  std_logic   
+    );
   end component;
 
   ------------------------------------------------------------------------------
   -- TXT Arbitrator module
   ------------------------------------------------------------------------------
   component txArbitrator is
-    generic(
-      tx_time_sup : boolean := true
-    );
-    port(
-      signal clk_sys              : in  std_logic;
-      signal res_n                : in  std_logic;
-      signal txt1buf_info_in      : in  std_logic_vector(639 downto 512);
-      signal txt1buf_data_in      : in  std_logic_vector(31 downto 0);
-      signal txt1_buffer_empty    : in  std_logic;
-      signal txt1_buffer_ack      : out std_logic;
-      signal txt2buf_info_in      : in  std_logic_vector(639 downto 512);
-      signal txt2buf_data_in      : in  std_logic_vector(31 downto 0);
-      signal txt2_buffer_empty    : in  std_logic;
-      signal txt2_buffer_ack      : out std_logic;
-      signal tran_data_word_out   : out std_logic_vector(31 downto 0);
-      signal tran_ident_out       : out std_logic_vector(28 downto 0);
-      signal tran_dlc_out         : out std_logic_vector(3 downto 0);
-      signal tran_is_rtr          : out std_logic;
-      signal tran_ident_type_out  : out std_logic;
-      signal tran_frame_type_out  : out std_logic;
-      signal tran_brs_out         : out std_logic;
-      signal tran_frame_valid_out : out std_logic;
-      signal tran_lock            : in  std_logic;
-      signal tran_unlock          : in  std_logic;
-      signal tran_drop            : in  std_logic;
-      signal mess_src_change      : out std_logic;
-      signal drv_bus              : in  std_logic_vector(1023 downto 0);
-      signal timestamp            : in  std_logic_vector(63 downto 0)
-      );
+  generic(
+    buf_count               : natural range 1 to 8;
+    tx_time_sup             : boolean := true
+  );
+  port( 
+    signal clk_sys                :in   std_logic;
+    signal res_n                  :in   std_logic;
+    signal txt_buf_data_in        :in   txtb_data_type;
+    signal txt_meta_data_in       :in   txtb_meta_data_type;
+    signal txt_buf_ready          :in   std_logic_vector(buf_count - 1 downto 0);
+    signal tran_data_word_out     :out  std_logic_vector(31 downto 0);
+    signal tran_ident_out         :out  std_logic_vector(28 downto 0);
+    signal tran_dlc_out           :out  std_logic_vector(3 downto 0);
+    signal tran_is_rtr            :out  std_logic;
+    signal tran_ident_type_out    :out  std_logic;
+    signal tran_frame_type_out    :out  std_logic;
+    signal tran_brs_out           :out  std_logic;
+    signal tran_frame_valid_out   :out  std_logic;
+    signal txt_hw_cmd             :in   txt_hw_cmd_type;  
+    signal txtb_changed           :out  std_logic;
+    signal txt_hw_cmd_buf_index   :out  natural range 0 to buf_count - 1;
+    signal drv_bus                :in   std_logic_vector(1023 downto 0);
+    signal txt_buf_prio           :in   txtb_priorities_type;
+    signal timestamp              :in   std_logic_vector(63 downto 0)    
+  );
+  end component;
+  
+  
+  ------------------------------------------------------------------------------
+  -- Priority decoder for TXT Buffer selection
+  ------------------------------------------------------------------------------
+  component priorityDecoder is
+  generic(
+    buf_count :  natural range 1 to 8
+  );
+  port( 
+    signal prio               : in  txtb_priorities_type;
+    signal prio_valid         : in  std_logic_vector(buf_count - 1 downto 0);
+    signal output_valid       : out  boolean;
+    signal output_index       : out  natural range 0 to buf_count - 1   
+  );
   end component;
 
   ------------------------------------------------------------------------------
@@ -337,10 +358,8 @@ package CANcomponents is
       signal tran_frame_type_in    : in  std_logic;
       signal tran_brs_in           : in  std_logic;
       signal tran_frame_valid_in   : in  std_logic;
-      signal tran_lock             : out std_logic;
-      signal tran_unlock           : out std_logic;
-      signal tran_drop             : out std_logic;
-      signal mess_src_change       : in std_logic;
+      signal txt_hw_cmd            : out txt_hw_cmd_type;
+      signal txtb_changed          : in  std_logic;
       signal txt_buf_ptr           : out natural range 0 to 15;
       signal rec_ident_out         : out std_logic_vector(28 downto 0);
       signal rec_dlc_out           : out std_logic_vector(3 downto 0);
@@ -600,12 +619,9 @@ package CANcomponents is
       signal tran_frame_type       : in  std_logic;
       signal tran_brs              : in  std_logic;
       signal txt_buf_ptr           : out natural range 0 to 15;
-      signal frame_store           : out std_logic;
       signal tran_frame_valid_in   : in  std_logic;
-      signal tran_lock             : out std_logic;
-      signal tran_unlock           : out std_logic;
-      signal tran_drop             : out std_logic;
-      signal mess_src_change       : in std_logic;
+      signal txt_hw_cmd            : out txt_hw_cmd_type;
+      signal txtb_changed          : in  std_logic;
       signal br_shifted            : out std_logic;
       signal rec_ident             : out std_logic_vector(28 downto 0);
       signal rec_dlc               : out std_logic_vector(3 downto 0);

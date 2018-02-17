@@ -160,6 +160,29 @@
 --   27.12.2017   Added "tran_lock", "tran_unlock", "tran_drop" signals for
 --                implementation of frame swapping feature. Replaced 
 --                "tran_data_ack" with "tran_lock" signal.
+--   15.02.2018   1. Removed "tran_lock", "tran_unlock" and "tran_drop" signals
+--                   and replaced them with "txt_hw_cmd" record signal
+--                2. Removed "rettransmitt" signal. It is not needed anymore.
+--                   Since the Core is now transmitting from the TXT Buffer
+--                   directly, the core will unlock the buffer at arbitration
+--                   lost or error frame. Thus in intermission idle, the Core 
+--                   will automatically start rettransmitting, since it will
+--                   have valid frame signalled by "tran_frame_valid_in"!
+--                3. If different buffer is decided for transmission, 
+--                   "txtb_changed" signal will be active. This signal is
+--                   implemented to be valid in the same clock as "tran_frame_
+--                   valid_in", and thus when it is sampled, "txt_buf_changed"
+--                   is used to find out if "retr_counter" should be erased.
+--                4. Added bugfix. If frame is locked for transmission from
+--                   tran_frame_valid, it must be locked at the same clock
+--                   cycle as "tran_frame_valid_in" is active. Since SW commands
+--                   are introduced to the TXT Buffers, one can no longer rely
+--                   on transiting to SOF from BUS IDLE and locking the frame
+--                   only then! "is_txt_locked" signal is introduced, to not
+--                   perform additional locking in SOF if lock was already per-
+--                   formed in BUS IDLE.
+--   17.02.2018   Removed obsolete "frame_store", its functionality is fully
+--                replaced with frame_lock
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -192,29 +215,17 @@ entity protocolControl is
     signal tran_frame_type        :in   std_logic;
     signal tran_brs               :in   std_logic; 
     
-    --Store frame from TX Arbitrator to the Transcieve Buffer
-    signal frame_store            :out  std_logic;
-    
     --Valid frame ready to be stored into Transcieeve Buffer
     signal tran_frame_valid_in    :in   std_logic;
     
-    -- Signal for TX Arbitrator that frame from TXT Buffer is transmitted
-    -- and it should provide the data of CAN Frame addressed by 
-    -- txt_buf_ptr. 
-    signal tran_lock              :out  std_logic;
-    
-    -- Signal for TX Arbitrator that it can release the lock on the current
-    -- frame in TXT Buffer and that the frame is not transmitted anymore.
-    signal tran_unlock            :out  std_logic;
-    
-    -- Signal for TX Arbitrator that the frame which was actually transmitted
-    -- can be dropped (TXT buffer can be set to empty)
-    signal tran_drop              :out  std_logic;
+    -- Commands for TX Arbitrator and TXT Buffers signalling
+    -- locking, unlocking and course of the transmission
+    signal txt_hw_cmd             :out  txt_hw_cmd_type;
     
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 15;
     
-    signal mess_src_change        :in std_logic;
+    signal txtb_changed           :in std_logic;
     
     -------------------------
     --Recieved data output --
@@ -419,24 +430,19 @@ entity protocolControl is
   --Internal loopBack enabled (for Bus monitoring mode)
   signal int_loop_back_ena_r      :     std_logic;
   
-  ----------------------------------------
-  --Retransmittion signals and  counters--
-  ----------------------------------------
+  -- Marks that TXT Buffer is locked and does not have
+  -- to be locked anymore
+  signal is_txt_locked            :     std_logic;
   
-  --Retransmittion of current frame enabled in next frame
-  signal retransmitt              :     std_logic;
-  
-  --Amount of retransmitted data
+  ----------------------------------------
+  --Retransmittion counters
+  ----------------------------------------
   signal retr_count               :     natural range 0 to 15;
   
   --Registered values of output
   signal data_tx_r                :     std_logic;
   signal arbitration_lost_r       :     std_logic; 
   signal crc_enable_r             :     std_logic;
-  signal frame_store_r            :     std_logic;
-  signal tran_lock_r              :     std_logic;
-  signal tran_unlock_r            :     std_logic;
-  signal tran_drop_r              :     std_logic;
   signal stuff_enable_r           :     std_logic;
   signal fixed_stuff_r            :     std_logic;
   signal stuff_length_r           :     std_logic_vector(2 downto 0);
@@ -674,10 +680,6 @@ begin
   PC_State_out          <=  PC_State;
   alc                   <=  alc_r;
   data_tx       	       <=  data_tx_r;
-  frame_Store           <=  frame_Store_r;
-  tran_lock             <=  tran_lock_r;
-  tran_unlock           <=  tran_unlock_r;
-  tran_drop             <=  tran_drop_r;
   arbitration_lost      <=  arbitration_lost_r;
   crc_enable            <=  crc_enable_r;
   stuff_enable          <=  stuff_enable_r;
@@ -770,16 +772,19 @@ begin
       PC_State                <=  off;
       interm_state            <=  interm_idle;
       int_loop_back_ena_r     <=  '0';
-      retransmitt             <=  '0';
       retr_count              <=  0;
+      is_txt_locked           <=  '0';
       
       --------------------------------
       --Configuring output registers--
       --------------------------------
-      frame_Store_r           <=  '0';
-      tran_lock_r             <=  '0';
-      tran_unlock_r           <=  '0';
-      tran_drop_r             <=  '0';
+      txt_hw_cmd.lock         <=  '0';
+      txt_hw_cmd.unlock       <=  '0';
+      txt_hw_cmd.valid        <=  '0';
+      txt_hw_cmd.err          <=  '0';
+      txt_hw_cmd.arbl         <=  '0';
+      txt_hw_cmd.failed       <=  '0';
+      
       --FSM starts from intermission.interm_idle state, we dont need 
       --preseting for intermission then!!! We CANT preeset then!!
       FSM_preset              <=  '0';
@@ -888,14 +893,18 @@ begin
        PC_state               <=  PC_state; --Protocol register
        data_tx_r              <=  data_tx_r; --Registered value of tx data
        arbitration_lost_r     <=  '0'; 
-       crc_enable_r           <=  crc_enable_r; 
+       crc_enable_r           <=  crc_enable_r;
+       is_txt_locked          <=  is_txt_locked;
        
        -- These TX arbitrator control signals are set only for one
        -- clock cycle
-       tran_lock_r            <=  '0'; 
-       tran_unlock_r          <=  '0';
-       tran_drop_r            <=  '0';
-       
+       txt_hw_cmd.lock         <=  '0';
+       txt_hw_cmd.unlock       <=  '0';
+       txt_hw_cmd.valid        <=  '0';
+       txt_hw_cmd.err          <=  '0';
+       txt_hw_cmd.arbl         <=  '0';
+       txt_hw_cmd.failed       <=  '0';
+     
        stuff_enable_r         <=  stuff_enable_r;
        fixed_stuff_r          <=  fixed_stuff_r;
        stuff_length_r         <=  stuff_length_r;
@@ -962,10 +971,8 @@ begin
        data_size              <=  data_size;
        
        --Retransmittion signals
-        retransmitt           <=  retransmitt;
-        retr_count            <=  retr_count;
+       retr_count            <=  retr_count;
   
-       
        --Control signals for OP_State FSM
        is_idle_r              <=  '0';
        set_transciever_r      <=  '0';
@@ -982,7 +989,6 @@ begin
        inc_one_r              <=  '0';
        inc_eight_r            <=  '0';
        dec_one_r              <=  '0';
-       frame_store_r          <=  '0';
        
        tran_valid_r           <=  '0';
        rec_valid_r            <=  '0';
@@ -1050,50 +1056,43 @@ begin
                 
                 ack_recieved <= '0';
                 crc_check    <= '0';
-                --sync_control_r        <=  RE_SYNC; 
                 
-                --(only when bus monitoring mode is disabled)
+                -- Bus monitoring mode is disabled
                 if(drv_bus_mon_ena='0')then
-                  if(retransmitt='0')then --If Frame shouldnt be retransmitted
-                      --Store frame for transcieve if availiable 
-                      --into transcieve buffer
-                      if(tran_frame_valid_in='1')then 
-                	       frame_store_r     <=  '1';
-                	       tran_lock_r       <=  '1';
-              	     	   set_transciever_r <=  '1';
-              	     	   retr_count        <=  0;
-              	     	   --Configuring Bit Stuffing
-              	     	   stuff_enable_r    <=  '1';
-                        fixed_stuff_r     <=  '0';
-                        stuff_length_r    <=  std_logic_vector(
-                                              to_unsigned(BASE_STUFF_LENGTH,3));
-            	         else
-          	             set_reciever_r    <=  '1';
-                      end if;
-                  else 
                     
-                    
-                    -- If retransmitting and "frame_swap" feature is turned on
-                    -- We have to store the new frame that TX Arbitrator decided
-                    -- to propagate to the Core!
-                    if (drv_frame_swap = '1') then
-                      frame_store_r     <=  '1';
-              	       tran_lock_r       <=  '1';  
+                    -- If we already have frame locked, or we have frame to lock
+                    -- available
+                    if (is_txt_locked = '1' or (tran_frame_valid_in = '1')) then
+                      set_transciever_r <=  '1';
+                      stuff_enable_r    <=  '1';
+                      fixed_stuff_r     <=  '0';
+                      stuff_length_r    <=  std_logic_vector(
+                                            to_unsigned(BASE_STUFF_LENGTH,3));
                     end if;
                     
-                    set_transciever_r     <=  '1';
-                    retransmitt           <=  '0';
-          	     	   --Configuring Bit Stuffing
-          	     	   stuff_enable_r        <=  '1';
-                    fixed_stuff_r         <=  '0';
-                    stuff_length_r        <=  std_logic_vector(
-                                              to_unsigned(BASE_STUFF_LENGTH,3));
-                  end if;
+                    -- If we dont have frame locked, but we have one available
+                    -- the we just lock it!
+                    if (is_txt_locked = '0' and (tran_frame_valid_in = '1')) then
+                       txt_hw_cmd.lock   <=  '1';
+           	           is_txt_locked     <=  '1';
+           	           
+           	           -- In case that TX Arbitrator provides different frame for
+           	           -- us, we need to erase the retranmsitt counter
+           	           if (txtb_changed = '1') then
+                          retr_count <= 0;
+                        end if;
+                    end if;
+                    
+                    -- If we dont have anything to lock, and have nothing locked
+          	     	   if (is_txt_locked = '0' and (tran_frame_valid_in = '0')) then
+          	     	     set_reciever_r      <=  '1';
+                    end if;
+                
                 else 
                   set_reciever_r          <=  '1';
                 end if;
                 
-                --If this one bit should be skypped go directly to 
+                --If this one bit should be skipped go directly to 
                 --arbitration field
                 if(sof_skip='1')then
                   FSM_preset              <=  '1';
@@ -1150,19 +1149,6 @@ begin
                 control_pointer           <=  0;
                 
             else
-                frame_store_r             <=  '0';
-                tran_lock_r               <=  '0';
-                
-                -- In case of retransmission if other message was selected
-                -- due to "frame_swap" feature, then we must null the
-                -- retransmitt counter. It is new message it should have
-                -- blank emount of "retransmitt error counts"! Note that
-                -- in case of new message from the same Buffer we dont
-                -- need to erase since "retransmitt=0" then and Protocol
-                -- control erases "retr_count" itself.
-                if (mess_src_change = '1') then
-                  retr_count <= 0;
-                end if;
                 
                 --Transcieving the data if we have what to transcieve
                 if(tran_trig='1')then
@@ -1218,12 +1204,9 @@ begin
                       stuff_enable_r      <=  '0';
                       
                       --Current frame should be retransmitted!
-                      retransmitt         <=  '1';
-                      if (drv_frame_swap = '1') then
-                         tran_unlock_r    <= '1';  
-                      else
-                         tran_unlock_r    <= '0';
-                      end if;
+                      txt_hw_cmd.unlock   <=  '1';
+                      txt_hw_cmd.arbl     <=  '1';
+                      is_txt_locked       <=  '0';
                       
                 when RECESSIVE_RECESSIVE =>
                       arbitration_lost_r  <=  '0';
@@ -2122,10 +2105,12 @@ begin
                 end if; 
               else
                 if(OP_State=transciever)then --Message is sucessfully transcieved
-                  tran_valid_r  <=  '1';
-                  dec_one_r     <=  '1';
-                  tran_unlock_r <=  '1';
-                  tran_drop_r   <=  '1';
+                  tran_valid_r        <=  '1';
+                  dec_one_r           <=  '1';            
+                  txt_hw_cmd.unlock   <=  '1';
+                  txt_hw_cmd.valid    <=  '1';
+                  is_txt_locked       <=  '0';
+                  retr_count          <=  0;
                 end if;
                 PC_State        <=  interframe; 
                 FSM_Preset      <=  '1';
@@ -2218,24 +2203,24 @@ begin
                       control_pointer     <=  control_pointer-1;
                     end if;
                      if(control_pointer=0)then  
-                      if (drv_bus_mon_ena       = '0') and
+                      if ((drv_bus_mon_ena       = '0') and
                          --Next data are availiable
-                         ((tran_frame_valid_in  = '1') or
-                         --Actual data should be retransmitted
-                          (retransmitt          = '1'))
+                         (tran_frame_valid_in  = '1'))
                       then
                           PC_State        <=  sof;
+                          is_txt_locked   <=  '1';
+                          txt_hw_cmd.lock <=  '1';
                           sof_skip        <=  '0';
                           crc_enable_r    <=  '1';
                           FSM_preset      <=  '1';
                           
                           --Bug fix 28.6.2016
-                          --Preset reciever already here not in SOF, otherwise
+                          --Preset reciever already here, not in SOF, otherwise
                           -- if there is nothing to transmitt SOF will be trans-
                           -- mitted anyway. If we were transmitter of previous 
                           -- message and we have nothing more to transmitt and 
                           -- we turn reciever, we dont want SOF to be
-                         -- tranmsmitted by reciever!!
+                          -- tranmsmitted by reciever!!
                           set_reciever_r      <=  '1';
                       
                       else
@@ -2260,28 +2245,39 @@ begin
                   
                  if( hard_sync_edge = '1' and (OP_State /= integrating) )then
                     PC_State          <=  sof;
-                    sof_skip          <=  '0'; 
+                    sof_skip          <=  '0';
                     crc_enable_r      <=  '1';
                     FSM_preset        <=  '1';
                     
-                  elsif(rec_trig='1' and (OP_State /= integrating) )then 
-                     if(rec_trig='1' and (OP_State /= integrating) )then 
+                 elsif(rec_trig='1' and (OP_State /= integrating) )then 
                       
-                    if(drv_bus_mon_ena  = '0') and 
-												 --Next data are availiable
-                         ((tran_frame_valid_in  = '1') or
-                         --Actual data should be retransmitted
-                          (retransmitt          = '1')) 
-                    then
-                      PC_State    <=  sof;
-                      sof_skip    <=  '0';                  
-                      crc_enable_r <=  '1';
-                      FSM_Preset  <=  '1';                    
-                    else
-                      FSM_Preset  <=  '0';                    
-                    end if;
-                  end if;
-                end if;
+                      -- If any frame is available here for transmission 
+                      -- we lock it already here. If we moved to SOF and
+                      -- locked only there, the frame might have been
+                      -- aborted in that one clock cycle! Thus we would
+                      -- then lock invalid frame!
+                      if ((drv_bus_mon_ena = '0') and 
+  												 -- Next data are availiable
+                         (tran_frame_valid_in  = '1')) 
+                      then
+                        PC_State        <=  sof;
+                        is_txt_locked   <=  '1';
+                        txt_hw_cmd.lock <=  '1';
+                        sof_skip        <=  '0';                  
+                        crc_enable_r    <=  '1';
+                        FSM_Preset      <=  '1';
+                        
+                        -- In case that TX Arbitrator provides different frame for
+           	            -- us, we need to erase the retranmsitt counter
+           	            if (txtb_changed = '1') then
+                          retr_count    <= 0;
+                        end if;
+                      else
+                        FSM_Preset      <=  '0';                    
+                      end if;
+                    
+                 end if;
+                
             when others =>
                   unknown_state_Error_r <=  '1'; 
                   PC_State              <=  error;
@@ -2314,30 +2310,29 @@ begin
               --rates!!
               data_tx_r         <=  DOMINANT;
               
-              --If unit is transciever and Error appears then frame should be 
-              -- marked to be retransmitted
+              --If unit is transciever and Error appears then rettransmitt
+              -- counter should be incremented
               if(OP_State=transciever)then
                 if ((drv_retr_lim_ena='0') or --Retransmitt limit is disabled 
                     (drv_retr_lim_ena='1' and --Enabled, but not reached
                      retr_count<to_integer(unsigned(drv_retr_th))))
                 then
-                  retransmitt   <=  '1';
-                  retr_count    <=  retr_count+1 mod 16;
-                  
-                  if (drv_frame_swap = '1') then
-                    tran_unlock_r      <= '1';  
-                  else
-                    tran_unlock_r      <= '0';
-                  end if;
-                  
+                  retr_count         <=  retr_count + 1 mod 16;            
+                  txt_hw_cmd.unlock  <=  '1';
+                  txt_hw_cmd.err     <=  '1';
                 else
                   
-                  --Retransmitt limit reached, drop the frame
-                  retransmitt   <=  '0';
-                  tran_unlock_r <=  '1';
-                  tran_drop_r   <=  '1';
+                  -- Retransmitt limit reached, signal transmission failure
+                  -- Erase the retransmitt counter, since the next frame
+                  -- can be from the same buffer, but it can be different frame!
+                  -- Thus retr_counter wont be erased on "txt_buf_changed"!
+                  retr_count          <=  0;
+                  txt_hw_cmd.unlock   <=  '1';
+                  txt_hw_cmd.failed   <=  '1';
                 end if;
                 
+                is_txt_locked         <=  '0';
+               
                 --Transmitter started to transmitt error flag -> increase by 8 
                 -- except ack error for error passive
                 --Or Stuff Error appeared during arbitration!

@@ -115,11 +115,8 @@ entity core_top is
     
     -- CAN Core control signals for TX Arbitrator for manipulation with
     -- TXT Buffers
-    signal tran_lock              :out std_logic;
-    signal tran_unlock            :out std_logic;
-    signal tran_drop              :out std_logic;
-    
-    signal mess_src_change        :in std_logic;
+    signal txt_hw_cmd             :out  txt_hw_cmd_type;
+    signal txtb_changed           :in   std_logic;
     
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 15; 
@@ -376,12 +373,11 @@ entity core_top is
    signal tran_frame_type         :     std_logic;
    signal tran_brs                :     std_logic;
    
-   signal tran_lock_i             :     std_logic;
-   signal tran_unlock_i           :     std_logic;
-   signal tran_drop_i             :     std_logic;
+   --signal tran_lock_i             :     std_logic;
+   --signal tran_unlock_i           :     std_logic;
+   --signal tran_drop_i             :     std_logic;
    
-   --Command for transcieve buffer to store frame on input
-   signal frame_Store             :     std_logic; 
+   signal txt_hw_cmd_i            :  txt_hw_cmd_type;
    
    --Fault confinement signals
    --Error counters
@@ -513,9 +509,10 @@ begin
   data_tx               <=  data_tx_int;
   sp_control            <=  sp_control_int;
   sync_control          <=  sync_control_int;
-  tran_lock             <=  tran_lock_i;            
-  tran_unlock           <=  tran_unlock_i;          
-  tran_drop             <=  tran_drop_i;    
+  --tran_lock             <=  tran_lock_i;            
+  --tran_unlock           <=  tran_unlock_i;          
+  --tran_drop             <=  tran_drop_i;    
+  txt_hw_cmd            <= txt_hw_cmd_i;
   
   rec_ident_out         <=  rec_ident;
   rec_dlc_out           <=  rec_dlc;
@@ -544,7 +541,7 @@ begin
      tran_ident_type_in =>  tran_ident_type_in,
      tran_frame_type_in =>  tran_frame_type_in,
      tran_brs_in        =>  tran_brs_in,
-     frame_store        =>  frame_Store,
+     frame_store        =>  txt_hw_cmd_i.lock,
        
      tran_ident_base    =>  tran_ident_base,
      tran_ident_ext     =>  tran_ident_ext,
@@ -596,14 +593,14 @@ begin
      
      hard_sync_edge     =>  hard_sync_edge,
      
-     frame_store        =>  frame_store,
      tran_frame_valid_in=>  tran_frame_valid_in,
      
-     tran_lock          =>  tran_lock_i,
-     tran_unlock        =>  tran_unlock_i,
-     tran_drop          =>  tran_drop_i,
+     --tran_lock          =>  tran_lock_i,
+     --tran_unlock        =>  tran_unlock_i,
+     --tran_drop          =>  tran_drop_i,
      
-     mess_src_change    =>  mess_src_change,
+     txt_hw_cmd         =>  txt_hw_cmd_i,
+     txtb_changed       =>  txtb_changed,
     
      rec_ident          =>  rec_ident,
      rec_dlc            =>  rec_dlc,
@@ -1080,9 +1077,9 @@ begin
  stat_bus(STAT_TRAN_IS_RTR_INDEX)                           <=  tran_is_rtr;
  stat_bus(STAT_TRAN_IDENT_TYPE_INDEX)                       <=  tran_ident_type;
  stat_bus(STAT_TRAN_FRAME_TYPE_INDEX)                       <=  tran_frame_type;
- stat_bus(STAT_TRAN_DATA_ACK_INDEX)                         <=  tran_lock_i;
+ stat_bus(STAT_TRAN_DATA_ACK_INDEX)                         <=  txt_hw_cmd_i.lock;
  stat_bus(STAT_TRAN_BRS_INDEX)                              <=  tran_brs;
- stat_bus(STAT_FRAME_STORE_INDEX)                           <=  frame_Store;
+ stat_bus(STAT_FRAME_STORE_INDEX)                           <=  txt_hw_cmd_i.lock;
 
  --Error counters and state
  stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW)  <=  tx_counter_out;

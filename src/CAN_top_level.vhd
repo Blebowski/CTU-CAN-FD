@@ -64,7 +64,9 @@
 --    20.12.2017  Removed obsolete "tran_data_in" signal.
 --     10.2.2017  Removed "useFDsize" generic. When TX Buffer goes completely
 --                to the Dual port RAM, there is no need to save memory
---                anymore. 
+--                anymore.
+--     15.2.2018  Added generic amount of TXT Buffers and support for TXT
+--                buffer FSM, HW commands and SW commands.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -203,11 +205,23 @@ entity CAN_top_level is
   ------------------------------------------------------------------------------
     
   --Data into the RAM of TXT Buffer
-  signal tran_data    : std_logic_vector(31 downto 0);
+  signal tran_data            : std_logic_vector(31 downto 0);
   
   --Address in the RAM of TXT buffer  
-  signal tran_addr    : std_logic_vector(4 downto 0);
+  signal tran_addr            : std_logic_vector(4 downto 0);
+  
+  -- Finite state machine types for TXT Buffer
+  signal txtb_fsms            : txt_fsms_type;  
 
+  -- Software commands + buffer indices that should be activated
+  signal txt_sw_cmd           :  txt_sw_cmd_type;
+  signal txt_buf_cmd_index    :  std_logic_vector(
+                                      TXT_BUFFER_COUNT - 1 downto 0);
+  signal txt_buf_prior        :  txtb_priorities_type;
+  
+  -- Indicates that TXT Buffer has changed and that Retrransmitt counter
+  -- should be erased by Protocol control.
+  signal txtb_changed         :  std_logic;
 
 	------------------------------------------------------------------------------
   -- Registers <--> event logger
@@ -224,24 +238,14 @@ entity CAN_top_level is
   --TX Arbitrator <--> TX Buffer, TXT Buffer
   ------------------------------------------------------------------------------
 
-	--Time buffer acknowledge that message can be erased
-  signal txt1_buffer_ack   : std_logic;
-  
-  --No message in Time TX Buffer
-  signal txt1_buffer_empty : std_logic;
-  
-  --Time buffer acknowledge that message can be erased
-  signal txt2_buffer_ack   : std_logic;
-  
-  --No message in Time TX Buffer
-  signal txt2_buffer_empty : std_logic;
+  signal txt_hw_cmd_buf_index : natural range 0 to TXT_BUFFER_COUNT - 1;
+  signal txt_buf_ready        : std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
 
-  signal txt1_data_word  : std_logic_vector(31 downto 0);
-  signal txt1_frame_info : std_logic_vector(127 downto 0);
-  signal txt2_data_word  : std_logic_vector(31 downto 0);
-  signal txt2_frame_info : std_logic_vector(127 downto 0);
-
-
+  -- Frames in TXT buffers on output - Data(addressed), Metadata (paralell)
+  signal txt_frame_metadata   : txtb_meta_data_type;
+  signal txt_data_word        : txtb_data_type;
+  
+  
   ------------------------------------------------------------------------------
   -- TX Arbitrator <--> CAN Core
   ------------------------------------------------------------------------------
@@ -271,22 +275,16 @@ entity CAN_top_level is
   --stored for transmitting
   signal tran_frame_valid_out : std_logic;
   
-  --Acknowledge from CAN core that acutal message was stored into internal 
-  --buffer for transmitting
-   signal tran_lock           :  std_logic;
-    
-  -- Signal for TX Arbitrator that it can release the lock on the current
-  -- frame in TXT Buffer and that the frame is not transmitted anymore.
-  signal tran_unlock          :  std_logic;
-    
-  -- Signal for TX Arbitrator that the frame which was actually transmitted
-  -- can be dropped (TXT buffer can be set to empty)
-  signal tran_drop            :  std_logic;
+  -- Hardware commands to TXT Buffer from Protocol control
+  signal txt_hw_cmd           : txt_hw_cmd_type;
+  
+  -- Hardware command index set by TX Arbitrator based on the current
+  -- internal state
+  signal txt_hw_cmd_index     : natural range 0 to TXT_BUFFER_COUNT - 1;
   
   --Pointer to TXT buffer memory  
   signal txt_buf_ptr          : natural range 0 to 15;
 
-  signal mess_src_change      : std_logic;
 
 	------------------------------------------------------------------------------
   --RX Buffer <--> CAN Core
@@ -450,8 +448,8 @@ architecture rtl of CAN_top_level is
   ----------------------------------------------------
   for reg_comp       : canfd_registers use entity work.canfd_registers(rtl);
   for rx_buf_comp    : rxBuffer use entity work.rxBuffer(rtl);
-  for txt1_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
-  for txt2_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
+  --for txt1_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
+  --for txt2_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
   for tx_arb_comp    : txArbitrator use entity work.txArbitrator(rtl);
   for mes_filt_comp  : messageFilter use entity work.messageFilter(rtl);
   for int_man_comp   : intManager use entity work.intManager(rtl);
@@ -507,8 +505,10 @@ begin
       rx_data_overrun      => rx_data_overrun,
       tran_data            => tran_data,
       tran_addr            => tran_addr,
-      txt2_empty           => txt2_buffer_empty,
-      txt1_empty           => txt1_buffer_empty,
+      txtb_fsms            => txtb_fsms,
+      txt_sw_cmd           => txt_sw_cmd,
+      txt_buf_cmd_index    => txt_buf_cmd_index,
+      txt_buf_prior_out    => txt_buf_prior,     
       int_vector           => int_vector,
       trv_delay_out        => trv_delay_out,
       loger_act_data       => loger_act_data,
@@ -553,74 +553,59 @@ begin
       drv_bus              => drv_bus
       );
 
-  txt1_buf_comp : txtBuffer
-    generic map(
-      ID        => 1
-      )
-    port map(
-      clk_sys            => clk_sys,
-      res_n              => res_n_int,
-      drv_bus            => drv_bus,
-      tran_data          => tran_data,
-      tran_addr          => tran_addr,
-      txt_empty          => txt1_buffer_empty,
-      txt_data_ack       => txt1_buffer_ack,
-      txt_data_word      => txt1_data_word,
-      txt_data_addr      => txt_buf_ptr,
-      txt_frame_info_out => txt1_frame_info
-      );
 
-  txt2_buf_comp : txtBuffer
+  txt_buf_comp_gen: for i in 0 to TXT_BUFFER_COUNT - 1 generate
+    txtBuffer_comp:txtBuffer
     generic map(
-      ID        => 2
-      )
-    port map(
-      clk_sys            => clk_sys,
-      res_n              => res_n_int,
-      drv_bus            => drv_bus,
-      tran_data          => tran_data,
-      tran_addr          => tran_addr,
-      txt_empty          => txt2_buffer_empty,
-      txt_data_ack       => txt2_buffer_ack,
-      txt_data_word      => txt2_data_word,
-      txt_data_addr      => txt_buf_ptr,
-      txt_frame_info_out => txt2_frame_info
-      );
-
-  tx_arb_comp : txArbitrator
-    generic map(
-      tx_time_sup       => tx_time_sup 
+      buf_count             => TXT_BUFFER_COUNT,
+      ID                    => i
     )
     port map(
-      clk_sys => clk_sys,
-      res_n   => res_n,
-
-      txt1buf_info_in   => txt1_frame_info,
-      txt1buf_data_in   => txt1_data_word,
-      txt1_buffer_ack   => txt1_buffer_ack,
-      txt1_buffer_empty => txt1_buffer_empty,
-
-      txt2buf_info_in   => txt2_frame_info,
-      txt2buf_data_in   => txt2_data_word,
-      txt2_buffer_empty => txt2_buffer_empty,
-      txt2_buffer_ack   => txt2_buffer_ack,
-
-      tran_data_word_out   => tran_data_out,
-      tran_ident_out       => tran_ident_out,
-      tran_dlc_out         => tran_dlc_out,
-      tran_is_rtr          => tran_is_rtr,
-      tran_ident_type_out  => tran_ident_type_out,
-      tran_frame_type_out  => tran_frame_type_out,
-      tran_brs_out         => tran_brs_out,
-      tran_frame_valid_out => tran_frame_valid_out,
-      tran_lock            => tran_lock,
-      tran_unlock          => tran_unlock,
-      tran_drop            => tran_drop,
-      mess_src_change      => mess_src_change,
-      
-      drv_bus   => drv_bus,
-      timestamp => timestamp
-      );
+      clk_sys               => clk_sys,
+      res_n                 => res_n,
+      drv_bus               => drv_bus,
+      tran_data             => tran_data,
+      tran_addr             => tran_addr,
+      txt_sw_cmd            => txt_sw_cmd,
+      txt_sw_buf_cmd_index  => txt_buf_cmd_index,
+      txtb_state            => txtb_fsms(i),
+      txt_hw_cmd            => txt_hw_cmd,
+      txt_hw_cmd_buf_index  => txt_hw_cmd_buf_index,
+      txt_data_word         => txt_data_word(i),
+      txt_data_addr         => txt_buf_ptr,
+      txt_frame_info_out    => txt_frame_metadata(i),
+      txt_buf_ready         => txt_buf_ready(i)
+    );
+  end generate;
+  
+  
+ tx_arb_comp: txArbitrator
+  generic map(
+    buf_count               => TXT_BUFFER_COUNT,
+    tx_time_sup             => tx_time_sup
+  )
+  port map( 
+     clk_sys                => clk_sys,
+     res_n                  => res_n,
+     txt_buf_data_in        => txt_data_word,
+     txt_meta_data_in       => txt_frame_metadata,
+     txt_buf_ready          => txt_buf_ready,
+     tran_data_word_out     => tran_data_out,
+     tran_ident_out         => tran_ident_out,
+     tran_dlc_out           => tran_dlc_out,
+     tran_is_rtr            => tran_is_rtr,
+     tran_ident_type_out    => tran_ident_type_out,
+     tran_frame_type_out    => tran_frame_type_out,
+     tran_brs_out           => tran_brs_out,
+     tran_frame_valid_out   => tran_frame_valid_out,
+     txt_hw_cmd             => txt_hw_cmd,
+     txtb_changed           => txtb_changed,
+     txt_hw_cmd_buf_index   => txt_hw_cmd_buf_index,
+     drv_bus                => drv_bus,
+     txt_buf_prio           => txt_buf_prior,
+     timestamp              => timestamp
+  );
+ 
 
   mes_filt_comp : messageFilter
     generic map(
@@ -677,10 +662,8 @@ begin
       tran_frame_type_in    => tran_frame_type_out,
       tran_brs_in           => tran_brs_out,
       tran_frame_valid_in   => tran_frame_valid_out,
-      tran_lock             => tran_lock,
-      tran_unlock           => tran_unlock,
-      tran_drop             => tran_drop,
-      mess_src_change       => mess_src_change,
+      txt_hw_cmd            => txt_hw_cmd,
+      txtb_changed          => txtb_changed,
       txt_buf_ptr           => txt_buf_ptr,
       rec_ident_out         => rec_ident_in,
       rec_dlc_out           => rec_dlc_in,

@@ -194,18 +194,19 @@ entity canfd_registers is
     -- Optimized, direct interface to TXT1 and TXT2 buffers
     --------------------------------------------------------
     
-    --Data into the RAM of TXT Buffer
-    signal tran_data            :out  std_logic_vector(31 downto 0); 
-    
-    --Address in the RAM of TXT buffer   
+    -- Data and address for access to RAM of TXT Buffer
+    signal tran_data            :out  std_logic_vector(31 downto 0);    
     signal tran_addr            :out  std_logic_vector(4 downto 0);  
     
-    --Logic 1 signals empty TxTime buffer
-    signal txt1_empty           :in   std_logic;                      
+    -- Buffer status signals
+    signal txtb_fsms            :in   txt_fsms_type;
     
-    --Logic 1 signals empty TxTime buffer
-    signal txt2_empty           :in   std_logic;                      
-    
+    -- Buffer commands + command index
+    signal txt_sw_cmd           :out  txt_sw_cmd_type;
+    signal txt_buf_cmd_index    :out  std_logic_vector(
+                                      TXT_BUFFER_COUNT - 1 downto 0);
+    signal txt_buf_prior_out    :out  txtb_priorities_type;
+     
     ----------------------------------
     -- Bus synchroniser interface
     ----------------------------------
@@ -287,34 +288,37 @@ entity canfd_registers is
   signal filter_C_ctrl          :     std_logic_vector(3 downto 0);
   signal filter_ran_ctrl        :     std_logic_vector(3 downto 0);
   
-  --RX Buffer control signals
+  -- RX Buffer control signals
   -- Transition from logic 1 to logic zero on this signal 
   -- causes rx_reading_pointer increment by one
   signal rx_read_start          :     std_logic; 
   
-  --TX Arbitrator allow
-  signal txt1_arbit_allow       :     std_logic;
-  signal txt2_arbit_allow       :     std_logic;
+  ---------------------------------------------------
+  -- TXT Buffer settings
+  ---------------------------------------------------
+  signal txt_bufdir             :     std_logic;   --TXT write direction register
   
-  --Transcieve data registers
-  type tx_data_memory_type is array (1 to 5) of std_logic_vector(127 downto 0);
-  signal tx_data_reg            :     tx_data_memory_type;
+  -- Swap behaviour when frame should be retransmitted and another frame
+  -- is available in other buffer
+  signal txt_frame_swap         :     std_logic;
   
+  --Store into TXT buffer 1 or 2 (chip select)
+  signal tran_wr                :     std_logic_vector(1 downto 0);   
+  
+  -- TXT Buffer priorities
+  signal txt_buf_prior          :     txtb_priorities_type;
+  
+  --One of the TX Buffers is accessed
+  signal txt_buf_access         :     boolean;
+    
+  
+    
   signal intLoopbackEna         :     std_logic;
   
   --Event logger registers
   signal log_trig_config        :     std_logic_vector(31 downto 0);
   signal log_capt_config        :     std_logic_vector(31 downto 0);
   signal log_cmd                :     std_logic_vector(3 downto 0);
-  
-  signal txt_bufdir             :     std_logic; --TXT write direction register
-  
-  -- Swap behaviour when frame should be retransmitted and another frame
-  -- is available in other buffer
-  signal txt_frame_swap         :     std_logic;
-  
-  --Store into TXT buffer 1 or 2
-  signal tran_wr                :     std_logic_vector(1 downto 0);   
      
   --Recieve transcieve message counters
   signal rx_ctr_set             :     std_logic;
@@ -347,9 +351,6 @@ entity canfd_registers is
   --Reading from RX buffer, detection of first cycle to move the pointer
   signal RX_buff_read_first     :     boolean;
   signal aux_data               :     std_logic_Vector(31 downto 0);
-  
-  --One of the TX Buffers is accessed
-  signal txt_buf_access         :     boolean;
   
 end entity;
 
@@ -400,8 +401,14 @@ architecture rtl of canfd_registers is
     signal filter_B_ctrl          :out  std_logic_vector(3 downto 0);
     signal filter_C_ctrl          :out  std_logic_vector(3 downto 0);
     signal filter_ran_ctrl        :out  std_logic_vector(3 downto 0);
-    signal txt1_arbit_allow       :out  std_logic;
-    signal txt2_arbit_allow       :out  std_logic;
+    
+    signal txt_buf_set_empty      :out  std_logic;
+    signal txt_buf_set_ready      :out  std_logic;
+    signal txt_buf_set_abort      :out  std_logic;
+    signal txt_buf_cmd_index      :out
+            std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
+    signal txt_buf_prior          :out  txtb_priorities_type;
+
     signal intLoopbackEna         :out  std_logic;
     signal log_trig_config        :out  std_logic_vector(31 downto 0);
     signal log_capt_config        :out  std_logic_vector(31 downto 0);
@@ -505,15 +512,21 @@ architecture rtl of canfd_registers is
       filter_ran_ctrl         <=  (OTHERS=>'0');
     end if;
     
-    txt1_arbit_allow        <=  TXT1A_RSTVAL;
-    txt2_arbit_allow        <=  TXT2A_RSTVAL;
-    
     log_cmd                 <=  (OTHERS =>'0');
     log_trig_config         <=  (OTHERS =>'0');
     log_capt_config         <=  (OTHERS =>'0');
     
     txt_frame_swap          <= '0';
     
+    txt_buf_set_empty      <= TXCE_RSTVAL;
+    txt_buf_set_ready      <= TXCR_RSTVAL;
+    txt_buf_set_abort      <= TXCA_RSTVAL;
+    txt_buf_cmd_index(0)   <= TXI1_RSTVAL;
+    txt_buf_cmd_index(1)   <= TXI2_RSTVAL;
+    
+    txt_buf_prior(0)       <= TXT1P_RSTVAL;
+    txt_buf_prior(1)       <= TXT2P_RSTVAL;
+
   end procedure;
   
   
@@ -628,13 +641,13 @@ begin
                                 and swr='1')
                            else
                       false;
-                          
+
   tran_wr               <= "01" when (txt_bufdir=TXT1_DIR and txt_buf_access) else
                            "10" when (txt_bufdir=TXT2_DIR and txt_buf_access) else
-                           "00"; 
-  -- TXT1 buffer corresponds to index 0, TXT2 buffer to index 1
-   
-   
+                           "00";
+
+  txt_buf_prior_out <= txt_buf_prior;
+
   --------------------------------------------------------
   -- Main memory access process
   --------------------------------------------------------
@@ -643,8 +656,8 @@ begin
   if(res_n=ACT_RESET)then
       
       --Internal synced reset
-      int_reset               <=  '1';
-      data_out_int            <=  (OTHERS=>'0');
+      int_reset               <= '1';
+      data_out_int            <= (OTHERS=>'0');
       sbe_reg                 <= (OTHERS => '0');
       
       --Reset the rest of registers
@@ -660,14 +673,16 @@ begin
        filter_B_mask      ,filter_C_mask          ,filter_A_value          ,
        filter_B_value     ,filter_C_value         ,filter_ran_low          ,        
        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
-       filter_C_ctrl      ,filter_ran_ctrl        ,txt1_arbit_allow        ,
-       txt2_arbit_allow   ,intLoopbackEna         ,log_trig_config         ,
+       filter_C_ctrl      ,filter_ran_ctrl        ,
+       txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,     
+       txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,txt_buf_prior           ,     
+       intLoopbackEna     ,log_trig_config        ,
        log_capt_config    ,log_cmd                ,rx_ctr_set              ,
        tx_ctr_set         ,ctr_val_set            ,CAN_enable              ,
        FD_type            ,mode_reg               ,txt_frame_swap          ,
        int_ena_reg            
       );
-            
+      
       RX_buff_read_first    <= false;
       aux_data              <=  (OTHERS=>'0');
       
@@ -692,8 +707,10 @@ begin
        filter_B_mask      ,filter_C_mask          ,filter_A_value          ,
        filter_B_value     ,filter_C_value         ,filter_ran_low          ,        
        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
-       filter_C_ctrl      ,filter_ran_ctrl        ,txt1_arbit_allow        ,
-       txt2_arbit_allow   ,intLoopbackEna         ,log_trig_config         ,
+       filter_C_ctrl      ,filter_ran_ctrl        ,
+       txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,     
+       txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,txt_buf_prior           ,      
+       intLoopbackEna     ,log_trig_config        ,
        log_capt_config    ,log_cmd                ,
        rx_ctr_set         ,tx_ctr_set             ,
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
@@ -770,6 +787,12 @@ begin
 		RX_buff_read_first        <= false;
 		aux_data                  <=  (OTHERS=>'0');
 		sbe_reg                   <= sbe;
+		
+		txt_sw_cmd.set_ety        <= '0';
+    txt_sw_cmd.set_rdy        <= '0';
+    txt_sw_cmd.set_abt        <= '0';
+    txt_buf_cmd_index         <= (OTHERS => '0');
+		txt_buf_prior             <= txt_buf_prior;
 		
 		--Chip select active and our device is selected (Component type and ID)
 		if((scs=ACT_CSC) and 
@@ -940,14 +963,32 @@ begin
 					  end if;
     			
     			----------------------------------------------------
-    			--TX Settings register
+    			-- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
     			----------------------------------------------------
-    			when TX_SETTINGS_ADR =>
-    			     write_be_s(txt1_arbit_allow, TXT1A_IND, data_in, sbe);  
-    					  write_be_s(txt2_arbit_allow, TXT2A_IND, data_in, sbe);  
- 					  write_be_s(txt_bufdir, BDIR_IND, data_in, sbe);  
-    				    write_be_s(txt_frame_swap, FRSW_IND, data_in, sbe);  
-  								  
+    			when TX_COMMAND_ADR =>
+    			 
+    			     -- TXT Buffers commands
+    			     write_be_s(txt_sw_cmd.set_ety, TXCE_IND, data_in, sbe);
+    			     write_be_s(txt_sw_cmd.set_rdy, TXCR_IND, data_in, sbe);
+    			     write_be_s(txt_sw_cmd.set_abt, TXCA_IND, data_in, sbe);
+    			   
+            -- Vector index for which buffer the command is active
+            write_be_vect(txt_buf_cmd_index, 0, TXT_BUFFER_COUNT - 1, data_in,
+                          TXI1_IND, TXI1_IND + txt_buf_cmd_index'length - 1, sbe); 
+      	    
+     	      -- Buffer direction and Frame swap
+     	      write_be_s(txt_bufdir, BDIR_IND, data_in, sbe);
+            write_be_s(txt_frame_swap, FRSW_IND, data_in, sbe);
+   	  
+   	   ----------------------------------------------------
+    			-- TX_PRIORITY
+    			----------------------------------------------------
+ 	     when TX_PRIORITY_ADR =>
+ 	          write_be_vect(txt_buf_prior(0), 0, 2, data_in,
+                        TXT1P_L, TXT1P_H, sbe);   
+ 	          write_be_vect(txt_buf_prior(1), 0, 2, data_in,
+                        TXT2P_L, TXT2P_H, sbe);
+ 	           
     			--------------------------------------
     			--Recieve frame counter presetting
     			--------------------------------------
@@ -1274,24 +1315,77 @@ begin
     			   -------------------------------------------------------
     			   when TX_STATUS_ADR => 
     			      data_out_int(31 downto 3)      <=  (OTHERS=>'0');
-    			      data_out_int(TXT2E_IND)   <=  txt2_empty;
-    			      data_out_int(TXT1E_IND)   <=  txt1_empty;
-    			      if (tx_time_sup) then   
-			         data_out_int(TXTS_IND) <= '1';
-			       else
-			         data_out_int(TXTS_IND) <= '0';
-			       end if;   
     			      
- 			    ------------------------------------------------------- 
- 			    --TX_Settings register
- 			    -------------------------------------------------------
-    			   when TX_SETTINGS_ADR => 
-    					  data_out_int                     <=  (OTHERS =>'0');
-    					  data_out_int(TXT1A_IND)          <=  txt1_arbit_allow;
-    					  data_out_int(TXT2A_IND)          <=  txt2_arbit_allow;
-    					  data_out_int(BDIR_IND)           <=  txt_bufdir;
-    					  data_out_int(FRSW_IND)           <=  txt_frame_swap;
-    					
+    			      -- We encode state here, later this will be abstracted to
+    			      -- higher level module. So far we unrool it and do it
+    			      -- for every Buffer state separately so that we dont have
+    			      -- problems with dependencies between indices! (e.g if
+    			      -- we used loop and used offset from first buffer state)
+			       case txtb_fsms(0) is
+			       when txt_empty =>
+			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ETY;
+			       when txt_ready =>
+			            data_out_int(TX1S_H downto TX1S_L) <= TXT_RDY;
+			       when txt_tx_prog =>
+			            data_out_int(TX1S_H downto TX1S_L) <= TXT_TRAN;
+			       when txt_ab_prog =>
+			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ABTP;
+			       when txt_ok =>
+			            data_out_int(TX1S_H downto TX1S_L) <= TXT_TOK;
+			       when txt_error =>
+			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ERR;
+			       when txt_aborted =>
+			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ABT;
+			       when others =>
+			            data_out_int(TX1S_H downto TX1S_L) <= (OTHERS => '0');
+			       end case;
+			       
+			       case txtb_fsms(1) is
+			       when txt_empty =>
+			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ETY;
+			       when txt_ready =>
+			            data_out_int(TX2S_H downto TX2S_L) <= TXT_RDY;
+			       when txt_tx_prog =>
+			            data_out_int(TX2S_H downto TX2S_L) <= TXT_TRAN;
+			       when txt_ab_prog =>
+			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ABTP;
+			       when txt_ok =>
+			            data_out_int(TX2S_H downto TX2S_L) <= TXT_TOK;
+			       when txt_error =>
+			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ERR;
+			       when txt_aborted =>
+			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ABT;
+			       when others =>
+			            data_out_int(TX2S_H downto TX2S_L) <= (OTHERS => '0');
+			       end case;
+    			
+    			-- TODO: Shouldn we add this to the register map as before??     
+    			      --if (tx_time_sup) then   
+--			         data_out_int(TXTS_IND) <= '1';
+--			       else
+--			         data_out_int(TXTS_IND) <= '0';
+--			       end if;
+ 			    
+ 			    ----------------------------------------------------
+   			    -- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
+			    ----------------------------------------------------
+			    when TX_COMMAND_ADR =>
+    			     
+    			     -- Commands and indices are read only (TX_COMMAND register)
+    			     
+     	      -- Buffer direction and Frame swap (TX_SETTINGS)
+     	      data_out_int           <= (OTHERS => '0');
+     	      data_out_int(BDIR_IND) <= txt_bufdir;
+            data_out_int(FRSW_IND) <= txt_frame_swap;
+          
+          ----------------------------------------------------
+    			   -- TX_PRIORITY
+    			   ----------------------------------------------------
+ 	        when TX_PRIORITY_ADR =>
+ 	          data_out_int                         <= (OTHERS => '0');
+     	      data_out_int(TXT1P_H downto TXT1P_L) <= txt_buf_prior(0);
+            data_out_int(TXT2P_H downto TXT2P_L) <= txt_buf_prior(1);
+        	
     					------------------------------------------------------- 
  			    --Error capture register
  			    -------------------------------------------------------
@@ -1468,9 +1562,11 @@ begin
                           else
                       '0';
   
-  --When buffer is not full there is one. However still might be not enough
-  -- place in buffer
-  status_reg(TBS_IND mod 8)<='1' when (txt1_empty='0' and txt2_empty='0') else '0'; 
+  
+  status_reg(TBS_IND mod 8)<='1' when (txtb_fsms(0) /= txt_empty and
+                                       txtb_fsms(1) /= txt_empty)
+                                 else
+                            '0';
   
   --When at least one message is availiable in the buffer
   status_reg(RBS_IND mod 8)<=not rx_empty; 
@@ -1485,7 +1581,7 @@ begin
   PC_state_reg_vect(4)    <= '1' when PC_State=eof else '0';
   PC_state_reg_vect(5)    <= '1' when PC_State=overload else '0';
   PC_state_reg_vect(6)    <= '1' when PC_State=interframe else '0';
-  
+   
   ---------------------------
   --Driving bus assignment --
   ---------------------------
@@ -1495,6 +1591,7 @@ begin
   drv_bus(351)                                      <=  '0';
   drv_bus(355 downto 354)                           <=  (OTHERS=>'0');
   drv_bus(360 downto 358)                           <=  (OTHERS=>'0');
+  drv_bus(362 downto 361)                           <=  (OTHERS=>'0');
   drv_bus(365 downto 364)                           <=  (OTHERS=>'0');
   drv_bus(370 downto 368)                           <=  (OTHERS=>'0');
   drv_bus(371)                                      <=  '0';
@@ -1558,11 +1655,6 @@ begin
   drv_bus(DRV_TXT2_WR)                              <=  tran_wr(1);
   drv_bus(DRV_ERASE_TXT2_INDEX)                     <=  '0';
   
-  --TODO: Add chance to erase also TXT Buffers
-  
-  --TX Arbitrator
-  drv_bus(DRV_ALLOW_TXT1_INDEX)                     <=  txt1_arbit_allow;
-  drv_bus(DRV_ALLOW_TXT2_INDEX)                     <=  txt2_arbit_allow;
   drv_bus(DRV_FRAME_SWAP_INDEX)                     <=  txt_frame_swap;
   
   --Tripple sampling

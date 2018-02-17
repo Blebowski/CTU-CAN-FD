@@ -92,8 +92,10 @@ package CAN_FD_register_map is
   constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"050";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"054";
   constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"058";
-  constant TX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"05C";
-  constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"060";
+  constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"05C";
+  constant TX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"05E";
+  constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"060";
+  constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"064";
   constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"0AC";
   constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"0B0";
   constant LOG_TRIG_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"0B8";
@@ -785,15 +787,48 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- TX_STATUS register
   --
-  -- Status of the TXT Buffers. 
+  -- Status of TXT Buffers. 
   ------------------------------------------------------------------------------
-  constant TXT1E_IND              : natural := 0;
-  constant TXT2E_IND              : natural := 1;
-  constant TXTS_IND               : natural := 2;
+  constant TX1S_L                 : natural := 0;
+  constant TX1S_H                 : natural := 3;
+  constant TX2S_L                 : natural := 4;
+  constant TX2S_H                 : natural := 7;
+
+  -- "TX1S" field enumerated values
+  constant TXT_RDY : std_logic_vector(3 downto 0) := x"1";
+  constant TXT_TRAN : std_logic_vector(3 downto 0) := x"2";
+  constant TXT_ABTP : std_logic_vector(3 downto 0) := x"3";
+  constant TXT_TOK : std_logic_vector(3 downto 0) := x"4";
+  constant TXT_ERR : std_logic_vector(3 downto 0) := x"6";
+  constant TXT_ABT : std_logic_vector(3 downto 0) := x"7";
+  constant TXT_ETY : std_logic_vector(3 downto 0) := x"8";
 
   -- TX_STATUS register reset values
-  constant TXT2E_RSTVAL       : std_logic := '1';
-  constant TXT1E_RSTVAL       : std_logic := '1';
+  constant TX2S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+  constant TX1S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+
+  ------------------------------------------------------------------------------
+  -- TX_COMMAND register
+  --
+  -- Command register for TXT Buffers. Command is activated by setting TXC(E,C,R
+  -- ) bit to logic 1. Buffer that receives the command is selected by setting b
+  -- it TXBI(1..8) to logic 1. Command and index must be set by single access. R
+  -- egister is automatically erased upon the command completion and 0 deos not 
+  -- need to be written. Reffer to description of TXT Buffer circuit for TXT buf
+  -- fer State machine.
+  ------------------------------------------------------------------------------
+  constant TXCE_IND               : natural := 0;
+  constant TXCR_IND               : natural := 1;
+  constant TXCA_IND               : natural := 2;
+  constant TXI1_IND               : natural := 8;
+  constant TXI2_IND               : natural := 9;
+
+  -- TX_COMMAND register reset values
+  constant TXCE_RSTVAL        : std_logic := '0';
+  constant TXCR_RSTVAL        : std_logic := '0';
+  constant TXCA_RSTVAL        : std_logic := '0';
+  constant TXI1_RSTVAL        : std_logic := '0';
+  constant TXI2_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- TX_SETTINGS register
@@ -801,16 +836,28 @@ package CAN_FD_register_map is
   -- This register controls the access into TX buffers. All bits are active in l
   -- ogic 1.
   ------------------------------------------------------------------------------
-  constant TXT1A_IND              : natural := 0;
-  constant TXT2A_IND              : natural := 1;
-  constant BDIR_IND               : natural := 2;
-  constant FRSW_IND               : natural := 3;
+  constant BDIR_IND              : natural := 18;
+  constant FRSW_IND              : natural := 19;
 
   -- TX_SETTINGS register reset values
-  constant TXT1A_RSTVAL       : std_logic := '0';
-  constant TXT2A_RSTVAL       : std_logic := '0';
   constant BDIR_RSTVAL        : std_logic := '0';
   constant FRSW_RSTVAL        : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- TX_PRIORITY register
+  --
+  -- Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals
+  --  that buffer is selected earlier for transmission. If two buffers have equa
+  -- l priorities, the one with lower index is selected.
+  ------------------------------------------------------------------------------
+  constant TXT1P_L                : natural := 0;
+  constant TXT1P_H                : natural := 2;
+  constant TXT2P_L                : natural := 4;
+  constant TXT2P_H                : natural := 6;
+
+  -- TX_PRIORITY register reset values
+  constant TXT1P_RSTVAL : std_logic_vector(2 downto 0) := "001";
+  constant TXT2P_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------
   -- ERR_CAPT register
