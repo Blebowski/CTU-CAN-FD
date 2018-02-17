@@ -169,7 +169,7 @@
 --                   will automatically start rettransmitting, since it will
 --                   have valid frame signalled by "tran_frame_valid_in"!
 --                3. If different buffer is decided for transmission, 
---                   "txt_buf_changed" signal will be active. This signal is
+--                   "txtb_changed" signal will be active. This signal is
 --                   implemented to be valid in the same clock as "tran_frame_
 --                   valid_in", and thus when it is sampled, "txt_buf_changed"
 --                   is used to find out if "retr_counter" should be erased.
