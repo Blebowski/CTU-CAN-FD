@@ -82,6 +82,7 @@ end entity;
 
 architecture rtl of priorityDecoder is
     
+  
   -- Level 0 aliases for input signals to provide variable signal width
   type level0_priority_type  is array (7 downto 0) of
           std_logic_vector(2 downto 0);
@@ -92,6 +93,8 @@ architecture rtl of priorityDecoder is
   -- Level 1 priorities and valid indicators
   type level1_priority_type  is array (3 downto 0) of
           std_logic_vector(2 downto 0);
+  type level1_comp_valid_type is array (3 downto 0) of
+          std_logic_vector(1 downto 0);
   signal l1_prio        : level1_priority_type;
   signal l1_valid       : std_logic_vector(3 downto 0);
   signal l1_winner      : std_logic_vector(3 downto 0);
@@ -99,6 +102,8 @@ architecture rtl of priorityDecoder is
   -- Level 2 priorities and valid indicators
   type level2_priority_type  is array (1 downto 0) of
           std_logic_vector(2 downto 0);
+  type level2_comp_valid_type is array (3 downto 0) of
+          std_logic_vector(1 downto 0);
   signal l2_prio        : level1_priority_type;
   signal l2_valid       : std_logic_vector(1 downto 0);
   signal l2_winner      : std_logic_vector(3 downto 0);
@@ -143,22 +148,22 @@ begin
   -------------------------
   -- Level 1 comparators
   -------------------------
-  l1_gen: for i in 0 to 3 generate
-    
-    l1_prio_dec_proc:process(l0_valid, l0_prio)
-    variable tmp : std_logic_vector(1 downto 0) := l0_valid(2 * i + 1 downto 2 * i);
-    begin
-      case tmp is
+  l1_prio_dec_proc:process(l0_valid, l0_prio)
+  variable tmp : level1_comp_valid_type := (OTHERS => (OTHERS => '0'));
+  begin
+    for i in 0 to 3 loop
+      tmp(i) := l0_valid(2 * i + 1 downto 2 * i);
+      case tmp(i) is
       when "01" =>
             l1_prio(i)      <= l0_prio(2 * i);
             l1_valid(i)     <= '1'; 
             l1_winner(i)    <= LOWER_TREE;
-
+  
       when "10" =>
             l1_prio(i)      <= l0_prio(2 * i + 1);
             l1_valid(i)     <= '1'; 
             l1_winner(i)    <= UPPER_TREE;
-
+  
       when "11" => 
             if (unsigned(l0_prio(2 * i)) > unsigned(l0_prio(2 * i + 1))) then
               l1_prio(i)    <= l0_prio(2 * i);
@@ -168,32 +173,32 @@ begin
               l1_winner(i)  <= UPPER_TREE;
             end if;
             l1_valid(i)     <= '1';  
-
+  
       when "00" =>
             l1_valid(i)     <= '0';
             l1_prio(i)      <= l0_prio(2 * i + 1);
             l1_winner(i)    <= UPPER_TREE;
-
+  
       when others => 
             l1_valid(i)     <= '0';
             l1_prio(i)      <= l0_prio(2 * i + 1);
             l1_winner(i)    <= UPPER_TREE;
-
-      end case;    
-    end process; 
-
-  end generate;
+  
+      end case;
+    end loop;
+  end process; 
 
 
   -------------------------
   -- Level 2 comparators
   -------------------------
-  l2_gen: for i in 0 to 1 generate
-
-    l2_prio_dec_proc:process(l1_valid, l1_prio)
-    variable tmp : std_logic_vector(1 downto 0) := l1_valid(2 * i + 1 downto 2 * i);
-    begin
-      case tmp is
+  l2_prio_dec_proc:process(l1_valid, l1_prio)
+  variable tmp : level2_comp_valid_type := (OTHERS => (OTHERS => '0'));
+  begin
+    for i in 0 to 1 loop
+      tmp(i) := l0_valid(2 * i + 1 downto 2 * i);
+    
+      case tmp(i) is
       when "01" => 
             l2_prio(i)      <= l1_prio(2 * i);
             l2_valid(i)     <= '1'; 
@@ -224,10 +229,9 @@ begin
             l2_prio(i)      <= l1_prio(2 * i + 1);
             l2_winner(i)    <= UPPER_TREE;
             
-      end case;    
-    end process; 
-    
-  end generate;
+      end case;
+    end loop;  
+  end process;
   
   
   -------------------------
