@@ -623,6 +623,8 @@ begin
     variable r_data     : std_logic_vector(31 downto 0);
     variable n_index    : natural := i;
     variable frame_sent : boolean := false;
+    variable used_txtb  : natural := 0;
+    variable txtb_state : std_logic_vector(3 downto 0) := "0000"; 
     begin
       if(do_restart_mem_if(i)=true)then
         restart_mem_bus(mb_arr(i));
@@ -652,11 +654,12 @@ begin
         
           if(do_traffic(i)=true)then
             
-            --Check if first TXT Buffer is empty
+            -- Check if first TXT Buffer is Empty or previous transmission
+            -- was Done...
             -- We use only 1st in this test
             -- Send Frame if yes
-            CAN_read(r_data,TX_STATUS_ADR,n_index,mb_arr(i));
-            if(r_data(0)='1')then
+            get_tx_buf_state(n_index, mb_arr(i), used_txtb, txtb_state);
+            if(txtb_state = TXT_ETY or txtb_state = TXT_TOK)then
               
               --Generate and transmitt frames until tx memory
               -- of given node is full.
