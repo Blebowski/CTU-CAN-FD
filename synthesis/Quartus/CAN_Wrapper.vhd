@@ -53,7 +53,6 @@ entity CAN_Wrapper is
     generic (
 	  constant use_logger     : boolean := false;              
 	  constant rx_buffer_size : natural := 32;
-     constant  useFDSize      : boolean := true;          
      constant  use_sync       : boolean:= true;             
      constant  ID             : natural:= 1; 
      constant  sup_filtA      : boolean:= true;              
@@ -205,7 +204,6 @@ begin
   generic map(
 	  use_logger     => use_logger,
      rx_buffer_size => rx_buffer_size,
-     useFDSize      => useFDSize,
      use_sync       => use_sync,
      ID             => ID,
      sup_filtA      => sup_filtA,
