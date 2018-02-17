@@ -182,6 +182,9 @@ begin
                   else
               '0';
     
+    -- Connet internal buffer state to output
+    txtb_state <= buf_fsm;
+    
     ----------------------------------------------------------------------------
     -- Buffer access process from SW
     ----------------------------------------------------------------------------
