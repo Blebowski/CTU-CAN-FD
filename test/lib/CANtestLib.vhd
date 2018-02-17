@@ -430,7 +430,22 @@ procedure generate_trig(
   constant operator1      : in std_logic_vector(11 downto 0);
   constant operator2      : in std_logic_vector(11 downto 0)
   ) return std_logic_vector;
-
+  
+  
+  procedure send_TXT_buf_cmd(
+    variable cmd          : in      std_logic_vector(2 downto 0);
+    variable buf_index    : natural range 0 to 7;
+    variable ID           : in      natural range 0 to 15;
+    signal   mem_bus      : inout   Avalon_mem_type
+  );
+  
+  
+  procedure get_tx_buf_state(
+    variable ID           : in      natural range 0 to 15;
+    signal   mem_bus      : inout   Avalon_mem_type;
+    variable buf_index    : in      natural range 0 to 7;
+    variable retVal       : out     std_logic_vector(3 downto 0)
+  );
   
   ------------------------------------------------------------------------------
   -- sanity test stuff; must be in a package
@@ -1214,22 +1229,18 @@ procedure process_error
   variable iter_limit      :          natural;
   variable aux_out         :          boolean;
   variable buf_index       :          natural range 0 to 31;
+  variable buf_state       :          std_logic_vector(3 downto 0);
   begin
    outcome := true;
+   buf_index := buf_nr;
    
-   --Read whether there is place in the TXT buffer
-   CAN_read(w_data,TX_STATUS_ADR,ID,mem_bus);
-   if (buf_nr = 1) then
-     if (w_data(TX1S_H downto TX1S_L) /= TXT_ETY) then
-       report "Unable to send the frame, TX buffer not empty" severity error;
-       return;
-     end if;  
-   elsif (buf_nr = 2) then
-     if (w_data(TX2S_H downto TX2S_L) /= TXT_ETY) then
-       report "Unable to send the frame, TX buffer not empty" severity error;
-       return;
-     end if;  
-   end if;
+   -- Read whether Buffer is empty or Done.
+   CAN_read(w_data, TX_STATUS_ADR, ID, mem_bus);
+   get_tx_buf_state(ID, mem_bus, buf_index, buf_state);
+   if (buf_state /= TXT_ETY or buf_state /= TXT_TOK) then
+      report "Unable to send the frame, TX buffer not empty" severity error;
+      return;
+   end if;  
    
    -- Set the buffer to access (direction)
    CAN_read(w_data,TX_COMMAND_ADR,ID,mem_bus);
@@ -1240,7 +1251,7 @@ procedure process_error
    else
      report "Unsupported TX buffer number" severity error;
    end if;
-   CAN_write(w_data,TX_SETTINGS_ADR,ID,mem_bus); 
+   CAN_write(w_data,TX_COMMAND_ADR,ID,mem_bus); 
       
    --Frame format word
    w_data := (OTHERS => '0');
@@ -1452,8 +1463,61 @@ procedure process_error
      bit_length:=bit_length+21+3;
   end if;
      
- end procedure;  
+ end procedure;
+ 
+ 
+ procedure send_TXT_buf_cmd(
+    variable cmd          : in      std_logic_vector(2 downto 0);
+    variable buf_index    : natural range 0 to 7;
+    variable ID           : in      natural range 0 to 15;
+    signal   mem_bus      : inout   Avalon_mem_type
+  )is
+  variable data           : std_logic_vector(31 downto 0);
+  begin
+    
+    if (cmd /= "001" or cmd /= "010" or cmd /= "100") then
+      report "Invalid TXT Buffer command" severity error;
+    end if;
+    
+    -- Read is necessary for legacy implementation with BDIR and
+    -- Frame swap bits at the same address.
+    CAN_read(data, TX_COMMAND_ADR, ID, mem_bus);
+    
+    data(2 downto 0) := cmd;
+    data(buf_index + TXI1_IND) := '1';
+    CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
+
+  end procedure;
   
+  
+  procedure get_tx_buf_state(
+    variable ID           : in      natural range 0 to 15;
+    signal   mem_bus      : inout   Avalon_mem_type;
+    variable buf_index    : in      natural range 0 to 7;
+    variable retVal       : out     std_logic_vector(3 downto 0)
+  )is
+    variable data         : std_logic_vector(31 downto 0);
+    variable b_state      : std_logic_vector(3 downto 0);
+  begin
+    CAN_read(data, TX_STATUS_ADR, ID, mem_bus);
+    b_state := data((buf_index + 1) * 4 - 1 downto buf_index * 4);
+    
+    case b_state is
+      when TXT_RDY  => null;
+      when TXT_TRAN => null;
+      when TXT_ABTP => null;
+      when TXT_TOK  => null;
+      when TXT_ERR  => null;
+      when TXT_ABT  => null;
+      when TXT_ETY  => null;
+    when others =>
+        report "Invalid TXT Buffer state: " & 
+                  integer'image(to_integer(unsigned(b_state))) severity error;  
+    end case;
+    
+    retVal := b_state;
+    
+  end procedure;
   
 end package body;
 
