@@ -181,7 +181,8 @@
 --                   only then! "is_txt_locked" signal is introduced, to not
 --                   perform additional locking in SOF if lock was already per-
 --                   formed in BUS IDLE.
---  
+--   17.02.2018   Removed obsolete "frame_store", its functionality is fully
+--                replaced with frame_lock
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -213,9 +214,6 @@ entity protocolControl is
     signal tran_ident_type        :in   std_logic;
     signal tran_frame_type        :in   std_logic;
     signal tran_brs               :in   std_logic; 
-    
-    --Store frame from TX Arbitrator to the Transcieve Buffer
-    signal frame_store            :out  std_logic;
     
     --Valid frame ready to be stored into Transcieeve Buffer
     signal tran_frame_valid_in    :in   std_logic;
@@ -445,7 +443,6 @@ entity protocolControl is
   signal data_tx_r                :     std_logic;
   signal arbitration_lost_r       :     std_logic; 
   signal crc_enable_r             :     std_logic;
-  signal frame_store_r            :     std_logic;
   signal stuff_enable_r           :     std_logic;
   signal fixed_stuff_r            :     std_logic;
   signal stuff_length_r           :     std_logic_vector(2 downto 0);
@@ -683,7 +680,6 @@ begin
   PC_State_out          <=  PC_State;
   alc                   <=  alc_r;
   data_tx       	       <=  data_tx_r;
-  frame_Store           <=  frame_Store_r;
   arbitration_lost      <=  arbitration_lost_r;
   crc_enable            <=  crc_enable_r;
   stuff_enable          <=  stuff_enable_r;
@@ -782,8 +778,6 @@ begin
       --------------------------------
       --Configuring output registers--
       --------------------------------
-      frame_Store_r           <=  '0';
-      
       txt_hw_cmd.lock         <=  '0';
       txt_hw_cmd.unlock       <=  '0';
       txt_hw_cmd.valid        <=  '0';
@@ -995,7 +989,6 @@ begin
        inc_one_r              <=  '0';
        inc_eight_r            <=  '0';
        dec_one_r              <=  '0';
-       frame_store_r          <=  '0';
        
        tran_valid_r           <=  '0';
        rec_valid_r            <=  '0';
@@ -1080,8 +1073,7 @@ begin
                     -- If we dont have frame locked, but we have one available
                     -- the we just lock it!
                     if (is_txt_locked = '0' and (tran_frame_valid_in = '1')) then
-                       frame_store_r     <=  '1';
-            	          txt_hw_cmd.lock   <=  '1';
+                       txt_hw_cmd.lock   <=  '1';
            	           is_txt_locked     <=  '1';
            	           
            	           -- In case that TX Arbitrator provides different frame for
@@ -1157,7 +1149,6 @@ begin
                 control_pointer           <=  0;
                 
             else
-                frame_store_r             <=  '0';
                 
                 --Transcieving the data if we have what to transcieve
                 if(tran_trig='1')then
