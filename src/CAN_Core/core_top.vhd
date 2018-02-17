@@ -379,9 +379,6 @@ entity core_top is
    
    signal txt_hw_cmd_i            :  txt_hw_cmd_type;
    
-   --Command for transcieve buffer to store frame on input
-   signal frame_Store             :     std_logic; 
-   
    --Fault confinement signals
    --Error counters
    signal tx_counter_out          :     std_logic_vector(8 downto 0);
@@ -544,7 +541,7 @@ begin
      tran_ident_type_in =>  tran_ident_type_in,
      tran_frame_type_in =>  tran_frame_type_in,
      tran_brs_in        =>  tran_brs_in,
-     frame_store        =>  frame_Store,
+     frame_store        =>  txt_hw_cmd_i.lock,
        
      tran_ident_base    =>  tran_ident_base,
      tran_ident_ext     =>  tran_ident_ext,
@@ -596,7 +593,6 @@ begin
      
      hard_sync_edge     =>  hard_sync_edge,
      
-     frame_store        =>  frame_store,
      tran_frame_valid_in=>  tran_frame_valid_in,
      
      --tran_lock          =>  tran_lock_i,
@@ -1083,7 +1079,7 @@ begin
  stat_bus(STAT_TRAN_FRAME_TYPE_INDEX)                       <=  tran_frame_type;
  stat_bus(STAT_TRAN_DATA_ACK_INDEX)                         <=  txt_hw_cmd_i.lock;
  stat_bus(STAT_TRAN_BRS_INDEX)                              <=  tran_brs;
- stat_bus(STAT_FRAME_STORE_INDEX)                           <=  frame_Store;
+ stat_bus(STAT_FRAME_STORE_INDEX)                           <=  txt_hw_cmd_i.lock;
 
  --Error counters and state
  stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW)  <=  tx_counter_out;
