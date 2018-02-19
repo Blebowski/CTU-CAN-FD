@@ -3159,49 +3159,95 @@
 				</ipxact:register>
 			</ipxact:addressBlock>
 			<ipxact:addressBlock>
-				<ipxact:name>TX_Buffer</ipxact:name>
-				<ipxact:displayName>TXT Buffer</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT Buffer.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXT_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXT_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXT_DATA_20) corresponds to DATA_61_64_W. The adresses in between correponds linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
+				<ipxact:name>TX_Buffer_1</ipxact:name>
+				<ipxact:displayName>TXT Buffer 1</ipxact:displayName>
+				<ipxact:description>Access to this memory region is mapped to TXT Buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correpond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
 				<ipxact:baseAddress>'h100</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
 				<ipxact:usage>memory</ipxact:usage>
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
-					<ipxact:name>TX_DATA_1</ipxact:name>
+					<ipxact:name>TXTB1_DATA_1</ipxact:name>
 					<ipxact:displayName>TX_DATA_1</ipxact:displayName>
-					<ipxact:description>This adress corresponds to FRAME_FORM word</ipxact:description>
+					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TX_DATA_1</ipxact:name>
+						<ipxact:name>TXTB1_DATA_1</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_DATA_2</ipxact:name>
+					<ipxact:name>TXTB1_DATA_2</ipxact:name>
 					<ipxact:displayName>TX_DATA_2</ipxact:displayName>
-					<ipxact:description>This adress corresponds to IDENTIFIER word.</ipxact:description>
+					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TX_DATA_2</ipxact:name>
+						<ipxact:name>TXTB1_DATA_2</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_DATA_20</ipxact:name>
+					<ipxact:name>TXTB1_DATA_20</ipxact:name>
 					<ipxact:displayName>TX_DATA_20</ipxact:displayName>
-					<ipxact:description>This adress corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TX_DATA_20</ipxact:name>
+						<ipxact:name>TXTB1_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+			</ipxact:addressBlock>
+			<ipxact:addressBlock>
+				<ipxact:name>TX_Buffer_2</ipxact:name>
+				<ipxact:displayName>TXT Buffer 2</ipxact:displayName>
+				<ipxact:description>Access to this memory region is mapped to TXT Buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correpond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
+				<ipxact:baseAddress>'h200</ipxact:baseAddress>
+				<ipxact:range>256</ipxact:range>
+				<ipxact:width>32</ipxact:width>
+				<ipxact:usage>register</ipxact:usage>
+				<ipxact:volatile>true</ipxact:volatile>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_1</ipxact:name>
+					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h0</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_1</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_2</ipxact:name>
+					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_20</ipxact:name>
+					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_20</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
