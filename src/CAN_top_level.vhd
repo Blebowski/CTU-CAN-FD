@@ -204,19 +204,17 @@ entity CAN_top_level is
   -- Registers <--> TX Buffer, TXT Buffer
   ------------------------------------------------------------------------------
     
-  --Data into the RAM of TXT Buffer
+  --Data, Address and chip select into the RAM of TXT Buffer
   signal tran_data            : std_logic_vector(31 downto 0);
-  
-  --Address in the RAM of TXT buffer  
   signal tran_addr            : std_logic_vector(4 downto 0);
+  signal tran_cs              : std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
   
   -- Finite state machine types for TXT Buffer
   signal txtb_fsms            : txt_fsms_type;  
 
   -- Software commands + buffer indices that should be activated
   signal txt_sw_cmd           :  txt_sw_cmd_type;
-  signal txt_buf_cmd_index    :  std_logic_vector(
-                                      TXT_BUFFER_COUNT - 1 downto 0);
+  signal txt_buf_cmd_index    :  std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
   signal txt_buf_prior        :  txtb_priorities_type;
   
   -- Indicates that TXT Buffer has changed and that Retrransmitt counter
@@ -505,6 +503,7 @@ begin
       rx_data_overrun      => rx_data_overrun,
       tran_data            => tran_data,
       tran_addr            => tran_addr,
+      txtb_cs              => tran_cs,
       txtb_fsms            => txtb_fsms,
       txt_sw_cmd           => txt_sw_cmd,
       txt_buf_cmd_index    => txt_buf_cmd_index,
@@ -566,6 +565,7 @@ begin
       drv_bus               => drv_bus,
       tran_data             => tran_data,
       tran_addr             => tran_addr,
+      tran_cs               => tran_cs(i),
       txt_sw_cmd            => txt_sw_cmd,
       txt_sw_buf_cmd_index  => txt_buf_cmd_index,
       txtb_state            => txtb_fsms(i),

@@ -250,13 +250,13 @@ package body tx_arb_time_tran_feature is
     --report "Checking the data";
      CAN_read(r_data,TX_STATUS_ADR,ID_1,mem_bus_1);
      if(rand_value<rand_value_2)then
-       if(r_data(TXT1E_IND)='0' or r_data(TXT2E_IND)='1')then
+       --if(r_data(TXT1E_IND)='0' or r_data(TXT2E_IND)='1')then
          outcome:=false;
-       end if;
+       --end if;
      else
-       if(r_data(TXT2E_IND)='0' or r_data(TXT1E_IND)='1')then
+       --if(r_data(TXT2E_IND)='0' or r_data(TXT1E_IND)='1')then
          outcome:=false;
-       end if; 
+       --end if; 
      end if;
      
      -------------------------------------------------
@@ -308,13 +308,13 @@ package body tx_arb_time_tran_feature is
      ------------------------------------------
      CAN_read(r_data,TX_STATUS_ADR,ID_1,mem_bus_1);
      if(CAN_frame.identifier<=CAN_frame_2.identifier)then
-       if(r_data(TXT1E_IND)='0' or r_data(TXT2E_IND)='1')then
+       --if(r_data(TXT1E_IND)='0' or r_data(TXT2E_IND)='1')then
          outcome:=false;
-       end if;
+       --end if;
      else
-       if(r_data(TXT2E_IND)='0' or r_data(TXT1E_IND)='1')then
+       --if(r_data(TXT2E_IND)='0' or r_data(TXT1E_IND)='1')then
          outcome:=false;
-       end if; 
+       --end if; 
      end if;
      
      -------------------------------------------------

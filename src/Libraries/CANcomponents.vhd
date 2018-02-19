@@ -113,6 +113,7 @@ package CANcomponents is
       constant sup_range   : boolean                      := true;
       constant sup_be      : boolean                      := false;
       constant tx_time_sup : boolean                      := true;
+      constant buf_count   : natural range 0 to 7         := 2;
       constant ID          : natural
       );
     port(
@@ -140,11 +141,11 @@ package CANcomponents is
       signal rx_data_overrun      : in  std_logic;
       signal tran_data            : out std_logic_vector(31 downto 0);
       signal tran_addr            : out std_logic_vector(4 downto 0);
+      signal txtb_cs              : out std_logic_vector(buf_count - 1 downto 0);   
       signal txtb_fsms            : in  txt_fsms_type;
       signal txt_sw_cmd           : out txt_sw_cmd_type;
-      signal txt_buf_cmd_index    : out std_logic_vector(
-                                TXT_BUFFER_COUNT - 1 downto 0);
-      signal txt_buf_prior_out    :out  txtb_priorities_type;      
+      signal txt_buf_cmd_index    : out std_logic_vector(buf_count - 1 downto 0);
+      signal txt_buf_prior_out    : out txtb_priorities_type;      
       signal trv_delay_out        : in  std_logic_vector(15 downto 0);
       signal int_vector           : in  std_logic_vector(10 downto 0);
       signal loger_act_data       : in  std_logic_vector(63 downto 0);
@@ -231,6 +232,7 @@ package CANcomponents is
     signal drv_bus                :in   std_logic_vector(1023 downto 0);
     signal tran_data              :in   std_logic_vector(31 downto 0);
     signal tran_addr              :in   std_logic_vector(4 downto 0);
+    signal tran_cs                :in   std_logic;
     signal txt_sw_cmd             :in   txt_sw_cmd_type;
     signal txt_sw_buf_cmd_index   :in   std_logic_vector(
                                           buf_count - 1 downto 0);
