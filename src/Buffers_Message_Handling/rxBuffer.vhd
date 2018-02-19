@@ -95,6 +95,8 @@
 --                3. Added combinational decoder on received DLC to frame
 --                   length in words (without frame_format word) into new signal
 --                   "data_size_comb".
+--    19.02.2018  1. Removed memory valid vector. Output word is 0 only if
+--                   memory is completely empty.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -226,10 +228,6 @@ entity rxBuffer is
   --Memory declaration inferred in SRAM
   signal memory                 :rx_memory;
   
-  --Vector if data word in memory is valid. SRAM cant be erased at reset, this 
-  --vector can! (because is DQ-FF based) Workaround strategy for erasing memory!
-  signal memory_valid           :std_logic_vector(0 to buff_size-1);
-  
   --Mark of new message('1') positions
   signal message_mark           :std_logic_vector(buff_size -1 downto 0);
   
@@ -260,6 +258,8 @@ entity rxBuffer is
   -- Combinational decoding of the memory words
   signal frame_form_w           :std_logic_vector(31 downto 0);
   
+  -- Internal empty Buffer
+  signal rx_empty_int           :std_logic;
   
 end entity;
 
@@ -278,15 +278,14 @@ begin
   rx_write_pointer_pos  <= std_logic_vector(to_unsigned(write_pointer,8));
   rx_data_overrun       <= data_overrun_r;
   
-  --TODO: check if timing analysis will stay still over 50 Mhz with following 
-  --logic. This integrates into one combinational path memory read + MUX,
-  -- possibly dangerous for Timing performance
-  
-  --Buffer output is propagated only if memory entry is marked as valid,
-  --Read data from SRAM memory (1 port, async read)
-  rx_read_buff          <= memory(read_pointer) when (memory_valid(read_pointer)='1') 
-                           else (OTHERS => '0');  
-  
+ 
+  -- When buffer is empty the word which is on the output is not valid,
+  -- provide zeroes instead
+  rx_read_buff          <= memory(read_pointer) when (rx_empty_int='0')
+                                                else
+                           (OTHERS => '0');
+              
+
   -- Address for the Receive data RAM in the CAN Core! Comparator is temporary 
   -- before the data order will be reversed!
   rec_dram_addr         <= 18-copy_counter when (copy_counter>2
@@ -350,9 +349,6 @@ begin
       mem_free          := buff_size;
       rx_mem_free       <= std_logic_vector(to_unsigned(buff_size,8));
           
-      --After reset SRAM contents stays but it is not valid!
-      memory_valid      <= (OTHERS=>'0');
-      
       message_count     := 0;
       rx_message_count  <= (OTHERS=>'0');
       message_mark      <= (OTHERS=>'0');
@@ -365,10 +361,14 @@ begin
       copy_counter      <= 16; 
       data_size         <= 0;
       
+      -- Memory can be initialized to zeroes in the simulation
+      -- pragma translate_off    
+      memory            <= (OTHERS => (OTHERS => '0'));
+      -- pragma translate_on
+      
     elsif rising_edge(clk_sys) then
       
       prev_read         <= drv_read_start;
-      memory_valid      <= memory_valid;
       read_pointer      <= read_pointer;
       
       --Clearing the overRun flag
@@ -386,11 +386,6 @@ begin
         
         --Increase the reading pointer
         read_pointer                <= (read_pointer+1) mod buff_size;
-        
-        --Mark the actual field as invalid, since we want the behaviour of FIFO 
-        --from user perspective to be that data are automatically erased after
-        --reading...
-        memory_valid(read_pointer)  <= '0'; 
         
         --If begin of new message then nulling
         message_mark(read_pointer)  <= '0';
@@ -448,7 +443,6 @@ begin
             --Writing Frame format Word
             rx_message_disc             <= '0';
             memory(write_pointer)       <= frame_form_w;
-            memory_valid(write_pointer) <= '1';
             
            --Increasing write pointer
            write_pointer                <= (write_pointer+1) mod buff_size;
@@ -479,16 +473,12 @@ begin
         ------------------------------------------------------------------------
         if(copy_counter=0)then
             memory(write_pointer)       <= "000"&rec_ident_in;
-            memory_valid(write_pointer) <= '1';
         elsif(copy_counter=1)then
             memory(write_pointer)       <= timestamp(31 downto 0);
-            memory_valid(write_pointer) <= '1';
         elsif(copy_counter=2)then
             memory(write_pointer)       <= timestamp(63 downto 32);
-            memory_valid(write_pointer) <= '1';
         else
             memory(write_pointer)        <= memory(write_pointer);
-            memory_valid(write_pointer)  <= '1';
         end if;
         
         write_pointer                   <= (write_pointer+1) mod buff_size;
@@ -504,7 +494,6 @@ begin
         --data RAM
         memory(write_pointer)           <= rec_dram_word;
         
-        memory_valid(write_pointer)     <= '1';
         write_pointer                   <= (write_pointer+1) mod buff_size;
         copy_counter                    <= copy_counter+1;
         data_size                       <= data_size;
@@ -531,10 +520,12 @@ begin
   
   --Memory empty output
   if (mem_free=buff_size) then 
-    rx_empty                            <= '1';
+    rx_empty_int                        <= '1';
   else
-    rx_empty                            <= '0';
+    rx_empty_int                        <= '0';
   end if;
+  
+  rx_empty                              <= rx_empty_int;
   
   --Propagating message count to output
   rx_message_count                      <= std_logic_vector(
