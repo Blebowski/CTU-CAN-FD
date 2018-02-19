@@ -186,9 +186,9 @@ begin
     begin
       if (res_n = ACT_RESET) then
         
-          -- synthesis translate_off
+          -- pragma translate_off
           txt_buffer_data <= (OTHERS => (OTHERS => '0'));
-          -- synthesis translate_on
+          -- pragma translate_on
         
           -- Frame info is stored in registers
           txt_buffer_meta_data <= (OTHERS => (OTHERS => '0'));
