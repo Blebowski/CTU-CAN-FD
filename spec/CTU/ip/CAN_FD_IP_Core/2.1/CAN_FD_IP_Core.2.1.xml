@@ -3202,7 +3202,7 @@
 				<ipxact:baseAddress>'h200</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
-				<ipxact:usage>register</ipxact:usage>
+				<ipxact:usage>memory</ipxact:usage>
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
 					<ipxact:name>TXTB2_DATA_1</ipxact:name>
