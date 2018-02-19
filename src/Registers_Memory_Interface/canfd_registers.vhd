@@ -131,6 +131,9 @@ entity canfd_registers is
     --Support of Transmission at given time
     constant tx_time_sup  : boolean                        := true;
     
+    -- Number of TXT Buffers
+    constant buf_count    : natural range 0 to 7           := 2;
+    
     --ID of the component
     constant ID           :natural                         := 1 
   );
@@ -197,14 +200,14 @@ entity canfd_registers is
     -- Data and address for access to RAM of TXT Buffer
     signal tran_data            :out  std_logic_vector(31 downto 0);    
     signal tran_addr            :out  std_logic_vector(4 downto 0);  
-    
+    signal txtb_cs              :out  std_logic_vector(buf_count - 1 downto 0);   
+  
     -- Buffer status signals
     signal txtb_fsms            :in   txt_fsms_type;
     
     -- Buffer commands + command index
     signal txt_sw_cmd           :out  txt_sw_cmd_type;
-    signal txt_buf_cmd_index    :out  std_logic_vector(
-                                      TXT_BUFFER_COUNT - 1 downto 0);
+    signal txt_buf_cmd_index    :out  std_logic_vector(buf_count - 1 downto 0);
     signal txt_buf_prior_out    :out  txtb_priorities_type;
      
     ----------------------------------
@@ -296,21 +299,16 @@ entity canfd_registers is
   ---------------------------------------------------
   -- TXT Buffer settings
   ---------------------------------------------------
-  signal txt_bufdir             :     std_logic;   --TXT write direction register
   
   -- Swap behaviour when frame should be retransmitted and another frame
   -- is available in other buffer
   signal txt_frame_swap         :     std_logic;
-  
-  --Store into TXT buffer 1 or 2 (chip select)
-  signal tran_wr                :     std_logic_vector(1 downto 0);   
   
   -- TXT Buffer priorities
   signal txt_buf_prior          :     txtb_priorities_type;
   
   --One of the TX Buffers is accessed
   signal txt_buf_access         :     boolean;
-    
   
     
   signal intLoopbackEna         :     std_logic;
@@ -637,15 +635,24 @@ begin
   --------------------------------------------------------
   -- Decoding of TXT buffer signals...
   --------------------------------------------------------
-  txt_buf_access   <= true when (adress(11 downto 8) = TX_BUFFER_BLOCK and scs='1'
-                                and swr='1')
+  txt_buf_access   <= true when (((adress(11 downto 8) = TX_BUFFER_1_BLOCK) or
+                                 (adress(11 downto 8) = TX_BUFFER_2_BLOCK)) and 
+                                 scs='1' and swr='1')
                            else
                       false;
-
-  tran_wr               <= "01" when (txt_bufdir=TXT1_DIR and txt_buf_access) else
-                           "10" when (txt_bufdir=TXT2_DIR and txt_buf_access) else
-                           "00";
-
+                      
+  -- We have to hard-code the chip select signals since we cant define array of
+  -- memory regions in IP-Xact
+  txtb_cs(0)       <= '1' when ((adress(11 downto 8) = TX_BUFFER_1_BLOCK) and
+                                txt_buf_access)
+                          else
+                      '0';
+  
+  txtb_cs(1)       <= '1' when ((adress(11 downto 8) = TX_BUFFER_2_BLOCK) and
+                                txt_buf_access)
+                          else
+                      '0';
+   
   txt_buf_prior_out <= txt_buf_prior;
 
   --------------------------------------------------------
@@ -976,9 +983,7 @@ begin
             write_be_vect(txt_buf_cmd_index, 0, TXT_BUFFER_COUNT - 1, data_in,
                           TXI1_IND, TXI1_IND + txt_buf_cmd_index'length - 1, sbe); 
       	    
-     	      -- Buffer direction and Frame swap
-     	      write_be_s(txt_bufdir, BDIR_IND, data_in, sbe);
-            write_be_s(txt_frame_swap, FRSW_IND, data_in, sbe);
+     	      write_be_s(txt_frame_swap, FRSW_IND, data_in, sbe);
    	  
    	   ----------------------------------------------------
     			-- TX_PRIORITY
@@ -1375,8 +1380,7 @@ begin
     			     
      	      -- Buffer direction and Frame swap (TX_SETTINGS)
      	      data_out_int           <= (OTHERS => '0');
-     	      data_out_int(BDIR_IND) <= txt_bufdir;
-            data_out_int(FRSW_IND) <= txt_frame_swap;
+     	      data_out_int(FRSW_IND) <= txt_frame_swap;
           
           ----------------------------------------------------
     			   -- TX_PRIORITY
@@ -1651,8 +1655,6 @@ begin
   
   --TXT Buffer and TX Buffer
   drv_bus(DRV_ERASE_TXT1_INDEX)                     <=  '0';
-  drv_bus(DRV_TXT1_WR)                              <=  tran_wr(0);
-  drv_bus(DRV_TXT2_WR)                              <=  tran_wr(1);
   drv_bus(DRV_ERASE_TXT2_INDEX)                     <=  '0';
   
   drv_bus(DRV_FRAME_SWAP_INDEX)                     <=  txt_frame_swap;
