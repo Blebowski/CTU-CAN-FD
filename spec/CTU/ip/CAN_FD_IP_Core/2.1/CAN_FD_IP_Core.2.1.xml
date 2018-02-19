@@ -3458,73 +3458,6 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>DATA_17_20_W</ipxact:name>
-					<ipxact:displayName>DATA_17_20_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h20</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_17_to_DATA_20</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_21_24_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h24</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_21_to_DATA_24</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_9_12_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h18</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_9_to_DATA_12</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_49_52_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h40</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_49_to_DATA_52</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_37_40_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h34</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_37_to_DATA_40</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_25_28_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h28</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_25_to_DATA_28</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
 					<ipxact:name>DATA_61_64_W</ipxact:name>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
@@ -3536,89 +3469,12 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>DATA_41_44_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h38</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_41_to_DATA_44</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_29_32_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_29_to_DATA_32</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_13_16_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_13_to_DATA_16</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
 					<ipxact:name>DATA_5_8_W</ipxact:name>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>DATA_5_to_DATA_8</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_57_60_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h48</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_57_to_DATA_60</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_45_48_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_45_to_DATA_48</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_53_56_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h44</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_53_to_DATA_56</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_33_36_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h30</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_33_to_DATA_36</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
