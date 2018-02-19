@@ -1316,18 +1316,6 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>BDIR</ipxact:name>
-						<ipxact:displayName>BDIR</ipxact:displayName>
-						<ipxact:description>Buffer to which the transmit data should be stored. To insert data for transmission first set TXT[n]A to 0, then set BDIR to select TXT buffer. As next write the data into buffer by executing accesses into TX_DATA_X registers. As last step, validate the content of the buffer by setting TXT[n] to 1. TXT[n]E bit of TX_STAT register is automatically cleared by this action.</ipxact:description>
-						<ipxact:bitOffset>2</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
 						<ipxact:name>FRSW</ipxact:name>
 						<ipxact:displayName>FRSW</ipxact:displayName>
 						<ipxact:description>If frame is inserted into either TXT buffer and the other TXT buffer is empty, the frame in the first buffer is transmitted. However, if during the transmission of this frame another frame is inserted into the other TXT buffer and error occurs (or arbitration is lost) there are two frames which can be selected for transmission (assuming Timestamps of both frames are lower than external Timestamp) . If FRSW bit is set to 0 the frame which was transmitted last is rettransmitted. If FRSW is set to 1 the frame for transmission is selected as if both frames were inserted for its first transmission as explained in Section &quot;Transmitt frame selection&quot;.</ipxact:description>
@@ -3159,49 +3147,95 @@
 				</ipxact:register>
 			</ipxact:addressBlock>
 			<ipxact:addressBlock>
-				<ipxact:name>TX_Buffer</ipxact:name>
-				<ipxact:displayName>TXT Buffer</ipxact:displayName>
-				<ipxact:description>Access to this memory region is mapped to TXT Buffer.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXT_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXT_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXT_DATA_20) corresponds to DATA_61_64_W. The adresses in between correponds linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
+				<ipxact:name>TX_Buffer_1</ipxact:name>
+				<ipxact:displayName>TXT Buffer 1</ipxact:displayName>
+				<ipxact:description>Access to this memory region is mapped to TXT Buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correpond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
 				<ipxact:baseAddress>'h100</ipxact:baseAddress>
 				<ipxact:range>256</ipxact:range>
 				<ipxact:width>32</ipxact:width>
 				<ipxact:usage>memory</ipxact:usage>
 				<ipxact:volatile>true</ipxact:volatile>
 				<ipxact:register>
-					<ipxact:name>TX_DATA_1</ipxact:name>
+					<ipxact:name>TXTB1_DATA_1</ipxact:name>
 					<ipxact:displayName>TX_DATA_1</ipxact:displayName>
-					<ipxact:description>This adress corresponds to FRAME_FORM word</ipxact:description>
+					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TX_DATA_1</ipxact:name>
+						<ipxact:name>TXTB1_DATA_1</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_DATA_2</ipxact:name>
+					<ipxact:name>TXTB1_DATA_2</ipxact:name>
 					<ipxact:displayName>TX_DATA_2</ipxact:displayName>
-					<ipxact:description>This adress corresponds to IDENTIFIER word.</ipxact:description>
+					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TX_DATA_2</ipxact:name>
+						<ipxact:name>TXTB1_DATA_2</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_DATA_20</ipxact:name>
+					<ipxact:name>TXTB1_DATA_20</ipxact:name>
 					<ipxact:displayName>TX_DATA_20</ipxact:displayName>
-					<ipxact:description>This adress corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>TX_DATA_20</ipxact:name>
+						<ipxact:name>TXTB1_DATA_20</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+			</ipxact:addressBlock>
+			<ipxact:addressBlock>
+				<ipxact:name>TX_Buffer_2</ipxact:name>
+				<ipxact:displayName>TXT Buffer 2</ipxact:displayName>
+				<ipxact:description>Access to this memory region is mapped to TXT Buffer 2.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter &quot;CAN FD frame format&quot;. First adress in this region (TXTB2_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB2_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correpond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.</ipxact:description>
+				<ipxact:baseAddress>'h200</ipxact:baseAddress>
+				<ipxact:range>256</ipxact:range>
+				<ipxact:width>32</ipxact:width>
+				<ipxact:usage>memory</ipxact:usage>
+				<ipxact:volatile>true</ipxact:volatile>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_1</ipxact:name>
+					<ipxact:description>This adress word corresponds to FRAME_FORM word</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h0</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_1</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_2</ipxact:name>
+					<ipxact:description>This adress word corresponds to IDENTIFIER word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_2</ipxact:name>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TXTB2_DATA_20</ipxact:name>
+					<ipxact:description>This adress word corresponds to DATA_61_64 word.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:field>
+						<ipxact:name>TXTB2_DATA_20</ipxact:name>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3406,175 +3440,90 @@
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_1_to_DATA_4</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_1</ipxact:name>
+						<ipxact:description>Data byte 1 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_17_20_W</ipxact:name>
-					<ipxact:displayName>DATA_17_20_W</ipxact:displayName>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h20</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_17_to_DATA_20</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_2</ipxact:name>
+						<ipxact:description>Data byte 2 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_21_24_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h24</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_21_to_DATA_24</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_3</ipxact:name>
+						<ipxact:description>Data byte 3 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_9_12_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h18</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_9_to_DATA_12</ipxact:name>
+						<ipxact:name>DATA_4</ipxact:name>
+						<ipxact:description>Data byte 4 of the CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_49_52_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h40</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_49_to_DATA_52</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_37_40_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h34</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_37_to_DATA_40</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_25_28_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h28</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_25_to_DATA_28</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>DATA_61_64_W</ipxact:name>
+					<ipxact:displayName>DATA_61_64_W</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_61_to_DATA_64</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_61</ipxact:name>
+						<ipxact:description>Data byte 61 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_41_44_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h38</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_41_to_DATA_44</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_62</ipxact:name>
+						<ipxact:description>Data byte 62 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_29_32_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_29_to_DATA_32</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_63</ipxact:name>
+						<ipxact:description>Data byte 63 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_13_16_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_13_to_DATA_16</ipxact:name>
+						<ipxact:name>DATA_64</ipxact:name>
+						<ipxact:description>Data byte 64 of the CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>DATA_5_8_W</ipxact:name>
+					<ipxact:displayName>DATA_5_8_W</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_5_to_DATA_8</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_5</ipxact:name>
+						<ipxact:description>Data byte 5 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_57_60_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h48</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_57_to_DATA_60</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_6</ipxact:name>
+						<ipxact:description>Data byte 6 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_45_48_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_45_to_DATA_48</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:name>DATA_7</ipxact:name>
+						<ipxact:description>Data byte 7 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_53_56_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h44</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_53_to_DATA_56</ipxact:name>
+						<ipxact:name>DATA_8</ipxact:name>
+						<ipxact:description>Data byte 8 of the CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>DATA_33_36_W</ipxact:name>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h30</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
-					<ipxact:field>
-						<ipxact:name>DATA_33_to_DATA_36</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 			</ipxact:addressBlock>

@@ -332,7 +332,7 @@ procedure generate_trig(
   
   procedure CAN_write(
     variable  w_data     :   in    std_logic_vector(31 downto 0);
-    constant  w_offset   :   in    std_logic_vector(11 downto 0);
+              w_offset   :   in    std_logic_vector(11 downto 0);
     variable  ID         :   in    natural range 0 to 15;
     signal    mem_bus    :   inout Avalon_mem_type
   );
@@ -427,8 +427,8 @@ procedure generate_trig(
     
   
   function CAN_add_unsigned(
-  constant operator1      : in std_logic_vector(11 downto 0);
-  constant operator2      : in std_logic_vector(11 downto 0)
+   operator1      : in std_logic_vector(11 downto 0);
+   operator2      : in std_logic_vector(11 downto 0)
   ) return std_logic_vector;
   
   
@@ -534,8 +534,8 @@ end procedure;
 -- Auxiliarly function for unsigned addition of Address offsets
 ---------------------------------------------------------------------------------------
 function CAN_add_unsigned(
-  constant operator1      : in std_logic_vector(11 downto 0);
-  constant operator2      : in std_logic_vector(11 downto 0)
+   operator1      : in std_logic_vector(11 downto 0);
+   operator2      : in std_logic_vector(11 downto 0)
   ) return std_logic_vector is
   begin
     return std_logic_vector(unsigned(operator1) + unsigned(operator2));
@@ -908,9 +908,10 @@ procedure process_error
 ------------------------------------------------------------
 -- Write to CAN Node
 ------------------------------------------------------------- 
+
   procedure CAN_write(
     variable  w_data     :   in    std_logic_vector(31 downto 0);
-    constant  w_offset   :   in    std_logic_vector(11 downto 0);
+              w_offset   :   in    std_logic_vector(11 downto 0);
     variable  ID         :   in    natural range 0 to 15;
     signal    mem_bus    :   inout Avalon_mem_type
   )is
@@ -1232,6 +1233,7 @@ procedure process_error
   variable buf_state       :          std_logic_vector(3 downto 0);
   variable buf_cmd         :          std_logic_vector(2 downto 0);
   variable bind_int        :          natural;
+  variable buf_offset      :          std_logic_vector(11 downto 0);
   begin
    outcome := true;
    buf_index := buf_nr;
@@ -1247,9 +1249,9 @@ procedure process_error
    -- Set the buffer to access (direction)
    CAN_read(w_data,TX_COMMAND_ADR,ID,mem_bus);
    if (buf_nr=1) then
-      w_data(BDIR_IND) := '0';
+      buf_offset   := TXTB1_DATA_1_ADR;
    elsif (buf_nr=2) then
-      w_data(BDIR_IND) := '1';
+     buf_offset    := TXTB2_DATA_1_ADR;
    else
      report "Unsupported TX buffer number" severity error;
    end if;
@@ -1264,7 +1266,7 @@ procedure process_error
    w_data(TBF_IND) := '1';
    w_data(BRS_IND) := frame.brs;
    w_data(ESI_RESVD_IND) := '0'; --ESI is receive only
-   CAN_write(w_data,TX_DATA_1_ADR,ID,mem_bus);          
+   CAN_write(w_data,buf_offset,ID,mem_bus);          
          
    --Identifier
    w_data := (OTHERS => '0');
@@ -1276,20 +1278,20 @@ procedure process_error
       ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
       w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
    end if;
-   CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, IDENTIFIER_W_ADR), ID, mem_bus);
+   CAN_write(w_data, CAN_add_unsigned(buf_offset, IDENTIFIER_W_ADR), ID, mem_bus);
    
     --Timestamp
    w_data:= frame.timestamp(31 downto 0);  
-   CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_L_W_ADR), ID, mem_bus);
+   CAN_write(w_data, CAN_add_unsigned(buf_offset, TIMESTAMP_L_W_ADR), ID, mem_bus);
    w_data:= frame.timestamp(63 downto 32);  
-   CAN_write(w_data, CAN_add_unsigned(TX_DATA_1_ADR, TIMESTAMP_U_W_ADR), ID, mem_bus);
+   CAN_write(w_data, CAN_add_unsigned(buf_offset, TIMESTAMP_U_W_ADR), ID, mem_bus);
    
    --Data words
    decode_dlc_v(frame.dlc,length);
    for i in 0 to (length-1)/4 loop
      w_data:= frame.data(511-i*32 downto 480-i*32);
      CAN_write(w_data,
-                std_logic_vector(unsigned(TX_DATA_1_ADR) +
+                std_logic_vector(unsigned(buf_offset) +
                                  unsigned(DATA_1_4_W_ADR) + i * 4),
                 ID,mem_bus);
    end loop;

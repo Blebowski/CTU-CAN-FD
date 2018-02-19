@@ -217,7 +217,7 @@ package body Arbitration_feature is
     w_data(FR_TYPE_IND) := frame_type;
     w_data(TBF_IND) := '1';
     w_data(BRS_IND) := brs_1;
-    CAN_write(w_data,TX_DATA_1_ADR,ID_1,mem_bus_1);
+    CAN_write(w_data,TXTB1_DATA_1_ADR,ID_1,mem_bus_1);
     
     
     w_data := (OTHERS => '0');
@@ -227,7 +227,7 @@ package body Arbitration_feature is
     w_data(FR_TYPE_IND) := frame_type;
     w_data(TBF_IND) := '1';
     w_data(BRS_IND) := brs_2;
-    CAN_write(w_data,TX_DATA_1_ADR,ID_2,mem_bus_2);
+    CAN_write(w_data,TXTB1_DATA_1_ADR,ID_2,mem_bus_2);
     
     --Identifier word
     id_1_vect := std_logic_vector(to_unsigned(ident1,29));
@@ -241,7 +241,7 @@ package body Arbitration_feature is
       w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
            id_1_vect(17 downto 0);
     end if;
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,IDENTIFIER_W_ADR), ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,IDENTIFIER_W_ADR), ID_1,mem_bus_1);
     
 
     w_data := (OTHERS => '0');
@@ -252,25 +252,25 @@ package body Arbitration_feature is
       w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
            id_2_vect(17 downto 0);
     end if;    
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,IDENTIFIER_W_ADR),ID_2,mem_bus_2);
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,IDENTIFIER_W_ADR),ID_2,mem_bus_2);
     
     --Timestamp words
     w_data      := (OTHERS => '0');
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_L_W_ADR),
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,TIMESTAMP_L_W_ADR),
                 ID_1,mem_bus_1);
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_U_W_ADR),
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,TIMESTAMP_U_W_ADR),
                 ID_1,mem_bus_1);
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_L_W_ADR),
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,TIMESTAMP_L_W_ADR),
                 ID_2,mem_bus_2);
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,TIMESTAMP_U_W_ADR),
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,TIMESTAMP_U_W_ADR),
                 ID_2,mem_bus_2);
     
     --Data words
     w_data      := x"ABCDABCD";
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,DATA_1_4_W_ADR),ID_1,mem_bus_1);
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,DATA_5_8_W_ADR),ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,DATA_1_4_W_ADR),ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,DATA_5_8_W_ADR),ID_1,mem_bus_1);
     w_data      := x"55555555";
-    CAN_write(w_data,CAN_add_unsigned(TX_DATA_1_ADR,DATA_1_4_W_ADR),ID_1,mem_bus_1);
+    CAN_write(w_data,CAN_add_unsigned(TXTB1_DATA_1_ADR,DATA_1_4_W_ADR),ID_1,mem_bus_1);
 
     -----------------------------------------------
     -- Commit the FRAMES for transmittion into

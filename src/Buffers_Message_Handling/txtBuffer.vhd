@@ -88,11 +88,11 @@ entity txtBuffer is
     -- Data and address for SW access into the RAM of TXT Buffer
     signal tran_data              :in   std_logic_vector(31 downto 0);
     signal tran_addr              :in   std_logic_vector(4 downto 0);
+    signal tran_cs                :in   std_logic;
     
     -- SW commands from user registers
     signal txt_sw_cmd             :in   txt_sw_cmd_type;
-    signal txt_sw_buf_cmd_index   :in   std_logic_vector(
-                                          buf_count - 1 downto 0);
+    signal txt_sw_buf_cmd_index   :in   std_logic_vector(buf_count - 1 downto 0);
   
     ------------------     
     --Status signals--
@@ -142,9 +142,6 @@ architecture rtl of txtBuffer is
   -- Frame format, Timestamps and Identifier
   signal txt_buffer_meta_data   : frame_info_memory;
    
-  -- Store into TXT buffer 1 or 2 (chip select)
-  signal tran_wr                : std_logic_vector(1 downto 0);
-  
   -- FSM state of the buffer
   signal buf_fsm                : txt_fsm_type;
   
@@ -154,9 +151,6 @@ architecture rtl of txtBuffer is
   signal sw_cbs                 : std_logic;
   
 begin
-    
-    -- Write signals for buffer
-    tran_wr             <= drv_bus(DRV_TXT2_WR)&drv_bus(DRV_TXT1_WR);
     
     -- Output data are given by the address from the Core
     txt_data_word       <= txt_buffer_data(txt_data_addr);
@@ -202,7 +196,7 @@ begin
       elsif (rising_edge(clk_sys))then
         
         --Store the data into the Buffer during the access
-        if (tran_wr(ID) = '1') then
+        if (tran_cs = '1') then
           if (to_integer(unsigned(tran_addr)) < 4) then
             txt_buffer_meta_data(to_integer(unsigned(tran_addr))) <= tran_data;
           else  

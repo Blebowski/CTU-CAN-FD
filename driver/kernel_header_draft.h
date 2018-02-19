@@ -97,9 +97,12 @@ enum can_fd_8bit_regs {
 	LOG_CAPT_EVENT_2      = 0xd0,
 	DEBUG_REGISTER        = 0xd4,
 	YOLO_REG              = 0xd8,
-	TX_DATA_1            = 0x100,
-	TX_DATA_2            = 0x104,
-	TX_DATA_20           = 0x14c,
+	TXTB1_DATA_1         = 0x100,
+	TXTB1_DATA_2         = 0x104,
+	TXTB1_DATA_20        = 0x14c,
+	TXTB2_DATA_1         = 0x200,
+	TXTB2_DATA_2         = 0x204,
+	TXTB2_DATA_20        = 0x24c,
 };
 
 
@@ -635,16 +638,14 @@ union tx_command_tx_settings {
 		uint32_t reserved_7_3            : 5;
 		uint32_t txi1                    : 1;
 		uint32_t txi2                    : 1;
-		uint32_t reserved_17_10          : 8;
+		uint32_t reserved_18_10          : 9;
   /* TX_SETTINGS */
-		uint32_t bdir                    : 1;
 		uint32_t frsw                    : 1;
 		uint32_t reserved_31_20         : 12;
 #else
 		uint32_t reserved_31_20         : 12;
 		uint32_t frsw                    : 1;
-		uint32_t bdir                    : 1;
-		uint32_t reserved_17_10          : 8;
+		uint32_t reserved_18_10          : 9;
 		uint32_t txi2                    : 1;
 		uint32_t txi1                    : 1;
 		uint32_t reserved_7_3            : 5;
@@ -917,27 +918,51 @@ union yolo_reg {
 	} s;
 };
 
-union tx_data_1 {
+union txtb1_data_1 {
 	uint32_t u32;
-	struct tx_data_1_s {
-  /* TX_DATA_1 */
-		uint32_t tx_data_1              : 32;
+	struct txtb1_data_1_s {
+  /* TXTB1_DATA_1 */
+		uint32_t txtb1_data_1           : 32;
 	} s;
 };
 
-union tx_data_2 {
+union txtb1_data_2 {
 	uint32_t u32;
-	struct tx_data_2_s {
-  /* TX_DATA_2 */
-		uint32_t tx_data_2              : 32;
+	struct txtb1_data_2_s {
+  /* TXTB1_DATA_2 */
+		uint32_t txtb1_data_2           : 32;
 	} s;
 };
 
-union tx_data_20 {
+union txtb1_data_20 {
 	uint32_t u32;
-	struct tx_data_20_s {
-  /* TX_DATA_20 */
-		uint32_t tx_data_20             : 32;
+	struct txtb1_data_20_s {
+  /* TXTB1_DATA_20 */
+		uint32_t txtb1_data_20          : 32;
+	} s;
+};
+
+union txtb2_data_1 {
+	uint32_t u32;
+	struct txtb2_data_1_s {
+  /* TXTB2_DATA_1 */
+		uint32_t txtb2_data_1           : 32;
+	} s;
+};
+
+union txtb2_data_2 {
+	uint32_t u32;
+	struct txtb2_data_2_s {
+  /* TXTB2_DATA_2 */
+		uint32_t txtb2_data_2           : 32;
+	} s;
+};
+
+union txtb2_data_20 {
+	uint32_t u32;
+	struct txtb2_data_20_s {
+  /* TXTB2_DATA_20 */
+		uint32_t txtb2_data_20          : 32;
 	} s;
 };
 
