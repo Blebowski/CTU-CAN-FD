@@ -3452,31 +3452,90 @@
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_1_to_DATA_4</ipxact:name>
+						<ipxact:name>DATA_1</ipxact:name>
+						<ipxact:description>Data byte 1 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_2</ipxact:name>
+						<ipxact:description>Data byte 2 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_3</ipxact:name>
+						<ipxact:description>Data byte 3 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_4</ipxact:name>
+						<ipxact:description>Data byte 4 of the CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>DATA_61_64_W</ipxact:name>
+					<ipxact:displayName>DATA_61_64_W</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_61_to_DATA_64</ipxact:name>
+						<ipxact:name>DATA_61</ipxact:name>
+						<ipxact:description>Data byte 61 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_62</ipxact:name>
+						<ipxact:description>Data byte 62 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_63</ipxact:name>
+						<ipxact:description>Data byte 63 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_64</ipxact:name>
+						<ipxact:description>Data byte 64 of the CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>DATA_5_8_W</ipxact:name>
+					<ipxact:displayName>DATA_5_8_W</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
-						<ipxact:name>DATA_5_to_DATA_8</ipxact:name>
+						<ipxact:name>DATA_5</ipxact:name>
+						<ipxact:description>Data byte 5 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_6</ipxact:name>
+						<ipxact:description>Data byte 6 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_7</ipxact:name>
+						<ipxact:description>Data byte 7 of the CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>DATA_8</ipxact:name>
+						<ipxact:description>Data byte 8 of the CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 			</ipxact:addressBlock>
