@@ -1316,18 +1316,6 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>BDIR</ipxact:name>
-						<ipxact:displayName>BDIR</ipxact:displayName>
-						<ipxact:description>Buffer to which the transmit data should be stored. To insert data for transmission first set TXT[n]A to 0, then set BDIR to select TXT buffer. As next write the data into buffer by executing accesses into TX_DATA_X registers. As last step, validate the content of the buffer by setting TXT[n] to 1. TXT[n]E bit of TX_STAT register is automatically cleared by this action.</ipxact:description>
-						<ipxact:bitOffset>2</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
 						<ipxact:name>FRSW</ipxact:name>
 						<ipxact:displayName>FRSW</ipxact:displayName>
 						<ipxact:description>If frame is inserted into either TXT buffer and the other TXT buffer is empty, the frame in the first buffer is transmitted. However, if during the transmission of this frame another frame is inserted into the other TXT buffer and error occurs (or arbitration is lost) there are two frames which can be selected for transmission (assuming Timestamps of both frames are lower than external Timestamp) . If FRSW bit is set to 0 the frame which was transmitted last is rettransmitted. If FRSW is set to 1 the frame for transmission is selected as if both frames were inserted for its first transmission as explained in Section &quot;Transmitt frame selection&quot;.</ipxact:description>
