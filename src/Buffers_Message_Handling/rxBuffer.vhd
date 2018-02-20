@@ -95,8 +95,34 @@
 --                3. Added combinational decoder on received DLC to frame
 --                   length in words (without frame_format word) into new signal
 --                   "data_size_comb".
---    19.02.2018  1. Removed memory valid vector. Output word is 0 only if
---                   memory is completely empty.
+--    19.02.2018  Removed memory valid vector. Output word is 0 only if
+--                memory is completely empty.
+--    20.02.2018  1. Implemented process for counting frames "read_frame_proc".
+--                   It stores size of the frame at the first read and decrements
+--                   it until 1. At transition from 1 to 0, message counter is
+--                   decremented.
+--                2. Added commit_rx_frame which will be active for one clock
+--                   cycle when frame storing finished. This is preparation for
+--                   continous storing of the frame during reception, instead
+--                   of storing it at once at the end.
+--                3. Changed read handling. Read is allowed to proceed (increment
+--                   read pointer) only if new message counter is non-zero. This
+--                   guarantees that frame is fully stored (again preparation
+--                   for later) at the time of first read. IT also keeps the 
+--                   read pointer in sync with frame counting process from p.1.
+--                4. Since "rx_empty" will be used for detection of frame in the
+--                   buffer, its now driven by non-zero message counter instead
+--                   of non-zero amount of stored words. Non-zero amount of
+--                   stored words would indicate that buffer is not empty even
+--                   if the frame was not committed yet! We dont want to signal
+--                   it since storing of the rest of the words (in case of con-
+--                   tinous storing during reception) might take longer than
+--                   reading the words out! Thus we would end up in a situation
+--                   where buffer is marked as non-empty but, SW cant read whole
+--                   frame from it! This is undesirable.
+--                5. Removed "message_mark" signal and original "message_counter"
+--                   variable in memory access process due to beiing obsolete
+--                   with new implementation of message counter.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -228,9 +254,6 @@ entity rxBuffer is
   --Memory declaration inferred in SRAM
   signal memory                 :rx_memory;
   
-  --Mark of new message('1') positions
-  signal message_mark           :std_logic_vector(buff_size -1 downto 0);
-  
   --Read Pointer for data
   signal read_pointer           :natural range 0 to buff_size-1;
   
@@ -246,7 +269,7 @@ entity rxBuffer is
   signal data_overrun_r         :std_logic;
   
   --Counter used for copying Recieved data to recieve buffer
-  signal copy_counter           :natural range 0 to 20;
+  signal copy_counter           :natural range 0 to 31;
   
   -- Internal data size decoded from received frame
   signal data_size              :natural range 0 to 31; 
@@ -260,6 +283,24 @@ entity rxBuffer is
   
   -- Internal empty Buffer
   signal rx_empty_int           :std_logic;
+  
+  -- Internal number of free memory words
+  signal rx_mem_free_int        :std_logic_vector(7 downto 0);
+  
+  
+  -- Signal that whole frame is stored in the RX Buffer. Active
+  -- for one clock cycle only
+  signal commit_rx_frame        :std_logic;
+  
+  -- Number of frames currently stored in the RX Buffer
+  -- Smallest frame length stored is 4 (FRAME_FORMAT +  IDENTIFIER + 2 * TIMESTAMP)
+  -- Since we need to store 0 and also buff_size/4 values we need one value more
+  -- than can fit into buff/size/4 width counter. Use one bit wider counter.
+  signal message_count          :natural range 0 to (buff_size / 2) - 1; 
+  
+  -- Counter for reading the frame. When whole frame is read,
+  -- number of frames must be decremented
+  signal read_frame_counter     :natural range 0 to 31;
   
 end entity;
 
@@ -281,7 +322,7 @@ begin
  
   -- When buffer is empty the word which is on the output is not valid,
   -- provide zeroes instead
-  rx_read_buff          <= memory(read_pointer) when (rx_empty_int='0')
+  rx_read_buff          <= memory(read_pointer) when (rx_empty_int = '0')
                                                 else
                            (OTHERS => '0');
               
@@ -314,7 +355,6 @@ begin
       19 when "1111", --64 bytes
       0  when others;
   
-  
   -- Frame format word assignment
   frame_form_w(DLC_H downto DLC_L)      <= rec_dlc_in;
   frame_form_w(RTR_IND)                 <= rec_is_rtr;
@@ -327,6 +367,59 @@ begin
           std_logic_vector(to_unsigned(data_size_comb, (RWCNT_H - RWCNT_L + 1)));
   frame_form_w(31 downto 16)            <= (OTHERS => '0');
   
+  
+  ------------------------------------------------------------------------------
+  -- Reading the Frame by user
+  ------------------------------------------------------------------------------
+  read_frame_proc:process(clk_sys, res_n)
+  begin
+    if (res_n = ACT_RESET) then
+      message_count             <= 0;
+      read_frame_counter        <= 0;
+    elsif (rising_edge(clk_sys))then
+      
+      message_count             <= message_count;
+      read_frame_counter        <= read_frame_counter;
+      
+      -- We can start reading only when there already is some frame
+      -- committed in the buffer !!
+      if ( (drv_read_start = '1') and (rx_empty_int = '0')) then
+        
+        -- During the read of FRAME_FORMAT word store the length
+        -- of the frame to "read_frame_counter", thus we know how much
+        -- we have to read before decrementing the "message_count".
+        if (read_frame_counter = 0) then
+          read_frame_counter    <= 
+              to_integer(unsigned(memory(read_pointer)(RWCNT_H downto RWCNT_L)));
+        
+        -- The last word is read during decrement from 1 to 0. We can decrease
+        -- number of frames then, NOT earlier! If decremented earlier, reading of
+        -- last frame would get stuck, since read_pointer in memory access is
+        -- incremented only with non-zero message count! If "commit_frame_counter"
+        -- is '1' we dont decrement since new frame has arrived.
+        elsif (read_frame_counter = 1) then  
+          if (commit_rx_frame = '0') then
+            message_count       <= (message_count - 1) mod (buff_size / 2);
+          end if; 
+          read_frame_counter    <= read_frame_counter - 1;
+        
+        -- Just count down during the read of all the remaining words of the frame
+        else
+           if (commit_rx_frame = '1') then
+            message_count       <= message_count + 1;
+          end if;
+          read_frame_counter    <= read_frame_counter - 1;
+          
+        end if;
+                
+      elsif (commit_rx_frame = '1') then 
+        message_count           <= (message_count + 1) mod (buff_size / 2);
+      end if;
+      
+    end if;    
+  end process;
+  
+  
   ------------------------------------------------------------------------------
   --Storing data from CANCore and loading data into reading buffer
   ------------------------------------------------------------------------------
@@ -338,20 +431,15 @@ begin
     --Amount of free words
     variable mem_free       : natural range 0 to buff_size:= buff_size;
     
-    --Message Count already stored
-    variable message_count  : natural range 0 to 255;
   begin     
     if (res_n=ACT_RESET) or (drv_erase_rx='1') then
       write_pointer     <= 0;
       read_pointer      <= 0;
       rx_full           <= '0';
-      rx_empty          <= '1';
+      rx_empty_int      <= '1';
       mem_free          := buff_size;
-      rx_mem_free       <= std_logic_vector(to_unsigned(buff_size,8));
-          
-      message_count     := 0;
-      rx_message_count  <= (OTHERS=>'0');
-      message_mark      <= (OTHERS=>'0');
+      rx_mem_free_int   <= std_logic_vector(to_unsigned(buff_size,8));
+      commit_rx_frame   <= '0';
       
       --Nulling output signals
       rec_message_ack   <= '0';
@@ -370,6 +458,7 @@ begin
       
       prev_read         <= drv_read_start;
       read_pointer      <= read_pointer;
+      commit_rx_frame   <= '0';
       
       --Clearing the overRun flag
       if(drv_clr_ovr='1')then
@@ -381,22 +470,13 @@ begin
       --------------------------------------------------------------------------
       --Moving to next word by reading (if there is sth to read)
       --------------------------------------------------------------------------
-      if (    (drv_read_start='1')  and 
-         (not (read_pointer=write_pointer and mem_free=buff_size)) )then 
+      if ((drv_read_start = '1') and (rx_empty_int = '0'))then 
         
         --Increase the reading pointer
         read_pointer                <= (read_pointer+1) mod buff_size;
-        
-        --If begin of new message then nulling
-        message_mark(read_pointer)  <= '0';
-        
+      
         -- Increase amount of free memory
         mem_free                    := mem_free+1;
-         
-        --If new message was moved then decrease number of messages
-        if(message_mark(read_pointer)='1')then
-          message_count             := message_count-1; 
-        end if;
            
       end if;
        
@@ -434,11 +514,7 @@ begin
           end case;
         end if; 
         
-          if( (mem_free>data_length+4) or 
-              (mem_free=data_length+4) )then --Checking if message can be stored
-            --Marking new message
-            message_mark(write_pointer) <= '1';
-            message_count               := message_count+1;
+          if (mem_free > (data_length + 3)) then --Checking if message can be stored
             
             --Writing Frame format Word
             rx_message_disc             <= '0';
@@ -453,7 +529,7 @@ begin
              data_size    <= 3;
            else
              data_size    <= data_size_comb;
-          end if;
+           end if;
           
           --Set the copy counter to properly copy the data in next cycles
           copy_counter                  <= 0;
@@ -477,8 +553,6 @@ begin
             memory(write_pointer)       <= timestamp(31 downto 0);
         elsif(copy_counter=2)then
             memory(write_pointer)       <= timestamp(63 downto 32);
-        else
-            memory(write_pointer)        <= memory(write_pointer);
         end if;
         
         write_pointer                   <= (write_pointer+1) mod buff_size;
@@ -499,6 +573,11 @@ begin
         data_size                       <= data_size;
         rec_message_ack                 <= '0';
         mem_free                        := mem_free-1;
+      
+      -- Note that we get here if either all words were stored
+      elsif(copy_counter = data_size) then
+        commit_rx_frame                 <= '1';
+        copy_counter                    <= copy_counter + 1;
         
       else
         rx_message_disc                 <= '0';
@@ -508,7 +587,7 @@ begin
         data_size                       <= 0;
       end if;
   
-  rx_mem_free                           <= std_logic_vector(
+  rx_mem_free_int                       <= std_logic_vector(
                                             to_unsigned(mem_free,8));
   
   --Assigning output whenever memory is full
@@ -517,21 +596,17 @@ begin
   else
     rx_full                             <= '0';
   end if;
-  
-  --Memory empty output
-  if (mem_free=buff_size) then 
-    rx_empty_int                        <= '1';
-  else
-    rx_empty_int                        <= '0';
-  end if;
-  
-  rx_empty                              <= rx_empty_int;
-  
-  --Propagating message count to output
-  rx_message_count                      <= std_logic_vector(
-                                            to_unsigned(message_count,8));
-
+ 
   end if;
 end process memory_acess;
+
+  --Memory empty output
+  rx_empty_int <= '1' when (message_count = 0)
+                      else
+                  '0'; 
+ 
+  rx_message_count          <= std_logic_vector(to_unsigned(message_count, 8)); 
+  rx_mem_free               <= rx_mem_free_int;
+  rx_empty                  <= rx_empty_int;
 
 end architecture;
