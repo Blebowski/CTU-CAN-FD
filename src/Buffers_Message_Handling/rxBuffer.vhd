@@ -436,7 +436,6 @@ begin
       write_pointer     <= 0;
       read_pointer      <= 0;
       rx_full           <= '0';
-      rx_empty_int      <= '1';
       mem_free          := buff_size;
       rx_mem_free_int   <= std_logic_vector(to_unsigned(buff_size,8));
       commit_rx_frame   <= '0';
@@ -575,7 +574,7 @@ begin
         mem_free                        := mem_free-1;
       
       -- Note that we get here if either all words were stored
-      elsif(copy_counter = data_size) then
+      elsif (copy_counter = data_size) then
         commit_rx_frame                 <= '1';
         copy_counter                    <= copy_counter + 1;
         
