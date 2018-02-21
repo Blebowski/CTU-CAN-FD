@@ -789,6 +789,10 @@ package CAN_FD_register_map is
   constant TX1S_H                 : natural := 3;
   constant TX2S_L                 : natural := 4;
   constant TX2S_H                 : natural := 7;
+  constant TX3S_L                 : natural := 8;
+  constant TX3S_H                : natural := 11;
+  constant TX4S_L                : natural := 12;
+  constant TX4S_H                : natural := 15;
 
   -- "TX1S" field enumerated values
   constant TXT_RDY : std_logic_vector(3 downto 0) := x"1";
@@ -802,6 +806,8 @@ package CAN_FD_register_map is
   -- TX_STATUS register reset values
   constant TX2S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
   constant TX1S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+  constant TX3S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
+  constant TX4S_RSTVAL : std_logic_vector(3 downto 0) := x"8";
 
   ------------------------------------------------------------------------------
   -- TX_COMMAND register
@@ -818,6 +824,8 @@ package CAN_FD_register_map is
   constant TXCA_IND               : natural := 2;
   constant TXI1_IND               : natural := 8;
   constant TXI2_IND               : natural := 9;
+  constant TXI3_IND              : natural := 10;
+  constant TXI4_IND              : natural := 11;
 
   -- TX_COMMAND register reset values
   constant TXCE_RSTVAL        : std_logic := '0';
@@ -825,6 +833,8 @@ package CAN_FD_register_map is
   constant TXCA_RSTVAL        : std_logic := '0';
   constant TXI1_RSTVAL        : std_logic := '0';
   constant TXI2_RSTVAL        : std_logic := '0';
+  constant TXI3_RSTVAL        : std_logic := '0';
+  constant TXI4_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- TX_SETTINGS register
@@ -848,10 +858,16 @@ package CAN_FD_register_map is
   constant TXT1P_H                : natural := 2;
   constant TXT2P_L                : natural := 4;
   constant TXT2P_H                : natural := 6;
+  constant TXT3P_L                : natural := 8;
+  constant TXT3P_H               : natural := 10;
+  constant TXT4P_L               : natural := 12;
+  constant TXT4P_H               : natural := 14;
 
   -- TX_PRIORITY register reset values
   constant TXT1P_RSTVAL : std_logic_vector(2 downto 0) := "001";
   constant TXT2P_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant TXT3P_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant TXT4P_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------
   -- ERR_CAPT register

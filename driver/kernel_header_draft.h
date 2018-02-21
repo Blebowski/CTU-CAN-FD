@@ -619,9 +619,13 @@ union tx_status {
   /* TX_STATUS */
 		uint32_t tx1s                    : 4;
 		uint32_t tx2s                    : 4;
-		uint32_t reserved_31_8          : 24;
+		uint32_t tx3s                    : 4;
+		uint32_t tx4s                    : 4;
+		uint32_t reserved_31_16         : 16;
 #else
-		uint32_t reserved_31_8          : 24;
+		uint32_t reserved_31_16         : 16;
+		uint32_t tx4s                    : 4;
+		uint32_t tx3s                    : 4;
 		uint32_t tx2s                    : 4;
 		uint32_t tx1s                    : 4;
 #endif
@@ -639,14 +643,18 @@ union tx_command_tx_settings {
 		uint32_t reserved_7_3            : 5;
 		uint32_t txi1                    : 1;
 		uint32_t txi2                    : 1;
-		uint32_t reserved_18_10          : 9;
+		uint32_t txi3                    : 1;
+		uint32_t txi4                    : 1;
+		uint32_t reserved_18_12          : 7;
   /* TX_SETTINGS */
 		uint32_t frsw                    : 1;
 		uint32_t reserved_31_20         : 12;
 #else
 		uint32_t reserved_31_20         : 12;
 		uint32_t frsw                    : 1;
-		uint32_t reserved_18_10          : 9;
+		uint32_t reserved_18_12          : 7;
+		uint32_t txi4                    : 1;
+		uint32_t txi3                    : 1;
 		uint32_t txi2                    : 1;
 		uint32_t txi1                    : 1;
 		uint32_t reserved_7_3            : 5;
@@ -665,9 +673,17 @@ union tx_priority {
 		uint32_t txt1p                   : 3;
 		uint32_t reserved_3              : 1;
 		uint32_t txt2p                   : 3;
-		uint32_t reserved_31_7          : 25;
+		uint32_t reserved_7              : 1;
+		uint32_t txt3p                   : 3;
+		uint32_t reserved_11             : 1;
+		uint32_t txt4p                   : 3;
+		uint32_t reserved_31_15         : 17;
 #else
-		uint32_t reserved_31_7          : 25;
+		uint32_t reserved_31_15         : 17;
+		uint32_t txt4p                   : 3;
+		uint32_t reserved_11             : 1;
+		uint32_t txt3p                   : 3;
+		uint32_t reserved_7              : 1;
 		uint32_t txt2p                   : 3;
 		uint32_t reserved_3              : 1;
 		uint32_t txt1p                   : 3;

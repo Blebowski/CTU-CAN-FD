@@ -1175,7 +1175,7 @@
 					<ipxact:description>Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals that buffer is selected earlier for transmission. If two buffers have equal priorities, the one with lower index is selected.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h60</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
+					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
@@ -1195,6 +1195,26 @@
 						<ipxact:displayName>TXT2P</ipxact:displayName>
 						<ipxact:description>Priority of TXT Buffer 2.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXT3P</ipxact:name>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXT4P</ipxact:name>
+						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -1265,6 +1285,26 @@
 						<ipxact:displayName>TXI2</ipxact:displayName>
 						<ipxact:description>Command is applied on TXT Buffer 2.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXI3</ipxact:name>
+						<ipxact:bitOffset>10</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXI4</ipxact:name>
+						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -2391,13 +2431,13 @@
 					<ipxact:description>Status of TXT Buffers. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h58</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
+					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>TX2S</ipxact:name>
 						<ipxact:displayName>TX1S</ipxact:displayName>
-						<ipxact:description>Status of TXT Buffer 1.</ipxact:description>
+						<ipxact:description>Status of TXT Buffer 2. Bit field meaning is analogous to TX1S.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2409,7 +2449,7 @@
 					<ipxact:field>
 						<ipxact:name>TX1S</ipxact:name>
 						<ipxact:displayName>TX2S</ipxact:displayName>
-						<ipxact:description>Status of TXT Buffer 2.</ipxact:description>
+						<ipxact:description>Status of TXT Buffer 1.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2461,6 +2501,28 @@
 								<ipxact:value>'h1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TX3S</ipxact:name>
+						<ipxact:description>Status of TXT Buffer 3. Bit field meaning is analogous to TX1S.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>'h8</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TX4S</ipxact:name>
+						<ipxact:description>Status of TXT Buffer 4. Bit field meaning is analogous to TX1S.</ipxact:description>
+						<ipxact:bitOffset>12</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>'h8</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>4</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
