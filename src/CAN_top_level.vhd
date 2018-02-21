@@ -476,6 +476,7 @@ begin
       sup_range    => sup_range,
       sup_be       => sup_be,
       tx_time_sup  => tx_time_sup,
+      buf_count    => TXT_BUFFER_COUNT,
       ID           => ID
       )
     port map(
