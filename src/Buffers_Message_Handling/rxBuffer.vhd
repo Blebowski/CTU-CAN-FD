@@ -123,6 +123,8 @@
 --                5. Removed "message_mark" signal and original "message_counter"
 --                   variable in memory access process due to beiing obsolete
 --                   with new implementation of message counter.
+--                6. Increased maximal buffer depth to 4096, resized output
+--                   vectors accordingly.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -134,11 +136,10 @@ use work.CAN_FD_frame_format.all;
 entity rxBuffer is
   GENERIC(
   
-      --Maximal number of 32 bit words to store (Minimal value=16, one 64 bytes
-      --message length) Only 2^k are allowed as buff_size. Memory adressing is
-      --in modular arithmetic, synthesis of modulo by number other than 2^k is
-      -- not supported!!!
-      buff_size                 :natural range 4 to 512 :=32 
+      -- Only 2^k are allowed as buff_size. Memory adressing is in modular 
+      -- arithmetic, synthesis of modulo by number other than 2^k might not play
+      -- nicely (will consume lot of LUTs)!!
+      buff_size                 :natural range 32 to 4096 := 32
   );
   PORT(
     -------------------
@@ -178,7 +179,7 @@ entity rxBuffer is
     --Output from acceptance filters (out_ident_valid) if message fits filters
     signal rec_message_valid    :in std_logic;
     
-    --Added interface for aux SRAM
+    --Added interface for aux SRAM in Protocol Control
     signal rec_dram_word        :in  std_logic_vector(31 downto 0);
     signal rec_dram_addr        :out natural range 0 to 15;
     
@@ -187,7 +188,7 @@ entity rxBuffer is
     ------------------------------------
     
     --Actual size of synthetised message buffer (in 32 bit words)
-    signal rx_buf_size          :out std_logic_vector(7 downto 0);
+    signal rx_buf_size          :out std_logic_vector(12 downto 0);
     
     --Signal whenever buffer is full
     signal rx_full              :out std_logic;
@@ -196,16 +197,16 @@ entity rxBuffer is
     signal rx_empty             :out std_logic;
     
     --Number of messaged stored in recieve buffer
-    signal rx_message_count     :out std_logic_vector(7 downto 0);
+    signal rx_message_count     :out std_logic_vector(10 downto 0);
     
     --Number of free 32 bit wide words
-    signal rx_mem_free          :out std_logic_vector(7 downto 0);
+    signal rx_mem_free          :out std_logic_vector(12 downto 0);
     
     --Position of read pointer
-    signal rx_read_pointer_pos  :out std_logic_vector(7 downto 0);
+    signal rx_read_pointer_pos  :out std_logic_vector(11 downto 0);
     
     --Position of write pointer
-    signal rx_write_pointer_pos :out std_logic_vector(7 downto 0);
+    signal rx_write_pointer_pos :out std_logic_vector(11 downto 0);
     
     --Message was discarded since Memory is full
     signal rx_message_disc      :out std_logic;
@@ -248,8 +249,8 @@ entity rxBuffer is
   ------------------
   constant data_width           :natural := 32;  --Word data width
   
-  type rx_memory is array(0 to buff_size-1) of 
-                    std_logic_vector(data_width-1 downto 0); --Memory type
+  type rx_memory is array(0 to buff_size - 1) of 
+                    std_logic_vector(data_width - 1 downto 0); --Memory type
   
   --Memory declaration inferred in SRAM
   signal memory                 :rx_memory;
@@ -285,7 +286,7 @@ entity rxBuffer is
   signal rx_empty_int           :std_logic;
   
   -- Internal number of free memory words
-  signal rx_mem_free_int        :std_logic_vector(7 downto 0);
+  signal rx_mem_free_int        :std_logic_vector(12 downto 0);
   
   
   -- Signal that whole frame is stored in the RX Buffer. Active
@@ -312,11 +313,11 @@ begin
   drv_ovr_rx            <= drv_bus(DRV_OVR_RX_INDEX);
   drv_read_start        <= drv_bus(DRV_READ_START_INDEX);
   drv_clr_ovr           <= drv_bus(DRV_CLR_OVR_INDEX);
-  rx_buf_size           <= std_logic_vector(to_unsigned(buff_size,8));
+  rx_buf_size           <= std_logic_vector(to_unsigned(buff_size, 13));
   
   --Propagating status registers on output
-  rx_read_pointer_pos   <= std_logic_vector(to_unsigned(read_pointer,8));
-  rx_write_pointer_pos  <= std_logic_vector(to_unsigned(write_pointer,8));
+  rx_read_pointer_pos   <= std_logic_vector(to_unsigned(read_pointer, 12));
+  rx_write_pointer_pos  <= std_logic_vector(to_unsigned(write_pointer, 12));
   rx_data_overrun       <= data_overrun_r;
   
  
@@ -371,9 +372,9 @@ begin
   ------------------------------------------------------------------------------
   -- Reading the Frame by user
   ------------------------------------------------------------------------------
-  read_frame_proc:process(clk_sys, res_n)
+  read_frame_proc:process(clk_sys, res_n, drv_erase_rx)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = ACT_RESET or drv_erase_rx = '1') then
       message_count             <= 0;
       read_frame_counter        <= 0;
     elsif (rising_edge(clk_sys))then
@@ -399,7 +400,7 @@ begin
         -- is '1' we dont decrement since new frame has arrived.
         elsif (read_frame_counter = 1) then  
           if (commit_rx_frame = '0') then
-            message_count       <= (message_count - 1) mod (buff_size / 2);
+            message_count       <= message_count - 1;
           end if; 
           read_frame_counter    <= read_frame_counter - 1;
         
@@ -413,7 +414,7 @@ begin
         end if;
                 
       elsif (commit_rx_frame = '1') then 
-        message_count           <= (message_count + 1) mod (buff_size / 2);
+        message_count           <= message_count + 1;
       end if;
       
     end if;    
@@ -423,13 +424,13 @@ begin
   ------------------------------------------------------------------------------
   --Storing data from CANCore and loading data into reading buffer
   ------------------------------------------------------------------------------
-  memory_acess:process(clk_sys,res_n)
+  memory_acess:process(clk_sys, res_n, drv_erase_rx)
 		
 		--Length variable for frame stored into reading buffer (in 32 bit words)
     variable data_length    : natural range 0 to 16;
     
     --Amount of free words
-    variable mem_free       : natural range 0 to buff_size:= buff_size;
+    variable mem_free       : natural range 0 to 2 * buff_size - 1 := buff_size;
     
   begin     
     if (res_n=ACT_RESET) or (drv_erase_rx='1') then
@@ -437,7 +438,7 @@ begin
       read_pointer      <= 0;
       rx_full           <= '0';
       mem_free          := buff_size;
-      rx_mem_free_int   <= std_logic_vector(to_unsigned(buff_size,8));
+      rx_mem_free_int   <= std_logic_vector(to_unsigned(buff_size, 13));
       commit_rx_frame   <= '0';
       
       --Nulling output signals
@@ -476,7 +477,7 @@ begin
       
         -- Increase amount of free memory
         mem_free                    := mem_free+1;
-           
+ 
       end if;
        
       
@@ -557,7 +558,7 @@ begin
         write_pointer                   <= (write_pointer+1) mod buff_size;
         copy_counter                    <= copy_counter+1;
         data_size                       <= data_size;
-        rec_message_ack                 <=  '0';
+        rec_message_ack                 <= '0';
         
         mem_free                        := mem_free-1;
       
@@ -587,7 +588,7 @@ begin
       end if;
   
   rx_mem_free_int                       <= std_logic_vector(
-                                            to_unsigned(mem_free,8));
+                                            to_unsigned(mem_free, 13));
   
   --Assigning output whenever memory is full
   if (mem_free=0) then 
@@ -604,7 +605,7 @@ end process memory_acess;
                       else
                   '0'; 
  
-  rx_message_count          <= std_logic_vector(to_unsigned(message_count, 8)); 
+  rx_message_count          <= std_logic_vector(to_unsigned(message_count, 11)); 
   rx_mem_free               <= rx_mem_free_int;
   rx_empty                  <= rx_empty_int;
 
