@@ -89,7 +89,6 @@ package CAN_FD_register_map is
   constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"054";
   constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"058";
   constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"05C";
-  constant TX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"05E";
   constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"060";
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"064";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"068";
@@ -835,17 +834,6 @@ package CAN_FD_register_map is
   constant TXI2_RSTVAL        : std_logic := '0';
   constant TXI3_RSTVAL        : std_logic := '0';
   constant TXI4_RSTVAL        : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- TX_SETTINGS register
-  --
-  -- This register controls the access into TX buffers. All bits are active in l
-  -- ogic 1.
-  ------------------------------------------------------------------------------
-  constant FRSW_IND              : natural := 19;
-
-  -- TX_SETTINGS register reset values
-  constant FRSW_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- TX_PRIORITY register

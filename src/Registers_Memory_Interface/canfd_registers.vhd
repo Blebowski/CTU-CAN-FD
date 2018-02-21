@@ -102,6 +102,8 @@
 --    28.12.2017  Added support for "tx_time_suport" and Filter Status register.
 --    18.01.2018  Removed txt1_disc, txt2_disc, txt1_commit and txt2_disc 
 --                obsolete signals
+--    21.02.2018  Removed "txt_frame_swap" since it is not needed with new,
+--                priority based implementation of TX Buffers.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -132,7 +134,7 @@ entity canfd_registers is
     constant tx_time_sup  : boolean                        := true;
     
     -- Number of TXT Buffers
-    constant buf_count    : natural range 0 to 7           := 2;
+    constant buf_count    : natural range 0 to 7           := 4;
     
     --ID of the component
     constant ID           :natural                         := 1 
@@ -300,10 +302,6 @@ entity canfd_registers is
   -- TXT Buffer settings
   ---------------------------------------------------
   
-  -- Swap behaviour when frame should be retransmitted and another frame
-  -- is available in other buffer
-  signal txt_frame_swap         :     std_logic;
-  
   -- TXT Buffer priorities
   signal txt_buf_prior          :     txtb_priorities_type;
   
@@ -416,7 +414,6 @@ architecture rtl of canfd_registers is
     signal CAN_enable             :out  std_logic;
     signal FD_type                :out  std_logic; 
     signal mode_reg               :out  std_logic_vector(5 downto 0);   
-    signal txt_frame_swap         :out  std_logic;
     signal int_ena_reg            :out  std_logic_vector(10 downto 0)
   ) is
   begin
@@ -512,8 +509,6 @@ architecture rtl of canfd_registers is
     log_cmd                 <=  (OTHERS =>'0');
     log_trig_config         <=  (OTHERS =>'0');
     log_capt_config         <=  (OTHERS =>'0');
-    
-    txt_frame_swap          <= '0';
     
     txt_buf_set_empty      <= TXCE_RSTVAL;
     txt_buf_set_ready      <= TXCR_RSTVAL;
@@ -702,7 +697,7 @@ begin
        intLoopbackEna     ,log_trig_config        ,
        log_capt_config    ,log_cmd                ,rx_ctr_set              ,
        tx_ctr_set         ,ctr_val_set            ,CAN_enable              ,
-       FD_type            ,mode_reg               ,txt_frame_swap          ,
+       FD_type            ,mode_reg               ,
        int_ena_reg            
       );
       
@@ -737,7 +732,7 @@ begin
        log_capt_config    ,log_cmd                ,
        rx_ctr_set         ,tx_ctr_set             ,
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
-       mode_reg           ,txt_frame_swap         ,int_ena_reg            
+       mode_reg           ,int_ena_reg            
       );
            
       RX_buff_read_first    <= false;
@@ -1446,8 +1441,7 @@ begin
     			     
      	      -- Buffer direction and Frame swap (TX_SETTINGS)
      	      data_out_int           <= (OTHERS => '0');
-     	      data_out_int(FRSW_IND) <= txt_frame_swap;
-          
+     	    
           ----------------------------------------------------
     			   -- TX_PRIORITY
     			   ----------------------------------------------------
@@ -1662,7 +1656,7 @@ begin
   drv_bus(355 downto 354)                           <=  (OTHERS=>'0');
   drv_bus(360 downto 358)                           <=  (OTHERS=>'0');
   drv_bus(362 downto 361)                           <=  (OTHERS=>'0');
-  drv_bus(365 downto 364)                           <=  (OTHERS=>'0');
+  drv_bus(365 downto 363)                           <=  (OTHERS=>'0');
   drv_bus(370 downto 368)                           <=  (OTHERS=>'0');
   drv_bus(371)                                      <=  '0';
   drv_bus(375 downto 373)                           <=  (OTHERS=>'0');
@@ -1722,8 +1716,6 @@ begin
   --TXT Buffer and TX Buffer
   drv_bus(DRV_ERASE_TXT1_INDEX)                     <=  '0';
   drv_bus(DRV_ERASE_TXT2_INDEX)                     <=  '0';
-  
-  drv_bus(DRV_FRAME_SWAP_INDEX)                     <=  txt_frame_swap;
   
   --Tripple sampling
   drv_bus(DRV_SAM_INDEX)                            <=  sam_norm;

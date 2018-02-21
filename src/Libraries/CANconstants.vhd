@@ -396,9 +396,6 @@ package CANconstants is
   constant DRV_ERASE_TXT1_INDEX : natural := 366;
   constant DRV_TXT2_WR          : natural := 367;
 
-  --TX Arbitrator
-  constant DRV_FRAME_SWAP_INDEX : natural := 363;
-
   --Interrupt manager indices 
   constant DRV_BUS_ERR_INT_ENA_INDEX : natural := 376;
   constant DRV_ARB_LST_INT_ENA_INDEX : natural := 377;

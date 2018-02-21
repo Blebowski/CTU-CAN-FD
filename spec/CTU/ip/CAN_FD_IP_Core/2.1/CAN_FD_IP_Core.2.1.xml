@@ -1314,28 +1314,6 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>TX_SETTINGS</ipxact:name>
-					<ipxact:displayName>TX_SETTINGS</ipxact:displayName>
-					<ipxact:description>This register controls the access into TX buffers. All bits are active in logic 1.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h5E</ipxact:addressOffset>
-					<ipxact:size>16</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>FRSW</ipxact:name>
-						<ipxact:displayName>FRSW</ipxact:displayName>
-						<ipxact:description>If frame is inserted into either TXT buffer and the other TXT buffer is empty, the frame in the first buffer is transmitted. However, if during the transmission of this frame another frame is inserted into the other TXT buffer and error occurs (or arbitration is lost) there are two frames which can be selected for transmission (assuming Timestamps of both frames are lower than external Timestamp) . If FRSW bit is set to 0 the frame which was transmitted last is rettransmitted. If FRSW is set to 1 the frame for transmission is selected as if both frames were inserted for its first transmission as explained in Section &quot;Transmitt frame selection&quot;.</ipxact:description>
-						<ipxact:bitOffset>3</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
 					<ipxact:name>LOG_TRIG_CONFIG</ipxact:name>
 					<ipxact:displayName>LOG_TRIG_CONFIG</ipxact:displayName>
 					<ipxact:description>Register for configuration of event logging triggering conditions. If Event logger is in Ready state and any of triggering conditions appear it starts recording the events on the bus (moves to Running state). Logic 1 in each bit means this triggering condition is valid.</ipxact:description>

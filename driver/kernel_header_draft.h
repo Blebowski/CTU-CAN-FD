@@ -78,7 +78,6 @@ enum can_fd_8bit_regs {
 	RX_DATA               = 0x54,
 	TX_STATUS             = 0x58,
 	TX_COMMAND            = 0x5c,
-	TX_SETTINGS           = 0x5e,
 	TX_PRIORITY           = 0x60,
 	ERR_CAPT              = 0x64,
 	TRV_DELAY             = 0x68,
@@ -632,9 +631,9 @@ union tx_status {
 	} s;
 };
 
-union tx_command_tx_settings {
+union tx_command {
 	uint32_t u32;
-	struct tx_command_tx_settings_s {
+	struct tx_command_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TX_COMMAND */
 		uint32_t txce                    : 1;
@@ -645,14 +644,9 @@ union tx_command_tx_settings {
 		uint32_t txi2                    : 1;
 		uint32_t txi3                    : 1;
 		uint32_t txi4                    : 1;
-		uint32_t reserved_18_12          : 7;
-  /* TX_SETTINGS */
-		uint32_t frsw                    : 1;
-		uint32_t reserved_31_20         : 12;
+		uint32_t reserved_31_12         : 20;
 #else
-		uint32_t reserved_31_20         : 12;
-		uint32_t frsw                    : 1;
-		uint32_t reserved_18_12          : 7;
+		uint32_t reserved_31_12         : 20;
 		uint32_t txi4                    : 1;
 		uint32_t txi3                    : 1;
 		uint32_t txi2                    : 1;
