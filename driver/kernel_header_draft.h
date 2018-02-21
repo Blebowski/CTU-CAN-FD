@@ -72,19 +72,16 @@ enum can_fd_8bit_regs {
 	FILTER_RAN_HIGH       = 0x40,
 	FILTER_CONTROL        = 0x44,
 	FILTER_STATUS         = 0x46,
-	RX_STATUS             = 0x48,
-	RX_MC                 = 0x49,
-	RX_MF                 = 0x4a,
-	RX_BUFF_SIZE          = 0x4c,
-	RX_WPP                = 0x4d,
-	RX_RPP                = 0x4e,
-	RX_DATA               = 0x50,
-	TRV_DELAY             = 0x54,
+	RX_MEM_INFO           = 0x48,
+	RX_POINTERS           = 0x4c,
+	RX_STATUS             = 0x50,
+	RX_DATA               = 0x54,
 	TX_STATUS             = 0x58,
 	TX_COMMAND            = 0x5c,
 	TX_SETTINGS           = 0x5e,
 	TX_PRIORITY           = 0x60,
 	ERR_CAPT              = 0x64,
+	TRV_DELAY             = 0x68,
 	RX_COUNTER            = 0xac,
 	TX_COUNTER            = 0xb0,
 	LOG_TRIG_CONFIG       = 0xb8,
@@ -545,46 +542,58 @@ union filter_control_filter_status {
 	} s;
 };
 
-union rx_status_rx_mc_rx_mf {
+union rx_mem_info {
 	uint32_t u32;
-	struct rx_status_rx_mc_rx_mf_s {
+	struct rx_mem_info_s {
 #ifdef __BIG_ENDIAN_BITFIELD
-  /* RX_STATUS */
-		uint32_t rx_empty                : 1;
-		uint32_t rx_full                 : 1;
-		uint32_t reserved_7_2            : 6;
-  /* RX_MC */
-		uint32_t rx_mc_value             : 8;
-  /* RX_MF */
-		uint32_t rx_mf_value             : 8;
-		uint32_t reserved_31_24          : 8;
+  /* RX_MEM_INFO */
+		uint32_t rx_buff_size           : 13;
+		uint32_t reserved_15_13          : 3;
+		uint32_t rx_mem_free            : 13;
+		uint32_t reserved_31_29          : 3;
 #else
-		uint32_t reserved_31_24          : 8;
-		uint32_t rx_mf_value             : 8;
-		uint32_t rx_mc_value             : 8;
-		uint32_t reserved_7_2            : 6;
-		uint32_t rx_full                 : 1;
-		uint32_t rx_empty                : 1;
+		uint32_t reserved_31_29          : 3;
+		uint32_t rx_mem_free            : 13;
+		uint32_t reserved_15_13          : 3;
+		uint32_t rx_buff_size           : 13;
 #endif
 	} s;
 };
 
-union rx_buff_size_rx_wpp_rx_rpp {
+union rx_pointers {
 	uint32_t u32;
-	struct rx_buff_size_rx_wpp_rx_rpp_s {
+	struct rx_pointers_s {
 #ifdef __BIG_ENDIAN_BITFIELD
-  /* RX_BUFF_SIZE */
-		uint32_t rx_buff_size_value      : 8;
-  /* RX_WPP */
-		uint32_t rx_wpp_value            : 8;
-  /* RX_RPP */
-		uint32_t rx_rpp_val              : 8;
-		uint32_t reserved_31_24          : 8;
+  /* RX_POINTERS */
+		uint32_t rx_wpp                 : 12;
+		uint32_t reserved_15_12          : 4;
+		uint32_t rx_rpp                 : 12;
+		uint32_t reserved_31_28          : 4;
 #else
-		uint32_t reserved_31_24          : 8;
-		uint32_t rx_rpp_val              : 8;
-		uint32_t rx_wpp_value            : 8;
-		uint32_t rx_buff_size_value      : 8;
+		uint32_t reserved_31_28          : 4;
+		uint32_t rx_rpp                 : 12;
+		uint32_t reserved_15_12          : 4;
+		uint32_t rx_wpp                 : 12;
+#endif
+	} s;
+};
+
+union rx_status {
+	uint32_t u32;
+	struct rx_status_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* RX_STATUS */
+		uint32_t rx_empty                : 1;
+		uint32_t rx_full                 : 1;
+		uint32_t reserved_3_2            : 2;
+		uint32_t rx_frc                 : 11;
+		uint32_t reserved_31_15         : 17;
+#else
+		uint32_t reserved_31_15         : 17;
+		uint32_t rx_frc                 : 11;
+		uint32_t reserved_3_2            : 2;
+		uint32_t rx_full                 : 1;
+		uint32_t rx_empty                : 1;
 #endif
 	} s;
 };
@@ -594,20 +603,6 @@ union rx_data {
 	struct rx_data_s {
   /* RX_DATA */
 		uint32_t rx_data                : 32;
-	} s;
-};
-
-union trv_delay {
-	uint32_t u32;
-	struct trv_delay_s {
-#ifdef __BIG_ENDIAN_BITFIELD
-  /* TRV_DELAY */
-		uint32_t trv_delay_value        : 16;
-		uint32_t reserved_31_16         : 16;
-#else
-		uint32_t reserved_31_16         : 16;
-		uint32_t trv_delay_value        : 16;
-#endif
 	} s;
 };
 
@@ -686,6 +681,20 @@ union err_capt {
 		uint32_t reserved_31_8          : 24;
 		uint32_t err_type                : 3;
 		uint32_t err_pos                 : 5;
+#endif
+	} s;
+};
+
+union trv_delay {
+	uint32_t u32;
+	struct trv_delay_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* TRV_DELAY */
+		uint32_t trv_delay_value        : 16;
+		uint32_t reserved_31_16         : 16;
+#else
+		uint32_t reserved_31_16         : 16;
+		uint32_t trv_delay_value        : 16;
 #endif
 	} s;
 };

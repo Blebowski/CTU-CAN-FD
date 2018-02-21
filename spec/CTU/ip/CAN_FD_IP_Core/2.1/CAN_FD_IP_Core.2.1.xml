@@ -1170,39 +1170,6 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>RX_MF</ipxact:name>
-					<ipxact:displayName>RX_MF</ipxact:displayName>
-					<ipxact:description>Number of free (32 bit) words in RX Buffer</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h4A</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-only</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>RX_MF_VALUE</ipxact:name>
-						<ipxact:displayName>RX_MF_VALUE</ipxact:displayName>
-						<ipxact:description>Number of free 32 bit words in the RX Buffer</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>RX_MC</ipxact:name>
-					<ipxact:displayName>RX_MC</ipxact:displayName>
-					<ipxact:description>Register with number of frames in the receive buffer.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h49</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-only</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>RX_MC_VALUE</ipxact:name>
-						<ipxact:description>Receive buffer frame count value</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
 					<ipxact:name>TX_PRIORITY</ipxact:name>
 					<ipxact:displayName>TX_PRIORITY</ipxact:displayName>
 					<ipxact:description>Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals that buffer is selected earlier for transmission. If two buffers have equal priorities, the one with lower index is selected.</ipxact:description>
@@ -2500,7 +2467,7 @@
 					<ipxact:name>TRV_DELAY</ipxact:name>
 					<ipxact:displayName>TRV_DELAY</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h54</ipxact:addressOffset>
+					<ipxact:addressOffset>'h68</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -2522,7 +2489,7 @@
 					<ipxact:displayName>RX_DATA</ipxact:displayName>
 					<ipxact:description>The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:addressOffset>'h54</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -2538,64 +2505,60 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>RX_RPP</ipxact:name>
-					<ipxact:displayName>RX_RPP</ipxact:displayName>
-					<ipxact:description>Read pointer position in th Receive buffer. When a new frame is stored write pointer is increased accordingly.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h4E</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-only</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>RX_RPP_VAL</ipxact:name>
-						<ipxact:displayName>RX_RPP_VAL</ipxact:displayName>
-						<ipxact:description>Read pointer position in the Receive buffer. When RX_DATA register is read, read pointer is increased accordingly</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>RX_WPP</ipxact:name>
-					<ipxact:displayName>RX_WPP</ipxact:displayName>
-					<ipxact:description>Write pointer position in th Receive buffer. When a new frame is stored write pointer is increased</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h4D</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-only</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>RX_WPP_VALUE</ipxact:name>
-						<ipxact:displayName>RX_WPP_VALUE</ipxact:displayName>
-						<ipxact:description>Write pointer position in th Receive buffer. When a new frame is stored write pointer is increased</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>RX_BUFF_SIZE</ipxact:name>
-					<ipxact:displayName>RX_BUFF_SIZE</ipxact:displayName>
-					<ipxact:description>Size of th Receive buffer. This parameter is configurable before synthesis.</ipxact:description>
+					<ipxact:name>RX_POINTERS</ipxact:name>
+					<ipxact:displayName>RX_POINTERS</ipxact:displayName>
+					<ipxact:description>Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol control FSM).</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
+					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RX_BUFF_SIZE_VALUE</ipxact:name>
+						<ipxact:name>RX_WPP</ipxact:name>
+						<ipxact:displayName>RX_WP</ipxact:displayName>
+						<ipxact:description>Write pointer position in Receive buffer. During store of received frame write pointer is updated.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>12</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RX_RPP</ipxact:name>
+						<ipxact:displayName>RX_RPP</ipxact:displayName>
+						<ipxact:description>Read pointer position in Receive buffer. During read of received frame read pointer is updated.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>12</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>RX_MEM_INFO</ipxact:name>
+					<ipxact:displayName>RX_MEM_INFO</ipxact:displayName>
+					<ipxact:description>Information register about FIFO memory of RX Buffer.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>RX_BUFF_SIZE</ipxact:name>
 						<ipxact:displayName>RX_BUFF_SIZE_VALUE</ipxact:displayName>
 						<ipxact:description>Size of th Receive buffer. This parameter is configurable before synthesis.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
+						<ipxact:bitWidth>13</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RX_MEM_FREE</ipxact:name>
+						<ipxact:description>Number of free 32 bit words in the RX Buffer.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>13</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -2603,8 +2566,8 @@
 					<ipxact:displayName>RX_STATUS</ipxact:displayName>
 					<ipxact:description>Information register one about FIFO Receive buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h48</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
@@ -2630,6 +2593,18 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RX_FRC</ipxact:name>
+						<ipxact:displayName>RX_FRC</ipxact:displayName>
+						<ipxact:description>Receive buffer frame count value.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>11</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>

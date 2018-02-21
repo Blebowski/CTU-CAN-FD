@@ -83,19 +83,16 @@ package CAN_FD_register_map is
   constant FILTER_RAN_HIGH_ADR       : std_logic_vector(11 downto 0) := x"040";
   constant FILTER_CONTROL_ADR        : std_logic_vector(11 downto 0) := x"044";
   constant FILTER_STATUS_ADR         : std_logic_vector(11 downto 0) := x"046";
-  constant RX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"048";
-  constant RX_MC_ADR                 : std_logic_vector(11 downto 0) := x"049";
-  constant RX_MF_ADR                 : std_logic_vector(11 downto 0) := x"04A";
-  constant RX_BUFF_SIZE_ADR          : std_logic_vector(11 downto 0) := x"04C";
-  constant RX_WPP_ADR                : std_logic_vector(11 downto 0) := x"04D";
-  constant RX_RPP_ADR                : std_logic_vector(11 downto 0) := x"04E";
-  constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"050";
-  constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"054";
+  constant RX_MEM_INFO_ADR           : std_logic_vector(11 downto 0) := x"048";
+  constant RX_POINTERS_ADR           : std_logic_vector(11 downto 0) := x"04C";
+  constant RX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"050";
+  constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"054";
   constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"058";
   constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"05C";
   constant TX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"05E";
   constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"060";
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"064";
+  constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"068";
   constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"0AC";
   constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"0B0";
   constant LOG_TRIG_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"0B8";
@@ -702,70 +699,46 @@ package CAN_FD_register_map is
   -- FILTER_STATUS register reset values
 
   ------------------------------------------------------------------------------
+  -- RX_MEM_INFO register
+  --
+  -- Information register about FIFO memory of RX Buffer.
+  ------------------------------------------------------------------------------
+  constant RX_BUFF_SIZE_L         : natural := 0;
+  constant RX_BUFF_SIZE_H        : natural := 12;
+  constant RX_MEM_FREE_L         : natural := 16;
+  constant RX_MEM_FREE_H         : natural := 28;
+
+  -- RX_MEM_INFO register reset values
+
+  ------------------------------------------------------------------------------
+  -- RX_POINTERS register
+  --
+  -- Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol cont
+  -- rol FSM).
+  ------------------------------------------------------------------------------
+  constant RX_WPP_L               : natural := 0;
+  constant RX_WPP_H              : natural := 11;
+  constant RX_RPP_L              : natural := 16;
+  constant RX_RPP_H              : natural := 27;
+
+  -- RX_POINTERS register reset values
+  constant RX_WPP_RSTVAL : std_logic_vector(11 downto 0) := x"000";
+  constant RX_RPP_RSTVAL : std_logic_vector(11 downto 0) := x"000";
+
+  ------------------------------------------------------------------------------
   -- RX_STATUS register
   --
   -- Information register one about FIFO Receive buffer.
   ------------------------------------------------------------------------------
   constant RX_EMPTY_IND           : natural := 0;
   constant RX_FULL_IND            : natural := 1;
+  constant RX_FRC_L               : natural := 4;
+  constant RX_FRC_H              : natural := 14;
 
   -- RX_STATUS register reset values
   constant RX_EMPTY_RSTVAL    : std_logic := '1';
   constant RX_FULL_RSTVAL     : std_logic := '1';
-
-  ------------------------------------------------------------------------------
-  -- RX_MC register
-  --
-  -- Register with number of frames in the receive buffer.
-  ------------------------------------------------------------------------------
-  constant RX_MC_VALUE_L          : natural := 8;
-  constant RX_MC_VALUE_H         : natural := 15;
-
-  -- RX_MC register reset values
-
-  ------------------------------------------------------------------------------
-  -- RX_MF register
-  --
-  -- Number of free (32 bit) words in RX Buffer
-  ------------------------------------------------------------------------------
-  constant RX_MF_VALUE_L         : natural := 16;
-  constant RX_MF_VALUE_H         : natural := 23;
-
-  -- RX_MF register reset values
-
-  ------------------------------------------------------------------------------
-  -- RX_BUFF_SIZE register
-  --
-  -- Size of th Receive buffer. This parameter is configurable before synthesis.
-  ------------------------------------------------------------------------------
-  constant RX_BUFF_SIZE_VALUE_L   : natural := 0;
-  constant RX_BUFF_SIZE_VALUE_H   : natural := 7;
-
-  -- RX_BUFF_SIZE register reset values
-
-  ------------------------------------------------------------------------------
-  -- RX_WPP register
-  --
-  -- Write pointer position in th Receive buffer. When a new frame is stored wri
-  -- te pointer is increased
-  ------------------------------------------------------------------------------
-  constant RX_WPP_VALUE_L         : natural := 8;
-  constant RX_WPP_VALUE_H        : natural := 15;
-
-  -- RX_WPP register reset values
-  constant RX_WPP_VALUE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- RX_RPP register
-  --
-  -- Read pointer position in th Receive buffer. When a new frame is stored writ
-  -- e pointer is increased accordingly.
-  ------------------------------------------------------------------------------
-  constant RX_RPP_VAL_L          : natural := 16;
-  constant RX_RPP_VAL_H          : natural := 23;
-
-  -- RX_RPP register reset values
-  constant RX_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+  constant RX_FRC_RSTVAL : std_logic_vector(10 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- RX_DATA register
@@ -784,16 +757,6 @@ package CAN_FD_register_map is
 
   -- RX_DATA register reset values
   constant RX_DATA_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
-
-  ------------------------------------------------------------------------------
-  -- TRV_DELAY register
-  --
-  ------------------------------------------------------------------------------
-  constant TRV_DELAY_VALUE_L      : natural := 0;
-  constant TRV_DELAY_VALUE_H     : natural := 15;
-
-  -- TRV_DELAY register reset values
-  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
   -- TX_STATUS register
@@ -900,6 +863,16 @@ package CAN_FD_register_map is
   -- ERR_CAPT register reset values
   constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";
   constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
+
+  ------------------------------------------------------------------------------
+  -- TRV_DELAY register
+  --
+  ------------------------------------------------------------------------------
+  constant TRV_DELAY_VALUE_L      : natural := 0;
+  constant TRV_DELAY_VALUE_H     : natural := 15;
+
+  -- TRV_DELAY register reset values
+  constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
   -- RX_COUNTER register
