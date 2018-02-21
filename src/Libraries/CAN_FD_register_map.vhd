@@ -129,6 +129,28 @@ package CAN_FD_register_map is
   constant TXTB2_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"24C";
 
   ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: TX_Buffer_3
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant TX_BUFFER_3_BLOCK            : std_logic_vector(3 downto 0) := x"3";
+
+  constant TXTB3_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"300";
+  constant TXTB3_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"304";
+  constant TXTB3_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"34C";
+
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: TX_Buffer_4
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant TX_BUFFER_4_BLOCK            : std_logic_vector(3 downto 0) := x"4";
+
+  constant TXTB4_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"400";
+  constant TXTB4_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"404";
+  constant TXTB4_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"44C";
+
+  ------------------------------------------------------------------------------
   -- DEVICE_ID register
   --
   -- The register contains an identifer of CAN FD IP function. It is used to det
@@ -1201,5 +1223,65 @@ package CAN_FD_register_map is
   constant TXTB2_DATA_20_H       : natural := 31;
 
   -- TXTB2_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_1 register
+  --
+  -- This adress word corresponds to FRAME_FORM word
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_1_L         : natural := 0;
+  constant TXTB3_DATA_1_H        : natural := 31;
+
+  -- TXTB3_DATA_1 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_2 register
+  --
+  -- This adress word corresponds to IDENTIFIER word.
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_2_L         : natural := 0;
+  constant TXTB3_DATA_2_H        : natural := 31;
+
+  -- TXTB3_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB3_DATA_20 register
+  --
+  -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB3_DATA_20_L        : natural := 0;
+  constant TXTB3_DATA_20_H       : natural := 31;
+
+  -- TXTB3_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_1 register
+  --
+  -- This adress word corresponds to FRAME_FORM word
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_1_L         : natural := 0;
+  constant TXTB4_DATA_1_H        : natural := 31;
+
+  -- TXTB4_DATA_1 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_2 register
+  --
+  -- This adress word corresponds to IDENTIFIER word.
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_2_L         : natural := 0;
+  constant TXTB4_DATA_2_H        : natural := 31;
+
+  -- TXTB4_DATA_2 register reset values
+
+  ------------------------------------------------------------------------------
+  -- TXTB4_DATA_20 register
+  --
+  -- This adress word corresponds to DATA_61_64 word.
+  ------------------------------------------------------------------------------
+  constant TXTB4_DATA_20_L        : natural := 0;
+  constant TXTB4_DATA_20_H       : natural := 31;
+
+  -- TXTB4_DATA_20 register reset values
 
 end package;

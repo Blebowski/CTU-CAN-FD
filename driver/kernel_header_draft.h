@@ -100,6 +100,12 @@ enum can_fd_8bit_regs {
 	TXTB2_DATA_1         = 0x200,
 	TXTB2_DATA_2         = 0x204,
 	TXTB2_DATA_20        = 0x24c,
+	TXTB3_DATA_1         = 0x300,
+	TXTB3_DATA_2         = 0x304,
+	TXTB3_DATA_20        = 0x34c,
+	TXTB4_DATA_1         = 0x400,
+	TXTB4_DATA_2         = 0x404,
+	TXTB4_DATA_20        = 0x44c,
 };
 
 
@@ -972,6 +978,54 @@ union txtb2_data_20 {
 	struct txtb2_data_20_s {
   /* TXTB2_DATA_20 */
 		uint32_t txtb2_data_20          : 32;
+	} s;
+};
+
+union txtb3_data_1 {
+	uint32_t u32;
+	struct txtb3_data_1_s {
+  /* TXTB3_DATA_1 */
+		uint32_t txtb3_data_1           : 32;
+	} s;
+};
+
+union txtb3_data_2 {
+	uint32_t u32;
+	struct txtb3_data_2_s {
+  /* TXTB3_DATA_2 */
+		uint32_t txtb3_data_2           : 32;
+	} s;
+};
+
+union txtb3_data_20 {
+	uint32_t u32;
+	struct txtb3_data_20_s {
+  /* TXTB3_DATA_20 */
+		uint32_t txtb3_data_20          : 32;
+	} s;
+};
+
+union txtb4_data_1 {
+	uint32_t u32;
+	struct txtb4_data_1_s {
+  /* TXTB4_DATA_1 */
+		uint32_t txtb4_data_1           : 32;
+	} s;
+};
+
+union txtb4_data_2 {
+	uint32_t u32;
+	struct txtb4_data_2_s {
+  /* TXTB4_DATA_2 */
+		uint32_t txtb4_data_2           : 32;
+	} s;
+};
+
+union txtb4_data_20 {
+	uint32_t u32;
+	struct txtb4_data_20_s {
+  /* TXTB4_DATA_20 */
+		uint32_t txtb4_data_20          : 32;
 	} s;
 };
 
