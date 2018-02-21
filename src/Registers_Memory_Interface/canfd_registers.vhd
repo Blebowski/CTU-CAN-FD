@@ -167,7 +167,7 @@ entity canfd_registers is
     signal rx_read_buff         :in   std_logic_vector(31 downto 0); 
     
     --Size of  message buffer (in words)
-    signal rx_buf_size          :in   std_logic_vector(7 downto 0);   
+    signal rx_buf_size          :in   std_logic_vector(12 downto 0);   
     
     --Signal whenever buffer is full
     signal rx_full              :in   std_logic;                      
@@ -176,16 +176,16 @@ entity canfd_registers is
     signal rx_empty             :in   std_logic;                      
     
     --Number of frames in recieve buffer
-    signal rx_message_count     :in   std_logic_vector(7 downto 0);   
+    signal rx_message_count     :in   std_logic_vector(10 downto 0);   
     
     --Number of free 32 bit wide ''windows''
-    signal rx_mem_free          :in   std_logic_vector(7 downto 0);   
+    signal rx_mem_free          :in   std_logic_vector(12 downto 0);   
     
     --Position of read pointer
-    signal rx_read_pointer_pos  :in   std_logic_vector(7 downto 0);   
+    signal rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);   
     
     --Position of write pointer
-    signal rx_write_pointer_pos :in   std_logic_vector(7 downto 0);   
+    signal rx_write_pointer_pos :in   std_logic_vector(11 downto 0);   
     
     --Frame was discarded due full Memory
     signal rx_message_disc      :in   std_logic;                     
@@ -1271,30 +1271,40 @@ begin
  					  
     					  data_out_int(31 downto 20)     <=  (OTHERS=>'0');
     					
-    			   -------------------------------------------------------
-    			   -- RX_STATUS, RX_MC, RX_MF
+    					-------------------------------------------------------
+    			   -- RX_MEM_INFO
     			   -------------------------------------------------------  
-    			   when RX_STATUS_ADR => 
+    			   when RX_MEM_INFO_ADR =>
+    					  data_out_int(31 downto 0)      <=  (OTHERS=>'0');
+    					  data_out_int(RX_BUFF_SIZE_H downto RX_BUFF_SIZE_L)
+    					           <= rx_buf_size;
+    					  data_out_int(RX_MEM_FREE_H downto RX_MEM_FREE_L)
+    					            <=  rx_mem_free;         
+    					  
+    					  
+    			   -------------------------------------------------------
+    			   -- RX_POINTERS
+    			   -------------------------------------------------------  
+    			   when RX_POINTERS_ADR =>
+    			     data_out_int(31 downto 0)      <=  (OTHERS=>'0');
+    			     data_out_int(RX_WPP_H downto RX_WPP_L)
+    					           <= rx_write_pointer_pos;
+    					  data_out_int(RX_RPP_H downto RX_RPP_L)
+    					           <= rx_read_pointer_pos;
+    					
+    					
+    					-------------------------------------------------------
+    			   -- RX_STATUS
+    			   -------------------------------------------------------  
+    			   when RX_STATUS_ADR =>
+    			   
     					  data_out_int(RX_EMPTY_IND)               <=  rx_empty;
     					  data_out_int(RX_FULL_IND)                <=  rx_full;
     					  
-    					  data_out_int(RX_MC_VALUE_H downto RX_MC_VALUE_L)
+    					  data_out_int(RX_FRC_H downto RX_FRC_L)
     					            <= rx_message_count;
-    					  data_out_int(RX_MF_VALUE_H downto RX_MF_VALUE_L)
-    					            <=  rx_mem_free;
-    			   
-    			   -------------------------------------------------------
-    			   -- RX_BUFF_SIZE, RX_WPP_ADR, RX_RPP_ADR
-    			   -------------------------------------------------------  
-    			   when RX_BUFF_SIZE_ADR =>
-    					  data_out_int(31 downto 0)      <=  (OTHERS=>'0');
-    					  data_out_int(RX_BUFF_SIZE_VALUE_H downto RX_BUFF_SIZE_VALUE_L)
-    					           <= rx_buf_size;
-    					  data_out_int(RX_WPP_VALUE_H downto RX_WPP_VALUE_L)
-    					           <= rx_write_pointer_pos;
-    					  data_out_int(RX_RPP_VAL_H downto RX_RPP_VAL_L)
-    					           <= rx_read_pointer_pos;
- 					
+    					
+    					
  				  -------------------------------------------------------
  				  --RX_DATA register
  				  -------------------------------------------------------

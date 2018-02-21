@@ -81,7 +81,7 @@ entity CAN_top_level is
     constant use_logger     : boolean                := true;
     
     -- Receive Buffer size
-    constant rx_buffer_size : natural range 4 to 512 := 128; 
+    constant rx_buffer_size : natural range 32 to 4096 := 128; 
     
     -- Whenever internal synchroniser chain should be used for incoming bus 
     -- signals. Dont turn off unless external synchronisation chain is put on
@@ -173,7 +173,7 @@ entity CAN_top_level is
   signal rx_read_buff         : std_logic_vector(31 downto 0);
   
   --Actual size of synthetised message buffer (in 32 bit words)
-  signal rx_buf_size          : std_logic_vector(7 downto 0);
+  signal rx_buf_size          : std_logic_vector(12 downto 0);
   
   --Signal whenever buffer is full
   signal rx_full              : std_logic;
@@ -182,16 +182,16 @@ entity CAN_top_level is
   signal rx_empty             : std_logic;
   
   --Number of messaged stored in recieve buffer
-  signal rx_message_count     : std_logic_vector(7 downto 0);
+  signal rx_message_count     : std_logic_vector(10 downto 0);
   
   --Number of free 32 bit wide ''windows''
-  signal rx_mem_free          : std_logic_vector(7 downto 0);
+  signal rx_mem_free          : std_logic_vector(12 downto 0);
   
   --Position of read pointer
-  signal rx_read_pointer_pos  : std_logic_vector(7 downto 0);
+  signal rx_read_pointer_pos  : std_logic_vector(11 downto 0);
   
   --Position of write pointer
-  signal rx_write_pointer_pos : std_logic_vector(7 downto 0);
+  signal rx_write_pointer_pos : std_logic_vector(11 downto 0);
   
   --Message was discarded since Memory is full
   signal rx_message_disc      : std_logic;

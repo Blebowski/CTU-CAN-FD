@@ -64,7 +64,7 @@ package CANcomponents is
   component CAN_top_level is
     generic(
       constant use_logger     : boolean               := true;
-      constant rx_buffer_size : natural               := 128;
+      constant rx_buffer_size : natural range 32 to 4096 := 128; 
       constant use_sync       : boolean               := true;
       constant ID             : natural range 0 to 15 := 1;
       constant sup_filtA      : boolean               := true;
@@ -130,13 +130,13 @@ package CANcomponents is
       signal drv_bus              : out std_logic_vector(1023 downto 0);
       signal stat_bus             : in  std_logic_vector(511 downto 0);
       signal rx_read_buff         : in  std_logic_vector(31 downto 0);
-      signal rx_buf_size          : in  std_logic_vector(7 downto 0);
+      signal rx_buf_size          : in  std_logic_vector(12 downto 0);
       signal rx_full              : in  std_logic;
       signal rx_empty             : in  std_logic;
-      signal rx_message_count     : in  std_logic_vector(7 downto 0);
-      signal rx_mem_free          : in  std_logic_vector(7 downto 0);
-      signal rx_read_pointer_pos  : in  std_logic_vector(7 downto 0);
-      signal rx_write_pointer_pos : in  std_logic_vector(7 downto 0);
+      signal rx_message_count     : in  std_logic_vector(10 downto 0);
+      signal rx_mem_free          : in  std_logic_vector(12 downto 0);
+      signal rx_read_pointer_pos  : in  std_logic_vector(11 downto 0);
+      signal rx_write_pointer_pos : in  std_logic_vector(11 downto 0);
       signal rx_message_disc      : in  std_logic;
       signal rx_data_overrun      : in  std_logic;
       signal tran_data            : out std_logic_vector(31 downto 0);
@@ -160,38 +160,38 @@ package CANcomponents is
   -- RX Buffer module
   ------------------------------------------------------------------------------
   component rxBuffer is
-    generic(
-      buff_size : natural range 4 to 512
-      );
-    port(
-      signal clk_sys              : in  std_logic;
-      signal res_n                : in  std_logic;
-      signal rec_ident_in         : in  std_logic_vector(28 downto 0);
-      signal rec_dlc_in           : in  std_logic_vector(3 downto 0);
-      signal rec_ident_type_in    : in  std_logic;
-      signal rec_frame_type_in    : in  std_logic;
-      signal rec_is_rtr           : in  std_logic;
-      signal rec_message_valid    : in  std_logic;
-      signal rec_brs              : in  std_logic;
-      signal rec_esi              : in  std_logic;
-      signal rec_message_ack      : out std_logic;
-      signal rec_dram_word        : in  std_logic_vector(31 downto 0);
-      signal rec_dram_addr        : out natural range 0 to 15;
-      signal rx_buf_size          : out std_logic_vector(7 downto 0);
-      signal rx_full              : out std_logic;
-      signal rx_empty             : out std_logic;
-      signal rx_message_count     : out std_logic_vector(7 downto 0);
-      signal rx_mem_free          : out std_logic_vector(7 downto 0);
-      signal rx_read_pointer_pos  : out std_logic_vector(7 downto 0);
-      signal rx_write_pointer_pos : out std_logic_vector(7 downto 0);
-      signal rx_message_disc      : out std_logic;
-      signal rx_data_overrun      : out std_logic;
-      signal timestamp            : in  std_logic_vector(63 downto 0);
-      signal rx_read_buff         : out std_logic_vector(31 downto 0);
-      signal drv_bus              : in  std_logic_vector(1023 downto 0)
-      );
-  end component;
-
+  GENERIC(
+     buff_size                  :   natural range 32 to 4096 := 32
+  );
+  PORT(
+    signal clk_sys              :in std_logic; --System clock
+    signal res_n                :in std_logic; --Async. reset
+    signal rec_ident_in         :in std_logic_vector(28 downto 0);
+    signal rec_dlc_in           :in std_logic_vector(3 downto 0);
+    signal rec_ident_type_in    :in std_logic;
+    signal rec_frame_type_in    :in std_logic;
+    signal rec_is_rtr           :in std_logic;
+    signal rec_brs              :in std_logic;
+    signal rec_esi              :in std_logic;
+    signal rec_message_ack      :out std_logic;
+    signal rec_message_valid    :in std_logic;
+    signal rec_dram_word        :in  std_logic_vector(31 downto 0);
+    signal rec_dram_addr        :out natural range 0 to 15;
+    signal rx_buf_size          :out std_logic_vector(12 downto 0);
+    signal rx_full              :out std_logic;
+    signal rx_empty             :out std_logic;
+    signal rx_message_count     :out std_logic_vector(10 downto 0);
+    signal rx_mem_free          :out std_logic_vector(12 downto 0);
+    signal rx_read_pointer_pos  :out std_logic_vector(11 downto 0);
+    signal rx_write_pointer_pos :out std_logic_vector(11 downto 0);
+    signal rx_message_disc      :out std_logic;
+    signal rx_data_overrun      :out std_logic;
+    signal timestamp            :in std_logic_vector(63 downto 0);
+    signal rx_read_buff         :out std_logic_vector(31 downto 0);
+    signal drv_bus              :in std_logic_vector(1023 downto 0)
+  );
+  end component; 
+  
   ------------------------------------------------------------------------------
   --TX Buffer  module
   ------------------------------------------------------------------------------
