@@ -186,6 +186,8 @@
 --                2. Added increment of the rettransmitt counter on arbitration
 --                   lost. This is desirable for new implementation of the
 --                   TXT Buffer finite state machine.
+--   21.02.2018   Removed obsolete frame_swap since it is not necessary with
+--                prioritized TX buffers.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -419,9 +421,6 @@ entity protocolControl is
   
   --Type of FD Format Frame (ISO,non-ISO)
   signal drv_fd_type              :     std_logic;
-  
-  --Frame swapping behaviour of TX Arbitrator
-  signal drv_frame_swap           :     std_logic;
   
   ----------------------
   --Internal registers--
@@ -675,7 +674,6 @@ begin
   drv_ack_forb          <=  drv_bus(DRV_ACK_FORB_INDEX);
   drv_ena               <=  drv_bus(DRV_ENA_INDEX);
   drv_fd_type           <=  drv_bus(DRV_FD_TYPE_INDEX);
-  drv_frame_swap        <=  drv_bus(DRV_FRAME_SWAP_INDEX);
   
   -----------------------------------
   --Registers to output propagation--

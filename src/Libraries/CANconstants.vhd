@@ -105,7 +105,7 @@ package CANconstants is
   constant INC_EIGHT_CON : std_logic_vector(2 downto 0) := "010";
   constant DEC_ONE_CON   : std_logic_vector(2 downto 0) := "001";
 
-  constant TXT_BUFFER_COUNT     : natural := 2;  
+  constant TXT_BUFFER_COUNT     : natural := 4;  
   
   ------------------------------------------------------------------------------   
   --DLC Types
@@ -395,9 +395,6 @@ package CANconstants is
   --TX Buffer
   constant DRV_ERASE_TXT1_INDEX : natural := 366;
   constant DRV_TXT2_WR          : natural := 367;
-
-  --TX Arbitrator
-  constant DRV_FRAME_SWAP_INDEX : natural := 363;
 
   --Interrupt manager indices 
   constant DRV_BUS_ERR_INT_ENA_INDEX : natural := 376;

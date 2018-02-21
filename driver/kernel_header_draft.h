@@ -78,7 +78,6 @@ enum can_fd_8bit_regs {
 	RX_DATA               = 0x54,
 	TX_STATUS             = 0x58,
 	TX_COMMAND            = 0x5c,
-	TX_SETTINGS           = 0x5e,
 	TX_PRIORITY           = 0x60,
 	ERR_CAPT              = 0x64,
 	TRV_DELAY             = 0x68,
@@ -100,6 +99,12 @@ enum can_fd_8bit_regs {
 	TXTB2_DATA_1         = 0x200,
 	TXTB2_DATA_2         = 0x204,
 	TXTB2_DATA_20        = 0x24c,
+	TXTB3_DATA_1         = 0x300,
+	TXTB3_DATA_2         = 0x304,
+	TXTB3_DATA_20        = 0x34c,
+	TXTB4_DATA_1         = 0x400,
+	TXTB4_DATA_2         = 0x404,
+	TXTB4_DATA_20        = 0x44c,
 };
 
 
@@ -613,18 +618,22 @@ union tx_status {
   /* TX_STATUS */
 		uint32_t tx1s                    : 4;
 		uint32_t tx2s                    : 4;
-		uint32_t reserved_31_8          : 24;
+		uint32_t tx3s                    : 4;
+		uint32_t tx4s                    : 4;
+		uint32_t reserved_31_16         : 16;
 #else
-		uint32_t reserved_31_8          : 24;
+		uint32_t reserved_31_16         : 16;
+		uint32_t tx4s                    : 4;
+		uint32_t tx3s                    : 4;
 		uint32_t tx2s                    : 4;
 		uint32_t tx1s                    : 4;
 #endif
 	} s;
 };
 
-union tx_command_tx_settings {
+union tx_command {
 	uint32_t u32;
-	struct tx_command_tx_settings_s {
+	struct tx_command_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TX_COMMAND */
 		uint32_t txce                    : 1;
@@ -633,14 +642,13 @@ union tx_command_tx_settings {
 		uint32_t reserved_7_3            : 5;
 		uint32_t txi1                    : 1;
 		uint32_t txi2                    : 1;
-		uint32_t reserved_18_10          : 9;
-  /* TX_SETTINGS */
-		uint32_t frsw                    : 1;
-		uint32_t reserved_31_20         : 12;
+		uint32_t txi3                    : 1;
+		uint32_t txi4                    : 1;
+		uint32_t reserved_31_12         : 20;
 #else
-		uint32_t reserved_31_20         : 12;
-		uint32_t frsw                    : 1;
-		uint32_t reserved_18_10          : 9;
+		uint32_t reserved_31_12         : 20;
+		uint32_t txi4                    : 1;
+		uint32_t txi3                    : 1;
 		uint32_t txi2                    : 1;
 		uint32_t txi1                    : 1;
 		uint32_t reserved_7_3            : 5;
@@ -659,9 +667,17 @@ union tx_priority {
 		uint32_t txt1p                   : 3;
 		uint32_t reserved_3              : 1;
 		uint32_t txt2p                   : 3;
-		uint32_t reserved_31_7          : 25;
+		uint32_t reserved_7              : 1;
+		uint32_t txt3p                   : 3;
+		uint32_t reserved_11             : 1;
+		uint32_t txt4p                   : 3;
+		uint32_t reserved_31_15         : 17;
 #else
-		uint32_t reserved_31_7          : 25;
+		uint32_t reserved_31_15         : 17;
+		uint32_t txt4p                   : 3;
+		uint32_t reserved_11             : 1;
+		uint32_t txt3p                   : 3;
+		uint32_t reserved_7              : 1;
 		uint32_t txt2p                   : 3;
 		uint32_t reserved_3              : 1;
 		uint32_t txt1p                   : 3;
@@ -972,6 +988,54 @@ union txtb2_data_20 {
 	struct txtb2_data_20_s {
   /* TXTB2_DATA_20 */
 		uint32_t txtb2_data_20          : 32;
+	} s;
+};
+
+union txtb3_data_1 {
+	uint32_t u32;
+	struct txtb3_data_1_s {
+  /* TXTB3_DATA_1 */
+		uint32_t txtb3_data_1           : 32;
+	} s;
+};
+
+union txtb3_data_2 {
+	uint32_t u32;
+	struct txtb3_data_2_s {
+  /* TXTB3_DATA_2 */
+		uint32_t txtb3_data_2           : 32;
+	} s;
+};
+
+union txtb3_data_20 {
+	uint32_t u32;
+	struct txtb3_data_20_s {
+  /* TXTB3_DATA_20 */
+		uint32_t txtb3_data_20          : 32;
+	} s;
+};
+
+union txtb4_data_1 {
+	uint32_t u32;
+	struct txtb4_data_1_s {
+  /* TXTB4_DATA_1 */
+		uint32_t txtb4_data_1           : 32;
+	} s;
+};
+
+union txtb4_data_2 {
+	uint32_t u32;
+	struct txtb4_data_2_s {
+  /* TXTB4_DATA_2 */
+		uint32_t txtb4_data_2           : 32;
+	} s;
+};
+
+union txtb4_data_20 {
+	uint32_t u32;
+	struct txtb4_data_20_s {
+  /* TXTB4_DATA_20 */
+		uint32_t txtb4_data_20          : 32;
 	} s;
 };
 
