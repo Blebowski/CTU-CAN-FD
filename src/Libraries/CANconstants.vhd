@@ -105,7 +105,7 @@ package CANconstants is
   constant INC_EIGHT_CON : std_logic_vector(2 downto 0) := "010";
   constant DEC_ONE_CON   : std_logic_vector(2 downto 0) := "001";
 
-  constant TXT_BUFFER_COUNT     : natural := 2;  
+  constant TXT_BUFFER_COUNT     : natural := 4;  
   
   ------------------------------------------------------------------------------   
   --DLC Types

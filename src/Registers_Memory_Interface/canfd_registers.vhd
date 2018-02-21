@@ -403,8 +403,7 @@ architecture rtl of canfd_registers is
     signal txt_buf_set_empty      :out  std_logic;
     signal txt_buf_set_ready      :out  std_logic;
     signal txt_buf_set_abort      :out  std_logic;
-    signal txt_buf_cmd_index      :out
-            std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
+    signal txt_buf_cmd_index      :out  std_logic_vector(buf_count - 1 downto 0);
     signal txt_buf_prior          :out  txtb_priorities_type;
 
     signal intLoopbackEna         :out  std_logic;
@@ -519,11 +518,16 @@ architecture rtl of canfd_registers is
     txt_buf_set_empty      <= TXCE_RSTVAL;
     txt_buf_set_ready      <= TXCR_RSTVAL;
     txt_buf_set_abort      <= TXCA_RSTVAL;
+    
     txt_buf_cmd_index(0)   <= TXI1_RSTVAL;
     txt_buf_cmd_index(1)   <= TXI2_RSTVAL;
+    txt_buf_cmd_index(2)   <= TXI3_RSTVAL;
+    txt_buf_cmd_index(3)   <= TXI4_RSTVAL;
     
     txt_buf_prior(0)       <= TXT1P_RSTVAL;
     txt_buf_prior(1)       <= TXT2P_RSTVAL;
+    txt_buf_prior(2)       <= TXT3P_RSTVAL;
+    txt_buf_prior(3)       <= TXT4P_RSTVAL;
 
   end procedure;
   
@@ -620,7 +624,7 @@ begin
   --Reset propagation to output
   --Note: this works only for reset active in logic zero
   --------------------------------------------------------
-  res_out                   <=  res_n and int_reset; 
+  res_out               <=  res_n and int_reset; 
  
   --------------------------------------------------------
   -- Propagation of Avalon address to TXT Buffer RAM
@@ -636,7 +640,9 @@ begin
   -- Decoding of TXT buffer signals...
   --------------------------------------------------------
   txt_buf_access   <= true when (((adress(11 downto 8) = TX_BUFFER_1_BLOCK) or
-                                 (adress(11 downto 8) = TX_BUFFER_2_BLOCK)) and 
+                                  (adress(11 downto 8) = TX_BUFFER_2_BLOCK) or
+                                  (adress(11 downto 8) = TX_BUFFER_3_BLOCK) or
+                                  (adress(11 downto 8) = TX_BUFFER_4_BLOCK)) and 
                                  scs='1' and swr='1')
                            else
                       false;
@@ -649,6 +655,16 @@ begin
                       '0';
   
   txtb_cs(1)       <= '1' when ((adress(11 downto 8) = TX_BUFFER_2_BLOCK) and
+                                txt_buf_access)
+                          else
+                      '0';
+                      
+  txtb_cs(2)       <= '1' when ((adress(11 downto 8) = TX_BUFFER_3_BLOCK) and
+                                txt_buf_access)
+                          else
+                      '0';
+                      
+  txtb_cs(3)       <= '1' when ((adress(11 downto 8) = TX_BUFFER_4_BLOCK) and
                                 txt_buf_access)
                           else
                       '0';
@@ -983,8 +999,6 @@ begin
             write_be_vect(txt_buf_cmd_index, 0, TXT_BUFFER_COUNT - 1, data_in,
                           TXI1_IND, TXI1_IND + txt_buf_cmd_index'length - 1, sbe); 
       	    
-     	      write_be_s(txt_frame_swap, FRSW_IND, data_in, sbe);
-   	  
    	   ----------------------------------------------------
     			-- TX_PRIORITY
     			----------------------------------------------------
@@ -993,6 +1007,10 @@ begin
                         TXT1P_L, TXT1P_H, sbe);   
  	          write_be_vect(txt_buf_prior(1), 0, 2, data_in,
                         TXT2P_L, TXT2P_H, sbe);
+            write_be_vect(txt_buf_prior(2), 0, 2, data_in,
+                        TXT3P_L, TXT3P_H, sbe);
+            write_be_vect(txt_buf_prior(3), 0, 2, data_in,
+                        TXT4P_L, TXT4P_H, sbe);   
  	           
     			--------------------------------------
     			--Recieve frame counter presetting
@@ -1372,6 +1390,44 @@ begin
 			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ABT;
 			       when others =>
 			            data_out_int(TX2S_H downto TX2S_L) <= (OTHERS => '0');
+			       end case;
+			       
+			       case txtb_fsms(2) is
+			       when txt_empty =>
+			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ETY;
+			       when txt_ready =>
+			            data_out_int(TX3S_H downto TX3S_L) <= TXT_RDY;
+			       when txt_tx_prog =>
+			            data_out_int(TX3S_H downto TX3S_L) <= TXT_TRAN;
+			       when txt_ab_prog =>
+			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ABTP;
+			       when txt_ok =>
+			            data_out_int(TX3S_H downto TX3S_L) <= TXT_TOK;
+			       when txt_error =>
+			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ERR;
+			       when txt_aborted =>
+			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ABT;
+			       when others =>
+			            data_out_int(TX3S_H downto TX3S_L) <= (OTHERS => '0');
+			       end case;
+			       
+			       case txtb_fsms(3) is
+			       when txt_empty =>
+			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ETY;
+			       when txt_ready =>
+			            data_out_int(TX4S_H downto TX4S_L) <= TXT_RDY;
+			       when txt_tx_prog =>
+			            data_out_int(TX4S_H downto TX4S_L) <= TXT_TRAN;
+			       when txt_ab_prog =>
+			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ABTP;
+			       when txt_ok =>
+			            data_out_int(TX4S_H downto TX4S_L) <= TXT_TOK;
+			       when txt_error =>
+			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ERR;
+			       when txt_aborted =>
+			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ABT;
+			       when others =>
+			            data_out_int(TX4S_H downto TX4S_L) <= (OTHERS => '0');
 			       end case;
     			
     			-- TODO: Shouldn we add this to the register map as before??     
