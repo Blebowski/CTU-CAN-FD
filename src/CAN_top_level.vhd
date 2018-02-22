@@ -317,6 +317,9 @@ entity CAN_top_level is
   
   -- Received Error state indicator
   signal rec_esi           : std_logic;
+  
+  -- Signals start of frame for storing timestamp
+  signal sof_pulse         : std_logic;
 
 	-- Pointer to RX Ram in CAN Core and output word with the received data
   signal rec_dram_word : std_logic_vector(31 downto 0);
@@ -549,6 +552,7 @@ begin
       rx_message_disc      => rx_message_disc,
       rx_data_overrun      => rx_data_overrun,
       rx_read_buff         => rx_read_buff,
+      sof_pulse            => sof_pulse,
       timestamp            => timestamp,
       drv_bus              => drv_bus
       );
@@ -703,7 +707,8 @@ begin
       ssp_reset             => ssp_reset,
       trv_delay_calib       => trv_delay_calib,
       hard_sync_edge        => hard_sync_edge_valid,
-      bit_Error_sec_sam     => bit_Error_sec_sam
+      bit_Error_sec_sam     => bit_Error_sec_sam,
+      sof_pulse             => sof_pulse
       );
 
   prescaler_comp : prescaler_v3

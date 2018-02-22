@@ -75,6 +75,7 @@ enum can_fd_8bit_regs {
 	RX_MEM_INFO           = 0x48,
 	RX_POINTERS           = 0x4c,
 	RX_STATUS             = 0x50,
+	RX_SETTINGS           = 0x52,
 	RX_DATA               = 0x54,
 	TX_STATUS             = 0x58,
 	TX_COMMAND            = 0x5c,
@@ -583,18 +584,23 @@ union rx_pointers {
 	} s;
 };
 
-union rx_status {
+union rx_status_rx_settings {
 	uint32_t u32;
-	struct rx_status_s {
+	struct rx_status_rx_settings_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RX_STATUS */
 		uint32_t rx_empty                : 1;
 		uint32_t rx_full                 : 1;
 		uint32_t reserved_3_2            : 2;
 		uint32_t rx_frc                 : 11;
-		uint32_t reserved_31_15         : 17;
+		uint32_t reserved_15             : 1;
+  /* RX_SETTINGS */
+		uint32_t rtsop                   : 1;
+		uint32_t reserved_31_17         : 15;
 #else
-		uint32_t reserved_31_15         : 17;
+		uint32_t reserved_31_17         : 15;
+		uint32_t rtsop                   : 1;
+		uint32_t reserved_15             : 1;
 		uint32_t rx_frc                 : 11;
 		uint32_t reserved_3_2            : 2;
 		uint32_t rx_full                 : 1;

@@ -188,6 +188,7 @@ package CANcomponents is
     signal rx_data_overrun      :out std_logic;
     signal timestamp            :in std_logic_vector(63 downto 0);
     signal rx_read_buff         :out std_logic_vector(31 downto 0);
+    signal sof_pulse            :in  std_logic;
     signal drv_bus              :in std_logic_vector(1023 downto 0)
   );
   end component; 
@@ -400,7 +401,8 @@ package CANcomponents is
       signal ssp_reset             : out std_logic;
       signal trv_delay_calib       : out std_logic;
       signal bit_Error_sec_sam     : in  std_logic;
-      signal hard_sync_edge        : in  std_logic
+      signal hard_sync_edge        : in  std_logic;
+      signal sof_pulse             : out std_logic
       );
   end component;
 
@@ -674,7 +676,8 @@ package CANcomponents is
       signal ssp_reset             : out std_logic;
       signal trv_delay_calib       : out std_logic;
       signal bit_err_enable        : out std_logic;
-      signal hard_sync_edge        : in  std_logic
+      signal hard_sync_edge        : in  std_logic;
+      signal sof_pulse             : out std_logic
       );
   end component;
 
