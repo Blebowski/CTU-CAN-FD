@@ -262,10 +262,10 @@ entity rxBuffer is
   signal memory                 :rx_memory;
   
   --Read Pointer for data
-  signal read_pointer           :natural range 0 to buff_size-1;
+  signal read_pointer           :natural range 0 to buff_size - 1;
   
   --Write pointer
-  signal write_pointer          :natural range 0 to buff_size-1;
+  signal write_pointer          :natural range 0 to buff_size - 1;
   
   --Registered value of read command for eedge detection. 
   signal prev_read              :std_logic;
@@ -339,9 +339,9 @@ begin
 
   -- Address for the Receive data RAM in the CAN Core! Comparator is temporary 
   -- before the data order will be reversed!
-  rec_dram_addr         <= 18-copy_counter when (copy_counter>2
+  rec_dram_addr         <= 18-copy_counter when (copy_counter > 2
 	                                             and
-                                                 copy_counter<19)
+                                                 copy_counter < 19)
                                            else
                            0;
   
@@ -462,7 +462,7 @@ begin
     variable mem_free       : natural range 0 to 2 * buff_size - 1 := buff_size;
     
   begin     
-    if (res_n=ACT_RESET) or (drv_erase_rx='1') then
+    if (res_n = ACT_RESET) or (drv_erase_rx = '1') then
       write_pointer     <= 0;
       read_pointer      <= 0;
       rx_full           <= '0';
@@ -490,7 +490,7 @@ begin
       commit_rx_frame   <= '0';
       
       --Clearing the overRun flag
-      if(drv_clr_ovr='1')then
+      if(drv_clr_ovr = '1')then
        data_overrun_r   <= '0';
       else  
        data_overrun_r   <= data_overrun_r;
@@ -502,10 +502,10 @@ begin
       if ((drv_read_start = '1') and (rx_empty_int = '0'))then 
         
         --Increase the reading pointer
-        read_pointer                <= (read_pointer+1) mod buff_size;
+        read_pointer                <= (read_pointer + 1) mod buff_size;
       
         -- Increase amount of free memory
-        mem_free                    := mem_free+1;
+        mem_free                    := mem_free + 1;
  
       end if;
        
@@ -513,33 +513,33 @@ begin
       --------------------------------------------------------------------------
       --Storing recieved message	
       --------------------------------------------------------------------------
-      if(rec_message_valid='1')then
+      if(rec_message_valid = '1')then
           rec_message_ack <= '1'; --Acknowledge message reception for CAN Core
           
           --If frame is RTR we dont CARE about recieved DLC, that can be arbit-
           --rary due to the rtr preffered behaviour! RTR frame, automatically no
           --data are stored!!!
-          if(rec_is_rtr='1' and rec_frame_type_in='0')then
+          if(rec_is_rtr = '1' and rec_frame_type_in = '0')then
             data_length := 0;
           else
            case rec_dlc_in is
-            when "0000" => data_length:=0; --Zero bits
-            when "0001" => data_length:=1; --1 byte
-            when "0010" => data_length:=1; --2 bytes
-            when "0011" => data_length:=1; --3 bytes
-            when "0100" => data_length:=1; --4 bytes
-            when "0101" => data_length:=2; --5 bytes
-            when "0110" => data_length:=2; --6 bytes
-            when "0111" => data_length:=2; --7 bytes
-            when "1000" => data_length:=2; --8 bytes
-            when "1001" => data_length:=3; --12 bytes
-            when "1010" => data_length:=4; --16 bytes
-            when "1011" => data_length:=5; --20 bytes
-            when "1100" => data_length:=6; --24 bytes
-            when "1101" => data_length:=8; --32 bytes
-            when "1110" => data_length:=12; --48 bytes
-            when "1111" => data_length:=16; --64 bytes
-            when others => data_length:=0;
+            when "0000" => data_length := 0; --Zero bits
+            when "0001" => data_length := 1; --1 byte
+            when "0010" => data_length := 1; --2 bytes
+            when "0011" => data_length := 1; --3 bytes
+            when "0100" => data_length := 1; --4 bytes
+            when "0101" => data_length := 2; --5 bytes
+            when "0110" => data_length := 2; --6 bytes
+            when "0111" => data_length := 2; --7 bytes
+            when "1000" => data_length := 2; --8 bytes
+            when "1001" => data_length := 3; --12 bytes
+            when "1010" => data_length := 4; --16 bytes
+            when "1011" => data_length := 5; --20 bytes
+            when "1100" => data_length := 6; --24 bytes
+            when "1101" => data_length := 8; --32 bytes
+            when "1110" => data_length := 12; --48 bytes
+            when "1111" => data_length := 16; --64 bytes
+            when others => data_length := 0;
           end case;
         end if; 
         
@@ -550,11 +550,10 @@ begin
             memory(write_pointer)       <= frame_form_w;
             
            --Increasing write pointer
-           write_pointer                <= (write_pointer+1) mod buff_size;
-           --mem_free                   := mem_free-4-data_length;
-           mem_free                     := mem_free-1;
+           write_pointer                <= (write_pointer + 1) mod buff_size;
+           mem_free                     := mem_free - 1;
            
-           if(rec_is_rtr='1' and rec_frame_type_in='0')then
+           if(rec_is_rtr = '1' and rec_frame_type_in = '0')then
              data_size    <= 3;
            else
              data_size    <= data_size_comb;
@@ -576,32 +575,31 @@ begin
         ------------------------------------------------------------------------
         --copy_counter decodes which part of received frame to store
         ------------------------------------------------------------------------
-        if(copy_counter=0)then
+        if(copy_counter = 0)then
             memory(write_pointer)       <= "000"&rec_ident_in;
-        elsif(copy_counter=1)then
+        elsif(copy_counter = 1)then
             memory(write_pointer)       <= timestamp(31 downto 0);
-        elsif(copy_counter=2)then
+        elsif(copy_counter = 2)then
             memory(write_pointer)       <= timestamp(63 downto 32);
         end if;
         
-        write_pointer                   <= (write_pointer+1) mod buff_size;
-        copy_counter                    <= copy_counter+1;
+        write_pointer                   <= (write_pointer + 1) mod buff_size;
+        copy_counter                    <= copy_counter + 1;
         data_size                       <= data_size;
         rec_message_ack                 <= '0';
-        
-        mem_free                        := mem_free-1;
+        mem_free                        := mem_free - 1;
       
-      elsif(copy_counter<data_size)then -- Here the data words are stored
+      elsif(copy_counter < data_size)then -- Here the data words are stored
         
         --Optimized implementation of the storing with auxiliarly receive 
         --data RAM
         memory(write_pointer)           <= rec_dram_word;
         
-        write_pointer                   <= (write_pointer+1) mod buff_size;
-        copy_counter                    <= copy_counter+1;
+        write_pointer                   <= (write_pointer + 1) mod buff_size;
+        copy_counter                    <= copy_counter + 1;
         data_size                       <= data_size;
         rec_message_ack                 <= '0';
-        mem_free                        := mem_free-1;
+        mem_free                        := mem_free - 1;
       
       -- Note that we get here if either all words were stored
       elsif (copy_counter = data_size) then
@@ -620,7 +618,7 @@ begin
                                             to_unsigned(mem_free, 13));
   
   --Assigning output whenever memory is full
-  if (mem_free=0) then 
+  if (mem_free = 0) then 
     rx_full                             <= '1';
   else
     rx_full                             <= '0';
