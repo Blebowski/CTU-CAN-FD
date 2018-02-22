@@ -664,6 +664,41 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>RX_SETTINGS</ipxact:name>
+					<ipxact:description>Settings register for FIFO RX Buffer.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h52</ipxact:addressOffset>
+					<ipxact:size>8</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>RTSOP</ipxact:name>
+						<ipxact:displayName>RTSOP</ipxact:displayName>
+						<ipxact:description>Receive buffer Timestamp option.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RTS_END</ipxact:name>
+								<ipxact:displayName>RTS_END</ipxact:displayName>
+								<ipxact:description>Timestamp in on received frame in RX FIFO is captured in the end of the CAN frame (in last bit of EOF field).</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>RTS_BEG</ipxact:name>
+								<ipxact:displayName>RTS_BEG</ipxact:displayName>
+								<ipxact:description>Timestamp in on received frame in RX FIFO is captured in the begining of the CAN frame (in SOF field).</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>INT_ENA</ipxact:name>
 					<ipxact:displayName>INT_ENA</ipxact:displayName>
 					<ipxact:description>Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed.</ipxact:description>

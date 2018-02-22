@@ -384,7 +384,7 @@ package CANconstants is
 
   --RX Buffer
   constant DRV_ERASE_RX_INDEX   : natural := 350;
-  constant DRV_OVR_RX_INDEX     : natural := 351;
+  constant DRV_RTSOPT_INDEX     : natural := 351;
   constant DRV_READ_START_INDEX : natural := 352;
   constant DRV_CLR_OVR_INDEX    : natural := 353;
 
@@ -412,7 +412,8 @@ package CANconstants is
   constant DRV_INT_VECT_ERASE_INDEX : natural := 387;
 
   constant DRV_SAM_INDEX : natural := 372;
-
+  
+  
   ------------------------------------------------------------------------------
   -- CAN Core
   ------------------------------------------------------------------------------

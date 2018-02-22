@@ -86,6 +86,7 @@ package CAN_FD_register_map is
   constant RX_MEM_INFO_ADR           : std_logic_vector(11 downto 0) := x"048";
   constant RX_POINTERS_ADR           : std_logic_vector(11 downto 0) := x"04C";
   constant RX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"050";
+  constant RX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"052";
   constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"054";
   constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"058";
   constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"05C";
@@ -760,6 +761,20 @@ package CAN_FD_register_map is
   constant RX_EMPTY_RSTVAL    : std_logic := '1';
   constant RX_FULL_RSTVAL     : std_logic := '1';
   constant RX_FRC_RSTVAL : std_logic_vector(10 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- RX_SETTINGS register
+  --
+  -- Settings register for FIFO RX Buffer.
+  ------------------------------------------------------------------------------
+  constant RTSOP_IND             : natural := 16;
+
+  -- "RTSOP" field enumerated values
+  constant RTS_END            : std_logic := '0';
+  constant RTS_BEG            : std_logic := '1';
+
+  -- RX_SETTINGS register reset values
+  constant RTSOP_RSTVAL       : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- RX_DATA register
