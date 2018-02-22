@@ -186,8 +186,10 @@
 --                2. Added increment of the rettransmitt counter on arbitration
 --                   lost. This is desirable for new implementation of the
 --                   TXT Buffer finite state machine.
---   21.02.2018   Removed obsolete frame_swap since it is not necessary with
+--   21.02.2018   Removed obsolete "frame_swap" since it is not necessary with
 --                prioritized TX buffers.
+--   22.02.2018   Added "sof_pulse" to signalize start of frame for rest of the
+--                design.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -384,6 +386,9 @@ entity protocolControl is
     --Internal loopBack enabled (for Bus monitoring mode)
     signal int_loop_back_ena      :out  std_logic;
     
+    -- One clock cycle long pulse in SOF
+    signal sof_pulse              :out  std_logic;
+    
     -- Protocol state output
     signal PC_State_out           :out  protocol_type
     
@@ -488,6 +493,7 @@ entity protocolControl is
   --Signal whenever transcieve of SOF bit should be skypped 
   --(detection of DOMINANT in intermission)
   signal sof_skip                 :     std_logic; 
+  signal sof_pulse_r              :     std_logic;
   
   -----------------------
   --Auxiliarly signals --
@@ -656,7 +662,8 @@ entity protocolControl is
   -----------------------
   --Overload registers --
   -----------------------
-  signal ovr_frame_state          :     ovr_frame_type; 
+  signal ovr_frame_state          :     ovr_frame_type;
+  
 
 end entity;
 
@@ -729,6 +736,8 @@ begin
   
   --Pointer into TXT Buffer
   txt_buf_ptr           <=  txt_buf_ptr_r;
+  
+  sof_pulse             <=  sof_pulse_r;
   
   -----------------------
   --Auxiliarly vectors
@@ -884,6 +893,8 @@ begin
       
       rx_parity               <=  '0';
       rx_count_grey           <=  (OTHERS =>'0');
+      
+      sof_pulse_r             <=  '0';
        
     elsif rising_edge(clk_sys)then
         
@@ -1016,6 +1027,8 @@ begin
        rec_dram_bind          <=  rec_dram_bind;
         
        txt_buf_ptr_r          <=  txt_buf_ptr_r;
+       
+       sof_pulse_r            <=  sof_pulse_r;
     
     if(drv_ena='0')then
       PC_State                <=  off;
@@ -1057,7 +1070,7 @@ begin
                 
                 ack_recieved <= '0';
                 crc_check    <= '0';
-                
+                sof_pulse_r  <= '1';
                 -- Bus monitoring mode is disabled
                 if(drv_bus_mon_ena='0')then
                     

@@ -246,7 +246,9 @@ entity core_top is
     signal trv_delay_calib        :out  std_logic;
     
     --Bit error with secondary sampling transciever! 
-    signal bit_Error_sec_sam      :in   std_logic 
+    signal bit_Error_sec_sam      :in   std_logic;
+    
+    signal sof_pulse              :out  std_logic
   
    );
    
@@ -486,6 +488,9 @@ entity core_top is
     --Bus traffic measurment
    signal tx_counter              :     std_logic_vector(31 downto 0);
    signal rx_counter              :     std_logic_vector(31 downto 0);
+   
+   -- Signals start of frame to rest of the design
+   signal sof_pulse_r             :     std_logic;
     
 end entity;
 
@@ -662,7 +667,9 @@ begin
      sp_control         =>  sp_control_int,
      ssp_reset          =>  ssp_reset_int,
      trv_delay_calib    =>  trv_delay_calib_int,
-     bit_err_enable     =>  bit_err_enable_int
+     bit_err_enable     =>  bit_err_enable_int,
+     
+     sof_pulse          =>  sof_pulse_r
     );
 
   faultConf_comp:faultConf 
@@ -841,6 +848,8 @@ begin
  wake_up_valid          <=  '0'; --No slepp mode implemented
  tx_finished            <=  tran_valid;
  
+ sof_pulse              <=  sof_pulse_r;
+ 
  --Note TODO: signal for signalling the shifted bit Rate for interrupt
  br_shifted             <=  br_shifted_int;
  
@@ -991,7 +1000,6 @@ begin
                                         drv_int_loopback_ena='1') 
                                   else
                         data_tx_from_PC;
- 
  
  ---------------------------
  --Bus traffic measurment --

@@ -348,6 +348,9 @@ entity canfd_registers is
   signal RX_buff_read_first     :     boolean;
   signal aux_data               :     std_logic_Vector(31 downto 0);
   
+  -- Receive Timestamp options
+  signal rtsopt                 :     std_logic;
+  
 end entity;
 
 
@@ -414,7 +417,8 @@ architecture rtl of canfd_registers is
     signal CAN_enable             :out  std_logic;
     signal FD_type                :out  std_logic; 
     signal mode_reg               :out  std_logic_vector(5 downto 0);   
-    signal int_ena_reg            :out  std_logic_vector(10 downto 0)
+    signal int_ena_reg            :out  std_logic_vector(10 downto 0);
+    signal rtsopt                 :out  std_logic
   ) is
   begin
     
@@ -523,7 +527,8 @@ architecture rtl of canfd_registers is
     txt_buf_prior(1)       <= TXT2P_RSTVAL;
     txt_buf_prior(2)       <= TXT3P_RSTVAL;
     txt_buf_prior(3)       <= TXT4P_RSTVAL;
-
+    
+    rtsopt                 <= RTSOP_RSTVAL;
   end procedure;
   
   
@@ -698,7 +703,7 @@ begin
        log_capt_config    ,log_cmd                ,rx_ctr_set              ,
        tx_ctr_set         ,ctr_val_set            ,CAN_enable              ,
        FD_type            ,mode_reg               ,
-       int_ena_reg            
+       int_ena_reg        ,rtsopt         
       );
       
       RX_buff_read_first    <= false;
@@ -732,7 +737,7 @@ begin
        log_capt_config    ,log_cmd                ,
        rx_ctr_set         ,tx_ctr_set             ,
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
-       mode_reg           ,int_ena_reg            
+       mode_reg           ,int_ena_reg            ,rtsopt           
       );
            
       RX_buff_read_first    <= false;
@@ -1006,7 +1011,13 @@ begin
                         TXT3P_L, TXT3P_H, sbe);
             write_be_vect(txt_buf_prior(3), 0, 2, data_in,
                         TXT4P_L, TXT4P_H, sbe);   
- 	           
+ 	     
+ 	     -------------------------------------------------------
+			 -- RX_STATUS (RX_SETTINGS is write)
+			 -------------------------------------------------------  
+			 when RX_STATUS_ADR =>
+    			     write_be_s(rtsopt, RTSOP_IND, data_in, sbe);
+ 			      
     			--------------------------------------
     			--Recieve frame counter presetting
     			--------------------------------------
@@ -1310,12 +1321,13 @@ begin
     			   -- RX_STATUS
     			   -------------------------------------------------------  
     			   when RX_STATUS_ADR =>
-    			   
+    			     data_out_int                             <= (OTHERS => '0');
     					  data_out_int(RX_EMPTY_IND)               <=  rx_empty;
     					  data_out_int(RX_FULL_IND)                <=  rx_full;
     					  
     					  data_out_int(RX_FRC_H downto RX_FRC_L)
     					            <= rx_message_count;
+ 					  data_out_int(RTSOP_IND)                  <= rtsopt;
     					
     					
  				  -------------------------------------------------------
@@ -1652,7 +1664,6 @@ begin
   --Note:  All unused signals indices should be assigned to zero!
   drv_bus(80 downto 50)                             <=  (OTHERS=>'0');
   drv_bus(349 downto 330)                           <=  (OTHERS=>'0');
-  drv_bus(351)                                      <=  '0';
   drv_bus(355 downto 354)                           <=  (OTHERS=>'0');
   drv_bus(360 downto 358)                           <=  (OTHERS=>'0');
   drv_bus(362 downto 361)                           <=  (OTHERS=>'0');
@@ -1712,6 +1723,7 @@ begin
   drv_bus(DRV_ERASE_RX_INDEX)                       <=  release_recieve;
   drv_bus(DRV_READ_START_INDEX)                     <=  rx_read_start;
   drv_bus(DRV_CLR_OVR_INDEX)                        <=  clear_overrun;
+  drv_bus(DRV_RTSOPT_INDEX)                         <=  rtsopt;
   
   --TXT Buffer and TX Buffer
   drv_bus(DRV_ERASE_TXT1_INDEX)                     <=  '0';

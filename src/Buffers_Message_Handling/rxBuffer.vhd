@@ -125,6 +125,9 @@
 --                   with new implementation of message counter.
 --                6. Increased maximal buffer depth to 4096, resized output
 --                   vectors accordingly.
+--    22.02.2018  1. Removed obsolete "drv_ovr_rx".
+--                2. Added configurable capturing of timestamp on beginning or
+--                   end of the frame.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -132,6 +135,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.CAN_FD_frame_format.all;
+use work.CAN_FD_register_map.all;
 
 entity rxBuffer is
   GENERIC(
@@ -214,6 +218,9 @@ entity rxBuffer is
     --Some data were discarded, register
     signal rx_data_overrun      :out std_logic;
     
+    -- Signals start of frame for timestamp storing
+    signal sof_pulse            :in  std_logic;
+    
     signal timestamp            :in std_logic_vector(63 downto 0);
     
     ------------------------------------
@@ -234,16 +241,15 @@ entity rxBuffer is
 	--Erase command from driving registers
   signal drv_erase_rx           :std_logic;
   
-  --OverRun behaviour (0 - Discard new message if full,
-  --									 1 - Rewrite the oldest message)
-  signal drv_ovr_rx             :std_logic;
-  
   --Command to load increase the reading pointer
   signal drv_read_start         :std_logic;
   
   --Clear data OverRun Flag
   signal drv_clr_ovr            :std_logic;
   
+  -- Receive Timestamp options
+  signal drv_rtsopt             :std_logic;
+    
   ------------------
   --FIFO  Memory   
   ------------------
@@ -303,6 +309,9 @@ entity rxBuffer is
   -- number of frames must be decremented
   signal read_frame_counter     :natural range 0 to 31;
   
+  --- Internal timestamp captured for storing
+  signal timestamp_capture      :std_logic_vector(63 downto 0);
+  
 end entity;
 
 
@@ -310,9 +319,9 @@ architecture rtl of rxBuffer is
 begin
   --Driving bus aliases
   drv_erase_rx          <= drv_bus(DRV_ERASE_RX_INDEX);
-  drv_ovr_rx            <= drv_bus(DRV_OVR_RX_INDEX);
   drv_read_start        <= drv_bus(DRV_READ_START_INDEX);
   drv_clr_ovr           <= drv_bus(DRV_CLR_OVR_INDEX);
+  drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);
   rx_buf_size           <= std_logic_vector(to_unsigned(buff_size, 13));
   
   --Propagating status registers on output
@@ -367,6 +376,26 @@ begin
   frame_form_w(RWCNT_H downto RWCNT_L)  <=
           std_logic_vector(to_unsigned(data_size_comb, (RWCNT_H - RWCNT_L + 1)));
   frame_form_w(31 downto 16)            <= (OTHERS => '0');
+  
+  
+  ------------------------------------------------------------------------------
+  -- Capturing timestamp at begining or end of the frame depending on config
+  ------------------------------------------------------------------------------
+  capt_ts_proc:process(clk_sys, res_n)
+  begin
+    if (res_n = ACT_RESET) then
+      timestamp_capture       <= (OTHERS => '0');
+    elsif (rising_edge(clk_sys))then
+      timestamp_capture       <= timestamp_capture;
+      
+      if ( (drv_rtsopt = RTS_END and rec_message_valid = '1') or
+           (drv_rtsopt = RTS_BEG and sof_pulse = '1')) 
+      then  
+          timestamp_capture   <= timestamp;
+      end if;
+
+    end if;
+  end process;
   
   
   ------------------------------------------------------------------------------
