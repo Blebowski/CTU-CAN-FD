@@ -578,9 +578,9 @@ begin
         if(copy_counter = 0)then
             memory(write_pointer)       <= "000"&rec_ident_in;
         elsif(copy_counter = 1)then
-            memory(write_pointer)       <= timestamp(31 downto 0);
+            memory(write_pointer)       <= timestamp_capture(31 downto 0);
         elsif(copy_counter = 2)then
-            memory(write_pointer)       <= timestamp(63 downto 32);
+            memory(write_pointer)       <= timestamp_capture(63 downto 32);
         end if;
         
         write_pointer                   <= (write_pointer + 1) mod buff_size;
