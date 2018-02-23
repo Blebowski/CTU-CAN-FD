@@ -232,7 +232,8 @@ architecture behavioral of sanity_test is
     if (frame.ident_type = '0') then
       memory(pointer+3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
                         ident_vect(10 downto 0);
-
+      memory(pointer+3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
+                        (OTHERS => '0');
     -- Extended Identifier
     else
       memory(pointer+3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
@@ -395,37 +396,33 @@ architecture behavioral of sanity_test is
     signal      com_id   : in    natural
   )is
   variable aux_vect    : std_logic_vector(28 downto 0);
+  variable aux_common  : std_logic_vector(28 downto 0);
   variable rand_val    : real;
   variable rand_index  : natural;
-  variable vect_comm   : std_logic_vector(28 downto 0);
   begin
     
-    -------------------------------------------
+    ---------------------------------------------
     -- Correct first bits to have interesting
     -- arbitration...
-    -------------------------------------------
+   -- Correct the last bits to avoid collisions 
+    ---------------------------------------------
     rand_real_v(rand_ctr,rand_val);
-    
-    if(frame.ident_type =EXTENDED)then
-      rand_index := integer(6.0*rand_val);
+    aux_common := std_logic_vector(to_unsigned(com_id, 29));
+      
+    if (frame.ident_type = EXTENDED)then
+      rand_index := integer(25.0 * rand_val);
+      aux_vect   := std_logic_vector(to_unsigned(frame.identifier, 29));
+      aux_vect (28 downto 28 - rand_index) := 
+                    aux_common(28 downto 28 - rand_index);
     else
-      rand_index := integer(24.0*rand_val);
+      rand_index := integer(7.0 * rand_val);
+      aux_vect   := "000000000000000000" &
+                    std_logic_vector(to_unsigned(frame.identifier, 11));
+      aux_vect (10 downto 10 - rand_index) := 
+                    aux_common(10 downto 10 - rand_index);
     end if;
-    
-    aux_vect := std_logic_vector(to_unsigned(frame.identifier,29));
-    vect_comm := std_logic_vector(to_unsigned(com_id,29));
-    
-    aux_vect (28 downto 28-rand_index) := vect_comm(28 downto 28-rand_index);
-    frame.identifier := to_integer(unsigned(aux_vect));
-    
-    -------------------------------------------
-    -- Correct the last two bits
-    -------------------------------------------
-    aux_vect := std_logic_vector(to_unsigned(frame.identifier,29)); 
-    --We set last bits of base to be equal to controller index. This
-    --way identifiers from each controller are unique
-      aux_vect (2 downto 0)   := std_logic_vector(to_unsigned(index,3));
-    frame.identifier := to_integer(unsigned(aux_vect));
+    aux_vect (2 downto 0)   := std_logic_vector(to_unsigned(index, 3));
+    frame.identifier        := to_integer(unsigned(aux_vect));
   
   end procedure;
   
