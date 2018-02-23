@@ -694,7 +694,7 @@ Address: 0x0
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Frame format word with basic frame information.
+Frame format word with CAN frame metadata.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -1672,37 +1672,37 @@ X\end_layout
 DLC Data length code as defined in CAN FD Specification.
 \end_layout
 \begin_layout Description
-RTR Remote transmission request flag\begin_inset Newline newline\end_inset
-		0b0  - NO_RTR_FRAME - \begin_inset Newline newline\end_inset
-		0b1  - RTR_FRAME - 
+RTR Remote transmission request flag. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
+		0b0  - NO_RTR_FRAME - CAN frame is not RTR frame.\begin_inset Newline newline\end_inset
+		0b1  - RTR_FRAME - CAN frame is RTR frame.
 \end_layout
 \begin_layout Description
-ID_TYPE Identifier type\begin_inset Newline newline\end_inset
-		0b0  - BASE - \begin_inset Newline newline\end_inset
-		0b1  - EXTENDED - 
+ID_TYPE Identifier type. Distinguishes between Base and Extended Identifiers.\begin_inset Newline newline\end_inset
+		0b0  - BASE - Frame Identifier is Basic (11 bits)\begin_inset Newline newline\end_inset
+		0b1  - EXTENDED - Frame Identifier is Extended (11 + 18 bits)
 \end_layout
 \begin_layout Description
-FR_TYPE Frame type\begin_inset Newline newline\end_inset
-		0b0  - NORMAL_CAN - \begin_inset Newline newline\end_inset
-		0b1  - FD_CAN - 
+FR_TYPE Frame type. Distinguishes between CAN and CAN FD Frames.\begin_inset Newline newline\end_inset
+		0b0  - NORMAL_CAN - Frame is CAN frame.\begin_inset Newline newline\end_inset
+		0b1  - FD_CAN - Frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-TBF Time base format\begin_inset Newline newline\end_inset
-		0b0  - NOT_TIME_BASED - \begin_inset Newline newline\end_inset
-		0b1  - TIME_BASED - 
+TBF Time base format. Should be always set to 1.\begin_inset Newline newline\end_inset
+		0b0  - NOT_TIME_BASED - TIMESTAMP_L and TIMESTAMP_H does not contain valid timestamp for transmission or reception.\begin_inset Newline newline\end_inset
+		0b1  - TIME_BASED - TIMESTAMP_L and TIMESTAMP_H contain valid timestamp for transmission or reception.
 \end_layout
 \begin_layout Description
-BRS Bit rate shift bit\begin_inset Newline newline\end_inset
-		0b0  - BR_NO_SHIFT - \begin_inset Newline newline\end_inset
-		0b1  - BR_SHIFT - 
+BRS Bit rate shift. In case of CAN FD frames indicates whether Bit-rate should be shifted during Data phase. This bit has no meaning for CAN Frames.\begin_inset Newline newline\end_inset
+		0b0  - BR_NO_SHIFT - Bit rate should not be shifted if frame is CAN FD frame.\begin_inset Newline newline\end_inset
+		0b1  - BR_SHIFT - Bit rate should be shifted if frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-ESI_RESVD Error state indicator bit for received frames. Reserved for transmitted frames.\begin_inset Newline newline\end_inset
-		0b0  - ESI_ERR_ACTIVE - \begin_inset Newline newline\end_inset
-		0b1  - ESI_ERR_PASIVE - 
+ESI_RESVD Error state indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames.\begin_inset Newline newline\end_inset
+		0b0  - ESI_ERR_ACTIVE - Transmitted of received CAN FD frame is error active.\begin_inset Newline newline\end_inset
+		0b1  - ESI_ERR_PASIVE - Transmitted of received CAN FD frame is error passive.
 \end_layout
 \begin_layout Description
-RWCNT Number of words this frame takes in the RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame WCNT=3, 64 Byte FD frame WCNT=19). In TX Buffer this field has no meaning.
+RWCNT Size of the CAN frame in RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT Buffer this field has no meaning.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -1856,7 +1856,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_EXT[17:13]\end_layout
+IDENTIFIER_BASE[10:6]\end_layout
 
 \end_inset
 </cell>
@@ -1864,7 +1864,7 @@ IDENTIFIER_EXT[17:13]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_EXT[17:13]\end_layout
+IDENTIFIER_BASE[10:6]\end_layout
 
 \end_inset
 </cell>
@@ -1872,7 +1872,7 @@ IDENTIFIER_EXT[17:13]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_EXT[17:13]\end_layout
+IDENTIFIER_BASE[10:6]\end_layout
 
 \end_inset
 </cell>
@@ -1880,7 +1880,7 @@ IDENTIFIER_EXT[17:13]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_EXT[17:13]\end_layout
+IDENTIFIER_BASE[10:6]\end_layout
 
 \end_inset
 </cell>
@@ -1888,7 +1888,7 @@ IDENTIFIER_EXT[17:13]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_EXT[17:13]\end_layout
+IDENTIFIER_BASE[10:6]\end_layout
 
 \end_inset
 </cell>
@@ -2071,59 +2071,59 @@ Field name\end_layout
 
 \end_inset
 </cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_BASE[5:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_BASE[5:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_BASE[5:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_BASE[5:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_BASE[5:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_BASE[5:0]\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
+IDENTIFIER_EXT[17:16]\end_layout
 
 \end_inset
 </cell>
@@ -2131,7 +2131,7 @@ IDENTIFIER_EXT[12:5]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_EXT[12:5]\end_layout
+IDENTIFIER_EXT[17:16]\end_layout
 
 \end_inset
 </cell>
@@ -2314,51 +2314,11 @@ Field name\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[4:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[4:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[4:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[4:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-IDENTIFIER_EXT[4:0]\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[10:8]\end_layout
+IDENTIFIER_EXT[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -2366,7 +2326,47 @@ IDENTIFIER_BASE[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[10:8]\end_layout
+IDENTIFIER_EXT[15:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_EXT[15:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_EXT[15:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_EXT[15:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_EXT[15:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDENTIFIER_EXT[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -2374,7 +2374,7 @@ IDENTIFIER_BASE[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[10:8]\end_layout
+IDENTIFIER_EXT[15:8]\end_layout
 
 \end_inset
 </cell>
@@ -2561,7 +2561,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2569,7 +2569,7 @@ IDENTIFIER_BASE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2577,7 +2577,7 @@ IDENTIFIER_BASE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2585,7 +2585,7 @@ IDENTIFIER_BASE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2593,7 +2593,7 @@ IDENTIFIER_BASE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2601,7 +2601,7 @@ IDENTIFIER_BASE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2609,7 +2609,7 @@ IDENTIFIER_BASE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2617,7 +2617,7 @@ IDENTIFIER_BASE[7:0]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-IDENTIFIER_BASE[7:0]\end_layout
+IDENTIFIER_EXT[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -2703,10 +2703,10 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-IDENTIFIER_BASE 
+IDENTIFIER_EXT Extended Identifier of CAN frame. Has meaning only if ID_TYPE of FRAME_FORMAT_W is EXTENDED.
 \end_layout
 \begin_layout Description
-IDENTIFIER_EXT 
+IDENTIFIER_BASE Base Identifier of CAN frame
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

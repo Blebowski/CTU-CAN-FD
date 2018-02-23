@@ -62,7 +62,7 @@ package CAN_FD_frame_format is
   ------------------------------------------------------------------------------
   -- FRAME_FORM_W register
   --
-  -- Frame format word with basic frame information.
+  -- Frame format word with CAN frame metadata.
   ------------------------------------------------------------------------------
   constant DLC_L                  : natural := 0;
   constant DLC_H                  : natural := 3;
@@ -106,10 +106,10 @@ package CAN_FD_frame_format is
   --
   -- CAN Identifier
   ------------------------------------------------------------------------------
-  constant IDENTIFIER_BASE_L      : natural := 0;
-  constant IDENTIFIER_BASE_H     : natural := 10;
-  constant IDENTIFIER_EXT_L      : natural := 11;
-  constant IDENTIFIER_EXT_H      : natural := 28;
+  constant IDENTIFIER_EXT_L       : natural := 0;
+  constant IDENTIFIER_EXT_H      : natural := 17;
+  constant IDENTIFIER_BASE_L     : natural := 18;
+  constant IDENTIFIER_BASE_H     : natural := 28;
 
   -- IDENTIFIER_W register reset values
 

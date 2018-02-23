@@ -49,6 +49,8 @@
 --                from IP-XACT.
 --    09.02.2018  Added support fow RWCNT field in the SW_CAN_Frame.
 --    15.02.2018  Added support for TXT Buffer commands in CAN Send frame procedure.
+--    23.02.2018  Corrected "CAN_generate_frame" function for proper placement of BASE identifier to unsigned
+--                value.
 -------------------------------------------------------------------------------------------------------------
 
 
@@ -1057,7 +1059,6 @@ procedure process_error
       rand_logic_vect_v(rand_ctr,frame.dlc,0.3);
       
       rand_real_v(rand_ctr,rand_value);
-      rand_value := rand_value*536870911.0;
       
       --We generate only valid frame combinations to avoid problems...
       -- FD frames has no RTR frame, neither the RTR field!
@@ -1069,12 +1070,17 @@ procedure process_error
         frame.brs := BR_NO_SHIFT;
       end if; 
       
-      --Cut the identifier if it is base!
-      aux := std_logic_vector(to_unsigned(integer(rand_value),29));
+      -- If base identifier, the lowest bits of unsigned ID contain the
+      -- basic value!
+      aux := (OTHERS => '0');
       if(frame.ident_type = BASE)then
-        aux(17 downto 0):= (OTHERS => '0');
+        rand_value := rand_value * 2047.0;
+        aux(10 downto 0) := std_logic_vector(to_unsigned(integer(rand_value), 11)); 
+      else
+        rand_value := rand_value * 536870911.0;
+        aux(28 downto 0) := std_logic_vector(to_unsigned(integer(rand_value), 29)); 
       end if;
-      frame.identifier:=to_integer(unsigned(aux));
+      frame.identifier := to_integer(unsigned(aux));
       
       decode_dlc_v(frame.dlc,frame.data_length);
       frame.timestamp:=(OTHERS => '0');
@@ -1271,10 +1277,16 @@ procedure process_error
    --Identifier
    w_data := (OTHERS => '0');
    if(frame.ident_type=EXTENDED)then
+      if (frame.identifier > 536870911) then
+        report "Extended Identifier Exceeds the maximal value!" severity error;
+      end if;
       ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
       w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(28 downto 18);
       w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := ident_vect(17 downto 0);
    else
+      if (frame.identifier > 2047) then
+        report "Base Identifier Exceeds the maximal value!" severity error;
+      end if;
       ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
       w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
    end if;

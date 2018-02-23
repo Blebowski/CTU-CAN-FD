@@ -42,11 +42,13 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    17.1.2016   Created file
+--   23.02.2018   Added explicit order on Base and Extended identifiers.
 --------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
+use work.CAN_FD_frame_format.all;
 
 package ID_transfer is
 
@@ -70,8 +72,8 @@ package body ID_transfer is
     variable ext  : std_logic_vector(17 downto 0);
     variable conc : std_logic_vector(28 downto 0);
   begin
-    base   := ID_reg(10 downto 0);
-    ext    := ID_reg(28 downto 11);
+    base   := ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+    ext    := ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
     conc   := base&ext;
     ID_dec <= to_integer(unsigned(conc));
   end procedure ID_reg_to_decimal;
@@ -82,7 +84,10 @@ package body ID_transfer is
     variable vector : std_logic_vector(28 downto 0);
   begin
     vector := std_logic_vector(to_unsigned(ID_dec, 29));
-    ID_reg <= vector(18 downto 0)&vector(28 downto 19);
+    ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) 
+          <= vector(28 downto 18);    
+    ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) 
+          <= vector(17 downto 0);
   end procedure ID_decimal_to_reg;
 
 end ID_transfer;

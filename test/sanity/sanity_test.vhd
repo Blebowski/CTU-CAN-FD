@@ -224,8 +224,32 @@ architecture behavioral of sanity_test is
     memory(pointer+2) <= frame.timestamp(31 downto 0);
     
     --Identifier
-    ident_vect := std_logic_vector(to_unsigned(frame.identifier,29)); 
-    memory(pointer+3) <= "000"&ident_vect(17 downto 0)&ident_vect(28 downto 18);
+    
+    if (frame.ident_type = BASE and frame.identifier > 2047) then
+      report "Incorrect BASE Identifier length" severity error;
+    elsif (frame.ident_type = EXTENDED and frame.identifier > 536870911) then
+      report "Incorrect EXTENDED Identifier length" severity error;
+    end if;
+    
+    ident_vect := std_logic_vector(to_unsigned(frame.identifier, 29));
+   
+    memory(pointer+3)(31 downto 29) <= "000";
+    
+    -- Base Identifier
+    if (frame.ident_type = BASE) then
+      memory(pointer+3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
+                        ident_vect(10 downto 0);
+      memory(pointer+3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
+                        (OTHERS => '0');
+    -- Extended Identifier
+    elsif (frame.ident_type = EXTENDED) then
+      memory(pointer+3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
+                        ident_vect(17 downto 0);
+      memory(pointer+3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
+                        ident_vect(28 downto 18);
+    else
+      report "Unsupported Identifier type" severity error;
+    end if;
     
     pointer           <= pointer+4;
     wait for 0 ns;
@@ -276,7 +300,18 @@ architecture behavioral of sanity_test is
     pointer           :=pointer+2;
     
     --Identifier
-    aux_vect          := memory(mem_index)(pointer)(10 downto 0)&memory(mem_index)(pointer)(28 downto 11);
+    if (frame.ident_type = BASE) then
+      aux_vect        := "000000000000000000" & memory(mem_index)(pointer)
+                                 (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+    elsif (frame.ident_type = EXTENDED) then
+      aux_vect        := memory(mem_index)(pointer)
+                               (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L)&
+                         memory(mem_index)(pointer)
+                               (IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+    else
+      report "Unsupported Identifier type" severity error;
+    end if;
+           
     frame.identifier  := to_integer(unsigned(aux_vect));
     pointer           := pointer +1;
     
@@ -372,37 +407,33 @@ architecture behavioral of sanity_test is
     signal      com_id   : in    natural
   )is
   variable aux_vect    : std_logic_vector(28 downto 0);
+  variable aux_common  : std_logic_vector(28 downto 0);
   variable rand_val    : real;
   variable rand_index  : natural;
-  variable vect_comm   : std_logic_vector(28 downto 0);
   begin
     
-    -------------------------------------------
+    ---------------------------------------------
     -- Correct first bits to have interesting
     -- arbitration...
-    -------------------------------------------
+   -- Correct the last bits to avoid collisions 
+    ---------------------------------------------
     rand_real_v(rand_ctr,rand_val);
-    
-    if(frame.ident_type =EXTENDED)then
-      rand_index := integer(6.0*rand_val);
+    aux_common := std_logic_vector(to_unsigned(com_id, 29));
+      
+    if (frame.ident_type = EXTENDED)then
+      rand_index := integer(25.0 * rand_val);
+      aux_vect   := std_logic_vector(to_unsigned(frame.identifier, 29));
+      aux_vect (28 downto 28 - rand_index) := 
+                    aux_common(28 downto 28 - rand_index);
     else
-      rand_index := integer(24.0*rand_val);
+      rand_index := integer(7.0 * rand_val);
+      aux_vect   := "000000000000000000" &
+                    std_logic_vector(to_unsigned(frame.identifier, 11));
+      aux_vect (10 downto 10 - rand_index) := 
+                    aux_common(28 downto 28 - rand_index);
     end if;
-    
-    aux_vect := std_logic_vector(to_unsigned(frame.identifier,29));
-    vect_comm := std_logic_vector(to_unsigned(com_id,29));
-    
-    aux_vect (28 downto 28-rand_index) := vect_comm(28 downto 28-rand_index);
-    frame.identifier := to_integer(unsigned(aux_vect));
-    
-    -------------------------------------------
-    -- Correct the last two bits
-    -------------------------------------------
-    aux_vect := std_logic_vector(to_unsigned(frame.identifier,29)); 
-    --We set last bits of base to be equal to controller index. This
-    --way identifiers from each controller are unique
-      aux_vect (2 downto 0)   := std_logic_vector(to_unsigned(index,3));
-    frame.identifier := to_integer(unsigned(aux_vect));
+    aux_vect (2 downto 0)   := std_logic_vector(to_unsigned(index, 3));
+    frame.identifier        := to_integer(unsigned(aux_vect));
   
   end procedure;
   

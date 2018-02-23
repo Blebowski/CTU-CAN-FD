@@ -50,6 +50,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
+use work.CAN_FD_frame_format.all;
 
 entity tranBuffer is 
   port(
@@ -127,8 +128,8 @@ begin
     tran_brs_reg          <=  '0';
   elsif rising_edge(clk_sys)then 
     if(frame_store='1')then
-      tran_ident_base_reg <=  tran_ident_in(10 downto 0);
-      tran_ident_ext_reg  <=  tran_ident_in(28 downto 11);
+      tran_ident_base_reg <=  tran_ident_in(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+      tran_ident_ext_reg  <=  tran_ident_in(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
       tran_dlc_reg        <=  tran_dlc_in;
       tran_is_rtr_reg     <=  tran_is_rtr_in;
       tran_ident_type_reg <=  tran_ident_type_in;

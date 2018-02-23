@@ -3398,7 +3398,7 @@
 				<ipxact:register>
 					<ipxact:name>FRAME_FORM_W</ipxact:name>
 					<ipxact:displayName>FRAME_FORM_W</ipxact:displayName>
-					<ipxact:description>Frame format word with basic frame information.</ipxact:description>
+					<ipxact:description>Frame format word with CAN frame metadata.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -3412,18 +3412,20 @@
 					<ipxact:field>
 						<ipxact:name>RTR</ipxact:name>
 						<ipxact:displayName>RTR</ipxact:displayName>
-						<ipxact:description>Remote transmission request flag</ipxact:description>
+						<ipxact:description>Remote transmission request flag. Has meaning only for CAN frames. CAN FD does not have RTR frames.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>RTR_FRAME</ipxact:name>
 								<ipxact:displayName>RTR_FRAME</ipxact:displayName>
+								<ipxact:description>CAN frame is RTR frame.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>NO_RTR_FRAME</ipxact:name>
 								<ipxact:displayName>NO_RTR_FRAME</ipxact:displayName>
+								<ipxact:description>CAN frame is not RTR frame.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -3431,18 +3433,20 @@
 					<ipxact:field>
 						<ipxact:name>ID_TYPE</ipxact:name>
 						<ipxact:displayName>ID_TYPE</ipxact:displayName>
-						<ipxact:description>Identifier type</ipxact:description>
+						<ipxact:description>Identifier type. Distinguishes between Base and Extended Identifiers.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>BASE</ipxact:name>
 								<ipxact:displayName>BASE</ipxact:displayName>
+								<ipxact:description>Frame Identifier is Basic (11 bits)</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>EXTENDED</ipxact:name>
 								<ipxact:displayName>EXTENDED</ipxact:displayName>
+								<ipxact:description>Frame Identifier is Extended (11 + 18 bits)</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -3450,18 +3454,20 @@
 					<ipxact:field>
 						<ipxact:name>FR_TYPE</ipxact:name>
 						<ipxact:displayName>FR_TYPE</ipxact:displayName>
-						<ipxact:description>Frame type</ipxact:description>
+						<ipxact:description>Frame type. Distinguishes between CAN and CAN FD Frames.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>NORMAL_CAN</ipxact:name>
 								<ipxact:displayName>NORMAL_CAN</ipxact:displayName>
+								<ipxact:description>Frame is CAN frame.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>FD_CAN</ipxact:name>
 								<ipxact:displayName>FD_CAN</ipxact:displayName>
+								<ipxact:description>Frame is CAN FD frame.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -3469,18 +3475,20 @@
 					<ipxact:field>
 						<ipxact:name>TBF</ipxact:name>
 						<ipxact:displayName>TBF</ipxact:displayName>
-						<ipxact:description>Time base format</ipxact:description>
+						<ipxact:description>Time base format. Should be always set to 1.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>TIME_BASED</ipxact:name>
 								<ipxact:displayName>TIME_BASED</ipxact:displayName>
+								<ipxact:description>TIMESTAMP_L and TIMESTAMP_H contain valid timestamp for transmission or reception.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>NOT_TIME_BASED</ipxact:name>
 								<ipxact:displayName>NOT_TIME_BASED</ipxact:displayName>
+								<ipxact:description>TIMESTAMP_L and TIMESTAMP_H does not contain valid timestamp for transmission or reception.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -3488,18 +3496,20 @@
 					<ipxact:field>
 						<ipxact:name>BRS</ipxact:name>
 						<ipxact:displayName>BRS</ipxact:displayName>
-						<ipxact:description>Bit rate shift bit</ipxact:description>
+						<ipxact:description>Bit rate shift. In case of CAN FD frames indicates whether Bit-rate should be shifted during Data phase. This bit has no meaning for CAN Frames.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>BR_SHIFT</ipxact:name>
 								<ipxact:displayName>BR_SHIFT</ipxact:displayName>
+								<ipxact:description>Bit rate should be shifted if frame is CAN FD frame.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>BR_NO_SHIFT</ipxact:name>
 								<ipxact:displayName>BR_NO_SHIFT</ipxact:displayName>
+								<ipxact:description>Bit rate should not be shifted if frame is CAN FD frame.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -3507,18 +3517,20 @@
 					<ipxact:field>
 						<ipxact:name>ESI_RESVD</ipxact:name>
 						<ipxact:displayName>ESI_RESVD</ipxact:displayName>
-						<ipxact:description>Error state indicator bit for received frames. Reserved for transmitted frames.</ipxact:description>
+						<ipxact:description>Error state indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ESI_ERR_ACTIVE</ipxact:name>
 								<ipxact:displayName>ESI_ERR_ACTIVE</ipxact:displayName>
+								<ipxact:description>Transmitted of received CAN FD frame is error active.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ESI_ERR_PASIVE</ipxact:name>
 								<ipxact:displayName>ESI_ERR_PASSIVE</ipxact:displayName>
+								<ipxact:description>Transmitted of received CAN FD frame is error passive.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -3526,7 +3538,7 @@
 					<ipxact:field>
 						<ipxact:name>RWCNT</ipxact:name>
 						<ipxact:displayName>RWCNT</ipxact:displayName>
-						<ipxact:description>Number of words this frame takes in the RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame WCNT=3, 64 Byte FD frame WCNT=19). In TX Buffer this field has no meaning.</ipxact:description>
+						<ipxact:description>Size of the CAN frame in RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT Buffer this field has no meaning.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:bitWidth>5</ipxact:bitWidth>
 					</ipxact:field>
@@ -3540,12 +3552,14 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>IDENTIFIER_BASE</ipxact:name>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:description>Base Identifier of CAN frame</ipxact:description>
+						<ipxact:bitOffset>18</ipxact:bitOffset>
 						<ipxact:bitWidth>11</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>IDENTIFIER_EXT</ipxact:name>
-						<ipxact:bitOffset>11</ipxact:bitOffset>
+						<ipxact:description>Extended Identifier of CAN frame. Has meaning only if ID_TYPE of FRAME_FORMAT_W is EXTENDED.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>18</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
