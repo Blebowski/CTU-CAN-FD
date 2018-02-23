@@ -224,8 +224,22 @@ architecture behavioral of sanity_test is
     memory(pointer+2) <= frame.timestamp(31 downto 0);
     
     --Identifier
-    ident_vect := std_logic_vector(to_unsigned(frame.identifier,29)); 
-    memory(pointer+3) <= "000"&ident_vect(17 downto 0)&ident_vect(28 downto 18);
+    ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
+    
+    memory(pointer+3)(31 downto 29) <= "000";
+    
+    -- Base Identifier
+    if (frame.ident_type = '0') then
+      memory(pointer+3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
+                        ident_vect(10 downto 0);
+
+    -- Extended Identifier
+    else
+      memory(pointer+3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
+                        ident_vect(17 downto 0);
+      memory(pointer+3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
+                        ident_vect(28 downto 28);
+    end if;
     
     pointer           <= pointer+4;
     wait for 0 ns;
@@ -276,7 +290,16 @@ architecture behavioral of sanity_test is
     pointer           :=pointer+2;
     
     --Identifier
-    aux_vect          := memory(mem_index)(pointer)(10 downto 0)&memory(mem_index)(pointer)(28 downto 11);
+    if (frame.frame_format = '0') then
+      aux_vect        := "000000000000000000" & memory(mem_index)(pointer)
+                                 (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+    else
+      aux_vect        := memory(mem_index)(pointer)
+                               (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L)&
+                         memory(mem_index)(pointer)
+                               (IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+    end if;
+                 
     frame.identifier  := to_integer(unsigned(aux_vect));
     pointer           := pointer +1;
     
