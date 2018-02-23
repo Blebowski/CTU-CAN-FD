@@ -1078,7 +1078,7 @@ procedure process_error
         aux(10 downto 0) := std_logic_vector(to_unsigned(integer(rand_value), 11)); 
       else
         rand_value := rand_value * 536870911.0;
-        aux(27 downto 0) := std_logic_vector(to_unsigned(integer(rand_value), 28)); 
+        aux(28 downto 0) := std_logic_vector(to_unsigned(integer(rand_value), 29)); 
       end if;
       frame.identifier := to_integer(unsigned(aux));
       
