@@ -190,6 +190,7 @@
 --                prioritized TX buffers.
 --   22.02.2018   Added "sof_pulse" to signalize start of frame for rest of the
 --                design.
+--   23.02.2018   Swapped Identifier Base and Extended on received identifier.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -724,7 +725,9 @@ begin
   sync_control          <=  sync_control_r;
   
   --Recieved data registers to output propagation
-  rec_ident             <=  rec_ident_ext_sr&rec_ident_base_sr;
+  rec_ident(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <= rec_ident_base_sr;
+  rec_ident(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L)   <= rec_ident_ext_sr;
+  
   rec_dlc               <=  rec_dlc_r;
   rec_is_rtr            <=  rec_is_rtr_r;
   rec_ident_type        <=  rec_ident_type_r;
