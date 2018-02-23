@@ -224,22 +224,31 @@ architecture behavioral of sanity_test is
     memory(pointer+2) <= frame.timestamp(31 downto 0);
     
     --Identifier
-    ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
     
+    if (frame.ident_type = BASE and frame.identifier > 2047) then
+      report "Incorrect BASE Identifier length" severity error;
+    elsif (frame.ident_type = EXTENDED and frame.identifier > 536870911) then
+      report "Incorrect EXTENDED Identifier length" severity error;
+    end if;
+    
+    ident_vect := std_logic_vector(to_unsigned(frame.identifier, 29));
+   
     memory(pointer+3)(31 downto 29) <= "000";
     
     -- Base Identifier
-    if (frame.ident_type = '0') then
+    if (frame.ident_type = BASE) then
       memory(pointer+3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
                         ident_vect(10 downto 0);
       memory(pointer+3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
                         (OTHERS => '0');
     -- Extended Identifier
-    else
+    elsif (frame.ident_type = EXTENDED) then
       memory(pointer+3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
                         ident_vect(17 downto 0);
       memory(pointer+3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
-                        ident_vect(28 downto 28);
+                        ident_vect(28 downto 18);
+    else
+      report "Unsupported Identifier type" severity error;
     end if;
     
     pointer           <= pointer+4;
@@ -291,16 +300,18 @@ architecture behavioral of sanity_test is
     pointer           :=pointer+2;
     
     --Identifier
-    if (frame.frame_format = '0') then
+    if (frame.ident_type = BASE) then
       aux_vect        := "000000000000000000" & memory(mem_index)(pointer)
                                  (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-    else
+    elsif (frame.ident_type = EXTENDED) then
       aux_vect        := memory(mem_index)(pointer)
                                (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L)&
                          memory(mem_index)(pointer)
                                (IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+    else
+      report "Unsupported Identifier type" severity error;
     end if;
-                 
+           
     frame.identifier  := to_integer(unsigned(aux_vect));
     pointer           := pointer +1;
     
@@ -419,7 +430,7 @@ architecture behavioral of sanity_test is
       aux_vect   := "000000000000000000" &
                     std_logic_vector(to_unsigned(frame.identifier, 11));
       aux_vect (10 downto 10 - rand_index) := 
-                    aux_common(10 downto 10 - rand_index);
+                    aux_common(28 downto 28 - rand_index);
     end if;
     aux_vect (2 downto 0)   := std_logic_vector(to_unsigned(index, 3));
     frame.identifier        := to_integer(unsigned(aux_vect));

@@ -1277,10 +1277,16 @@ procedure process_error
    --Identifier
    w_data := (OTHERS => '0');
    if(frame.ident_type=EXTENDED)then
+      if (frame.identifier > 536870911) then
+        report "Extended Identifier Exceeds the maximal value!" severity error;
+      end if;
       ident_vect := std_logic_vector(to_unsigned(frame.identifier,29));
       w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(28 downto 18);
       w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := ident_vect(17 downto 0);
    else
+      if (frame.identifier > 2047) then
+        report "Base Identifier Exceeds the maximal value!" severity error;
+      end if;
       ident_vect := "000000000000000000"&std_logic_vector(to_unsigned(frame.identifier,11));
       w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := ident_vect(10 downto 0);
    end if;
