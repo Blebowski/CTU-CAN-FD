@@ -16,7 +16,7 @@ entity CTU_CAN_FD_v1_0 is
   );
   port(
     -- system clock and reset from AXI
-    int              : out std_logic;
+    irq              : out std_logic;
     CAN_tx           : out std_logic;
     CAN_rx           : in  std_logic;
     time_quanta_clk  : out std_logic;
@@ -155,7 +155,7 @@ begin
       swr             => reg_wren,
       sbe             => reg_be,
 
-      int             => int,
+      int             => irq,
 
       CAN_tx          => CAN_tx,
       CAN_rx          => CAN_rx,

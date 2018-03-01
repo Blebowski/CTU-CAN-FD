@@ -98,7 +98,6 @@ architecture rtl of axi_ifc is
   signal axi_bvalid  : std_logic;
   signal axi_araddr  : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
   signal axi_arready  : std_logic;
-  signal axi_rdata  : std_logic_vector(C_S_AXI_DATA_WIDTH-1 downto 0);
   signal axi_rresp  : std_logic_vector(1 downto 0);
   signal axi_rvalid  : std_logic;
 
@@ -115,7 +114,6 @@ begin
   S_AXI_BRESP   <= axi_bresp;
   S_AXI_BVALID  <= axi_bvalid;
   S_AXI_ARREADY <= axi_arready;
-  S_AXI_RDATA   <= axi_rdata;
   S_AXI_RRESP   <= axi_rresp;
   S_AXI_RVALID  <= axi_rvalid;
 
@@ -169,6 +167,7 @@ begin
 
         axi_arready <= '1';
         axi_rvalid <= '1';
+        axi_rresp <= "00"; -- OK
       elsif (want_to_write = '1') then
         reg_addr_o <= S_AXI_AWADDR;
         reg_be_o <= S_AXI_WSTRB;
