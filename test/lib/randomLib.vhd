@@ -829,6 +829,14 @@ procedure rand_real(signal real_ctr   : inout natural range 0 to RAND_POOL_SIZE;
 procedure rand_real_v(signal real_ctr   : inout natural range 0 to RAND_POOL_SIZE;
                       variable retval     : out   real);
 
+procedure rand_int(signal real_ctr   : inout natural range 0 to RAND_POOL_SIZE;
+                   constant max      : in    positive;
+                   signal retval     : out   natural);
+
+procedure rand_int_vv_nowait(variable real_ctr   : inout natural range 0 to RAND_POOL_SIZE;
+                     constant max      : in    positive;
+                     variable retval   : out   natural);
+
 procedure rand_logic(signal real_ctr  : inout natural range 0 to RAND_POOL_SIZE;
                      signal retval    : out std_logic;
                      constant chances : in real    );
@@ -849,7 +857,11 @@ procedure rand_logic_vect_bt(signal real_ctr   : inout natural range 0 to RAND_P
 procedure rand_logic_vect_v(signal    real_ctr  : inout natural range 0 to RAND_POOL_SIZE;
                             variable  retVal    : out   std_logic_vector;
                             constant  chances   : in    real    );
-                        
+
+procedure rand_logic_vect_vs_nowait(variable real_ctr  : inout natural range 0 to RAND_POOL_SIZE;
+                            signal    retVal    : out   std_logic_vector;
+                            constant  chances   : in    real    );
+
 procedure rand_gauss_v(signal   rand_ctr            : inout natural range 0 to RAND_POOL_SIZE;
                        signal   iter_amount         : in    natural;
                        signal   mean                : in    real;
@@ -894,6 +906,31 @@ package body randomLib is
      
   end PROCEDURE;
   
+  procedure rand_int_vv_nowait(variable   real_ctr: inout natural range 0 to RAND_POOL_SIZE;
+                       constant max     : in    positive;
+                       variable retval  : out   natural) is
+    variable tmp : real;
+  begin
+     if(real_ctr=RAND_POOL_SIZE)then
+       real_ctr:=0;
+     else
+       real_ctr:=real_ctr+1;
+     end if;
+
+     tmp:=randomLibData(real_ctr);
+     retval := natural(tmp * real(max));
+  end PROCEDURE;
+
+  procedure rand_int(signal   real_ctr: inout natural range 0 to RAND_POOL_SIZE;
+                     constant max     : in    positive;
+                     signal   retval  : out   natural) is
+    variable tmp : real;
+  begin
+     rand_real_v(real_ctr, tmp);
+     retval <= natural(tmp * real(max));
+     wait for 0 ns;
+  end PROCEDURE;
+
   ---------------------------------------------------
   --Returns pseudo random std logic value 0 or 1
   ---------------------------------------------------
@@ -1000,31 +1037,47 @@ package body randomLib is
     end if;
         
   end procedure;
-  
+
   procedure rand_logic_vect_v(signal    real_ctr  : inout natural range 0 to RAND_POOL_SIZE;
                               variable  retVal    : out   std_logic_vector;
                               constant  chances   : in    real    ) is
   begin
     for i in 0 to retVal'length-1 loop
-      
       if(real_ctr=RAND_POOL_SIZE)then
          real_ctr<=0;
       else
         real_ctr<=real_ctr+1;
       end if;
-    
+
       wait for 0 ns;
-      
+
       if(randomLibData(real_ctr)<chances)then
         retVal(i):='1';
       else
         retVal(i):='0';
-      end if;    
-      
+      end if;
     end loop;
-      
   end procedure;
-  
+
+  procedure rand_logic_vect_vs_nowait(variable real_ctr  : inout natural range 0 to RAND_POOL_SIZE;
+                              signal  retVal    : out   std_logic_vector;
+                              constant  chances   : in    real    ) is
+  begin
+    for i in 0 to retVal'length-1 loop
+      if(real_ctr=RAND_POOL_SIZE)then
+         real_ctr:=0;
+      else
+        real_ctr:=real_ctr+1;
+      end if;
+
+      if(randomLibData(real_ctr)<chances)then
+        retVal(i)<='1';
+      else
+        retVal(i)<='0';
+      end if;
+    end loop;
+  end procedure;
+
   
   --------------------------------------------------------------------
   -- Gaussian number generation 

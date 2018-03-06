@@ -91,21 +91,28 @@ end entity axi_ifc;
 architecture rtl of axi_ifc is
 
   -- AXI4LITE signals
-  signal axi_awaddr  : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+  --signal axi_awaddr   : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
   signal axi_awready  : std_logic;
-  signal axi_wready  : std_logic;
-  signal axi_bresp  : std_logic_vector(1 downto 0);
-  signal axi_bvalid  : std_logic;
-  signal axi_araddr  : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
+  signal axi_wready   : std_logic;
+  signal axi_bresp    : std_logic_vector(1 downto 0);
+  signal axi_bvalid   : std_logic;
+  signal axi_araddr   : std_logic_vector(C_S_AXI_ADDR_WIDTH-1 downto 0);
   signal axi_arready  : std_logic;
-  signal axi_rresp  : std_logic_vector(1 downto 0);
-  signal axi_rvalid  : std_logic;
+  signal axi_rresp    : std_logic_vector(1 downto 0);
+  signal axi_rvalid   : std_logic;
 
-  signal want_to_read     : std_logic;
-  signal want_to_write    : std_logic;
-  signal want_to_write_q  : std_logic;
+  signal want_to_read           : std_logic;
+  signal want_to_write          : std_logic;
+  signal want_to_write_q        : std_logic;
 
-  signal write_precedence_set, write_precedence, write_precedence_r : std_logic;
+  signal read_in_progress       : std_logic;
+  signal write_in_progress      : std_logic;
+  signal write_precedence       : std_logic;
+  signal write_precedence_r     : std_logic;
+  signal write_precedence_set   : std_logic;
+  signal write_precedence_reset : boolean;
+  signal read_stage             : natural range 0 to 1;
+  signal write_stage            : natural range 0 to 1;
 begin
   -- I/O Connections assignments
 
@@ -117,10 +124,6 @@ begin
   S_AXI_RRESP   <= axi_rresp;
   S_AXI_RVALID  <= axi_rvalid;
 
-  --slv_reg_wren <= want_to_write and (not want_to_read or write_precedence);
-  --slv_reg_rden <= want_to_read and not write_precedence;
-
-
   reg_data_in_o <= S_AXI_WDATA;
   S_AXI_RDATA <= reg_data_out_i;
   -- arbitrate
@@ -129,7 +132,7 @@ begin
   want_to_write <= S_AXI_WVALID and S_AXI_AWVALID;
   want_to_read <= S_AXI_RREADY and S_AXI_ARVALID;
 
-  process
+  p_wtwq: process(S_AXI_ARESETN, S_AXI_ACLK)
   begin
     if (S_AXI_ARESETN = '0') then
       want_to_write_q <= '0';
@@ -138,72 +141,125 @@ begin
     end if;
   end process;
 
-  write_precedence_set <= want_to_write and not want_to_write_q;
-  write_precedence <= write_precedence_set or write_precedence_r;
-
-  process
+  p_wpq:process(S_AXI_ARESETN, S_AXI_ACLK)
   begin
-    if (S_AXI_ARESETN = '0') then
+    if S_AXI_ARESETN = '0' then
       write_precedence_r <= '0';
-      reg_addr_o <= (others => '0');
-      reg_be_o <= (others => '0');
-      reg_rden_o <= '0';
-      reg_wren_o <= '0';
-      axi_arready <= '0';
-      axi_rvalid <= '0';
-      axi_awready <= '0';
-      axi_wready <= '0';
-      axi_bvalid <= '0';
-      axi_bresp <= "00";
-    elsif (rising_edge(S_AXI_ACLK)) then
-      if (want_to_write = '1' and want_to_write_q = '0') then
+    elsif rising_edge(S_AXI_ACLK) then
+      if write_precedence_reset then
         write_precedence_r <= not want_to_read;
-      end if;
-
-      if (write_precedence = '0' and want_to_read = '1') then
-        reg_addr_o <= S_AXI_ARADDR;
-        reg_be_o <= (others => '1');
-        reg_rden_o <= '1';
-
-        axi_arready <= '1';
-        axi_rvalid <= '1';
-        axi_rresp <= "00"; -- OK
-      elsif (want_to_write = '1') then
-        reg_addr_o <= S_AXI_AWADDR;
-        reg_be_o <= S_AXI_WSTRB;
-        reg_wren_o <= '1';
-
-        axi_awready <= '1';
-        axi_wready <= '1';
-        axi_bvalid <= '1';
-        axi_bresp <= "00"; -- OK
-        write_precedence_r <= '0';
-      end if;
-
-      if (axi_bvalid = '1' and S_AXI_BREADY = '1') then
-        axi_awready <= '0';
-        axi_wready <= '0';
-        axi_bvalid <= '0';
-        reg_wren_o <= '0';
-      end if;
-
-      if (axi_rvalid = '1' and S_AXI_RREADY = '1') then
-        axi_rvalid <= '0';
-        axi_arready <= '0';
-        reg_rden_o <= '0';
-        -- TODO: waitcycle?
+      elsif write_precedence_set = '1' then
+        write_precedence_r <= not want_to_read;
       end if;
     end if;
   end process;
 
+  write_precedence_set <= want_to_write and not want_to_write_q;
+  write_precedence <= (write_precedence_set and not want_to_read) or write_precedence_r;
 
--- edge on (S_AXI_WVALID and S_AXI_AWVALID and S_AXI_BREADY) -> want to write; write_precedence := not want_to_read
--- edge on (S_AXI_RREDY and S_AXI_ARVALID) -> want to read
+-- write:
+-- write_in_progress = want_to_write and (not want_to_read or write_precedence)
 --
--- if write_precedence and want_to_write -> route address, pulse slv_reg_wren
--- elsif want_to_read -> route address, pulse slv_reg_rden
--- elsif want_to_write -> route address, pulse slv_reg_wren
+-- write_in_progress
+-- stage 0:
+-- -> async latch addr, be
+-- -> async set ready, wren
+-- -> async set bresp, bvalid
+-- -> set write_stage=1
+-- stage 1:
+-- -> async unlatch everything, unset ready
+-- - sync: if bready=1 -> async unset bvalid
+--                     -> set write_stage=0
+--                     -> sync unset write_precedence_r
+--
+-- read:
+-- read_in_progress = want_to_read and (not want_to_write or not write_precedence)
+--
+-- read_in_progress
+-- stage 0:
+-- -> async latch addr
+-- -> async set ready, rden
+-- -> set read_stage=1
+-- stage 1:
+-- -> async unlatch everything, unset ready, rden
+-- -> set rdata
+-- - sync: if rready=1 -> unset rvalid
+--                     -> set read_stage=0
+  write_in_progress <= want_to_write and (not want_to_read or write_precedence);
+  read_in_progress <= want_to_read and not (want_to_write and write_precedence);
 
-  -- User logic ends
+  p_read:process(S_AXI_ARESETN, S_AXI_ACLK)
+  begin
+    if S_AXI_ARESETN = '0' then
+      read_stage <= 0;
+    elsif rising_edge(S_AXI_ACLK) then
+      if read_stage = 0 and read_in_progress = '1' then
+        read_stage <= 1;
+      elsif read_stage = 1 and S_AXI_RREADY = '1' then
+        read_stage <= 0;
+      end if;
+    end if;
+  end process;
 
+  write_precedence_reset <= write_stage = 1 and S_AXI_BREADY = '1';
+  p_write:process(S_AXI_ARESETN, S_AXI_ACLK)
+  begin
+    if S_AXI_ARESETN = '0' then
+      write_stage <= 0;
+    elsif rising_edge(S_AXI_ACLK) then
+      if write_stage = 0 and write_in_progress = '1' then
+        write_stage <= 1;
+      elsif write_stage = 1 and S_AXI_BREADY = '1' then
+        write_stage <= 0;
+        -- reset write_precedence_r
+      end if;
+    end if;
+  end process;
+
+  p_async_common:process(all)
+  begin
+    if S_AXI_ARESETN = '0' then
+      reg_addr_o <= (others => '0');
+    elsif write_in_progress = '1' and (write_stage = 0 or S_AXI_BREADY = '1') then
+      reg_addr_o <= S_AXI_AWADDR;
+    elsif read_in_progress = '1' and (read_stage = 0) then -- no back-to-back for read (need waitcycle)
+      reg_addr_o <= S_AXI_ARADDR;
+    else
+      reg_addr_o <= (others => '0');
+    end if;
+  end process;
+
+  p_async_read:process(all)
+  begin
+    if S_AXI_ARESETN /= '0' and read_in_progress = '1' then --and read_stage = 0 then
+      reg_rden_o <= '1';
+      axi_arready <= '1';
+      axi_rvalid <= '1';
+      axi_rresp <= "00"; -- OK
+    else
+      reg_rden_o <= '0';
+      axi_arready <= '0';
+      axi_rvalid <= '0';
+      axi_rresp <= "00"; -- OK
+    end if;
+  end process;
+
+  p_async_write:process(all)
+  begin
+    if S_AXI_ARESETN /= '0' and write_in_progress = '1' and (write_stage = 0 or S_AXI_BREADY = '1') then
+      reg_be_o    <= S_AXI_WSTRB;
+      reg_wren_o  <= '1';
+      axi_awready <= '1';
+      axi_wready  <= '1';
+      axi_bvalid  <= '1';
+      axi_bresp   <= "00"; -- OK
+    else
+      reg_be_o    <= (others => '1');
+      reg_wren_o  <= '0';
+      axi_awready <= '0';
+      axi_wready  <= '0';
+      axi_bvalid  <= '0';
+      axi_bresp   <= "00";
+    end if;
+  end process;
 end architecture rtl;
