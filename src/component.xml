@@ -801,229 +801,237 @@
     <spirit:fileSet>
       <spirit:name>xilinx_vhdlsynthesis_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd</spirit:name>
+        <spirit:name>CAN_Core/bitDeStuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/tranBuffer.vhd</spirit:name>
+        <spirit:name>CAN_Core/tranBuffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd</spirit:name>
+        <spirit:name>CAN_Core/core_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CANcomponents.vhd</spirit:name>
+        <spirit:name>Libraries/CANcomponents.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/axi_ifc.vhd</spirit:name>
+        <spirit:name>axi_ifc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/ID_transfer.vhd</spirit:name>
+        <spirit:name>ID_transfer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/rst_sync.vhd</spirit:name>
+        <spirit:name>rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/brs_comp.vhd</spirit:name>
+        <spirit:name>Bus_Timing_Synchronisation/brs_comp.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/messageFilter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/bitStuffing_v2.vhd</spirit:name>
+        <spirit:name>CAN_Core/bitStuffing_v2.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/txtBuffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd</spirit:name>
+        <spirit:name>CAN_Core/CRC.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CAN_FD_frame_format.vhd</spirit:name>
+        <spirit:name>Libraries/CAN_FD_frame_format.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd</spirit:name>
+        <spirit:name>CAN_Core/protocolControl.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd</spirit:name>
+        <spirit:name>CAN_Core/operationControl.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/rxBuffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd</spirit:name>
+        <spirit:name>Bus_Timing_Synchronisation/busSync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CANconstants.vhd</spirit:name>
+        <spirit:name>Libraries/CANconstants.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/txArbitrator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/can_top_axi.vhd</spirit:name>
+        <spirit:name>can_top_axi.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_top_level.vhd</spirit:name>
+        <spirit:name>CAN_top_level.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd</spirit:name>
+        <spirit:name>CAN_Core/faultConf.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd</spirit:name>
+        <spirit:name>Registers_Memory_Interface/canfd_registers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Interrupts/intManager.vhd</spirit:name>
+        <spirit:name>Interrupts/intManager.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd</spirit:name>
+        <spirit:name>Bus_Timing_Synchronisation/prescaler_v3.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Event_Logger/logger.vhd</spirit:name>
+        <spirit:name>Event_Logger/logger.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CAN_FD_register_map.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/priorityDecoder.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>Libraries/CAN_FD_register_map.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_vhdlbehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd</spirit:name>
+        <spirit:name>CAN_Core/bitDeStuffing.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/tranBuffer.vhd</spirit:name>
+        <spirit:name>CAN_Core/tranBuffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd</spirit:name>
+        <spirit:name>CAN_Core/core_top.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CANcomponents.vhd</spirit:name>
+        <spirit:name>Libraries/CANcomponents.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/axi_ifc.vhd</spirit:name>
+        <spirit:name>axi_ifc.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/ID_transfer.vhd</spirit:name>
+        <spirit:name>ID_transfer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/rst_sync.vhd</spirit:name>
+        <spirit:name>rst_sync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/brs_comp.vhd</spirit:name>
+        <spirit:name>Bus_Timing_Synchronisation/brs_comp.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/messageFilter.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/bitStuffing_v2.vhd</spirit:name>
+        <spirit:name>CAN_Core/bitStuffing_v2.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/txtBuffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd</spirit:name>
+        <spirit:name>CAN_Core/CRC.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CAN_FD_frame_format.vhd</spirit:name>
+        <spirit:name>Libraries/CAN_FD_frame_format.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd</spirit:name>
+        <spirit:name>CAN_Core/protocolControl.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd</spirit:name>
+        <spirit:name>CAN_Core/operationControl.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/rxBuffer.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd</spirit:name>
+        <spirit:name>Bus_Timing_Synchronisation/busSync.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CANconstants.vhd</spirit:name>
+        <spirit:name>Libraries/CANconstants.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/txArbitrator.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/can_top_axi.vhd</spirit:name>
+        <spirit:name>can_top_axi.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_top_level.vhd</spirit:name>
+        <spirit:name>CAN_top_level.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd</spirit:name>
+        <spirit:name>CAN_Core/faultConf.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd</spirit:name>
+        <spirit:name>Registers_Memory_Interface/canfd_registers.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Interrupts/intManager.vhd</spirit:name>
+        <spirit:name>Interrupts/intManager.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd</spirit:name>
+        <spirit:name>Bus_Timing_Synchronisation/prescaler_v3.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Event_Logger/logger.vhd</spirit:name>
+        <spirit:name>Event_Logger/logger.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>/home/martin/projects/cvut/can-fd/CAN_FD_IP_Core/src/Libraries/CAN_FD_register_map.vhd</spirit:name>
+        <spirit:name>Buffers_Message_Handling/priorityDecoder.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>Libraries/CAN_FD_register_map.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/CTU_CAN_FD_v1_0.tcl</spirit:name>
+        <spirit:name>ip/CTU_CAN_FD_1.0/xgui/CTU_CAN_FD_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_72679e3d</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
@@ -1032,7 +1040,7 @@
     <spirit:fileSet>
       <spirit:name>bd_tcl_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>bd/bd.tcl</spirit:name>
+        <spirit:name>ip/CTU_CAN_FD_1.0/bd/bd.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1151,10 +1159,10 @@
         <xilinx:taxonomy>AXI_Peripheral</xilinx:taxonomy>
       </xilinx:taxonomies>
       <xilinx:displayName>CTU_CAN_FD_v1.0</xilinx:displayName>
-      <xilinx:coreRevision>7</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2018-03-01T11:00:14Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>10</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2018-03-06T12:14:58Z</xilinx:coreCreationDateTime>
       <xilinx:tags>
-        <xilinx:tag xilinx:name="user.org:user:CTU_CAN_FD:1.0_ARCHIVE_LOCATION">/home/martin/projects/cvut/bakalarka/canbench-sw/modules/CTU_CAN_FD/src/ip/CTU_CAN_FD_1.0</xilinx:tag>
+        <xilinx:tag xilinx:name="user.org:user:CTU_CAN_FD:1.0_ARCHIVE_LOCATION">ip/CTU_CAN_FD_1.0</xilinx:tag>
       </xilinx:tags>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
