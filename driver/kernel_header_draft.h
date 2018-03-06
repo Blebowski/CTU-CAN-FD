@@ -82,18 +82,10 @@ enum can_fd_8bit_regs {
 	TX_PRIORITY           = 0x60,
 	ERR_CAPT              = 0x64,
 	TRV_DELAY             = 0x68,
-	RX_COUNTER            = 0xac,
-	TX_COUNTER            = 0xb0,
-	LOG_TRIG_CONFIG       = 0xb8,
-	LOG_CAPT_CONFIG       = 0xc0,
-	LOG_STATUS            = 0xc4,
-	LOG_WPP               = 0xc6,
-	LOG_RPP               = 0xc7,
-	LOG_COMMAND           = 0xc8,
-	LOG_CAPT_EVENT_1      = 0xcc,
-	LOG_CAPT_EVENT_2      = 0xd0,
-	DEBUG_REGISTER        = 0xd4,
-	YOLO_REG              = 0xd8,
+	RX_COUNTER            = 0x6c,
+	TX_COUNTER            = 0x70,
+	DEBUG_REGISTER        = 0x74,
+	YOLO_REG              = 0x78,
 	TXTB1_DATA_1         = 0x100,
 	TXTB1_DATA_2         = 0x104,
 	TXTB1_DATA_20        = 0x14c,
@@ -106,6 +98,13 @@ enum can_fd_8bit_regs {
 	TXTB4_DATA_1         = 0x400,
 	TXTB4_DATA_2         = 0x404,
 	TXTB4_DATA_20        = 0x44c,
+	LOG_TRIG_CONFIG      = 0x500,
+	LOG_CAPT_CONFIG      = 0x504,
+	LOG_STATUS           = 0x508,
+	LOG_POINTERS         = 0x50a,
+	LOG_COMMAND          = 0x50c,
+	LOG_CAPT_EVENT_1     = 0x510,
+	LOG_CAPT_EVENT_2     = 0x514,
 };
 
 
@@ -737,180 +736,6 @@ union tx_counter {
 	} s;
 };
 
-union log_trig_config {
-	uint32_t u32;
-	struct log_trig_config_s {
-#ifdef __BIG_ENDIAN_BITFIELD
-  /* LOG_TRIG_CONFIG */
-		uint32_t t_sof                   : 1;
-		uint32_t t_arbl                  : 1;
-		uint32_t t_rev                   : 1;
-		uint32_t t_trv                   : 1;
-		uint32_t t_ovl                   : 1;
-		uint32_t t_err                   : 1;
-		uint32_t t_brs                   : 1;
-		uint32_t t_usrw                  : 1;
-		uint32_t t_arbs                  : 1;
-		uint32_t t_ctrs                  : 1;
-		uint32_t t_dats                  : 1;
-		uint32_t t_crcs                  : 1;
-		uint32_t t_ackr                  : 1;
-		uint32_t t_acknr                 : 1;
-		uint32_t t_ewlr                  : 1;
-		uint32_t t_erpc                  : 1;
-		uint32_t t_trs                   : 1;
-		uint32_t t_res                   : 1;
-		uint32_t reserved_31_18         : 14;
-#else
-		uint32_t reserved_31_18         : 14;
-		uint32_t t_res                   : 1;
-		uint32_t t_trs                   : 1;
-		uint32_t t_erpc                  : 1;
-		uint32_t t_ewlr                  : 1;
-		uint32_t t_acknr                 : 1;
-		uint32_t t_ackr                  : 1;
-		uint32_t t_crcs                  : 1;
-		uint32_t t_dats                  : 1;
-		uint32_t t_ctrs                  : 1;
-		uint32_t t_arbs                  : 1;
-		uint32_t t_usrw                  : 1;
-		uint32_t t_brs                   : 1;
-		uint32_t t_err                   : 1;
-		uint32_t t_ovl                   : 1;
-		uint32_t t_trv                   : 1;
-		uint32_t t_rev                   : 1;
-		uint32_t t_arbl                  : 1;
-		uint32_t t_sof                   : 1;
-#endif
-	} s;
-};
-
-union log_capt_config {
-	uint32_t u32;
-	struct log_capt_config_s {
-#ifdef __BIG_ENDIAN_BITFIELD
-  /* LOG_CAPT_CONFIG */
-		uint32_t c_sof                   : 1;
-		uint32_t c_arbl                  : 1;
-		uint32_t c_rev                   : 1;
-		uint32_t c_trv                   : 1;
-		uint32_t c_ovl                   : 1;
-		uint32_t c_err                   : 1;
-		uint32_t c_brs                   : 1;
-		uint32_t c_arbs                  : 1;
-		uint32_t c_ctrs                  : 1;
-		uint32_t c_dats                  : 1;
-		uint32_t c_crcs                  : 1;
-		uint32_t c_ackr                  : 1;
-		uint32_t c_acknr                 : 1;
-		uint32_t c_ewlr                  : 1;
-		uint32_t c_erc                   : 1;
-		uint32_t c_trs                   : 1;
-		uint32_t c_res                   : 1;
-		uint32_t c_syne                  : 1;
-		uint32_t c_stuff                 : 1;
-		uint32_t c_destuff               : 1;
-		uint32_t c_ovr                   : 1;
-		uint32_t reserved_31_21         : 11;
-#else
-		uint32_t reserved_31_21         : 11;
-		uint32_t c_ovr                   : 1;
-		uint32_t c_destuff               : 1;
-		uint32_t c_stuff                 : 1;
-		uint32_t c_syne                  : 1;
-		uint32_t c_res                   : 1;
-		uint32_t c_trs                   : 1;
-		uint32_t c_erc                   : 1;
-		uint32_t c_ewlr                  : 1;
-		uint32_t c_acknr                 : 1;
-		uint32_t c_ackr                  : 1;
-		uint32_t c_crcs                  : 1;
-		uint32_t c_dats                  : 1;
-		uint32_t c_ctrs                  : 1;
-		uint32_t c_arbs                  : 1;
-		uint32_t c_brs                   : 1;
-		uint32_t c_err                   : 1;
-		uint32_t c_ovl                   : 1;
-		uint32_t c_trv                   : 1;
-		uint32_t c_rev                   : 1;
-		uint32_t c_arbl                  : 1;
-		uint32_t c_sof                   : 1;
-#endif
-	} s;
-};
-
-union log_status_log_wpp_log_rpp {
-	uint32_t u32;
-	struct log_status_log_wpp_log_rpp_s {
-#ifdef __BIG_ENDIAN_BITFIELD
-  /* LOG_STATUS */
-		uint32_t log_cfg                 : 1;
-		uint32_t log_rdy                 : 1;
-		uint32_t log_run                 : 1;
-		uint32_t reserved_6_3            : 4;
-		uint32_t log_exist               : 1;
-		uint32_t log_size                : 8;
-  /* LOG_WPP */
-		uint32_t log_wpp_val             : 8;
-  /* LOG_RPP */
-		uint32_t log_rpp_val             : 8;
-#else
-		uint32_t log_rpp_val             : 8;
-		uint32_t log_wpp_val             : 8;
-		uint32_t log_size                : 8;
-		uint32_t log_exist               : 1;
-		uint32_t reserved_6_3            : 4;
-		uint32_t log_run                 : 1;
-		uint32_t log_rdy                 : 1;
-		uint32_t log_cfg                 : 1;
-#endif
-	} s;
-};
-
-union log_command {
-	uint32_t u32;
-	struct log_command_s {
-#ifdef __BIG_ENDIAN_BITFIELD
-  /* LOG_COMMAND */
-		uint32_t log_str                 : 1;
-		uint32_t log_abt                 : 1;
-		uint32_t log_up                  : 1;
-		uint32_t log_down                : 1;
-		uint32_t reserved_31_4          : 28;
-#else
-		uint32_t reserved_31_4          : 28;
-		uint32_t log_down                : 1;
-		uint32_t log_up                  : 1;
-		uint32_t log_abt                 : 1;
-		uint32_t log_str                 : 1;
-#endif
-	} s;
-};
-
-union log_capt_event_1 {
-	uint32_t u32;
-	struct log_capt_event_1_s {
-  /* LOG_CAPT_EVENT_1 */
-		uint32_t event_time_stamp_47_to_16: 32;
-	} s;
-};
-
-union log_capt_event_2 {
-	uint32_t u32;
-	struct log_capt_event_2_s {
-#ifdef __BIG_ENDIAN_BITFIELD
-  /* LOG_CAPT_EVENT_2 */
-		uint32_t event_type              : 8;
-		uint32_t event_details           : 8;
-		uint32_t event_ts_15_0          : 16;
-#else
-		uint32_t event_ts_15_0          : 16;
-		uint32_t event_details           : 8;
-		uint32_t event_type              : 8;
-#endif
-	} s;
-};
-
 union debug_register {
 	uint32_t u32;
 	struct debug_register_s {
@@ -1042,6 +867,183 @@ union txtb4_data_20 {
 	struct txtb4_data_20_s {
   /* TXTB4_DATA_20 */
 		uint32_t txtb4_data_20          : 32;
+	} s;
+};
+
+union log_trig_config {
+	uint32_t u32;
+	struct log_trig_config_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* LOG_TRIG_CONFIG */
+		uint32_t t_sof                   : 1;
+		uint32_t t_arbl                  : 1;
+		uint32_t t_rev                   : 1;
+		uint32_t t_trv                   : 1;
+		uint32_t t_ovl                   : 1;
+		uint32_t t_err                   : 1;
+		uint32_t t_brs                   : 1;
+		uint32_t t_usrw                  : 1;
+		uint32_t t_arbs                  : 1;
+		uint32_t t_ctrs                  : 1;
+		uint32_t t_dats                  : 1;
+		uint32_t t_crcs                  : 1;
+		uint32_t t_ackr                  : 1;
+		uint32_t t_acknr                 : 1;
+		uint32_t t_ewlr                  : 1;
+		uint32_t t_erpc                  : 1;
+		uint32_t t_trs                   : 1;
+		uint32_t t_res                   : 1;
+		uint32_t reserved_31_18         : 14;
+#else
+		uint32_t reserved_31_18         : 14;
+		uint32_t t_res                   : 1;
+		uint32_t t_trs                   : 1;
+		uint32_t t_erpc                  : 1;
+		uint32_t t_ewlr                  : 1;
+		uint32_t t_acknr                 : 1;
+		uint32_t t_ackr                  : 1;
+		uint32_t t_crcs                  : 1;
+		uint32_t t_dats                  : 1;
+		uint32_t t_ctrs                  : 1;
+		uint32_t t_arbs                  : 1;
+		uint32_t t_usrw                  : 1;
+		uint32_t t_brs                   : 1;
+		uint32_t t_err                   : 1;
+		uint32_t t_ovl                   : 1;
+		uint32_t t_trv                   : 1;
+		uint32_t t_rev                   : 1;
+		uint32_t t_arbl                  : 1;
+		uint32_t t_sof                   : 1;
+#endif
+	} s;
+};
+
+union log_capt_config {
+	uint32_t u32;
+	struct log_capt_config_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* LOG_CAPT_CONFIG */
+		uint32_t c_sof                   : 1;
+		uint32_t c_arbl                  : 1;
+		uint32_t c_rev                   : 1;
+		uint32_t c_trv                   : 1;
+		uint32_t c_ovl                   : 1;
+		uint32_t c_err                   : 1;
+		uint32_t c_brs                   : 1;
+		uint32_t c_arbs                  : 1;
+		uint32_t c_ctrs                  : 1;
+		uint32_t c_dats                  : 1;
+		uint32_t c_crcs                  : 1;
+		uint32_t c_ackr                  : 1;
+		uint32_t c_acknr                 : 1;
+		uint32_t c_ewlr                  : 1;
+		uint32_t c_erc                   : 1;
+		uint32_t c_trs                   : 1;
+		uint32_t c_res                   : 1;
+		uint32_t c_syne                  : 1;
+		uint32_t c_stuff                 : 1;
+		uint32_t c_destuff               : 1;
+		uint32_t c_ovr                   : 1;
+		uint32_t reserved_31_21         : 11;
+#else
+		uint32_t reserved_31_21         : 11;
+		uint32_t c_ovr                   : 1;
+		uint32_t c_destuff               : 1;
+		uint32_t c_stuff                 : 1;
+		uint32_t c_syne                  : 1;
+		uint32_t c_res                   : 1;
+		uint32_t c_trs                   : 1;
+		uint32_t c_erc                   : 1;
+		uint32_t c_ewlr                  : 1;
+		uint32_t c_acknr                 : 1;
+		uint32_t c_ackr                  : 1;
+		uint32_t c_crcs                  : 1;
+		uint32_t c_dats                  : 1;
+		uint32_t c_ctrs                  : 1;
+		uint32_t c_arbs                  : 1;
+		uint32_t c_brs                   : 1;
+		uint32_t c_err                   : 1;
+		uint32_t c_ovl                   : 1;
+		uint32_t c_trv                   : 1;
+		uint32_t c_rev                   : 1;
+		uint32_t c_arbl                  : 1;
+		uint32_t c_sof                   : 1;
+#endif
+	} s;
+};
+
+union log_status_log_pointers {
+	uint32_t u32;
+	struct log_status_log_pointers_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* LOG_STATUS */
+		uint32_t log_cfg                 : 1;
+		uint32_t log_rdy                 : 1;
+		uint32_t log_run                 : 1;
+		uint32_t reserved_6_3            : 4;
+		uint32_t log_exist               : 1;
+		uint32_t log_size                : 8;
+  /* LOG_POINTERS */
+		uint32_t log_wpp                 : 8;
+		uint32_t log_rpp                 : 8;
+#else
+		uint32_t log_rpp                 : 8;
+		uint32_t log_wpp                 : 8;
+		uint32_t log_size                : 8;
+		uint32_t log_exist               : 1;
+		uint32_t reserved_6_3            : 4;
+		uint32_t log_run                 : 1;
+		uint32_t log_rdy                 : 1;
+		uint32_t log_cfg                 : 1;
+#endif
+	} s;
+};
+
+union log_command {
+	uint32_t u32;
+	struct log_command_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* LOG_COMMAND */
+		uint32_t log_str                 : 1;
+		uint32_t log_abt                 : 1;
+		uint32_t log_up                  : 1;
+		uint32_t log_down                : 1;
+		uint32_t reserved_31_4          : 28;
+#else
+		uint32_t reserved_31_4          : 28;
+		uint32_t log_down                : 1;
+		uint32_t log_up                  : 1;
+		uint32_t log_abt                 : 1;
+		uint32_t log_str                 : 1;
+#endif
+	} s;
+};
+
+union log_capt_event_1 {
+	uint32_t u32;
+	struct log_capt_event_1_s {
+  /* LOG_CAPT_EVENT_1 */
+		uint32_t event_ts_48_16         : 32;
+	} s;
+};
+
+union log_capt_event_2 {
+	uint32_t u32;
+	struct log_capt_event_2_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* LOG_CAPT_EVENT_2 */
+		uint32_t evnt_type               : 5;
+		uint32_t evnt_den                : 3;
+		uint32_t evnt_det                : 5;
+		uint32_t evnt_dea                : 3;
+		uint32_t event_ts_15_0          : 16;
+#else
+		uint32_t event_ts_15_0          : 16;
+		uint32_t evnt_dea                : 3;
+		uint32_t evnt_det                : 5;
+		uint32_t evnt_den                : 3;
+		uint32_t evnt_type               : 5;
+#endif
 	} s;
 };
 
