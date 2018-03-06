@@ -1520,8 +1520,8 @@ begin
     			
     					  data_out_int(6 downto 3)                         <= (OTHERS =>'0');
     					  data_out_int(LOG_SIZE_H downto LOG_SIZE_L)       <= log_size;
-    					  data_out_int(LOG_WPP_VAL_H downto LOG_WPP_VAL_L) <= log_write_pointer;
-    					  data_out_int(LOG_RPP_VAL_H downto LOG_RPP_VAL_L) <= log_read_pointer;
+    					  data_out_int(LOG_WPP_H downto LOG_WPP_L) <= log_write_pointer;
+    					  data_out_int(LOG_RPP_H downto LOG_RPP_L) <= log_read_pointer;
     			  
     			   when LOG_CAPT_EVENT_1_ADR=>
     					  data_out_int                     <=  
