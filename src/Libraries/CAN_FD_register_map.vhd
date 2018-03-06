@@ -93,18 +93,10 @@ package CAN_FD_register_map is
   constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"060";
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"064";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"068";
-  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"0AC";
-  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"0B0";
-  constant LOG_TRIG_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"0B8";
-  constant LOG_CAPT_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"0C0";
-  constant LOG_STATUS_ADR            : std_logic_vector(11 downto 0) := x"0C4";
-  constant LOG_WPP_ADR               : std_logic_vector(11 downto 0) := x"0C6";
-  constant LOG_RPP_ADR               : std_logic_vector(11 downto 0) := x"0C7";
-  constant LOG_COMMAND_ADR           : std_logic_vector(11 downto 0) := x"0C8";
-  constant LOG_CAPT_EVENT_1_ADR      : std_logic_vector(11 downto 0) := x"0CC";
-  constant LOG_CAPT_EVENT_2_ADR      : std_logic_vector(11 downto 0) := x"0D0";
-  constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"0D4";
-  constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"0D8";
+  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"06C";
+  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"070";
+  constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"074";
+  constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"078";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -149,6 +141,21 @@ package CAN_FD_register_map is
   constant TXTB4_DATA_1_ADR          : std_logic_vector(11 downto 0) := x"400";
   constant TXTB4_DATA_2_ADR          : std_logic_vector(11 downto 0) := x"404";
   constant TXTB4_DATA_20_ADR         : std_logic_vector(11 downto 0) := x"44C";
+
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  -- Address block: Event_Logger
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  constant EVENT_LOGGER_BLOCK           : std_logic_vector(3 downto 0) := x"5";
+
+  constant LOG_TRIG_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"500";
+  constant LOG_CAPT_CONFIG_ADR       : std_logic_vector(11 downto 0) := x"504";
+  constant LOG_STATUS_ADR            : std_logic_vector(11 downto 0) := x"508";
+  constant LOG_POINTERS_ADR          : std_logic_vector(11 downto 0) := x"50A";
+  constant LOG_COMMAND_ADR           : std_logic_vector(11 downto 0) := x"50C";
+  constant LOG_CAPT_EVENT_1_ADR      : std_logic_vector(11 downto 0) := x"510";
+  constant LOG_CAPT_EVENT_2_ADR      : std_logic_vector(11 downto 0) := x"514";
 
   ------------------------------------------------------------------------------
   -- DEVICE_ID register
@@ -940,210 +947,6 @@ package CAN_FD_register_map is
                  : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
-  -- LOG_TRIG_CONFIG register
-  --
-  -- Register for configuration of event logging triggering conditions. If Event
-  --  logger is in Ready state and any of triggering conditions appear it starts
-  --  recording the events on the bus (moves to Running state). Logic 1 in each 
-  -- bit means this triggering condition is valid.
-  ------------------------------------------------------------------------------
-  constant T_SOF_IND              : natural := 0;
-  constant T_ARBL_IND             : natural := 1;
-  constant T_REV_IND              : natural := 2;
-  constant T_TRV_IND              : natural := 3;
-  constant T_OVL_IND              : natural := 4;
-  constant T_ERR_IND              : natural := 5;
-  constant T_BRS_IND              : natural := 6;
-  constant T_USRW_IND             : natural := 7;
-  constant T_ARBS_IND             : natural := 8;
-  constant T_CTRS_IND             : natural := 9;
-  constant T_DATS_IND            : natural := 10;
-  constant T_CRCS_IND            : natural := 11;
-  constant T_ACKR_IND            : natural := 12;
-  constant T_ACKNR_IND           : natural := 13;
-  constant T_EWLR_IND            : natural := 14;
-  constant T_ERPC_IND            : natural := 15;
-  constant T_TRS_IND             : natural := 16;
-  constant T_RES_IND             : natural := 17;
-
-  -- LOG_TRIG_CONFIG register reset values
-  constant T_SOF_RSTVAL       : std_logic := '0';
-  constant T_ARBL_RSTVAL      : std_logic := '0';
-  constant T_TRV_RSTVAL       : std_logic := '0';
-  constant T_REV_RSTVAL       : std_logic := '0';
-  constant T_ERPC_RSTVAL      : std_logic := '0';
-  constant T_OVL_RSTVAL       : std_logic := '0';
-  constant T_ERR_RSTVAL       : std_logic := '0';
-  constant T_BRS_RSTVAL       : std_logic := '0';
-  constant T_TRS_RSTVAL       : std_logic := '0';
-  constant T_USRW_RSTVAL      : std_logic := '0';
-  constant T_EWLR_RSTVAL      : std_logic := '0';
-  constant T_ARBS_RSTVAL      : std_logic := '0';
-  constant T_CTRS_RSTVAL      : std_logic := '0';
-  constant T_ACKNR_RSTVAL     : std_logic := '0';
-  constant T_RES_RSTVAL       : std_logic := '0';
-  constant T_ACKR_RSTVAL      : std_logic := '0';
-  constant T_DATS_RSTVAL      : std_logic := '0';
-  constant T_CRCS_RSTVAL      : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_CONFIG register
-  --
-  -- Register for configuring which events to capture by event logger into the l
-  -- ogger FIFO memory when event logger is running.
-  ------------------------------------------------------------------------------
-  constant C_SOF_IND              : natural := 0;
-  constant C_ARBL_IND             : natural := 1;
-  constant C_REV_IND              : natural := 2;
-  constant C_TRV_IND              : natural := 3;
-  constant C_OVL_IND              : natural := 4;
-  constant C_ERR_IND              : natural := 5;
-  constant C_BRS_IND              : natural := 6;
-  constant C_ARBS_IND             : natural := 7;
-  constant C_CTRS_IND             : natural := 8;
-  constant C_DATS_IND             : natural := 9;
-  constant C_CRCS_IND            : natural := 10;
-  constant C_ACKR_IND            : natural := 11;
-  constant C_ACKNR_IND           : natural := 12;
-  constant C_EWLR_IND            : natural := 13;
-  constant C_ERC_IND             : natural := 14;
-  constant C_TRS_IND             : natural := 15;
-  constant C_RES_IND             : natural := 16;
-  constant C_SYNE_IND            : natural := 17;
-  constant C_STUFF_IND           : natural := 18;
-  constant C_DESTUFF_IND         : natural := 19;
-  constant C_OVR_IND             : natural := 20;
-
-  -- LOG_CAPT_CONFIG register reset values
-  constant C_SOF_RSTVAL       : std_logic := '0';
-  constant C_ARBL_RSTVAL      : std_logic := '0';
-  constant C_REV_RSTVAL       : std_logic := '0';
-  constant C_TRV_RSTVAL       : std_logic := '0';
-  constant C_OVL_RSTVAL       : std_logic := '0';
-  constant C_DESTUFF_RSTVAL   : std_logic := '0';
-  constant C_ERR_RSTVAL       : std_logic := '0';
-  constant C_BRS_RSTVAL       : std_logic := '0';
-  constant C_STUFF_RSTVAL     : std_logic := '0';
-  constant C_SYNE_RSTVAL      : std_logic := '0';
-  constant C_RES_RSTVAL       : std_logic := '0';
-  constant C_ACKNR_RSTVAL     : std_logic := '0';
-  constant C_OVR_RSTVAL       : std_logic := '0';
-  constant C_EWLR_RSTVAL      : std_logic := '0';
-  constant C_ARBS_RSTVAL      : std_logic := '0';
-  constant C_CTRS_RSTVAL      : std_logic := '0';
-  constant C_ERC_RSTVAL       : std_logic := '0';
-  constant C_DATS_RSTVAL      : std_logic := '0';
-  constant C_ACKR_RSTVAL      : std_logic := '0';
-  constant C_TRS_RSTVAL       : std_logic := '0';
-  constant C_CRCS_RSTVAL      : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_STATUS register
-  --
-  -- Status  register for Event logger.
-  ------------------------------------------------------------------------------
-  constant LOG_CFG_IND            : natural := 0;
-  constant LOG_RDY_IND            : natural := 1;
-  constant LOG_RUN_IND            : natural := 2;
-  constant LOG_EXIST_IND          : natural := 7;
-  constant LOG_SIZE_L             : natural := 8;
-  constant LOG_SIZE_H            : natural := 15;
-
-  -- LOG_STATUS register reset values
-  constant LOG_CFG_RSTVAL     : std_logic := '1';
-  constant LOG_RDY_RSTVAL     : std_logic := '0';
-  constant LOG_RUN_RSTVAL     : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_WPP register
-  --
-  ------------------------------------------------------------------------------
-  constant LOG_WPP_VAL_L         : natural := 16;
-  constant LOG_WPP_VAL_H         : natural := 23;
-
-  -- LOG_WPP register reset values
-  constant LOG_WPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- LOG_RPP register
-  --
-  ------------------------------------------------------------------------------
-  constant LOG_RPP_VAL_L         : natural := 24;
-  constant LOG_RPP_VAL_H         : natural := 31;
-
-  -- LOG_RPP register reset values
-  constant LOG_RPP_VAL_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
-  -- LOG_COMMAND register
-  --
-  -- Register for controlling the state machine of Event logger and read pointer
-  --  position. Every bit is active in logic 1.
-  ------------------------------------------------------------------------------
-  constant LOG_STR_IND            : natural := 0;
-  constant LOG_ABT_IND            : natural := 1;
-  constant LOG_UP_IND             : natural := 2;
-  constant LOG_DOWN_IND           : natural := 3;
-
-  -- LOG_COMMAND register reset values
-  constant LOG_STR_RSTVAL     : std_logic := '0';
-  constant LOG_ABT_RSTVAL     : std_logic := '0';
-  constant LOG_UP_RSTVAL      : std_logic := '0';
-  constant LOG_DOWN_RSTVAL    : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_EVENT_1 register
-  --
-  -- First word of the logged event details.
-  ------------------------------------------------------------------------------
-  constant EVENT_TIME_STAMP_47_TO_16_L : natural := 0;
-  constant EVENT_TIME_STAMP_47_TO_16_H : natural := 31;
-
-  -- LOG_CAPT_EVENT_1 register reset values
-  constant EVENT_TIME_STAMP_47_TO_16_RSTVAL
-                 : std_logic_vector(31 downto 0) := x"00000000";
-
-  ------------------------------------------------------------------------------
-  -- LOG_CAPT_EVENT_2 register
-  --
-  -- Second word of the logged event details.
-  ------------------------------------------------------------------------------
-  constant EVENT_TYPE_L           : natural := 0;
-  constant EVENT_TYPE_H           : natural := 7;
-  constant EVENT_DETAILS_L        : natural := 8;
-  constant EVENT_DETAILS_H       : natural := 15;
-  constant EVENT_TS_15_0_L       : natural := 16;
-  constant EVENT_TS_15_0_H       : natural := 31;
-
-  -- "EVENT_TYPE" field enumerated values
-  constant SOF_EVNT : std_logic_vector(7 downto 0) := x"01";
-  constant ALO_EVNT : std_logic_vector(7 downto 0) := x"02";
-  constant REC_EVNT : std_logic_vector(7 downto 0) := x"03";
-  constant TRAN_EVNT : std_logic_vector(7 downto 0) := x"04";
-  constant OVLD_EVNT : std_logic_vector(7 downto 0) := x"05";
-  constant ERR_EVNT : std_logic_vector(7 downto 0) := x"06";
-  constant BRS_EVNT : std_logic_vector(7 downto 0) := x"07";
-  constant ARB_EVNT : std_logic_vector(7 downto 0) := x"08";
-  constant CTRL_EVNT : std_logic_vector(7 downto 0) := x"09";
-  constant DATA_EVNT : std_logic_vector(7 downto 0) := x"0A";
-  constant CRC_EVNT : std_logic_vector(7 downto 0) := x"0B";
-  constant ACK_EVNT : std_logic_vector(7 downto 0) := x"0C";
-  constant NACK_EVNT : std_logic_vector(7 downto 0) := x"0D";
-  constant EWL_EVNT : std_logic_vector(7 downto 0) := x"0E";
-  constant ERP_EVNT : std_logic_vector(7 downto 0) := x"0F";
-  constant TXS_EVNT : std_logic_vector(7 downto 0) := x"10";
-  constant RXS_EVNT : std_logic_vector(7 downto 0) := x"11";
-  constant SYNC_EVNT : std_logic_vector(7 downto 0) := x"12";
-  constant STUF_EVNT : std_logic_vector(7 downto 0) := x"13";
-  constant DSTF_EVNT : std_logic_vector(7 downto 0) := x"14";
-  constant OVR_EVNT : std_logic_vector(7 downto 0) := x"15";
-
-  -- LOG_CAPT_EVENT_2 register reset values
-  constant EVENT_TS_15_0_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
-  constant EVENT_DETAILS_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-  constant EVENT_TYPE_RSTVAL : std_logic_vector(7 downto 0) := x"00";
-
-  ------------------------------------------------------------------------------
   -- DEBUG_REGISTER register
   --
   -- Register for reading out state of the controller. This register is only for
@@ -1302,5 +1105,231 @@ package CAN_FD_register_map is
   constant TXTB4_DATA_20_H       : natural := 31;
 
   -- TXTB4_DATA_20 register reset values
+
+  ------------------------------------------------------------------------------
+  -- LOG_TRIG_CONFIG register
+  --
+  -- Register for configuration of event logging triggering conditions. If Event
+  --  logger is in Ready state and any of triggering conditions appear it starts
+  --  recording the events on the bus (moves to Running state). Logic 1 in each 
+  -- bit means this triggering condition is valid.
+  ------------------------------------------------------------------------------
+  constant T_SOF_IND              : natural := 0;
+  constant T_ARBL_IND             : natural := 1;
+  constant T_REV_IND              : natural := 2;
+  constant T_TRV_IND              : natural := 3;
+  constant T_OVL_IND              : natural := 4;
+  constant T_ERR_IND              : natural := 5;
+  constant T_BRS_IND              : natural := 6;
+  constant T_USRW_IND             : natural := 7;
+  constant T_ARBS_IND             : natural := 8;
+  constant T_CTRS_IND             : natural := 9;
+  constant T_DATS_IND            : natural := 10;
+  constant T_CRCS_IND            : natural := 11;
+  constant T_ACKR_IND            : natural := 12;
+  constant T_ACKNR_IND           : natural := 13;
+  constant T_EWLR_IND            : natural := 14;
+  constant T_ERPC_IND            : natural := 15;
+  constant T_TRS_IND             : natural := 16;
+  constant T_RES_IND             : natural := 17;
+
+  -- LOG_TRIG_CONFIG register reset values
+  constant T_SOF_RSTVAL       : std_logic := '0';
+  constant T_ARBL_RSTVAL      : std_logic := '0';
+  constant T_REV_RSTVAL       : std_logic := '0';
+  constant T_TRV_RSTVAL       : std_logic := '0';
+  constant T_OVL_RSTVAL       : std_logic := '0';
+  constant T_RES_RSTVAL       : std_logic := '0';
+  constant T_ERR_RSTVAL       : std_logic := '0';
+  constant T_BRS_RSTVAL       : std_logic := '0';
+  constant T_USRW_RSTVAL      : std_logic := '0';
+  constant T_ARBS_RSTVAL      : std_logic := '0';
+  constant T_CTRS_RSTVAL      : std_logic := '0';
+  constant T_ACKNR_RSTVAL     : std_logic := '0';
+  constant T_EWLR_RSTVAL      : std_logic := '0';
+  constant T_ERPC_RSTVAL      : std_logic := '0';
+  constant T_DATS_RSTVAL      : std_logic := '0';
+  constant T_ACKR_RSTVAL      : std_logic := '0';
+  constant T_TRS_RSTVAL       : std_logic := '0';
+  constant T_CRCS_RSTVAL      : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- LOG_CAPT_CONFIG register
+  --
+  -- Register for configuring which events to capture by event logger into the l
+  -- ogger FIFO memory when event logger is running.
+  ------------------------------------------------------------------------------
+  constant C_SOF_IND              : natural := 0;
+  constant C_ARBL_IND             : natural := 1;
+  constant C_REV_IND              : natural := 2;
+  constant C_TRV_IND              : natural := 3;
+  constant C_OVL_IND              : natural := 4;
+  constant C_ERR_IND              : natural := 5;
+  constant C_BRS_IND              : natural := 6;
+  constant C_ARBS_IND             : natural := 7;
+  constant C_CTRS_IND             : natural := 8;
+  constant C_DATS_IND             : natural := 9;
+  constant C_CRCS_IND            : natural := 10;
+  constant C_ACKR_IND            : natural := 11;
+  constant C_ACKNR_IND           : natural := 12;
+  constant C_EWLR_IND            : natural := 13;
+  constant C_ERC_IND             : natural := 14;
+  constant C_TRS_IND             : natural := 15;
+  constant C_RES_IND             : natural := 16;
+  constant C_SYNE_IND            : natural := 17;
+  constant C_STUFF_IND           : natural := 18;
+  constant C_DESTUFF_IND         : natural := 19;
+  constant C_OVR_IND             : natural := 20;
+
+  -- LOG_CAPT_CONFIG register reset values
+  constant C_SOF_RSTVAL       : std_logic := '0';
+  constant C_ARBL_RSTVAL      : std_logic := '0';
+  constant C_REV_RSTVAL       : std_logic := '0';
+  constant C_TRV_RSTVAL       : std_logic := '0';
+  constant C_OVL_RSTVAL       : std_logic := '0';
+  constant C_ERR_RSTVAL       : std_logic := '0';
+  constant C_BRS_RSTVAL       : std_logic := '0';
+  constant C_ARBS_RSTVAL      : std_logic := '0';
+  constant C_SYNE_RSTVAL      : std_logic := '0';
+  constant C_STUFF_RSTVAL     : std_logic := '0';
+  constant C_CTRS_RSTVAL      : std_logic := '0';
+  constant C_DESTUFF_RSTVAL   : std_logic := '0';
+  constant C_DATS_RSTVAL      : std_logic := '0';
+  constant C_TRS_RSTVAL       : std_logic := '0';
+  constant C_RES_RSTVAL       : std_logic := '0';
+  constant C_OVR_RSTVAL       : std_logic := '0';
+  constant C_CRCS_RSTVAL      : std_logic := '0';
+  constant C_ACKR_RSTVAL      : std_logic := '0';
+  constant C_ACKNR_RSTVAL     : std_logic := '0';
+  constant C_EWLR_RSTVAL      : std_logic := '0';
+  constant C_ERC_RSTVAL       : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- LOG_STATUS register
+  --
+  -- Status  register for Event logger.
+  ------------------------------------------------------------------------------
+  constant LOG_CFG_IND            : natural := 0;
+  constant LOG_RDY_IND            : natural := 1;
+  constant LOG_RUN_IND            : natural := 2;
+  constant LOG_EXIST_IND          : natural := 7;
+  constant LOG_SIZE_L             : natural := 8;
+  constant LOG_SIZE_H            : natural := 15;
+
+  -- LOG_STATUS register reset values
+  constant LOG_CFG_RSTVAL     : std_logic := '1';
+  constant LOG_RDY_RSTVAL     : std_logic := '0';
+  constant LOG_RUN_RSTVAL     : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- LOG_POINTERS register
+  --
+  -- Pointers to Logger RAM memory.
+  ------------------------------------------------------------------------------
+  constant LOG_WPP_L             : natural := 16;
+  constant LOG_WPP_H             : natural := 23;
+  constant LOG_RPP_L             : natural := 24;
+  constant LOG_RPP_H             : natural := 31;
+
+  -- LOG_POINTERS register reset values
+  constant LOG_WPP_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+  constant LOG_RPP_RSTVAL : std_logic_vector(7 downto 0) := x"00";
+
+  ------------------------------------------------------------------------------
+  -- LOG_COMMAND register
+  --
+  -- Register for controlling the state machine of Event logger and read pointer
+  --  position. Every bit is active in logic 1.
+  ------------------------------------------------------------------------------
+  constant LOG_STR_IND            : natural := 0;
+  constant LOG_ABT_IND            : natural := 1;
+  constant LOG_UP_IND             : natural := 2;
+  constant LOG_DOWN_IND           : natural := 3;
+
+  -- LOG_COMMAND register reset values
+  constant LOG_STR_RSTVAL     : std_logic := '0';
+  constant LOG_ABT_RSTVAL     : std_logic := '0';
+  constant LOG_UP_RSTVAL      : std_logic := '0';
+  constant LOG_DOWN_RSTVAL    : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- LOG_CAPT_EVENT_1 register
+  --
+  -- First word of the captured event at read pointer position.
+  ------------------------------------------------------------------------------
+  constant EVENT_TS_48_16_L       : natural := 0;
+  constant EVENT_TS_48_16_H      : natural := 31;
+
+  -- LOG_CAPT_EVENT_1 register reset values
+  constant EVENT_TS_48_16_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
+
+  ------------------------------------------------------------------------------
+  -- LOG_CAPT_EVENT_2 register
+  --
+  -- Second word of the captured event at read pointer position.
+  ------------------------------------------------------------------------------
+  constant EVNT_TYPE_L            : natural := 0;
+  constant EVNT_TYPE_H            : natural := 4;
+  constant EVNT_DEN_L             : natural := 5;
+  constant EVNT_DEN_H             : natural := 7;
+  constant EVNT_DET_L             : natural := 8;
+  constant EVNT_DET_H            : natural := 12;
+  constant EVNT_DEA_L            : natural := 13;
+  constant EVNT_DEA_H            : natural := 15;
+  constant EVENT_TS_15_0_L       : natural := 16;
+  constant EVENT_TS_15_0_H       : natural := 31;
+
+  -- "EVNT_TYPE" field enumerated values
+  constant SOF_EVNT : std_logic_vector(4 downto 0) := "00001";
+  constant ARBL_EVNT : std_logic_vector(4 downto 0) := "00010";
+  constant FREC_EVNT : std_logic_vector(4 downto 0) := "00011";
+  constant TRANV_EVNT : std_logic_vector(4 downto 0) := "00100";
+  constant OVRL_EVNT : std_logic_vector(4 downto 0) := "00101";
+  constant ERR_EVNT : std_logic_vector(4 downto 0) := "00110";
+  constant BRS_EVNT : std_logic_vector(4 downto 0) := "00111";
+  constant ARBS_EVNT : std_logic_vector(4 downto 0) := "01000";
+  constant CONS_EVNT : std_logic_vector(4 downto 0) := "01001";
+  constant DATS_EVNT : std_logic_vector(4 downto 0) := "01010";
+  constant CRCS_EVNT : std_logic_vector(4 downto 0) := "01011";
+  constant ACKR_EVNT : std_logic_vector(4 downto 0) := "01100";
+  constant ACKN_EVNT : std_logic_vector(4 downto 0) := "01101";
+  constant EWLR_EVNT : std_logic_vector(4 downto 0) := "01110";
+  constant FCSC_EVNT : std_logic_vector(4 downto 0) := "01111";
+  constant TS_EVNT : std_logic_vector(4 downto 0) := "10000";
+  constant RS_EVNT : std_logic_vector(4 downto 0) := "10001";
+  constant SE_EVNT : std_logic_vector(4 downto 0) := "10010";
+  constant STF_EVNT : std_logic_vector(4 downto 0) := "10011";
+  constant DSTF_EVNT : std_logic_vector(4 downto 0) := "10100";
+  constant DOR_EVNT : std_logic_vector(4 downto 0) := "10101";
+
+  -- "EVNT_DET" field enumerated values
+  constant ISN_FDSTF : std_logic_vector(4 downto 0) := "00000";
+  constant ISN_FSTF : std_logic_vector(4 downto 0) := "00000";
+  constant BIT_ERR : std_logic_vector(4 downto 0) := "00001";
+  constant S_UP : std_logic_vector(4 downto 0) := "00001";
+  constant IS_SYNC : std_logic_vector(4 downto 0) := "00001";
+  constant IS_FDSTF : std_logic_vector(4 downto 0) := "00001";
+  constant IS_FSTF : std_logic_vector(4 downto 0) := "00001";
+  constant ST_ERR : std_logic_vector(4 downto 0) := "00010";
+  constant S_DOWN : std_logic_vector(4 downto 0) := "00010";
+  constant IS_PROP : std_logic_vector(4 downto 0) := "00010";
+  constant CRC_ERR : std_logic_vector(4 downto 0) := "00100";
+  constant IS_PH1 : std_logic_vector(4 downto 0) := "00100";
+  constant ACK_ERR : std_logic_vector(4 downto 0) := "01000";
+  constant IS_PH2 : std_logic_vector(4 downto 0) := "01000";
+  constant FRM_ERR : std_logic_vector(4 downto 0) := "10000";
+
+  -- "EVNT_DEA" field enumerated values
+  constant NO_SNC : std_logic_vector(2 downto 0) := "000";
+  constant HA_SNC : std_logic_vector(2 downto 0) := "001";
+  constant RE_SNC : std_logic_vector(2 downto 0) := "010";
+
+  -- LOG_CAPT_EVENT_2 register reset values
+  constant EVNT_TYPE_RSTVAL : std_logic_vector(4 downto 0) := "00000";
+  constant EVNT_DEN_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant EVNT_DET_RSTVAL : std_logic_vector(4 downto 0) := "00000";
+  constant EVNT_DEA_RSTVAL : std_logic_vector(2 downto 0) := "000";
+  constant EVENT_TS_15_0_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
 end package;
