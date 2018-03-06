@@ -73,7 +73,8 @@
 --                on what content is in event_captured!  Additionaly with Event 
 --                harvesting CAN controller reached better timing analysis and 
 --                less LUT usage with same settings!
---
+--    06.3.2018   Changed coding of Event details. Created "numerical" and 
+--                "additional" details fields.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -147,7 +148,12 @@ entity CAN_logger is
   
   signal error_type_vect        :     std_logic_vector(4 downto 0);
   signal bit_type_vect          :     std_logic_vector(3 downto 0);
-  signal ev_details             :     std_logic_vector(7 downto 0);
+  
+  signal s_up                   :     std_logic;
+  
+  signal ev_det                 :     std_logic_vector(4 downto 0);
+  signal ev_den                 :     std_logic_vector(2 downto 0);
+  signal ev_dea                 :     std_logic_vector(2 downto 0);
   
   ------------------------
   --Driving bus aliases --
@@ -427,21 +433,44 @@ begin
     end if;  
   end process;
 
+  
+  -- TODO: This will be fixed later! 
+  s_up <= '1';
+
   -----------------------------------------------------------------
   --Event details decoding!
   -----------------------------------------------------------------
-  ev_details <= "000"&error_type_vect 
-                      when harvest_pointer=5 else
-                "0000"&bit_type_vect  
-                      when harvest_pointer=6 else
-                 "0000"&stat_bus(STAT_FIXED_STUFF_INDEX)&
-                 stat_bus(STAT_BS_LENGTH_HIGH downto STAT_BS_LENGTH_LOW)  
-                      when harvest_pointer=18 else
-                 "0000"&stat_bus(STAT_FIXED_DESTUFF_INDEX)&
-                 stat_bus(STAT_BDS_LENGTH_HIGH downto STAT_BDS_LENGTH_LOW)  
-                      when harvest_pointer=19 else
-                 (OTHERS => '0');
-      
+  ev_det     <=  error_type_vect 
+                      when harvest_pointer = 5 else
+                
+                "0000" & s_up
+                      when harvest_pointer = 6 else
+                   
+                "0" & bit_type_vect  
+                      when harvest_pointer = 17 else
+                        
+                "0000" & stat_bus(STAT_FIXED_STUFF_INDEX)
+                      when harvest_pointer = 18 else
+                        
+                "0000" & stat_bus(STAT_FIXED_DESTUFF_INDEX)
+                      when harvest_pointer = 19 else
+                (OTHERS => '0');
+
+  ev_den     <= stat_bus(STAT_BS_LENGTH_HIGH downto STAT_BS_LENGTH_LOW)  
+                      when harvest_pointer = 18 else
+                
+                stat_bus(STAT_BDS_LENGTH_HIGH downto STAT_BDS_LENGTH_LOW)  
+                      when harvest_pointer = 19 else    
+                
+                (OTHERS => '0');
+                 
+                 
+  ev_dea     <= '0' & stat_bus(STAT_SYNC_CONTROL_HIGH downto STAT_SYNC_CONTROL_LOW)  
+                      when harvest_pointer = 17 else    
+                
+                (OTHERS => '0');
+
+  
   -----------------------------------------------------------------
   --Process for event harvesting
   -----------------------------------------------------------------
@@ -516,10 +545,12 @@ begin
             memory_valid(write_pointer)     <= '1';
             
             --Here store the data into logger
-            memory(write_pointer)           <= timestamp(47 downto 0)&
-                                               ev_details&
+            memory(write_pointer)           <= timestamp(47 downto 0) &
+                                               ev_dea &
+                                               ev_det &
+                                               ev_den &
                                                std_logic_vector(
-                                               to_unsigned(harvest_pointer+1,8));
+                                               to_unsigned(harvest_pointer+1,5));
             write_pointer                   <= (write_pointer+1) mod memory_size;
           end if;          
           
