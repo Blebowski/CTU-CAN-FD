@@ -57,46 +57,49 @@ package CAN_FD_register_map is
   constant COMMAND_ADR               : std_logic_vector(11 downto 0) := x"005";
   constant STATUS_ADR                : std_logic_vector(11 downto 0) := x"006";
   constant SETTINGS_ADR              : std_logic_vector(11 downto 0) := x"007";
-  constant INT_ADR                   : std_logic_vector(11 downto 0) := x"008";
-  constant INT_ENA_ADR               : std_logic_vector(11 downto 0) := x"00A";
-  constant BTR_ADR                   : std_logic_vector(11 downto 0) := x"00C";
-  constant BTR_FD_ADR                : std_logic_vector(11 downto 0) := x"00E";
-  constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"010";
-  constant SJW_ADR                   : std_logic_vector(11 downto 0) := x"011";
-  constant BRP_ADR                   : std_logic_vector(11 downto 0) := x"012";
-  constant BRP_FD_ADR                : std_logic_vector(11 downto 0) := x"013";
-  constant EWL_ADR                   : std_logic_vector(11 downto 0) := x"014";
-  constant ERP_ADR                   : std_logic_vector(11 downto 0) := x"015";
-  constant FAULT_STATE_ADR           : std_logic_vector(11 downto 0) := x"016";
-  constant RXC_ADR                   : std_logic_vector(11 downto 0) := x"018";
-  constant TXC_ADR                   : std_logic_vector(11 downto 0) := x"01A";
-  constant ERR_NORM_ADR              : std_logic_vector(11 downto 0) := x"01C";
-  constant ERR_FD_ADR                : std_logic_vector(11 downto 0) := x"01E";
-  constant CTR_PRES_ADR              : std_logic_vector(11 downto 0) := x"020";
-  constant FILTER_A_MASK_ADR         : std_logic_vector(11 downto 0) := x"024";
-  constant FILTER_A_VAL_ADR          : std_logic_vector(11 downto 0) := x"028";
-  constant FILTER_B_MASK_ADR         : std_logic_vector(11 downto 0) := x"02C";
-  constant FILTER_B_VAL_ADR          : std_logic_vector(11 downto 0) := x"030";
-  constant FILTER_C_MASK_ADR         : std_logic_vector(11 downto 0) := x"034";
-  constant FILTER_C_VAL_ADR          : std_logic_vector(11 downto 0) := x"038";
-  constant FILTER_RAN_LOW_ADR        : std_logic_vector(11 downto 0) := x"03C";
-  constant FILTER_RAN_HIGH_ADR       : std_logic_vector(11 downto 0) := x"040";
-  constant FILTER_CONTROL_ADR        : std_logic_vector(11 downto 0) := x"044";
-  constant FILTER_STATUS_ADR         : std_logic_vector(11 downto 0) := x"046";
-  constant RX_MEM_INFO_ADR           : std_logic_vector(11 downto 0) := x"048";
-  constant RX_POINTERS_ADR           : std_logic_vector(11 downto 0) := x"04C";
-  constant RX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"050";
-  constant RX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"052";
-  constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"054";
-  constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"058";
-  constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"05C";
-  constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"060";
-  constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"064";
-  constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"068";
-  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"06C";
-  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"070";
-  constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"074";
-  constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"078";
+  constant INT_STAT_ADR              : std_logic_vector(11 downto 0) := x"008";
+  constant INT_ENA_SET_ADR           : std_logic_vector(11 downto 0) := x"00C";
+  constant INT_ENA_CLR_ADR           : std_logic_vector(11 downto 0) := x"010";
+  constant INT_MASK_SET_ADR          : std_logic_vector(11 downto 0) := x"014";
+  constant INT_MASK_CLR_ADR          : std_logic_vector(11 downto 0) := x"018";
+  constant BTR_ADR                   : std_logic_vector(11 downto 0) := x"01C";
+  constant BTR_FD_ADR                : std_logic_vector(11 downto 0) := x"01E";
+  constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"020";
+  constant SJW_ADR                   : std_logic_vector(11 downto 0) := x"021";
+  constant BRP_ADR                   : std_logic_vector(11 downto 0) := x"022";
+  constant BRP_FD_ADR                : std_logic_vector(11 downto 0) := x"023";
+  constant EWL_ADR                   : std_logic_vector(11 downto 0) := x"024";
+  constant ERP_ADR                   : std_logic_vector(11 downto 0) := x"025";
+  constant FAULT_STATE_ADR           : std_logic_vector(11 downto 0) := x"026";
+  constant RXC_ADR                   : std_logic_vector(11 downto 0) := x"028";
+  constant TXC_ADR                   : std_logic_vector(11 downto 0) := x"02A";
+  constant ERR_NORM_ADR              : std_logic_vector(11 downto 0) := x"02C";
+  constant ERR_FD_ADR                : std_logic_vector(11 downto 0) := x"02E";
+  constant CTR_PRES_ADR              : std_logic_vector(11 downto 0) := x"030";
+  constant FILTER_A_MASK_ADR         : std_logic_vector(11 downto 0) := x"034";
+  constant FILTER_A_VAL_ADR          : std_logic_vector(11 downto 0) := x"038";
+  constant FILTER_B_MASK_ADR         : std_logic_vector(11 downto 0) := x"03C";
+  constant FILTER_B_VAL_ADR          : std_logic_vector(11 downto 0) := x"040";
+  constant FILTER_C_MASK_ADR         : std_logic_vector(11 downto 0) := x"044";
+  constant FILTER_C_VAL_ADR          : std_logic_vector(11 downto 0) := x"048";
+  constant FILTER_RAN_LOW_ADR        : std_logic_vector(11 downto 0) := x"04C";
+  constant FILTER_RAN_HIGH_ADR       : std_logic_vector(11 downto 0) := x"050";
+  constant FILTER_CONTROL_ADR        : std_logic_vector(11 downto 0) := x"054";
+  constant FILTER_STATUS_ADR         : std_logic_vector(11 downto 0) := x"056";
+  constant RX_MEM_INFO_ADR           : std_logic_vector(11 downto 0) := x"058";
+  constant RX_POINTERS_ADR           : std_logic_vector(11 downto 0) := x"05C";
+  constant RX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"060";
+  constant RX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"062";
+  constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"064";
+  constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"068";
+  constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"06C";
+  constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"070";
+  constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"074";
+  constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"078";
+  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"07C";
+  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"080";
+  constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"084";
+  constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"088";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -310,11 +313,11 @@ package CAN_FD_register_map is
   constant FD_TYPE_RSTVAL     : std_logic := '0';
 
   ------------------------------------------------------------------------------
-  -- INT register
+  -- INT_STAT register
   --
-  -- This register contains interrupt vector of interrupts that were generated s
-  -- ince the last read. If 8 bit or 16 bit access is executed to any of lowest 
-  -- two bits the register is automatically erased.
+  -- Reading this register returns Interrupt vector (status of generated Interru
+  -- pts). Writing logic 1 to any bit clears according interrupt. Writing logic 
+  -- 0 has no effect.
   ------------------------------------------------------------------------------
   constant RI_IND                 : natural := 0;
   constant TI_IND                 : natural := 1;
@@ -327,7 +330,7 @@ package CAN_FD_register_map is
   constant RFI_IND                : natural := 9;
   constant BSI_IND               : natural := 10;
 
-  -- INT register reset values
+  -- INT_STAT register reset values
   constant RI_RSTVAL          : std_logic := '0';
   constant TI_RSTVAL          : std_logic := '0';
   constant EI_RSTVAL          : std_logic := '0';
@@ -340,33 +343,60 @@ package CAN_FD_register_map is
   constant BSI_RSTVAL         : std_logic := '0';
 
   ------------------------------------------------------------------------------
-  -- INT_ENA register
+  -- INT_ENA_SET register
   --
-  -- Register enables interrupts by different sources. Logic 1 in each bit means
-  --  interrupt is allowed.
+  -- Writing logic 1 to a bit enables according interrupt.Writing logic 0 has no
+  --  effect. Reading the register returns logic 1 in every bit whose interrupt 
+  -- capturing is enabled.
   ------------------------------------------------------------------------------
-  constant RIE_IND               : natural := 16;
-  constant TIE_IND               : natural := 17;
-  constant EIE_IND               : natural := 18;
-  constant DOIE_IND              : natural := 19;
-  constant EPIE_IND              : natural := 21;
-  constant ALIE_IND              : natural := 22;
-  constant BEIE_IND              : natural := 23;
-  constant LFIE_IND              : natural := 24;
-  constant RFIE_IND              : natural := 25;
-  constant BSIE_IND              : natural := 26;
+  constant INT_ENA_SET_L          : natural := 0;
+  constant INT_ENA_SET_H         : natural := 10;
 
-  -- INT_ENA register reset values
-  constant EIE_RSTVAL         : std_logic := '1';
-  constant DOIE_RSTVAL        : std_logic := '0';
-  constant EPIE_RSTVAL        : std_logic := '1';
-  constant ALIE_RSTVAL        : std_logic := '0';
-  constant RIE_RSTVAL         : std_logic := '0';
-  constant BEIE_RSTVAL        : std_logic := '0';
-  constant LFIE_RSTVAL        : std_logic := '0';
-  constant RFIE_RSTVAL        : std_logic := '0';
-  constant BSIE_RSTVAL        : std_logic := '0';
-  constant TIE_RSTVAL         : std_logic := '1';
+  -- INT_ENA_SET register reset values
+  constant INT_ENA_SET_RSTVAL
+                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- INT_ENA_CLR register
+  --
+  -- Writing logic 1 disables according interrupt. Writing logic 0 has no effect
+  -- . Reading this register has no effect.
+  ------------------------------------------------------------------------------
+  constant INT_ENA_CLR_L          : natural := 0;
+  constant INT_ENA_CLR_H         : natural := 10;
+
+  -- INT_ENA_CLR register reset values
+  constant INT_ENA_CLR_RSTVAL
+                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- INT_MASK_SET register
+  --
+  -- Writing logic 1 masks according interrupt. Writing logic 0 has no effect. R
+  -- eading this register returns status of the interrupt mask. Masked interrupt
+  --  is captured and can be read from INT_STAT, but does not affect interrupt o
+  -- utput of the CAN Core.
+  ------------------------------------------------------------------------------
+  constant INT_MASK_SET_L         : natural := 0;
+  constant INT_MASK_SET_H        : natural := 10;
+
+  -- INT_MASK_SET register reset values
+  constant INT_MASK_SET_RSTVAL
+                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
+
+  ------------------------------------------------------------------------------
+  -- INT_MASK_CLR register
+  --
+  -- Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect
+  -- . Reading this register has no effect. Un-masked interrupt is captured, can
+  --  be read from INT_STAT and it does affect interrupt output of the CAN Core.
+  ------------------------------------------------------------------------------
+  constant INT_MASK_CLR_L         : natural := 0;
+  constant INT_MASK_CLR_H        : natural := 10;
+
+  -- INT_MASK_CLR register reset values
+  constant INT_MASK_CLR_RSTVAL
+                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- BTR register

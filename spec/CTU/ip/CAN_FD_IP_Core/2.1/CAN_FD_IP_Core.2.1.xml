@@ -524,14 +524,14 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>INT</ipxact:name>
-					<ipxact:displayName>INT</ipxact:displayName>
-					<ipxact:description>This register contains interrupt vector of interrupts that were generated since the last read. If 8 bit or 16 bit access is executed to any of lowest two bits the register is automatically erased.</ipxact:description>
+					<ipxact:name>INT_STAT</ipxact:name>
+					<ipxact:displayName>INT_STAT</ipxact:displayName>
+					<ipxact:description>Reading this register returns Interrupt vector (status of generated Interrupts). Writing logic 1 to any bit clears according interrupt. Writing logic 0 has no effect.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-only</ipxact:access>
+					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RI</ipxact:name>
 						<ipxact:displayName>RI</ipxact:displayName>
@@ -543,7 +543,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TI</ipxact:name>
@@ -556,7 +555,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EI</ipxact:name>
@@ -569,7 +567,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
@@ -582,7 +579,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EPI</ipxact:name>
@@ -595,7 +591,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
@@ -608,7 +603,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
@@ -621,7 +615,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LFI</ipxact:name>
@@ -634,7 +627,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RFI</ipxact:name>
@@ -647,7 +639,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
@@ -660,14 +651,13 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>RX_SETTINGS</ipxact:name>
 					<ipxact:description>Settings register for FIFO RX Buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h52</ipxact:addressOffset>
+					<ipxact:addressOffset>'h62</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -699,143 +689,91 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
-					<ipxact:name>INT_ENA</ipxact:name>
-					<ipxact:displayName>INT_ENA</ipxact:displayName>
-					<ipxact:description>Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed.</ipxact:description>
+					<ipxact:name>INT_ENA_CLR</ipxact:name>
+					<ipxact:displayName>INT_ENA_CLR</ipxact:displayName>
+					<ipxact:description>Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hA</ipxact:addressOffset>
+					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
+					<ipxact:access>write-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>EIE</ipxact:name>
-						<ipxact:displayName>EIE</ipxact:displayName>
-						<ipxact:description>Error warning limit reached interrupt enable</ipxact:description>
-						<ipxact:bitOffset>2</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>DOIE</ipxact:name>
-						<ipxact:displayName>DOIE</ipxact:displayName>
-						<ipxact:description>Data Overrun on RX Buffer interrupt enable</ipxact:description>
-						<ipxact:bitOffset>3</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>EPIE</ipxact:name>
-						<ipxact:displayName>EPIE</ipxact:displayName>
-						<ipxact:description>Node became error passive or bus off interrupt enable</ipxact:description>
-						<ipxact:bitOffset>5</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>ALIE</ipxact:name>
-						<ipxact:displayName>ALIE</ipxact:displayName>
-						<ipxact:description>Arbitration lost interrupt enable</ipxact:description>
-						<ipxact:bitOffset>6</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>RIE</ipxact:name>
-						<ipxact:displayName>RIE</ipxact:displayName>
-						<ipxact:description>Frame successfully received interrupt enable</ipxact:description>
+						<ipxact:name>INT_ENA_CLR</ipxact:name>
+						<ipxact:displayName>INT_ENA_CLR</ipxact:displayName>
+						<ipxact:description>Bit meaning is equivalent to register INT_STAT.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
+						<ipxact:bitWidth>11</ipxact:bitWidth>
 					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>INT_MASK_CLR</ipxact:name>
+					<ipxact:displayName>INT_MASK_CLR</ipxact:displayName>
+					<ipxact:description>Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT and it does affect interrupt output of the CAN Core.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>write-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>BEIE</ipxact:name>
-						<ipxact:displayName>BEIE</ipxact:displayName>
-						<ipxact:description>Bus Error interrupt enable</ipxact:description>
-						<ipxact:bitOffset>7</ipxact:bitOffset>
+						<ipxact:name>INT_MASK_CLR</ipxact:name>
+						<ipxact:displayName>INT_MASK_CLR</ipxact:displayName>
+						<ipxact:description>Bit meaning is equivalent to register INT_STAT.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
+								<ipxact:value>'h0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
+						<ipxact:bitWidth>11</ipxact:bitWidth>
 					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>INT_MASK_SET</ipxact:name>
+					<ipxact:displayName>INT_MASK_SET</ipxact:displayName>
+					<ipxact:description>Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>LFIE</ipxact:name>
-						<ipxact:displayName>LFIE</ipxact:displayName>
-						<ipxact:description>Event logging finished interrupt enable</ipxact:description>
-						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:name>INT_MASK_SET</ipxact:name>
+						<ipxact:displayName>INT_MASK_SET</ipxact:displayName>
+						<ipxact:description>Bit meaning is equivalent to register INT_STAT.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
+								<ipxact:value>'h0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
+						<ipxact:bitWidth>11</ipxact:bitWidth>
 					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>INT_ENA_SET</ipxact:name>
+					<ipxact:displayName>INT_ENA_SET</ipxact:displayName>
+					<ipxact:description>Writing logic 1 to a bit enables according interrupt.Writing logic 0 has no effect. Reading the register returns logic 1 in every bit whose interrupt capturing is enabled.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RFIE</ipxact:name>
-						<ipxact:displayName>RFIE</ipxact:displayName>
-						<ipxact:description>Receive buffer full interrupt enable</ipxact:description>
-						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:name>INT_ENA_SET</ipxact:name>
+						<ipxact:displayName>INT_ENA_SET</ipxact:displayName>
+						<ipxact:description>Bit meaning is equivalent to register INT_STAT.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
+								<ipxact:value>'h0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>BSIE</ipxact:name>
-						<ipxact:displayName>BSIE</ipxact:displayName>
-						<ipxact:description>Bit-rate shifted interrupt enable</ipxact:description>
-						<ipxact:bitOffset>10</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>TIE</ipxact:name>
-						<ipxact:displayName>TIE</ipxact:displayName>
-						<ipxact:description>Frame successfully transmitted interrupt enable</ipxact:description>
-						<ipxact:bitOffset>1</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:readAction>clear</ipxact:readAction>
+						<ipxact:bitWidth>11</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -843,7 +781,7 @@
 					<ipxact:displayName>BTR_FD</ipxact:displayName>
 					<ipxact:description>Length of bit time segments for Data bit time in Time quanta. Note that SYNC segment always lasts one Time quanta.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hE</ipxact:addressOffset>
+					<ipxact:addressOffset>'h1E</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -913,7 +851,7 @@
 					<ipxact:displayName>BTR</ipxact:displayName>
 					<ipxact:description>The length of bit time segments for Nominal bit time in Time quanta. Note that SYNC segment always lasts one Time quanta.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'hC</ipxact:addressOffset>
+					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -959,7 +897,7 @@
 					<ipxact:displayName>ALC</ipxact:displayName>
 					<ipxact:description>Arbitration lost capture register. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h10</ipxact:addressOffset>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -981,7 +919,7 @@
 					<ipxact:displayName>SJW</ipxact:displayName>
 					<ipxact:description>Synchronisation jump width registers for both Nominal and Data bit times.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h11</ipxact:addressOffset>
+					<ipxact:addressOffset>'h21</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1015,7 +953,7 @@
 					<ipxact:displayName>BRP</ipxact:displayName>
 					<ipxact:description>Baud rate Prescaler register - Nominal bit time. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h12</ipxact:addressOffset>
+					<ipxact:addressOffset>'h22</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1037,7 +975,7 @@
 					<ipxact:displayName>BRP_FD</ipxact:displayName>
 					<ipxact:description>Baud rate Prescaler register - Data bit time. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h13</ipxact:addressOffset>
+					<ipxact:addressOffset>'h23</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1059,7 +997,7 @@
 					<ipxact:displayName>EWL</ipxact:displayName>
 					<ipxact:description>Error warning limit register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h14</ipxact:addressOffset>
+					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1081,7 +1019,7 @@
 					<ipxact:displayName>ERP</ipxact:displayName>
 					<ipxact:description>Error passive limit register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h15</ipxact:addressOffset>
+					<ipxact:addressOffset>'h25</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1103,7 +1041,7 @@
 					<ipxact:displayName>FAULT_STATE</ipxact:displayName>
 					<ipxact:description>Fault confinement state of the node. This state can be manipulated by writes to CTR_PRES register. When these counters are set Fault confinement state changes automatically.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h16</ipxact:addressOffset>
+					<ipxact:addressOffset>'h26</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1149,7 +1087,7 @@
 					<ipxact:displayName>FILTER_A_VAL</ipxact:displayName>
 					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received identifier format. BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtX=false&quot;;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h28</ipxact:addressOffset>
+					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1171,7 +1109,7 @@
 					<ipxact:displayName>FILTER_STATUS</ipxact:displayName>
 					<ipxact:description>This register provides information if the Core is synthesized with fillter support.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h46</ipxact:addressOffset>
+					<ipxact:addressOffset>'h56</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1209,7 +1147,7 @@
 					<ipxact:displayName>TX_PRIORITY</ipxact:displayName>
 					<ipxact:description>Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals that buffer is selected earlier for transmission. If two buffers have equal priorities, the one with lower index is selected.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h60</ipxact:addressOffset>
+					<ipxact:addressOffset>'h70</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1263,7 +1201,7 @@
 					<ipxact:displayName>TX_COMMAND</ipxact:displayName>
 					<ipxact:description>Command register for TXT Buffers. Command is activated by setting TXC(E,C,R) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..8) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 deos not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h5C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h6C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>write-only</ipxact:access>
@@ -1352,7 +1290,7 @@
 					<ipxact:name>YOLO_REG</ipxact:name>
 					<ipxact:description>Register for fun :)</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h78</ipxact:addressOffset>
+					<ipxact:addressOffset>'h88</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1373,7 +1311,7 @@
 					<ipxact:displayName>DEBUG_REGISTER</ipxact:displayName>
 					<ipxact:description>Register for reading out state of the controller. This register is only for debugging purposes!</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h74</ipxact:addressOffset>
+					<ipxact:addressOffset>'h84</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1482,7 +1420,7 @@
 					<ipxact:displayName>TX_COUNTER</ipxact:displayName>
 					<ipxact:description>Counter for transmitted frames to enable bus traffic measurement</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h70</ipxact:addressOffset>
+					<ipxact:addressOffset>'h80</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1503,7 +1441,7 @@
 					<ipxact:displayName>RX_COUNTER</ipxact:displayName>
 					<ipxact:description>Counter for received frames to enable bus traffic measurement</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h6C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h7C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -1524,7 +1462,7 @@
 					<ipxact:displayName>ERR_CAPT</ipxact:displayName>
 					<ipxact:description>Last error frame capture.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h64</ipxact:addressOffset>
+					<ipxact:addressOffset>'h74</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1652,7 +1590,7 @@
 					<ipxact:displayName>TX_STATUS</ipxact:displayName>
 					<ipxact:description>Status of TXT Buffers. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h58</ipxact:addressOffset>
+					<ipxact:addressOffset>'h68</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1751,7 +1689,7 @@
 					<ipxact:name>TRV_DELAY</ipxact:name>
 					<ipxact:displayName>TRV_DELAY</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h68</ipxact:addressOffset>
+					<ipxact:addressOffset>'h78</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1773,7 +1711,7 @@
 					<ipxact:displayName>RX_DATA</ipxact:displayName>
 					<ipxact:description>The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h54</ipxact:addressOffset>
+					<ipxact:addressOffset>'h64</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1793,7 +1731,7 @@
 					<ipxact:displayName>RX_POINTERS</ipxact:displayName>
 					<ipxact:description>Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol control FSM).</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h5C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1827,7 +1765,7 @@
 					<ipxact:displayName>RX_MEM_INFO</ipxact:displayName>
 					<ipxact:description>Information register about FIFO memory of RX Buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h48</ipxact:addressOffset>
+					<ipxact:addressOffset>'h58</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1850,7 +1788,7 @@
 					<ipxact:displayName>RX_STATUS</ipxact:displayName>
 					<ipxact:description>Information register one about FIFO Receive buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h50</ipxact:addressOffset>
+					<ipxact:addressOffset>'h60</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1896,7 +1834,7 @@
 					<ipxact:displayName>FILTER_CONTROL</ipxact:displayName>
 					<ipxact:description>Every filter can be configured to accept only selected frame types. Every bit is active in logic 1.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h44</ipxact:addressOffset>
+					<ipxact:addressOffset>'h54</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2097,7 +2035,7 @@
 					<ipxact:displayName>FILTER_RAN_HIGH</ipxact:displayName>
 					<ipxact:description>Higher threshold of the Range filter. Note that 29-bit value of range threshold is not the same format as transmitted</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h40</ipxact:addressOffset>
+					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2119,7 +2057,7 @@
 					<ipxact:displayName>FILTER_RAN_LOW</ipxact:displayName>
 					<ipxact:description>Lower threshold of the Range filter. Note that 29-bit value of range threshold is not the same format as transmitted and received identifier! In TX_DATA_4 (transmitted identifier) BASE Identifier is at 11 LSB bits and Extension at bits 28-12. However, actual decimal value of the Identifier is that BASE identifier is at MSB bits and 18 LSB bits is identifier extension. The unsigned binary value of the identifier must be written into this register! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_ran=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2141,7 +2079,7 @@
 					<ipxact:displayName>FILTER_C_VAL</ipxact:displayName>
 					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h38</ipxact:addressOffset>
+					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2162,7 +2100,7 @@
 					<ipxact:name>FILTER_C_MASK</ipxact:name>
 					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h34</ipxact:addressOffset>
+					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2184,7 +2122,7 @@
 					<ipxact:displayName>FILTER_B_VAL</ipxact:displayName>
 					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h30</ipxact:addressOffset>
+					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2205,7 +2143,7 @@
 					<ipxact:name>FILTER_B_MASK</ipxact:name>
 					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2227,7 +2165,7 @@
 					<ipxact:displayName>FILTER_A_MASK</ipxact:displayName>
 					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received identifier format. BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_fillt=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h24</ipxact:addressOffset>
+					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
@@ -2249,7 +2187,7 @@
 					<ipxact:displayName>CTR_PRES</ipxact:displayName>
 					<ipxact:description>Register for manipulation with error counters.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:addressOffset>'h30</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>write-only</ipxact:access>
@@ -2321,7 +2259,7 @@
 				<ipxact:register>
 					<ipxact:name>ERR_FD</ipxact:name>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h1E</ipxact:addressOffset>
+					<ipxact:addressOffset>'h2E</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -2343,7 +2281,7 @@
 					<ipxact:displayName>ERR_NORM</ipxact:displayName>
 					<ipxact:description>Error counter for nominal Bit time</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -2365,7 +2303,7 @@
 					<ipxact:displayName>TXC</ipxact:displayName>
 					<ipxact:description>Counter for transcieved frames to enable bus traffic measurement.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h1A</ipxact:addressOffset>
+					<ipxact:addressOffset>'h2A</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -2386,7 +2324,7 @@
 					<ipxact:displayName>RXC</ipxact:displayName>
 					<ipxact:description>Counter for received frames to enable bus traffic measurement.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h18</ipxact:addressOffset>
+					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>

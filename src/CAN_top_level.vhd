@@ -162,8 +162,10 @@ entity CAN_top_level is
   signal drv_bus    : std_logic_vector(1023 downto 0);
   signal stat_bus   : std_logic_vector(511 downto 0);
   
-  --Interrupt vector (Interrupt register of SJA1000)
-  signal int_vector : std_logic_vector(10 downto 0);
+  --Interrupt signals
+  signal int_vector :   std_logic_vector(INT_COUNT - 1 downto 0);
+  signal int_ena    :   std_logic_vector(INT_COUNT - 1 downto 0);
+  signal int_mask   :   std_logic_vector(INT_COUNT - 1 downto 0);
 
 	------------------------------------------------------------------------------
   -- Registers <--> RX Buffer Interface
@@ -511,8 +513,10 @@ begin
       txtb_fsms            => txtb_fsms,
       txt_sw_cmd           => txt_sw_cmd,
       txt_buf_cmd_index    => txt_buf_cmd_index,
-      txt_buf_prior_out    => txt_buf_prior,     
+      txt_buf_prior_out    => txt_buf_prior,
       int_vector           => int_vector,
+      int_ena              => int_ena,
+      int_mask             => int_mask,
       trv_delay_out        => trv_delay_out,
       loger_act_data       => loger_act_data,
       log_write_pointer    => log_write_pointer,
@@ -632,7 +636,7 @@ begin
 
   int_man_comp : intManager
     generic map(
-      int_length => 7
+      int_count             => INT_COUNT
       )
     port map(
       clk_sys               => clk_sys,
@@ -650,7 +654,9 @@ begin
       loger_finished        => loger_finished,
       drv_bus               => drv_bus,
       int_out               => int,
-      int_vector            => int_vector
+      int_vector            => int_vector,
+      int_ena               => int_ena,
+      int_mask              => int_mask
       );
 
   core_top_comp : core_top
