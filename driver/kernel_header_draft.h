@@ -46,46 +46,49 @@ enum can_fd_8bit_regs {
 	COMMAND                = 0x5,
 	STATUS                 = 0x6,
 	SETTINGS               = 0x7,
-	INT                    = 0x8,
-	INT_ENA                = 0xa,
-	BTR                    = 0xc,
-	BTR_FD                 = 0xe,
-	ALC                   = 0x10,
-	SJW                   = 0x11,
-	BRP                   = 0x12,
-	BRP_FD                = 0x13,
-	EWL                   = 0x14,
-	ERP                   = 0x15,
-	FAULT_STATE           = 0x16,
-	RXC                   = 0x18,
-	TXC                   = 0x1a,
-	ERR_NORM              = 0x1c,
-	ERR_FD                = 0x1e,
-	CTR_PRES              = 0x20,
-	FILTER_A_MASK         = 0x24,
-	FILTER_A_VAL          = 0x28,
-	FILTER_B_MASK         = 0x2c,
-	FILTER_B_VAL          = 0x30,
-	FILTER_C_MASK         = 0x34,
-	FILTER_C_VAL          = 0x38,
-	FILTER_RAN_LOW        = 0x3c,
-	FILTER_RAN_HIGH       = 0x40,
-	FILTER_CONTROL        = 0x44,
-	FILTER_STATUS         = 0x46,
-	RX_MEM_INFO           = 0x48,
-	RX_POINTERS           = 0x4c,
-	RX_STATUS             = 0x50,
-	RX_SETTINGS           = 0x52,
-	RX_DATA               = 0x54,
-	TX_STATUS             = 0x58,
-	TX_COMMAND            = 0x5c,
-	TX_PRIORITY           = 0x60,
-	ERR_CAPT              = 0x64,
-	TRV_DELAY             = 0x68,
-	RX_COUNTER            = 0x6c,
-	TX_COUNTER            = 0x70,
-	DEBUG_REGISTER        = 0x74,
-	YOLO_REG              = 0x78,
+	INT_STAT               = 0x8,
+	INT_ENA_SET            = 0xc,
+	INT_ENA_CLR           = 0x10,
+	INT_MASK_SET          = 0x14,
+	INT_MASK_CLR          = 0x18,
+	BTR                   = 0x1c,
+	BTR_FD                = 0x1e,
+	ALC                   = 0x20,
+	SJW                   = 0x21,
+	BRP                   = 0x22,
+	BRP_FD                = 0x23,
+	EWL                   = 0x24,
+	ERP                   = 0x25,
+	FAULT_STATE           = 0x26,
+	RXC                   = 0x28,
+	TXC                   = 0x2a,
+	ERR_NORM              = 0x2c,
+	ERR_FD                = 0x2e,
+	CTR_PRES              = 0x30,
+	FILTER_A_MASK         = 0x34,
+	FILTER_A_VAL          = 0x38,
+	FILTER_B_MASK         = 0x3c,
+	FILTER_B_VAL          = 0x40,
+	FILTER_C_MASK         = 0x44,
+	FILTER_C_VAL          = 0x48,
+	FILTER_RAN_LOW        = 0x4c,
+	FILTER_RAN_HIGH       = 0x50,
+	FILTER_CONTROL        = 0x54,
+	FILTER_STATUS         = 0x56,
+	RX_MEM_INFO           = 0x58,
+	RX_POINTERS           = 0x5c,
+	RX_STATUS             = 0x60,
+	RX_SETTINGS           = 0x62,
+	RX_DATA               = 0x64,
+	TX_STATUS             = 0x68,
+	TX_COMMAND            = 0x6c,
+	TX_PRIORITY           = 0x70,
+	ERR_CAPT              = 0x74,
+	TRV_DELAY             = 0x78,
+	RX_COUNTER            = 0x7c,
+	TX_COUNTER            = 0x80,
+	DEBUG_REGISTER        = 0x84,
+	YOLO_REG              = 0x88,
 	TXTB1_DATA_1         = 0x100,
 	TXTB1_DATA_2         = 0x104,
 	TXTB1_DATA_20        = 0x14c,
@@ -191,11 +194,11 @@ union mode_command_status_settings {
 	} s;
 };
 
-union int_int_ena {
+union int_stat {
 	uint32_t u32;
-	struct int_int_ena_s {
+	struct int_stat_s {
 #ifdef __BIG_ENDIAN_BITFIELD
-  /* INT */
+  /* INT_STAT */
 		uint32_t ri                      : 1;
 		uint32_t ti                      : 1;
 		uint32_t ei                      : 1;
@@ -207,34 +210,9 @@ union int_int_ena {
 		uint32_t lfi                     : 1;
 		uint32_t rfi                     : 1;
 		uint32_t bsi                     : 1;
-		uint32_t reserved_15_11          : 5;
-  /* INT_ENA */
-		uint32_t rie                     : 1;
-		uint32_t tie                     : 1;
-		uint32_t eie                     : 1;
-		uint32_t doie                    : 1;
-		uint32_t reserved_20             : 1;
-		uint32_t epie                    : 1;
-		uint32_t alie                    : 1;
-		uint32_t beie                    : 1;
-		uint32_t lfie                    : 1;
-		uint32_t rfie                    : 1;
-		uint32_t bsie                    : 1;
-		uint32_t reserved_31_27          : 5;
+		uint32_t reserved_31_11         : 21;
 #else
-		uint32_t reserved_31_27          : 5;
-		uint32_t bsie                    : 1;
-		uint32_t rfie                    : 1;
-		uint32_t lfie                    : 1;
-		uint32_t beie                    : 1;
-		uint32_t alie                    : 1;
-		uint32_t epie                    : 1;
-		uint32_t reserved_20             : 1;
-		uint32_t doie                    : 1;
-		uint32_t eie                     : 1;
-		uint32_t tie                     : 1;
-		uint32_t rie                     : 1;
-		uint32_t reserved_15_11          : 5;
+		uint32_t reserved_31_11         : 21;
 		uint32_t bsi                     : 1;
 		uint32_t rfi                     : 1;
 		uint32_t lfi                     : 1;
@@ -246,6 +224,62 @@ union int_int_ena {
 		uint32_t ei                      : 1;
 		uint32_t ti                      : 1;
 		uint32_t ri                      : 1;
+#endif
+	} s;
+};
+
+union int_ena_set {
+	uint32_t u32;
+	struct int_ena_set_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* INT_ENA_SET */
+		uint32_t int_ena_set            : 11;
+		uint32_t reserved_31_11         : 21;
+#else
+		uint32_t reserved_31_11         : 21;
+		uint32_t int_ena_set            : 11;
+#endif
+	} s;
+};
+
+union int_ena_clr {
+	uint32_t u32;
+	struct int_ena_clr_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* INT_ENA_CLR */
+		uint32_t int_ena_clr            : 11;
+		uint32_t reserved_31_11         : 21;
+#else
+		uint32_t reserved_31_11         : 21;
+		uint32_t int_ena_clr            : 11;
+#endif
+	} s;
+};
+
+union int_mask_set {
+	uint32_t u32;
+	struct int_mask_set_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* INT_MASK_SET */
+		uint32_t int_mask_set           : 11;
+		uint32_t reserved_31_11         : 21;
+#else
+		uint32_t reserved_31_11         : 21;
+		uint32_t int_mask_set           : 11;
+#endif
+	} s;
+};
+
+union int_mask_clr {
+	uint32_t u32;
+	struct int_mask_clr_s {
+#ifdef __BIG_ENDIAN_BITFIELD
+  /* INT_MASK_CLR */
+		uint32_t int_mask_clr           : 11;
+		uint32_t reserved_31_11         : 21;
+#else
+		uint32_t reserved_31_11         : 21;
+		uint32_t int_mask_clr           : 11;
 #endif
 	} s;
 };

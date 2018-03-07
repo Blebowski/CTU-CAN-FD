@@ -107,6 +107,8 @@ package CANconstants is
 
   constant TXT_BUFFER_COUNT     : natural := 4;  
   
+  constant INT_COUNT            : natural := 11;
+  
   ------------------------------------------------------------------------------   
   --DLC Types
   ------------------------------------------------------------------------------
@@ -396,20 +398,22 @@ package CANconstants is
   constant DRV_ERASE_TXT1_INDEX : natural := 366;
   constant DRV_TXT2_WR          : natural := 367;
 
-  --Interrupt manager indices 
-  constant DRV_BUS_ERR_INT_ENA_INDEX : natural := 376;
-  constant DRV_ARB_LST_INT_ENA_INDEX : natural := 377;
-  constant DRV_ERR_PAS_INT_ENA_INDEX : natural := 378;
-  constant DRV_WAKE_INT_ENA_INDEX    : natural := 379;
-  constant DRV_DOV_INT_ENA_INDEX     : natural := 380;
-  constant DRV_ERR_WAR_INT_ENA_INDEX : natural := 381;
-  constant DRV_TX_INT_ENA_INDEX      : natural := 382;
-  constant DRV_RX_INT_ENA_INDEX      : natural := 383;
-  constant DRV_LOG_FIN_INT_ENA_INDEX : natural := 384;
-  constant DRV_RX_FULL_INT_ENA_INDEX : natural := 385;
-  constant DRV_BRS_INT_ENA_INDEX     : natural := 386;
 
-  constant DRV_INT_VECT_ERASE_INDEX : natural := 387;
+  --Interrupt manager indices 
+  constant DRV_INT_CLR_HIGH   : natural := 746;
+  constant DRV_INT_CLR_LOW    : natural := 736;
+
+  constant DRV_INT_ENA_SET_HIGH     : natural := 778;
+  constant DRV_INT_ENA_SET_LOW      : natural := 768;
+
+  constant DRV_INT_ENA_CLR_HIGH   : natural := 810;
+  constant DRV_INT_ENA_CLR_LOW    : natural := 800;
+  
+  constant DRV_INT_MASK_SET_HIGH   : natural := 842;
+  constant DRV_INT_MASK_SET_LOW    : natural := 832;
+  
+  constant DRV_INT_MASK_CLR_HIGH   : natural := 874;
+  constant DRV_INT_MASK_CLR_LOW    : natural := 864;
 
   constant DRV_SAM_INDEX : natural := 372;
   

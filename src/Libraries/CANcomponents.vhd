@@ -147,7 +147,9 @@ package CANcomponents is
       signal txt_buf_cmd_index    : out std_logic_vector(buf_count - 1 downto 0);
       signal txt_buf_prior_out    : out txtb_priorities_type;      
       signal trv_delay_out        : in  std_logic_vector(15 downto 0);
-      signal int_vector           : in  std_logic_vector(10 downto 0);
+      signal int_vector           : in  std_logic_vector(INT_COUNT - 1 downto 0);
+      signal int_ena              : in  std_logic_vector(INT_COUNT - 1 downto 0);
+      signal int_mask             : in  std_logic_vector(INT_COUNT - 1 downto 0);
       signal loger_act_data       : in  std_logic_vector(63 downto 0);
       signal log_write_pointer    : in  std_logic_vector(7 downto 0);
       signal log_read_pointer     : in  std_logic_vector(7 downto 0);
@@ -321,29 +323,31 @@ package CANcomponents is
   -- Interrupt manager module
   ------------------------------------------------------------------------------
   component intManager is
-    generic(
-      constant int_length : natural range 0 to 10 := 5
-      );
-    port(
-      signal clk_sys               : in  std_logic;
-      signal res_n                 : in  std_logic;
-      signal error_valid           : in  std_logic;
-      signal error_passive_changed : in  std_logic;
-      signal error_warning_limit   : in  std_logic;
-      signal arbitration_lost      : in  std_logic;
-      signal wake_up_valid         : in  std_logic;
-      signal tx_finished           : in  std_logic;
-      signal br_shifted            : in  std_logic;
-      signal rx_message_disc       : in  std_logic;
-      signal rec_message_valid     : in  std_logic;
-      signal rx_full               : in  std_logic;
-      signal loger_finished        : in  std_logic;
-      signal drv_bus               : in  std_logic_vector(1023 downto 0);
-      signal int_out               : out std_logic;
-      signal int_vector            : out std_logic_vector(10 downto 0)
-      );
+  GENERIC(
+		  constant int_count          :     natural range 0 to 32 := 11
+    );
+  PORT(
+    signal clk_sys                :in   std_logic; 
+    signal res_n                  :in   std_logic;
+    signal error_valid            :in   std_logic;
+    signal error_passive_changed  :in   std_logic;
+    signal error_warning_limit    :in   std_logic;
+    signal arbitration_lost       :in   std_logic;
+    signal wake_up_valid          :in   std_logic;
+    signal tx_finished            :in   std_logic;
+    signal br_shifted             :in   std_logic;
+    signal rx_message_disc        :in   std_logic;
+    signal rec_message_valid      :in   std_logic;
+    signal rx_full                :in   std_logic;
+    signal loger_finished         :in   std_logic;
+    signal drv_bus                :in   std_logic_vector(1023 downto 0);
+    signal int_out                :out  std_logic;
+    signal int_vector             :out  std_logic_vector(int_count - 1 downto 0);
+    signal int_mask               :out  std_logic_vector(int_count - 1 downto 0);
+    signal int_ena                :out  std_logic_vector(int_count - 1 downto 0)
+  );
   end component;
-
+  
   ------------------------------------------------------------------------------
   --CAN Core module --
   ------------------------------------------------------------------------------

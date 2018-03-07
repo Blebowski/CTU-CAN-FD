@@ -230,7 +230,9 @@ entity canfd_registers is
     --Interrrupt Interface--
     ------------------------
     --Interrupt vector (Interrupt register of SJA1000)
-    signal int_vector           :in   std_logic_vector(10 downto 0) 
+    signal int_vector           :in   std_logic_vector(INT_COUNT - 1 downto 0);
+    signal int_ena              :in   std_logic_vector(INT_COUNT - 1 downto 0);
+    signal int_mask             :in   std_logic_vector(INT_COUNT - 1 downto 0)
   );
   ----------------------
   --Internal registers--
@@ -255,7 +257,11 @@ entity canfd_registers is
   signal retr_lim_th            :     std_logic_vector(3 downto 0);   
   
   --Interrupt registers
-  signal interrupt_vector_erase :     std_logic;
+  signal int_vect_clear         :     std_logic_vector(INT_COUNT - 1 downto 0);
+  signal int_ena_set            :     std_logic_vector(INT_COUNT - 1 downto 0);
+  signal int_ena_clear          :     std_logic_vector(INT_COUNT - 1 downto 0);
+  signal int_mask_set           :     std_logic_vector(INT_COUNT - 1 downto 0);
+  signal int_mask_clear         :     std_logic_vector(INT_COUNT - 1 downto 0);
   
   --Timing registers
   signal sjw_norm               :     std_logic_vector(3 downto 0);
@@ -337,9 +343,6 @@ entity canfd_registers is
   --Status Register
   signal status_reg             :     std_logic_vector(7 downto 0);   
   
-  --Interrupt Enable register
-  signal int_ena_reg            :     std_logic_vector(10 downto 0);  
-  
   --Auxiliarly signals
   signal PC_state               :     protocol_type;
   signal PC_state_reg_vect      :     std_logic_vector(6 downto 0);
@@ -372,7 +375,12 @@ architecture rtl of canfd_registers is
     --Retransmit treshold
     signal retr_lim_th            :out  std_logic_vector(3 downto 0);
        
-    signal interrupt_vector_erase :out  std_logic;
+    signal int_vect_clear         :out  std_logic_vector(INT_COUNT - 1 downto 0);
+    signal int_ena_set            :out  std_logic_vector(INT_COUNT - 1 downto 0);
+    signal int_ena_clear          :out  std_logic_vector(INT_COUNT - 1 downto 0);
+    signal int_mask_set           :out  std_logic_vector(INT_COUNT - 1 downto 0);
+    signal int_mask_clear         :out  std_logic_vector(INT_COUNT - 1 downto 0);
+    
     signal sjw_norm               :out  std_logic_vector(3 downto 0);
     signal brp_norm               :out  std_logic_vector(5 downto 0);
     signal ph1_norm               :out  std_logic_vector(4 downto 0);
@@ -417,7 +425,6 @@ architecture rtl of canfd_registers is
     signal CAN_enable             :out  std_logic;
     signal FD_type                :out  std_logic; 
     signal mode_reg               :out  std_logic_vector(5 downto 0);   
-    signal int_ena_reg            :out  std_logic_vector(10 downto 0);
     signal rtsopt                 :out  std_logic
   ) is
   begin
@@ -426,8 +433,6 @@ architecture rtl of canfd_registers is
     clear_overrun           <=  CDO_RSTVAL;
     release_recieve         <=  RRB_RSTVAL;
     abort_transmittion      <=  AT_RSTVAL;
-    
-    interrupt_vector_erase  <=  NO_ACTION;
     
     erctr_pres_value        <=  (OTHERS=>'0');
     erctr_pres_mask         <=  (OTHERS=>'0');
@@ -448,20 +453,7 @@ architecture rtl of canfd_registers is
     mode_reg(AFM_IND)       <=  AFM_RSTVAL;   --Acceptance filters mode 
     mode_reg(FDE_IND)       <=  FDE_RSTVAL;    --Flexible datarate enable
     mode_reg(RTR_PREF_IND)  <=  RTR_PREF_RSTVAL;    --RTR Preffered behaviour   
-    
-    --Interrupt enable register
-    int_ena_reg(RI_IND)     <=  RIE_RSTVAL;
-    int_ena_reg(TI_IND)     <=  TIE_RSTVAL;
-    int_ena_reg(EI_IND)     <=  EIE_RSTVAL;
-    int_ena_reg(DOI_IND)    <=  DOIE_RSTVAL;
-    int_ena_reg(4)          <=  DISABLED;
-    int_ena_reg(EPI_IND)    <=  EPIE_RSTVAL;
-    int_ena_reg(ALI_IND)    <=  ALIE_RSTVAL;
-    int_ena_reg(BEI_IND)    <=  BEIE_RSTVAL;
-    int_ena_reg(LFI_IND)    <=  LFIE_RSTVAL;
-    int_ena_reg(RFI_IND)    <=  RFIE_RSTVAL;
-    int_ena_reg(BSI_IND)    <=  BSIE_RSTVAL;      
-    
+        
     --Retransmitt limit enable
     retr_lim_ena            <=  RTRLE_RSTVAL;
     retr_lim_th             <=  RTR_TH_RSTVAL; --Retr. limit treshold zeroes   
@@ -527,6 +519,12 @@ architecture rtl of canfd_registers is
     txt_buf_prior(1)       <= TXT2P_RSTVAL;
     txt_buf_prior(2)       <= TXT3P_RSTVAL;
     txt_buf_prior(3)       <= TXT4P_RSTVAL;
+    
+    int_vect_clear         <= (OTHERS => '0');
+    int_ena_set            <= INT_ENA_SET_RSTVAL;
+    int_ena_clear          <= INT_ENA_CLR_RSTVAL;
+    int_mask_set           <= INT_MASK_SET_RSTVAL;
+    int_mask_clear         <= INT_MASK_CLR_RSTVAL;
     
     rtsopt                 <= RTSOP_RSTVAL;
   end procedure;
@@ -687,7 +685,12 @@ begin
       reg_reset (
        int_reset          ,clear_overrun          ,release_recieve         ,
        abort_transmittion ,ack_forb               ,retr_lim_ena            ,
-       retr_lim_th        ,interrupt_vector_erase ,sjw_norm                ,
+       retr_lim_th        ,
+       
+       int_vect_clear     ,int_ena_set            ,int_ena_clear           ,
+       int_mask_set       ,int_mask_clear         ,
+       
+       sjw_norm           ,
        brp_norm           ,ph1_norm               ,ph2_norm                ,
        prop_norm          ,sjw_fd                 ,brp_fd                  ,             
        ph1_fd             ,ph2_fd                 ,prop_fd                 ,
@@ -702,8 +705,7 @@ begin
        intLoopbackEna     ,log_trig_config        ,
        log_capt_config    ,log_cmd                ,rx_ctr_set              ,
        tx_ctr_set         ,ctr_val_set            ,CAN_enable              ,
-       FD_type            ,mode_reg               ,
-       int_ena_reg        ,rtsopt         
+       FD_type            ,mode_reg               ,rtsopt         
       );
       
       RX_buff_read_first    <= false;
@@ -721,7 +723,12 @@ begin
       reg_reset (
        int_reset          ,clear_overrun          ,release_recieve         ,
        abort_transmittion ,ack_forb               ,retr_lim_ena            ,
-       retr_lim_th        ,interrupt_vector_erase ,sjw_norm                ,
+       retr_lim_th        ,
+       
+       int_vect_clear     ,int_ena_set            ,int_ena_clear           ,
+       int_mask_set       ,int_mask_clear         ,
+
+       sjw_norm           ,
        brp_norm           ,ph1_norm               ,ph2_norm                ,
        prop_norm          ,sjw_fd                 ,brp_fd                  ,             
        ph1_fd             ,ph2_fd                 ,prop_fd                 ,
@@ -737,7 +744,7 @@ begin
        log_capt_config    ,log_cmd                ,
        rx_ctr_set         ,tx_ctr_set             ,
        ctr_val_set        ,CAN_enable             ,FD_type                 ,         
-       mode_reg           ,int_ena_reg            ,rtsopt           
+       mode_reg           ,rtsopt           
       );
            
       RX_buff_read_first    <= false;
@@ -771,7 +778,6 @@ begin
       filter_ran_ctrl         <=  filter_ran_ctrl;
     end if;
 		
-		int_ena_reg               <=  int_ena_reg;
 		retr_lim_ena              <=  retr_lim_ena;
 		retr_lim_th               <=  retr_lim_th;
 		sjw_norm                  <=  sjw_norm;
@@ -797,7 +803,6 @@ begin
 		clear_overrun             <=  '0';
 		release_recieve           <=  '0';
 		abort_transmittion        <=  '0';
-		interrupt_vector_erase    <=  '0';
 		erctr_pres_value          <=  (OTHERS=>'0');
 		erctr_pres_mask           <=  "0000";
 		ctr_val_set               <=  (OTHERS =>'0');
@@ -865,19 +870,43 @@ begin
     					  write_be_s(FD_type, FD_TYPE_IND, data_in, sbe);     
     			
 			 ------------------------------------------------------------	  
- 			 --INT and INT_ENA registers
+ 			 -- INT_STATUS register
  			 ------------------------------------------------------------
-    			when INT_ADR =>               
-    			          
- 			      --Interrupt enable register
- 			      write_be_vect(int_ena_reg, 0, 10, data_in, 16, 26, sbe);
-    			
-    					  --Interrupt register (interrupt vector) is read only! 
-    					  --(By read it is also erased)  
- 			 
+    			when INT_STAT_ADR =>               
+ 			      write_be_vect(int_vect_clear, 0, INT_COUNT - 1, data_in,
+ 			                                    0, INT_COUNT - 1, sbe);
+    
+       ------------------------------------------------------------	  
+ 			 -- INT_ENA_SET register
+ 			 ------------------------------------------------------------
+    			when INT_ENA_SET_ADR =>
+    			     write_be_vect(int_ena_set, 0, INT_COUNT - 1, data_in,
+ 			                                 0, INT_COUNT - 1, sbe);
+
+       ------------------------------------------------------------	  
+ 			 -- INT_ENA_CLEAR register
+ 			 ------------------------------------------------------------
+    			when INT_ENA_CLR_ADR =>
+    			     write_be_vect(int_ena_clear, 0, INT_COUNT - 1, data_in,
+ 			                                   0, INT_COUNT - 1, sbe);
+       
+       ------------------------------------------------------------	  
+ 			 -- INT_MASK_SET register
+ 			 ------------------------------------------------------------
+    			when INT_MASK_SET_ADR =>
+    			     write_be_vect(int_mask_set, 0, INT_COUNT - 1, data_in,
+ 			                                  0, INT_COUNT - 1, sbe);
+       
+       ------------------------------------------------------------	  
+ 			 -- INT_MASK_CLEAR register
+ 			 ------------------------------------------------------------
+    			when INT_MASK_CLR_ADR =>
+    			     write_be_vect(int_mask_clear, 0, INT_COUNT - 1, data_in,
+ 			                                    0, INT_COUNT - 1, sbe);
+ 
  			 ----------------------
- 			 --BTR and BTR FD 
- 			 -----------------------        
+ 			 --BTR and BTR FD
+ 			 -----------------------
     			when BTR_ADR => 
     			  
     			      write_be_vect(prop_norm, 0, 5, data_in, PROP_L, PROP_H, sbe);
@@ -1094,22 +1123,34 @@ begin
     					  data_out_int(FD_TYPE_IND)              <=  FD_type;
     					  
  				 ---------------------------------------------------------
- 				 -- INT and INT_ENA
+ 				 -- INT_STAT
  				 ---------------------------------------------------------
-    			  when INT_ADR => 
-    					  data_out_int               <=  (OTHERS=>'0');
-    					  
-    					  --Interrupt enable register
-    					  data_out_int(26 downto 16) <=  int_ena_reg(10 downto 0);
+    			  when INT_STAT_ADR => 
+    					  data_out_int               <=  (OTHERS => '0');
     					  
     					   --Interrupt register
-    					  data_out_int(10 downto 0)  <=  int_vector;
+    					  data_out_int(INT_COUNT - 1 downto 0)  <=  int_vector;
+
+ 				 ---------------------------------------------------------
+ 				 -- INT_ENA_SET
+ 				 ---------------------------------------------------------
+    			  when INT_ENA_SET_ADR => 
+    					  data_out_int               <=  (OTHERS=>'0');
     					  
-    					  --By reading interrupt vector it is erased
-    					  if (sbe(0)='1' and sbe(1)='1') then
-    					     interrupt_vector_erase     <=  '1'; 
-  			       end if;
-    			  
+    					   -- Reading this register returns the value of interrupt
+    					   -- enable
+    					   data_out_int(INT_COUNT - 1 downto 0)  <=  int_ena;
+
+ 				 ---------------------------------------------------------
+ 				 -- INT_MASK_SET
+ 				 ---------------------------------------------------------
+    			  when INT_MASK_SET_ADR => 
+    					  data_out_int               <=  (OTHERS=>'0');
+    					  
+    					  -- Reading this register returns the value of interrupt
+					  -- mask
+    					  data_out_int(INT_COUNT - 1 downto 0)  <=  int_mask;
+
     			  ---------------------------------------------------------
  				 -- BTR and BTR_FD
     			  ---------------------------------------------------------
@@ -1674,11 +1715,11 @@ begin
   drv_bus(399 downto 388)                           <=  (OTHERS=>'0');
   drv_bus(459 downto 445)                           <=  (OTHERS=>'0');
   drv_bus(464 downto 462)                           <=  (OTHERS=>'0');
-  drv_bus(1023 downto 614)                          <=  (OTHERS=>'0');
   drv_bus(609 downto 601)                           <=  (OTHERS=>'0');
   drv_bus(579 downto 570)                           <=  (OTHERS=>'0');
   drv_bus(519 downto 511)                           <=  (OTHERS=>'0');
   drv_bus(444 downto 429)                           <=  (OTHERS=>'0');
+  drv_bus(1023 downto 614)                          <=  (OTHERS=>'0');
   
   --Prescaler data and bus timing
   drv_bus(DRV_TQ_NBT_HIGH downto DRV_TQ_NBT_LOW)    <=  brp_norm;
@@ -1732,23 +1773,23 @@ begin
   --Tripple sampling
   drv_bus(DRV_SAM_INDEX)                            <=  sam_norm;
   
+  
   --Interrupts
-  drv_bus(DRV_BUS_ERR_INT_ENA_INDEX)                <=  int_ena_reg(BEI_IND);
-  drv_bus(DRV_ARB_LST_INT_ENA_INDEX)                <=  int_ena_reg(ALI_IND);
-  drv_bus(DRV_ERR_PAS_INT_ENA_INDEX)                <=  int_ena_reg(EPI_IND);
+  drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW)          
+            <= int_vect_clear;
+            
+  drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW)      
+            <= int_ena_set;
+            
+  drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW)  
+            <= int_ena_clear;
+            
+  drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW)    
+            <= int_mask_set;
+            
+  drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW)
+            <= int_mask_clear;
   
-  --Wake interrupt is not supported, no sleep mode implemented
-  drv_bus(DRV_WAKE_INT_ENA_INDEX)                   <=  '0'; 
-  
-  drv_bus(DRV_DOV_INT_ENA_INDEX)                    <=  int_ena_reg(DOI_IND);
-  drv_bus(DRV_ERR_WAR_INT_ENA_INDEX)                <=  int_ena_reg(EI_IND);
-  drv_bus(DRV_TX_INT_ENA_INDEX)                     <=  int_ena_reg(TI_IND);  
-  drv_bus(DRV_RX_INT_ENA_INDEX)                     <=  int_ena_reg(RI_IND);
-  drv_bus(DRV_LOG_FIN_INT_ENA_INDEX)                <=  int_ena_reg(LFI_IND);
-  drv_bus(DRV_RX_FULL_INT_ENA_INDEX)                <=  int_ena_reg(RFI_IND);
-  drv_bus(DRV_BRS_INT_ENA_INDEX)                    <=  int_ena_reg(BSI_IND);
-  
-  drv_bus(DRV_INT_VECT_ERASE_INDEX)                 <=  interrupt_vector_erase;
   
   --Falt confinement
   drv_bus(DRV_EWL_HIGH downto DRV_EWL_LOW)          <=  ewl;  
