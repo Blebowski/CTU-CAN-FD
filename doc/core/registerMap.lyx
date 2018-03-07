@@ -255,7 +255,7 @@ Control registers memory region.\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="33" version="3">
+<lyxtabular columns="5" rows="37" version="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -441,13 +441,7 @@ hyperref[MODE]{MODE}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[INT_ENA]{INT\backslash textunderscore ENA}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -455,13 +449,7 @@ hyperref[INT_ENA]{INT\backslash textunderscore ENA}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[INT_ENA]{INT\backslash textunderscore ENA}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -473,7 +461,7 @@ hyperref[INT_ENA]{INT\backslash textunderscore ENA}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[INT]{INT}\end_layout
+hyperref[INT_STAT]{INT\backslash textunderscore STAT}\end_layout
 \end_inset
 \end_layout
 
@@ -487,7 +475,7 @@ hyperref[INT]{INT}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[INT]{INT}\end_layout
+hyperref[INT_STAT]{INT\backslash textunderscore STAT}\end_layout
 \end_inset
 \end_layout
 
@@ -498,6 +486,222 @@ hyperref[INT]{INT}\end_layout
 
 \begin_layout Plain Layout
 0x8\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_ENA_SET]{INT\backslash textunderscore ENA\backslash textunderscore SET}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_ENA_SET]{INT\backslash textunderscore ENA\backslash textunderscore SET}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0xC\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_ENA_CLR]{INT\backslash textunderscore ENA\backslash textunderscore CLR}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_ENA_CLR]{INT\backslash textunderscore ENA\backslash textunderscore CLR}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x10\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_MASK_SET]{INT\backslash textunderscore MASK\backslash textunderscore SET}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_MASK_SET]{INT\backslash textunderscore MASK\backslash textunderscore SET}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x14\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_MASK_CLR]{INT\backslash textunderscore MASK\backslash textunderscore CLR}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[INT_MASK_CLR]{INT\backslash textunderscore MASK\backslash textunderscore CLR}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x18\end_layout
 
 \end_inset
 </cell>
@@ -563,7 +767,7 @@ hyperref[BTR]{BTR}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0xC\end_layout
+0x1C\end_layout
 
 \end_inset
 </cell>
@@ -629,7 +833,7 @@ hyperref[ALC]{ALC}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x10\end_layout
+0x20\end_layout
 
 \end_inset
 </cell>
@@ -695,270 +899,6 @@ hyperref[EWL]{EWL}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x14\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TXC]{TXC}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TXC]{TXC}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RXC]{RXC}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RXC]{RXC}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0x18\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[ERR_FD]{ERR\backslash textunderscore FD}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[ERR_FD]{ERR\backslash textunderscore FD}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[ERR_NORM]{ERR\backslash textunderscore NORM}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[ERR_NORM]{ERR\backslash textunderscore NORM}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0x1C\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0x20\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 0x24\end_layout
 
 \end_inset
@@ -973,7 +913,7 @@ hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
+hyperref[TXC]{TXC}\end_layout
 \end_inset
 \end_layout
 
@@ -987,7 +927,21 @@ hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
+hyperref[TXC]{TXC}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[RXC]{RXC}\end_layout
 \end_inset
 \end_layout
 
@@ -1001,21 +955,7 @@ hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
+hyperref[RXC]{RXC}\end_layout
 \end_inset
 \end_layout
 
@@ -1039,7 +979,7 @@ hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
+hyperref[ERR_FD]{ERR\backslash textunderscore FD}\end_layout
 \end_inset
 \end_layout
 
@@ -1053,7 +993,21 @@ hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
+hyperref[ERR_FD]{ERR\backslash textunderscore FD}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[ERR_NORM]{ERR\backslash textunderscore NORM}\end_layout
 \end_inset
 \end_layout
 
@@ -1067,21 +1021,7 @@ hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
+hyperref[ERR_NORM]{ERR\backslash textunderscore NORM}\end_layout
 \end_inset
 \end_layout
 
@@ -1105,7 +1045,7 @@ hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
+hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
 \end_inset
 \end_layout
 
@@ -1119,7 +1059,7 @@ hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
+hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
 \end_inset
 \end_layout
 
@@ -1133,7 +1073,7 @@ hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
+hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
 \end_inset
 \end_layout
 
@@ -1147,7 +1087,7 @@ hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
+hyperref[CTR_PRES]{CTR\backslash textunderscore PRES}\end_layout
 \end_inset
 \end_layout
 
@@ -1171,7 +1111,7 @@ hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
+hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1185,7 +1125,7 @@ hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
+hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1199,7 +1139,7 @@ hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
+hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1213,7 +1153,7 @@ hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
+hyperref[FILTER_A_MASK]{FILTER\backslash textunderscore A\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1237,7 +1177,7 @@ hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textundersco
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1251,7 +1191,7 @@ hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1265,7 +1205,7 @@ hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1279,7 +1219,7 @@ hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+hyperref[FILTER_A_VAL]{FILTER\backslash textunderscore A\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1303,7 +1243,7 @@ hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1317,7 +1257,7 @@ hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunder
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1331,7 +1271,7 @@ hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunder
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1345,7 +1285,7 @@ hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunder
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+hyperref[FILTER_B_MASK]{FILTER\backslash textunderscore B\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1369,7 +1309,7 @@ hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunder
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1383,7 +1323,7 @@ hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunde
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1397,7 +1337,7 @@ hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunde
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1411,7 +1351,7 @@ hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunde
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+hyperref[FILTER_B_VAL]{FILTER\backslash textunderscore B\backslash textunderscore VAL}\end_layout
 \end_inset
 \end_layout
 
@@ -1435,7 +1375,7 @@ hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunde
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_STATUS]{FILTER\backslash textunderscore STATUS}\end_layout
+hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1449,21 +1389,7 @@ hyperref[FILTER_STATUS]{FILTER\backslash textunderscore STATUS}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_STATUS]{FILTER\backslash textunderscore STATUS}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[FILTER_CONTROL]{FILTER\backslash textunderscore CONTROL}\end_layout
+hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1477,7 +1403,21 @@ hyperref[FILTER_CONTROL]{FILTER\backslash textunderscore CONTROL}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[FILTER_CONTROL]{FILTER\backslash textunderscore CONTROL}\end_layout
+hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_C_MASK]{FILTER\backslash textunderscore C\backslash textunderscore MASK}\end_layout
 \end_inset
 \end_layout
 
@@ -1501,6 +1441,270 @@ hyperref[FILTER_CONTROL]{FILTER\backslash textunderscore CONTROL}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
+hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_C_VAL]{FILTER\backslash textunderscore C\backslash textunderscore VAL}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x48\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_LOW]{FILTER\backslash textunderscore RAN\backslash textunderscore LOW}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x4C\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_RAN_HIGH]{FILTER\backslash textunderscore RAN\backslash textunderscore HIGH}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x50\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_STATUS]{FILTER\backslash textunderscore STATUS}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_STATUS]{FILTER\backslash textunderscore STATUS}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_CONTROL]{FILTER\backslash textunderscore CONTROL}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[FILTER_CONTROL]{FILTER\backslash textunderscore CONTROL}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x54\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
 hyperref[RX_MEM_INFO]{RX\backslash textunderscore MEM\backslash textunderscore INFO}\end_layout
 \end_inset
 \end_layout
@@ -1553,7 +1757,7 @@ hyperref[RX_MEM_INFO]{RX\backslash textunderscore MEM\backslash textunderscore I
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x48\end_layout
+0x58\end_layout
 
 \end_inset
 </cell>
@@ -1619,7 +1823,7 @@ hyperref[RX_POINTERS]{RX\backslash textunderscore POINTERS}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x4C\end_layout
+0x5C\end_layout
 
 \end_inset
 </cell>
@@ -1679,234 +1883,6 @@ hyperref[RX_STATUS]{RX\backslash textunderscore STATUS}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x50\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0x54\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_STATUS]{TX\backslash textunderscore STATUS}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_STATUS]{TX\backslash textunderscore STATUS}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0x58\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_COMMAND]{TX\backslash textunderscore COMMAND}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_COMMAND]{TX\backslash textunderscore COMMAND}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0x5C\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_PRIORITY]{TX\backslash textunderscore PRIORITY}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_PRIORITY]{TX\backslash textunderscore PRIORITY}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 0x60\end_layout
 
 \end_inset
@@ -1921,7 +1897,7 @@ hyperref[TX_PRIORITY]{TX\backslash textunderscore PRIORITY}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
 \end_inset
 \end_layout
 
@@ -1935,7 +1911,7 @@ hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
 \end_inset
 \end_layout
 
@@ -1949,7 +1925,7 @@ hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
 \end_inset
 \end_layout
 
@@ -1963,7 +1939,7 @@ hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+hyperref[RX_DATA]{RX\backslash textunderscore DATA}\end_layout
 \end_inset
 \end_layout
 
@@ -2003,7 +1979,7 @@ Reserved\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
+hyperref[TX_STATUS]{TX\backslash textunderscore STATUS}\end_layout
 \end_inset
 \end_layout
 
@@ -2017,7 +1993,7 @@ hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
+hyperref[TX_STATUS]{TX\backslash textunderscore STATUS}\end_layout
 \end_inset
 \end_layout
 
@@ -2037,11 +2013,27 @@ hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_COMMAND]{TX\backslash textunderscore COMMAND}\end_layout
 \end_inset
 \end_layout
 
@@ -2055,35 +2047,7 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_COMMAND]{TX\backslash textunderscore COMMAND}\end_layout
 \end_inset
 \end_layout
 
@@ -2103,11 +2067,27 @@ hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_PRIORITY]{TX\backslash textunderscore PRIORITY}\end_layout
 \end_inset
 \end_layout
 
@@ -2121,35 +2101,7 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+hyperref[TX_PRIORITY]{TX\backslash textunderscore PRIORITY}\end_layout
 \end_inset
 \end_layout
 
@@ -2173,6 +2125,258 @@ hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
+hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x74\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TRV_DELAY]{TRV\backslash textunderscore DELAY}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x78\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[RX_COUNTER]{RX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x7C\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+hyperref[TX_COUNTER]{TX\backslash textunderscore COUNTER}\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0x80\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
 hyperref[DEBUG_REGISTER]{DEBUG\backslash textunderscore REGISTER}\end_layout
 \end_inset
 \end_layout
@@ -2225,7 +2429,7 @@ hyperref[DEBUG_REGISTER]{DEBUG\backslash textunderscore REGISTER}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x74\end_layout
+0x84\end_layout
 
 \end_inset
 </cell>
@@ -2291,7 +2495,7 @@ hyperref[YOLO_REG]{YOLO\backslash textunderscore REG}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x78\end_layout
+0x88\end_layout
 
 \end_inset
 </cell>
@@ -4548,17 +4752,17 @@ FD_TYPE Selection between two possible CAN FD frame formats.\begin_inset Newline
 \end_inset
 \end_layout
 \begin_layout Subsection
-INT
+INT_STAT
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{INT
+label{INT_STAT
 }\end_layout
 \end_inset
 \end_layout
 \begin_layout Description
-Type: read-only
+Type: read-write
 \end_layout
 \begin_layout Description
 Address: 0x8
@@ -4567,7 +4771,7 @@ Address: 0x8
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-This register contains interrupt vector of interrupts that were generated since the last read. If 8 bit or 16 bit access is executed to any of lowest two bits the register is automatically erased.
+Reading this register returns Interrupt vector (status of generated Interrupts). Writing logic 1 to any bit clears according interrupt. Writing logic 0 has no effect.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -5090,12 +5294,12 @@ BSI Bit-rate shifted interrupt
 \end_inset
 \end_layout
 \begin_layout Subsection
-INT_ENA
+INT_ENA_SET
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
-label{INT_ENA
+label{INT_ENA_SET
 }\end_layout
 \end_inset
 \end_layout
@@ -5103,13 +5307,13 @@ label{INT_ENA
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0xA
+Address: 0xC
 \end_layout
 \begin_layout Description
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Register enables interrupts by different sources. Logic 1 in each bit means interrupt is allowed.
+Writing logic 1 to a bit enables according interrupt.Writing logic 0 has no effect. Reading the register returns logic 1 in every bit whose interrupt capturing is enabled.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -5249,27 +5453,27 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BSIE\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RFIE\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-LFIE\end_layout
+INT_ENA_SET[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[10:8]\end_layout
 
 \end_inset
 </cell>
@@ -5452,67 +5656,67 @@ Field name\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BEIE\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ALIE\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-EPIE\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-DOIE\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-EIE\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-TIE\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-RIE\end_layout
+INT_ENA_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[7:0]\end_layout
 
 \end_inset
 </cell>
@@ -5546,7 +5750,287 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+\begin_layout Description
+INT_ENA_SET Bit meaning is equivalent to register INT_STAT.
+\end_layout
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+\end_layout
+\begin_layout Subsection
+INT_ENA_CLR
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+label{INT_ENA_CLR
+}\end_layout
+\end_inset
+\end_layout
+\begin_layout Description
+Type: write-only
+\end_layout
+\begin_layout Description
+Address: 0x10
+\end_layout
+\begin_layout Description
+Size: 2 bytes
+\end_layout
+\begin_layout Standard
+Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect.
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+14\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[10:8]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -5570,7 +6054,194 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
 
 \end_inset
 </cell>
@@ -5578,7 +6249,55 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5598,34 +6317,1037 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RIE Frame successfully received interrupt enable
+INT_ENA_CLR Bit meaning is equivalent to register INT_STAT.
+\end_layout
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+\end_layout
+\begin_layout Subsection
+INT_MASK_SET
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+label{INT_MASK_SET
+}\end_layout
+\end_inset
 \end_layout
 \begin_layout Description
-TIE Frame successfully transmitted interrupt enable
+Type: read-write
 \end_layout
 \begin_layout Description
-EIE Error warning limit reached interrupt enable
+Address: 0x14
 \end_layout
 \begin_layout Description
-DOIE Data Overrun on RX Buffer interrupt enable
+Size: 2 bytes
+\end_layout
+\begin_layout Standard
+Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+14\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[10:8]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[7:0]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 \begin_layout Description
-EPIE Node became error passive or bus off interrupt enable
+INT_MASK_SET Bit meaning is equivalent to register INT_STAT.
+\end_layout
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+\end_layout
+\begin_layout Subsection
+INT_MASK_CLR
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+label{INT_MASK_CLR
+}\end_layout
+\end_inset
 \end_layout
 \begin_layout Description
-ALIE Arbitration lost interrupt enable
+Type: write-only
 \end_layout
 \begin_layout Description
-BEIE Bus Error interrupt enable
+Address: 0x18
 \end_layout
 \begin_layout Description
-LFIE Event logging finished interrupt enable
+Size: 2 bytes
+\end_layout
+\begin_layout Standard
+Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT and it does affect interrupt output of the CAN Core.
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+15\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+14\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+13\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[10:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[10:8]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[7:0]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 \begin_layout Description
-RFIE Receive buffer full interrupt enable
-\end_layout
-\begin_layout Description
-BSIE Bit-rate shifted interrupt enable
+INT_MASK_CLR Bit meaning is equivalent to register INT_STAT.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -5645,7 +7367,7 @@ label{BTR
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0xC
+Address: 0x1C
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -6166,7 +7888,7 @@ label{BTR_FD
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0xE
+Address: 0x1E
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -6687,7 +8409,7 @@ label{ALC
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x10
+Address: 0x20
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -6959,7 +8681,7 @@ label{SJW
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x11
+Address: 0x21
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -7234,7 +8956,7 @@ label{BRP
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x12
+Address: 0x22
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -7506,7 +9228,7 @@ label{BRP_FD
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x13
+Address: 0x23
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -7778,7 +9500,7 @@ label{EWL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x14
+Address: 0x24
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -8050,7 +9772,7 @@ label{ERP
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x15
+Address: 0x25
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -8322,7 +10044,7 @@ label{FAULT_STATE
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x16
+Address: 0x26
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -8843,7 +10565,7 @@ label{RXC
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x18
+Address: 0x28
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -9358,7 +11080,7 @@ label{TXC
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x1A
+Address: 0x2A
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -9873,7 +11595,7 @@ label{ERR_NORM
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x1C
+Address: 0x2C
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -10388,7 +12110,7 @@ label{ERR_FD
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x1E
+Address: 0x2E
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -10903,7 +12625,7 @@ label{CTR_PRES
 Type: write-only
 \end_layout
 \begin_layout Description
-Address: 0x20
+Address: 0x30
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -11916,7 +13638,7 @@ label{FILTER_A_MASK
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x24
+Address: 0x34
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -12917,7 +14639,7 @@ label{FILTER_A_VAL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x28
+Address: 0x38
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -13918,7 +15640,7 @@ label{FILTER_B_MASK
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x2C
+Address: 0x3C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -14919,7 +16641,7 @@ label{FILTER_B_VAL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x30
+Address: 0x40
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -15920,7 +17642,7 @@ label{FILTER_C_MASK
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x34
+Address: 0x44
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -16921,7 +18643,7 @@ label{FILTER_C_VAL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x38
+Address: 0x48
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -17922,7 +19644,7 @@ label{FILTER_RAN_LOW
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x3C
+Address: 0x4C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -18923,7 +20645,7 @@ label{FILTER_RAN_HIGH
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x40
+Address: 0x50
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -19924,7 +21646,7 @@ label{FILTER_CONTROL
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x44
+Address: 0x54
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -20484,7 +22206,7 @@ label{FILTER_STATUS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x46
+Address: 0x56
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -21008,7 +22730,7 @@ label{RX_MEM_INFO
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x48
+Address: 0x58
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -22012,7 +23734,7 @@ label{RX_POINTERS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x4C
+Address: 0x5C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -23016,7 +24738,7 @@ label{RX_STATUS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x50
+Address: 0x60
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -23537,7 +25259,7 @@ label{RX_SETTINGS
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x52
+Address: 0x62
 \end_layout
 \begin_layout Description
 Size: 1 byte
@@ -23811,7 +25533,7 @@ label{RX_DATA
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x54
+Address: 0x64
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -24812,7 +26534,7 @@ label{TX_STATUS
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x58
+Address: 0x68
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -25343,7 +27065,7 @@ label{TX_COMMAND
 Type: write-only
 \end_layout
 \begin_layout Description
-Address: 0x5C
+Address: 0x6C
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -25876,7 +27598,7 @@ label{TX_PRIORITY
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x60
+Address: 0x70
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -26400,7 +28122,7 @@ label{ERR_CAPT
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x64
+Address: 0x74
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -27419,7 +29141,7 @@ label{TRV_DELAY
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x68
+Address: 0x78
 \end_layout
 \begin_layout Description
 Size: 2 bytes
@@ -27934,7 +29656,7 @@ label{RX_COUNTER
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x6C
+Address: 0x7C
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -28935,7 +30657,7 @@ label{TX_COUNTER
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x70
+Address: 0x80
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -29936,7 +31658,7 @@ label{DEBUG_REGISTER
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x74
+Address: 0x84
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -30961,7 +32683,7 @@ label{YOLO_REG
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x78
+Address: 0x88
 \end_layout
 \begin_layout Description
 Size: 4 bytes
