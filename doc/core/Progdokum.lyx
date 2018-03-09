@@ -3249,6 +3249,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/RX_Buffer_layout.pdf
 	lyxscale 20
+	scale 80
 
 \end_inset
 
@@ -3383,7 +3384,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-RX Buffer memory layout
+TXT Buffer state machine
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:TXT_Buffer"

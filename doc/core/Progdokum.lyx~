@@ -3247,8 +3247,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/RX_Buffer.emf
+	filename ../pics/Visio_generated/RX_Buffer_layout.pdf
 	lyxscale 20
+	scale 80
 
 \end_inset
 
@@ -4062,8 +4063,15 @@ reference "tab: IPT_reqs"
 
  theoretical maximum bandwidth in Data phase of CAN FD IP Core can be calculated.
  Assuming we have Prescaler set to 1, length of all bit segments together
- is 7 and clk_sys is 100 Mhz CAN FD IP Core reaches 14,7 Mbit bit rate in
- Data phase.
+ is 7 and 
+\begin_inset Quotes eld
+\end_inset
+
+clk_sys
+\begin_inset Quotes erd
+\end_inset
+
+ is 100 Mhz CAN FD IP Core reaches 14,7 Mbit bit rate in Data phase.
  Note that this situation is theoretical maximum and since timing conditions
  are very tight, synchronization errors can appear.
  This configuration was tested (see 
