@@ -38,8 +38,8 @@
 #ifndef __CTU_CAN_FD__
 #define __CTU_CAN_FD__
 
-/* CAN_FD_8bit_regs memory map */
-enum can_fd_8bit_regs {
+/* Regs memory map */
+enum regs {
 	DEVICE_ID              = 0x0,
 	VERSION                = 0x2,
 	MODE                   = 0x4,
