@@ -1057,7 +1057,10 @@ begin
       stuff_enable_r          <=  '0';
       destuff_enable_r        <=  '0';
       is_idle_r               <=  '1'; 
-    
+      
+      txt_hw_cmd.unlock       <=  '1';
+      txt_hw_cmd.failed       <=  '1';
+      
         --Bug fix 21.6.2016
     elsif(delay_control_trans  =  '1')then
       PC_State                <= control;

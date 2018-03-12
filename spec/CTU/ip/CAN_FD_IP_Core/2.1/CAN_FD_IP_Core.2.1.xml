@@ -8,7 +8,7 @@
 		<ipxact:memoryMap>
 			<ipxact:name>CAN_FD_8bit_regs</ipxact:name>
 			<ipxact:displayName>3. CAN FD Core memory map</ipxact:displayName>
-			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The register map consists of following memory regions:</ipxact:description>
+			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The memory map consists of following memory regions:</ipxact:description>
 			<ipxact:addressBlock>
 				<ipxact:name>Control_registers</ipxact:name>
 				<ipxact:displayName>Control registers</ipxact:displayName>
@@ -21,7 +21,7 @@
 				<ipxact:register>
 					<ipxact:name>DEVICE_ID</ipxact:name>
 					<ipxact:displayName>DEVICE ID</ipxact:displayName>
-					<ipxact:description>The register contains an identifer of CAN FD IP function. It is used to determine if CAN IP function is mapped correctly on its base address.</ipxact:description>
+					<ipxact:description>Register contains the identifer of CAN FD IP function. It can be used to determine if CAN IP function is mapped correctly on its base address.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -44,7 +44,7 @@
 				<ipxact:register>
 					<ipxact:name>MODE</ipxact:name>
 					<ipxact:displayName>MODE</ipxact:displayName>
-					<ipxact:description>MODE register controls special operating modes of the controller.</ipxact:description>
+					<ipxact:description>MODE register controls operating modes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -53,7 +53,7 @@
 					<ipxact:field>
 						<ipxact:name>RST</ipxact:name>
 						<ipxact:displayName>RST</ipxact:displayName>
-						<ipxact:description>Writing logic 1 resets the controller. It has the same effect as logic 0 on res_n input of the controller.</ipxact:description>
+						<ipxact:description>Writing logic 1 resets the core. It has the same effect as logic 0 on &quot;res_n&quot; input of the controller.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -65,7 +65,7 @@
 					<ipxact:field>
 						<ipxact:name>FDE</ipxact:name>
 						<ipxact:displayName>FDE</ipxact:displayName>
-						<ipxact:description>Enable flexible data rate support. When disabled receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.</ipxact:description>
+						<ipxact:description>Enable flexible data rate support. When disabled, receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -91,7 +91,7 @@
 					<ipxact:field>
 						<ipxact:name>TSM</ipxact:name>
 						<ipxact:displayName>TSM</ipxact:displayName>
-						<ipxact:description>Triple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. It is recommended to use triple sampling only at low Bit rates.</ipxact:description>
+						<ipxact:description>Tripple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. CAN standard reccomends to use tripple sampling at low Bit rates.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -117,7 +117,7 @@
 					<ipxact:field>
 						<ipxact:name>RTR_PREF</ipxact:name>
 						<ipxact:displayName>RTRP</ipxact:displayName>
-						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when this situation occurs.</ipxact:description>
+						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when sending RTR Frames.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -195,7 +195,7 @@
 					<ipxact:field>
 						<ipxact:name>STM</ipxact:name>
 						<ipxact:displayName>STM</ipxact:displayName>
-						<ipxact:description>Self test mode. In this mode transmitted frame is considered valid even if acknowledge is not received.</ipxact:description>
+						<ipxact:description>Self test mode. In this mode transmitted frame is considered valid even if acknowledge was not received.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -248,7 +248,7 @@
 				<ipxact:register>
 					<ipxact:name>COMMAND</ipxact:name>
 					<ipxact:displayName>COMMAND</ipxact:displayName>
-					<ipxact:description>Writing logic 1 into each bit gives different command to the controller. After writing logic 1, logic 0 does not have to be written.</ipxact:description>
+					<ipxact:description>Writing logic 1 into each bit gives different command to the IP Core. After writing logic 1, logic 0 does not have to be written.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h5</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -257,7 +257,7 @@
 					<ipxact:field>
 						<ipxact:name>AT</ipxact:name>
 						<ipxact:displayName>AT</ipxact:displayName>
-						<ipxact:description>Abort transmission of CAN frame.</ipxact:description>
+						<ipxact:description>Abort transmission of CAN frame. CTU CAN FD IP Core will immediately move to the Interframe state. If the Core is a receiver, this command has no effect. Aborting transmission can be used to release the bus immediately. If another unit is receiving frame whose transmission is aborted, it will start transmitting Error frame due to Stuff Error. TXT Buffer will move to TX Error state.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -294,7 +294,7 @@
 				<ipxact:register>
 					<ipxact:name>STATUS</ipxact:name>
 					<ipxact:displayName>STATUS</ipxact:displayName>
-					<ipxact:description>Register signals various states of CAN controller. Logic 1 signals active state/flag.</ipxact:description>
+					<ipxact:description>Register signals various states of CTU CAN FD IP Core. Logic 1 signals active state/flag.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -315,7 +315,7 @@
 					<ipxact:field>
 						<ipxact:name>TBS</ipxact:name>
 						<ipxact:displayName>TBS</ipxact:displayName>
-						<ipxact:description>TXT buffer status. Both TXT buffers are full and frame can not be inserted for transmission.</ipxact:description>
+						<ipxact:description>TXT buffer status. Active if at least one of the TXT Buffers is in &quot;Empty&quot; state.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -327,7 +327,7 @@
 					<ipxact:field>
 						<ipxact:name>DOS</ipxact:name>
 						<ipxact:displayName>DOS</ipxact:displayName>
-						<ipxact:description>Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer.</ipxact:description>
+						<ipxact:description>Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer. This bit can be cleaned by CDO command.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -351,7 +351,7 @@
 					<ipxact:field>
 						<ipxact:name>RS</ipxact:name>
 						<ipxact:displayName>RS</ipxact:displayName>
-						<ipxact:description>Core is receiving a CAN Frame.</ipxact:description>
+						<ipxact:description>CTU CAN FD IP Core is a receiver of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -363,7 +363,7 @@
 					<ipxact:field>
 						<ipxact:name>TS</ipxact:name>
 						<ipxact:displayName>TS</ipxact:displayName>
-						<ipxact:description>Core is transmitting a CAN Frame.</ipxact:description>
+						<ipxact:description>CTU CAN FD IP Core is a transmitter of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -409,7 +409,7 @@
 					<ipxact:field>
 						<ipxact:name>RTRLE</ipxact:name>
 						<ipxact:displayName>RTRLE</ipxact:displayName>
-						<ipxact:description>Retransmitt limit enable. If enabled the core only attempts to transmitt each frame up to RTR_TH times. If not succesfull the frame is dropped from TX Buffer.</ipxact:description>
+						<ipxact:description>Retransmitt limit enable. If enabled, the core only attempts to transmitt each frame up to RTR_TH times. If not succesfull, the TXT Buffer will end up in &quot;Failed&quot; state.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -435,7 +435,7 @@
 					<ipxact:field>
 						<ipxact:name>RTR_TH</ipxact:name>
 						<ipxact:displayName>RTR_TH</ipxact:displayName>
-						<ipxact:description>The maximal amount of retransmission attempts</ipxact:description>
+						<ipxact:description>The maximal amount of retransmission attempts.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -473,7 +473,7 @@
 					<ipxact:field>
 						<ipxact:name>ENA</ipxact:name>
 						<ipxact:displayName>ENA</ipxact:displayName>
-						<ipxact:description>Enable bit for the whole CAN FD Controller. When disabled it acts as if not connected to the CAN Bus.</ipxact:description>
+						<ipxact:description>Enable bit for the whole CAN FD Controller. When disabled, IP Core acts as if not connected to the CAN Bus.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -679,6 +679,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>RX_SETTINGS</ipxact:name>
+					<ipxact:displayName>RX_SETTINGS</ipxact:displayName>
 					<ipxact:description>Settings register for FIFO RX Buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h62</ipxact:addressOffset>
@@ -737,7 +738,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_MASK_CLR</ipxact:name>
 					<ipxact:displayName>INT_MASK_CLR</ipxact:displayName>
-					<ipxact:description>Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT and it does affect interrupt output of the CAN Core.</ipxact:description>
+					<ipxact:description>Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT, and it does affect interrupt output of the CAN Core.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -759,7 +760,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_MASK_SET</ipxact:name>
 					<ipxact:displayName>INT_MASK_SET</ipxact:displayName>
-					<ipxact:description>Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.</ipxact:description>
+					<ipxact:description>Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured, and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1201,6 +1202,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXT3P</ipxact:name>
+						<ipxact:displayName>TXT3P</ipxact:displayName>
+						<ipxact:description>Priority of TXT Buffer 3.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1211,6 +1214,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXT4P</ipxact:name>
+						<ipxact:displayName>TXT4P</ipxact:displayName>
+						<ipxact:description>Priority of TXT Buffer 4.</ipxact:description>
 						<ipxact:bitOffset>12</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1223,7 +1228,7 @@
 				<ipxact:register>
 					<ipxact:name>TX_COMMAND</ipxact:name>
 					<ipxact:displayName>TX_COMMAND</ipxact:displayName>
-					<ipxact:description>Command register for TXT Buffers. Command is activated by setting TXC(E,C,R) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..8) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 deos not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.</ipxact:description>
+					<ipxact:description>Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 does not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1312,6 +1317,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>YOLO_REG</ipxact:name>
+					<ipxact:displayName>YOLO_REG</ipxact:displayName>
 					<ipxact:description>Register for fun :)</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h88</ipxact:addressOffset>
@@ -1442,7 +1448,7 @@
 				<ipxact:register>
 					<ipxact:name>TX_COUNTER</ipxact:name>
 					<ipxact:displayName>TX_COUNTER</ipxact:displayName>
-					<ipxact:description>Counter for transmitted frames to enable bus traffic measurement</ipxact:description>
+					<ipxact:description>Counter for transmitted frames to enable bus traffic measurement.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h80</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1733,7 +1739,6 @@
 				<ipxact:register>
 					<ipxact:name>RX_DATA</ipxact:name>
 					<ipxact:displayName>RX_DATA</ipxact:displayName>
-					<ipxact:description>The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h64</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1741,6 +1746,8 @@
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RX_DATA</ipxact:name>
+						<ipxact:displayName>RX_DATA</ipxact:displayName>
+						<ipxact:description>The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1802,6 +1809,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RX_MEM_FREE</ipxact:name>
+						<ipxact:displayName>RX_MEM_FREE</ipxact:displayName>
 						<ipxact:description>Number of free 32 bit words in the RX Buffer.</ipxact:description>
 						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:bitWidth>13</ipxact:bitWidth>
@@ -1900,6 +1908,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FAFE</ipxact:name>
+						<ipxact:displayName>FILT_A_FD_EXT</ipxact:displayName>
 						<ipxact:description>CAN FD Extended Frame should be accepted by filter A.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
@@ -2101,7 +2110,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_C_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_C_VAL</ipxact:displayName>
-					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
+					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2122,7 +2131,8 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>FILTER_C_MASK</ipxact:name>
-					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
+					<ipxact:displayName>FILTER_C_MASK</ipxact:displayName>
+					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2144,7 +2154,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_B_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_B_VAL</ipxact:displayName>
-					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
+					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2165,7 +2175,8 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>FILTER_B_MASK</ipxact:name>
-					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and</ipxact:description>
+					<ipxact:displayName>FILTER_B_MASK</ipxact:displayName>
+					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2282,6 +2293,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>ERR_FD</ipxact:name>
+					<ipxact:displayName>ERR_FD</ipxact:displayName>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2E</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2303,7 +2315,6 @@
 				<ipxact:register>
 					<ipxact:name>ERR_NORM</ipxact:name>
 					<ipxact:displayName>ERR_NORM</ipxact:displayName>
-					<ipxact:description>Error counter for nominal Bit time</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2355,7 +2366,7 @@
 					<ipxact:field>
 						<ipxact:name>RXC_VAL</ipxact:name>
 						<ipxact:displayName>RXC_VAL</ipxact:displayName>
-						<ipxact:description>Receive error counter. This register determines Fault confiment state (Error active,Error passive, Bus off) according to CAN specification.</ipxact:description>
+						<ipxact:description>Receive error counter. This register determines Fault confiment state (Error active, Error passive, Bus off) according to CAN specification.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -3657,12 +3668,13 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 				<ipxact:register>
 					<ipxact:name>TIMESTAMP_L_W</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_L_W</ipxact:displayName>
-					<ipxact:description>Lower 32 bits of timestamp when the frame should be transmitted or when it was received.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TIME_STAMP_31_0</ipxact:name>
+						<ipxact:displayName>TIME_STAMP_31_0</ipxact:displayName>
+						<ipxact:description>Lower 32 bits of timestamp when the frame should be transmitted or when it was received.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>
@@ -3670,12 +3682,13 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 				<ipxact:register>
 					<ipxact:name>TIMESTAMP_U_W</ipxact:name>
 					<ipxact:displayName>TIMESTAMP_U_W</ipxact:displayName>
-					<ipxact:description>Upper 32 bits of timestamp when the frame should be transmitted or when it was received.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>TIMESTAMP_L_W</ipxact:name>
+						<ipxact:displayName>TIMESTAMP_L_W</ipxact:displayName>
+						<ipxact:description>Upper 32 bits of timestamp when the frame should be transmitted or when it was received.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
 					</ipxact:field>

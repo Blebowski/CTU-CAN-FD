@@ -1680,8 +1680,10 @@ begin
                       '0';
   
   
-  status_reg(TBS_IND mod 8)<='1' when (txtb_fsms(0) /= txt_empty and
-                                       txtb_fsms(1) /= txt_empty)
+  status_reg(TBS_IND mod 8)<='1' when (txtb_fsms(0) = txt_empty or
+                                       txtb_fsms(1) = txt_empty or
+                                       txtb_fsms(2) = txt_empty or
+                                       txtb_fsms(3) = txt_empty)
                                  else
                             '0';
   

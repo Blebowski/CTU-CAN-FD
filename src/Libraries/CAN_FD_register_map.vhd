@@ -163,8 +163,8 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- DEVICE_ID register
   --
-  -- The register contains an identifer of CAN FD IP function. It is used to det
-  -- ermine if CAN IP function is mapped correctly on its base address.
+  -- Register contains the identifer of CAN FD IP function. It can be used to de
+  -- termine if CAN IP function is mapped correctly on its base address.
   ------------------------------------------------------------------------------
   constant DEVICE_ID_L            : natural := 0;
   constant DEVICE_ID_H           : natural := 15;
@@ -187,7 +187,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- MODE register
   --
-  -- MODE register controls special operating modes of the controller.
+  -- MODE register controls operating modes.
   ------------------------------------------------------------------------------
   constant RST_IND                : natural := 0;
   constant LOM_IND                : natural := 1;
@@ -239,8 +239,8 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- COMMAND register
   --
-  -- Writing logic 1 into each bit gives different command to the controller. Af
-  -- ter writing logic 1, logic 0 does not have to be written.
+  -- Writing logic 1 into each bit gives different command to the IP Core. After
+  --  writing logic 1, logic 0 does not have to be written.
   ------------------------------------------------------------------------------
   constant AT_IND                 : natural := 9;
   constant RRB_IND               : natural := 10;
@@ -254,8 +254,8 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- STATUS register
   --
-  -- Register signals various states of CAN controller. Logic 1 signals active s
-  -- tate/flag.
+  -- Register signals various states of CTU CAN FD IP Core. Logic 1 signals acti
+  -- ve state/flag.
   ------------------------------------------------------------------------------
   constant RBS_IND               : natural := 16;
   constant DOS_IND               : natural := 17;
@@ -376,8 +376,8 @@ package CAN_FD_register_map is
   --
   -- Writing logic 1 masks according interrupt. Writing logic 0 has no effect. R
   -- eading this register returns status of the interrupt mask. Masked interrupt
-  --  is captured and can be read from INT_STAT, but does not affect interrupt o
-  -- utput of the CAN Core.
+  --  is captured, and can be read from INT_STAT, but does not affect interrupt 
+  -- output of the CAN Core.
   ------------------------------------------------------------------------------
   constant INT_MASK_SET_L         : natural := 0;
   constant INT_MASK_SET_H        : natural := 11;
@@ -390,7 +390,8 @@ package CAN_FD_register_map is
   --
   -- Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect
   -- . Reading this register has no effect. Un-masked interrupt is captured, can
-  --  be read from INT_STAT and it does affect interrupt output of the CAN Core.
+  --  be read from INT_STAT, and it does affect interrupt output of the CAN Core
+  -- .
   ------------------------------------------------------------------------------
   constant INT_MASK_CLR_L         : natural := 0;
   constant INT_MASK_CLR_H        : natural := 11;
@@ -544,7 +545,6 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- ERR_NORM register
   --
-  -- Error counter for nominal Bit time
   ------------------------------------------------------------------------------
   constant ERR_NORM_VAL_L         : natural := 0;
   constant ERR_NORM_VAL_H        : natural := 15;
@@ -621,7 +621,7 @@ package CAN_FD_register_map is
   -- FILTER_B_MASK register
   --
   -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and
+  -- ier format is the same as transmitted and received Identifier.
   ------------------------------------------------------------------------------
   constant BIT_MASK_B_VAL_L       : natural := 0;
   constant BIT_MASK_B_VAL_H      : natural := 28;
@@ -634,7 +634,7 @@ package CAN_FD_register_map is
   -- FILTER_B_VAL register
   --
   -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and
+  -- fier format is the same as transmitted and received Identifier.
   ------------------------------------------------------------------------------
   constant BIT_VAL_B_VAL_L        : natural := 0;
   constant BIT_VAL_B_VAL_H       : natural := 28;
@@ -647,7 +647,7 @@ package CAN_FD_register_map is
   -- FILTER_C_MASK register
   --
   -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and
+  -- ier format is the same as transmitted and received Identifier.
   ------------------------------------------------------------------------------
   constant BIT_MASK_C_VAL_L       : natural := 0;
   constant BIT_MASK_C_VAL_H      : natural := 28;
@@ -660,7 +660,7 @@ package CAN_FD_register_map is
   -- FILTER_C_VAL register
   --
   -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and
+  -- fier format is the same as transmitted and received Identifier.
   ------------------------------------------------------------------------------
   constant BIT_VAL_C_VAL_L        : natural := 0;
   constant BIT_VAL_C_VAL_H       : natural := 28;
@@ -816,14 +816,6 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- RX_DATA register
   --
-  -- The recieve buffer data at read pointer position in FIFO. CAN Frame layout 
-  -- in RX buffer is described in Figure 7. By reading data from this register r
-  -- ead_pointer is automatically increased, as long as there is next data word 
-  -- stored in the buffer. Next Read from this register returns next word of CAN
-  --  frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc
-  -- . In detail bits of each word have following meaning. If any access is exec
-  -- uted (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. I
-  -- t is recomended to use 32 bit acccess on this register.
   ------------------------------------------------------------------------------
   constant RX_DATA_L              : natural := 0;
   constant RX_DATA_H             : natural := 31;
@@ -863,10 +855,10 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- TX_COMMAND register
   --
-  -- Command register for TXT Buffers. Command is activated by setting TXC(E,C,R
+  -- Command register for TXT Buffers. Command is activated by setting TXC(E,R,A
   -- ) bit to logic 1. Buffer that receives the command is selected by setting b
-  -- it TXBI(1..8) to logic 1. Command and index must be set by single access. R
-  -- egister is automatically erased upon the command completion and 0 deos not 
+  -- it TXBI(1..4) to logic 1. Command and index must be set by single access. R
+  -- egister is automatically erased upon the command completion and 0 does not 
   -- need to be written. Reffer to description of TXT Buffer circuit for TXT buf
   -- fer State machine.
   ------------------------------------------------------------------------------
@@ -967,7 +959,7 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- TX_COUNTER register
   --
-  -- Counter for transmitted frames to enable bus traffic measurement
+  -- Counter for transmitted frames to enable bus traffic measurement.
   ------------------------------------------------------------------------------
   constant TX_COUNTER_VAL_L       : natural := 0;
   constant TX_COUNTER_VAL_H      : natural := 31;
