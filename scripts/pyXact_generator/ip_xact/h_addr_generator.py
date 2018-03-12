@@ -30,7 +30,6 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 		for line in self.headerGen.out :
 			self.of.write(line)
 	
-	
 
 	def write_reg_group(self, regGroup):
 		decls = []
@@ -67,6 +66,24 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 	def addr_reg_lookup(self, fieldReg):
 		return super().addr_reg_lookup(fieldReg)
 	
+	
+	def write_reg_enums(self, reg):
+		for (i,field) in enumerate(sorted(reg.field, key=lambda a: a.bitOffset)):
+			if (field.enumeratedValues == []):
+				continue
+			decls = []
+			
+			if (len(field.enumeratedValues[0].enumeratedValue) > 0):
+				for es in field.enumeratedValues:
+					for (i,e) in enumerate(sorted(es.enumeratedValue, key=lambda x: x.value)):
+							decls.append(LanDeclaration(e.name.upper(), 
+								e.value, intType="enum"))
+							
+			self.headerGen.create_enum(reg.name.lower() + "_" + field.name.lower(), 
+											decls)
+			self.headerGen.wr_nl()
+			
+	
 	def write_regs(self, regs):
 		regGroups = [[]]
 		lowInd = 0
@@ -83,6 +100,8 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 			
 		for regGroup in regGroups:
 			self.write_reg_group(regGroup)
+			for reg in regGroup:
+				self.write_reg_enums(reg)
 
 				
 	

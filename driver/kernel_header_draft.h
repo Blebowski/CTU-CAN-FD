@@ -194,6 +194,61 @@ union mode_command_status_settings {
 	} s;
 };
 
+enum mode_lom {
+	LOM_DISABLED       = 0x0,
+	LOM_ENABLED        = 0x1,
+};
+
+enum mode_stm {
+	STM_DISABLED       = 0x0,
+	STM_ENABLED        = 0x1,
+};
+
+enum mode_afm {
+	AFM_DISABLED       = 0x0,
+	AFM_ENABLED        = 0x1,
+};
+
+enum mode_fde {
+	FDE_DISABLE       = 0x0,
+	FDE_ENABLE        = 0x1,
+};
+
+enum mode_rtr_pref {
+	RTR_EXTRA          = 0x0,
+	RTR_STANDARD       = 0x1,
+};
+
+enum mode_tsm {
+	TSM_DISABLE       = 0x0,
+	TSM_ENABLE        = 0x1,
+};
+
+enum mode_acf {
+	ACF_DISABLED       = 0x0,
+	ACF_ENABLED        = 0x1,
+};
+
+enum settings_rtrle {
+	RTRLE_DISABLED       = 0x0,
+	RTRLE_ENABLED        = 0x1,
+};
+
+enum settings_int_loop {
+	INT_LOOP_DISABLED       = 0x0,
+	INT_LOOP_ENABLED        = 0x1,
+};
+
+enum settings_ena {
+	DISABLED       = 0x0,
+	ENABLED        = 0x1,
+};
+
+enum settings_fd_type {
+	ISO_FD           = 0x0,
+	NON_ISO_FD       = 0x1,
+};
+
 union int_stat {
 	uint32_t u32;
 	struct int_stat_s {
@@ -644,6 +699,11 @@ union rx_status_rx_settings {
 	} s;
 };
 
+enum rx_settings_rtsop {
+	RTS_END       = 0x0,
+	RTS_BEG       = 0x1,
+};
+
 union rx_data {
 	uint32_t u32;
 	struct rx_data_s {
@@ -670,6 +730,16 @@ union tx_status {
 		uint32_t tx1s                    : 4;
 #endif
 	} s;
+};
+
+enum tx_status_tx1s {
+	TXT_RDY        = 0x1,
+	TXT_TRAN       = 0x2,
+	TXT_ABTP       = 0x3,
+	TXT_TOK        = 0x4,
+	TXT_ERR        = 0x6,
+	TXT_ABT        = 0x7,
+	TXT_ETY        = 0x8,
 };
 
 union tx_command {
@@ -740,6 +810,27 @@ union err_capt {
 		uint32_t err_pos                 : 5;
 #endif
 	} s;
+};
+
+enum err_capt_err_pos {
+	ERC_POS_SOF         = 0x0,
+	ERC_POS_ARB         = 0x1,
+	ERC_POS_CTRL        = 0x2,
+	ERC_POS_DATA        = 0x3,
+	ERC_POS_CRC         = 0x4,
+	ERC_POS_ACK         = 0x5,
+	ERC_POS_INTF        = 0x6,
+	ERC_POS_ERR         = 0x7,
+	ERC_POS_OVRL        = 0x8,
+	ERC_POS_OTHER      = 0x1f,
+};
+
+enum err_capt_err_type {
+	ERC_BIT_ERR        = 0x0,
+	ERC_CRC_ERR        = 0x1,
+	ERC_FRM_ERR        = 0x2,
+	ERC_ACK_ERR        = 0x3,
+	ERC_STUF_ERR       = 0x4,
 };
 
 union trv_delay {
@@ -1081,6 +1172,54 @@ union log_capt_event_2 {
 		uint32_t evnt_type               : 5;
 #endif
 	} s;
+};
+
+enum log_capt_event_2_evnt_type {
+	SOF_EVNT         = 0x1,
+	ARBL_EVNT        = 0x2,
+	FREC_EVNT        = 0x3,
+	TRANV_EVNT       = 0x4,
+	OVRL_EVNT        = 0x5,
+	ERR_EVNT         = 0x6,
+	BRS_EVNT         = 0x7,
+	ARBS_EVNT        = 0x8,
+	CONS_EVNT        = 0x9,
+	DATS_EVNT        = 0xa,
+	CRCS_EVNT        = 0xb,
+	ACKR_EVNT        = 0xc,
+	ACKN_EVNT        = 0xd,
+	EWLR_EVNT        = 0xe,
+	FCSC_EVNT        = 0xf,
+	TS_EVNT         = 0x10,
+	RS_EVNT         = 0x11,
+	SE_EVNT         = 0x12,
+	STF_EVNT        = 0x13,
+	DSTF_EVNT       = 0x14,
+	DOR_EVNT        = 0x15,
+};
+
+enum log_capt_event_2_evnt_det {
+	ISN_FDSTF       = 0x0,
+	ISN_FSTF        = 0x0,
+	BIT_ERR         = 0x1,
+	S_UP            = 0x1,
+	IS_SYNC         = 0x1,
+	IS_FDSTF        = 0x1,
+	IS_FSTF         = 0x1,
+	ST_ERR          = 0x2,
+	S_DOWN          = 0x2,
+	IS_PROP         = 0x2,
+	CRC_ERR         = 0x4,
+	IS_PH1          = 0x4,
+	ACK_ERR         = 0x8,
+	IS_PH2          = 0x8,
+	FRM_ERR        = 0x10,
+};
+
+enum log_capt_event_2_evnt_dea {
+	NO_SNC       = 0x0,
+	HA_SNC       = 0x1,
+	RE_SNC       = 0x2,
 };
 
 #endif
