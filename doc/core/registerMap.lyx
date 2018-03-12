@@ -4903,11 +4903,19 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TXBHCI\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RBNEI\end_layout
 
 \end_inset
 </cell>
@@ -4919,19 +4927,11 @@ BSI\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-RFI\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-LFI\end_layout
+RFI\end_layout
 
 \end_inset
 </cell>
@@ -4981,7 +4981,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5118,6 +5118,14 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+LFI\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 BEI\end_layout
 
 \end_inset
@@ -5135,14 +5143,6 @@ ALI\end_layout
 
 \begin_layout Plain Layout
 EPI\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
 
 \end_inset
 </cell>
@@ -5216,7 +5216,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5288,6 +5288,12 @@ RFI Receive buffer full interrupt
 \end_layout
 \begin_layout Description
 BSI Bit-rate shifted interrupt
+\end_layout
+\begin_layout Description
+RBNEI Receive buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.
+\end_layout
+\begin_layout Description
+TXBHCI TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core, this interrupt will be acivated.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -5445,19 +5451,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_ENA_SET[10:8]\end_layout
+INT_ENA_SET[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -5465,7 +5463,15 @@ INT_ENA_SET[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_ENA_SET[10:8]\end_layout
+INT_ENA_SET[11:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_SET[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -5473,7 +5479,7 @@ INT_ENA_SET[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_ENA_SET[10:8]\end_layout
+INT_ENA_SET[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -5523,7 +5529,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -5960,19 +5966,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_ENA_CLR[10:8]\end_layout
+INT_ENA_CLR[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -5980,7 +5978,15 @@ INT_ENA_CLR[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_ENA_CLR[10:8]\end_layout
+INT_ENA_CLR[11:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_ENA_CLR[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -5988,7 +5994,7 @@ INT_ENA_CLR[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_ENA_CLR[10:8]\end_layout
+INT_ENA_CLR[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -6038,7 +6044,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -6475,19 +6481,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_MASK_SET[10:8]\end_layout
+INT_MASK_SET[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -6495,7 +6493,15 @@ INT_MASK_SET[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_MASK_SET[10:8]\end_layout
+INT_MASK_SET[11:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_SET[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -6503,7 +6509,7 @@ INT_MASK_SET[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_MASK_SET[10:8]\end_layout
+INT_MASK_SET[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -6553,7 +6559,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -6990,19 +6996,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_MASK_CLR[10:8]\end_layout
+INT_MASK_CLR[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -7010,7 +7008,15 @@ INT_MASK_CLR[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_MASK_CLR[10:8]\end_layout
+INT_MASK_CLR[11:8]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+INT_MASK_CLR[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -7018,7 +7024,7 @@ INT_MASK_CLR[10:8]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-INT_MASK_CLR[10:8]\end_layout
+INT_MASK_CLR[11:8]\end_layout
 
 \end_inset
 </cell>
@@ -7068,7 +7074,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>

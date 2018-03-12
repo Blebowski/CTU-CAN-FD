@@ -107,7 +107,7 @@ package CANconstants is
 
   constant TXT_BUFFER_COUNT     : natural := 4;  
   
-  constant INT_COUNT            : natural := 11;
+  constant INT_COUNT            : natural := 12;
   
   ------------------------------------------------------------------------------   
   --DLC Types
@@ -400,19 +400,19 @@ package CANconstants is
 
 
   --Interrupt manager indices 
-  constant DRV_INT_CLR_HIGH   : natural := 746;
+  constant DRV_INT_CLR_HIGH   : natural := 747;
   constant DRV_INT_CLR_LOW    : natural := 736;
 
-  constant DRV_INT_ENA_SET_HIGH     : natural := 778;
+  constant DRV_INT_ENA_SET_HIGH     : natural := 779;
   constant DRV_INT_ENA_SET_LOW      : natural := 768;
 
-  constant DRV_INT_ENA_CLR_HIGH   : natural := 810;
+  constant DRV_INT_ENA_CLR_HIGH   : natural := 811;
   constant DRV_INT_ENA_CLR_LOW    : natural := 800;
   
-  constant DRV_INT_MASK_SET_HIGH   : natural := 842;
+  constant DRV_INT_MASK_SET_HIGH   : natural := 843;
   constant DRV_INT_MASK_SET_LOW    : natural := 832;
   
-  constant DRV_INT_MASK_CLR_HIGH   : natural := 874;
+  constant DRV_INT_MASK_CLR_HIGH   : natural := 875;
   constant DRV_INT_MASK_CLR_LOW    : natural := 864;
 
   constant DRV_SAM_INDEX : natural := 372;

@@ -159,7 +159,6 @@ entity core_top is
     --Interrupt Manager Interface--
     -------------------------------
     signal arbitration_lost_out   :out  std_logic; --Arbitration was lost input
-    signal wake_up_valid          :out  std_logic; --Wake up appeared
     
     --Message stored in CAN Core was sucessfully transmitted
     signal tx_finished            :out  std_logic; 
@@ -845,7 +844,6 @@ begin
   
  --Output propagation
  arbitration_lost_out   <=  arbitration_lost;
- wake_up_valid          <=  '0'; --No slepp mode implemented
  tx_finished            <=  tran_valid;
  
  sof_pulse              <=  sof_pulse_r;

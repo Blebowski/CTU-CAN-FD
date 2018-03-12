@@ -333,12 +333,13 @@ package CANcomponents is
     signal error_passive_changed  :in   std_logic;
     signal error_warning_limit    :in   std_logic;
     signal arbitration_lost       :in   std_logic;
-    signal wake_up_valid          :in   std_logic;
     signal tx_finished            :in   std_logic;
     signal br_shifted             :in   std_logic;
     signal rx_message_disc        :in   std_logic;
     signal rec_message_valid      :in   std_logic;
     signal rx_full                :in   std_logic;
+    signal rx_empty               :in   std_logic;
+    signal txt_hw_cmd             :in   txt_hw_cmd_type;
     signal loger_finished         :in   std_logic;
     signal drv_bus                :in   std_logic_vector(1023 downto 0);
     signal int_out                :out  std_logic;
@@ -380,7 +381,6 @@ package CANcomponents is
       signal rec_dram_word_out     : out std_logic_vector(31 downto 0);
       signal rec_dram_addr_out     : in  natural range 0 to 15;
       signal arbitration_lost_out  : out std_logic;
-      signal wake_up_valid         : out std_logic;
       signal tx_finished           : out std_logic;
       signal br_shifted            : out std_logic;
       signal error_valid           : out std_logic;
