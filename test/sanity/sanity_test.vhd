@@ -1,10 +1,12 @@
 --------------------------------------------------------------------------------
 -- 
--- CAN with Flexible Data-Rate IP Core 
+-- CTU CAN FD IP Core
+-- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
 -- 
--- Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisor: Jiri Novak <jnovak@fel.cvut.cz>
+-- Project advisors and co-authors: 
+-- 	Jiri Novak <jnovak@fel.cvut.cz>
+-- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+-- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
@@ -415,7 +417,8 @@ architecture behavioral of sanity_test is
     ---------------------------------------------
     -- Correct first bits to have interesting
     -- arbitration...
-   -- Correct the last bits to avoid collisions 
+   
+-- Correct the last bits to avoid collisions 
     ---------------------------------------------
     rand_real_v(rand_ctr,rand_val);
     aux_common := std_logic_vector(to_unsigned(com_id, 29));

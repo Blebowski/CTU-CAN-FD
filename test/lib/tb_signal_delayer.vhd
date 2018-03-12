@@ -1,9 +1,53 @@
+--------------------------------------------------------------------------------
+-- 
+-- CTU CAN FD IP Core
+-- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
+-- 
+-- Project advisors and co-authors: 
+-- 	Jiri Novak <jnovak@fel.cvut.cz>
+-- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+-- 	Martin Jerabek <jerabma7@fel.cvut.cz>
+-- Department of Measurement         (http://meas.fel.cvut.cz/)
+-- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
+-- Czech Technical University        (http://www.cvut.cz/)
+-- 
+-- Permission is hereby granted, free of charge, to any person obtaining a copy 
+-- of this VHDL component and associated documentation files (the "Component"), 
+-- to deal in the Component without restriction, including without limitation 
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+-- and/or sell copies of the Component, and to permit persons to whom the 
+-- Component is furnished to do so, subject to the following conditions:
+-- 
+-- The above copyright notice and this permission notice shall be included in 
+-- all copies or substantial portions of the Component.
+-- 
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- IN THE COMPONENT.
+-- 
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+-- protocol license from Bosch.
+-- 
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+-- Purpose:
+--    Delay a signal by non-static time.
+--    Maintains a FIFO of (time&value) of event (change) on input signal
+--    and replays it on the delayed signal with the specified delay.
+--------------------------------------------------------------------------------
+-- Revision History:
+--    February 2018   First Implementation - Martin Jerabek
+--------------------------------------------------------------------------------
+
 library ieee;
 use ieee.std_logic_1164.all;
 
--- Delay a signal by non-static time.
--- Maintains a FIFO of (time&value) of event (change) on input signal
--- and replays it on the delayed signal with the specified delay.
 entity tb_signal_delayer_vec is
     generic (
         NSAMPLES : positive;

@@ -1,10 +1,12 @@
 --------------------------------------------------------------------------------
 -- 
--- CAN with Flexible Data-Rate IP Core 
+-- CTU CAN FD IP Core
+-- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
 -- 
--- Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisor: Jiri Novak <jnovak@fel.cvut.cz>
+-- Project advisors and co-authors: 
+-- 	Jiri Novak <jnovak@fel.cvut.cz>
+-- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+-- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
@@ -419,7 +421,7 @@ begin
         -- of the frame to "read_frame_counter", thus we know how much
         -- we have to read before decrementing the "message_count".
         if (read_frame_counter = 0) then
-          read_frame_counter    <= 
+          read_frame_counter    <=
               to_integer(unsigned(memory(read_pointer)(RWCNT_H downto RWCNT_L)));
         
         -- The last word is read during decrement from 1 to 0. We can decrease
