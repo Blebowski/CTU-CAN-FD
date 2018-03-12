@@ -2732,7 +2732,7 @@ Address: 0x8
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Lower 32 bits of timestamp when the frame should be transmitted or when it was received.
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -3707,7 +3707,7 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-TIME_STAMP_31_0 
+TIME_STAMP_31_0 Lower 32 bits of timestamp when the frame should be transmitted or when it was received.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -3733,7 +3733,7 @@ Address: 0xC
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Upper 32 bits of timestamp when the frame should be transmitted or when it was received.
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4708,7 +4708,7 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-TIMESTAMP_L_W 
+TIMESTAMP_L_W Upper 32 bits of timestamp when the frame should be transmitted or when it was received.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

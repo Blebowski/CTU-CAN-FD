@@ -100,7 +100,7 @@ customHeadersFooters
 3. CAN FD Core memory map
 \end_layout
 \begin_layout Standard
-CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The register map consists of following memory regions:
+CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The memory map consists of following memory regions:
 \end_layout
 \begin_layout Standard
 \noindent
@@ -2568,7 +2568,7 @@ Address: 0x0
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-The register contains an identifer of CAN FD IP function. It is used to determine if CAN IP function is mapped correctly on its base address.
+Register contains the identifer of CAN FD IP function. It can be used to determine if CAN IP function is mapped correctly on its base address.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -3601,7 +3601,7 @@ Address: 0x4
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-MODE register controls special operating modes of the controller.
+MODE register controls operating modes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -3847,7 +3847,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RST Writing logic 1 resets the controller. It has the same effect as logic 0 on res_n input of the controller.
+RST Writing logic 1 resets the core. It has the same effect as logic 0 on "res_n" input of the controller.
 \end_layout
 \begin_layout Description
 LOM Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!\begin_inset Newline newline\end_inset
@@ -3855,7 +3855,7 @@ LOM Listen only mode. In this mode controller only receives data and sends only 
 		0b1  - LOM_ENABLED - Listen only mode enabled.
 \end_layout
 \begin_layout Description
-STM Self test mode. In this mode transmitted frame is considered valid even if acknowledge is not received.\begin_inset Newline newline\end_inset
+STM Self test mode. In this mode transmitted frame is considered valid even if acknowledge was not received.\begin_inset Newline newline\end_inset
 		0b0  - STM_DISABLED - Self test mode disabled.\begin_inset Newline newline\end_inset
 		0b1  - STM_ENABLED - Self test mode enabled.
 \end_layout
@@ -3865,17 +3865,17 @@ AFM Acceptance filters mode. If this mode is enabled, acceptance filters are use
 		0b1  - AFM_ENABLED - Acceptance filter mode enabled
 \end_layout
 \begin_layout Description
-FDE Enable flexible data rate support. When disabled receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.\begin_inset Newline newline\end_inset
+FDE Enable flexible data rate support. When disabled, receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.\begin_inset Newline newline\end_inset
 		0b0  - FDE_DISABLE - Flexible data-rate support disabled.\begin_inset Newline newline\end_inset
 		0b1  - FDE_ENABLE - Flexible data-rate support enabled.
 \end_layout
 \begin_layout Description
-RTR_PREF RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when this situation occurs.\begin_inset Newline newline\end_inset
+RTR_PREF RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when sending RTR Frames.\begin_inset Newline newline\end_inset
 		0b0  - RTR_EXTRA - When RTR Frame is sent, all zeroes are sent at DLC.\begin_inset Newline newline\end_inset
 		0b1  - RTR_STANDARD - When RTR Frame is sent, also the DLC inserted to TX Buffer is sent.
 \end_layout
 \begin_layout Description
-TSM Triple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. It is recommended to use triple sampling only at low Bit rates.\begin_inset Newline newline\end_inset
+TSM Tripple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. CAN standard reccomends to use tripple sampling at low Bit rates.\begin_inset Newline newline\end_inset
 		0b0  - TSM_DISABLE - Tripple sampling mode disabled\begin_inset Newline newline\end_inset
 		0b1  - TSM_ENABLE - Tripple sampling mode enabled
 \end_layout
@@ -3908,7 +3908,7 @@ Address: 0x5
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Writing logic 1 into each bit gives different command to the controller. After writing logic 1, logic 0 does not have to be written.
+Writing logic 1 into each bit gives different command to the IP Core. After writing logic 1, logic 0 does not have to be written.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4154,7 +4154,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-AT Abort transmission of CAN frame.
+AT Abort transmission of CAN frame. CTU CAN FD IP Core will immediately move to the Interframe state. If the Core is a receiver, this command has no effect. Aborting transmission can be used to release the bus immediately. If another unit is receiving frame whose transmission is aborted, it will start transmitting Error frame due to Stuff Error. TXT Buffer will move to TX Error state.
 \end_layout
 \begin_layout Description
 RRB Release Receive buffer. This command deletes all data from the Receive buffer and restarts its memory pointers.
@@ -4186,7 +4186,7 @@ Address: 0x6
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Register signals various states of CAN controller. Logic 1 signals active state/flag.
+Register signals various states of CTU CAN FD IP Core. Logic 1 signals active state/flag.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4435,19 +4435,19 @@ Reset value\end_layout
 RBS Receive buffer is not empty.
 \end_layout
 \begin_layout Description
-DOS Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer.
+DOS Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer. This bit can be cleaned by CDO command.
 \end_layout
 \begin_layout Description
-TBS TXT buffer status. Both TXT buffers are full and frame can not be inserted for transmission.
+TBS TXT buffer status. Active if at least one of the TXT Buffers is in "Empty" state.
 \end_layout
 \begin_layout Description
 ET Error frame is beeing transmitted at the moment.
 \end_layout
 \begin_layout Description
-RS Core is receiving a CAN Frame.
+RS CTU CAN FD IP Core is a receiver of CAN Frame.
 \end_layout
 \begin_layout Description
-TS Core is transmitting a CAN Frame.
+TS CTU CAN FD IP Core is a transmitter of CAN Frame.
 \end_layout
 \begin_layout Description
 ES Error status. Error warning limit was reached at any of error counters.
@@ -4725,12 +4725,12 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RTRLE Retransmitt limit enable. If enabled the core only attempts to transmitt each frame up to RTR_TH times. If not succesfull the frame is dropped from TX Buffer.\begin_inset Newline newline\end_inset
+RTRLE Retransmitt limit enable. If enabled, the core only attempts to transmitt each frame up to RTR_TH times. If not succesfull, the TXT Buffer will end up in "Failed" state.\begin_inset Newline newline\end_inset
 		0b0  - RTRLE_DISABLED - Retransmitt limit is disabled.\begin_inset Newline newline\end_inset
 		0b1  - RTRLE_ENABLED - Retransmitt limit is enabled.
 \end_layout
 \begin_layout Description
-RTR_TH The maximal amount of retransmission attempts
+RTR_TH The maximal amount of retransmission attempts.
 \end_layout
 \begin_layout Description
 INT_LOOP Internal loop-back option (recommended  only for testing). If internal loopback options is enabled the Core automatically receive any dominant bit it transmitts.\begin_inset Newline newline\end_inset
@@ -4738,7 +4738,7 @@ INT_LOOP Internal loop-back option (recommended  only for testing). If internal 
 		0b1  - INT_LOOP_ENABLED - Internal loop-back is enabled.
 \end_layout
 \begin_layout Description
-ENA Enable bit for the whole CAN FD Controller. When disabled it acts as if not connected to the CAN Bus.\begin_inset Newline newline\end_inset
+ENA Enable bit for the whole CAN FD Controller. When disabled, IP Core acts as if not connected to the CAN Bus.\begin_inset Newline newline\end_inset
 		0b0  - DISABLED - The CAN Core is disabled.\begin_inset Newline newline\end_inset
 		0b1  - ENABLED - The CAN Core is enabled.
 \end_layout
@@ -6349,7 +6349,7 @@ Address: 0x14
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.
+Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured, and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -6864,7 +6864,7 @@ Address: 0x18
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT and it does affect interrupt output of the CAN Core.
+Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT, and it does affect interrupt output of the CAN Core.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -11066,7 +11066,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RXC_VAL Receive error counter. This register determines Fault confiment state (Error active,Error passive, Bus off) according to CAN specification.
+RXC_VAL Receive error counter. This register determines Fault confiment state (Error active, Error passive, Bus off) according to CAN specification.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -11607,7 +11607,7 @@ Address: 0x2C
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Error counter for nominal Bit time
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -15652,7 +15652,7 @@ Address: 0x3C
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and
+Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -16653,7 +16653,7 @@ Address: 0x40
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and
+Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -17654,7 +17654,7 @@ Address: 0x44
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and
+Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -18655,7 +18655,7 @@ Address: 0x48
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and
+Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -25545,7 +25545,7 @@ Address: 0x64
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -26520,7 +26520,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RX_DATA 
+RX_DATA The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -27077,7 +27077,7 @@ Address: 0x6C
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Command register for TXT Buffers. Command is activated by setting TXC(E,C,R) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..8) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 deos not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.
+Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 does not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -28105,10 +28105,10 @@ TXT1P Priority of TXT Buffer 1.
 TXT2P Priority of TXT Buffer 2.
 \end_layout
 \begin_layout Description
-TXT3P 
+TXT3P Priority of TXT Buffer 3.
 \end_layout
 \begin_layout Description
-TXT4P 
+TXT4P Priority of TXT Buffer 4.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -30669,7 +30669,7 @@ Address: 0x80
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Counter for transmitted frames to enable bus traffic measurement
+Counter for transmitted frames to enable bus traffic measurement.
 \end_layout
 \begin_layout Standard
 \noindent

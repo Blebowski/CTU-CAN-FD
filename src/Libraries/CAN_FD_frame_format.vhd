@@ -116,8 +116,6 @@ package CAN_FD_frame_format is
   ------------------------------------------------------------------------------
   -- TIMESTAMP_L_W register
   --
-  -- Lower 32 bits of timestamp when the frame should be transmitted or when it 
-  -- was received.
   ------------------------------------------------------------------------------
   constant TIME_STAMP_31_0_L      : natural := 0;
   constant TIME_STAMP_31_0_H     : natural := 31;
@@ -127,8 +125,6 @@ package CAN_FD_frame_format is
   ------------------------------------------------------------------------------
   -- TIMESTAMP_U_W register
   --
-  -- Upper 32 bits of timestamp when the frame should be transmitted or when it 
-  -- was received.
   ------------------------------------------------------------------------------
   constant TIMESTAMP_L_W_L        : natural := 0;
   constant TIMESTAMP_L_W_H       : natural := 31;
