@@ -39,82 +39,82 @@
 #define __CTU_CAN_FD__
 
 /* Regs memory map */
-enum regs {
-	DEVICE_ID              = 0x0,
-	VERSION                = 0x2,
-	MODE                   = 0x4,
-	COMMAND                = 0x5,
-	STATUS                 = 0x6,
-	SETTINGS               = 0x7,
-	INT_STAT               = 0x8,
-	INT_ENA_SET            = 0xc,
-	INT_ENA_CLR           = 0x10,
-	INT_MASK_SET          = 0x14,
-	INT_MASK_CLR          = 0x18,
-	BTR                   = 0x1c,
-	BTR_FD                = 0x1e,
-	ALC                   = 0x20,
-	SJW                   = 0x21,
-	BRP                   = 0x22,
-	BRP_FD                = 0x23,
-	EWL                   = 0x24,
-	ERP                   = 0x25,
-	FAULT_STATE           = 0x26,
-	RXC                   = 0x28,
-	TXC                   = 0x2a,
-	ERR_NORM              = 0x2c,
-	ERR_FD                = 0x2e,
-	CTR_PRES              = 0x30,
-	FILTER_A_MASK         = 0x34,
-	FILTER_A_VAL          = 0x38,
-	FILTER_B_MASK         = 0x3c,
-	FILTER_B_VAL          = 0x40,
-	FILTER_C_MASK         = 0x44,
-	FILTER_C_VAL          = 0x48,
-	FILTER_RAN_LOW        = 0x4c,
-	FILTER_RAN_HIGH       = 0x50,
-	FILTER_CONTROL        = 0x54,
-	FILTER_STATUS         = 0x56,
-	RX_MEM_INFO           = 0x58,
-	RX_POINTERS           = 0x5c,
-	RX_STATUS             = 0x60,
-	RX_SETTINGS           = 0x62,
-	RX_DATA               = 0x64,
-	TX_STATUS             = 0x68,
-	TX_COMMAND            = 0x6c,
-	TX_PRIORITY           = 0x70,
-	ERR_CAPT              = 0x74,
-	TRV_DELAY             = 0x78,
-	RX_COUNTER            = 0x7c,
-	TX_COUNTER            = 0x80,
-	DEBUG_REGISTER        = 0x84,
-	YOLO_REG              = 0x88,
-	TXTB1_DATA_1         = 0x100,
-	TXTB1_DATA_2         = 0x104,
-	TXTB1_DATA_20        = 0x14c,
-	TXTB2_DATA_1         = 0x200,
-	TXTB2_DATA_2         = 0x204,
-	TXTB2_DATA_20        = 0x24c,
-	TXTB3_DATA_1         = 0x300,
-	TXTB3_DATA_2         = 0x304,
-	TXTB3_DATA_20        = 0x34c,
-	TXTB4_DATA_1         = 0x400,
-	TXTB4_DATA_2         = 0x404,
-	TXTB4_DATA_20        = 0x44c,
-	LOG_TRIG_CONFIG      = 0x500,
-	LOG_CAPT_CONFIG      = 0x504,
-	LOG_STATUS           = 0x508,
-	LOG_POINTERS         = 0x50a,
-	LOG_COMMAND          = 0x50c,
-	LOG_CAPT_EVENT_1     = 0x510,
-	LOG_CAPT_EVENT_2     = 0x514,
+enum ctu_can_fd_regs {
+	CTU_CAN_FD_DEVICE_ID              = 0x0,
+	CTU_CAN_FD_VERSION                = 0x2,
+	CTU_CAN_FD_MODE                   = 0x4,
+	CTU_CAN_FD_COMMAND                = 0x5,
+	CTU_CAN_FD_STATUS                 = 0x6,
+	CTU_CAN_FD_SETTINGS               = 0x7,
+	CTU_CAN_FD_INT_STAT               = 0x8,
+	CTU_CAN_FD_INT_ENA_SET            = 0xc,
+	CTU_CAN_FD_INT_ENA_CLR           = 0x10,
+	CTU_CAN_FD_INT_MASK_SET          = 0x14,
+	CTU_CAN_FD_INT_MASK_CLR          = 0x18,
+	CTU_CAN_FD_BTR                   = 0x1c,
+	CTU_CAN_FD_BTR_FD                = 0x1e,
+	CTU_CAN_FD_ALC                   = 0x20,
+	CTU_CAN_FD_SJW                   = 0x21,
+	CTU_CAN_FD_BRP                   = 0x22,
+	CTU_CAN_FD_BRP_FD                = 0x23,
+	CTU_CAN_FD_EWL                   = 0x24,
+	CTU_CAN_FD_ERP                   = 0x25,
+	CTU_CAN_FD_FAULT_STATE           = 0x26,
+	CTU_CAN_FD_RXC                   = 0x28,
+	CTU_CAN_FD_TXC                   = 0x2a,
+	CTU_CAN_FD_ERR_NORM              = 0x2c,
+	CTU_CAN_FD_ERR_FD                = 0x2e,
+	CTU_CAN_FD_CTR_PRES              = 0x30,
+	CTU_CAN_FD_FILTER_A_MASK         = 0x34,
+	CTU_CAN_FD_FILTER_A_VAL          = 0x38,
+	CTU_CAN_FD_FILTER_B_MASK         = 0x3c,
+	CTU_CAN_FD_FILTER_B_VAL          = 0x40,
+	CTU_CAN_FD_FILTER_C_MASK         = 0x44,
+	CTU_CAN_FD_FILTER_C_VAL          = 0x48,
+	CTU_CAN_FD_FILTER_RAN_LOW        = 0x4c,
+	CTU_CAN_FD_FILTER_RAN_HIGH       = 0x50,
+	CTU_CAN_FD_FILTER_CONTROL        = 0x54,
+	CTU_CAN_FD_FILTER_STATUS         = 0x56,
+	CTU_CAN_FD_RX_MEM_INFO           = 0x58,
+	CTU_CAN_FD_RX_POINTERS           = 0x5c,
+	CTU_CAN_FD_RX_STATUS             = 0x60,
+	CTU_CAN_FD_RX_SETTINGS           = 0x62,
+	CTU_CAN_FD_RX_DATA               = 0x64,
+	CTU_CAN_FD_TX_STATUS             = 0x68,
+	CTU_CAN_FD_TX_COMMAND            = 0x6c,
+	CTU_CAN_FD_TX_PRIORITY           = 0x70,
+	CTU_CAN_FD_ERR_CAPT              = 0x74,
+	CTU_CAN_FD_TRV_DELAY             = 0x78,
+	CTU_CAN_FD_RX_COUNTER            = 0x7c,
+	CTU_CAN_FD_TX_COUNTER            = 0x80,
+	CTU_CAN_FD_DEBUG_REGISTER        = 0x84,
+	CTU_CAN_FD_YOLO_REG              = 0x88,
+	CTU_CAN_FD_TXTB1_DATA_1         = 0x100,
+	CTU_CAN_FD_TXTB1_DATA_2         = 0x104,
+	CTU_CAN_FD_TXTB1_DATA_20        = 0x14c,
+	CTU_CAN_FD_TXTB2_DATA_1         = 0x200,
+	CTU_CAN_FD_TXTB2_DATA_2         = 0x204,
+	CTU_CAN_FD_TXTB2_DATA_20        = 0x24c,
+	CTU_CAN_FD_TXTB3_DATA_1         = 0x300,
+	CTU_CAN_FD_TXTB3_DATA_2         = 0x304,
+	CTU_CAN_FD_TXTB3_DATA_20        = 0x34c,
+	CTU_CAN_FD_TXTB4_DATA_1         = 0x400,
+	CTU_CAN_FD_TXTB4_DATA_2         = 0x404,
+	CTU_CAN_FD_TXTB4_DATA_20        = 0x44c,
+	CTU_CAN_FD_LOG_TRIG_CONFIG      = 0x500,
+	CTU_CAN_FD_LOG_CAPT_CONFIG      = 0x504,
+	CTU_CAN_FD_LOG_STATUS           = 0x508,
+	CTU_CAN_FD_LOG_POINTERS         = 0x50a,
+	CTU_CAN_FD_LOG_COMMAND          = 0x50c,
+	CTU_CAN_FD_LOG_CAPT_EVENT_1     = 0x510,
+	CTU_CAN_FD_LOG_CAPT_EVENT_2     = 0x514,
 };
 
 
 /* Register descriptions: */
-union device_id_version {
+union ctu_can_fd_device_id_version {
 	uint32_t u32;
-	struct device_id_version_s {
+	struct ctu_can_fd_device_id_version_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* DEVICE_ID */
 		uint32_t device_id              : 16;
@@ -129,9 +129,9 @@ union device_id_version {
 	} s;
 };
 
-union mode_command_status_settings {
+union ctu_can_fd_mode_command_status_settings {
 	uint32_t u32;
-	struct mode_command_status_settings_s {
+	struct ctu_can_fd_mode_command_status_settings_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* MODE */
 		uint32_t rst                     : 1;
@@ -194,64 +194,64 @@ union mode_command_status_settings {
 	} s;
 };
 
-enum mode_lom {
+enum ctu_can_fd_mode_lom {
 	LOM_DISABLED       = 0x0,
 	LOM_ENABLED        = 0x1,
 };
 
-enum mode_stm {
+enum ctu_can_fd_mode_stm {
 	STM_DISABLED       = 0x0,
 	STM_ENABLED        = 0x1,
 };
 
-enum mode_afm {
+enum ctu_can_fd_mode_afm {
 	AFM_DISABLED       = 0x0,
 	AFM_ENABLED        = 0x1,
 };
 
-enum mode_fde {
+enum ctu_can_fd_mode_fde {
 	FDE_DISABLE       = 0x0,
 	FDE_ENABLE        = 0x1,
 };
 
-enum mode_rtr_pref {
+enum ctu_can_fd_mode_rtr_pref {
 	RTR_EXTRA          = 0x0,
 	RTR_STANDARD       = 0x1,
 };
 
-enum mode_tsm {
+enum ctu_can_fd_mode_tsm {
 	TSM_DISABLE       = 0x0,
 	TSM_ENABLE        = 0x1,
 };
 
-enum mode_acf {
+enum ctu_can_fd_mode_acf {
 	ACF_DISABLED       = 0x0,
 	ACF_ENABLED        = 0x1,
 };
 
-enum settings_rtrle {
+enum ctu_can_fd_settings_rtrle {
 	RTRLE_DISABLED       = 0x0,
 	RTRLE_ENABLED        = 0x1,
 };
 
-enum settings_int_loop {
+enum ctu_can_fd_settings_int_loop {
 	INT_LOOP_DISABLED       = 0x0,
 	INT_LOOP_ENABLED        = 0x1,
 };
 
-enum settings_ena {
+enum ctu_can_fd_settings_ena {
 	DISABLED       = 0x0,
 	ENABLED        = 0x1,
 };
 
-enum settings_fd_type {
+enum ctu_can_fd_settings_fd_type {
 	ISO_FD           = 0x0,
 	NON_ISO_FD       = 0x1,
 };
 
-union int_stat {
+union ctu_can_fd_int_stat {
 	uint32_t u32;
-	struct int_stat_s {
+	struct ctu_can_fd_int_stat_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_STAT */
 		uint32_t ri                      : 1;
@@ -285,9 +285,9 @@ union int_stat {
 	} s;
 };
 
-union int_ena_set {
+union ctu_can_fd_int_ena_set {
 	uint32_t u32;
-	struct int_ena_set_s {
+	struct ctu_can_fd_int_ena_set_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_ENA_SET */
 		uint32_t int_ena_set            : 12;
@@ -299,9 +299,9 @@ union int_ena_set {
 	} s;
 };
 
-union int_ena_clr {
+union ctu_can_fd_int_ena_clr {
 	uint32_t u32;
-	struct int_ena_clr_s {
+	struct ctu_can_fd_int_ena_clr_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_ENA_CLR */
 		uint32_t int_ena_clr            : 12;
@@ -313,9 +313,9 @@ union int_ena_clr {
 	} s;
 };
 
-union int_mask_set {
+union ctu_can_fd_int_mask_set {
 	uint32_t u32;
-	struct int_mask_set_s {
+	struct ctu_can_fd_int_mask_set_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_MASK_SET */
 		uint32_t int_mask_set           : 12;
@@ -327,9 +327,9 @@ union int_mask_set {
 	} s;
 };
 
-union int_mask_clr {
+union ctu_can_fd_int_mask_clr {
 	uint32_t u32;
-	struct int_mask_clr_s {
+	struct ctu_can_fd_int_mask_clr_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_MASK_CLR */
 		uint32_t int_mask_clr           : 12;
@@ -341,9 +341,9 @@ union int_mask_clr {
 	} s;
 };
 
-union btr_btr_fd {
+union ctu_can_fd_btr_btr_fd {
 	uint32_t u32;
-	struct btr_btr_fd_s {
+	struct ctu_can_fd_btr_btr_fd_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* BTR */
 		uint32_t prop                    : 6;
@@ -368,9 +368,9 @@ union btr_btr_fd {
 	} s;
 };
 
-union alc_sjw_brp_brp_fd {
+union ctu_can_fd_alc_sjw_brp_brp_fd {
 	uint32_t u32;
-	struct alc_sjw_brp_brp_fd_s {
+	struct ctu_can_fd_alc_sjw_brp_brp_fd_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* ALC */
 		uint32_t alc_val                 : 5;
@@ -397,9 +397,9 @@ union alc_sjw_brp_brp_fd {
 	} s;
 };
 
-union ewl_erp_fault_state {
+union ctu_can_fd_ewl_erp_fault_state {
 	uint32_t u32;
-	struct ewl_erp_fault_state_s {
+	struct ctu_can_fd_ewl_erp_fault_state_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* EWL */
 		uint32_t ewl_limit               : 8;
@@ -421,9 +421,9 @@ union ewl_erp_fault_state {
 	} s;
 };
 
-union rxc_txc {
+union ctu_can_fd_rxc_txc {
 	uint32_t u32;
-	struct rxc_txc_s {
+	struct ctu_can_fd_rxc_txc_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RXC */
 		uint32_t rxc_val                : 16;
@@ -436,9 +436,9 @@ union rxc_txc {
 	} s;
 };
 
-union err_norm_err_fd {
+union ctu_can_fd_err_norm_err_fd {
 	uint32_t u32;
-	struct err_norm_err_fd_s {
+	struct ctu_can_fd_err_norm_err_fd_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* ERR_NORM */
 		uint32_t err_norm_val           : 16;
@@ -451,9 +451,9 @@ union err_norm_err_fd {
 	} s;
 };
 
-union ctr_pres {
+union ctu_can_fd_ctr_pres {
 	uint32_t u32;
-	struct ctr_pres_s {
+	struct ctu_can_fd_ctr_pres_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* CTR_PRES */
 		uint32_t ctpv                    : 9;
@@ -473,9 +473,9 @@ union ctr_pres {
 	} s;
 };
 
-union filter_a_mask {
+union ctu_can_fd_filter_a_mask {
 	uint32_t u32;
-	struct filter_a_mask_s {
+	struct ctu_can_fd_filter_a_mask_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_A_MASK */
 		uint32_t bit_mask_a_val         : 29;
@@ -487,9 +487,9 @@ union filter_a_mask {
 	} s;
 };
 
-union filter_a_val {
+union ctu_can_fd_filter_a_val {
 	uint32_t u32;
-	struct filter_a_val_s {
+	struct ctu_can_fd_filter_a_val_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_A_VAL */
 		uint32_t bit_val_a_val          : 29;
@@ -501,9 +501,9 @@ union filter_a_val {
 	} s;
 };
 
-union filter_b_mask {
+union ctu_can_fd_filter_b_mask {
 	uint32_t u32;
-	struct filter_b_mask_s {
+	struct ctu_can_fd_filter_b_mask_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_B_MASK */
 		uint32_t bit_mask_b_val         : 29;
@@ -515,9 +515,9 @@ union filter_b_mask {
 	} s;
 };
 
-union filter_b_val {
+union ctu_can_fd_filter_b_val {
 	uint32_t u32;
-	struct filter_b_val_s {
+	struct ctu_can_fd_filter_b_val_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_B_VAL */
 		uint32_t bit_val_b_val          : 29;
@@ -529,9 +529,9 @@ union filter_b_val {
 	} s;
 };
 
-union filter_c_mask {
+union ctu_can_fd_filter_c_mask {
 	uint32_t u32;
-	struct filter_c_mask_s {
+	struct ctu_can_fd_filter_c_mask_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_C_MASK */
 		uint32_t bit_mask_c_val         : 29;
@@ -543,9 +543,9 @@ union filter_c_mask {
 	} s;
 };
 
-union filter_c_val {
+union ctu_can_fd_filter_c_val {
 	uint32_t u32;
-	struct filter_c_val_s {
+	struct ctu_can_fd_filter_c_val_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_C_VAL */
 		uint32_t bit_val_c_val          : 29;
@@ -557,9 +557,9 @@ union filter_c_val {
 	} s;
 };
 
-union filter_ran_low {
+union ctu_can_fd_filter_ran_low {
 	uint32_t u32;
-	struct filter_ran_low_s {
+	struct ctu_can_fd_filter_ran_low_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_RAN_LOW */
 		uint32_t bit_ran_low_val        : 29;
@@ -571,9 +571,9 @@ union filter_ran_low {
 	} s;
 };
 
-union filter_ran_high {
+union ctu_can_fd_filter_ran_high {
 	uint32_t u32;
-	struct filter_ran_high_s {
+	struct ctu_can_fd_filter_ran_high_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_RAN_HIGH */
 		uint32_t bit_ran_high_val       : 29;
@@ -585,9 +585,9 @@ union filter_ran_high {
 	} s;
 };
 
-union filter_control_filter_status {
+union ctu_can_fd_filter_control_filter_status {
 	uint32_t u32;
-	struct filter_control_filter_status_s {
+	struct ctu_can_fd_filter_control_filter_status_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* FILTER_CONTROL */
 		uint32_t fanb                    : 1;
@@ -638,9 +638,9 @@ union filter_control_filter_status {
 	} s;
 };
 
-union rx_mem_info {
+union ctu_can_fd_rx_mem_info {
 	uint32_t u32;
-	struct rx_mem_info_s {
+	struct ctu_can_fd_rx_mem_info_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RX_MEM_INFO */
 		uint32_t rx_buff_size           : 13;
@@ -656,9 +656,9 @@ union rx_mem_info {
 	} s;
 };
 
-union rx_pointers {
+union ctu_can_fd_rx_pointers {
 	uint32_t u32;
-	struct rx_pointers_s {
+	struct ctu_can_fd_rx_pointers_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RX_POINTERS */
 		uint32_t rx_wpp                 : 12;
@@ -674,9 +674,9 @@ union rx_pointers {
 	} s;
 };
 
-union rx_status_rx_settings {
+union ctu_can_fd_rx_status_rx_settings {
 	uint32_t u32;
-	struct rx_status_rx_settings_s {
+	struct ctu_can_fd_rx_status_rx_settings_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* RX_STATUS */
 		uint32_t rx_empty                : 1;
@@ -699,22 +699,22 @@ union rx_status_rx_settings {
 	} s;
 };
 
-enum rx_settings_rtsop {
+enum ctu_can_fd_rx_settings_rtsop {
 	RTS_END       = 0x0,
 	RTS_BEG       = 0x1,
 };
 
-union rx_data {
+union ctu_can_fd_rx_data {
 	uint32_t u32;
-	struct rx_data_s {
+	struct ctu_can_fd_rx_data_s {
   /* RX_DATA */
 		uint32_t rx_data                : 32;
 	} s;
 };
 
-union tx_status {
+union ctu_can_fd_tx_status {
 	uint32_t u32;
-	struct tx_status_s {
+	struct ctu_can_fd_tx_status_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TX_STATUS */
 		uint32_t tx1s                    : 4;
@@ -732,7 +732,7 @@ union tx_status {
 	} s;
 };
 
-enum tx_status_tx1s {
+enum ctu_can_fd_tx_status_tx1s {
 	TXT_RDY        = 0x1,
 	TXT_TRAN       = 0x2,
 	TXT_ABTP       = 0x3,
@@ -742,9 +742,9 @@ enum tx_status_tx1s {
 	TXT_ETY        = 0x8,
 };
 
-union tx_command {
+union ctu_can_fd_tx_command {
 	uint32_t u32;
-	struct tx_command_s {
+	struct ctu_can_fd_tx_command_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TX_COMMAND */
 		uint32_t txce                    : 1;
@@ -770,9 +770,9 @@ union tx_command {
 	} s;
 };
 
-union tx_priority {
+union ctu_can_fd_tx_priority {
 	uint32_t u32;
-	struct tx_priority_s {
+	struct ctu_can_fd_tx_priority_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TX_PRIORITY */
 		uint32_t txt1p                   : 3;
@@ -796,9 +796,9 @@ union tx_priority {
 	} s;
 };
 
-union err_capt {
+union ctu_can_fd_err_capt {
 	uint32_t u32;
-	struct err_capt_s {
+	struct ctu_can_fd_err_capt_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* ERR_CAPT */
 		uint32_t err_pos                 : 5;
@@ -812,7 +812,7 @@ union err_capt {
 	} s;
 };
 
-enum err_capt_err_pos {
+enum ctu_can_fd_err_capt_err_pos {
 	ERC_POS_SOF         = 0x0,
 	ERC_POS_ARB         = 0x1,
 	ERC_POS_CTRL        = 0x2,
@@ -825,7 +825,7 @@ enum err_capt_err_pos {
 	ERC_POS_OTHER      = 0x1f,
 };
 
-enum err_capt_err_type {
+enum ctu_can_fd_err_capt_err_type {
 	ERC_BIT_ERR        = 0x0,
 	ERC_CRC_ERR        = 0x1,
 	ERC_FRM_ERR        = 0x2,
@@ -833,9 +833,9 @@ enum err_capt_err_type {
 	ERC_STUF_ERR       = 0x4,
 };
 
-union trv_delay {
+union ctu_can_fd_trv_delay {
 	uint32_t u32;
-	struct trv_delay_s {
+	struct ctu_can_fd_trv_delay_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* TRV_DELAY */
 		uint32_t trv_delay_value        : 16;
@@ -847,25 +847,25 @@ union trv_delay {
 	} s;
 };
 
-union rx_counter {
+union ctu_can_fd_rx_counter {
 	uint32_t u32;
-	struct rx_counter_s {
+	struct ctu_can_fd_rx_counter_s {
   /* RX_COUNTER */
 		uint32_t rx_counter_val         : 32;
 	} s;
 };
 
-union tx_counter {
+union ctu_can_fd_tx_counter {
 	uint32_t u32;
-	struct tx_counter_s {
+	struct ctu_can_fd_tx_counter_s {
   /* TX_COUNTER */
 		uint32_t tx_counter_val         : 32;
 	} s;
 };
 
-union debug_register {
+union ctu_can_fd_debug_register {
 	uint32_t u32;
-	struct debug_register_s {
+	struct ctu_can_fd_debug_register_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* DEBUG_REGISTER */
 		uint32_t stuff_count             : 3;
@@ -893,17 +893,17 @@ union debug_register {
 	} s;
 };
 
-union yolo_reg {
+union ctu_can_fd_yolo_reg {
 	uint32_t u32;
-	struct yolo_reg_s {
+	struct ctu_can_fd_yolo_reg_s {
   /* YOLO_REG */
 		uint32_t yolo_val               : 32;
 	} s;
 };
 
-union log_trig_config {
+union ctu_can_fd_log_trig_config {
 	uint32_t u32;
-	struct log_trig_config_s {
+	struct ctu_can_fd_log_trig_config_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* LOG_TRIG_CONFIG */
 		uint32_t t_sof                   : 1;
@@ -949,9 +949,9 @@ union log_trig_config {
 	} s;
 };
 
-union log_capt_config {
+union ctu_can_fd_log_capt_config {
 	uint32_t u32;
-	struct log_capt_config_s {
+	struct ctu_can_fd_log_capt_config_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* LOG_CAPT_CONFIG */
 		uint32_t c_sof                   : 1;
@@ -1003,9 +1003,9 @@ union log_capt_config {
 	} s;
 };
 
-union log_status_log_pointers {
+union ctu_can_fd_log_status_log_pointers {
 	uint32_t u32;
-	struct log_status_log_pointers_s {
+	struct ctu_can_fd_log_status_log_pointers_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* LOG_STATUS */
 		uint32_t log_cfg                 : 1;
@@ -1030,9 +1030,9 @@ union log_status_log_pointers {
 	} s;
 };
 
-union log_command {
+union ctu_can_fd_log_command {
 	uint32_t u32;
-	struct log_command_s {
+	struct ctu_can_fd_log_command_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* LOG_COMMAND */
 		uint32_t log_str                 : 1;
@@ -1050,17 +1050,17 @@ union log_command {
 	} s;
 };
 
-union log_capt_event_1 {
+union ctu_can_fd_log_capt_event_1 {
 	uint32_t u32;
-	struct log_capt_event_1_s {
+	struct ctu_can_fd_log_capt_event_1_s {
   /* LOG_CAPT_EVENT_1 */
 		uint32_t event_ts_48_16         : 32;
 	} s;
 };
 
-union log_capt_event_2 {
+union ctu_can_fd_log_capt_event_2 {
 	uint32_t u32;
-	struct log_capt_event_2_s {
+	struct ctu_can_fd_log_capt_event_2_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* LOG_CAPT_EVENT_2 */
 		uint32_t evnt_type               : 5;
@@ -1078,7 +1078,7 @@ union log_capt_event_2 {
 	} s;
 };
 
-enum log_capt_event_2_evnt_type {
+enum ctu_can_fd_log_capt_event_2_evnt_type {
 	SOF_EVNT         = 0x1,
 	ARBL_EVNT        = 0x2,
 	FREC_EVNT        = 0x3,
@@ -1102,7 +1102,7 @@ enum log_capt_event_2_evnt_type {
 	DOR_EVNT        = 0x15,
 };
 
-enum log_capt_event_2_evnt_det {
+enum ctu_can_fd_log_capt_event_2_evnt_det {
 	ISN_FDSTF       = 0x0,
 	ISN_FSTF        = 0x0,
 	BIT_ERR         = 0x1,
@@ -1120,7 +1120,7 @@ enum log_capt_event_2_evnt_det {
 	FRM_ERR        = 0x10,
 };
 
-enum log_capt_event_2_evnt_dea {
+enum ctu_can_fd_log_capt_event_2_evnt_dea {
 	NO_SNC       = 0x0,
 	HA_SNC       = 0x1,
 	RE_SNC       = 0x2,

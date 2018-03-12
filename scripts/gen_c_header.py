@@ -95,7 +95,8 @@ if __name__ == '__main__':
 			if (args.licPath != ""):
 				lic_text = load_license(args.licPath)
 				write_license(lic_text, '*', of)
-			
+				
+			headerGen.prefix = "ctu_can_fd"
 			headerGen.create_addrMap_package("CTU_CAN_FD")
 			
 			headerGen.commit_to_file()

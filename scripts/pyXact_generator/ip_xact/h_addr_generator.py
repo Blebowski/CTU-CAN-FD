@@ -20,6 +20,7 @@ from pyXact_generator.languages.declaration import LanDeclaration
 class HeaderAddrGenerator(IpXactAddrGenerator):
 
 	headerGen = None
+	prefix	= ""
 
 	def __init__(self, pyXactComp, addrMap, fieldMap, busWidth):
 		super().__init__(pyXactComp, addrMap, fieldMap, busWidth)
@@ -34,7 +35,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 	def write_reg_group(self, regGroup):
 		decls = []
 		enumDecl = []
-		unName = ""
+		unName = self.prefix + "_"
 		for (j,reg) in enumerate(regGroup):
 			for (i,field) in enumerate(sorted(reg.field, key=lambda a: a.bitOffset)):
 				
@@ -50,6 +51,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 							bitIndex=field.bitOffset + 
 									((int(reg.addressOffset)*8) % self.busWidth), 
 							intType="bitfield"))
+							
 			unName += reg.name.lower()
 			if (j != len(regGroup) - 1):
 				unName += "_"
@@ -62,6 +64,7 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 		
 		self.headerGen.create_union(unName, enumDecl)
 		self.headerGen.wr_nl()
+	
 	
 	def addr_reg_lookup(self, fieldReg):
 		return super().addr_reg_lookup(fieldReg)
@@ -76,11 +79,11 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 			if (len(field.enumeratedValues[0].enumeratedValue) > 0):
 				for es in field.enumeratedValues:
 					for (i,e) in enumerate(sorted(es.enumeratedValue, key=lambda x: x.value)):
-							decls.append(LanDeclaration(e.name.upper(), 
+							decls.append(LanDeclaration((e.name).upper(), 
 								e.value, intType="enum"))
 							
-			self.headerGen.create_enum(reg.name.lower() + "_" + field.name.lower(), 
-											decls)
+			self.headerGen.create_enum((self.prefix + "_" + reg.name + 
+										"_" + field.name).lower(), decls)
 			self.headerGen.wr_nl()
 			
 	
@@ -122,11 +125,12 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 		
 		for block in self.addrMap.addressBlock:
 			for reg in sorted(block.register, key=lambda a: a.addressOffset):
-				decls.append(LanDeclaration(reg.name.upper(), 
+				decls.append(LanDeclaration((self.prefix + "_" + reg.name).upper(), 
 								value=reg.addressOffset+block.baseAddress,
 								intType="enum"))
 		
-		self.headerGen.create_enum(self.addrMap.name.lower(), decls)
+		self.headerGen.create_enum(self.prefix.lower() + "_" + self.addrMap.name.lower(),
+										decls)
 	
 	
 	def write_mem_map_both(self):
