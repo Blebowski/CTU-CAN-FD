@@ -68,7 +68,8 @@ if __name__ == '__main__':
 	
 	if (str_arg_to_bool(args.updHeader)):
 		print("Generating CAN FD memory registers Header file...\n")
-		os.system("""py gen_c_header.py --licPath ../LICENSE --xactSpec {} --addrMap Regs --fieldMap Regs --wordWidth 32 --outFile ../driver/ctu_can_fd_regs.h --headName CAN_FD_frame_format""".format(args.xactSpec))
+		os.system("""py gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Regs --fieldMap Regs --wordWidth 32 --outFile ../driver/ctu_can_fd_regs.h --headName CAN_FD_frame_format""".format(args.xactSpec))
+		os.system("""py gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Frame_format --fieldMap Frame_format --wordWidth 32 --outFile ../driver/ctu_can_fd_frame.h --headName CAN_FD_frame_format""".format(args.xactSpec))
 		print("\nDone\n")
 	
 	if (str_arg_to_bool(args.updDocs)):
