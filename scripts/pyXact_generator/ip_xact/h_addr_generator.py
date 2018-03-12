@@ -103,10 +103,14 @@ class HeaderAddrGenerator(IpXactAddrGenerator):
 			for reg in regGroup:
 				self.write_reg_enums(reg)
 
-				
 	
 	def write_mem_map_fields(self):
 		for block in self.fieldMap.addressBlock:
+			
+			# Skip memory blocks. 
+			if (block.usage == "memory"):
+				continue
+			
 			self.write_regs(block.register)
 
 
