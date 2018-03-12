@@ -323,12 +323,14 @@ package CAN_FD_register_map is
   constant TI_IND                 : natural := 1;
   constant EI_IND                 : natural := 2;
   constant DOI_IND                : natural := 3;
-  constant EPI_IND                : natural := 5;
-  constant ALI_IND                : natural := 6;
-  constant BEI_IND                : natural := 7;
-  constant LFI_IND                : natural := 8;
-  constant RFI_IND                : natural := 9;
-  constant BSI_IND               : natural := 10;
+  constant EPI_IND                : natural := 4;
+  constant ALI_IND                : natural := 5;
+  constant BEI_IND                : natural := 6;
+  constant LFI_IND                : natural := 7;
+  constant RFI_IND                : natural := 8;
+  constant BSI_IND                : natural := 9;
+  constant RBNEI_IND             : natural := 10;
+  constant TXBHCI_IND            : natural := 11;
 
   -- INT_STAT register reset values
   constant RI_RSTVAL          : std_logic := '0';
@@ -341,6 +343,8 @@ package CAN_FD_register_map is
   constant LFI_RSTVAL         : std_logic := '0';
   constant RFI_RSTVAL         : std_logic := '0';
   constant BSI_RSTVAL         : std_logic := '0';
+  constant RBNEI_RSTVAL       : std_logic := '0';
+  constant TXBHCI_RSTVAL      : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- INT_ENA_SET register
@@ -350,11 +354,10 @@ package CAN_FD_register_map is
   -- capturing is enabled.
   ------------------------------------------------------------------------------
   constant INT_ENA_SET_L          : natural := 0;
-  constant INT_ENA_SET_H         : natural := 10;
+  constant INT_ENA_SET_H         : natural := 11;
 
   -- INT_ENA_SET register reset values
-  constant INT_ENA_SET_RSTVAL
-                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
+  constant INT_ENA_SET_RSTVAL : std_logic_vector(11 downto 0) := x"000";
 
   ------------------------------------------------------------------------------
   -- INT_ENA_CLR register
@@ -363,11 +366,10 @@ package CAN_FD_register_map is
   -- . Reading this register has no effect.
   ------------------------------------------------------------------------------
   constant INT_ENA_CLR_L          : natural := 0;
-  constant INT_ENA_CLR_H         : natural := 10;
+  constant INT_ENA_CLR_H         : natural := 11;
 
   -- INT_ENA_CLR register reset values
-  constant INT_ENA_CLR_RSTVAL
-                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
+  constant INT_ENA_CLR_RSTVAL : std_logic_vector(11 downto 0) := x"000";
 
   ------------------------------------------------------------------------------
   -- INT_MASK_SET register
@@ -378,11 +380,10 @@ package CAN_FD_register_map is
   -- utput of the CAN Core.
   ------------------------------------------------------------------------------
   constant INT_MASK_SET_L         : natural := 0;
-  constant INT_MASK_SET_H        : natural := 10;
+  constant INT_MASK_SET_H        : natural := 11;
 
   -- INT_MASK_SET register reset values
-  constant INT_MASK_SET_RSTVAL
-                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
+  constant INT_MASK_SET_RSTVAL : std_logic_vector(11 downto 0) := x"000";
 
   ------------------------------------------------------------------------------
   -- INT_MASK_CLR register
@@ -392,11 +393,10 @@ package CAN_FD_register_map is
   --  be read from INT_STAT and it does affect interrupt output of the CAN Core.
   ------------------------------------------------------------------------------
   constant INT_MASK_CLR_L         : natural := 0;
-  constant INT_MASK_CLR_H        : natural := 10;
+  constant INT_MASK_CLR_H        : natural := 11;
 
   -- INT_MASK_CLR register reset values
-  constant INT_MASK_CLR_RSTVAL
-                 : std_logic_vector(10 downto 0) := (OTHERS => '0');
+  constant INT_MASK_CLR_RSTVAL : std_logic_vector(11 downto 0) := x"000";
 
   ------------------------------------------------------------------------------
   -- BTR register

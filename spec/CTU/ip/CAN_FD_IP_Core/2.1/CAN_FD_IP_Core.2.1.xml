@@ -584,7 +584,7 @@
 						<ipxact:name>EPI</ipxact:name>
 						<ipxact:displayName>EPI</ipxact:displayName>
 						<ipxact:description>Node became error passive or bus off interrupt</ipxact:description>
-						<ipxact:bitOffset>5</ipxact:bitOffset>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -596,7 +596,7 @@
 						<ipxact:name>ALI</ipxact:name>
 						<ipxact:displayName>ALI</ipxact:displayName>
 						<ipxact:description>Arbitration lost interrupt</ipxact:description>
-						<ipxact:bitOffset>6</ipxact:bitOffset>
+						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -608,7 +608,7 @@
 						<ipxact:name>BEI</ipxact:name>
 						<ipxact:displayName>BEI</ipxact:displayName>
 						<ipxact:description>Bus Error interrupt</ipxact:description>
-						<ipxact:bitOffset>7</ipxact:bitOffset>
+						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -620,7 +620,7 @@
 						<ipxact:name>LFI</ipxact:name>
 						<ipxact:displayName>LFI</ipxact:displayName>
 						<ipxact:description>Event logging finished interrupt</ipxact:description>
-						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -632,7 +632,7 @@
 						<ipxact:name>RFI</ipxact:name>
 						<ipxact:displayName>RFI</ipxact:displayName>
 						<ipxact:description>Receive buffer full interrupt</ipxact:description>
-						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -644,7 +644,31 @@
 						<ipxact:name>BSI</ipxact:name>
 						<ipxact:displayName>BSI</ipxact:displayName>
 						<ipxact:description>Bit-rate shifted interrupt</ipxact:description>
+						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RBNEI</ipxact:name>
+						<ipxact:displayName>RBNEI</ipxact:displayName>
+						<ipxact:description>Receive buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXBHCI</ipxact:name>
+						<ipxact:displayName>TXBHCI</ipxact:displayName>
+						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core, this interrupt will be acivated.</ipxact:description>
+						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -707,7 +731,7 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>11</ipxact:bitWidth>
+						<ipxact:bitWidth>12</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -729,7 +753,7 @@
 								<ipxact:value>'h0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>11</ipxact:bitWidth>
+						<ipxact:bitWidth>12</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -751,7 +775,7 @@
 								<ipxact:value>'h0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>11</ipxact:bitWidth>
+						<ipxact:bitWidth>12</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -773,7 +797,7 @@
 								<ipxact:value>'h0</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>11</ipxact:bitWidth>
+						<ipxact:bitWidth>12</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>

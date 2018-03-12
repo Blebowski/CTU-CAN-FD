@@ -56,12 +56,14 @@
 --                interrupt enable and interrupt mask. Interrupts changed to
 --                be level based instead of edge based with fixed duration. This
 --                is more fitting for SocketCAN implementation.
+--    12.3.2018   Implemented RX Buffer not empty and TX Buffer HW command INT.
 --------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
+use work.CAN_FD_register_map.all;
 
 entity intManager is
   GENERIC(
@@ -90,9 +92,6 @@ entity intManager is
     --Arbitration was lost input
     signal arbitration_lost       :in   std_logic;
     
-    --Wake up appeared
-    signal wake_up_valid          :in   std_logic;
-    
     --Message stored in CAN Core was sucessfully transmitted
     signal tx_finished            :in   std_logic;
     
@@ -108,6 +107,12 @@ entity intManager is
     signal rx_full                :in   std_logic;
     --RX Buffer is full (the last income message filled the remaining space)
     --NOTE! rec_message_valid will be in logic one for two clock cycles
+    
+    --Recieve buffer is empty
+    signal rx_empty               :in   std_logic;
+    
+    --HW commands on TXT Buffer
+    signal txt_hw_cmd             :in   txt_hw_cmd_type;
     
     --Event logger
     signal loger_finished         :in   std_logic;  --Event logging finsihed
@@ -167,19 +172,22 @@ begin
               '0';
   
   -- Interrupt register masking and enabling
-  int_input_active(BUS_ERR_INT)       <=  error_valid;
-  int_input_active(ARB_LST_INT)       <=  arbitration_lost;
-  int_input_active(ERR_PAS_INT)       <=  error_passive_changed;
-  int_input_active(WAKE_INT)          <=  wake_up_valid;
-  int_input_active(DOV_INT)           <=  rx_message_disc;
-  int_input_active(ERR_WAR_INT)       <=  error_warning_limit;
-  int_input_active(TX_INT)            <=  tx_finished;
-  int_input_active(RX_INT)            <=  rec_message_valid;
-  int_input_active(LOG_FIN_INT)       <=  loger_finished;
-  int_input_active(RX_FULL_INT)       <=  rx_full;
-  int_input_active(BRS_INT)           <=  br_shifted; 
-
-
+  int_input_active(BEI_IND)       <=  error_valid;
+  int_input_active(ALI_IND)       <=  arbitration_lost;
+  int_input_active(EPI_IND)       <=  error_passive_changed;
+  int_input_active(DOI_IND)       <=  rx_message_disc;
+  int_input_active(EI_IND)        <=  error_warning_limit;
+  int_input_active(TI_IND)        <=  tx_finished;
+  int_input_active(RI_IND)        <=  rec_message_valid;
+  int_input_active(LFI_IND)       <=  loger_finished;
+  int_input_active(RFI_IND)       <=  rx_full;
+  int_input_active(BSI_IND)       <=  br_shifted;
+  int_input_active(RBNEI_IND)     <=  not rx_empty;
+  int_input_active(TXBHCI_IND)    <=  '1' when (txt_hw_cmd.lock = '1' or
+                                               txt_hw_cmd.unlock = '1')
+                                          else
+                                      '0';
+  
   int_proc:process(res_n, clk_sys)
   begin
     if (res_n = ACT_RESET) then

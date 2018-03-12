@@ -203,23 +203,25 @@ union int_stat {
 		uint32_t ti                      : 1;
 		uint32_t ei                      : 1;
 		uint32_t doi                     : 1;
-		uint32_t reserved_4              : 1;
 		uint32_t epi                     : 1;
 		uint32_t ali                     : 1;
 		uint32_t bei                     : 1;
 		uint32_t lfi                     : 1;
 		uint32_t rfi                     : 1;
 		uint32_t bsi                     : 1;
-		uint32_t reserved_31_11         : 21;
+		uint32_t rbnei                   : 1;
+		uint32_t txbhci                  : 1;
+		uint32_t reserved_31_12         : 20;
 #else
-		uint32_t reserved_31_11         : 21;
+		uint32_t reserved_31_12         : 20;
+		uint32_t txbhci                  : 1;
+		uint32_t rbnei                   : 1;
 		uint32_t bsi                     : 1;
 		uint32_t rfi                     : 1;
 		uint32_t lfi                     : 1;
 		uint32_t bei                     : 1;
 		uint32_t ali                     : 1;
 		uint32_t epi                     : 1;
-		uint32_t reserved_4              : 1;
 		uint32_t doi                     : 1;
 		uint32_t ei                      : 1;
 		uint32_t ti                      : 1;
@@ -233,11 +235,11 @@ union int_ena_set {
 	struct int_ena_set_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_ENA_SET */
-		uint32_t int_ena_set            : 11;
-		uint32_t reserved_31_11         : 21;
+		uint32_t int_ena_set            : 12;
+		uint32_t reserved_31_12         : 20;
 #else
-		uint32_t reserved_31_11         : 21;
-		uint32_t int_ena_set            : 11;
+		uint32_t reserved_31_12         : 20;
+		uint32_t int_ena_set            : 12;
 #endif
 	} s;
 };
@@ -247,11 +249,11 @@ union int_ena_clr {
 	struct int_ena_clr_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_ENA_CLR */
-		uint32_t int_ena_clr            : 11;
-		uint32_t reserved_31_11         : 21;
+		uint32_t int_ena_clr            : 12;
+		uint32_t reserved_31_12         : 20;
 #else
-		uint32_t reserved_31_11         : 21;
-		uint32_t int_ena_clr            : 11;
+		uint32_t reserved_31_12         : 20;
+		uint32_t int_ena_clr            : 12;
 #endif
 	} s;
 };
@@ -261,11 +263,11 @@ union int_mask_set {
 	struct int_mask_set_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_MASK_SET */
-		uint32_t int_mask_set           : 11;
-		uint32_t reserved_31_11         : 21;
+		uint32_t int_mask_set           : 12;
+		uint32_t reserved_31_12         : 20;
 #else
-		uint32_t reserved_31_11         : 21;
-		uint32_t int_mask_set           : 11;
+		uint32_t reserved_31_12         : 20;
+		uint32_t int_mask_set           : 12;
 #endif
 	} s;
 };
@@ -275,11 +277,11 @@ union int_mask_clr {
 	struct int_mask_clr_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* INT_MASK_CLR */
-		uint32_t int_mask_clr           : 11;
-		uint32_t reserved_31_11         : 21;
+		uint32_t int_mask_clr           : 12;
+		uint32_t reserved_31_12         : 20;
 #else
-		uint32_t reserved_31_11         : 21;
-		uint32_t int_mask_clr           : 11;
+		uint32_t reserved_31_12         : 20;
+		uint32_t int_mask_clr           : 12;
 #endif
 	} s;
 };
