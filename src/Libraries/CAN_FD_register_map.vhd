@@ -171,6 +171,9 @@ package CAN_FD_register_map is
   constant DEVICE_ID_L            : natural := 0;
   constant DEVICE_ID_H           : natural := 15;
 
+  -- "DEVICE_ID" field enumerated values
+  constant CTU_CAN_FD_ID : std_logic_vector(15 downto 0) := x"CAFD";
+
   -- DEVICE_ID register reset values
   constant DEVICE_ID_RSTVAL : std_logic_vector(15 downto 0) := x"CAFD";
 
