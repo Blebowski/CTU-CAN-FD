@@ -266,16 +266,18 @@ entity canfd_registers is
   signal int_mask_clear         :     std_logic_vector(INT_COUNT - 1 downto 0);
   
   --Timing registers
-  signal sjw_norm               :     std_logic_vector(3 downto 0);
-  signal brp_norm               :     std_logic_vector(5 downto 0);
-  signal ph1_norm               :     std_logic_vector(4 downto 0);
-  signal ph2_norm               :     std_logic_vector(4 downto 0);
-  signal prop_norm              :     std_logic_vector(5 downto 0);
-  signal sjw_fd                 :     std_logic_vector(3 downto 0);
-  signal brp_fd                 :     std_logic_vector(5 downto 0);
-  signal ph1_fd                 :     std_logic_vector(3 downto 0);
-  signal ph2_fd                 :     std_logic_vector(3 downto 0);
+  signal sjw_norm               :     std_logic_vector(4 downto 0);
+  signal brp_norm               :     std_logic_vector(7 downto 0);
+  signal ph1_norm               :     std_logic_vector(5 downto 0);
+  signal ph2_norm               :     std_logic_vector(5 downto 0);
+  signal prop_norm              :     std_logic_vector(6 downto 0);
+  
+  signal sjw_fd                 :     std_logic_vector(4 downto 0);
+  signal brp_fd                 :     std_logic_vector(7 downto 0);
+  signal ph1_fd                 :     std_logic_vector(4 downto 0);
+  signal ph2_fd                 :     std_logic_vector(4 downto 0);
   signal prop_fd                :     std_logic_vector(5 downto 0);
+  
    --Tripple sampling for normal data rate
   signal sam_norm               :     std_logic;             
   
@@ -383,16 +385,18 @@ architecture rtl of canfd_registers is
     signal int_mask_set           :out  std_logic_vector(INT_COUNT - 1 downto 0);
     signal int_mask_clear         :out  std_logic_vector(INT_COUNT - 1 downto 0);
     
-    signal sjw_norm               :out  std_logic_vector(3 downto 0);
-    signal brp_norm               :out  std_logic_vector(5 downto 0);
-    signal ph1_norm               :out  std_logic_vector(4 downto 0);
-    signal ph2_norm               :out  std_logic_vector(4 downto 0);
-    signal prop_norm              :out  std_logic_vector(5 downto 0);
-    signal sjw_fd                 :out  std_logic_vector(3 downto 0);
-    signal brp_fd                 :out  std_logic_vector(5 downto 0);
-    signal ph1_fd                 :out  std_logic_vector(3 downto 0);
-    signal ph2_fd                 :out  std_logic_vector(3 downto 0);
+    signal sjw_norm               :out  std_logic_vector(4 downto 0);
+    signal brp_norm               :out  std_logic_vector(7 downto 0);
+    signal ph1_norm               :out  std_logic_vector(5 downto 0);
+    signal ph2_norm               :out  std_logic_vector(5 downto 0);
+    signal prop_norm              :out  std_logic_vector(6 downto 0);
+    
+    signal sjw_fd                 :out  std_logic_vector(4 downto 0);
+    signal brp_fd                 :out  std_logic_vector(7 downto 0);
+    signal ph1_fd                 :out  std_logic_vector(4 downto 0);
+    signal ph2_fd                 :out  std_logic_vector(4 downto 0);
     signal prop_fd                :out  std_logic_vector(5 downto 0);
+    
     signal sam_norm               :out  std_logic;             
     signal ewl                    :out  std_logic_vector(7 downto 0);
     signal erp                    :out  std_logic_vector(7 downto 0);
@@ -907,29 +911,35 @@ begin
  			                                    0, INT_COUNT - 1, sbe);
  
  			 ----------------------
- 			 --BTR and BTR FD
- 			 -----------------------
-    			when BTR_ADR => 
-    			  
-    			      write_be_vect(prop_norm, 0, 5, data_in, PROP_L, PROP_H, sbe);
-    			      write_be_vect(ph1_norm, 0, 4, data_in, PH1_L, PH1_H, sbe);
-    			      write_be_vect(ph2_norm, 0, 4, data_in, PH2_L, PH2_H, sbe);
-    			      write_be_vect(prop_fd, 0, 5, data_in, PROP_FD_L, PROP_FD_H, sbe);
-    			      write_be_vect(ph1_fd, 0, 3, data_in, PH1_FD_L, PH1_FD_H, sbe);
-    			      write_be_vect(ph2_fd, 0, 3, data_in, PH2_FD_L, PH2_FD_H, sbe);
-			
-			 ----------------------------------------------------
-    			--ALC, SJW, BRP, BRP_FD
-    			----------------------------------------------------
-    			when ALC_ADR => 
-    					   --Arbitration lost, Error code are read only
+ 			 -- BTR
+ 			 ----------------------
+    			when BTR_ADR =>
+    			      write_be_vect(prop_norm, 0, prop_norm'length - 1, data_in, 
+			                     PROP_L, PROP_H, sbe);
+    			      write_be_vect(ph1_norm, 0, ph1_norm'length - 1, data_in,
+  			                     PH1_L, PH1_H, sbe);
+    			      write_be_vect(ph2_norm, 0, ph2_norm'length - 1, data_in,
+  			                     PH2_L, PH2_H, sbe);
+    			      write_be_vect(brp_norm, 0, brp_norm'length - 1, data_in,
+  			                     BRP_L, BRP_H, sbe);
+ 					   write_be_vect(sjw_norm, 0, sjw_norm'length - 1, data_in,
+ 					                 SJW_L, SJW_H, sbe);
+ 					   
+  			 ----------------------
+ 			 -- BTR_FD
+ 			 ----------------------
+    			when BTR_FD_ADR =>
+    			      write_be_vect(prop_fd, 0, prop_fd'length - 1, data_in,
+    			                     PROP_FD_L, PROP_FD_H, sbe);
+    			      write_be_vect(ph1_fd, 0, ph1_fd'length - 1, data_in,
+    			                     PH1_FD_L, PH1_FD_H, sbe);
+    			      write_be_vect(ph2_fd, 0, ph2_fd'length - 1, data_in,
+    			                     PH2_FD_L, PH2_FD_H, sbe);
+             write_be_vect(brp_fd, 0, brp_fd'length - 1, data_in,
+                            BRP_FD_L, BRP_FD_H, sbe);
+ 					   write_be_vect(sjw_fd, 0, sjw_fd'length - 1, data_in,
+ 					                  SJW_FD_L, SJW_FD_H, sbe);
     					   
- 					   --Baud rate prescaler register
- 					   write_be_vect(brp_norm, 0, 5, data_in, BRP_L, BRP_H, sbe);
- 					   write_be_vect(sjw_norm, 0, 3, data_in, SJW_L, SJW_H, sbe);
- 					   write_be_vect(brp_fd, 0, 5, data_in, BRP_FD_L, BRP_FD_H, sbe);
- 					   write_be_vect(sjw_fd, 0, 3, data_in, SJW_FD_L, SJW_FD_H, sbe);
-    			
     			---------------------------------------------------- 
   			 -- EWL, ERP
   			 ----------------------------------------------------	   
@@ -1148,36 +1158,31 @@ begin
  				 ---------------------------------------------------------
     			  when INT_MASK_SET_ADR => 
     					  data_out_int               <=  (OTHERS=>'0');
-    					  
+
     					  -- Reading this register returns the value of interrupt
 					  -- mask
     					  data_out_int(INT_COUNT - 1 downto 0)  <=  int_mask;
 
     			  ---------------------------------------------------------
- 				 -- BTR and BTR_FD
+ 				 -- BTR
     			  ---------------------------------------------------------
  				 when BTR_ADR => 
     					   data_out_int(PROP_H downto PROP_L)          <=  prop_norm;
     					   data_out_int(PH1_H downto PH1_L)            <=  ph1_norm;
     					   data_out_int(PH2_H downto PH2_L)            <=  ph2_norm;
+ 			       data_out_int(BRP_H downto BRP_L)            <=  brp_norm; 
+    					   data_out_int(SJW_H downto SJW_L)            <=  sjw_norm;
+    					   
+ 			   ---------------------------------------------------------
+ 				 -- BTR_FD
+    			  ---------------------------------------------------------
+ 				 when BTR_FD_ADR =>
     					   data_out_int(PROP_FD_H downto PROP_FD_L)    <=  prop_fd;
     					   data_out_int(PH1_FD_H downto PH1_FD_L)      <=  ph1_fd;
     					   data_out_int(PH2_FD_H downto PH2_FD_L)      <=  ph2_fd;
-    			  
-    			  ----------------------------------------------------------
-    			  -- ALC, SJW, BRP, BRP_FD
-         ----------------------------------------------------------
-    			  when ALC_ADR =>
-    					   data_out_int                                  <=  (OTHERS =>'0');
-    					   data_out_int(ALC_VAL_H downto ALC_VAL_L)      <=  
-    					        stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW); 
-    					   
-    					   --Baud rate prescaler register
-    					   data_out_int(BRP_H downto BRP_L)          <=  brp_norm; 
-    					   data_out_int(SJW_H downto SJW_L)          <=  sjw_norm;
-    					   data_out_int(BRP_FD_H downto BRP_FD_L)    <=  brp_fd;
-    					   data_out_int(SJW_FD_H downto SJW_FD_L)    <=  sjw_fd;
-    					   
+    					   data_out_int(BRP_FD_H downto BRP_FD_L)      <=  brp_fd;
+    					   data_out_int(SJW_FD_H downto SJW_FD_L)      <=  sjw_fd;
+    			     
 				  ----------------------------------------------------------
     			   -- EWL, ERP and FAULT_STATE
           ----------------------------------------------------------
@@ -1506,13 +1511,15 @@ begin
             data_out_int(TXT2P_H downto TXT2P_L) <= txt_buf_prior(1);
         	
     					------------------------------------------------------- 
- 			    --Error capture register
+ 			    --Error capture register and ALC
  			    -------------------------------------------------------
   					when ERR_CAPT_ADR =>
-  					  data_out_int(31 downto 8)        <=  (OTHERS =>'0');
-  					  data_out_int(7 downto 0)         <=  
+  					  data_out_int                      <=  (OTHERS =>'0');
+  					  data_out_int(7 downto 0)          <=
   					       stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW);
-    					
+ 					  data_out_int(ALC_VAL_H downto ALC_VAL_L)      <=  
+    					        stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW); 
+    					   
     		    ------------------------------------------------------- 
  			    --Frame counters registers
  			    -------------------------------------------------------  
@@ -1707,7 +1714,7 @@ begin
   --Driving bus assignment --
   ---------------------------
   --Note:  All unused signals indices should be assigned to zero!
-  drv_bus(80 downto 50)                             <=  (OTHERS=>'0');
+  drv_bus(80 downto 61)                             <=  (OTHERS=>'0');
   drv_bus(349 downto 330)                           <=  (OTHERS=>'0');
   drv_bus(355 downto 354)                           <=  (OTHERS=>'0');
   drv_bus(360 downto 358)                           <=  (OTHERS=>'0');
@@ -1729,10 +1736,10 @@ begin
   drv_bus(DRV_TQ_NBT_HIGH downto DRV_TQ_NBT_LOW)    <=  brp_norm;
   drv_bus(DRV_TQ_DBT_HIGH downto DRV_TQ_DBT_LOW)    <=  brp_fd;
   drv_bus(DRV_PRS_NBT_HIGH downto DRV_PRS_NBT_LOW)  <=  prop_norm;
-  drv_bus(DRV_PRS_DBT_HIGH downto DRV_PRS_DBT_LOW)  <=  prop_fd(3 downto 0);
-  drv_bus(DRV_PH1_NBT_HIGH downto DRV_PH1_NBT_LOW)  <=  '0'&ph1_norm;
+  drv_bus(DRV_PRS_DBT_HIGH downto DRV_PRS_DBT_LOW)  <=  prop_fd;
+  drv_bus(DRV_PH1_NBT_HIGH downto DRV_PH1_NBT_LOW)  <=  ph1_norm;
   drv_bus(DRV_PH1_DBT_HIGH downto DRV_PH1_DBT_LOW)  <=  ph1_fd;
-  drv_bus(DRV_PH2_NBT_HIGH downto DRV_PH2_NBT_LOW)  <=  '0'&ph2_norm;
+  drv_bus(DRV_PH2_NBT_HIGH downto DRV_PH2_NBT_LOW)  <=  ph2_norm;
   drv_bus(DRV_PH2_DBT_HIGH downto DRV_PH2_DBT_LOW)  <=  ph2_fd;
   drv_bus(DRV_SJW_HIGH downto DRV_SJW_LOW)          <=  sjw_norm;
   drv_bus(DRV_SJW_DBT_HIGH downto DRV_SJW_DBT_LOW)  <=  sjw_fd;

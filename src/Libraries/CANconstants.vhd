@@ -301,34 +301,34 @@ package CANconstants is
   ------------------------------------------------------------------------------
   --Prescaler
   constant DRV_TQ_NBT_LOW  : natural := 0;
-  constant DRV_TQ_NBT_HIGH : natural := 5;
+  constant DRV_TQ_NBT_HIGH : natural := 7;
 
-  constant DRV_TQ_DBT_LOW  : natural := 6;
-  constant DRV_TQ_DBT_HIGH : natural := 11;
+  constant DRV_TQ_DBT_LOW  : natural := 8;
+  constant DRV_TQ_DBT_HIGH : natural := 15;
 
-  constant DRV_PRS_NBT_LOW  : natural := 12;
-  constant DRV_PRS_NBT_HIGH : natural := 17;
+  constant DRV_PRS_NBT_LOW  : natural := 16;
+  constant DRV_PRS_NBT_HIGH : natural := 22;
 
-  constant DRV_PH1_NBT_LOW  : natural := 18;
-  constant DRV_PH1_NBT_HIGH : natural := 23;
+  constant DRV_PH1_NBT_LOW  : natural := 23;
+  constant DRV_PH1_NBT_HIGH : natural := 28;
 
-  constant DRV_PH2_NBT_LOW  : natural := 24;
-  constant DRV_PH2_NBT_HIGH : natural := 29;
+  constant DRV_PH2_NBT_LOW  : natural := 29;
+  constant DRV_PH2_NBT_HIGH : natural := 34;
 
-  constant DRV_PRS_DBT_LOW  : natural := 30;
-  constant DRV_PRS_DBT_HIGH : natural := 33;
+  constant DRV_PRS_DBT_LOW  : natural := 35;
+  constant DRV_PRS_DBT_HIGH : natural := 40;
 
-  constant DRV_PH1_DBT_LOW  : natural := 34;
-  constant DRV_PH1_DBT_HIGH : natural := 37;
+  constant DRV_PH1_DBT_LOW  : natural := 41;
+  constant DRV_PH1_DBT_HIGH : natural := 45;
 
-  constant DRV_PH2_DBT_LOW  : natural := 38;
-  constant DRV_PH2_DBT_HIGH : natural := 41;
+  constant DRV_PH2_DBT_LOW  : natural := 46;
+  constant DRV_PH2_DBT_HIGH : natural := 50;
 
-  constant DRV_SJW_LOW  : natural := 42;
-  constant DRV_SJW_HIGH : natural := 45;
+  constant DRV_SJW_LOW  : natural := 51;
+  constant DRV_SJW_HIGH : natural := 55;
 
-  constant DRV_SJW_DBT_LOW  : natural := 46;
-  constant DRV_SJW_DBT_HIGH : natural := 49;
+  constant DRV_SJW_DBT_LOW  : natural := 56;
+  constant DRV_SJW_DBT_HIGH : natural := 60;
 
   --TimeStampGen
   constant DRV_TS_1_SRC_LOW  : natural := 61;

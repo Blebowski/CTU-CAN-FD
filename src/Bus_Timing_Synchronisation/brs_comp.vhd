@@ -61,8 +61,8 @@
 --  use hard-coded value of time quanta during ph1 and ph2 bit times.
 --------------------------------------------------------------------------------
 -- Revision History:
---    July 2015   Created file
---
+--    Oct 2017   Created file
+--    13.3.2018  Modified bit phases lengths
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -72,12 +72,12 @@ USE WORK.CANconstants.ALL;
 
 package brs_comp_package is
   procedure brs_comp(
-        signal tq_nbt : in natural range 0 to 63;
-        signal tq_dbt : in natural range 0 to 63;
+        signal tq_nbt : in natural range 0 to 255;
+        signal tq_dbt : in natural range 0 to 255;
         signal sp_control : in std_logic_vector(1 downto 0);
         signal ph2_nbt : in natural range 0 to 63;
-        signal ph2_dbt : in natural range 0 to 15;
-        signal ph2_real : out integer range -63 to 63
+        signal ph2_dbt : in natural range 0 to 31;
+        signal ph2_real : out integer range -127 to 127
   );
 end brs_comp_package;
 
@@ -92,12 +92,12 @@ package body brs_comp_package is
   -- sp_control update, actual update of the ph2_real), compensation
   -- of the ph2_real is needed based on Time quanta(TQ) duration
   procedure brs_comp(
-        signal tq_nbt : in natural range 0 to 63;
-        signal tq_dbt : in natural range 0 to 63;
+        signal tq_nbt : in natural range 0 to 255;
+        signal tq_dbt : in natural range 0 to 255;
         signal sp_control : in std_logic_vector(1 downto 0);
         signal ph2_nbt : in natural range 0 to 63;
-        signal ph2_dbt : in natural range 0 to 15;
-        signal ph2_real : out integer range -63 to 63
+        signal ph2_dbt : in natural range 0 to 31;
+        signal ph2_real : out integer range -127 to 127
   )is
   variable ntd : boolean; --Nominal to Data switch
   begin

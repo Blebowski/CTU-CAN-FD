@@ -960,35 +960,33 @@ procedure process_error
   variable data          :          std_logic_vector(31 downto 0):=(OTHERS => '0');
   begin
      
-    -- Baud rate prescaler and Synchronisation jump width         
-    data(BRP_H downto BRP_L) := 
-      std_logic_vector(to_unsigned(bus_timing.tq_nbt,6));
-    data(BRP_FD_H downto BRP_FD_L) := 
-      std_logic_vector(to_unsigned(bus_timing.tq_dbt,6));
-    data(SJW_FD_H downto SJW_FD_L) := 
-      std_logic_vector(to_unsigned(bus_timing.sjw_dbt,4));
-    data(SJW_H downto SJW_L) := 
-      std_logic_vector(to_unsigned(bus_timing.sjw_nbt,4));
-    CAN_write(data,ALC_ADR,ID,mem_bus);  
+    -- Bit timing register - Nominal
+    data(BRP_H downto BRP_L) := std_logic_vector(to_unsigned(
+            bus_timing.tq_nbt, BRP_H - BRP_L + 1));
+    data(PROP_H downto PROP_L) := std_logic_vector(to_unsigned(
+            bus_timing.prop_nbt, PROP_H - PROP_L + 1));
+    data(PH1_H downto PH1_L) := std_logic_vector(to_unsigned(
+            bus_timing.ph1_nbt, PH1_H - PH1_L + 1));
+    data(PH2_H downto PH2_L) := std_logic_vector(to_unsigned(
+            bus_timing.ph2_nbt, PH2_H - PH2_L + 1));
+    data(SJW_H downto SJW_L) := std_logic_vector(to_unsigned(
+            bus_timing.sjw_nbt, SJW_H - SJW_L + 1));
+    CAN_write(data, BTR_ADR, ID, mem_bus);     
     
-    data := (OTHERS => '0');
-    
-    -- PH1, PH2 and PROP for nominal and Data
-    data(PROP_H downto PROP_L) := 
-      std_logic_vector(to_unsigned(bus_timing.prop_nbt,6));
-    data(PH1_H downto PH1_L) := 
-      std_logic_vector(to_unsigned(bus_timing.ph1_nbt,5));
-    data(PH2_H downto PH2_L) := 
-      std_logic_vector(to_unsigned(bus_timing.ph2_nbt,5));
-    
-    data(PROP_FD_H downto PROP_FD_L) := 
-      std_logic_vector(to_unsigned(bus_timing.prop_dbt,6));
-    data(PH1_FD_H downto PH1_FD_L) := 
-      std_logic_vector(to_unsigned(bus_timing.ph1_dbt,4));
-    data(PH2_FD_H downto PH2_FD_L) :=
-      std_logic_vector(to_unsigned(bus_timing.ph2_dbt,4));
-    
-    CAN_write(data,BTR_ADR,ID,mem_bus);                   
+     
+    -- Bit timing register - Data
+    data(BRP_FD_H downto BRP_FD_L) := std_logic_vector(to_unsigned(
+            bus_timing.tq_dbt, BRP_FD_H - BRP_FD_L + 1));
+    data(PROP_FD_H downto PROP_FD_L) := std_logic_vector(to_unsigned(
+            bus_timing.prop_dbt, PROP_FD_H - PROP_FD_L + 1));
+    data(PH1_FD_H downto PH1_FD_L) := std_logic_vector(to_unsigned(
+            bus_timing.ph1_dbt, PH1_FD_H - PH1_FD_L + 1));
+    data(PH2_FD_H downto PH2_FD_L) := std_logic_vector(to_unsigned(
+            bus_timing.ph2_dbt, PH2_FD_H - PH2_FD_L + 1));
+    data(SJW_FD_H downto SJW_FD_L) := std_logic_vector(to_unsigned(
+            bus_timing.sjw_dbt, SJW_FD_H - SJW_FD_L + 1));
+    CAN_write(data, BTR_FD_ADR, ID, mem_bus);     
+                  
   end procedure;
   
   

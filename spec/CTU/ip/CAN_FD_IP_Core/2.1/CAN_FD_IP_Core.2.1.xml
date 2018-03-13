@@ -812,28 +812,28 @@
 				<ipxact:register>
 					<ipxact:name>BTR_FD</ipxact:name>
 					<ipxact:displayName>BTR_FD</ipxact:displayName>
-					<ipxact:description>Length of bit time segments for Data bit time in Time quanta. Note that SYNC segment always lasts one Time quanta.</ipxact:description>
+					<ipxact:description>Bit timing register for data bit-rate.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h1E</ipxact:addressOffset>
-					<ipxact:size>16</ipxact:size>
+					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>PH2_FD</ipxact:name>
 						<ipxact:displayName>PH2_FD</ipxact:displayName>
-						<ipxact:description>Phase 2 segment - Data bit time</ipxact:description>
-						<ipxact:bitOffset>11</ipxact:bitOffset>
+						<ipxact:description>Phase 2 segment</ipxact:description>
+						<ipxact:bitOffset>13</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>3</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>4</ipxact:bitWidth>
+						<ipxact:bitWidth>5</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PROP_FD</ipxact:name>
 						<ipxact:displayName>PROP_FD</ipxact:displayName>
-						<ipxact:description>Propagation segment - Data bit time</ipxact:description>
+						<ipxact:description>Propagation segment</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -845,14 +845,36 @@
 					<ipxact:field>
 						<ipxact:name>PH1_FD</ipxact:name>
 						<ipxact:displayName>PH1_FD</ipxact:displayName>
-						<ipxact:description>Phase 1 segment - Data bit time</ipxact:description>
-						<ipxact:bitOffset>6</ipxact:bitOffset>
+						<ipxact:description>Phase 1 segment</ipxact:description>
+						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>3</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>4</ipxact:bitWidth>
+						<ipxact:bitWidth>5</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>BRP_FD</ipxact:name>
+						<ipxact:description>Baud-rate prescaler</ipxact:description>
+						<ipxact:bitOffset>19</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>4</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>SJW_FD</ipxact:name>
+						<ipxact:description>Synchronisation jump width</ipxact:description>
+						<ipxact:bitOffset>27</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>2</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>5</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -882,17 +904,41 @@
 				<ipxact:register>
 					<ipxact:name>BTR</ipxact:name>
 					<ipxact:displayName>BTR</ipxact:displayName>
-					<ipxact:description>The length of bit time segments for Nominal bit time in Time quanta. Note that SYNC segment always lasts one Time quanta.</ipxact:description>
+					<ipxact:description>Bit timing register for nominal bit-rate.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
-					<ipxact:size>16</ipxact:size>
+					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>PROP</ipxact:name>
 						<ipxact:displayName>PROP</ipxact:displayName>
-						<ipxact:description>Propagation segment - Nominal bit time</ipxact:description>
+						<ipxact:description>Propagation segment</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>5</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>7</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PH1</ipxact:name>
+						<ipxact:displayName>PH1</ipxact:displayName>
+						<ipxact:description>Phase 1 segment</ipxact:description>
+						<ipxact:bitOffset>7</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>3</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>6</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PH2</ipxact:name>
+						<ipxact:displayName>PH2</ipxact:displayName>
+						<ipxact:description>Phase 2 segment</ipxact:description>
+						<ipxact:bitOffset>13</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>5</ipxact:value>
@@ -901,25 +947,23 @@
 						<ipxact:bitWidth>6</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>PH1</ipxact:name>
-						<ipxact:displayName>PH1</ipxact:displayName>
-						<ipxact:description>Phase 1 segment - Nominal bit time</ipxact:description>
-						<ipxact:bitOffset>6</ipxact:bitOffset>
+						<ipxact:name>BRP</ipxact:name>
+						<ipxact:description>Baud-rate prescaler</ipxact:description>
+						<ipxact:bitOffset>19</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>3</ipxact:value>
+								<ipxact:value>'hA</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
-						<ipxact:bitWidth>5</ipxact:bitWidth>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>PH2</ipxact:name>
-						<ipxact:displayName>PH2</ipxact:displayName>
-						<ipxact:description>Phase 2 segment - Nominal bit time</ipxact:description>
-						<ipxact:bitOffset>11</ipxact:bitOffset>
+						<ipxact:name>SJW</ipxact:name>
+						<ipxact:description>Synchronisation jump width</ipxact:description>
+						<ipxact:bitOffset>27</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>5</ipxact:value>
+								<ipxact:value>2</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>5</ipxact:bitWidth>
@@ -930,7 +974,7 @@
 					<ipxact:displayName>ALC</ipxact:displayName>
 					<ipxact:description>Arbitration lost capture register. </ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h20</ipxact:addressOffset>
+					<ipxact:addressOffset>'h75</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -945,84 +989,6 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>5</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>SJW</ipxact:name>
-					<ipxact:displayName>SJW</ipxact:displayName>
-					<ipxact:description>Synchronisation jump width registers for both Nominal and Data bit times.</ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h21</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>SJW</ipxact:name>
-						<ipxact:displayName>SJW</ipxact:displayName>
-						<ipxact:description>Synchronisation jump width - Nominal bit time.</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>2</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>4</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>SJW_FD</ipxact:name>
-						<ipxact:displayName>SJW_FD</ipxact:displayName>
-						<ipxact:description>Synchronisation jump widh - Data bit time.</ipxact:description>
-						<ipxact:bitOffset>4</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>2</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>4</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>BRP</ipxact:name>
-					<ipxact:displayName>BRP</ipxact:displayName>
-					<ipxact:description>Baud rate Prescaler register - Nominal bit time. </ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h22</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>BRP</ipxact:name>
-						<ipxact:displayName>BRP</ipxact:displayName>
-						<ipxact:description>Specifies time quanta duration for nominal bit time.</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>10</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>6</ipxact:bitWidth>
-					</ipxact:field>
-				</ipxact:register>
-				<ipxact:register>
-					<ipxact:name>BRP_FD</ipxact:name>
-					<ipxact:displayName>BRP_FD</ipxact:displayName>
-					<ipxact:description>Baud rate Prescaler register - Data bit time. </ipxact:description>
-					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h23</ipxact:addressOffset>
-					<ipxact:size>8</ipxact:size>
-					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>BRP_FD</ipxact:name>
-						<ipxact:displayName>BRP_FD</ipxact:displayName>
-						<ipxact:description>Specifies time quanta duration for data bit time.</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>4</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>6</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -1501,7 +1467,7 @@
 					<ipxact:description>Last error frame capture.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h74</ipxact:addressOffset>
-					<ipxact:size>32</ipxact:size>
+					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
