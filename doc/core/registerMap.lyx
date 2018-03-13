@@ -3057,7 +3057,8 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-DEVICE_ID Device ID
+DEVICE_ID Device ID\begin_inset Newline newline\end_inset
+		0b1100101011111101  - CTU_CAN_FD_ID - Identifier of CTU CAN FD IP Core.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
