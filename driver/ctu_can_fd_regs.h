@@ -124,6 +124,10 @@ union ctu_can_fd_device_id_version {
 	} s;
 };
 
+enum ctu_can_fd_device_id_device_id {
+	CTU_CAN_FD_ID    = 0xcafd,
+};
+
 union ctu_can_fd_mode_command_status_settings {
 	uint32_t u32;
 	struct ctu_can_fd_mode_command_status_settings_s {
