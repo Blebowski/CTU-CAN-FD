@@ -39,6 +39,14 @@
 						</ipxact:resets>
 						<ipxact:bitWidth>16</ipxact:bitWidth>
 						<ipxact:access>read-only</ipxact:access>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>CTU_CAN_FD_ID</ipxact:name>
+								<ipxact:displayName>CTU_CAN_FD_DEVICE_ID</ipxact:displayName>
+								<ipxact:description>Identifier of CTU CAN FD IP Core.</ipxact:description>
+								<ipxact:value>'hCAFD</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
