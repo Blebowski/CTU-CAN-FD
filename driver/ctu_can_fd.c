@@ -36,26 +36,26 @@
 
 /* Memory access functions */
 static inline void ctu_can_fd_write32(const void *base, enum ctu_can_fd_regs reg,
-										u32 val)
+					u32 val)
 {
 	 iowrite32(val, base + reg);
 }
 
 static inline void ctu_can_fd_write16(const void *base, enum ctu_can_fd_regs reg,
-										u16 val)
+					u16 val)
 {
 	 iowrite16(val, base + reg);
 }
 
 static inline void ctu_can_fd_write8(const void *base, enum ctu_can_fd_regs reg,
-										u8 val)
+					u8 val)
 {
 	 iowrite8(val, base + reg);
 }
 
 static inline void ctu_can_fd_write_txt_buf(const void *base,
-											enum ctu_can_fd_regs buf_base,
-											u32 offset, u32 val)
+						enum ctu_can_fd_regs buf_base,
+						u32 offset, u32 val)
 {
 	iowrite32(val, base + buf_base + offset);
 }
@@ -113,27 +113,27 @@ void ctu_can_fd_set_mode(const void *base, struct can_ctrlmode *mode)
 	
 	if (mode->mask & CAN_CTRLMODE_LOOPBACK)
 		reg.int_loop = mode->flag & CAN_CTRLMODE_LOOPBACK ?
-									INT_LOOP_ENABLED : INT_LOOP_DISABLED;
+					INT_LOOP_ENABLED : INT_LOOP_DISABLED;
 	
 	if (mode->mask & CAN_CTRLMODE_LISTENONLY)
 		reg.lom = mode->flag & CAN_CTRLMODE_LISTENONLY ?
-								LOM_ENABLED : LOM_DISABLED;
+					LOM_ENABLED : LOM_DISABLED;
 	
 	if (mode->mask & CAN_CTRLMODE_3_SAMPLES)
 		reg.tsm = mode->flag & CAN_CTRLMODE_3_SAMPLES ? 
-								TSM_ENABLE : TSM_DISABLE;						
+				TSM_ENABLE : TSM_DISABLE;						
 	
 	if (mode->mask & CAN_CTRLMODE_FD)
 		reg.fde = mode->flag & CAN_CTRLMODE_FD ? 
-								FDE_ENABLE : FDE_DISABLE;
+				FDE_ENABLE : FDE_DISABLE;
 	
 	if (mode->mask & CAN_CTRLMODE_PRESUME_ACK)
 		reg.stm = mode->flag & CAN_CTRLMODE_PRESUME_ACK ? 
-								STM_ENABLED : STM_DISABLED;
+				STM_ENABLED : STM_DISABLED;
 	
 	if (mode->mask & CAN_CTRLMODE_FD_NON_ISO)
 		reg.fd_type = mode->flag & CAN_CTRLMODE_FD_NON_ISO ?
-								NON_ISO_FD : ISO_FD;
+				NON_ISO_FD : ISO_FD;
 								
 	ctu_can_fd_write32(base, CTU_CAN_FD_MODE, reg.u32);
 }
@@ -187,10 +187,10 @@ void ctu_can_fd_int_clr(const void *base, union ctu_can_fd_int_stat *mask)
 }
 
 static void ctu_can_fd_int_conf(const void *base,
-								const enum ctu_can_fd_regs sreg,
-								const enum ctu_can_fd_regs creg, 
-								union ctu_can_fd_int_stat *mask,
-								union ctu_can_fd_int_stat *val)
+				const enum ctu_can_fd_regs sreg,
+				const enum ctu_can_fd_regs creg, 
+				union ctu_can_fd_int_stat *mask,
+				union ctu_can_fd_int_stat *val)
 {
 	union ctu_can_fd_int_stat reg;
 	reg.u32 = ctu_can_fd_read32(base, sreg);
@@ -200,14 +200,14 @@ static void ctu_can_fd_int_conf(const void *base,
 }
 
 void ctu_can_fd_int_ena(const void *base, union ctu_can_fd_int_stat *mask,
-						union ctu_can_fd_int_stat *val)
+			union ctu_can_fd_int_stat *val)
 {
 	ctu_can_fd_int_conf(base, CTU_CAN_FD_INT_ENA_SET, CTU_CAN_FD_INT_ENA_CLR,
-						mask, val);
+				mask, val);
 }
 
 void ctu_can_fd_int_mask(const void *base, union ctu_can_fd_int_stat *mask,
-							union ctu_can_fd_int_stat *val)
+				union ctu_can_fd_int_stat *val)
 {
 	ctu_can_fd_int_conf(base, CTU_CAN_FD_INT_MASK_SET, CTU_CAN_FD_INT_MASK_CLR,
 						mask, val);
@@ -572,9 +572,9 @@ void ctu_can_fd_insert_frame(const void *base, unsigned char *data, u64 *ts,
 	if (cf->ident & CAN_EFF_FLAG){
 		ffw.id_type = EXTENDED;
 		idw.identifier_base = (cf->ident & CAN_EFF_MASK) >> 
-								(CAN_EFF_ID_BITS - CAN_SFF_ID_BITS);
+					(CAN_EFF_ID_BITS - CAN_SFF_ID_BITS);
 		idw.identifier_ext = cf->ident & (CAN_EFF_MASK >> 
-										(CAN_EFF_ID_BITS - CAN_SFF_ID_BITS));
+					(CAN_EFF_ID_BITS - CAN_SFF_ID_BITS));
 	} else {
 		ffw.id_type = BASE;
 		idw.identifer_base = (cf->ident & CAN_SFF_MASK);
@@ -600,7 +600,7 @@ void ctu_can_fd_insert_frame(const void *base, unsigned char *data, u64 *ts,
 	
 	for (i = 0; i < cf->len; i += 4)
 		ctu_can_fd_write_txt_buf(base, buf, CTU_CAN_FD_DATA_1_4_W + i,
-									*(u32 *)(cf->data + i));
+							*(u32 *)(cf->data + i));
 }
 
 // TODO: AL_CAPTURE and ERROR_CAPTURE
