@@ -525,8 +525,8 @@ inline void ctu_can_fd_txt_set_abort(const void *base, u8 buf)
 }
 
 // TODO: Should I replace literals in the upper functions by enum value?
-//		 Should this macro be generated or harcdoded? Generated would involve
-//		 changing the command field in the IP-XACT
+//	 Should this macro be generated or harcdoded? Generated would involve
+//	 changing the command field in the IP-XACT
 
 
 // TODO: Replace the buffer count with macro defined value
