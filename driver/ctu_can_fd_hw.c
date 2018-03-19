@@ -212,8 +212,6 @@ union ctu_can_fd_mode_command_status_settings ctu_can_get_status(const void *bas
 	return ctu_can_fd_read32(base, CTU_CAN_FD_MODE);
 }
 
-
-
 union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base)
 {
 	return ctu_can_fd_read32(base, CTU_CAN_FD_INT_STAT);
@@ -493,16 +491,38 @@ bool ctu_can_fd_set_mask_filter(const void *base, u8 fnum, bool enable,
 
 	ctu_can_fd_id_to_hwid(filter->can_id, &hwid_mask);
 	ctu_can_fd_id_to_hwid(filter->can_mask, &hwid_val);
-	ctu_can_fd_write32(base, CTU_CAN_FD_FILTER_CONTROL, creg);
+	ctu_can_fd_write32(base, CTU_CAN_FD_FILTER_CONTROL, creg.u32);
 	ctu_can_fd_write32(base, maddr, hwid_mask.u32);
 	ctu_can_fd_write32(base, vaddr, hwid_val.u32);
 	return true;
 }
 
-bool ctu_can_fd_set_range_filter(const void *base, canid_t low_th,
+void ctu_can_fd_set_range_filter(const void *base, canid_t low_th,
 				 canid_t high_th, bool enable)
 {
-	// TODO
+	union ctu_can_fd_identifier_w hwid_low;	
+	union ctu_can_fd_identifier_w hwid_high;
+	union ctu_can_fd_filter_control_filter_status creg;
+	
+	hwid_low.u32 = ctu_can_fd_id_to_hwid(low_th, &hwid_low);
+	hwid_high.u32 = ctu_can_fd_id_to_hwid(high_th, &hwid_high);
+
+	creg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_FILTER_CONTROL);
+	
+	if (enable){
+		creg.s.frnb = 1;
+		creg.s.frne = 1;
+		creg.s.frfb = 1;
+		creg.s.frfe = 1;
+	} else {
+		creg.s.frnb = 0;
+		creg.s.frne = 0;
+		creg.s.frfb = 0;
+		creg.s.frfe = 0;
+	}
+	ctu_can_fd_write32(base, CTU_CAN_FD_FILTER_CONTROL, creg.u32);
+	ctu_can_fd_write32(base, CTU_CAN_FD_FILTER_RAN_LOW, hwid_low.u32);
+	ctu_can_fd_write32(base, CTU_CAN_FD_FILTER_RAN_HIGH, hwid_high.u32);
 }
 
 u16 ctu_can_fd_get_rx_fifo_size(const void *base)
@@ -595,13 +615,13 @@ enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(const void *base, u8 buf
 	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_TX_STATUS);
 	
 	switch (buf) {
-	case 1 : return reg.s.tx1s;
+	case CTU_CAN_FD_TXT_BUFFER_1 : return reg.s.tx1s;
 	break;
-	case 2 : return reg.s.tx2s;
+	case CTU_CAN_FD_TXT_BUFFER_2 : return reg.s.tx2s;
 	break;
-	case 3 : return reg.s.tx3s;
+	case CTU_CAN_FD_TXT_BUFFER_3: return reg.s.tx3s;
 	break;
-	case 4 : return reg.s.tx4s;
+	case CTU_CAN_FD_TXT_BUFFER_4 : return reg.s.tx4s;
 	break;
 	default :
 		return ~0;
@@ -626,13 +646,13 @@ static bool ctu_can_fd_txt_buf_give_command(const void *base, u8 cmd, u8 buf)
 	reg.u32 = 0;
 	
 	switch (buf){
-	case 1: reg.s.tx1 = 1;
+	case CTU_CAN_FD_TXT_BUFFER_1: reg.s.tx1 = 1;
 	break;
-	case 2: reg.s.tx2 = 1;
+	case CTU_CAN_FD_TXT_BUFFER_2: reg.s.tx2 = 1;
 	break;
-	case 3: reg.s.tx3 = 1;
+	case CTU_CAN_FD_TXT_BUFFER_3: reg.s.tx3 = 1;
 	break;
-	case 4: reg.s.tx4 = 1;
+	case CTU_CAN_FD_TXT_BUFFER_4: reg.s.tx4 = 1;
 	break;
 	default:		
 		return false;
@@ -690,13 +710,13 @@ bool ctu_can_fd_insert_frame(const void *base, const unsigned char *data, u64 ts
 	idw.u32 = 0;
 	 
 	switch (buf){
-	case 1: buf = CTU_CAN_FD_TXTB1_DATA_1;
+	case CTU_CAN_FD_TXT_BUFFER_1: buf = CTU_CAN_FD_TXTB1_DATA_1;
 	break;
-	case 2: buf = CTU_CAN_FD_TXTB2_DATA_1;
+	case CTU_CAN_FD_TXT_BUFFER_2: buf = CTU_CAN_FD_TXTB2_DATA_1;
 	break;
-	case 3: buf = CTU_CAN_FD_TXTB3_DATA_1;
+	case CTU_CAN_FD_TXT_BUFFER_3: buf = CTU_CAN_FD_TXTB3_DATA_1;
 	break;
-	case 4: buf = CTU_CAN_FD_TXTB4_DATA_1;
+	case CTU_CAN_FD_TXT_BUFFER_4: buf = CTU_CAN_FD_TXTB4_DATA_1;
 	break;
 	default:
 		return false;
