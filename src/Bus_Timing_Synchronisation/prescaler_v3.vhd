@@ -103,6 +103,8 @@
 --                   "drv_" prefix.
 --    12.12.2017  Added "brs_comp" compensation for the compensation of phase2
 --                During the bit where bit rate switch occured.
+--    13.03.2018  Modified bit phases length to have more options in SW settings
+--                of bit-timings.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -189,13 +191,13 @@ entity prescaler_v3 is
   --Number of mminimal time quantum (sys clock) in time quantum , Nominal 
   --BitTimeNumber of mminimal time quantum (sys clock) in time quantum ,
   --Nominal BitTime
-  signal drv_tq_nbt             :   std_logic_vector (5 downto 0);
+  signal drv_tq_nbt             :   std_logic_vector (7 downto 0);
   
   --Number of mminimal time quantum (sys clock) in time quantum , Data BitTime
-  signal drv_tq_dbt             :   std_logic_vector (5 downto 0);
+  signal drv_tq_dbt             :   std_logic_vector (7 downto 0);
   
   --Propagation segment length in nominal bit time
-  signal drv_prs_nbt            :   std_logic_vector (5 downto 0);
+  signal drv_prs_nbt            :   std_logic_vector (6 downto 0);
   
   --Phase 1 segment length nominal bit time
   signal drv_ph1_nbt            :   std_logic_vector (5 downto 0);
@@ -204,34 +206,34 @@ entity prescaler_v3 is
   signal drv_ph2_nbt            :   std_logic_vector (5 downto 0);
   
   --Propagation segment length in nominal bit time
-  signal drv_prs_dbt            :   std_logic_vector (3 downto 0);
+  signal drv_prs_dbt            :   std_logic_vector (5 downto 0);
   
   --Phase 1 segment length nominal bit time
-  signal drv_ph1_dbt            :   std_logic_vector (3 downto 0);
+  signal drv_ph1_dbt            :   std_logic_vector (4 downto 0);
   
   --Phase 2 segment length nominal bit time
-  signal drv_ph2_dbt            :   std_logic_vector (3 downto 0);
+  signal drv_ph2_dbt            :   std_logic_vector (4 downto 0);
   
   --Synchronisation jump width
-  signal drv_sjw_nbt            :   std_logic_vector(3 downto 0);
+  signal drv_sjw_nbt            :   std_logic_vector(4 downto 0);
   
   --Synchronisation jump width
-  signal drv_sjw_dbt            :   std_logic_vector(3 downto 0);
+  signal drv_sjw_dbt            :   std_logic_vector(4 downto 0);
 
   ------------------------------------------------------------------------------
   --Driving bus aliases converted to integer (signed, natural)
   -- Integer aliases used for simplification of the code !!
   ------------------------------------------------------------------------------
-  signal tq_nbt                 :   natural range 0 to 63;
-  signal tq_dbt                 :   natural range 0 to 63;
-  signal prs_nbt                 :   natural range 0 to 63;
-  signal prs_dbt                 :   natural range 0 to 15;
-  signal ph1_nbt                 :   natural range 0 to 63;
-  signal ph1_dbt                 :   natural range 0 to 15;
-  signal ph2_nbt                 :   natural range 0 to 63;
-  signal ph2_dbt                 :   natural range 0 to 15;
-  signal sjw_nbt                 :   natural range 0 to 15;
-  signal sjw_dbt                 :   natural range 0 to 15;
+  signal tq_nbt                 :   natural range 0 to 255;
+  signal tq_dbt                 :   natural range 0 to 255;
+  signal prs_nbt                :   natural range 0 to 127;
+  signal prs_dbt                :   natural range 0 to 63;
+  signal ph1_nbt                :   natural range 0 to 63;
+  signal ph1_dbt                :   natural range 0 to 31;
+  signal ph2_nbt                :   natural range 0 to 63;
+  signal ph2_dbt                :   natural range 0 to 31;
+  signal sjw_nbt                :   natural range 0 to 31;
+  signal sjw_dbt                :   natural range 0 to 31;
   
   ----------------------
   --INTERNAL REGISTERS--
@@ -249,7 +251,7 @@ entity prescaler_v3 is
   signal tq_edge                :   std_logic;
   
   --Bit time counter
-  signal bt_counter             :   natural range 0 to 63;
+  signal bt_counter             :   natural range 0 to 255;
   
   --Hard synchronisation appeared
   signal hard_sync_valid        :   std_logic;
@@ -279,7 +281,7 @@ entity prescaler_v3 is
   ---------------------
   
   --Time quantum duration 
-  signal tq_dur                 :   natural range 0 to 63;
+  signal tq_dur                 :   natural range 0 to 255;
   
   ------------------
   --Bit time type --
@@ -288,10 +290,10 @@ entity prescaler_v3 is
   signal is_tran_trig           :   boolean;
  
 	--Duration of ph1 segment after synchronisation
-  signal ph1_real               :   integer range -63 to 63;
+  signal ph1_real               :   integer range -127 to 127;
   
   --Duration of ph2 segment after synchronisation
-  signal ph2_real               :   integer range -63 to 63;
+  signal ph2_real               :   integer range -127 to 127;
   
 end entity;
 
@@ -396,8 +398,8 @@ begin
   end process;
   
   --New time quantum period detection
-  tq_edge <= '1'  when (sp_control=NOMINAL_SAMPLE) and (drv_tq_nbt="000001") else
-             '1'  when (sp_control=DATA_SAMPLE) and (drv_tq_dbt="000001") else
+  tq_edge <= '1'  when (sp_control=NOMINAL_SAMPLE) and (drv_tq_nbt="00000001") else
+             '1'  when (sp_control=DATA_SAMPLE) and (drv_tq_dbt="00000001") else
              '1'  when (tq_counter=1) else
              '0';
              

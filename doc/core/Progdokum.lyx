@@ -6013,8 +6013,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/UNIT_scheme.emf
+	filename ../pics/Visio_generated/unit_test_diagram.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -6469,8 +6470,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Feature_env.emf
+	filename ../pics/Visio_generated/Feature_env.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7157,8 +7159,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/sanity_env.emf
+	filename ../pics/Visio_generated/sanity_env.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7354,8 +7357,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/bt.emf
+	filename ../pics/Visio_generated/bus_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7431,8 +7435,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/star_topology.emf
+	filename ../pics/Visio_generated/star_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7508,8 +7513,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/tree_topology.emf
+	filename ../pics/Visio_generated/tree_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7585,8 +7591,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/ring_topology.emf
+	filename ../pics/Visio_generated/ring_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 

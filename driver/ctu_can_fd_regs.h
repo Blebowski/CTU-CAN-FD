@@ -47,11 +47,7 @@ enum ctu_can_fd_regs {
 	CTU_CAN_FD_INT_MASK_SET          = 0x14,
 	CTU_CAN_FD_INT_MASK_CLR          = 0x18,
 	CTU_CAN_FD_BTR                   = 0x1c,
-	CTU_CAN_FD_BTR_FD                = 0x1e,
-	CTU_CAN_FD_ALC                   = 0x20,
-	CTU_CAN_FD_SJW                   = 0x21,
-	CTU_CAN_FD_BRP                   = 0x22,
-	CTU_CAN_FD_BRP_FD                = 0x23,
+	CTU_CAN_FD_BTR_FD                = 0x20,
 	CTU_CAN_FD_EWL                   = 0x24,
 	CTU_CAN_FD_ERP                   = 0x25,
 	CTU_CAN_FD_FAULT_STATE           = 0x26,
@@ -79,6 +75,7 @@ enum ctu_can_fd_regs {
 	CTU_CAN_FD_TX_COMMAND            = 0x6c,
 	CTU_CAN_FD_TX_PRIORITY           = 0x70,
 	CTU_CAN_FD_ERR_CAPT              = 0x74,
+	CTU_CAN_FD_ALC                   = 0x75,
 	CTU_CAN_FD_TRV_DELAY             = 0x78,
 	CTU_CAN_FD_RX_COUNTER            = 0x7c,
 	CTU_CAN_FD_TX_COUNTER            = 0x80,
@@ -122,6 +119,10 @@ union ctu_can_fd_device_id_version {
 		uint32_t device_id              : 16;
 #endif
 	} s;
+};
+
+enum ctu_can_fd_device_id_device_id {
+	CTU_CAN_FD_ID    = 0xcafd,
 };
 
 union ctu_can_fd_mode_command_status_settings {
@@ -336,58 +337,48 @@ union ctu_can_fd_int_mask_clr {
 	} s;
 };
 
-union ctu_can_fd_btr_btr_fd {
+union ctu_can_fd_btr {
 	uint32_t u32;
-	struct ctu_can_fd_btr_btr_fd_s {
+	struct ctu_can_fd_btr_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* BTR */
-		uint32_t prop                    : 6;
-		uint32_t ph1                     : 5;
-		uint32_t ph2                     : 5;
-  /* BTR_FD */
-		uint32_t prop_fd                 : 6;
-		uint32_t ph1_fd                  : 4;
-		uint32_t reserved_26             : 1;
-		uint32_t ph2_fd                  : 4;
-		uint32_t reserved_31             : 1;
+		uint32_t prop                    : 7;
+		uint32_t ph1                     : 6;
+		uint32_t ph2                     : 6;
+		uint32_t brp                     : 8;
+		uint32_t sjw                     : 5;
 #else
-		uint32_t reserved_31             : 1;
-		uint32_t ph2_fd                  : 4;
-		uint32_t reserved_26             : 1;
-		uint32_t ph1_fd                  : 4;
-		uint32_t prop_fd                 : 6;
-		uint32_t ph2                     : 5;
-		uint32_t ph1                     : 5;
-		uint32_t prop                    : 6;
+		uint32_t sjw                     : 5;
+		uint32_t brp                     : 8;
+		uint32_t ph2                     : 6;
+		uint32_t ph1                     : 6;
+		uint32_t prop                    : 7;
 #endif
 	} s;
 };
 
-union ctu_can_fd_alc_sjw_brp_brp_fd {
+union ctu_can_fd_btr_fd {
 	uint32_t u32;
-	struct ctu_can_fd_alc_sjw_brp_brp_fd_s {
+	struct ctu_can_fd_btr_fd_s {
 #ifdef __BIG_ENDIAN_BITFIELD
-  /* ALC */
-		uint32_t alc_val                 : 5;
-		uint32_t reserved_7_5            : 3;
-  /* SJW */
-		uint32_t sjw                     : 4;
-		uint32_t sjw_fd                  : 4;
-  /* BRP */
-		uint32_t brp                     : 6;
-		uint32_t reserved_23_22          : 2;
-  /* BRP_FD */
-		uint32_t brp_fd                  : 6;
-		uint32_t reserved_31_30          : 2;
+  /* BTR_FD */
+		uint32_t prop_fd                 : 6;
+		uint32_t reserved_6              : 1;
+		uint32_t ph1_fd                  : 5;
+		uint32_t reserved_12             : 1;
+		uint32_t ph2_fd                  : 5;
+		uint32_t reserved_18             : 1;
+		uint32_t brp_fd                  : 8;
+		uint32_t sjw_fd                  : 5;
 #else
-		uint32_t reserved_31_30          : 2;
-		uint32_t brp_fd                  : 6;
-		uint32_t reserved_23_22          : 2;
-		uint32_t brp                     : 6;
-		uint32_t sjw_fd                  : 4;
-		uint32_t sjw                     : 4;
-		uint32_t reserved_7_5            : 3;
-		uint32_t alc_val                 : 5;
+		uint32_t sjw_fd                  : 5;
+		uint32_t brp_fd                  : 8;
+		uint32_t reserved_18             : 1;
+		uint32_t ph2_fd                  : 5;
+		uint32_t reserved_12             : 1;
+		uint32_t ph1_fd                  : 5;
+		uint32_t reserved_6              : 1;
+		uint32_t prop_fd                 : 6;
 #endif
 	} s;
 };
@@ -791,16 +782,19 @@ union ctu_can_fd_tx_priority {
 	} s;
 };
 
-union ctu_can_fd_err_capt {
+union ctu_can_fd_err_capt_alc {
 	uint32_t u32;
-	struct ctu_can_fd_err_capt_s {
+	struct ctu_can_fd_err_capt_alc_s {
 #ifdef __BIG_ENDIAN_BITFIELD
   /* ERR_CAPT */
 		uint32_t err_pos                 : 5;
 		uint32_t err_type                : 3;
-		uint32_t reserved_31_8          : 24;
+  /* ALC */
+		uint32_t alc_val                 : 5;
+		uint32_t reserved_31_13         : 19;
 #else
-		uint32_t reserved_31_8          : 24;
+		uint32_t reserved_31_13         : 19;
+		uint32_t alc_val                 : 5;
 		uint32_t err_type                : 3;
 		uint32_t err_pos                 : 5;
 #endif

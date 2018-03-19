@@ -65,11 +65,7 @@ package CAN_FD_register_map is
   constant INT_MASK_SET_ADR          : std_logic_vector(11 downto 0) := x"014";
   constant INT_MASK_CLR_ADR          : std_logic_vector(11 downto 0) := x"018";
   constant BTR_ADR                   : std_logic_vector(11 downto 0) := x"01C";
-  constant BTR_FD_ADR                : std_logic_vector(11 downto 0) := x"01E";
-  constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"020";
-  constant SJW_ADR                   : std_logic_vector(11 downto 0) := x"021";
-  constant BRP_ADR                   : std_logic_vector(11 downto 0) := x"022";
-  constant BRP_FD_ADR                : std_logic_vector(11 downto 0) := x"023";
+  constant BTR_FD_ADR                : std_logic_vector(11 downto 0) := x"020";
   constant EWL_ADR                   : std_logic_vector(11 downto 0) := x"024";
   constant ERP_ADR                   : std_logic_vector(11 downto 0) := x"025";
   constant FAULT_STATE_ADR           : std_logic_vector(11 downto 0) := x"026";
@@ -97,6 +93,7 @@ package CAN_FD_register_map is
   constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"06C";
   constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"070";
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"074";
+  constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"075";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"078";
   constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"07C";
   constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"080";
@@ -170,6 +167,9 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   constant DEVICE_ID_L            : natural := 0;
   constant DEVICE_ID_H           : natural := 15;
+
+  -- "DEVICE_ID" field enumerated values
+  constant CTU_CAN_FD_ID : std_logic_vector(15 downto 0) := x"CAFD";
 
   -- DEVICE_ID register reset values
   constant DEVICE_ID_RSTVAL : std_logic_vector(15 downto 0) := x"CAFD";
@@ -404,85 +404,48 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- BTR register
   --
-  -- The length of bit time segments for Nominal bit time in Time quanta. Note t
-  -- hat SYNC segment always lasts one Time quanta.
+  -- Bit timing register for nominal bit-rate.
   ------------------------------------------------------------------------------
   constant PROP_L                 : natural := 0;
-  constant PROP_H                 : natural := 5;
-  constant PH1_L                  : natural := 6;
-  constant PH1_H                 : natural := 10;
-  constant PH2_L                 : natural := 11;
-  constant PH2_H                 : natural := 15;
+  constant PROP_H                 : natural := 6;
+  constant PH1_L                  : natural := 7;
+  constant PH1_H                 : natural := 12;
+  constant PH2_L                 : natural := 13;
+  constant PH2_H                 : natural := 18;
+  constant BRP_L                 : natural := 19;
+  constant BRP_H                 : natural := 26;
+  constant SJW_L                 : natural := 27;
+  constant SJW_H                 : natural := 31;
 
   -- BTR register reset values
-  constant PROP_RSTVAL : std_logic_vector(5 downto 0) := "000101";
-  constant PH1_RSTVAL : std_logic_vector(4 downto 0) := "00011";
-  constant PH2_RSTVAL : std_logic_vector(4 downto 0) := "00101";
+  constant PROP_RSTVAL : std_logic_vector(6 downto 0) := "0000101";
+  constant PH1_RSTVAL : std_logic_vector(5 downto 0) := "000011";
+  constant PH2_RSTVAL : std_logic_vector(5 downto 0) := "000101";
+  constant BRP_RSTVAL : std_logic_vector(7 downto 0) := x"0A";
+  constant SJW_RSTVAL : std_logic_vector(4 downto 0) := "00010";
 
   ------------------------------------------------------------------------------
   -- BTR_FD register
   --
-  -- Length of bit time segments for Data bit time in Time quanta. Note that SYN
-  -- C segment always lasts one Time quanta.
+  -- Bit timing register for data bit-rate.
   ------------------------------------------------------------------------------
-  constant PROP_FD_L             : natural := 16;
-  constant PROP_FD_H             : natural := 21;
-  constant PH1_FD_L              : natural := 22;
-  constant PH1_FD_H              : natural := 25;
-  constant PH2_FD_L              : natural := 27;
-  constant PH2_FD_H              : natural := 30;
+  constant PROP_FD_L              : natural := 0;
+  constant PROP_FD_H              : natural := 5;
+  constant PH1_FD_L               : natural := 7;
+  constant PH1_FD_H              : natural := 11;
+  constant PH2_FD_L              : natural := 13;
+  constant PH2_FD_H              : natural := 17;
+  constant BRP_FD_L              : natural := 19;
+  constant BRP_FD_H              : natural := 26;
+  constant SJW_FD_L              : natural := 27;
+  constant SJW_FD_H              : natural := 31;
 
   -- BTR_FD register reset values
-  constant PH2_FD_RSTVAL : std_logic_vector(3 downto 0) := x"3";
+  constant PH2_FD_RSTVAL : std_logic_vector(4 downto 0) := "00011";
   constant PROP_FD_RSTVAL : std_logic_vector(5 downto 0) := "000011";
-  constant PH1_FD_RSTVAL : std_logic_vector(3 downto 0) := x"3";
-
-  ------------------------------------------------------------------------------
-  -- ALC register
-  --
-  -- Arbitration lost capture register. 
-  ------------------------------------------------------------------------------
-  constant ALC_VAL_L              : natural := 0;
-  constant ALC_VAL_H              : natural := 4;
-
-  -- ALC register reset values
-  constant ALC_VAL_RSTVAL : std_logic_vector(4 downto 0) := "00000";
-
-  ------------------------------------------------------------------------------
-  -- SJW register
-  --
-  -- Synchronisation jump width registers for both Nominal and Data bit times.
-  ------------------------------------------------------------------------------
-  constant SJW_L                  : natural := 8;
-  constant SJW_H                 : natural := 11;
-  constant SJW_FD_L              : natural := 12;
-  constant SJW_FD_H              : natural := 15;
-
-  -- SJW register reset values
-  constant SJW_RSTVAL : std_logic_vector(3 downto 0) := x"2";
-  constant SJW_FD_RSTVAL : std_logic_vector(3 downto 0) := x"2";
-
-  ------------------------------------------------------------------------------
-  -- BRP register
-  --
-  -- Baud rate Prescaler register - Nominal bit time. 
-  ------------------------------------------------------------------------------
-  constant BRP_L                 : natural := 16;
-  constant BRP_H                 : natural := 21;
-
-  -- BRP register reset values
-  constant BRP_RSTVAL : std_logic_vector(5 downto 0) := "001010";
-
-  ------------------------------------------------------------------------------
-  -- BRP_FD register
-  --
-  -- Baud rate Prescaler register - Data bit time. 
-  ------------------------------------------------------------------------------
-  constant BRP_FD_L              : natural := 24;
-  constant BRP_FD_H              : natural := 29;
-
-  -- BRP_FD register reset values
-  constant BRP_FD_RSTVAL : std_logic_vector(5 downto 0) := "000100";
+  constant PH1_FD_RSTVAL : std_logic_vector(4 downto 0) := "00011";
+  constant BRP_FD_RSTVAL : std_logic_vector(7 downto 0) := x"04";
+  constant SJW_FD_RSTVAL : std_logic_vector(4 downto 0) := "00010";
 
   ------------------------------------------------------------------------------
   -- EWL register
@@ -935,6 +898,17 @@ package CAN_FD_register_map is
   -- ERR_CAPT register reset values
   constant ERR_POS_RSTVAL : std_logic_vector(4 downto 0) := "11111";
   constant ERR_TYPE_RSTVAL : std_logic_vector(2 downto 0) := "000";
+
+  ------------------------------------------------------------------------------
+  -- ALC register
+  --
+  -- Arbitration lost capture register. 
+  ------------------------------------------------------------------------------
+  constant ALC_VAL_L              : natural := 8;
+  constant ALC_VAL_H             : natural := 12;
+
+  -- ALC register reset values
+  constant ALC_VAL_RSTVAL : std_logic_vector(4 downto 0) := "00000";
 
   ------------------------------------------------------------------------------
   -- TRV_DELAY register

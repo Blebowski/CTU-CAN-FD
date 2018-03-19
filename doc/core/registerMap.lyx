@@ -715,7 +715,7 @@ hyperref[INT_MASK_CLR]{INT\backslash textunderscore MASK\backslash textunderscor
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[BTR_FD]{BTR\backslash textunderscore FD}\end_layout
+hyperref[BTR]{BTR}\end_layout
 \end_inset
 \end_layout
 
@@ -729,13 +729,13 @@ hyperref[BTR_FD]{BTR\backslash textunderscore FD}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[BTR_FD]{BTR\backslash textunderscore FD}\end_layout
+hyperref[BTR]{BTR}\end_layout
 \end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -781,13 +781,13 @@ hyperref[BTR]{BTR}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[BRP_FD]{BRP\backslash textunderscore FD}\end_layout
+hyperref[BTR_FD]{BTR\backslash textunderscore FD}\end_layout
 \end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -795,13 +795,13 @@ hyperref[BRP_FD]{BRP\backslash textunderscore FD}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[BRP]{BRP}\end_layout
+hyperref[BTR_FD]{BTR\backslash textunderscore FD}\end_layout
 \end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -809,13 +809,13 @@ hyperref[BRP]{BRP}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[SJW]{SJW}\end_layout
+hyperref[BTR_FD]{BTR\backslash textunderscore FD}\end_layout
 \end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -823,7 +823,7 @@ hyperref[SJW]{SJW}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[ALC]{ALC}\end_layout
+hyperref[BTR_FD]{BTR\backslash textunderscore FD}\end_layout
 \end_inset
 \end_layout
 
@@ -2121,13 +2121,7 @@ hyperref[TX_PRIORITY]{TX\backslash textunderscore PRIORITY}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -2135,17 +2129,11 @@ hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
-\end_inset
-\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -2153,13 +2141,13 @@ hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
 status open
 \begin_layout Plain Layout
 \backslash
-hyperref[ERR_CAPT]{ERR\backslash textunderscore CAPT}\end_layout
+hyperref[ALC]{ALC}\end_layout
 \end_inset
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3057,7 +3045,8 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-DEVICE_ID Device ID
+DEVICE_ID Device ID\begin_inset Newline newline\end_inset
+		0b1100101011111101  - CTU_CAN_FD_ID - Identifier of CTU CAN FD IP Core.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -7376,10 +7365,496 @@ Type: read-write
 Address: 0x1C
 \end_layout
 \begin_layout Description
-Size: 2 bytes
+Size: 4 bytes
 \end_layout
 \begin_layout Standard
-The length of bit time segments for Nominal bit time in Time quanta. Note that SYNC segment always lasts one Time quanta.
+Bit timing register for nominal bit-rate.
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+31\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+30\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+29\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+28\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+25\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[7:5]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[7:5]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[7:5]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+23\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+22\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+19\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+18\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH2[5:3]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH2[5:3]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH2[5:3]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -7483,7 +7958,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH2\end_layout
+PH2[2:0]\end_layout
 
 \end_inset
 </cell>
@@ -7491,7 +7966,7 @@ PH2\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH2\end_layout
+PH2[2:0]\end_layout
 
 \end_inset
 </cell>
@@ -7499,23 +7974,7 @@ PH2\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH2\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH2\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH2\end_layout
+PH2[2:0]\end_layout
 
 \end_inset
 </cell>
@@ -7523,7 +7982,7 @@ PH2\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH1[4:2]\end_layout
+PH1[5:1]\end_layout
 
 \end_inset
 </cell>
@@ -7531,7 +7990,23 @@ PH1[4:2]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH1[4:2]\end_layout
+PH1[5:1]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH1[5:1]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH1[5:1]\end_layout
 
 \end_inset
 </cell>
@@ -7539,7 +8014,7 @@ PH1[4:2]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH1[4:2]\end_layout
+PH1[5:1]\end_layout
 
 \end_inset
 </cell>
@@ -7557,22 +8032,6 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 1\end_layout
 
 \end_inset
@@ -7590,6 +8049,22 @@ Reset value\end_layout
 
 \begin_layout Plain Layout
 1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -7613,7 +8088,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -7726,19 +8201,19 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH1[1:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH1[1:0]\end_layout
+PH1[0]\end_layout
 
 \end_inset
 </cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PROP\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7808,7 +8283,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -7868,13 +8343,19 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-PROP Propagation segment - Nominal bit time
+PROP Propagation segment
 \end_layout
 \begin_layout Description
-PH1 Phase 1 segment - Nominal bit time
+PH1 Phase 1 segment
 \end_layout
 \begin_layout Description
-PH2 Phase 2 segment - Nominal bit time
+PH2 Phase 2 segment
+\end_layout
+\begin_layout Description
+BRP Baud-rate prescaler
+\end_layout
+\begin_layout Description
+SJW Synchronisation jump width
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -7894,13 +8375,499 @@ label{BTR_FD
 Type: read-write
 \end_layout
 \begin_layout Description
-Address: 0x1E
+Address: 0x20
 \end_layout
 \begin_layout Description
-Size: 2 bytes
+Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Length of bit time segments for Data bit time in Time quanta. Note that SYNC segment always lasts one Time quanta.
+Bit timing register for data bit-rate.
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+31\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+30\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+29\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+28\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+27\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+26\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+25\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW_FD\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW_FD\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW_FD\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW_FD\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SJW_FD\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[7:5]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[7:5]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[7:5]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+23\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+22\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+21\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+20\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+19\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+18\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+17\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+16\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRP_FD[4:0]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH2_FD[4:3]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH2_FD[4:3]\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -8004,15 +8971,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH2_FD\end_layout
+PH2_FD[2:0]\end_layout
 
 \end_inset
 </cell>
@@ -8020,7 +8979,7 @@ PH2_FD\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH2_FD\end_layout
+PH2_FD[2:0]\end_layout
 
 \end_inset
 </cell>
@@ -8028,15 +8987,7 @@ PH2_FD\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH2_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH2_FD\end_layout
+PH2_FD[2:0]\end_layout
 
 \end_inset
 </cell>
@@ -8052,7 +9003,23 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH1_FD[3:2]\end_layout
+PH1_FD[4:1]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH1_FD[4:1]\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PH1_FD[4:1]\end_layout
 
 \end_inset
 </cell>
@@ -8060,7 +9027,7 @@ PH1_FD[3:2]\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH1_FD[3:2]\end_layout
+PH1_FD[4:1]\end_layout
 
 \end_inset
 </cell>
@@ -8078,22 +9045,6 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 0\end_layout
 
 \end_inset
@@ -8119,6 +9070,22 @@ Reset value\end_layout
 
 \begin_layout Plain Layout
 -\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -8134,7 +9101,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -8247,277 +9214,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-PH1_FD[1:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PH1_FD[1:0]\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PROP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PROP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PROP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PROP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PROP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-PROP_FD\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset value\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Description
-PROP_FD Propagation segment - Data bit time
-\end_layout
-\begin_layout Description
-PH1_FD Phase 1 segment - Data bit time
-\end_layout
-\begin_layout Description
-PH2_FD Phase 2 segment - Data bit time
-\end_layout
-\begin_layout Standard
-\begin_inset VSpace bigskip
-\end_inset
-\end_layout
-\begin_layout Subsection
-ALC
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-label{ALC
-}\end_layout
-\end_inset
-\end_layout
-\begin_layout Description
-Type: read-only
-\end_layout
-\begin_layout Description
-Address: 0x20
-\end_layout
-\begin_layout Description
-Size: 1 byte
-\end_layout
-\begin_layout Standard
-Arbitration lost capture register. 
-\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bit index\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Field name\end_layout
+PH1_FD[0]\end_layout
 
 \end_inset
 </cell>
@@ -8529,27 +9226,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+PROP_FD\end_layout
 
 \end_inset
 </cell>
@@ -8557,7 +9238,7 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+PROP_FD\end_layout
 
 \end_inset
 </cell>
@@ -8565,7 +9246,7 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+PROP_FD\end_layout
 
 \end_inset
 </cell>
@@ -8573,7 +9254,15 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+PROP_FD\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+PROP_FD\end_layout
 
 \end_inset
 </cell>
@@ -8581,7 +9270,7 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+PROP_FD\end_layout
 
 \end_inset
 </cell>
@@ -8599,271 +9288,15 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Description
-ALC_VAL Arbitration lost capture value. Not supported yet. Do not use!
-\end_layout
-\begin_layout Standard
-\begin_inset VSpace bigskip
-\end_inset
-\end_layout
-\begin_layout Subsection
-SJW
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-label{SJW
-}\end_layout
-\end_inset
-\end_layout
-\begin_layout Description
-Type: read-write
-\end_layout
-\begin_layout Description
-Address: 0x21
-\end_layout
-\begin_layout Description
-Size: 1 byte
-\end_layout
-\begin_layout Standard
-Synchronisation jump width registers for both Nominal and Data bit times.
-\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bit index\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 1\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Field name\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-SJW\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reset value\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -8872,22 +9305,6 @@ Reset value\end_layout
 
 \begin_layout Plain Layout
 0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
 
 \end_inset
 </cell>
@@ -8927,7 +9344,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+1\end_layout
 
 \end_inset
 </cell>
@@ -8939,554 +9356,19 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-SJW Synchronisation jump width - Nominal bit time.
+PROP_FD Propagation segment
 \end_layout
 \begin_layout Description
-SJW_FD Synchronisation jump widh - Data bit time.
-\end_layout
-\begin_layout Standard
-\begin_inset VSpace bigskip
-\end_inset
-\end_layout
-\begin_layout Subsection
-BRP
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-label{BRP
-}\end_layout
-\end_inset
+PH1_FD Phase 1 segment
 \end_layout
 \begin_layout Description
-Type: read-write
+PH2_FD Phase 2 segment
 \end_layout
 \begin_layout Description
-Address: 0x22
+BRP_FD Baud-rate prescaler
 \end_layout
 \begin_layout Description
-Size: 1 byte
-\end_layout
-\begin_layout Standard
-Baud rate Prescaler register - Nominal bit time. 
-\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bit index\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Field name\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset value\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Description
-BRP Specifies time quanta duration for nominal bit time.
-\end_layout
-\begin_layout Standard
-\begin_inset VSpace bigskip
-\end_inset
-\end_layout
-\begin_layout Subsection
-BRP_FD
-\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-label{BRP_FD
-}\end_layout
-\end_inset
-\end_layout
-\begin_layout Description
-Type: read-write
-\end_layout
-\begin_layout Description
-Address: 0x23
-\end_layout
-\begin_layout Description
-Size: 1 byte
-\end_layout
-\begin_layout Standard
-Baud rate Prescaler register - Data bit time. 
-\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bit index\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-7\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-6\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-5\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-4\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-3\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-2\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Field name\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP_FD\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-BRP_FD\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset value\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-1\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Description
-BRP_FD Specifies time quanta duration for data bit time.
+SJW_FD Synchronisation jump width
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -28131,739 +28013,10 @@ Type: read-only
 Address: 0x74
 \end_layout
 \begin_layout Description
-Size: 4 bytes
+Size: 1 byte
 \end_layout
 \begin_layout Standard
 Last error frame capture.
-\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bit index\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-31\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-30\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-29\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-28\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-27\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-26\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-25\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-24\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Field name\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset value\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bit index\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-23\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-22\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-21\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-20\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-19\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-18\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-17\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-16\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Field name\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset value\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
-\end_layout
-\begin_layout Standard
-\noindent
-\align center
-\begin_inset Tabular
-<lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<column alignment="center" valignment="top" width="1.4cm">
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Bit index\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-15\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-14\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-13\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-12\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-11\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-10\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-9\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-8\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Field name\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reserved\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Reset value\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
--\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
-
 \end_layout
 \begin_layout Standard
 \noindent
@@ -29128,6 +28281,278 @@ ERR_TYPE Type of the last error\begin_inset Newline newline\end_inset
 		0b010  - ERC_FRM_ERR - Form Error\begin_inset Newline newline\end_inset
 		0b011  - ERC_ACK_ERR - Acknowledge Error\begin_inset Newline newline\end_inset
 		0b100  - ERC_STUF_ERR - Stuff Error
+\end_layout
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+\end_layout
+\begin_layout Subsection
+ALC
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+label{ALC
+}\end_layout
+\end_inset
+\end_layout
+\begin_layout Description
+Type: read-only
+\end_layout
+\begin_layout Description
+Address: 0x75
+\end_layout
+\begin_layout Description
+Size: 1 byte
+\end_layout
+\begin_layout Standard
+Arbitration lost capture register. 
+\end_layout
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular columns="9" rows="3" version="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<column alignment="center" valignment="top" width="1.4cm">
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit index\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Field name\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ALC_VAL\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ALC_VAL\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ALC_VAL\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ALC_VAL\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ALC_VAL\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset value\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+\begin_layout Description
+ALC_VAL Arbitration lost capture value. Not supported yet. Do not use!
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
