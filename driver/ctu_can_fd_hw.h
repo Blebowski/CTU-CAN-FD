@@ -40,6 +40,10 @@
 
 #define CTU_CAN_FD_TXT_BUFFER_COUNT 4
 
+#define CTU_CAN_FD_TXT_BUFFER_1 0x1
+#define CTU_CAN_FD_TXT_BUFFER_2 0x2
+#define CTU_CAN_FD_TXT_BUFFER_3 0x3
+#define CTU_CAN_FD_TXT_BUFFER_4 0x4
 
 /* 
  * Status macros -> pass "ctu_can_get_status" result
@@ -429,10 +433,8 @@ bool ctu_can_fd_set_mask_filter(const void *base, u8 fnum, bool enable,
  *	low_th	Lower threshold of identifiers which should be accepted
  *	high_th	Upper threshold of identifiers which should be accepted
  *	enable	Enable the range filter.
- * Returns:
- *	True if mask filter was configured properly, false otherwise.
  */
-bool ctu_can_fd_set_range_filter(const void *base, canid_t low_th,
+void ctu_can_fd_set_range_filter(const void *base, canid_t low_th,
 				 canid_t high_th, bool enable);
 
 /*
