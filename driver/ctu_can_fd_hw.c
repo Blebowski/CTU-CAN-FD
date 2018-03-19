@@ -107,6 +107,39 @@ static inline void ctu_can_fd_hwid_to_id(union ctu_can_fd_identifier_w hwid,
 		*id = hwid.s.identifier_base;
 }
 
+
+static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
+{
+	if (len =< 8){
+		*dlc = len;
+		goto exit_ok;
+	}
+
+	switch (len){
+	case 12 : *dlc = 0x9;
+	break;
+	case 16 : *dlc = 0xA;
+	break;
+	case 20 : *dlc = 0xB;
+	break;
+	case 24 : *dlc = 0xC;
+	break;
+	case 32 : *dlc = 0xD;
+	break;
+	case 48 : *dlc = 0xE;
+	break;
+	case 64 : *dlc = 0xF;
+	break;
+	default : *dlc = 0x0;
+	}
+	
+	if (!dlc)
+		return false;
+exit:
+	return true;
+}
+
+
 bool ctu_can_fd_check_access(const void *base)
 {
 	union ctu_can_fd_device_id_version reg;
@@ -619,7 +652,7 @@ enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(const void *base, u8 buf
 	break;
 	case CTU_CAN_FD_TXT_BUFFER_2 : return reg.s.tx2s;
 	break;
-	case CTU_CAN_FD_TXT_BUFFER_3: return reg.s.tx3s;
+	case CTU_CAN_FD_TXT_BUFFER_3 : return reg.s.tx3s;
 	break;
 	case CTU_CAN_FD_TXT_BUFFER_4 : return reg.s.tx4s;
 	break;
@@ -705,6 +738,7 @@ bool ctu_can_fd_insert_frame(const void *base, const unsigned char *data, u64 ts
 	union ctu_can_fd_frame_form_w ffw;
 	union ctu_can_fd_identifier_w idw;
 	struct canfd_frame *cf = (struct canfd_frame *)data;
+	u8 dlc;
 	
 	ffw.u32 = 0;
 	idw.u32 = 0;
@@ -725,7 +759,6 @@ bool ctu_can_fd_insert_frame(const void *base, const unsigned char *data, u64 ts
 	if (!ctu_can_fd_is_txt_buf_accessible(base, buf))
 		return false;
 
-
 	if (cf->ident & CAN_RTR_FLAG)
 		ffw.s.rtr = RTR_FRAME;
 
@@ -733,21 +766,27 @@ bool ctu_can_fd_insert_frame(const void *base, const unsigned char *data, u64 ts
 		ffw.s.id_type = EXTENDED;
  	else
 		ffw.s.id_type = BASE;
+	
+	ffw.s.tbf = TIME_BASED;
 
 	ctu_can_fd_id_to_hwid(cf->ident, &idw);
 
-	ffw.s.tbf = TIME_BASED;
-	
-	// TODO: DLC!!!
+	if (!ctu_can_fd_len_to_dlc(cf->len, &dlc))
+		return false;
+	ffw.s.dlc = dlc;
 	
 	// Larger data chunks and the ones where bit rate should be shifted
-	// are sent as CAN FD Frames.
+	// are sent as CAN FD Frames. TODO: Think here, and discuss this with Martin.
+	// How does the Socket CAN distinguish beween normal and FD Frame (without BRS)
+	// Once BRS flag is present it is clear. Without it, we dont know whether
+	// 8 byte frame should be CAN FD Frame without bit rate shifted or CAN Frame
+	// So we send FD Frame only if BRS present or higher length than 8 ...
 	if (cf->len > 8)
 		ffw.s.fr_type = FD_CAN;
 	
 	if (cf->flags & CANFD_BRS){
 		ffw.s.fr_type = FD_CAN;
-		ffw.s.brs = BR_SHIFT; 
+		ffw.s.brs = BR_SHIFT;
 	}
 	ctu_can_fd_write_txt_buf(base, buf, CTU_CAN_FD_FRAME_FORM_W, ffw.u32);
 	ctu_can_fd_write_txt_buf(base, buf, CTU_CAN_FD_IDENTIFIER_W, idw.u32);
