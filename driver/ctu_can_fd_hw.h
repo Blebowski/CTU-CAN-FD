@@ -74,6 +74,43 @@
 #define CTU_CAN_FD_RX_BUF_NEMPTY(stat) stat.s.rbs ? true : false;
 
 
+/* 
+ * Interrupt macros -> pass "ctu_can_fd_int_sts" result
+ */
+
+// Frame reveived interrupt
+#define CTU_CAN_FD_RX_INT(int_stat) int_stat.s.ri ? true : false;
+
+// Frame transceived interrupt
+#define CTU_CAN_FD_TX_INT(int_stat) int_stat.s.ti ? true : false;
+
+// Error warning limit reached interrupt
+#define CTU_CAN_FD_EWL_INT(int_stat) int_stat.s.ei ? true : false;
+
+// RX Buffer data overrun interrupt
+#define CTU_CAN_FD_OVERRUN_INT(int_stat) int_stat.s.doi ? true : false;
+
+// Core turned error passive interrupt
+#define CTU_CAN_FD_ERR_PASSIVE_INT(int_stat) int_stat.s.epi ? true : false;
+
+// Error frame transmission started interrupt
+#define CTU_CAN_FD_BUS_ERROR_INT(int_stat) int_stat.s.bei ? true : false;
+
+// Event logger finished interrupt
+#define CTU_CAN_FD_LOGGER_FIN_INT(int_stat) int_stat.s.lfi ? true : false;
+
+// RX Buffer full interrupt
+#define CTU_CAN_FD_RX_FULL_INT(int_stat) int_stat.s.rfi ? true : false;
+
+// Bit-rate shifted interrupt
+#define CTU_CAN_FD_BIT_RATE_SHIFT_INT(int_stat) int_stat.s.bsi ? true : false;
+
+// Receive buffer not empty interrupt
+#define CTU_CAN_FD_RX_BUF_NEPMTY_INT(int_stat) int_stat.s.rbnei ? true : false;
+
+// TX Buffer received HW command interrupt
+#define CTU_CAN_FD_TXT_BUF_HWCMD_INT(int_stat) int_stat.s.txbhci ? true : false;
+
 
 /*
  * Checks whether the core is mapped correctly at it's base address.
