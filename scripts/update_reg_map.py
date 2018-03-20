@@ -60,22 +60,24 @@ if __name__ == '__main__':
 	print("**  Generating CAN FD register map")
 	print(80 * "*")
 
+	pythonAlias = "python3.5"
+
 	if (str_arg_to_bool(args.updVHDL)):
 		print("Generating CAN FD memory registers VHDL package...\n")
-		os.system("""py gen_vhdl_package.py --licPath ../LICENSE --xactSpec {} --fieldMap Regs --addrMap Regs --wordWidth 32 --outFile ../src/Libraries/CAN_FD_register_map.vhd --packName CAN_FD_register_map""".format(args.xactSpec))
-		os.system("""py gen_vhdl_package.py --licPath ../LICENSE --xactSpec {} --fieldMap Frame_format --addrMap Frame_format --wordWidth 32 --outFile ../src/Libraries/CAN_FD_frame_format.vhd --packName CAN_FD_frame_format""".format(args.xactSpec))
+		os.system("""{} gen_vhdl_package.py --licPath ../LICENSE --xactSpec {} --fieldMap Regs --addrMap Regs --wordWidth 32 --outFile ../src/Libraries/CAN_FD_register_map.vhd --packName CAN_FD_register_map""".format(pythonAlias, args.xactSpec))
+		os.system("""{} gen_vhdl_package.py --licPath ../LICENSE --xactSpec {} --fieldMap Frame_format --addrMap Frame_format --wordWidth 32 --outFile ../src/Libraries/CAN_FD_frame_format.vhd --packName CAN_FD_frame_format""".format(pythonAlias, args.xactSpec))
 		print("\nDone\n")
 	
 	if (str_arg_to_bool(args.updHeader)):
 		print("Generating CAN FD memory registers Header file...\n")
-		os.system("""py gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Regs --fieldMap Regs --wordWidth 32 --outFile ../driver/ctu_can_fd_regs.h --headName CAN_FD_frame_format""".format(args.xactSpec))
-		os.system("""py gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Frame_format --fieldMap Frame_format --wordWidth 32 --outFile ../driver/ctu_can_fd_frame.h --headName CAN_FD_frame_format""".format(args.xactSpec))
+		os.system("""{} gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Regs --fieldMap Regs --wordWidth 32 --outFile ../driver/ctu_can_fd_regs.h --headName CAN_FD_frame_format""".format(pythonAlias, args.xactSpec))
+		os.system("""{} gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Frame_format --fieldMap Frame_format --wordWidth 32 --outFile ../driver/ctu_can_fd_frame.h --headName CAN_FD_frame_format""".format(pythonAlias, args.xactSpec))
 		print("\nDone\n")
 	
 	if (str_arg_to_bool(args.updDocs)):
 		print("Generating CAN FD memory registers Documentation...\n")
-		os.system("""py gen_lyx_docu.py --xactSpec {} --memMap Regs --wordWidth 32 --lyxTemplate ../doc/core/template.lyx --outFile ../doc/core/registerMap.lyx --chaptName "Register map" --genRegions True --genFiDesc True""".format(args.xactSpec))
-		os.system("""py gen_lyx_docu.py --xactSpec {} --memMap Frame_format --wordWidth 32 --lyxTemplate ../doc/core/template.lyx --outFile ../doc/core/CANFrameFormat.lyx --chaptName "CAN Frame format" --genRegions False --genFiDesc True""".format(args.xactSpec))
+		os.system("""{} gen_lyx_docu.py --xactSpec {} --memMap Regs --wordWidth 32 --lyxTemplate ../doc/core/template.lyx --outFile ../doc/core/registerMap.lyx --chaptName "Register map" --genRegions True --genFiDesc True""".format(pythonAlias, args.xactSpec))
+		os.system("""{} gen_lyx_docu.py --xactSpec {} --memMap Frame_format --wordWidth 32 --lyxTemplate ../doc/core/template.lyx --outFile ../doc/core/CANFrameFormat.lyx --chaptName "CAN Frame format" --genRegions False --genFiDesc True""".format(pythonAlias, args.xactSpec))
 		print("\nDone\n")
 	
 	print( 80 * "*")
