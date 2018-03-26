@@ -255,8 +255,8 @@ begin
         
         --Invert random range of bits in shift register...
         tran_del_sr(integer(rand_max * 127.0) downto integer(rand_min * 127.0))
-          <= not
-             tran_del_sr(integer(rand_max * 127.0) downto integer(rand_min * 127.0));
+         <= not
+          tran_del_sr(integer(rand_max * 127.0) downto integer(rand_min * 127.0));
         
       end if;
     
