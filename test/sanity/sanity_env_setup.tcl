@@ -206,5 +206,5 @@ add wave -group "Frame type" \
 	-label "Node 2" $WRCOMP/comp_gen__2/node_1_comp/core_top_comp/tran_frame_type \
 	-label "Node 3" $WRCOMP/comp_gen__3/node_1_comp/core_top_comp/tran_frame_type \
 	-label "Node 4" $WRCOMP/comp_gen__4/node_1_comp/core_top_comp/tran_frame_type
-	
+
 	

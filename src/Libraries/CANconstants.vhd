@@ -248,8 +248,11 @@ package CANconstants is
 
   -- TX arbitrator state type
   type tx_arb_state_type is (
-    arb_idle,
-    arb_trans
+    arb_sel_low_ts,
+    arb_sel_upp_ts,
+    arb_sel_ffw,
+    arb_sel_idw,
+    arb_locked
     );
   
   -- TXT buffer state type
@@ -269,14 +272,8 @@ package CANconstants is
   type txtb_priorities_type is array (0 to TXT_BUFFER_COUNT - 1) of
         std_logic_vector(2 downto 0);
   
-  type txtb_data_type is array (0 to TXT_BUFFER_COUNT - 1) of
+  type txtb_output_type is array (0 to TXT_BUFFER_COUNT - 1) of
         std_logic_vector(31 downto 0);
-  
-  type txtb_meta_data_type is array (0 to TXT_BUFFER_COUNT - 1) of
-        std_logic_vector(639 downto 512);
-  
-  type txtb_timestamps_type is array (0 to TXT_BUFFER_COUNT - 1) of
-        std_logic_vector(63 downto 0);
   
   type txt_fsms_type is array (0 to TXT_BUFFER_COUNT - 1) of
         txt_fsm_type;

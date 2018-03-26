@@ -244,8 +244,7 @@ entity CAN_top_level is
   signal txt_buf_ready        : std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
 
   -- Frames in TXT buffers on output - Data(addressed), Metadata (paralell)
-  signal txt_frame_metadata   : txtb_meta_data_type;
-  signal txt_data_word        : txtb_data_type;
+  signal txt_word             : txtb_output_type;
   
   
   ------------------------------------------------------------------------------
@@ -284,8 +283,11 @@ entity CAN_top_level is
   -- internal state
   signal txt_hw_cmd_index     : natural range 0 to TXT_BUFFER_COUNT - 1;
   
-  --Pointer to TXT buffer memory  
-  signal txt_buf_ptr          : natural range 0 to 15;
+  --Pointer to TXT buffer memory (from TX Arbitrator)
+  signal txt_buf_ptr          : natural range 0 to 19;
+  
+  -- Pointer to TXT Buffer memory (from CAN Core)
+  signal txtb_core_pointer    : natural range 0 to 19;
 
 
 	------------------------------------------------------------------------------
@@ -582,14 +584,13 @@ begin
       txtb_state            => txtb_fsms(i),
       txt_hw_cmd            => txt_hw_cmd,
       txt_hw_cmd_buf_index  => txt_hw_cmd_buf_index,
-      txt_data_word         => txt_data_word(i),
-      txt_data_addr         => txt_buf_ptr,
-      txt_frame_info_out    => txt_frame_metadata(i),
+      txt_word              => txt_word(i),
+      txt_addr              => txt_buf_ptr,
       txt_buf_ready         => txt_buf_ready(i)
     );
   end generate;
   
-  
+
  tx_arb_comp: txArbitrator
   generic map(
     buf_count               => TXT_BUFFER_COUNT,
@@ -598,9 +599,9 @@ begin
   port map( 
      clk_sys                => clk_sys,
      res_n                  => res_n,
-     txt_buf_data_in        => txt_data_word,
-     txt_meta_data_in       => txt_frame_metadata,
+     txt_buf_in             => txt_word,
      txt_buf_ready          => txt_buf_ready,
+     txtb_ptr               => txt_buf_ptr,
      tran_data_word_out     => tran_data_out,
      tran_ident_out         => tran_ident_out,
      tran_dlc_out           => tran_dlc_out,
@@ -612,11 +613,11 @@ begin
      txt_hw_cmd             => txt_hw_cmd,
      txtb_changed           => txtb_changed,
      txt_hw_cmd_buf_index   => txt_hw_cmd_buf_index,
+     txtb_core_pointer      => txtb_core_pointer,
      drv_bus                => drv_bus,
      txt_buf_prio           => txt_buf_prior,
      timestamp              => timestamp
   );
- 
 
   mes_filt_comp : messageFilter
     generic map(
@@ -678,7 +679,7 @@ begin
       tran_frame_valid_in   => tran_frame_valid_out,
       txt_hw_cmd            => txt_hw_cmd,
       txtb_changed          => txtb_changed,
-      txt_buf_ptr           => txt_buf_ptr,
+      txt_buf_ptr           => txtb_core_pointer,
       rec_ident_out         => rec_ident_in,
       rec_dlc_out           => rec_dlc_in,
       rec_ident_type_out    => rec_ident_type_in,

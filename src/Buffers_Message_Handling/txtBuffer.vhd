@@ -61,6 +61,11 @@
 --                and "allow" signals with HW commands from Protocol Control and
 --                SW commands from User registers. Hardware commands have always
 --                higher priority.
+--     24.3.2018  1. Changed TXT Buffer implementation to have both, metadata
+--                    and data in CAN frame.
+--                2. Added memory protection on the TXT Buffer. It can NOT be
+--                    written when in "ready", "tx in progress" or "abort in
+--                    progress" states.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -109,14 +114,9 @@ entity txtBuffer is
     signal txt_hw_cmd             :in   txt_hw_cmd_type;  
     signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
   
-    -- Data of the frame to be transmitted and pointer to the RAM memory
-    -- of TXT buffer from Protocol control
-    signal txt_data_word          :out  std_logic_vector(31 downto 0);
-    signal txt_data_addr          :in   natural range 0 to 15;
-    
-    --First 4 words (frame format, timestamps, identifier) are available 
-    --combinationally, to be able instantly decide on higher priority frame
-    signal txt_frame_info_out     :out  std_logic_vector(639 downto 512);
+    -- Buffer output and pointer to the RAM memory
+    signal txt_word               :out  std_logic_vector(31 downto 0);
+    signal txt_addr               :in   natural range 0 to 19;
     
     -- Signals to the TX Arbitrator that it can be selected for transmission
     -- (used as input to priority decoder)
@@ -131,21 +131,20 @@ architecture rtl of txtBuffer is
   ----------------------
   --Internal registers--
   ----------------------
-  type frame_data_memory is array(0 to 15) of std_logic_vector(31 downto 0);
-  type frame_info_memory is array (0 to 3) of std_logic_vector(31 downto 0);
-
+  type frame_memory is array(0 to 19) of std_logic_vector(31 downto 0);
+  
   ------------------
   --Signal aliases--
   ------------------
   
   -- Time transcieve buffer - Data memory
-  signal txt_buffer_data        : frame_data_memory;
-  
-  -- Frame format, Timestamps and Identifier
-  signal txt_buffer_meta_data   : frame_info_memory;
+  signal txt_buffer_mem        : frame_memory;
    
   -- FSM state of the buffer
   signal buf_fsm                : txt_fsm_type;
+  
+  -- TXT Buffer memory protection
+  signal txtb_user_accessible   : boolean;
   
   -- Internal buffer selects for commands. Commands are shared across the
   -- buffers so we need unique identifier
@@ -154,20 +153,16 @@ architecture rtl of txtBuffer is
   
 begin
     
-    -- Output data are given by the address from the Core
-    txt_data_word       <= txt_buffer_data(txt_data_addr);
-    
-    -- First 4 words of the Frame are available constantly...
-    txt_frame_info_out  <= txt_buffer_meta_data(0)&
-													 txt_buffer_meta_data(1)&
-													 txt_buffer_meta_data(3)&
-													 txt_buffer_meta_data(2);
+    -- Output data are given by the address from Core
+    txt_word            <= txt_buffer_mem(txt_addr);
     
     -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
-    txt_buf_ready       <= '1' when buf_fsm = txt_ready
-                                else
+    -- Abort signal must not be active. If not considered,
+    -- race conditions between HW and SW commands could occur.
+    txt_buf_ready       <= '1' when ((buf_fsm = txt_ready) and
+                                     (txt_sw_cmd.set_abt = '0'))
+                               else
                            '0';
-                               
     
     -- Command buffer select signals
     hw_cbs <= '1' when txt_hw_cmd_buf_index = ID
@@ -181,6 +176,13 @@ begin
     -- Connet internal buffer state to output
     txtb_state <= buf_fsm;
     
+    -- Memory protection of TXT Buffer
+    txtb_user_accessible <= false when ((buf_fsm = txt_ready)   or
+                                        (buf_fsm = txt_tx_prog) or
+                                        (buf_fsm = txt_ab_prog))
+                                  else
+                            true;
+    
     ----------------------------------------------------------------------------
     -- Buffer access process from SW
     ----------------------------------------------------------------------------
@@ -189,21 +191,14 @@ begin
       if (res_n = ACT_RESET) then
         
           -- pragma translate_off
-          txt_buffer_data <= (OTHERS => (OTHERS => '0'));
+          txt_buffer_mem <= (OTHERS => (OTHERS => '0'));
           -- pragma translate_on
-        
-          -- Frame info is stored in registers
-          txt_buffer_meta_data <= (OTHERS => (OTHERS => '0'));
-          
+                 
       elsif (rising_edge(clk_sys))then
         
         --Store the data into the Buffer during the access
-        if (tran_cs = '1') then
-          if (to_integer(unsigned(tran_addr)) < 4) then
-            txt_buffer_meta_data(to_integer(unsigned(tran_addr))) <= tran_data;
-          else  
-            txt_buffer_data(to_integer(unsigned(tran_addr)) - 4)  <= tran_data;
-          end if;
+        if (tran_cs = '1' and txtb_user_accessible) then
+            txt_buffer_mem(to_integer(unsigned(tran_addr))) <= tran_data;
         end if;
         
       end if;
