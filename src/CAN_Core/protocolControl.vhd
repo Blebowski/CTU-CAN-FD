@@ -233,7 +233,7 @@ entity protocolControl is
     signal txt_hw_cmd             :out  txt_hw_cmd_type;
     
     --Pointer to TXT buffer memory
-    signal txt_buf_ptr            :out  natural range 0 to 15;
+    signal txt_buf_ptr            :out  natural range 0 to 19;
     
     signal txtb_changed           :in std_logic;
     
@@ -600,7 +600,7 @@ entity protocolControl is
   signal rec_dram                 :     rec_data_RAM_type;
   
   --Pointer directly to TXT buffer to get the data
-  signal txt_buf_ptr_r            :     natural range 0 to 15;
+  signal txt_buf_ptr_r            :     natural range 0 to 19;
   
   -----------------------
   --CRC field registers--
@@ -875,7 +875,7 @@ begin
       rec_data_sr             <= (OTHERS => '0');
       
       -- Pointer directly to TXT Buffer RAM
-      txt_buf_ptr_r           <= 0;
+      txt_buf_ptr_r           <= 4;
       
       --Presetting the sampling point control
       sp_control_r            <=  NOMINAL_SAMPLE;
@@ -1742,7 +1742,7 @@ begin
             rec_data_sr             <= (OTHERS => '0');
             
             -- Pointer directly to TXT Buffer
-            txt_buf_ptr_r           <= 0;
+            txt_buf_ptr_r           <= 4;
             
           else
 
@@ -1754,7 +1754,7 @@ begin
                 
                 --Move to the next word
                 if ((data_pointer mod 32) = 0) then
-                  txt_buf_ptr_r <= (txt_buf_ptr_r+1) mod 16;
+                  txt_buf_ptr_r <= txt_buf_ptr_r + 1;
                 end if;
                 
               end if;

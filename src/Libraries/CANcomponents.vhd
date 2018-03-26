@@ -239,15 +239,13 @@ package CANcomponents is
     signal tran_addr              :in   std_logic_vector(4 downto 0);
     signal tran_cs                :in   std_logic;
     signal txt_sw_cmd             :in   txt_sw_cmd_type;
-    signal txt_sw_buf_cmd_index   :in   std_logic_vector(
-                                          buf_count - 1 downto 0);
+    signal txt_sw_buf_cmd_index   :in   std_logic_vector(buf_count - 1 downto 0);
     signal txtb_state             :out  txt_fsm_type;
     signal txt_hw_cmd             :in   txt_hw_cmd_type;  
     signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
-    signal txt_data_word          :out  std_logic_vector(31 downto 0);
-    signal txt_data_addr          :in   natural range 0 to 15;
-    signal txt_frame_info_out     :out  std_logic_vector(639 downto 512);
-    signal txt_buf_ready          :out  std_logic   
+    signal txt_word               :out  std_logic_vector(31 downto 0);
+    signal txt_addr               :in   natural range 0 to 15;
+    signal txt_buf_ready          :out  std_logic
     );
   end component;
 
@@ -256,29 +254,30 @@ package CANcomponents is
   ------------------------------------------------------------------------------
   component txArbitrator is
   generic(
-    buf_count               : natural range 1 to 8;
-    tx_time_sup             : boolean := true
+    buf_count   : natural range 1 to 8;
+    tx_time_sup : boolean := true
   );
   port( 
-    signal clk_sys                :in   std_logic;
-    signal res_n                  :in   std_logic;
-    signal txt_buf_data_in        :in   txtb_data_type;
-    signal txt_meta_data_in       :in   txtb_meta_data_type;
-    signal txt_buf_ready          :in   std_logic_vector(buf_count - 1 downto 0);
-    signal tran_data_word_out     :out  std_logic_vector(31 downto 0);
-    signal tran_ident_out         :out  std_logic_vector(28 downto 0);
-    signal tran_dlc_out           :out  std_logic_vector(3 downto 0);
-    signal tran_is_rtr            :out  std_logic;
-    signal tran_ident_type_out    :out  std_logic;
-    signal tran_frame_type_out    :out  std_logic;
-    signal tran_brs_out           :out  std_logic;
-    signal tran_frame_valid_out   :out  std_logic;
-    signal txt_hw_cmd             :in   txt_hw_cmd_type;  
-    signal txtb_changed           :out  std_logic;
-    signal txt_hw_cmd_buf_index   :out  natural range 0 to buf_count - 1;
-    signal drv_bus                :in   std_logic_vector(1023 downto 0);
-    signal txt_buf_prio           :in   txtb_priorities_type;
-    signal timestamp              :in   std_logic_vector(63 downto 0)    
+    signal clk_sys                :in  std_logic;
+    signal res_n                  :in  std_logic;
+    signal txt_buf_in             :in txtb_output_type;
+    signal txt_buf_ready          :in std_logic_vector(buf_count - 1 downto 0);
+    signal txtb_ptr               :out natural range 0 to 19;
+    signal tran_data_word_out     :out std_logic_vector(31 downto 0);
+    signal tran_ident_out         :out std_logic_vector(28 downto 0);
+    signal tran_dlc_out           :out std_logic_vector(3 downto 0);
+    signal tran_is_rtr            :out std_logic;
+    signal tran_ident_type_out    :out std_logic;
+    signal tran_frame_type_out    :out std_logic;
+    signal tran_brs_out           :out std_logic;
+    signal tran_frame_valid_out   :out std_logic;
+    signal txt_hw_cmd             :in txt_hw_cmd_type;  
+    signal txtb_changed           :out std_logic;
+    signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
+    signal txtb_core_pointer      :in natural range 0 to 19;
+    signal drv_bus                :in std_logic_vector(1023 downto 0);
+    signal txt_buf_prio           :in txtb_priorities_type;
+    signal timestamp              :in std_logic_vector(63 downto 0)
   );
   end component;
   
