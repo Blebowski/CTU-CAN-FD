@@ -470,14 +470,7 @@ begin
             tx_arb_fsm            <= arb_sel_low_ts;
             txtb_pointer_meta     <= to_integer(unsigned(
                                       TIMESTAMP_L_W_ADR(11 downto 2)));
-        
---        when arb_locked =>
---          if (txt_hw_cmd.unlock = '1') then
---            tx_arb_fsm            <= arb_sel_low_ts;
---            txtb_pointer_meta     <= to_integer(unsigned(
---                                      TIMESTAMP_L_W_ADR(11 downto 2)));      
---          end if;
---        
+                                              
         when others =>
           report "Error - Unknow TX Arbitrator state" severity error;
         end case;
