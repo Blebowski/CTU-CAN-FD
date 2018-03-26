@@ -199,9 +199,12 @@ begin
         
         rand_logic_vect(rand_set_ctr, bs_length, 0.2);
         wait for 0 ns;
-        if (bs_length = "000" or bs_length = "001") then
-          bs_length <= "010";
+	
+        -- Bit Stuffing of 0,1 or 2 is not needed.
+        if (bs_length = "000" or bs_length = "001" or bs_length = "010") then
+          bs_length <= "011";
         end if;
+
         wait for 0 ns;
         bd_length <= bs_length; 
              
@@ -229,8 +232,10 @@ begin
     
     while true loop
       wait until falling_edge(rx_trig) and destuffed = '0' and 
-			data_halt = '0' and err_data = '0';
+			data_halt = '0' and err_data = '0' and 
+                        bs_enable = '1' and bd_enable = '1';
       wait for 10 ns;
+
       if (tx_data /= rx_data) then
         log("TX Data not matching RX Data", error_l, log_level);
         process_error(rx_err_ctr, error_beh, exit_imm_1);
