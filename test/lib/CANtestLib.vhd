@@ -464,6 +464,24 @@ procedure generate_trig(
   subtype timing_config_t is anat_t(1 to 10);
   
   
+  
+  ------------------------------------------------------------------------------
+  -- Component declarations
+  ------------------------------------------------------------------------------  
+  component CAN_test is
+    port (
+      signal run            :in   boolean;                -- Input trigger, test starts running when true
+      signal iterations     :in   natural;                -- Number of iterations that test should do
+      signal log_level      :in   log_lvl_type;           -- Logging level, severity which should be shown
+      signal error_beh      :in   err_beh_type;           -- Test behaviour when error occurs: Quit, or Go on
+      signal error_tol      :in   natural;                -- Error tolerance, error counter should not
+                                                           -- exceed this value in order for the test to pass
+      signal status         :out  test_status_type;      -- Status of the test
+      signal errors         :out  natural                -- Amount of errors which appeared in the test
+      --TODO: Error log results 
+    );
+    end component;
+  
 end package;
 
 
