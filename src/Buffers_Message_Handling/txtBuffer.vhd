@@ -116,7 +116,7 @@ entity txtBuffer is
   
     -- Buffer output and pointer to the RAM memory
     signal txt_word               :out  std_logic_vector(31 downto 0);
-    signal txt_addr               :in   natural range 0 to 15;
+    signal txt_addr               :in   natural range 0 to 19;
     
     -- Signals to the TX Arbitrator that it can be selected for transmission
     -- (used as input to priority decoder)

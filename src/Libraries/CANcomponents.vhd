@@ -244,7 +244,7 @@ package CANcomponents is
     signal txt_hw_cmd             :in   txt_hw_cmd_type;  
     signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
     signal txt_word               :out  std_logic_vector(31 downto 0);
-    signal txt_addr               :in   natural range 0 to 15;
+    signal txt_addr               :in   natural range 0 to 19;
     signal txt_buf_ready          :out  std_logic
     );
   end component;
