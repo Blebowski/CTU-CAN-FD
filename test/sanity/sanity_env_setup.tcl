@@ -207,22 +207,4 @@ add wave -group "Frame type" \
 	-label "Node 3" $WRCOMP/comp_gen__3/node_1_comp/core_top_comp/tran_frame_type \
 	-label "Node 4" $WRCOMP/comp_gen__4/node_1_comp/core_top_comp/tran_frame_type
 
-add wave -group "TX Arbitrator - Node 1" \
-	-label "FSM" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/tx_arb_fsm \
-	-label "select_buf_index" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/select_buf_index \
-	-label "select_buf_avail" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/select_buf_avail \
-	-label "txtb_selected_input" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/txtb_selected_input \
-	-label "ts_low_internal" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/ts_low_internal \
-	-label "int_txtb_index" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/int_txtb_index \
-	-label "txtb_pointer_meta" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/txtb_pointer_meta \
-	-label "frame_type_int" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/frame_type_int \
-	-label "ident_type_int" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/ident_type_int \
-	-label "dlc_int" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/dlc_int \
-	-label "rtr_int" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/rtr_int \
-	-label "brs_int" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/brs_int \
-	-label "last_txtb_index" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/last_txtb_index \
-	-label "txtb_timestamp" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/txtb_timestamp \
-	-label "tran_data_word_out" $WRCOMP/comp_gen__4/node_1_comp/tx_arb_comp/tran_data_word_out \
-
-
 	

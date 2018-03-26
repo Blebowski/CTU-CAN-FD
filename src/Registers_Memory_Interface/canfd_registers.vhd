@@ -1730,7 +1730,16 @@ begin
   drv_bus(579 downto 570)                           <=  (OTHERS=>'0');
   drv_bus(519 downto 511)                           <=  (OTHERS=>'0');
   drv_bus(444 downto 429)                           <=  (OTHERS=>'0');
-  drv_bus(1023 downto 614)                          <=  (OTHERS=>'0');
+  
+  drv_bus(1023 downto 876)                          <=  (OTHERS=>'0');
+  
+  drv_bus(863 downto 844)                          <=  (OTHERS=>'0');
+  drv_bus(831 downto 812)                          <=  (OTHERS=>'0');
+  drv_bus(799 downto 780)                          <=  (OTHERS=>'0');
+  drv_bus(767 downto 748)                          <=  (OTHERS=>'0');
+  drv_bus(735 downto 614)                          <=  (OTHERS=>'0');
+
+
   
   --Prescaler data and bus timing
   drv_bus(DRV_TQ_NBT_HIGH downto DRV_TQ_NBT_LOW)    <=  brp_norm;
