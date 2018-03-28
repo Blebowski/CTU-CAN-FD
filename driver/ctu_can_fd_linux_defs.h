@@ -36,9 +36,13 @@
 #define __CTU_CAN_FD_LINUX_DEFS__
 
 #include <stdint.h>
+#include <stdio.h>
 #include <stddef.h>
 //#include <linux/types.h>
 #include <linux/socket.h>
+
+#define likely(x) __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
 
 typedef uint8_t   __u8;
 typedef uint16_t  __u16;
@@ -66,6 +70,16 @@ enum {
 	false	= 0,
 	true	= 1
 };
+#endif
+
+#define __WARN_printf printf
+#ifndef WARN
+#define WARN(condition, format...) ({						\
+int __ret_warn_on = !!(condition);				\
+if (unlikely(__ret_warn_on))					\
+    __WARN_printf(format);					\
+    unlikely(__ret_warn_on);					\
+})
 #endif
 
 /*

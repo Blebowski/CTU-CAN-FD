@@ -261,7 +261,7 @@ union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base);
  *	base	Pointer to the base address
  *	mask	Mask of interrupts which should be cleared.
  */
-void ctu_can_fd_int_clr(void *base, union ctu_can_fd_int_stat *mask);
+void ctu_can_fd_int_clr(void *base, const union ctu_can_fd_int_stat *mask);
 
 
 /*
@@ -272,8 +272,8 @@ void ctu_can_fd_int_clr(void *base, union ctu_can_fd_int_stat *mask);
  *	mask	Mask of interrupts which should be enabled/disabled.
  * 	val	0 - disable, 1 - enable the interrupt.
  */
-void ctu_can_fd_int_ena(void *base, union ctu_can_fd_int_stat *mask,
-			union ctu_can_fd_int_stat *val);
+void ctu_can_fd_int_ena(void *base, const union ctu_can_fd_int_stat *mask,
+			const union ctu_can_fd_int_stat *val);
 
 
 /*
@@ -284,8 +284,8 @@ void ctu_can_fd_int_ena(void *base, union ctu_can_fd_int_stat *mask,
  *	mask	Mask of interrupts which should be enabled/disabled.
  * 	val	0 - unmask, 1 - mask the interrupt.
  */
-void ctu_can_fd_int_mask(void *base, union ctu_can_fd_int_stat *mask,
-				union ctu_can_fd_int_stat *val);
+void ctu_can_fd_int_mask(void *base, const union ctu_can_fd_int_stat *mask,
+				const union ctu_can_fd_int_stat *val);
 
 
 /*
@@ -297,7 +297,7 @@ void ctu_can_fd_int_mask(void *base, union ctu_can_fd_int_stat *mask,
  *	base	Pointer to the base address
  *	mode	Mode of the controller from Socket CAN.
  */
-void ctu_can_fd_set_mode(void *base, struct can_ctrlmode *mode);
+void ctu_can_fd_set_mode(void *base, const struct can_ctrlmode *mode);
 
 
 /*
@@ -307,7 +307,7 @@ void ctu_can_fd_set_mode(void *base, struct can_ctrlmode *mode);
  *	base	Pointer to the base address
  *	nbt	Nominal bit timing settings of CAN Controller.
  */
-void ctu_can_fd_set_nom_bittiming(void *base, struct can_bittiming *nbt);
+void ctu_can_fd_set_nom_bittiming(void *base, const struct can_bittiming *nbt);
 
 
 /*
@@ -317,7 +317,7 @@ void ctu_can_fd_set_nom_bittiming(void *base, struct can_bittiming *nbt);
  *	base	Pointer to the base address
  *	nbt	Data bit timing settings of CAN Controller.
  */
-void ctu_can_fd_set_data_bittiming(void *base, struct can_bittiming *dbt);
+void ctu_can_fd_set_data_bittiming(void *base, const struct can_bittiming *dbt);
 
 
 /*
@@ -417,7 +417,7 @@ enum can_state ctu_can_fd_read_error_state(const void *base);
  * Returns:
  *	Error state of the CTU CAN FD Core.
  */
-void ctu_can_fd_set_err_ctrs(void *base, struct can_berr_counter *ctr);
+void ctu_can_fd_set_err_ctrs(void *base, const struct can_berr_counter *ctr);
 
 
 /*
@@ -455,7 +455,7 @@ bool ctu_can_fd_get_range_filter_support(const void *base);
  *	True if mask filter was configured properly, false otherwise.
  */
 bool ctu_can_fd_set_mask_filter(void *base, u8 fnum, bool enable,
-				struct can_filter *filter);
+				const struct can_filter *filter);
 
 /*
  * Configure range filter of CTU CAN FD Core. An identifier of RX Frame
