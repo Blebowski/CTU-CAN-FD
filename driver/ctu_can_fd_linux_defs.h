@@ -105,6 +105,10 @@ static inline u32 ioread32(const void *addr) {return *(const volatile u32*)addr;
 static inline u16 ioread16(const void *addr) {return *(const volatile u16*)addr;}
 static inline u8 ioread8(const void *addr) {return *(const volatile u8*)addr;}
 
+/* CAN DLC to real data length conversion helpers */
+u8 can_dlc2len(u8 can_dlc);
+u8 can_len2dlc(u8 len);
+
 /*
  * CAN bit-timing parameters
  *

@@ -581,7 +581,7 @@ bool ctu_can_fd_is_txt_buf_accessible(const void *base, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-static bool ctu_can_fd_txt_buf_give_command(void *base, u8 cmd, u8 buf);
+bool ctu_can_fd_txt_buf_give_command(void *base, u8 cmd, u8 buf);
 
 
 /*
@@ -593,7 +593,10 @@ static bool ctu_can_fd_txt_buf_give_command(void *base, u8 cmd, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-inline void ctu_can_fd_txt_set_empty(void *base, u8 buf);
+static inline void ctu_can_fd_txt_set_empty(void *base, u8 buf)
+{
+    ctu_can_fd_txt_buf_give_command(base, 0x1, buf);
+}
 
 
 /*
@@ -605,7 +608,10 @@ inline void ctu_can_fd_txt_set_empty(void *base, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-inline void ctu_can_fd_txt_set_rdy(void *base, u8 buf);
+static inline void ctu_can_fd_txt_set_rdy(void *base, u8 buf)
+{
+    ctu_can_fd_txt_buf_give_command(base, 0x2, buf);
+}
 
 
 /*
@@ -617,7 +623,10 @@ inline void ctu_can_fd_txt_set_rdy(void *base, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-inline void ctu_can_fd_txt_set_abort(void *base, u8 buf);
+static inline void ctu_can_fd_txt_set_abort(void *base, u8 buf)
+{
+    ctu_can_fd_txt_buf_give_command(base, 0x4, buf);
+}
 
 
 /*
@@ -689,5 +698,8 @@ u32 ctu_can_fd_get_rx_frame_ctr(const void *base);
  *	Content of Debug register.
  */
 union ctu_can_fd_debug_register ctu_can_fd_read_debug_info(const void *base);
+
+extern const struct can_bittiming_const ctu_can_fd_bit_timing_max;
+extern const struct can_bittiming_const ctu_can_fd_bit_timing_data_max;
 
 #endif
