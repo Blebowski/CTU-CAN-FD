@@ -50,28 +50,28 @@
  */
 
 // True if Core is transceiver of current frame
-#define CTU_CAN_FD_IS_TRANSMITTER(stat) stat.ts ? true : false;
+#define CTU_CAN_FD_IS_TRANSMITTER(stat) (!!(stat).ts)
 
 // True if Core is receiver of current frame
-#define CTU_CAN_FD_IS_RECEIVER(stat) stat.s.rs ? true : false;
+#define CTU_CAN_FD_IS_RECEIVER(stat) (!!(stat).s.rs)
 
 // True if Core is idle (integrating or interfame space)
-#define CTU_CAN_FD_IS_IDLE(stat) stat.s.bs ? true : false;
+#define CTU_CAN_FD_IS_IDLE(stat) (!!(stat).s.bs)
 
 // True if Core is transmitting error frame
-#define CTU_CAN_FD_ERR_FRAME(stat) stat.s.et ? true : false;
+#define CTU_CAN_FD_ERR_FRAME(stat) (!!(stat).s.et)
 
 // True if Error warning limit was reached
-#define CTU_CAN_FD_EWL(stat) stat.s.ewl ? true : false;
+#define CTU_CAN_FD_EWL(stat) (!!(stat).s.ewl)
 
 // True if at least one TXT Buffer is empty
-#define CTU_CAN_FD_TXTNE(stat) stat.s.tbs ? true : false;
+#define CTU_CAN_FD_TXTNE(stat) (!!(stat).s.tbs)
 
 // True if data overrun flag of RX Buffer occurred
-#define CTU_CAN_FD_DATA_OVERRUN(stat) stat.s.dos ? true : false;
+#define CTU_CAN_FD_DATA_OVERRUN(stat) (!!(stat).s.dos)
 
 // True if RX Buffer is not empty
-#define CTU_CAN_FD_RX_BUF_NEMPTY(stat) stat.s.rbs ? true : false;
+#define CTU_CAN_FD_RX_BUF_NEMPTY(stat) (!!(stat).s.rbs)
 
 
 /* 
@@ -79,37 +79,37 @@
  */
 
 // Frame reveived interrupt
-#define CTU_CAN_FD_RX_INT(int_stat) int_stat.s.ri ? true : false;
+#define CTU_CAN_FD_RX_INT(int_stat) (!!(int_stat).s.ri)
 
 // Frame transceived interrupt
-#define CTU_CAN_FD_TX_INT(int_stat) int_stat.s.ti ? true : false;
+#define CTU_CAN_FD_TX_INT(int_stat) (!!(int_stat).s.ti)
 
 // Error warning limit reached interrupt
-#define CTU_CAN_FD_EWL_INT(int_stat) int_stat.s.ei ? true : false;
+#define CTU_CAN_FD_EWL_INT(int_stat) (!!(int_stat).s.ei)
 
 // RX Buffer data overrun interrupt
-#define CTU_CAN_FD_OVERRUN_INT(int_stat) int_stat.s.doi ? true : false;
+#define CTU_CAN_FD_OVERRUN_INT(int_stat) (!!(int_stat).s.doi)
 
 // Core turned error passive interrupt
-#define CTU_CAN_FD_ERR_PASSIVE_INT(int_stat) int_stat.s.epi ? true : false;
+#define CTU_CAN_FD_ERR_PASSIVE_INT(int_stat) (!!(int_stat).s.epi)
 
 // Error frame transmission started interrupt
-#define CTU_CAN_FD_BUS_ERROR_INT(int_stat) int_stat.s.bei ? true : false;
+#define CTU_CAN_FD_BUS_ERROR_INT(int_stat) (!!(int_stat).s.bei)
 
 // Event logger finished interrupt
-#define CTU_CAN_FD_LOGGER_FIN_INT(int_stat) int_stat.s.lfi ? true : false;
+#define CTU_CAN_FD_LOGGER_FIN_INT(int_stat) (!!(int_stat).s.lfi)
 
 // RX Buffer full interrupt
-#define CTU_CAN_FD_RX_FULL_INT(int_stat) int_stat.s.rfi ? true : false;
+#define CTU_CAN_FD_RX_FULL_INT(int_stat) (!!(int_stat).s.rfi)
 
 // Bit-rate shifted interrupt
-#define CTU_CAN_FD_BIT_RATE_SHIFT_INT(int_stat) int_stat.s.bsi ? true : false;
+#define CTU_CAN_FD_BIT_RATE_SHIFT_INT(int_stat) (!!(int_stat).s.bsi)
 
 // Receive buffer not empty interrupt
-#define CTU_CAN_FD_RX_BUF_NEPMTY_INT(int_stat) int_stat.s.rbnei ? true : false;
+#define CTU_CAN_FD_RX_BUF_NEPMTY_INT(int_stat) (!!(int_stat).s.rbnei)
 
 // TX Buffer received HW command interrupt
-#define CTU_CAN_FD_TXT_BUF_HWCMD_INT(int_stat) int_stat.s.txbhci ? true : false;
+#define CTU_CAN_FD_TXT_BUF_HWCMD_INT(int_stat) (!!(int_stat).s.txbhci)
 
 
 /*
@@ -162,7 +162,7 @@ void ctu_can_fd_enable(const void *base, bool enable);
  * Returns:
  *	True if set correctly. False if "limit" is too high.
  */
-bool ctu_can_fd_set_ret_limit(const void *base, bool enable, u8 limit)
+bool ctu_can_fd_set_ret_limit(void *base, bool enable, u8 limit)
 
 
 /*
@@ -189,7 +189,7 @@ bool ctu_can_fd_set_ret_limit(const void *base, bool enable, u8 limit)
  *	base	Pointer to the base address
  *	mode	CAN mode to be set to on the Core. 
  */
-void ctu_can_fd_set_mode_reg(const void *base, const struct can_ctrlmode *mode);
+void ctu_can_fd_set_mode_reg(void *base, const struct can_ctrlmode *mode);
 
 
 /*
@@ -199,7 +199,7 @@ void ctu_can_fd_set_mode_reg(const void *base, const struct can_ctrlmode *mode);
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_rel_rx_buf(const void *base);
+void ctu_can_fd_rel_rx_buf(void *base);
 
 
 /*
@@ -209,7 +209,7 @@ void ctu_can_fd_rel_rx_buf(const void *base);
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_clr_overrun_flag(const void *base);
+void ctu_can_fd_clr_overrun_flag(void *base);
 
 
 /*
@@ -219,7 +219,7 @@ void ctu_can_fd_clr_overrun_flag(const void *base);
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_abort_tx(const void *base);
+void ctu_can_fd_abort_tx(void *base);
 
 
 /*
@@ -258,13 +258,13 @@ union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base);
 
 
 /*
- * Reads the interrupt status vector from CTU CAN FD Core.
+ * Clears the interrupts from CTU CAN FD Core.
  * 
  * Arguments:
  *	base	Pointer to the base address
  *	mask	Mask of interrupts which should be cleared.
  */
-void ctu_can_fd_int_clr(const void *base, union ctu_can_fd_int_stat *mask);
+void ctu_can_fd_int_clr(void *base, union ctu_can_fd_int_stat *mask);
 
 
 /*
@@ -275,7 +275,7 @@ void ctu_can_fd_int_clr(const void *base, union ctu_can_fd_int_stat *mask);
  *	mask	Mask of interrupts which should be enabled/disabled.
  * 	val	0 - disable, 1 - enable the interrupt.
  */
-void ctu_can_fd_int_ena(const void *base, union ctu_can_fd_int_stat *mask,
+void ctu_can_fd_int_ena(void *base, union ctu_can_fd_int_stat *mask,
 			union ctu_can_fd_int_stat *val);
 
 
@@ -287,7 +287,7 @@ void ctu_can_fd_int_ena(const void *base, union ctu_can_fd_int_stat *mask,
  *	mask	Mask of interrupts which should be enabled/disabled.
  * 	val	0 - unmask, 1 - mask the interrupt.
  */
-void ctu_can_fd_int_mask(const void *base, union ctu_can_fd_int_stat *mask,
+void ctu_can_fd_int_mask(void *base, union ctu_can_fd_int_stat *mask,
 				union ctu_can_fd_int_stat *val);
 
 
@@ -300,7 +300,7 @@ void ctu_can_fd_int_mask(const void *base, union ctu_can_fd_int_stat *mask,
  *	base	Pointer to the base address
  *	mode	Mode of the controller from Socket CAN.
  */
-void ctu_can_fd_set_mode(const void *base, struct can_ctrlmode *mode);
+void ctu_can_fd_set_mode(void *base, struct can_ctrlmode *mode);
 
 
 /*
@@ -310,7 +310,7 @@ void ctu_can_fd_set_mode(const void *base, struct can_ctrlmode *mode);
  *	base	Pointer to the base address
  *	nbt	Nominal bit timing settings of CAN Controller.
  */
-void ctu_can_fd_set_nom_bittiming(const void *base, struct can_bittiming *nbt);
+void ctu_can_fd_set_nom_bittiming(void *base, struct can_bittiming *nbt);
 
 
 /*
@@ -320,7 +320,7 @@ void ctu_can_fd_set_nom_bittiming(const void *base, struct can_bittiming *nbt);
  *	base	Pointer to the base address
  *	nbt	Data bit timing settings of CAN Controller.
  */
-void ctu_can_fd_set_data_bittiming(const void *base, struct can_bittiming *dbt)
+void ctu_can_fd_set_data_bittiming(void *base, struct can_bittiming *dbt)
 
 
 /*
@@ -334,7 +334,7 @@ void ctu_can_fd_set_data_bittiming(const void *base, struct can_bittiming *dbt)
  *	ewl	Error warning limit
  *	erp	Error passive limit
  */
-void ctu_can_fd_set_err_limits(const void *base, u8 ewl, u8 erp);
+void ctu_can_fd_set_err_limits(void *base, u8 ewl, u8 erp);
 
 
 /*
@@ -343,7 +343,7 @@ void ctu_can_fd_set_err_limits(const void *base, u8 ewl, u8 erp);
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_set_def_err_limits(const void *base);
+void ctu_can_fd_set_def_err_limits(void *base);
 
 
 /*
@@ -376,7 +376,7 @@ u16 ctu_can_fd_read_nom_errs(const void *base);
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_erase_nom_errs(const void *base);
+void ctu_can_fd_erase_nom_errs(void *base);
 
 
 /*
@@ -397,7 +397,7 @@ u16 ctu_can_fd_read_fd_errs(const void *base);
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_erase_fd_errs(const void *base);
+void ctu_can_fd_erase_fd_errs(void *base);
 
 
 /*
@@ -420,7 +420,7 @@ enum can_state ctu_can_fd_read_error_state(const void *base)
  * Returns:
  *	Error state of the CTU CAN FD Core.
  */
-void ctu_can_fd_set_err_ctrs(const void *base, struct can_berr_counter *ctr);
+void ctu_can_fd_set_err_ctrs(void *base, struct can_berr_counter *ctr);
 
 
 /*
@@ -457,7 +457,7 @@ bool ctu_can_fd_get_range_filter_support(const void *base);
  * Returns:
  *	True if mask filter was configured properly, false otherwise.
  */
-bool ctu_can_fd_set_mask_filter(const void *base, u8 fnum, bool enable,
+bool ctu_can_fd_set_mask_filter(void *base, u8 fnum, bool enable,
 				struct can_filter *filter);
 
 /*
@@ -471,7 +471,7 @@ bool ctu_can_fd_set_mask_filter(const void *base, u8 fnum, bool enable,
  *	high_th	Upper threshold of identifiers which should be accepted
  *	enable	Enable the range filter.
  */
-void ctu_can_fd_set_range_filter(const void *base, canid_t low_th,
+void ctu_can_fd_set_range_filter(void *base, canid_t low_th,
 				 canid_t high_th, bool enable);
 
 /*
@@ -536,7 +536,7 @@ u16 ctu_can_fd_get_rx_frame_count(const void *base);
  *	base	Pointer to the base address
  *	val	Timestamp option settings.
  */
-void ctu_can_fd_set_rx_tsop(const void *base, enum ctu_can_fd_rx_settings_rtsop val);
+void ctu_can_fd_set_rx_tsop(void *base, enum ctu_can_fd_rx_settings_rtsop val);
 
 
 /*
@@ -584,7 +584,7 @@ bool ctu_can_fd_is_txt_buf_accessible(const void *base, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-static bool ctu_can_fd_txt_buf_give_command(const void *base, u8 cmd, u8 buf);
+static bool ctu_can_fd_txt_buf_give_command(void *base, u8 cmd, u8 buf);
 
 
 /*
@@ -596,7 +596,7 @@ static bool ctu_can_fd_txt_buf_give_command(const void *base, u8 cmd, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-inline void ctu_can_fd_txt_set_empty(const void *base, u8 buf);
+inline void ctu_can_fd_txt_set_empty(void *base, u8 buf);
 
 
 /*
@@ -608,7 +608,7 @@ inline void ctu_can_fd_txt_set_empty(const void *base, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-inline void ctu_can_fd_txt_set_rdy(const void *base, u8 buf);
+inline void ctu_can_fd_txt_set_rdy(void *base, u8 buf);
 
 
 /*
@@ -620,7 +620,7 @@ inline void ctu_can_fd_txt_set_rdy(const void *base, u8 buf);
  * Returns:
  *	Status of the TXT Buffer.
  */
-inline void ctu_can_fd_txt_set_abort(const void *base, u8 buf);
+inline void ctu_can_fd_txt_set_abort(void *base, u8 buf);
 
 
 /*
@@ -631,7 +631,7 @@ inline void ctu_can_fd_txt_set_abort(const void *base, u8 buf);
  *	prio	Pointer to array with CTU_CAN_FD_TXT_BUFFER_COUNT number
  *		of elements with TXT Buffer priorities.
  */
-void ctu_can_fd_set_txt_priority(const void *base, const u8 *prio);
+void ctu_can_fd_set_txt_priority(void *base, const u8 *prio);
 
 
 /*
@@ -645,7 +645,7 @@ void ctu_can_fd_set_txt_priority(const void *base, const u8 *prio);
  * Returns:
  *	True if the frame was inserted succesfully, False otherwise.
  */
-bool ctu_can_fd_insert_frame(const void *base, const unsigned char *data, u64 ts,
+bool ctu_can_fd_insert_frame(void *base, const unsigned char *data, u64 ts,
 				u8 buf);
 
 /*
