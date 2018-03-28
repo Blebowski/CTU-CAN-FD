@@ -198,26 +198,6 @@ void ctu_can_fd_abort_tx(void *base)
 	ctu_can_fd_write32(base, CTU_CAN_FD_MODE, reg.u32);
 }
 
-union ctu_can_fd_mode_command_status_settings ctu_can_get_status(const void *base)
-{
-	// MODE and STATUS are within the same word
-	union ctu_can_fd_mode_command_status_settings res;
-	res.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_MODE);
-	return res;
-}
-
-union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base)
-{
-	union ctu_can_fd_int_stat res;
-	res.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_INT_STAT);
-	return res;
-}
-
-void ctu_can_fd_int_clr(void *base, const union ctu_can_fd_int_stat *mask)
-{
-	ctu_can_fd_write32(base, CTU_CAN_FD_INT_STAT, mask->u32);
-}
-
 static void ctu_can_fd_int_conf(void *base, enum ctu_can_fd_regs sreg,
 				enum ctu_can_fd_regs creg, 
 				const union ctu_can_fd_int_stat *mask,
@@ -334,22 +314,6 @@ bool ctu_can_fd_read_err_ctrs(const void *base, struct can_berr_counter *ctr)
 	ctr->txerr = reg.s.rxc_val;
 	ctr->rxerr = reg.s.txc_val;
 	return true;
-}
-
-void ctu_can_fd_erase_nom_errs(void *base)
-{
-	union ctu_can_fd_ctr_pres reg;
-	reg.u32 = 0;
-	reg.s.enorm = 1;
-	ctu_can_fd_write32(base, CTU_CAN_FD_CTR_PRES, reg.u32);
-}
-
-void ctu_can_fd_erase_fd_errs(void *base)
-{
-	union ctu_can_fd_ctr_pres reg;
-	reg.u32 = 0;
-	reg.s.efd = 1;
-	ctu_can_fd_write32(base, CTU_CAN_FD_CTR_PRES, reg.u32);
 }
 
 enum can_state ctu_can_fd_read_error_state(const void *base)

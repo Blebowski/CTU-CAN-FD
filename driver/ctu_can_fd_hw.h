@@ -282,7 +282,14 @@ void ctu_can_fd_abort_tx(void *base);
  * Returns:
  *	Mode/status structure with multiple mode flags.
  */
-union ctu_can_fd_mode_command_status_settings ctu_can_get_status(const void *base);
+static inline union ctu_can_fd_mode_command_status_settings ctu_can_get_status(const void *base)
+{
+    // MODE and STATUS are within the same word
+    union ctu_can_fd_mode_command_status_settings res;
+    res.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_MODE);
+    return res;
+}
+
 
 /*
  * Reads the interrupt status vector from CTU CAN FD Core.
@@ -293,7 +300,12 @@ union ctu_can_fd_mode_command_status_settings ctu_can_get_status(const void *bas
  * Returns:
  *	Interrupt status vector.
  */
-union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base);
+static inline union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base)
+{
+    union ctu_can_fd_int_stat res;
+    res.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_INT_STAT);
+    return res;
+}
 
 
 /*
@@ -303,7 +315,10 @@ union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base);
  *	base	Pointer to the base address
  *	mask	Mask of interrupts which should be cleared.
  */
-void ctu_can_fd_int_clr(void *base, const union ctu_can_fd_int_stat *mask);
+static inline void ctu_can_fd_int_clr(void *base, const union ctu_can_fd_int_stat *mask)
+{
+    ctu_can_fd_write32(base, CTU_CAN_FD_INT_STAT, mask->u32);
+}
 
 
 /*
@@ -424,7 +439,13 @@ static inline u16 ctu_can_fd_read_nom_errs(const void *base)
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_erase_nom_errs(void *base);
+static inline void ctu_can_fd_erase_nom_errs(void *base)
+{
+	union ctu_can_fd_ctr_pres reg;
+	reg.u32 = 0;
+	reg.s.enorm = 1;
+	ctu_can_fd_write32(base, CTU_CAN_FD_CTR_PRES, reg.u32);
+}
 
 
 /*
@@ -450,7 +471,13 @@ static inline u16 ctu_can_fd_read_fd_errs(const void *base)
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_erase_fd_errs(void *base);
+static inline void ctu_can_fd_erase_fd_errs(void *base)
+{
+	union ctu_can_fd_ctr_pres reg;
+	reg.u32 = 0;
+	reg.s.efd = 1;
+	ctu_can_fd_write32(base, CTU_CAN_FD_CTR_PRES, reg.u32);
+}
 
 
 /*
