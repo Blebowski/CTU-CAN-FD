@@ -640,7 +640,7 @@ void ctu_can_fd_read_rx_frame(const void *base, unsigned char *data, u64 *ts)
 			cf->len = 8;
 	}
 
-	ctu_can_fd_hwid_to_id(idw, &(cf->can_id), ffw.s.id_type);
+	ctu_can_fd_hwid_to_id(idw, &(cf->can_id), (enum ctu_can_fd_frame_form_w_id_type) ffw.s.id_type);
 	
 	// Timestamp
 	*ts = (u64)(ctu_can_fd_read32(base, CTU_CAN_FD_RX_DATA));
@@ -656,18 +656,20 @@ enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(const void *base, u8 buf
 	union ctu_can_fd_tx_status reg;
 	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_TX_STATUS);
 	
-	switch (buf) {
-	case CTU_CAN_FD_TXT_BUFFER_1 : return reg.s.tx1s;
+    uint32_t status;
+    switch (buf) {
+	case CTU_CAN_FD_TXT_BUFFER_1 : status = reg.s.tx1s;
 	break;
-	case CTU_CAN_FD_TXT_BUFFER_2 : return reg.s.tx2s;
+    case CTU_CAN_FD_TXT_BUFFER_2 : status = reg.s.tx2s;
 	break;
-	case CTU_CAN_FD_TXT_BUFFER_3 : return reg.s.tx3s;
+    case CTU_CAN_FD_TXT_BUFFER_3 : status = reg.s.tx3s;
 	break;
-	case CTU_CAN_FD_TXT_BUFFER_4 : return reg.s.tx4s;
+    case CTU_CAN_FD_TXT_BUFFER_4 : status = reg.s.tx4s;
 	break;
 	default :
-		return ~0;
+        status = ~0;
 	}
+	return (enum ctu_can_fd_tx_status_tx1s) status;
 }
 
 bool ctu_can_fd_is_txt_buf_accessible(const void *base, u8 buf)
