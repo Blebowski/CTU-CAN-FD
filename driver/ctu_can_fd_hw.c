@@ -200,25 +200,25 @@ void ctu_can_fd_abort_tx(void *base)
 
 static void ctu_can_fd_int_conf(void *base, enum ctu_can_fd_regs sreg,
 				enum ctu_can_fd_regs creg, 
-				const union ctu_can_fd_int_stat *mask,
-				const union ctu_can_fd_int_stat *val)
+				union ctu_can_fd_int_stat mask,
+				union ctu_can_fd_int_stat val)
 {
 	//union ctu_can_fd_int_stat reg;
 	//reg.u32 = ctu_can_fd_read32(base, sreg);
 	
-	ctu_can_fd_write32(base, sreg, mask->u32 & val->u32);
-	ctu_can_fd_write32(base, creg, mask->u32 & (~val->u32));
+	ctu_can_fd_write32(base, sreg, mask.u32 & val.u32);
+	ctu_can_fd_write32(base, creg, mask.u32 & (~val.u32));
 }
 
-void ctu_can_fd_int_ena(void *base, const union ctu_can_fd_int_stat *mask,
-			const union ctu_can_fd_int_stat *val)
+void ctu_can_fd_int_ena(void *base, union ctu_can_fd_int_stat mask,
+			union ctu_can_fd_int_stat val)
 {
 	ctu_can_fd_int_conf(base, CTU_CAN_FD_INT_ENA_SET, CTU_CAN_FD_INT_ENA_CLR,
 				mask, val);
 }
 
-void ctu_can_fd_int_mask(void *base, const union ctu_can_fd_int_stat *mask,
-			 const union ctu_can_fd_int_stat *val)
+void ctu_can_fd_int_mask(void *base, union ctu_can_fd_int_stat mask,
+			 union ctu_can_fd_int_stat val)
 {
 	ctu_can_fd_int_conf(base, CTU_CAN_FD_INT_MASK_SET, CTU_CAN_FD_INT_MASK_CLR,
 				mask, val);
@@ -236,7 +236,7 @@ void ctu_can_fd_set_mode(void *base, const struct can_ctrlmode *mode)
 	union ctu_can_fd_int_stat reg;
 	reg.u32 = 0;
 	reg.s.bei = 1;
-	ctu_can_fd_int_ena(base, &reg, &reg);
+	ctu_can_fd_int_ena(base, reg, reg);
 }
 
 

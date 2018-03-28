@@ -315,9 +315,9 @@ static inline union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base)
  *	base	Pointer to the base address
  *	mask	Mask of interrupts which should be cleared.
  */
-static inline void ctu_can_fd_int_clr(void *base, const union ctu_can_fd_int_stat *mask)
+static inline void ctu_can_fd_int_clr(void *base, union ctu_can_fd_int_stat mask)
 {
-    ctu_can_fd_write32(base, CTU_CAN_FD_INT_STAT, mask->u32);
+    ctu_can_fd_write32(base, CTU_CAN_FD_INT_STAT, mask.u32);
 }
 
 
@@ -329,8 +329,8 @@ static inline void ctu_can_fd_int_clr(void *base, const union ctu_can_fd_int_sta
  *	mask	Mask of interrupts which should be enabled/disabled.
  * 	val	0 - disable, 1 - enable the interrupt.
  */
-void ctu_can_fd_int_ena(void *base, const union ctu_can_fd_int_stat *mask,
-			const union ctu_can_fd_int_stat *val);
+void ctu_can_fd_int_ena(void *base, union ctu_can_fd_int_stat mask,
+			union ctu_can_fd_int_stat val);
 
 
 /*
@@ -341,8 +341,8 @@ void ctu_can_fd_int_ena(void *base, const union ctu_can_fd_int_stat *mask,
  *	mask	Mask of interrupts which should be enabled/disabled.
  * 	val	0 - unmask, 1 - mask the interrupt.
  */
-void ctu_can_fd_int_mask(void *base, const union ctu_can_fd_int_stat *mask,
-				const union ctu_can_fd_int_stat *val);
+void ctu_can_fd_int_mask(void *base, union ctu_can_fd_int_stat mask,
+				union ctu_can_fd_int_stat val);
 
 
 /*
