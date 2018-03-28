@@ -115,16 +115,16 @@ end record;
 --Prescaler types
 -----------------------------------------------------------------------------------------
 type presc_drv_type is record
-     drv_tq_nbt           :   std_logic_vector (5 downto 0); 
-     drv_tq_dbt           :   std_logic_vector (5 downto 0); 
-     drv_prs_nbt          :   std_logic_vector (5 downto 0); 
+     drv_tq_nbt           :   std_logic_vector (7 downto 0); 
+     drv_tq_dbt           :   std_logic_vector (7 downto 0); 
+     drv_prs_nbt          :   std_logic_vector (6 downto 0); 
      drv_ph1_nbt          :   std_logic_vector (5 downto 0);  
      drv_ph2_nbt          :   std_logic_vector (5 downto 0); 
-     drv_prs_dbt          :   std_logic_vector (3 downto 0); 
-     drv_ph1_dbt          :   std_logic_vector (3 downto 0);  
-     drv_ph2_dbt          :   std_logic_vector (3 downto 0); 
-     drv_sjw_nbt          :   std_logic_vector(3 downto 0); 
-     drv_sjw_dbt          :   std_logic_vector(3 downto 0); 
+     drv_prs_dbt          :   std_logic_vector (5 downto 0); 
+     drv_ph1_dbt          :   std_logic_vector (4 downto 0);  
+     drv_ph2_dbt          :   std_logic_vector (4 downto 0); 
+     drv_sjw_nbt          :   std_logic_vector(4 downto 0); 
+     drv_sjw_dbt          :   std_logic_vector(4 downto 0); 
 end record;
 
 type presc_triggers_type is record

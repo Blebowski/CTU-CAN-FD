@@ -42,6 +42,8 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    7.6.2016   Created file
+--   28.3.2018   Changed to be compatible with extended bit time fields in the
+--               register map for Socket CAN.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -57,42 +59,64 @@ use work.ID_transfer.all;
 
 architecture presc_unit_test of CAN_test is
   
-    signal clk_sys              : std_logic:='0';  --System clock
-    signal res_n                : std_logic:='0';   --Async reset
-    signal sync_edge            : std_logic:='0';        --Edge for synchronisation
-    signal OP_State             : oper_mode_type:=reciever;   --Protocol control state
-    signal drv_bus              : std_logic_vector(1023 downto 0):=(OTHERS =>'0');    
-    signal clk_tq_nbt           : std_logic:='0'; --Time quantum clock - Nominal bit time
-    signal clk_tq_dbt           : std_logic:='0'; --bit time - Nominal bit time
-    signal sample_nbt           : std_logic:='0'; --Sample signal for nominal bit time
-    signal sample_dbt           : std_logic:='0'; --Sample signal of data bit time
-    signal sample_nbt_del_1     : std_logic:='0';
-    signal sample_dbt_del_1     : std_logic:='0';
-    signal sample_nbt_del_2     : std_logic:='0';
-    signal sample_dbt_del_2     : std_logic:='0';
-    signal sync_nbt             : std_logic:='0';
-    signal sync_dbt             : std_logic:='0';
-    signal sync_nbt_del_1       : std_logic:='0';
-    signal sync_dbt_del_1       : std_logic:='0';    
+    -- System clock
+    signal clk_sys              : std_logic := '0';
+
+    -- Async reset
+    signal res_n                : std_logic := '0';
+
+    -- Edge for synchronisation
+    signal sync_edge            : std_logic := '0';
+
+    -- Protocol control state
+    signal OP_State             : oper_mode_type := reciever;
+    signal drv_bus              : std_logic_vector(1023 downto 0) := 
+                                    (OTHERS => '0');
+
+    -- Time quantum clock - Nominal bit time    
+    signal clk_tq_nbt           : std_logic := '0';
+
+    -- Bit time - Nominal bit time
+    signal clk_tq_dbt           : std_logic := '0';
+
+    -- Sample signal for nominal bit time
+    signal sample_nbt           : std_logic := '0';
+
+    -- Sample signal of data bit time
+    signal sample_dbt           : std_logic := '0';
+
+    -- Delayed signals
+    signal sample_nbt_del_1     : std_logic := '0';
+    signal sample_dbt_del_1     : std_logic := '0';
+    signal sample_nbt_del_2     : std_logic := '0';
+    signal sample_dbt_del_2     : std_logic := '0';
+
+    signal sync_nbt             : std_logic := '0';
+    signal sync_dbt             : std_logic := '0';
+    signal sync_nbt_del_1       : std_logic := '0';
+    signal sync_dbt_del_1       : std_logic := '0';    
     signal bt_FSM_out           : bit_time_type;
-    signal hard_sync_edge_valid : std_logic:='0'; 
+    signal hard_sync_edge_valid : std_logic := '0'; 
     signal sp_control           : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
     signal sync_control         : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
     signal data_tx              : std_logic;
     
-    --Driving bus aliases
-    signal drv_tq_nbt           :   std_logic_vector (5 downto 0) := "000000";
-    signal drv_tq_dbt           :   std_logic_vector (5 downto 0) := "000000";
-    signal drv_prs_nbt          :   std_logic_vector (5 downto 0) := "000000";
+    -- Driving bus aliases
+    signal drv_tq_nbt           :   std_logic_vector (7 downto 0) := "00000000";
+    signal drv_tq_dbt           :   std_logic_vector (7 downto 0) := "00000000";
+
+    signal drv_prs_nbt          :   std_logic_vector (6 downto 0) := "0000000";
     signal drv_ph1_nbt          :   std_logic_vector (5 downto 0) := "000000";
     signal drv_ph2_nbt          :   std_logic_vector (5 downto 0) := "000000";
-    signal drv_prs_dbt          :   std_logic_vector (3 downto 0) := "0000";
-    signal drv_ph1_dbt          :   std_logic_vector (3 downto 0) := "0000";
-    signal drv_ph2_dbt          :   std_logic_vector (3 downto 0) := "0000";
-    signal drv_sjw_nbt          :   std_logic_vector (3 downto 0) := "0000";
-    signal drv_sjw_dbt          :   std_logic_vector (3 downto 0) := "0000";
+
+    signal drv_prs_dbt          :   std_logic_vector (5 downto 0) := "000000";
+    signal drv_ph1_dbt          :   std_logic_vector (4 downto 0) := "00000";
+    signal drv_ph2_dbt          :   std_logic_vector (4 downto 0) := "00000";
+
+    signal drv_sjw_nbt          :   std_logic_vector (4 downto 0) := "00000";
+    signal drv_sjw_dbt          :   std_logic_vector (4 downto 0) := "00000";
     
     ---------------------------------------
     --Internal test signals and constants
@@ -121,56 +145,57 @@ architecture presc_unit_test of CAN_test is
     signal exit_imm_4             :   boolean := false;
     signal exit_imm_5             :   boolean := false;
      
-    --Generates random bit timing settings
+    -- Generates random bit timing settings
     procedure gen_bit_time_setting(
-      signal rand_ctr           : inout natural range 0 to RAND_POOL_SIZE;
-      signal setting            : inout presc_drv_type
-    )is
+        signal rand_ctr             : inout natural range 0 to RAND_POOL_SIZE;
+        signal setting              : inout presc_drv_type
+    ) is
     begin
-      rand_logic_vect_bt(rand_ctr, setting.drv_tq_nbt, 0, 0.2);
-      rand_logic_vect_bt(rand_ctr, setting.drv_tq_dbt, 0, 0.1);
-      
-      rand_logic_vect_bt(rand_ctr, setting.drv_prs_nbt, 0, 0.4);
-      rand_logic_vect_bt(rand_ctr, setting.drv_ph1_nbt, 0, 0.2);
-      
-      rand_logic_vect_bt(rand_ctr, setting.drv_ph2_nbt, 0, 0.2);
-      rand_logic_vect_bt(rand_ctr, setting.drv_prs_dbt, 0, 0.3);
-      rand_logic_vect_bt(rand_ctr, setting.drv_ph1_dbt, 0, 0.15);
-      rand_logic_vect_bt(rand_ctr, setting.drv_ph2_dbt, 0, 0.15);
-      
-      rand_logic_vect(rand_ctr, setting.drv_sjw_nbt, 0.2);
-      rand_logic_vect(rand_ctr, setting.drv_sjw_dbt, 0.2);
-      
-      -- Here we check that settings are matching IPT!!
-      -- This is stated in documentation and is up to responsible 
-      -- user to set. Otherwise controller is not working!
-      
-      -- NBT
-      if (setting.drv_tq_nbt = "000001" and 
-          unsigned(setting.drv_ph2_nbt) < 4)
-      then
-        setting.drv_ph2_nbt <= "000100";
-      end if;
+        rand_logic_vect_bt(rand_ctr, setting.drv_tq_nbt, 0, 0.2);
+        rand_logic_vect_bt(rand_ctr, setting.drv_tq_dbt, 0, 0.1);
 
-      if ((setting.drv_tq_nbt = "000010" or 
-           setting.drv_tq_nbt = "000011")
-          and unsigned(setting.drv_ph2_nbt) < 2)
-      then
-        setting.drv_ph2_nbt <= "000010";
-      end if;
+        rand_logic_vect_bt(rand_ctr, setting.drv_prs_nbt, 0, 0.4);
+        rand_logic_vect_bt(rand_ctr, setting.drv_ph1_nbt, 0, 0.2);
+
+        rand_logic_vect_bt(rand_ctr, setting.drv_ph2_nbt, 0, 0.2);
+        rand_logic_vect_bt(rand_ctr, setting.drv_prs_dbt, 0, 0.3);
+        rand_logic_vect_bt(rand_ctr, setting.drv_ph1_dbt, 0, 0.15);
+        rand_logic_vect_bt(rand_ctr, setting.drv_ph2_dbt, 0, 0.15);
+
+        rand_logic_vect(rand_ctr, setting.drv_sjw_nbt, 0.2);
+        rand_logic_vect(rand_ctr, setting.drv_sjw_dbt, 0.2);
+
+        -- Here we check that settings are matching IPT!!
+        -- This is stated in documentation and is up to responsible 
+        -- user to set. Otherwise controller is not working!
+
+        -- NBT
+        if (setting.drv_tq_nbt = "00000001" and 
+            unsigned(setting.drv_ph2_nbt) < 4)
+        then
+            setting.drv_ph2_nbt <= "000100";
+        end if;
+
+        if ((setting.drv_tq_nbt = "00000010" or 
+             setting.drv_tq_nbt = "00000011")
+             and unsigned(setting.drv_ph2_nbt) < 2)
+        then
+            setting.drv_ph2_nbt <= "000010";
+        end if;
       
-      -- DBT
-      if (setting.drv_tq_dbt = "0001" and
-          unsigned(setting.drv_ph2_dbt) < 4)
-      then
-        setting.drv_ph2_dbt <= "0100";
-      end if;
+        -- DBT
+        if (setting.drv_tq_dbt = "00000001" and
+            unsigned(setting.drv_ph2_dbt) < 4)
+        then
+            setting.drv_ph2_dbt <= "00100";
+        end if;
       
-      if ((setting.drv_tq_dbt = "0010" or setting.drv_tq_dbt = "0011")
-          and unsigned(setting.drv_ph2_dbt) < 2)
-      then
-        setting.drv_ph2_dbt <= "0010";
-      end if;
+        if ((setting.drv_tq_dbt = "00000010" or
+             setting.drv_tq_dbt = "00000011")
+            and unsigned(setting.drv_ph2_dbt) < 2)
+        then
+            setting.drv_ph2_dbt <= "00010";
+        end if;
       
     end procedure;
     
@@ -205,34 +230,34 @@ architecture presc_unit_test of CAN_test is
     
 begin
   
-  ---------------------------------
-  --Instance of Prescaler
-  ---------------------------------
-  prescaler_comp:prescaler_v3
-  PORT map(
-     clk_sys              =>  clk_sys,            
-     res_n                =>  res_n,
-     sync_edge            =>  sync_edge,
-     OP_State             =>  OP_State,
-     drv_bus              =>  drv_bus  , 
-     clk_tq_nbt           =>  clk_tq_nbt,
-     clk_tq_dbt           =>  clk_tq_dbt,
-     sample_nbt           =>  sample_nbt,
-     sample_dbt           =>  sample_dbt,
-     sample_nbt_del_1     =>  sample_nbt_del_1,
-     sample_dbt_del_1     =>  sample_dbt_del_1,
-     sample_nbt_del_2     =>  sample_nbt_del_2,
-     sample_dbt_del_2     =>  sample_dbt_del_2,
-     sync_nbt             =>  sync_nbt,
-     sync_dbt             =>  sync_dbt,
-     data_tx              =>  data_tx,
-     sync_nbt_del_1       =>  sync_nbt_del_1,
-     sync_dbt_del_1       =>  sync_dbt_del_1 ,   
-     bt_FSM_out           =>  bt_FSM_out,
-     hard_sync_edge_valid =>  hard_sync_edge_valid,
-     sp_control           =>  sp_control,
-     sync_control         =>  sync_control
-  );
+    ---------------------------------
+    -- Instance of Prescaler
+    ---------------------------------
+    prescaler_comp : prescaler_v3
+    PORT map(
+        clk_sys              =>  clk_sys,            
+        res_n                =>  res_n,
+        sync_edge            =>  sync_edge,
+        OP_State             =>  OP_State,
+        drv_bus              =>  drv_bus  , 
+        clk_tq_nbt           =>  clk_tq_nbt,
+        clk_tq_dbt           =>  clk_tq_dbt,
+        sample_nbt           =>  sample_nbt,
+        sample_dbt           =>  sample_dbt,
+        sample_nbt_del_1     =>  sample_nbt_del_1,
+        sample_dbt_del_1     =>  sample_dbt_del_1,
+        sample_nbt_del_2     =>  sample_nbt_del_2,
+        sample_dbt_del_2     =>  sample_dbt_del_2,
+        sync_nbt             =>  sync_nbt,
+        sync_dbt             =>  sync_dbt,
+        data_tx              =>  data_tx,
+        sync_nbt_del_1       =>  sync_nbt_del_1,
+        sync_dbt_del_1       =>  sync_dbt_del_1 ,   
+        bt_FSM_out           =>  bt_FSM_out,
+        hard_sync_edge_valid =>  hard_sync_edge_valid,
+        sp_control           =>  sp_control,
+        sync_control         =>  sync_control
+    );
   
   drv_bus(DRV_TQ_NBT_HIGH downto DRV_TQ_NBT_LOW)    <= drv_tq_nbt;
   drv_bus(DRV_TQ_DBT_HIGH downto DRV_TQ_DBT_LOW)    <= drv_tq_dbt;
@@ -270,11 +295,10 @@ begin
    trig_signals.sync_dbt          <=  sync_dbt;
    trig_signals.sync_nbt_del_1    <=  sync_nbt_del_1;
    trig_signals.sync_dbt_del_1    <=  sync_dbt_del_1;
-  
-  
-  
+
+
   ---------------------------------
-  --Clock generation
+  -- Clock generation
   ---------------------------------
   clock_gen:process
   variable period   : natural := f100_Mhz;
@@ -465,10 +489,10 @@ end process;
         count_cycles_until(clk_sys, check_ctr, sample_nbt, sample_dbt);
         
         if (sp_control = NOMINAL_SAMPLE) then
-          exp_dur := (((to_integer(unsigned(drv_ph1_nbt)) + to_integer(unsigned(drv_prs_nbt)) +1) *
-                       to_integer(unsigned(drv_tq_nbt)) 
-                     ) +1
-                    ); 
+          exp_dur := (( (to_integer(unsigned(drv_ph1_nbt)) + 
+                         to_integer(unsigned(drv_prs_nbt)) + 1)
+                        *
+                        to_integer(unsigned(drv_tq_nbt))) + 1); 
           if (check_ctr /= exp_dur) then
             log("SYNC+PROP+PH1(Data) did not last expected time!",
                  error_l, log_level);
