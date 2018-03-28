@@ -31,6 +31,15 @@
 #ifndef __CTU_CAN_FD_HW__
 #define __CTU_CAN_FD_HW__
 
+#include "ctu_can_fd_regs.h"
+
+/*
+    MJ TODO:
+    - move small functions to *.h, make them inline
+    - either pass union arguments by value or just as u32;
+      this way they are forced on stack instead of passing in register
+      + one level of pointer indirection, which sucks performance-wise
+*/
 
 #define CTU_CAN_FD_RETR_MAX 15
 
@@ -145,7 +154,7 @@ u32 ctu_can_fd_get_version(const void *base);
  *	enable	Enable/disable the core.
  *
  */
-void ctu_can_fd_enable(const void *base, bool enable);
+void ctu_can_fd_enable(void *base, bool enable);
 
 
 /*
@@ -162,7 +171,7 @@ void ctu_can_fd_enable(const void *base, bool enable);
  * Returns:
  *	True if set correctly. False if "limit" is too high.
  */
-bool ctu_can_fd_set_ret_limit(void *base, bool enable, u8 limit)
+bool ctu_can_fd_set_ret_limit(void *base, bool enable, u8 limit);
 
 
 /*
@@ -246,18 +255,6 @@ union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base);
 
 
 /*
- * Reads the interrupt status vector from CTU CAN FD Core.
- * 
- * Arguments:
- *	base	Pointer to the base address
- 
- * Returns:
- *	Interrupt status vector.
- */
-union ctu_can_fd_int_stat ctu_can_fd_int_sts(const void *base);
-
-
-/*
  * Clears the interrupts from CTU CAN FD Core.
  * 
  * Arguments:
@@ -320,7 +317,7 @@ void ctu_can_fd_set_nom_bittiming(void *base, struct can_bittiming *nbt);
  *	base	Pointer to the base address
  *	nbt	Data bit timing settings of CAN Controller.
  */
-void ctu_can_fd_set_data_bittiming(void *base, struct can_bittiming *dbt)
+void ctu_can_fd_set_data_bittiming(void *base, struct can_bittiming *dbt);
 
 
 /*
@@ -409,7 +406,7 @@ void ctu_can_fd_erase_fd_errs(void *base);
  * Returns:
  *	Error state of the CTU CAN FD Core.
  */
-enum can_state ctu_can_fd_read_error_state(const void *base)
+enum can_state ctu_can_fd_read_error_state(const void *base);
 
 
 /*

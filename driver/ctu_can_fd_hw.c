@@ -28,15 +28,13 @@
  * 
 *******************************************************************************/
 
-#include "ctu_can_fd_frame.h"
-#include "ctu_can_fd_regs.h"
-#include "ctu_can_fd_hw.h"
-
-#ifndef __linux__
-
-#include "ctu_can_fd_linux_defs.h"
-
+#ifndef __KERNEL__
+# include "ctu_can_fd_linux_defs.h"
 #endif
+
+#include "ctu_can_fd_frame.h"
+//#include "ctu_can_fd_regs.h"
+#include "ctu_can_fd_hw.h"
 
 
 inline void ctu_can_fd_write32(void *base, enum ctu_can_fd_regs reg,
@@ -92,14 +90,14 @@ static inline void ctu_can_fd_id_to_hwid(canid_t id, union ctu_can_fd_identifier
 		hwid->s.identifier_base = id & CAN_SFF_MASK;
 }
  
-static inline void ctu_can_fd_hwid_to_id(union ctu_can_fd_identifier_w hwid, 
+static inline void ctu_can_fd_hwid_to_id(union ctu_can_fd_identifier_w hwid,
 					 canid_t *id,
 					 enum ctu_can_fd_frame_form_w_id_type type)
 {	
 	// Preserve flags which we dont set
 	*id &= ~(CAN_EFF_FLAG | CAN_EFF_MASK);
 	
-	if (type == EXTENDED){ 		
+	if (type == EXTENDED){
 		*id |= CAN_EFF_FLAG;
 		*id |= hwid.s.identifier_base << 18;
 		*id |= hwid.s.identifier_ext;
@@ -110,7 +108,7 @@ static inline void ctu_can_fd_hwid_to_id(union ctu_can_fd_identifier_w hwid,
 
 static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
 {
-	if (len =< 8){
+	if (len <= 8){
 		*dlc = len;
 		goto exit_ok;
 	}
@@ -133,9 +131,9 @@ static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
 	default : *dlc = 0x0;
 	}
 	
-	if (!dlc)
+	if (*dlc == 0)
 		return false;
-exit:
+exit_ok:
 	return true;
 }
 
@@ -178,7 +176,7 @@ bool ctu_can_fd_set_ret_limit(void *base, bool enable, u8 limit)
  	
 	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_MODE);
 	reg.s.rtrle = enable ? RTRLE_ENABLED : RTRLE_DISABLED;
-	reg.s.rtrth = limit & 0xF;
+	reg.s.rtr_th = limit & 0xF;
 	ctu_can_fd_write32(base, CTU_CAN_FD_MODE, reg.u32);
 	return true;
 }
@@ -189,27 +187,27 @@ void ctu_can_fd_set_mode_reg(void *base, const struct can_ctrlmode *mode)
 	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_MODE);
 	
 	if (mode->mask & CAN_CTRLMODE_LOOPBACK)
-		reg.s.int_loop = mode->flag & CAN_CTRLMODE_LOOPBACK ?
+		reg.s.int_loop = mode->flags & CAN_CTRLMODE_LOOPBACK ?
 					INT_LOOP_ENABLED : INT_LOOP_DISABLED;
 	
 	if (mode->mask & CAN_CTRLMODE_LISTENONLY)
-		reg.s.lom = mode->flag & CAN_CTRLMODE_LISTENONLY ?
+		reg.s.lom = mode->flags & CAN_CTRLMODE_LISTENONLY ?
 					LOM_ENABLED : LOM_DISABLED;
 	
 	if (mode->mask & CAN_CTRLMODE_3_SAMPLES)
-		reg.s.tsm = mode->flag & CAN_CTRLMODE_3_SAMPLES ? 
+		reg.s.tsm = mode->flags & CAN_CTRLMODE_3_SAMPLES ?
 				TSM_ENABLE : TSM_DISABLE;						
 	
 	if (mode->mask & CAN_CTRLMODE_FD)
-		reg.s.fde = mode->flag & CAN_CTRLMODE_FD ? 
+		reg.s.fde = mode->flags & CAN_CTRLMODE_FD ?
 				FDE_ENABLE : FDE_DISABLE;
 	
 	if (mode->mask & CAN_CTRLMODE_PRESUME_ACK)
-		reg.s.stm = mode->flag & CAN_CTRLMODE_PRESUME_ACK ? 
+		reg.s.stm = mode->flags & CAN_CTRLMODE_PRESUME_ACK ?
 				STM_ENABLED : STM_DISABLED;
 	
 	if (mode->mask & CAN_CTRLMODE_FD_NON_ISO)
-		reg.s.fd_type = mode->flag & CAN_CTRLMODE_FD_NON_ISO ?
+		reg.s.fd_type = mode->flags & CAN_CTRLMODE_FD_NON_ISO ?
 				NON_ISO_FD : ISO_FD;
 								
 	ctu_can_fd_write32(base, CTU_CAN_FD_MODE, reg.u32);
@@ -737,7 +735,7 @@ bool ctu_can_fd_insert_frame(void *base, const unsigned char *data, u64 ts,
 	enum ctu_can_fd_regs buf;
 	union ctu_can_fd_frame_form_w ffw;
 	union ctu_can_fd_identifier_w idw;
-	struct canfd_frame *cf = (struct canfd_frame *)data;
+	struct canfd_frame *cf = (struct canfd_frame *)data; // TODO: may break alignment constraints
 	u8 dlc;
 	
 	ffw.u32 = 0;

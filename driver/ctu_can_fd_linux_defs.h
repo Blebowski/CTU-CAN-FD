@@ -35,6 +35,62 @@
 #ifndef __CTU_CAN_FD_LINUX_DEFS__
 #define __CTU_CAN_FD_LINUX_DEFS__
 
+#include <stdint.h>
+#include <stddef.h>
+//#include <linux/types.h>
+#include <linux/socket.h>
+
+typedef uint8_t   __u8;
+typedef uint16_t  __u16;
+typedef uint32_t  __u32;
+typedef uint64_t  __u64;
+
+typedef int8_t   __s8;
+typedef int16_t  __s16;
+typedef int32_t  __s32;
+typedef int64_t  __s64;
+
+typedef __u8  u8;
+typedef __u16 u16;
+typedef __u32 u32;
+typedef __u64 u64;
+
+typedef __s8  s8;
+typedef __s16 s16;
+typedef __s32 s32;
+typedef __s64 s64;
+
+#ifndef __cplusplus
+typedef _Bool			bool;
+enum {
+	false	= 0,
+	true	= 1
+};
+#endif
+
+/*
+// from include/uapi/linux/types.h
+#define __bitwise
+
+typedef __u16 __bitwise __le16;
+typedef __u16 __bitwise __be16;
+typedef __u32 __bitwise __le32;
+typedef __u32 __bitwise __be32;
+typedef __u64 __bitwise __le64;
+typedef __u64 __bitwise __be64;
+
+typedef __u16 __bitwise __sum16;
+typedef __u32 __bitwise __wsum;
+*/
+
+static inline void iowrite32(u32 value, void *addr) {*(volatile u32*)addr = value;}
+static inline void iowrite16(u16 value, void *addr) {*(volatile u16*)addr = value;}
+static inline void iowrite8(u8 value, void *addr) {*(volatile u8*)addr = value;}
+
+static inline u32 ioread32(const void *addr) {return *(const volatile u32*)addr;}
+static inline u16 ioread16(const void *addr) {return *(const volatile u16*)addr;}
+static inline u8 ioread8(const void *addr) {return *(const volatile u8*)addr;}
+
 /*
  * CAN bit-timing parameters
  *
@@ -204,8 +260,6 @@ enum {
 #ifndef _UAPI_CAN_H
 #define _UAPI_CAN_H
 
-#include <linux/types.h>
-#include <linux/socket.h>
 
 
 
@@ -388,5 +442,7 @@ struct can_filter {
 
 #define CAN_INV_FILTER 0x20000000U /* to be set in can_filter.can_id */
 #define CAN_RAW_FILTER_MAX 512 /* maximum number of can_filter set via setsockopt() */
+#endif /* _UAPI_CAN_H */
 
-#endif
+
+#endif /* __CTU_CAN_FD_LINUX_DEFS__ */
