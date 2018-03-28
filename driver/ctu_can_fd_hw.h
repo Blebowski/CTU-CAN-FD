@@ -34,11 +34,13 @@
 #include "ctu_can_fd_regs.h"
 
 /*
-    MJ TODO:
-    - move small functions to *.h, make them inline
-    - either pass union arguments by value or just as u32;
-      this way they are forced on stack instead of passing in register
-      + one level of pointer indirection, which sucks performance-wise
+	MJ TODO:
+	- move small functions to *.h, make them inline
+	- either pass union arguments by value or just as u32;
+	  this way they are forced on stack instead of passing in register
+	  + one level of pointer indirection, which sucks performance-wise
+	  - use u32 directly, as non-primitive types (however small )are not
+		guaranteed to be passed in registers across all ABIs
 */
 
 #define CTU_CAN_FD_RETR_MAX 15
@@ -119,6 +121,46 @@
 
 // TX Buffer received HW command interrupt
 #define CTU_CAN_FD_TXT_BUF_HWCMD_INT(int_stat) (!!(int_stat).s.txbhci)
+
+static inline void ctu_can_fd_write32(void *base, enum ctu_can_fd_regs reg,
+					u32 val)
+{
+	iowrite32(val, (char *)base + reg);
+}
+
+static inline void ctu_can_fd_write16(void *base, enum ctu_can_fd_regs reg,
+					u16 val)
+{
+	iowrite16(val, (char *)base + reg);
+}
+
+static inline void ctu_can_fd_write8(void *base, enum ctu_can_fd_regs reg,
+					u8 val)
+{
+	iowrite8(val, (char *)base + reg);
+}
+
+static inline void ctu_can_fd_write_txt_buf(void *base,
+						enum ctu_can_fd_regs buf_base,
+						u32 offset, u32 val)
+{
+	iowrite32(val, (char *)base + buf_base + offset);
+}
+
+static inline u32 ctu_can_fd_read32(const void *base, enum ctu_can_fd_regs reg)
+{
+	return ioread32((const char *)base + reg);
+}
+
+static inline u16 ctu_can_fd_read16(const void *base, enum ctu_can_fd_regs reg)
+{
+	return ioread16((const char *)base + reg);
+}
+
+static inline u8 ctu_can_fd_read8(const void *base, enum ctu_can_fd_regs reg)
+{
+	return ioread8((const char *)base + reg);
+}
 
 
 /*
@@ -340,7 +382,10 @@ void ctu_can_fd_set_err_limits(void *base, u8 ewl, u8 erp);
  * Arguments:
  *	base	Pointer to the base address
  */
-void ctu_can_fd_set_def_err_limits(void *base);
+static inline void ctu_can_fd_set_def_err_limits(void *base)
+{
+	ctu_can_fd_set_err_limits(base, 96, 128);
+}
 
 
 /*
@@ -364,7 +409,13 @@ bool ctu_can_fd_read_err_ctrs(const void *base, struct can_berr_counter *ctr);
  * Returns:
  *	Number of Error frames detected during Nominal Bit-rate
  */
-u16 ctu_can_fd_read_nom_errs(const void *base);
+static inline u16 ctu_can_fd_read_nom_errs(const void *base)
+{
+	union ctu_can_fd_err_norm_err_fd reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_ERR_NORM);
+	return reg.s.err_norm_val;
+}
+
 
 
 /*
@@ -385,7 +436,12 @@ void ctu_can_fd_erase_nom_errs(void *base);
  * Returns:
  *	Number of Error frames detected during Data Bit-rate
  */
-u16 ctu_can_fd_read_fd_errs(const void *base);
+static inline u16 ctu_can_fd_read_fd_errs(const void *base)
+{
+	union ctu_can_fd_err_norm_err_fd reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_ERR_NORM);
+	return reg.s.err_fd_val;
+}
 
 
 /*
@@ -479,7 +535,12 @@ void ctu_can_fd_set_range_filter(void *base, canid_t low_th,
  * Returns:
  *	Size of the RX Buffer in words (32 bit)
  */
-u16 ctu_can_fd_get_rx_fifo_size(const void *base);
+static inline u16 ctu_can_fd_get_rx_fifo_size(const void *base)
+{
+	union ctu_can_fd_rx_mem_info reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_RX_MEM_INFO);
+	return reg.s.rx_buff_size;
+}
 
 
 /*
@@ -490,7 +551,12 @@ u16 ctu_can_fd_get_rx_fifo_size(const void *base);
  * Returns:
  *	Number of free words (32 bit) in RX Buffer.
  */
-u16 ctu_can_fd_get_rx_fifo_mem_free(const void *base);
+static inline u16 ctu_can_fd_get_rx_fifo_mem_free(const void *base)
+{
+	union ctu_can_fd_rx_mem_info reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_RX_MEM_INFO);
+	return reg.s.rx_mem_free;
+}
 
 
 /*
@@ -501,7 +567,12 @@ u16 ctu_can_fd_get_rx_fifo_mem_free(const void *base);
  * Returns:
  *	True if empty, false otherwise.
  */
-bool ctu_can_fd_is_rx_fifo_empty(const void *base);
+static inline bool ctu_can_fd_is_rx_fifo_empty(const void *base)
+{
+	union ctu_can_fd_rx_status_rx_settings reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_RX_STATUS);
+	return reg.s.rx_empty;
+}
 
 
 /*
@@ -512,7 +583,12 @@ bool ctu_can_fd_is_rx_fifo_empty(const void *base);
  * Returns:
  *	True if Full, false otherwise.
  */
-bool ctu_can_fd_is_rx_fifo_full(const void *base);
+static inline bool ctu_can_fd_is_rx_fifo_full(const void *base)
+{
+	union ctu_can_fd_rx_status_rx_settings reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_RX_STATUS);
+	return reg.s.rx_full;
+}
 
 
 /*
@@ -523,7 +599,12 @@ bool ctu_can_fd_is_rx_fifo_full(const void *base);
  * Returns:
  *	True if Full, false otherwise.
  */
-u16 ctu_can_fd_get_rx_frame_count(const void *base);
+static inline u16 ctu_can_fd_get_rx_frame_count(const void *base)
+{
+	union ctu_can_fd_rx_status_rx_settings reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_RX_STATUS);
+	return reg.s.rx_frc;
+}
 
 
 /*
@@ -595,7 +676,7 @@ bool ctu_can_fd_txt_buf_give_command(void *base, u8 cmd, u8 buf);
  */
 static inline void ctu_can_fd_txt_set_empty(void *base, u8 buf)
 {
-    ctu_can_fd_txt_buf_give_command(base, 0x1, buf);
+	ctu_can_fd_txt_buf_give_command(base, 0x1, buf);
 }
 
 
@@ -610,7 +691,7 @@ static inline void ctu_can_fd_txt_set_empty(void *base, u8 buf)
  */
 static inline void ctu_can_fd_txt_set_rdy(void *base, u8 buf)
 {
-    ctu_can_fd_txt_buf_give_command(base, 0x2, buf);
+	ctu_can_fd_txt_buf_give_command(base, 0x2, buf);
 }
 
 
@@ -625,7 +706,7 @@ static inline void ctu_can_fd_txt_set_rdy(void *base, u8 buf)
  */
 static inline void ctu_can_fd_txt_set_abort(void *base, u8 buf)
 {
-    ctu_can_fd_txt_buf_give_command(base, 0x4, buf);
+	ctu_can_fd_txt_buf_give_command(base, 0x4, buf);
 }
 
 
@@ -664,7 +745,12 @@ bool ctu_can_fd_insert_frame(void *base, const unsigned char *data, u64 ts,
  * Returns:
  *	True if the frame was inserted succesfully, False otherwise.
  */
-u16 ctu_can_fd_get_tran_delay(const void *base);
+static inline u16 ctu_can_fd_get_tran_delay(const void *base)
+{
+	union ctu_can_fd_trv_delay reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_TRV_DELAY);
+	return reg.s.trv_delay_value;
+}
 
 
 /*
@@ -675,7 +761,12 @@ u16 ctu_can_fd_get_tran_delay(const void *base);
  * Returns:
  *	Number of received CAN/CAN FD frames.
  */
-u32 ctu_can_fd_get_tx_frame_ctr(const void *base);
+static inline u32 ctu_can_fd_get_tx_frame_ctr(const void *base)
+{
+	union ctu_can_fd_tx_counter reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_TX_COUNTER);
+	return reg.s.tx_counter_val;
+}
 
 
 /*
@@ -686,7 +777,12 @@ u32 ctu_can_fd_get_tx_frame_ctr(const void *base);
  * Returns:
  *	Number of received CAN/CAN FD frames.
  */
-u32 ctu_can_fd_get_rx_frame_ctr(const void *base);
+static inline u32 ctu_can_fd_get_rx_frame_ctr(const void *base)
+{
+	union ctu_can_fd_rx_counter reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_RX_COUNTER);
+	return reg.s.rx_counter_val;
+}
 
 
 /*
@@ -697,7 +793,12 @@ u32 ctu_can_fd_get_rx_frame_ctr(const void *base);
  * Returns:
  *	Content of Debug register.
  */
-union ctu_can_fd_debug_register ctu_can_fd_read_debug_info(const void *base);
+static inline union ctu_can_fd_debug_register ctu_can_fd_read_debug_info(const void *base)
+{
+	union ctu_can_fd_debug_register reg;
+	reg.u32 = ctu_can_fd_read32(base, CTU_CAN_FD_DEBUG_REGISTER);
+	return reg;
+}
 
 extern const struct can_bittiming_const ctu_can_fd_bit_timing_max;
 extern const struct can_bittiming_const ctu_can_fd_bit_timing_data_max;
