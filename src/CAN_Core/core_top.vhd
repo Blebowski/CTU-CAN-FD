@@ -124,7 +124,7 @@ entity core_top is
     signal txtb_changed           :in   std_logic;
     
     --Pointer to TXT buffer memory
-    signal txt_buf_ptr            :out  natural range 0 to 15; 
+    signal txt_buf_ptr            :out  natural range 0 to 19;
     
     -----------------------------------------------
     --Recieve Buffer and Message Filter Interface--
