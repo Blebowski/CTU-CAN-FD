@@ -114,7 +114,7 @@ USE WORK.CANconstants.ALL;
 use work.brs_comp_package.all;
 
 entity prescaler_v3 is
-  PORT(
+    PORT(
     ------------------------
     --Clock and async reset-
     ------------------------
@@ -299,6 +299,28 @@ end entity;
 
 
 architecture rtl of prescaler_v3 is
+    
+    ----------------------------------------------------------------------------
+    -- Generates either receive (sample) or transceive (sync) triggering signal
+    -- based on sample type.
+    ----------------------------------------------------------------------------
+    procedure generate_trig(
+        signal sample_type          : in std_logic_vector(1 downto 0);
+        signal nbt_trig             : out std_logic;
+        signal dbt_trig             : out std_logic
+    ) is
+    begin
+        if (sample_type = NOMINAL_SAMPLE) then
+            nbt_trig    <= '1';
+            dbt_trig    <= '0';
+        
+        -- DATA_SAMPLE as well as SAMPLE_SEC covered
+        else
+            nbt_trig    <= '0';
+            dbt_trig    <= '1';
+        end if;  
+    end procedure;
+
 begin
   
   --Aliases from DRV_BUS to internal names
@@ -405,7 +427,7 @@ begin
              
   bt_proc:process(clk_sys,res_n)
   begin
-    if(res_n=ACT_RESET)then
+	if(res_n=ACT_RESET)then
       bt_FSM          <=  reset;
       bt_counter      <=  0;
       FSM_Preset      <=  '1';
@@ -572,13 +594,7 @@ begin
         when sync =>
             if(FSM_Preset='1')then
              is_tran_trig <= true;
-             if(sp_control=NOMINAL_SAMPLE)then 
-              sync_nbt_r<='1';
-              sync_dbt_r<='0';
-             else
-              sync_nbt_r<='0';
-              sync_dbt_r<='1';
-             end if;
+             generate_trig(sp_control, sync_nbt_r, sync_dbt_r);
              FSM_Preset<='0';
             end if;
             if(tq_edge='1')then
@@ -643,6 +659,7 @@ begin
                 end if;  
              end if;
             end if;
+
         when ph1 =>
             if(tq_edge='1')then
               if((bt_counter=ph1_real) or (bt_counter>ph1_real))then
@@ -653,18 +670,13 @@ begin
                   bt_counter<=bt_counter+1;
               end if;  
               
-            end if; 
-        when ph2 =>
-            if(FSM_Preset='1')then
-            is_tran_trig <= false;
-            if(sp_control=NOMINAL_SAMPLE)then 
-              sample_nbt_r<='1';
-              sample_dbt_r<='0';
-            else
-              sample_nbt_r<='0';
-              sample_dbt_r<='1';
             end if;
-             FSM_Preset<='0';
+
+        when ph2 =>
+            if (FSM_Preset = '1') then
+                is_tran_trig <= false;
+                FSM_Preset   <= '0';
+                generate_trig(sp_control, sample_nbt_r, sample_dbt_r);
             end if;
             
             if(tq_edge='1')then
@@ -742,39 +754,31 @@ begin
   end process;
 
 
-  trig_sign_proc:process(clk_sys,res_n)
-  begin
-    if(res_n=ACT_RESET)then
-      sync_nbt_del_1_r<='0';
-      sync_dbt_del_1_r<='0';
-      sample_nbt_del_2_r<='0';
-      sample_dbt_del_2_r<='0';
-      sample_nbt_del_1_r<='0';
-      sample_dbt_del_1_r<='0';
-    elsif rising_edge(clk_sys)then
-      if (sync_nbt_r='1') then sync_nbt_del_1_r<='1';
-                         else sync_nbt_del_1_r<='0';
-			end if;
-      if (sync_dbt_r='1') then sync_dbt_del_1_r<='1';
-                         else sync_dbt_del_1_r<='0';
-			end if;
-      
-      if (sample_nbt_r='1') then sample_nbt_del_1_r<='1';
-                            else sample_nbt_del_1_r<='0';
-			end if;
-      if (sample_dbt_r='1') then sample_dbt_del_1_r<='1';
-	                        else sample_dbt_del_1_r<='0';
-			end if;
-    
-      if (sample_nbt_del_1_r='1') then sample_nbt_del_2_r<='1';
-                                  else sample_nbt_del_2_r<='0';
-			end if;
-      if (sample_dbt_del_1_r='1') then sample_dbt_del_2_r<='1';
-                                  else sample_dbt_del_2_r<='0';
-		  end if;
-    
-    end if;
-  end process;
+    ----------------------------------------------------------------------------
+    -- Creating delayed sample and synchronisation signals by shift registers
+    ----------------------------------------------------------------------------
+    trig_sign_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = ACT_RESET) then
+            sync_nbt_del_1_r    <= '0';
+            sync_dbt_del_1_r    <= '0';
+            sample_nbt_del_2_r  <= '0';
+            sample_dbt_del_2_r  <= '0';
+            sample_nbt_del_1_r  <= '0';
+            sample_dbt_del_1_r  <= '0';
+        elsif rising_edge(clk_sys) then
+
+            sync_nbt_del_1_r <= sync_nbt_r;
+            sync_dbt_del_1_r <= sync_dbt_r;
+
+            sample_nbt_del_1_r <= sample_nbt_r;
+            sample_dbt_del_1_r <= sample_dbt_r;
+
+            sample_nbt_del_2_r <= sample_nbt_del_1_r;
+            sample_dbt_del_2_r <= sample_dbt_del_1_r;
+   
+        end if;
+    end process;
 
   
 end architecture;
