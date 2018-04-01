@@ -63,6 +63,8 @@
 -- Revision History:
 --    Oct 2017   Created file
 --    13.3.2018  Modified bit phases lengths
+--    1.4.2018   Updated compensation for new implementation of triggering
+--               signals in Prescaler.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -72,12 +74,12 @@ USE WORK.CANconstants.ALL;
 
 package brs_comp_package is
   procedure brs_comp(
-        signal tq_nbt : in natural range 0 to 255;
-        signal tq_dbt : in natural range 0 to 255;
-        signal sp_control : in std_logic_vector(1 downto 0);
-        signal ph2_nbt : in natural range 0 to 63;
-        signal ph2_dbt : in natural range 0 to 31;
-        signal ph2_real : out integer range -127 to 127
+        signal tq_nbt       : in natural range 0 to 255;
+        signal tq_dbt       : in natural range 0 to 255;
+        signal sp_control   : in std_logic_vector(1 downto 0);
+        signal ph2_nbt      : in natural range 0 to 63;
+        signal ph2_dbt      : in natural range 0 to 31;
+        signal ph2_real     : out integer range -127 to 127
   );
 end brs_comp_package;
 
@@ -86,64 +88,72 @@ package body brs_comp_package is
   ---------------------------------
   -- Bit rate switch compensation
   ---------------------------------
-  --Sample type has changed we have to modify "ph2_real" accordingly...
+  -- Sample type has changed we have to modify "ph2_real" accordingly...
   -- This corresponds to moment of bit rate switching. Since the processing
-  -- of switching takes 3 clock cycles (bit destuffing, protocol control,
-  -- sp_control update, actual update of the ph2_real), compensation
-  -- of the ph2_real is needed based on Time quanta(TQ) duration
+  -- of switching takes 2 clock cycles (bit destuffing, protocol control), 
+  -- compensation of ph2_real is needed based on Time quanta(TQ) duration
   procedure brs_comp(
-        signal tq_nbt : in natural range 0 to 255;
-        signal tq_dbt : in natural range 0 to 255;
-        signal sp_control : in std_logic_vector(1 downto 0);
-        signal ph2_nbt : in natural range 0 to 63;
-        signal ph2_dbt : in natural range 0 to 31;
-        signal ph2_real : out integer range -127 to 127
+        signal tq_nbt       : in natural range 0 to 255;
+        signal tq_dbt       : in natural range 0 to 255;
+        signal sp_control   : in std_logic_vector(1 downto 0);
+        signal ph2_nbt      : in natural range 0 to 63;
+        signal ph2_dbt      : in natural range 0 to 31;
+        signal ph2_real     : out integer range -127 to 127
   )is
-  variable ntd : boolean; --Nominal to Data switch
+    variable ntd : boolean; --Nominal to Data switch
   begin
     
-    if ((sp_control = SECONDARY_SAMPLE) or (sp_control=DATA_SAMPLE)) then
-       ntd := true;
+    -- Switching from Nominal to Data (BRS bit)           
+    if ((sp_control = SECONDARY_SAMPLE) or (sp_control = DATA_SAMPLE)) then        
+        ntd := true;
+
+    -- Switching from Data to Nominal (CRC Delimiter bit)
     elsif (sp_control = NOMINAL_SAMPLE) then
        ntd := false;
+
     else
        ntd := false;
        report "Unknown sampling type" severity error;
     end if;
     
-    if(ntd=true)then
-      if (tq_nbt=1 and tq_dbt>3) then
-        ph2_real <= ph2_dbt+3; 
-      elsif ((tq_nbt=2 or tq_nbt=3) and (tq_dbt>3)) then
-        ph2_real <= ph2_dbt+1;
-      elsif (tq_nbt=1 and (tq_dbt=2 or tq_dbt=3)) then
-        ph2_real <= ph2_dbt+2;
-      elsif ((tq_nbt=2 or tq_nbt=3) and (tq_dbt=1)) then
-        ph2_real <= ph2_dbt-2;
-      elsif ((tq_dbt=2 or tq_dbt=3) and (tq_nbt>3)) then
-        ph2_real <= ph2_dbt-1;
-      elsif (tq_nbt>3 and tq_dbt=1) then
-        ph2_real <= ph2_dbt-3; 
-      else 
-        ph2_real <= ph2_dbt;
-      end if;
+    if (tq_nbt > 2 and tq_dbt = 1) then
+        if (ntd) then
+            ph2_real    <= ph2_dbt - 2;
+        else
+            ph2_real    <= ph2_nbt + 2;
+        end if;
+
+    elsif ((tq_nbt = 2 and tq_dbt = 1) or
+           (tq_nbt > 2 and tq_dbt = 2)) then
+        if (ntd) then
+            ph2_real    <= ph2_dbt - 1;
+        else
+            ph2_real    <= ph2_nbt + 1;
+        end if;
+
+    elsif ((tq_nbt = 1 and tq_dbt = 2) or
+           (tq_nbt = 2 and tq_dbt > 2)) then
+        if (ntd) then        
+            ph2_real    <= ph2_dbt + 1;
+        else
+            ph2_real    <= ph2_nbt - 1;
+        end if;
+
+    elsif (tq_nbt = 1 and tq_dbt > 2) then
+        if (ntd) then        
+            ph2_real    <= ph2_dbt + 2;
+        else
+            ph2_real    <= ph2_nbt - 2;
+        end if;
+
     else
-      if (tq_nbt>3 and tq_dbt=1)then
-        ph2_real <= ph2_nbt+3;
-      elsif (tq_nbt>3 and (tq_dbt=2 or tq_dbt=3)) then
-        ph2_real <= ph2_nbt+1;
-      elsif (tq_dbt=1 and (tq_nbt=2 or tq_nbt=3)) then
-        ph2_real <= ph2_nbt+1;
-      elsif (tq_dbt>3 and (tq_nbt=2 or tq_nbt=3)) then
-        ph2_real <= ph2_nbt-1;
-      elsif (tq_nbt=1 and (tq_dbt=2 or tq_dbt=3)) then
-        ph2_real <= ph2_nbt-2;
-      elsif (tq_nbt=1 and tq_dbt>3) then
-        ph2_real <= ph2_nbt-3;
-      else
-        ph2_real <= ph2_nbt;
-      end if;
+        if (ntd) then
+            ph2_real    <= ph2_dbt;
+        else
+            ph2_real    <= ph2_nbt;
+        end if;
     end if;
+
   end procedure;
 
 end package body;
