@@ -464,6 +464,7 @@ end process;
   -- Sum of error counters
   error_ctr <= sample_seq_err_ctr + sync_seq_err_ctr + 
                coh_err_ctr + ipt_err_ctr + main_err_ctr;
+  errors <= error_ctr;
   
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
@@ -488,6 +489,11 @@ test_proc:process
   begin
     log("Restarting Prescaler unit test!", info_l, log_level);
     wait for 5 ns;
+
+    -- Generates random initial bit time settings to avoid having zero values
+    -- on the input of DUT after reset!
+    gen_bit_time_setting(rand_ctr, setting);   
+
     reset_test(res_n, status, run, main_err_ctr);
     log("Restarted Prescaler unit test", info_l, log_level);
     print_test_info(iterations, log_level, error_beh,  error_tol);
@@ -595,8 +601,6 @@ test_proc:process
                          (to_integer(unsigned(drv_tq_nbt)) *
                           to_integer(unsigned(drv_ph2_nbt)));
       
-      log("Checking Bit-rate switch timing. ", info_l, log_level);
-
       --------------------------------------------------------------------------
       -- Emulate a BRS bit
       --------------------------------------------------------------------------
