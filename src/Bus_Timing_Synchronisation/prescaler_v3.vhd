@@ -108,13 +108,20 @@
 --    1.4.2018    1. Changed trigger signals generation from clocked to combina-
 --                   tional. Thisway sample point can be truly generated between
 --                   PH1 and PH2.
+--                2. Changed Bit-rate shift compensation to two counters solution.
+--                   Added "ph2_extra" which calculates value to be set on the
+--                   extra counter (by DSP device). Extra counter is set during
+--                   transition to PH2, and PH2 finishes when either original
+--                   "bt_counter" expires and bit-rate shift did no occur or
+--                   when "bt_counter_sw" expires and bit-rate was shifted.
+--                   Note that with this solution there is no resynchronisation
+--                   occuring during BRS bit!
 --------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
-use work.brs_comp_package.all;
 
 entity prescaler_v3 is
     PORT(
@@ -256,6 +263,11 @@ entity prescaler_v3 is
   --Bit time counter
   signal bt_counter             :   natural range 0 to 255;
   
+  -- Secondary counter for duration of PH2 after bit-rate switch
+  -- (Counting in clock cycles, not Time Quantas)
+  -- 13 bit counter (8 bit prescaler + 5 bit max length of Ph2)
+  signal bt_counter_sw          :   natural range 0 to 8191;
+
   --Hard synchronisation appeared
   signal hard_sync_valid        :   std_logic;
   
@@ -277,7 +289,7 @@ entity prescaler_v3 is
   signal sync_nbt_del_1_r       :   std_logic;
   signal sync_dbt_del_1_r       :   std_logic;
   
-  signal sp_control_reg         :   std_logic_vector(1 downto 0);
+  signal sp_control_stored      :   std_logic_vector(1 downto 0);
 
   -- Auxiliarly signals for internal decoders
   signal switch_ph1_to_ph2      :   boolean;
@@ -287,8 +299,13 @@ entity prescaler_v3 is
   signal switch_prop_to_ph1     :   boolean;
   
   -- Special triggering signal
-  signal sync_trig_spec         :   std_logic;  
+  signal sync_trig_spec         :   std_logic;
 
+  -- Auxiliarly signal for detection which counter should be used for
+  -- finish of PH2 in case of Bit-rate shift
+  signal use_default_ctr        :   boolean;
+  signal use_spec_ctr           :   boolean;
+ 
   ---------------------
   --Internal aliases --
   ---------------------
@@ -308,7 +325,10 @@ entity prescaler_v3 is
   
   --Duration of ph2 segment after synchronisation
   signal ph2_real               :   integer range -127 to 127;
-  
+
+  --Length to be set on secondary counter (post switching)
+  signal ph2_extra              :   natural range 0 to 8191;  
+
 end entity;
 
 
@@ -333,6 +353,20 @@ architecture rtl of prescaler_v3 is
             nbt_trig    <= '0';
             dbt_trig    <= '1';
         end if;  
+    end procedure;
+
+    ----------------------------------------------------------------------------
+    -- Presetting secondary counter for case of bit-rate shift
+    ----------------------------------------------------------------------------
+    procedure set_secondary_ctr(
+        signal ctr              : out natural range 0 to 8191;
+        signal ctr_pres         : in  natural range 0 to 8191;
+        signal sp_control       : out std_logic_vector(1 downto 0);
+        signal sp_control_pres  : in  std_logic_vector(1 downto 0)
+    ) is
+    begin
+        ctr         <= ctr_pres;
+        sp_control  <= sp_control_pres;
     end procedure;
 
 begin
@@ -432,6 +466,51 @@ begin
     
   end if;
   end process;
+
+
+  ------------------------------------------------------------------------------
+  -- Calculating length to be preset to the extra PH2 counter
+  -- This can be clocked, since before sample point there is enough cycles
+  -- to have the value stable.
+  -- Multiplier is assumed to be automatically inferred to DSP, MAC device!
+  -- This should consume two DSP devices, and it should fit within both Altera
+  -- and Xilinx DSP, MAC units!
+  ------------------------------------------------------------------------------
+  extra_ctr_calc_proc : process(res_n, clk_sys)
+  begin
+    if (res_n = ACT_RESET) then
+        ph2_extra   <= 0;
+    elsif (rising_edge(clk_sys)) then
+        
+        -- Value into extra counter will be always taken during PH1 to PH2
+        -- switch. We assume that bit-rate switch will occur, and use the
+        -- oposite bit-rate as during PH1!
+        if (sp_control = NOMINAL_SAMPLE) then
+            ph2_extra   <= tq_dbt * ph2_dbt;
+        else
+            ph2_extra   <= tq_nbt * ph2_nbt;
+        end if;
+
+    end if;
+  end process;
+
+  ------------------------------------------------------------------------------
+  -- Deciding which counter to use during PH2 to SYNC switch in case of
+  -- bit-rate shift
+  ------------------------------------------------------------------------------
+  use_default_ctr   <= true when ((sp_control = NOMINAL_SAMPLE) and
+                                  (sp_control_stored = NOMINAL_SAMPLE))
+                                 or
+                                  ((sp_control = DATA_SAMPLE or
+                                    sp_control = SECONDARY_SAMPLE)
+                                   and
+                                   (sp_control_stored = DATA_SAMPLE or
+                                    sp_control_stored = SECONDARY_SAMPLE))
+                            else
+                      false;
+
+  use_spec_ctr      <= not use_default_ctr;
+
   
   ------------------------------------------------------------------------------
   -- New time quantum period detection
@@ -523,42 +602,43 @@ begin
                          '0';                            
 
    
-  bt_proc:process(clk_sys,res_n)
+  bt_proc : process(clk_sys, res_n)
   begin
-	if(res_n=ACT_RESET)then
-      bt_FSM          <=  reset;
-      bt_counter      <=  0;
-      FSM_Preset      <=  '1';
-      FSM_Preset_2    <=  '0';
-      hard_sync_valid <=  '0';
-      is_tran_trig    <=  false;
-      sp_control_reg  <=  NO_SYNC;
-      ph1_real        <=  0;
-      ph2_real        <=  0;
-      sync_trig_spec  <= '0';
-    elsif rising_edge(clk_sys)then
-                
-      sp_control_reg  <=  sp_control;
-      bt_FSM          <=  bt_FSM;
-      FSM_Preset      <=  FSM_Preset;
-      FSM_Preset_2    <=  FSM_Preset_2;
-      bt_counter      <=  bt_counter;
-      is_tran_trig    <=  is_tran_trig;
-      ph2_real        <=  ph2_real;
-      ph1_real        <=  ph1_real;
-      sync_trig_spec  <=  '0';
+	if (res_n = ACT_RESET) then
+      bt_FSM            <=  reset;
+      bt_counter        <=  0;
+      FSM_Preset        <=  '1';
+      FSM_Preset_2      <=  '0';
+      hard_sync_valid   <=  '0';
+      is_tran_trig      <=  false;
+      sp_control_stored <=  NOMINAL_SAMPLE;
+      ph1_real          <=  0;
+      ph2_real          <=  0;
+      sync_trig_spec    <= '0';
+      bt_counter_sw     <=  1;
 
-      if(bt_FSM=reset)then
-        bt_FSM<=sync;
+    elsif rising_edge(clk_sys) then
+                
+      bt_FSM            <=  bt_FSM;
+      FSM_Preset        <=  FSM_Preset;
+      FSM_Preset_2      <=  FSM_Preset_2;
+      bt_counter        <=  bt_counter;
+      is_tran_trig      <=  is_tran_trig;
+      ph2_real          <=  ph2_real;
+      ph1_real          <=  ph1_real;
+      sync_trig_spec    <=  '0';
+ 
+      sp_control_stored <=  sp_control_stored;
+      bt_counter_sw     <=  bt_counter_sw;
+
+      if (bt_FSM = reset) then
+        bt_FSM        <=  sync;
       end if;
       
-      if(sp_control /= sp_control_reg)then
-          -- Perform Ph2 compensation
-          brs_comp(tq_nbt,tq_dbt,sp_control,ph2_nbt,ph2_dbt,ph2_real);
-      elsif(sync_edge='1' and 
-					 (sync_control=HARD_SYNC) and
-					 (bt_FSM /= h_sync))
-			then
+      if(sync_edge='1' and 
+           (sync_control=HARD_SYNC) and
+           (bt_FSM /= h_sync))
+      then
           bt_FSM        <=  h_sync;
           FSM_Preset    <=  '1';
           --It is assumed that hard sync appears only during Nominal bit time,
@@ -701,6 +781,8 @@ begin
                 else 
                     bt_FSM      <= ph2;
                     FSM_Preset  <= '1';
+                    set_secondary_ctr(bt_counter_sw, ph2_extra,
+                                      sp_control_stored, sp_control);
                 end if;
 
                 bt_counter      <= 1;
@@ -726,6 +808,8 @@ begin
                         bt_FSM <= ph1;
                     else
                         bt_FSM <= ph2;
+                        set_secondary_ctr(bt_counter_sw, ph2_extra,
+                                        sp_control_stored, sp_control);
                     end if;
                     FSM_Preset <= '1';
                     bt_counter <= 1;
@@ -743,6 +827,8 @@ begin
                   bt_FSM        <= ph2;
                   bt_counter    <= 1;
                   FSM_Preset    <= '1';
+                  set_secondary_ctr(bt_counter_sw, ph2_extra,
+                                      sp_control_stored, sp_control);
               else
                   bt_counter    <= bt_counter + 1;
               end if;
@@ -759,16 +845,29 @@ begin
             
             if (tq_edge = '1') then
               if (switch_ph2_to_sync) then
-               -- If lower than minimal timing is chosen then it minimal 
-               -- timing will be applied!!
+                if (use_default_ctr) then
                   bt_FSM        <= sync;
                   bt_counter    <= 1;
                   FSM_Preset    <= '1';
+                end if;
               else
                   bt_counter    <= bt_counter + 1;
-              end if;  
+              end if;
             end if;
-        
+
+            -- Counting with 1 each clock cycle! No resynchronisation on this
+            -- counter, no need to check on underflow. We can count to exact
+            -- value (0)!
+            if (bt_counter_sw = 0 or bt_counter_sw = 1) then
+                if (use_spec_ctr) then
+                    bt_FSM      <= sync;
+                    bt_counter  <= 1;
+                    FSM_Preset  <= '1';
+                end if;
+            else
+                bt_counter_sw   <= bt_counter_sw - 1; 
+            end if;
+
         ------------------------------------------------------------------------
         -- Special state which appears after hard synchronisation to handle 
         -- proper bit timing! It is a substitute for sync, prop and ph1 segment
@@ -802,9 +901,9 @@ begin
                 --One cycle has to be between sync signal! Otherwise PC control 
                 --wont be able to react on hard sync valid!
                 --Here sync signal is finally set!
-                FSM_Preset_2 <= '1';
+                FSM_Preset_2        <= '1';
                 if (is_tran_trig = false) then
-                    sync_trig_spec <= '1';
+                    sync_trig_spec  <= '1';
                 end if;
             end if;
                 
