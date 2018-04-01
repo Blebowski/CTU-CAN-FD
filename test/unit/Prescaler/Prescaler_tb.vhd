@@ -44,6 +44,9 @@
 --    7.6.2016   Created file
 --   28.3.2018   Changed to be compatible with extended bit time fields in the
 --               register map for Socket CAN.
+--   29.3.2018   Added check for the bit-rate switching to verify the compen-
+--               sation mechanism, and provide stable reference in case of
+--               reimplementation.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -226,7 +229,22 @@ architecture presc_unit_test of CAN_test is
       end loop;      
     end procedure;
     
-    
+    --------------------------------------------------------
+    -- Counts number of clock cycles elapse until condition
+    -- becomes '1'.
+    --------------------------------------------------------
+    procedure count_cycles_until(
+      signal clk_sys            : in       std_logic;
+      variable counter          : inout    natural;
+      signal condition          : in       std_logic
+    ) is
+    begin
+      counter := 0;
+      while condition = '0' loop
+        wait until falling_edge(clk_sys);
+        counter := counter + 1;
+      end loop;
+    end procedure;
     
 begin
   
@@ -345,11 +363,12 @@ end process;
 --------------------------------------------------------------------------------
 -- Checking that two consecutive sync or sample signals are not present!!
 --------------------------------------------------------------------------------
- trig_coherency_proc:process
+ trig_coherency_proc : process
  variable was_sync : boolean := false;
  begin
   if (sp_control = NOMINAL_SAMPLE) then
-    wait until rising_edge(sync_nbt) or rising_edge(sample_nbt);
+    wait until falling_edge(clk_sys) and 
+                (sync_nbt = '1' or sample_nbt = '1');
     
     if (sync_nbt = '1') then
       
@@ -372,7 +391,9 @@ end process;
     end if;
   
   elsif (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE) then
-    wait until rising_edge(sync_dbt) or rising_edge(sample_dbt);
+    
+    wait until falling_edge(clk_sys) and
+                (sync_dbt = '1' or sample_dbt = '1');
     
     if (sync_dbt = '1') then
       
@@ -395,7 +416,7 @@ end process;
     end if;
 
   end if;
- end process; 
+end process; 
 
 
 --------------------------------------------------------------------------------
@@ -420,9 +441,10 @@ end process;
 --------------------------------------------------------------------------------
   sample_seq_check_proc:process
   begin
-    wait until rising_edge(sample_nbt) or rising_edge(sample_dbt);
+    wait until falling_edge(clk_sys) and 
+                (sample_nbt = '1' or sample_dbt = '1');
     
-    wait for 15 ns; -- One ad half clock cycle
+    wait for 10 ns; -- One and half clock cycle
     if (sample_nbt_del_1 = '0' and sample_dbt_del_1 = '0') then
        log("Sample sequnce not complete, delay 1 CLK signal missing!",
             error_l, log_level);
@@ -448,10 +470,21 @@ end process;
 -- Main Test process
 --------------------------------------------------------------------------------
 --------------------------------------------------------------------------------
-  test_proc:process
-  variable rand_real_value  : real;
-  variable check_ctr        : natural := 0;
-  variable exp_dur          : integer;
+test_proc:process
+    variable rand_real_value  : real;
+    variable check_ctr        : natural := 0;
+    variable nom_ctr          : natural := 0;
+    variable data_ctr         : natural := 0;
+    variable exp_dur          : integer;
+
+    -- Expected duration of Bit Rate shift bit 
+    variable exp_dur_BRS      : integer;
+
+    -- Expected duration of CRC delimiter
+    variable exp_dur_CRC_del  : integer;
+
+    variable tmp_text         : string (1 to 10) := "Nominal   ";
+
   begin
     log("Restarting Prescaler unit test!", info_l, log_level);
     wait for 5 ns;
@@ -480,38 +513,147 @@ end process;
       end if;
       wait for 0 ns;
       
-      -------------------------
-      --Set no synchronization
-      -------------------------
+      --------------------------------------------------------------------------
+      -- Check duration of default bit length without synchronisation
+      --------------------------------------------------------------------------
       sync_control  <= NO_SYNC;
-      for i in 1 to 20 loop
+      for i in 1 to 10 loop
+
+        -- Check distance between "SYNC" and "SAMPLE" trigger
         wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
         count_cycles_until(clk_sys, check_ctr, sample_nbt, sample_dbt);
         
         if (sp_control = NOMINAL_SAMPLE) then
-          exp_dur := (( (to_integer(unsigned(drv_ph1_nbt)) + 
-                         to_integer(unsigned(drv_prs_nbt)) + 1)
-                        *
-                        to_integer(unsigned(drv_tq_nbt))) + 1); 
-          if (check_ctr /= exp_dur) then
-            log("SYNC+PROP+PH1(Data) did not last expected time!",
-                 error_l, log_level);
-            process_error(main_err_ctr, error_beh, exit_imm);
-          end if;
+          exp_dur := ( (to_integer(unsigned(drv_ph1_nbt)) + 
+                        to_integer(unsigned(drv_prs_nbt)) + 1)
+                       *
+                       to_integer(unsigned(drv_tq_nbt)));
+          tmp_text := "Nominal   "; 
         else
-          exp_dur := (( ( to_integer(unsigned(drv_ph1_dbt)) + to_integer(unsigned(drv_prs_dbt)) +1) *
+          exp_dur := ( (to_integer(unsigned(drv_ph1_dbt)) +
+                        to_integer(unsigned(drv_prs_dbt)) + 1)
+                       *
                        to_integer(unsigned(drv_tq_dbt)) 
-                     ) +1
-                    );
-          if (check_ctr /= exp_dur) then
-            log("SYNC+PROP+PH1(Nominal) did not last expected time!",
-                 error_l, log_level);
-            process_error(main_err_ctr, error_beh, exit_imm);
-          end if;
+                      );
+          tmp_text := "Data      ";
         end if;
         
+        if (check_ctr /= exp_dur) then
+            log("SYNC+PROP+PH1 " & tmp_text & " did not last expected time!",
+                 error_l, log_level);
+            process_error(main_err_ctr, error_beh, exit_imm);
+        end if;
+        
+
+
+        -- Check distance between two consecutive "SYNC" triggers
+        -- (whole bit time)
+        wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
+        wait for 15 ns;
+        count_cycles_until(clk_sys, check_ctr, sync_nbt, sync_dbt);
+
+        if (sp_control = NOMINAL_SAMPLE) then
+            exp_dur := ((to_integer(unsigned(drv_prs_nbt)) +
+                         to_integer(unsigned(drv_ph1_nbt)) +
+                         to_integer(unsigned(drv_ph2_nbt)) + 1)
+                        *
+                        to_integer(unsigned(drv_tq_nbt)));
+            tmp_text := "Nominal   ";
+        else
+            exp_dur := ((to_integer(unsigned(drv_prs_dbt)) +
+                         to_integer(unsigned(drv_ph1_dbt)) +
+                         to_integer(unsigned(drv_ph2_dbt)) + 1)
+                        *
+                        to_integer(unsigned(drv_tq_dbt)));
+            tmp_text := "Data      ";
+        end if;
+
+        if (check_ctr /= exp_dur) then
+            log("SYNC+PROP+PH1+PH2 " & tmp_text & " did not last expected time!",
+                 error_l, log_level);
+            process_error(main_err_ctr, error_beh, exit_imm);
+        end if;
+
       end loop;
+
+
+      --------------------------------------------------------------------------
+      -- Test the duration of bits during bit-rate switching, to verify the
+      -- BRS compensation mechanism applied in Prescaler.
+      --------------------------------------------------------------------------
+      exp_dur_BRS := (to_integer(unsigned(drv_tq_nbt)) *
+                     (to_integer(unsigned(drv_prs_nbt)) + 
+                      to_integer(unsigned(drv_ph1_nbt)) + 1))
+                     +
+                     (to_integer(unsigned(drv_tq_dbt)) *
+                      to_integer(unsigned(drv_ph2_dbt)));
+
+      exp_dur_CRC_del := to_integer(unsigned(drv_tq_dbt)) *
+                         (to_integer(unsigned(drv_prs_dbt)) + 
+                          to_integer(unsigned(drv_ph1_dbt)) + 1)
+                         +
+                         (to_integer(unsigned(drv_tq_nbt)) *
+                          to_integer(unsigned(drv_ph2_nbt)));
       
+      log("Checking Bit-rate switch timing. ", info_l, log_level);
+
+      --------------------------------------------------------------------------
+      -- Emulate a BRS bit
+      --------------------------------------------------------------------------
+
+      -- Nominal Bit-rate part, count length between sync trigger and sample
+      -- trigger!
+      sp_control <= NOMINAL_SAMPLE;
+      wait until bt_FSM_out = ph2;
+      wait until falling_edge(clk_sys) and sync_nbt = '1';
+      count_cycles_until(clk_sys, nom_ctr, sample_nbt);
+
+      -- Delay before Sampling type switching as if caused by Protocol Control !
+      -- (three clock cycles)
+      wait until rising_edge(clk_sys);
+      wait until rising_edge(clk_sys);
+      wait until rising_edge(clk_sys);
+      sp_control <= DATA_SAMPLE;
+
+      -- Wait till the end of the bit time
+      count_cycles_until(clk_sys, data_ctr, sync_dbt);
+      
+      -- Check duration, count with two cycle delay.
+      if (exp_dur_BRS /= nom_ctr + data_ctr + 2) then
+            log("BRS bit length not as expected, " &
+                "Expected: " & integer'image(exp_dur_BRS) &
+                "Real: " & integer'image(nom_ctr + data_ctr + 2), 
+                 error_l, log_level);
+            process_error(main_err_ctr, error_beh, exit_imm);
+      end if;
+
+      --------------------------------------------------------------------------
+      -- Emulate CRC delimiter bit (as if switching back to Nominal data-rate)
+      --------------------------------------------------------------------------
+      wait until bt_FSM_out = ph2;
+      wait until falling_edge(clk_sys) and sync_dbt = '1';
+      count_cycles_until(clk_sys, data_ctr, sample_dbt);
+      
+      -- Delay three clock cycles again, as if caused by Protocol Control !
+      wait until rising_edge(clk_sys);
+      wait until rising_edge(clk_sys);
+      wait until rising_edge(clk_sys);
+      sp_control <= NOMINAL_SAMPLE;
+
+      -- Wait until the end of bit time
+      count_cycles_until(clk_sys, nom_ctr, sync_nbt);
+      
+      -- Check the duration
+      if (exp_dur_CRC_del /= nom_ctr + data_ctr + 2) then
+            log("CRC delimiter bit length not as expected, " &
+                "Expected: " & integer'image(exp_dur_CRC_del) &
+                "Real: " & integer'image(nom_ctr + data_ctr + 2), 
+                 error_l, log_level);
+            process_error(main_err_ctr, error_beh, exit_imm);
+      end if;
+      
+      wait until rising_edge(clk_sys);
+
       loop_ctr <= loop_ctr + 1;
     end loop;
     
@@ -549,7 +691,7 @@ begin
      iterations       =>  iterations , 
      log_level        =>  log_level,
      error_beh        =>  error_beh,
-     error_tol        =>  error_tol,                                                     
+     error_tol        =>  error_tol,
      status           =>  status_int,
      errors           =>  errors
   );
