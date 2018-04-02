@@ -506,7 +506,7 @@ test_proc:process
       -- Check duration of default bit length without synchronisation
       --------------------------------------------------------------------------
       sync_control  <= NO_SYNC;
-      for i in 1 to 10 loop
+      for i in 1 to 5 loop
 
         -- Check distance between "SYNC" and "SAMPLE" trigger
         wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
