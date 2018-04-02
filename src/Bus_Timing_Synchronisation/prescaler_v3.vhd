@@ -442,6 +442,62 @@ architecture rtl of prescaler_v3 is
         end if;
     end procedure;
 
+    ----------------------------------------------------------------------------
+    -- Positive resynchronisation
+    ----------------------------------------------------------------------------
+    procedure positive_resync(
+        signal bt_FSM           : in    bit_time_type;
+        signal bt_counter       : in    natural range 0 to 255;
+        signal sp_control       : in    std_logic_vector(1 downto 0);
+        signal prop_nbt         : in    natural range 0 to 127;
+        signal prop_dbt         : in    natural range 0 to 63;
+        signal ph1_nbt          : in    natural range 0 to 63;
+        signal ph1_dbt          : in    natural range 0 to 31;
+        signal sjw_nbt          : in    natural range 0 to 31;
+        signal sjw_dbt          : in    natural range 0 to 31;
+        signal tq_nbt           : in    natural range 0 to 255;
+        signal tq_dbt           : in    natural range 0 to 255;
+        signal ph1_real         : out   integer range -127 to 127
+    ) is
+        variable ph1_v          :       natural range 0 to 63;
+        variable sjw            :       natural range 0 to 31;
+        variable tq             :       integer range -127 to 127;
+        variable prop_v         :       natural range 0 to 127;
+    begin
+        if (sp_control = NOMINAL_SAMPLE) then
+            sjw           := sjw_nbt;
+            ph1_v         := ph1_nbt;
+            prop_v        := prop_nbt;
+        else
+            sjw           := sjw_dbt;
+            ph1_v         := ph1_dbt;
+            prop_v        := prop_dbt;
+        end if;
+
+        -- Resync edge came during PROP segment.
+        if (bt_FSM = prop) then
+
+            -- Resynchronisation bigger than SJW, allow max. SJW.
+            if (bt_counter > sjw) then
+                ph1_real    <= ph1_v + sjw;
+            else
+                ph1_real    <= ph1_v + bt_counter;
+            end if;
+        
+        -- Resync edge came during PH1 segment (still can, if PROP is very short
+        -- or resync is just very long...)
+        elsif (bt_FSM = ph1) then
+
+            -- Resync is longer than Synchronisation jump width, count with
+            -- the propagation segment which already elapsed!
+            if ((bt_counter + prop_v) > sjw) then
+                ph1_real    <= ph1_v + sjw;
+            else
+                ph1_real    <= ph1_v + bt_counter + prop_v;
+            end if;
+        end if;
+    end procedure;
+
 begin
   
   --Aliases from DRV_BUS to internal names
@@ -731,50 +787,16 @@ begin
                 negative_resync(bt_counter, sp_control, ph2_nbt, ph2_dbt,
                                 sjw_nbt, sjw_dbt, tq_nbt, tq_dbt, ph2_real);
 
-            -- Positive resynchronisation, transciever in data phase does not per-
-            -- form positive resynchronisation. Also when dominant bit was just
-            -- send on the bus, no positive resynchronization is performed
+            -- Positive resynchronisation
+            -- Transciever in data phase does not perform positive resynchro-
+            -- nisation. Also when dominant bit was just send on the bus, no 
+            -- positive resynchronization is performed.
             elsif ((data_tx = RECESSIVE) and
                (not (OP_State = transciever and sp_control = SECONDARY_SAMPLE)))
             then
-                if (bt_FSM = prop) then
-                    if (sp_control = NOMINAL_SAMPLE) then
-
-                        if (bt_counter > sjw_nbt) then
-                            ph1_real <= ph1_nbt + sjw_nbt;
-                        else
-                            ph1_real <= ph1_nbt + bt_counter;
-                        end if;
-
-                    else
-
-                        if (bt_counter > sjw_dbt) then
-                            ph1_real <= ph1_dbt + sjw_dbt;
-                        else
-                            ph1_real <= ph1_dbt + bt_counter;
-                        end if;
-
-                    end if;
-
-                elsif (bt_FSM = ph1) then
-                    if (sp_control = NOMINAL_SAMPLE) then
-
-                        if (bt_counter + ph1_nbt > sjw_nbt) then
-                            ph1_real <= ph1_nbt + sjw_nbt;
-                        else
-                            ph1_real <= ph1_nbt + bt_counter;
-                        end if;
-
-                    else
-
-                        if (bt_counter + ph1_dbt > sjw_dbt) then
-                            ph1_real <= ph1_dbt + sjw_dbt;
-                        else
-                            ph1_real <= ph1_dbt + bt_counter;
-                        end if;
-
-                    end if; 
-                end if;
+                positive_resync(bt_FSM, bt_counter, sp_control, prs_nbt, prs_dbt,
+                                ph1_nbt, ph1_dbt, sjw_nbt, sjw_dbt,
+                                tq_nbt, tq_dbt, ph1_real);
             end if; 
         end if;
         
