@@ -369,6 +369,79 @@ architecture rtl of prescaler_v3 is
         sp_control  <= sp_control_pres;
     end procedure;
 
+    ----------------------------------------------------------------------------
+    -- Negative resynchronisation
+    -- TODO: Check if here we could not shorten IPT to 3!!!
+    ----------------------------------------------------------------------------
+    procedure negative_resync(
+        signal bt_counter       : in    natural range 0 to 255;
+        signal sp_control       : in    std_logic_vector(1 downto 0);
+        signal ph2_nbt          : in    natural range 0 to 63;
+        signal ph2_dbt          : in    natural range 0 to 31;
+        signal sjw_nbt          : in    natural range 0 to 31;
+        signal sjw_dbt          : in    natural range 0 to 31;
+        signal tq_nbt           : in    natural range 0 to 255;
+        signal tq_dbt           : in    natural range 0 to 255;
+        signal ph2_real         : out   integer range -127 to 127
+    ) is
+        variable ph2            :       natural range 0 to 63;
+        variable sjw            :       natural range 0 to 31;
+        variable tq             :       integer range -127 to 127;
+        variable ph2_min_sjw    :       natural range 0 to 63;
+        variable ipt_ok         :       boolean;
+    begin
+        if (sp_control = NOMINAL_SAMPLE) then
+            ph2             := ph2_nbt;
+            sjw             := sjw_nbt;
+            tq              := tq_nbt;
+        else
+            ph2             := ph2_dbt;
+            sjw             := sjw_dbt;
+            tq              := tq_dbt;
+        end if;
+        ph2_min_sjw         := ph2 - sjw;
+
+        -- First check If information processing time is not corrupted
+        if ((tq = 1 and bt_counter < 4) or
+            ((tq = 2 or tq = 3) and bt_counter < 2))
+        then
+            ipt_ok  := false;
+        else
+            ipt_ok  := true;
+        end if;
+
+        -- The edge did not come during the Information processing time
+        if (ipt_ok) then
+
+            -- Resynchronisation is bigger than synchronisation jump width,
+            -- resynchronize only up to maximum of SJW.
+            if (bt_counter < ph2_min_sjw) then
+                ph2_real    <= ph2_min_sjw;
+
+            -- Resynchronisation is smaller than synchronisation jump width,
+            -- finish the Bit in the next Time quantum!
+            else
+                ph2_real    <= bt_counter;
+            end if;
+        
+        -- The edge did come during Information processing time, should 
+        -- shorten min to 4 clock cycles, but not more than SJW!
+        else
+            -- SJW setting does corrupt IPT, does not shorten to less than IPT!
+            if (ph2_min_sjw < 4) then
+                if (tq = 1) then
+                    ph2_real    <= 4;
+                else
+                    ph2_real    <= 2;
+                end if;
+            
+            -- SJW does not corrupt IPT, shorten max to SJW!
+            else
+                ph2_real        <= ph2_min_sjw;
+            end if;
+        end if;
+    end procedure;
+
 begin
   
   --Aliases from DRV_BUS to internal names
@@ -655,111 +728,54 @@ begin
           
             -- Negative resynchronisation
             if (bt_FSM = ph2) then
-            
-                if (sp_control = NOMINAL_SAMPLE) then
-             
-                    if (bt_counter < (ph2_nbt - sjw_nbt)) then
-                        -- Resync bigger than SJW, resync. max SJW
-                        ph2_real <= ph2_nbt - sjw_nbt;
-                    else
-                        -- Resync smaller than SJW
-                        if (bt_counter * tq_nbt < 4) then 
-                            --We have to check for minimal information processing time 
-                            --(4 clock cycles) Thus if we get here we cant quit PH2 imme-
-                            --diately otherwise we woud miss some of the sampling signals!
-                            --So we shorten PH2 only to its minimal possible length. The 
-                            -- length is dependent on time quantum duration
-                            if (tq_nbt = 1) then --Presc=1
-                                --This is only case not according to specification
-                                ph2_real <= 4;
-                            elsif (tq_nbt = 2) then -- Presc=2
-                                ph2_real <= 2;
-                            elsif (tq_nbt = 3) then -- Presc 3
-                                ph2_real <= 2;
-                            else
-                                ph2_real <= 1;
-                            end if;
+                negative_resync(bt_counter, sp_control, ph2_nbt, ph2_dbt,
+                                sjw_nbt, sjw_dbt, tq_nbt, tq_dbt, ph2_real);
+
+            -- Positive resynchronisation, transciever in data phase does not per-
+            -- form positive resynchronisation. Also when dominant bit was just
+            -- send on the bus, no positive resynchronization is performed
+            elsif ((data_tx = RECESSIVE) and
+               (not (OP_State = transciever and sp_control = SECONDARY_SAMPLE)))
+            then
+                if (bt_FSM = prop) then
+                    if (sp_control = NOMINAL_SAMPLE) then
+
+                        if (bt_counter > sjw_nbt) then
+                            ph1_real <= ph1_nbt + sjw_nbt;
                         else
-                            -- This causes finish of ph2 in next time quantum
-                            ph2_real <= bt_counter;
+                            ph1_real <= ph1_nbt + bt_counter;
                         end if;
-                    end if;
-            
-                else
-               
-                    if (bt_counter < (ph2_dbt - sjw_dbt)) then
-                        ph2_real <= ph2_dbt - sjw_dbt;
+
                     else
-                        -- Resync smaller than SJW
-                        if (bt_counter * tq_dbt < 4) then 
-                            --We have to check for minimal information processing time 
-                            --(4 clock cycles) Thus if we get here we cant quit PH2 imme-
-                            --diately otherwise we woud miss some of the sampling signals!
-                            --So we shorten PH2 only to its minimal possible length. The 
-                            --length is dependent on time quantum duration
-                            if (tq_dbt = 1) then --Presc=1
-                                -- This is only case not according to specification
-                                ph2_real <= 4;
-                            elsif (tq_dbt = 2) then --Presc=2
-                                ph2_real <= 2;
-                            elsif (tq_dbt = 3) then --Presc 3
-                                ph2_real <= 2;
-                            else
-                                ph2_real <= 1;
-                            end if;
+
+                        if (bt_counter > sjw_dbt) then
+                            ph1_real <= ph1_dbt + sjw_dbt;
                         else
-                            -- This causes finish of ph2 in next time quantum
-                            ph2_real <= bt_counter;
+                            ph1_real <= ph1_dbt + bt_counter;
                         end if;
+
+                    end if;
+
+                elsif (bt_FSM = ph1) then
+                    if (sp_control = NOMINAL_SAMPLE) then
+
+                        if (bt_counter + ph1_nbt > sjw_nbt) then
+                            ph1_real <= ph1_nbt + sjw_nbt;
+                        else
+                            ph1_real <= ph1_nbt + bt_counter;
+                        end if;
+
+                    else
+
+                        if (bt_counter + ph1_dbt > sjw_dbt) then
+                            ph1_real <= ph1_dbt + sjw_dbt;
+                        else
+                            ph1_real <= ph1_dbt + bt_counter;
+                        end if;
+
+                    end if; 
                 end if;
-            
-            end if;     
-          
-        -- Positive resynchronisation, transciever in data phase does not per-
-        -- form positive resynchronisation. Also when dominant bit was just
-        -- send on the bus, no positive resynchronization is performed
-        elsif ((data_tx = RECESSIVE) and
-               (not(OP_State = transciever and sp_control = SECONDARY_SAMPLE)))
-        then
-            if (bt_FSM = prop) then
-                if (sp_control = NOMINAL_SAMPLE) then
-
-                    if (bt_counter > sjw_nbt) then
-                        ph1_real <= ph1_nbt + sjw_nbt;
-                    else
-                        ph1_real <= ph1_nbt + bt_counter;
-                    end if;
-
-                else
-
-                    if (bt_counter > sjw_dbt) then
-                        ph1_real <= ph1_dbt + sjw_dbt;
-                    else
-                        ph1_real <= ph1_dbt + bt_counter;
-                    end if;
-
-                end if;
-
-            elsif (bt_FSM = ph1) then
-                if (sp_control = NOMINAL_SAMPLE) then
-
-                    if (bt_counter + ph1_nbt > sjw_nbt) then
-                        ph1_real <= ph1_nbt + sjw_nbt;
-                    else
-                        ph1_real <= ph1_nbt + bt_counter;
-                    end if;
-
-                else
-
-                    if (bt_counter + ph1_dbt > sjw_dbt) then
-                        ph1_real <= ph1_dbt + sjw_dbt;
-                    else
-                        ph1_real <= ph1_dbt + bt_counter;
-                    end if;
-
-                end if; 
-            end if;
-        end if; 
+            end if; 
         end if;
         
         case bt_FSM is
