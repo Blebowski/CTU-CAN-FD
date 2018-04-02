@@ -132,7 +132,7 @@ architecture presc_unit_test of CAN_test is
                                       (OTHERS => '0'), (OTHERS => '0'));
 
     signal trig_signals         :   presc_triggers_type;
-    constant  inf_proc_time     :   natural := 4; --Information processing time
+    constant  inf_proc_time     :   natural := 3; --Information processing time
     signal clock_counter        :   natural := 0;
     
     --Additional error counters
@@ -366,11 +366,11 @@ end process;
  trig_coherency_proc : process
  variable was_sync : boolean := false;
  begin
-  if (sp_control = NOMINAL_SAMPLE) then
     wait until falling_edge(clk_sys) and 
-                (sync_nbt = '1' or sample_nbt = '1');
+                (sync_nbt = '1' or sample_nbt = '1' or
+                 sync_dbt = '1' or sample_dbt = '1');
     
-    if (sync_nbt = '1') then
+    if (sync_nbt = '1' or sync_dbt = '1') then
       
       -- Here error occures due to two consecutive sync signals
       if (was_sync = true) then
@@ -379,7 +379,7 @@ end process;
       end if; 
       was_sync := true;
       
-    elsif (sample_nbt = '1') then
+    elsif (sample_nbt = '1' or sample_dbt = '1') then
       
       -- Here error occures due to two consecutive sample signals
       if (was_sync = false) then
@@ -389,33 +389,6 @@ end process;
       was_sync := false;
       
     end if;
-  
-  elsif (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE) then
-    
-    wait until falling_edge(clk_sys) and
-                (sync_dbt = '1' or sample_dbt = '1');
-    
-    if (sync_dbt = '1') then
-      
-      -- Here error occures due to two consecutive sync signals
-      if (was_sync = true) then
-        log("Two consecutive sync signals!", error_l, log_level);
-        process_error(coh_err_ctr, error_beh, exit_imm_3);
-      end if;
-      was_sync := true;
-      
-    elsif (sample_dbt = '1') then
-      
-      -- Here error occures due to two consecutive sample signals
-      if (was_sync = false) then
-        log("Two consecutive sample signals!", error_l, log_level);
-        process_error(coh_err_ctr, error_beh, exit_imm_3);
-      end if;
-      was_sync := false;
-      
-    end if;
-
-  end if;
 end process; 
 
 
@@ -507,7 +480,9 @@ test_proc:process
     loop
       log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
       
-      -- Generates random bit time settings
+      -- Generates random bit time settings for new bits.
+      wait until bt_FSM_out = ph2;
+      wait until bt_FSM_out = sync;
       gen_bit_time_setting(rand_ctr, setting); 
       
       -- Sets random sampling
@@ -517,7 +492,15 @@ test_proc:process
       else
         sp_control <= NOMINAL_SAMPLE;
       end if;
-      wait for 0 ns;
+     
+      -- After applying the Bit time settings the first bit can be fucked up
+      -- due to register updates. Wait for a bit which starts with clean new
+      -- timing set properly (tq_edge update takes one clock cycle, thus it
+      -- can happend that SYNC will last only one clock cycle instead of one
+      -- time quanta). Note that Bit Timing does not have to be changed during
+      -- the bit duration, but is set only once at controller configuration!
+      wait until bt_FSM_out = ph2;
+      wait until bt_FSM_out = sync;
       
       --------------------------------------------------------------------------
       -- Check duration of default bit length without synchronisation
