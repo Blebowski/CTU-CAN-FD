@@ -551,48 +551,47 @@ begin
   --------------------------------
   --Time quantum counter process--
   --------------------------------
-  tq_process:process(clk_sys,res_n)
+  tq_process : process(clk_sys, res_n)
   begin
-  if(res_n=ACT_RESET)then
-    tq_counter      <=  1;
-    clk_tq_nbt_r    <=  '0';
-    clk_tq_dbt_r    <=  '0';
-    prev_tq_val     <=  '0';
-  elsif rising_edge(clk_sys)then
+    if (res_n = ACT_RESET) then
+        tq_counter      <=  1;
+        clk_tq_nbt_r    <=  '0';
+        clk_tq_dbt_r    <=  '0';
+        prev_tq_val     <=  '0';
+    elsif rising_edge(clk_sys) then
     
-    if(sp_control=NOMINAL_SAMPLE) then 
-      prev_tq_val   <=  clk_tq_nbt_r; 
-    else 
-      prev_tq_val   <=  clk_tq_dbt_r; 
-    end if;
+        if (sp_control = NOMINAL_SAMPLE) then 
+            prev_tq_val   <=  clk_tq_nbt_r; 
+        else 
+            prev_tq_val   <=  clk_tq_dbt_r; 
+        end if;
     
-    --Time quantum counter
-    if(tq_counter<tq_dur)then
-        tq_counter  <=  tq_counter+1;
-    else
-        tq_counter  <=  1; 
-    end if;
+        -- Time quantum counter
+        if (tq_counter < tq_dur) then
+            tq_counter  <=  tq_counter + 1;
+        else
+            tq_counter  <=  1; 
+        end if;
     
-    --Note:Check if barrel Shifter is used for division by 2, 
-    --if no then manually shift the indices
-    if(tq_counter<tq_dur/2)then
+        if (tq_counter < (tq_dur / 2)) then
       
-      if(sp_control=NOMINAL_SAMPLE) then 
-        clk_tq_nbt_r  <=  '1'; 
-      else 
-        clk_tq_nbt_r  <=  '0'; 
-      end if;
-      if((sp_control=DATA_SAMPLE) or (sp_control=SECONDARY_SAMPLE))then 
-        clk_tq_dbt_r  <=  '1'; 
-      else 
-        clk_tq_dbt_r  <=  '0'; 
-      end if;
-    
-    else
-      clk_tq_nbt_r    <=  '0';
-      clk_tq_dbt_r    <=  '0';
-    end if;
-    
+            if (sp_control = NOMINAL_SAMPLE) then 
+                clk_tq_nbt_r  <=  '1'; 
+            else 
+                clk_tq_nbt_r  <=  '0'; 
+            end if;
+
+            if ((sp_control = DATA_SAMPLE) or
+                (sp_control = SECONDARY_SAMPLE))
+            then
+                clk_tq_dbt_r  <=  '1'; 
+            else 
+                clk_tq_dbt_r  <=  '0'; 
+            end if;
+        else
+            clk_tq_nbt_r    <=  '0';
+            clk_tq_dbt_r    <=  '0';
+        end if;
   end if;
   end process;
 
