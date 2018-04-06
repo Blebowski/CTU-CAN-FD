@@ -115,16 +115,16 @@ end record;
 --Prescaler types
 -----------------------------------------------------------------------------------------
 type presc_drv_type is record
-     drv_tq_nbt           :   std_logic_vector (5 downto 0); 
-     drv_tq_dbt           :   std_logic_vector (5 downto 0); 
-     drv_prs_nbt          :   std_logic_vector (5 downto 0); 
+     drv_tq_nbt           :   std_logic_vector (7 downto 0); 
+     drv_tq_dbt           :   std_logic_vector (7 downto 0); 
+     drv_prs_nbt          :   std_logic_vector (6 downto 0); 
      drv_ph1_nbt          :   std_logic_vector (5 downto 0);  
      drv_ph2_nbt          :   std_logic_vector (5 downto 0); 
-     drv_prs_dbt          :   std_logic_vector (3 downto 0); 
-     drv_ph1_dbt          :   std_logic_vector (3 downto 0);  
-     drv_ph2_dbt          :   std_logic_vector (3 downto 0); 
-     drv_sjw_nbt          :   std_logic_vector(3 downto 0); 
-     drv_sjw_dbt          :   std_logic_vector(3 downto 0); 
+     drv_prs_dbt          :   std_logic_vector (5 downto 0); 
+     drv_ph1_dbt          :   std_logic_vector (4 downto 0);  
+     drv_ph2_dbt          :   std_logic_vector (4 downto 0); 
+     drv_sjw_nbt          :   std_logic_vector(4 downto 0); 
+     drv_sjw_dbt          :   std_logic_vector(4 downto 0); 
 end record;
 
 type presc_triggers_type is record
@@ -463,6 +463,24 @@ procedure generate_trig(
   subtype trv_del_type is anat_nc_t;
   subtype timing_config_t is anat_t(1 to 10);
   
+  
+  
+  ------------------------------------------------------------------------------
+  -- Component declarations
+  ------------------------------------------------------------------------------  
+  component CAN_test is
+    port (
+      signal run            :in   boolean;                -- Input trigger, test starts running when true
+      signal iterations     :in   natural;                -- Number of iterations that test should do
+      signal log_level      :in   log_lvl_type;           -- Logging level, severity which should be shown
+      signal error_beh      :in   err_beh_type;           -- Test behaviour when error occurs: Quit, or Go on
+      signal error_tol      :in   natural;                -- Error tolerance, error counter should not
+                                                           -- exceed this value in order for the test to pass
+      signal status         :out  test_status_type;      -- Status of the test
+      signal errors         :out  natural                -- Amount of errors which appeared in the test
+      --TODO: Error log results 
+    );
+    end component;
   
 end package;
 

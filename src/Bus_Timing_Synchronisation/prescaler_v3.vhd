@@ -105,16 +105,33 @@
 --                During the bit where bit rate switch occured.
 --    13.03.2018  Modified bit phases length to have more options in SW settings
 --                of bit-timings.
+--    1.4.2018    1. Changed trigger signals generation from clocked to combina-
+--                   tional. Thisway sample point can be truly generated between
+--                   PH1 and PH2.
+--                2. Changed Bit-rate shift compensation to two counters solution.
+--                   Added "ph2_extra" which calculates value to be set on the
+--                   extra counter (by DSP device). Extra counter is set during
+--                   transition to PH2, and PH2 finishes when either original
+--                   "bt_counter" expires and bit-rate shift did no occur or
+--                   when "bt_counter_sw" expires and bit-rate was shifted.
+--                   Note that with this solution there is no resynchronisation
+--                   occuring during BRS bit!
+--    6.4.2018    1. Added "ipt_counter" which is set to 3 at PH1 to PH2 shift!
+--                   PH2 will only end if "bt_counter" has expired. This counter
+--                   makes it simpler to set "ph2_real" during resynchronisation
+--                   edge.
+--                2. Added "brs_resync" to cover resynchronisation during bits
+--                   where bit-rate is shifted! In these two bits SJW is ignored
+--                   and up to IPT resynchronisation is allowed on PH2!
 --------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
-use work.brs_comp_package.all;
 
 entity prescaler_v3 is
-  PORT(
+    PORT(
     ------------------------
     --Clock and async reset-
     ------------------------
@@ -253,6 +270,11 @@ entity prescaler_v3 is
   --Bit time counter
   signal bt_counter             :   natural range 0 to 255;
   
+  -- Secondary counter for duration of PH2 after bit-rate switch
+  -- (Counting in clock cycles, not Time Quantas)
+  -- 13 bit counter (8 bit prescaler + 5 bit max length of Ph2 + 1)
+  signal bt_counter_sw          :   natural range 0 to 16383;
+
   --Hard synchronisation appeared
   signal hard_sync_valid        :   std_logic;
   
@@ -274,8 +296,24 @@ entity prescaler_v3 is
   signal sync_nbt_del_1_r       :   std_logic;
   signal sync_dbt_del_1_r       :   std_logic;
   
-  signal sp_control_reg         :   std_logic_vector(1 downto 0);
+  signal sp_control_stored      :   std_logic_vector(1 downto 0);
+
+  -- Auxiliarly signals for internal decoders
+  signal switch_ph1_to_ph2      :   boolean;
+  signal switch_ph2_to_sync     :   boolean;
+  signal prop_non_zero          :   boolean;
+  signal ph1_non_zero           :   boolean;
+  signal switch_prop_to_ph1     :   boolean;
   
+  -- Special triggering signals
+  signal sync_trig_spec         :   std_logic;
+  signal sample_trig_spec       :   std_logic;
+
+  -- Auxiliarly signal for detection which counter should be used for
+  -- finish of PH2 in case of Bit-rate shift
+  signal use_default_ctr        :   boolean;
+  signal use_spec_ctr           :   boolean;
+ 
   ---------------------
   --Internal aliases --
   ---------------------
@@ -287,18 +325,179 @@ entity prescaler_v3 is
   --Bit time type --
   ------------------
   signal bt_FSM                 :   bit_time_type;
+  signal bt_FSM_del             :   bit_time_type;
   signal is_tran_trig           :   boolean;
  
-	--Duration of ph1 segment after synchronisation
+  --Duration of ph1 segment after re-synchronisation
   signal ph1_real               :   integer range -127 to 127;
   
   --Duration of ph2 segment after synchronisation
   signal ph2_real               :   integer range -127 to 127;
-  
+
+  --Length to be set on secondary counter (post switching)
+  signal ph2_extra              :   natural range 0 to 16383;
+
+  -- During BRS bit we still have to resynchronise. Since extra counter is 
+  -- not compared with "ph2_real", we have to mark that resync edge came!
+  signal brs_resync             :   boolean;
+
+  -- Information processing time counter to avoid re-synchronisation to be too
+  -- short! It takes 3 clock cycles to process the data after sample point!
+  -- Can't shorten the PH2 to less than 3 cycles. 
+  signal ipt_counter            :   natural range 0 to 3;
+  signal ipt_ok                 :   boolean;
+
+  -- It takes 3 clock cycles to determine following bus value after sample point
+  -- during this time, the bit can't end!
+  constant INFORMATION_PROCESSING_TIME : natural := 3;
+
 end entity;
 
 
 architecture rtl of prescaler_v3 is
+    
+    ----------------------------------------------------------------------------
+    -- Generates either receive (sample) or transceive (sync) triggering signal
+    -- based on sample type.
+    ----------------------------------------------------------------------------
+    procedure generate_trig(
+        signal sample_type          : in std_logic_vector(1 downto 0);
+        signal nbt_trig             : out std_logic;
+        signal dbt_trig             : out std_logic
+    ) is
+    begin
+        if (sample_type = NOMINAL_SAMPLE) then
+            nbt_trig    <= '1';
+            dbt_trig    <= '0';
+        
+        -- DATA_SAMPLE as well as SAMPLE_SEC covered
+        else
+            nbt_trig    <= '0';
+            dbt_trig    <= '1';
+        end if;  
+    end procedure;
+
+    ----------------------------------------------------------------------------
+    -- Presetting extra counters related to switch between PH1 and PH2.
+    -- Following counters are set:
+    --  1. Counter which assumes that bit-rate was shifted and counts clock
+    --     cycles as if "post-switch".
+    --  2. Information processing time counter which is set to 3 and counts to
+    --     0. If zero is reached, resynchronisation is allowed, not sonner,
+    --     otherwise bit would end earlier than processed by Protocol Control!
+    ----------------------------------------------------------------------------
+    procedure set_extra_counters(
+        signal brs_counter      : out natural range 0 to 16383;
+        signal ctr_pres         : in  natural range 0 to 16383;
+        signal sp_control       : out std_logic_vector(1 downto 0);
+        signal sp_control_pres  : in  std_logic_vector(1 downto 0);
+        signal ipt_counter      : out natural range 0 to 3
+    ) is
+    begin
+        brs_counter     <= ctr_pres;
+        sp_control      <= sp_control_pres;
+        ipt_counter     <= INFORMATION_PROCESSING_TIME;
+    end procedure;
+
+    ----------------------------------------------------------------------------
+    -- Negative resynchronisation
+    ----------------------------------------------------------------------------
+    procedure negative_resync(
+        signal bt_counter           : in    natural range 0 to 255;
+        signal sp_control           : in    std_logic_vector(1 downto 0);
+        signal ph2_nbt              : in    natural range 0 to 63;
+        signal ph2_dbt              : in    natural range 0 to 31;
+        signal sjw_nbt              : in    natural range 0 to 31;
+        signal sjw_dbt              : in    natural range 0 to 31;
+        signal tq_nbt               : in    natural range 0 to 255;
+        signal tq_dbt               : in    natural range 0 to 255;
+        signal ph2_real             : out   integer range -127 to 127
+    ) is
+        variable ph2                :       natural range 0 to 63;
+        variable sjw                :       natural range 0 to 31;
+        variable tq                 :       integer range -127 to 127;
+        variable ph2_min_sjw        :       natural range 0 to 63;
+    begin
+        if (sp_control = NOMINAL_SAMPLE) then
+            ph2             := ph2_nbt;
+            sjw             := sjw_nbt;
+            tq              := tq_nbt;
+        else
+            ph2             := ph2_dbt;
+            sjw             := sjw_dbt;
+            tq              := tq_dbt;
+        end if;
+        ph2_min_sjw         := ph2 - sjw;
+
+        -- Resynchronisation is bigger than synchronisation jump width,
+        -- resynchronize only up to maximum of SJW.
+        if (bt_counter < ph2_min_sjw) then
+            ph2_real    <= ph2_min_sjw;
+
+        -- Resynchronisation is smaller than synchronisation jump width,
+        -- finish the Bit in the next Time quantum!
+        else
+            ph2_real    <= bt_counter;
+        end if;
+
+    end procedure;
+
+    ----------------------------------------------------------------------------
+    -- Positive resynchronisation
+    ----------------------------------------------------------------------------
+    procedure positive_resync(
+        signal bt_FSM           : in    bit_time_type;
+        signal bt_counter       : in    natural range 0 to 255;
+        signal sp_control       : in    std_logic_vector(1 downto 0);
+        signal prop_nbt         : in    natural range 0 to 127;
+        signal prop_dbt         : in    natural range 0 to 63;
+        signal ph1_nbt          : in    natural range 0 to 63;
+        signal ph1_dbt          : in    natural range 0 to 31;
+        signal sjw_nbt          : in    natural range 0 to 31;
+        signal sjw_dbt          : in    natural range 0 to 31;
+        signal tq_nbt           : in    natural range 0 to 255;
+        signal tq_dbt           : in    natural range 0 to 255;
+        signal ph1_real         : out   integer range -127 to 127
+    ) is
+        variable ph1_v          :       natural range 0 to 63;
+        variable sjw            :       natural range 0 to 31;
+        variable tq             :       integer range -127 to 127;
+        variable prop_v         :       natural range 0 to 127;
+    begin
+        if (sp_control = NOMINAL_SAMPLE) then
+            sjw           := sjw_nbt;
+            ph1_v         := ph1_nbt;
+            prop_v        := prop_nbt;
+        else
+            sjw           := sjw_dbt;
+            ph1_v         := ph1_dbt;
+            prop_v        := prop_dbt;
+        end if;
+
+        -- Resync edge came during PROP segment.
+        if (bt_FSM = prop) then
+
+            -- Resynchronisation bigger than SJW, allow max. SJW.
+            if (bt_counter > sjw) then
+                ph1_real    <= ph1_v + sjw;
+            else
+                ph1_real    <= ph1_v + bt_counter;
+            end if;
+        
+        -- Resync edge came during PH1 segment (still can, if PROP is very short
+        -- or resync is just very long...)
+        elsif (bt_FSM = ph1) then
+
+            -- Resync is longer than Synchronisation jump width, count with
+            -- the propagation segment which already elapsed!
+            if ((bt_counter + prop_v) > sjw) then
+                ph1_real    <= ph1_v + sjw;
+            else
+                ph1_real    <= ph1_v + bt_counter + prop_v;
+            end if;
+        end if;
+    end procedure;
+
 begin
   
   --Aliases from DRV_BUS to internal names
@@ -352,389 +551,435 @@ begin
   --------------------------------
   --Time quantum counter process--
   --------------------------------
-  tq_process:process(clk_sys,res_n)
+  tq_process : process(clk_sys, res_n)
   begin
-  if(res_n=ACT_RESET)then
-    tq_counter      <=  1;
-    clk_tq_nbt_r    <=  '0';
-    clk_tq_dbt_r    <=  '0';
-    prev_tq_val     <=  '0';
-  elsif rising_edge(clk_sys)then
+    if (res_n = ACT_RESET) then
+        tq_counter      <=  1;
+        clk_tq_nbt_r    <=  '0';
+        clk_tq_dbt_r    <=  '0';
+        prev_tq_val     <=  '0';
+    elsif rising_edge(clk_sys) then
     
-    if(sp_control=NOMINAL_SAMPLE) then 
-      prev_tq_val   <=  clk_tq_nbt_r; 
-    else 
-      prev_tq_val   <=  clk_tq_dbt_r; 
-    end if;
+        if (sp_control = NOMINAL_SAMPLE) then 
+            prev_tq_val   <=  clk_tq_nbt_r; 
+        else 
+            prev_tq_val   <=  clk_tq_dbt_r; 
+        end if;
     
-    --Time quantum counter
-    if(tq_counter<tq_dur)then
-        tq_counter  <=  tq_counter+1;
-    else
-        tq_counter  <=  1; 
-    end if;
+        -- Time quantum counter
+        if (tq_counter < tq_dur) then
+            tq_counter  <=  tq_counter + 1;
+        else
+            tq_counter  <=  1; 
+        end if;
     
-    --Note:Check if barrel Shifter is used for division by 2, 
-    --if no then manually shift the indices
-    if(tq_counter<tq_dur/2)then
+        if (tq_counter < (tq_dur / 2)) then
       
-      if(sp_control=NOMINAL_SAMPLE) then 
-        clk_tq_nbt_r  <=  '1'; 
-      else 
-        clk_tq_nbt_r  <=  '0'; 
-      end if;
-      if((sp_control=DATA_SAMPLE) or (sp_control=SECONDARY_SAMPLE))then 
-        clk_tq_dbt_r  <=  '1'; 
-      else 
-        clk_tq_dbt_r  <=  '0'; 
-      end if;
-    
-    else
-      clk_tq_nbt_r    <=  '0';
-      clk_tq_dbt_r    <=  '0';
-    end if;
-    
+            if (sp_control = NOMINAL_SAMPLE) then 
+                clk_tq_nbt_r  <=  '1'; 
+            else 
+                clk_tq_nbt_r  <=  '0'; 
+            end if;
+
+            if ((sp_control = DATA_SAMPLE) or
+                (sp_control = SECONDARY_SAMPLE))
+            then
+                clk_tq_dbt_r  <=  '1'; 
+            else 
+                clk_tq_dbt_r  <=  '0'; 
+            end if;
+        else
+            clk_tq_nbt_r    <=  '0';
+            clk_tq_dbt_r    <=  '0';
+        end if;
   end if;
   end process;
+
+
+  ------------------------------------------------------------------------------
+  -- Calculating length to be preset to the extra PH2 counter
+  -- This can be clocked, since before sample point there is enough cycles
+  -- to have the value stable.
+  -- Multiplier is assumed to be automatically inferred to DSP, MAC device!
+  -- This should consume two DSP devices, and it should fit within both Altera
+  -- and Xilinx DSP, MAC units!
+  ------------------------------------------------------------------------------
+  extra_ctr_calc_proc : process(res_n, clk_sys)
+  begin
+    if (res_n = ACT_RESET) then
+        ph2_extra   <= 0;
+    elsif (rising_edge(clk_sys)) then
+        
+        -- Value into extra counter will be always taken during PH1 to PH2
+        -- switch. We assume that bit-rate switch will occur, and use the
+        -- oposite bit-rate as during PH1!
+        if (sp_control = NOMINAL_SAMPLE) then
+            ph2_extra   <= tq_dbt * ph2_dbt;
+        else
+            ph2_extra   <= tq_nbt * ph2_nbt;
+        end if;
+
+    end if;
+  end process;
+
+  ------------------------------------------------------------------------------
+  -- Deciding which counter to use during PH2 to SYNC switch in case of
+  -- bit-rate shift
+  ------------------------------------------------------------------------------
+  use_default_ctr   <= true when ((sp_control = NOMINAL_SAMPLE) and
+                                  (sp_control_stored = NOMINAL_SAMPLE))
+                                 or
+                                  ((sp_control = DATA_SAMPLE or
+                                    sp_control = SECONDARY_SAMPLE)
+                                   and
+                                   (sp_control_stored = DATA_SAMPLE or
+                                    sp_control_stored = SECONDARY_SAMPLE))
+                            else
+                      false;
+
+  use_spec_ctr      <= not use_default_ctr;
+
   
-  --New time quantum period detection
+  ------------------------------------------------------------------------------
+  -- New time quantum period detection
+  ------------------------------------------------------------------------------
   tq_edge <= '1'  when (sp_control=NOMINAL_SAMPLE) and (drv_tq_nbt="00000001") else
              '1'  when (sp_control=DATA_SAMPLE) and (drv_tq_dbt="00000001") else
              '1'  when (tq_counter=1) else
              '0';
-             
-  bt_proc:process(clk_sys,res_n)
+
+
+    ----------------------------------------------------------------------------
+    -- Combinational decoder for Bit time state changes
+    ----------------------------------------------------------------------------
+    switch_ph1_to_ph2 <= true when ((bt_counter = ph1_real) or
+                                    (bt_counter > ph1_real))
+                              else
+                         false;
+
+    -- Note that we should not have to wait for finish of the sampling signals
+    -- since, negative resynchronisation is not allowed to shorten ph2 to less
+    -- than Information processing time!
+    switch_ph2_to_sync <= true when ((bt_counter = ph2_real) or
+                                     (bt_counter > ph2_real))
+                               else
+                          false;
+    
+    prop_non_zero      <= true when ((sp_control = NOMINAL_SAMPLE) and
+                                      (prs_nbt > 0))
+                                     or
+                                     ((sp_control = DATA_SAMPLE or
+                                       sp_control = SECONDARY_SAMPLE) and
+                                      (prs_dbt > 0))
+                                else
+                          false;
+
+    ph1_non_zero       <= true when ((sp_control = NOMINAL_SAMPLE) and
+                                      (ph1_nbt > 0))
+                                     or
+                                     ((sp_control = DATA_SAMPLE or
+                                       sp_control = SECONDARY_SAMPLE) and
+                                      (ph1_dbt > 0))
+                                else
+                          false;
+    
+    -- Note that bt_counter can be only compared on equality since length
+    -- of propagation segment is not affected by resynchronisation.
+    switch_prop_to_ph1   <= true when ((sp_control = NOMINAL_SAMPLE) and
+                                       (bt_counter = prs_nbt))
+                                      or
+                                      ((sp_control = DATA_SAMPLE or
+                                        sp_control = SECONDARY_SAMPLE) and
+                                       (bt_counter = prs_dbt))
+                                 else
+                            false;
+
+    -- When Information processing time counter expires, it is OK to shift
+    -- the bit-rate!
+    ipt_ok               <= true when ipt_counter = 0 else
+                            false;
+
+    ----------------------------------------------------------------------------
+    -- Triggering signals decoders
+    -- Decoded commbinationally to truly sample between PH1 and PH2!
+    ----------------------------------------------------------------------------
+    sync_nbt_r        <= '1' when (((sp_control  = NOMINAL_SAMPLE) and
+                                    (bt_FSM_del /= sync) and
+                                    (bt_FSM      = sync)) or
+                                   (sync_trig_spec = '1'))
+                             else
+                         '0';
+
+    sync_dbt_r        <= '1' when ((sp_control  = DATA_SAMPLE or
+                                    sp_control  = SECONDARY_SAMPLE) and
+                                   (bt_FSM_del /= sync) and
+                                   (bt_FSM      = sync))
+                             else
+                         '0';
+
+    -- Comparison of bt_FSM_del is to avoid glitches between PROP and PH1
+    sample_nbt_r      <= '1' when ((sp_control = NOMINAL_SAMPLE) and
+                                   (bt_FSM = ph1) and
+                                   (switch_ph1_to_ph2) and
+                                   (tq_edge = '1')) or
+				   (sample_trig_spec = '1')
+                             else
+                         '0';
+
+    sample_dbt_r      <= '1' when ((sp_control = DATA_SAMPLE or
+                                    sp_control = SECONDARY_SAMPLE) and
+                                   (bt_FSM = ph1) and
+                                   (switch_ph1_to_ph2) and
+                                   (tq_edge = '1'))
+                             else
+                         '0';
+
+   
+  bt_proc : process(clk_sys, res_n)
   begin
-    if(res_n=ACT_RESET)then
-      bt_FSM          <=  reset;
-      bt_counter      <=  0;
-      FSM_Preset      <=  '1';
-      FSM_Preset_2    <=  '0';
-      sync_dbt_r      <=  '0';
-      sync_nbt_r      <=  '0';
-      sample_nbt_r    <=  '0';
-      sample_dbt_r    <=  '0';
-      hard_sync_valid <=  '0';
-      is_tran_trig    <=  false;
-      sp_control_reg  <=  NO_SYNC;
-      ph1_real        <=  0;
-      ph2_real        <=  0;
-    elsif rising_edge(clk_sys)then
+	if (res_n = ACT_RESET) then
+      bt_FSM            <=  reset;
+      bt_counter        <=  0;
+      FSM_Preset        <=  '1';
+      FSM_Preset_2      <=  '0';
+      hard_sync_valid   <=  '0';
+      is_tran_trig      <=  false;
+      sp_control_stored <=  NOMINAL_SAMPLE;
+      ph1_real          <=  0;
+      ph2_real          <=  0;
+      sync_trig_spec    <= '0';
+      sample_trig_spec  <= '0';
+      bt_counter_sw     <=  1;
+      ipt_counter       <=  0;
+      brs_resync        <=  false;
+
+    elsif rising_edge(clk_sys) then
                 
-      sp_control_reg  <=  sp_control;
-      bt_FSM          <=  bt_FSM;
-      FSM_Preset      <=  FSM_Preset;
-      FSM_Preset_2    <=  FSM_Preset_2;
-      bt_counter      <=  bt_counter;
-      sample_nbt_r    <=  '0';
-      sample_dbt_r    <=  '0';
-      sync_nbt_r      <=  '0';
-      sync_dbt_r      <=  '0';
-      is_tran_trig    <=  is_tran_trig;
-      ph2_real        <=  ph2_real;
-      ph1_real        <=  ph1_real;
+      bt_FSM            <=  bt_FSM;
+      FSM_Preset        <=  FSM_Preset;
+      FSM_Preset_2      <=  FSM_Preset_2;
+      bt_counter        <=  bt_counter;
+      is_tran_trig      <=  is_tran_trig;
+      ph2_real          <=  ph2_real;
+      ph1_real          <=  ph1_real;
+      sync_trig_spec    <=  '0';
+      sample_trig_spec  <=  '0';
+
+      sp_control_stored <=  sp_control_stored;
+      bt_counter_sw     <=  bt_counter_sw;
+      brs_resync        <=  brs_resync;
       
-      if(bt_FSM=reset)then
-        bt_FSM<=sync;
+      -- Information processing time is not corrupted when the counter has
+      -- reached zero!
+      if (ipt_counter /= 0) then
+        ipt_counter       <=  ipt_counter - 1;
+      end if;
+
+      if (bt_FSM = reset) then
+        bt_FSM        <=  sync;
       end if;
       
-      if(sp_control /= sp_control_reg)then
-          -- Perform Ph2 compensation
-          brs_comp(tq_nbt,tq_dbt,sp_control,ph2_nbt,ph2_dbt,ph2_real);
-      elsif(sync_edge='1' and 
-					 (sync_control=HARD_SYNC) and
-					 (bt_FSM /= h_sync))
-			then
+      if (sync_edge = '1' and
+         (sync_control = HARD_SYNC) and
+         (bt_FSM /= h_sync))
+      then
           bt_FSM        <=  h_sync;
           FSM_Preset    <=  '1';
-          --It is assumed that hard sync appears only during Nominal bit time,
+          -- It is assumed that hard sync appears only during Nominal bit time,
           -- according to specification!
-          if(tq_nbt=1)then 
+          if (tq_nbt = 1) then 
             bt_counter  <=  3;
-          elsif(tq_nbt=2)then
+          elsif (tq_nbt = 2) then
             bt_counter  <=  2;
           else
             bt_counter  <=  1;
           end if;
       else
-        if(sync_edge='1' and (sync_control=RE_SYNC))then
+        if (sync_edge = '1' and (sync_control = RE_SYNC)) then
           
-          if(bt_FSM=ph2)then --Negative resynchronisation
-            
-            if(sp_control=NOMINAL_SAMPLE)then
-             
-              if(bt_counter<(ph2_nbt-sjw_nbt))then
-                --Resync bigger than SJW, resync. max SJW
-                ph2_real<=ph2_nbt-sjw_nbt;
-              else
-                --Resync smaller than SJW
-                if(bt_counter*tq_nbt<4)then 
-                  --We have to check for minimal information processing time 
-                  --(4 clock cycles) Thus if we get here we cant quit PH2 imme-
-                  --diately otherwise we woud miss some of the sampling signals!
-                  --So we shorten PH2 only to its minimal possible length. The 
-                  -- length is dependent on time quantum duration
-                  if(tq_nbt=1)then --Presc=1
-                    --This is only case not according to specification
-                    ph2_real<=4;
-                  elsif (tq_nbt=2) then --Presc=2
-                    ph2_real<=2;
-                  elsif (tq_nbt=3) then --Presc 3
-                    ph2_real<=2;
-                  else
-                    ph2_real<=1;
-                  end if;
-                else
-                  --This causes finish of ph2 in next time quantum
-                  ph2_real<=bt_counter;
-                end if;
-              end if;
-            
-            else
-               
-              if(bt_counter<(ph2_dbt-sjw_dbt))then
-                ph2_real<=ph2_dbt-sjw_dbt;
-              else
-                 --Resync smaller than SJW
-                if(bt_counter*tq_dbt<4)then 
-                  --We have to check for minimal information processing time 
-                  --(4 clock cycles) Thus if we get here we cant quit PH2 imme-
-                  --diately otherwise we woud miss some of the sampling signals!
-                  --So we shorten PH2 only to its minimal possible length. The 
-                  --length is dependent on time quantum duration
-                  if(tq_dbt=1)then --Presc=1
-                    --This is only case not according to specification
-                    ph2_real<=4;
-                  elsif (tq_dbt=2) then --Presc=2
-                    ph2_real<=2;
-                  elsif (tq_dbt=3) then --Presc 3
-                    ph2_real<=2;
-                  else
-                    ph2_real<=1;
-                  end if;
-                else
-                  --This causes finish of ph2 in next time quantum
-                  ph2_real<=bt_counter;
-                end if;
-              end if;
-            
-            end if;     
-          
-          --Positive resynchronisation, transciever in data phase does not per-
-          --form positive resynchronisation. Also when dominant bit was just
-          --send on the bus, no positive resynchronization is performed
-          elsif((data_tx=RECESSIVE)
-                 and
-                (not(OP_State=transciever and sp_control=SECONDARY_SAMPLE)))
-					then
-            if(bt_FSM=prop)then
-              if(sp_control=NOMINAL_SAMPLE)then
-            
-                if(bt_counter>sjw_nbt)then
-                  ph1_real<=ph1_nbt+sjw_nbt;
-                else
-                  ph1_real<=ph1_nbt+bt_counter;
-                end if;
-              
-              else
-            
-                if(bt_counter>sjw_dbt)then
-                  ph1_real<=ph1_dbt+sjw_dbt;
-                else
-                  ph1_real<=ph1_dbt+bt_counter;
-                end if;
-              
-              end if;
-            elsif(bt_FSM=ph1)then
-              if(sp_control=NOMINAL_SAMPLE)then
-            
-                if(bt_counter+ph1_nbt>sjw_nbt)then
-                  ph1_real<=ph1_nbt+sjw_nbt;
-                else
-                  ph1_real<=ph1_nbt+bt_counter;
-                end if;
-              
-              else
-            
-                if(bt_counter+ph1_dbt>sjw_dbt)then
-                  ph1_real<=ph1_dbt+sjw_dbt;
-                else
-                  ph1_real<=ph1_dbt+bt_counter;
-                end if;
-              
-              end if; 
-            end if;
-            
-           end if; 
+            -- Negative resynchronisation
+            if (bt_FSM = ph2) then
+                negative_resync(bt_counter, sp_control, ph2_nbt, ph2_dbt,
+                                sjw_nbt, sjw_dbt, tq_nbt, tq_dbt, ph2_real);
+                brs_resync   <= true;
+
+            -- Positive resynchronisation
+            -- Transciever in data phase does not perform positive resynchro-
+            -- nisation. Also when dominant bit was just send on the bus, no 
+            -- positive resynchronization is performed.
+            elsif ((data_tx = RECESSIVE) and
+               (not (OP_State = transciever and sp_control = SECONDARY_SAMPLE)))
+            then
+                positive_resync(bt_FSM, bt_counter, sp_control, prs_nbt, prs_dbt,
+                                ph1_nbt, ph1_dbt, sjw_nbt, sjw_dbt,
+                                tq_nbt, tq_dbt, ph1_real);
+            end if; 
         end if;
         
-        case bt_FSM is 
+        case bt_FSM is
+
+        ------------------------------------------------------------------------
+        -- Synchronisation segment
+        ------------------------------------------------------------------------
         when sync =>
-            if(FSM_Preset='1')then
-             is_tran_trig <= true;
-             if(sp_control=NOMINAL_SAMPLE)then 
-              sync_nbt_r<='1';
-              sync_dbt_r<='0';
-             else
-              sync_nbt_r<='0';
-              sync_dbt_r<='1';
-             end if;
-             FSM_Preset<='0';
+            if (FSM_Preset = '1') then
+                is_tran_trig        <= true;
+                FSM_Preset          <= '0';
+                brs_resync          <= false;
             end if;
-            if(tq_edge='1')then
-              --Logic for state switching if some of segments have zero length
-              if(sp_control=NOMINAL_SAMPLE)then
-                if(prs_nbt>0)then
-                  bt_FSM<=prop;
-                elsif (ph1_nbt>0)then  
-                  bt_FSM<=ph1;
-                else
-                  bt_FSM<=ph2;
-                  FSM_Preset<='1';
+
+            if (tq_edge = '1') then
+                if (prop_non_zero) then
+                    bt_FSM      <= prop;
+                elsif (ph1_non_zero) then
+                    bt_FSM      <= ph1;
+                else 
+                    bt_FSM      <= ph2;
+                    FSM_Preset  <= '1';
+                    set_extra_counters(bt_counter_sw, ph2_extra,
+                                       sp_control_stored, sp_control,
+                                       ipt_counter);
                 end if;
-              else
-                if(prs_dbt>0)then
-                  bt_FSM<=prop;
-                elsif (ph1_dbt>0)then  
-                  bt_FSM<=ph1;
-                else
-                  bt_FSM<=ph2;
-                  FSM_Preset<='1'; 
-                end if;
-              end if;
-              
-              --bt_FSM<=prop; 
-              bt_counter<=1;
+
+                bt_counter      <= 1;
             end if;
             
-             if(sp_control=NOMINAL_SAMPLE)then
-               ph2_real<=ph2_nbt;
-               ph1_real<=ph1_nbt;
-             else
-               ph2_real<=ph2_dbt;
-               ph1_real<=ph1_dbt;
-             end if; 
-            
-        when prop =>
-            if(tq_edge='1')then
-             if(sp_control=NOMINAL_SAMPLE)then
-                if(bt_counter=prs_nbt or bt_counter>prs_nbt)then
-                  if (ph1_nbt>0)then
-                    bt_FSM<=ph1;
-                  else 
-                    bt_FSM<=ph2;
-                    FSM_Preset<='1';
-                  end if;
-                  bt_counter<=1;
-                else
-                  bt_counter<=bt_counter+1;
-                end if;  
-             else
-               if(bt_counter=prs_dbt or  bt_counter>prs_dbt)then
-                  if (ph1_dbt>0)then
-                    bt_FSM<=ph1;
-                  else 
-                    bt_FSM<=ph2;
-                    FSM_Preset<='1';
-                  end if;
-                  bt_counter<=1;
-                else
-                  bt_counter<=bt_counter+1;
-                end if;  
-             end if;
-            end if;
-        when ph1 =>
-            if(tq_edge='1')then
-              if((bt_counter=ph1_real) or (bt_counter>ph1_real))then
-                  bt_FSM<=ph2;
-                  bt_counter<=1;
-                  FSM_Preset<='1';
-              else
-                  bt_counter<=bt_counter+1;
-              end if;  
-              
-            end if; 
-        when ph2 =>
-            if(FSM_Preset='1')then
-            is_tran_trig <= false;
-            if(sp_control=NOMINAL_SAMPLE)then 
-              sample_nbt_r<='1';
-              sample_dbt_r<='0';
+            -- Set the "default" bit time duration. Later in the bit time
+            -- resynchronisation can change it!
+            if (sp_control = NOMINAL_SAMPLE) then
+               ph2_real         <= ph2_nbt;
+               ph1_real         <= ph1_nbt;
             else
-              sample_nbt_r<='0';
-              sample_dbt_r<='1';
-            end if;
-             FSM_Preset<='0';
-            end if;
-            
-            if(tq_edge='1')then
-              --Sample signals already have to be sent! Only then node can
-              --resynchronize!!
-              if(((bt_counter=ph2_real) or (bt_counter>ph2_real)) and
-                 (sample_nbt_r='0' 			 and 
-                  sample_dbt_r='0' 			 and 
-                  sample_nbt_del_1_r='0' and 
-                  sample_dbt_del_1_r='0'))
-              then
-               --If lower than minimal timing is chosen then it minimal 
-               --timing will be applied!!
-                  bt_FSM<=sync;
-                  bt_counter<=1;
-                  FSM_Preset<='1';
-              else
-                  bt_counter<=bt_counter+1;
-              end if;  
-            end if;
-            
-        --State which appears after hard synchronisation to handle proper 
-        --bit timing!
-        when h_sync=> 
-                --It is substitute for sync, prop and ph1 segment after
-                -- hard synchronisation appeared!
-                if(tq_edge='1')then
-                  bt_counter<=bt_counter+1;
+               ph2_real         <= ph2_dbt;
+               ph1_real         <= ph1_dbt;
+            end if; 
+        
+        ------------------------------------------------------------------------
+        -- Propagation segment
+        ------------------------------------------------------------------------ 
+        when prop =>
+            if (tq_edge = '1') then
+                if (switch_prop_to_ph1) then
+                    if (ph1_non_zero) then
+                        bt_FSM <= ph1;
+                    else
+                        bt_FSM <= ph2;
+                        set_extra_counters(bt_counter_sw, ph2_extra,
+                                           sp_control_stored, sp_control,
+                                           ipt_counter);
+                    end if;
+                    FSM_Preset <= '1';
+                    bt_counter <= 1;
+                else
+                    bt_counter <= bt_counter + 1;
                 end if;
+            end if;
+
+        ------------------------------------------------------------------------
+        -- Phase 1 segment
+        ------------------------------------------------------------------------
+        when ph1 =>
+            if (tq_edge = '1') then
+              if (switch_ph1_to_ph2) then
+                  bt_FSM        <= ph2;
+                  bt_counter    <= 1;
+                  FSM_Preset    <= '1';
+                  set_extra_counters(bt_counter_sw, ph2_extra,
+                                     sp_control_stored, sp_control,
+                                     ipt_counter);
+              else
+                  bt_counter    <= bt_counter + 1;
+              end if;
+            end if;
+
+        ------------------------------------------------------------------------
+        -- Phase 2 segment
+        ------------------------------------------------------------------------
+        when ph2 =>
+            if (FSM_Preset = '1') then
+                is_tran_trig <= false;
+                FSM_Preset   <= '0';
+            end if;
+            
+            if (tq_edge = '1') then
+                if (switch_ph2_to_sync and 
+                    ipt_ok and
+                    use_default_ctr)
+                then
+                    bt_FSM        <= sync;
+                    bt_counter    <= 1;
+                    FSM_Preset    <= '1';
+                else
+                    bt_counter    <= bt_counter + 1;
+                end if;
+            end if;
+
+            -- Counting with 1 each clock cycle! Exit when counter expired,
+            -- or resynchronisation edge has occured. Make sure the exit is
+            -- aligned with Time quanta and IPT is not corrupted!
+            if ((bt_counter_sw = 0 or bt_counter_sw = 1 or
+                (brs_resync = true and tq_edge = '1'))
+                and ipt_ok)
+            then
+                if (use_spec_ctr) then
+                    bt_FSM      <= sync;
+                    bt_counter  <= 1;
+                    FSM_Preset  <= '1';
+                end if;
+            else
+                bt_counter_sw   <= bt_counter_sw - 1; 
+            end if;
+
+        ------------------------------------------------------------------------
+        -- Special state which appears after hard synchronisation to handle 
+        -- proper bit timing! It is a substitute for sync, prop and ph1 segment
+        -- after hard synchronisation appeared!
+        ------------------------------------------------------------------------
+        when h_sync => 
+            if (tq_edge = '1') then
+                bt_counter <= bt_counter + 1;
+            end if;
                 
-                if((sync_nbt_r='0' and sync_dbt_r='0' and
-                  sample_nbt_r='0' and sample_dbt_r='0' and 
-                  sample_nbt_del_1_r='0' and sample_dbt_del_1_r='0')
-                  and (FSM_Preset='1')
-                )then
-                 --Hard synchronisation appeared during sync or sample sequence.
-                 --It has to be finished first then hard synchronise!
-                  hard_sync_valid<='1';
-                  FSM_Preset<='0';
-                elsif(hard_sync_valid='1' and  FSM_Preset='0')then
-                  hard_sync_valid<='0';
-                elsif(hard_sync_valid='0' and  
-                      FSM_Preset='0'      and
-                      FSM_Preset_2='0')
-                then 
+            if ((sync_nbt_r = '0') and
+                (sync_dbt_r = '0') and
+                (sample_nbt_r = '0') and
+                (sample_dbt_r = '0') and 
+                (sample_nbt_del_1_r = '0') and
+                (sample_dbt_del_1_r = '0') and
+                (FSM_Preset = '1'))
+            then
+                --Hard synchronisation appeared during sync or sample sequence.
+                --It has to be finished first then hard synchronise!
+                hard_sync_valid     <= '1';
+                FSM_Preset          <= '0';
+
+            elsif (hard_sync_valid = '1' and  FSM_Preset = '0') then
+                hard_sync_valid     <= '0';
+
+            elsif (hard_sync_valid = '0' and  
+                   FSM_Preset = '0'      and
+                   FSM_Preset_2 = '0')
+            then 
                 --One cycle has to be between sync signal! Otherwise PC control 
                 --wont be able to react on hard sync valid!
-                  --Here sync signal is finally set!
-                  FSM_Preset_2<='1';
-                  if(is_tran_trig=false)then
-                    if(sp_control=NOMINAL_SAMPLE)then 
-                      sync_nbt_r<='1';
-                      sync_dbt_r<='0';
-                    else
-                      sync_nbt_r<='0';
-                      sync_dbt_r<='1';
-                    end if; 
-                  end if;
+                --Here sync signal is finally set!
+                FSM_Preset_2        <= '1';
+                if (is_tran_trig = false) then
+                    sync_trig_spec  <= '1';
                 end if;
+            end if;
                 
                 --This condition is to satisfy that correct sync signal 
                 --will be generated!
-                if((bt_counter>=prs_nbt+ph1_nbt) and 
-                    ((sync_nbt_r='0') and (sync_dbt_r='0')) )then
-                    bt_FSM<=ph2;
-                    bt_counter<=1;
-                    FSM_preset<='1';
-                    FSM_Preset_2<='0';
-                end if;
-                
+                if ((bt_counter >= prs_nbt + ph1_nbt) and 
+                    ((sync_nbt_r = '0') and (sync_dbt_r = '0')))
+                then
+                    bt_FSM           <= ph2;
+                    sample_trig_spec <= '1';
+                    bt_counter       <= 1;
+                    FSM_preset       <= '1';
+                    FSM_Preset_2     <= '0';
+                end if;    
           when others =>
           end case;   
         end if;
@@ -742,39 +987,34 @@ begin
   end process;
 
 
-  trig_sign_proc:process(clk_sys,res_n)
-  begin
-    if(res_n=ACT_RESET)then
-      sync_nbt_del_1_r<='0';
-      sync_dbt_del_1_r<='0';
-      sample_nbt_del_2_r<='0';
-      sample_dbt_del_2_r<='0';
-      sample_nbt_del_1_r<='0';
-      sample_dbt_del_1_r<='0';
-    elsif rising_edge(clk_sys)then
-      if (sync_nbt_r='1') then sync_nbt_del_1_r<='1';
-                         else sync_nbt_del_1_r<='0';
-			end if;
-      if (sync_dbt_r='1') then sync_dbt_del_1_r<='1';
-                         else sync_dbt_del_1_r<='0';
-			end if;
-      
-      if (sample_nbt_r='1') then sample_nbt_del_1_r<='1';
-                            else sample_nbt_del_1_r<='0';
-			end if;
-      if (sample_dbt_r='1') then sample_dbt_del_1_r<='1';
-	                        else sample_dbt_del_1_r<='0';
-			end if;
+    ----------------------------------------------------------------------------
+    -- Creating delayed sample and synchronisation signals by shift registers
+    ----------------------------------------------------------------------------
+    trig_sign_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = ACT_RESET) then
+            sync_nbt_del_1_r    <= '0';
+            sync_dbt_del_1_r    <= '0';
+            sample_nbt_del_2_r  <= '0';
+            sample_dbt_del_2_r  <= '0';
+            sample_nbt_del_1_r  <= '0';
+            sample_dbt_del_1_r  <= '0';
+            
+            bt_FSM_del          <= sync;
+        elsif rising_edge(clk_sys) then
+
+            sync_nbt_del_1_r <= sync_nbt_r;
+            sync_dbt_del_1_r <= sync_dbt_r;
+
+            sample_nbt_del_1_r <= sample_nbt_r;
+            sample_dbt_del_1_r <= sample_dbt_r;
+
+            sample_nbt_del_2_r <= sample_nbt_del_1_r;
+            sample_dbt_del_2_r <= sample_dbt_del_1_r;
     
-      if (sample_nbt_del_1_r='1') then sample_nbt_del_2_r<='1';
-                                  else sample_nbt_del_2_r<='0';
-			end if;
-      if (sample_dbt_del_1_r='1') then sample_dbt_del_2_r<='1';
-                                  else sample_dbt_del_2_r<='0';
-		  end if;
-    
-    end if;
-  end process;
+            bt_FSM_del         <= bt_FSM;
+        end if;
+    end process;
 
   
 end architecture;

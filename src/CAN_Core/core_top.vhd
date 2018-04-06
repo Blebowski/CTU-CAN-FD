@@ -70,6 +70,10 @@
 --               signal for CRC engines. The condition halts crc step as long as
 --               data is destuffed or data_halt and fixed_destuffing method is 
 --               being used!
+--   3.4.2018   Removed "tranBuffer" since TX frame metadata are now available
+--              on the output of TX Arbitrator combinationally ! During the
+--              transmission  metadata will not change since TX arbitrator is
+--              locked!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -498,7 +502,6 @@ end entity;
 
 architecture rtl of core_top is
   
- for tran_Buf_comp    : tranBuffer        use entity work.tranBuffer(rtl);
  for OP_State_comp    : operationControl  use entity work.operationControl(rtl);
  for PC_State_comp    : protocolControl   use entity work.protocolControl(rtl);
  for faultConf_comp   : faultConf         use entity work.faultConf(rtl);
@@ -535,29 +538,15 @@ begin
   --rec_message_ack_out 
   --NOTE: HandShake protocol with acknowledge not used in the end
   
-       
-  
-  tran_Buf_comp:tranBuffer --Transcieve Buffer
-  port map(
-     clk_sys            =>  clk_sys,
-     res_n              =>  res_n,
-     tran_ident_in      =>  tran_ident_in,
-     tran_dlc_in        =>  tran_dlc_in,
-     tran_is_rtr_in     =>  tran_is_rtr_in,
-     tran_ident_type_in =>  tran_ident_type_in,
-     tran_frame_type_in =>  tran_frame_type_in,
-     tran_brs_in        =>  tran_brs_in,
-     frame_store        =>  txt_hw_cmd_i.lock,
-       
-     tran_ident_base    =>  tran_ident_base,
-     tran_ident_ext     =>  tran_ident_ext,
-     
-     tran_dlc           =>  tran_dlc,
-     tran_is_rtr        =>  tran_is_rtr,
-     tran_ident_type    =>  tran_ident_type,
-     tran_frame_type    =>  tran_frame_type,
-     tran_brs           =>  tran_brs
-  );
+  -- Transceive CAN frame is routed directly
+  tran_dlc              <= tran_dlc_in;
+  tran_is_rtr           <= tran_is_rtr_in;
+  tran_ident_type       <= tran_ident_type_in;
+  tran_frame_type       <= tran_frame_type_in;
+  tran_brs              <= tran_brs_in;
+  tran_ident_base       <= tran_ident_in(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+  tran_ident_ext        <= tran_ident_in(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+
   
   OP_State_comp:operationControl --Operation control state machine
   port map(
