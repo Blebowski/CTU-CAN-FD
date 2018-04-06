@@ -566,8 +566,8 @@ begin
       );
 
 
-  txt_buf_comp_gen: for i in 0 to TXT_BUFFER_COUNT - 1 generate
-    txtBuffer_comp:txtBuffer
+  txt_buf_comp_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
+    txtBuffer_comp : txtBuffer
     generic map(
       buf_count             => TXT_BUFFER_COUNT,
       ID                    => i
@@ -575,7 +575,6 @@ begin
     port map(
       clk_sys               => clk_sys,
       res_n                 => res_n,
-      drv_bus               => drv_bus,
       tran_data             => tran_data,
       tran_addr             => tran_addr,
       tran_cs               => tran_cs(i),

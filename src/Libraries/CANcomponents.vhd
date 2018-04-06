@@ -234,7 +234,6 @@ package CANcomponents is
   PORT(
     signal clk_sys                :in   std_logic;
     signal res_n                  :in   std_logic; --Async reset
-    signal drv_bus                :in   std_logic_vector(1023 downto 0);
     signal tran_data              :in   std_logic_vector(31 downto 0);
     signal tran_addr              :in   std_logic_vector(4 downto 0);
     signal tran_cs                :in   std_logic;

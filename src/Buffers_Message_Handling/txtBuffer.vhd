@@ -76,7 +76,7 @@ use work.CANconstants.all;
 entity txtBuffer is
   generic(
     constant buf_count            :     natural range 1 to 8;
-    constant ID                   :     natural :=1
+    constant ID                   :     natural := 1
   );
   PORT(
     ------------------
@@ -88,9 +88,6 @@ entity txtBuffer is
     -------------------------------
     --Driving Registers Interface--
     -------------------------------
-    
-    -- Driving bus
-    signal drv_bus                :in   std_logic_vector(1023 downto 0);
     
     -- Data and address for SW access into the RAM of TXT Buffer
     signal tran_data              :in   std_logic_vector(31 downto 0);
@@ -106,9 +103,9 @@ entity txtBuffer is
     ------------------
     signal txtb_state             :out  txt_fsm_type;
     
-    ------------------------------------
-    --CAN Core and TX Arbiter Interface-
-    ------------------------------------
+    -------------------------------------
+    -- CAN Core and TX Arbiter Interface
+    -------------------------------------
     
     -- Commands from the CAN Core for manipulation of the CAN 
     signal txt_hw_cmd             :in   txt_hw_cmd_type;  
@@ -138,7 +135,7 @@ architecture rtl of txtBuffer is
   ------------------
   
   -- Time transcieve buffer - Data memory
-  signal txt_buffer_mem        : frame_memory;
+  signal txt_buffer_mem         : frame_memory;
    
   -- FSM state of the buffer
   signal buf_fsm                : txt_fsm_type;
@@ -173,7 +170,7 @@ begin
                   else
               '0';
     
-    -- Connet internal buffer state to output
+    -- Connect internal buffer state to output
     txtb_state <= buf_fsm;
     
     -- Memory protection of TXT Buffer
@@ -186,7 +183,7 @@ begin
     ----------------------------------------------------------------------------
     -- Buffer access process from SW
     ----------------------------------------------------------------------------
-    tx_buf_access_proc:process(res_n,clk_sys)
+    tx_buf_access_proc : process(res_n, clk_sys)
     begin
       if (res_n = ACT_RESET) then
         
@@ -194,7 +191,7 @@ begin
           txt_buffer_mem <= (OTHERS => (OTHERS => '0'));
           -- pragma translate_on
                  
-      elsif (rising_edge(clk_sys))then
+      elsif (rising_edge(clk_sys)) then
         
         --Store the data into the Buffer during the access
         if (tran_cs = '1' and txtb_user_accessible) then
@@ -208,11 +205,11 @@ begin
     ----------------------------------------------------------------------------
     -- Buffer FSM process
     ----------------------------------------------------------------------------
-    tx_buf_fsm_proc:process(res_n,clk_sys)
+    tx_buf_fsm_proc : process(res_n, clk_sys)
     begin
       if (res_n = ACT_RESET) then
           buf_fsm         <= txt_empty;
-      elsif (rising_edge(clk_sys))then
+      elsif (rising_edge(clk_sys)) then
         
         buf_fsm           <= buf_fsm;
         
