@@ -251,7 +251,6 @@ package CANconstants is
     arb_sel_low_ts,
     arb_sel_upp_ts,
     arb_sel_ffw,
-    arb_sel_idw,
     arb_locked
     );
   

@@ -66,6 +66,8 @@
 --                2. Added memory protection on the TXT Buffer. It can NOT be
 --                    written when in "ready", "tx in progress" or "abort in
 --                    progress" states.
+--     06.4.2018  Changed output from side of CAN Core to synchronous. Async.
+--                output did not allow inferrence of RAM in Altera FPGA.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -153,9 +155,6 @@ architecture rtl of txtBuffer is
   
 begin
     
-    -- Output data are given by the address from Core
-    txt_word            <= txt_buffer_mem(txt_addr);
-    
     -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
     -- Abort signal must not be active. If not considered,
     -- race conditions between HW and SW commands could occur.
@@ -201,6 +200,9 @@ begin
             txt_buffer_mem(to_integer(unsigned(tran_addr))) <= tran_data;
         end if;
         
+        -- Output data are given by the address from Core
+        txt_word            <= txt_buffer_mem(txt_addr);
+
       end if;
     end process;
     

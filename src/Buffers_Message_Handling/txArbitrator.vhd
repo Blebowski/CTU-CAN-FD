@@ -89,6 +89,18 @@
 --                At the end of the load, data are committed on the output of
 --                TX Arbitrator. This allows single input from TXT Buffer and
 --                synthesis of whole TXT Buffer to RAM memory.
+--     6.4.2018   1. Removed loading of identifier by TX arbitrator. Only
+--                   metadata are loaded by identifier. Since only one word
+--                   is updated for CAN Core, there is no need for internal
+--                   registers! Identifier is now addressed by CAN Core in the
+--                   same way as CAN data.
+--                2. Changed pointer to TXT Buffer memory to combinational,
+--                   since TXT Buffer must have clocked reading to achieve RAM
+--                   inferrence! Every condition which causes transfer to a
+--                   state where Arbitrator reads from TXT Buffer, must set
+--                   the address from which the state will be reading. This-
+--                   way on transfer address is available and TXT Buffer can
+--                   provide the data!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -131,9 +143,6 @@ entity txArbitrator is
     
     -- TX Message data
     signal tran_data_word_out     :out std_logic_vector(31 downto 0);
-    
-    --TX Identifier
-    signal tran_ident_out         :out std_logic_vector(28 downto 0);
     
     --TX Data length code
     signal tran_dlc_out           :out std_logic_vector(3 downto 0);
@@ -208,13 +217,9 @@ entity txArbitrator is
   -- TXT Buffer timestamp joined combinationally
   signal txtb_timestamp           : std_logic_vector(63 downto 0);
   
-  -- CAN Frame metadata from Frame Format word of TXT Buffer
-  signal frame_type_int           : std_logic;
-  signal ident_type_int           : std_logic;
-  signal dlc_int                  : std_logic_vector(3 downto 0);
-  signal rtr_int                  : std_logic;
-  signal brs_int                  : std_logic;
-  
+  -- Comparison of loaded timestamp from TXT Buffer.
+  signal timestamp_valid          : boolean;
+
   -- Internal index of TXT Buffer stored at the time of buffer selection
   signal int_txtb_index           : natural range 0 to buf_count - 1;
   
@@ -228,7 +233,6 @@ entity txArbitrator is
 
 
   -- Comitted values of internal signals
-  signal tran_ident_com         : std_logic_vector(28 downto 0);
   signal tran_dlc_com           : std_logic_vector(3 downto 0);
   signal tran_is_rtr_com        : std_logic;
   signal tran_ident_type_com    : std_logic;
@@ -237,7 +241,7 @@ entity txArbitrator is
   signal tran_frame_valid_com   : std_logic;
     
 
-  --Comparing procedure for two 64 bit std logic vectors
+  -- Comparing procedure for two 64 bit std logic vectors
     function less_than(
       signal   a       : in std_logic_vector(63 downto 0);
       signal   b       : in std_logic_vector(63 downto 0)
@@ -280,12 +284,22 @@ begin
   ------------------------------------------------------------------------------
   txtb_selected_input <= txt_buf_in(select_buf_index);
   
+
   ------------------------------------------------------------------------------
   -- Joined timestamp from TXT Buffer. Note that it is not always valid!
   -- Only when the TXT Buffer is addressed with upper timestamp word address!
   ------------------------------------------------------------------------------
   txtb_timestamp      <= txtb_selected_input & ts_low_internal;
   
+
+  ------------------------------------------------------------------------------
+  -- Comparing timestamp with external timestamp. This assumes that Upper 
+  -- timestamp is on the output of buffer and lower timestamp is stored in
+  -- "ts_low_internal".
+  ------------------------------------------------------------------------------
+  timestamp_valid    <= less_than(txtb_timestamp, timestamp);
+
+
   ------------------------------------------------------------------------------
   -- Invalid state of the buffer must be immediately available to the
   -- CAN Core, otherwise Core might attempt to lock buffer which was
@@ -296,22 +310,24 @@ begin
                               else
                           '0';
   
+
   ------------------------------------------------------------------------------
   -- Output data word is selected based on the stored buffer index at the time
   -- of buffer locking.
   ------------------------------------------------------------------------------  
   tran_data_word_out   <= txt_buf_in(int_txtb_index);
   
+
   ------------------------------------------------------------------------------
   -- Output frame metadata and Identifier for CAN Core
   ------------------------------------------------------------------------------
-  tran_ident_out       <= tran_ident_com;
   tran_dlc_out         <= tran_dlc_com;
   tran_is_rtr          <= tran_is_rtr_com;
   tran_ident_type_out  <= tran_ident_type_com;
   tran_frame_type_out  <= tran_frame_type_com;
   tran_brs_out         <= tran_brs_com;
-   
+  
+
   ------------------------------------------------------------------------------
   -- During Buffer selection, TX Arbitrator is addressing TXT Buffers.
   -- During Transmission, the Core is addressing TXT Buffers.
@@ -325,34 +341,47 @@ begin
                          '1';
   txt_hw_cmd_buf_index <= int_txtb_index;
   
+
+  ------------------------------------------------------------------------------
+  -- Arbitrator pointer for loading Timestamp and Metadata from TXT Buffers.
+  -- Must be decoded combinationally, since it takes one clock cycle to read
+  -- the data from the TXT Buffer! If set on clock, additional delay would be
+  -- needed in each state, till the data are returned from TXT Buffer!
+  ------------------------------------------------------------------------------
+  txtb_pointer_meta     <= to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)))
+                           when ((select_buf_avail = false) or
+                                 (select_buf_index_reg /= select_buf_index) or
+                                 (tx_arb_fsm = arb_locked and 
+                                  txt_hw_cmd.unlock = '1')) else
+
+                           to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2)))
+                           when (tx_arb_fsm = arb_sel_low_ts) else
+
+                           to_integer(unsigned(FRAME_FORM_W_ADR(11 downto 2)))
+                           when (tx_arb_fsm = arb_sel_upp_ts and
+                                 timestamp_valid) else
+
+                           to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));
+                            
+
   ------------------------------------------------------------------------------
   -- State machine for selection of highest priority buffer and load of the
   -- metadata and identifier words on parallel outputs.
   ------------------------------------------------------------------------------
-  proc_txarb_fsm:process(clk_sys,res_n)
+  proc_txarb_fsm : process(clk_sys, res_n)
   begin
-    if (res_n=ACT_RESET) then
+    if (res_n = ACT_RESET) then
         tx_arb_fsm            <= arb_sel_low_ts;
       
-        -- Start on the "Lower timestamp word"
-        txtb_pointer_meta     <= to_integer(unsigned(
-                                    TIMESTAMP_L_W_ADR(11 downto 2)));
         ts_low_internal       <= (OTHERS => '0');
         
-        tran_ident_com        <= (OTHERS => '0');
         tran_dlc_com          <= (OTHERS => '0');
         tran_is_rtr_com       <= '0';
         tran_ident_type_com   <= '0';
         tran_frame_type_com   <= '0';
         tran_brs_com          <= '0';
         tran_frame_valid_com  <= '0';
-        
-        frame_type_int        <= '0';
-        ident_type_int        <= '0';
-        dlc_int               <= (OTHERS => '0');
-        rtr_int               <= '0';
-        brs_int               <= '0';
-        
+           
         last_txtb_index       <= 0;
         int_txtb_index        <= 0;
         
@@ -366,7 +395,6 @@ begin
       ts_low_internal           <= ts_low_internal;
       last_txtb_index           <= last_txtb_index;
       
-      tran_ident_com            <= tran_ident_com;
       tran_dlc_com              <= tran_dlc_com;
       tran_is_rtr_com           <= tran_is_rtr_com;
       tran_ident_type_com       <= tran_ident_type_com;
@@ -382,8 +410,6 @@ begin
       if (tx_arb_fsm = arb_locked) then
           if (txt_hw_cmd.unlock = '1') then
             tx_arb_fsm            <= arb_sel_low_ts;
-            txtb_pointer_meta     <= to_integer(unsigned(
-                                      TIMESTAMP_L_W_ADR(11 downto 2)));
           end if;
       
       --------------------------------------------------------------
@@ -399,8 +425,6 @@ begin
       elsif ((select_buf_avail = false) or
             (select_buf_index_reg /= select_buf_index)) then
         tx_arb_fsm              <= arb_sel_low_ts;
-        txtb_pointer_meta       <= to_integer(unsigned(
-                                    TIMESTAMP_L_W_ADR(11 downto 2)));
       else
       
         case tx_arb_fsm is   
@@ -409,10 +433,7 @@ begin
         -- Polling on Low timestamp of the highest prority TXT buffer
         --------------------------------------------------------------
         when arb_sel_low_ts =>
-            txtb_pointer_meta  <= to_integer(unsigned(
-                                    TIMESTAMP_U_W_ADR(11 downto 2)));     
             tx_arb_fsm         <= arb_sel_upp_ts;
-            
             ts_low_internal    <= txtb_selected_input;
         
         --------------------------------------------------------------
@@ -421,56 +442,33 @@ begin
         -- Lower timestamp is stored from previous state.
         --------------------------------------------------------------        
         when arb_sel_upp_ts =>
-            if (less_than(txtb_timestamp, timestamp)) then
+            if (timestamp_valid) then
                 tx_arb_fsm         <= arb_sel_ffw;
-                txtb_pointer_meta  <= to_integer(unsigned(
-                                    FRAME_FORM_W_ADR(11 downto 2)));
                                     
             -- If timestamp has not elapsed, repeat the whole process.
             else
                 tx_arb_fsm         <= arb_sel_low_ts;
-                txtb_pointer_meta  <= to_integer(unsigned(
-                                    TIMESTAMP_L_W_ADR(11 downto 2)));
             end if;
 
         --------------------------------------------------------------
-        -- Store the Frame format info
+        -- Store the Frame format info to the output. We can do this
+        -- directly, since it is all done in one clock cycle!
+        -- Buffer input did not change during the whole selection, we 
+        -- can store its index to the output and us it for access from 
+        -- CAN Core.
         --------------------------------------------------------------        
         when arb_sel_ffw =>
-            frame_type_int      <= txtb_selected_input(FR_TYPE_IND);
-            ident_type_int      <= txtb_selected_input(ID_TYPE_IND);
-            dlc_int             <= txtb_selected_input(DLC_H downto 
-                                                        DLC_L);
-            rtr_int             <= txtb_selected_input(RTR_IND);
-            brs_int             <= txtb_selected_input(BRS_IND);
-            
-            tx_arb_fsm          <= arb_sel_idw;
-            txtb_pointer_meta   <= to_integer(unsigned(
-                                    IDENTIFIER_W_ADR(11 downto 2)));
-        
-        --------------------------------------------------------------
-        -- Commit the internal info to the output and make it
-        -- available to the CAN Core. Buffer input did not change
-        -- during the whole selection, we can store its index to the
-        -- output and us it for access from CAN Core.
-        --------------------------------------------------------------        
-        when arb_sel_idw =>
-            tran_ident_com        <= txtb_selected_input(
-                                      IDENTIFIER_BASE_H downto 
-                                      IDENTIFIER_EXT_L);
-            tran_dlc_com          <= dlc_int;
-            tran_is_rtr_com       <= rtr_int;
-            tran_ident_type_com   <= ident_type_int;
-            tran_frame_type_com   <= frame_type_int;
-            tran_brs_com          <= brs_int;
-            tran_frame_valid_com  <= '1';
-            
-            int_txtb_index        <= select_buf_index;
-                        
-            tx_arb_fsm            <= arb_sel_low_ts;
-            txtb_pointer_meta     <= to_integer(unsigned(
-                                      TIMESTAMP_L_W_ADR(11 downto 2)));
-                                              
+            tran_frame_type_com      <= txtb_selected_input(FR_TYPE_IND);
+            tran_ident_type_com      <= txtb_selected_input(ID_TYPE_IND);
+            tran_dlc_com             <= txtb_selected_input(DLC_H downto 
+                                                            DLC_L);
+            tran_is_rtr_com          <= txtb_selected_input(RTR_IND);
+            tran_brs_com             <= txtb_selected_input(BRS_IND);
+
+            tran_frame_valid_com     <= '1';
+            int_txtb_index           <= select_buf_index;
+            tx_arb_fsm               <= arb_sel_low_ts;
+                                  
         when others =>
           report "Error - Unknow TX Arbitrator state" severity error;
         end case;

@@ -254,9 +254,6 @@ entity CAN_top_level is
   --TX Message data
   signal tran_data_out        : std_logic_vector(31 downto 0);
   
-  --TX Identifier
-  signal tran_ident_out       : std_logic_vector(28 downto 0);
-  
   --TX Data length code
   signal tran_dlc_out         : std_logic_vector(3 downto 0);
   
@@ -455,8 +452,6 @@ architecture rtl of CAN_top_level is
   ----------------------------------------------------
   for reg_comp       : canfd_registers use entity work.canfd_registers(rtl);
   for rx_buf_comp    : rxBuffer use entity work.rxBuffer(rtl);
-  --for txt1_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
-  --for txt2_buf_comp  : txtBuffer use entity work.txtBuffer(rtl);
   for tx_arb_comp    : txArbitrator use entity work.txArbitrator(rtl);
   for mes_filt_comp  : messageFilter use entity work.messageFilter(rtl);
   for int_man_comp   : intManager use entity work.intManager(rtl);
@@ -603,7 +598,6 @@ begin
      txt_buf_ready          => txt_buf_ready,
      txtb_ptr               => txt_buf_ptr,
      tran_data_word_out     => tran_data_out,
-     tran_ident_out         => tran_ident_out,
      tran_dlc_out           => tran_dlc_out,
      tran_is_rtr            => tran_is_rtr,
      tran_ident_type_out    => tran_ident_type_out,
@@ -670,7 +664,6 @@ begin
       drv_bus               => drv_bus,
       stat_bus              => stat_bus,
       tran_data_in          => tran_data_out,
-      tran_ident_in         => tran_ident_out,
       tran_dlc_in           => tran_dlc_out,
       tran_is_rtr_in        => tran_is_rtr,
       tran_ident_type_in    => tran_ident_type_out,
