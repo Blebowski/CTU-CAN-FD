@@ -305,8 +305,9 @@ entity prescaler_v3 is
   signal ph1_non_zero           :   boolean;
   signal switch_prop_to_ph1     :   boolean;
   
-  -- Special triggering signal
+  -- Special triggering signals
   signal sync_trig_spec         :   std_logic;
+  signal sample_trig_spec       :   std_logic;
 
   -- Auxiliarly signal for detection which counter should be used for
   -- finish of PH2 in case of Bit-rate shift
@@ -720,7 +721,8 @@ begin
     sample_nbt_r      <= '1' when ((sp_control = NOMINAL_SAMPLE) and
                                    (bt_FSM = ph1) and
                                    (switch_ph1_to_ph2) and
-                                   (tq_edge = '1'))
+                                   (tq_edge = '1')) or
+				   (sample_trig_spec = '1')
                              else
                          '0';
 
@@ -746,6 +748,7 @@ begin
       ph1_real          <=  0;
       ph2_real          <=  0;
       sync_trig_spec    <= '0';
+      sample_trig_spec  <= '0';
       bt_counter_sw     <=  1;
       ipt_counter       <=  0;
       brs_resync        <=  false;
@@ -760,7 +763,8 @@ begin
       ph2_real          <=  ph2_real;
       ph1_real          <=  ph1_real;
       sync_trig_spec    <=  '0';
- 
+      sample_trig_spec  <=  '0';
+
       sp_control_stored <=  sp_control_stored;
       bt_counter_sw     <=  bt_counter_sw;
       brs_resync        <=  brs_resync;
@@ -970,10 +974,11 @@ begin
                 if ((bt_counter >= prs_nbt + ph1_nbt) and 
                     ((sync_nbt_r = '0') and (sync_dbt_r = '0')))
                 then
-                    bt_FSM          <= ph2;
-                    bt_counter      <= 1;
-                    FSM_preset      <= '1';
-                    FSM_Preset_2    <= '0';
+                    bt_FSM           <= ph2;
+                    sample_trig_spec <= '1';
+                    bt_counter       <= 1;
+                    FSM_preset       <= '1';
+                    FSM_Preset_2     <= '0';
                 end if;    
           when others =>
           end case;   
