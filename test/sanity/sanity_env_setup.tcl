@@ -177,17 +177,17 @@ add wave -group "Operation states" \
 	-label "Node 3" $WRCOMP/comp_gen__3/node_1_comp/core_top_comp/OP_State \
 	-label "Node 4" $WRCOMP/comp_gen__4/node_1_comp/core_top_comp/OP_State
 	
-add wave -group "Identifiers (Base part)" \
-	-label "Node 1" $WRCOMP/comp_gen__1/node_1_comp/core_top_comp/tran_ident_base \
-	-label "Node 2" $WRCOMP/comp_gen__2/node_1_comp/core_top_comp/tran_ident_base \
-	-label "Node 3" $WRCOMP/comp_gen__3/node_1_comp/core_top_comp/tran_ident_base \
-	-label "Node 4" $WRCOMP/comp_gen__4/node_1_comp/core_top_comp/tran_ident_base \
+add wave -group "Identifier shift registers (Base part)" \
+	-label "Node 1" $WRCOMP/comp_gen__1/node_1_comp/core_top_comp/PC_State_comp/tran_ident_base_sr \
+	-label "Node 2" $WRCOMP/comp_gen__2/node_1_comp/core_top_comp/PC_State_comp/tran_ident_base_sr \
+	-label "Node 3" $WRCOMP/comp_gen__3/node_1_comp/core_top_comp/PC_State_comp/tran_ident_base_sr \
+	-label "Node 4" $WRCOMP/comp_gen__4/node_1_comp/core_top_comp/PC_State_comp/tran_ident_base_sr \
 
-add wave -group "Identifiers (Extended part)" \
-	-label "Node 1" $WRCOMP/comp_gen__1/node_1_comp/core_top_comp/tran_ident_ext \
-	-label "Node 2" $WRCOMP/comp_gen__2/node_1_comp/core_top_comp/tran_ident_ext \
-	-label "Node 3" $WRCOMP/comp_gen__3/node_1_comp/core_top_comp/tran_ident_ext \
-	-label "Node 4" $WRCOMP/comp_gen__4/node_1_comp/core_top_comp/tran_ident_ext \
+add wave -group "Identifiers shift registers (Extended part)" \
+	-label "Node 1" $WRCOMP/comp_gen__1/node_1_comp/core_top_comp/PC_State_comp/tran_ident_ext_sr \
+	-label "Node 2" $WRCOMP/comp_gen__2/node_1_comp/core_top_comp/PC_State_comp/tran_ident_ext_sr \
+	-label "Node 3" $WRCOMP/comp_gen__3/node_1_comp/core_top_comp/PC_State_comp/tran_ident_ext_sr \
+	-label "Node 4" $WRCOMP/comp_gen__4/node_1_comp/core_top_comp/PC_State_comp/tran_ident_ext_sr \
 
 add wave -group "RTR flag" \
 	-label "Node 1" $WRCOMP/comp_gen__1/node_1_comp/core_top_comp/tran_is_rtr \

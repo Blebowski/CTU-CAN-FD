@@ -102,7 +102,6 @@ entity core_top is
     --Tx Arbitrator interface--
     ---------------------------
     signal tran_data_in           :in   std_logic_vector(31 downto 0);
-    signal tran_ident_in          :in   std_logic_vector(28 downto 0);
     signal tran_dlc_in            :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr_in         :in   std_logic;
     
@@ -372,8 +371,6 @@ entity core_top is
    signal alc                     :     std_logic_vector(4 downto 0);
    
    --Transcieve buffer output
-   signal tran_ident_base         :     std_logic_vector(10 downto 0);
-   signal tran_ident_ext          :     std_logic_vector(17 downto 0);
    signal tran_dlc                :     std_logic_vector(3 downto 0);
    signal tran_is_rtr             :     std_logic;
    signal tran_ident_type         :     std_logic;
@@ -544,8 +541,6 @@ begin
   tran_ident_type       <= tran_ident_type_in;
   tran_frame_type       <= tran_frame_type_in;
   tran_brs              <= tran_brs_in;
-  tran_ident_base       <= tran_ident_in(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-  tran_ident_ext        <= tran_ident_in(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
 
   
   OP_State_comp:operationControl --Operation control state machine
@@ -576,8 +571,6 @@ begin
      alc                =>  alc,
          
      tran_data          =>  tran_data_in,
-     tran_ident_base    =>  tran_ident_base,
-     tran_ident_ext     =>  tran_ident_ext,
      tran_dlc           =>  tran_dlc,
      tran_is_rtr        =>  tran_is_rtr,
      tran_ident_type    =>  tran_ident_type,
@@ -1067,8 +1060,8 @@ begin
  stat_bus(STAT_BDS_LENGTH_HIGH downto STAT_BDS_LENGTH_LOW)  <=  bds_length;
  
  --Transcieve data interface
- stat_bus(STAT_TRAN_IDENT_HIGH downto STAT_TRAN_IDENT_LOW)  
-       <=  tran_ident_ext&tran_ident_base;
+ --stat_bus(STAT_TRAN_IDENT_HIGH downto STAT_TRAN_IDENT_LOW)  
+ --      <=  tran_ident_ext & tran_ident_base;
  
  stat_bus(STAT_TRAN_DLC_HIGH downto STAT_TRAN_DLC_LOW)      <=  tran_dlc;
  stat_bus(STAT_TRAN_IS_RTR_INDEX)                           <=  tran_is_rtr;

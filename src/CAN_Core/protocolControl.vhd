@@ -193,6 +193,9 @@
 --   22.02.2018   Added "sof_pulse" to signalize start of frame for rest of the
 --                design.
 --   23.02.2018   Swapped Identifier Base and Extended on received identifier.
+--     6.4.2018   Added direct addressing of identifier from Protocol control.
+--                In SOF TXT buffer pointer is set to identifier word and
+--                Identifier is stored in the first cycle of Arbitration field.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -217,8 +220,6 @@ entity protocolControl is
     --Transcieve buffer interface--
     -------------------------------
     signal tran_data              :in   std_logic_vector(31 downto 0);
-    signal tran_ident_base        :in   std_logic_vector(10 downto 0);
-    signal tran_ident_ext         :in   std_logic_vector(17 downto 0);
     signal tran_dlc               :in   std_logic_vector(3 downto 0);
     signal tran_is_rtr            :in   std_logic;
     signal tran_ident_type        :in   std_logic;
@@ -512,7 +513,7 @@ entity protocolControl is
   --Recieved data registers--
   ---------------------------
   signal rec_dlc_r                :     std_logic_vector(3 downto 0);
- 	signal rec_is_rtr_r             :     std_logic;
+  signal rec_is_rtr_r             :     std_logic;
   signal rec_ident_type_r         :     std_logic;
   signal rec_frame_type_r         :     std_logic;
   signal rec_brs_r        	       :     std_logic;
@@ -875,7 +876,8 @@ begin
       rec_data_sr             <= (OTHERS => '0');
       
       -- Pointer directly to TXT Buffer RAM
-      txt_buf_ptr_r           <= 4;
+      txt_buf_ptr_r           <= to_integer(unsigned(
+                                    IDENTIFIER_W_ADR(11 downto 2)));
       
       --Presetting the sampling point control
       sp_control_r            <=  NOMINAL_SAMPLE;
@@ -1147,9 +1149,10 @@ begin
                 --base ident is 10
                 tran_pointer              <=  10;
                 
-                --Load the Identifier transmission shift registers
-                tran_ident_base_sr        <= tran_ident_base;
-                tran_ident_ext_sr         <= tran_ident_ext;
+                -- Putting address of Identifier word, in beginning of Arbitr.
+                -- shift registers can be loaded!
+                txt_buf_ptr_r             <=  to_integer(unsigned(
+                                                IDENTIFIER_W_ADR(11 downto 2)));
                 
                 arb_state                 <=  base_id;
                 crc_enable_r              <=  '1';
@@ -1205,8 +1208,15 @@ begin
     --Arbitration
     ----------------------------------------------------------------------------
     when arbitration =>
-          if(FSM_Preset='1')then
-            FSM_Preset<='0';
+          if (FSM_Preset = '1') then
+             FSM_Preset             <= '0';
+
+             -- Loading shift registers with Identifier, It was addressed in
+             -- SOF and is available on TXT Buffer output!
+             tran_ident_base_sr     <= tran_data(IDENTIFIER_BASE_H downto   
+                                                 IDENTIFIER_BASE_L);
+             tran_ident_ext_sr      <= tran_data(IDENTIFIER_EXT_H downto
+                                                 IDENTIFIER_EXT_L);
            else
             --Losing arbitration when sending recessive and sampling dominant
             if(OP_state=transciever)then
@@ -1741,8 +1751,9 @@ begin
             rec_dram_bind           <= 0;
             rec_data_sr             <= (OTHERS => '0');
             
-            -- Pointer directly to TXT Buffer
-            txt_buf_ptr_r           <= 4;
+            -- Pointer directly to TXT Buffer, First data word
+            txt_buf_ptr_r           <= to_integer(unsigned(
+                                        DATA_1_4_W_ADR(11 downto 2)));
             
           else
 

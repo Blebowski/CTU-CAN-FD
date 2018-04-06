@@ -264,7 +264,6 @@ package CANcomponents is
     signal txt_buf_ready          :in std_logic_vector(buf_count - 1 downto 0);
     signal txtb_ptr               :out natural range 0 to 19;
     signal tran_data_word_out     :out std_logic_vector(31 downto 0);
-    signal tran_ident_out         :out std_logic_vector(28 downto 0);
     signal tran_dlc_out           :out std_logic_vector(3 downto 0);
     signal tran_is_rtr            :out std_logic;
     signal tran_ident_type_out    :out std_logic;
@@ -360,7 +359,6 @@ package CANcomponents is
       signal drv_bus               : in  std_logic_vector(1023 downto 0);
       signal stat_bus              : out std_logic_vector(511 downto 0);
       signal tran_data_in          : in  std_logic_vector(31 downto 0);
-      signal tran_ident_in         : in  std_logic_vector(28 downto 0);
       signal tran_dlc_in           : in  std_logic_vector(3 downto 0);
       signal tran_is_rtr_in        : in  std_logic;
       signal tran_ident_type_in    : in  std_logic;
@@ -620,8 +618,6 @@ package CANcomponents is
       signal PC_State_out          : out protocol_type;
       signal alc                   : out std_logic_vector(4 downto 0);
       signal tran_data             : in  std_logic_vector(31 downto 0);
-      signal tran_ident_base       : in  std_logic_vector(10 downto 0);
-      signal tran_ident_ext        : in  std_logic_vector(17 downto 0);
       signal tran_dlc              : in  std_logic_vector(3 downto 0);
       signal tran_is_rtr           : in  std_logic;
       signal tran_ident_type       : in  std_logic;
