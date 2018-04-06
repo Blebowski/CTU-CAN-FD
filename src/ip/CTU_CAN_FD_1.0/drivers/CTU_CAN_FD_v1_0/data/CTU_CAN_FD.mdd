@@ -1,0 +1,10 @@
+
+
+OPTION psf_version = 2.1;
+
+BEGIN DRIVER can_crossbar
+	OPTION supported_peripherals = (CTU_CAN_FD);
+	OPTION copyfiles = all;
+	OPTION VERSION = 1.0;
+	OPTION NAME = CTU_CAN_FD;
+END DRIVER

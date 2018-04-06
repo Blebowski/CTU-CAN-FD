@@ -216,7 +216,7 @@ begin
     end if;
   end process;
 
-  p_async_common:process(all)
+  p_async_common:process
   begin
     if S_AXI_ARESETN = '0' then
       reg_addr_o <= (others => '0');
@@ -229,7 +229,7 @@ begin
     end if;
   end process;
 
-  p_async_read:process(all)
+  p_async_read:process
   begin
     if S_AXI_ARESETN /= '0' and read_in_progress = '1' then --and read_stage = 0 then
       reg_rden_o <= '1';
@@ -244,7 +244,7 @@ begin
     end if;
   end process;
 
-  p_async_write:process(all)
+  p_async_write:process
   begin
     if S_AXI_ARESETN /= '0' and write_in_progress = '1' and (write_stage = 0 or S_AXI_BREADY = '1') then
       reg_be_o    <= S_AXI_WSTRB;
