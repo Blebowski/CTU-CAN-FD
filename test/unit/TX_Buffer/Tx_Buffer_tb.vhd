@@ -59,121 +59,88 @@ use work.ID_transfer.all;
 
 architecture tx_buf_unit_test of CAN_test is
   
-      --Common signals
-      signal clk_sys            :   std_logic:='0';
-      signal res_n              :   std_logic:='0';                        --Async reset
-      signal drv_bus            :   std_logic_vector(1023 downto 0):=(OTHERS => '0');  --Driving bus
-      signal tran_data_in       :   std_logic_vector(639 downto 0):=(OTHERS => '0');   --Input data frame
-      
-      --Buffer 1 
-      signal txt_empty_1        :   std_logic:='0';                       --Logic 1 signals empty TxTime buffer
-      signal txt_disc_1         :   std_logic:='0';                       --Info that  message was stored into buffer
-      signal txt_buffer_out_1   :   std_logic_vector(639 downto 0):=(OTHERS => '0');  --Output value of message in the buffer  
-      signal txt_data_ack_1     :   std_logic:='0';  
-      
-      --Buffer 2 
-      signal txt_empty_2        :   std_logic:='0';                       --Logic 1 signals empty TxTime buffer
-      signal txt_disc_2         :   std_logic:='0';                       --Info that  message was stored into buffer
-      signal txt_buffer_out_2   :   std_logic_vector(639 downto 0):=(OTHERS => '0');  --Output value of message in the buffer  
-      signal txt_data_ack_2     :   std_logic:='0';            
-      
-      --Driving bus aliases
-      signal drv_erase_txt_1    :   std_logic:='0';                           --Command for erasing time transcieve buffer
-      signal drv_store_txt_1    :   std_logic:='0';                           --Command for storing data from tran_data_in into txt_buffer
-      
-      signal drv_erase_txt_2    :   std_logic:='0';                           --Command for erasing time transcieve buffer
-      signal drv_store_txt_2    :   std_logic:='0';                           --Command for storing data from tran_data_in into txt_buffer
-      
-      --Internal test signals
-      signal small_mem          :   std_logic_vector(191 downto 0):=(OTHERS => '0');
-      signal big_mem            :   std_logic_vector(639 downto 0):=(OTHERS => '0');
-      signal rand_ctr_2         :   natural range 0 to RAND_POOL_SIZE:=0;
+    -- Clocking and reset
+    signal clk_sys                :   std_logic:='0';
+    signal res_n                  :   std_logic:='0';
+    
+    -------------------------------
+    --Driving Registers Interface--
+    -------------------------------
+    
+    -- Data and address for SW access into the RAM of TXT Buffer
+    signal tran_data              :     std_logic_vector(31 downto 0);
+    signal tran_addr              :     std_logic_vector(4 downto 0);
+    signal tran_cs                :     std_logic;
+    
+    -- SW commands from user registers
+    signal txt_sw_cmd             :     txt_sw_cmd_type;
+    signal txt_sw_buf_cmd_index   :     std_logic_vector(buf_count - 1 downto 0);
+  
+    ------------------     
+    --Status signals--
+    ------------------
+    signal txtb_state             :     txt_fsm_type;
+    
+    ------------------------------------
+    --CAN Core and TX Arbiter Interface-
+    ------------------------------------
+    
+    -- Commands from the CAN Core for manipulation of the CAN 
+    signal txt_hw_cmd             :     txt_hw_cmd_type;  
+    signal txt_hw_cmd_buf_index   :     natural range 0 to buf_count - 1;
+  
+    -- Buffer output and pointer to the RAM memory
+    signal txt_word               :     std_logic_vector(31 downto 0);
+    signal txt_addr               :     natural range 0 to 19;
+    
+    -- Signals to the TX Arbitrator that it can be selected for transmission
+    -- (used as input to priority decoder)
+    signal txt_buf_ready          :     std_logic
+
 begin
    
-   --Driving bus aliases
-   drv_bus(DRV_ERASE_TXT1_INDEX) <=  drv_erase_txt_1;
-   drv_bus(DRV_ERASE_TXT2_INDEX) <=  drv_erase_txt_1;
-   
-   drv_bus(DRV_STORE_TXT1_INDEX) <=  drv_store_txt_1;
-   drv_bus(DRV_STORE_TXT2_INDEX) <=  drv_store_txt_2;
-  
-  --------------------------------------------
-  -- Buffer components
-  --------------------------------------------
-  
-  txt_Buf_comp_1:txtBuffer 
+    ----------------------------------------------------------------------------
+    -- Buffer components - create only one instance
+    ----------------------------------------------------------------------------
+    txt_Buf_comp : txtBuffer 
     generic map(
-       ID             => 1,
-       useFDsize      => true
+        buf_count               => 4,
+        ID                      => 0
     )
-    PORT map(
-       clk_sys        =>  clk_sys,
-       res_n          =>  res_n,
-       drv_bus        =>  drv_bus,  
-       tran_data_in   =>  tran_data_in,
-       txt_empty      =>  txt_empty_1,
-       txt_disc       =>  txt_disc_1,
-       txt_buffer_out =>  txt_buffer_out_1,
-       txt_data_ack   =>  txt_data_ack_1
-      );
+    port map(
+        clk_sys                 => clk_sys,    
+        res_n                   => res_n,
+        tran_data               => tran_data,
+        tran_addr               => tran_addr,
+        tran_cs                 => tran_cs,
+        txt_sw_cmd              => txt_sw_cmd,
+        txt_sw_buf_cmd_index    => txt_sw_buf_cmd_index,
+        txtb_state              => txtb_state,
+        txt_hw_cmd              => txt_hw_cmd,
+        txt_hw_cmd_buf_index    => txt_hw_cmd_buf_index,
+        txt_word                => txt_word,
+        txt_addr                => txt_addr,
+        txt_buf_ready           => txt_buf_ready
+    );
   
-  txt_Buf_comp_2:txtBuffer 
-    generic map(
-       ID             => 2,
-       useFDsize      => false
-    )
-    PORT map(
-       clk_sys        =>  clk_sys,
-       res_n          =>  res_n,
-       drv_bus        =>  drv_bus,  
-       tran_data_in   =>  tran_data_in,
-       txt_empty      =>  txt_empty_2,
-       txt_disc       =>  txt_disc_2,
-       txt_buffer_out =>  txt_buffer_out_2,
-       txt_data_ack   =>  txt_data_ack_2
-      );
-      
     ---------------------------------
-    --Clock generation
+    -- Clock generation
     ---------------------------------
-    clock_gen:process
-    variable period   :natural:=f100_Mhz;
-    variable duty     :natural:=50;
-    variable epsilon  :natural:=0;
+    clock_gen : process
+    variable period   :natural := f100_Mhz;
+    variable duty     :natural := 50;
+    variable epsilon  :natural := 0;
     begin
-      generate_clock(period,duty,epsilon,clk_sys);
+      generate_clock(period, duty, epsilon, clk_sys);
     end process;
     
     --------------------------------------------
     -- Data generation
     -------------------------------------------- 
-    data_gen_proc:process
-    variable rand_nr :real;
-    variable rand_time: time;
+    data_gen_proc : process
+        variable rand_nr    : real;
+        variable rand_time  : time;
     begin
-      wait until falling_edge(clk_sys) and res_n='1';
-      
-      if(txt_empty_2='1' or txt_empty_1='1')then
-        rand_logic_vect(rand_ctr,tran_data_in,0.5);
-        wait for 0 ns;
-        
-        if(txt_empty_1='1')then
-          drv_store_txt_1 <=  '1';
-          big_mem         <=  tran_data_in;
-        elsif(txt_empty_2='1')then
-          drv_store_txt_2 <=  '1';
-          small_mem       <=  tran_data_in(639 downto 448);
-        end if;
-        
-        wait for 10 ns;
-        drv_store_txt_1   <=  '0';
-        drv_store_txt_2   <=  '0';
-        
-        rand_real_v(rand_ctr,rand_nr);
-        rand_nr:= rand_nr*2.0;
-        rand_time := (integer(rand_nr) + 10) * 1 ns;
-        wait for rand_time;
-      end if;
       
     end process;
   
@@ -183,61 +150,34 @@ begin
     --Main Test process
     ---------------------------------
     ---------------------------------
-    test_proc:process
-    variable rand_nr :real;
-    variable rand_time: time;
+    test_proc : process
+        variable rand_nr    : real;
+        variable rand_time  : time;
     begin
-      log("Restarting TXT Buffer test!",info_l,log_level);
-      wait for 5 ns;
-      reset_test(res_n,status,run,error_ctr);
-      log("Restarted TXT Buffer test",info_l,log_level);
-      print_test_info(iterations,log_level,error_beh,error_tol);
-      
-      -------------------------------
-      --Main loop of the test
-      -------------------------------
-      log("Starting TXT Buffer main loop",info_l,log_level);
-      
-      while (loop_ctr<iterations  or  exit_imm)
-      loop
-        log("Starting loop nr "&integer'image(loop_ctr),info_l,log_level);
-        
-        wait until falling_edge(clk_sys);
-      
-        if(txt_empty_2='0' or txt_empty_1='0')then
-          
-          --Reading from Buffer 1
-          if(txt_empty_1='0')then
-            txt_data_ack_1  <=  '1';
-            if(txt_buffer_out_1 /= big_mem)then
-              log("TXT Buffer with FD support data mismatch",error_l,log_level);
-              process_error(error_ctr,error_beh,exit_imm);  
-            end if;
-          end if;
-          
-          --Reading from Buffer 2
-          if(txt_empty_2='0')then
-            txt_data_ack_2  <=  '1';
-            if(txt_buffer_out_2(639 downto 448) /= small_mem)then
-              log("TXT Buffer without FD support data mismatch",error_l,log_level);
-              process_error(error_ctr,error_beh,exit_imm);  
-            end if;
-          end if;
-          
-          wait for 10 ns;
-          txt_data_ack_2<='0';
-          txt_data_ack_1<='0';
-          rand_real_v(rand_ctr_2,rand_nr);
-          rand_nr:= rand_nr*3.0;
-          rand_time := (integer(rand_nr) + 10) * 1 ns;
-          wait for rand_time;
-          
-        end if;
-        
-        loop_ctr<=loop_ctr+1;
-      end loop;
-      
-      evaluate_test(error_tol,error_ctr,status);
+        log("Restarting TXT Buffer test!", info_l, log_level);
+        wait for 5 ns;
+        reset_test(res_n, status, run, error_ctr);
+        log("Restarted TXT Buffer test", info_l, log_level);
+        print_test_info(iterations, log_level, error_beh, error_tol);
+
+        -------------------------------
+        -- Main loop of the test
+        -------------------------------
+        log("Starting TXT Buffer main loop", info_l, log_level);
+
+        while (loop_ctr < iterations  or  exit_imm)
+        loop
+            log("Starting loop nr " & integer'image(loop_ctr),
+                                        info_l, log_level);
+            wait until falling_edge(clk_sys);
+
+            
+
+
+            loop_ctr <= loop_ctr + 1;
+        end loop;
+
+        evaluate_test(error_tol,error_ctr,status);
     end process;
       
 end architecture;
