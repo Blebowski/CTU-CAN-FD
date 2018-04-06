@@ -116,6 +116,13 @@
 --                   when "bt_counter_sw" expires and bit-rate was shifted.
 --                   Note that with this solution there is no resynchronisation
 --                   occuring during BRS bit!
+--    6.4.2018    1. Added "ipt_counter" which is set to 3 at PH1 to PH2 shift!
+--                   PH2 will only end if "bt_counter" has expired. This counter
+--                   makes it simpler to set "ph2_real" during resynchronisation
+--                   edge.
+--                2. Added "brs_resync" to cover resynchronisation during bits
+--                   where bit-rate is shifted! In these two bits SJW is ignored
+--                   and up to IPT resynchronisation is allowed on PH2!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -320,14 +327,28 @@ entity prescaler_v3 is
   signal bt_FSM_del             :   bit_time_type;
   signal is_tran_trig           :   boolean;
  
-  --Duration of ph1 segment after synchronisation
+  --Duration of ph1 segment after re-synchronisation
   signal ph1_real               :   integer range -127 to 127;
   
   --Duration of ph2 segment after synchronisation
   signal ph2_real               :   integer range -127 to 127;
 
   --Length to be set on secondary counter (post switching)
-  signal ph2_extra              :   natural range 0 to 16383;  
+  signal ph2_extra              :   natural range 0 to 16383;
+
+  -- During BRS bit we still have to resynchronise. Since extra counter is 
+  -- not compared with "ph2_real", we have to mark that resync edge came!
+  signal brs_resync             :   boolean;
+
+  -- Information processing time counter to avoid re-synchronisation to be too
+  -- short! It takes 3 clock cycles to process the data after sample point!
+  -- Can't shorten the PH2 to less than 3 cycles. 
+  signal ipt_counter            :   natural range 0 to 3;
+  signal ipt_ok                 :   boolean;
+
+  -- It takes 3 clock cycles to determine following bus value after sample point
+  -- during this time, the bit can't end!
+  constant INFORMATION_PROCESSING_TIME : natural := 3;
 
 end entity;
 
@@ -356,39 +377,45 @@ architecture rtl of prescaler_v3 is
     end procedure;
 
     ----------------------------------------------------------------------------
-    -- Presetting secondary counter for case of bit-rate shift
+    -- Presetting extra counters related to switch between PH1 and PH2.
+    -- Following counters are set:
+    --  1. Counter which assumes that bit-rate was shifted and counts clock
+    --     cycles as if "post-switch".
+    --  2. Information processing time counter which is set to 3 and counts to
+    --     0. If zero is reached, resynchronisation is allowed, not sonner,
+    --     otherwise bit would end earlier than processed by Protocol Control!
     ----------------------------------------------------------------------------
-    procedure set_secondary_ctr(
-        signal ctr              : out natural range 0 to 16383;
+    procedure set_extra_counters(
+        signal brs_counter      : out natural range 0 to 16383;
         signal ctr_pres         : in  natural range 0 to 16383;
         signal sp_control       : out std_logic_vector(1 downto 0);
-        signal sp_control_pres  : in  std_logic_vector(1 downto 0)
+        signal sp_control_pres  : in  std_logic_vector(1 downto 0);
+        signal ipt_counter      : out natural range 0 to 3
     ) is
     begin
-        ctr         <= ctr_pres;
-        sp_control  <= sp_control_pres;
+        brs_counter     <= ctr_pres;
+        sp_control      <= sp_control_pres;
+        ipt_counter     <= INFORMATION_PROCESSING_TIME;
     end procedure;
 
     ----------------------------------------------------------------------------
     -- Negative resynchronisation
-    -- TODO: Check if here we could not shorten IPT to 3!!!
     ----------------------------------------------------------------------------
     procedure negative_resync(
-        signal bt_counter       : in    natural range 0 to 255;
-        signal sp_control       : in    std_logic_vector(1 downto 0);
-        signal ph2_nbt          : in    natural range 0 to 63;
-        signal ph2_dbt          : in    natural range 0 to 31;
-        signal sjw_nbt          : in    natural range 0 to 31;
-        signal sjw_dbt          : in    natural range 0 to 31;
-        signal tq_nbt           : in    natural range 0 to 255;
-        signal tq_dbt           : in    natural range 0 to 255;
-        signal ph2_real         : out   integer range -127 to 127
+        signal bt_counter           : in    natural range 0 to 255;
+        signal sp_control           : in    std_logic_vector(1 downto 0);
+        signal ph2_nbt              : in    natural range 0 to 63;
+        signal ph2_dbt              : in    natural range 0 to 31;
+        signal sjw_nbt              : in    natural range 0 to 31;
+        signal sjw_dbt              : in    natural range 0 to 31;
+        signal tq_nbt               : in    natural range 0 to 255;
+        signal tq_dbt               : in    natural range 0 to 255;
+        signal ph2_real             : out   integer range -127 to 127
     ) is
-        variable ph2            :       natural range 0 to 63;
-        variable sjw            :       natural range 0 to 31;
-        variable tq             :       integer range -127 to 127;
-        variable ph2_min_sjw    :       natural range 0 to 63;
-        variable ipt_ok         :       boolean;
+        variable ph2                :       natural range 0 to 63;
+        variable sjw                :       natural range 0 to 31;
+        variable tq                 :       integer range -127 to 127;
+        variable ph2_min_sjw        :       natural range 0 to 63;
     begin
         if (sp_control = NOMINAL_SAMPLE) then
             ph2             := ph2_nbt;
@@ -401,45 +428,17 @@ architecture rtl of prescaler_v3 is
         end if;
         ph2_min_sjw         := ph2 - sjw;
 
-        -- First check If information processing time is not corrupted
-        if ((tq = 1 and bt_counter < 4) or
-            ((tq = 2 or tq = 3) and bt_counter < 2))
-        then
-            ipt_ok  := false;
+        -- Resynchronisation is bigger than synchronisation jump width,
+        -- resynchronize only up to maximum of SJW.
+        if (bt_counter < ph2_min_sjw) then
+            ph2_real    <= ph2_min_sjw;
+
+        -- Resynchronisation is smaller than synchronisation jump width,
+        -- finish the Bit in the next Time quantum!
         else
-            ipt_ok  := true;
+            ph2_real    <= bt_counter;
         end if;
 
-        -- The edge did not come during the Information processing time
-        if (ipt_ok) then
-
-            -- Resynchronisation is bigger than synchronisation jump width,
-            -- resynchronize only up to maximum of SJW.
-            if (bt_counter < ph2_min_sjw) then
-                ph2_real    <= ph2_min_sjw;
-
-            -- Resynchronisation is smaller than synchronisation jump width,
-            -- finish the Bit in the next Time quantum!
-            else
-                ph2_real    <= bt_counter;
-            end if;
-        
-        -- The edge did come during Information processing time, should 
-        -- shorten min to 4 clock cycles, but not more than SJW!
-        else
-            -- SJW setting does corrupt IPT, does not shorten to less than IPT!
-            if (ph2_min_sjw < 4) then
-                if (tq = 1) then
-                    ph2_real    <= 4;
-                else
-                    ph2_real    <= 2;
-                end if;
-            
-            -- SJW does not corrupt IPT, shorten max to SJW!
-            else
-                ph2_real        <= ph2_min_sjw;
-            end if;
-        end if;
     end procedure;
 
     ----------------------------------------------------------------------------
@@ -694,6 +693,10 @@ begin
                                  else
                             false;
 
+    -- When Information processing time counter expires, it is OK to shift
+    -- the bit-rate!
+    ipt_ok               <= true when ipt_counter = 0 else
+                            false;
 
     ----------------------------------------------------------------------------
     -- Triggering signals decoders
@@ -727,7 +730,7 @@ begin
                                    (switch_ph1_to_ph2) and
                                    (tq_edge = '1'))
                              else
-                         '0';                            
+                         '0';
 
    
   bt_proc : process(clk_sys, res_n)
@@ -744,6 +747,8 @@ begin
       ph2_real          <=  0;
       sync_trig_spec    <= '0';
       bt_counter_sw     <=  1;
+      ipt_counter       <=  0;
+      brs_resync        <=  false;
 
     elsif rising_edge(clk_sys) then
                 
@@ -758,12 +763,19 @@ begin
  
       sp_control_stored <=  sp_control_stored;
       bt_counter_sw     <=  bt_counter_sw;
+      brs_resync        <=  brs_resync;
+      
+      -- Information processing time is not corrupted when the counter has
+      -- reached zero!
+      if (ipt_counter /= 0) then
+        ipt_counter       <=  ipt_counter - 1;
+      end if;
 
       if (bt_FSM = reset) then
         bt_FSM        <=  sync;
       end if;
       
-      if (sync_edge = '1' and 
+      if (sync_edge = '1' and
          (sync_control = HARD_SYNC) and
          (bt_FSM /= h_sync))
       then
@@ -785,6 +797,7 @@ begin
             if (bt_FSM = ph2) then
                 negative_resync(bt_counter, sp_control, ph2_nbt, ph2_dbt,
                                 sjw_nbt, sjw_dbt, tq_nbt, tq_dbt, ph2_real);
+                brs_resync   <= true;
 
             -- Positive resynchronisation
             -- Transciever in data phase does not perform positive resynchro-
@@ -806,8 +819,9 @@ begin
         ------------------------------------------------------------------------
         when sync =>
             if (FSM_Preset = '1') then
-                is_tran_trig   <= true;
-                FSM_Preset     <= '0';
+                is_tran_trig        <= true;
+                FSM_Preset          <= '0';
+                brs_resync          <= false;
             end if;
 
             if (tq_edge = '1') then
@@ -818,8 +832,9 @@ begin
                 else 
                     bt_FSM      <= ph2;
                     FSM_Preset  <= '1';
-                    set_secondary_ctr(bt_counter_sw, ph2_extra,
-                                      sp_control_stored, sp_control);
+                    set_extra_counters(bt_counter_sw, ph2_extra,
+                                       sp_control_stored, sp_control,
+                                       ipt_counter);
                 end if;
 
                 bt_counter      <= 1;
@@ -845,8 +860,9 @@ begin
                         bt_FSM <= ph1;
                     else
                         bt_FSM <= ph2;
-                        set_secondary_ctr(bt_counter_sw, ph2_extra,
-                                        sp_control_stored, sp_control);
+                        set_extra_counters(bt_counter_sw, ph2_extra,
+                                           sp_control_stored, sp_control,
+                                           ipt_counter);
                     end if;
                     FSM_Preset <= '1';
                     bt_counter <= 1;
@@ -864,8 +880,9 @@ begin
                   bt_FSM        <= ph2;
                   bt_counter    <= 1;
                   FSM_Preset    <= '1';
-                  set_secondary_ctr(bt_counter_sw, ph2_extra,
-                                      sp_control_stored, sp_control);
+                  set_extra_counters(bt_counter_sw, ph2_extra,
+                                     sp_control_stored, sp_control,
+                                     ipt_counter);
               else
                   bt_counter    <= bt_counter + 1;
               end if;
@@ -881,21 +898,25 @@ begin
             end if;
             
             if (tq_edge = '1') then
-              if (switch_ph2_to_sync) then
-                if (use_default_ctr) then
-                  bt_FSM        <= sync;
-                  bt_counter    <= 1;
-                  FSM_Preset    <= '1';
+                if (switch_ph2_to_sync and 
+                    ipt_ok and
+                    use_default_ctr)
+                then
+                    bt_FSM        <= sync;
+                    bt_counter    <= 1;
+                    FSM_Preset    <= '1';
+                else
+                    bt_counter    <= bt_counter + 1;
                 end if;
-              else
-                  bt_counter    <= bt_counter + 1;
-              end if;
             end if;
 
-            -- Counting with 1 each clock cycle! No resynchronisation on this
-            -- counter, no need to check on underflow. We can count to exact
-            -- value (0)!
-            if (bt_counter_sw = 0 or bt_counter_sw = 1) then
+            -- Counting with 1 each clock cycle! Exit when counter expired,
+            -- or resynchronisation edge has occured. Make sure the exit is
+            -- aligned with Time quanta and IPT is not corrupted!
+            if ((bt_counter_sw = 0 or bt_counter_sw = 1 or
+                (brs_resync = true and tq_edge = '1'))
+                and ipt_ok)
+            then
                 if (use_spec_ctr) then
                     bt_FSM      <= sync;
                     bt_counter  <= 1;
