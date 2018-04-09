@@ -43,6 +43,7 @@
 
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
+#define __iomem volatile
 
 typedef uint8_t   __u8;
 typedef uint16_t  __u16;
