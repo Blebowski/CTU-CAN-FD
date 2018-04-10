@@ -105,7 +105,7 @@ architecture rtl of axi_ifc is
   signal axi_rresp    : std_logic_vector(1 downto 0);
   signal axi_rvalid   : std_logic;
 
-  signal addr_regoff : std_logic_vector(ID_ADRESS_LOWER-1 downto 0);
+  signal addr_regoff : std_logic_vector(ID_ADRESS_LOWER-1 downto 2); -- forward only aligned addresses (the bridge/CPU will then pick the bytes itself)
 
   signal want_to_read           : std_logic;
   signal want_to_write          : std_logic;
@@ -226,6 +226,7 @@ begin
   reg_addr_o(COMP_TYPE_ADRESS_HIGHER downto COMP_TYPE_ADRESS_LOWER) <= CAN_COMPONENT_TYPE;
   reg_addr_o(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) <= std_logic_vector(to_unsigned(ID,4));
   reg_addr_o(addr_regoff'range) <= addr_regoff;
+  reg_addr_o(1 downto 0) <= (others => '0');
 
   p_async_common:process(S_AXI_ARESETN, write_in_progress, write_stage, S_AXI_BREADY, read_in_progress, read_stage)
   begin
