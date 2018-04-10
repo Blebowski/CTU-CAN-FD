@@ -232,14 +232,10 @@ begin
   begin
     if S_AXI_ARESETN = '0' then
       addr_regoff <= (others => '0');
-    elsif write_in_progress = '1' then
-      if write_stage = 0 or S_AXI_BREADY = '1' then
-        addr_regoff <= S_AXI_AWADDR(addr_regoff'range);
-      end if;
-    elsif read_in_progress = '1' then
-      if (read_stage = 0) then -- no back-to-back for read (need waitcycle)
-        addr_regoff <= S_AXI_ARADDR(addr_regoff'range);
-      end if;
+    elsif write_in_progress = '1' and (write_stage = 0 or S_AXI_BREADY = '1') then
+      addr_regoff <= S_AXI_AWADDR(addr_regoff'range);
+    elsif read_in_progress = '1' and read_stage = 0 then -- no back-to-back for read (need waitcycle)
+      addr_regoff <= S_AXI_ARADDR(addr_regoff'range);
     else
       addr_regoff <= (others => '0');
     end if;
