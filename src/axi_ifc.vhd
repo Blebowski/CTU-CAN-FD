@@ -1,6 +1,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+use work.CANconstants.all;
 
 entity axi_ifc is
   generic (
@@ -12,7 +13,10 @@ entity axi_ifc is
     -- Width of S_AXI data bus
     C_S_AXI_DATA_WIDTH  : integer  := 32;
     -- Width of S_AXI address bus
-    C_S_AXI_ADDR_WIDTH  : integer  := 24
+    C_S_AXI_ADDR_WIDTH  : integer  := 24;
+
+    -- ID (bits  19-16 of reg_addr_o)
+    ID : natural := 1
   );
   port (
     -- Users to add ports here
@@ -101,6 +105,8 @@ architecture rtl of axi_ifc is
   signal axi_rresp    : std_logic_vector(1 downto 0);
   signal axi_rvalid   : std_logic;
 
+  signal addr_regoff : std_logic_vector(ID_ADRESS_LOWER-1 downto 0);
+
   signal want_to_read           : std_logic;
   signal want_to_write          : std_logic;
   signal want_to_write_q        : std_logic;
@@ -111,7 +117,8 @@ architecture rtl of axi_ifc is
   signal write_precedence_r     : std_logic;
   signal write_precedence_set   : std_logic;
   signal write_precedence_reset : boolean;
-  signal read_stage             : natural range 0 to 1;
+  constant READ_STAGE_END : natural := 1;
+  signal read_stage             : natural range 0 to READ_STAGE_END;
   signal write_stage            : natural range 0 to 1;
 begin
   -- I/O Connections assignments
@@ -193,9 +200,9 @@ begin
     if S_AXI_ARESETN = '0' then
       read_stage <= 0;
     elsif rising_edge(S_AXI_ACLK) then
-      if read_stage = 0 and read_in_progress = '1' then
-        read_stage <= 1;
-      elsif read_stage = 1 and S_AXI_RREADY = '1' then
+      if read_in_progress = '1' and read_stage < READ_STAGE_END then
+        read_stage <= read_stage + 1;
+      elsif read_stage = READ_STAGE_END and S_AXI_RREADY = '1' then
         read_stage <= 0;
       end if;
     end if;
@@ -216,35 +223,47 @@ begin
     end if;
   end process;
 
-  p_async_common:process
+  reg_addr_o(COMP_TYPE_ADRESS_HIGHER downto COMP_TYPE_ADRESS_LOWER) <= CAN_COMPONENT_TYPE;
+  reg_addr_o(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) <= std_logic_vector(to_unsigned(ID,4));
+  reg_addr_o(addr_regoff'range) <= addr_regoff;
+
+  p_async_common:process(S_AXI_ARESETN, write_in_progress, write_stage, S_AXI_BREADY, read_in_progress, read_stage)
   begin
     if S_AXI_ARESETN = '0' then
-      reg_addr_o <= (others => '0');
-    elsif write_in_progress = '1' and (write_stage = 0 or S_AXI_BREADY = '1') then
-      reg_addr_o <= S_AXI_AWADDR;
-    elsif read_in_progress = '1' and (read_stage = 0) then -- no back-to-back for read (need waitcycle)
-      reg_addr_o <= S_AXI_ARADDR;
+      addr_regoff <= (others => '0');
+    elsif write_in_progress = '1' then
+      if write_stage = 0 or S_AXI_BREADY = '1' then
+        addr_regoff <= S_AXI_AWADDR(addr_regoff'range);
+      end if;
+    elsif read_in_progress = '1' then
+      if (read_stage = 0) then -- no back-to-back for read (need waitcycle)
+        addr_regoff <= S_AXI_ARADDR(addr_regoff'range);
+      end if;
     else
-      reg_addr_o <= (others => '0');
+      addr_regoff <= (others => '0');
     end if;
   end process;
 
-  p_async_read:process
+  p_async_read:process(S_AXI_ARESETN, read_in_progress, read_stage)
   begin
-    if S_AXI_ARESETN /= '0' and read_in_progress = '1' then --and read_stage = 0 then
+    if S_AXI_ARESETN /= '0' and read_in_progress = '1' then
       reg_rden_o <= '1';
-      axi_arready <= '1';
-      axi_rvalid <= '1';
-      axi_rresp <= "00"; -- OK
+      if read_stage < READ_STAGE_END then
+        axi_arready <= '0';
+        axi_rvalid <= '0';
+      else
+        axi_arready <= '1';
+        axi_rvalid <= '1';
+      end if;
     else
       reg_rden_o <= '0';
       axi_arready <= '0';
       axi_rvalid <= '0';
-      axi_rresp <= "00"; -- OK
     end if;
+    axi_rresp <= "00"; -- OK
   end process;
 
-  p_async_write:process
+  p_async_write:process(S_AXI_ARESETN, write_in_progress, write_stage, S_AXI_BREADY)
   begin
     if S_AXI_ARESETN /= '0' and write_in_progress = '1' and (write_stage = 0 or S_AXI_BREADY = '1') then
       reg_be_o    <= S_AXI_WSTRB;
