@@ -37,7 +37,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Unit test for the TX Buffer circuit                                                 
+--  Unit test for the TX Buffer circuit
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.6.2016   Created file
@@ -73,8 +73,8 @@ architecture tx_buf_unit_test of CAN_test is
     signal tran_cs                :     std_logic;
     
     -- SW commands from user registers
-    signal txt_sw_cmd             :     txt_sw_cmd_type;
-    signal txt_sw_buf_cmd_index   :     std_logic_vector(buf_count - 1 downto 0);
+    signal txt_sw_cmd             :     txt_sw_cmd_type := ('0','0','0');
+    signal txt_sw_buf_cmd_index   :     std_logic_vector(3 downto 0);
   
     ------------------     
     --Status signals--
@@ -86,8 +86,9 @@ architecture tx_buf_unit_test of CAN_test is
     ------------------------------------
     
     -- Commands from the CAN Core for manipulation of the CAN 
-    signal txt_hw_cmd             :     txt_hw_cmd_type;  
-    signal txt_hw_cmd_buf_index   :     natural range 0 to buf_count - 1;
+    signal txt_hw_cmd             :     txt_hw_cmd_type :=
+                                          ('0', '0', '0', '0', '0', '0'); 
+    signal txt_hw_cmd_buf_index   :     natural range 0 to 3;
   
     -- Buffer output and pointer to the RAM memory
     signal txt_word               :     std_logic_vector(31 downto 0);
@@ -95,7 +96,108 @@ architecture tx_buf_unit_test of CAN_test is
     
     -- Signals to the TX Arbitrator that it can be selected for transmission
     -- (used as input to priority decoder)
-    signal txt_buf_ready          :     std_logic
+    signal txt_buf_ready          :     std_logic;
+
+
+    ------------------------------------
+    -- Internal testbench signals
+    ------------------------------------
+    type shadow_memory_type is array (0 to 19) of std_logic_vector(31 downto 0);  
+    signal shadow_mem             :     shadow_memory_type
+            := (OTHERS => (OTHERS => '0'));
+
+    -- Random generator counters
+    signal rand_gen_ctr           :     natural range 0 to RAND_POOL_SIZE;
+    signal rand_read_ctr          :     natural range 0 to RAND_POOL_SIZE;
+    signal rand_com_gen_ctr       :     natural range 0 to RAND_POOL_SIZE;
+
+    -- Error counters
+    signal data_coh_err_ctr       :     natural;
+    signal state_coh_error_ctr    :     natural;
+
+    -- Immediate exits
+    signal exit_imm_1             :     boolean;
+    signal exit_imm_2             :     boolean;
+    
+    signal txtb_exp_state         :     txt_fsm_type;
+
+    procedure calc_exp_state(
+        signal sw_cmd             : in  txt_sw_cmd_type;
+        signal hw_cmd             : in  txt_hw_cmd_type;
+        signal act_state          : in  txt_fsm_type;
+        signal exp_state          : out txt_fsm_type
+    ) is
+    begin
+
+        -- By default, the state does not change. Only after command!
+        exp_state   <= act_state;
+
+        case act_state is
+        when txt_empty =>
+            if (sw_cmd.set_rdy = '1') then
+                exp_state   <= txt_ready;
+            end if;
+
+        when txt_ready =>
+            if (hw_cmd.lock = '1') then
+                if (sw_cmd.set_abt = '1') then
+                    exp_state   <= txt_ab_prog;
+                else
+                    exp_state   <= txt_tx_prog;
+                end if;
+            elsif (sw_cmd.set_abt = '1') then
+                exp_state       <= txt_aborted;
+            end if;
+
+        when txt_tx_prog =>
+            if (sw_cmd.set_abt = '1') then
+                exp_state   <= txt_ab_prog;
+            end if;
+
+            if (hw_cmd.unlock = '1') then
+                if (hw_cmd.valid = '1') then
+                    exp_state   <= txt_ok;
+                elsif (hw_cmd.err = '1' or hw_cmd.arbl = '1') then
+                    exp_state   <= txt_ready;
+                elsif (hw_cmd.failed = '1') then
+                    exp_state   <= txt_error;
+                end if;
+            end if;
+
+        when txt_ab_prog =>
+            if (hw_cmd.unlock = '1') then
+                if (hw_cmd.valid = '1') then
+                    exp_state   <= txt_ok;
+                elsif (hw_cmd.err = '1' or hw_cmd.arbl = '1') then
+                    exp_state   <= txt_aborted;
+                elsif (hw_cmd.failed = '1') then
+                    exp_state   <= txt_error;
+                end if;
+            end if;
+
+        when txt_ok =>
+            if (sw_cmd.set_ety = '1') then
+                exp_state   <= txt_empty;
+            elsif (sw_cmd.set_rdy = '1') then
+                exp_state   <= txt_ready;
+            end if;
+
+        when txt_aborted =>
+            if (sw_cmd.set_ety = '1') then
+                exp_state   <= txt_empty;
+            elsif (sw_cmd.set_rdy = '1') then
+                exp_state   <= txt_ready;
+            end if;
+
+        when txt_error =>
+            if (sw_cmd.set_ety = '1') then
+                exp_state   <= txt_empty;
+            elsif (sw_cmd.set_rdy = '1') then
+                exp_state   <= txt_ready;
+            end if;
+        when others =>
+        end case;
+    end procedure;
 
 begin
    
@@ -127,27 +229,128 @@ begin
     -- Clock generation
     ---------------------------------
     clock_gen : process
-    variable period   :natural := f100_Mhz;
-    variable duty     :natural := 50;
-    variable epsilon  :natural := 0;
+    variable period         : natural := f100_Mhz;
+    variable duty           : natural := 50;
+    variable epsilon        : natural := 0;
     begin
       generate_clock(period, duty, epsilon, clk_sys);
     end process;
     
+
     --------------------------------------------
-    -- Data generation
+    -- Data generation - stored by user writes
     -------------------------------------------- 
     data_gen_proc : process
-        variable rand_nr    : real;
-        variable rand_time  : time;
     begin
-      
+        tran_cs      <= '0';
+
+        -- Generate random address and data and attempt to store it 
+        -- to the buffer.
+        wait until rising_edge(clk_sys);
+        rand_logic_vect(rand_gen_ctr, tran_data, 0.5);
+        rand_logic_vect(rand_gen_ctr, tran_addr, 0.5);
+        if (to_integer(unsigned(tran_addr)) > 19) then
+            tran_addr  <= "00000";
+        end if;
+        tran_cs <=  '1';
+        wait for 0 ns;
+
+        -- If the buffer is not "ready", the data should be really stored.
+        -- Store it in the shadow buffer!
+        if (txt_buf_ready = '0') then
+            shadow_mem(to_integer(unsigned(tran_addr))) <= tran_data;
+        end if;
+        wait until rising_edge(clk_sys);
+        tran_cs <=  '0';
+        wait until rising_edge(clk_sys);
+
     end process;
-  
-      
+
+
+    ---------------------------------------------
+    -- Reading the data like as If from CAN Core
+    ---------------------------------------------
+    data_read_proc : process
+        variable tmp   : std_logic_vector(4 downto 0);
+    begin
+        data_coh_err_ctr <= 0;
+        wait until falling_edge(clk_sys);
+        -- Read data from random address in the buffer
+        rand_logic_vect_v(rand_read_ctr, tmp, 0.5);
+        if (to_integer(unsigned(tmp)) > 19) then
+            tmp    := "00000";
+        end if;
+        
+        txt_addr <= to_integer(unsigned(tmp));
+        
+        wait until rising_edge(clk_sys) and tran_cs = '0';
+
+        -- At any point the data should be matching the data in
+        -- the shadow buffer
+        if (txt_word /= shadow_mem(txt_addr)) then
+            process_error(data_coh_err_ctr, error_beh, exit_imm_1);
+            log("Data coherency error!", error_l, log_level);
+        end if;
+    end process;
+
+
+    ---------------------------------------------------------
+    -- Sending random commands to the buffer from SW and HW
+    ---------------------------------------------------------
+    commands_proc : process
+    begin
+            
+        wait until falling_edge(clk_sys);
+
+        -- Generate HW commands
+        rand_logic(rand_com_gen_ctr, txt_hw_cmd.lock, 0.2);
+        rand_logic(rand_com_gen_ctr, txt_hw_cmd.unlock, 0.2);
+    
+        if (txtb_state /= txt_ready) then
+            txt_hw_cmd.lock   <= '0';
+        end if;
+
+        if (txtb_state /= txt_tx_prog and txtb_state /= txt_ab_prog) then
+            txt_hw_cmd.unlock <= '0';
+        end if;
+        wait for 0 ns;
+
+        if (txt_hw_cmd.unlock = '1') then
+            rand_logic(rand_com_gen_ctr, txt_hw_cmd.valid,  0.2);
+            rand_logic(rand_com_gen_ctr, txt_hw_cmd.err,    0.2);
+            rand_logic(rand_com_gen_ctr, txt_hw_cmd.arbl,   0.2);
+            rand_logic(rand_com_gen_ctr, txt_hw_cmd.failed, 0.2);
+            
+            if (txt_hw_cmd.valid   = '0' and
+                txt_hw_cmd.err     = '0' and
+                txt_hw_cmd.arbl    = '0' and
+                txt_hw_cmd.failed  = '0')
+            then
+                txt_hw_cmd.valid      <= '1';
+            end if;
+        end if;
+
+        -- Generate SW commands
+        rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_rdy, 0.2);
+        rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_ety, 0.2);
+        rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_abt, 0.2);
+
+        -- Calculate the expected state
+        calc_exp_state(txt_sw_cmd, txt_hw_cmd, txtb_state, txtb_exp_state);
+
+        wait until rising_edge(clk_sys);
+        
+        -- Check whether the state ended up as expected
+        if (txtb_state /= txtb_exp_state) then
+            process_error(state_coh_error_ctr, error_beh, exit_imm_2);
+            --log("State not updated as expected!", error_l, log_level);
+        end if;
+ 
+    end process;
+
     ---------------------------------
     ---------------------------------
-    --Main Test process
+    -- Main Test process
     ---------------------------------
     ---------------------------------
     test_proc : process
@@ -171,13 +374,13 @@ begin
                                         info_l, log_level);
             wait until falling_edge(clk_sys);
 
-            
-
+            -- Just add the errors from two separate processes
+			error_ctr   <= state_coh_error_ctr + data_coh_err_ctr;
 
             loop_ctr <= loop_ctr + 1;
         end loop;
 
-        evaluate_test(error_tol,error_ctr,status);
+        evaluate_test(error_tol, error_ctr, status);
     end process;
       
 end architecture;
@@ -185,45 +388,35 @@ end architecture;
 
 
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Test wrapper and control signals generator                                           
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 architecture tx_buf_unit_test_wrapper of CAN_test_wrapper is
-  
-  --Test component itself
-  component CAN_test is
-  port (
-    signal run            :in   boolean;                -- Input trigger, test starts running when true
-    signal iterations     :in   natural;                -- Number of iterations that test should do
-    signal log_level      :in   log_lvl_type;           -- Logging level, severity which should be shown
-    signal error_beh      :in   err_beh_type;           -- Test behaviour when error occurs: Quit, or Go on
-    signal error_tol      :in   natural;                -- Error tolerance, error counter should not
-                                                         -- exceed this value in order for the test to pass
-    signal status         :out  test_status_type;      -- Status of the test
-    signal errors         :out  natural                -- Amount of errors which appeared in the test
-    --TODO: Error log results 
-  );
-  end component;
   
   --Select architecture of the test
   for test_comp : CAN_test use entity work.CAN_test(tx_buf_unit_test);
   
-    signal run              :   boolean;                -- Input trigger, test starts running when true                                                        -- exceed this value in order for the test to pass
-    signal status_int       :   test_status_type;      -- Status of the test
-    signal errors           :   natural;                -- Amount of errors which appeared in the test
 
+    -- Input trigger, test starts running when true
+    signal run              :   boolean;
+
+    -- Status of the test        
+    signal status_int       :   test_status_type;
+
+    -- Amount of errors which appeared in the test
+    signal errors           :   natural;
 begin
   
-  --In this test wrapper generics are directly connected to the signals
+  -- In this test wrapper generics are directly connected to the signals
   -- of test entity
-  test_comp:CAN_test
+  test_comp : CAN_test
   port map(
      run              =>  run,
      --iterations       =>  10000,
      iterations       =>  iterations , 
      log_level        =>  log_level,
      error_beh        =>  error_beh,
-     error_tol        =>  error_tol,                                                     
+     error_tol        =>  error_tol,
      status           =>  status_int,
      errors           =>  errors
   );
@@ -231,20 +424,19 @@ begin
   status              <= status_int;
   
   ------------------------------------
-  --Starts the test and lets it run
+  -- Starts the test and lets it run
   ------------------------------------
-  test:process
+  test : process
   begin
     run               <= true;
     wait for 1 ns;
     
-    --Wait until the only test finishes and then propagate the results
-    wait until (status_int=passed or status_int=failed);  
+    -- Wait until the only test finishes and then propagate the results
+    wait until (status_int = passed or status_int = failed);  
     
     wait for 100 ns;
     run               <= false;
         
   end process;
-  
   
 end;
