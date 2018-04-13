@@ -356,5 +356,15 @@ begin
          
       end if;
     end process;
-  
+
+    ----------------------------------------------------------------------------
+    -- Monitoring invalid command combinations!
+    ----------------------------------------------------------------------------
+    assert ((buf_fsm /= txt_ready)  and (txt_hw_cmd.lock = '1'))
+            report "Buffer not READY and LOCK occurred" severity error;
+
+    assert ((buf_fsm /= txt_tx_prog or buf_fsm /= txt_ab_prog) and
+            (txt_hw_cmd.unlock = '1'))
+    report "Buffer not READY and LOCK occurred" severity error;
+
 end architecture;
