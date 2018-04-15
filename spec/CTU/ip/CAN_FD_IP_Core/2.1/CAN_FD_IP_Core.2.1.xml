@@ -229,7 +229,7 @@
 					<ipxact:field>
 						<ipxact:name>AFM</ipxact:name>
 						<ipxact:displayName>AFM</ipxact:displayName>
-						<ipxact:description>Acceptance filters mode. If this mode is enabled, acceptance filters are used on  RX Frames . If disabled, every received frame is stored in the RX buffer.</ipxact:description>
+						<ipxact:description>Acceptance filters mode. If this mode is enabled, acceptance filters are used on  RX Frames . If disabled, every received frame is stored in the RX buffer. This bit has meaning only if there is at least one filter synthesized.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2040,7 +2040,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_RAN_HIGH</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_HIGH</ipxact:displayName>
-					<ipxact:description>Higher threshold of the Range filter. Note that 29-bit value of range threshold is not the same format as transmitted</ipxact:description>
+					<ipxact:description>High Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_range=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2062,7 +2062,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_RAN_LOW</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_LOW</ipxact:displayName>
-					<ipxact:description>Lower threshold of the Range filter. Note that 29-bit value of range threshold is not the same format as transmitted and received identifier! In TX_DATA_4 (transmitted identifier) BASE Identifier is at 11 LSB bits and Extension at bits 28-12. However, actual decimal value of the Identifier is that BASE identifier is at MSB bits and 18 LSB bits is identifier extension. The unsigned binary value of the identifier must be written into this register! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_ran=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:description>Low Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_range=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2084,7 +2084,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_C_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_C_VAL</ipxact:displayName>
-					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
+					<ipxact:description>Bit value for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtC=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2106,7 +2106,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_C_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_C_MASK</ipxact:displayName>
-					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
+					<ipxact:description>Bit mask for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtC=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2128,7 +2128,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_B_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_B_VAL</ipxact:displayName>
-					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
+					<ipxact:description>Bit value for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtB=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2150,7 +2150,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_B_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_B_MASK</ipxact:displayName>
-					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.</ipxact:description>
+					<ipxact:description>Bit mask for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtB=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2172,7 +2172,7 @@
 				<ipxact:register>
 					<ipxact:name>FILTER_A_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_A_MASK</ipxact:displayName>
-					<ipxact:description>Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received identifier format. BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_fillt=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:description>Bit mask for acceptance filter A. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtA=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
