@@ -63,8 +63,10 @@ add wave -label "HW commands" $TCOMP/txt_hw_cmd
 add wave -noupdate -divider -height 20 "DUT status signals"
 add wave -label "Buffer state" $TCOMP/txtb_state
 add wave -label "Buffer ready" $TCOMP/txt_buf_ready
-add wave -label "Buffer output" $TCOMP/txt_word
+add wave -label "Buffer output" -hexadecimal $TCOMP/txt_word
 add wave -label "Buffer adress from CAN Core" $TCOMP/txt_addr
+
+add wave -label "TX Buffer memory" $TCOMP/txt_Buf_comp/txt_buffer_mem
 
 add wave -noupdate -divider -height 20 "Internal testbench signals"
 add wave -label "Shadow memory" -hexadecimal $TCOMP/shadow_mem
