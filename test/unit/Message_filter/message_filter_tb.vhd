@@ -195,18 +195,18 @@ architecture mess_filt_unit_test of CAN_test is
                   (drv_settings.drv_filter_C_bits and
                    drv_settings.drv_filter_C_mask));
       
-      frame_conc := frame_info.rec_ident_in(10 downto 0) &
-                    frame_info.rec_ident_in(28 downto 11);
+      frame_conc := frame_info.rec_ident_in(28 downto 18) &
+                    frame_info.rec_ident_in(17 downto 0);
       ident_dec  := to_integer(unsigned(frame_conc)); 
       
       -- Note that here identifier parts are not swapped since driving bus
       -- value is already decimal value!
-      low_conc   := drv_settings.drv_filter_ran_lo_th(28 downto 11) &
-                    drv_settings.drv_filter_ran_lo_th(10 downto 0);
+      low_conc   := drv_settings.drv_filter_ran_lo_th(28 downto 18) &
+                    drv_settings.drv_filter_ran_lo_th(17 downto 0);
       ident_dec  := to_integer(unsigned(low_conc));      
       
-      high_conc  := drv_settings.drv_filter_ran_hi_th(28 downto 11) &
-                    drv_settings.drv_filter_ran_hi_th(10 downto 0);
+      high_conc  := drv_settings.drv_filter_ran_hi_th(28 downto 18) &
+                    drv_settings.drv_filter_ran_hi_th(17 downto 0);
       ident_dec  := to_integer(unsigned(high_conc));        
             
       ran_vals   := ((frame_conc < high_conc) or (frame_conc = high_conc)) and 
@@ -362,7 +362,7 @@ begin
     
     while (loop_ctr < iterations  or exit_imm)
     loop
-      --log("Starting loop nr "&integer'image(loop_ctr),info_l,log_level);
+      log("Starting loop nr " & integer'image(loop_ctr),info_l,log_level);
       
       generate_input    (rand_ctr, frame_info);
       generate_setting  (rand_ctr, drv_settings);
