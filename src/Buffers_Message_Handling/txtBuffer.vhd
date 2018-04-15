@@ -135,21 +135,21 @@ architecture rtl of txtBuffer is
   ------------------
   --Signal aliases--
   ------------------
-  
+
   -- Time transcieve buffer - Data memory
   signal txt_buffer_mem         : frame_memory;
-   
+
   -- FSM state of the buffer
   signal buf_fsm                : txt_fsm_type;
-  
+
   -- TXT Buffer memory protection
   signal txtb_user_accessible   : boolean;
-  
+
   -- Internal buffer selects for commands. Commands are shared across the
   -- buffers so we need unique identifier
   signal hw_cbs                 : std_logic;
   signal sw_cbs                 : std_logic;
-  
+
 begin
     
     -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
@@ -188,8 +188,9 @@ begin
         
           -- pragma translate_off
           txt_buffer_mem <= (OTHERS => (OTHERS => '0'));
+          txt_word       <= (OTHERS => '0');      
           -- pragma translate_on
-                 
+           
       elsif (rising_edge(clk_sys)) then
         
         --Store the data into the Buffer during the access
@@ -360,11 +361,27 @@ begin
     ----------------------------------------------------------------------------
     -- Monitoring invalid command combinations!
     ----------------------------------------------------------------------------
-    assert ((buf_fsm /= txt_ready)  and (txt_hw_cmd.lock = '1'))
-            report "Buffer not READY and LOCK occurred" severity error;
-
-    assert ((buf_fsm /= txt_tx_prog or buf_fsm /= txt_ab_prog) and
-            (txt_hw_cmd.unlock = '1'))
-    report "Buffer not READY and LOCK occurred" severity error;
+    lock_check_proc : process(clk_sys)
+    begin
+        if (rising_edge(clk_sys)) then
+            if (txt_hw_cmd.lock = '1') then
+                if (buf_fsm /= txt_ready) then
+                    report "Buffer not READY and LOCK occurred" severity error;
+                end if;
+            end if;
+        end if;
+    end process;
+    
+    unlock_check_proc : process(clk_sys)
+    begin
+        if (rising_edge(clk_sys)) then
+            if (txt_hw_cmd.unlock = '1') then
+                if (buf_fsm /= txt_tx_prog and buf_fsm /= txt_ab_prog) then
+                    report "Buffer not 'TX_prog' or 'AB_prog'" &
+                           " and UNLOCK occurred" severity error;
+                end if;
+            end if;
+        end if;
+    end process;
 
 end architecture;
