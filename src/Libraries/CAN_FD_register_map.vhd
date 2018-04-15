@@ -549,13 +549,12 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_A_MASK register
   --
-  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and received identifier format. BASE 
-  -- Identifier is 11 LSB and Identifier extension are bits 28-12! Note that fil
-  -- ter support is available by default but it can be left out from synthesis (
-  -- to save logic) by setting "sup_fillt=false". If the particular filter is no
-  -- t supported, writes to this register have no effect and read will return al
-  -- l zeroes.
+  -- Bit mask for acceptance filter A. The identifier format is the same as tran
+  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
+  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
+  -- lable by default but it can be left out from synthesis (to save logic) by s
+  -- etting "sup_filtA=false". If the particular filter is not supported, writes
+  --  to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_A_VAL_L       : natural := 0;
   constant BIT_MASK_A_VAL_H      : natural := 28;
@@ -585,8 +584,12 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_B_MASK register
   --
-  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and received Identifier.
+  -- Bit mask for acceptance filter B. The identifier format is the same as tran
+  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
+  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
+  -- lable by default but it can be left out from synthesis (to save logic) by s
+  -- etting "sup_filtB=false". If the particular filter is not supported, writes
+  --  to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_B_VAL_L       : natural := 0;
   constant BIT_MASK_B_VAL_H      : natural := 28;
@@ -598,8 +601,12 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_B_VAL register
   --
-  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and received Identifier.
+  -- Bit value for acceptance filter B. The identifier format is the same as tra
+  -- nsmitted and received identifier format. BASE Identifier is in bits 28 : 18
+  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
+  -- lable by default but it can be left out from synthesis (to save logic) by s
+  -- etting "sup_filtB=false". If the particular filter is not supported, writes
+  --  to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_B_VAL_L        : natural := 0;
   constant BIT_VAL_B_VAL_H       : natural := 28;
@@ -611,8 +618,12 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_C_MASK register
   --
-  -- Bit mask for acceptance filters. Filters A, B, C are available. The identif
-  -- ier format is the same as transmitted and received Identifier.
+  -- Bit mask for acceptance filter C. The identifier format is the same as tran
+  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
+  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
+  -- lable by default but it can be left out from synthesis (to save logic) by s
+  -- etting "sup_filtC=false". If the particular filter is not supported, writes
+  --  to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_C_VAL_L       : natural := 0;
   constant BIT_MASK_C_VAL_H      : natural := 28;
@@ -624,8 +635,12 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_C_VAL register
   --
-  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and received Identifier.
+  -- Bit value for acceptance filter C. The identifier format is the same as tra
+  -- nsmitted and received identifier format. BASE Identifier is  in bits 28 : 1
+  -- 8 and Identifier extension are bits 17 : 0. Note that filter support is ava
+  -- ilable by default but it can be left out from synthesis (to save logic) by 
+  -- setting "sup_filtC=false". If the particular filter is not supported, write
+  -- s to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_C_VAL_L        : natural := 0;
   constant BIT_VAL_C_VAL_H       : natural := 28;
@@ -637,16 +652,12 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_RAN_LOW register
   --
-  -- Lower threshold of the Range filter. Note that 29-bit value of range thresh
-  -- old is not the same format as transmitted and received identifier! In TX_DA
-  -- TA_4 (transmitted identifier) BASE Identifier is at 11 LSB bits and Extensi
-  -- on at bits 28-12. However, actual decimal value of the Identifier is that B
-  -- ASE identifier is at MSB bits and 18 LSB bits is identifier extension. The 
-  -- unsigned binary value of the identifier must be written into this register!
-  --  Note that filter support is available by default but it can be left out fr
-  -- om synthesis (to save logic) by setting "sup_ran=false". If the particular 
-  -- filter is not supported, writes to this register have no effect and read wi
-  -- ll return all zeroes.
+  -- Low Identifier threshold for range filter. The identifier format is the sam
+  -- e as transmitted and received identifier format. BASE Identifier is in bits
+  --  28 : 18 and Identifier extension are bits 17 : 0. Note that filter support
+  --  is available by default but it can be left out from synthesis (to save log
+  -- ic) by setting "sup_range=false". If the particular filter is not supported
+  -- , writes to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_RAN_LOW_VAL_L      : natural := 0;
   constant BIT_RAN_LOW_VAL_H     : natural := 28;
@@ -658,8 +669,12 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_RAN_HIGH register
   --
-  -- Higher threshold of the Range filter. Note that 29-bit value of range thres
-  -- hold is not the same format as transmitted
+  -- High Identifier threshold for range filter. The identifier format is the sa
+  -- me as transmitted and received identifier format. BASE Identifier is in bit
+  -- s 28 : 18 and Identifier extension are bits 17 : 0. Note that filter suppor
+  -- t is available by default but it can be left out from synthesis (to save lo
+  -- gic) by setting "sup_range=false". If the particular filter is not supporte
+  -- d, writes to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_RAN_HIGH_VAL_L     : natural := 0;
   constant BIT_RAN_HIGH_VAL_H    : natural := 28;

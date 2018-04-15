@@ -3849,7 +3849,7 @@ STM Self test mode. In this mode transmitted frame is considered valid even if a
 		0b1  - STM_ENABLED - Self test mode enabled.
 \end_layout
 \begin_layout Description
-AFM Acceptance filters mode. If this mode is enabled, acceptance filters are used on  RX Frames . If disabled, every received frame is stored in the RX buffer.\begin_inset Newline newline\end_inset
+AFM Acceptance filters mode. If this mode is enabled, acceptance filters are used on  RX Frames . If disabled, every received frame is stored in the RX buffer. This bit has meaning only if there is at least one filter synthesized.\begin_inset Newline newline\end_inset
 		0b0  - AFM_DISABLED - Acceptance filter mode disabled\begin_inset Newline newline\end_inset
 		0b1  - AFM_ENABLED - Acceptance filter mode enabled
 \end_layout
@@ -13532,7 +13532,7 @@ Address: 0x34
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received identifier format. BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_fillt=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Bit mask for acceptance filter A. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtA=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -15534,7 +15534,7 @@ Address: 0x3C
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
+Bit mask for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtB=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -16535,7 +16535,7 @@ Address: 0x40
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
+Bit value for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtB=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -17536,7 +17536,7 @@ Address: 0x44
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
+Bit mask for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtC=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -18537,7 +18537,7 @@ Address: 0x48
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received Identifier.
+Bit value for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtC=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -19538,7 +19538,7 @@ Address: 0x4C
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Lower threshold of the Range filter. Note that 29-bit value of range threshold is not the same format as transmitted and received identifier! In TX_DATA_4 (transmitted identifier) BASE Identifier is at 11 LSB bits and Extension at bits 28-12. However, actual decimal value of the Identifier is that BASE identifier is at MSB bits and 18 LSB bits is identifier extension. The unsigned binary value of the identifier must be written into this register! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_ran=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Low Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_range=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -20539,7 +20539,7 @@ Address: 0x50
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Higher threshold of the Range filter. Note that 29-bit value of range threshold is not the same format as transmitted
+High Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_range=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent

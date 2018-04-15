@@ -59,24 +59,35 @@ use work.ID_transfer.all;
 
 architecture mess_filt_unit_test of CAN_test is
 
-    signal clk_sys            : std_logic;                      --System clock
-    signal res_n              : std_logic;                      --Async reset
-    signal rec_ident_in       : std_logic_vector(28 downto 0);  --Receieved identifier
-    signal ident_type         : std_logic;                      --Input message identifier type 
-                                                                  -- (0-BASE Format, 1-Extended Format);
-    signal frame_type         : std_logic;                      --Input frame type (0-Normal CAN, 1- CAN FD) 
-    signal rec_ident_valid    : std_logic;                      --Identifier valid (active log 1)
+    -- Clock and reset
+    signal clk_sys            : std_logic;
+    signal res_n              : std_logic;
+
+    -- Received identifier
+    signal rec_ident_in       : std_logic_vector(28 downto 0);
+
+    -- Received identifier type
+    -- (0-BASE Format, 1-Extended Format);
+    signal ident_type         : std_logic; 
+
+    -- Input frame type (0-Normal CAN, 1- CAN FD) 
+    signal frame_type         : std_logic;
+
+    -- Identifier valid (active log 1)
+    signal rec_ident_valid    : std_logic;
+    
     signal drv_bus            : std_logic_vector(1023 downto 0);
     signal out_ident_valid    : std_logic;
 
-    --Internal testbench signals
-    signal frame_info         : mess_filter_input_type := ((OTHERS=>'0'),'0','0','0');  
-    signal drv_settings       : mess_filter_drv_type   := ((OTHERS=>'0'),(OTHERS=>'0'),(OTHERS=>'0'),
-                                                           (OTHERS=>'0'),(OTHERS=>'0'),(OTHERS=>'0'),
-                                                           (OTHERS=>'0'),(OTHERS=>'0'),(OTHERS=>'0'),
-                                                           (OTHERS=>'0'),(OTHERS=>'0'),(OTHERS=>'0'),
-                                                           '0');
-        
+    -- Internal testbench signals
+    signal frame_info         : mess_filter_input_type :=
+                        ((OTHERS => '0'), '0', '0', '0');
+  
+    signal drv_settings       : mess_filter_drv_type   :=
+                        ((OTHERS => '0'), (OTHERS => '0'),(OTHERS => '0'),
+                         (OTHERS => '0'), (OTHERS => '0'),(OTHERS => '0'),
+                         (OTHERS => '0'), (OTHERS => '0'),(OTHERS => '0'),
+                         (OTHERS => '0'), (OTHERS => '0'),(OTHERS => '0'), '0');
      
     procedure generate_input(
       signal rand_ctr        :inout natural range 0 to RAND_POOL_SIZE;
@@ -91,27 +102,27 @@ architecture mess_filt_unit_test of CAN_test is
     
     
     procedure generate_setting(
-      signal rand_ctr        :inout natural range 0 to RAND_POOL_SIZE;
+      signal rand_ctr        :inout   natural range 0 to RAND_POOL_SIZE;
       signal drv_settings    :inout   mess_filter_drv_type
       )is
     begin
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_A_bits,  0.50);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_A_mask,  0.15);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_A_ctrl,  0.50);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_A_bits, 0.50);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_A_mask, 0.15);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_A_ctrl, 0.50);
       
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_B_bits,  0.50);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_B_mask,  0.15);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_B_ctrl,  0.50);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_B_bits, 0.50);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_B_mask, 0.15);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_B_ctrl, 0.50);
         
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_C_bits,  0.50);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_C_mask,  0.15);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_C_ctrl,  0.50);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_C_bits, 0.50);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_C_mask, 0.15);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_C_ctrl, 0.50);
       
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_ran_hi_th,  0.60);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_ran_lo_th,  0.40);
-      rand_logic_vect    (rand_ctr,  drv_settings.drv_filter_ran_ctrl,   0.50);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_ran_hi_th, 0.60);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_ran_lo_th, 0.40);
+      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_ran_ctrl,  0.50);
       
-      rand_logic         (rand_ctr,  drv_settings.drv_filters_ena,  0.9); 
+      rand_logic         (rand_ctr, drv_settings.drv_filters_ena, 0.9); 
     end procedure;
     
     
@@ -119,69 +130,83 @@ architecture mess_filt_unit_test of CAN_test is
       signal drv_settings   :in     mess_filter_drv_type;
       signal filt_res       :in     std_logic;
       signal log_level      :in     log_lvl_type;
-      signal frame_info     :in     mess_filter_input_type) return boolean
+      signal frame_info     :in     mess_filter_input_type)
+    return boolean
     is
-      variable join           :       std_logic_vector(1 downto 0);
-      variable ctrl           :       std_logic_vector(3 downto 0);
-      variable A_type         :       boolean;  --Whether input frame matches the frame type
-      variable B_type         :       boolean;  --Whether input frame matches the frame type
-      variable C_type         :       boolean;  --Whether input frame matches the frame type
-      variable ran_type       :       boolean;  --Whether input frame matches the frame type
-      variable A_vals         :       boolean;  --Whether input frame matches the frame bits
-      variable B_vals         :       boolean;  --Whether input frame matches the frame bits
-      variable C_vals         :       boolean;  --Whether input frame matches the frame bits
-      variable ran_vals       :       boolean;  --Whether input frame matches the frame range
-      variable ident_dec      :       integer;
-      variable ran_low_dec    :       integer;
-      variable ran_high_dec   :       integer;
-      variable frame_conc     :       std_logic_vector(28 downto 0);
-      variable low_conc       :       std_logic_vector(28 downto 0);
-      variable high_conc      :       std_logic_vector(28 downto 0);
+      variable join         :       std_logic_vector(1 downto 0);
+      variable ctrl         :       std_logic_vector(3 downto 0);
+      variable A_type       :       boolean;
+      variable B_type       :       boolean;
+      variable C_type       :       boolean;
+      variable ran_type     :       boolean;
+      variable A_vals       :       boolean;
+      variable B_vals       :       boolean;
+      variable C_vals       :       boolean;
+      variable ran_vals     :       boolean;
+      variable ident_dec    :       integer;
+      variable ran_low_dec  :       integer;
+      variable ran_high_dec :       integer;
+      variable frame_conc   :       std_logic_vector(28 downto 0);
+      variable low_conc     :       std_logic_vector(28 downto 0);
+      variable high_conc    :       std_logic_vector(28 downto 0);
     begin
       
-      --Filters disabled but result is positive -> error
-      if(drv_settings.drv_filters_ena='0')then
+      -- Filters disabled but result is positive -> error
+      if (drv_settings.drv_filters_ena = '0') then
         
-        if(frame_info.rec_ident_valid = filt_res)then
-            return true;
-        else
-          log("Filters disabled but result positive",error_l,log_level);
-          return false; 
-        end if;
+          if (frame_info.rec_ident_valid = filt_res) then
+              return true;
+          else
+              log("Filters disabled but result positive", error_l, log_level);
+              return false; 
+          end if;
       end if;
       
-      join:= frame_info.frame_type&frame_info.ident_type;
+      join := frame_info.frame_type & frame_info.ident_type;
       case join is
-      when "00" => ctrl:= "0001" ; --CAN BASIC
-      when "01" => ctrl:= "0010" ; --CAN Extended
-      when "10" => ctrl:= "0100" ; --CAN FD Basic
-      when "11" => ctrl:= "1000" ; --CAN Fd Extended
-      when others => ctrl:= "0000" ; 
+      when "00" => ctrl := "0001" ; --CAN BASIC
+      when "01" => ctrl := "0010" ; --CAN Extended
+      when "10" => ctrl := "0100" ; --CAN FD Basic
+      when "11" => ctrl := "1000" ; --CAN Fd Extended
+      when others => ctrl := "0000" ; 
       end case;  
       
-      --Calculate the values of matching frames
-      A_type :=  not ((ctrl AND drv_settings.drv_filter_A_ctrl) = "0000");
-      B_type :=  not ((ctrl AND drv_settings.drv_filter_B_ctrl) = "0000");
-      C_type :=  not ((ctrl AND drv_settings.drv_filter_C_ctrl) = "0000");
-      ran_type :=  not ((ctrl AND drv_settings.drv_filter_ran_ctrl) = "0000");
+      -- Calculate the values of matching frames
+      A_type :=  not ((ctrl and drv_settings.drv_filter_A_ctrl) = "0000");
+      B_type :=  not ((ctrl and drv_settings.drv_filter_B_ctrl) = "0000");
+      C_type :=  not ((ctrl and drv_settings.drv_filter_C_ctrl) = "0000");
+      ran_type :=  not ((ctrl and drv_settings.drv_filter_ran_ctrl) = "0000");
       
-      A_vals :=  ((frame_info.rec_ident_in         AND drv_settings.drv_filter_A_mask) =
-                  (drv_settings.drv_filter_A_bits  AND drv_settings.drv_filter_A_mask));
+      A_vals := ((frame_info.rec_ident_in and 
+                  drv_settings.drv_filter_A_mask)
+                 =
+                 (drv_settings.drv_filter_A_bits and
+                  drv_settings.drv_filter_A_mask));
       
-      B_vals :=  ((frame_info.rec_ident_in         AND drv_settings.drv_filter_B_mask) =
-                  (drv_settings.drv_filter_B_bits  AND drv_settings.drv_filter_B_mask));
+      B_vals := ((frame_info.rec_ident_in and
+                  drv_settings.drv_filter_B_mask)
+                 =
+                 (drv_settings.drv_filter_B_bits and
+                  drv_settings.drv_filter_B_mask));
                   
-      C_vals :=  ((frame_info.rec_ident_in         AND drv_settings.drv_filter_C_mask) =
-                  (drv_settings.drv_filter_C_bits  AND drv_settings.drv_filter_C_mask));
+      C_vals :=  ((frame_info.rec_ident_in and
+                   drv_settings.drv_filter_C_mask)
+                  =
+                  (drv_settings.drv_filter_C_bits and
+                   drv_settings.drv_filter_C_mask));
       
-      frame_conc := frame_info.rec_ident_in(10 downto 0)&frame_info.rec_ident_in(28 downto 11);
+      frame_conc := frame_info.rec_ident_in(28 downto 18) &
+                    frame_info.rec_ident_in(17 downto 0);
       ident_dec  := to_integer(unsigned(frame_conc)); 
       
-      --Note that here identifier parts are not swapped since driving bus value is already decimal value!
-      low_conc   := drv_settings.drv_filter_ran_lo_th(28 downto 11)&drv_settings.drv_filter_ran_lo_th(10 downto 0);
+      -- Note that here identifier parts are not swapped since driving bus
+      -- value is already decimal value!
+      low_conc   := drv_settings.drv_filter_ran_lo_th(28 downto 18) &
+                    drv_settings.drv_filter_ran_lo_th(17 downto 0);
       ident_dec  := to_integer(unsigned(low_conc));      
       
-      high_conc  := drv_settings.drv_filter_ran_hi_th(28 downto 11)&drv_settings.drv_filter_ran_hi_th(10 downto 0);
+      high_conc  := drv_settings.drv_filter_ran_hi_th(28 downto 18) &
+                    drv_settings.drv_filter_ran_hi_th(17 downto 0);
       ident_dec  := to_integer(unsigned(high_conc));        
             
       ran_vals   := ((frame_conc < high_conc) or (frame_conc = high_conc)) and 
@@ -190,63 +215,65 @@ architecture mess_filt_unit_test of CAN_test is
       --------------------------------------------
       --Invalid frame type was not filtered out
       --------------------------------------------
-      if( (A_type=false)    AND
-          (B_type=false)    AND
-          (C_type=false)    AND
-          (ran_type=false)  AND
-          (filt_res='1')
+      if( (A_type = false)    and
+          (B_type = false)    and
+          (C_type = false)    and
+          (ran_type = false)  and
+          (filt_res = '1')
       )then
-        log("Invalid frame type was not filtered out",error_l,log_level);
+        log("Invalid frame type was not filtered out", error_l, log_level);
         return false;
       end if;
       
       -------------------------------------------
       --Valid or invalid frames on input
       -------------------------------------------
-      if( ((A_type AND A_vals) OR
-          (B_type AND B_vals) OR
-          (C_type AND C_vals) OR
-          (ran_type AND ran_vals))
-          AND
-          (drv_settings.drv_filters_ena='1')
-          AND
-          (frame_info.rec_ident_valid='1')
+      if( ((A_type and  A_vals) or
+           (B_type and B_vals) or
+           (C_type and C_vals) or
+           (ran_type and ran_vals))
+          and
+           (drv_settings.drv_filters_ena='1')
+          and
+           (frame_info.rec_ident_valid='1')
       )then
         
-        if (filt_res='1')then   --Is detected
+        if (filt_res = '1') then   --Is detected
           return true;
-        elsif (filt_res='0')then -- Is not detected
-          log("Valid frame not detected",error_l,log_level);
+
+        elsif (filt_res = '0') then -- Is not detected
+          log("Valid frame not detected", error_l, log_level);
           return false;
+
         else
-          log("Filter res undefined",error_l,log_level);
+          log("Filter res undefined", error_l, log_level);
           return false;
         end if;
         
        else 
          
-         if (filt_res='1')then   --Is detected
-          log("Invalid frame but frame detected",error_l,log_level);
-          
+         if (filt_res = '1') then   --Is detected
+          log("Invalid frame but frame detected", error_l, log_level);
           return false;
-         elsif (filt_res='0')then -- Is not detected
+
+         elsif (filt_res = '0') then -- Is not detected
           return true;
+
          else
-          log("Filter res undefined",error_l,log_level); 
+          log("Filter res undefined", error_l, log_level); 
           return false;
          end if;
         
        end if;
-      
     end function;
     
     
 begin
   
-  ---------------------------------
-  --Instance of the message filter
-  ---------------------------------
-  messageFilter_comp:messageFilter 
+  ----------------------------------
+  -- Instance of the message filter
+  ----------------------------------
+  messageFilter_comp : messageFilter 
   PORT map(
      clk_sys            =>  clk_sys,        
      res_n              =>  res_n,
@@ -259,32 +286,57 @@ begin
   );
   
   ---------------------------------
-  --Clock generation
+  -- Clock generation
   ---------------------------------
   clock_gen:process
-  variable period   :natural:=f100_Mhz;
-  variable duty     :natural:=50;
-  variable epsilon  :natural:=0;
+  variable period     : natural := f100_Mhz;
+  variable duty       : natural := 50;
+  variable epsilon    : natural := 0;
   begin
-    generate_clock(period,duty,epsilon,clk_sys);
+    generate_clock(period,duty, epsilon, clk_sys);
   end process;  
   
   --Propagate driving bus to driving bus signals
-  drv_bus(DRV_FILTER_A_MASK_HIGH downto DRV_FILTER_A_MASK_LOW)           <= drv_settings.drv_filter_A_mask;
-  drv_bus(DRV_FILTER_A_CTRL_HIGH downto DRV_FILTER_A_CTRL_LOW)           <= drv_settings.drv_filter_A_ctrl;
-  drv_bus(DRV_FILTER_A_BITS_HIGH downto DRV_FILTER_A_BITS_LOW)           <= drv_settings.drv_filter_A_bits;
-  drv_bus(DRV_FILTER_B_MASK_HIGH downto DRV_FILTER_B_MASK_LOW)           <= drv_settings.drv_filter_B_mask;
-  drv_bus(DRV_FILTER_B_CTRL_HIGH downto DRV_FILTER_B_CTRL_LOW)           <= drv_settings.drv_filter_B_ctrl;
-  drv_bus(DRV_FILTER_B_BITS_HIGH downto DRV_FILTER_B_BITS_LOW)           <= drv_settings.drv_filter_B_bits;
-  drv_bus(DRV_FILTER_C_MASK_HIGH downto DRV_FILTER_C_MASK_LOW)           <= drv_settings.drv_filter_C_mask;
-  drv_bus(DRV_FILTER_C_CTRL_HIGH downto DRV_FILTER_C_CTRL_LOW)           <= drv_settings.drv_filter_C_ctrl;
-  drv_bus(DRV_FILTER_C_BITS_HIGH downto DRV_FILTER_C_BITS_LOW)           <= drv_settings.drv_filter_C_bits;
-  drv_bus(DRV_FILTER_RAN_CTRL_HIGH downto DRV_FILTER_RAN_CTRL_LOW)       <= drv_settings.drv_filter_ran_ctrl;
-  drv_bus(DRV_FILTER_RAN_LO_TH_HIGH downto DRV_FILTER_RAN_LO_TH_LOW)     <= drv_settings.drv_filter_ran_lo_th;
-  drv_bus(DRV_FILTER_RAN_HI_TH_HIGH downto DRV_FILTER_RAN_HI_TH_LOW)     <= drv_settings.drv_filter_ran_hi_th;
-  drv_bus(DRV_FILTERS_ENA_INDEX)                                         <= drv_settings.drv_filters_ena;
+  drv_bus(DRV_FILTER_A_MASK_HIGH downto DRV_FILTER_A_MASK_LOW) <=
+        drv_settings.drv_filter_A_mask;
+
+  drv_bus(DRV_FILTER_A_CTRL_HIGH downto DRV_FILTER_A_CTRL_LOW) <=
+        drv_settings.drv_filter_A_ctrl;
+
+  drv_bus(DRV_FILTER_A_BITS_HIGH downto DRV_FILTER_A_BITS_LOW) <=
+        drv_settings.drv_filter_A_bits;
+
+  drv_bus(DRV_FILTER_B_MASK_HIGH downto DRV_FILTER_B_MASK_LOW) <=
+        drv_settings.drv_filter_B_mask;
+
+  drv_bus(DRV_FILTER_B_CTRL_HIGH downto DRV_FILTER_B_CTRL_LOW) <=
+        drv_settings.drv_filter_B_ctrl;
+
+  drv_bus(DRV_FILTER_B_BITS_HIGH downto DRV_FILTER_B_BITS_LOW) <=
+        drv_settings.drv_filter_B_bits;
+  drv_bus(DRV_FILTER_C_MASK_HIGH downto DRV_FILTER_C_MASK_LOW) <=
+        drv_settings.drv_filter_C_mask;
+
+  drv_bus(DRV_FILTER_C_CTRL_HIGH downto DRV_FILTER_C_CTRL_LOW) <=
+        drv_settings.drv_filter_C_ctrl;
+
+  drv_bus(DRV_FILTER_C_BITS_HIGH downto DRV_FILTER_C_BITS_LOW) <=
+        drv_settings.drv_filter_C_bits;
+
+  drv_bus(DRV_FILTER_RAN_CTRL_HIGH downto DRV_FILTER_RAN_CTRL_LOW) <=
+        drv_settings.drv_filter_ran_ctrl;
+
+  drv_bus(DRV_FILTER_RAN_LO_TH_HIGH downto DRV_FILTER_RAN_LO_TH_LOW) <=
+        drv_settings.drv_filter_ran_lo_th;
+
+  drv_bus(DRV_FILTER_RAN_HI_TH_HIGH downto DRV_FILTER_RAN_HI_TH_LOW) <=
+        drv_settings.drv_filter_ran_hi_th; 
+
+  drv_bus(DRV_FILTERS_ENA_INDEX) <=
+        drv_settings.drv_filters_ena;
+
   
-  --Connect input generator to the circuit
+  -- Connect input generator to the circuit
      rec_ident_in       <=  frame_info.rec_ident_in;
      ident_type         <=  frame_info.ident_type;
      frame_type         <=  frame_info.frame_type;
@@ -292,76 +344,66 @@ begin
   
   ---------------------------------
   ---------------------------------
-  --Main Test process
+  -- Main Test process
   ---------------------------------
   ---------------------------------
-  test_proc:process
+  test_proc : process
   begin
-    log("Restarting Message filter test!",info_l,log_level);
+    log("Restarting Message filter test!", info_l, log_level);
     wait for 5 ns;
-    reset_test(res_n,status,run,error_ctr);
-    log("Restarted Message filter test",info_l,log_level);
-    print_test_info(iterations,log_level,error_beh,error_tol);
+    reset_test(res_n, status, run, error_ctr);
+    log("Restarted Message filter test", info_l, log_level);
+    print_test_info(iterations, log_level, error_beh, error_tol);
     
     -------------------------------
-    --Main loop of the test
+    -- Main loop of the test
     -------------------------------
-    log("Starting message filter main loop",info_l,log_level);
+    log("Starting message filter main loop", info_l, log_level);
     
-    while (loop_ctr<iterations  or  exit_imm)
+    while (loop_ctr < iterations  or exit_imm)
     loop
-      --log("Starting loop nr "&integer'image(loop_ctr),info_l,log_level);
+      log("Starting loop nr " & integer'image(loop_ctr),info_l,log_level);
       
-      generate_input    (rand_ctr,frame_info);
-      generate_setting  (rand_ctr,drv_settings);
+      generate_input    (rand_ctr, frame_info);
+      generate_setting  (rand_ctr, drv_settings);
       
       wait for 10 ns;
       
-      if(validate(drv_settings,out_ident_valid,log_level,frame_info)=false)then
-        process_error(error_ctr,error_beh,exit_imm);       
-      end if;     
+      if(validate(drv_settings, out_ident_valid, log_level, frame_info)
+          = false)
+      then
+          process_error(error_ctr, error_beh, exit_imm);       
+      end if;
       
-      loop_ctr<=loop_ctr+1;
+      loop_ctr <= loop_ctr + 1;
     end loop;
-    
-    evaluate_test(error_tol,error_ctr,status);
+
+    evaluate_test(error_tol, error_ctr, status);
   end process;
-  
+
 end architecture;
 
-
------------------------------------------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+-- Test wrapper and control signals generator         
+-------------------------------------------------------------------------------
 architecture mess_filt_unit_test_wrapper of CAN_test_wrapper is
   
-  --Test component itself
-  component CAN_test is
-  port (
-    signal run            :in   boolean;                -- Input trigger, test starts running when true
-    signal iterations     :in   natural;                -- Number of iterations that test should do
-    signal log_level      :in   log_lvl_type;           -- Logging level, severity which should be shown
-    signal error_beh      :in   err_beh_type;           -- Test behaviour when error occurs: Quit, or Go on
-    signal error_tol      :in   natural;                -- Error tolerance, error counter should not
-                                                         -- exceed this value in order for the test to pass
-    signal status         :out  test_status_type;      -- Status of the test
-    signal errors         :out  natural                -- Amount of errors which appeared in the test
-    --TODO: Error log results 
-  );
-  end component;
-  
-  --Select architecture of the test
+  -- Select architecture of the test
   for test_comp : CAN_test use entity work.CAN_test(mess_filt_unit_test);
   
-    signal run              :   boolean;                -- Input trigger, test starts running when true                                                        -- exceed this value in order for the test to pass
-    signal status_int       :   test_status_type;      -- Status of the test
-    signal errors           :   natural;                -- Amount of errors which appeared in the test
+    -- Starts the test
+    signal run              :   boolean;
+
+    signal status_int       :   test_status_type;
+
+    -- Number of errors that occurred in the test
+    signal errors           :   natural;
 
 begin
   
-  --In this test wrapper generics are directly connected to the signals
+  -- In this test wrapper generics are directly connected to the signals
   -- of test entity
-  test_comp:CAN_test
+  test_comp : CAN_test
   port map(
      run              =>  run,
      iterations       =>  iterations , 
@@ -375,22 +417,19 @@ begin
   status              <= status_int;
   
   ------------------------------------
-  --Starts the test and lets it run
+  -- Starts the test and lets it run
   ------------------------------------
-  test:process
+  test : process
   begin
     run               <= true;
     wait for 1 ns;
     
     --Wait until the only test finishes and then propagate the results
-    wait until (status_int=passed or status_int=failed);  
+    wait until (status_int = passed or status_int = failed);  
     
     wait for 100 ns;
     run               <= false;
         
   end process;
   
-  
 end;
-
-
