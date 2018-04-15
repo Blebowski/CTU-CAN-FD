@@ -2,3 +2,4 @@
 *.bak
 /modelsim_project/work
 *__pycache__*
+*.swp

@@ -78,7 +78,7 @@ use work.CANconstants.all;
 entity txtBuffer is
   generic(
     constant buf_count            :     natural range 1 to 8;
-    constant ID                   :     natural :=1
+    constant ID                   :     natural := 1
   );
   PORT(
     ------------------
@@ -90,9 +90,6 @@ entity txtBuffer is
     -------------------------------
     --Driving Registers Interface--
     -------------------------------
-    
-    -- Driving bus
-    signal drv_bus                :in   std_logic_vector(1023 downto 0);
     
     -- Data and address for SW access into the RAM of TXT Buffer
     signal tran_data              :in   std_logic_vector(31 downto 0);
@@ -108,9 +105,9 @@ entity txtBuffer is
     ------------------
     signal txtb_state             :out  txt_fsm_type;
     
-    ------------------------------------
-    --CAN Core and TX Arbiter Interface-
-    ------------------------------------
+    -------------------------------------
+    -- CAN Core and TX Arbiter Interface
+    -------------------------------------
     
     -- Commands from the CAN Core for manipulation of the CAN 
     signal txt_hw_cmd             :in   txt_hw_cmd_type;  
@@ -138,21 +135,21 @@ architecture rtl of txtBuffer is
   ------------------
   --Signal aliases--
   ------------------
-  
+
   -- Time transcieve buffer - Data memory
-  signal txt_buffer_mem        : frame_memory;
-   
+  signal txt_buffer_mem         : frame_memory;
+  
   -- FSM state of the buffer
   signal buf_fsm                : txt_fsm_type;
-  
+
   -- TXT Buffer memory protection
   signal txtb_user_accessible   : boolean;
-  
+
   -- Internal buffer selects for commands. Commands are shared across the
   -- buffers so we need unique identifier
   signal hw_cbs                 : std_logic;
   signal sw_cbs                 : std_logic;
-  
+
 begin
     
     -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
@@ -172,7 +169,7 @@ begin
                   else
               '0';
     
-    -- Connet internal buffer state to output
+    -- Connect internal buffer state to output
     txtb_state <= buf_fsm;
     
     -- Memory protection of TXT Buffer
@@ -185,15 +182,16 @@ begin
     ----------------------------------------------------------------------------
     -- Buffer access process from SW
     ----------------------------------------------------------------------------
-    tx_buf_access_proc:process(res_n,clk_sys)
+    tx_buf_access_proc : process(res_n, clk_sys)
     begin
       if (res_n = ACT_RESET) then
         
           -- pragma translate_off
           txt_buffer_mem <= (OTHERS => (OTHERS => '0'));
+          txt_word       <= (OTHERS => '0');      
           -- pragma translate_on
-                 
-      elsif (rising_edge(clk_sys))then
+           
+      elsif (rising_edge(clk_sys)) then
         
         --Store the data into the Buffer during the access
         if (tran_cs = '1' and txtb_user_accessible) then
@@ -210,11 +208,11 @@ begin
     ----------------------------------------------------------------------------
     -- Buffer FSM process
     ----------------------------------------------------------------------------
-    tx_buf_fsm_proc:process(res_n,clk_sys)
+    tx_buf_fsm_proc : process(res_n, clk_sys)
     begin
       if (res_n = ACT_RESET) then
           buf_fsm         <= txt_empty;
-      elsif (rising_edge(clk_sys))then
+      elsif (rising_edge(clk_sys)) then
         
         buf_fsm           <= buf_fsm;
         
@@ -359,5 +357,31 @@ begin
          
       end if;
     end process;
-  
+
+    ----------------------------------------------------------------------------
+    -- Monitoring invalid command combinations!
+    ----------------------------------------------------------------------------
+    lock_check_proc : process(clk_sys)
+    begin
+        if (rising_edge(clk_sys)) then
+            if (txt_hw_cmd.lock = '1') then
+                if (buf_fsm /= txt_ready) then
+                    report "Buffer not READY and LOCK occurred" severity error;
+                end if;
+            end if;
+        end if;
+    end process;
+    
+    unlock_check_proc : process(clk_sys)
+    begin
+        if (rising_edge(clk_sys)) then
+            if (txt_hw_cmd.unlock = '1') then
+                if (buf_fsm /= txt_tx_prog and buf_fsm /= txt_ab_prog) then
+                    report "Buffer not 'TX_prog' or 'AB_prog'" &
+                           " and UNLOCK occurred" severity error;
+                end if;
+            end if;
+        end if;
+    end process;
+
 end architecture;

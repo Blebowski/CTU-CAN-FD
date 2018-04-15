@@ -50,27 +50,26 @@ add_test_status_waves
 add_system_waves
 
 #Add circuit specific signals
-add wave -label "Common Data input" -hexadecimal $TCOMP/tran_data_in
+add wave -noupdate -divider -height 20 "DUT memory access"
+add wave -label "Data input" -hexadecimal $TCOMP/tran_data
+add wave -label "Address input" -hexadecimal $TCOMP/tran_addr
+add wave -label "Chip select" $TCOMP/tran_cs
 
-add wave -noupdate -divider -height 20 "DUT signals - Buffer 1"	
-add wave -label "Buffer empty" -hexadecimal $TCOMP/txt_empty_1							
-add wave -label "Discard content" $TCOMP/txt_disc_1	
-add wave -label "Buffer output" -hexadecimal $TCOMP/txt_buffer_out_1
-add wave -label "Discard content" $TCOMP/txt_disc_1
-add wave -label "Store data" $TCOMP/drv_store_txt_1
-add wave -label "Supports FD size" $TCOMP/txt_buf_comp_1/useFDsize
+add wave -noupdate -divider -height 20 "DUT control signals"
+add wave -label "SW commands" $TCOMP/txt_sw_cmd			
+add wave -label "SW command index" $TCOMP/txt_sw_buf_cmd_index
+add wave -label "HW commands" $TCOMP/txt_hw_cmd
 
-add wave -noupdate -divider -height 20 "DUT signals - Buffer 2"
-add wave -label "Buffer empty" -hexadecimal $TCOMP/txt_empty_2							
-add wave -label "Discard content" $TCOMP/txt_disc_2	
-add wave -label "Buffer output" -hexadecimal $TCOMP/txt_buffer_out_2
-add wave -label "Discard content" $TCOMP/txt_disc_2
-add wave -label "Store data" $TCOMP/drv_store_txt_2
-add wave -label "Supports FD size" $TCOMP/txt_buf_comp_2/useFDsize
+add wave -noupdate -divider -height 20 "DUT status signals"
+add wave -label "Buffer state" $TCOMP/txtb_state
+add wave -label "Buffer ready" $TCOMP/txt_buf_ready
+add wave -label "Buffer output" -hexadecimal $TCOMP/txt_word
+add wave -label "Buffer adress from CAN Core" $TCOMP/txt_addr
 
-add wave -noupdate -divider -height 20 "Internal testbench signals"								
-add wave -label "Expected output Buffer 1" -hexadecimal $TCOMP/small_mem
-add wave -label "Expected output Buffer 2" -hexadecimal $TCOMP/big_mem
+add wave -label "TX Buffer memory" $TCOMP/txt_Buf_comp/txt_buffer_mem
+
+add wave -noupdate -divider -height 20 "Internal testbench signals"
+add wave -label "Shadow memory" -hexadecimal $TCOMP/shadow_mem
 									 
 ################################################################################
 # Execute the simulation, gather results
