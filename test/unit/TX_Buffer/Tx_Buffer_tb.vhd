@@ -68,13 +68,16 @@ architecture tx_buf_unit_test of CAN_test is
     -------------------------------
     
     -- Data and address for SW access into the RAM of TXT Buffer
-    signal tran_data              :     std_logic_vector(31 downto 0);
-    signal tran_addr              :     std_logic_vector(4 downto 0);
-    signal tran_cs                :     std_logic;
+    signal tran_data              :     std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    signal tran_addr              :     std_logic_vector(4 downto 0) :=
+                                            (OTHERS => '0');
+    signal tran_cs                :     std_logic := '0';
     
     -- SW commands from user registers
     signal txt_sw_cmd             :     txt_sw_cmd_type := ('0','0','0');
-    signal txt_sw_buf_cmd_index   :     std_logic_vector(3 downto 0);
+    signal txt_sw_buf_cmd_index   :     std_logic_vector(3 downto 0) :=
+                                        (OTHERS => '1');
   
     ------------------     
     --Status signals--
@@ -92,7 +95,7 @@ architecture tx_buf_unit_test of CAN_test is
   
     -- Buffer output and pointer to the RAM memory
     signal txt_word               :     std_logic_vector(31 downto 0);
-    signal txt_addr               :     natural range 0 to 19;
+    signal txt_addr               :     natural range 0 to 19 := 0;
     
     -- Signals to the TX Arbitrator that it can be selected for transmission
     -- (used as input to priority decoder)
@@ -241,8 +244,12 @@ begin
     -- Data generation - stored by user writes
     -------------------------------------------- 
     data_gen_proc : process
+        variable buf_fsm : txt_fsm_type;
     begin
         tran_cs      <= '0';
+        while res_n = ACT_RESET loop
+            wait until rising_edge(clk_sys);        
+        end loop;
 
         -- Generate random address and data and attempt to store it 
         -- to the buffer.
@@ -255,12 +262,20 @@ begin
         tran_cs <=  '1';
         wait for 0 ns;
 
-        -- If the buffer is not "ready", the data should be really stored.
+        wait until rising_edge(clk_sys);
+        tran_cs <= '0';
+        buf_fsm := txtb_state;
+        wait until rising_edge(clk_sys);
+        -- Data should be stored only if the buffer is accessible by user,
+        -- when it is not ready, neither transmission is in progress.
         -- Store it in the shadow buffer!
-        if (txt_buf_ready = '0') then
+        if (buf_fsm /= txt_ready and
+            buf_fsm /= txt_tx_prog and
+            buf_fsm /= txt_ab_prog)
+        then
             shadow_mem(to_integer(unsigned(tran_addr))) <= tran_data;
         end if;
-        wait until rising_edge(clk_sys);
+
         tran_cs <=  '0';
         wait until rising_edge(clk_sys);
 
@@ -272,7 +287,11 @@ begin
     ---------------------------------------------
     data_read_proc : process
         variable tmp   : std_logic_vector(4 downto 0);
-    begin
+    begin        
+        while res_n = ACT_RESET loop
+            wait until rising_edge(clk_sys);        
+        end loop;
+
         data_coh_err_ctr <= 0;
         wait until falling_edge(clk_sys);
         -- Read data from random address in the buffer
@@ -283,7 +302,7 @@ begin
         
         txt_addr <= to_integer(unsigned(tmp));
         
-        wait until rising_edge(clk_sys) and tran_cs = '0';
+        wait until falling_edge(clk_sys) and tran_cs = '0';
 
         -- At any point the data should be matching the data in
         -- the shadow buffer
@@ -298,8 +317,13 @@ begin
     -- Sending random commands to the buffer from SW and HW
     ---------------------------------------------------------
     commands_proc : process
+        variable tmp_real : real;
     begin
-            
+        
+        while res_n = ACT_RESET loop
+            wait until rising_edge(clk_sys);        
+        end loop;
+
         wait until falling_edge(clk_sys);
 
         -- Generate HW commands
@@ -316,35 +340,50 @@ begin
         wait for 0 ns;
 
         if (txt_hw_cmd.unlock = '1') then
-            rand_logic(rand_com_gen_ctr, txt_hw_cmd.valid,  0.2);
-            rand_logic(rand_com_gen_ctr, txt_hw_cmd.err,    0.2);
-            rand_logic(rand_com_gen_ctr, txt_hw_cmd.arbl,   0.2);
-            rand_logic(rand_com_gen_ctr, txt_hw_cmd.failed, 0.2);
-            
-            if (txt_hw_cmd.valid   = '0' and
-                txt_hw_cmd.err     = '0' and
-                txt_hw_cmd.arbl    = '0' and
-                txt_hw_cmd.failed  = '0')
-            then
-                txt_hw_cmd.valid      <= '1';
+            rand_real_v(rand_com_gen_ctr, tmp_real);
+
+            if (tmp_real < 0.3) then
+                 txt_hw_cmd.valid  <= '1';
+            elsif (tmp_real < 0.6) then
+                 txt_hw_cmd.arbl   <= '1';
+            elsif (tmp_real < 0.8) then
+                 txt_hw_cmd.err    <= '1';
+            else
+                 txt_hw_cmd.failed <='1';
             end if;
+        
         end if;
 
         -- Generate SW commands
         rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_rdy, 0.2);
         rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_ety, 0.2);
         rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_abt, 0.2);
+	wait for 0 ns;
 
         -- Calculate the expected state
         calc_exp_state(txt_sw_cmd, txt_hw_cmd, txtb_state, txtb_exp_state);
 
         wait until rising_edge(clk_sys);
-        
+        wait until falling_edge(clk_sys);        
         -- Check whether the state ended up as expected
         if (txtb_state /= txtb_exp_state) then
             process_error(state_coh_error_ctr, error_beh, exit_imm_2);
-            --log("State not updated as expected!", error_l, log_level);
+            log("State not updated as expected! Actual: " &
+	         txt_fsm_type'image(txtb_state) & " Expected: " &
+                 txt_fsm_type'image(txtb_exp_state),
+                  error_l, log_level);
         end if;
+
+	-- Set all the commands to be inactive
+	txt_hw_cmd.valid   <= '0';
+        txt_hw_cmd.err     <= '0';
+        txt_hw_cmd.arbl    <= '0';
+        txt_hw_cmd.failed  <= '0';
+        txt_hw_cmd.lock    <= '0';
+        txt_hw_cmd.unlock  <= '0';
+        txt_sw_cmd.set_rdy <= '0';
+        txt_sw_cmd.set_ety <= '0';
+        txt_sw_cmd.set_abt <= '0';
  
     end process;
 
@@ -373,9 +412,12 @@ begin
             log("Starting loop nr " & integer'image(loop_ctr),
                                         info_l, log_level);
             wait until falling_edge(clk_sys);
+            wait until rising_edge(clk_sys);
+            wait until rising_edge(clk_sys);
+            wait until rising_edge(clk_sys);
 
             -- Just add the errors from two separate processes
-			error_ctr   <= state_coh_error_ctr + data_coh_err_ctr;
+            error_ctr   <= state_coh_error_ctr + data_coh_err_ctr;
 
             loop_ctr <= loop_ctr + 1;
         end loop;
@@ -383,6 +425,8 @@ begin
         evaluate_test(error_tol, error_ctr, status);
     end process;
       
+    errors <= error_ctr;
+
 end architecture;
 
 
