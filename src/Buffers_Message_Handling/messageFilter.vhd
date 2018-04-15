@@ -308,19 +308,28 @@ begin
      int_filter_ran_valid <= '0';
    end generate;
   
-            
-  --If received message is valid and at least one of
-  -- the filters is matching the message passed the
-  -- filter.
-  valid_reg             <=  rec_ident_valid        AND
-                            (
-                              int_filter_A_valid   OR
-                              int_filter_B_valid   OR
-                              int_filter_C_valid   OR
-                              int_filter_ran_valid
-                            ) when drv_filters_ena='1'
-                            else rec_ident_valid;
-                            
+ 
+ -- If no filter is supported then output should be determined just by
+ -- input, regardless of 'drv_filters_ena'! If Core is not synthesized, turning
+ -- filters on should not affect the acceptance! Everyhting should be affected!
+ filt_sup_gen_false : if (sup_filtA = false and sup_filtB = false and
+                          sup_filtC = false and sup_range = false) generate
+     valid_reg           <= rec_ident_valid;
+ end generate;
+
+ filt_sup_gen_true : if (sup_filtA = true or sup_filtB = true or
+                         sup_filtC = true or sup_range = true) generate
+    -- If received message is valid and at least one of the filters is matching 
+    -- the message passed the filter.
+    valid_reg             <=  rec_ident_valid        AND
+                              (
+                                int_filter_A_valid   OR
+                                int_filter_B_valid   OR
+                                int_filter_C_valid   OR
+                                int_filter_ran_valid
+                              ) when drv_filters_ena = '1'
+                              else rec_ident_valid;
+ end generate;
   
   ------------------------------------------------------------------------------
   --To avoid long combinational paths, valid filter output is pipelined. This is
