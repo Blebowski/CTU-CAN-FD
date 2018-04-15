@@ -51,19 +51,19 @@ add_system_waves
 
 #Add message filter specific components
 add wave -noupdate -divider -height 20 "Stimuli inputs"
-add wave -expand -height 17 $TCOMP/frame_info  
-add wave -expand -height 17 $TCOMP/drv_settings
+add wave -expand -height 17 -label "Input frame" $TCOMP/frame_info  
+add wave -expand -height 17 -label "Filter settings" $TCOMP/drv_settings
 
 #Circuit component			
 set CCOMP "messageFilter_comp"  
 add wave -noupdate -divider -height 20 "Circuit state"
-add wave $TCOMP/$CCOMP/int_filter_a_valid
-add wave $TCOMP/$CCOMP/int_filter_b_valid
-add wave $TCOMP/$CCOMP/int_filter_c_valid
-add wave $TCOMP/$CCOMP/int_filter_ran_valid
+add wave -label "Filter A valid" $TCOMP/$CCOMP/int_filter_a_valid
+add wave -label "Filter B valid" $TCOMP/$CCOMP/int_filter_b_valid
+add wave -label "Filter C valid" $TCOMP/$CCOMP/int_filter_c_valid
+add wave -label "Filter Range valid" $TCOMP/$CCOMP/int_filter_ran_valid
 
 add wave -noupdate -divider -height 20 "Circuit outputs"
-add wave $TCOMP/out_ident_valid
+add wave -label "Output valid" $TCOMP/out_ident_valid
 
 ################################################################################
 # Execute the simulation, gather results
