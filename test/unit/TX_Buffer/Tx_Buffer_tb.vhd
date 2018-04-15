@@ -78,7 +78,6 @@ architecture tx_buf_unit_test of CAN_test is
     signal txt_sw_cmd             :     txt_sw_cmd_type := ('0','0','0');
     signal txt_sw_buf_cmd_index   :     std_logic_vector(3 downto 0) :=
                                         (OTHERS => '1');
-  
     ------------------     
     --Status signals--
     ------------------
@@ -201,7 +200,7 @@ architecture tx_buf_unit_test of CAN_test is
         when others =>
         end case;
     end procedure;
-
+  
 begin
    
     ----------------------------------------------------------------------------
@@ -419,7 +418,7 @@ begin
             -- Just add the errors from two separate processes
             error_ctr   <= state_coh_error_ctr + data_coh_err_ctr;
 
-            loop_ctr <= loop_ctr + 1;
+            loop_ctr    <= loop_ctr + 1;
         end loop;
 
         evaluate_test(error_tol, error_ctr, status);

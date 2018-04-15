@@ -138,7 +138,7 @@ architecture rtl of txtBuffer is
 
   -- Time transcieve buffer - Data memory
   signal txt_buffer_mem         : frame_memory;
-
+  
   -- FSM state of the buffer
   signal buf_fsm                : txt_fsm_type;
 
