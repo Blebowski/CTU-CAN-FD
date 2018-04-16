@@ -37,7 +37,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---    Simple test of can_top_axi.
+--    Simple test of can_top_axi, performing register read via AXI.
 --------------------------------------------------------------------------------
 -- Revision History:
 --    April 2018   First Implementation - Martin Jerabek
@@ -53,13 +53,13 @@ USE work.CANtestLib.All;
 USE work.CANconstants.All;
 use work.CAN_FD_register_map.all;
 
-entity tb_can_top_axi is
+entity tb_can_top_axi_read is
   generic (
     runner_cfg : string
   );
 end entity;
 
-architecture tb of tb_can_top_axi is
+architecture tb of tb_can_top_axi_read is
   component CTU_CAN_FD_v1_0 is
     generic(
       use_logger       : boolean                := true;
