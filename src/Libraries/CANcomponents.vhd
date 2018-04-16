@@ -366,7 +366,7 @@ package CANcomponents is
       signal tran_frame_valid_in   : in  std_logic;
       signal txt_hw_cmd            : out txt_hw_cmd_type;
       signal txtb_changed          : in  std_logic;
-      signal txt_buf_ptr           : out natural range 0 to 15;
+      signal txt_buf_ptr           : out natural range 0 to 19;
       signal rec_ident_out         : out std_logic_vector(28 downto 0);
       signal rec_dlc_out           : out std_logic_vector(3 downto 0);
       signal rec_ident_type_out    : out std_logic;
@@ -622,7 +622,7 @@ package CANcomponents is
       signal tran_ident_type       : in  std_logic;
       signal tran_frame_type       : in  std_logic;
       signal tran_brs              : in  std_logic;
-      signal txt_buf_ptr           : out natural range 0 to 15;
+      signal txt_buf_ptr           : out natural range 0 to 19;
       signal tran_frame_valid_in   : in  std_logic;
       signal txt_hw_cmd            : out txt_hw_cmd_type;
       signal txtb_changed          : in  std_logic;

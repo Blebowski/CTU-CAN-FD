@@ -508,10 +508,11 @@ begin
   ----------------------------------------------
   clock_generic: for i in 1 to NODE_COUNT generate
     clock_gen_1:process
-    variable period   :natural:=f100_Mhz;
-    variable duty     :natural:=50;
-    variable epsilon  :natural:=epsilon_v(i);
+    constant period   :natural:=f100_Mhz;
+    constant duty     :natural:=50;
+    variable epsilon  :natural;
     begin
+      epsilon := epsilon_v(i);
       generate_clock(period,duty,epsilon,mem_aux_clk(i));
       timestamp_v(i) <= std_logic_vector(unsigned(timestamp_v(i))+1);
     end process; 
