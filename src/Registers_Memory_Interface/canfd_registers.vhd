@@ -1,46 +1,46 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Memory registers which control functionality of CAN FD core. Memory inter-
---  face is 32 bit avalon compatible. Registers create drv_bus signal which is 
---  used in whole CAN FD IP function to control all modules. Memory Reads and 
---  writes to any location need to be executed as one read, write. No extended 
+--  face is 32 bit avalon compatible. Registers create drv_bus signal which is
+--  used in whole CAN FD IP function to control all modules. Memory Reads and
+--  writes to any location need to be executed as one read, write. No extended
 --  cycles are allowed.
 --  Write to register as following:
 --    1. SCS <= ACT_SCS, data_in <= valid_data, adress <= valid_adress
@@ -56,57 +56,57 @@
 --       a synchronous reset is performed the next cycle.
 --------------------------------------------------------------------------------
 --Note: All control signals which command any event execution which lasts one
---      clock cycle has negative edge detection. Therefore once srd or swr is 
+--      clock cycle has negative edge detection. Therefore once srd or swr is
 --      active to finish the read or write it has to become inactive!--
 -- 2018-04-10 MJ: this looks untrue!
 --------------------------------------------------------------------------------
 -- Revision History:
 --    July 2015   Created file
 --    19.12.2015  RETR register changed for settings register, added configura-
---                tion options for enabling and disabling whole controller, and 
+--                tion options for enabling and disabling whole controller, and
 --                selecting ISO FD option. (Not yet implemented)
 --    16.5.2016   Added restart function. Code formatting and constant replace-
 --                ment
---    19.6.2016   Changed tx_data reg to be array 5*128 bits instead of 640 
---                std_logic vector. This should ease the automatic inference 
+--    19.6.2016   Changed tx_data reg to be array 5*128 bits instead of 640
+--                std_logic vector. This should ease the automatic inference
 --                into RAM memory...
---    20.6.2016   Added ET bit in status register to monitor transmittion of 
+--    20.6.2016   Added ET bit in status register to monitor transmittion of
 --                error frame!
---    21.6.2016   Fixed SETTINGS registers some of the bits were not read back 
+--    21.6.2016   Fixed SETTINGS registers some of the bits were not read back
 --                correctly
 --    23.6.2016   Added DEBUG_REG for some additional debugging purposes
 --    15.7.2016   Added "RX_buff_read_first" and "aux_data" signals. Changed han-
---                dling of moving to next word in RX buffer RX_DATA. Now first 
---                cycle of memory access is detected, here and  "rx_read_start" 
---                is set to active value for only one clock cycle! Even if bus 
+--                dling of moving to next word in RX buffer RX_DATA. Now first
+--                cycle of memory access is detected, here and  "rx_read_start"
+--                is set to active value for only one clock cycle! Even if bus
 --                access lasts several clock cycles data output is captured only
---                in the first cycle and then held until the end of access. 
+--                in the first cycle and then held until the end of access.
 --                Additionally "rx_read_start" signal is now combinationall, not
 --                registered output. Thisway latency is shortened. Without this
 --                precaution it was necessary to add empty cycles between reads
---                from RX_DATA!!!        
+--                from RX_DATA!!!
 --    24.8.2016   Added "use_logger" generic and LOG_EXIST bit to the LOG_STATUS
---                register to provide way how to find out from SW if logger is 
---                actually present. Size is not deciding since HW developer can 
+--                register to provide way how to find out from SW if logger is
+--                actually present. Size is not deciding since HW developer can
 --                set the size to e.g. 32 and use_logger to false!
---    1.9.2016    Moved SJW values to separate register! Now SJW has 4 bits 
+--    1.9.2016    Moved SJW values to separate register! Now SJW has 4 bits
 --                instead of two bits! This is compliant with CAN FD specifi-
 --                cation.
 --    30.11.2017  Changed implementation of TX_DATA registers. Registers removed
---                and access into these registers is now directly accessing RAM 
---                in TXT buffer. Note that buffer must be first forbidden in 
+--                and access into these registers is now directly accessing RAM
+--                in TXT buffer. Note that buffer must be first forbidden in
 --                TX_SETTINGS register so that half written frame is not commi-
 --                tted to CAN Core for transmission. Added BUF_DIR bit and remo-
 --                ved TXT1_COMMIT and TXT2_COMMIT bits
 --    12.12.2017  Renamed entity to  "canfd_registers" instead of "registers"
 --                to avoid possible name conflicts.
---    20.12.2017  Removed obsolete tran_data_in signal. Removed obsolete 
+--    20.12.2017  Removed obsolete tran_data_in signal. Removed obsolete
 --                tx_data_reg. Added supoort for byte enable signal on register
 --                writes and reads.
 --    27.12.2017  Added "txt_frame_swap" bit for frame swapping after the
 --                frame retransmission.
 --    28.12.2017  Added support for "tx_time_suport" and Filter Status register.
---    18.01.2018  Removed txt1_disc, txt2_disc, txt1_commit and txt2_disc 
+--    18.01.2018  Removed txt1_disc, txt2_disc, txt1_commit and txt2_disc
 --                obsolete signals
 --    21.02.2018  Removed "txt_frame_swap" since it is not needed with new,
 --                priority based implementation of TX Buffers.
@@ -123,13 +123,13 @@ entity canfd_registers is
     constant compType     :std_logic_vector(3 downto 0)    := CAN_COMPONENT_TYPE;
     
     --Whenever event logger is present
-    constant use_logger   :boolean                         := true; 
+    constant use_logger   :boolean                         := true;
     
     --Optional synthesis of received message filters
-    constant sup_filtA    :boolean                         := true; 
+    constant sup_filtA    :boolean                         := true;
     
     -- By default the behaviour is as if all the filters are present
-    constant sup_filtB    :boolean                         := true; 
+    constant sup_filtB    :boolean                         := true;
     constant sup_filtC    :boolean                         := true;
     constant sup_range    :boolean                         := true;
     
@@ -143,7 +143,7 @@ entity canfd_registers is
     constant buf_count    : natural range 0 to 7           := 4;
     
     --ID of the component
-    constant ID           :natural                         := 1 
+    constant ID           :natural                         := 1
   );
   port(
     --Clock and asynchronous reset
@@ -163,7 +163,7 @@ entity canfd_registers is
     signal sbe                  :in   std_logic_vector(3 downto 0);
       
     --Driving and Status Bus
-    signal drv_bus              :out  std_logic_vector(1023 downto 0) 
+    signal drv_bus              :out  std_logic_vector(1023 downto 0)
                                         := (OTHERS=>'0');
     signal stat_bus             :in   std_logic_vector(511 downto 0);
     
@@ -172,43 +172,43 @@ entity canfd_registers is
     -----------------------
     
     --Actually loaded data for reading
-    signal rx_read_buff         :in   std_logic_vector(31 downto 0); 
+    signal rx_read_buff         :in   std_logic_vector(31 downto 0);
     
     --Size of  message buffer (in words)
-    signal rx_buf_size          :in   std_logic_vector(12 downto 0);   
+    signal rx_buf_size          :in   std_logic_vector(12 downto 0);
     
     --Signal whenever buffer is full
-    signal rx_full              :in   std_logic;                      
+    signal rx_full              :in   std_logic;
     
     --Signal whenever buffer is empty
-    signal rx_empty             :in   std_logic;                      
+    signal rx_empty             :in   std_logic;
     
     --Number of frames in recieve buffer
-    signal rx_message_count     :in   std_logic_vector(10 downto 0);   
+    signal rx_message_count     :in   std_logic_vector(10 downto 0);
     
     --Number of free 32 bit wide ''windows''
-    signal rx_mem_free          :in   std_logic_vector(12 downto 0);   
+    signal rx_mem_free          :in   std_logic_vector(12 downto 0);
     
     --Position of read pointer
-    signal rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);   
+    signal rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);
     
     --Position of write pointer
-    signal rx_write_pointer_pos :in   std_logic_vector(11 downto 0);   
+    signal rx_write_pointer_pos :in   std_logic_vector(11 downto 0);
     
     --Frame was discarded due full Memory
-    signal rx_message_disc      :in   std_logic;                     
+    signal rx_message_disc      :in   std_logic;
     
-     --Some data were discarded, register 
-    signal rx_data_overrun      :in   std_logic;                     
+     --Some data were discarded, register
+    signal rx_data_overrun      :in   std_logic;
     
     --------------------------------------------------------
     -- Optimized, direct interface to TXT1 and TXT2 buffers
     --------------------------------------------------------
     
     -- Data and address for access to RAM of TXT Buffer
-    signal tran_data            :out  std_logic_vector(31 downto 0);    
-    signal tran_addr            :out  std_logic_vector(4 downto 0);  
-    signal txtb_cs              :out  std_logic_vector(buf_count - 1 downto 0);   
+    signal tran_data            :out  std_logic_vector(31 downto 0);
+    signal tran_addr            :out  std_logic_vector(4 downto 0);
+    signal txtb_cs              :out  std_logic_vector(buf_count - 1 downto 0);
   
     -- Buffer status signals
     signal txtb_fsms            :in   txt_fsms_type;
@@ -257,10 +257,10 @@ entity canfd_registers is
   
   --Retransmitt registers
   --Retransmit limited is enabled
-  signal retr_lim_ena           :     std_logic;                     
+  signal retr_lim_ena           :     std_logic;
   
   --Retransmit treshold
-  signal retr_lim_th            :     std_logic_vector(3 downto 0);   
+  signal retr_lim_th            :     std_logic_vector(3 downto 0);
   
   --Interrupt registers
   signal int_vect_clear         :     std_logic_vector(INT_COUNT - 1 downto 0);
@@ -283,7 +283,7 @@ entity canfd_registers is
   signal prop_fd                :     std_logic_vector(5 downto 0);
   
    --Tripple sampling for normal data rate
-  signal sam_norm               :     std_logic;             
+  signal sam_norm               :     std_logic;
   
   --Error treshold registers
   signal ewl                    :     std_logic_vector(7 downto 0);
@@ -300,7 +300,7 @@ entity canfd_registers is
   signal filter_A_value         :     std_logic_vector(28 downto 0);
   signal filter_B_value         :     std_logic_vector(28 downto 0);
   signal filter_C_value         :     std_logic_vector(28 downto 0);
-  signal filter_ran_low         :     std_logic_vector(28 downto 0); 
+  signal filter_ran_low         :     std_logic_vector(28 downto 0);
   signal filter_ran_high        :     std_logic_vector(28 downto 0);
   signal filter_A_ctrl          :     std_logic_vector(3 downto 0);
   signal filter_B_ctrl          :     std_logic_vector(3 downto 0);
@@ -308,9 +308,9 @@ entity canfd_registers is
   signal filter_ran_ctrl        :     std_logic_vector(3 downto 0);
   
   -- RX Buffer control signals
-  -- Transition from logic 1 to logic zero on this signal 
+  -- Transition from logic 1 to logic zero on this signal
   -- causes rx_reading_pointer increment by one
-  signal rx_read_start          :     std_logic; 
+  signal rx_read_start          :     std_logic;
   
   ---------------------------------------------------
   -- TXT Buffer settings
@@ -339,17 +339,17 @@ entity canfd_registers is
   signal CAN_enable             :     std_logic;
   
   --Type of FD controller used (ISO CAN FD or FD1.0)
-  signal FD_type                :     std_logic; 
+  signal FD_type                :     std_logic;
   
   --------------------
   --Memory registers--
   --------------------
   
   --Mode register
-  signal mode_reg               :     std_logic_vector(5 downto 0);   
+  signal mode_reg               :     std_logic_vector(5 downto 0);
   
   --Status Register
-  signal status_reg             :     std_logic_vector(7 downto 0);   
+  signal status_reg             :     std_logic_vector(7 downto 0);
   
   --Auxiliarly signals
   signal PC_state               :     protocol_type;
@@ -378,7 +378,7 @@ architecture rtl of canfd_registers is
     signal ack_forb               :out  std_logic;
     
     --Retransmit limited is enabled
-    signal retr_lim_ena           :out  std_logic;                      
+    signal retr_lim_ena           :out  std_logic;
     
     --Retransmit treshold
     signal retr_lim_th            :out  std_logic_vector(3 downto 0);
@@ -401,7 +401,7 @@ architecture rtl of canfd_registers is
     signal ph2_fd                 :out  std_logic_vector(4 downto 0);
     signal prop_fd                :out  std_logic_vector(5 downto 0);
     
-    signal sam_norm               :out  std_logic;             
+    signal sam_norm               :out  std_logic;
     signal ewl                    :out  std_logic_vector(7 downto 0);
     signal erp                    :out  std_logic_vector(7 downto 0);
     signal erctr_pres_value       :out  std_logic_vector(8 downto 0);
@@ -412,7 +412,7 @@ architecture rtl of canfd_registers is
     signal filter_A_value         :out  std_logic_vector(28 downto 0);
     signal filter_B_value         :out  std_logic_vector(28 downto 0);
     signal filter_C_value         :out  std_logic_vector(28 downto 0);
-    signal filter_ran_low         :out  std_logic_vector(28 downto 0); 
+    signal filter_ran_low         :out  std_logic_vector(28 downto 0);
     signal filter_ran_high        :out  std_logic_vector(28 downto 0);
     signal filter_A_ctrl          :out  std_logic_vector(3 downto 0);
     signal filter_B_ctrl          :out  std_logic_vector(3 downto 0);
@@ -428,13 +428,13 @@ architecture rtl of canfd_registers is
     signal intLoopbackEna         :out  std_logic;
     signal log_trig_config        :out  std_logic_vector(31 downto 0);
     signal log_capt_config        :out  std_logic_vector(31 downto 0);
-    signal log_cmd                :out  std_logic_vector(3 downto 0);    
+    signal log_cmd                :out  std_logic_vector(3 downto 0);
     signal rx_ctr_set             :out  std_logic;
     signal tx_ctr_set             :out  std_logic;
     signal ctr_val_set            :out  std_logic_vector(31 downto 0);
     signal CAN_enable             :out  std_logic;
-    signal FD_type                :out  std_logic; 
-    signal mode_reg               :out  std_logic_vector(5 downto 0);   
+    signal FD_type                :out  std_logic;
+    signal mode_reg               :out  std_logic_vector(5 downto 0);
     signal rtsopt                 :out  std_logic
   ) is
   begin
@@ -456,17 +456,17 @@ architecture rtl of canfd_registers is
     CAN_enable              <=  ENA_RSTVAL;
     FD_type                 <=  FD_TYPE_RSTVAL;
     
-    --Mode register 
+    --Mode register
     mode_reg(RST_IND)       <=  RST_RSTVAL;
     mode_reg(LOM_IND)       <=  LOM_RSTVAL;   --Listen only mode
     mode_reg(STM_IND)       <=  STM_RSTVAL;   --Self test mode
-    mode_reg(AFM_IND)       <=  AFM_RSTVAL;   --Acceptance filters mode 
+    mode_reg(AFM_IND)       <=  AFM_RSTVAL;   --Acceptance filters mode
     mode_reg(FDE_IND)       <=  FDE_RSTVAL;    --Flexible datarate enable
-    mode_reg(RTR_PREF_IND)  <=  RTR_PREF_RSTVAL;    --RTR Preffered behaviour   
+    mode_reg(RTR_PREF_IND)  <=  RTR_PREF_RSTVAL;    --RTR Preffered behaviour
         
     --Retransmitt limit enable
     retr_lim_ena            <=  RTRLE_RSTVAL;
-    retr_lim_th             <=  RTR_TH_RSTVAL; --Retr. limit treshold zeroes   
+    retr_lim_th             <=  RTR_TH_RSTVAL; --Retr. limit treshold zeroes
     
     sjw_norm                <=  SJW_RSTVAL;
     brp_norm                <=  BRP_RSTVAL;
@@ -508,7 +508,7 @@ architecture rtl of canfd_registers is
     
     if (sup_range = true) then
       filter_ran_low          <=  BIT_RAN_LOW_VAL_RSTVAL;
-      filter_ran_high         <=  BIT_RAN_HIGH_VAL_RSTVAL; 
+      filter_ran_high         <=  BIT_RAN_HIGH_VAL_RSTVAL;
       filter_ran_ctrl         <=  (OTHERS=>'0');
     end if;
     
@@ -592,7 +592,7 @@ architecture rtl of canfd_registers is
     constant  bit_index    : in natural range 0 to 31;
     signal    data_in      : in std_logic_vector(31 downto 0);
     signal    be           : in std_logic_vector(3 downto 0)
-  )is
+  ) is
   begin
     if (write_be_isenabled(bit_index, be)) then
       dest_reg <= data_in(bit_index);
@@ -613,9 +613,8 @@ architecture rtl of canfd_registers is
     
     signal   be          : in std_logic_vector(3 downto 0)
   ) is
-  variable j : natural;
+    variable j : natural;
   begin
-    
     assert high_rindex >= low_rindex report "Swapped high_rindex and low_rindex.";
     assert high_dindex >= low_dindex report "Swapped high_dindex and low_dindex.";
     -- Check if input data range to write corresponds to register indices
@@ -629,7 +628,6 @@ architecture rtl of canfd_registers is
       j := j+1;
     end loop;
   end procedure;
-  
 
 begin
   
@@ -637,7 +635,7 @@ begin
   --Reset propagation to output
   --Note: this works only for reset active in logic zero
   --------------------------------------------------------
-  res_out               <=  res_n and int_reset; 
+  res_out               <=  res_n and int_reset;
  
   --------------------------------------------------------
   -- Propagation of Avalon address to TXT Buffer RAM
@@ -645,7 +643,7 @@ begin
   tran_data             <= data_in;
   
   --Since TX_DATA registers are in separate region, which
-  -- is aligned it is enough to take the lowest bits to 
+  -- is aligned it is enough to take the lowest bits to
   -- create the address offset
   tran_addr             <= adress(6 downto 2);
   
@@ -655,7 +653,7 @@ begin
   txt_buf_access   <= true when (((adress(11 downto 8) = TX_BUFFER_1_BLOCK) or
                                   (adress(11 downto 8) = TX_BUFFER_2_BLOCK) or
                                   (adress(11 downto 8) = TX_BUFFER_3_BLOCK) or
-                                  (adress(11 downto 8) = TX_BUFFER_4_BLOCK)) and 
+                                  (adress(11 downto 8) = TX_BUFFER_4_BLOCK)) and
                                  scs='1' and swr='1')
                            else
                       false;
@@ -707,930 +705,907 @@ begin
        
        sjw_norm           ,
        brp_norm           ,ph1_norm               ,ph2_norm                ,
-       prop_norm          ,sjw_fd                 ,brp_fd                  ,             
+       prop_norm          ,sjw_fd                 ,brp_fd                  ,
        ph1_fd             ,ph2_fd                 ,prop_fd                 ,
        sam_norm           ,ewl                    ,erp                     ,
        erctr_pres_value   ,erctr_pres_mask        ,filter_A_mask           ,
        filter_B_mask      ,filter_C_mask          ,filter_A_value          ,
-       filter_B_value     ,filter_C_value         ,filter_ran_low          ,        
+       filter_B_value     ,filter_C_value         ,filter_ran_low          ,
        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
        filter_C_ctrl      ,filter_ran_ctrl        ,
-       txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,     
-       txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,txt_buf_prior           ,     
+       txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,
+       txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,txt_buf_prior           ,
        intLoopbackEna     ,log_trig_config        ,
        log_capt_config    ,log_cmd                ,rx_ctr_set              ,
        tx_ctr_set         ,ctr_val_set            ,CAN_enable              ,
-       FD_type            ,mode_reg               ,rtsopt         
+       FD_type            ,mode_reg               ,rtsopt
       );
       
       RX_buff_read_first    <= false;
       aux_data              <=  (OTHERS=>'0');
       
   elsif rising_edge(clk_sys)then
-	if(int_reset=ACT_RESET)then --Synchronous reset
-		
-  		  --Internal synced reset
-  		  int_reset               <=  not ACT_RESET;
-  	   data_out_int            <= (OTHERS=>'0');
-  	   sbe_reg                 <= (OTHERS => '0');
-  	   
-  	    --Reset the rest of registers
-      reg_reset (
-       int_reset          ,clear_overrun          ,release_recieve         ,
-       abort_transmittion ,ack_forb               ,retr_lim_ena            ,
-       retr_lim_th        ,
-       
-       int_vect_clear     ,int_ena_set            ,int_ena_clear           ,
-       int_mask_set       ,int_mask_clear         ,
+    if(int_reset=ACT_RESET)then --Synchronous reset
+      --Internal synced reset
+      int_reset               <=  not ACT_RESET;
+      data_out_int            <= (OTHERS=>'0');
+      sbe_reg                 <= (OTHERS => '0');
 
-       sjw_norm           ,
-       brp_norm           ,ph1_norm               ,ph2_norm                ,
-       prop_norm          ,sjw_fd                 ,brp_fd                  ,             
-       ph1_fd             ,ph2_fd                 ,prop_fd                 ,
-       sam_norm           ,ewl                    ,erp                     ,
-       erctr_pres_value   ,erctr_pres_mask        ,filter_A_mask           ,
-       filter_B_mask      ,filter_C_mask          ,filter_A_value          ,
-       filter_B_value     ,filter_C_value         ,filter_ran_low          ,        
-       filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
-       filter_C_ctrl      ,filter_ran_ctrl        ,
-       txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,     
-       txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,txt_buf_prior           ,      
-       intLoopbackEna     ,log_trig_config        ,
-       log_capt_config    ,log_cmd                ,
-       rx_ctr_set         ,tx_ctr_set             ,
-       ctr_val_set        ,CAN_enable             ,FD_type                 ,         
-       mode_reg           ,rtsopt           
+          --Reset the rest of registers
+      reg_reset (
+        int_reset          ,clear_overrun          ,release_recieve         ,
+        abort_transmittion ,ack_forb               ,retr_lim_ena            ,
+        retr_lim_th        ,
+
+        int_vect_clear     ,int_ena_set            ,int_ena_clear           ,
+        int_mask_set       ,int_mask_clear         ,
+
+        sjw_norm           ,
+        brp_norm           ,ph1_norm               ,ph2_norm                ,
+        prop_norm          ,sjw_fd                 ,brp_fd                  ,
+        ph1_fd             ,ph2_fd                 ,prop_fd                 ,
+        sam_norm           ,ewl                    ,erp                     ,
+        erctr_pres_value   ,erctr_pres_mask        ,filter_A_mask           ,
+        filter_B_mask      ,filter_C_mask          ,filter_A_value          ,
+        filter_B_value     ,filter_C_value         ,filter_ran_low          ,
+        filter_ran_high    ,filter_A_ctrl          ,filter_B_ctrl           ,
+        filter_C_ctrl      ,filter_ran_ctrl        ,
+        txt_sw_cmd.set_ety ,txt_sw_cmd.set_rdy     ,
+        txt_sw_cmd.set_abt ,txt_buf_cmd_index      ,txt_buf_prior           ,
+        intLoopbackEna     ,log_trig_config        ,
+        log_capt_config    ,log_cmd                ,
+        rx_ctr_set         ,tx_ctr_set             ,
+        ctr_val_set        ,CAN_enable             ,FD_type                 ,
+        mode_reg           ,rtsopt
       );
-           
+
       RX_buff_read_first    <= false;
       aux_data              <=  (OTHERS=>'0');
+    else
+      --Internal registers holding its value
 
-	else
-		--Internal registers holding its value
-		
-		 --Message filters
-    if (sup_filtA = true) then
-      filter_A_mask           <=  filter_A_mask;
-      filter_A_value          <=  filter_A_value;
-      filter_A_ctrl           <=  filter_A_ctrl;
-    end if;
-    
-    if (sup_filtB = true) then
-      filter_B_mask           <=  filter_B_mask;
-      filter_B_value          <=  filter_B_value;
-      filter_B_ctrl           <=  filter_B_ctrl;
-    end if;
-    
-    if (sup_filtB = true) then
-      filter_C_mask           <=  filter_C_mask;
-      filter_C_value          <=  filter_C_value;
-      filter_C_ctrl           <=  filter_C_ctrl;
-    end if;
-    
-    if (sup_range = true) then
-      filter_ran_low          <=  filter_ran_low;
-      filter_ran_high         <=  filter_ran_high;
-      filter_ran_ctrl         <=  filter_ran_ctrl;
-    end if;
-		
-		retr_lim_ena              <=  retr_lim_ena;
-		retr_lim_th               <=  retr_lim_th;
-		sjw_norm                  <=  sjw_norm;
-		brp_norm                  <=  brp_norm;
-		ph1_norm                  <=  ph1_norm;
-		ph2_norm                  <=  ph2_norm;
-		prop_norm                 <=  prop_norm;
-		sjw_fd                    <=  sjw_fd;
-		brp_fd                    <=  brp_fd;
-		ph1_fd                    <=  ph1_fd;
-		ph2_fd                    <=  ph2_fd;
-		prop_fd                   <=  prop_fd;
-		sam_norm                  <=  sam_norm;
-		ewl                       <=  ewl;
-		erp                       <=  erp;
-		mode_reg                  <=  mode_reg;
-		intLoopbackEna            <=  intLoopbackEna;
-		log_trig_config           <=  log_trig_config;
-		log_capt_config           <=  log_capt_config;
-		
-		--Internal registers manipulation
-		int_reset                 <=  not ACT_RESET;
-		clear_overrun             <=  '0';
-		release_recieve           <=  '0';
-		abort_transmittion        <=  '0';
-		erctr_pres_value          <=  (OTHERS=>'0');
-		erctr_pres_mask           <=  "0000";
-		ctr_val_set               <=  (OTHERS =>'0');
-		rx_ctr_set                <=  '0';
-		tx_ctr_set                <=  '0';
-		ack_forb                  <=  ack_forb;
-		data_out_int              <=  (OTHERS=>'0');
-		log_cmd                   <=  (OTHERS =>'0');
-		
-		RX_buff_read_first        <= false;
-		aux_data                  <=  (OTHERS=>'0');
-		sbe_reg                   <= sbe;
-		
-		txt_sw_cmd.set_ety        <= '0';
-    txt_sw_cmd.set_rdy        <= '0';
-    txt_sw_cmd.set_abt        <= '0';
-    txt_buf_cmd_index         <= (OTHERS => '0');
-		txt_buf_prior             <= txt_buf_prior;
-		
-		--Chip select active and our device is selected (Component type and ID)
-		if((scs=ACT_CSC) and 
-		   (adress(COMP_TYPE_ADRESS_HIGHER downto 
-		    COMP_TYPE_ADRESS_LOWER)=compType) and
-		   (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER)=
-		   std_logic_vector(to_unsigned(ID,4))) )
-		then 
-		  
-		  --------------------
-		  --Writing the data--
-		  --------------------
-		  if(swr=ACT_SWR)then 
-    			case adress(11 downto 0) is
-    			
-    			---------------------------------------------------------  
-    			-- MODE, COMMAND and SETTINGS registers
-    			---------------------------------------------------------   
-    			when MODE_ADR =>    
-    
-    			     --RTR_PREF,FDE,AFM,STM,LOM Bits
-    					  write_be_vect(mode_reg, 1, 5, data_in, 1, 5, sbe);
-    					  
-					  --Tripple sampling
-					  write_be_s(sam_norm, TSM_IND, data_in, sbe);
-    					  		  
-    					  --Acknowledge forbidden
-    					  write_be_s(ack_forb, ACF_IND, data_in, sbe);       
-    					  
-    					  --Reset by memory access
-    					  if(data_in(RST_IND)='1' and sbe(0)='1')then                              
-    					   int_reset               <=  ACT_RESET; 
-    					  end if;      
-    					            
-    					  --Command register
-    					  write_be_s(clear_overrun, CDO_IND, data_in, sbe);
- 					  write_be_s(release_recieve, RRB_IND, data_in, sbe);
- 					  write_be_s(abort_transmittion, AT_IND, data_in, sbe);
- 					 		  
-    					  --Status register is read only!
-    					  
-    					  --Settings register
-    					  write_be_s(retr_lim_ena, RTRLE_IND, data_in, sbe);     
-    					  write_be_vect(retr_lim_th, 0, 3, data_in, RTR_TH_L, RTR_TH_H, sbe);
-    					  write_be_s(intLoopbackEna, INT_LOOP_IND, data_in, sbe);     
-    					  write_be_s(CAN_enable, ENA_IND, data_in, sbe);     
-    					  write_be_s(FD_type, FD_TYPE_IND, data_in, sbe);     
-    			
-			 ------------------------------------------------------------	  
- 			 -- INT_STATUS register
- 			 ------------------------------------------------------------
-    			when INT_STAT_ADR =>               
- 			      write_be_vect(int_vect_clear, 0, INT_COUNT - 1, data_in,
- 			                                    0, INT_COUNT - 1, sbe);
-    
-       ------------------------------------------------------------	  
- 			 -- INT_ENA_SET register
- 			 ------------------------------------------------------------
-    			when INT_ENA_SET_ADR =>
-    			     write_be_vect(int_ena_set, 0, INT_COUNT - 1, data_in,
- 			                                 0, INT_COUNT - 1, sbe);
+      --Message filters
+      if (sup_filtA = true) then
+        filter_A_mask           <=  filter_A_mask;
+        filter_A_value          <=  filter_A_value;
+        filter_A_ctrl           <=  filter_A_ctrl;
+      end if;
 
-       ------------------------------------------------------------	  
- 			 -- INT_ENA_CLEAR register
- 			 ------------------------------------------------------------
-    			when INT_ENA_CLR_ADR =>
-    			     write_be_vect(int_ena_clear, 0, INT_COUNT - 1, data_in,
- 			                                   0, INT_COUNT - 1, sbe);
-       
-       ------------------------------------------------------------	  
- 			 -- INT_MASK_SET register
- 			 ------------------------------------------------------------
-    			when INT_MASK_SET_ADR =>
-    			     write_be_vect(int_mask_set, 0, INT_COUNT - 1, data_in,
- 			                                  0, INT_COUNT - 1, sbe);
-       
-       ------------------------------------------------------------	  
- 			 -- INT_MASK_CLEAR register
- 			 ------------------------------------------------------------
-    			when INT_MASK_CLR_ADR =>
-    			     write_be_vect(int_mask_clear, 0, INT_COUNT - 1, data_in,
- 			                                    0, INT_COUNT - 1, sbe);
- 
- 			 ----------------------
- 			 -- BTR
- 			 ----------------------
-    			when BTR_ADR =>
-    			      write_be_vect(prop_norm, 0, prop_norm'length - 1, data_in, 
-			                     PROP_L, PROP_H, sbe);
-    			      write_be_vect(ph1_norm, 0, ph1_norm'length - 1, data_in,
-  			                     PH1_L, PH1_H, sbe);
-    			      write_be_vect(ph2_norm, 0, ph2_norm'length - 1, data_in,
-  			                     PH2_L, PH2_H, sbe);
-    			      write_be_vect(brp_norm, 0, brp_norm'length - 1, data_in,
-  			                     BRP_L, BRP_H, sbe);
- 					   write_be_vect(sjw_norm, 0, sjw_norm'length - 1, data_in,
- 					                 SJW_L, SJW_H, sbe);
- 					   
-  			 ----------------------
- 			 -- BTR_FD
- 			 ----------------------
-    			when BTR_FD_ADR =>
-    			      write_be_vect(prop_fd, 0, prop_fd'length - 1, data_in,
-    			                     PROP_FD_L, PROP_FD_H, sbe);
-    			      write_be_vect(ph1_fd, 0, ph1_fd'length - 1, data_in,
-    			                     PH1_FD_L, PH1_FD_H, sbe);
-    			      write_be_vect(ph2_fd, 0, ph2_fd'length - 1, data_in,
-    			                     PH2_FD_L, PH2_FD_H, sbe);
-             write_be_vect(brp_fd, 0, brp_fd'length - 1, data_in,
-                            BRP_FD_L, BRP_FD_H, sbe);
- 					   write_be_vect(sjw_fd, 0, sjw_fd'length - 1, data_in,
- 					                  SJW_FD_L, SJW_FD_H, sbe);
-    					   
-    			---------------------------------------------------- 
-  			 -- EWL, ERP
-  			 ----------------------------------------------------	   
-    			when EWL_ADR =>
-				           
-				     --Error warning limit
-				     write_be_vect(ewl, 0, 7, data_in, EWL_LIMIT_L, EWL_LIMIT_H, sbe);
-    					   
- 					   --Error passive treshold
- 					   write_be_vect(erp, 0, 7, data_in, ERP_LIMIT_L, ERP_LIMIT_H, sbe);
-    			
-    			----------------------------------------------------	   
-    			-- CTR_PRES 
-    			----------------------------------------------------	   
-    			when CTR_PRES_ADR => 
-    			  
-    			     write_be_vect(erctr_pres_value, 0, 8, data_in, CTPV_L, CTPV_H, sbe);
-    			     write_be_vect(erctr_pres_mask, 0, 3, data_in, 9, 12, sbe);
-    			   
-    			----------------------------------------------------	   
-    			-- ERR_NORM_ADR
-    			----------------------------------------------------	
-    			when ERR_NORM_ADR => 
-    			  
-    			     if (sbe(1) = '1') then
-    					    erctr_pres_value         <=  (OTHERS=>'0');
-    					    erctr_pres_mask          <=  data_in(12 downto 11)&"00"; 
-  		        end if;
-    		
-    		 ----------------------------------------------------	   
-    			--Acceptance filters
-    			----------------------------------------------------	
-    			when FILTER_A_VAL_ADR    => 
-    			       if (sup_filtA) then
-    			         write_be_vect(filter_A_value, 0, 28, data_in, 
-			                  BIT_VAL_A_VAL_L, BIT_VAL_A_VAL_H, sbe);
-  			        end if;
-    			when FILTER_A_MASK_ADR   =>
-    			       if (sup_filtA) then
-    			         write_be_vect(filter_A_mask, 0, 28, data_in,
-			                  BIT_MASK_A_VAL_L, BIT_MASK_A_VAL_H, sbe);
-			        end if;     
-    			when FILTER_B_VAL_ADR    => 
-    			     if (sup_filtB) then
-    			       write_be_vect(filter_B_value, 0, 28, data_in,
-    			               BIT_VAL_B_VAL_L, BIT_VAL_B_VAL_H, sbe);
-  			       end if;
-    			when FILTER_B_MASK_ADR   => 
-    			     if (sup_filtB) then
-    			       write_be_vect(filter_B_mask, 0, 28, data_in,
-    			               BIT_MASK_B_VAL_L, BIT_MASK_B_VAL_H, sbe);
-			      end if;
-    			when FILTER_C_VAL_ADR    =>
-    			     if (sup_filtC) then
-    			       write_be_vect(filter_C_value, 0, 28, data_in,
-    			               BIT_VAL_C_VAL_L, BIT_VAL_C_VAL_H, sbe);
-			      end if;
-    			when FILTER_C_MASK_ADR   =>
-    			     if (sup_filtC) then
-    			       write_be_vect(filter_C_mask, 0, 28, data_in,
-    			               BIT_MASK_C_VAL_L, BIT_MASK_C_VAL_H, sbe);
-			      end if;
-    			when FILTER_RAN_LOW_ADR  => 
-    			     if (sup_range) then
-    			       write_be_vect(filter_ran_low, 0, 28, data_in,
-    			              BIT_RAN_LOW_VAL_L, BIT_RAN_LOW_VAL_H, sbe);
-  			       end if;
-    			when FILTER_RAN_HIGH_ADR => 
-			      if (sup_range) then
-			        write_be_vect(filter_ran_high, 0, 28, data_in,
-			                BIT_RAN_HIGH_VAL_L, BIT_RAN_HIGH_VAL_H, sbe);
-			      end if;
-    			when FILTER_CONTROL_ADR  =>
-   			      if (sup_filtA) then
-   			         write_be_vect(filter_A_ctrl, 0, 3, data_in, 0, 3, sbe);
-					  end if;
-					  if (sup_filtB) then
-					     write_be_vect(filter_B_ctrl, 0, 3, data_in, 4, 7, sbe); 
-  					  end if;
-  					  if (sup_filtC) then
-  					     write_be_vect(filter_C_ctrl, 0, 3, data_in, 8, 11, sbe);
-  				    end if;	     
-					  if (sup_range) then
-					     write_be_vect(filter_ran_ctrl, 0, 3, data_in, 12, 15, sbe); 
-					  end if;
-    			
-    			----------------------------------------------------
-    			-- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
-    			----------------------------------------------------
-    			when TX_COMMAND_ADR =>
-    			 
-    			     -- TXT Buffers commands
-    			     write_be_s(txt_sw_cmd.set_ety, TXCE_IND, data_in, sbe);
-    			     write_be_s(txt_sw_cmd.set_rdy, TXCR_IND, data_in, sbe);
-    			     write_be_s(txt_sw_cmd.set_abt, TXCA_IND, data_in, sbe);
-    			   
-            -- Vector index for which buffer the command is active
-            write_be_vect(txt_buf_cmd_index, 0, TXT_BUFFER_COUNT - 1, data_in,
-                          TXI1_IND, TXI1_IND + txt_buf_cmd_index'length - 1, sbe); 
-      	    
-   	   ----------------------------------------------------
-    			-- TX_PRIORITY
-    			----------------------------------------------------
- 	     when TX_PRIORITY_ADR =>
- 	          write_be_vect(txt_buf_prior(0), 0, 2, data_in,
-                        TXT1P_L, TXT1P_H, sbe);   
- 	          write_be_vect(txt_buf_prior(1), 0, 2, data_in,
-                        TXT2P_L, TXT2P_H, sbe);
-            write_be_vect(txt_buf_prior(2), 0, 2, data_in,
-                        TXT3P_L, TXT3P_H, sbe);
-            write_be_vect(txt_buf_prior(3), 0, 2, data_in,
-                        TXT4P_L, TXT4P_H, sbe);   
- 	     
- 	     -------------------------------------------------------
-			 -- RX_STATUS (RX_SETTINGS is write)
-			 -------------------------------------------------------  
-			 when RX_STATUS_ADR =>
-    			     write_be_s(rtsopt, RTSOP_IND, data_in, sbe);
- 			      
-    			--------------------------------------
-    			--Recieve frame counter presetting
-    			--------------------------------------
-    			when RX_COUNTER_ADR =>
-    			     write_be_vect(ctr_val_set, 0, 31, data_in, 
-    			             RX_COUNTER_VAL_L, RX_COUNTER_VAL_H, sbe);
-    					  rx_ctr_set                 <=  '1';
-    					  
-    			--------------------------------------
-    			--Transcieve frame counter presetting
-    			--------------------------------------		  
-    			when TX_COUNTER_ADR => 
-            write_be_vect(ctr_val_set, 0, 31, data_in,
-                    TX_COUNTER_VAL_L, TX_COUNTER_VAL_H, sbe);
-    					  tx_ctr_set                 <=  '1';
-    			
-    			--------------------------------------
-    			--Logger configuration registers
-    			--------------------------------------		  
-    			when LOG_TRIG_CONFIG_ADR=>
-            write_be_vect(log_trig_config, 0, 31, data_in, 0, 31, sbe);
-    			when LOG_CAPT_CONFIG_ADR=>
-    			     write_be_vect(log_capt_config, 0, 31, data_in, 0, 31, sbe);
-    			when LOG_COMMAND_ADR => 
-    			    --LOG_DOWN,LOG_UP,LOG_ABT,LOG_STR
-    			    write_be_vect(log_cmd, 0, 3, data_in, 0, 3, sbe);     
-    			when others =>
-    			  
-    			end case;
-		  end if;
-		  
-		  --------------------
-		  --Reading the data--
-		  --------------------
-		  if(srd=ACT_SRD)then 
-		   
-		   data_out_int      <=  (OTHERS=>'0');
-		    
-    			case adress(11 downto 0) is
-    			  
-    			  --------------------------------------
-    			  --Device_ID and VERSION
-			   --------------------------------------	    			  
-  			   when DEVICE_ID_ADR =>     
-  			       data_out_int(DEVICE_ID_H downto DEVICE_ID_L)
-  			             <=  DEVICE_ID_RSTVAL;
-  			       data_out_int(VER_MINOR_H downto VER_MINOR_L)
-  			             <=  CTU_CAN_FD_VERSION_MINOR;
-			       data_out_int(VER_MAJOR_H downto VER_MAJOR_L)
-  			             <=  CTU_CAN_FD_VERSION_MAJOR;
-  			     
-  			   --------------------------------------
-    			  --MODE Register (Mode, Command, Status of SJA1000)
-			   --------------------------------------  
-    			  when MODE_ADR => 
-    			     
-    			     --Mode register
-    					  data_out_int               <=  (OTHERS=>'0');
-    					  data_out_int(TSM_IND)      <=  sam_norm;
-    					  data_out_int(ACF_IND)      <=  ack_forb;
-    					  data_out_int(5 downto 1)   <=  mode_reg(5 downto 1);
-    					  
-    					  --Command register is write only!
-    					  --(Read in these bytes wont return previous value)
-    					  
-    					  --Status register
-    					  data_out_int(23 downto 16) <=  status_reg;
-    					  
-    					  --Retransmitt limit register
-    					  data_out_int(RTRLE_IND)                <=  retr_lim_ena;
-    					  data_out_int(RTR_TH_H downto RTR_TH_L) <=  retr_lim_th;
-    					  data_out_int(INT_LOOP_IND)             <=  intLoopbackEna;
- 				    data_out_int(ENA_IND)    					         <=  CAN_enable;
-    					  data_out_int(FD_TYPE_IND)              <=  FD_type;
-    					  
- 				 ---------------------------------------------------------
- 				 -- INT_STAT
- 				 ---------------------------------------------------------
-    			  when INT_STAT_ADR => 
-    					  data_out_int               <=  (OTHERS => '0');
-    					  
-    					   --Interrupt register
-    					  data_out_int(INT_COUNT - 1 downto 0)  <=  int_vector;
+      if (sup_filtB = true) then
+        filter_B_mask           <=  filter_B_mask;
+        filter_B_value          <=  filter_B_value;
+        filter_B_ctrl           <=  filter_B_ctrl;
+      end if;
 
- 				 ---------------------------------------------------------
- 				 -- INT_ENA_SET
- 				 ---------------------------------------------------------
-    			  when INT_ENA_SET_ADR => 
-    					  data_out_int               <=  (OTHERS=>'0');
-    					  
-    					   -- Reading this register returns the value of interrupt
-    					   -- enable
-    					   data_out_int(INT_COUNT - 1 downto 0)  <=  int_ena;
+      if (sup_filtB = true) then
+        filter_C_mask           <=  filter_C_mask;
+        filter_C_value          <=  filter_C_value;
+        filter_C_ctrl           <=  filter_C_ctrl;
+      end if;
 
- 				 ---------------------------------------------------------
- 				 -- INT_MASK_SET
- 				 ---------------------------------------------------------
-    			  when INT_MASK_SET_ADR => 
-    					  data_out_int               <=  (OTHERS=>'0');
+      if (sup_range = true) then
+        filter_ran_low          <=  filter_ran_low;
+        filter_ran_high         <=  filter_ran_high;
+        filter_ran_ctrl         <=  filter_ran_ctrl;
+      end if;
 
-    					  -- Reading this register returns the value of interrupt
-					  -- mask
-    					  data_out_int(INT_COUNT - 1 downto 0)  <=  int_mask;
+      retr_lim_ena              <=  retr_lim_ena;
+      retr_lim_th               <=  retr_lim_th;
+      sjw_norm                  <=  sjw_norm;
+      brp_norm                  <=  brp_norm;
+      ph1_norm                  <=  ph1_norm;
+      ph2_norm                  <=  ph2_norm;
+      prop_norm                 <=  prop_norm;
+      sjw_fd                    <=  sjw_fd;
+      brp_fd                    <=  brp_fd;
+      ph1_fd                    <=  ph1_fd;
+      ph2_fd                    <=  ph2_fd;
+      prop_fd                   <=  prop_fd;
+      sam_norm                  <=  sam_norm;
+      ewl                       <=  ewl;
+      erp                       <=  erp;
+      mode_reg                  <=  mode_reg;
+      intLoopbackEna            <=  intLoopbackEna;
+      log_trig_config           <=  log_trig_config;
+      log_capt_config           <=  log_capt_config;
 
-    			  ---------------------------------------------------------
- 				 -- BTR
-    			  ---------------------------------------------------------
- 				 when BTR_ADR => 
-    					   data_out_int(PROP_H downto PROP_L)          <=  prop_norm;
-    					   data_out_int(PH1_H downto PH1_L)            <=  ph1_norm;
-    					   data_out_int(PH2_H downto PH2_L)            <=  ph2_norm;
- 			       data_out_int(BRP_H downto BRP_L)            <=  brp_norm; 
-    					   data_out_int(SJW_H downto SJW_L)            <=  sjw_norm;
-    					   
- 			   ---------------------------------------------------------
- 				 -- BTR_FD
-    			  ---------------------------------------------------------
- 				 when BTR_FD_ADR =>
-    					   data_out_int(PROP_FD_H downto PROP_FD_L)    <=  prop_fd;
-    					   data_out_int(PH1_FD_H downto PH1_FD_L)      <=  ph1_fd;
-    					   data_out_int(PH2_FD_H downto PH2_FD_L)      <=  ph2_fd;
-    					   data_out_int(BRP_FD_H downto BRP_FD_L)      <=  brp_fd;
-    					   data_out_int(SJW_FD_H downto SJW_FD_L)      <=  sjw_fd;
-    			     
-				  ----------------------------------------------------------
-    			   -- EWL, ERP and FAULT_STATE
-          ----------------------------------------------------------
-    			   when EWL_ADR =>
-    			   
-    			     --Error warning limit 
-    					  data_out_int(EWL_LIMIT_H downto EWL_LIMIT_L)    <=  ewl; 
-    					  
-    					  --Error passive treshold
-    					  data_out_int(ERP_LIMIT_H downto ERP_LIMIT_L)    <=  erp; 
-    					  
-    					  --Fault confinment state
-    					   if(error_state_type'VAL(to_integer(unsigned(
-    					      stat_bus(STAT_ERROR_STATE_HIGH downto 
-    					      STAT_ERROR_STATE_LOW))))=error_active)
-    					   then
-    					     data_out_int(ERA_IND)            <=  '1'; 
-					   else 
-					     data_out_int(ERA_IND)            <=  '0'; 
-					   end if;
-					   
-    					   if(error_state_type'VAL(to_integer(unsigned(stat_bus(
-    					      STAT_ERROR_STATE_HIGH downto STAT_ERROR_STATE_LOW))))
-    					      =error_passive)
-    					   then
-    					     data_out_int(ERP_IND)            <=  '1';
-					   else 
-					     data_out_int(ERP_IND)            <=  '0';
-					   end if;
-    					   
-    					   if(error_state_type'VAL(to_integer(unsigned(stat_bus(
-    					     STAT_ERROR_STATE_HIGH downto STAT_ERROR_STATE_LOW))))
-    					     =bus_off)
-    					   then
-    					     data_out_int(BOF_IND)            <=  '1'; 
-					   else 
-					     data_out_int(BOF_IND)            <=  '0';
-					    end if;  
-    					  
-    					   data_out_int(31 downto 19)<=(OTHERS=>'0');
-    			   
-    			   ----------------------------------------------------------
-    			   -- RXC, TXC 
-    			   ----------------------------------------------------------
-    			   when RXC_ADR => 
-    					  data_out_int                   <=  (OTHERS=>'0');
-    					  data_out_int(8 downto 0)       <=  
-    					       stat_bus(STAT_RX_COUNTER_HIGH downto 
-    					                STAT_RX_COUNTER_LOW);
-    					  data_out_int(24 downto 16)     <=  
-    					       stat_bus(STAT_TX_COUNTER_HIGH downto 
-    					                STAT_TX_COUNTER_LOW);
-    					
-    					-------------------------------------------------------- 
-    					-- ERR_NORM, ERR_FD
-    					--------------------------------------------------------
-    			   when ERR_NORM_ADR => 
-    					  data_out_int                   <=  (OTHERS=>'0');
-    					  data_out_int(ERR_NORM_VAL_H downto ERR_NORM_VAL_L)  <=  
-    					           stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto 
-    					                    STAT_ERROR_COUNTER_NORM_LOW);
-    					  data_out_int(ERR_FD_VAL_H downto ERR_FD_VAL_L)     <=  
-    					           stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto 
-    					                    STAT_ERROR_COUNTER_FD_LOW);
-    			   
-    			   -------------------------------------------------------- 
-    					--Acceptance filters  
-    					--------------------------------------------------------
-    			   when FILTER_A_VAL_ADR => 
-    			     if (sup_filtA) then 
-    			       data_out_int(28 downto 0)       <=  filter_A_mask;
-						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if;
-    			   when FILTER_A_MASK_ADR =>
-    			     if (sup_filtA) then  
-    			       data_out_int(28 downto 0)       <=  filter_A_value;
-						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if;  
-    			   when FILTER_B_VAL_ADR =>
-    			     if (sup_filtB) then 
-    			       data_out_int(28 downto 0)       <=  filter_B_mask;
-    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if; 
-    			   when FILTER_B_MASK_ADR =>
-    			     if (sup_filtB) then  
-    			       data_out_int(28 downto 0)       <=  filter_B_value;
-    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if;   
-    			   when FILTER_C_VAL_ADR =>
-			      if (sup_filtC) then 
-    			       data_out_int(28 downto 0)       <=  filter_C_mask;
-    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if;    
-    			   when FILTER_C_MASK_ADR =>
-    			     if (sup_filtC) then 
-    			       data_out_int(28 downto 0)       <=  filter_C_value;
-    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0'); 
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if;     
-    			   when FILTER_RAN_LOW_ADR =>
-    			     if (sup_range) then 
-    			       data_out_int(28 downto 0)       <=  filter_ran_low;
-    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if; 
-    			   when FILTER_RAN_HIGH_ADR =>
-    			     if (sup_range) then 
-    			       data_out_int(28 downto 0)       <=  filter_ran_high;
-    						  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
-						else
-						  data_out_int <= (OTHERS => '0');  
-						end if; 
-    					
-    			   -------------------------------------------------------
-				  --Acceptance filter configuration and status register
-			    -------------------------------------------------------
-    			   when FILTER_CONTROL_ADR => 
-    					  data_out_int(3 downto 0)       <=  filter_A_ctrl;
-    					  data_out_int(7 downto 4)       <=  filter_B_ctrl;
-    					  data_out_int(11 downto 8)      <=  filter_B_ctrl;
-    					  data_out_int(15 downto 12)     <=  filter_ran_ctrl;
-    					  
-    					  if (sup_filtA) then
-    					    data_out_int(SFA_IND) <= '1';
- 					  else
- 					    data_out_int(SFA_IND) <= '0';
- 					  end if;
- 					  
- 					  if (sup_filtB) then
-    					    data_out_int(SFB_IND) <= '1';
- 					  else
- 					    data_out_int(SFB_IND) <= '0';
- 					  end if;
- 					  
- 					  if (sup_filtC) then
-    					    data_out_int(SFC_IND) <= '1';
- 					  else
- 					    data_out_int(SFC_IND) <= '0';
- 					  end if;
- 					  
- 					  if (sup_range) then
-    					    data_out_int(SFR_IND) <= '1';
- 					  else
- 					    data_out_int(SFR_IND) <= '0';
- 					  end if;
- 					  
-    					  data_out_int(31 downto 20)     <=  (OTHERS=>'0');
-    					
-    					-------------------------------------------------------
-    			   -- RX_MEM_INFO
-    			   -------------------------------------------------------  
-    			   when RX_MEM_INFO_ADR =>
-    					  data_out_int(31 downto 0)      <=  (OTHERS=>'0');
-    					  data_out_int(RX_BUFF_SIZE_H downto RX_BUFF_SIZE_L)
-    					           <= rx_buf_size;
-    					  data_out_int(RX_MEM_FREE_H downto RX_MEM_FREE_L)
-    					            <=  rx_mem_free;         
-    					  
-    					  
-    			   -------------------------------------------------------
-    			   -- RX_POINTERS
-    			   -------------------------------------------------------  
-    			   when RX_POINTERS_ADR =>
-    			     data_out_int(31 downto 0)      <=  (OTHERS=>'0');
-    			     data_out_int(RX_WPP_H downto RX_WPP_L)
-    					           <= rx_write_pointer_pos;
-    					  data_out_int(RX_RPP_H downto RX_RPP_L)
-    					           <= rx_read_pointer_pos;
-    					
-    					
-    					-------------------------------------------------------
-    			   -- RX_STATUS
-    			   -------------------------------------------------------  
-    			   when RX_STATUS_ADR =>
-    			     data_out_int                             <= (OTHERS => '0');
-    					  data_out_int(RX_EMPTY_IND)               <=  rx_empty;
-    					  data_out_int(RX_FULL_IND)                <=  rx_full;
-    					  
-    					  data_out_int(RX_FRC_H downto RX_FRC_L)
-    					            <= rx_message_count;
- 					  data_out_int(RTSOP_IND)                  <= rtsopt;
-    					
-    					
- 				  -------------------------------------------------------
- 				  --RX_DATA register
- 				  -------------------------------------------------------
-    			   when RX_DATA_ADR => 
-    			     if(RX_buff_read_first=false)then
-    					   data_out_int(RX_DATA_H downto RX_DATA_L) <= rx_read_buff;
-					  else
-					   data_out_int(RX_DATA_H downto RX_DATA_L) <= aux_data;
-					  end if;
-					  
-    					  RX_buff_read_first              <=  true;
-    			   
-    			   -------------------------------------------------------
-			    --Transciever delay adress  
-    			   -------------------------------------------------------
-    			   when TRV_DELAY_ADR =>
-    			      data_out_int(31 downto 16)     <=  (OTHERS=>'0');
-    			      data_out_int(TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)
-			                <= trv_delay_out; 
- 			    
- 			    -------------------------------------------------------
- 			    --TXT Buffers status
-    			   -------------------------------------------------------
-    			   when TX_STATUS_ADR => 
-    			      data_out_int(31 downto 3)      <=  (OTHERS=>'0');
-    			      
-    			      -- We encode state here, later this will be abstracted to
-    			      -- higher level module. So far we unrool it and do it
-    			      -- for every Buffer state separately so that we dont have
-    			      -- problems with dependencies between indices! (e.g if
-    			      -- we used loop and used offset from first buffer state)
-			       case txtb_fsms(0) is
-			       when txt_empty =>
-			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ETY;
-			       when txt_ready =>
-			            data_out_int(TX1S_H downto TX1S_L) <= TXT_RDY;
-			       when txt_tx_prog =>
-			            data_out_int(TX1S_H downto TX1S_L) <= TXT_TRAN;
-			       when txt_ab_prog =>
-			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ABTP;
-			       when txt_ok =>
-			            data_out_int(TX1S_H downto TX1S_L) <= TXT_TOK;
-			       when txt_error =>
-			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ERR;
-			       when txt_aborted =>
-			            data_out_int(TX1S_H downto TX1S_L) <= TXT_ABT;
-			       when others =>
-			            data_out_int(TX1S_H downto TX1S_L) <= (OTHERS => '0');
-			       end case;
-			       
-			       case txtb_fsms(1) is
-			       when txt_empty =>
-			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ETY;
-			       when txt_ready =>
-			            data_out_int(TX2S_H downto TX2S_L) <= TXT_RDY;
-			       when txt_tx_prog =>
-			            data_out_int(TX2S_H downto TX2S_L) <= TXT_TRAN;
-			       when txt_ab_prog =>
-			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ABTP;
-			       when txt_ok =>
-			            data_out_int(TX2S_H downto TX2S_L) <= TXT_TOK;
-			       when txt_error =>
-			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ERR;
-			       when txt_aborted =>
-			            data_out_int(TX2S_H downto TX2S_L) <= TXT_ABT;
-			       when others =>
-			            data_out_int(TX2S_H downto TX2S_L) <= (OTHERS => '0');
-			       end case;
-			       
-			       case txtb_fsms(2) is
-			       when txt_empty =>
-			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ETY;
-			       when txt_ready =>
-			            data_out_int(TX3S_H downto TX3S_L) <= TXT_RDY;
-			       when txt_tx_prog =>
-			            data_out_int(TX3S_H downto TX3S_L) <= TXT_TRAN;
-			       when txt_ab_prog =>
-			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ABTP;
-			       when txt_ok =>
-			            data_out_int(TX3S_H downto TX3S_L) <= TXT_TOK;
-			       when txt_error =>
-			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ERR;
-			       when txt_aborted =>
-			            data_out_int(TX3S_H downto TX3S_L) <= TXT_ABT;
-			       when others =>
-			            data_out_int(TX3S_H downto TX3S_L) <= (OTHERS => '0');
-			       end case;
-			       
-			       case txtb_fsms(3) is
-			       when txt_empty =>
-			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ETY;
-			       when txt_ready =>
-			            data_out_int(TX4S_H downto TX4S_L) <= TXT_RDY;
-			       when txt_tx_prog =>
-			            data_out_int(TX4S_H downto TX4S_L) <= TXT_TRAN;
-			       when txt_ab_prog =>
-			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ABTP;
-			       when txt_ok =>
-			            data_out_int(TX4S_H downto TX4S_L) <= TXT_TOK;
-			       when txt_error =>
-			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ERR;
-			       when txt_aborted =>
-			            data_out_int(TX4S_H downto TX4S_L) <= TXT_ABT;
-			       when others =>
-			            data_out_int(TX4S_H downto TX4S_L) <= (OTHERS => '0');
-			       end case;
-    			
-    			-- TODO: Shouldn we add this to the register map as before??     
-    			      --if (tx_time_sup) then   
---			         data_out_int(TXTS_IND) <= '1';
---			       else
---			         data_out_int(TXTS_IND) <= '0';
---			       end if;
- 			    
- 			    ----------------------------------------------------
-   			    -- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
-			    ----------------------------------------------------
-			    when TX_COMMAND_ADR =>
-    			     
-    			     -- Commands and indices are read only (TX_COMMAND register)
-    			     
-     	      -- Buffer direction and Frame swap (TX_SETTINGS)
-     	      data_out_int           <= (OTHERS => '0');
-     	    
-          ----------------------------------------------------
-    			   -- TX_PRIORITY
-    			   ----------------------------------------------------
- 	        when TX_PRIORITY_ADR =>
- 	          data_out_int                         <= (OTHERS => '0');
-     	      data_out_int(TXT1P_H downto TXT1P_L) <= txt_buf_prior(0);
-            data_out_int(TXT2P_H downto TXT2P_L) <= txt_buf_prior(1);
-        	
-    					------------------------------------------------------- 
- 			    --Error capture register and ALC
- 			    -------------------------------------------------------
-  					when ERR_CAPT_ADR =>
-  					  data_out_int                      <=  (OTHERS =>'0');
-  					  data_out_int(7 downto 0)          <=
-  					       stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW);
- 					  data_out_int(ALC_VAL_H downto ALC_VAL_L)      <=  
-    					        stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW); 
-    					   
-    		    ------------------------------------------------------- 
- 			    --Frame counters registers
- 			    -------------------------------------------------------  
-    			   when RX_COUNTER_ADR => --Recieve message counter 
-    					  data_out_int                     <=  
-    					      stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW);
-    					      
-    			   when TX_COUNTER_ADR => --Transcieve message counter 
-    					  data_out_int                     <=  
-    					      stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW);
-    			   
-    			   ------------------------------------------------------- 
- 			    --Logger configuration registers
- 			    -------------------------------------------------------  
-    			   when LOG_TRIG_CONFIG_ADR=>
-    					  data_out_int                     <=  log_trig_config;
-    			   when LOG_CAPT_CONFIG_ADR=>
-    					  data_out_int                     <=  log_capt_config;
- 					
- 					------------------------------------------------------- 
- 			    --LOG_STATUS, LOG_WPP, LOG_RPP
- 			    -------------------------------------------------------  
-    			   when LOG_STATUS_ADR=>
-    					  --Logger status
-    					  if(log_state_out=config)then 
-    					     data_out_int(LOG_CFG_IND)     <=  '1'; 
-					  else 
-					     data_out_int(LOG_CFG_IND)     <=  '0'; 
-					  end if;
-					  
-    					  if(log_state_out=ready)then 
-    					     data_out_int(LOG_RDY_IND)     <=  '1'; 
-    					  else 
-    					     data_out_int(LOG_RDY_IND)     <=  '0'; 
-    					  end if;
-    					  
-    					  if(log_state_out=running)then 
-    					     data_out_int(LOG_RUN_IND)     <=  '1'; 
-    					  else 
-    					     data_out_int(LOG_RUN_IND)     <=  '0'; 
-    					  end if;
-    					  
-    					  if(use_logger=true)then
-    					     data_out_int(LOG_EXIST_IND)   <=  '1';
-					  else
-					     data_out_int(LOG_EXIST_IND)   <=  '0';
-					  end if;       
-    			
-    					  data_out_int(6 downto 3)                         <= (OTHERS =>'0');
-    					  data_out_int(LOG_SIZE_H downto LOG_SIZE_L)       <= log_size;
-    					  data_out_int(LOG_WPP_H downto LOG_WPP_L) <= log_write_pointer;
-    					  data_out_int(LOG_RPP_H downto LOG_RPP_L) <= log_read_pointer;
-    			  
-    			   when LOG_CAPT_EVENT_1_ADR=>
-    					  data_out_int                     <=  
-    					      loger_act_data(63 downto 32);
-    					      
-    			   when LOG_CAPT_EVENT_2_ADR=>
-    					  data_out_int                     <=  
-    					      loger_act_data(31 downto 0);
-    			      			   
- 			   ------------------------------------------------------- 
- 			   --DEBUG register
- 			   -------------------------------------------------------  
-  			    when DEBUG_REGISTER_ADR =>
-  			      data_out_int(7 downto 3)         <= (OTHERS =>'0');
-  			      data_out_int(STUFF_COUNT_H downto STUFF_COUNT_L) <= 
-  			          stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW);
-  			      data_out_int(DESTUFF_COUNT_H downto DESTUFF_COUNT_L) <= 
-  			           stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW);
-   			      data_out_int(12 downto 6)        <= PC_state_reg_vect;
-    			   
-  			   ------------------------------------------------------- 
- 			   --YOOOOLOOOO REGISTER
- 			   ------------------------------------------------------- 
-    				 when YOLO_REG_ADR =>
-    				     data_out_int             <=  x"DEADBEEF";
-    				     
-    			   when others=>
-    			  end case;    
-		  end if;
-		  
-		end if;
-	end if;
-  end if;  
+      --Internal registers manipulation
+      int_reset                 <=  not ACT_RESET;
+      clear_overrun             <=  '0';
+      release_recieve           <=  '0';
+      abort_transmittion        <=  '0';
+      erctr_pres_value          <=  (OTHERS=>'0');
+      erctr_pres_mask           <=  "0000";
+      ctr_val_set               <=  (OTHERS =>'0');
+      rx_ctr_set                <=  '0';
+      tx_ctr_set                <=  '0';
+      ack_forb                  <=  ack_forb;
+      data_out_int              <=  (OTHERS=>'0');
+      log_cmd                   <=  (OTHERS =>'0');
+
+      RX_buff_read_first        <= false;
+      aux_data                  <=  (OTHERS=>'0');
+      sbe_reg                   <= sbe;
+
+      txt_sw_cmd.set_ety        <= '0';
+      txt_sw_cmd.set_rdy        <= '0';
+      txt_sw_cmd.set_abt        <= '0';
+      txt_buf_cmd_index         <= (OTHERS => '0');
+      txt_buf_prior             <= txt_buf_prior;
+
+      --Chip select active and our device is selected (Component type and ID)
+      if((scs=ACT_CSC) and
+          (adress(COMP_TYPE_ADRESS_HIGHER downto
+          COMP_TYPE_ADRESS_LOWER)=compType) and
+          (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER)=
+          std_logic_vector(to_unsigned(ID,4))) )
+      then
+        --------------------
+        --Writing the data--
+        --------------------
+        if (swr=ACT_SWR) then
+          case adress(11 downto 0) is
+            ---------------------------------------------------------
+            -- MODE, COMMAND and SETTINGS registers
+            ---------------------------------------------------------
+            when MODE_ADR =>
+                --RTR_PREF,FDE,AFM,STM,LOM Bits
+                write_be_vect(mode_reg, 1, 5, data_in, 1, 5, sbe);
+
+                --Tripple sampling
+                write_be_s(sam_norm, TSM_IND, data_in, sbe);
+
+                --Acknowledge forbidden
+                write_be_s(ack_forb, ACF_IND, data_in, sbe);
+
+                --Reset by memory access
+                if(data_in(RST_IND)='1' and sbe(0)='1')then
+                int_reset               <=  ACT_RESET;
+                end if;
+
+                --Command register
+                write_be_s(clear_overrun, CDO_IND, data_in, sbe);
+                write_be_s(release_recieve, RRB_IND, data_in, sbe);
+                write_be_s(abort_transmittion, AT_IND, data_in, sbe);
+
+                --Status register is read only!
+
+                --Settings register
+                write_be_s(retr_lim_ena, RTRLE_IND, data_in, sbe);
+                write_be_vect(retr_lim_th, 0, 3, data_in, RTR_TH_L, RTR_TH_H, sbe);
+                write_be_s(intLoopbackEna, INT_LOOP_IND, data_in, sbe);
+                write_be_s(CAN_enable, ENA_IND, data_in, sbe);
+                write_be_s(FD_type, FD_TYPE_IND, data_in, sbe);
+
+            ------------------------------------------------------------
+            -- INT_STATUS register
+            ------------------------------------------------------------
+            when INT_STAT_ADR =>
+                write_be_vect(int_vect_clear, 0, INT_COUNT - 1, data_in,
+                                                0, INT_COUNT - 1, sbe);
+
+            ------------------------------------------------------------
+            -- INT_ENA_SET register
+            ------------------------------------------------------------
+            when INT_ENA_SET_ADR =>
+                write_be_vect(int_ena_set, 0, INT_COUNT - 1, data_in,
+                                            0, INT_COUNT - 1, sbe);
+
+            ------------------------------------------------------------
+            -- INT_ENA_CLEAR register
+            ------------------------------------------------------------
+            when INT_ENA_CLR_ADR =>
+                write_be_vect(int_ena_clear, 0, INT_COUNT - 1, data_in,
+                                                0, INT_COUNT - 1, sbe);
+
+            ------------------------------------------------------------
+            -- INT_MASK_SET register
+            ------------------------------------------------------------
+            when INT_MASK_SET_ADR =>
+                write_be_vect(int_mask_set, 0, INT_COUNT - 1, data_in,
+                                            0, INT_COUNT - 1, sbe);
+
+            ------------------------------------------------------------
+            -- INT_MASK_CLEAR register
+            ------------------------------------------------------------
+            when INT_MASK_CLR_ADR =>
+                write_be_vect(int_mask_clear, 0, INT_COUNT - 1, data_in,
+                                              0, INT_COUNT - 1, sbe);
+
+            ----------------------
+            -- BTR
+            ----------------------
+            when BTR_ADR =>
+                write_be_vect(prop_norm, 0, prop_norm'length - 1, data_in,
+                              PROP_L, PROP_H, sbe);
+                write_be_vect(ph1_norm, 0, ph1_norm'length - 1, data_in,
+                              PH1_L, PH1_H, sbe);
+                write_be_vect(ph2_norm, 0, ph2_norm'length - 1, data_in,
+                              PH2_L, PH2_H, sbe);
+                write_be_vect(brp_norm, 0, brp_norm'length - 1, data_in,
+                              BRP_L, BRP_H, sbe);
+                write_be_vect(sjw_norm, 0, sjw_norm'length - 1, data_in,
+                              SJW_L, SJW_H, sbe);
+
+            ----------------------
+            -- BTR_FD
+            ----------------------
+            when BTR_FD_ADR =>
+                write_be_vect(prop_fd, 0, prop_fd'length - 1, data_in,
+                              PROP_FD_L, PROP_FD_H, sbe);
+                write_be_vect(ph1_fd, 0, ph1_fd'length - 1, data_in,
+                              PH1_FD_L, PH1_FD_H, sbe);
+                write_be_vect(ph2_fd, 0, ph2_fd'length - 1, data_in,
+                              PH2_FD_L, PH2_FD_H, sbe);
+                write_be_vect(brp_fd, 0, brp_fd'length - 1, data_in,
+                              BRP_FD_L, BRP_FD_H, sbe);
+                write_be_vect(sjw_fd, 0, sjw_fd'length - 1, data_in,
+                              SJW_FD_L, SJW_FD_H, sbe);
+
+            ----------------------------------------------------
+            -- EWL, ERP
+            ----------------------------------------------------
+            when EWL_ADR =>
+                --Error warning limit
+                write_be_vect(ewl, 0, 7, data_in, EWL_LIMIT_L, EWL_LIMIT_H, sbe);
+
+                --Error passive treshold
+                write_be_vect(erp, 0, 7, data_in, ERP_LIMIT_L, ERP_LIMIT_H, sbe);
+
+            ----------------------------------------------------
+            -- CTR_PRES
+            ----------------------------------------------------
+            when CTR_PRES_ADR =>
+                write_be_vect(erctr_pres_value, 0, 8, data_in, CTPV_L, CTPV_H, sbe);
+                write_be_vect(erctr_pres_mask, 0, 3, data_in, 9, 12, sbe);
+
+            ----------------------------------------------------
+            -- ERR_NORM_ADR
+            ----------------------------------------------------
+            when ERR_NORM_ADR =>
+                if (sbe(1) = '1') then
+                    erctr_pres_value         <=  (OTHERS=>'0');
+                    erctr_pres_mask          <=  data_in(12 downto 11)&"00";
+                end if;
+
+            ----------------------------------------------------
+            --Acceptance filters
+            ----------------------------------------------------
+            when FILTER_A_VAL_ADR    =>
+                if (sup_filtA) then
+                  write_be_vect(filter_A_value, 0, 28, data_in,
+                                BIT_VAL_A_VAL_L, BIT_VAL_A_VAL_H, sbe);
+                end if;
+            when FILTER_A_MASK_ADR   =>
+                if (sup_filtA) then
+                  write_be_vect(filter_A_mask, 0, 28, data_in,
+                                BIT_MASK_A_VAL_L, BIT_MASK_A_VAL_H, sbe);
+                end if;
+            when FILTER_B_VAL_ADR    =>
+                if (sup_filtB) then
+                  write_be_vect(filter_B_value, 0, 28, data_in,
+                                BIT_VAL_B_VAL_L, BIT_VAL_B_VAL_H, sbe);
+                end if;
+            when FILTER_B_MASK_ADR   =>
+                if (sup_filtB) then
+                  write_be_vect(filter_B_mask, 0, 28, data_in,
+                                BIT_MASK_B_VAL_L, BIT_MASK_B_VAL_H, sbe);
+                end if;
+            when FILTER_C_VAL_ADR    =>
+                if (sup_filtC) then
+                  write_be_vect(filter_C_value, 0, 28, data_in,
+                                BIT_VAL_C_VAL_L, BIT_VAL_C_VAL_H, sbe);
+                end if;
+            when FILTER_C_MASK_ADR   =>
+                if (sup_filtC) then
+                  write_be_vect(filter_C_mask, 0, 28, data_in,
+                                BIT_MASK_C_VAL_L, BIT_MASK_C_VAL_H, sbe);
+                end if;
+            when FILTER_RAN_LOW_ADR  =>
+                if (sup_range) then
+                  write_be_vect(filter_ran_low, 0, 28, data_in,
+                                BIT_RAN_LOW_VAL_L, BIT_RAN_LOW_VAL_H, sbe);
+                end if;
+            when FILTER_RAN_HIGH_ADR =>
+                if (sup_range) then
+                  write_be_vect(filter_ran_high, 0, 28, data_in,
+                                BIT_RAN_HIGH_VAL_L, BIT_RAN_HIGH_VAL_H, sbe);
+                end if;
+            when FILTER_CONTROL_ADR  =>
+                if (sup_filtA) then
+                  write_be_vect(filter_A_ctrl, 0, 3, data_in, 0, 3, sbe);
+                end if;
+                if (sup_filtB) then
+                  write_be_vect(filter_B_ctrl, 0, 3, data_in, 4, 7, sbe);
+                end if;
+                if (sup_filtC) then
+                  write_be_vect(filter_C_ctrl, 0, 3, data_in, 8, 11, sbe);
+                end if;
+                if (sup_range) then
+                  write_be_vect(filter_ran_ctrl, 0, 3, data_in, 12, 15, sbe);
+                end if;
+
+            ----------------------------------------------------
+            -- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
+            ----------------------------------------------------
+            when TX_COMMAND_ADR =>
+                -- TXT Buffers commands
+                write_be_s(txt_sw_cmd.set_ety, TXCE_IND, data_in, sbe);
+                write_be_s(txt_sw_cmd.set_rdy, TXCR_IND, data_in, sbe);
+                write_be_s(txt_sw_cmd.set_abt, TXCA_IND, data_in, sbe);
+
+                -- Vector index for which buffer the command is active
+                write_be_vect(txt_buf_cmd_index, 0, TXT_BUFFER_COUNT - 1, data_in,
+                              TXI1_IND, TXI1_IND + txt_buf_cmd_index'length - 1, sbe);
+
+            ----------------------------------------------------
+            -- TX_PRIORITY
+            ----------------------------------------------------
+            when TX_PRIORITY_ADR =>
+                write_be_vect(txt_buf_prior(0), 0, 2, data_in,
+                              TXT1P_L, TXT1P_H, sbe);
+                write_be_vect(txt_buf_prior(1), 0, 2, data_in,
+                              TXT2P_L, TXT2P_H, sbe);
+                write_be_vect(txt_buf_prior(2), 0, 2, data_in,
+                              TXT3P_L, TXT3P_H, sbe);
+                write_be_vect(txt_buf_prior(3), 0, 2, data_in,
+                              TXT4P_L, TXT4P_H, sbe);
+
+            -------------------------------------------------------
+            -- RX_STATUS (RX_SETTINGS is write)
+            -------------------------------------------------------
+            when RX_STATUS_ADR =>
+                write_be_s(rtsopt, RTSOP_IND, data_in, sbe);
+
+            --------------------------------------
+            --Recieve frame counter presetting
+            --------------------------------------
+            when RX_COUNTER_ADR =>
+                write_be_vect(ctr_val_set, 0, 31, data_in,
+                              RX_COUNTER_VAL_L, RX_COUNTER_VAL_H, sbe);
+                rx_ctr_set                 <=  '1';
+
+            --------------------------------------
+            --Transcieve frame counter presetting
+            --------------------------------------
+            when TX_COUNTER_ADR =>
+                write_be_vect(ctr_val_set, 0, 31, data_in,
+                              TX_COUNTER_VAL_L, TX_COUNTER_VAL_H, sbe);
+                tx_ctr_set                 <=  '1';
+
+            --------------------------------------
+            --Logger configuration registers
+            --------------------------------------
+            when LOG_TRIG_CONFIG_ADR=>
+                write_be_vect(log_trig_config, 0, 31, data_in, 0, 31, sbe);
+            when LOG_CAPT_CONFIG_ADR=>
+                write_be_vect(log_capt_config, 0, 31, data_in, 0, 31, sbe);
+            when LOG_COMMAND_ADR =>
+                --LOG_DOWN,LOG_UP,LOG_ABT,LOG_STR
+                write_be_vect(log_cmd, 0, 3, data_in, 0, 3, sbe);
+            when others =>
+
+          end case;
+        end if;
+
+        --------------------
+        --Reading the data--
+        --------------------
+        if (srd=ACT_SRD) then
+          data_out_int      <=  (OTHERS=>'0');
+
+          case adress(11 downto 0) is -- address(11 downto 2) & "00"
+            --------------------------------------
+            --Device_ID and VERSION
+            --------------------------------------
+            when DEVICE_ID_ADR =>
+                data_out_int(DEVICE_ID_H downto DEVICE_ID_L)
+                        <=  DEVICE_ID_RSTVAL;
+                data_out_int(VER_MINOR_H downto VER_MINOR_L)
+                        <=  CTU_CAN_FD_VERSION_MINOR;
+                data_out_int(VER_MAJOR_H downto VER_MAJOR_L)
+                        <=  CTU_CAN_FD_VERSION_MAJOR;
+
+            --------------------------------------
+            --MODE Register (Mode, Command, Status of SJA1000)
+            --------------------------------------
+            when MODE_ADR =>
+                --Mode register
+                data_out_int               <=  (OTHERS=>'0');
+                data_out_int(TSM_IND)      <=  sam_norm;
+                data_out_int(ACF_IND)      <=  ack_forb;
+                data_out_int(5 downto 1)   <=  mode_reg(5 downto 1);
+
+                --Command register is write only!
+                --(Read in these bytes wont return previous value)
+
+                --Status register
+                data_out_int(23 downto 16) <=  status_reg;
+
+                --Retransmitt limit register
+                data_out_int(RTRLE_IND)                <=  retr_lim_ena;
+                data_out_int(RTR_TH_H downto RTR_TH_L) <=  retr_lim_th;
+                data_out_int(INT_LOOP_IND)             <=  intLoopbackEna;
+                data_out_int(ENA_IND)                  <=  CAN_enable;
+                data_out_int(FD_TYPE_IND)              <=  FD_type;
+
+            ---------------------------------------------------------
+            -- INT_STAT
+            ---------------------------------------------------------
+            when INT_STAT_ADR =>
+                data_out_int               <=  (OTHERS => '0');
+
+                --Interrupt register
+                data_out_int(INT_COUNT - 1 downto 0)  <=  int_vector;
+
+            ---------------------------------------------------------
+            -- INT_ENA_SET
+            ---------------------------------------------------------
+            when INT_ENA_SET_ADR =>
+                data_out_int               <=  (OTHERS=>'0');
+
+                -- Reading this register returns the value of interrupt enable
+                data_out_int(INT_COUNT - 1 downto 0)  <=  int_ena;
+
+            ---------------------------------------------------------
+            -- INT_MASK_SET
+            ---------------------------------------------------------
+            when INT_MASK_SET_ADR =>
+                data_out_int               <=  (OTHERS=>'0');
+
+                -- Reading this register returns the value of interrupt mask
+                data_out_int(INT_COUNT - 1 downto 0)  <=  int_mask;
+
+            ---------------------------------------------------------
+            -- BTR
+            ---------------------------------------------------------
+            when BTR_ADR =>
+                data_out_int(PROP_H downto PROP_L)          <=  prop_norm;
+                data_out_int(PH1_H downto PH1_L)            <=  ph1_norm;
+                data_out_int(PH2_H downto PH2_L)            <=  ph2_norm;
+                data_out_int(BRP_H downto BRP_L)            <=  brp_norm;
+                data_out_int(SJW_H downto SJW_L)            <=  sjw_norm;
+
+            ---------------------------------------------------------
+            -- BTR_FD
+            ---------------------------------------------------------
+            when BTR_FD_ADR =>
+                data_out_int(PROP_FD_H downto PROP_FD_L)    <=  prop_fd;
+                data_out_int(PH1_FD_H downto PH1_FD_L)      <=  ph1_fd;
+                data_out_int(PH2_FD_H downto PH2_FD_L)      <=  ph2_fd;
+                data_out_int(BRP_FD_H downto BRP_FD_L)      <=  brp_fd;
+                data_out_int(SJW_FD_H downto SJW_FD_L)      <=  sjw_fd;
+
+            ----------------------------------------------------------
+            -- EWL, ERP and FAULT_STATE
+            ----------------------------------------------------------
+            when EWL_ADR =>
+                --Error warning limit
+                data_out_int(EWL_LIMIT_H downto EWL_LIMIT_L)    <=  ewl;
+
+                --Error passive treshold
+                data_out_int(ERP_LIMIT_H downto ERP_LIMIT_L)    <=  erp;
+
+                --Fault confinment state
+                if (error_state_type'VAL(to_integer(unsigned(
+                    stat_bus(STAT_ERROR_STATE_HIGH downto
+                    STAT_ERROR_STATE_LOW)))) = error_active)
+                then
+                  data_out_int(ERA_IND)            <=  '1';
+                else
+                  data_out_int(ERA_IND)            <=  '0';
+                end if;
+
+                if (error_state_type'VAL(to_integer(unsigned(stat_bus(
+                    STAT_ERROR_STATE_HIGH downto STAT_ERROR_STATE_LOW))))
+                    = error_passive)
+                then
+                  data_out_int(ERP_IND)            <=  '1';
+                else
+                  data_out_int(ERP_IND)            <=  '0';
+                end if;
+
+                if (error_state_type'VAL(to_integer(unsigned(stat_bus(
+                    STAT_ERROR_STATE_HIGH downto STAT_ERROR_STATE_LOW))))
+                    = bus_off)
+                then
+                  data_out_int(BOF_IND)            <=  '1';
+                else
+                  data_out_int(BOF_IND)            <=  '0';
+                end if;
+
+                data_out_int(31 downto 19) <= (OTHERS=>'0');
+
+            ----------------------------------------------------------
+            -- RXC, TXC
+            ----------------------------------------------------------
+            when RXC_ADR =>
+                data_out_int                   <=  (OTHERS=>'0');
+                data_out_int(8 downto 0)       <=
+                    stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
+                data_out_int(24 downto 16)     <=
+                    stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
+
+            --------------------------------------------------------
+            -- ERR_NORM, ERR_FD
+            --------------------------------------------------------
+            when ERR_NORM_ADR =>
+                data_out_int                   <=  (OTHERS=>'0');
+                data_out_int(ERR_NORM_VAL_H downto ERR_NORM_VAL_L)  <=
+                    stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto
+                             STAT_ERROR_COUNTER_NORM_LOW);
+                data_out_int(ERR_FD_VAL_H downto ERR_FD_VAL_L)      <=
+                    stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto
+                             STAT_ERROR_COUNTER_FD_LOW);
+
+            --------------------------------------------------------
+            --Acceptance filters
+            --------------------------------------------------------
+            when FILTER_A_VAL_ADR =>
+                if (sup_filtA) then
+                  data_out_int(28 downto 0)       <=  filter_A_mask;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+            when FILTER_A_MASK_ADR =>
+                if (sup_filtA) then
+                  data_out_int(28 downto 0)       <=  filter_A_value;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+            when FILTER_B_VAL_ADR =>
+                if (sup_filtB) then
+                  data_out_int(28 downto 0)       <=  filter_B_mask;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+            when FILTER_B_MASK_ADR =>
+                if (sup_filtB) then
+                  data_out_int(28 downto 0)       <=  filter_B_value;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+            when FILTER_C_VAL_ADR =>
+                if (sup_filtC) then
+                  data_out_int(28 downto 0)       <=  filter_C_mask;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+            when FILTER_C_MASK_ADR =>
+                if (sup_filtC) then
+                  data_out_int(28 downto 0)       <=  filter_C_value;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+            when FILTER_RAN_LOW_ADR =>
+                if (sup_range) then
+                  data_out_int(28 downto 0)       <=  filter_ran_low;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+            when FILTER_RAN_HIGH_ADR =>
+                if (sup_range) then
+                  data_out_int(28 downto 0)       <=  filter_ran_high;
+                  data_out_int(31 downto 29)      <=  (OTHERS=>'0');
+                else
+                  data_out_int <= (OTHERS => '0');
+                end if;
+
+            -------------------------------------------------------
+            --Acceptance filter configuration and status register
+            -------------------------------------------------------
+            when FILTER_CONTROL_ADR =>
+                data_out_int(3 downto 0)       <=  filter_A_ctrl;
+                data_out_int(7 downto 4)       <=  filter_B_ctrl;
+                data_out_int(11 downto 8)      <=  filter_B_ctrl;
+                data_out_int(15 downto 12)     <=  filter_ran_ctrl;
+
+                if (sup_filtA) then
+                  data_out_int(SFA_IND) <= '1';
+                else
+                  data_out_int(SFA_IND) <= '0';
+                end if;
+
+                if (sup_filtB) then
+                  data_out_int(SFB_IND) <= '1';
+                else
+                  data_out_int(SFB_IND) <= '0';
+                end if;
+
+                if (sup_filtC) then
+                  data_out_int(SFC_IND) <= '1';
+                else
+                  data_out_int(SFC_IND) <= '0';
+                end if;
+
+                if (sup_range) then
+                  data_out_int(SFR_IND) <= '1';
+                else
+                  data_out_int(SFR_IND) <= '0';
+                end if;
+
+                data_out_int(31 downto 20)     <=  (OTHERS=>'0');
+
+            -------------------------------------------------------
+            -- RX_MEM_INFO
+            -------------------------------------------------------
+            when RX_MEM_INFO_ADR =>
+                data_out_int(31 downto 0)      <=  (OTHERS=>'0');
+                data_out_int(RX_BUFF_SIZE_H downto RX_BUFF_SIZE_L)
+                    <= rx_buf_size;
+                data_out_int(RX_MEM_FREE_H downto RX_MEM_FREE_L)
+                    <= rx_mem_free;
+
+            -------------------------------------------------------
+            -- RX_POINTERS
+            -------------------------------------------------------
+            when RX_POINTERS_ADR =>
+                data_out_int(31 downto 0)      <=  (OTHERS=>'0');
+                data_out_int(RX_WPP_H downto RX_WPP_L) <= rx_write_pointer_pos;
+                data_out_int(RX_RPP_H downto RX_RPP_L) <= rx_read_pointer_pos;
+
+            -------------------------------------------------------
+            -- RX_STATUS
+            -------------------------------------------------------
+            when RX_STATUS_ADR =>
+                data_out_int                             <= (OTHERS => '0');
+                data_out_int(RX_EMPTY_IND)               <=  rx_empty;
+                data_out_int(RX_FULL_IND)                <=  rx_full;
+
+                data_out_int(RX_FRC_H downto RX_FRC_L)   <= rx_message_count;
+                data_out_int(RTSOP_IND)                  <= rtsopt;
+
+            -------------------------------------------------------
+            --RX_DATA register
+            -------------------------------------------------------
+            when RX_DATA_ADR =>
+                if(RX_buff_read_first=false)then
+                  data_out_int(RX_DATA_H downto RX_DATA_L) <= rx_read_buff;
+                else
+                  data_out_int(RX_DATA_H downto RX_DATA_L) <= aux_data;
+                end if;
+
+                RX_buff_read_first              <=  true;
+
+            -------------------------------------------------------
+            --Transciever delay adress
+            -------------------------------------------------------
+            when TRV_DELAY_ADR =>
+                data_out_int(31 downto 16)     <=  (OTHERS=>'0');
+                data_out_int(TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)
+                    <= trv_delay_out;
+
+            -------------------------------------------------------
+            --TXT Buffers status
+            -------------------------------------------------------
+            when TX_STATUS_ADR =>
+                data_out_int(31 downto 3)      <=  (OTHERS=>'0');
+
+                -- We encode state here, later this will be abstracted to
+                -- higher level module. So far we unrool it and do it
+                -- for every Buffer state separately so that we dont have
+                -- problems with dependencies between indices! (e.g if
+                -- we used loop and used offset from first buffer state)
+                case txtb_fsms(0) is
+                  when txt_empty =>
+                      data_out_int(TX1S_H downto TX1S_L) <= TXT_ETY;
+                  when txt_ready =>
+                      data_out_int(TX1S_H downto TX1S_L) <= TXT_RDY;
+                  when txt_tx_prog =>
+                      data_out_int(TX1S_H downto TX1S_L) <= TXT_TRAN;
+                  when txt_ab_prog =>
+                      data_out_int(TX1S_H downto TX1S_L) <= TXT_ABTP;
+                  when txt_ok =>
+                      data_out_int(TX1S_H downto TX1S_L) <= TXT_TOK;
+                  when txt_error =>
+                      data_out_int(TX1S_H downto TX1S_L) <= TXT_ERR;
+                  when txt_aborted =>
+                      data_out_int(TX1S_H downto TX1S_L) <= TXT_ABT;
+                  when others =>
+                      data_out_int(TX1S_H downto TX1S_L) <= (OTHERS => '0');
+                end case;
+
+                case txtb_fsms(1) is
+                  when txt_empty =>
+                      data_out_int(TX2S_H downto TX2S_L) <= TXT_ETY;
+                  when txt_ready =>
+                      data_out_int(TX2S_H downto TX2S_L) <= TXT_RDY;
+                  when txt_tx_prog =>
+                      data_out_int(TX2S_H downto TX2S_L) <= TXT_TRAN;
+                  when txt_ab_prog =>
+                      data_out_int(TX2S_H downto TX2S_L) <= TXT_ABTP;
+                  when txt_ok =>
+                      data_out_int(TX2S_H downto TX2S_L) <= TXT_TOK;
+                  when txt_error =>
+                      data_out_int(TX2S_H downto TX2S_L) <= TXT_ERR;
+                  when txt_aborted =>
+                      data_out_int(TX2S_H downto TX2S_L) <= TXT_ABT;
+                  when others =>
+                      data_out_int(TX2S_H downto TX2S_L) <= (OTHERS => '0');
+                end case;
+
+                case txtb_fsms(2) is
+                  when txt_empty =>
+                      data_out_int(TX3S_H downto TX3S_L) <= TXT_ETY;
+                  when txt_ready =>
+                      data_out_int(TX3S_H downto TX3S_L) <= TXT_RDY;
+                  when txt_tx_prog =>
+                      data_out_int(TX3S_H downto TX3S_L) <= TXT_TRAN;
+                  when txt_ab_prog =>
+                      data_out_int(TX3S_H downto TX3S_L) <= TXT_ABTP;
+                  when txt_ok =>
+                      data_out_int(TX3S_H downto TX3S_L) <= TXT_TOK;
+                  when txt_error =>
+                      data_out_int(TX3S_H downto TX3S_L) <= TXT_ERR;
+                  when txt_aborted =>
+                      data_out_int(TX3S_H downto TX3S_L) <= TXT_ABT;
+                  when others =>
+                      data_out_int(TX3S_H downto TX3S_L) <= (OTHERS => '0');
+                end case;
+
+                case txtb_fsms(3) is
+                  when txt_empty =>
+                      data_out_int(TX4S_H downto TX4S_L) <= TXT_ETY;
+                  when txt_ready =>
+                      data_out_int(TX4S_H downto TX4S_L) <= TXT_RDY;
+                  when txt_tx_prog =>
+                      data_out_int(TX4S_H downto TX4S_L) <= TXT_TRAN;
+                  when txt_ab_prog =>
+                      data_out_int(TX4S_H downto TX4S_L) <= TXT_ABTP;
+                  when txt_ok =>
+                      data_out_int(TX4S_H downto TX4S_L) <= TXT_TOK;
+                  when txt_error =>
+                      data_out_int(TX4S_H downto TX4S_L) <= TXT_ERR;
+                  when txt_aborted =>
+                      data_out_int(TX4S_H downto TX4S_L) <= TXT_ABT;
+                  when others =>
+                      data_out_int(TX4S_H downto TX4S_L) <= (OTHERS => '0');
+                end case;
+
+                -- TODO: Shouldn we add this to the register map as before??
+                -- if (tx_time_sup) then
+                --   data_out_int(TXTS_IND) <= '1';
+                -- else
+                --   data_out_int(TXTS_IND) <= '0';
+                -- end if;
+
+            ----------------------------------------------------
+            -- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
+            ----------------------------------------------------
+            when TX_COMMAND_ADR =>
+                -- Commands and indices are read only (TX_COMMAND register)
+
+                -- Buffer direction and Frame swap (TX_SETTINGS)
+                data_out_int           <= (OTHERS => '0');
+
+            ----------------------------------------------------
+            -- TX_PRIORITY
+            ----------------------------------------------------
+            when TX_PRIORITY_ADR =>
+                data_out_int                         <= (OTHERS => '0');
+                data_out_int(TXT1P_H downto TXT1P_L) <= txt_buf_prior(0);
+                data_out_int(TXT2P_H downto TXT2P_L) <= txt_buf_prior(1);
+
+            -------------------------------------------------------
+            --Error capture register and ALC
+            -------------------------------------------------------
+            when ERR_CAPT_ADR =>
+                data_out_int                      <=  (OTHERS =>'0');
+                data_out_int(7 downto 0)
+                    <= stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW);
+                data_out_int(ALC_VAL_H downto ALC_VAL_L)
+                    <= stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW);
+
+            -------------------------------------------------------
+            --Frame counters registers
+            -------------------------------------------------------
+            --Recieve message counter
+            when RX_COUNTER_ADR =>
+                data_out_int
+                    <= stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW);
+
+            --Transcieve message counter
+            when TX_COUNTER_ADR =>
+                data_out_int
+                    <= stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW);
+
+            -------------------------------------------------------
+            --Logger configuration registers
+            -------------------------------------------------------
+            when LOG_TRIG_CONFIG_ADR =>
+                data_out_int                     <=  log_trig_config;
+            when LOG_CAPT_CONFIG_ADR =>
+                data_out_int                     <=  log_capt_config;
+
+            -------------------------------------------------------
+            --LOG_STATUS, LOG_WPP, LOG_RPP
+            -------------------------------------------------------
+            when LOG_STATUS_ADR=>
+                --Logger status
+                if(log_state_out=config)then
+                  data_out_int(LOG_CFG_IND)     <=  '1';
+                else
+                  data_out_int(LOG_CFG_IND)     <=  '0';
+                end if;
+
+                if(log_state_out=ready)then
+                  data_out_int(LOG_RDY_IND)     <=  '1';
+                else
+                  data_out_int(LOG_RDY_IND)     <=  '0';
+                end if;
+
+                if(log_state_out=running)then
+                  data_out_int(LOG_RUN_IND)     <=  '1';
+                else
+                  data_out_int(LOG_RUN_IND)     <=  '0';
+                end if;
+
+                if(use_logger=true)then
+                  data_out_int(LOG_EXIST_IND)   <=  '1';
+                else
+                  data_out_int(LOG_EXIST_IND)   <=  '0';
+                end if;
+
+                data_out_int(6 downto 3)                     <= (OTHERS =>'0');
+                data_out_int(LOG_SIZE_H downto LOG_SIZE_L)   <= log_size;
+                data_out_int(LOG_WPP_H downto LOG_WPP_L) <= log_write_pointer;
+                data_out_int(LOG_RPP_H downto LOG_RPP_L) <= log_read_pointer;
+
+            when LOG_CAPT_EVENT_1_ADR=>
+                data_out_int
+                    <= loger_act_data(63 downto 32);
+
+            when LOG_CAPT_EVENT_2_ADR=>
+                data_out_int
+                    <= loger_act_data(31 downto 0);
+
+            -------------------------------------------------------
+            --DEBUG register
+            -------------------------------------------------------
+            when DEBUG_REGISTER_ADR =>
+                data_out_int(7 downto 3)         <= (OTHERS =>'0');
+                data_out_int(STUFF_COUNT_H downto STUFF_COUNT_L)
+                    <= stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW);
+                data_out_int(DESTUFF_COUNT_H downto DESTUFF_COUNT_L)
+                    <= stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW);
+                data_out_int(12 downto 6)        <= PC_state_reg_vect;
+
+            -------------------------------------------------------
+            --YOOOOLOOOO REGISTER
+            -------------------------------------------------------
+            when YOLO_REG_ADR =>
+                data_out_int             <=  x"DEADBEEF";
+
+            when others =>
+          end case;
+        end if; -- srd = ACT_SRD
+      end if; -- chip select
+    end if; -- not reset
+  end if; -- rising edge
   end process mem_acess;
   
   
   -------------------------------------------------------------------------------
   -- Combinational logic for incrementing read pointer in RX buffer!
- 	-------------------------------------------------------------------------------
-  rx_read_start   <=  '1' when 
- 	                        (srd=ACT_SRD and 
- 	                         scs=ACT_CSC and   
-		                     adress(COMP_TYPE_ADRESS_HIGHER downto 
-		                            COMP_TYPE_ADRESS_LOWER)=CAN_COMPONENT_TYPE and 
-		                     adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER)=
-		                                std_logic_vector(to_unsigned(ID,4)) and
-		                     adress(11 downto 0)=RX_DATA_ADR and
-		                     RX_buff_read_first = false)
-		                     else
-		                '0';
+  -------------------------------------------------------------------------------
+  rx_read_start <=  '1' when
+                        (srd=ACT_SRD and
+                         scs=ACT_CSC and
+                         adress(COMP_TYPE_ADRESS_HIGHER downto
+                                COMP_TYPE_ADRESS_LOWER) = CAN_COMPONENT_TYPE and
+                         adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
+                           std_logic_vector(to_unsigned(ID,4)) and
+                         adress(11 downto 0) = RX_DATA_ADR and
+                         RX_buff_read_first = false)
+                        else
+                    '0';
   
   -------------------------------------------------------------------------------
   -- Read data set by byte enable combinationally
@@ -1638,21 +1613,21 @@ begin
   -- spec. the byte enable signal does not have to be valid in the clock
   -- cycle when the data are returned!!
  	-------------------------------------------------------------------------------
-  data_out(7 downto 0) <= data_out_int(7 downto 0) when sbe_reg(0)='1' 
+  data_out(7 downto 0) <= data_out_int(7 downto 0) when sbe_reg(0)='1'
                                                    else
                           (OTHERS => '0');
   
-  data_out(15 downto 8) <= data_out_int(15 downto 8) when sbe_reg(1)='1' 
+  data_out(15 downto 8) <= data_out_int(15 downto 8) when sbe_reg(1)='1'
                                                    else
                           (OTHERS => '0');
   
-  data_out(23 downto 16) <= data_out_int(23 downto 16) when sbe_reg(2)='1' 
+  data_out(23 downto 16) <= data_out_int(23 downto 16) when sbe_reg(2)='1'
                                                    else
                           (OTHERS => '0');
    
-  data_out(31 downto 24) <= data_out_int(31 downto 24) when sbe_reg(3)='1' 
+  data_out(31 downto 24) <= data_out_int(31 downto 24) when sbe_reg(3)='1'
                                                    else
-                          (OTHERS => '0');                       
+                          (OTHERS => '0');
   
   --------------------------------
   --Register logic and structure--
@@ -1660,42 +1635,42 @@ begin
   PC_state <=  protocol_type'VAL(to_integer(
                unsigned(stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))));
  
-  --Note: Flip flops are not used for most of the logic because all the blocks 
-  --      have registered information on output, therefore it is enough to read 
+  --Note: Flip flops are not used for most of the logic because all the blocks
+  --      have registered information on output, therefore it is enough to read
   --      it directly!
   
   --Status register
   status_reg(BS_IND mod 8)<= '1' when  error_state_type'VAL(
                                    to_integer(unsigned(
-                                       stat_bus(STAT_ERROR_STATE_HIGH downto 
-                                                STAT_ERROR_STATE_LOW))))=bus_off 
-                           else 
+                                       stat_bus(STAT_ERROR_STATE_HIGH downto
+                                                STAT_ERROR_STATE_LOW))))=bus_off
+                           else
                        '1' when  oper_mode_type'VAL(
                                    to_integer(unsigned(
-                                        stat_bus(STAT_OP_STATE_HIGH downto 
+                                        stat_bus(STAT_OP_STATE_HIGH downto
                                                  STAT_OP_STATE_LOW))))=integrating
                            else
                        '1' when  oper_mode_type'VAL(
                                     to_integer(unsigned(
-                                         stat_bus(STAT_OP_STATE_HIGH downto 
-                                                  STAT_OP_STATE_LOW))))=idle 
+                                         stat_bus(STAT_OP_STATE_HIGH downto
+                                                  STAT_OP_STATE_LOW))))=idle
                            else
                        '0';
-  status_reg(ES_IND mod 8)<='1' when (ewl<stat_bus(STAT_TX_COUNTER_HIGH downto 
+  status_reg(ES_IND mod 8)<='1' when (ewl<stat_bus(STAT_TX_COUNTER_HIGH downto
                                              STAT_TX_COUNTER_LOW) or
-                                ewl<stat_bus(STAT_RX_COUNTER_HIGH downto 
+                                ewl<stat_bus(STAT_RX_COUNTER_HIGH downto
                                              STAT_RX_COUNTER_LOW)) else '0';
                                 
   status_reg(TS_IND mod 8)<='1' when oper_mode_type'VAL(to_integer(
-                               unsigned(stat_bus(STAT_OP_STATE_HIGH downto 
-                                        STAT_OP_STATE_LOW))))=transciever 
+                               unsigned(stat_bus(STAT_OP_STATE_HIGH downto
+                                        STAT_OP_STATE_LOW))))=transciever
                           else
-                      '0';
+                       '0';
   status_reg(RS_IND mod 8)<='1' when oper_mode_type'VAL(to_integer(
                                unsigned(stat_bus(STAT_OP_STATE_HIGH downto
                                                  STAT_OP_STATE_LOW))))=reciever
                           else
-                      '0';
+                       '0';
   
   
   status_reg(TBS_IND mod 8)<='1' when (txtb_fsms(0) = txt_empty or
@@ -1703,10 +1678,10 @@ begin
                                        txtb_fsms(2) = txt_empty or
                                        txtb_fsms(3) = txt_empty)
                                  else
-                            '0';
+                             '0';
   
   --When at least one message is availiable in the buffer
-  status_reg(RBS_IND mod 8)<=not rx_empty; 
+  status_reg(RBS_IND mod 8)<=not rx_empty;
   status_reg(DOS_IND mod 8)<=rx_data_overrun;
   status_reg(ET_IND mod 8) <='1' when PC_state=error else '0';
    
@@ -1764,29 +1739,29 @@ begin
   
   --Acceptance filters
   drv_bus(DRV_FILTERS_ENA_INDEX)        <=  mode_reg(AFM_IND);
-  drv_bus(DRV_FILTER_A_MASK_HIGH downto 
+  drv_bus(DRV_FILTER_A_MASK_HIGH downto
           DRV_FILTER_A_MASK_LOW)        <=  filter_A_mask;
-  drv_bus(DRV_FILTER_A_BITS_HIGH downto 
+  drv_bus(DRV_FILTER_A_BITS_HIGH downto
           DRV_FILTER_A_BITS_LOW)        <=  filter_A_value;
-  drv_bus(DRV_FILTER_A_CTRL_HIGH downto 
+  drv_bus(DRV_FILTER_A_CTRL_HIGH downto
           DRV_FILTER_A_CTRL_LOW)        <=  filter_A_ctrl;
-  drv_bus(DRV_FILTER_B_MASK_HIGH downto 
+  drv_bus(DRV_FILTER_B_MASK_HIGH downto
           DRV_FILTER_B_MASK_LOW)        <=  filter_B_mask;
-  drv_bus(DRV_FILTER_B_BITS_HIGH downto 
+  drv_bus(DRV_FILTER_B_BITS_HIGH downto
           DRV_FILTER_B_BITS_LOW)        <=  filter_B_value;
-  drv_bus(DRV_FILTER_B_CTRL_HIGH downto 
+  drv_bus(DRV_FILTER_B_CTRL_HIGH downto
           DRV_FILTER_B_CTRL_LOW)        <=  filter_B_ctrl;
-  drv_bus(DRV_FILTER_C_MASK_HIGH downto 
+  drv_bus(DRV_FILTER_C_MASK_HIGH downto
           DRV_FILTER_C_MASK_LOW)        <=  filter_C_mask;
-  drv_bus(DRV_FILTER_C_BITS_HIGH downto 
+  drv_bus(DRV_FILTER_C_BITS_HIGH downto
           DRV_FILTER_C_BITS_LOW)        <=  filter_C_value;
-  drv_bus(DRV_FILTER_C_CTRL_HIGH downto 
+  drv_bus(DRV_FILTER_C_CTRL_HIGH downto
           DRV_FILTER_C_CTRL_LOW)        <=  filter_C_ctrl;
-  drv_bus(DRV_FILTER_RAN_CTRL_HIGH downto 
+  drv_bus(DRV_FILTER_RAN_CTRL_HIGH downto
           DRV_FILTER_RAN_CTRL_LOW)    <=  filter_ran_ctrl;
-  drv_bus(DRV_FILTER_RAN_LO_TH_HIGH downto 
+  drv_bus(DRV_FILTER_RAN_LO_TH_HIGH downto
           DRV_FILTER_RAN_LO_TH_LOW)  <=  filter_ran_low;
-  drv_bus(DRV_FILTER_RAN_HI_TH_HIGH downto 
+  drv_bus(DRV_FILTER_RAN_HI_TH_HIGH downto
           DRV_FILTER_RAN_HI_TH_LOW)  <=  filter_ran_high;
   
   --Rx Buffer
@@ -1804,16 +1779,16 @@ begin
   
   
   --Interrupts
-  drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW)          
+  drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW)
             <= int_vect_clear;
             
-  drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW)      
+  drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW)
             <= int_ena_set;
             
-  drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW)  
+  drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW)
             <= int_ena_clear;
             
-  drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW)    
+  drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW)
             <= int_mask_set;
             
   drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW)
@@ -1821,7 +1796,7 @@ begin
   
   
   --Falt confinement
-  drv_bus(DRV_EWL_HIGH downto DRV_EWL_LOW)          <=  ewl;  
+  drv_bus(DRV_EWL_HIGH downto DRV_EWL_LOW)          <=  ewl;
   drv_bus(DRV_ERP_HIGH downto DRV_ERP_LOW)          <=  erp;
   
   drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW)  <=  erctr_pres_value;
@@ -1852,7 +1827,7 @@ begin
   drv_bus(DRV_INT_LOOBACK_ENA_INDEX)                <=  intLoopbackEna;
   
   --Event logger
-  drv_bus(DRV_TRIG_CONFIG_DATA_HIGH downto 
+  drv_bus(DRV_TRIG_CONFIG_DATA_HIGH downto
           DRV_TRIG_CONFIG_DATA_LOW)<=(OTHERS =>'0');
    
   drv_bus(DRV_TRIG_SOF_INDEX)                       <=  log_trig_config(0);
