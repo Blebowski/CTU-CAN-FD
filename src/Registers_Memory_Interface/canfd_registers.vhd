@@ -41,20 +41,24 @@
 --  face is 32 bit avalon compatible. Registers create drv_bus signal which is 
 --  used in whole CAN FD IP function to control all modules. Memory Reads and 
 --  writes to any location need to be executed as one read, write. No extended 
---  cycles are allowed.                                                                                                  
+--  cycles are allowed.
 --  Write to register as following:
---    1. SCS<='1' , data_in<=valid_data, adress<=valid_adress
---    2. SWR<='0' , wait at least one clock cycle
---    3. SWR<='1' SCS<='0'
+--    1. SCS <= ACT_SCS, data_in <= valid_data, adress <= valid_adress
+--    2. SWR <= ACT_SWR, wait at least one clock cycle
+--    3. SWR <= not ACT_SWR SCS <= not ACT_SCS
 --  Read from register as following:
---    1. SCS<='1' , adress<=valid_adress
---    2. SRD<='0' , wait at least one clock cycle
+--    1. SCS <= ACT_SCS, adress<=valid_adress
+--    2. SRD <= ACT_SRD, wait at least one clock cycle
 --    3. Capture valid data on data_out output
---    4. SWR<='1' SCS<='0'
+--    4. SRD <= not ACT_SRD, SCS <= not ACT_SCS
 --------------------------------------------------------------------------------
---Note: All control signals which command any event execution which lasts one 
+-- Note: You must wait at least 1 cycle after deasserting async reset, since
+--       a synchronous reset is performed the next cycle.
+--------------------------------------------------------------------------------
+--Note: All control signals which command any event execution which lasts one
 --      clock cycle has negative edge detection. Therefore once srd or swr is 
 --      active to finish the read or write it has to become inactive!--
+-- 2018-04-10 MJ: this looks untrue!
 --------------------------------------------------------------------------------
 -- Revision History:
 --    July 2015   Created file
@@ -831,7 +835,7 @@ begin
 		--Chip select active and our device is selected (Component type and ID)
 		if((scs=ACT_CSC) and 
 		   (adress(COMP_TYPE_ADRESS_HIGHER downto 
-		    COMP_TYPE_ADRESS_LOWER)=CAN_COMPONENT_TYPE) and 
+		    COMP_TYPE_ADRESS_LOWER)=compType) and
 		   (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER)=
 		   std_logic_vector(to_unsigned(ID,4))) )
 		then 
