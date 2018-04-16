@@ -98,12 +98,18 @@ typedef __u16 __bitwise __sum16;
 typedef __u32 __bitwise __wsum;
 */
 
+__attribute__((noinline))
 static inline void iowrite32(u32 value, void *addr) {*(volatile u32*)addr = value;}
+__attribute__((noinline))
 static inline void iowrite16(u16 value, void *addr) {*(volatile u16*)addr = value;}
+__attribute__((noinline))
 static inline void iowrite8(u8 value, void *addr) {*(volatile u8*)addr = value;}
 
+__attribute__((noinline))
 static inline u32 ioread32(const void *addr) {return *(const volatile u32*)addr;}
+__attribute__((noinline))
 static inline u16 ioread16(const void *addr) {return *(const volatile u16*)addr;}
+__attribute__((noinline))
 static inline u8 ioread8(const void *addr) {return *(const volatile u8*)addr;}
 
 /* CAN DLC to real data length conversion helpers */

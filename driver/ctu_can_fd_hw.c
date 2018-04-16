@@ -72,6 +72,17 @@ static inline void ctu_can_fd_hwid_to_id(union ctu_can_fd_identifier_w hwid,
 // TODO: use can_len2dlc
 static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
 {
+	if (unlikely(len > 64)) {
+		*dlc = 0;
+		return false;
+	} else {
+		*dlc = can_len2dlc(len);
+		if (unlikely(*dlc == can_len2dlc(len-1))) {
+			*dlc = 0;
+			return false;
+		}
+	}
+	/*
 	if (len <= 8){
 		*dlc = len;
 		goto exit_ok;
@@ -98,6 +109,7 @@ static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
 	if (*dlc == 0)
 		return false;
 exit_ok:
+	*/
 	return true;
 }
 
@@ -198,6 +210,8 @@ void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv)
 	ctu_can_fd_write32(priv, CTU_CAN_FD_MODE, reg.u32);
 }
 
+// TODO: rather than set(value, mask) interface, provide native set(val), clr(val)
+//       interface to potentially avoid unnecessary write
 static void ctu_can_fd_int_conf(struct ctucanfd_priv *priv, enum ctu_can_fd_regs sreg,
 				enum ctu_can_fd_regs creg, 
 				union ctu_can_fd_int_stat mask,
