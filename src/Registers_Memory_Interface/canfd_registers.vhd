@@ -541,6 +541,33 @@ architecture rtl of canfd_registers is
   
   
   ------------------------------------------------
+  -- Return if a single-bit write into register is enabled,
+  -- based on byte enable support
+  ------------------------------------------------
+  function write_be_isenabled(
+    constant  bit_index  : in natural range 0 to 31;
+    signal    be         : in std_logic_vector(3 downto 0)
+  ) return boolean is
+    variable res : boolean;
+  begin
+    res := false;
+    if (sup_be = true) then
+      if (bit_index<8 and be(0)='1') then
+        res := true;
+      elsif (bit_index<16 and bit_index>7 and be(1)='1') then
+        res := true;
+      elsif (bit_index<24 and bit_index>15 and be(2)='1') then
+        res := true;
+      elsif (bit_index<32 and bit_index>23 and be(3)='1') then
+        res := true;
+      end if;
+    else
+      res := true;
+    end if;
+    return res;
+  end function;
+
+  ------------------------------------------------
   -- Write into register of single bit with byte
   -- enable support - variable input
   ------------------------------------------------
@@ -549,19 +576,9 @@ architecture rtl of canfd_registers is
     constant  bit_index  : in natural range 0 to 31;
     variable  data_in    : in std_logic_vector(31 downto 0);
     signal    be         : in std_logic_vector(3 downto 0)
-  )is
+  ) is
   begin
-    if (sup_be = true) then
-      if (bit_index<8 and be(0)='1') then
-        dest_reg := data_in(bit_index);
-      elsif (bit_index<16 and bit_index>7 and be(1)='1') then
-        dest_reg := data_in(bit_index);
-      elsif (bit_index<24 and bit_index>15 and be(2)='1') then
-        dest_reg := data_in(bit_index);
-      elsif (bit_index<32 and bit_index>23 and be(3)='1') then
-        dest_reg := data_in(bit_index);
-      end if;
-    else
+    if (write_be_isenabled(bit_index, be)) then
       dest_reg := data_in(bit_index);
     end if;
   end procedure;
@@ -577,17 +594,7 @@ architecture rtl of canfd_registers is
     signal    be           : in std_logic_vector(3 downto 0)
   )is
   begin
-    if (sup_be = true) then
-      if (bit_index<8 and be(0)='1') then
-        dest_reg <= data_in(bit_index);
-      elsif (bit_index<16 and bit_index>7 and be(1)='1') then
-        dest_reg <= data_in(bit_index);
-      elsif (bit_index<24 and bit_index>15 and be(2)='1') then
-        dest_reg <= data_in(bit_index);
-      elsif (bit_index<32 and bit_index>23 and be(3)='1') then
-        dest_reg <= data_in(bit_index);
-      end if;
-    else
+    if (write_be_isenabled(bit_index, be)) then
       dest_reg <= data_in(bit_index);
     end if;
   end procedure;
@@ -605,22 +612,20 @@ architecture rtl of canfd_registers is
     constant high_dindex : in natural range 31 downto 0;
     
     signal   be          : in std_logic_vector(3 downto 0)
-  )is
-  variable reg_val  : std_logic;
-  variable data_val : std_logic_vector(31 downto 0);
+  ) is
   variable j : natural;
   begin
     
+    assert high_rindex >= low_rindex report "Swapped high_rindex and low_rindex.";
+    assert high_dindex >= low_dindex report "Swapped high_dindex and low_dindex.";
     -- Check if input data range to write corresponds to register indices
-    if (high_rindex-low_rindex /= high_dindex-low_dindex) then
-      report "Mismatching data and register size";
-    end if;
-    
+    assert high_rindex-low_rindex = high_dindex-low_dindex report "Mismatching data and register size";
+
     j := low_rindex;
     for i in low_dindex to high_dindex loop
-      data_val := data_in;
-      write_be_v(reg_val,i,data_val,be);
-      dest_reg(j) <= reg_val;
+      if (write_be_isenabled(i, be)) then
+        dest_reg(j) <= data_in(i);
+      end if;
       j := j+1;
     end loop;
   end procedure;
