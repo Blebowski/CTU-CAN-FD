@@ -260,10 +260,7 @@ entity prescaler_v3 is
   --Information that the state is visited for the first time
   signal FSM_Preset             :   std_logic;
   signal FSM_Preset_2           :   std_logic;
-  
-  --Registered previous vlaue of time quantum clock used for edge detection
-  signal prev_tq_val            :   std_logic;
-  
+    
   --Edge on time quantum clock (new time quantum clock cycle)
   signal tq_edge                :   std_logic;
   
@@ -552,15 +549,8 @@ begin
         tq_counter      <=  1;
         clk_tq_nbt_r    <=  '0';
         clk_tq_dbt_r    <=  '0';
-        prev_tq_val     <=  '0';
     elsif rising_edge(clk_sys) then
-    
-        if (sp_control = NOMINAL_SAMPLE) then 
-            prev_tq_val   <=  clk_tq_nbt_r; 
-        else 
-            prev_tq_val   <=  clk_tq_dbt_r; 
-        end if;
-    
+     
         -- Time quantum counter
         if (tq_counter < tq_dur) then
             tq_counter  <=  tq_counter + 1;
