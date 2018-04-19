@@ -409,23 +409,18 @@ architecture rtl of prescaler_v3 is
         signal ph2_dbt              : in    natural range 0 to 31;
         signal sjw_nbt              : in    natural range 0 to 31;
         signal sjw_dbt              : in    natural range 0 to 31;
-        signal tq_nbt               : in    natural range 0 to 255;
-        signal tq_dbt               : in    natural range 0 to 255;
         signal ph2_real             : out   integer range -127 to 127
     ) is
         variable ph2                :       natural range 0 to 63;
         variable sjw                :       natural range 0 to 31;
-        variable tq                 :       integer range -127 to 127;
         variable ph2_min_sjw        :       natural range 0 to 63;
     begin
         if (sp_control = NOMINAL_SAMPLE) then
             ph2             := ph2_nbt;
             sjw             := sjw_nbt;
-            tq              := tq_nbt;
         else
             ph2             := ph2_dbt;
             sjw             := sjw_dbt;
-            tq              := tq_dbt;
         end if;
         ph2_min_sjw         := ph2 - sjw;
 
@@ -800,7 +795,7 @@ begin
             -- Negative resynchronisation
             if (bt_FSM = ph2) then
                 negative_resync(bt_counter, sp_control, ph2_nbt, ph2_dbt,
-                                sjw_nbt, sjw_dbt, tq_nbt, tq_dbt, ph2_real);
+                                sjw_nbt, sjw_dbt, ph2_real);
                 brs_resync   <= true;
 
             -- Positive resynchronisation
