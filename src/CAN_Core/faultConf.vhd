@@ -548,6 +548,6 @@ begin
   end process;
   
   -- Internal register to output propagation
-  err_capt <= err_capt_r;
+  err_capt <= erc_capt_r;
   
 end architecture;
