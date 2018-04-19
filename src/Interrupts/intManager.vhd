@@ -169,7 +169,9 @@ begin
              
   -- Register to output propagation
   int_vector                          <=  int_vect_reg;
-  
+  int_mask                            <=  int_mask_reg;
+  int_ena                             <=  int_ena_reg;  
+
   int_out  <= '1' when (int_vect_reg and int_mask_reg) /= zero_mask else
               '0';
   
@@ -189,7 +191,7 @@ begin
                                                txt_hw_cmd.unlock = '1')
                                           else
                                       '0';
-  
+
   int_proc:process(res_n, clk_sys)
   begin
     if (res_n = ACT_RESET) then
