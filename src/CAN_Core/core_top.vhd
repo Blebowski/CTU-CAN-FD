@@ -1017,7 +1017,7 @@ begin
  stat_bus(299 downto 289)                                  <=  (OTHERS=>'0');
  stat_bus(99 downto 90)                                    <=  (OTHERS=>'0');
  stat_bus(80)                                              <=  '0';
- 
+ stat_bus(60 downto 32)                                    <= (OTHERS => '0');
  
  stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW)               <= err_capt;
  
