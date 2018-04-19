@@ -97,7 +97,6 @@ set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitStuffing_v2.vhd
 set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitDeStuffing.vhd
 set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/prescaler_v3.vhd
 set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/busSync.vhd
-set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/brs_comp.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txtBuffer.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txArbitrator.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/rxBuffer.vhd
