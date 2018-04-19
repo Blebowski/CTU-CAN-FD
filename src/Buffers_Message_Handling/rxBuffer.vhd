@@ -269,11 +269,6 @@ entity rxBuffer is
   --Write pointer
   signal write_pointer          :natural range 0 to buff_size - 1;
   
-  --Registered value of read command for eedge detection. 
-  signal prev_read              :std_logic;
-  --Note :1->0 edge detection is used here, to move to the next 
-  --data when the previous read is finished!
-  
   --Recieved message was lost because RX Buffer was full
   signal data_overrun_r         :std_logic;
   
@@ -369,6 +364,7 @@ begin
   
   -- Frame format word assignment
   frame_form_w(DLC_H downto DLC_L)      <= rec_dlc_in;
+  frame_form_w(4)                       <= '0';
   frame_form_w(RTR_IND)                 <= rec_is_rtr;
   frame_form_w(ID_TYPE_IND)             <= rec_ident_type_in;
   frame_form_w(FR_TYPE_IND)             <= rec_frame_type_in;
@@ -476,7 +472,6 @@ begin
       rec_message_ack   <= '0';
       rx_message_disc   <= '0';
       data_overrun_r    <= '0';
-      prev_read         <= '0';
       copy_counter      <= 16; 
       data_size         <= 0;
       
@@ -487,7 +482,6 @@ begin
       
     elsif rising_edge(clk_sys) then
       
-      prev_read         <= drv_read_start;
       read_pointer      <= read_pointer;
       commit_rx_frame   <= '0';
       
