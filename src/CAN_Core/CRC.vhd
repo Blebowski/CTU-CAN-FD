@@ -130,8 +130,6 @@ begin
       start_reg       <= '0';
     elsif rising_edge(clk_sys) then
       start_reg       <= enable;
-    else 
-      start_reg       <= start_reg;
     end if;
   end process start_reg_proc;
   

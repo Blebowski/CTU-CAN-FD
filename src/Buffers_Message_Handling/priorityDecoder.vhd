@@ -198,7 +198,7 @@ begin
   variable tmp : level2_comp_valid_type := (OTHERS => (OTHERS => '0'));
   begin
     for i in 0 to 1 loop
-      tmp(i) := l0_valid(2 * i + 1 downto 2 * i);
+      tmp(i) := l1_valid(2 * i + 1 downto 2 * i);
     
       case tmp(i) is
       when "01" => 

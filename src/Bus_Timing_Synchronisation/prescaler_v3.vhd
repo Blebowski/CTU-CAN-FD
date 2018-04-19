@@ -260,10 +260,7 @@ entity prescaler_v3 is
   --Information that the state is visited for the first time
   signal FSM_Preset             :   std_logic;
   signal FSM_Preset_2           :   std_logic;
-  
-  --Registered previous vlaue of time quantum clock used for edge detection
-  signal prev_tq_val            :   std_logic;
-  
+    
   --Edge on time quantum clock (new time quantum clock cycle)
   signal tq_edge                :   std_logic;
   
@@ -409,23 +406,18 @@ architecture rtl of prescaler_v3 is
         signal ph2_dbt              : in    natural range 0 to 31;
         signal sjw_nbt              : in    natural range 0 to 31;
         signal sjw_dbt              : in    natural range 0 to 31;
-        signal tq_nbt               : in    natural range 0 to 255;
-        signal tq_dbt               : in    natural range 0 to 255;
         signal ph2_real             : out   integer range -127 to 127
     ) is
         variable ph2                :       natural range 0 to 63;
         variable sjw                :       natural range 0 to 31;
-        variable tq                 :       integer range -127 to 127;
         variable ph2_min_sjw        :       natural range 0 to 63;
     begin
         if (sp_control = NOMINAL_SAMPLE) then
             ph2             := ph2_nbt;
             sjw             := sjw_nbt;
-            tq              := tq_nbt;
         else
             ph2             := ph2_dbt;
             sjw             := sjw_dbt;
-            tq              := tq_dbt;
         end if;
         ph2_min_sjw         := ph2 - sjw;
 
@@ -557,15 +549,8 @@ begin
         tq_counter      <=  1;
         clk_tq_nbt_r    <=  '0';
         clk_tq_dbt_r    <=  '0';
-        prev_tq_val     <=  '0';
     elsif rising_edge(clk_sys) then
-    
-        if (sp_control = NOMINAL_SAMPLE) then 
-            prev_tq_val   <=  clk_tq_nbt_r; 
-        else 
-            prev_tq_val   <=  clk_tq_dbt_r; 
-        end if;
-    
+     
         -- Time quantum counter
         if (tq_counter < tq_dur) then
             tq_counter  <=  tq_counter + 1;
@@ -800,7 +785,7 @@ begin
             -- Negative resynchronisation
             if (bt_FSM = ph2) then
                 negative_resync(bt_counter, sp_control, ph2_nbt, ph2_dbt,
-                                sjw_nbt, sjw_dbt, tq_nbt, tq_dbt, ph2_real);
+                                sjw_nbt, sjw_dbt, ph2_real);
                 brs_resync   <= true;
 
             -- Positive resynchronisation

@@ -87,7 +87,6 @@ set_global_assignment -name VHDL_FILE ../../src/rst_sync.vhd
 set_global_assignment -name VHDL_FILE ../../src/Registers_Memory_Interface/canfd_registers.vhd
 set_global_assignment -name VHDL_FILE ../../src/Interrupts/intManager.vhd
 set_global_assignment -name VHDL_FILE ../../src/Event_Logger/logger.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/tranBuffer.vhd
 set_global_assignment -name VHDL_FILE ../../src/CAN_Core/protocolControl.vhd
 set_global_assignment -name VHDL_FILE ../../src/CAN_Core/operationControl.vhd
 set_global_assignment -name VHDL_FILE ../../src/CAN_Core/faultConf.vhd
@@ -97,7 +96,6 @@ set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitStuffing_v2.vhd
 set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitDeStuffing.vhd
 set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/prescaler_v3.vhd
 set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/busSync.vhd
-set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/brs_comp.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txtBuffer.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txArbitrator.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/rxBuffer.vhd
