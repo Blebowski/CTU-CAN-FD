@@ -543,22 +543,6 @@ package CANconstants is
 
 
   ------------------------------------------------------------------------------
-  -- Interrupt vector indices
-  ------------------------------------------------------------------------------
-  constant BUS_ERR_INT : natural := 7;
-  constant ARB_LST_INT : natural := 6;
-  constant ERR_PAS_INT : natural := 5;
-  constant WAKE_INT    : natural := 4;
-  constant DOV_INT     : natural := 3;
-  constant ERR_WAR_INT : natural := 2;
-  constant TX_INT      : natural := 1;
-  constant RX_INT      : natural := 0;
-  constant LOG_FIN_INT : natural := 8;
-  constant RX_FULL_INT : natural := 9;
-  constant BRS_INT     : natural := 10;
-
-
-  ------------------------------------------------------------------------------
   -- Status bus Indices
   ------------------------------------------------------------------------------
   constant STAT_OP_STATE_LOW  : natural := 0;
