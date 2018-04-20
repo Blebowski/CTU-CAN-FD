@@ -1608,7 +1608,7 @@ begin
                         (srd=ACT_SRD and
                          scs=ACT_CSC and
                          adress(COMP_TYPE_ADRESS_HIGHER downto
-                                COMP_TYPE_ADRESS_LOWER) = CAN_COMPONENT_TYPE and
+                                COMP_TYPE_ADRESS_LOWER) = compType and
                          adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
                            std_logic_vector(to_unsigned(ID,4)) and
                          adress(11 downto 0) = RX_DATA_ADR and

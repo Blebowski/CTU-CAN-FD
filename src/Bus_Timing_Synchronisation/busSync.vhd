@@ -75,6 +75,11 @@
 --                since in CAN spec. EDL bit is in nominal bit time and no other
 --                edge can be transmitted before it is recieved (condition of 
 --                original CAN)
+--    20.4.2018   Added register to "trv_delay_out". Transceiver delay is
+--                updated on the output only once the measurement has finished.
+--                Thus reading TRV_DELAY register would always result in tran-
+--                sceiver delay of last CAN FD Frame. This is done to avoid
+--                reading wrong value from TRV_DELAY register during measurment.
 --
 --------------------------------------------------------------------------------
 
@@ -252,8 +257,28 @@ begin
   
   --Output data propagation
   CAN_tx                <=  data_tx;
+
   
-  trv_delay_out         <=  "000000000"&trv_delay;
+  ------------------------------------------------------------------------------
+  -- Transceiver delay propagation to output.
+  -- Transceiver delay is propagated only once the measurement is finished!
+  -- If not, reading TRV_DELAY register during the measurement would return
+  -- immediate value in the counter which would not correspond to transceiver
+  -- delay measured during last FD frame!! 
+  ------------------------------------------------------------------------------
+  trv_delay_out_proc : process (clk_sys, res_n)
+  begin
+    if (res_n = ACT_RESET) then
+        trv_delay_out       <= (OTHERS => '0');
+    elsif (rising_edge(clk_sys)) then
+        
+        -- Do not propagate during the measurement!
+        if (trv_running = '0') then
+            trv_delay_out   <= "000000000" & trv_delay;
+        end if;
+
+    end if;
+  end process;
   
   --Registers to output propagation
   sample_sec_out        <=  sample_sec;

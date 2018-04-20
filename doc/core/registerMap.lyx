@@ -29067,7 +29067,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-TRV_DELAY_VALUE When sending CAN FD Frame with bit rate shift, transceiver delay is measured to apply secondary sampling point for bit error detection during transmission. After the measurement is done (after EDL bit) it can be read from this register. The value in this register is valid until the start of the next frame. It is recommended to set bit rate shift interrupt and read this value directly after bit rate is shifted in interrupt handling. This register can be used for transceiver TXD to RXD delay verifcation.
+TRV_DELAY_VALUE When sending CAN FD Frame with bit rate shift, transceiver delay is measured to apply secondary sampling point for bit error detection during transmission. After the measurement is done (after EDL bit) it can be read from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
