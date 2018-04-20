@@ -221,7 +221,7 @@ begin
         end if;
         
         -- Interrupt status (vector)
-        if (int_input_active(i) = '1') then
+        if (int_input_active(i) = '1' and int_ena_reg(i) = '1') then
           int_vect_reg(i) <= '1';
         elsif (drv_int_vect_clr(i) = '1') then
           int_vect_reg(i) <= '0';
