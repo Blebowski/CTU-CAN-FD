@@ -364,10 +364,12 @@ begin
     lock_check_proc : process(clk_sys)
     begin
         if (rising_edge(clk_sys)) then
-            if (txt_hw_cmd.lock = '1') then
-                if (buf_fsm /= txt_ready) then
-                    report "Buffer not READY and LOCK occurred" severity error;
-                end if;
+            if (txt_hw_cmd.lock       = '1'       and
+                buf_fsm              /= txt_ready and
+                txt_hw_cmd_buf_index  = ID) 
+            then
+                report "Buffer not READY and LOCK occurred on TXT Buffer: " &
+                        integer'image(ID) severity error;
             end if;
         end if;
     end process;
@@ -375,11 +377,13 @@ begin
     unlock_check_proc : process(clk_sys)
     begin
         if (rising_edge(clk_sys)) then
-            if (txt_hw_cmd.unlock = '1') then
-                if (buf_fsm /= txt_tx_prog and buf_fsm /= txt_ab_prog) then
-                    report "Buffer not 'TX_prog' or 'AB_prog'" &
-                           " and UNLOCK occurred" severity error;
-                end if;
+            if (txt_hw_cmd.unlock     = '1'         and
+                buf_fsm              /= txt_tx_prog and
+                buf_fsm              /= txt_ab_prog and
+                txt_hw_cmd_buf_index  = ID)
+            then
+                report "Buffer not 'TX_prog' or 'AB_prog' and UNLOCK" &
+                       " occurred on Buffer: " & integer'image(ID) severity error;
             end if;
         end if;
     end process;
