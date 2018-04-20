@@ -55,42 +55,34 @@ add wave -group "Interrupt sources" $TCOMP/error_valid \
 									 $TCOMP/error_passive_changed \
 									 $TCOMP/error_warning_limit \
 									 $TCOMP/arbitration_lost \
-									 $TCOMP/wake_up_valid \
 									 $TCOMP/tx_finished \
 									 $TCOMP/br_shifted \
 									 $TCOMP/rx_message_disc \
 									 $TCOMP/rec_message_valid \
 									 $TCOMP/rx_full \
-									 $TCOMP/loger_finished
-#
-add wave -group "Interrupt configuration" $TCOMP/drv_bus_err_int_ena \
-										$TCOMP/drv_arb_lst_int_ena \
-										$TCOMP/drv_err_pas_int_ena \
-										$TCOMP/drv_wake_int_ena \
-										$TCOMP/drv_dov_int_ena \
-										$TCOMP/drv_err_war_int_ena \
-										$TCOMP/drv_tx_int_ena \
-										$TCOMP/drv_rx_int_ena \
-										$TCOMP/drv_log_fin_int_ena \
-										$TCOMP/drv_rx_full_int_ena \
-										$TCOMP/drv_brs_int_ena
+									 $TCOMP/loger_finished \
+									 $TCOMP/rx_empty \
+									 $TCOMP/txt_hw_cmd
 
-add wave $TCOMP/drv_int_vect_erase	
+# Commands from user registers
+add wave -label "Interrupt clear" $TCOMP/drv_int_clear;
+add wave -label "Interrupt Enable set" $TCOMP/drv_int_ena_set;
+add wave -label "Interrupt Enable clear" $TCOMP/drv_int_ena_clear;
+add wave -label "Interrupt Mask set" $TCOMP/drv_int_mask_set;
+add wave -label "Interrupt Mask clear" $TCOMP/drv_int_mask_clear;
 
+# Interrupt manager outputs
 add wave -noupdate -divider -height 20 "DUT outputs"
-add wave $TCOMP/int_out
-add wave $TCOMP/int_vector
+add wave -label "Interrupt output" $TCOMP/int_out
+add wave -label "Interrupt vector" $TCOMP/int_vector
+add wave -label "Interrupt Enable" $TCOMP/int_ena
+add wave -label "Interrupt Mask" $TCOMP/int_mask
 
 add wave -noupdate -divider -height 20 "Testbench internal signals"
-add wave $TCOMP/int_ctr
-add wave $TCOMP/int_test_ctr
-add wave $TCOMP/int_test_mask
-add wave $TCOMP/int_test_vector	 
+add wave $TCOMP/int_status_exp
+add wave $TCOMP/int_ena_exp
+add wave $TCOMP/int_mask_exp
 
-add wave -noupdate -divider -height 20 "Internal DUT signals"								
-add wave $TCOMP/int_man_comp/int_mask
-add wave $TCOMP/int_man_comp/interrupt_active
-add wave $TCOMP/int_man_comp/interrupt_counter
 									 
 ################################################################################
 # Execute the simulation, gather results
