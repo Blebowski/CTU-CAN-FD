@@ -833,6 +833,15 @@ begin
       txt_buf_cmd_index         <= (OTHERS => '0');
       txt_buf_prior             <= txt_buf_prior;
 
+      -- Interrupt commands must be erased after each access!!
+      -- Otherwise command would stay and user would need to clear the interrupt
+      -- command by writing logic 0!
+      int_vect_clear           <= (OTHERS => '0');
+      int_ena_set              <= (OTHERS => '0');
+      int_ena_clear            <= (OTHERS => '0');
+      int_mask_set             <= (OTHERS => '0');
+      int_mask_clear           <= (OTHERS => '0');
+
       --Chip select active and our device is selected (Component type and ID)
       if((scs=ACT_CSC) and
           (adress(COMP_TYPE_ADRESS_HIGHER downto
