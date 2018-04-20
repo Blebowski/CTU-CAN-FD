@@ -214,7 +214,7 @@ begin
         -- Interrupt mask
         if (drv_int_mask_set(i) = '1') then
           int_mask_reg(i) <= '1';
-        elsif (drv_int_mask_clr(i) = '0') then
+        elsif (drv_int_mask_clr(i) = '1') then
           int_mask_reg(i) <= '0';
         else
           int_mask_reg(i) <= int_mask_reg(i);
