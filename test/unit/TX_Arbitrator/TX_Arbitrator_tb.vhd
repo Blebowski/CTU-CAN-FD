@@ -37,14 +37,12 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Unit test for TX_Arbitrator circuit                                                 
+--  Unit test for TX Arbitrator circuit                                                 
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.5.2016   Created file
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
--- Test implementation                                            
+--    23.4.2018   Updated test to cover TX Arbitrator with continous timestamp
+--                load.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -55,368 +53,406 @@ use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 use work.ID_transfer.all;
 
 architecture tx_arb_unit_test of CAN_test is
-  
-    signal txt1_buffer_in         :  std_logic_vector(639 downto 0):=(OTHERS => '0');     
-    signal txt1_buffer_empty      :  std_logic:='0';                        
-    signal txt1_buffer_ack        :  std_logic:='0';                          
-    signal txt2_buffer_in         :  std_logic_vector(639 downto 0):=(OTHERS => '0');       
-    signal txt2_buffer_empty      :  std_logic:='0';                          
-    signal txt2_buffer_ack        :  std_logic:='0';                         
-    signal tran_data_out          :  std_logic_vector(511 downto 0):=(OTHERS => '0');      
-    signal tran_ident_out         :  std_logic_vector(28 downto 0):=(OTHERS => '0');       
-    signal tran_dlc_out           :  std_logic_vector(3 downto 0):=(OTHERS => '0');        
-    signal tran_is_rtr            :  std_logic:='0';                         
-    signal tran_ident_type_out    :  std_logic:='0';                         
-    signal tran_frame_type_out    :  std_logic:='0';                    
-    signal tran_brs_out           :  std_logic:='0';                    
-    signal tran_frame_valid_out   :  std_logic:='0';                    
-    signal tran_data_ack          :  std_logic:='0';                                                
-                                                                          
-    signal drv_bus                :  std_logic_vector(1023 downto 0):= (OTHERS => '0'); 
-    signal timestamp              :  std_logic_vector(63 downto 0):= 
-                                      "0000000000000000000000000000000011111111111111111111111111111111";  
     
-    --Here reset is only to have the same framework for each test
-    -- Circuit is only combinational
-    signal res_n                  :  std_logic:='0';
-    signal clk_sys                :  std_logic:='0';
+    ------------------------
+    -- DUT signals    
+    ------------------------
+    signal clk_sys                :  std_logic;
+    signal res_n                  :  std_logic := '0';
+    signal txt_buf_in             :  txtb_output_type :=
+                                        (OTHERS => (OTHERS => '0'));
+
+    signal txt_buf_ready          :  std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0)
+                                        := (OTHERS => '0');
+
+    signal txtb_ptr               :  natural range 0 to 19;
+    signal tran_data_word_out     :  std_logic_vector(31 downto 0);
+    signal tran_dlc_out           :  std_logic_vector(3 downto 0);
+    signal tran_is_rtr            :  std_logic;
+    signal tran_ident_type_out    :  std_logic;
+    signal tran_frame_type_out    :  std_logic;
+    signal tran_brs_out           :  std_logic;
+    signal tran_frame_valid_out   :  std_logic;
+    signal txt_hw_cmd             :  txt_hw_cmd_type := ('0','0','0','0','0','0');
+    signal txtb_changed           :  std_logic;
+    signal txt_hw_cmd_buf_index   :  natural range 0 to TXT_BUFFER_COUNT - 1;
+    signal txtb_core_pointer      :  natural range 0 to 19 := 0;
+    signal drv_bus                :  std_logic_vector(1023 downto 0);
+    signal txt_buf_prio           :  txtb_priorities_type :=
+                                        (OTHERS => (OTHERS => '0'));
+    signal timestamp              :  std_logic_vector(63 downto 0) :=
+                                        (OTHERS => '0');
+
+    ------------------------
+    -- Internal TB signals   
+    ------------------------
+
+    -- Memories as if connected to TXT Buffers
+    type txtb_test_mem_type is array (0 to 19) of std_logic_vector(31 downto 0);
+    type txtb_multi_test_type is array (0 to TXT_BUFFER_COUNT - 1) of
+         txtb_test_mem_type;
+    signal shadow_mem             : txtb_multi_test_type :=
+                                    (OTHERS => (OTHERS => (OTHERS => '0')));
+
+    -- Random pool pointers
+    signal rand_ctr_1             : natural range 0 to RAND_POOL_SIZE;
+    signal rand_ctr_2             : natural range 0 to RAND_POOL_SIZE;
+    signal rand_ctr_3             : natural range 0 to RAND_POOL_SIZE;
+
+    -- Highest priority buffer which is ready
+    signal high_prio_buf_index    : natural range 0 to TXT_BUFFER_COUNT - 1;
     
-    signal drv_allow_txt1         :   std_logic:='0';                             --Allow transmit of messages from tx buffer
-    signal drv_allow_txt2         :   std_logic:='0';                             --Allow transmit of messages from txt buffer
-    
-    -------------------------------------------------------
-    -- Generatees random input frame as TX buffet would do
-    -------------------------------------------------------
-    procedure gen_random_input(
-      signal  rand_ctr            :inout  natural range 0 to RAND_POOL_SIZE;
-      signal  buffer_in           :inout  std_logic_vector(639 downto 0);
-      signal  buffer_empty        :inout  std_logic
-    )is
-    variable aux_log_vector       :std_logic_vector(31 downto 0);
-    begin
-      --Generate frame format
-      rand_logic_vect_v(rand_ctr,aux_log_vector,0.5);
-      buffer_in(639 downto 608)<=aux_log_vector;
-      
-      --Generate identifier and data
-      rand_logic_vect(rand_ctr,buffer_in(575 downto 0),0.5);
-      rand_logic(rand_ctr,buffer_empty,0.5);
-      
-      --Uppest 32 bits of timestamp is always zero
-      --buffer_in(607 downto 576) <= (OTHERS => '0');
-      --buffer_in(575 downto 544) <= (OTHERS => '0');
-      --buffer_in(543 downto 512) <= (OTHERS => '0');
-      wait for 0 ns;
-      
-    end procedure;
-    
-    --Comparing procedure for two 64 bit std logic vectors
+     -- Modeled outputs
+     signal mod_dlc_out           :  std_logic_vector(3 downto 0) := "0000";
+     signal mod_is_rtr            :  std_logic := '0';
+     signal mod_ident_type_out    :  std_logic := '0';
+     signal mod_frame_type_out    :  std_logic := '0';
+     signal mod_brs_out           :  std_logic := '0';
+     signal mod_frame_valid_out   :  std_logic := '0';
+     signal mod_buf_index         :  natural range 0 to TXT_BUFFER_COUNT - 1 :=
+                                     0;
+
+    -- Model is locked (as if transmission in progress)
+    signal mod_locked             :  boolean := false;
+
+    -- Error counters
+    signal cmp_err_ctr            :  natural;
+
+
+    -- Comparing procedure for two 64 bit std logic vectors
     function less_than(
       signal   a       : in std_logic_vector(63 downto 0);
       signal   b       : in std_logic_vector(63 downto 0)
     )return boolean is
     begin
        if (unsigned(a(63 downto 32)) < unsigned(b(63 downto 32))) or 
-          ((a(63 downto 32) = b(63 downto 32)) and (unsigned(a(31 downto 0)) < unsigned(b(31 downto 0))))then
+          ((a(63 downto 32) = b(63 downto 32)) and 
+          (unsigned(a(31 downto 0)) < unsigned(b(31 downto 0))))
+       then
           return true;
-      else
-         return false;
-      end if;
+       else
+          return false;
+       end if;
    
-    end function;
-    
-    procedure compare_frame(
-      signal buffer_in              :in  std_logic_vector(639 downto 0); 
-      signal tran_data_out          :in  std_logic_vector(511 downto 0);    
-      signal tran_ident_out         :in  std_logic_vector(28 downto 0);     
-      signal tran_dlc_out           :in  std_logic_vector(3 downto 0);      
-      signal tran_is_rtr            :in  std_logic;                         
-      signal tran_ident_type_out    :in  std_logic;                         
-      signal tran_frame_type_out    :in  std_logic;                         
-      signal tran_brs_out           :in  std_logic;
-      variable outcome              :out boolean
+     end function;
+
+
+    -- Setting TXT Buffer priorities as from user registers
+    procedure set_priorities(
+        signal rand_ptr               :inout natural range 0 to RAND_POOL_SIZE;
+        signal txt_buf_prio           :out   txtb_priorities_type
     )is
+        variable tmp                  : std_logic_vector(2 downto 0);
     begin
-      outcome:=true;
-      
-      if(buffer_in(611 downto 608) /= tran_dlc_out)then
-        outcome:=false;
-      end if; 
-      
-      if(buffer_in(613) /= tran_is_rtr)then
-        outcome:=false;
-      end if; 
-      
-      if(buffer_in(614) /= tran_ident_type_out)then
-        outcome:=false;
-      end if;
-      
-      if(buffer_in(615) /= tran_frame_type_out)then
-        outcome:=false;
-      end if;
-      
-      if(buffer_in(617) /= tran_brs_out)then
-        outcome:=false;
-      end if;  
-      
-      if(buffer_in(540 downto 512) /= tran_ident_out)then
-        outcome:=false;
-      end if;
-      
-      if(buffer_in(511 downto 0) /= tran_data_out)then
-        outcome:=false;
-      end if;
-      
+        for i in 0 to TXT_BUFFER_COUNT - 1 loop
+            rand_logic_vect_v(rand_ptr, tmp, 0.5);
+            txt_buf_prio(i)      <= tmp;
+        end loop;
     end procedure;
     
-    procedure check_output(
-      signal txt1_buffer_in         :in  std_logic_vector(639 downto 0);     
-      signal txt1_buffer_empty      :in  std_logic;                          
-      signal txt1_buffer_ack        :in  std_logic;                          
-      signal txt2_buffer_in         :in  std_logic_vector(639 downto 0);     
-      signal txt2_buffer_empty      :in  std_logic;                          
-      signal txt2_buffer_ack        :in  std_logic;
-      signal tran_data_out          :in  std_logic_vector(511 downto 0);    
-      signal tran_ident_out         :in  std_logic_vector(28 downto 0);     
-      signal tran_dlc_out           :in  std_logic_vector(3 downto 0);      
-      signal tran_is_rtr            :in  std_logic;                         
-      signal tran_ident_type_out    :in  std_logic;                         
-      signal tran_frame_type_out    :in  std_logic;                         
-      signal tran_brs_out           :in  std_logic;                         
-      signal tran_frame_valid_out   :in  std_logic;                         
-      signal tran_data_ack          :in  std_logic;
-      signal drv_allow_txt1         :in  std_logic;
-      signal drv_allow_txt2         :in  std_logic;
-      variable outcome              :out boolean
-    )is
-      variable estim_src              :std_logic:='0';
-      variable ts1_valid              :boolean:=false;
-      variable ts2_valid              :boolean:=false;
-      variable id_1_dec               :natural;
-      variable id_2_dec               :natural;
-      variable base                   :std_logic_vector(10 downto 0);
-      variable ext                    :std_logic_vector(17 downto 0);
-      variable conc                   :std_logic_vector(28 downto 0);
-      variable ts_val_1               :boolean:=false;
-      variable ts_val_2               :boolean:=false;
-      variable no_frame               :boolean:=true;
-      variable imm                    :boolean:=false;
-    begin
-      outcome:=true;
-      
-      --Calculate the decimal values of identifiers
-      base      :=  txt1_buffer_in(522 downto 512);
-      ext       :=  txt1_buffer_in(540 downto 523);
-      conc      :=  base&ext;
-      id_1_dec  :=  to_integer(unsigned(conc));
-      
-      base      :=  txt2_buffer_in(522 downto 512);
-      ext       :=  txt2_buffer_in(540 downto 523);
-      conc      :=  base&ext;
-      id_2_dec  :=  to_integer(unsigned(conc));     
-      
-      if(txt1_buffer_empty='1' and txt2_buffer_empty='1')then
-        no_frame:=true;
-      else
-        no_frame:=false;
-      end if;
-          
-      --No frame should be put on output if none on input
-      if(txt1_buffer_empty='1' and txt2_buffer_empty='1' 
-         and tran_frame_valid_out='1')then
-        outcome:=false;
-        log("Both buffers empty but frame_valid is active!",error_l,log_level);
-      else
-        --Here we dont car what data are on output as long as frame_valid is inactive
-        outcome:=true;
-      end if;
-      
-      ----------------------------------
-      --Determine the predicted source
-      ----------------------------------
-      
-      --Only buffer 1 has message and is allowed
-      if(txt1_buffer_empty='1' and txt2_buffer_empty='0' and drv_allow_txt2='1' )then
-        estim_src:='1';
-        
-      --Only buffer two has frame ans is allowed
-      elsif(txt1_buffer_empty='0' and txt2_buffer_empty='1' and drv_allow_txt1='1' )then
-        estim_src:='0';
-        
-      --Both buffers have message but only 1 is allowed
-      elsif(txt1_buffer_empty='0' and txt2_buffer_empty='0' and drv_allow_txt1='1' and drv_allow_txt2='0')then
-        estim_src:='0';
-      
-      --Both buffers have message but only 2 is allowed
-      elsif(txt1_buffer_empty='0' and txt2_buffer_empty='0' and drv_allow_txt1='0' and drv_allow_txt2='1')then
-        estim_src:='1';
-      
-      --Both buffers are allowed and non empty...
-      elsif(txt1_buffer_empty='0' and txt2_buffer_empty='0' and 
-            less_than(txt1_buffer_in(607 downto 544),txt2_buffer_in(607 downto 544))=true)then
-        estim_src:='0';
-        
-      elsif(txt1_buffer_empty='0' and txt2_buffer_empty='0' and 
-            txt1_buffer_in(607 downto 544)=txt2_buffer_in(607 downto 544) and
-             (id_1_dec   < id_2_dec))then
-        estim_src:='0';  
-      else
-        estim_src:='1';
-      end if;
-      
-      --See whether timestamps are valid
-      if(less_than(txt1_buffer_in(607 downto 544),timestamp) and drv_allow_txt1='1')then
-        ts_val_1:=true;
-      else
-        ts_val_1:=false;
-      end if;
-      
-      --See whether timestamps are valid
-      if(less_than(txt2_buffer_in(607 downto 544),timestamp) and drv_allow_txt2='1')then
-        ts_val_2:=true;
-      else
-        ts_val_2:=false;
-      end if;
-      
-      if(no_frame=false)then
-        
-        if(estim_src='0' and ts_val_1=true and txt1_buffer_empty='0') then
-          compare_frame(txt1_buffer_in,tran_data_out, tran_ident_out, tran_dlc_out, tran_is_rtr ,                         
-                         tran_ident_type_out , tran_frame_type_out, tran_brs_out, imm);
-          if(tran_frame_valid_out='0')then
-            log("Frame_valid is inactive expecting active",error_l,log_level);
-            outcome:=false;
-          end if;
-          
-          if(imm=false)then
-            log("Comparison between input and expected output failed",error_l,log_level);
-            outcome:=false;
-          end if;
-          
-        elsif (estim_src='0' and ts_val_1=false) then
-          
-          if(tran_frame_valid_out='1')then
-            outcome:=false;
-            log("Frame_valid active but timestamp does not have according value",error_l,log_level);
-          end if;
-          
-        elsif (estim_src='1' and ts_val_2=true and txt2_buffer_empty='0') then
-          
-          compare_frame(txt2_buffer_in,tran_data_out, tran_ident_out, tran_dlc_out, tran_is_rtr ,                         
-                         tran_ident_type_out , tran_frame_type_out, tran_brs_out, imm);
-          if(imm=false or tran_frame_valid_out='0')then
-            outcome:=false;
-            log("Frame_valid invalid when it should be valid or data comparison failed",error_l,log_level);
-          end if;
-          
-        elsif (estim_src='1' and ts_val_2=false ) then
-          
-          if(tran_frame_valid_out='1')then
-            log("Frame_valid valid when it should be invalid",error_l,log_level);
-            outcome:=false;
-          end if;
-          
-        end if;     
-         
-      end if;
-      
-    end procedure;
-        
+
 begin
-  
-  tx_Arbitrator_comp:txArbitrator  
+
+  ---------------------------------
+  -- DUT
+  ---------------------------------
+  txArbitrator_comp : txArbitrator
+  generic map(
+    buf_count               => TXT_BUFFER_COUNT,
+    tx_time_sup             => true
+  )
   port map( 
-     txt1_buffer_in       =>  txt1_buffer_in,      
-     txt1_buffer_empty    =>  txt1_buffer_empty , 
-     txt1_buffer_ack      =>  txt1_buffer_ack,
-     txt2_buffer_in       =>  txt2_buffer_in, 
-     txt2_buffer_empty    =>  txt2_buffer_empty,
-     txt2_buffer_ack      =>  txt2_buffer_ack,
-     tran_data_out        =>  tran_data_out,  
-     tran_ident_out       =>  tran_ident_out,
-     tran_dlc_out         =>  tran_dlc_out,
-     tran_is_rtr          =>  tran_is_rtr,
-     tran_ident_type_out  =>  tran_ident_type_out,
-     tran_frame_type_out  =>  tran_frame_type_out,
-     tran_brs_out         =>  tran_brs_out ,                       
-     tran_frame_valid_out =>  tran_frame_valid_out ,                   
-     tran_data_ack        =>  tran_data_ack,                                                                     
-     drv_bus              =>  drv_bus,
-     timestamp            =>  timestamp
+     clk_sys                => clk_sys,
+     res_n                  => res_n,
+     txt_buf_in             => txt_buf_in,
+     txt_buf_ready          => txt_buf_ready,
+     txtb_ptr               => txtb_ptr,
+     tran_data_word_out     => tran_data_word_out,
+     tran_dlc_out           => tran_dlc_out,
+     tran_is_rtr            => tran_is_rtr,
+     tran_ident_type_out    => tran_ident_type_out,
+     tran_frame_type_out    => tran_frame_type_out,
+     tran_brs_out           => tran_brs_out,
+     tran_frame_valid_out   => tran_frame_valid_out,
+     txt_hw_cmd             => txt_hw_cmd,
+     txtb_changed           => txtb_changed,
+     txt_hw_cmd_buf_index   => txt_hw_cmd_buf_index,
+     txtb_core_pointer      => txtb_core_pointer,
+     drv_bus                => drv_bus,
+     txt_buf_prio           => txt_buf_prio,
+     timestamp              => timestamp
   );
-  
-  --Driving bus aliases
-  drv_bus(DRV_ALLOW_TXT1_INDEX) <= drv_allow_txt1;
-  drv_bus(DRV_ALLOW_TXT2_INDEX) <= drv_allow_txt2;
-  
-  ---------------------------------
-  --Clock generation
-  ---------------------------------
-  clock_gen:process
-  variable period   :natural:=f100_Mhz;
-  variable duty     :natural:=50;
-  variable epsilon  :natural:=0;
+
+
+  ----------------------------------------------
+  -- Emulate content and state of TXT Buffers
+  ----------------------------------------------
+  buf_em_proc : process
+    variable wait_time_r    : real;
+    variable wait_time      : time;
+    variable buf_index      : real;
+    variable tmp            : std_logic_vector(31 downto 0);
+    variable extra_time     : std_logic_vector(7 downto 0);
+    variable time_to_tx     : std_logic_vector(31 downto 0);
   begin
-    generate_clock(period,duty,epsilon,clk_sys);
-    timestamp <= std_logic_vector(unsigned(timestamp)+1);
+
+    -- Wait up to 100 ns
+    rand_real_v(rand_ctr_1, wait_time_r);
+    wait_time_r := wait_time_r * 100.0;
+    wait_time   := wait_time_r * 1 ns;
+    wait for wait_time;
+
+    -- Choose random TXT Buffer
+    rand_real_v(rand_ctr_1, buf_index);
+    buf_index := buf_index * 3.0;
+
+    -- Make sure buffer is not "ready", only then it can be accessed
+    txt_buf_ready(integer(buf_index)) <= '0';
+    wait for 10 ns;
+
+    -- Fill the buffer with random data
+    for i in 0 to 19 loop
+        rand_logic_vect_v(rand_ctr_1, tmp, 0.5);
+        shadow_mem(integer(buf_index))(i) <= tmp;
+    end loop;
+
+    -- Make sure that timestamp words in the buffer have some normal value,
+    -- otherwise no buffer would ever get on output...
+    -- Set the time to transmit to actual timestamp + some extra time
+    shadow_mem(integer(buf_index))(3) <= timestamp(63 downto 32);
+    rand_logic_vect_v(rand_ctr_1, extra_time, 0.3);
+    time_to_tx  := std_logic_vector(to_unsigned(
+                    to_integer(unsigned(timestamp(31 downto 0))) +
+                    to_integer(unsigned(extra_time)), 32));
+    shadow_mem(integer(buf_index))(2) <= time_to_tx;
+
+    -- Make the buffer ready again
+    txt_buf_ready(integer(buf_index)) <= '1';
+
+    wait for 150 ns;
+
+  end process;
+
+
+  ------------------------------------------------------------------------------
+  -- Connect TX Arbitrator to the shadow memories which emulate TXT Buffers
+  ------------------------------------------------------------------------------
+  buf_access_emu_proc : process (res_n, clk_sys)
+  begin
+    if (res_n = ACT_RESET) then
+         txt_buf_in(0) <= (OTHERS => '0');
+         txt_buf_in(1) <= (OTHERS => '0');
+         txt_buf_in(2) <= (OTHERS => '0');
+         txt_buf_in(3) <= (OTHERS => '0');
+    elsif (rising_edge(clk_sys)) then
+         txt_buf_in(0) <= shadow_mem(0)(txtb_ptr);
+         txt_buf_in(1) <= shadow_mem(1)(txtb_ptr);
+         txt_buf_in(2) <= shadow_mem(2)(txtb_ptr);
+         txt_buf_in(3) <= shadow_mem(3)(txtb_ptr);
+    end if;
+  end process;
+
+  ------------------------------------------------------------------------------
+  -- Model TX Arbitrator. Choose Highest priority "ready" TXT Buffer
+  ------------------------------------------------------------------------------
+  tx_arb_model_proc : process
+    variable tmp_index    : natural;
+    variable tmp_prio     : natural;
+  begin
+    
+    -- Choose highest priority TXT buffer 
+    tmp_index           := 0;
+    tmp_prio            := 0;
+    for i in 0 to TXT_BUFFER_COUNT - 1 loop
+        if ((to_integer(unsigned(txt_buf_prio(i))) >= tmp_prio) and
+            txt_buf_ready(i) = '1')
+        then
+            tmp_index   := i;
+            tmp_prio    := to_integer(unsigned(txt_buf_prio(i)));
+        end if;
+    end loop;
+
+    -- Update the buffer
+    high_prio_buf_index <= tmp_index;
+
+    wait for 10 ns;
+  end process;
+
+
+  ------------------------------------------------------------------------------
+  -- Update data on output based on the highest priority buffer and timestamp
+  ------------------------------------------------------------------------------
+  tx_time_proc : process
+    variable ts_elapsed : boolean       := false;
+    variable ts         : std_logic_vector(63 downto 0);
+  begin
+
+    while res_n = ACT_RESET loop
+        wait until rising_edge(clk_sys);
+    end loop;
+
+    -- Wait until timestamp is reached
+    while ts_elapsed = false or mod_locked = true loop
+        ts := shadow_mem(high_prio_buf_index)(3) &
+              shadow_mem(high_prio_buf_index)(2);
+        wait for 10 ns;
+        if (to_integer(unsigned(ts)) < to_integer(unsigned(timestamp))) then
+            ts_elapsed := true;
+        else
+            ts_elapsed := false;
+        end if;
+    end loop;
+
+    -- Emulate two clock cycles delay!
+    wait for 20 ns;
+
+    -- Propagate metadata to the output
+    mod_buf_index        <= high_prio_buf_index;
+    mod_dlc_out          <= shadow_mem(high_prio_buf_index)(0)
+                                       (DLC_H downto DLC_L);  
+    mod_is_rtr           <= shadow_mem(high_prio_buf_index)(0)
+                                       (RTR_IND); 
+    mod_ident_type_out   <= shadow_mem(high_prio_buf_index)(0)
+                                       (ID_TYPE_IND); 
+    mod_frame_type_out   <= shadow_mem(high_prio_buf_index)(0)
+                                       (FR_TYPE_IND); 
+    mod_brs_out          <= shadow_mem(high_prio_buf_index)(0)
+                                       (BRS_IND); 
+    mod_frame_valid_out  <= '1';
+
+    -- Wait until the buffer gets unlocked again
+    while mod_locked = true loop
+        wait until rising_edge(clk_sys);
+    end loop;
   end process;
   
-  ---------------------------------
-  -- Input generator
-  ---------------------------------
-  input_gen:process
+
+  ------------------------------------------------------------------------------
+  -- Model LOCK and UNLOCK commands as if coming from CAN Core
+  ------------------------------------------------------------------------------
+  cmd_mod_proc : process
+    variable wait_time      : time;
+    variable wait_time_r    : real;
   begin
+    while mod_frame_valid_out = '0' loop
+        wait until rising_edge(clk_sys);
+    end loop;
+
+    wait until rising_edge(clk_sys);
+
+    -- Lock the Buffer
+    txt_hw_cmd.lock <= '1';
+    mod_locked      <= true;
+    wait until rising_edge(clk_sys);
+    txt_hw_cmd.lock <= '0';
+
+    -- Wait random time
+    rand_real_v(rand_ctr_3, wait_time_r);
+    wait_time_r := wait_time_r * 200.0;
+    wait_time   := wait_time_r * 1 ns;
+    wait for wait_time;
+    
+    -- Unlock the Buffer
+    txt_hw_cmd.unlock <= '1';
+    mod_locked        <= false;
+    wait until rising_edge(clk_sys);
+    txt_hw_cmd.unlock <= '0';
+
+    -- Before the next possible LOCK command, buffers must be evaluated.
+    -- This takes up to 3 states of TX Arbitrator FSM. Note that this condition
+    -- is always satisfied by CAN Core since between unlock and lock there must
+    -- be 3 whole bit times of interframe space!    
+    wait until rising_edge(clk_sys);
+    wait until rising_edge(clk_sys);
+    wait until rising_edge(clk_sys);
+    wait until rising_edge(clk_sys);
+    wait until rising_edge(clk_sys);
+    
+  end process;
+
+
+  ------------------------------------------------------------------------------
+  -- Compare DUT outputs with model outputs
+  ------------------------------------------------------------------------------
+  cmp_proc : process
+  begin
+    
+    if ((mod_dlc_out            /= tran_dlc_out) or
+        (mod_is_rtr             /= tran_is_rtr) or
+        (mod_ident_type_out     /= tran_ident_type_out) or
+        (mod_frame_type_out     /= tran_frame_type_out) or
+        (mod_frame_valid_out    /= tran_frame_valid_out))
+    then
+        log("DUT and Model metadata not matching!", error_l, log_level);
+        cmp_err_ctr          <= cmp_err_ctr + 1;
+    end if;
+
+    if (txt_hw_cmd_buf_index   /= mod_buf_index)
+    then
+        log("DUT and Model buffer index not matching!", error_l, log_level);
+        cmp_err_ctr          <= cmp_err_ctr + 1;
+    end if;
+
     wait until falling_edge(clk_sys);
-    gen_random_input(rand_ctr,txt1_buffer_in,txt1_buffer_empty);
-    gen_random_input(rand_ctr,txt2_buffer_in,txt2_buffer_empty);
-    rand_logic(rand_ctr,drv_allow_txt1,0.5);
-    rand_logic(rand_ctr,drv_allow_txt2,0.5);
+  end process;
+
+
+  -----------------------------------
+  -- Clock and timestamp generation
+  -----------------------------------
+  clock_gen : process
+  variable period   :natural := f100_Mhz;
+  variable duty     :natural := 50;
+  variable epsilon  :natural := 0;
+  begin
+    generate_clock(period, duty, epsilon, clk_sys);
+    timestamp <= std_logic_vector(unsigned(timestamp) + 1);
   end process;
   
+  errors <= error_ctr;
+
   ---------------------------------
   ---------------------------------
-  --Main Test process
+  -- Main Test process
   ---------------------------------
   ---------------------------------
-  test_proc:process
-  variable outcome:boolean;
+  test_proc : process
+    variable outcome : boolean;
   begin
-    log("Restarting TX Arbitrator test!",info_l,log_level);
+    log("Restarting TX Arbitrator test!", info_l, log_level);
     wait for 5 ns;
-    reset_test(res_n,status,run,error_ctr);
-    log("Restarted TX Arbitrator test",info_l,log_level);
-    print_test_info(iterations,log_level,error_beh,error_tol);
+    reset_test(res_n, status, run, error_ctr);
+    log("Restarted TX Arbitrator test", info_l, log_level);
+    print_test_info(iterations, log_level, error_beh, error_tol);
     
     -------------------------------
     --Main loop of the test
     -------------------------------
-    log("Starting main loop",info_l,log_level);
+    log("Starting main loop", info_l, log_level);
     
-    while (loop_ctr<iterations  or  exit_imm)
+    while (loop_ctr < iterations  or  exit_imm)
     loop
-      log("Starting loop nr "&integer'image(loop_ctr),info_l,log_level);
+      log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
      
-      --TODO: Test processing
-      check_output( txt1_buffer_in, txt1_buffer_empty ,txt1_buffer_ack, txt2_buffer_in, txt2_buffer_empty,                      
-                     txt2_buffer_ack , tran_data_out, tran_ident_out , tran_dlc_out ,tran_is_rtr ,                      
-                     tran_ident_type_out  , tran_frame_type_out , tran_brs_out, tran_frame_valid_out,                         
-                     tran_data_ack , drv_allow_txt1 , drv_allow_txt2 , outcome);
-      
-      if(outcome=false)then
-        log("Predicted and actual output not matching!",error_l,log_level);
-        process_error(error_ctr,error_beh,exit_imm);  
-      end if;
-      
+      -- Configure TXT Buffer priorities!
+	  set_priorities(rand_ctr_2, txt_buf_prio);
+
+      wait for 1000 ns;
+ 
+      error_ctr <= cmp_err_ctr;
+
       wait until rising_edge(clk_sys);
-      
-      loop_ctr<=loop_ctr+1;
+
+      loop_ctr <= loop_ctr + 1;
     end loop;
-    
-    evaluate_test(error_tol,error_ctr,status);
+
+    evaluate_test(error_tol, error_ctr, status);
   end process;
   
   
@@ -424,33 +460,22 @@ end architecture;
 
 
 
-
------------------------------------------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Test wrapper and control signals generator        
+--------------------------------------------------------------------------------
 architecture tx_arb_unit_test_wrapper of CAN_test_wrapper is
   
-  --Test component itself
-  component CAN_test is
-  port (
-    signal run            :in   boolean;                -- Input trigger, test starts running when true
-    signal iterations     :in   natural;                -- Number of iterations that test should do
-    signal log_level      :in   log_lvl_type;           -- Logging level, severity which should be shown
-    signal error_beh      :in   err_beh_type;           -- Test behaviour when error occurs: Quit, or Go on
-    signal error_tol      :in   natural;                -- Error tolerance, error counter should not
-                                                         -- exceed this value in order for the test to pass
-    signal status         :out  test_status_type;      -- Status of the test
-    signal errors         :out  natural                -- Amount of errors which appeared in the test
-    --TODO: Error log results 
-  );
-  end component;
-  
-  --Select architecture of the test
+  -- Select architecture of the test
   for test_comp : CAN_test use entity work.CAN_test(tx_arb_unit_test);
   
-    signal run              :   boolean;                -- Input trigger, test starts running when true                                                        -- exceed this value in order for the test to pass
-    signal status_int       :   test_status_type;      -- Status of the test
-    signal errors           :   natural;                -- Amount of errors which appeared in the test
+	-- Input trigger, test starts running when true
+    signal run              :   boolean;
+
+	-- Status of the test
+    signal status_int       :   test_status_type;
+
+    -- Amount of errors which appeared in the test
+    signal errors           :   natural;
 
 begin
   
