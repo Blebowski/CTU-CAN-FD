@@ -48,33 +48,47 @@ start_CAN_simulation "tx_arb_unit_test_wrapper"
 #Add common waves for each test entity
 add_test_status_waves
 add_system_waves
-
-#Add circuit specific signals
-add wave -noupdate -divider -height 20 "DUT inputs (generated)"									 
-add wave -label "Buffer 1 allowed" $TCOMP/drv_allow_txt1								
-add wave -label "Buffer 2 allowed" $TCOMP/drv_allow_txt2
-add wave -label "Buffer 1 Output" -hexadecimal $TCOMP/txt1_buffer_in
-add wave -label "Buffer 2 Output" -hexadecimal $TCOMP/txt2_buffer_in
 add wave -label "Timestamp" -unsigned $TCOMP/timestamp
 
-add wave -noupdate -divider -height 20 "DUT outputs"
-add wave -label "Data output" -hexadecimal $TCOMP/tran_data_out
-add wave -label "Identifier output" -hexadecimal $TCOMP/tran_ident_out
+#Add circuit specific signals
+add wave -noupdate -divider -height 20 "DUT TXT Buffers interface"
+add wave -label "Buffer inputs" -unsigned $TCOMP/txt_buf_in
+add wave -label "Buffers ready" -unsigned $TCOMP/txt_buf_ready
+add wave -label "Buffers pointer" -unsigned $TCOMP/txtb_ptr
+add wave -label "Stored buffer index" -unsigned $TCOMP/txt_hw_cmd_buf_index
+add wave -label "Priorities" $TCOMP/txArbitrator_comp/txt_buf_prio
+
+add wave -noupdate -divider -height 20 "DUT CAN Core interface"
+add wave -label "Data output" -hexadecimal $TCOMP/tran_data_word_out
 add wave -label "DLC" $TCOMP/tran_dlc_out
 add wave -label "RTR" $TCOMP/tran_is_rtr
 add wave -label "Identifier type" $TCOMP/tran_ident_type_out
 add wave -label "Frame format" $TCOMP/tran_frame_type_out
 add wave -label "BRS" $TCOMP/tran_brs_out
 add wave -label "Output frame is valid" $TCOMP/tran_frame_valid_out
+add wave -label "Hardware commands" $TCOMP/txt_hw_cmd
+add wave -label "Pointer from CAN Core" $TCOMP/txtb_core_pointer
 
-add wave -noupdate -divider -height 20 "Internal DUT signals"								
-add wave $TCOMP/tx_arbitrator_comp/valid_join
-add wave $TCOMP/tx_arbitrator_comp/mess_src
-add wave $TCOMP/tx_arbitrator_comp/mess_time1
-add wave $TCOMP/tx_arbitrator_comp/mess_time2
-add wave $TCOMP/tx_arbitrator_comp/ts_valid
-add wave $TCOMP/tx_arbitrator_comp/id_1_dec
-add wave $TCOMP/tx_arbitrator_comp/id_2_dec
+add wave -noupdate -divider -height 20 "Internal testbench signals"
+add wave -label "Shadow memories" $TCOMP/shadow_mem
+add wave -label "Model locked" $TCOMP/mod_locked
+add wave -label "DLC output" $TCOMP/mod_dlc_out
+add wave -label "RTR" $TCOMP/mod_is_rtr
+add wave -label "Identifier type" $TCOMP/mod_ident_type_out
+add wave -label "Frame type" $TCOMP/mod_frame_type_out
+add wave -label "Frame valid" $TCOMP/mod_frame_valid_out
+add wave -label "Stored index" $TCOMP/mod_buf_index
+add wave -label "Combinational index" $TCOMP/high_prio_buf_index
+
+add wave -noupdate -divider -height 20 "Internal DUT signals"
+add wave -label "Metadata pointer" $TCOMP/txArbitrator_comp/txtb_pointer_meta
+add wave -label "FSM" $TCOMP/txArbitrator_comp/tx_arb_fsm
+add wave -label "Last txt buffer index" $TCOMP/txArbitrator_comp/last_txtb_index
+add wave -label "Buffer available" $TCOMP/txArbitrator_comp/select_buf_avail
+add wave -label "Selected buf index" $TCOMP/txArbitrator_comp/select_buf_index
+add wave -label "Read timestamp" $TCOMP/txArbitrator_comp/txtb_timestamp
+add wave -label "Timestamp valid" $TCOMP/txArbitrator_comp/timestamp_valid
+
 									 
 ################################################################################
 # Execute the simulation, gather results
