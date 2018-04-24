@@ -569,7 +569,7 @@ begin
     )
     port map(
       clk_sys               => clk_sys,
-      res_n                 => res_n,
+      res_n                 => res_n_int,
       tran_data             => tran_data,
       tran_addr             => tran_addr,
       tran_cs               => tran_cs(i),
@@ -592,7 +592,7 @@ begin
   )
   port map( 
      clk_sys                => clk_sys,
-     res_n                  => res_n,
+     res_n                  => res_n_int,
      txt_buf_in             => txt_word,
      txt_buf_ready          => txt_buf_ready,
      txtb_ptr               => txt_buf_ptr,
@@ -621,7 +621,7 @@ begin
       )
     port map(
       clk_sys         => clk_sys,
-      res_n           => res_n,
+      res_n           => res_n_int,
       rec_ident_in    => rec_ident_in,
       ident_type      => rec_ident_type_in,
       frame_type      => rec_frame_type_in,
@@ -715,7 +715,7 @@ begin
   prescaler_comp : prescaler_v3
     port map(
       clk_sys              => clk_sys,
-      res_n                => res_n,
+      res_n                => res_n_int,
       OP_State             => OP_State,
       sync_edge            => sync_edge,
       drv_bus              => drv_bus,
@@ -776,7 +776,7 @@ begin
         )
       port map(
         clk_sys => clk_sys,
-        res_n   => res_n,
+        res_n   => res_n_int,
 
         drv_bus   => drv_bus,
         stat_bus  => stat_bus,
