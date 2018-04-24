@@ -470,4 +470,80 @@ struct can_filter {
 #endif /* _UAPI_CAN_H */
 
 
+struct can_priv {
+    struct can_bittiming bittiming, data_bittiming;
+    const struct can_bittiming_const *bittiming_const,
+        *data_bittiming_const;
+    //const u16 *termination_const;
+    //unsigned int termination_const_cnt;
+    //u16 termination;
+    const u32 *bitrate_const;
+    unsigned int bitrate_const_cnt;
+    const u32 *data_bitrate_const;
+    unsigned int data_bitrate_const_cnt;
+    struct can_clock clock;
+};
+
+struct net_device {
+    struct can_priv can;
+};
+
+#define netdev_priv(nd) (&((nd)->can))
+
+int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt,
+                      const struct can_bittiming_const *btc,
+                      const u32 *bitrate_const,
+                      const unsigned int bitrate_const_cnt);
+
+#define min(a, b) (a < b ? a : b)
+#define max(a, b) (a > b ? a : b)
+#define clamp(val, lo, hi)  min((typeof(val))max(val, lo), hi)
+
+/**
+ * do_div - returns 2 values: calculate remainder and update new dividend
+ * @n: pointer to uint64_t dividend (will be updated)
+ * @base: uint32_t divisor
+ *
+ * Summary:
+ * ``uint32_t remainder = *n % base;``
+ * ``*n = *n / base;``
+ *
+ * Return: (uint32_t)remainder
+ *
+ * NOTE: macro parameter @n is evaluated multiple times,
+ * beware of side effects!
+ */
+# define do_div(n,base) ({					\
+	uint32_t __base = (base);				\
+	uint32_t __rem;						\
+	__rem = ((uint64_t)(n)) % __base;			\
+	(n) = ((uint64_t)(n)) / __base;				\
+	__rem;							\
+ })
+/**
+ * abs - return absolute value of an argument
+ * @x: the value.  If it is unsigned type, it is converted to signed type first.
+ *     char is treated as if it was signed (regardless of whether it really is)
+ *     but the macro's return type is preserved as char.
+ *
+ * Return: an absolute value of x.
+ */
+#define abs(x)	__abs_choose_expr(x, long long,				\
+		__abs_choose_expr(x, long,				\
+		__abs_choose_expr(x, int,				\
+		__abs_choose_expr(x, short,				\
+		__abs_choose_expr(x, char,				\
+		__builtin_choose_expr(					\
+			__builtin_types_compatible_p(typeof(x), char),	\
+			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
+			((void)0)))))))
+
+#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
+	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
+	__builtin_types_compatible_p(typeof(x), unsigned type),		\
+	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
+
+#define netdev_warn(dev, format, ...) printf("%s" format, "netdev_warn: ", ##__VA_ARGS__);
+#define netdev_err(dev, format, ...) printf("%s" format, "netdev_err: ", ##__VA_ARGS__);
+
 #endif /* __CTU_CAN_FD_LINUX_DEFS__ */

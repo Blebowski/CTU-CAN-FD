@@ -207,14 +207,14 @@ void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable);
 
 /*
  * Configures CTU CAN FD Core to limit the amount of retransmit attempts after
- * occurence of error (Error frame, Arbitration lost). If retransmitt limit is 
- * disabled, the Core will attempt to retransmitt inifinitely. If rettransmitt 
+ * occurence of error (Error frame, Arbitration lost). If retransmit limit is
+ * disabled, the Core will attempt to retransmit inifinitely. If retransmit
  * limit is reached, the Core will finish and according TXT buffer will end up
  * in TX Error state.
  * 
  * Arguments:
  *	priv	Private info
- *	enable	Enable/disable the retransmitt limitation
+ *	enable	Enable/disable the retransmit limitation
  *      limit	Number to which limit the retransmission (1-CTU_CAN_FD_RETR_MAX) 
  * Returns:
  *	True if set correctly. False if "limit" is too high.
@@ -234,12 +234,12 @@ bool ctu_can_fd_set_ret_limit(struct ctucanfd_priv *priv, bool enable, u8 limit)
  *	CAN_CTRLMODE_3_SAMPLES  - Tripple sampling mode
  *	CAN_CTRLMODE_FD		- Flexible data-rate support. When not set, Core
  *				  does not accept CAN FD Frames and interprets,
- *				  them as form error. Capability to transmitt
+ *				  them as form error. Capability to transmit
  *				  CAN FD Frames is not affected by this setting.
  *	CAN_CTRLMODE_PRESUME_ACK - When set, Core does not require dominant bit
  *				   in ACK field to consider the transmission as
  *				   valid.
- *	CAN_CTRLMODE_FD_NON_ISO  - When set, the Core transmitts the frames
+ *	CAN_CTRLMODE_FD_NON_ISO  - When set, the Core transmits the frames
  *				   according to NON-ISO FD standard.
  * 
  * Arguments:
@@ -354,7 +354,7 @@ void ctu_can_fd_int_mask(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat m
 /*
  * Set the modes of CTU CAN FD IP Core. All flags from "ctu_can_fd_set_mode_reg"
  * are configured, plus CAN_CTRLMODE_ONE_SHOT, CAN_CTRLMODE_BERR_REPORTING,
- * which are configured via "rettransmitt limit" and enabling error interrupts.
+ * which are configured via "retransmit limit" and enabling error interrupts.
  * 
  * Arguments:
  *	priv	Private info
@@ -658,7 +658,7 @@ void ctu_can_fd_set_rx_tsop(struct ctucanfd_priv *priv, enum ctu_can_fd_rx_setti
  *	data	Pointer to buffer where the CAN Frame should be stored.
  *	ts	Pointer to u64 where RX Timestamp should be stored.
  */
-void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, unsigned char *data, u64 *ts);
+void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, struct canfd_frame *data, u64 *ts);
 
 
 /*
@@ -765,7 +765,7 @@ void ctu_can_fd_set_txt_priority(struct ctucanfd_priv *priv, const u8 *prio);
  * Returns:
  *	True if the frame was inserted succesfully, False otherwise.
  */
-bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const unsigned char *data, u64 ts,
+bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_frame *data, u64 ts,
 				u8 buf);
 
 /*

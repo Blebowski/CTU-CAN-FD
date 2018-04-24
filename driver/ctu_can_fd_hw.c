@@ -72,6 +72,9 @@ static inline void ctu_can_fd_hwid_to_id(union ctu_can_fd_identifier_w hwid,
 // TODO: use can_len2dlc
 static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
 {
+	*dlc = can_len2dlc(len);
+	return true;
+	/*
 	if (unlikely(len > 64)) {
 		*dlc = 0;
 		return false;
@@ -81,7 +84,8 @@ static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
 			*dlc = 0;
 			return false;
 		}
-	}
+	}*/
+
 	/*
 	if (len <= 8){
 		*dlc = len;
@@ -484,7 +488,7 @@ void ctu_can_fd_set_rx_tsop(struct ctucanfd_priv *priv, enum ctu_can_fd_rx_setti
 	ctu_can_fd_write32(priv, CTU_CAN_FD_RX_STATUS, reg.u32);
 }
 
-void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, unsigned char *data, u64 *ts)
+void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, struct canfd_frame *data, u64 *ts)
 {
 	struct canfd_frame *cf = (struct canfd_frame *)data; // TODO: may break alignment rules
 	union ctu_can_fd_frame_form_w ffw;
@@ -499,7 +503,7 @@ void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, unsigned char *data, u
 	// BRS, ESI, RTR Flags
 	if (ffw.s.fr_type == FD_CAN){
 		if (ffw.s.brs == BR_SHIFT)
-			cf->flags |= CANFD_BRS; 
+			cf->flags |= CANFD_BRS;
 		if (ffw.s.esi_resvd == ESI_ERR_PASIVE)
 			cf->flags |= CANFD_ESI;
 	}else if (ffw.s.rtr == RTR_FRAME)
@@ -605,7 +609,7 @@ void ctu_can_fd_set_txt_priority(struct ctucanfd_priv *priv, const u8 *prio)
 	ctu_can_fd_write32(priv, CTU_CAN_FD_TX_PRIORITY, reg.u32);
 }
 
-bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const unsigned char *data, u64 ts,
+bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_frame *data, u64 ts,
 				u8 buf)
 {
 	enum ctu_can_fd_regs buf_base;
@@ -631,23 +635,25 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const unsigned char *da
 		return false;
 	}
 
-	if (!ctu_can_fd_is_txt_buf_accessible(priv, buf))
+	if (!ctu_can_fd_is_txt_buf_accessible(priv, buf)) {
 		return false;
+	}
 
 	if (cf->can_id & CAN_RTR_FLAG)
 		ffw.s.rtr = RTR_FRAME;
 
 	if (cf->can_id & CAN_EFF_FLAG)
 		ffw.s.id_type = EXTENDED;
- 	else
+	else
 		ffw.s.id_type = BASE;
 	
 	ffw.s.tbf = TIME_BASED;
 
 	idw = ctu_can_fd_id_to_hwid(cf->can_id);
 
-	if (!ctu_can_fd_len_to_dlc(cf->len, &dlc))
+	if (!ctu_can_fd_len_to_dlc(cf->len, &dlc)) {
 		return false;
+	}
 	ffw.s.dlc = dlc;
 
 	// Larger data chunks and the ones where bit rate should be shifted
