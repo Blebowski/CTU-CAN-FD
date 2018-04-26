@@ -116,6 +116,15 @@
 --                   on the output is not updated, "tran_frame_valid" is also
 --                   not updated and should stay the same as at the moment of
 --                   locking.
+--                3. Added waiting in "arb_upp_ts" for timestamp to elapse.
+--                   Metadata pointer must have been changed, since if the
+--                   FSM stays in "arb_upp_ts" it needs to have Upper Timestamp
+--                   on the output in the next clock cycle, not Frame format
+--                   word! Note that this change adds one part to metadata poin-
+--                   ter multiplexor, but it is now able to react on timestamp
+--                   elapse with no jitter! Before it could have happend that
+--                   timestamp was elapse during reading lower timestamp word
+--                   but circuit reacted only one clock cycle later!
 --                  
 --------------------------------------------------------------------------------
 
@@ -381,6 +390,10 @@ begin
                            to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2)))
                            when (tx_arb_fsm = arb_sel_low_ts) else
 
+                           to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2)))
+                           when (tx_arb_fsm = arb_sel_upp_ts and
+                                 timestamp_valid = false) else
+
                            to_integer(unsigned(FRAME_FORM_W_ADR(11 downto 2)))
                            when (tx_arb_fsm = arb_sel_upp_ts and
                                  timestamp_valid) else
@@ -478,8 +491,8 @@ begin
                 tx_arb_fsm         <= arb_sel_ffw;
                                     
             -- If timestamp has not elapsed, repeat the whole process.
-            else
-                tx_arb_fsm         <= arb_sel_low_ts;
+            -- else
+            --    tx_arb_fsm       <= arb_sel_low_ts;
             end if;
 
         --------------------------------------------------------------
