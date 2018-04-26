@@ -101,6 +101,22 @@
 --                   the address from which the state will be reading. This-
 --                   way on transfer address is available and TXT Buffer can
 --                   provide the data!
+--    26.4.2018   1. Pointer to TXT Buffer in last cycle of "arb_locked" is taken
+--                   from FSM not from CAN Core. In the next clock cycle FSM is
+--                   already taking the data as if coming from Lower timestamp
+--                   address! Without it, Frame format word was taken as timestamp
+--                   word and timestamp comparison was executed on it! This could
+--                   have lead to validating frame for transmission in wrong
+--                   moment!
+--                2. "tran_frame_valid" set to be in logic 1 during the whole
+--                   "arb_lock" state. Protocol control reacts on active "tran_
+--                   frame_valid" and locks the buffer. Metadata on outputs 
+--                   are used by Protocol control during transmission. It is
+--                   better design approach, since during whole TX, the frame
+--                   on the output is not updated, "tran_frame_valid" is also
+--                   not updated and should stay the same as at the moment of
+--                   locking.
+--                  
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -204,6 +220,7 @@ entity txArbitrator is
   
   -- Registered values for detection of change
   signal select_buf_index_reg     : natural range 0 to buf_count - 1;
+  signal select_buf_avail_reg     : boolean;
   
   -- State machine for following when the frame was already transmitted!
   signal tx_arb_fsm               : tx_arb_state_type;  
@@ -304,9 +321,12 @@ begin
   -- Invalid state of the buffer must be immediately available to the
   -- CAN Core, otherwise Core might attempt to lock buffer which was
   -- already aborted!
+  -- During transmission, CAN Core is reading metadata from outputs. Since the
+  -- frame is valid, it is logical to also have "tran_frame_valid" active!
   ------------------------------------------------------------------------------
-  tran_frame_valid_out <= '1' when (select_buf_avail and 
-                                    tran_frame_valid_com = '1')
+  tran_frame_valid_out <= '1' when ((select_buf_avail and 
+                                    tran_frame_valid_com = '1') or
+                                    (tx_arb_fsm = arb_locked))
                               else
                           '0';
   
@@ -331,8 +351,12 @@ begin
   ------------------------------------------------------------------------------
   -- During Buffer selection, TX Arbitrator is addressing TXT Buffers.
   -- During Transmission, the Core is addressing TXT Buffers.
+  -- In the last cycle when the unlock command comes, TX Arbitrator must
+  -- already provide pointer from FSM, not the one from CAN Core. It is already
+  -- addressing the lower timestamp word for timestamp selection!
   ------------------------------------------------------------------------------
-  txtb_ptr            <= txtb_core_pointer when (tx_arb_fsm = arb_locked)
+  txtb_ptr            <= txtb_core_pointer when (tx_arb_fsm = arb_locked and
+                                                 txt_hw_cmd.unlock = '0')
                                             else
                          txtb_pointer_meta;
   
@@ -386,6 +410,7 @@ begin
         int_txtb_index        <= 0;
         
         select_buf_index_reg  <= 0;
+        select_buf_avail_reg  <= false;
         
     elsif rising_edge(clk_sys) then
       
@@ -403,7 +428,8 @@ begin
       tran_frame_valid_com      <= tran_frame_valid_com;
       
       select_buf_index_reg      <= select_buf_index;
-      
+      select_buf_avail_reg      <= select_buf_avail;
+
       --------------------------------------------------------------
       -- Finishing the transmission = unlocking the buffer
       --------------------------------------------------------------                
@@ -422,9 +448,15 @@ begin
       -- Keep the arbitrator in selection of the lowest word as
       -- long as there is no buffer with valid frame.
       -- If Selected buffer changes, restart the selection.
-      elsif ((select_buf_avail = false) or
-            (select_buf_index_reg /= select_buf_index)) then
+      elsif ((select_buf_avail = false)) then
         tx_arb_fsm              <= arb_sel_low_ts;
+        tran_frame_valid_com    <= '0';
+      
+      -- Selected buffer index on the output of priority decoder has changed
+      -- during selection. Restart the selection!
+      elsif (select_buf_index_reg /= select_buf_index) then
+        tx_arb_fsm              <= arb_sel_low_ts;
+        
       else
       
         case tx_arb_fsm is   
