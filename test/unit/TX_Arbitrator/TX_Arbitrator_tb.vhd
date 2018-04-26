@@ -129,6 +129,10 @@ architecture tx_arb_unit_test of CAN_test is
     -- Model is locked (as if transmission in progress)
     signal mod_locked             :  boolean := false;
 
+    -- Last locked buffer to detect functionality of txtb_changed
+    signal last_locked_index      : natural range 0 to TXT_BUFFER_COUNT - 1 :=
+                                    0;
+    
     -- Error counters
     signal cmp_err_ctr            :  natural := 0;
 
@@ -455,6 +459,8 @@ begin
         wait until rising_edge(clk_sys);
         txt_hw_cmd.lock     <= '0';
 
+        last_locked_index   <= mod_buf_index;
+
         -- Wait some time (as if Frame transmission was in progress). Have realistic
         -- waiting time (at least 1000 ns) to cover for SOF bit.
         rand_real_v(rand_ctr_3, wait_time_r);
@@ -509,6 +515,14 @@ begin
         log("DUT and Model buffer index not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
+
+    if (last_locked_index   /= mod_buf_index and
+        txtb_changed = '0')
+    then
+        log("Buffer change not detected!", error_l, log_level);
+        cmp_err_ctr          <= cmp_err_ctr + 1;
+    end if;
+
     
     wait until falling_edge(clk_sys);
   end process;
