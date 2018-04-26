@@ -79,6 +79,8 @@ add wave -label "Frame type" $TCOMP/mod_frame_type_out
 add wave -label "Frame valid" $TCOMP/mod_frame_valid_out
 add wave -label "Stored index" $TCOMP/mod_buf_index
 add wave -label "Combinational index" $TCOMP/high_prio_buf_index
+add wave -label "Combinational index valid" $TCOMP/high_prio_valid
+add wave -label "Delay counter" $TCOMP/del_counter
 
 add wave -noupdate -divider -height 20 "Internal DUT signals"
 add wave -label "Metadata pointer" $TCOMP/txArbitrator_comp/txtb_pointer_meta

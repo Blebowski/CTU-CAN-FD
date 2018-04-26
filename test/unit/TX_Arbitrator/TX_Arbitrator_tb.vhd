@@ -104,19 +104,27 @@ architecture tx_arb_unit_test of CAN_test is
     signal rand_ctr_1             : natural range 0 to RAND_POOL_SIZE;
     signal rand_ctr_2             : natural range 0 to RAND_POOL_SIZE;
     signal rand_ctr_3             : natural range 0 to RAND_POOL_SIZE;
+    signal rand_ctr_4             : natural range 0 to RAND_POOL_SIZE;
 
     -- Highest priority buffer which is ready
     signal high_prio_buf_index    : natural range 0 to TXT_BUFFER_COUNT - 1;
-    
+    signal high_prio_buf_index_d  : natural range 0 to TXT_BUFFER_COUNT - 1;
+    signal high_prio_valid        : boolean;
+    signal high_prio_valid_d      : boolean;    
+
      -- Modeled outputs
      signal mod_dlc_out           :  std_logic_vector(3 downto 0) := "0000";
      signal mod_is_rtr            :  std_logic := '0';
      signal mod_ident_type_out    :  std_logic := '0';
      signal mod_frame_type_out    :  std_logic := '0';
      signal mod_brs_out           :  std_logic := '0';
-     signal mod_frame_valid_out   :  std_logic := '0';
+
+     -- Committed output of the frame_valid
+     signal mod_frame_com         :  std_logic := '0';
+
      signal mod_buf_index         :  natural range 0 to TXT_BUFFER_COUNT - 1 :=
                                      0;
+     signal mod_frame_valid_out   :  std_logic;
 
     -- Model is locked (as if transmission in progress)
     signal mod_locked             :  boolean := false;
@@ -124,6 +132,8 @@ architecture tx_arb_unit_test of CAN_test is
     -- Error counters
     signal cmp_err_ctr            :  natural;
 
+    -- Delay propagation of metadata to the output!
+    signal del_counter            :  natural;
 
     -- Comparing procedure for two 64 bit std logic vectors
     function less_than(
@@ -191,34 +201,64 @@ begin
 
 
   ----------------------------------------------
-  -- Emulate content and state of TXT Buffers
+  -- Emulate Ready state of the buffers!
   ----------------------------------------------
   buf_em_proc : process
     variable wait_time_r    : real;
     variable wait_time      : time;
     variable buf_index      : real;
-    variable tmp            : std_logic_vector(31 downto 0);
-    variable extra_time     : std_logic_vector(7 downto 0);
-    variable time_to_tx     : std_logic_vector(31 downto 0);
+    variable ready          : std_logic;
   begin
 
-    -- Wait up to 100 ns
+    -- Wait up to 500 ns
     rand_real_v(rand_ctr_1, wait_time_r);
-    wait_time_r := wait_time_r * 100.0;
+    wait_time_r := wait_time_r * 500.0;
     wait_time   := wait_time_r * 1 ns;
     wait for wait_time;
+    wait until rising_edge(clk_sys);
 
     -- Choose random TXT Buffer
     rand_real_v(rand_ctr_1, buf_index);
     buf_index := buf_index * 3.0;
 
-    -- Make sure buffer is not "ready", only then it can be accessed
-    txt_buf_ready(integer(buf_index)) <= '0';
-    wait for 10 ns;
+    -- Check whether the buffer is not locked by the Core, in this case one
+    -- can't change the buffer state not to be ready. SW could only send command
+    -- to abort transmission.
+    if (mod_locked = false or 
+        mod_buf_index /= integer(buf_index))
+    then
+        -- Choose whether buffer will be set to ready or not
+        rand_logic_v(rand_ctr_1, ready, 0.1);
+
+        -- Set it to the buffer
+        txt_buf_ready(integer(buf_index)) <= ready;
+    end if;
+
+  end process;
+
+
+  ----------------------------------------------
+  -- Emulate Access to buffers when not ready
+  ----------------------------------------------
+  buf_acc_proc : process
+    variable tmp            : std_logic_vector(31 downto 0);
+    variable extra_time     : std_logic_vector(7 downto 0);
+    variable time_to_tx     : std_logic_vector(31 downto 0);
+    variable buf_index      : real;
+  begin
+
+    -- Choose random TXT Buffer
+    rand_real_v(rand_ctr_4, buf_index);
+    buf_index := buf_index * 3.0;
+
+    -- Wait till it can be accessed
+    while txt_buf_ready(integer(buf_index)) = '1' loop
+        wait until rising_edge(clk_sys);
+    end loop;
 
     -- Fill the buffer with random data
     for i in 0 to 19 loop
-        rand_logic_vect_v(rand_ctr_1, tmp, 0.5);
+        rand_logic_vect_v(rand_ctr_4, tmp, 0.5);
         shadow_mem(integer(buf_index))(i) <= tmp;
     end loop;
 
@@ -226,22 +266,23 @@ begin
     -- otherwise no buffer would ever get on output...
     -- Set the time to transmit to actual timestamp + some extra time
     shadow_mem(integer(buf_index))(3) <= timestamp(63 downto 32);
-    rand_logic_vect_v(rand_ctr_1, extra_time, 0.3);
+    rand_logic_vect_v(rand_ctr_4, extra_time, 0.3);
     time_to_tx  := std_logic_vector(to_unsigned(
                     to_integer(unsigned(timestamp(31 downto 0))) +
                     to_integer(unsigned(extra_time)), 32));
     shadow_mem(integer(buf_index))(2) <= time_to_tx;
 
-    -- Make the buffer ready again
-    txt_buf_ready(integer(buf_index)) <= '1';
-
-    wait for 150 ns;
+    -- Wait some extra time not to have too many data changes in buffer and
+    -- avoid confusion during test bring-up! 
+    wait for 5000 ns;
 
   end process;
 
 
   ------------------------------------------------------------------------------
   -- Connect TX Arbitrator to the shadow memories which emulate TXT Buffers
+  -- Note that data must be returned one clock cycle later exactly as TXT Buffer
+  -- does it!
   ------------------------------------------------------------------------------
   buf_access_emu_proc : process (res_n, clk_sys)
   begin
@@ -258,121 +299,187 @@ begin
     end if;
   end process;
 
+
   ------------------------------------------------------------------------------
-  -- Model TX Arbitrator. Choose Highest priority "ready" TXT Buffer
+  -- Model TX Arbitrator. Choose Highest priority "ready" TXT Buffer.
+  -- This should model the "priorityDecoder" entity inside TX Arbitrator.
   ------------------------------------------------------------------------------
-  tx_arb_model_proc : process
+  prio_dec_model_proc : process(txt_buf_ready, txt_buf_prio)
     variable tmp_index    : natural;
     variable tmp_prio     : natural;
+    variable txt_valid    : boolean;
   begin
     
-    -- Choose highest priority TXT buffer 
-    tmp_index           := 0;
+    -- By default we have to assume index 3 (The highest one)
+    -- This is default returned index by priority decoder when there is no
+    -- valid frame!
+    tmp_index           := 3;
     tmp_prio            := 0;
-    for i in 0 to TXT_BUFFER_COUNT - 1 loop
+    txt_valid           := false;
+
+    -- Choose highest priority TXT buffer
+    for i in TXT_BUFFER_COUNT - 1 downto 0 loop
         if ((to_integer(unsigned(txt_buf_prio(i))) >= tmp_prio) and
             txt_buf_ready(i) = '1')
         then
             tmp_index   := i;
             tmp_prio    := to_integer(unsigned(txt_buf_prio(i)));
+            txt_valid   := true;
         end if;
     end loop;
 
     -- Update the buffer
     high_prio_buf_index <= tmp_index;
-
-    wait for 10 ns;
+    high_prio_valid     <= txt_valid;
   end process;
 
 
   ------------------------------------------------------------------------------
-  -- Update data on output based on the highest priority buffer and timestamp
+  -- Model delay of combinationally selected value. This must be done, to make
+  -- sure that If TX Arbitrator selection is in progress, selection process
+  -- will restart if selected buffer index has changed!
+  ------------------------------------------------------------------------------
+  prio_dec_delay_proc : process(clk_sys)
+  begin
+    if (rising_edge(clk_sys)) then
+        high_prio_buf_index_d <= high_prio_buf_index;
+        high_prio_valid_d     <= high_prio_valid;
+    end if;
+  end process;
+
+
+  ------------------------------------------------------------------------------
+  -- Emulate selection process! Based on chosen highest priority buffer which
+  -- is ready, update outputs with two clock cycle delay!
+  -- This can be done only when TX Arbitrator is not locked for transmission!
+  -- If buffer index changes, restart the selection process!
   ------------------------------------------------------------------------------
   tx_time_proc : process
-    variable ts_elapsed : boolean       := false;
-    variable ts         : std_logic_vector(63 downto 0);
+    variable update     : boolean       := false;
+    variable tmp_timest : std_logic_vector(63 downto 0) := (OTHERS => '0');
   begin
 
-    while res_n = ACT_RESET loop
-        wait until rising_edge(clk_sys);
-    end loop;
+    update 		:= false;
+    tmp_timest 	:= shadow_mem(integer(high_prio_buf_index))(3) & 
+                   shadow_mem(integer(high_prio_buf_index))(2);
 
-    -- Wait until timestamp is reached
-    while ts_elapsed = false or mod_locked = true loop
-        ts := shadow_mem(high_prio_buf_index)(3) &
-              shadow_mem(high_prio_buf_index)(2);
-        wait for 10 ns;
-        if (to_integer(unsigned(ts)) < to_integer(unsigned(timestamp))) then
-            ts_elapsed := true;
+    -- Model is locked
+    if (mod_locked = true) then
+        wait until rising_edge(clk_sys);
+		del_counter   <= 1;
+
+	-- Buffer became invalid
+	elsif (high_prio_valid = false) then
+		mod_frame_com <= '0';
+		del_counter   <= 1;
+		wait until rising_edge(clk_sys);
+
+    -- Selected buffer has changed
+    elsif (high_prio_buf_index /= high_prio_buf_index_d) then
+        del_counter   <= 1;
+        wait until rising_edge(clk_sys);
+
+	-- Timestamp not yet elapsed!
+	elsif (to_integer(unsigned(tmp_timest)) >= to_integer(unsigned(timestamp))) then
+		del_counter   <= 1;
+		wait until rising_edge(clk_sys);
+
+	-- HW Command lock came on previously loaded Frame / Buffer
+	elsif (txt_hw_cmd.lock = '1') then
+        del_counter   <= 0;
+        wait until rising_edge(clk_sys);
+
+    -- Count the delay
+    else
+        if (del_counter < 3) then
+            del_counter <= del_counter + 1;
+			update 	    := false;
         else
-            ts_elapsed := false;
+            update      := true;
         end if;
-    end loop;
 
-    -- Emulate two clock cycles delay!
-    wait for 20 ns;
+        if (update = true) then    
+			-- Propagate metadata to the output
+		    mod_buf_index        <= high_prio_buf_index;
+		    mod_dlc_out          <= shadow_mem(high_prio_buf_index)(0)
+		                                       (DLC_H downto DLC_L);
+		    mod_is_rtr           <= shadow_mem(high_prio_buf_index)(0)
+		                                       (RTR_IND);
+		    mod_ident_type_out   <= shadow_mem(high_prio_buf_index)(0)
+		                                       (ID_TYPE_IND);
+		    mod_frame_type_out   <= shadow_mem(high_prio_buf_index)(0)
+		                                       (FR_TYPE_IND);
+		    mod_brs_out          <= shadow_mem(high_prio_buf_index)(0)
+		                                       (BRS_IND);
+		    mod_frame_com        <= '1';
+        end if;
 
-    -- Propagate metadata to the output
-    mod_buf_index        <= high_prio_buf_index;
-    mod_dlc_out          <= shadow_mem(high_prio_buf_index)(0)
-                                       (DLC_H downto DLC_L);  
-    mod_is_rtr           <= shadow_mem(high_prio_buf_index)(0)
-                                       (RTR_IND); 
-    mod_ident_type_out   <= shadow_mem(high_prio_buf_index)(0)
-                                       (ID_TYPE_IND); 
-    mod_frame_type_out   <= shadow_mem(high_prio_buf_index)(0)
-                                       (FR_TYPE_IND); 
-    mod_brs_out          <= shadow_mem(high_prio_buf_index)(0)
-                                       (BRS_IND); 
-    mod_frame_valid_out  <= '1';
-
-    -- Wait until the buffer gets unlocked again
-    while mod_locked = true loop
         wait until rising_edge(clk_sys);
-    end loop;
+    end if;
+
   end process;
+
+  mod_frame_valid_out <= '1' when ((mod_frame_com = '1' and
+                                    high_prio_valid = true) or
+                                    (mod_locked = true)) 
+                             else
+                         '0';
   
 
   ------------------------------------------------------------------------------
-  -- Model LOCK and UNLOCK commands as if coming from CAN Core
+  -- Model LOCK and UNLOCK commands as if coming from CAN Core.
   ------------------------------------------------------------------------------
   cmd_mod_proc : process
     variable wait_time      : time;
     variable wait_time_r    : real;
   begin
-    while mod_frame_valid_out = '0' loop
+    
+    -- Wait till test start
+    while res_n = ACT_RESET loop
+        wait until rising_edge(clk_sys);
+    end loop;
+    
+    -- Lock command can be generated only when the output of DUT is valid
+    while tran_frame_valid_out = '0' loop
         wait until rising_edge(clk_sys);
     end loop;
 
+    -- One clock cycle must elapse, to model synchronous response from CAN Core!
     wait until rising_edge(clk_sys);
 
-    -- Lock the Buffer
-    txt_hw_cmd.lock <= '1';
-    mod_locked      <= true;
-    wait until rising_edge(clk_sys);
-    txt_hw_cmd.lock <= '0';
+    -- Frame could have been invalidated by SW since then
+    if (tran_frame_valid_out = '1') then
+        -- Lock the Buffer
+        txt_hw_cmd.lock     <= '1';
+        mod_locked          <= true;
+        wait until rising_edge(clk_sys);
+        txt_hw_cmd.lock     <= '0';
 
-    -- Wait random time
-    rand_real_v(rand_ctr_3, wait_time_r);
-    wait_time_r := wait_time_r * 200.0;
-    wait_time   := wait_time_r * 1 ns;
-    wait for wait_time;
-    
-    -- Unlock the Buffer
-    txt_hw_cmd.unlock <= '1';
-    mod_locked        <= false;
-    wait until rising_edge(clk_sys);
-    txt_hw_cmd.unlock <= '0';
+        -- Wait some time (as if Frame transmission was in progress). Have realistic
+        -- waiting time (at least 1000 ns) to cover for SOF bit.
+        rand_real_v(rand_ctr_3, wait_time_r);
+        wait_time_r         := wait_time_r * 10000.0;
+        wait_time_r         := wait_time_r + 1000.0;
+        wait_time           := wait_time_r * 1 ns;
+        wait for wait_time;
+        wait until rising_edge(clk_sys);
 
-    -- Before the next possible LOCK command, buffers must be evaluated.
-    -- This takes up to 3 states of TX Arbitrator FSM. Note that this condition
-    -- is always satisfied by CAN Core since between unlock and lock there must
-    -- be 3 whole bit times of interframe space!    
-    wait until rising_edge(clk_sys);
-    wait until rising_edge(clk_sys);
-    wait until rising_edge(clk_sys);
-    wait until rising_edge(clk_sys);
-    wait until rising_edge(clk_sys);
+        -- Unlock the Buffer
+        txt_hw_cmd.unlock   <= '1';
+        wait until rising_edge(clk_sys);    
+        mod_locked          <= false;
+        txt_hw_cmd.unlock   <= '0';
+
+        -- Before the next possible LOCK command, buffers must be evaluated.
+        -- This takes up to 3 states of TX Arbitrator FSM.
+        -- We can be less strict here, since unlock occurs at the end of the frame
+        -- (either Normal or Error).
+        -- After that there is at least 3 bits of interframe space. Assuming
+        -- 10 clock cycles per bit, this gives at least 30 clock cycles! 
+        for i in 1 to 30 loop
+            wait until rising_edge(clk_sys);
+        end loop;
+    end if;
     
   end process;
 
@@ -383,20 +490,29 @@ begin
   cmp_proc : process
   begin
     
-    if ((mod_dlc_out            /= tran_dlc_out) or
-        (mod_is_rtr             /= tran_is_rtr) or
-        (mod_ident_type_out     /= tran_ident_type_out) or
-        (mod_frame_type_out     /= tran_frame_type_out) or
-        (mod_frame_valid_out    /= tran_frame_valid_out))
-    then
-        log("DUT and Model metadata not matching!", error_l, log_level);
+    if (mod_frame_valid_out    /= tran_frame_valid_out) then
+        log("DUT and Model Frame valid not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
-    if (txt_hw_cmd_buf_index   /= mod_buf_index)
-    then
-        log("DUT and Model buffer index not matching!", error_l, log_level);
-        cmp_err_ctr          <= cmp_err_ctr + 1;
+    -- Metadata on the output should be compared only when the frame is valid.
+    -- If not, metadata does not have to be considered! It does not matter
+    -- what is on the output when frame is not valid!
+    if (mod_frame_valid_out = '1') then
+        if ((mod_dlc_out            /= tran_dlc_out) or
+            (mod_is_rtr             /= tran_is_rtr) or
+            (mod_ident_type_out     /= tran_ident_type_out) or
+            (mod_frame_type_out     /= tran_frame_type_out))
+        then
+            log("DUT and Model metadata not matching!", error_l, log_level);
+            cmp_err_ctr          <= cmp_err_ctr + 1;
+        end if;
+
+        if (txt_hw_cmd_buf_index   /= mod_buf_index)
+        then
+            log("DUT and Model buffer index not matching!", error_l, log_level);
+            cmp_err_ctr          <= cmp_err_ctr + 1;
+        end if;
     end if;
 
     wait until falling_edge(clk_sys);
@@ -443,7 +559,7 @@ begin
       -- Configure TXT Buffer priorities!
 	  set_priorities(rand_ctr_2, txt_buf_prio);
 
-      wait for 1000 ns;
+      wait for 5000 ns;
  
       error_ctr <= cmp_err_ctr;
 
