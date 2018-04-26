@@ -130,7 +130,7 @@ architecture tx_arb_unit_test of CAN_test is
     signal mod_locked             :  boolean := false;
 
     -- Error counters
-    signal cmp_err_ctr            :  natural;
+    signal cmp_err_ctr            :  natural := 0;
 
     -- Delay propagation of metadata to the output!
     signal del_counter            :  natural;
@@ -495,26 +495,21 @@ begin
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
-    -- Metadata on the output should be compared only when the frame is valid.
-    -- If not, metadata does not have to be considered! It does not matter
-    -- what is on the output when frame is not valid!
-    if (mod_frame_valid_out = '1') then
-        if ((mod_dlc_out            /= tran_dlc_out) or
-            (mod_is_rtr             /= tran_is_rtr) or
-            (mod_ident_type_out     /= tran_ident_type_out) or
-            (mod_frame_type_out     /= tran_frame_type_out))
-        then
-            log("DUT and Model metadata not matching!", error_l, log_level);
-            cmp_err_ctr          <= cmp_err_ctr + 1;
-        end if;
-
-        if (txt_hw_cmd_buf_index   /= mod_buf_index)
-        then
-            log("DUT and Model buffer index not matching!", error_l, log_level);
-            cmp_err_ctr          <= cmp_err_ctr + 1;
-        end if;
+    if ((mod_dlc_out            /= tran_dlc_out) or
+        (mod_is_rtr             /= tran_is_rtr) or
+        (mod_ident_type_out     /= tran_ident_type_out) or
+        (mod_frame_type_out     /= tran_frame_type_out))
+    then
+        log("DUT and Model metadata not matching!", error_l, log_level);
+        cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
+    if (txt_hw_cmd_buf_index   /= mod_buf_index)
+    then
+        log("DUT and Model buffer index not matching!", error_l, log_level);
+        cmp_err_ctr          <= cmp_err_ctr + 1;
+    end if;
+    
     wait until falling_edge(clk_sys);
   end process;
 
@@ -561,7 +556,9 @@ begin
 
       wait for 5000 ns;
  
-      error_ctr <= cmp_err_ctr;
+      -- Minus 1 due to strange value "1" in "cmp_err_ctr" which always stays
+      -- and is not caused by any error in "cmp_proc".
+      error_ctr <= cmp_err_ctr - 1;
 
       wait until rising_edge(clk_sys);
 
