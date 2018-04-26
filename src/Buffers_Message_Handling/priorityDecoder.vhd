@@ -167,12 +167,12 @@ begin
             l1_winner(i)    <= UPPER_TREE;
   
       when "11" => 
-            if (unsigned(l0_prio(2 * i)) > unsigned(l0_prio(2 * i + 1))) then
-              l1_prio(i)    <= l0_prio(2 * i);
-              l1_winner(i)  <= LOWER_TREE;
-            else
+            if (unsigned(l0_prio(2 * i + 1)) > unsigned(l0_prio(2 * i))) then
               l1_prio(i)    <= l0_prio(2 * i + 1);
               l1_winner(i)  <= UPPER_TREE;
+            else
+              l1_prio(i)    <= l0_prio(2 * i);
+              l1_winner(i)  <= LOWER_TREE;
             end if;
             l1_valid(i)     <= '1';  
   
@@ -212,12 +212,12 @@ begin
             l2_winner(i)    <= UPPER_TREE;
             
       when "11" => 
-            if (unsigned(l1_prio(2 * i)) > unsigned(l1_prio(2 * i + 1))) then
-              l2_prio(i)    <= l1_prio(2 * i);
-              l2_winner(i)  <= LOWER_TREE;
-            else
+            if (unsigned(l1_prio(2 * i + 1)) > unsigned(l1_prio(2 * i))) then
               l2_prio(i)    <= l1_prio(2 * i + 1);
               l2_winner(i)  <= UPPER_TREE;
+            else
+              l2_prio(i)    <= l1_prio(2 * i);
+              l2_winner(i)  <= LOWER_TREE;
             end if;
             l2_valid(i)     <= '1';  
              
@@ -252,11 +252,10 @@ begin
   -- Priority comparator of level 3
   l3_winner  <= LOWER_TREE when l2_valid(1 downto 0) = "01" else
                 UPPER_TREE when l2_valid(1 downto 0) = "10" else
-                LOWER_TREE
-                    when (l2_valid(1 downto 0) = "11" and
-                      unsigned(l2_prio(0)) > unsigned(l2_prio(1))) 
-                    else 
-                UPPER_TREE;
+                UPPER_TREE when (l2_valid(1 downto 0) = "11" and
+                                 unsigned(l2_prio(1)) > unsigned(l2_prio(0))) 
+                           else 
+                LOWER_TREE;
    
          
    -------------------------
