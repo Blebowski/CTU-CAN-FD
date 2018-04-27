@@ -381,13 +381,6 @@ procedure generate_trig(
     variable frame       :  inout   SW_CAN_frame_type
   );
   
-  procedure CAN_compare_frames(
-    signal frame_A       :  in      SW_CAN_frame_type;
-    signal frame_B       :  in      SW_CAN_frame_type;
-    constant comp_ts     :  in      boolean;
-    variable outcome     :  inout   boolean
-  );
-  
   procedure CAN_compare_frames_v(
     variable frame_A     :  in      SW_CAN_frame_type;
     variable frame_B     :  in      SW_CAN_frame_type;
@@ -1117,126 +1110,78 @@ procedure process_error
       
   end procedure;
   
-  
-------------------------------------------------------------
--- Compare two frames if they are eqaul (signal version)
--------------------------------------------------------------  
-  procedure CAN_compare_frames(
-    signal frame_A       :  in      SW_CAN_frame_type;
-    signal frame_B       :  in      SW_CAN_frame_type;
-    constant comp_ts     :  in      boolean;
-    variable outcome     :  inout   boolean
-  )is
-  begin
-    outcome := true;
+ 
+    ------------------------------------------------------------
+    -- Compare two frames if they are equal (variable version)
+    -------------------------------------------------------------  
+    procedure CAN_compare_frames_v(
+        variable frame_A     :  in      SW_CAN_frame_type;
+        variable frame_B     :  in      SW_CAN_frame_type;
+        constant comp_ts     :  in      boolean;
+        variable outcome     :  inout   boolean
+    )is
+    begin
+        outcome := true;
     
-    if(frame_A.frame_format /= frame_B.frame_format)then
-      outcome:= false;
-    end if;
+        if (frame_A.frame_format /= frame_B.frame_format) then
+            outcome := false;
+        end if;
     
-    if(frame_A.ident_type /= frame_B.ident_type)then
-      outcome:= false;
-    end if;
+        if (frame_A.ident_type /= frame_B.ident_type) then
+            outcome := false;
+        end if;
     
-    if(frame_A.rtr  /= frame_B.rtr)then
-      outcome:= false;
-    end if;
+        -- RTR should be te same only in normal CAN Frame. In FD Frame there is
+        -- no RTR bit!
+        if (frame_A.frame_format = NORMAL_CAN) then
+            if (frame_A.rtr /= frame_B.rtr) then
+                outcome := false;
+            end if;
+        end if;
     
-    if(frame_A.brs /= frame_B.brs)then
-      outcome:= false;
-    end if;
+        -- BRS bit is compared only in FD frame
+        if (frame_A.frame_format = FD_CAN) then
+            if (frame_A.brs /= frame_B.brs) then
+                outcome := false;
+            end if;
+        end if;
     
-    if(frame_A.rwcnt /= frame_B.rwcnt)then
-      outcome := false;
-    end if;
+        -- Received word count
+        if (frame_A.rwcnt /= frame_B.rwcnt) then
+            outcome := false;
+        end if;
     
-    --DLC is compared only in non-RTR frames!
-    -- In RTR frames it does not necessarily have to be equal due to RTR-pref feature
-    if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN) 
-        and frame_A.dlc /= frame_B.dlc)
-    then
-      outcome:=false;
-    end if;
-    
-    if(outcome = true) then
-      if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN) 
-        and frame_A.data_length /= 0)
-      then
-        for i in 0 to (frame_A.data_length-1)/4 loop
-          if(frame_A.data(511-i*32 downto 480-i*32) /=
-            frame_B.data(511-i*32 downto 480-i*32) )then
-            outcome:= false;
-          end if;
-        end loop;  
-          
-      end if;
-    end if;
-    
-  end procedure;
-  
-  
-------------------------------------------------------------
--- Compare two frames if they are eqaul (variable version)
--------------------------------------------------------------  
-   procedure CAN_compare_frames_v(
-    variable frame_A     :  in      SW_CAN_frame_type;
-    variable frame_B     :  in      SW_CAN_frame_type;
-    constant comp_ts     :  in      boolean;
-    variable outcome     :  inout   boolean
-  )is
-  begin
-    outcome := true;
-    
-    if(frame_A.frame_format /= frame_B.frame_format)then
-      outcome:= false;
-    end if;
-    
-    if(frame_A.ident_type /= frame_B.ident_type)then
-      outcome:= false;
-    end if;
-    
-    -- RTR should be te same only in normal CAN
-    if(frame_A.frame_format=NORMAL_CAN)then
-      if(frame_A.rtr  /= frame_B.rtr)then
-        outcome:= false;
-      end if;
-    end if;
-    
-    --BRS bit is compared only in FD frame
-    if(frame_A.frame_format=FD_CAN)then
-      if(frame_A.brs /= frame_B.brs)then
-        outcome:= false;
-      end if;
-    end if;
-    
-    -- Received word count
-    if(frame_A.rwcnt /= frame_B.rwcnt)then
-      outcome := false;
-    end if;
-    
-    --DLC is compared only in non-RTR frames!
-    -- In RTR frames it does not necessarily have to be equal due to RTR-pref feature
-    if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
-        and frame_A.dlc /= frame_B.dlc)
-    then
-      outcome:=false;
-    end if;
-    
-    if(outcome = true) then
-      if((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
-         and frame_A.data_length /= 0)
-      then
-        for i in 0 to (frame_A.data_length-1)/4 loop
-          if(frame_A.data(511-i*32 downto 480-i*32) /=
-            frame_B.data(511-i*32 downto 480-i*32) )then
-            outcome:= false;
-          end if;
-        end loop;  
-          
-      end if;
-    end if;
-    
-  end procedure;
+        -- DLC is compared only in non-RTR frames!
+        -- In RTR frames it does not necessarily have to be equal due to 
+        -- RTR-pref feature (though it should be zero in normal controllers).
+        if ((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
+            and (frame_A.dlc /= frame_B.dlc))
+        then
+            outcome := false;
+        end if;
+
+        if (frame_A.identifier /= frame_B.identifier) then
+            outcome := false;
+        end if;
+
+        -- Compare data for NON-RTR Frames. To save time comparing frames whose
+        -- metadata comparison failed, do it only for frames which are fine till
+        -- now.
+        if (outcome = true) then
+            if ((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
+                and frame_A.data_length /= 0)
+            then
+                for i in 0 to (frame_A.data_length - 1) / 4 loop
+                    if (frame_A.data(511 - i * 32 downto 480 - i * 32) /=
+                        frame_B.data(511 - i * 32 downto 480 - i * 32))
+                    then
+                        outcome  := false;
+                    end if;
+                end loop;
+            end if;
+        end if;
+
+    end procedure;
 
 ------------------------------------------------------------
 -- Insert frame for transmittion into the CAN Node
