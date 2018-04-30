@@ -1260,7 +1260,6 @@ package body CANtestLib is
     end procedure;
 
 
-
     procedure generate_trig(
         signal    sync            : out     std_logic;
         signal    sample          : out     std_logic;
@@ -1288,7 +1287,7 @@ package body CANtestLib is
     end procedure;
   
   
- 
+
     procedure aval_write(
         constant  w_data        : in    std_logic_vector(31 downto 0);
         constant  w_address     : in    std_logic_vector(23 downto 0);
@@ -1307,7 +1306,6 @@ package body CANtestLib is
         mem_bus.address   <=  (OTHERS => '0');
         mem_bus.data_in   <=  (OTHERS => '0');    
     end procedure;
-
 
 
     procedure aval_read(
@@ -1329,7 +1327,6 @@ package body CANtestLib is
     end procedure;
 
 
-
     procedure CAN_write(
         constant  w_data        : in    std_logic_vector(31 downto 0);
         constant  w_offset      : in    std_logic_vector(11 downto 0);
@@ -1345,7 +1342,6 @@ package body CANtestLib is
     end procedure;
   
 
-
     procedure CAN_read(
         variable  r_data        : out   std_logic_vector(31 downto 0);
         constant  r_offset      : in    std_logic_vector(11 downto 0);
@@ -1360,6 +1356,7 @@ package body CANtestLib is
         aval_read(r_data, int_address, mem_bus);
     end procedure;
  
+
     procedure CAN_configure_timing(
         constant bus_timing     : in    bit_time_config_type;
         constant ID             : in    natural range 0 to 15;
@@ -1393,8 +1390,7 @@ package body CANtestLib is
                 bus_timing.ph2_dbt, PH2_FD_H - PH2_FD_L + 1));
         data(SJW_FD_H downto SJW_FD_L) := std_logic_vector(to_unsigned(
                 bus_timing.sjw_dbt, SJW_FD_H - SJW_FD_L + 1));
-        CAN_write(data, BTR_FD_ADR, ID, mem_bus);     
-                  
+        CAN_write(data, BTR_FD_ADR, ID, mem_bus);
     end procedure;
   
   
@@ -1403,10 +1399,31 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type    
     )is
+        variable data           :       std_logic_vector(31 downto 0);
     begin
-        --TODO
+
+        -- Bit timing register - Nominal
+        CAN_read(data, BTR_ADR, ID, mem_bus);
+        bus_timing.tq_nbt    <= to_integer(unsigned(data(BRP_H downto BRP_L)));
+        bus_timing.prop_nbt  <= to_integer(unsigned(data(PROP_H downto PROP_L));
+        bus_timing.ph1_nbt   <= to_integer(unsigned(data(PH1_H downto PH1_L));
+        bus_timing.ph2_nbt   <= to_integer(unsigned(data(PH2_H downto PH2_L));
+        bus_timing.sjw_nbt   <= to_integer(unsigned(data(SJW_H downto SJW_L));
+
+        -- Bit timing register - Data
+        CAN_read(data, BTR_FD_ADR, ID, mem_bus);
+        bus_timing.tq_dbt    <= to_integer(unsigned(data(BRP_FD_H downto
+                                                         BRP_FD_L)));
+        bus_timing.prop_dbt  <= to_integer(unsigned(data(PROP_FD_H downto
+                                                         PROP_FD_L));
+        bus_timing.ph1_dbt   <= to_integer(unsigned(data(PH1_FD_H downto
+                                                         PH1_FD_L));
+        bus_timing.ph2_dbt   <= to_integer(unsigned(data(PH2_FD_H downto
+                                                         PH2_FD_L));
+        bus_timing.sjw_dbt   <= to_integer(unsigned(data(SJW_FD_H downto
+                                                         SJW_FD_L));
     end procedure;
-  
+
 
     procedure CAN_turn_controller(
         constant turn_on        : in    boolean;
@@ -1502,7 +1519,6 @@ package body CANtestLib is
 
         -- Unused bytes of data can be set to 0
         frame.data(511 - frame.data_length * 8 downto 0) := (OTHERS => '0');
-      
     end procedure;
   
 
@@ -1573,7 +1589,6 @@ package body CANtestLib is
                 end loop;
             end if;
         end if;
-
     end procedure;
 
 
@@ -1677,7 +1692,6 @@ package body CANtestLib is
 
         -- Give "Set ready" command to the buffer
         send_TXT_buf_cmd(buf_set_ready, buf_nr, ID, mem_bus);
-   
     end procedure;
   
 
@@ -1691,7 +1705,6 @@ package body CANtestLib is
         variable aux_vect       :       std_logic_vector(28 downto 0) :=
                                         (OTHERS => '0');
     begin
-    
         -- Read Frame format word
         CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);   
         frame.dlc           := r_data(DLC_H downto DLC_L);
