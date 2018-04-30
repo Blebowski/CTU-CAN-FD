@@ -374,7 +374,7 @@ architecture behavioral of sanity_test is
               detected:=false;
               while(rx_mems(j)(rx_r_ptr)(8)='1' and comp_out=false)loop
                 read_frame_from_mem(RX_frame,rx_mems,j,rx_r_ptr);
-                CAN_compare_frames_v(TX_frame,RX_frame,false,comp_out);
+                CAN_compare_frames(TX_frame,RX_frame,false,comp_out);
                 if(comp_out=true)then
                   detected:=true;
                 end if;
@@ -672,8 +672,8 @@ begin
     variable r_data     : std_logic_vector(31 downto 0);
     variable n_index    : natural := i;
     variable frame_sent : boolean := false;
-    variable used_txtb  : natural := 0;
-    variable txtb_state : std_logic_vector(3 downto 0) := "0000"; 
+    variable used_txtb  : natural := 1;
+    variable txtb_state : SW_TXT_Buffer_state_type;
     begin
       if(do_restart_mem_if(i)=true)then
         restart_mem_bus(mb_arr(i));
@@ -705,10 +705,9 @@ begin
             
             -- Check if first TXT Buffer is Empty or previous transmission
             -- was Done...
-            -- We use only 1st in this test
             -- Send Frame if yes
-            get_tx_buf_state(n_index, mb_arr(i), used_txtb, txtb_state);
-            if(txtb_state = TXT_ETY or txtb_state = TXT_TOK)then
+            get_tx_buf_state(used_txtb, txtb_state, n_index, mb_arr(i));
+            if(txtb_state = buf_empty or txtb_state = buf_done)then
               
               --Generate and transmitt frames until tx memory
               -- of given node is full.
