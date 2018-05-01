@@ -1221,6 +1221,35 @@ package CANtestLib is
     );
 
 
+    ----------------------------------------------------------------------------
+    -- Read fault confinement state of CTU CAN FD Core. 
+    -- 
+    -- Arguments:
+    --  fault_state     Variable in which fault confinement state will be
+    --                  returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure get_fault_state(
+        variable fault_state    : out   SW_fault_state;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Read Error counters from CTU CAN FD Core. 
+    -- 
+    -- Arguments:
+    --  err_counters    Variable in which error counters will be returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_error_counters(
+        variable err_counters   : out   SW_error_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
 
 
     ----------------------------------------------------------------------------
@@ -2812,6 +2841,55 @@ package body CANtestLib is
         data := not data;
         CAN_write(data, INT_MASK_CLR_ADR, ID, mem_bus, BIT_16);
     end procedure;
+
+
+
+    procedure get_fault_state(
+        variable fault_state    : out   SW_fault_state;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, FAULT_STATE_ADR, ID, mem_bus, BIT_16);
+
+        if (data(ERA_IND) = '1') then
+            fault_state         := fc_error_active;
+        elsif (data(ERP_IND) = '1') then
+            fault_state         := fc_error_passive;
+        elsif (data(BOF_IND) = '1') then
+            fault_state         := fc_bus_off;        
+        end if;
+    end procedure;
+
+
+    procedure read_error_counters(
+        variable err_counters   : out   SW_error_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        -- Reading separately for possible future separation of RXC and TXC!
+        CAN_read(data, RXC_ADR, ID, mem_bus, BIT_16);
+        err_counters.rx_counter := 
+                to_integer(unsigned(data(RXC_VAL_H downto RXC_VAL_L)));
+
+        CAN_read(data, TXC_ADR, ID, mem_bus, BIT_16);
+        err_counters.tx_counter :=
+                to_integer(unsigned(data(TXC_VAL_H downto TXC_VAL_L)));
+
+        CAN_read(data, ERR_NORM_ADR, ID, mem_bus, BIT_16);
+        err_counters.err_norm :=
+                to_integer(unsigned(data(ERR_NORM_VAL_H downto ERR_NORM_VAL_L)));
+
+        CAN_read(data, ERR_FD_ADR, ID, mem_bus, BIT_16);
+        err_counters.err_fd :=
+                to_integer(unsigned(data(ERR_FD_VAL_H downto ERR_FD_VAL_L)));
+    end procedure;
+
+
+
 
 end package body;
 
