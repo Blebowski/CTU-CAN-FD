@@ -61,11 +61,16 @@
 --                procedure.
 --    23.02.2018  Corrected "CAN_generate_frame" function for proper placement
 --                of BASE identifier to unsigned value.
+--     28.4.2018  Converted TXT Buffer access functions to use generated macros.
+--      1.5.2018  1. Added HAL layer types and functions.
+--                2. Added Byte enable support to memory access functions.
 --------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
+use STD.textio.all;
+use IEEE.std_logic_textio.all;
 USE ieee.math_real.ALL;
 USE work.randomLib.All;
 use work.CANconstants.all;
@@ -105,6 +110,137 @@ package CANtestLib is
         passed,
         failed
     );
+
+
+    ----------------------------------------------------------------------------
+    -- Memory access types
+    ----------------------------------------------------------------------------
+
+    -- Avalon bus access size (to support "byte enable" functionality)
+    type aval_access_size is (
+        BIT_8,
+        BIT_16,
+        BIT_32
+    );
+
+    ----------------------------------------------------------------------------
+    -- Core common types for register map (generated in future)
+    -- Implemented to create HAL like abstraction and allow easier modifications
+    -- of register map without touching the test code!
+    ----------------------------------------------------------------------------
+   
+    -- Controller modes
+    type SW_mode is record
+        reset                   :   boolean;
+        listen_only             :   boolean;
+        self_test               :   boolean;
+        acceptance_filter       :   boolean;
+        flexible_data_rate      :   boolean;
+        rtr_pref                :   boolean;
+        tripple_sampling        :   boolean;
+        acknowledge_forbidden   :   boolean;
+    end record;
+
+
+    -- Controller commands
+    type SW_command is record
+        abort_transmission      :   boolean;
+        release_rec_buffer      :   boolean;
+        clear_data_overrun      :   boolean;
+    end record;
+
+
+    -- Controller status
+    type SW_status is record
+        receive_buffer          :   boolean;
+        data_overrun            :   boolean;
+        transceive_buffer       :   boolean;
+        error_transmission      :   boolean;
+        receiver                :   boolean;
+        transmitter             :   boolean;
+        error_warning           :   boolean;
+        bus_status              :   boolean;
+    end record;
+
+
+    -- Controller settings
+    type SW_settings is record
+        retransmitt_limit_ena   :   boolean;
+        retransmitt_th          :   natural range 0 to 15;
+        internal_loopback       :   boolean;
+        enable                  :   boolean;
+        fd_type                 :   boolean;
+    end record;
+
+
+    -- Transmitt buffer HW command
+    type SW_interrupts is record
+        receive_int             :   boolean;
+        transmitt_int           :   boolean;
+        error_warning_int       :   boolean;
+        data_overrun_int        :   boolean;
+        error_passive_int       :   boolean;
+        arb_lost_int            :   boolean;
+        bus_error_int           :   boolean;
+        logger_finished_int     :   boolean;
+        rx_buffer_full_int      :   boolean;
+        bit_rate_shift_int      :   boolean;
+        rx_buffer_not_empty_int :   boolean;
+        tx_buffer_hw_cmd        :   boolean;
+    end record;
+
+
+    -- Error limits (Normal and special)
+    type SW_err_counters is record
+        error_warning_limit     :   natural range 0 to 255;
+        error_passive_limit     :   natural range 0 to 255;
+    end record;
+    
+
+    -- Fault confinement states
+    type SW_fault_state is (
+        fc_error_active,
+        fc_error_passive,
+        fc_bus_off
+    );
+
+
+    -- Error counters (Normal and special)
+    type SW_error_counters is record
+        rx_counter              :   natural range 0 to 2 ** 16 - 1;
+        tx_counter              :   natural range 0 to 2 ** 16 - 1;
+        err_norm                :   natural range 0 to 2 ** 16 - 1;
+        err_fd                  :   natural range 0 to 2 ** 16 - 1;
+    end record;
+
+
+    -- RX Buffer info and status
+    type SW_RX_Buffer_info is record
+        rx_buff_size            :   natural range 0 to 2 ** 13 - 1;
+        rx_mem_free             :   natural range 0 to 2 ** 13 - 1;
+        rx_write_pointer        :   natural range 0 to 2 ** 13 - 1;
+        rx_read_pointer         :   natural range 0 to 2 ** 13 - 1;
+        rx_full                 :   boolean;
+        rx_empty                :   boolean;
+        rx_frame_count          :   natural range 0 to 2 ** 11 - 1;
+    end record;
+
+
+    -- RX Buffer options
+    type SW_RX_Buffer_options is record
+        rx_time_stamp_options   :   boolean;
+    end record;
+
+
+    -- TXT Buffer priorities
+    type SW_TXT_priority is record
+        txt_buffer_1_priority   :   natural range 0 to 7;
+        txt_buffer_2_priority   :   natural range 0 to 7;
+        txt_buffer_3_priority   :   natural range 0 to 7;
+        txt_buffer_4_priority   :   natural range 0 to 7;
+    end record;
+
+
 
 
     ----------------------------------------------------------------------------
@@ -280,6 +416,7 @@ package CANtestLib is
         scs                     :   std_logic;
         swr                     :   std_logic;
         srd                     :   std_logic;
+        sbe                     :   std_logic_vector(3 downto 0);
     end record;
 
 
@@ -575,38 +712,46 @@ package CANtestLib is
     ----------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
-    -- Execute write access on Avalon memory bus.
+    -- Execute write access on Avalon memory bus. Does not support unaligned
+    -- accesses.
     -- 
     -- Arguments:
     --  w_data          Data to write.
     --  w_address       Address where to write the data
+    --  w_size          Size of the access (8 Bit, 16 bit or 32 bit)
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure aval_write(
         constant  w_data        : in    std_logic_vector(31 downto 0);
         constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  w_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     );
 
 
     ----------------------------------------------------------------------------
-    -- Execute read access on Avalon memory bus.
+    -- Execute read access on Avalon memory bus. Does not supports unaligned
+    -- accesses.
     -- 
     -- Arguments:
     --  r_data          Variable in which Read data will be returned.
     --  r_address       Address to read the data from.
+    --  r_size          Size of the access (8 Bit, 16 bit or 32 bit)
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure aval_read(
         variable  r_data        : out   std_logic_vector(31 downto 0);
         constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  r_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     );
 
 
     ----------------------------------------------------------------------------
-    -- Execute write access to CTU CAN FD Core over Avalon Bus. Address bits
-    -- meaning is following:
+    -- Execute write access to CTU CAN FD Core over Avalon Bus. If size is not
+    -- specified, 32 bit access is executed.
+    --
+    -- Address bits meaning is following:
     --  [19:16]     Component type (always CAN_COMPONENT_TYPE)
     --  [15:12]     Identifier (Index) of core. Allows to distinguish between
     --              up to 16 instances of CTU CAN FD Core.
@@ -622,13 +767,16 @@ package CANtestLib is
         constant  w_data        : in    std_logic_vector(31 downto 0);
         constant  w_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
-        signal    mem_bus       : inout Avalon_mem_type
+        signal    mem_bus       : inout Avalon_mem_type;
+        constant  w_size        : in    aval_access_size := BIT_32
     );
 
 
     ----------------------------------------------------------------------------
-    -- Execute read access from CTU CAN FD Core over Avalon Bus. Address bits
-    -- meaning is following:
+    -- Execute read access from CTU CAN FD Core over Avalon Bus. If size is not
+    -- specified, 32 bit access is executed.
+    --
+    -- Address bits meaning is following:
     --  [19:16]     Component type (always CAN_COMPONENT_TYPE)
     --  [15:12]     Identifier (Index) of core. Allows to distinguish between
     --              up to 16 instances of CTU CAN FD Core.
@@ -644,14 +792,17 @@ package CANtestLib is
         variable  r_data        : out   std_logic_vector(31 downto 0);
         constant  r_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
-        signal    mem_bus       : inout Avalon_mem_type
+        signal    mem_bus       : inout Avalon_mem_type;
+        constant  r_size        : in    aval_access_size := BIT_32
     ); 
+
+
 
 
     ----------------------------------------------------------------------------
     -- CAN configuration routines
-    ----------------------------------------------------------------------------    
-
+    ----------------------------------------------------------------------------
+    
     ----------------------------------------------------------------------------
     -- Configure Bus timing on CTU CAN FD Core.
     -- (duration of bit phases, synchronisation jump width, baud-rate prescaler)
@@ -681,7 +832,7 @@ package CANtestLib is
     procedure CAN_read_timing(
         signal   bus_timing     : out   bit_time_config_type;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type  
     );
 
 
@@ -889,6 +1040,24 @@ package CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+
+
+    ----------------------------------------------------------------------------
+    -- Read version register and return the actual version of the core like so:
+    --  MAJOR_VERSION * 10 + MINOR_VERSION.
+    -- 
+    -- Arguments:
+    --  retVal          Variable in which return version will be returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ---------------------------------------------------------------------------- 
+    procedure get_core_version(
+        variable retVal         : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
 
 
     ----------------------------------------------------------------------------
@@ -1287,43 +1456,131 @@ package body CANtestLib is
     end procedure;
   
   
+    function aval_is_aligned(
+        constant  address       : in    std_logic_vector(23 downto 0);
+        constant  size          : in    aval_access_size
+    )return boolean is
+    begin
+        case size is
+        when BIT_8 =>
+            return true;
+        when BIT_16 =>
+            if (address(0) = '1') then
+                return true;
+            else
+                return false;
+            end if;
+        when BIT_32 =>
+            if (address(1 downto 0) = "00") then
+                return true;
+            else
+                return false;
+            end if;
+        when others => 
+            return false;
+        end case;
+    end function;
+
+
+    function bsize_to_be(
+        constant address       : in    std_logic_vector(23 downto 0);
+        constant size          : in    aval_access_size
+    ) return std_logic_vector is
+    begin
+        if (size = BIT_32) then
+            return "1111";
+        end if;
+
+        if (size = BIT_16) then
+            if (address (1) = '0') then
+                return "1100";
+            else
+                return "0011";
+            end if;
+        end if;
+
+        if (size = BIT_8) then
+            case address(1 downto 0) is
+            when "00"   => return "0001";
+            when "01"   => return "0010";
+            when "10"   => return "0100";
+            when "11"   => return "1000";
+            when others => return "0000";
+            end case;
+        end if;
+    end function;
+
 
     procedure aval_write(
         constant  w_data        : in    std_logic_vector(31 downto 0);
         constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  w_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     )is
+        variable msg            :       line;
     begin
-        wait until falling_edge(mem_bus.clk_sys);
-        mem_bus.scs       <=  '1';
-        mem_bus.swr       <=  '1';
-        mem_bus.address   <=  w_address;
-        mem_bus.data_in   <=  w_data;
 
-        wait until falling_edge(mem_bus.clk_sys);
-        mem_bus.scs       <=  '0';
-        mem_bus.swr       <=  '0';
-        mem_bus.address   <=  (OTHERS => '0');
-        mem_bus.data_in   <=  (OTHERS => '0');    
+        -- Check for access alignment
+        if (not aval_is_aligned(w_address, w_size)) then
+            write(msg, string'("Unaligned Avalon write, Adress :"));            
+            hwrite(msg, w_address);
+            write(msg, string'(" Size: "));
+            write(msg, aval_access_size'image(w_size)); 
+            writeline(output, msg);
+        else
+            wait until falling_edge(mem_bus.clk_sys);
+            mem_bus.scs       <=  '1';
+            mem_bus.swr       <=  '1';
+            mem_bus.sbe       <=  bsize_to_be(w_address, w_size);
+
+            -- Align the adress for the Core!
+            mem_bus.address   <=  w_address(23 downto 2) & "00";
+            mem_bus.data_in   <=  w_data;
+
+            wait until falling_edge(mem_bus.clk_sys);
+            mem_bus.scs       <=  '0';
+            mem_bus.swr       <=  '0';
+            mem_bus.sbe       <=  (OTHERS => '0');
+            mem_bus.address   <=  (OTHERS => '0');
+            mem_bus.data_in   <=  (OTHERS => '0');
+        end if;
+
     end procedure;
 
 
     procedure aval_read(
         variable  r_data        : out   std_logic_vector(31 downto 0);
         constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  r_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     )is
+        variable  msg           :       line;
     begin
-        wait until falling_edge(mem_bus.clk_sys);
-        mem_bus.scs       <=  '1';
-        mem_bus.srd       <=  '1';
-        mem_bus.address   <=  r_address;
 
-        wait until falling_edge(mem_bus.clk_sys);
-        r_data            :=  mem_bus.data_out;
-        mem_bus.scs       <=  '0';
-        mem_bus.srd       <=  '0';
-        mem_bus.address   <=  (OTHERS => '0');    
+        -- Check for access alignment
+        if (not aval_is_aligned(r_address, r_size)) then
+            write(msg, string'("Unaligned Avalon Read, Adress :"));            
+            hwrite(msg, r_address);
+            write(msg, string'(" Size: "));
+            write(msg, aval_access_size'image(r_size)); 
+            writeline(output, msg);
+        else
+            wait until falling_edge(mem_bus.clk_sys);
+            mem_bus.scs       <=  '1';
+            mem_bus.srd       <=  '1';
+            mem_bus.sbe       <=  bsize_to_be(r_address, r_size);
+
+            -- Align the adress for the Core!
+            mem_bus.address   <=  r_address(23 downto 2) & "00";
+
+            wait until falling_edge(mem_bus.clk_sys);
+            r_data            :=  mem_bus.data_out;
+            mem_bus.scs       <=  '0';
+            mem_bus.srd       <=  '0';
+            mem_bus.sbe       <=  (OTHERS => '0');
+            mem_bus.address   <=  (OTHERS => '0');
+        end if;
+
     end procedure;
 
 
@@ -1331,14 +1588,15 @@ package body CANtestLib is
         constant  w_data        : in    std_logic_vector(31 downto 0);
         constant  w_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
-        signal    mem_bus       : inout Avalon_mem_type
+        signal    mem_bus       : inout Avalon_mem_type;
+        constant  w_size        : in    aval_access_size := BIT_32
     )is
         variable int_address   :   std_logic_vector(23 downto 0);
     begin
         int_address       := CAN_COMPONENT_TYPE &
                              std_logic_vector(to_unsigned(ID, 4)) &
                              "0000" & w_offset;
-        aval_write(w_data, int_address, mem_bus);
+        aval_write(w_data, int_address, w_size, mem_bus);
     end procedure;
   
 
@@ -1346,14 +1604,15 @@ package body CANtestLib is
         variable  r_data        : out   std_logic_vector(31 downto 0);
         constant  r_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
-        signal    mem_bus       : inout Avalon_mem_type
+        signal    mem_bus       : inout Avalon_mem_type;
+        constant  r_size        : in    aval_access_size := BIT_32
     )is
         variable int_address   :   std_logic_vector(23 downto 0);
     begin
         int_address       := CAN_COMPONENT_TYPE &
                              std_logic_vector(to_unsigned(ID, 4)) &
                              "0000" & r_offset;
-        aval_read(r_data, int_address, mem_bus);
+        aval_read(r_data, int_address, r_size, mem_bus);
     end procedure;
  
 
@@ -1405,23 +1664,23 @@ package body CANtestLib is
         -- Bit timing register - Nominal
         CAN_read(data, BTR_ADR, ID, mem_bus);
         bus_timing.tq_nbt    <= to_integer(unsigned(data(BRP_H downto BRP_L)));
-        bus_timing.prop_nbt  <= to_integer(unsigned(data(PROP_H downto PROP_L));
-        bus_timing.ph1_nbt   <= to_integer(unsigned(data(PH1_H downto PH1_L));
-        bus_timing.ph2_nbt   <= to_integer(unsigned(data(PH2_H downto PH2_L));
-        bus_timing.sjw_nbt   <= to_integer(unsigned(data(SJW_H downto SJW_L));
+        bus_timing.prop_nbt  <= to_integer(unsigned(data(PROP_H downto PROP_L)));
+        bus_timing.ph1_nbt   <= to_integer(unsigned(data(PH1_H downto PH1_L)));
+        bus_timing.ph2_nbt   <= to_integer(unsigned(data(PH2_H downto PH2_L)));
+        bus_timing.sjw_nbt   <= to_integer(unsigned(data(SJW_H downto SJW_L)));
 
         -- Bit timing register - Data
         CAN_read(data, BTR_FD_ADR, ID, mem_bus);
         bus_timing.tq_dbt    <= to_integer(unsigned(data(BRP_FD_H downto
                                                          BRP_FD_L)));
         bus_timing.prop_dbt  <= to_integer(unsigned(data(PROP_FD_H downto
-                                                         PROP_FD_L));
+                                                         PROP_FD_L)));
         bus_timing.ph1_dbt   <= to_integer(unsigned(data(PH1_FD_H downto
-                                                         PH1_FD_L));
+                                                         PH1_FD_L)));
         bus_timing.ph2_dbt   <= to_integer(unsigned(data(PH2_FD_H downto
-                                                         PH2_FD_L));
+                                                         PH2_FD_L)));
         bus_timing.sjw_dbt   <= to_integer(unsigned(data(SJW_FD_H downto
-                                                         SJW_FD_L));
+                                                         SJW_FD_L)));
     end procedure;
 
 
@@ -1910,7 +2169,23 @@ package body CANtestLib is
         end case;
 
     end procedure;
-  
+
+
+    procedure get_core_version(
+        variable retVal         : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, VERSION_ADR, ID, mem_bus, BIT_16);
+
+        retVal := (10 * to_integer(unsigned(data(VER_MAJOR_H downto 
+                                                 VER_MAJOR_L)))) +
+                  to_integer(unsigned(data(VER_MINOR_H downto VER_MINOR_L)));
+
+    end procedure;
+
 end package body;
 
 
