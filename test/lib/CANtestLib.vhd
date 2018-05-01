@@ -139,6 +139,8 @@ package CANtestLib is
         rtr_pref                :   boolean;
         tripple_sampling        :   boolean;
         acknowledge_forbidden   :   boolean;
+        internal_loopback       :   boolean;
+        iso_fd_support          :   boolean;
     end record;
 
 
@@ -160,16 +162,6 @@ package CANtestLib is
         transmitter             :   boolean;
         error_warning           :   boolean;
         bus_status              :   boolean;
-    end record;
-
-
-    -- Controller settings
-    type SW_settings is record
-        retransmitt_limit_ena   :   boolean;
-        retransmitt_th          :   natural range 0 to 15;
-        internal_loopback       :   boolean;
-        enable                  :   boolean;
-        fd_type                 :   boolean;
     end record;
 
 
@@ -1123,12 +1115,113 @@ package CANtestLib is
     --  status          Variable in which status of the Core will be returned.
     --  ID              Index of CTU CAN FD Core instance.    
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure get_controller_status(
         variable status         : out   SW_status;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+
+
+    ----------------------------------------------------------------------------
+    -- Read captured interrupt vector (status). "true" indicates interrupt
+    -- occurred.
+    -- 
+    -- Arguments:
+    --  interrupts      Variable in which Interrupt vector will be returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_int_status(
+        variable interrupts     : out   SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Clear captured interrupt vector (status). "true" indicates interrupt
+    -- should be cleared.
+    -- 
+    -- Arguments:
+    --  interrupts      Interrupts which should be cleared.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure clear_int_status(
+        constant interrupts     : in    SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Read interrupt enable vector. "true" indicates interrupt
+    -- is enabled for capturing.
+    -- 
+    -- Arguments:
+    --  interrupts      Variable in which interrupt enable vector will be 
+    --                  returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_int_enable(
+        variable interrupts     : out   SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Write interrupt enable vector (status). "true" indicates interrupt
+    -- will be enabled for capturing, "false" indicates interrupt will be
+    -- disabled for capturing.
+    -- 
+    -- Arguments:
+    --  interrupts      Variable in which status of the Core will be returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure write_int_enable(
+        constant interrupts     : in    SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Read interrupt mask. "true" indicates interrupt is masked, thus it does 
+    -- not affect "int" output of CTU CAN FD Core.
+    -- 
+    -- Arguments:
+    --  interrupts      Variable in which interrupt mask will be returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_int_mask(
+        variable interrupts     : out   SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Write interrupt mask. "true" indicates interrupt is masked, thus it does
+    -- not affect "int" output of CTU CAN FD Core.
+    -- 
+    -- Arguments:
+    --  interrupts      Interrupt mask to write.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure write_int_mask(
+        constant interrupts     : in    SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -2253,19 +2346,19 @@ package body CANtestLib is
         retVal := (10 * to_integer(unsigned(data(VER_MAJOR_H downto 
                                                  VER_MAJOR_L)))) +
                   to_integer(unsigned(data(VER_MINOR_H downto VER_MINOR_L)));
-
     end procedure;
 
 
     procedure set_core_mode(
         constant mode           : in    SW_mode;
         constant ID             : in    natural range 0 to 15;
-        signal mem_bus          : inout Avalon_mem_type
+        signal   mem_bus        : inout Avalon_mem_type
     )is
         variable data           :       std_logic_vector(31 downto 0);
     begin
         data := (OTHERS => '0');
 
+        -- Following modes are stored in MODE register
         if (mode.reset) then
             data(RST_IND)       := '1';
         end if;
@@ -2299,6 +2392,23 @@ package body CANtestLib is
         end if;
 
         CAN_write(data, MODE_ADR, ID, mem_bus, BIT_8);
+
+        -- Following modes are stored in SETTINGS register
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        
+        if (mode.iso_fd_support) then
+            data(FD_TYPE_IND)   := '0';
+        else
+            data(FD_TYPE_IND)   := '1';
+        end if;
+
+        if (mode.internal_loopback) then
+            data(INT_LOOP_IND)   := '1';
+        else
+            data(INT_LOOP_IND)   := '0';
+        end if;
+
+        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
     end procedure;
 
 
@@ -2351,6 +2461,21 @@ package body CANtestLib is
         if (data(ACF_IND) = '1') then
             mode.acknowledge_forbidden  := true;
         end if;
+
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+  
+        if (data(FD_TYPE_IND) = '0') then
+            mode.iso_fd_support         := true;
+        else
+            mode.iso_fd_support         := false;
+        end if;
+
+        if (data(INT_LOOP_IND) = '1') then
+            mode.internal_loopback      := true;
+        else
+            mode.internal_loopback      := false;
+        end if;
+
     end procedure;
 
 
@@ -2443,7 +2568,249 @@ package body CANtestLib is
         if (data(BS_IND) = '1') then
             status.bus_status           := true;
         end if;
+    end procedure;
 
+
+    procedure configure_retransmitt_limit(
+        constant enable         : in    boolean;
+        constant limit          : in    natural range 0 to 15;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+
+        if (enable) then
+            data(ENA_IND)       := '1';
+        else
+            data(ENA_IND)       := '0';
+        end if;
+
+        data(RTR_TH_H downto RTR_TH_L) := 
+            std_logic_vector(to_unsigned(limit, RTR_TH_H - RTR_TH_L + 1));
+
+        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+    end procedure;
+  
+
+    procedure enable_controller(
+        constant enable         : in    boolean;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        
+        if (enable) then
+            data(ENA_IND) := '1';
+        else
+            data(ENA_IND) := '0';
+        end if;
+
+        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+    end procedure;
+
+
+    function sw_int_to_int_reg(
+        constant interrupts     :       SW_interrupts
+    )return std_logic_vector is
+        variable tmp            :       std_logic_vector(31 downto 0);
+    begin
+        tmp := (OTHERS => '0');
+        
+        if (interrupts.receive_int) then
+            tmp(RI_IND)         :=  '1';
+        end if;
+        
+        if (interrupts.transmitt_int) then
+            tmp(TI_IND)         :=  '1';
+        end if;
+
+        if (interrupts.error_warning_int) then
+            tmp(EI_IND)         :=  '1';
+        end if;
+
+        if (interrupts.data_overrun_int) then
+            tmp(DOI_IND)        :=  '1';
+        end if;
+
+        if (interrupts.error_passive_int) then
+            tmp(EPI_IND)        :=  '1';
+        end if;
+
+        if (interrupts.arb_lost_int) then
+            tmp(ALI_IND)        :=  '1';
+        end if;
+
+        if (interrupts.bus_error_int) then
+            tmp(BEI_IND)        :=  '1';
+        end if;
+
+        if (interrupts.logger_finished_int) then
+            tmp(LFI_IND)        :=  '1';
+        end if;
+
+        if (interrupts.rx_buffer_full_int) then
+            tmp(RFI_IND)        :=  '1';
+        end if;
+
+        if (interrupts.bit_rate_shift_int) then
+            tmp(BSI_IND)        :=  '1';
+        end if;
+
+        if (interrupts.rx_buffer_not_empty_int) then
+            tmp(RBNEI_IND)      :=  '1';
+        end if;
+
+        if (interrupts.tx_buffer_hw_cmd) then
+            tmp(TXBHCI_IND)     :=  '1';
+        end if;
+
+        return tmp;
+    end function;
+
+
+    function int_reg_to_sw_int(
+        constant int_reg        :       std_logic_vector(31 downto 0)
+    )return SW_interrupts is
+        variable tmp            :       SW_interrupts;
+    begin
+        tmp := (false, false, false, false, false, false,
+                false, false, false, false, false, false);
+        
+        if (int_reg(RI_IND) = '1') then
+            tmp.receive_int              :=  true;
+        end if;
+        
+        if (int_reg(TI_IND) = '1') then
+            tmp.transmitt_int            :=  true;
+        end if;
+
+        if (int_reg(EI_IND) = '1') then
+            tmp.error_warning_int        :=  true;
+        end if;
+
+        if (int_reg(DOI_IND) = '1') then
+            tmp.data_overrun_int         :=  true;
+        end if;
+
+        if (int_reg(EPI_IND) = '1') then
+            tmp.error_passive_int        :=  true;
+        end if;
+
+        if (int_reg(ALI_IND) = '1') then
+            tmp.arb_lost_int             :=  true;
+        end if;
+
+        if (int_reg(BEI_IND) = '1') then
+            tmp.bus_error_int            :=  true;
+        end if;
+
+        if (int_reg(LFI_IND) = '1') then
+            tmp.logger_finished_int      :=  true;
+        end if;
+
+        if (int_reg(RFI_IND) = '1') then
+            tmp.rx_buffer_full_int       :=  true;
+        end if;
+
+        if (int_reg(BSI_IND) = '1') then
+            tmp.bit_rate_shift_int       :=  true;
+        end if;
+
+        if (int_reg(RBNEI_IND) = '1') then
+            tmp.rx_buffer_not_empty_int  :=  true;
+        end if;
+
+        if (int_reg(TXBHCI_IND) = '1') then
+            tmp.tx_buffer_hw_cmd         :=  true;
+        end if;
+
+        return tmp;
+    end function;
+
+
+    procedure read_int_status(
+        variable interrupts    : out   SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, INT_STAT_ADR, ID, mem_bus, BIT_16);
+        interrupts := int_reg_to_sw_int(data);
+    end procedure;
+
+
+    procedure clear_int_status(
+        constant interrupts     : in    SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        data := sw_int_to_int_reg(interrupts);
+        CAN_write(data, INT_STAT_ADR, ID, mem_bus, BIT_16);
+    end procedure;
+
+
+    procedure read_int_enable(
+        variable interrupts    : out   SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, INT_ENA_SET_ADR, ID, mem_bus, BIT_16);
+        interrupts := int_reg_to_sw_int(data);
+    end procedure;
+
+
+    procedure write_int_enable(
+        constant interrupts     : in    SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        -- Set interrupts which should be set to 1
+        data := sw_int_to_int_reg(interrupts);
+        CAN_write(data, INT_ENA_SET_ADR, ID, mem_bus, BIT_16);
+
+        -- Clear interrupts which should be set to 0
+        data := not data;
+        CAN_write(data, INT_ENA_CLR_ADR, ID, mem_bus, BIT_16);
+    end procedure;
+
+
+    procedure read_int_mask(
+        variable interrupts     : out   SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, INT_MASK_SET_ADR, ID, mem_bus, BIT_16);
+        interrupts := int_reg_to_sw_int(data);
+    end procedure;
+
+
+    procedure write_int_mask(
+        constant interrupts     : in    SW_interrupts;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        -- Set interrupts which should be set to 1
+        data := sw_int_to_int_reg(interrupts);
+        CAN_write(data, INT_MASK_SET_ADR, ID, mem_bus, BIT_16);
+
+        -- Clear interrupts which should be set to 0
+        data := not data;
+        CAN_write(data, INT_MASK_CLR_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
 end package body;
