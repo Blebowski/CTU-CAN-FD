@@ -154,7 +154,7 @@ package CANtestLib is
     type SW_status is record
         receive_buffer          :   boolean;
         data_overrun            :   boolean;
-        transceive_buffer       :   boolean;
+        tx_buffer_empty         :   boolean;
         error_transmission      :   boolean;
         receiver                :   boolean;
         transmitter             :   boolean;
@@ -173,7 +173,7 @@ package CANtestLib is
     end record;
 
 
-    -- Transmitt buffer HW command
+    -- Interrupt sources
     type SW_interrupts is record
         receive_int             :   boolean;
         transmitt_int           :   boolean;
@@ -205,7 +205,7 @@ package CANtestLib is
     );
 
 
-    -- Error counters (Normal and special)
+    -- Error counters (Normal and Special)
     type SW_error_counters is record
         rx_counter              :   natural range 0 to 2 ** 16 - 1;
         tx_counter              :   natural range 0 to 2 ** 16 - 1;
@@ -1058,7 +1058,77 @@ package CANtestLib is
     );
 
 
+    ----------------------------------------------------------------------------
+    -- Sets mode of CTU CAN FD Core.
+    -- 
+    -- Arguments:
+    --  mode            Mode to set.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ---------------------------------------------------------------------------- 
+    procedure set_core_mode(
+        constant mode           : in    SW_mode;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
 
+
+    ----------------------------------------------------------------------------
+    -- Reads mode from CTU CAN FD Core.
+    -- 
+    -- Arguments:
+    --  mode            Variable to which returned mode will be stored.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ---------------------------------------------------------------------------- 
+    procedure get_core_mode(
+        variable mode           : out   SW_mode;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Send command to execute SW reset
+    -- 
+    -- Arguments:
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ---------------------------------------------------------------------------- 
+    procedure exec_SW_reset(
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Send arbitrary command to the controller.
+    -- 
+    -- Arguments:
+    --  command         Command to send to the controller.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ---------------------------------------------------------------------------- 
+    procedure give_controller_command(
+        constant command        : in    SW_command;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Read status of CTU CAN FD controller.
+    -- 
+    -- Arguments:
+    --  status          Variable in which status of the Core will be returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ---------------------------------------------------------------------------- 
+    procedure get_controller_status(
+        variable status         : out   SW_status;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -2183,6 +2253,196 @@ package body CANtestLib is
         retVal := (10 * to_integer(unsigned(data(VER_MAJOR_H downto 
                                                  VER_MAJOR_L)))) +
                   to_integer(unsigned(data(VER_MINOR_H downto VER_MINOR_L)));
+
+    end procedure;
+
+
+    procedure set_core_mode(
+        constant mode           : in    SW_mode;
+        constant ID             : in    natural range 0 to 15;
+        signal mem_bus          : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        data := (OTHERS => '0');
+
+        if (mode.reset) then
+            data(RST_IND)       := '1';
+        end if;
+
+        if (mode.listen_only) then
+            data(LOM_IND)       := '1';
+        end if;
+
+        if (mode.self_test) then
+            data(STM_IND)       := '1';
+        end if;
+
+        if (mode.acceptance_filter) then
+            data(AFM_IND)       := '1';
+        end if;
+
+        if (mode.flexible_data_rate) then
+            data(FDE_IND)       := '1';
+        end if;
+
+        if (mode.rtr_pref) then
+            data(RTR_PREF_IND)  := '1';
+        end if;
+
+        if (mode.tripple_sampling) then
+            data(TSM_IND)       := '1';
+        end if;
+
+        if (mode.acknowledge_forbidden) then
+            data(ACF_IND)       := '1';
+        end if;
+
+        CAN_write(data, MODE_ADR, ID, mem_bus, BIT_8);
+    end procedure;
+
+
+    procedure get_core_mode(
+        variable mode           : out   SW_mode;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, MODE_ADR, ID, mem_bus, BIT_8);
+
+        mode.reset                      := false;
+        mode.listen_only                := false;
+        mode.self_test                  := false;
+        mode.acceptance_filter          := false;
+        mode.flexible_data_rate         := false;
+        mode.rtr_pref                   := false;
+        mode.tripple_sampling           := false;
+        mode.acknowledge_forbidden      := false;
+
+        if (data(RST_IND) = '1') then
+            mode.reset                  := true;
+        end if;
+
+        if (data(LOM_IND) = '1') then
+            mode.listen_only            := true;
+        end if;
+
+        if (data(STM_IND) = '1') then
+            mode.self_test              := true;
+        end if;
+
+        if (data(AFM_IND) = '1') then
+            mode.acceptance_filter      := true;
+        end if;
+
+        if (data(FDE_IND) = '1') then
+            mode.flexible_data_rate     := true;
+        end if;
+
+        if (data(RTR_PREF_IND) = '1') then
+            mode.rtr_pref               := true;
+        end if;
+
+        if (data(TSM_IND) = '1') then
+            mode.tripple_sampling       := true;
+        end if;
+
+        if (data(ACF_IND) = '1') then
+            mode.acknowledge_forbidden  := true;
+        end if;
+    end procedure;
+
+
+    procedure exec_SW_reset(
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable mode           :       SW_mode;
+    begin
+        get_core_mode(mode, ID, mem_bus);
+
+        -- Note that reset bit is self clearing, no need to write 0 afterwards!
+        mode.reset := true;
+
+        set_core_mode(mode, ID, mem_bus);
+    end procedure;
+
+
+    procedure give_controller_command(
+        constant command        : in    SW_command;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        data := (OTHERS => '0');
+        
+        if (command.abort_transmission) then
+            data(AT_IND)        := '1';
+        end if;
+
+        if (command.release_rec_buffer) then
+            data(RRB_IND)        := '1';
+        end if;
+
+        if (command.clear_data_overrun) then
+            data(CDO_IND)        := '1';
+        end if;
+
+        CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_8);
+    end procedure;
+
+
+    procedure get_controller_status(
+        variable status         : out   SW_status;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, STATUS_ADR, ID, mem_bus, BIT_8);
+
+        status.receive_buffer           := false;
+        status.data_overrun             := false;
+        status.tx_buffer_empty          := false;
+        status.error_transmission       := false;
+        status.receiver                 := false;
+        status.transmitter              := false;
+        status.error_warning            := false;
+        status.bus_status               := false;
+
+        if (data(RBS_IND) = '1') then
+            status.receive_buffer       := true;
+        end if;
+
+        if (data(DOS_IND) = '1') then
+            status.data_overrun         := true;
+        end if;
+
+        if (data(TBS_IND) = '1') then
+            status.tx_buffer_empty      := true;
+        end if;
+
+        if (data(ET_IND) = '1') then
+            status.error_transmission   := true;
+        end if;
+
+        if (data(RS_IND) = '1') then
+            status.receiver             := true;
+        end if;
+
+        if (data(TS_IND) = '1') then
+            status.transmitter          := true;
+        end if;
+     
+        if (data(ES_IND) = '1') then
+            status.error_warning        := true;
+        end if;
+
+        if (data(BS_IND) = '1') then
+            status.bus_status           := true;
+        end if;
 
     end procedure;
 
