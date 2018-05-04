@@ -199,81 +199,81 @@ architecture int_man_unit_test of CAN_test is
     )is
     begin
       if (error_valid = '1') then
-        rand_logic(rand_ctr, error_valid, 0.85);
+        rand_logic_s(rand_ctr, error_valid, 0.85);
       else
-        rand_logic(rand_ctr, error_valid, 0.1);
+        rand_logic_s(rand_ctr, error_valid, 0.1);
       end if;
       
       if (error_passive_changed = '1') then
-        rand_logic(rand_ctr, error_passive_changed, 0.85);
+        rand_logic_s(rand_ctr, error_passive_changed, 0.85);
       else
-        rand_logic(rand_ctr, error_passive_changed, 0.05);
+        rand_logic_s(rand_ctr, error_passive_changed, 0.05);
       end if;
       
       if (error_warning_limit = '1') then
-        rand_logic(rand_ctr, error_warning_limit, 0.85);
+        rand_logic_s(rand_ctr, error_warning_limit, 0.85);
       else
-        rand_logic(rand_ctr, error_warning_limit, 0.05);
+        rand_logic_s(rand_ctr, error_warning_limit, 0.05);
       end if;
       
       if (arbitration_lost = '1') then
-        rand_logic(rand_ctr, arbitration_lost, 0.95);
+        rand_logic_s(rand_ctr, arbitration_lost, 0.95);
       else
-        rand_logic(rand_ctr, arbitration_lost, 0.05);
+        rand_logic_s(rand_ctr, arbitration_lost, 0.05);
       end if;
       
       if (tx_finished = '1') then
-        rand_logic(rand_ctr, tx_finished, 0.95);
+        rand_logic_s(rand_ctr, tx_finished, 0.95);
       else
-        rand_logic(rand_ctr, tx_finished, 0.05);
+        rand_logic_s(rand_ctr, tx_finished, 0.05);
       end if;
       
       if (br_shifted = '1') then
-        rand_logic(rand_ctr, br_shifted, 0.95);
+        rand_logic_s(rand_ctr, br_shifted, 0.95);
       else
-        rand_logic(rand_ctr, br_shifted, 0.05);
+        rand_logic_s(rand_ctr, br_shifted, 0.05);
       end if;
       
       if (rx_message_disc = '1') then
-        rand_logic(rand_ctr, rx_message_disc, 0.95);
+        rand_logic_s(rand_ctr, rx_message_disc, 0.95);
       else
-        rand_logic(rand_ctr, rx_message_disc, 0.05);
+        rand_logic_s(rand_ctr, rx_message_disc, 0.05);
       end if;
       
       if (rec_message_valid = '1') then
-        rand_logic(rand_ctr, rec_message_valid, 0.95);
+        rand_logic_s(rand_ctr, rec_message_valid, 0.95);
       else
-        rand_logic(rand_ctr, rec_message_valid, 0.05);
+        rand_logic_s(rand_ctr, rec_message_valid, 0.05);
       end if;
       
       if (rx_full = '1') then
-        rand_logic(rand_ctr, rx_full, 0.95);
+        rand_logic_s(rand_ctr, rx_full, 0.95);
       else
-        rand_logic(rand_ctr, rx_full, 0.05);
+        rand_logic_s(rand_ctr, rx_full, 0.05);
       end if;
       
       if (loger_finished = '1') then
-        rand_logic(rand_ctr, loger_finished, 0.95);
+        rand_logic_s(rand_ctr, loger_finished, 0.95);
       else
-        rand_logic(rand_ctr, loger_finished, 0.05);
+        rand_logic_s(rand_ctr, loger_finished, 0.05);
       end if;
       
       if (rx_empty = '0') then
-        rand_logic(rand_ctr, rx_empty, 0.95);
+        rand_logic_s(rand_ctr, rx_empty, 0.95);
       else
-        rand_logic(rand_ctr, rx_empty, 0.05);
+        rand_logic_s(rand_ctr, rx_empty, 0.05);
       end if;
 
       if (txt_hw_cmd.lock = '1') then
-        rand_logic(rand_ctr, txt_hw_cmd.lock, 0.95);
+        rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.95);
       else
-        rand_logic(rand_ctr, txt_hw_cmd.lock, 0.05);
+        rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.05);
       end if;
 
       if (txt_hw_cmd.lock = '1') then
-        rand_logic(rand_ctr, txt_hw_cmd.unlock, 0.95);
+        rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.95);
       else
-        rand_logic(rand_ctr, txt_hw_cmd.unlock, 0.05);
+        rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.05);
       end if;
       
     end procedure;    
@@ -305,19 +305,19 @@ architecture int_man_unit_test of CAN_test is
         -- Only one command is generated at any time, since commands are
         -- coming from different registers!
         if (tmp < 0.2) then
-            rand_logic_vect(rand_ctr, drv_int_clear, 0.4);
+            rand_logic_vect_s(rand_ctr, drv_int_clear, 0.4);
         
         elsif (tmp < 0.4) then
-            rand_logic_vect(rand_ctr, drv_int_ena_set, 0.2);
+            rand_logic_vect_s(rand_ctr, drv_int_ena_set, 0.2);
 
         elsif (tmp < 0.6) then
-            rand_logic_vect(rand_ctr, drv_int_ena_clear, 0.4);
+            rand_logic_vect_s(rand_ctr, drv_int_ena_clear, 0.4);
 
         elsif (tmp < 0.8) then
-            rand_logic_vect(rand_ctr, drv_int_mask_set, 0.2);
+            rand_logic_vect_s(rand_ctr, drv_int_mask_set, 0.2);
 
         else
-            rand_logic_vect(rand_ctr, drv_int_mask_clear, 0.4);
+            rand_logic_vect_s(rand_ctr, drv_int_mask_clear, 0.4);
         end if;
 
         wait for 0 ns;

@@ -154,19 +154,19 @@ architecture presc_unit_test of CAN_test is
         signal setting              : inout presc_drv_type
     ) is
     begin
-        rand_logic_vect_bt(rand_ctr, setting.drv_tq_nbt, 0, 0.2);
-        rand_logic_vect_bt(rand_ctr, setting.drv_tq_dbt, 0, 0.1);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_tq_nbt, 0, 0.2);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_tq_dbt, 0, 0.1);
 
-        rand_logic_vect_bt(rand_ctr, setting.drv_prs_nbt, 0, 0.4);
-        rand_logic_vect_bt(rand_ctr, setting.drv_ph1_nbt, 0, 0.2);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_prs_nbt, 0, 0.4);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_ph1_nbt, 0, 0.2);
 
-        rand_logic_vect_bt(rand_ctr, setting.drv_ph2_nbt, 0, 0.2);
-        rand_logic_vect_bt(rand_ctr, setting.drv_prs_dbt, 0, 0.3);
-        rand_logic_vect_bt(rand_ctr, setting.drv_ph1_dbt, 0, 0.15);
-        rand_logic_vect_bt(rand_ctr, setting.drv_ph2_dbt, 0, 0.15);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_ph2_nbt, 0, 0.2);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_prs_dbt, 0, 0.3);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_ph1_dbt, 0, 0.15);
+        rand_logic_vect_bt_s(rand_ctr, setting.drv_ph2_dbt, 0, 0.15);
 
-        rand_logic_vect(rand_ctr, setting.drv_sjw_nbt, 0.2);
-        rand_logic_vect(rand_ctr, setting.drv_sjw_dbt, 0.2);
+        rand_logic_vect_s(rand_ctr, setting.drv_sjw_nbt, 0.2);
+        rand_logic_vect_s(rand_ctr, setting.drv_sjw_dbt, 0.2);
 
         -- Here we check that settings are matching IPT!!
         -- This is stated in documentation and is up to responsible 

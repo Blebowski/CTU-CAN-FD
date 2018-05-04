@@ -320,7 +320,7 @@ begin
       log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
       
       --Generate random ISO, non ISO
-      rand_logic(rand_ctr, drv_fd_type, 0.5);
+      rand_logic_s(rand_ctr, drv_fd_type, 0.5);
       
       --Generate bit sequence
       log("Generating random bit sequence", info_l,  log_level);

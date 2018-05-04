@@ -37,7 +37,8 @@
 
 --------------------------------------------------------------------------------
 --  Purpose:
---    Package with the pseudo random number functions.
+--    Package with the pseudo random number functions. Functions with postix
+--    "_v" return variables, functions with postfix "_s" return signals.
 --
 --    For simulation only.
 --
@@ -139,7 +140,7 @@ package randomLib is
     --  refresh         If signal change should be processed by simulator by
     --                  executing: "wait for 0 ns"
     ----------------------------------------------------------------------------
-    procedure rand_real(
+    procedure rand_real_s(
         signal   real_ctr         : inout natural range 0 to RAND_POOL_SIZE;
         signal   retval           : out   real;
         constant refresh          : in    boolean := true
@@ -169,7 +170,7 @@ package randomLib is
     --  refresh         If signal change should be processed by simulator by
     --                  executing: "wait for 0 ns"
     ----------------------------------------------------------------------------
-    procedure rand_int(
+    procedure rand_int_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         constant max            : in    positive;
         signal   retval         : out   natural;
@@ -204,7 +205,7 @@ package randomLib is
     --  refresh         If signal change should be processed by simulator by
     --                  executing: "wait for 0 ns"
     ----------------------------------------------------------------------------
-    procedure rand_logic(
+    procedure rand_logic_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retval         : out 	std_logic;
         constant chances        : in 	real;
@@ -240,7 +241,7 @@ package randomLib is
     --  refresh         If signal change should be processed by simulator by
     --                  executing: "wait for 0 ns"
     ----------------------------------------------------------------------------
-    procedure rand_logic_vect(
+    procedure rand_logic_vect_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retVal         : out   std_logic_vector;
         constant chances        : in    real;
@@ -278,7 +279,7 @@ package randomLib is
     --  refresh         If signal change should be processed by simulator by
     --                  executing: "wait for 0 ns"
     ----------------------------------------------------------------------------
-    procedure rand_logic_vect_bt(
+    procedure rand_logic_vect_bt_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retVal         : inout std_logic_vector;
         constant bt             : in    integer;
@@ -1107,7 +1108,7 @@ end package;
 package body randomLib is
 
 
-    procedure rand_real(
+    procedure rand_real_s(
         signal   real_ctr         : inout natural range 0 to RAND_POOL_SIZE;
         signal   retval           : out   real;
         constant refresh          : in    boolean := true
@@ -1141,7 +1142,7 @@ package body randomLib is
     end procedure;
   
 
-    procedure rand_int(
+    procedure rand_int_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         constant max            : in    positive;
         signal   retval         : out   natural;
@@ -1182,7 +1183,7 @@ package body randomLib is
     end procedure;
 
 
-    procedure rand_logic(
+    procedure rand_logic_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retval         : out 	std_logic;
         constant chances        : in 	real;
@@ -1230,7 +1231,7 @@ package body randomLib is
   
 
 
-    procedure rand_logic_vect(
+    procedure rand_logic_vect_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retVal         : out   std_logic_vector;
         constant chances        : in    real;
@@ -1286,7 +1287,7 @@ package body randomLib is
     end procedure;  
 
   
-    procedure rand_logic_vect_bt(
+    procedure rand_logic_vect_bt_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retVal         : inout std_logic_vector;
         constant bt             : in    integer;

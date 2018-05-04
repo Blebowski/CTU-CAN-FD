@@ -191,13 +191,13 @@ begin
         rx_trig = '0' and err_data = '0') then
       if (rand_val > 0.95) then
         
-        rand_logic(rand_set_ctr, bs_enable, 0.9);
+        rand_logic_s(rand_set_ctr, bs_enable, 0.9);
         wait for 0 ns;
         bd_enable <= bs_enable;
         
-        rand_logic(rand_set_ctr, fixed_stuff, 0.25);
+        rand_logic_s(rand_set_ctr, fixed_stuff, 0.25);
         
-        rand_logic_vect(rand_set_ctr, bs_length, 0.2);
+        rand_logic_vect_s(rand_set_ctr, bs_length, 0.2);
         wait for 0 ns;
 	
         -- Bit Stuffing of 0,1 or 2 is not needed.
@@ -220,7 +220,7 @@ begin
   begin
     wait until rising_edge(tx_trig) and data_halt = '0' and 
 		stuff_error = '0' and err_data = '0';
-    rand_logic(rand_tx_ctr, tx_data, 0.5);
+    rand_logic_s(rand_tx_ctr, tx_data, 0.5);
   end process;
   
   --------------------------------
