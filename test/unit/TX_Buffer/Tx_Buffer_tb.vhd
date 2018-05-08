@@ -255,8 +255,8 @@ begin
         -- Generate random address and data and attempt to store it 
         -- to the buffer.
         wait until rising_edge(clk_sys);
-        rand_logic_vect(rand_gen_ctr, tran_data, 0.5);
-        rand_logic_vect(rand_gen_ctr, tran_addr, 0.5);
+        rand_logic_vect_s(rand_gen_ctr, tran_data, 0.5);
+        rand_logic_vect_s(rand_gen_ctr, tran_addr, 0.5);
         if (to_integer(unsigned(tran_addr)) > 19) then
             tran_addr  <= "00000";
         end if;
@@ -328,8 +328,8 @@ begin
         wait until falling_edge(clk_sys);
 
         -- Generate HW commands
-        rand_logic(rand_com_gen_ctr, txt_hw_cmd.lock, 0.2);
-        rand_logic(rand_com_gen_ctr, txt_hw_cmd.unlock, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.lock, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.unlock, 0.2);
     
         if (txtb_state /= txt_ready) then
             txt_hw_cmd.lock   <= '0';
@@ -356,9 +356,9 @@ begin
         end if;
 
         -- Generate SW commands
-        rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_rdy, 0.2);
-        rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_ety, 0.2);
-        rand_logic(rand_com_gen_ctr, txt_sw_cmd.set_abt, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_rdy, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_ety, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_abt, 0.2);
 	wait for 0 ns;
 
         -- Calculate the expected state

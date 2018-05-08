@@ -94,10 +94,10 @@ architecture mess_filt_unit_test of CAN_test is
       signal frame_info      :out   mess_filter_input_type
       )is
     begin
-      rand_logic_vect (rand_ctr,  frame_info.rec_ident_in     ,0.5);
-      rand_logic      (rand_ctr,  frame_info.ident_type       ,0.5);
-      rand_logic      (rand_ctr,  frame_info.frame_type       ,0.5);
-      rand_logic      (rand_ctr,  frame_info.rec_ident_valid  ,0.9);
+      rand_logic_vect_s (rand_ctr,  frame_info.rec_ident_in     ,0.5);
+      rand_logic_s    (rand_ctr,  frame_info.ident_type       ,0.5);
+      rand_logic_s    (rand_ctr,  frame_info.frame_type       ,0.5);
+      rand_logic_s    (rand_ctr,  frame_info.rec_ident_valid  ,0.9);
     end procedure;
     
     
@@ -106,23 +106,23 @@ architecture mess_filt_unit_test of CAN_test is
       signal drv_settings    :inout   mess_filter_drv_type
       )is
     begin
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_A_bits, 0.50);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_A_mask, 0.15);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_A_ctrl, 0.50);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_A_bits, 0.50);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_A_mask, 0.15);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_A_ctrl, 0.50);
       
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_B_bits, 0.50);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_B_mask, 0.15);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_B_ctrl, 0.50);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_B_bits, 0.50);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_B_mask, 0.15);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_B_ctrl, 0.50);
         
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_C_bits, 0.50);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_C_mask, 0.15);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_C_ctrl, 0.50);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_C_bits, 0.50);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_C_mask, 0.15);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_C_ctrl, 0.50);
       
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_ran_hi_th, 0.60);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_ran_lo_th, 0.40);
-      rand_logic_vect    (rand_ctr, drv_settings.drv_filter_ran_ctrl,  0.50);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_ran_hi_th, 0.60);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_ran_lo_th, 0.40);
+      rand_logic_vect_s  (rand_ctr, drv_settings.drv_filter_ran_ctrl,  0.50);
       
-      rand_logic         (rand_ctr, drv_settings.drv_filters_ena, 0.9); 
+      rand_logic_s       (rand_ctr, drv_settings.drv_filters_ena, 0.9); 
     end procedure;
     
     

@@ -211,7 +211,7 @@ begin
     if (generate_ones = true) then
       data_tx <= RECESSIVE;
     else
-      rand_logic(rand_ctr_data_gen, data_tx, 0.5);
+      rand_logic_s(rand_ctr_data_gen, data_tx, 0.5);
     end if;
     
   end process;

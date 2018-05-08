@@ -203,7 +203,7 @@ begin
   variable rand_val:real:=0.0;
   begin
     wait until falling_edge(clk_sys);
-    rand_logic_vect(rand_ctr_2,stat_bus_short,0.1);
+    rand_logic_vect_s(rand_ctr_2,stat_bus_short,0.1);
         
         
     --Here we emulate frame
@@ -227,8 +227,8 @@ begin
       PC_State  <=  sof;
     end if;
     
-    rand_logic(rand_ctr_2,data_overrun,0.2);
-    rand_logic(rand_ctr_2,sync_edge,0.2);  
+    rand_logic_s(rand_ctr_2,data_overrun,0.2);
+    rand_logic_s(rand_ctr_2,sync_edge,0.2);  
       
     rand_real_v(rand_ctr_2,rand_val);
     wt:= integer(rand_val*100.0) * 1 ns;
