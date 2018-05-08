@@ -1035,6 +1035,22 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Read state of RX Buffer.
+    -- 
+    -- Arguments:
+    --  retVal          Variable in which return state of the buffer will be
+    --                  returned.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ---------------------------------------------------------------------------- 
+    procedure get_rx_buf_state(
+        variable retVal         : out   SW_RX_Buffer_info;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Read version register and return the actual version of the core like so:
     --  MAJOR_VERSION * 10 + MINOR_VERSION.
     -- 
@@ -1657,7 +1673,7 @@ package body CANtestLib is
         when BIT_8 =>
             return true;
         when BIT_16 =>
-            if (address(0) = '1') then
+            if (address(0) = '0') then
                 return true;
             else
                 return false;
@@ -2360,6 +2376,45 @@ package body CANtestLib is
                   integer'image(to_integer(unsigned(b_state))) severity error;  
         end case;
 
+    end procedure;
+
+
+    procedure get_rx_buf_state(
+        variable retVal         : out   SW_RX_Buffer_info;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        -- Read information about buffer memory first!
+        CAN_read(data, RX_MEM_INFO_ADR, ID, mem_bus);
+        retVal.rx_buff_size := to_integer(unsigned(
+                                 data(RX_BUFF_SIZE_H downto RX_BUFF_SIZE_L)));
+        retVal.rx_mem_free := to_integer(unsigned(
+                                 data(RX_MEM_FREE_H downto RX_MEM_FREE_L)));
+
+        -- Read memory pointers
+        CAN_read(data, RX_POINTERS_ADR, ID, mem_bus);
+        retVal.rx_write_pointer := to_integer(unsigned(
+                                     data(RX_WPP_H downto RX_WPP_L)));
+        retVal.rx_read_pointer  := to_integer(unsigned(
+                                     data(RX_RPP_H downto RX_RPP_L)));
+
+        -- Read memory status
+        CAN_read(data, RX_STATUS_ADR, ID, mem_bus, BIT_16);
+        retVal.rx_full          := false;        
+        retVal.rx_empty         := false;        
+        
+        if (data(RX_FULL_IND) = '1') then
+            retVal.rx_full      := true;
+        end if;
+
+        if (data(RX_EMPTY_IND) = '1') then
+            retVal.rx_empty     := true;
+        end if;
+
+        retVal.rx_frame_count   := to_integer(unsigned(
+                                    data(RX_FRC_H downto RX_FRC_L)));
     end procedure;
 
 
