@@ -796,6 +796,8 @@ begin
             variable frame_sent     :       boolean := false;
             variable used_txtb      :       natural := 1;
             variable txtb_state     :       SW_TXT_Buffer_state_type;
+            variable rx_buf_state   :       SW_RX_Buffer_info;
+            variable fault_state    :       SW_fault_state;
         begin
             if (do_restart_mem_if(i)) then
                 restart_mem_bus(mb_arr(i));
@@ -866,12 +868,13 @@ begin
                         end if;
 
                         -- Check if RX buffer is non-empty and read frames if not!
-                        CAN_read(r_data, RX_STATUS_ADR, n_index, mb_arr(i));
-                        while (r_data(0) = '0') loop
+                        get_rx_buf_state(rx_buf_state, n_index, mb_arr(i));
+                        while (rx_buf_state.rx_empty = false) loop
                             CAN_read_frame(RX_frame, n_index, mb_arr(i));
                             store_frame_to_mem(RX_frame, rx_mems(i),
                                                rx_mem_pointers(i));
-                            CAN_read(r_data, RX_STATUS_ADR, n_index, mb_arr(i));             
+
+                            get_rx_buf_state(rx_buf_state, n_index, mb_arr(i));           
 
                             -- Count the received frames
                             frame_counters(i) <= frame_counters(i) + 1;
@@ -882,9 +885,9 @@ begin
                     -- Check if unit is not error passive. If node is error 
                     -- passive data consitency will be corrupted!!!
                     -- That should never happend !!!
-                    if (do_read_errors(n_index) = true) then            
-                        CAN_read(r_data, EWL_ADR, n_index, mb_arr(i));
-                        if (r_data(17) = '1') then
+                    if (do_read_errors(n_index)) then   
+                        get_fault_state(fault_state, n_index, mb_arr(i));        
+                        if (fault_state /= fc_error_active) then
                             erp_detected(i) <= true;
                         end if;
                     end if;
