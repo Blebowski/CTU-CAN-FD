@@ -210,6 +210,7 @@ static int ctucan_chip_start(struct net_device *ndev)
 	}
 
 	ctu_can_fd_int_ena(&priv->p, int_ena, int_msk);
+	ctu_can_fd_int_mask(&priv->p, int_ena, int_msk);
 
 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
 
@@ -679,6 +680,7 @@ static void ctucan_chip_stop(struct net_device *ndev)
 
 	/* Disable interrupts and disable can */
 	ctu_can_fd_int_ena(&priv->p, ena, mask);
+	ctu_can_fd_int_mask(&priv->p, ena, mask);
 	ctu_can_fd_enable(&priv->p, false);
 	priv->can.state = CAN_STATE_STOPPED;
 }

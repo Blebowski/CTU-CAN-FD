@@ -59,6 +59,12 @@ unsigned ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) 
 unsigned ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
     return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~1)) >> (8 * (reg & 1));
 }
+void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint8_t val) {
+    iowrite8(val, (uint8_t*)priv->mem_base + reg);
+}
+void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint16_t val) {
+    iowrite16(val, (uint8_t*)priv->mem_base + reg);
+}
 
 
 int main(int argc, char *argv[])
@@ -142,7 +148,10 @@ int main(int argc, char *argv[])
     //struct can_ctrlmode ctrlmode = {CAN_CTRLMODE_FD, CAN_CTRLMODE_FD};
     //ctu_can_fd_set_mode(priv, &ctrlmode);
 
-    ctu_can_fd_reset(priv);
+
+
+    printf("NOT RESETTING!\n");
+    //ctu_can_fd_reset(priv);
 
     {
         union ctu_can_fd_mode_command_status_settings mode;
@@ -176,6 +185,8 @@ int main(int argc, char *argv[])
            nom_timing.bitrate
     );
 
+    priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, 0xffff);
+    priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, 0xffff);
     ctu_can_fd_set_nom_bittiming(priv, &nom_timing);
     ctu_can_fd_rel_rx_buf(priv);
     //ctu_can_fd_set_ret_limit(priv, true, 1);
@@ -210,8 +221,10 @@ int main(int argc, char *argv[])
         printf("%u RX frames, %u words", nrxf, rxsz);
         printf(", status 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_STATUS));
         printf(", settings 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_SETTINGS));
-        printf(", INT_STAT 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_INT_STAT));
-        printf(", CTU_CAN_FD_TX_STATUS 0x%02hx", ctu_can_fd_read16(priv, CTU_CAN_FD_TX_STATUS));
+        printf(", INT_STAT 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_INT_STAT));
+        printf(", CTU_CAN_FD_INT_ENA_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_ENA_SET));
+        printf(", CTU_CAN_FD_INT_MASK_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_MASK_SET));
+        printf(", CTU_CAN_FD_TX_STATUS 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_TX_STATUS));
         //printf(", CTU_CAN_FD_ERR_CAPT 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_ERR_CAPT));
 
 
