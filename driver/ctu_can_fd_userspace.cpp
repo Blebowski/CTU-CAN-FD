@@ -53,6 +53,14 @@ void *mem_map(unsigned long mem_start, unsigned long mem_length)
     return mem;
 }
 
+unsigned ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
+    return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~3)) >> (8 * (reg & 3));
+}
+unsigned ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
+    return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~1)) >> (8 * (reg & 1));
+}
+
+
 int main(int argc, char *argv[])
 {
     uint32_t addr_base;
@@ -118,6 +126,7 @@ int main(int argc, char *argv[])
 
     priv->mem_base = base;
     priv->read_reg = ctu_can_fd_read32;
+    priv->write_reg = ctu_can_fd_write32;
 
     union ctu_can_fd_device_id_version reg;
     reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_DEVICE_ID);
@@ -130,15 +139,19 @@ int main(int argc, char *argv[])
     u32 version = ctu_can_fd_get_version(priv);
     printf("Core version: %u\n", version);
 
-
     //struct can_ctrlmode ctrlmode = {CAN_CTRLMODE_FD, CAN_CTRLMODE_FD};
     //ctu_can_fd_set_mode(priv, &ctrlmode);
 
-    // reset
-    union ctu_can_fd_mode_command_status_settings mode;
-    mode.s.rst = 1;
-    ctu_can_fd_write8(priv, CTU_CAN_FD_MODE, mode.u32);
+    ctu_can_fd_reset(priv);
 
+    {
+        union ctu_can_fd_mode_command_status_settings mode;
+        mode.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+
+        if (mode.s.ena) {
+            printf("Core is enabled but should be disabled!\n");
+        }
+    }
 
     struct net_device nd;
     nd.can.clock.freq = 100000000;
@@ -165,7 +178,8 @@ int main(int argc, char *argv[])
 
     ctu_can_fd_set_nom_bittiming(priv, &nom_timing);
     ctu_can_fd_rel_rx_buf(priv);
-    ctu_can_fd_set_ret_limit(priv, true, 1);
+    //ctu_can_fd_set_ret_limit(priv, true, 1);
+    ctu_can_fd_set_ret_limit(priv, false, 0);
     ctu_can_fd_abort_tx(priv);
     ctu_can_fd_txt_set_abort(priv, CTU_CAN_FD_TXT_BUFFER_1);
     ctu_can_fd_txt_set_empty(priv, CTU_CAN_FD_TXT_BUFFER_1);
@@ -181,7 +195,7 @@ int main(int argc, char *argv[])
         memcpy(txf.data, d, sizeof(d));
         txf.len = sizeof(d);
 
-        res = ctu_can_fd_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1);
+        res = ctu_can_fd_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1, false);
         if (!res)
             printf("TX failed\n");
         ctu_can_fd_txt_set_rdy(priv, CTU_CAN_FD_TXT_BUFFER_1);

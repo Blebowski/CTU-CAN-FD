@@ -31,7 +31,14 @@
 #ifndef __CTU_CAN_FD_HW__
 #define __CTU_CAN_FD_HW__
 
+#include <asm/byteorder.h>
+
+#if defined(__LITTLE_ENDIAN_BITFIELD) == defined(__BIG_ENDIAN_BITFIELD)
+# error Either __BIG_ENDIAN_BITFIELD or __LITTLE_ENDIAN_BITFIELD must be defined.
+#endif
+
 #include "ctu_can_fd_regs.h"
+#include "ctu_can_fd_frame.h"
 
 /*
 	MJ TODO:
@@ -45,16 +52,16 @@
 
 #define CTU_CAN_FD_RETR_MAX 15
 
-#define CTU_CAN_FD_FILTER_A 0x01
-#define CTU_CAN_FD_FILTER_B 0x02
-#define CTU_CAN_FD_FILTER_C 0x03
+#define CTU_CAN_FD_FILTER_A 0
+#define CTU_CAN_FD_FILTER_B 1
+#define CTU_CAN_FD_FILTER_C 2
 
 #define CTU_CAN_FD_TXT_BUFFER_COUNT 4
 
-#define CTU_CAN_FD_TXT_BUFFER_1 0x1
-#define CTU_CAN_FD_TXT_BUFFER_2 0x2
-#define CTU_CAN_FD_TXT_BUFFER_3 0x3
-#define CTU_CAN_FD_TXT_BUFFER_4 0x4
+#define CTU_CAN_FD_TXT_BUFFER_1 0
+#define CTU_CAN_FD_TXT_BUFFER_2 1
+#define CTU_CAN_FD_TXT_BUFFER_3 2
+#define CTU_CAN_FD_TXT_BUFFER_4 3
 
 /* 
  * Status macros -> pass "ctu_can_get_status" result
@@ -76,7 +83,7 @@
 #define CTU_CAN_FD_EWL(stat) (!!(stat).s.ewl)
 
 // True if at least one TXT Buffer is empty
-#define CTU_CAN_FD_TXTNE(stat) (!!(stat).s.tbs)
+#define CTU_CAN_FD_TXTNF(stat) (!!(stat).s.tbs)
 
 // True if data overrun flag of RX Buffer occurred
 #define CTU_CAN_FD_DATA_OVERRUN(stat) (!!(stat).s.dos)
@@ -122,51 +129,25 @@
 // TX Buffer received HW command interrupt
 #define CTU_CAN_FD_TXT_BUF_HWCMD_INT(int_stat) (!!(int_stat).s.txbhci)
 
+static inline bool CTU_CAN_FD_INT_ERROR(union ctu_can_fd_int_stat i) {
+	return i.s.ei || i.s.doi || i.s.epi || i.s.ali;
+}
+
+struct ctucanfd_priv;
+#ifndef ctucanfd_priv
 struct ctucanfd_priv {
     void __iomem *mem_base;
     u32 (*read_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
     void (*write_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, u32 val);
 };
+#endif
 
-static inline void ctu_can_fd_write32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
-					u32 val)
-{
-	iowrite32(val, (char *)priv->mem_base + reg);
-}
-
-static inline void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
-					u16 val)
-{
-    iowrite16(val, (char *)priv->mem_base + reg);
-}
-
-static inline void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
-					u8 val)
-{
-    iowrite8(val, (char *)priv->mem_base + reg);
-}
-
-static inline void ctu_can_fd_write_txt_buf(struct ctucanfd_priv *priv,
-						enum ctu_can_fd_regs buf_base,
-						u32 offset, u32 val)
-{
-    iowrite32(val, (char *)priv->mem_base + buf_base + offset);
-}
-
-static inline u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
-{
-    return ioread32((const char *)priv->mem_base + reg);
-}
-
-static inline u16 ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
-{
-    return ioread16((const char *)priv->mem_base + reg);
-}
-
-static inline u8 ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
-{
-    return ioread8((const char *)priv->mem_base + reg);
-}
+void ctu_can_fd_write32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+			u32 val);
+void ctu_can_fd_write32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+			   u32 val);
+u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
+u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
 
 
 /*
@@ -200,9 +181,19 @@ u32 ctu_can_fd_get_version(struct ctucanfd_priv *priv);
  * Arguments:
  *	priv	Private info
  *	enable	Enable/disable the core.
- *
  */
 void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable);
+
+
+/*
+ * Resets the CTU CAN FD Core.
+ * NOTE: After resetting, you must wait until ctu_can_fd_check_access()
+ *       succeeds!
+ *
+ * Arguments:
+ *	priv	Private info
+ */
+void ctu_can_fd_reset(struct ctucanfd_priv *priv);
 
 
 /*
@@ -415,10 +406,8 @@ static inline void ctu_can_fd_set_def_err_limits(struct ctucanfd_priv *priv)
  * Arguments:
  *	priv	Private info
  *	ctr	Pointer to error counter structure to fill
- * Returns:
- *	True if read succesfully, false otherwise.
  */
-bool ctu_can_fd_read_err_ctrs(struct ctucanfd_priv *priv, struct can_berr_counter *ctr);
+void ctu_can_fd_read_err_ctrs(struct ctucanfd_priv *priv, struct can_berr_counter *ctr);
 
 
 /*
@@ -661,6 +650,9 @@ void ctu_can_fd_set_rx_tsop(struct ctucanfd_priv *priv, enum ctu_can_fd_rx_setti
 void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, struct canfd_frame *data, u64 *ts);
 
 
+void ctu_can_fd_read_rx_frame_ffw(struct ctucanfd_priv *priv, struct canfd_frame *cf, u64 *ts, union ctu_can_fd_frame_form_w ffw);
+
+
 /*
  * Returns status of TXT Buffer.
  * 
@@ -762,11 +754,12 @@ void ctu_can_fd_set_txt_priority(struct ctucanfd_priv *priv, const u8 *prio);
  *	data	Pointer to CAN Frame buffer.
  *	u64	Timestamp when the buffer should be sent.
  *	buf	Index of TXT Buffer where to insert the CAN Frame.
+ * 	isfdf	True if the frame is a FD frame.
  * Returns:
  *	True if the frame was inserted succesfully, False otherwise.
  */
 bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_frame *data, u64 ts,
-				u8 buf);
+				u8 buf, bool isfdf);
 
 /*
  * Read transceiver delay as measured by CTU CAN FD Core. Note that
