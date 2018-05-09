@@ -46,7 +46,6 @@
 #include <linux/can/led.h>
 #include <linux/pm_runtime.h>
 
-#define ctucanfd_priv ctucan_priv
 #include "ctu_can_fd_hw.h"
 #include "ctu_can_fd_regs.h"
 
@@ -63,11 +62,8 @@
  */
 
 struct ctucan_priv {
-	void __iomem *mem_base;
-	u32 (*read_reg)(struct ctucan_priv *priv, enum ctu_can_fd_regs reg);
-	void (*write_reg)(struct ctucan_priv *priv, enum ctu_can_fd_regs reg, u32 val);
-	//----
-	struct can_priv can;
+	struct can_priv can; // must be first member!
+    struct ctucanfd_priv p;
 
 	unsigned int txb_head;
 	unsigned int txb_tail;
@@ -85,9 +81,9 @@ static int ctucan_reset(struct net_device *ndev)
 	struct ctucan_priv *priv = netdev_priv(ndev);
     netdev_info(ndev, "ctucan_reset");
 
-	ctu_can_fd_reset(priv);
+	ctu_can_fd_reset(&priv->p);
 	for (i=0; i<100; ++i) {
-		if (ctu_can_fd_check_access(priv))
+		if (ctu_can_fd_check_access(&priv->p))
 			return 0;
 		udelay(100);
 	}
@@ -112,7 +108,7 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 	union ctu_can_fd_mode_command_status_settings mode;
     netdev_info(ndev, "ctucan_set_bittiming");
 
-    mode.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+    mode.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_MODE);
 
 	if (mode.s.ena) {
 		netdev_alert(ndev,
@@ -120,7 +116,7 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 		return -EPERM;
 	}
 
-	ctu_can_fd_set_nom_bittiming(priv, bt);
+	ctu_can_fd_set_nom_bittiming(&priv->p, bt);
 
 	return 0;
 }
@@ -140,7 +136,7 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 	union ctu_can_fd_mode_command_status_settings mode;
     netdev_info(ndev, "ctucan_set_data_bittiming");
 
-    mode.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+    mode.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_MODE);
 
 	if (mode.s.ena) {
 		netdev_alert(ndev,
@@ -148,7 +144,7 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 		return -EPERM;
 	}
 
-	ctu_can_fd_set_data_bittiming(priv, dbt);
+	ctu_can_fd_set_data_bittiming(&priv->p, dbt);
 
 	return 0;
 }
@@ -176,7 +172,7 @@ static int ctucan_chip_start(struct net_device *ndev)
 	priv->txb_prio = 0x01234567;
 	priv->txb_head = 0;
 	priv->txb_tail = 0;
-	priv->write_reg(priv, CTU_CAN_FD_TX_PRIORITY, priv->txb_prio);
+	priv->p.write_reg(&priv->p, CTU_CAN_FD_TX_PRIORITY, priv->txb_prio);
 
 
     err = ctucan_set_bittiming(ndev);
@@ -201,11 +197,11 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	mode.flags = priv->can.ctrlmode;
 	mode.mask = 0xFFFFFFFF;
-	ctu_can_fd_set_mode_reg(priv, &mode);
+	ctu_can_fd_set_mode_reg(&priv->p, &mode);
 
 	/* One shot mode supported indirectly via Retransmit limit */
 	if (priv->can.ctrlmode & CAN_CTRLMODE_ONE_SHOT)
-		ctu_can_fd_set_ret_limit(priv, true, 0);
+		ctu_can_fd_set_ret_limit(&priv->p, true, 0);
 
 	/* Bus error reporting -> Allow Error interrupt */
 	if (priv->can.ctrlmode & CAN_CTRLMODE_BERR_REPORTING) {
@@ -213,12 +209,12 @@ static int ctucan_chip_start(struct net_device *ndev)
 		int_ena.s.bei = 1;
 	}
 
-	ctu_can_fd_int_ena(priv, int_ena, int_msk);
+	ctu_can_fd_int_ena(&priv->p, int_ena, int_msk);
 
 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
 
 	/* Enable the controller */
-	ctu_can_fd_enable(priv, true);
+	ctu_can_fd_enable(&priv->p, true);
 
 	return 0;
 }
@@ -280,7 +276,7 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 		return NETDEV_TX_OK;
 
 	/* Check if the TX buffer is full */
-	if (unlikely(!CTU_CAN_FD_TXTNF(ctu_can_get_status(priv)))) {
+	if (unlikely(!CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))) {
 		netif_stop_queue(ndev);
 		netdev_err(ndev, "BUG!, no TXB free when queue awake!\n");
 		return NETDEV_TX_BUSY;
@@ -288,20 +284,20 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 
 	txb_id = priv->txb_head & priv->txb_mask;
 	priv->txb_head++;
-	ok = ctu_can_fd_insert_frame(priv, cf, 0, txb_id, can_is_canfd_skb(skb));
+	ok = ctu_can_fd_insert_frame(&priv->p, cf, 0, txb_id, can_is_canfd_skb(skb));
 	if (!ok) {
 		netdev_err(ndev, "BUG! cannot insert frame into TXTB!");
 		return NETDEV_TX_OK; // TODO: what else to return
 	}
 	can_put_echo_skb(skb, ndev, txb_id);
-	ctu_can_fd_txt_set_rdy(priv, txb_id);
+	ctu_can_fd_txt_set_rdy(&priv->p, txb_id);
 
 	if (!(cf->can_id & CAN_RTR_FLAG)) {
 		stats->tx_bytes += cf->len;
 	}
 
 	/* Check if all TX buffers are full */
-	if (!CTU_CAN_FD_TXTNF(ctu_can_get_status(priv)))
+	if (!CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))
 		netif_stop_queue(ndev);
 
 	return NETDEV_TX_OK;
@@ -334,8 +330,8 @@ static int ctucan_rx(struct net_device *ndev)
 		return 0;
 	}
 
-	ffw.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
-	ctu_can_fd_read_rx_frame_ffw(priv, cf, &ts, ffw);
+	ffw.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
+	ctu_can_fd_read_rx_frame_ffw(&priv->p, cf, &ts, ffw);
 
 	// TODO: better, this is an ugly hack ...
 	if (ffw.s.fr_type == FD_CAN)
@@ -369,18 +365,18 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	err_status = priv->read_reg(priv, XCAN_ESR_OFFSET);
-	priv->write_reg(priv, XCAN_ESR_OFFSET, err_status);
-	txerr = priv->read_reg(priv, XCAN_ECR_OFFSET) & XCAN_ECR_TEC_MASK;
-	rxerr = ((priv->read_reg(priv, XCAN_ECR_OFFSET) &
+	err_status = priv->p.read_reg(&priv->p, XCAN_ESR_OFFSET);
+	priv->p.write_reg(&priv->p, XCAN_ESR_OFFSET, err_status);
+	txerr = priv->p.read_reg(&priv->p, XCAN_ECR_OFFSET) & XCAN_ECR_TEC_MASK;
+	rxerr = ((priv->p.read_reg(&priv->p, XCAN_ECR_OFFSET) &
 			XCAN_ECR_REC_MASK) >> XCAN_ESR_REC_SHIFT);
-	status = priv->read_reg(priv, XCAN_SR_OFFSET);
+	status = priv->p.read_reg(&priv->p, XCAN_SR_OFFSET);
 
 	if (isr & XCAN_IXR_BSOFF_MASK) {
 		priv->can.state = CAN_STATE_BUS_OFF;
 		priv->can.can_stats.bus_off++;
 		/* Leave device in Config Mode in bus-off state */
-		priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
+		priv->p.write_reg(&priv->p, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
 		can_bus_off(ndev);
 		if (skb)
 			cf->can_id |= CAN_ERR_BUSOFF;
@@ -421,7 +417,7 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
 	if (isr & XCAN_IXR_RXOFLW_MASK) {
 		stats->rx_over_errors++;
 		stats->rx_errors++;
-		priv->write_reg(priv, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
+		priv->p.write_reg(&priv->p, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
 		if (skb) {
 			cf->can_id |= CAN_ERR_CRTL;
 			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
@@ -487,7 +483,7 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
 	}
 
 	netdev_dbg(ndev, "%s: error status register:0x%x\n",
-			__func__, priv->read_reg(priv, XCAN_ESR_OFFSET));
+			__func__, priv->p.read_reg(&priv->p, XCAN_ESR_OFFSET));
 }
 #endif
 
@@ -513,12 +509,12 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	iec.s.rbnei = 1;
 
 	/* Get the interrupt status */
-	isr = ctu_can_fd_int_sts(priv);
+	isr = ctu_can_fd_int_sts(&priv->p);
 	while (isr.s.rbnei && work_done < quota) {
-		ctu_can_fd_int_clr(priv, iec);
+		ctu_can_fd_int_clr(&priv->p, iec);
 		ctucan_rx(ndev);
 		work_done++;
-		isr = ctu_can_fd_int_sts(priv);
+		isr = ctu_can_fd_int_sts(&priv->p);
 	}
 
 	if (work_done)
@@ -526,7 +522,7 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 
 	if (work_done < quota) {
 		napi_complete(napi);
-		priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, iec.u32);
+		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
 	}
 
 	return work_done;
@@ -541,7 +537,7 @@ static void ctucan_rotate_txb_prio(struct net_device *ndev)
 
 	prio = (prio << 4) | (prio >> (nbuffers*4));
 	priv->txb_prio = prio;
-	priv->write_reg(priv, CTU_CAN_FD_TX_PRIORITY, prio);
+	priv->p.write_reg(&priv->p, CTU_CAN_FD_TX_PRIORITY, prio);
 }
 
 /**
@@ -566,7 +562,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 
 	while ((priv->txb_head - priv->txb_tail > 0)) {
 		u32 txb_idx = priv->txb_tail & priv->txb_mask;
-		u32 status = ctu_can_fd_get_tx_status(priv, txb_idx);
+		u32 status = ctu_can_fd_get_tx_status(&priv->p, txb_idx);
 
 		switch (status) {
 		case TXT_TOK:
@@ -591,7 +587,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 
 		/* Adjust priorities *before* marking the buffer as empty. */
 		ctucan_rotate_txb_prio(ndev);
-		ctu_can_fd_txt_set_empty(priv, txb_idx);
+		ctu_can_fd_txt_set_empty(&priv->p, txb_idx);
 	}
 	can_led_event(ndev, CAN_LED_EVENT_TX);
 	netif_wake_queue(ndev);
@@ -616,7 +612,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
     netdev_info(ndev, "ctucan_interrupt");
 
 	/* Get the interrupt status */
-	isr = ctu_can_fd_int_sts(priv);
+	isr = ctu_can_fd_int_sts(&priv->p);
 
 	if (!isr.u32)
 		return IRQ_NONE;
@@ -626,7 +622,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		netdev_info(ndev, "RXBNEI");
         icr.u32 = 0;
 		icr.s.rbnei = 1;
-		priv->write_reg(priv, CTU_CAN_FD_INT_ENA_CLR, icr.u32);
+		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_CLR, icr.u32);
 		napi_schedule(&priv->napi);
 	}
 	#define CTUCANFD_INT_RI      BIT(0)
@@ -648,14 +644,14 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
         netdev_info(ndev, "TXBHCI");
         icr.u32 = 0;
 		icr.s.txbhci = 1;
-		ctu_can_fd_int_clr(priv, icr);
+		ctu_can_fd_int_clr(&priv->p, icr);
 		ctucan_tx_interrupt(ndev);
 	}
 
 	/* Error interrupts */
 	if (isr.s.ei || isr.s.doi || isr.s.epi || isr.s.ali) {
 		icr.u32 = isr.u32 & CTUCANFD_INT_ERROR;
-		ctu_can_fd_int_clr(priv, icr);
+		ctu_can_fd_int_clr(&priv->p, icr);
 		netdev_warn(ndev, "err interrupt handler not implemented!");
 		//ctucan_err_interrupt(ndev, isr);
 	}
@@ -682,8 +678,8 @@ static void ctucan_chip_stop(struct net_device *ndev)
 	mask.u32 = 0xFFFFFFFF;
 
 	/* Disable interrupts and disable can */
-	ctu_can_fd_int_ena(priv, ena, mask);
-	ctu_can_fd_enable(priv, false);
+	ctu_can_fd_int_ena(&priv->p, ena, mask);
+	ctu_can_fd_enable(&priv->p, false);
 	priv->can.state = CAN_STATE_STOPPED;
 }
 
@@ -794,7 +790,7 @@ static int ctucan_get_berr_counter(const struct net_device *ndev,
 		return ret;
 	}
 
-	ctu_can_fd_read_err_ctrs(priv, bec);
+	ctu_can_fd_read_err_ctrs(&priv->p, bec);
 
 	pm_runtime_put(priv->dev);
 
@@ -895,7 +891,7 @@ static int ctucan_probe(struct platform_device *pdev)
 	priv->can.do_get_berr_counter = ctucan_get_berr_counter;
 	//priv->can.do_get_state = ctucan_get_state;
 	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK /*| CAN_CTRLMODE_LISTENONLY | CAN_CTRLMODE_3_SAMPLES | CAN_CTRLMODE_FD | CAN_CTRLMODE_PRESUME_ACK | CAN_CTRLMODE_FD_NON_ISO | CAN_CTRLMODE_ONE_SHOT*/;
-	priv->mem_base = addr;
+	priv->p.mem_base = addr;
 
 	/* Get IRQ for the device */
 	ndev->irq = platform_get_irq(pdev, 0);
@@ -913,8 +909,8 @@ static int ctucan_probe(struct platform_device *pdev)
 		goto err_free;
 	}
 
-	priv->write_reg = ctu_can_fd_write32;
-	priv->read_reg = ctu_can_fd_read32;
+	priv->p.write_reg = ctu_can_fd_write32;
+	priv->p.read_reg = ctu_can_fd_read32;
 
 	pm_runtime_enable(&pdev->dev);
 	ret = pm_runtime_get_sync(&pdev->dev);
@@ -924,9 +920,9 @@ static int ctucan_probe(struct platform_device *pdev)
 		goto err_pmdisable;
 	}
 
-	if ((priv->read_reg(priv, CTU_CAN_FD_DEVICE_ID) & 0xFFFF) != CTU_CAN_FD_ID) {
-		priv->write_reg = ctu_can_fd_write32_be;
-		priv->read_reg = ctu_can_fd_read32_be;
+	if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) & 0xFFFF) != CTU_CAN_FD_ID) {
+		priv->p.write_reg = ctu_can_fd_write32_be;
+		priv->p.read_reg = ctu_can_fd_read32_be;
 	}
 
 	ret = ctucan_reset(ndev);
@@ -948,7 +944,7 @@ static int ctucan_probe(struct platform_device *pdev)
 	pm_runtime_put(&pdev->dev);
 
 	netdev_dbg(ndev, "mem_base=0x%p irq=%d clock=%d, txb mask:%d\n",
-			priv->mem_base, ndev->irq, priv->can.clock.freq,
+			priv->p.mem_base, ndev->irq, priv->can.clock.freq,
 			priv->txb_mask);
 
 	return 0;
