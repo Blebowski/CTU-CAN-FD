@@ -573,15 +573,17 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 		switch (status) {
 		case TXT_TOK:
 			netdev_info(ndev, "TXT_OK");
-			can_get_echo_skb(ndev, priv->txb_tail & priv->txb_mask);
+			can_get_echo_skb(ndev, txb_idx);
 			stats->tx_packets++;
 		break;
 		case TXT_ERR:
 			netdev_warn(ndev, "TXB in Error state");
+			can_free_echo_skb(ndev, txb_idx);
 			// TODO: send some error frame - but what should it contain?
 		break;
 		case TXT_ABT:
 			netdev_warn(ndev, "TXB in Aborted state");
+			can_free_echo_skb(ndev, txb_idx);
 			// TODO: send some error frame - but what should it contain?
 		break;
 		default:
