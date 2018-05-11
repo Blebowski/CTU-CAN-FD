@@ -325,18 +325,23 @@ static int ctucan_rx(struct net_device *ndev)
 	netdev_info(ndev, "ctucan_rx");
 
 
-	skb = alloc_canfd_skb(ndev, &cf);
+	ffw.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
+	if (ffw.s.fr_type == FD_CAN)
+		skb = alloc_canfd_skb(ndev, &cf);
+	else
+		skb = alloc_can_skb(ndev, (struct can_frame **) &cf);
+
 	if (unlikely(!skb)) {
+		int i;
+		/* Remove the rest of the frame from the controller */
+		for (i = 0; i < ffw.s.rwcnt; i++)
+			priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
+
 		stats->rx_dropped++;
 		return 0;
 	}
 
-	ffw.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
 	ctu_can_fd_read_rx_frame_ffw(&priv->p, cf, &ts, ffw);
-
-	// TODO: better, this is an ugly hack ...
-	if (ffw.s.fr_type == FD_CAN)
-		skb->tail -= CANFD_MTU - CAN_MTU;
 
 	stats->rx_bytes += cf->len;
 	stats->rx_packets++;
