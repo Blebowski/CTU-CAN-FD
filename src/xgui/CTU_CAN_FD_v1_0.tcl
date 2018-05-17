@@ -3,19 +3,17 @@ proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "Component_Name"
   #Adding Page
   set Page_0 [ipgui::add_page $IPINST -name "Page 0"]
-  ipgui::add_param $IPINST -name "C_S00_AXI_BASEADDR" -parent ${Page_0}
-  ipgui::add_param $IPINST -name "C_S00_AXI_HIGHADDR" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "logger_size" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "rx_buffer_size" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "sup_be" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "sup_filtA" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "sup_filtB" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "sup_filtC" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "sup_range" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "tx_time_sup" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "use_logger" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "use_sync" -parent ${Page_0}
 
-  ipgui::add_param $IPINST -name "use_logger"
-  ipgui::add_param $IPINST -name "rx_buffer_size"
-  ipgui::add_param $IPINST -name "use_sync"
-  ipgui::add_param $IPINST -name "sup_filtA"
-  ipgui::add_param $IPINST -name "sup_filtB"
-  ipgui::add_param $IPINST -name "sup_filtC"
-  ipgui::add_param $IPINST -name "sup_range"
-  ipgui::add_param $IPINST -name "tx_time_sup"
-  ipgui::add_param $IPINST -name "sup_be"
-  ipgui::add_param $IPINST -name "logger_size"
 
 }
 
@@ -106,42 +104,6 @@ proc update_PARAM_VALUE.use_sync { PARAM_VALUE.use_sync } {
 
 proc validate_PARAM_VALUE.use_sync { PARAM_VALUE.use_sync } {
 	# Procedure called to validate use_sync
-	return true
-}
-
-proc update_PARAM_VALUE.C_S00_AXI_BASEADDR { PARAM_VALUE.C_S00_AXI_BASEADDR } {
-	# Procedure called to update C_S00_AXI_BASEADDR when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.C_S00_AXI_BASEADDR { PARAM_VALUE.C_S00_AXI_BASEADDR } {
-	# Procedure called to validate C_S00_AXI_BASEADDR
-	return true
-}
-
-proc update_PARAM_VALUE.C_S00_AXI_HIGHADDR { PARAM_VALUE.C_S00_AXI_HIGHADDR } {
-	# Procedure called to update C_S00_AXI_HIGHADDR when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.C_S00_AXI_HIGHADDR { PARAM_VALUE.C_S00_AXI_HIGHADDR } {
-	# Procedure called to validate C_S00_AXI_HIGHADDR
-	return true
-}
-
-proc update_PARAM_VALUE.C_S_AXI_INTR_BASEADDR { PARAM_VALUE.C_S_AXI_INTR_BASEADDR } {
-	# Procedure called to update C_S_AXI_INTR_BASEADDR when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.C_S_AXI_INTR_BASEADDR { PARAM_VALUE.C_S_AXI_INTR_BASEADDR } {
-	# Procedure called to validate C_S_AXI_INTR_BASEADDR
-	return true
-}
-
-proc update_PARAM_VALUE.C_S_AXI_INTR_HIGHADDR { PARAM_VALUE.C_S_AXI_INTR_HIGHADDR } {
-	# Procedure called to update C_S_AXI_INTR_HIGHADDR when any of the dependent parameters in the arguments change
-}
-
-proc validate_PARAM_VALUE.C_S_AXI_INTR_HIGHADDR { PARAM_VALUE.C_S_AXI_INTR_HIGHADDR } {
-	# Procedure called to validate C_S_AXI_INTR_HIGHADDR
 	return true
 }
 
