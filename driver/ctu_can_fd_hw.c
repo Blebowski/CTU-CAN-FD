@@ -597,8 +597,11 @@ void ctu_can_fd_read_rx_frame_ffw(struct ctucanfd_priv *priv, struct canfd_frame
 	*ts |= ((u64)priv->read_reg(priv, CTU_CAN_FD_RX_DATA) << 32);
 	
 	// Data
-	for (i = 0; i < cf->len; i += 4)
-		*(u32 *)(cf->data + i) = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
+	for (i = 0; i < cf->len; i += 4) {
+		u32 data = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
+		data = be32_to_cpu(data); // TODO: remove when the core is fixed
+		*(u32 *)(cf->data + i) = data;
+	}
 }
 
 enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(struct ctucanfd_priv *priv, u8 buf)
@@ -742,9 +745,12 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_fram
 	
 	if (!(cf->can_id & CAN_RTR_FLAG)) {
 		// be32_to_cpup?
-		for (i = 0; i < cf->len; i += 4)
+		for (i = 0; i < cf->len; i += 4) {
+			u32 data = *(u32 *)(cf->data + i);
+			data = cpu_to_be32(data); // TODO: remove when the core is fixed
 			ctu_can_fd_write_txt_buf(priv, buf_base, CTU_CAN_FD_DATA_1_4_W + i,
-								*(u32 *)(cf->data + i));
+								data);
+		}
 	}
 
 	return true;

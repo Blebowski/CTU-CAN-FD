@@ -271,10 +271,10 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	struct canfd_frame *cf = (struct canfd_frame *)skb->data;
 	u32 txb_id;
 	bool ok;
-	netdev_info(ndev, "ctucan_start_xmit");
 
 	if (can_dropped_invalid_skb(ndev, skb))
 		return NETDEV_TX_OK;
+
 
 	/* Check if the TX buffer is full */
 	if (unlikely(!CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))) {
@@ -284,6 +284,7 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	}
 
 	txb_id = priv->txb_head & priv->txb_mask;
+	netdev_info(ndev, "ctucan_start_xmit: using TXB#%u", txb_id);
 	priv->txb_head++;
 	ok = ctu_can_fd_insert_frame(&priv->p, cf, 0, txb_id, can_is_canfd_skb(skb));
 	if (!ok) {
@@ -322,7 +323,7 @@ static int ctucan_rx(struct net_device *ndev)
 	struct sk_buff *skb;
 	u64 ts;
 	union ctu_can_fd_frame_form_w ffw;
-	netdev_info(ndev, "ctucan_rx");
+	//netdev_info(ndev, "ctucan_rx");
 
 
 	ffw.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
@@ -509,7 +510,7 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	int work_done = 0;
 	union ctu_can_fd_int_stat isr, iec;
-	netdev_info(ndev, "ctucan_rx_poll");
+	//netdev_info(ndev, "ctucan_rx_poll");
 
 	iec.u32 = 0;
 	iec.s.rbnei = 1;
@@ -536,12 +537,12 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 
 static void ctucan_rotate_txb_prio(struct net_device *ndev)
 {
-	netdev_info(ndev, "ctucan_rotate_txb_prio");
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	u32 prio = priv->txb_prio;
-	u32 nbuffers = priv->txb_mask+1;
+	u32 nbuffersm1 = priv->txb_mask; /* nbuffers - 1 */
 
-	prio = (prio << 4) | (prio >> (nbuffers*4));
+	prio = (prio << 4) | ((prio >> (nbuffersm1*4)) & 0xF);
+	netdev_info(ndev, "ctucan_rotate_txb_prio: from 0x%08x to 0x%08x", priv->txb_prio, prio);
 	priv->txb_prio = prio;
 	priv->p.write_reg(&priv->p, CTU_CAN_FD_TX_PRIORITY, prio);
 }
@@ -570,6 +571,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 		u32 txb_idx = priv->txb_tail & priv->txb_mask;
 		u32 status = ctu_can_fd_get_tx_status(&priv->p, txb_idx);
 
+		netdev_info(ndev, "TXI: TXB#%u: status 0x%x", txb_idx, status);
 		switch (status) {
 		case TXT_TOK:
 			netdev_info(ndev, "TXT_OK");
@@ -882,7 +884,7 @@ static int ctucan_probe(struct platform_device *pdev)
 	if (ret < 0)
 		goto err;
 	*/
-	ntxbufs = 8;
+	ntxbufs = 4;
 
 	/* Create a CAN device instance */
 	ndev = alloc_candev(sizeof(struct ctucan_priv), ntxbufs);

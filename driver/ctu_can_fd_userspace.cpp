@@ -59,12 +59,13 @@ unsigned ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) 
 unsigned ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
     return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~1)) >> (8 * (reg & 1));
 }
+/*
 void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint8_t val) {
     iowrite8(val, (uint8_t*)priv->mem_base + reg);
 }
 void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint16_t val) {
     iowrite16(val, (uint8_t*)priv->mem_base + reg);
-}
+}*/
 
 
 int main(int argc, char *argv[])
@@ -135,7 +136,7 @@ int main(int argc, char *argv[])
     priv->write_reg = ctu_can_fd_write32;
 
     union ctu_can_fd_device_id_version reg;
-    reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_DEVICE_ID);
+    reg.u32 = priv->read_reg(priv, CTU_CAN_FD_DEVICE_ID);
 
     printf("DevID: 0x%08x, should be 0x%08x\n", reg.s.device_id, CTU_CAN_FD_ID);
 
@@ -150,8 +151,8 @@ int main(int argc, char *argv[])
 
 
 
-    printf("NOT RESETTING!\n");
-    //ctu_can_fd_reset(priv);
+    //printf("NOT RESETTING!\n");
+    ctu_can_fd_reset(priv);
 
     {
         union ctu_can_fd_mode_command_status_settings mode;
@@ -166,7 +167,7 @@ int main(int argc, char *argv[])
     nd.can.clock.freq = 100000000;
 
     struct can_bittiming nom_timing = {
-        .bitrate = 500000,
+        .bitrate = 1000000,
     };
     res = can_get_bittiming(&nd, &nom_timing,
                       &ctu_can_fd_bit_timing_max,
@@ -200,9 +201,10 @@ int main(int argc, char *argv[])
 
     if (do_transmit) {
         struct canfd_frame txf;
-        txf.can_id = 0x123;
+        txf.can_id = 0x1FF;
         txf.flags = 0;
-        u8 d[] = {0xde, 0xad, 0xbe, 0xef};
+        //u8 d[] = {0xde, 0xad, 0xbe, 0xef};
+        u8 d[] = {0xDE, 0xAD, 0xBE, 0xEF};
         memcpy(txf.data, d, sizeof(d));
         txf.len = sizeof(d);
 
@@ -210,6 +212,7 @@ int main(int argc, char *argv[])
         if (!res)
             printf("TX failed\n");
         ctu_can_fd_txt_set_rdy(priv, CTU_CAN_FD_TXT_BUFFER_1);
+        return 0;
     }
 
     while (1) {
@@ -229,16 +232,22 @@ int main(int argc, char *argv[])
 
 
         printf("\n");
-
+        /*
+        while (rxsz--) {
+            u32 data = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
+            printf("  0x%08x\n", data);
+        }
+        */
         if (nrxf || rxsz) {
             struct canfd_frame cf;
             u64 ts;
             ctu_can_fd_read_rx_frame(priv, &cf, &ts);
-            printf("#%x [%u]", cf.can_id, cf.len);
+            printf("%llu: #%x [%u]", ts, cf.can_id, cf.len);
             for (int i=0; i<cf.len; ++i)
                 printf(" %02x", cf.data[i]);
             printf("\n");
         }
+
         usleep(1000000);
     }
 

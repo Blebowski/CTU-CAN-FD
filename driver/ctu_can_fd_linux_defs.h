@@ -40,7 +40,7 @@
 #include <stddef.h>
 //#include <linux/types.h>
 #include <linux/socket.h>
-
+#include <arpa/inet.h>
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #define __iomem volatile
@@ -112,12 +112,13 @@ static inline u16 ioread16(const void *addr) {return *(const volatile u16*)addr;
 __attribute__((noinline))
 static inline u8 ioread8(const void *addr) {return *(const volatile u8*)addr;}
 
+static inline u32 cpu_to_be32(u32 v) {return htonl(v);}
+static inline u32 be32_to_cpu(u32 v) {return ntohl(v);}
 
-// TODO: perform actual conversions
 __attribute__((noinline))
-static inline void iowrite32be(u32 value, void *addr) {*(volatile u32*)addr = value;}
+static inline void iowrite32be(u32 value, void *addr) {*(volatile u32*)addr = cpu_to_be32(value);}
 __attribute__((noinline))
-static inline u32 ioread32be(const void *addr) {return *(const volatile u32*)addr;}
+static inline u32 ioread32be(const void *addr) {return be32_to_cpu(*(const volatile u32*)addr);}
 
 /* CAN DLC to real data length conversion helpers */
 u8 can_dlc2len(u8 can_dlc);
