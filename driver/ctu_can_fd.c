@@ -188,11 +188,11 @@ static int ctucan_chip_start(struct net_device *ndev)
 	int_ena.u32 = 0;
 	int_ena.s.rbnei = 1;
 	int_ena.s.txbhci = 1;
-	/*
+
 	int_ena.s.ei = 1;
 	int_ena.s.epi = 1;
 	int_ena.s.doi = 1;
-	 */
+
 	int_msk.u32 = 0xFFFFFFFF;
 
 	mode.flags = priv->can.ctrlmode;
@@ -352,7 +352,7 @@ static int ctucan_rx(struct net_device *ndev)
 }
 
 /**
- * xcan_err_interrupt - error frame Isr
+ * ctucan_err_interrupt - error frame Isr
  * @ndev:	net_device pointer
  * @isr:	interrupt status register value
  *
@@ -360,59 +360,61 @@ static int ctucan_rx(struct net_device *ndev)
  * check the the type of error and forward the error
  * frame to upper layers.
  */
-#if 0
-static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
+static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_stat isr)
 {
-	struct xcan_priv *priv = netdev_priv(ndev);
+	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct net_device_stats *stats = &ndev->stats;
 	struct can_frame *cf;
 	struct sk_buff *skb;
-	u32 err_status, status, txerr = 0, rxerr = 0;
-	netdev_info(ndev, "xcan_err_interrupt");
+	struct can_berr_counter berr;
+	netdev_info(ndev, "ctucan_err_interrupt");
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	err_status = priv->p.read_reg(&priv->p, XCAN_ESR_OFFSET);
-	priv->p.write_reg(&priv->p, XCAN_ESR_OFFSET, err_status);
-	txerr = priv->p.read_reg(&priv->p, XCAN_ECR_OFFSET) & XCAN_ECR_TEC_MASK;
-	rxerr = ((priv->p.read_reg(&priv->p, XCAN_ECR_OFFSET) &
-			XCAN_ECR_REC_MASK) >> XCAN_ESR_REC_SHIFT);
-	status = priv->p.read_reg(&priv->p, XCAN_SR_OFFSET);
-
-	if (isr & XCAN_IXR_BSOFF_MASK) {
-		priv->can.state = CAN_STATE_BUS_OFF;
-		priv->can.can_stats.bus_off++;
-		/* Leave device in Config Mode in bus-off state */
-		priv->p.write_reg(&priv->p, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
-		can_bus_off(ndev);
-		if (skb)
-			cf->can_id |= CAN_ERR_BUSOFF;
-	} else if ((status & XCAN_SR_ESTAT_MASK) == XCAN_SR_ESTAT_MASK) {
-		priv->can.state = CAN_STATE_ERROR_PASSIVE;
-		priv->can.can_stats.error_passive++;
-		if (skb) {
-			cf->can_id |= CAN_ERR_CRTL;
-			cf->data[1] = (rxerr > 127) ?
-					CAN_ERR_CRTL_RX_PASSIVE :
-					CAN_ERR_CRTL_TX_PASSIVE;
-			cf->data[6] = txerr;
-			cf->data[7] = rxerr;
+	ctu_can_fd_read_err_ctrs(&priv->p, &berr);
+	/*
+	 * EWI: error warning
+	 * DOI: RX overrun
+	 * EPI: error passive or bus off
+	 * ALI: arbitration lost (just informative)
+	 * BEI: bus error interrupt
+	 */
+	if (isr.s.epi) {
+		/* error passive or bus off */
+		enum can_state state = ctu_can_fd_read_error_state(&priv->p);
+		priv->can.state = state;
+		if (state == CAN_STATE_BUS_OFF) {
+			priv->can.can_stats.bus_off++;
+			can_bus_off(ndev);
+			if (skb)
+				cf->can_id |= CAN_ERR_BUSOFF;
+		} else if (state == CAN_STATE_ERROR_PASSIVE) {
+			priv->can.can_stats.error_passive++;
+			if (skb) {
+				cf->can_id |= CAN_ERR_CRTL;
+				cf->data[1] = (berr.rxerr > 127) ?
+						CAN_ERR_CRTL_RX_PASSIVE :
+						CAN_ERR_CRTL_TX_PASSIVE;
+				cf->data[6] = berr.txerr;
+				cf->data[7] = berr.rxerr;
+			}
 		}
-	} else if (status & XCAN_SR_ERRWRN_MASK) {
+	} else if (isr.s.ei) {
+		/* error warning */
 		priv->can.state = CAN_STATE_ERROR_WARNING;
 		priv->can.can_stats.error_warning++;
 		if (skb) {
 			cf->can_id |= CAN_ERR_CRTL;
-			cf->data[1] |= (txerr > rxerr) ?
+			cf->data[1] |= (berr.txerr > berr.rxerr) ?
 					CAN_ERR_CRTL_TX_WARNING :
 					CAN_ERR_CRTL_RX_WARNING;
-			cf->data[6] = txerr;
-			cf->data[7] = rxerr;
+			cf->data[6] = berr.txerr;
+			cf->data[7] = berr.rxerr;
 		}
 	}
 
-	/* Check for Arbitration lost interrupt */
-	if (isr & XCAN_IXR_ARBLST_MASK) {
+	/* Check for Arbitration Lost interrupt */
+	if (isr.s.ali) {
 		priv->can.can_stats.arbitration_lost++;
 		if (skb) {
 			cf->can_id |= CAN_ERR_LOSTARB;
@@ -421,66 +423,24 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
 	}
 
 	/* Check for RX FIFO Overflow interrupt */
-	if (isr & XCAN_IXR_RXOFLW_MASK) {
+	if (isr.s.doi) {
 		stats->rx_over_errors++;
 		stats->rx_errors++;
-		priv->p.write_reg(&priv->p, XCAN_SRR_OFFSET, XCAN_SRR_RESET_MASK);
 		if (skb) {
 			cf->can_id |= CAN_ERR_CRTL;
 			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
 		}
 	}
 
-	/* Check for error interrupt */
-	if (isr & XCAN_IXR_ERROR_MASK) {
-		if (skb)
+	/* Check for Bus Error interrupt */
+	if (isr.s.bei) {
+		priv->can.can_stats.bus_error++;
+		stats->tx_errors++; // TODO: really?
+		if (skb) {
 			cf->can_id |= CAN_ERR_PROT | CAN_ERR_BUSERROR;
-
-		/* Check for Ack error interrupt */
-		if (err_status & XCAN_ESR_ACKER_MASK) {
-			stats->tx_errors++;
-			if (skb) {
-				cf->can_id |= CAN_ERR_ACK;
-				cf->data[3] = CAN_ERR_PROT_LOC_ACK;
-			}
+			cf->data[2] = CAN_ERR_PROT_UNSPEC;
+			cf->data[3] = CAN_ERR_PROT_LOC_UNSPEC;
 		}
-
-		/* Check for Bit error interrupt */
-		if (err_status & XCAN_ESR_BERR_MASK) {
-			stats->tx_errors++;
-			if (skb) {
-				cf->can_id |= CAN_ERR_PROT;
-				cf->data[2] = CAN_ERR_PROT_BIT;
-			}
-		}
-
-		/* Check for Stuff error interrupt */
-		if (err_status & XCAN_ESR_STER_MASK) {
-			stats->rx_errors++;
-			if (skb) {
-				cf->can_id |= CAN_ERR_PROT;
-				cf->data[2] = CAN_ERR_PROT_STUFF;
-			}
-		}
-
-		/* Check for Form error interrupt */
-		if (err_status & XCAN_ESR_FMER_MASK) {
-			stats->rx_errors++;
-			if (skb) {
-				cf->can_id |= CAN_ERR_PROT;
-				cf->data[2] = CAN_ERR_PROT_FORM;
-			}
-		}
-
-		/* Check for CRC error interrupt */
-		if (err_status & XCAN_ESR_CRCER_MASK) {
-			stats->rx_errors++;
-			if (skb) {
-				cf->can_id |= CAN_ERR_PROT;
-				cf->data[3] = CAN_ERR_PROT_LOC_CRC_SEQ;
-			}
-		}
-			priv->can.can_stats.bus_error++;
 	}
 
 	if (skb) {
@@ -488,11 +448,7 @@ static void xcan_err_interrupt(struct net_device *ndev, u32 isr)
 		stats->rx_bytes += cf->can_dlc;
 		netif_rx(skb);
 	}
-
-	netdev_dbg(ndev, "%s: error status register:0x%x\n",
-			__func__, priv->p.read_reg(&priv->p, XCAN_ESR_OFFSET));
 }
-#endif
 
 /**
  * ctucan_rx_poll - Poll routine for rx packets (NAPI)
@@ -660,10 +616,10 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 
 	/* Error interrupts */
 	if (isr.s.ei || isr.s.doi || isr.s.epi || isr.s.ali) {
+		netdev_info(ndev, "some ERR interrupt");
 		icr.u32 = isr.u32 & CTUCANFD_INT_ERROR;
 		ctu_can_fd_int_clr(&priv->p, icr);
-		netdev_warn(ndev, "err interrupt handler not implemented!");
-		//ctucan_err_interrupt(ndev, isr);
+		ctucan_err_interrupt(ndev, isr);
 	}
 
 	/* Ignore RI, TI, LFI, RFI, BSI */
