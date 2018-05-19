@@ -196,9 +196,11 @@
 --     6.4.2018   Added direct addressing of identifier from Protocol control.
 --                In SOF TXT buffer pointer is set to identifier word and
 --                Identifier is stored in the first cycle of Arbitration field.
---   19.5.2018    Added "store_data", "store_metadata", "rec_abort" signals
---                as a storing protocol between CAN Core and RX Buffer for
---                continous storing of CAN frame during reception.
+--   19.5.2018    1. Added "store_data", "store_metadata", "rec_abort" signals
+--                   as a storing protocol between CAN Core and RX Buffer for
+--                   continous storing of CAN frame during reception.
+--                2. Added endian swap for transceived and received data to 
+--                   have Data byte 0 at address 0.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -207,6 +209,8 @@ USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.CAN_FD_frame_format.all;
 use work.CAN_FD_register_map.all;
+
+use work.endian_swap.all;
 
 entity protocolControl is
   port(
@@ -618,6 +622,9 @@ entity protocolControl is
   
   --Pointer directly to TXT buffer to get the data
   signal txt_buf_ptr_r            :     natural range 0 to 19;
+
+  -- Data word to transmit after endian swapping.
+  signal tx_data_word             :     std_logic_vector(31 downto 0);
   
   -----------------------
   --CRC field registers--
@@ -767,6 +774,9 @@ begin
   txt_buf_ptr           <=  txt_buf_ptr_r;
   
   sof_pulse             <=  sof_pulse_r;
+
+  -- TX Data word endian swap
+  tx_data_word          <= endian_swap_32(tran_data);
   
   -----------------------
   --Auxiliarly vectors
@@ -1795,10 +1805,9 @@ begin
             if(OP_State=transciever)then
               if(tran_trig='1')then
               
-                --data_tx_r <=  tran_data(data_pointer);
-                data_tx_r <= tran_data(data_pointer mod 32);
+                data_tx_r <= tx_data_word(data_pointer mod 32);
                 
-                --Move to the next word
+                -- Move to the next word
                 if ((data_pointer mod 32) = 0) then
                   if (txt_buf_ptr_r < 19) then
                     txt_buf_ptr_r <= txt_buf_ptr_r + 1;
@@ -1822,22 +1831,22 @@ begin
                 rec_word_bind <= (rec_word_bind + 1) mod 4;
                 case rec_word_bind is
                   when  0 =>
-                    store_data_word_r         <= rec_data_sr(6 downto 0) &
-                                                 data_rx &
-                                                 "000000000000000000000000";
+                    -- First byte of word, whole word is written to avoid
+                    -- bytes from old frames!
+                    store_data_word_r         <= "000000000000000000000000" &
+                                                 rec_data_sr(6 downto 0) &
+                                                 data_rx;
                   when  1 =>
-                    store_data_word_r(23 downto 0) <= 
+                    store_data_word_r(15 downto 8) <= 
                                                 rec_data_sr(6 downto 0) &
-                                                data_rx &
-                                                "0000000000000000";
+                                                data_rx;
                   when  2 =>
-                    store_data_word_r(15 downto 0) <= 
+                    store_data_word_r(23 downto 16) <= 
                                                 rec_data_sr(6 downto 0) &
-                                                data_rx &
-                                                "00000000";
+                                                data_rx;
                   when  3 =>
-                    store_data_word_r(7 downto 0) <= 
-                                              rec_data_sr(6 downto 0)&
+                    store_data_word_r(31 downto 24) <= 
+                                              rec_data_sr(6 downto 0) &
                                               data_rx;
                   when others =>
                       report "Unknown state" severity error;
