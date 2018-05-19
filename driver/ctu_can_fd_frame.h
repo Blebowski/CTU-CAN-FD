@@ -143,15 +143,15 @@ union ctu_can_fd_data_1_4_w {
 	struct ctu_can_fd_data_1_4_w_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* DATA_1_4_W */
-		uint32_t data_4                  : 8;
-		uint32_t data_3                  : 8;
-		uint32_t data_2                  : 8;
 		uint32_t data_1                  : 8;
+		uint32_t data_2                  : 8;
+		uint32_t data_3                  : 8;
+		uint32_t data_4                  : 8;
 #else
-		uint32_t data_1                  : 8;
-		uint32_t data_2                  : 8;
-		uint32_t data_3                  : 8;
 		uint32_t data_4                  : 8;
+		uint32_t data_3                  : 8;
+		uint32_t data_2                  : 8;
+		uint32_t data_1                  : 8;
 #endif
 	} s;
 };
@@ -161,15 +161,15 @@ union ctu_can_fd_data_5_8_w {
 	struct ctu_can_fd_data_5_8_w_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* DATA_5_8_W */
-		uint32_t data_8                  : 8;
-		uint32_t data_7                  : 8;
-		uint32_t data_6                  : 8;
 		uint32_t data_5                  : 8;
+		uint32_t data_6                  : 8;
+		uint32_t data_7                  : 8;
+		uint32_t data_8                  : 8;
 #else
-		uint32_t data_5                  : 8;
-		uint32_t data_6                  : 8;
-		uint32_t data_7                  : 8;
 		uint32_t data_8                  : 8;
+		uint32_t data_7                  : 8;
+		uint32_t data_6                  : 8;
+		uint32_t data_5                  : 8;
 #endif
 	} s;
 };
@@ -179,15 +179,15 @@ union ctu_can_fd_data_61_64_w {
 	struct ctu_can_fd_data_61_64_w_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* DATA_61_64_W */
-		uint32_t data_64                 : 8;
-		uint32_t data_63                 : 8;
-		uint32_t data_62                 : 8;
 		uint32_t data_61                 : 8;
+		uint32_t data_62                 : 8;
+		uint32_t data_63                 : 8;
+		uint32_t data_64                 : 8;
 #else
-		uint32_t data_61                 : 8;
-		uint32_t data_62                 : 8;
-		uint32_t data_63                 : 8;
 		uint32_t data_64                 : 8;
+		uint32_t data_63                 : 8;
+		uint32_t data_62                 : 8;
+		uint32_t data_61                 : 8;
 #endif
 	} s;
 };

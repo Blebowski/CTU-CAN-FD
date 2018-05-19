@@ -137,14 +137,14 @@ package CAN_FD_frame_format is
   -- DATA_1_4_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_4_L               : natural := 0;
-  constant DATA_4_H               : natural := 7;
-  constant DATA_3_L               : natural := 8;
-  constant DATA_3_H              : natural := 15;
-  constant DATA_2_L              : natural := 16;
-  constant DATA_2_H              : natural := 23;
-  constant DATA_1_L              : natural := 24;
-  constant DATA_1_H              : natural := 31;
+  constant DATA_1_L               : natural := 0;
+  constant DATA_1_H               : natural := 7;
+  constant DATA_2_L               : natural := 8;
+  constant DATA_2_H              : natural := 15;
+  constant DATA_3_L              : natural := 16;
+  constant DATA_3_H              : natural := 23;
+  constant DATA_4_L              : natural := 24;
+  constant DATA_4_H              : natural := 31;
 
   -- DATA_1_4_W register reset values
 
@@ -152,14 +152,14 @@ package CAN_FD_frame_format is
   -- DATA_5_8_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_8_L               : natural := 0;
-  constant DATA_8_H               : natural := 7;
-  constant DATA_7_L               : natural := 8;
-  constant DATA_7_H              : natural := 15;
-  constant DATA_6_L              : natural := 16;
-  constant DATA_6_H              : natural := 23;
-  constant DATA_5_L              : natural := 24;
-  constant DATA_5_H              : natural := 31;
+  constant DATA_5_L               : natural := 0;
+  constant DATA_5_H               : natural := 7;
+  constant DATA_6_L               : natural := 8;
+  constant DATA_6_H              : natural := 15;
+  constant DATA_7_L              : natural := 16;
+  constant DATA_7_H              : natural := 23;
+  constant DATA_8_L              : natural := 24;
+  constant DATA_8_H              : natural := 31;
 
   -- DATA_5_8_W register reset values
 
@@ -167,14 +167,14 @@ package CAN_FD_frame_format is
   -- DATA_61_64_W register
   --
   ------------------------------------------------------------------------------
-  constant DATA_64_L              : natural := 0;
-  constant DATA_64_H              : natural := 7;
-  constant DATA_63_L              : natural := 8;
-  constant DATA_63_H             : natural := 15;
-  constant DATA_62_L             : natural := 16;
-  constant DATA_62_H             : natural := 23;
-  constant DATA_61_L             : natural := 24;
-  constant DATA_61_H             : natural := 31;
+  constant DATA_61_L              : natural := 0;
+  constant DATA_61_H              : natural := 7;
+  constant DATA_62_L              : natural := 8;
+  constant DATA_62_H             : natural := 15;
+  constant DATA_63_L             : natural := 16;
+  constant DATA_63_H             : natural := 23;
+  constant DATA_64_L             : natural := 24;
+  constant DATA_64_H             : natural := 31;
 
   -- DATA_61_64_W register reset values
 
