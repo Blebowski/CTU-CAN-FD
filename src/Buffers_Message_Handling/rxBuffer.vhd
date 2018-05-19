@@ -912,7 +912,7 @@ begin
     -- memory, and there is not enough free space, data overrun flag will be
     -- set, and no further writes will be executed.
     ----------------------------------------------------------------------------
-    dor_proc : process(res_n, clk_sys)
+    dor_proc : process(res_n, clk_sys, drv_erase_rx)
     begin
         if (res_n = ACT_RESET or drv_erase_rx = '1') then
             data_overrun_r      <= '0';
@@ -961,7 +961,9 @@ begin
 
         elsif (rising_edge(clk_sys)) then
             
-            if (write_raw_OK) then
+            -- Write to memory either by regular pointer or by "extra timestamp"
+            -- pointer.
+            if (write_raw_OK or write_extra_ts) then
                 memory(memory_write_pointer) <= memory_write_data;    
             end if;
 
