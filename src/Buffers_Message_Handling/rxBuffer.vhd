@@ -865,7 +865,7 @@ begin
             -- Second one is offset by 4.
             --------------------------------------------------------------------
             if (rx_fsm = rxb_store_data) then
-                write_pointer_extra_ts    <= (write_pointer + 3) mod buff_size;
+                write_pointer_extra_ts    <= (write_pointer + 2) mod buff_size;
 
             elsif (rx_fsm = rxb_store_end_ts_low) then
                 write_pointer_extra_ts    <= (write_pointer_extra_ts + 1) mod
