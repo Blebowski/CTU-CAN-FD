@@ -196,6 +196,9 @@
 --     6.4.2018   Added direct addressing of identifier from Protocol control.
 --                In SOF TXT buffer pointer is set to identifier word and
 --                Identifier is stored in the first cycle of Arbitration field.
+--   19.5.2018    Added "store_data", "store_metadata", "rec_abort" signals
+--                as a storing protocol between CAN Core and RX Buffer for
+--                continous storing of CAN frame during reception.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -236,10 +239,10 @@ entity protocolControl is
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 19;
     
-    signal txtb_changed           :in std_logic;
+    signal txtb_changed           :in   std_logic;
     
     -------------------------
-    --Recieved data output --
+    -- RX Buffer interface
     -------------------------
     signal rec_ident              :out  std_logic_vector(28 downto 0);
     signal rec_dlc                :out  std_logic_vector(3 downto 0);
@@ -250,10 +253,16 @@ entity protocolControl is
     signal rec_crc                :out  std_logic_vector(20 downto 0);
     signal rec_esi                :out  std_logic;
     
-    --Added interface for aux SRAM
-    signal rec_dram_word          :out  std_logic_vector(31 downto 0);
-    signal rec_dram_addr          :in   natural range 0 to 15;
-    
+    -- Metadata are received OK, and can be stored in RX Buffer!
+    signal store_metadata         :out  std_logic;
+
+    -- Cancel storing of frame in RX Buffer.
+    signal rec_abort              :out  std_logic;
+
+    -- Data words is available and can be stored in RX Buffer!
+    signal store_data             :out  std_logic;
+    signal store_data_word        :out  std_logic_vector(31 downto 0);
+
     --------------------------------
     --Operation mode FSM Interface--
     --------------------------------
@@ -526,6 +535,16 @@ entity protocolControl is
   
   --Recieved Error state indicator
   signal rec_esi_r                :     std_logic;
+
+  -- Metadata are received OK, and can be stored in RX Buffer!
+  signal store_metadata_r         :     std_logic;
+
+  -- Cancel storing of frame in RX Buffer.
+  signal rec_abort_r              :     std_logic;
+
+  -- Data words is available and can be stored in RX Buffer!
+  signal store_data_r             :     std_logic;
+  signal store_data_word_r        :     std_logic_vector(31 downto 0);
     
   -------------------------
   --Arbitration registers--
@@ -585,20 +604,17 @@ entity protocolControl is
   --Pointer for transcieving the stuf length field
   signal stl_pointer              :     natural range 0 to 3;
   signal data_size                :     natural range 0 to 511;
-  
-  -- Signals for optimalization of data reception usage
-  -- Refer to Revision comment: 29.11.2017
-  type rec_data_RAM_type is array (0 to 15) of std_logic_vector(31 downto 0); 
-  
+
+
   --Shift register for data reception
   signal rec_data_sr              :     std_logic_vector(7 downto 0);
   
   --Register for counting received bytes in shift register
-  signal rec_dram_ptr             :     natural range 0 to 7;
+  signal rec_word_ptr             :     natural range 0 to 7;
   
-  --Byte index into RAM
-  signal rec_dram_bind            :     natural range 0 to 3;
-  signal rec_dram                 :     rec_data_RAM_type;
+  --Byte index into RAM word (store_data_word)
+  signal rec_word_bind            :     natural range 0 to 3;
+
   
   --Pointer directly to TXT buffer to get the data
   signal txt_buf_ptr_r            :     natural range 0 to 19;
@@ -738,8 +754,15 @@ begin
   rec_brs               <=  rec_brs_r;
   rec_crc               <=  rec_crc_r;
   rec_esi               <=  rec_esi_r;
+
+  store_metadata        <=  store_metadata_r;
+  rec_abort             <=  rec_abort_r;
+  store_data            <=  store_data_r;
+  store_data_word       <=  store_data_word_r;
+
   ack_recieved_out      <=  ack_recieved;
   
+
   --Pointer into TXT Buffer
   txt_buf_ptr           <=  txt_buf_ptr_r;
   
@@ -769,12 +792,7 @@ begin
    --Parity of the stuff length field
    -------------------------------------
    stuff_parity <= '0' when (dst_ctr mod 2)=0 else
-                   '1';  
-  
-   -------------------------------------
-   -- Output of receive data RAM
-   ------------------------------------- 
-   rec_dram_word <= rec_dram(rec_dram_addr);
+                   '1';
   
   ---------------------------------------
   ---------------------------------------
@@ -862,17 +880,23 @@ begin
       tran_ident_base_sr      <= (OTHERS => '0');
       tran_ident_ext_sr       <= (OTHERS => '0');
       
-      --Nulling recieve registers
+      -- Nulling recieve registers
       rec_ident_base_sr       <=  (OTHERS=>'0');
       rec_ident_ext_sr        <=  (OTHERS=>'0');
       rec_dlc_r               <=  (OTHERS=>'0');
       rec_is_rtr_r            <=  '0';
       rec_ident_type_r        <=  '0';
       rec_frame_type_r        <=  '0';
+
+      -- Commands for RX Buffer for storing received frame
+      store_metadata_r        <=  '0';
+      rec_abort_r             <=  '0';
+      store_data_r            <=  '0';
+      store_data_word_r       <=  (OTHERS=>'0');
       
       -- Receive data RAM
-      rec_dram_ptr            <= 0;
-      rec_dram_bind           <= 0;
+      rec_word_ptr            <= 0;
+      rec_word_bind           <= 0;
       rec_data_sr             <= (OTHERS => '0');
       
       -- Pointer directly to TXT Buffer RAM
@@ -931,6 +955,7 @@ begin
        fixed_destuff_r        <=  fixed_destuff_r;
        destuff_length_r       <=  destuff_length_r;
        stuff_error_enable_r   <=  stuff_error_enable_r;
+
        rec_ident_base_sr      <=  rec_ident_base_sr;
        rec_ident_ext_sr       <=  rec_ident_ext_sr;
        rec_dlc_r              <=  rec_dlc_r;
@@ -940,6 +965,12 @@ begin
        rec_brs_r              <=  rec_brs_r;
        rec_crc_r              <=  rec_crc_r;
        rec_esi_r              <=  rec_esi_r;
+
+       store_metadata_r       <=  '0';
+       rec_abort_r            <=  '0';
+       store_data_r           <=  '0';
+       store_data_word_r      <=  store_data_word_r;
+
        tran_pointer           <=  tran_pointer;
        arb_state              <=  arb_state;--Arbitration control state machine
        arb_two_bits           <=  arb_two_bits;
@@ -1030,12 +1061,12 @@ begin
        rx_count_grey          <=  rx_count_grey;
     
        rec_data_sr            <=  rec_data_sr;
-       rec_dram_ptr           <=  rec_dram_ptr;
-       rec_dram_bind          <=  rec_dram_bind;
+       rec_word_ptr           <=  rec_word_ptr;
+       rec_word_bind          <=  rec_word_bind;
         
        txt_buf_ptr_r          <=  txt_buf_ptr_r;
        
-       sof_pulse_r            <=  sof_pulse_r;
+       sof_pulse_r            <=  '0';
     
     if(drv_ena='0')then
       PC_State                <=  off;
@@ -1675,7 +1706,7 @@ begin
                       rec_dlc_r(0)      <=  data_rx;
                       FSM_preset        <=  '1';
                       
-                      --If frame is RTR Frame or dat length is zero
+                      --If frame is RTR Frame or data length is zero
                       if((rec_is_rtr_r=RTR_FRAME and rec_frame_type_r=NORMAL_CAN) or 
                         (rec_dlc_r(3 downto 1)="000" and data_rx='0'))then 
                         PC_State        <=  crc;
@@ -1695,6 +1726,10 @@ begin
                         dlc_int(3 downto 1) <=  rec_dlc_r(3 downto 1);
                         dlc_int(0)          <=  data_rx;
                       end if;
+
+                      -- Sending commands to RX Buffer, to store metadata, 
+                      -- identifier and frame format words
+                      store_metadata_r       <=  '1';
                       
                   when others=> 
                       unknown_state_Error_r <=  '1'; 
@@ -1747,8 +1782,8 @@ begin
             end if;
             
             --Receive RAM signals
-            rec_dram_ptr            <= 0;
-            rec_dram_bind           <= 0;
+            rec_word_ptr            <= 0;
+            rec_word_bind           <= 0;
             rec_data_sr             <= (OTHERS => '0');
             
             -- Pointer directly to TXT Buffer, First data word
@@ -1776,42 +1811,56 @@ begin
             --Recieving data (also transmitter recieves the same data)
             if(rec_trig='1')then
               
-              -- Shift register and storing to local RAM
-              rec_data_sr               <=  rec_data_sr(6 downto 0)&data_rx; 
-              rec_dram_ptr              <=  (rec_dram_ptr+1) mod 8;
+              -- Shift register and bits within one byte
+              rec_data_sr               <=  rec_data_sr(6 downto 0) & data_rx; 
+              rec_word_ptr              <=  (rec_word_ptr + 1) mod 8;
               
-              -- If the whole byte was received
-              if (rec_dram_ptr=7) then
-                rec_dram_bind <= (rec_dram_bind+1) mod 4;
-                case rec_dram_bind is
+              -- If whole byte was received store it to "store_data_word_r".
+              if (rec_word_ptr = 7) then
+                rec_word_bind <= (rec_word_bind + 1) mod 4;
+                case rec_word_bind is
                   when  0 =>
-                    rec_dram(data_pointer/32) <= rec_data_sr(6 downto 0) &
+                    store_data_word_r         <= rec_data_sr(6 downto 0) &
                                                  data_rx &
                                                  "000000000000000000000000";
                   when  1 =>
-                    rec_dram(data_pointer/32)(23 downto 0) <= 
+                    store_data_word_r(23 downto 0) <= 
                                                 rec_data_sr(6 downto 0) &
                                                 data_rx &
                                                 "0000000000000000";
                   when  2 =>
-                    rec_dram(data_pointer/32)(15 downto 0) <= 
+                    store_data_word_r(15 downto 0) <= 
                                                 rec_data_sr(6 downto 0) &
                                                 data_rx &
                                                 "00000000";
                   when  3 =>
-                    rec_dram(data_pointer/32)(7 downto 0) <= 
+                    store_data_word_r(7 downto 0) <= 
                                               rec_data_sr(6 downto 0)&
                                               data_rx;
                   when others =>
                       report "Unknown state" severity error;
                       PC_State <= error;
-                end case;   
+                end case;
+                
+                -- Give command to RX Buffer to store data word if 4 byte
+                -- aligned data were received!
+                if (rec_word_bind = 3 and OP_State = reciever) then
+                    store_data_r <= '1';
+                end if;
+
               end if;
               
               if(data_pointer>511-data_size)then
-              --if(data_pointer>0)then
                 data_pointer            <=  data_pointer-1;
               else
+
+                -- If we finish data field, and we did not receive 4 byte aligned
+                -- data, we still did not store data since last aligned word!
+                -- Remaining bytes must be stored
+                if (rec_word_bind /= 3 and OP_State = reciever) then
+                    store_data_r          <= '1';
+                end if;
+
                 PC_State      <=  crc;
                 FSM_Preset    <=  '1';
               end if;
@@ -2359,6 +2408,9 @@ begin
               --This helps in situations when error is detected during Data bit 
               --rates!!
               data_tx_r         <=  DOMINANT;
+
+              -- Storing in RX Buffer must be aborted regardless of OP State.
+              rec_abort_r       <= '1';
               
               --If unit is transciever and Error appears then rettransmitt
               -- counter should be incremented

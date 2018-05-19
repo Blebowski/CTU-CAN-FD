@@ -151,15 +151,20 @@ entity core_top is
      --Error state indicator
     signal rec_esi_out  	      :out  std_logic;
     
-    --Output from acceptance filters (out_ident_valid) if message fits the filters
+    -- Acknowledge that CAN frame was received succesfully and can be
+    -- committed in the RX Buffer
     signal rec_message_valid_out  :out  std_logic; 
-    
-    --Acknowledge for CAN Core about accepted data
-    signal rec_message_ack_out    :in   std_logic; 
-    
-    signal rec_dram_word_out      :out  std_logic_vector(31 downto 0);
-    signal rec_dram_addr_out      :in   natural range 0 to 15;
-    
+   
+    -- Metadata are received OK, and can be stored in RX Buffer!
+    signal store_metadata         :out  std_logic;
+
+    -- Data words is available and can be stored in RX Buffer!
+    signal store_data             :out  std_logic;
+    signal store_data_word        :out  std_logic_vector(31 downto 0);
+
+    -- Cancel storing of frame in RX Buffer.
+    signal rec_abort              :out  std_logic;
+ 
     -------------------------------
     --Interrupt Manager Interface--
     -------------------------------
@@ -440,8 +445,6 @@ entity core_top is
    signal rec_esi                 :     std_logic;
    
    signal ack_recieved_out        :     std_logic;
-   signal rec_dram_word           :     std_logic_vector(31 downto 0);
-   signal rec_dram_addr           :     natural range 0 to 15;
    
    --CRC Interfaces  
    --Transition from 0 to 1 erases the CRC and operation holds as long 
@@ -527,12 +530,9 @@ begin
   rec_is_rtr_out        <=  rec_is_rtr;
   rec_brs_out           <=  rec_brs;
   rec_esi_out           <=  rec_esi;
-  rec_dram_word_out     <=  rec_dram_word;
-  rec_dram_addr         <=  rec_dram_addr_out;
   
   --Confirmation about valid recieved data for RX Buffer
   rec_message_valid_out <=  rec_valid; 
-  --rec_message_ack_out 
   --NOTE: HandShake protocol with acknowledge not used in the end
   
   -- Transceive CAN frame is routed directly
@@ -598,8 +598,11 @@ begin
      rec_brs            =>  rec_brs,
      rec_crc            =>  rec_crc,
      rec_esi            =>  rec_esi,
-     rec_dram_word      =>  rec_dram_word,
-     rec_dram_addr      =>  rec_dram_addr,
+
+     store_metadata     =>  store_metadata,
+     rec_abort          =>  rec_abort,
+     store_data         =>  store_data,
+     store_data_word    =>  store_data_word,
     
      OP_state           =>  OP_state,
      arbitration_lost   =>  arbitration_lost,

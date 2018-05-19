@@ -294,9 +294,6 @@ entity CAN_top_level is
   --Message Identifier
   signal rec_ident_in      : std_logic_vector(28 downto 0);
   
-  --Message Data (up to 64 bytes);
-  signal rec_data_in       : std_logic_vector(511 downto 0);
-  
   --Data length code
   signal rec_dlc_in        : std_logic_vector(3 downto 0);
   
@@ -309,14 +306,11 @@ entity CAN_top_level is
   --Recieved frame is RTR Frame(0-No, 1-Yes)
   signal rec_is_rtr        : std_logic;
   
-  --Frame is received properly
+  --Frame is received properly (can be committed to RX Buffer)
   signal rec_message_valid : std_logic;
   
   --Whenever frame was recieved with BIT Rate shift 
   signal rec_brs           : std_logic;
-  
-  --Acknowledge for CAN Core about accepted data
-  signal rec_message_ack   : std_logic;
   
   -- Received Error state indicator
   signal rec_esi           : std_logic;
@@ -324,9 +318,17 @@ entity CAN_top_level is
   -- Signals start of frame for storing timestamp
   signal sof_pulse         : std_logic;
 
-	-- Pointer to RX Ram in CAN Core and output word with the received data
-  signal rec_dram_word : std_logic_vector(31 downto 0);
-  signal rec_dram_addr : natural range 0 to 15;
+  -- Metadata can be stored to the RX Buffer
+  signal rx_store_metadata : std_logic;
+
+  -- Data word can be stored in RX Buffer
+  signal rx_store_data     : std_logic;
+
+  -- Data word to be stored
+  signal rx_store_data_word : std_logic_vector(31 downto 0);
+
+  -- Abort storing of RX Frame (in case of Error frame)
+  signal rx_abort           : std_logic;
 
 
 	------------------------------------------------------------------------------
@@ -504,7 +506,6 @@ begin
       rx_mem_free          => rx_mem_free,
       rx_read_pointer_pos  => rx_read_pointer_pos,
       rx_write_pointer_pos => rx_write_pointer_pos,
-      rx_message_disc      => rx_message_disc,
       rx_data_overrun      => rx_data_overrun,
       tran_data            => tran_data,
       tran_addr            => tran_addr,
@@ -524,41 +525,43 @@ begin
       log_state_out        => log_state_out
       );
 
-  rx_buf_comp : rxBuffer
+
+    rx_buf_comp : rxBuffer
     generic map(
-      buff_size => rx_buffer_size
-      )
+        buff_size            => rx_buffer_size
+    )
     port map(
-      clk_sys              => clk_sys,
-      res_n                => res_n_int,
-      rec_ident_in         => rec_ident_in,
-      rec_dlc_in           => rec_dlc_in,
-      rec_ident_type_in    => rec_ident_type_in,
-      rec_frame_type_in    => rec_frame_type_in,
-      rec_is_rtr           => rec_is_rtr,
-      
-      --Note: This has to be confirmed from Message filters not CAN Core
-      rec_message_valid    => out_ident_valid, 
-      
-      rec_brs              => rec_brs,
-      rec_esi              => rec_esi,
-      rec_message_ack      => rec_message_ack,
-      rec_dram_word        => rec_dram_word,
-      rec_dram_addr        => rec_dram_addr,
-      rx_buf_size          => rx_buf_size,
-      rx_full              => rx_full,
-      rx_empty             => rx_empty,
-      rx_message_count     => rx_message_count,
-      rx_mem_free          => rx_mem_free,
-      rx_read_pointer_pos  => rx_read_pointer_pos,
-      rx_write_pointer_pos => rx_write_pointer_pos,
-      rx_message_disc      => rx_message_disc,
-      rx_data_overrun      => rx_data_overrun,
-      rx_read_buff         => rx_read_buff,
-      sof_pulse            => sof_pulse,
-      timestamp            => timestamp,
-      drv_bus              => drv_bus
-      );
+        clk_sys              => clk_sys,
+        res_n                => res_n_int,
+        rec_ident_in         => rec_ident_in,
+        rec_dlc_in           => rec_dlc_in,
+        rec_ident_type_in    => rec_ident_type_in,
+        rec_frame_type_in    => rec_frame_type_in,
+        rec_is_rtr           => rec_is_rtr,
+        rec_brs              => rec_brs,
+        rec_esi              => rec_esi,
+
+        store_metadata       => out_ident_valid,
+        store_data           => rx_store_data,
+        store_data_word      => rx_store_data_word,
+        rec_message_valid    => rec_message_valid,
+        rec_abort            => rx_abort,
+
+        sof_pulse            => sof_pulse,
+        rx_buf_size          => rx_buf_size,
+        rx_full              => rx_full,
+        rx_empty             => rx_empty,
+        rx_message_count     => rx_message_count,
+        rx_mem_free          => rx_mem_free,
+        rx_read_pointer_pos  => rx_read_pointer_pos,
+        rx_write_pointer_pos => rx_write_pointer_pos,
+        rx_data_overrun      => rx_data_overrun,
+        timestamp            => timestamp, 
+        rx_read_buff         => rx_read_buff,
+        drv_bus              => drv_bus
+    );
+
+
 
 
   txt_buf_comp_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
@@ -625,7 +628,9 @@ begin
       rec_ident_in    => rec_ident_in,
       ident_type      => rec_ident_type_in,
       frame_type      => rec_frame_type_in,
-      rec_ident_valid => rec_message_valid,
+ 
+      -- Identifier comparison can be done when metadata are received!
+      rec_ident_valid => rx_store_metadata,
       drv_bus         => drv_bus,
       out_ident_valid => out_ident_valid
       );
@@ -643,7 +648,7 @@ begin
       arbitration_lost      => arbitration_lost,
       tx_finished           => tx_finished,
       br_shifted            => br_shifted,
-      rx_message_disc       => rx_message_disc,
+      rx_message_disc       => rx_data_overrun,
       rec_message_valid     => rec_message_valid,
       rx_full               => rx_full,
       rx_empty              => rx_empty,
@@ -680,9 +685,12 @@ begin
       rec_brs_out           => rec_brs,
       rec_esi_out           => rec_esi,
       rec_message_valid_out => rec_message_valid,
-      rec_message_ack_out   => rec_message_ack,
-      rec_dram_word_out     => rec_dram_word,
-      rec_dram_addr_out     => rec_dram_addr,
+
+      store_metadata        =>  rx_store_metadata,
+      rec_abort             =>  rx_abort,
+      store_data            =>  rx_store_data,
+      store_data_word       =>  rx_store_data_word,
+
       arbitration_lost_out  => arbitration_lost,
       tx_finished           => tx_finished,
       br_shifted            => br_shifted,
