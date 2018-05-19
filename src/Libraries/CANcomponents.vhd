@@ -139,7 +139,6 @@ package CANcomponents is
       signal rx_mem_free          : in  std_logic_vector(12 downto 0);
       signal rx_read_pointer_pos  : in  std_logic_vector(11 downto 0);
       signal rx_write_pointer_pos : in  std_logic_vector(11 downto 0);
-      signal rx_message_disc      : in  std_logic;
       signal rx_data_overrun      : in  std_logic;
       signal tran_data            : out std_logic_vector(31 downto 0);
       signal tran_addr            : out std_logic_vector(4 downto 0);
@@ -164,38 +163,39 @@ package CANcomponents is
   -- RX Buffer module
   ------------------------------------------------------------------------------
   component rxBuffer is
-  GENERIC(
-     buff_size                  :   natural range 32 to 4096 := 32
-  );
-  PORT(
-    signal clk_sys              :in std_logic; --System clock
-    signal res_n                :in std_logic; --Async. reset
-    signal rec_ident_in         :in std_logic_vector(28 downto 0);
-    signal rec_dlc_in           :in std_logic_vector(3 downto 0);
-    signal rec_ident_type_in    :in std_logic;
-    signal rec_frame_type_in    :in std_logic;
-    signal rec_is_rtr           :in std_logic;
-    signal rec_brs              :in std_logic;
-    signal rec_esi              :in std_logic;
-    signal rec_message_ack      :out std_logic;
-    signal rec_message_valid    :in std_logic;
-    signal rec_dram_word        :in  std_logic_vector(31 downto 0);
-    signal rec_dram_addr        :out natural range 0 to 15;
-    signal rx_buf_size          :out std_logic_vector(12 downto 0);
-    signal rx_full              :out std_logic;
-    signal rx_empty             :out std_logic;
-    signal rx_message_count     :out std_logic_vector(10 downto 0);
-    signal rx_mem_free          :out std_logic_vector(12 downto 0);
-    signal rx_read_pointer_pos  :out std_logic_vector(11 downto 0);
-    signal rx_write_pointer_pos :out std_logic_vector(11 downto 0);
-    signal rx_message_disc      :out std_logic;
-    signal rx_data_overrun      :out std_logic;
-    signal timestamp            :in std_logic_vector(63 downto 0);
-    signal rx_read_buff         :out std_logic_vector(31 downto 0);
-    signal sof_pulse            :in  std_logic;
-    signal drv_bus              :in std_logic_vector(1023 downto 0)
-  );
-  end component; 
+    generic(
+        buff_size                   :       natural range 32 to 4096 := 32
+    );
+    port(
+        signal clk_sys              :in     std_logic; --System clock
+        signal res_n                :in     std_logic; --Async. reset
+        signal rec_ident_in         :in     std_logic_vector(28 downto 0);
+        signal rec_dlc_in           :in     std_logic_vector(3 downto 0);
+        signal rec_ident_type_in    :in     std_logic;
+        signal rec_frame_type_in    :in     std_logic;
+        signal rec_is_rtr           :in     std_logic;
+        signal rec_brs              :in     std_logic;
+        signal rec_esi              :in     std_logic;
+        signal store_metadata       :in     std_logic;
+        signal store_data           :in     std_logic;
+        signal store_data_word      :in     std_logic_vector(31 downto 0);
+        signal rec_message_valid    :in     std_logic;
+        signal rec_abort            :in     std_logic;
+        signal sof_pulse            :in     std_logic;
+        signal rx_buf_size          :out    std_logic_vector(12 downto 0);
+        signal rx_full              :out    std_logic;
+        signal rx_empty             :out    std_logic;
+        signal rx_message_count     :out    std_logic_vector(10 downto 0);
+        signal rx_mem_free          :out    std_logic_vector(12 downto 0);
+        signal rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
+        signal rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
+        signal rx_data_overrun      :out    std_logic;
+        signal timestamp            :in     std_logic_vector(63 downto 0);
+        signal rx_read_buff         :out    std_logic_vector(31 downto 0);
+        signal drv_bus              :in     std_logic_vector(1023 downto 0)
+    );
+  end component;
+
   
   ------------------------------------------------------------------------------
   --TX Buffer  module
@@ -367,6 +367,7 @@ package CANcomponents is
       signal txt_hw_cmd            : out txt_hw_cmd_type;
       signal txtb_changed          : in  std_logic;
       signal txt_buf_ptr           : out natural range 0 to 19;
+
       signal rec_ident_out         : out std_logic_vector(28 downto 0);
       signal rec_dlc_out           : out std_logic_vector(3 downto 0);
       signal rec_ident_type_out    : out std_logic;
@@ -375,9 +376,11 @@ package CANcomponents is
       signal rec_brs_out           : out std_logic;
       signal rec_esi_out           : out std_logic;
       signal rec_message_valid_out : out std_logic;
-      signal rec_message_ack_out   : in  std_logic;
-      signal rec_dram_word_out     : out std_logic_vector(31 downto 0);
-      signal rec_dram_addr_out     : in  natural range 0 to 15;
+      signal store_metadata        : out std_logic;
+      signal store_data            : out std_logic;
+      signal store_data_word       : out std_logic_vector(31 downto 0);
+      signal rec_abort             : out std_logic;
+
       signal arbitration_lost_out  : out std_logic;
       signal tx_finished           : out std_logic;
       signal br_shifted            : out std_logic;
@@ -635,8 +638,10 @@ package CANcomponents is
       signal rec_brs               : out std_logic;
       signal rec_crc               : out std_logic_vector(20 downto 0);
       signal rec_esi               : out std_logic;
-      signal rec_dram_word         : out std_logic_vector(31 downto 0);
-      signal rec_dram_addr         : in  natural range 0 to 15;
+      signal store_metadata        : out std_logic;
+      signal rec_abort             : out std_logic;
+      signal store_data            : out std_logic;
+      signal store_data_word       : out std_logic_vector(31 downto 0);
       signal OP_state              : in  oper_mode_type;
       signal arbitration_lost      : out std_logic;
       signal is_idle               : out std_logic;
