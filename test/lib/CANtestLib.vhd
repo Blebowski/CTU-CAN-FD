@@ -335,45 +335,6 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- RX Buffer types
-    ----------------------------------------------------------------------------
-    type CAN_frame_type is record
-
-        -- Message Identifier
-        rec_ident_in            :   std_logic_vector(28 downto 0);
-
-        -- Message Data (up to 64 bytes);
-        rec_data_in             :   std_logic_vector(511 downto 0);
-
-        -- Data length code
-        rec_dlc_in              :   std_logic_vector(3 downto 0);
-
-        -- Recieved identifier type (0-BASE Format, 1-Extended Format);
-        rec_ident_type_in       :   std_logic;
-
-        -- Recieved frame type (0-Normal CAN, 1- CAN FD)
-        rec_frame_type_in       :   std_logic;
-
-        -- Recieved frame is RTR Frame(0-No, 1-Yes)
-        rec_is_rtr              :   std_logic;
-
-        -- Whenever frame was recieved with BIT Rate shift 
-        rec_brs                 :   std_logic;
-
-        -- Error state indicator
-        rec_esi                 :   std_logic;
-
-        -- Output from acceptance filters (out_ident_valid) if message 
-        -- fits the filters
-        rec_message_valid       :   std_logic;
-
-        --Number of words frame takes in the RX Buffer without FRAME_FORMAT word 
-        rec_rwcnt               :   std_logic_vector(4 downto 0);
-
-    end record;
-
-
-    ----------------------------------------------------------------------------
     -- TXT Buffer types
     ----------------------------------------------------------------------------
     
@@ -460,6 +421,9 @@ package CANtestLib is
 
         -- Bit rate shift flag
         brs                     :   std_logic;
+
+        -- ESI Flag (Error state indicator)
+        esi                     :   std_logic;
 
         -- Timestamp (as defined in TIMESTAMP_U_W and TIMESTAMP_L_W)
         timestamp               :   std_logic_vector(63 downto 0);
@@ -664,6 +628,38 @@ package CANtestLib is
         variable buff_space     : out   natural
     );
     
+
+    ----------------------------------------------------------------------------
+    -- Convert identifier from register format (as stored in IDENTIFIER_W of
+    --  TXT Buffers and RX Buffer) to integer value as used by SW.
+    -- 
+    -- Arguments:
+    --  identifier      Input identifier as stored in IDENTIFIER_W
+    --  id_type         Type of identifier (BASE or EXTENDED)
+    --  out             Identifier in integer format
+    ----------------------------------------------------------------------------
+    procedure id_hw_to_sw(
+        constant id_in          : in    std_logic_vector(28 downto 0);
+        constant id_type        : in    std_logic;
+        variable id_out         : out   natural
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Convert identifier from SW format to register format (as stored in 
+    --  IDENTIFIER_W of TXT Buffers and RX Buffer).
+    -- 
+    -- Arguments:
+    --  identifier      Input identifier in integer format (as used by SW).
+    --  id_type         Type of identifier (BASE or EXTENDED)
+    --  out             Identifier in register format as stored in IDENTIFIER_W.
+    ----------------------------------------------------------------------------
+    procedure id_sw_to_hw(
+        constant id_in          : in    natural;
+        constant id_type        : in    std_logic;
+        variable id_out         : out   std_logic_vector(28 downto 0)
+    );
+
 
     ----------------------------------------------------------------------------
     -- Generate simple triggering signals.
@@ -871,6 +867,19 @@ package CANtestLib is
     procedure CAN_generate_frame(
         signal   rand_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         variable frame          : inout SW_CAN_frame_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Prints CAN Frame to simulator output
+    -- 
+    -- Arguments:
+    --  frame           Frame to print
+    --  severity        Severity level that should be used to print the frame.
+    ---------------------------------------------------------------------------- 
+    procedure CAN_print_frame(
+        constant frame          : in    SW_CAN_frame_type;
+        constant log_level      : in    log_lvl_type
     );
 
 
@@ -1599,6 +1608,59 @@ package body CANtestLib is
         end case;
     end procedure;
 
+    
+    procedure id_hw_to_sw(
+        constant id_in          : in    std_logic_vector(28 downto 0);
+        constant id_type        : in    std_logic;
+        variable id_out         : out   natural
+    )is
+        variable tmp_vect       :       std_logic_vector(28 downto 0);
+    begin
+        if (id_type = EXTENDED) then
+            tmp_vect := id_in(IDENTIFIER_BASE_H downto 
+                              IDENTIFIER_BASE_L) &
+                        id_in(IDENTIFIER_EXT_H downto 
+                              IDENTIFIER_EXT_L);
+            id_out   := to_integer(unsigned(tmp_vect));
+        else
+            tmp_vect   := "000000000000000000" &
+                           id_in(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+            id_out     := to_integer(unsigned(tmp_vect));
+        end if;
+    end procedure;
+
+
+    procedure id_sw_to_hw(
+        constant id_in          : in    natural;
+        constant id_type        : in    std_logic;
+        variable id_out         : out   std_logic_vector(28 downto 0)
+    )is
+        variable id_vect        :       std_logic_vector(28 downto 0);
+    begin
+        if (id_type = EXTENDED) then
+            if (id_in > 536870911) then
+                report "Extended Identifier Exceeds the maximal value!"
+                severity error;
+            end if;
+            id_vect := std_logic_vector(to_unsigned(id_in, 29));
+
+            id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := 
+                id_vect(28 downto 18);
+            id_out(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
+                id_vect(17 downto 0);
+        else
+            if (id_in > 2047) then
+                report "Base Identifier Exceeds the maximal value!"
+                severity error;
+            end if;
+            id_vect := "000000000000000000" & 
+                           std_logic_vector(to_unsigned(id_in, 11));
+            id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
+                id_vect(10 downto 0);
+            id_out(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := (OTHERS => '0');
+        end if;
+    end procedure;
+
 
     procedure generate_simple_trig(
         signal   rand_ctr       : inout natural range 0 to RAND_POOL_SIZE;
@@ -1984,10 +2046,66 @@ package body CANtestLib is
         -- as is filled by the RX Buffer.
         decode_dlc_rx_buff(frame.dlc, frame.rwcnt);
 
+        -- ESI is read only, but is is better to have initialized value in it!
+        frame.esi := '0';
+        
         -- Unused bytes of data can be set to 0
         frame.data(511 - frame.data_length * 8 downto 0) := (OTHERS => '0');
     end procedure;
   
+
+    procedure CAN_print_frame(
+        constant frame          : in    SW_CAN_frame_type;
+        constant log_level      : in    log_lvl_type
+    )is
+        variable msg            :       line;
+    begin
+
+        write(msg, string'("CAN Frame:"));
+        
+        -- Identifier
+        write(msg, string'(" ID : 0x"));
+        hwrite(msg, std_logic_vector(to_unsigned(frame.identifier, 32)), RIGHT,
+                    8);
+        
+        -- Metadata
+        write(msg, string'("    DLC: "));
+        hwrite(msg, frame.dlc);
+
+        if (frame.rtr = RTR_FRAME) then
+            write(msg, string'("    RTR Frame"));
+        else
+            write(msg, string'("             "));
+        end if;
+
+        if (frame.ident_type = BASE) then
+            write(msg, string'("    BASE identifier    "));
+        else
+            write(msg, string'("    EXTENDED identifier"));
+        end if;
+
+        if (frame.frame_format = NORMAL_CAN) then
+            write(msg, string'("    CAN 2.0 frame"));
+        else
+            write(msg, string'("    CAN FD frame "));
+        end if;
+
+        write(msg, string'("    RWCNT (read word count): "));        
+        write(msg, Integer'image(frame.rwcnt));
+
+        -- Data words
+        if (frame.rtr = NO_RTR_FRAME) then
+            write(msg, string'("    Data: ")); 
+            hwrite(msg, frame.data);
+        end if;
+
+        writeline(output, msg);
+        
+--        info_l,
+--        warning_l,
+--        error_l
+
+    end procedure;
 
 
     procedure CAN_compare_frames(
@@ -2116,27 +2234,8 @@ package body CANtestLib is
         CAN_write(w_data, buf_offset, ID, mem_bus);          
              
         -- Identifier
-        w_data := (OTHERS => '0');
-        if (frame.ident_type = EXTENDED) then
-            if (frame.identifier > 536870911) then
-                report "Extended Identifier Exceeds the maximal value!"
-                severity error;
-            end if;
-            ident_vect := std_logic_vector(to_unsigned(frame.identifier, 29));
-            w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := 
-                ident_vect(28 downto 18);
-            w_data(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
-                ident_vect(17 downto 0);
-        else
-            if (frame.identifier > 2047) then
-                report "Base Identifier Exceeds the maximal value!"
-                severity error;
-            end if;
-            ident_vect := "000000000000000000" & 
-                           std_logic_vector(to_unsigned(frame.identifier, 11));
-            w_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
-                ident_vect(10 downto 0);
-        end if;
+        id_sw_to_hw(frame.identifier, frame.ident_type, ident_vect);
+        w_data := "000" & ident_vect;
         CAN_write(w_data, CAN_add_unsigned(buf_offset, IDENTIFIER_W_ADR),
                   ID, mem_bus);
 
@@ -2185,17 +2284,8 @@ package body CANtestLib is
 
         --Read identifier
         CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
-        if (frame.ident_type = EXTENDED) then
-            aux_vect         := r_data(IDENTIFIER_BASE_H downto 
-                                       IDENTIFIER_BASE_L) &
-                                r_data(IDENTIFIER_EXT_H downto 
-                                       IDENTIFIER_EXT_L);
-            frame.identifier := to_integer(unsigned(aux_vect));
-        else
-          aux_vect         := "000000000000000000" &
-                              r_data(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-          frame.identifier := to_integer(unsigned(aux_vect));
-        end if;
+        aux_vect := r_data(28 downto 0);
+        id_hw_to_sw(aux_vect, frame.ident_type, frame.identifier);
 
         -- Read timestamp
         CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);  
