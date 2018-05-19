@@ -453,6 +453,7 @@ architecture behavioral of sanity_test is
         variable RX_frame       :           SW_CAN_frame_type;
         variable comp_out       :           boolean;
         variable detected       :           boolean := false;
+        variable node_error     :           boolean := false;
     begin
         outcome     := true;
         tx_r_ptr    := 0;
@@ -463,7 +464,9 @@ architecture behavioral of sanity_test is
         -- own frames)!
         for i in 1 to NODE_COUNT loop
 
+            node_error := false;
             tx_r_ptr := 0;
+
             for j in 1 to NODE_COUNT loop
 
                 if (i /= j) then
@@ -494,10 +497,32 @@ architecture behavioral of sanity_test is
 
                         if (detected = false) then
                             outcome:= false;
+                            node_error := true;
                         end if;
                     end loop;
                 end if;
             end loop;
+
+            -- Print contents of test memories for each node if something
+            -- went wrong!
+            if (node_error) then
+                tx_r_ptr := 0;
+                log("TX Memory Node " & integer'image(i) & ":",
+                    error_l, log_level);
+                while (tx_mems(i)(tx_r_ptr)(8) = '1') loop
+                    read_frame_from_mem(TX_frame, tx_mems, i, tx_r_ptr);
+                    CAN_print_frame(TX_frame, error_l);
+                end loop;
+
+                log("RX Memory Node " & integer'image(i) & ":",
+                    error_l, log_level);
+                rx_r_ptr := 0;
+                while (rx_mems(i)(rx_r_ptr)(8) = '1') loop
+                    read_frame_from_mem(RX_frame, rx_mems, i, rx_r_ptr);
+                    CAN_print_frame(RX_frame, error_l);
+                end loop;
+            end if;
+
         end loop;
     end procedure;
     

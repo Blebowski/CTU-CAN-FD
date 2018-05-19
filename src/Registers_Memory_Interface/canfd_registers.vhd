@@ -194,11 +194,8 @@ entity canfd_registers is
     
     --Position of write pointer
     signal rx_write_pointer_pos :in   std_logic_vector(11 downto 0);
-    
-    --Frame was discarded due full Memory
-    signal rx_message_disc      :in   std_logic;
-    
-     --Some data were discarded, register
+        
+    --Some data were discarded, register
     signal rx_data_overrun      :in   std_logic;
     
     --------------------------------------------------------

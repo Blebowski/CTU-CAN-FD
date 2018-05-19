@@ -246,6 +246,18 @@ package CANconstants is
     running
     );
 
+  -- RX Buffer loader type
+  type rx_buf_fsm_type is (
+    rxb_idle,
+    rxb_store_frame_format,
+    rxb_store_identifier,
+    rxb_store_beg_ts_low,
+    rxb_store_beg_ts_high,
+    rxb_store_end_ts_low,
+    rxb_store_end_ts_high,
+    rxb_store_data
+    );
+
   -- TX arbitrator state type
   type tx_arb_state_type is (
     arb_sel_low_ts,
