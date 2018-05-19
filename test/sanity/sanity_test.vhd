@@ -367,7 +367,10 @@ architecture behavioral of sanity_test is
             (frame.data_length /= 0))
         then          
           for i in 0 to ((frame.data_length - 1) / 4) loop
-            memory(pointer + i) <= frame.data(511 - i * 32 downto 480 - i * 32);
+            memory(pointer + i) <= frame.data((i * 4) + 3) &
+                                   frame.data((i * 4) + 2) &
+                                   frame.data((i * 4) + 1) &
+                                   frame.data((i * 4));
             wait for 0 ns;
           end loop;
           
@@ -389,7 +392,7 @@ architecture behavioral of sanity_test is
         variable aux_vect       :           std_logic_vector(28 downto 0);
     begin
         -- Erase some unnecessary stuff
-        frame.data          := (OTHERS => '0');
+        frame.data          := (OTHERS => (OTHERS => '0'));
         frame.identifier    := 0;
 
         --Frame format
@@ -398,7 +401,7 @@ architecture behavioral of sanity_test is
         frame.ident_type    := memory(mem_index)(pointer)(6);
         frame.frame_format  := memory(mem_index)(pointer)(7);
         frame.brs           := memory(mem_index)(pointer)(9);
-        decode_dlc_v(frame.dlc,frame.data_length);
+        decode_dlc_v(frame.dlc, frame.data_length);
         frame.rwcnt         := 
           to_integer(unsigned(memory(mem_index)(pointer)(15 downto 11)));
 
@@ -431,8 +434,10 @@ architecture behavioral of sanity_test is
             frame.data_length /= 0)
         then
           for i in 0 to ((frame.data_length - 1) / 4) loop
-            frame.data(511 - i * 32 downto 480 - i * 32) :=
-                memory(mem_index)(pointer);
+            frame.data((i * 4) + 3) := memory(mem_index)(pointer)(31 downto 24);
+            frame.data((i * 4) + 2) := memory(mem_index)(pointer)(23 downto 16);
+            frame.data((i * 4) + 1) := memory(mem_index)(pointer)(15 downto 8);
+            frame.data((i * 4)) := memory(mem_index)(pointer)(7 downto 0);
             pointer := pointer + 1;
           end loop;
         end if;

@@ -208,8 +208,10 @@ architecture rx_buf_unit_test of CAN_test is
         -- Store the data
         if (length > 0) then
             for i in 0 to (length - 1) / 4 loop
-                memory(in_pointer)   <= frame.data
-                                        (511 - i * 32 downto 480 - i * 32);
+                memory(in_pointer)   <= frame.data((i * 4) + 3) &
+                                        frame.data((i * 4) + 2) &
+                                        frame.data((i * 4) + 1) &
+                                        frame.data((i * 4));
                 in_pointer           <= in_pointer + 1;
                 wait for 0 ns;
             end loop;
@@ -347,8 +349,10 @@ architecture rx_buf_unit_test of CAN_test is
                 wait_rand_cycles(rand_ctr, clk_sys, 10, 50);
                 
                 -- Send signal to store data
-                store_data_word <= CAN_frame.data(511 - i * 32 downto
-                                                  480 - i * 32);
+                store_data_word <= CAN_frame.data((i * 4) + 3) &
+                                   CAN_frame.data((i * 4) + 2) &
+                                   CAN_frame.data((i * 4) + 1) &
+                                   CAN_frame.data((i * 4));
 
                 store_data      <= '1';   
                 log("Storing data word", info_l, log_level);

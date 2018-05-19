@@ -391,6 +391,8 @@ package CANtestLib is
     end record;
 
 
+    type SW_CAN_data_type is array (0 to 63) of std_logic_vector(7 downto 0);
+
     ----------------------------------------------------------------------------
     -- Software CAN Frame type. Used for generation, transmission, reception,
     -- comparison of CAN Frames.
@@ -402,7 +404,7 @@ package CANtestLib is
         identifier              :   natural;
 
         -- Data payload
-        data                    :   std_logic_vector(511 downto 0);
+        data                    :   SW_CAN_data_type;
 
         -- Data length code as defined in CAN Standard
         dlc                     :   std_logic_vector(3 downto 0);
@@ -1998,13 +2000,13 @@ package body CANtestLib is
     )is
         variable rand_value     : real := 0.0;
         variable aux            : std_logic_vector(28 downto 0);
+        variable data_byte      : std_logic_vector(7 downto 0);
     begin
        
         rand_logic_v(rand_ctr, frame.ident_type, 0.5);
         rand_logic_v(rand_ctr, frame.frame_format, 0.5);
         rand_logic_v(rand_ctr, frame.rtr, 0.5);
         rand_logic_v(rand_ctr, frame.brs, 0.5);
-        rand_logic_vect_v(rand_ctr, frame.data, 0.5);
         rand_logic_vect_v(rand_ctr, frame.dlc, 0.3);
 
         rand_real_v(rand_ctr, rand_value);
@@ -2037,7 +2039,7 @@ package body CANtestLib is
         frame.timestamp := (OTHERS => '0');
 
         if (frame.rtr = RTR_FRAME) then
-            frame.data          := (OTHERS => '0');
+            frame.data          := (OTHERS => (OTHERS => '0'));
             frame.dlc           := (OTHERS => '0');
             frame.data_length   := 0;
         end if;
@@ -2049,8 +2051,15 @@ package body CANtestLib is
         -- ESI is read only, but is is better to have initialized value in it!
         frame.esi := '0';
         
+        -- Generate random data 
         -- Unused bytes of data can be set to 0
-        frame.data(511 - frame.data_length * 8 downto 0) := (OTHERS => '0');
+        if (frame.data_length > 0) then
+            for i in 0 to frame.data_length - 1 loop
+                rand_logic_vect_v(rand_ctr, data_byte, 0.5);
+                frame.data(i) := data_byte;
+            end loop;
+        end if;
+
     end procedure;
   
 
@@ -2059,6 +2068,7 @@ package body CANtestLib is
         constant log_level      : in    log_lvl_type
     )is
         variable msg            :       line;
+        variable data_byte      :       std_logic_vector(7 downto 0);
     begin
 
         write(msg, string'("CAN Frame:"));
@@ -2094,9 +2104,14 @@ package body CANtestLib is
         write(msg, Integer'image(frame.rwcnt));
 
         -- Data words
-        if (frame.rtr = NO_RTR_FRAME) then
-            write(msg, string'("    Data: ")); 
-            hwrite(msg, frame.data);
+        if (frame.rtr = NO_RTR_FRAME and frame.data_length > 0) then
+            write(msg, string'("    Data: "));
+            for i in 0 to frame.data_length - 1 loop
+                data_byte := frame.data(i);
+                write(msg, string'("0x"));
+                hwrite(msg, frame.data(i));
+                write(msg, string'(" "));
+            end loop;
         end if;
 
         writeline(output, msg);
@@ -2165,10 +2180,8 @@ package body CANtestLib is
             if ((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
                 and frame_A.data_length /= 0)
             then
-                for i in 0 to (frame_A.data_length - 1) / 4 loop
-                    if (frame_A.data(511 - i * 32 downto 480 - i * 32) /=
-                        frame_B.data(511 - i * 32 downto 480 - i * 32))
-                    then
+                for i in 0 to (frame_A.data_length - 1) loop
+                    if (frame_A.data(i) /= frame_B.data(i)) then
                         outcome  := false;
                     end if;
                 end loop;
@@ -2250,7 +2263,10 @@ package body CANtestLib is
         -- Data words
         decode_dlc_v(frame.dlc, length);
         for i in 0 to (length - 1) / 4 loop
-            w_data:= frame.data(511 - i * 32 downto 480 - i * 32);
+            w_data := frame.data((i * 4) + 3) &
+                      frame.data((i * 4) + 2) &
+                      frame.data((i * 4) + 1) &
+                      frame.data((i * 4));
             CAN_write(w_data, std_logic_vector(unsigned(buf_offset) +
                               unsigned(DATA_1_4_W_ADR) + i * 4),
                       ID, mem_bus);
@@ -2299,7 +2315,10 @@ package body CANtestLib is
         then
             for i in 0 to (frame.data_length - 1) / 4 loop
                 CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
-                frame.data(511 - i * 32 downto 480 - i * 32) := r_data;
+                frame.data(i * 4)       := r_data(7 downto 0);
+                frame.data((i * 4) + 1) := r_data(15 downto 8);
+                frame.data((i * 4) + 2) := r_data(23 downto 16);
+                frame.data((i * 4) + 3) := r_data(31 downto 24);
             end loop;
         end if;
     end procedure;
