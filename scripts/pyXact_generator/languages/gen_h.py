@@ -214,9 +214,9 @@ class HeaderGenerator(LanBaseGenerator):
 				index = index + item.bitWidth
 		tmp.remove(tmp[-1])
 		
-		# Write the bitfield values
+		# Write bitfield values
 		if (len(tmp) > 1):
-			self.__wr_line("#ifdef __BIG_ENDIAN_BITFIELD\n")
+			self.__wr_line("#ifdef __LITTLE_ENDIAN_BITFIELD\n")
 		for decl in sorted(tmp , key=lambda a: a.bitIndex):
 			self.write_decl(decl)
 		if (len(tmp) > 1):

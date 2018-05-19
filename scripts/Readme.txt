@@ -7,8 +7,9 @@ python3.5 gen_vhdl_package.py --licPath ../LICENSE --xactSpec ../spec/CTU/ip/CAN
 
 
 # To generate C header files (register map and frame format)
-python3.5 gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec ../spec/CTU/ip/CAN_FD_IP_Core/2.1/CAN_FD_IP_Core.2.1.xml --addrMap Regs --fieldMap Regs --wordWidth 32 --outFile ../driver/ctu_can_fd_regs.h --headName CAN_FD_frame_format
-py gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec ../spec/CTU/ip/CAN_FD_IP_Core/2.1/CAN_FD_IP_Core.2.1.xml --addrMap Frame_format --fieldMap Frame_format --wordWidth 32 --outFile ../driver/ctu_can_fd_frame.h --headName CAN_FD_frame_format
+python3.5 gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec ../spec/CTU/ip/CAN_FD_IP_Core/2.1/CAN_FD_IP_Core.2.1.xml --addrMap Regs --fieldMap Regs --wordWidth 32 --outFile ../driver/ctu_can_fd_regs.h --headName regs
+
+python3.5 gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec ../spec/CTU/ip/CAN_FD_IP_Core/2.1/CAN_FD_IP_Core.2.1.xml --addrMap Frame_format --fieldMap Frame_format --wordWidth 32 --outFile ../driver/ctu_can_fd_frame.h --headName frame
 
 
 # To generate Lyx docu for register map
