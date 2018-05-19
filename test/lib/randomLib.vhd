@@ -73,63 +73,63 @@ USE ieee.math_real.ALL;
 
 package randomLib is
  	
-	----------------------------------------------------------------------------
-	----------------------------------------------------------------------------
-	-- Probability distributions
-	-- 
-	-- Distribution parameters are different for every distribution. Each of 
-	-- the following subsections contains one 
-	----------------------------------------------------------------------------
-	----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Probability distributions
+    -- 
+    -- Distribution parameters are different for every distribution. Each of 
+    -- the following subsections contains one 
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 
-	-- Types of probability distributions
-	type rand_distribution_type is(
+    -- Types of probability distributions
+    type rand_distribution_type is(
         GAUSS,
         EXPONENTIAL
     );
 
-	-- Distribution parameters
-	constant DISTR_PAR_COUNT	:	natural := 5;
-	type rand_distribution_par_type is 
-		array (0 to DISTR_PAR_COUNT - 1) of real;
+    -- Distribution parameters
+    constant DISTR_PAR_COUNT	:	natural := 5;
+    type rand_distribution_par_type is 
+        array (0 to DISTR_PAR_COUNT - 1) of real;
 
 
-	----------------------------------------------------------------------------
-	-- GAUSS (Normal) distribution
-	--
-	-- GAUS_mean                    Mean value of Normal distribution
-	-- GAUS_vairance                Variance of Normal distribution
-	-- GAUS_iterations              Number of summations in central limit
-	--                              theorem, to calculate the result.	
-	----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- GAUSS (Normal) distribution
+    --
+    -- GAUS_mean                    Mean value of Normal distribution
+    -- GAUS_vairance                Variance of Normal distribution
+    -- GAUS_iterations              Number of summations in central limit
+    --                              theorem, to calculate the result.	
+    ----------------------------------------------------------------------------
 	constant GAUSS_mean			:	natural := 0;
 	constant GAUSS_variance		:   natural := 1;
 	constant GAUSS_iterations	:	natural := 2;
 
 
-	----------------------------------------------------------------------------
-	-- Exponential distribution
-	--
-	-- EXPONENTIAL_mean             Mean value of Exponential distribution
+    ----------------------------------------------------------------------------
+    -- Exponential distribution
+    --
+    -- EXPONENTIAL_mean             Mean value of Exponential distribution
     --                              (or so called, "scale" parameter)	
-	----------------------------------------------------------------------------
-	constant EXPONENTIAL_mean   :	natural := 0;
+    ----------------------------------------------------------------------------
+    constant EXPONENTIAL_mean   :	natural := 0;
 	
 
-	----------------------------------------------------------------------------
-	----------------------------------------------------------------------------
-	-- Uniformly distributed random pool stuff
-	----------------------------------------------------------------------------
-	----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Uniformly distributed random pool stuff
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     constant RAND_POOL_SIZE       : natural := 3800;
 
 
 
-	----------------------------------------------------------------------------
-	----------------------------------------------------------------------------
-	-- Function declarations
-	----------------------------------------------------------------------------
-	----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Function declarations
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
     -- Get random value of type "real" from random pool. Signal output.
@@ -308,16 +308,34 @@ package randomLib is
 
 
     ----------------------------------------------------------------------------
+    -- Waits for random number of clock cycles with minimum and maximum amount
+    -- of cycles to wait.
+    -- 
+    -- Arguments:
+    --  real_ctr        Pointer to random data pool
+    --  clk             Clock on which wait should be executed!
+    --  min             Minimum amount of cycles to wait
+    --  max             Maximum amount of cycles to wait
+    ----------------------------------------------------------------------------
+    procedure wait_rand_cycles(
+        signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
+        signal   clk            : in    std_logic;
+        constant min            : in    integer;
+        constant max            : in    integer
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Get random value of type real. Repetitive calls of this function return
-	-- random numbers with selected distribution.
+    -- random numbers with selected distribution.
     --
     -- Arguments:
     --  real_ctr        Pointer to random data pool
     --  retval          Variable in which returned value will be stored
-	--  distribution	Probability distribution of successive returned values.
-	--	parameters		Parameters of probability distribution. Reffer to 
-	--					description of "rand_distribution_type" for further
-	--					explanation.
+    --  distribution    Probability distribution of successive returned values.
+    --	parameters      Parameters of probability distribution. Reffer to 
+    --	                description of "rand_distribution_type" for further
+    --                  explanation.
     --  
     ----------------------------------------------------------------------------
     procedure rand_real_distr_v(
@@ -1319,6 +1337,28 @@ package body randomLib is
 
         if (refresh) then
             wait for 0 ns;
+        end if;
+    end procedure;
+
+
+    procedure wait_rand_cycles(
+        signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
+        signal   clk            : in    std_logic;
+        constant min            : in    integer;
+        constant max            : in    integer
+    )is
+        variable rand_val       :       natural;
+    begin
+        if (max < min) then
+            report "Invalid input parameters, MAX lower than MIN" severity
+            error;
+        else
+            rand_int_v(real_ctr, max - min, rand_val);
+            rand_val := rand_val + min;
+            
+            for i in 0 to rand_val loop
+                wait until rising_edge(clk);
+            end loop;
         end if;
     end procedure;
 
