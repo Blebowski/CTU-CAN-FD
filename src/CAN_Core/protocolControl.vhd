@@ -1800,7 +1800,9 @@ begin
                 
                 --Move to the next word
                 if ((data_pointer mod 32) = 0) then
-                  txt_buf_ptr_r <= txt_buf_ptr_r + 1;
+                  if (txt_buf_ptr_r < 19) then
+                    txt_buf_ptr_r <= txt_buf_ptr_r + 1;
+                  end if;
                 end if;
                 
               end if;
