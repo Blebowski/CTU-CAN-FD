@@ -75,6 +75,7 @@ set_parameter -name sup_filtC true
 set_parameter -name sup_range true
 set_parameter -name tx_time_sup true
 set_parameter -name logger_size 64
+set_global_assignment -name VHDL_FILE ../../src/endian_swap.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/priorityDecoder.vhd
 set_global_assignment -name VHDL_FILE ../../src/Libraries/CANconstants.vhd
 set_global_assignment -name VHDL_FILE ../../src/Libraries/CANcomponents.vhd

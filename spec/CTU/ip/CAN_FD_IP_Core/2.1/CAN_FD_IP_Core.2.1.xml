@@ -3675,26 +3675,26 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>DATA_1</ipxact:name>
-						<ipxact:description>Data byte 1 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:description>Data byte 1 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_2</ipxact:name>
-						<ipxact:description>Data byte 2 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>16</ipxact:bitOffset>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>DATA_3</ipxact:name>
-						<ipxact:description>Data byte 3 of the CAN Frame.</ipxact:description>
+						<ipxact:description>Data byte 2 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
+						<ipxact:name>DATA_3</ipxact:name>
+						<ipxact:description>Data byte 3 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
 						<ipxact:name>DATA_4</ipxact:name>
-						<ipxact:description>Data byte 4 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:description>Data byte 4 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -3706,26 +3706,26 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>DATA_61</ipxact:name>
-						<ipxact:description>Data byte 61 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:description>Data byte 61 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_62</ipxact:name>
-						<ipxact:description>Data byte 62 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>16</ipxact:bitOffset>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>DATA_63</ipxact:name>
-						<ipxact:description>Data byte 63 of the CAN Frame.</ipxact:description>
+						<ipxact:description>Data byte 62 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
+						<ipxact:name>DATA_63</ipxact:name>
+						<ipxact:description>Data byte 63 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
 						<ipxact:name>DATA_64</ipxact:name>
-						<ipxact:description>Data byte 64 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:description>Data byte 64 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
@@ -3737,26 +3737,26 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:field>
 						<ipxact:name>DATA_5</ipxact:name>
-						<ipxact:description>Data byte 5 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>24</ipxact:bitOffset>
+						<ipxact:description>Data byte 5 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DATA_6</ipxact:name>
-						<ipxact:description>Data byte 6 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>16</ipxact:bitOffset>
-						<ipxact:bitWidth>8</ipxact:bitWidth>
-					</ipxact:field>
-					<ipxact:field>
-						<ipxact:name>DATA_7</ipxact:name>
-						<ipxact:description>Data byte 7 of the CAN Frame.</ipxact:description>
+						<ipxact:description>Data byte 6 of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
+						<ipxact:name>DATA_7</ipxact:name>
+						<ipxact:description>Data byte 7 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
+						<ipxact:bitWidth>8</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
 						<ipxact:name>DATA_8</ipxact:name>
-						<ipxact:description>Data byte 8 of the CAN Frame.</ipxact:description>
-						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:description>Data byte 8 of CAN Frame.</ipxact:description>
+						<ipxact:bitOffset>24</ipxact:bitOffset>
 						<ipxact:bitWidth>8</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
