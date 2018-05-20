@@ -390,7 +390,7 @@ begin
     inc_dec_assert_proc : process(clk_sys)
     begin
         -- pragma translate_off
-        if (rising_edge(clk_sys)) then
+        if (rising_edge(clk_sys) and now /= 0 fs) then
             if (joined_ctr /= "000" and joined_ctr /= "001" and
                 joined_ctr /= "010" and joined_ctr /= "100") then
                 report "Error counters commands from Protocol Control to " &
