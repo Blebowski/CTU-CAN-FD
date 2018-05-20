@@ -202,16 +202,16 @@ begin
 
   CAN_comp:CAN_top_level
   generic map(
-	  use_logger     => use_logger,
-     rx_buffer_size => rx_buffer_size,
-     use_sync       => use_sync,
+	  use_logger     => false,
+     rx_buffer_size => 4096,
+     use_sync       => true,
      ID             => ID,
-     sup_filtA      => sup_filtA,
-     sup_filtB      => sup_filtB,
-     sup_filtC      => sup_filtC,
-     sup_range      => sup_range,
-     tx_time_sup    => tx_time_sup,
-	  sup_be         => sup_be,
+     sup_filtA      => true,
+     sup_filtB      => true,
+     sup_filtC      => true,
+     sup_range      => true,
+     tx_time_sup    => true,
+	  sup_be         => true,
      logger_size    => logger_size
     )
   port map(

@@ -130,7 +130,7 @@ begin
     -- that input values are properly defined
     l0_val_proc:process(prio_valid)
     begin
-      if (prio_valid(i) /= '0' and prio_valid(i) /= '1') then
+      if (prio_valid(i) /= '0' and prio_valid(i) /= '1' and now /= 0 fs) then
         report "Input values not exactly defined" severity error;
       end if;
     end process;
