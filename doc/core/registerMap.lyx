@@ -4760,7 +4760,7 @@ Address: 0x8
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Reading this register returns Interrupt vector (status of generated Interrupts). Writing logic 1 to any bit clears according interrupt. Writing logic 0 has no effect.
+Reading this register returns logic 1 for each interrupt which was captured (interrupt vector). Writing logic 1 to any bit clears according bit of captured interrupt. Writing logic 0 has no effect.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -5308,7 +5308,7 @@ Address: 0xC
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 to a bit enables according interrupt.Writing logic 0 has no effect. Reading the register returns logic 1 in every bit whose interrupt capturing is enabled.
+Writing logic 1 to a bit enables according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each enabled interrupt. If interrupt is captured in INT_STAT, enabled interrupt will cause "int" output to be asserted. Interrupts are level-based. To capture interrupt to INT_STAT register, interrupt must be unmasked.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -5823,7 +5823,7 @@ Address: 0x10
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect.
+Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Disabled interrupt wil not affect "int" output of CAN Core event if it is captured in INT_STAT register.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -6338,7 +6338,7 @@ Address: 0x14
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured, and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.
+Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each masked interrupt. If particular interrupt is masked, it won't be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).
 \end_layout
 \begin_layout Standard
 \noindent
@@ -6853,7 +6853,7 @@ Address: 0x18
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT, and it does affect interrupt output of the CAN Core.
+Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. If particular interrupt is un-masked, it will be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).
 \end_layout
 \begin_layout Standard
 \noindent

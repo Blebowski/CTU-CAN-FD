@@ -534,7 +534,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_STAT</ipxact:name>
 					<ipxact:displayName>INT_STAT</ipxact:displayName>
-					<ipxact:description>Reading this register returns Interrupt vector (status of generated Interrupts). Writing logic 1 to any bit clears according interrupt. Writing logic 0 has no effect.</ipxact:description>
+					<ipxact:description>Reading this register returns logic 1 for each interrupt which was captured (interrupt vector). Writing logic 1 to any bit clears according bit of captured interrupt. Writing logic 0 has no effect.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -724,7 +724,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_ENA_CLR</ipxact:name>
 					<ipxact:displayName>INT_ENA_CLR</ipxact:displayName>
-					<ipxact:description>Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect.</ipxact:description>
+					<ipxact:description>Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Disabled interrupt wil not affect &quot;int&quot; output of CAN Core event if it is captured in INT_STAT register.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -746,7 +746,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_MASK_CLR</ipxact:name>
 					<ipxact:displayName>INT_MASK_CLR</ipxact:displayName>
-					<ipxact:description>Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Un-masked interrupt is captured, can be read from INT_STAT, and it does affect interrupt output of the CAN Core.</ipxact:description>
+					<ipxact:description>Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. If particular interrupt is un-masked, it will be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h18</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -768,7 +768,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_MASK_SET</ipxact:name>
 					<ipxact:displayName>INT_MASK_SET</ipxact:displayName>
-					<ipxact:description>Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns status of the interrupt mask. Masked interrupt is captured, and can be read from INT_STAT, but does not affect interrupt output of the CAN Core.</ipxact:description>
+					<ipxact:description>Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each masked interrupt. If particular interrupt is masked, it won't be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -790,7 +790,7 @@
 				<ipxact:register>
 					<ipxact:name>INT_ENA_SET</ipxact:name>
 					<ipxact:displayName>INT_ENA_SET</ipxact:displayName>
-					<ipxact:description>Writing logic 1 to a bit enables according interrupt.Writing logic 0 has no effect. Reading the register returns logic 1 in every bit whose interrupt capturing is enabled.</ipxact:description>
+					<ipxact:description>Writing logic 1 to a bit enables according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each enabled interrupt. If interrupt is captured in INT_STAT, enabled interrupt will cause &quot;int&quot; output to be asserted. Interrupts are level-based. To capture interrupt to INT_STAT register, interrupt must be unmasked.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
