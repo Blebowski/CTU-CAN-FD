@@ -317,9 +317,9 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- INT_STAT register
   --
-  -- Reading this register returns Interrupt vector (status of generated Interru
-  -- pts). Writing logic 1 to any bit clears according interrupt. Writing logic 
-  -- 0 has no effect.
+  -- Reading this register returns logic 1 for each interrupt which was captured
+  --  (interrupt vector). Writing logic 1 to any bit clears according bit of cap
+  -- tured interrupt. Writing logic 0 has no effect.
   ------------------------------------------------------------------------------
   constant RI_IND                 : natural := 0;
   constant TI_IND                 : natural := 1;
@@ -351,9 +351,11 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- INT_ENA_SET register
   --
-  -- Writing logic 1 to a bit enables according interrupt.Writing logic 0 has no
-  --  effect. Reading the register returns logic 1 in every bit whose interrupt 
-  -- capturing is enabled.
+  -- Writing logic 1 to a bit enables according interrupt. Writing logic 0 has n
+  -- o effect. Reading this register returns logic 1 for each enabled interrupt.
+  --  If interrupt is captured in INT_STAT, enabled interrupt will cause "int" o
+  -- utput to be asserted. Interrupts are level-based. To capture interrupt to I
+  -- NT_STAT register, interrupt must be unmasked.
   ------------------------------------------------------------------------------
   constant INT_ENA_SET_L          : natural := 0;
   constant INT_ENA_SET_H         : natural := 11;
@@ -365,7 +367,8 @@ package CAN_FD_register_map is
   -- INT_ENA_CLR register
   --
   -- Writing logic 1 disables according interrupt. Writing logic 0 has no effect
-  -- . Reading this register has no effect.
+  -- . Reading this register has no effect. Disabled interrupt wil not affect "i
+  -- nt" output of CAN Core event if it is captured in INT_STAT register.
   ------------------------------------------------------------------------------
   constant INT_ENA_CLR_L          : natural := 0;
   constant INT_ENA_CLR_H         : natural := 11;
@@ -377,9 +380,10 @@ package CAN_FD_register_map is
   -- INT_MASK_SET register
   --
   -- Writing logic 1 masks according interrupt. Writing logic 0 has no effect. R
-  -- eading this register returns status of the interrupt mask. Masked interrupt
-  --  is captured, and can be read from INT_STAT, but does not affect interrupt 
-  -- output of the CAN Core.
+  -- eading this register returns logic 1 for each masked interrupt. If particul
+  -- ar interrupt is masked, it won't be captured in INT_STAT register when inte
+  -- rnal conditions for this interrupt are met (e.g RX Buffer is not empty for 
+  -- RXNEI).
   ------------------------------------------------------------------------------
   constant INT_MASK_SET_L         : natural := 0;
   constant INT_MASK_SET_H        : natural := 11;
@@ -391,9 +395,9 @@ package CAN_FD_register_map is
   -- INT_MASK_CLR register
   --
   -- Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect
-  -- . Reading this register has no effect. Un-masked interrupt is captured, can
-  --  be read from INT_STAT, and it does affect interrupt output of the CAN Core
-  -- .
+  -- . Reading this register has no effect. If particular interrupt is un-masked
+  -- , it will be captured in INT_STAT register when internal conditions for thi
+  -- s interrupt are met (e.g RX Buffer is not empty for RXNEI).
   ------------------------------------------------------------------------------
   constant INT_MASK_CLR_L         : natural := 0;
   constant INT_MASK_CLR_H        : natural := 11;

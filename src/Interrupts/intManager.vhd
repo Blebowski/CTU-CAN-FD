@@ -172,8 +172,8 @@ begin
   int_mask                            <=  int_mask_reg;
   int_ena                             <=  int_ena_reg;  
 
-  int_out  <= '1' when (int_vect_reg and int_mask_reg) /= zero_mask else
-              '0';
+  int_out  <= '0' when (int_vect_reg and int_ena_reg) = zero_mask else
+              '1';
   
   -- Interrupt register masking and enabling
   int_input_active(BEI_IND)       <=  error_valid;
@@ -221,7 +221,7 @@ begin
         end if;
         
         -- Interrupt status (vector)
-        if (int_input_active(i) = '1' and int_ena_reg(i) = '1') then
+        if (int_input_active(i) = '1' and int_mask_reg(i) = '0') then
           int_vect_reg(i) <= '1';
         elsif (drv_int_vect_clr(i) = '1') then
           int_vect_reg(i) <= '0';

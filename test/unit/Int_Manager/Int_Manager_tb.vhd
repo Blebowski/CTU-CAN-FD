@@ -103,7 +103,7 @@ architecture int_man_unit_test of CAN_test is
     signal loger_finished         :   std_logic := '0';
 
     -- RX Buffer not empty
-    signal rx_empty               :   std_logic := '0';
+    signal rx_empty               :   std_logic := '1';
 
     -- HW command on TX Buffer
     signal txt_hw_cmd             :   txt_hw_cmd_type;
@@ -449,7 +449,7 @@ begin
         end if;
 
         -- Interrupt clear and capturing!
-        if (int_input(i) = '1' and int_ena(i) = '1') then
+        if (int_input(i) = '1' and int_mask_exp(i) = '0') then
             int_status_exp(i) <= '1';
         elsif (drv_int_clear(i) = '1') then
             int_status_exp(i) <= '0';
@@ -457,7 +457,7 @@ begin
     end loop;
 
     -- Calculating expected interrupt output
-    if ((int_vector AND int_mask) = zeroes) then
+    if ((int_vector AND int_ena_exp) = zeroes) then
         exp_output      := false;
     else
         exp_output      := true;
