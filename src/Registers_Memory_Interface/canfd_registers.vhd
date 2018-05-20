@@ -1729,6 +1729,10 @@ begin
   drv_bus(767 downto 748)                          <=  (OTHERS=>'0');
   drv_bus(735 downto 614)                          <=  (OTHERS=>'0');
 
+  drv_bus(387 downto 376)                          <= (OTHERS=>'0');
+  drv_bus(367)                                     <= '0';
+  drv_bus(357)                                     <= '0';
+
 
   
   --Prescaler data and bus timing

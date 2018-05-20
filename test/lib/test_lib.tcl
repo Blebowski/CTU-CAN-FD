@@ -99,6 +99,7 @@ proc start_CAN_simulation {test_wrapper} {
 proc run_simulation {} {
 	#Import global variables
 	global WAIT_ON_END
+	global NumericStdNoWarnings
 	
 	# Set what happedns when simulation is interrupted
 	if	{$WAIT_ON_END == true} {
@@ -107,7 +108,12 @@ proc run_simulation {} {
 	} else {
 		onbreak { resume }
 	}
-	
+
+	# Avoid warnings at time 0
+	set NumericStdNoWarnings 1
+	run 0 ns
+	set NumericStdNoWarnings 0	
+
 	#Run the simulation
 	run -all
 }

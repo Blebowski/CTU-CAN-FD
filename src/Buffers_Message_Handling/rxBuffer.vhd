@@ -1009,7 +1009,7 @@ begin
         variable cmd_join  : std_logic_vector(3 downto 0);
     begin
         -- pragma translate_off
-        if (rising_edge(clk_sys)) then
+        if (rising_edge(clk_sys) and now /= 0 fs) then
             if (store_metadata = '1' and rx_fsm /= rxb_idle) then
                 report "RX Buffer: Store metadata command did NOT come during " &
                        "'rx_buf_idle'!"severity error; 
@@ -1057,7 +1057,7 @@ begin
         variable act_data_stores   : natural := 0;
     begin
         -- pragma translate_off
-        if (rising_edge(clk_sys)) then
+        if (rising_edge(clk_sys) and now /= 0 fs) then
 
             -- Calculate number of expected "store_data" commands from CAN Core.
             if (rec_abort = '1') then
