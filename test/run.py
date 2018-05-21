@@ -6,12 +6,14 @@
 # $ VUNIT_SIMULATOR=ghdl python run.py
 
 from os.path import join, dirname
-from vunit import VUnit
+from vunit.ui import VUnit
 from glob import glob
 from pprint import pprint
 import os
 import signal
 import subprocess
+import re
+from textwrap import dedent
 
 def get_children_pids(parent_pid):
     cmd = subprocess.run("ps -o pid --ppid {} --noheaders".format(parent_pid), shell=True, stdout=subprocess.PIPE, check=False)
@@ -26,6 +28,34 @@ def recursive_kill(pid, sig=signal.SIGTERM):
             os.kill(child, sig)
         except ProcessLookupError as e:
             pass
+
+def create_wrapper(lib):
+    files = lib.get_source_files()
+    tests = []
+    r = re.compile(r'^architecture\s+(\S+)\s+of\s+CAN_test\s+is$')
+    for file in files:
+        with open(file.name, 'rt', encoding='utf-8') as f:
+            for l in f:
+                m = r.match(l)
+                if m:
+                    tests.append(m.group(1))
+    wrapper = []
+    with open("tb_wrappers.vhd", "wt", encoding='utf-8') as f:
+        for test in tests:
+            f.write(dedent("""\
+                library work;
+                USE work.CANtestLib.All;
+
+                entity tb_{test} is generic (runner_cfg : string); end entity;
+                architecture tb of tb_{test} is
+                    for all:CAN_test use entity work.CAN_test({test});
+                begin
+                    tb:entity work.vunittb_wrapper generic map(xrunner_cfg => runner_cfg);
+                end architecture;
+                -- -----------------------------------------------------------------------------
+                """.format(test=test)
+            ))
+    lib.add_source_file("tb_wrappers.vhd")
 
 # ghdl creates a new process group for itself and fails to kill its child when it receives a signal :(
 def sighandler(signo, frame):
@@ -43,9 +73,12 @@ root = dirname(__file__)
 ui = VUnit.from_argv()
 lib = ui.add_library("lib")
 for pattern in ['../src/**/*.vhd', '*.vhd', 'unit/**/*.vhd', 'sanity/*.vhd', 'lib/*.vhd']:
-	p = join(root, pattern)
-	for f in glob(p, recursive=True):
-		lib.add_source_file(str(f))
+    p = join(root, pattern)
+    for f in glob(p, recursive=True):
+        if f != "tb_wrappers.vhd":
+            lib.add_source_file(str(f))
+
+create_wrapper(lib)
 
 #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
 

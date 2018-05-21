@@ -17,8 +17,10 @@ elaborate:
 test:
 	$(PYTHON) run.py $(TEST_FLAGS)
 test_unit:
+	$(PYTHON) run.py $(TEST_FLAGS) 'lib.tb_*_unit_test.*'
 test_feature:
 test_sanity:
+	$(PYTHON) run.py $(TEST_FLAGS) 'lib.tb_sanity.*'
 
 coverage:
 	lcov --capture --directory . --output-file $@

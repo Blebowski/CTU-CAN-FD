@@ -1,6 +1,6 @@
-image: ghdl/ext:vunit
+image: mjerabek/ghdl
 before_script:
-    - apt-get -y install lcov make
+    - "export PATH=/opt/ghdl/bin:$PATH"
 
 build_ip_and_tests:
     stage: build
@@ -16,15 +16,15 @@ build_ip_and_tests:
         - cd driver
         - "make -j`nproc`"
 
-test_ip:
+test_ip_unit:
     stage: test
     allow_failure: true
     script:
         - cd test
-        - make test XUNIT=1
+        - make test_unit XUNIT=1
         - make coverage
     coverage: "/lines......: ([^%]+%)/"
     artifacts:
         paths:
             - code_html
-            - test.xml
+            - test_unit.xml
