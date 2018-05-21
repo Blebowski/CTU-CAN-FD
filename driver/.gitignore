@@ -1,0 +1,11 @@
+*.o
+*.d
+/test
+*.das
+.*.cmd
+.tmp_versions
+modules.order
+Module.symvers
+ctucanfd.mod.c
+a.out
+*.ko
