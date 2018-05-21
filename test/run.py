@@ -42,7 +42,7 @@ root = dirname(__file__)
 
 ui = VUnit.from_argv()
 lib = ui.add_library("lib")
-for pattern in ['../src/**/*.vhd', '**/*.vhd']:
+for pattern in ['../src/**/*.vhd', '*.vhd', 'unit/**/*.vhd', 'sanity/*.vhd', 'lib/*.vhd']:
 	p = join(root, pattern)
 	for f in glob(p, recursive=True):
 		lib.add_source_file(str(f))
