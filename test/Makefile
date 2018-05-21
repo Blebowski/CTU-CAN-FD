@@ -23,7 +23,7 @@ test_sanity:
 	$(PYTHON) run.py $(TEST_FLAGS) 'lib.tb_sanity.*'
 
 coverage:
-	lcov --capture --directory . --output-file $@
+	lcov --capture --directory . --output-file code_coverage.info
 	genhtml code_coverage.info --output-directory code_html
 
 clean:

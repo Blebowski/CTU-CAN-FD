@@ -5,6 +5,11 @@ before_script:
 build_ip_and_tests:
     stage: build
     allow_failure: true
+    cache:
+        paths:
+            - vunit_out
+            - '*.gcda'
+            - '*.gcno'
     script:
         - cd test
         - make elaborate
