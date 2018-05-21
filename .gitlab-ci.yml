@@ -7,9 +7,9 @@ build_ip_and_tests:
     allow_failure: true
     cache:
         paths:
-            - vunit_out
-            - '*.gcda'
-            - '*.gcno'
+            - test/vunit_out
+            - 'test/*.gcda'
+            - 'test/*.gcno'
     script:
         - cd test
         - make elaborate
@@ -31,5 +31,5 @@ test_ip_unit:
     coverage: "/lines......: ([^%]+%)/"
     artifacts:
         paths:
-            - code_html
-            - test_unit.xml
+            - test/code_html
+            - test/test_unit.xml
