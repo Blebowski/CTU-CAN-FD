@@ -4,7 +4,6 @@ before_script:
 
 build_ip_and_tests:
     stage: build
-    allow_failure: true
     cache: &vunit_cache
         paths:
             - test/vunit_out
@@ -23,7 +22,6 @@ build_ip_and_tests:
 
 test_ip_unit:
     stage: test
-    allow_failure: true
     cache: *vunit_cache
     script:
         - cd test
