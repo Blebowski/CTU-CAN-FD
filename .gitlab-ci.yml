@@ -1,6 +1,25 @@
 image: ghdl/ext:vunit
-test:
+before_script:
+    - apt-get -y install lcov make
+
+build_ip_and_tests:
+    stage: build
+    allow_failure: true
+    script:
+        - cd test
+        - python run.py --elaborate
+
+build_driver:
+    stage: build
+    allow_failure: true
+    script:
+        - cd driver
+        - "make -j`nproc`"
+
+test_ip:
+    stage: test
+    allow_failure: true
     script:
         - cd test
         - python run.py --xunit-xml test_output.xml
-        - gcov -s `realpath ..` *.gcda | tail -n1
+        - "gcov -s `realpath ..` *.gcda | tail -n1"
