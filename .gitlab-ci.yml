@@ -1,0 +1,6 @@
+image: ghdl/ext:vunit
+test:
+    script:
+        - echo Hello from docker!
+        - hostname
+        - pwd
