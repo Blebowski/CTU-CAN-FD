@@ -7,9 +7,9 @@ build_ip_and_tests:
     allow_failure: true
     script:
         - cd test
-        - python run.py --elaborate
+        - make elaborate
 
-build_driver:
+.build_driver:
     stage: build
     allow_failure: true
     script:
@@ -21,5 +21,10 @@ test_ip:
     allow_failure: true
     script:
         - cd test
-        - python run.py --xunit-xml test_output.xml
-        - "gcov -s `realpath ..` *.gcda | tail -n1"
+        - make test XUNIT=1
+        - make coverage
+    coverage: "/lines......: ([^%]+%)/"
+    artifacts:
+        paths:
+            - code_html
+            - test.xml

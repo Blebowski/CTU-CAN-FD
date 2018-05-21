@@ -47,17 +47,9 @@ for pattern in ['../src/**/*.vhd', '*.vhd', 'unit/**/*.vhd', 'sanity/*.vhd', 'li
 	for f in glob(p, recursive=True):
 		lib.add_source_file(str(f))
 
-lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
-#ui.add_compile_option('ghdl.flags', ['--ieee=synopsys'])
+#lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
 
 lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage"])
 ui.set_sim_option("ghdl.elab_flags", ["-Wl,-lgcov", "-Wl,--coverage", "-Wl,-no-pie"])
 ui.set_sim_option("ghdl.sim_flags", ["--ieee-asserts=disable-at-0"])
-try:
-    ui.main()
-except SystemExit as exc:
-    all_ok = exc.code == 0
-
-#if all_ok:
-#    subprocess.call(["lcov", "--capture", "--directory", ".", "--output-file",  "code_coverage.info"])
-#    subprocess.call(["genhtml", "code_coverage.info", "--output-directory", "code_html"])
+ui.main()
