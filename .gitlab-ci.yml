@@ -1,6 +1,6 @@
 image: ghdl/ext:vunit
 test:
     script:
-        - echo Hello from docker!
-        - hostname
-        - pwd
+        - cd test
+        - python run.py --xunit-xml test_output.xml
+        - gcov -s `realpath ..` *.gcda | tail -n1
