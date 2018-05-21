@@ -62,13 +62,13 @@ u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
 
 /*
 void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
-				      u16 val)
+					  u16 val)
 {
 	iowrite16(val, (char *)priv->mem_base + reg);
 }
 
 void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
-				     u8 val)
+					 u8 val)
 {
 	iowrite8(val, (char *)priv->mem_base + reg);
 }
@@ -87,8 +87,8 @@ u8 ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
 */
 
 static void ctu_can_fd_write_txt_buf(struct ctucanfd_priv *priv,
-			      enum ctu_can_fd_regs buf_base,
-			      u32 offset, u32 val)
+				  enum ctu_can_fd_regs buf_base,
+				  u32 offset, u32 val)
 {
 	priv->write_reg(priv, buf_base + offset, val);
 }
@@ -721,7 +721,6 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_fram
 
 	if (!ctu_can_fd_len_to_dlc(cf->len, &dlc))
 		return false;
-
 	ffw.s.dlc = dlc;
 
 	// Larger data chunks and the ones where bit rate should be shifted

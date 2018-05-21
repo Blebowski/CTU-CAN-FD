@@ -136,9 +136,9 @@ static inline bool CTU_CAN_FD_INT_ERROR(union ctu_can_fd_int_stat i) {
 struct ctucanfd_priv;
 #ifndef ctucanfd_priv
 struct ctucanfd_priv {
-    void __iomem *mem_base;
-    u32 (*read_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
-    void (*write_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, u32 val);
+	void __iomem *mem_base;
+	u32 (*read_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
+	void (*write_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, u32 val);
 };
 #endif
 
