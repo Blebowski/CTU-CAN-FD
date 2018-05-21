@@ -4,8 +4,9 @@ before_script:
 
 build_ip_and_tests:
     stage: build
-    cache: &vunit_cache
-        paths:
+    cache:
+        policy: push
+        paths: &vunit_cache_paths
             - test/vunit_out
             - 'test/*.gcda'
             - 'test/*.gcno'
@@ -22,7 +23,9 @@ build_ip_and_tests:
 
 test_ip_unit:
     stage: test
-    cache: *vunit_cache
+    cache:
+        policy: pull
+        paths: *vunit_cache_paths
     script:
         - cd test
         - make test_unit XUNIT=1
@@ -31,4 +34,18 @@ test_ip_unit:
     artifacts:
         paths:
             - test/code_html
+            - test/test_unit.xml
+
+test_ip_sanity:
+    stage: test
+    cache:
+        policy: pull
+        paths: *vunit_cache_paths
+    only:
+        - schedules
+    script:
+        - cd test
+        - make test_sanity XUNIT=1
+    artifacts:
+        paths:
             - test/test_unit.xml
