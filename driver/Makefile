@@ -2,12 +2,8 @@ SRCS := ctu_can_fd_hw.c  ctu_can_fd_linux_defs.c  ctu_can_fd_userspace.cpp
 OBJS := $(addsuffix .o,$(SRCS))
 DEPS := $(addsuffix .d,$(SRCS))
 
-ifeq ($(shell hostname),majernb)
-	P := /home/martin/programs/Xilinx/SDK/2017.4/gnu/aarch32/lin/gcc-arm-linux-gnueabi/bin/arm-linux-gnueabihf-
-else
-	P := /home/mjerabek/Xilinx/vivado-2017.3/SDK/2017.3/gnu/aarch32/lin/gcc-arm-linux-gnueabi/bin/arm-linux-gnueabihf-
-endif
-#P := arm-linux-gnueabihf-
+P := arm-linux-gnueabihf-
+
 CC := $(P)gcc
 CXX := $(P)g++
 #CC := clang -target armv7a-pc-linux-gnueabi -march=armv7 -mthumb
