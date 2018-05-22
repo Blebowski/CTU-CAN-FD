@@ -1,0 +1,8 @@
+*.gcda
+*.gcno
+/vunit_out
+/code_html
+code_coverage.info
+/work
+tb_wrappers*.vhd
+test*.xml
