@@ -13,7 +13,9 @@ CXXFLAGS := $(XFLAGS)
 #LDFLAGS := -fuse-ld=gold
 
 all: test
+ifeq ($(shell hostname),hathi)
 	cp ./test /srv/nfs4/debian-armhf-devel/
+endif
 
 test: $(OBJS)
 	$(CXX) $(XFLAGS) -o $@ $(OBJS) $(LDFLAGS)
