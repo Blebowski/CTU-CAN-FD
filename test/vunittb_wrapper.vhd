@@ -54,7 +54,6 @@ USE work.CANtestLib.All;
 entity vunittb_wrapper is
   generic (
     xrunner_cfg : string;
-    ok         : boolean := false;
     iterations : natural := 1;
     log_level  : log_lvl_type := info_l;
     error_beh  : err_beh_type := quit;           -- Test behaviour when error occurs: Quit, or Go on
@@ -68,7 +67,6 @@ architecture tb of vunittb_wrapper is
     signal t_status   : test_status_type;
     signal t_run      : boolean;
 begin
-    g:if ok generate
     i_test: CAN_test
         port map (
             iterations => iterations,
@@ -79,12 +77,11 @@ begin
             status     => t_status,
             run        => t_run
         );
-    end generate;
     main:process
     begin
         test_runner_setup(runner, xrunner_cfg);
-        while test_suite loop
-            if run("test") then
+        --while test_suite loop
+            if true or run("all") then
                 t_run <= true;
                 wait until t_status = passed or t_status = failed;
                 report "Done";
@@ -92,7 +89,7 @@ begin
                 wait for 100 ns;
                 t_run <= false;
             end if;
-        end loop;
+        --end loop;
         test_runner_cleanup(runner, t_errors > 0);
     end process;
 end architecture;
