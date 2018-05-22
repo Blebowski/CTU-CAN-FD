@@ -20,7 +20,7 @@ build_ip_and_tests:
         - triggers   # Run by trigger (on merge request)
         - web        # Run by manual request from web UI
 
-.build_driver:
+build_driver:
     stage: build
     allow_failure: true
     only: *only
