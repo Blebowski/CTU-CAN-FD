@@ -22,7 +22,6 @@ build_ip_and_tests:
 
 build_driver:
     stage: build
-    allow_failure: true
     only: *only
     script:
         - cd driver
