@@ -59,18 +59,15 @@
 --                2.Added keeping previous value of dst_counter when circuit is 
 --                  disabled instead of erasing! This way ciruit is compatible
 --                  with bit stuffing!
---                3.dst_bit_ctr value kept when destuffing error occured for 
---                  correct behaviour in testbench. This is only a small thing 
---                  since when stuff error occurs bit stuffing is turned off 
---                  immediately due to error frame transmittion and dst_ctr is 
---                  not needed anymore!!! 
---                4.Added warning when bit stuffing rule is set to 0 or 1 which
+--                3.Added warning when bit stuffing rule is set to 0 or 1 which
 --                  is invalid setting!
 --    12.1.2017  Changed priority of fixed bit-destuffing processing. Fixed bit 
 --               destuffing should always have higher priority than non-fixed 
 --               bit-destuffing and thus be before in the If-elsif condition!
 --               This is due to possible conflic of normal and fixed bit destu-
 --               ffing in the start of FD CRC. Fixed bit-destuff should win!
+--    23.5.2018  Bug-fix of stuff error detection. Stuff error on special
+--               stuff-bit in first bit of CRC also must be detected.
 --------------------------------------------------------------------------------
 
 library ieee;
@@ -192,16 +189,22 @@ begin
 
         --Destuffing is processed with triggering signal
         elsif(trig_spl_1 = '1')then
-          prev_val <= data_in;          --Data is always propagated
+          prev_val      <= data_in;      --Data is always propagated
+          fixed_prev    <= fixed_stuff;
 
           --When stuffing method is changed in the beginning of the
           --CRC field the stuffing counter needs to be erased!
           if(fixed_stuff = '1' and fixed_prev = '0')then
             prev_val      <= RECESSIVE;
-            same_bits     <= 1;         --TODO: think if here shouldnt be zero
-            --      due to extra inserted stuff bit!!!
+            same_bits     <= 1;
             destuffed_reg <= '1';
-            fixed_prev    <= fixed_stuff;
+          
+            --Stuff Rule violation 
+            if(prev_val = data_in and stuff_Error_enable = '1')then
+              error_reg   <= '1';
+            else
+              error_reg <= '0';
+            end if; 
 
           --If number of bits was reached then
           elsif(same_bits = unsigned(length) and fixed_stuff = '0')or
@@ -224,7 +227,6 @@ begin
             --Stuff Rule violation 
             if(prev_val = data_in and stuff_Error_enable = '1')then
               error_reg   <= '1';
-              dst_bit_ctr <= dst_bit_ctr;
             else
               error_reg <= '0';
             end if;
