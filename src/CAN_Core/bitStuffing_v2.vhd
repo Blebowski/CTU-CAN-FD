@@ -175,19 +175,19 @@ begin
       --Trigger signal
       elsif(tran_trig_1='1')then 
         
+		fixed_prev    <= fixed_stuff;
+
         --When stuffing method is changed in the beginning of the
         --CRC field the stuffing counter needs to be erased!
         if(fixed_stuff='1' and fixed_prev='0')then
           prev_bit      <=  not prev_bit;
           halt_reg      <= '1';
-          same_bits     <=  1;  --TODO: think if here shouldnt be zero
-                                --      due to extra inserted stuff bit!!!          
-          fixed_prev    <= fixed_stuff;
-      
+		  same_bits     <= 1;
+		 
         --If number of bits was reached
         elsif(same_bits=unsigned(length) and fixed_stuff='0')  or
           (same_bits=unsigned(length)+1 and fixed_stuff='1')
-          --Fixed stuff is must be plus one since also the stuffed bit is 
+          --Fixed stuff must be plus one since also the stuffed bit is 
           --counted! In normal bit stuffing when bit is stuffed same_bits is 
           --erased and counted from first bit after stuffed bit!
         then 
