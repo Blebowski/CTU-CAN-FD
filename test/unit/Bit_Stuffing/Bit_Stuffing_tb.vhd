@@ -51,7 +51,15 @@
 -- Revision History:
 --
 --    13.6.2016   Created file
---    21.5.2018   Added SW model for bit stuffing.
+--    23.5.2018   Reimplemented Bit stuffing testbench. Generated bitsream
+--                before bit stuffing. Added SW model. Calculated expected stuff
+--                sequence. Comparing TX/RX mismatch, stuff output expected/
+--                actual, stuff error/expected actual.
+--                Stuff error randomly generated upon inserted stuff bit.
+--                Verification of "special" fixed stuff bit in transition
+--                between "non fixed" and "fixed" stuffing added.
+--                CAN frame emulated. First stuffing is enabled non fixed, then
+--                transits to fixed stuffing as during CAN FD Frame.
 --------------------------------------------------------------------------------
 
 
@@ -67,56 +75,426 @@ use work.ID_transfer.all;
 
 architecture bit_stuffing_unit_test of CAN_test is
 
+    ----------------------------------------------------------------------------
     -- System clock and async. reset
+    ----------------------------------------------------------------------------
     signal clk_sys              :   std_logic := '0';
     signal res_n                :   std_logic := '0';
 
+    ----------------------------------------------------------------------------    
     -- Triggering signals
-    signal tx_trig              :   std_logic := '0';
+    ----------------------------------------------------------------------------
+    
+    -- Trigger with intention to transmitt the data.
+    signal tx_trig_intent       :   std_logic := '0';
+
+    -- Trigger on which data are actually transmitted! New data are not
+    -- transmitted if bit was stuffed and "data_halt" occurred!
+    signal tx_trig_ack          :   std_logic := '0';
+
+    -- Bit stuffing trigger (one clock delayed from tx_trig)
     signal bs_trig              :   std_logic := '0';
+
+    -- Bit destuffin trigger
     signal bd_trig              :   std_logic := '0';
-    signal rx_trig              :   std_logic := '0';
 
+    -- Intent to receive data
+    signal rx_trig_intent       :   std_logic := '0';
+
+    -- Trigger on which data are really sampled! New data are not received if
+    -- data are destuffed ("destuffed" is active)!
+    signal rx_trig_ack          :   std_logic := '0';
+
+    ----------------------------------------------------------------------------    
     -- Datapath
-    signal tx_data              :   std_logic := '0';
-    signal stuffed_data         :   std_logic := '0';
-    signal joined_data          :   std_logic := '0';
-    signal err_data             :   std_logic := '0';
-    signal rx_data              :   std_logic := '0';
+    ----------------------------------------------------------------------------
+    -- Transmitted data (before bit stuffing)
+    signal tx_data              :   std_logic := '1';
 
+    -- Stuffed data (after bit stuffing)
+    signal stuffed_data         :   std_logic := '1';
+
+    -- Data for bit destuffing (stuffed_data and err_data)
+    signal joined_data          :   std_logic := '0';
+
+    -- Error data should be inserted
+    signal err_data             :   std_logic := '0';
+
+    -- Received data (after bit-destuffing)
+    signal rx_data              :   std_logic := '1';
+
+    ----------------------------------------------------------------------------    
     -- Control signals
+    ----------------------------------------------------------------------------    
     signal bs_enable            :   std_logic := '0';
     signal bd_enable            :   std_logic := '0';
-    signal fixed_stuff          :   std_logic := '0';  --Common for both
+    signal fixed_stuff          :   std_logic := '0';  -- Common for both
     signal bs_length            :   std_logic_vector(2 downto 0) := "100";
     signal bd_length            :   std_logic_vector(2 downto 0) := "100";
+    signal stuff_error_enable   :   std_logic := '1';
 
-    --TODO: Testbench not yet debugged with stuff_error enabled!!
-    --      Bit destuffing is detecting the stuff errors OK, just TB is not
-    --      finished with this feature!
-    signal stuff_error_enable   :   std_logic := '0';
-
-    --Status signals
+    ----------------------------------------------------------------------------    
+    -- Status signals
+    ----------------------------------------------------------------------------
     signal data_halt            :   std_logic := '0';
     signal destuffed            :   std_logic := '0';
     signal stuff_error          :   std_logic := '0';
     signal bs_ctr               :   natural range 0 to 7 := 0;
     signal bd_ctr               :   natural range 0 to 7 := 0;
 
-    --Other signals
+
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------    
+    -- Testbench signals
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+
+    ----------------------------------------------------------------------------
+    -- Bit stuffing settings. Includes everything necessary for one iteration
+    -- of Bit stuffing unit test.
+    ----------------------------------------------------------------------------
+    type bs_test_settings_type is record
+
+        -- Number of bits to wait in "NON FIXED" mode after enabling.
+        bc_non_fixed            :   natural;
+
+        -- Length of "NON FIXED" stuffing rule.
+        stuff_length_non_fixed  :   std_logic_vector(2 downto 0);
+
+        -- Whether change to "FIXED" bit stuffing should be performed.
+        change_to_fixed         :   boolean;
+
+        -- Number of bits to wait in FIXED mode after enabling.
+        bc_fixed                :   natural;
+
+        -- Number of to wait in "FIXED" mode after change from NON FIXED to
+        -- FIXED bit stuffing.
+        stuff_length_fixed      :   std_logic_vector(2 downto 0);
+
+        -- TX Data sequence before bit stuffing and RX after bit destuffing.
+        -- (Make sure that largest possible CAN FD frame fits)
+        tx_data_seq             :   std_logic_vector(799 downto 0);
+        rx_data_seq             :   std_logic_vector(799 downto 0);
+
+        -- Stuffed data sequence which should come out of bit stuffing after
+        -- "tx_data_seq" was applied on input of the circuit.
+        stuffed_data_seq        :   std_logic_vector(799 downto 0);
+
+        -- Bit at matching position in "stuffed_data_seq" is stuffed
+        stuffed_bits_mark       :   std_logic_vector(799 downto 0);
+    end record;
+
+    ----------------------------------------------------------------------------
+    -- Error counters
+    ----------------------------------------------------------------------------
+    signal  stuf_e_err_ctr      :   natural := 0;
+    signal  stat_err_ctr        :   natural := 0;
+
+    ----------------------------------------------------------------------------
+    -- Other signals
+    ----------------------------------------------------------------------------
     signal rand_set_ctr         :   natural range 0 to RAND_POOL_SIZE := 0;
-    signal rand_tx_ctr          :   natural range 0 to RAND_POOL_SIZE := 0;
     signal rand_st_err_ctr      :   natural range 0 to RAND_POOL_SIZE := 0;
     signal exit_imm_1           :   boolean := false;
-    signal exit_imm_2           :   boolean := false;
-    signal exit_imm_3           :   boolean := false;
+   
 
-    --Error counters
-    signal  rx_err_ctr          :   natural := 0;
-    signal  stat_err_ctr        :   natural := 0;
-    signal  st_er_err_ctr       :   natural := 0;
-    signal  bs_mod_err_ctr      :   natural := 0;
+    -- Signal that no trigger is active and bit stuffing settings can be
+    -- changed
+    signal no_trigger           :   boolean := false;
   
+    -- Bit stuffing step settings
+    signal set                  :   bs_test_settings_type :=
+                                    (0, "000", false, 0, "000", (OTHERS => '0'),
+                                     (OTHERS => '0'), (OTHERS => '0'),
+                                     (OTHERS => '0'));
+
+    ----------------------------------------------------------------------------
+    -- Calculates expected sequence on output of bit stuffing circuit
+    -- from input sequence based on bit stuffing settings.
+    -- Includes: non - fixed stuffing, extra stuff bit + fixed stuffing!
+    ----------------------------------------------------------------------------
+    procedure calc_sw_bit_stuf_sequence(
+        signal set              : inout bs_test_settings_type
+    ) is
+        variable i              :       integer := 0;
+        variable in_ptr         :       integer := 0;
+        variable out_ptr        :       integer := 0;
+        variable stuff_ctr      :       integer := 0;
+        variable st_length      :       integer := 0;
+        variable prev_bit       :       std_logic := '0';
+    begin
+
+        -- Check settings validity for circuits as well as for
+        -- "stuffed_data_seq" length
+        if (to_integer(unsigned(set.stuff_length_fixed))     < 3 or
+            to_integer(unsigned(set.stuff_length_non_fixed)) < 3)
+        then
+            report "Invalid bit stuffing settings!" severity failure;            
+        end if;
+
+        --------------------------------------
+        -- Calculate non-fixed stuffing
+        --------------------------------------
+        st_length := to_integer(unsigned(set.stuff_length_non_fixed));
+        while (i < (set.bc_non_fixed - 1)) loop
+            
+            -- Insert stuff bit
+            if (stuff_ctr = st_length) then
+                stuff_ctr := 1;
+                set.stuffed_data_seq(out_ptr) <= not set.tx_data_seq(in_ptr - 1);
+                set.stuffed_bits_mark(out_ptr) <= '1';
+                out_ptr := out_ptr + 1;
+
+            -- Check if next bit is equal to previous one            
+            elsif (set.tx_data_seq(in_ptr) = prev_bit) then
+                stuff_ctr := stuff_ctr + 1;
+            else
+                stuff_ctr := 1;
+            end if;
+            
+            -- Insert bit from input sequence
+            prev_bit := set.tx_data_seq(in_ptr);
+            set.stuffed_data_seq(out_ptr) <= set.tx_data_seq(in_ptr);
+            in_ptr  := in_ptr + 1;
+            out_ptr := out_ptr + 1;
+            i       := i + 1;
+        end loop;
+
+        
+        --------------------------------------
+        -- Calculate fixed bit stuffing
+        --------------------------------------
+        if (set.change_to_fixed) then
+            -- Insert one extra stuff bit as in beginning of CAN FD CRC!
+            set.stuffed_data_seq(out_ptr)  <= not set.tx_data_seq(in_ptr);
+            set.stuffed_bits_mark(out_ptr) <= '1';
+            out_ptr := out_ptr + 1;
+
+            st_length := to_integer(unsigned(set.stuff_length_fixed));
+            i := 0;   
+            while (i < (set.bc_fixed - 1)) loop
+                
+                -- Insert stuff bit
+                if (stuff_ctr = st_length) then
+                    stuff_ctr := 1;
+                    set.stuffed_data_seq(out_ptr) <=
+                        not set.tx_data_seq(in_ptr - 1);
+                    set.stuffed_bits_mark(out_ptr) <= '1';
+                    out_ptr := out_ptr + 1;
+
+                -- Stuff counter is incremented regardless of bit values since
+                -- stuffing is fixed!         
+                else
+                    stuff_ctr := stuff_ctr + 1;
+                end if;
+                
+                -- Insert bit from input sequence
+                prev_bit := set.tx_data_seq(in_ptr);
+                set.stuffed_data_seq(out_ptr) <= set.tx_data_seq(in_ptr);
+                in_ptr  := in_ptr + 1;
+                out_ptr := out_ptr + 1;
+                i       := i + 1;
+            end loop;
+        end if;
+
+    end procedure;
+
+
+
+    procedure generate_bs_settings(
+        signal rand_ctr         : inout natural range 0 to RAND_POOL_SIZE;
+        signal set              : inout bs_test_settings_type
+    )is
+        variable tmp            :       natural;
+        variable tmp_vect       :       std_logic_vector(799 downto 0);
+    begin
+        ------------------------------------------------------------------------
+        -- Generate random bit stuffing rule lengths. This is not necessary
+        -- for CAN protocol, but why not to be a litte more general? Stuffing
+        -- length constrained to lengths from 3 to 7.
+        ------------------------------------------------------------------------
+        rand_int_v(rand_ctr, 3, tmp);
+        set.stuff_length_non_fixed <=
+            std_logic_vector(to_unsigned(tmp + 3, 3));
+
+        rand_int_v(rand_ctr, 3, tmp);
+        set.stuff_length_fixed <=
+            std_logic_vector(to_unsigned(tmp + 3, 3));
+
+        ------------------------------------------------------------------------
+        -- Generate duration of random intervals for non fixed and for
+        -- fixed parts of bit stuffing. Generate if fixed bit stuffing should
+        -- even be used!
+        ------------------------------------------------------------------------
+        rand_int_s(rand_ctr, 550, set.bc_non_fixed, true);
+        set.bc_non_fixed <= set.bc_non_fixed + 20;
+
+        rand_int_s(rand_ctr, 5, set.bc_non_fixed, true);
+        set.bc_non_fixed <= set.bc_non_fixed + 15;
+
+        rand_int_v(rand_ctr, 10, tmp);
+        if (tmp > 5) then
+            set.change_to_fixed <= true;
+        else
+            set.change_to_fixed <= false;
+        end if;
+        wait for 0 ns;
+
+        ------------------------------------------------------------------------
+        -- Generate random bit sequences in TX Data, use only data up to
+        -- generated length
+        ------------------------------------------------------------------------
+        rand_logic_vect_cons_v(rand_ctr, tmp_vect, 0.8);
+        set.tx_data_seq(set.bc_non_fixed - 1 downto 0) <=
+            tmp_vect(set.bc_non_fixed - 1 downto 0);
+
+        if (set.change_to_fixed) then
+            rand_logic_vect_cons_v(rand_ctr, tmp_vect, 0.8);
+            set.tx_data_seq(set.bc_fixed + set.bc_non_fixed - 1 downto
+                            set.bc_non_fixed) <=
+                tmp_vect(set.bc_fixed - 1 downto 0);
+        end if;
+
+        -- Calculate expected stuff sequence!
+        calc_sw_bit_stuf_sequence(set);
+
+    end procedure;
+
+
+
+    ----------------------------------------------------------------------------
+    -- Executes test step. Sequence is as following:
+    --  1. Generate random settings for bit stuffing, bit destuffing. Generate
+    --     random bit streams, calculates expected sequence after bit stuffing!
+    --  2. Enable bit stuffing with "fixed_stuff = 0" as if CAN frame started.
+    --  3. Transmit TX data , receive RX data. Sample data after bit stuffing.
+    --     In each step, evaluate if data after bit stuffing match expected data
+    --     in "set.stuffed_data". Throw an error if not.
+    --  4. After "set.bc_non_fixed" change to fixed bit stuffing if 
+    --     "set.change_fixed = true".
+    --  5. TX, RX and sample stuffed data for rest of the sequence with fixed
+    --     bit stuffing. Evaluate if TX data = RX data and if stuffed sequence
+    --     matches the expected sequence.
+    --  6. During points 3 and 5, if "err_data" is active, finish the step.
+    --     "gen_st_error" process is looking for detection of stuff error.
+    --     Stuff error means error frame on CAN Bus, no sense in comparing the
+    --     data further!
+    ----------------------------------------------------------------------------
+    procedure exec_bs_test_step(
+        signal rand_ctr     : inout natural range 0 to RAND_POOL_SIZE;
+        signal set          : inout bs_test_settings_type;
+
+        -- Triggering signals
+        signal tx_trig_ack  : in    std_logic;
+        signal rx_trig_ack  : in    std_logic;
+        signal bs_trig      : in    std_logic;
+        signal bd_trig      : in    std_logic;
+        signal no_trigger   : in    boolean;
+
+        -- Data signals
+        signal tx_data      : inout std_logic;
+        signal rx_data      : in    std_logic;
+        signal stuffed_data : in    std_logic;
+        signal err_data     : in    std_logic;
+
+        -- Bit stuffing and destuffing configuration
+        signal bs_enable    : inout std_logic;
+        signal bd_enable    : inout std_logic;
+        signal fixed_stuff  : inout std_logic;
+        signal bs_length    : inout std_logic_vector(2 downto 0);
+        signal bd_length    : inout std_logic_vector(2 downto 0);
+
+        -- Error behaviour stuff
+        signal err_ctr      : inout natural;
+        signal log_lvl      : in    log_lvl_type; 
+        signal error_beh    : in    err_beh_type;
+        signal exit_imm     : inout boolean
+    ) is
+        variable nbs_ptr    :       natural := 0;
+        variable wbs_ptr    :       natural := 0;
+    begin
+        wait until no_trigger;
+        wait until rising_edge(clk_sys);
+
+        -- Generate step settings
+        generate_bs_settings(rand_ctr, set);
+        
+        -- Enable Bit stuffing and destuffing. Set no fixed stuffing.
+        bs_enable    <= '1';
+        bd_enable    <= '1';
+        fixed_stuff  <= '0';
+
+        -- Set non fixed length
+        bs_length    <= set.stuff_length_non_fixed;
+        bd_length    <= set.stuff_length_non_fixed;
+
+        -- Transmitt, receive and sample stuffed data!
+        while true loop
+            wait until rising_edge(clk_sys);
+
+            -- Stuff error was forced -> stop sampling.
+            if (err_data = '1') then
+                exit;
+            end if;
+
+            -- Transmitting
+            if (tx_trig_ack = '1') then
+                tx_data <= set.tx_data_seq(nbs_ptr);
+            end if;
+
+            -- Receiving
+            if (rx_trig_ack = '1') then
+                wait for 1 ns;
+                if (rx_data /= tx_data) then
+                     log("TX, RX data mismatch", error_l, log_level);
+                     process_error(err_ctr, error_beh, exit_imm);
+                end if;
+                nbs_ptr := nbs_ptr + 1;
+            end if;
+
+            -- Checking Bit stuffed sequence and that bit was stuffed when
+            -- supposed to!
+            if (bs_trig = '1') then
+                wait for 1 ns;
+                if (stuffed_data /= set.stuffed_data_seq(wbs_ptr)) then
+                    log("Stuffed data mismatch", error_l, log_level);
+                    process_error(err_ctr, error_beh, exit_imm);
+                end if;
+
+                if (set.stuffed_bits_mark(wbs_ptr) /= data_halt) then
+                    log("Stuff bit not inserted!", error_l, log_level);
+                    process_error(err_ctr, error_beh, exit_imm);
+                end if;
+                wbs_ptr := wbs_ptr + 1;
+            end if;
+
+            -- Check for change to fixed stuffing
+            if (no_trigger and (nbs_ptr = set.bc_non_fixed - 1) and
+                fixed_stuff = '0')
+            then
+
+                -- Quit if fixed stuffing is not set for this step.
+                if (set.change_to_fixed = false) then
+                    exit;
+                end if;
+
+                fixed_stuff  <= '1';
+                bs_length    <= set.stuff_length_fixed;
+                bd_length    <= set.stuff_length_fixed;
+            end if;
+
+            -- Check if we are in the end
+            if (no_trigger and (nbs_ptr = set.bc_non_fixed + set.bc_fixed - 1)
+                and fixed_stuff = '1')
+            then
+                exit;
+            end if;
+
+        end loop;
+
+    end procedure;
+
+
 begin
   
     bitStufComp : bitStuffing_v2 
@@ -150,7 +528,7 @@ begin
         dst_ctr            =>  bd_ctr
     );
   
-  
+ 
     ----------------------------------------------------------------------------
     -- Clock generation
     ----------------------------------------------------------------------------
@@ -160,7 +538,8 @@ begin
         variable epsilon  :natural := 0;
     begin
         generate_clock(period, duty, epsilon, clk_sys);
-    end process; 
+    end process;
+
 
     ----------------------------------------------------------------------------
     -- Trigger generation
@@ -168,190 +547,87 @@ begin
     stuff_gen : process
     begin
         wait until falling_edge(clk_sys);
-        tx_trig              <= '1';
+        tx_trig_intent       <= '1';
         wait until falling_edge(clk_sys);
-        tx_trig              <= '0'; 
+        tx_trig_intent       <= '0'; 
         bs_trig              <= '1';
         wait until falling_edge(clk_sys);  
         bs_trig              <= '0';
         bd_trig              <= '1';
         wait until falling_edge(clk_sys);  
         bd_trig              <= '0';
-        rx_trig              <= '1';  
+        rx_trig_intent       <= '1';  
         wait until falling_edge(clk_sys);  
-        rx_trig              <= '0';
+        rx_trig_intent       <= '0';
         wait until falling_edge(clk_sys);
         wait until falling_edge(clk_sys);
-    end process; 
-  
-  
-    ----------------------------------------------------------------------------
-    -- Random settings generation
-    ----------------------------------------------------------------------------
-    set_gen : process
-        variable rand_val: real;
-    begin
         wait until falling_edge(clk_sys);
-
-        rand_real_v(rand_set_ctr, rand_val);
-        if (tx_trig = '0' and bs_trig = '0' and bd_trig = '0' and 
-            rx_trig = '0' and err_data = '0')
-        then
-            if (rand_val > 0.95) then
-
-                wait for 0 ns;
-                rand_logic_s(rand_set_ctr, bs_enable, 0.7);
-                wait for 0 ns;
-                bd_enable <= bs_enable;
-
-                rand_logic_s(rand_set_ctr, fixed_stuff, 0.25);
-
-                rand_logic_vect_s(rand_set_ctr, bs_length, 0.2);
-                wait for 0 ns;
-
-                -- Bit Stuffing of 0,1 or 2 is not needed.
-                if (bs_length = "000" or bs_length = "001" or 
-                    bs_length = "010")
-                then
-                    bs_length <= "011";
-                end if;
-
-                wait for 0 ns;
-                bd_length <= bs_length;
-                
-                wait for 500 ns;
-          end if;
-        end if;
+        wait until falling_edge(clk_sys);
     end process;
-  
-  
-    ----------------------------------------------------------------------------
-    -- TX Data generation
-    ----------------------------------------------------------------------------
-    tx_data_gen : process
-    begin
-        wait until rising_edge(tx_trig) and data_halt = '0' and 
-	               stuff_error = '0' and err_data = '0';
-        rand_logic_s(rand_tx_ctr, tx_data, 0.5);
-    end process;
-  
-    ----------------------------------------------------------------------------
-    -- RX Data sampling
-    ----------------------------------------------------------------------------
-    rx_data_sam : process
-    begin
-        wait for 150 ns;
 
-        while true loop
-            wait until falling_edge(rx_trig) and destuffed = '0' and 
-                        data_halt = '0' and err_data = '0' and 
-                        bs_enable = '1' and bd_enable = '1';
-            wait for 10 ns;
 
-            if (tx_data /= rx_data) then
-               log("TX Data not matching RX Data", error_l, log_level);
-               process_error(rx_err_ctr, error_beh, exit_imm_1);
-            end if;
+    -- Generation of real TX, RX triggers based on bus throttling by
+    -- bit stuffing and destuffing!
+    tx_trig_ack <= tx_trig_intent and (not data_halt);
+    rx_trig_ack <= rx_trig_intent and (not destuffed);
+
+    no_trigger <= true when (tx_trig_intent = '0' and bs_trig = '0' and 
+                             bd_trig = '0' and tx_trig_intent = '0')
+                       else
+                  false;
+ 
+
+    ----------------------------------------------------------------------------
+    -- When bit stuff occurs, value of next bit should be oposite of previous
+    -- one! Bit destuffing is thus expecting bit of opposite polarity that
+    -- should be destuffed. If this does not occur, stuff error should be
+    -- detected!
+    --
+    -- With some random chance, if stuff bit occurs force stuff error and
+    -- check whether stuff error was fired!
+    ----------------------------------------------------------------------------
+    gen_st_error : process
+        variable tmp        : real := 0.0;
+    begin
+
+        while (res_n = ACT_RESET) loop
+            wait until rising_edge(clk_sys);
         end loop;
-    end process;
-  
-    ----------------------------------------------------------------------------
-    -- Testing Stuff error detection
-    ----------------------------------------------------------------------------
-    st_err_det_proc : process
-        variable rand_val   : real    := 0.0;
-        variable wt         : time    := 0 ns;
-        variable int_tm     : integer := 0;
-    begin
-        wait for 150 ns;
 
-        while true loop
-            wait until rising_edge(clk_sys) and 
-                       (tx_trig = '0' and bs_trig = '0' and bd_trig = '0' and
-                        rx_trig = '0' and bs_enable = '1' and 
-                        stuff_error_enable = '1');
-
-            rand_real_v(rand_st_err_ctr, rand_val);
-            if (rand_val > 0.98) then
-                err_data  <= '1';
-                --int_tm    := 70*(to_integer(unsigned(bs_length))+1);
-                --wt        := int_tm * 10 ns;
-                wait until stuff_error = '1';
-                wait for 10 ns;
-
-                if (stuff_error = '0') then
-                    log("Stuff ERR not fired as expected!", error_l, log_level);
-                    process_error(st_er_err_ctr, error_beh, exit_imm_2);
-                end if;
-
-                err_data <= '0';
-            end if;
-        end loop;
-    end process;
-
-
-    ----------------------------------------------------------------------------
-    -- Add SW modeled behaviour of bit stuffing
-    ----------------------------------------------------------------------------
-    sw_bs_proc : process
-        variable st_ctr     :   natural     := 0;
-        variable last_bit   :   std_logic   := '1'; -- Recessive by default
-        variable last_fixed :   std_logic   := '0';
-    begin
-        wait until rising_edge(clk_sys) and bs_trig = '1';
-
-        -- No change in input bitstream, or fixed bit stuffing method has
-        -- changed from NON FIXED to FIXED. During this transition CAN FD
-        -- protocol states that fixed bit stuff should be inserted, regardless
-        -- of previous bits!
-        -- 
-        --  Add one to stuff counter or insert bit stuff if counter
-        --     is reached!
-        if ((last_bit = tx_data or fixed_stuff = '1') and bs_enable = '1' and
-            (last_fixed = '0' and fixed_stuff = '1')) then
-
-            if (st_ctr = to_integer(unsigned(bs_length))) then
-
-                wait for 1 ns;
-
-                -- Check if "data_halt" was asserted.
-                if (data_halt = '0') then
-                    log("Data not halted on bit stuffing!", error_l, log_level);
-                    process_error(bs_mod_err_ctr, error_beh, exit_imm_3);
-                end if;
-
-                -- Check if stuff bit was inserted
-                if (rx_data = tx_data) then
-                    log("Stuff bit not inserted on bit stuffing", error_l,
-                        log_level);
-                    process_error(bs_mod_err_ctr, error_beh, exit_imm_3);
-                end if;
-
-                st_ctr := 0;
-            else
-                st_ctr := st_ctr + 1;
-            end if;
-
-        -- Bit stuffing is disabled, data should be only bypassed, input
-        -- data should match output data!
-        else
-            st_ctr := 0;
-
+        -- Wait until bit was stuffed
+        wait until rising_edge(data_halt);
+        
+        -- Generate random stuff error;
+        rand_real_v(rand_st_err_ctr, tmp);
+        if (tmp > 0.9) then
+            err_data <= '1';
+            wait until rising_edge(clk_sys) and (bd_trig = '1');
             wait for 1 ns;
-            if (rx_data /= tx_data and bs_enable = '0') then
-                log("Data not bypassed when enable=false", error_l, log_level);
+
+            -- Now stuff error should be fired by bit destuffing, since
+            -- bit value was forced to be the same as previous bits!
+            if (stuff_error = '0') then
+                log("Stuff error not fired!", error_l, log_level);
+                process_error(stuf_e_err_ctr, error_beh, exit_imm_1);
             end if;
+            wait until rising_edge(clk_sys);
+            err_data <= '0';
         end if;
-
-        last_fixed := fixed_stuff;
-
     end process;
 
-    
-    error_ctr     <=  rx_err_ctr + stat_err_ctr + st_er_err_ctr + 
-                      bs_mod_err_ctr;
-    joined_data   <=  stuffed_data or err_data;
+
+    error_ctr     <=  stat_err_ctr + stuf_e_err_ctr;
+
+
+    -- Stuffed data are inverted if error should be forced! Bit destuffing will
+    -- receive inversion of stuffed bits (the same as original value), thus 
+    -- causing error!
+    joined_data   <=  stuffed_data when (err_data = '0') else
+                      not stuffed_data;
+
+    errors        <= error_ctr;
   
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Main Test process
@@ -370,17 +646,15 @@ begin
         -------------------------------
         log("Starting Bit stuffing-destuffing main loop", info_l, log_level);
 
-        while (loop_ctr < iterations  or  exit_imm)
+        while (loop_ctr < iterations  or  exit_imm or exit_imm_1)
         loop
             log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
 
-            wait until (tx_trig = '0' and bs_trig = '0' and bd_trig = '0' and
-                        rx_trig = '0' and err_data = '0');
-
-            if (data_halt /= destuffed or bd_ctr /= bs_ctr) then
-                log("Status signals are mismatching", error_l, log_level);
-                process_error(stat_err_ctr, error_beh, exit_imm);
-            end if;  
+            exec_bs_test_step(rand_ctr, set, tx_trig_ack, rx_trig_ack, bs_trig,
+                              bd_trig, no_trigger, tx_data, rx_data,
+                              stuffed_data, err_data, bs_enable, bd_enable,
+                              fixed_stuff, bs_length, bd_length, stat_err_ctr,
+                              log_level, error_beh, exit_imm);
 
             loop_ctr <= loop_ctr + 1;
         end loop;
