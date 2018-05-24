@@ -1445,15 +1445,17 @@ package body CANtestLib is
         res_n     <= '0';
         status    <= waiting;
 
-        wait for 100 ns;
-        while run = false loop
-            wait for 10 ns;
-        end loop;
+        wait for 0 ns;
+        if not run then
+            wait until run;
+        end if;
+
+        wait for 100 ns; -- some time in reset
 
         res_n     <= '1';
         status    <= running;
         error_ctr <= 0;
-        wait for 250 ns;
+        wait for 250 ns; -- TODO: is it necessary?
     end procedure;
 
 

@@ -128,11 +128,11 @@ architecture tb of tb_sanity is
     else
       r := b'right;
     end if;
-    report to_string(l) severity note;
-    report to_string(r) severity note;
-    report a(l to r) severity note;
-    report b(l to r) severity note;
-    return a(l to r) = b(l to r);
+    --report to_string(l) severity note;
+    --report to_string(r) severity note;
+    --report a(l to r) severity note;
+    --report b(l to r) severity note;
+    --return a(l to r) = b(l to r);
   end function;
 
   function len_to_matrix(topology : string; l : bus_length_type)

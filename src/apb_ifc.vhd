@@ -77,7 +77,7 @@ entity apb_ifc is
 end entity;
 
 architecture rtl of apb_ifc is
-    signal rst_countdown_reg : natural range 0 to 2;
+    signal rst_countdown_reg : natural range 0 to 3;
 begin
     reg_data_in_o <= s_apb_pwdata;
     s_apb_prdata  <= reg_data_out_i;
@@ -96,7 +96,7 @@ begin
     p_rready:process(arstn, aclk)
     begin
         if arstn = '0' then
-            rst_countdown_reg <= 2;
+            rst_countdown_reg <= 3;
         elsif rising_edge(aclk) then
             if rst_countdown_reg > 0 then
                 rst_countdown_reg <= rst_countdown_reg - 1;
