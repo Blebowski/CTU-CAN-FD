@@ -76,208 +76,209 @@ use IEEE.numeric_std.all;
 use WORK.CANconstants.all;
 
 entity bitDestuffing is
-  port(
-    -------------------
-    --Clock And Reset--
-    -------------------
-    signal clk_sys : in std_logic;      --System clock
-    signal res_n   : in std_logic;      --Async Reset
+    port(
+        ------------------------------------------------------------------------
+        -- Clock And Reset
+        ------------------------------------------------------------------------
+        signal clk_sys : in std_logic;
+        signal res_n   : in std_logic;
 
-    -------------------------
-    --Bus Sampling Interface-
-    -------------------------
-    signal data_in : in std_logic;      --Sampled data from busSync.vhd
+        ------------------------------------------------------------------------
+        -- Bus Sampling Interface
+        ------------------------------------------------------------------------
+        signal data_in : in std_logic;
 
-    -----------------------
-    --Prescaler interface -
-    -----------------------
-    --Triggering signal with one clk_sys delay behind the used sampling signal
-    signal trig_spl_1 : in std_logic; 
-    --Note: signals nbt_trig_spl_1 or dbt_trig_spl_1 can be used 
-    --      depending whenever data bit time or nominal bit tim is used
+        ------------------------------------------------------------------------
+        -- Prescaler interface
+        ------------------------------------------------------------------------
+        -- Triggering signal with one clk_sys delay behind the used 
+        -- sampling signal
+        signal trig_spl_1 : in std_logic;
 
-    --------------------
-    --Error Signalling--
-    --------------------
-    signal stuff_Error : out std_logic;  --Stuff Error
+        ------------------------------------------------------------------------
+        --Error Signalling
+        ------------------------------------------------------------------------
 
-    -----------------------
-    --CAN Core interface --
-    -----------------------
-    
-    --Data output for CAN Core
-    signal data_out           : out std_logic;
-    
-    --Signal that data on output are not valid but it is a stuff bit
-    signal destuffed          : out std_logic;  
-    
-    --Enable of the circuit
-    signal enable             : in  std_logic;
-    
-    --Enable stuff Error logging
-    signal stuff_Error_enable : in  std_logic;
-    
-    --Whenever fixed bit Destuffing method is used    
-    signal fixed_stuff        : in  std_logic;  
-    
-    --Length of bit stuffing rule
-    signal length             : in  std_logic_vector(2 downto 0);  
-    
-    --Number of destuffed bits with regular bit stuffing method
-    signal dst_ctr            : out natural range 0 to 7  
+        -- Stuff error detected when stuff rule is 
+        signal stuff_Error : out std_logic;
+
+        ------------------------------------------------------------------------
+        --CAN Core interface
+        ------------------------------------------------------------------------
+
+        -- Data output for CAN Core
+        signal data_out           : out std_logic;
+
+        -- Signal that data on output are not valid but it is a stuff bit
+        signal destuffed          : out std_logic;  
+
+        -- Enable of the circuit
+        signal enable             : in  std_logic;
+
+        -- Enable stuff Error logging
+        signal stuff_Error_enable : in  std_logic;
+
+        -- Whenever fixed bit Destuffing method is used    
+        signal fixed_stuff        : in  std_logic;  
+
+        -- Length of bit stuffing rule
+        signal length             : in  std_logic_vector(2 downto 0);  
+
+        -- Number of destuffed bits with regular bit stuffing method
+        signal dst_ctr            : out natural range 0 to 7  
     );
-  --Note:Bit Destuffing has no driving bus aliases
 
-  ---------------------------------
-  --Internal signals and registers
-  ---------------------------------
-  
-  --Number of equal consecutive bits
-  signal same_bits     : natural range 0 to 15;
-  
-  signal prev_val      : std_logic;     --Previous value of the bit
-  signal destuffed_reg : std_logic;     --Registered value of destuffed
-  signal error_reg     : std_logic;     --Registred value of destuffed
-  signal enable_prev   : std_logic;     --Previous value of enable
-  signal fixed_prev    : std_logic;     --Previous value of fixed stuff method
+    ----------------------------------------------------------------------------
+    --Internal signals and registers
+    ----------------------------------------------------------------------------
 
-  --ISO CAN FD destuff bit counter
-  signal dst_bit_ctr : natural range 0 to 7;
-  --Note: Number of stuffed, destuffed bits is transmitted modulo 8. Thus 
-  --      only 3 bits counter is enough!!
+    --Number of equal consecutive bits
+    signal same_bits     : natural range 0 to 15;
+
+    signal prev_val      : std_logic;     -- Previous value of the bit
+    signal destuffed_reg : std_logic;     -- Registered value of destuffed
+    signal error_reg     : std_logic;     -- Registred value of destuffed
+    signal enable_prev   : std_logic;     -- Previous value of enable
+    signal fixed_prev    : std_logic;     -- Previous value of fixed stuff
+
+    -- ISO CAN FD destuff bit counter
+    signal dst_bit_ctr : natural range 0 to 7;
+    -- Note: Number of stuffed, destuffed bits is transmitted modulo 8. Thus 
+    --       only 3 bits counter is enough!!
 
 end entity;
 
 architecture rtl of bitDestuffing is
 begin
 
-  -----------------------
-  --Destuffing process
-  -----------------------
-  destuf_proc : process(res_n, clk_sys)
-  begin
-    if(res_n = ACT_RESET)then
-      same_bits     <= 1;
-      prev_val      <= RECESSIVE;
-      fixed_prev    <= '0';
-      destuffed_reg <= '0';
-      error_reg     <= '0';
+    ----------------------------------------------------------------------------
+    -- Destuffing process
+    ---------------------------------------------------------------------------
+    destuf_proc : process(res_n, clk_sys)
+    begin
+    if (res_n = ACT_RESET) then
+        same_bits       <= 1;
+        prev_val        <= RECESSIVE;
+        fixed_prev      <= '0';
+        destuffed_reg   <= '0';
+        error_reg       <= '0';
 
-      --Bit stuff counter for ISO FD
-      dst_bit_ctr <= 0;
-      enable_prev <= '0';
+        -- Bit stuff counter for ISO FD
+        dst_bit_ctr     <= 0;
+        enable_prev     <= '0';
 
-    elsif (rising_edge(clk_sys))then
+    elsif (rising_edge(clk_sys)) then
 
-      --Edge detection on enable and fixed stuff
-      enable_prev <= enable;
-      dst_bit_ctr <= dst_bit_ctr;
+        -- Edge detection on enable and fixed stuff
+        enable_prev <= enable;
+        dst_bit_ctr <= dst_bit_ctr;
 
-      if((length = "000" or length = "001")and (enable='1'))then
-        report "0 and 1 bit stuffing length is invalid" severity warning;
-      end if;
+        if ((length = "000" or length = "001") and (enable = '1')) then
+            report "0 and 1 bit stuffing length is invalid" severity warning;
+        end if;
 
-      if(enable = '1')then
+        if (enable = '1') then
 
-        --When transition starts prev_val needs to be deleted! Otherwise 
-        --stuff error might occur when first bits of identifier are zero
-        if(enable_prev = '0')then
-          prev_val    <= RECESSIVE;
-          dst_bit_ctr <= 0;
-          fixed_prev  <= '0';
-          same_bits   <= 1;
+            -- When transition starts prev_val needs to be deleted! Otherwise 
+            -- stuff error might occur when first bits of identifier are zero
+            if (enable_prev = '0') then
+                prev_val    <= RECESSIVE;
+                dst_bit_ctr <= 0;
+                fixed_prev  <= '0';
+                same_bits   <= 1;
 
-        --Destuffing is processed with triggering signal
-        elsif(trig_spl_1 = '1')then
-          prev_val      <= data_in;      --Data is always propagated
-          fixed_prev    <= fixed_stuff;
+            -- Destuffing is processed with triggering signal
+            elsif (trig_spl_1 = '1') then
+                prev_val      <= data_in;      --Data is always propagated
+                fixed_prev    <= fixed_stuff;
 
-          --When stuffing method is changed in the beginning of the
-          --CRC field the stuffing counter needs to be erased!
-          if(fixed_stuff = '1' and fixed_prev = '0')then
-            prev_val      <= RECESSIVE;
+                --When stuffing method is changed in the beginning of the
+                --CRC field the stuffing counter needs to be erased!
+                if (fixed_stuff = '1' and fixed_prev = '0') then
+                    prev_val        <= RECESSIVE;
+                    same_bits       <= 1;
+                    destuffed_reg   <= '1';
+
+                    -- Stuff Rule violation 
+                    if (prev_val = data_in and stuff_Error_enable = '1') then
+                        error_reg   <= '1';
+                    else
+                        error_reg   <= '0';
+                    end if; 
+
+                --If number of bits was reached then
+                elsif (same_bits = unsigned(length) and fixed_stuff = '0') or
+                      (same_bits = unsigned(length) + 1 and fixed_stuff = '1')
+                
+                -- Fixed stuff must be plus one since also the stuffed bit is 
+                -- counted! In normal bit stuffing when bit is stuffed same_bits
+                -- is erased and counted from first bit after stuffed bit!                
+                then
+
+                    destuffed_reg   <= '1';
+                    same_bits       <= 1;
+
+                    -- Stuff bit occured increase the stuffing counter!
+                    -- but only in the case of the original stuffing method
+                    if (fixed_stuff = '0') then
+                        dst_bit_ctr <= (dst_bit_ctr + 1) mod 8;
+                    else
+                        dst_bit_ctr <= dst_bit_ctr;
+                    end if;
+
+                    -- Stuff Rule violation 
+                    if (prev_val = data_in and stuff_Error_enable = '1') then
+                        error_reg   <= '1';
+                    else
+                        error_reg   <= '0';
+                    end if;
+
+                -- If number of bits not reached then
+                -- only increase number of same bits
+                else
+
+                    if (data_in = prev_val) or (fixed_stuff = '1') then
+                        same_bits   <= (same_bits + 1) mod 8;
+                    else
+                        same_bits   <= 1;
+                    end if;
+
+                    -- Trigger not occured keep the value of stuff counter
+                    dst_bit_ctr     <= dst_bit_ctr;
+
+                    destuffed_reg   <= '0';
+                    error_reg       <= '0';
+
+                end if;
+
+            --Trigger not occured keep the previous values  
+            else
+                same_bits     <= same_bits;
+                prev_val      <= prev_val;
+                destuffed_reg <= destuffed_reg;
+                error_reg     <= '0';
+                dst_bit_ctr   <= dst_bit_ctr;
+            end if;
+
+        else
             same_bits     <= 1;
-            destuffed_reg <= '1';
-          
-            --Stuff Rule violation 
-            if(prev_val = data_in and stuff_Error_enable = '1')then
-              error_reg   <= '1';
-            else
-              error_reg <= '0';
-            end if; 
-
-          --If number of bits was reached then
-          elsif(same_bits = unsigned(length) and fixed_stuff = '0')or
-            (same_bits = unsigned(length)+1 and fixed_stuff = '1')then
-            --Fixed stuff is must be plus one since also the stuffed bit is 
-            --counted! In normal bit stuffing when bit is stuffed same_bits is 
-            --erased and counted from first bit after stuffed bit!
-
-            destuffed_reg <= '1';
-            same_bits     <= 1;
-
-            --Stuff bit occured increase the stuffing counter!
-            --but only in the case of the original stuffing method
-            if(fixed_stuff = '0')then
-              dst_bit_ctr <= (dst_bit_ctr+1) mod 8;
-            else
-              dst_bit_ctr <= dst_bit_ctr;
-            end if;
-
-            --Stuff Rule violation 
-            if(prev_val = data_in and stuff_Error_enable = '1')then
-              error_reg   <= '1';
-            else
-              error_reg <= '0';
-            end if;
-
-          --If number of bits not reached then
-          --only increase number of same bits
-          else
-
-            if(data_in = prev_val) or (fixed_stuff = '1')then
-              same_bits <= (same_bits+1) mod 8;
-            else
-              same_bits <= 1;
-            end if;
-
-            --Trigger not occured keep the value of the
-            --stuff counter
-            dst_bit_ctr <= dst_bit_ctr;
-
             destuffed_reg <= '0';
             error_reg     <= '0';
+            dst_bit_ctr   <= dst_bit_ctr;
 
-          end if;
+            -- Sample the data with trigger even if destuffing
+            -- is disabled
+            if (trig_spl_1 = '1') then
+                prev_val <= data_in;
+            else
+                prev_val <= prev_val;
+            end if;
 
-        --Trigger not occured keep the previous values  
-        else
-          same_bits     <= same_bits;
-          prev_val      <= prev_val;
-          destuffed_reg <= destuffed_reg;
-          error_reg     <= '0';
-          dst_bit_ctr   <= dst_bit_ctr;
         end if;
-
-      else
-        same_bits     <= 1;
-        destuffed_reg <= '0';
-        error_reg     <= '0';
-        dst_bit_ctr   <= dst_bit_ctr;
-
-        --Sample the data with trigger even if destuffing
-        -- is disabled
-        if(trig_spl_1 = '1')then
-          prev_val <= data_in;
-        else
-          prev_val <= prev_val;
-        end if;
-
-      end if;
     end if;
-  end process;
+    end process;
 
-  --Register propagation on output
+  -- Register propagation on output
   data_out    <= data_in;
   destuffed   <= destuffed_reg;
   stuff_Error <= error_reg;
