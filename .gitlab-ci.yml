@@ -31,7 +31,6 @@ build_ip_and_tests:
 test_ip_unit:
     stage: test
     only: *only
-    allow_failure: true # for debugging
     dependencies: [build_ip_and_tests]
     script:
         - cd test
@@ -63,7 +62,6 @@ pages:
     stage: deploy
     when: always
     #dependencies: [test_ip_unit, test_ip_sanity]
-    allow_failure: true # for debugging
     script:
         - mkdir -p public
         - cp test/xunit.xsl public/
@@ -71,7 +69,6 @@ pages:
         - mv test/code_html public/coverage || true
     only:
         - master
-        - triggers
     artifacts:
         paths:
             - public
