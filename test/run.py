@@ -39,22 +39,38 @@ def create_wrapper(lib):
                 m = r.match(l)
                 if m:
                     tests.append(m.group(1))
-    wrapper = []
-    with open("tb_wrappers.vhd", "wt", encoding='utf-8') as f:
-        for test in tests:
-            f.write(dedent("""\
-                library work;
-                USE work.CANtestLib.All;
+    configs = []
+    tbs = []
+    for test in tests:
+        configs.append(dedent("""\
+            configuration tbconf_{test} of vunittb_wrapper is
+            for tb
+                for i_test : CAN_test use entity work.CAN_test({test}); end for;
+            end for;
+            end configuration;
+            -- -----------------------------------------------------------------------------
+            """.format(test=test)
+        ))
+        tbs.append(dedent("""\
+            library work;
+            USE work.CANtestLib.All;
 
-                entity tb_{test} is generic (runner_cfg : string); end entity;
-                architecture tb of tb_{test} is
-                    for all:CAN_test use entity work.CAN_test({test});
-                begin
-                    tb:entity work.vunittb_wrapper generic map(xrunner_cfg => runner_cfg);
-                end architecture;
-                -- -----------------------------------------------------------------------------
-                """.format(test=test)
-            ))
+            entity tb_{test} is generic (runner_cfg : string); end entity;
+            architecture tb of tb_{test} is
+                component vunittb_wrapper is generic (xrunner_cfg : string); end component;
+                for all:vunittb_wrapper use configuration work.tbconf_{test};
+            begin
+                tb:vunittb_wrapper generic map(xrunner_cfg => runner_cfg);
+            end architecture;
+            -- -----------------------------------------------------------------------------
+            """.format(test=test)
+        ))
+    with open("tb_wrappers.vhd", "wt", encoding='utf-8') as f:
+        for c in configs:
+            f.write(c)
+        for t in tbs:
+            f.write(t)
+
     lib.add_source_file("tb_wrappers.vhd")
 
 # ghdl creates a new process group for itself and fails to kill its child when it receives a signal :(
