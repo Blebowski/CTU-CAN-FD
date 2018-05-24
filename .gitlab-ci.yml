@@ -4,12 +4,12 @@ before_script:
 
 build_ip_and_tests:
     stage: build
-    cache:
-        policy: push
-        paths: &vunit_cache_paths
+    artifacts:
+        paths: &vunit_build_paths
             - test/vunit_out
             - 'test/*.gcda'
             - 'test/*.gcno'
+        expire_in: 1 hour
     script:
         - cd test
         - make elaborate
@@ -31,9 +31,9 @@ build_ip_and_tests:
 test_ip_unit:
     stage: test
     only: *only
-    cache:
-        policy: pull
-        paths: *vunit_cache_paths
+    dependencies: [build_ip_and_tests]
+    artifacts:
+        paths: *vunit_build_paths
     script:
         - cd test
         - make test_unit XUNIT=1
@@ -43,12 +43,13 @@ test_ip_unit:
         paths:
             - test/code_html
             - test/test_unit.xml
+            - test/xunit.xsl
 
 test_ip_sanity:
     stage: test
-    cache:
-        policy: pull
-        paths: *vunit_cache_paths
+    dependencies: [build_ip_and_tests]
+    artifacts:
+        paths: *vunit_build_paths
     only:
         - schedules
     script:
@@ -56,4 +57,21 @@ test_ip_sanity:
         - make test_sanity XUNIT=1
     artifacts:
         paths:
-            - test/test_unit.xml
+            - test/test_sanity.xml
+            - test/xunit.xsl
+
+pages:
+    stage: deploy
+    when: always
+    #dependencies: [test_ip_unit, test_ip_sanity]
+    allow_failure: true # for debugging
+    script:
+        - mkdir -p public
+        - cp xunit.xsl public/
+        - cp test_*.xml public/
+        - mv code_html public/coverage || true
+    only:
+        - master
+    artifacts:
+        paths:
+            - public
