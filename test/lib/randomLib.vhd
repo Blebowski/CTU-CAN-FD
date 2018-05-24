@@ -308,6 +308,42 @@ package randomLib is
 
 
     ----------------------------------------------------------------------------
+    -- Get random value of type "std_logic_vector" from random pool with given
+    -- probability that bit at position "n+1" will have the same value as
+    -- bit on position "n". Intention to use for bit-stuffing. Signal output.
+    -- 
+    -- Arguments:
+    --  real_ctr        Pointer to random data pool
+    --  retval          Return value
+    --  cons_chance     Probability that next bit will be the same as previous!
+    --  refresh         If signal change should be processed by simulator by
+    --                  executing: "wait for 0 ns"
+    ----------------------------------------------------------------------------
+    procedure rand_logic_vect_cons_s(
+        signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
+        signal   retVal         : inout std_logic_vector;
+        constant cons_chance    : in    real
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Get random value of type "std_logic_vector" from random pool with given
+    -- probability that bit at position "n+1" will have the same value as
+    -- bit on position "n". Intention to use for bit-stuffing. Variable output.
+    -- 
+    -- Arguments:
+    --  real_ctr        Pointer to random data pool
+    --  retval          Return value
+    --  cons_chance     Probability that next bit will be the same as previous!
+    ----------------------------------------------------------------------------
+    procedure rand_logic_vect_cons_v(
+        signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
+        variable retVal         : inout std_logic_vector;
+        constant cons_chance    : in    real
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Waits for random number of clock cycles with minimum and maximum amount
     -- of cycles to wait.
     -- 
@@ -1304,7 +1340,59 @@ package body randomLib is
         end loop;
     end procedure;  
 
+
+    procedure rand_logic_vect_cons_s(
+        signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
+        signal   retVal         : inout std_logic_vector;
+        constant cons_chance    : in    real
+    ) is
+        variable tmp            :       std_logic;
+        variable tmp_real       :       real;
+    begin
+        rand_logic_v(real_ctr, tmp, 0.5);
+        retVal(0) <= tmp;
+
+        for i in 1 to retVal'length - 1 loop
+     
+            -- Swap value with "p(1 - cons_chance)"
+            rand_real_v(real_ctr, tmp_real);
+            wait for 0 ns;
+            if (tmp_real > cons_chance) then
+                tmp := not tmp;
+            end if;
+            
+            retVal(i) <= tmp;
+        end loop;
+
+        wait for 0 ns;
+    end procedure;
+
+
+    procedure rand_logic_vect_cons_v(
+        signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
+        variable retVal         : inout std_logic_vector;
+        constant cons_chance    : in    real
+    ) is
+        variable tmp            :       std_logic;
+        variable tmp_real       :       real;
+    begin
+        rand_logic_v(real_ctr, tmp, 0.5);
+        retVal(0) := tmp;
+
+        for i in 1 to retVal'length - 1 loop
+      
+            -- Swap value with "p(1 - cons_chance)"
+            rand_real_v(real_ctr, tmp_real);
+            wait for 0 ns;
+            if (tmp_real > cons_chance) then
+                tmp := not tmp;
+            end if;
+            
+            retVal(i) := tmp;
+        end loop;
+    end procedure;
   
+
     procedure rand_logic_vect_bt_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retVal         : inout std_logic_vector;

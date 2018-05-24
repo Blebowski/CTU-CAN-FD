@@ -50,28 +50,42 @@ add_test_status_waves
 add_system_waves
 
 #Add circuit specific signals
-add wave -noupdate -divider -height 20 "DUT inputs (generated)"
-add wave -group "Triggering signals" $TCOMP/tx_trig \
+add wave -group "Triggering signals" $TCOMP/tx_trig_ack \
 									 $TCOMP/bs_trig \
 									 $TCOMP/bd_trig \
-									 $TCOMP/rx_trig
-									 
-add wave -label "Data before bit stuffing" $TCOMP/tx_data								
-add wave -label "Data before bit De-stuffing" $TCOMP/joined_data								
-add wave -label "Bit stuffing enabled" $TCOMP/bs_enable
-add wave -label "Bit De-stuffing enabled" $TCOMP/bd_enable
-add wave -label "Fixed bit stuffing method" $TCOMP/fixed_stuff
-add wave -label "Length of bit stuffing rule" -unsigned $TCOMP/bs_length
-add wave -label "Length of bit De-stuffing rule" -unsigned $TCOMP/bd_length
+									 $TCOMP/rx_trig_ack
 
-add wave -noupdate -divider -height 20 "DUT outputs"
-add wave -label "Bit stuffed" $TCOMP/data_halt
+
+add wave -noupdate -divider -height 20 "DUT settings"
+add wave -label "Fixed bit stuffing method" $TCOMP/fixed_stuff
+# Note that only one length is enough since both circuits are set to same length!
+# The same with enable!
+add wave -label "Length of bit stuffing/destuffing rule" -unsigned $TCOMP/bs_length
+add wave -label "Bit stuffing/destuffing enabled" $TCOMP/bs_enable
+
+add wave -noupdate -divider -height 20 "Bit Stuffing"
+add wave -label "Pre bit stuffing" $TCOMP/tx_data
+add wave -label "Post bit stuffing: DUT" $TCOMP/stuffed_data
+add wave -label "Post bit stuffing: MODEL" $TCOMP/exp_stuffed
+add wave -label "Bit stuffed: DUT" $TCOMP/data_halt
+add wave -label "Bit stuffed: MODEL" $TCOMP/should_be_stuffed
+add wave -label "Stuff count mod 8" -unsigned $TCOMP/bs_ctr
+
+add wave -noupdate -divider -height 20 "Bit De-Stuffing"
+add wave -label "Pre bit De-stuffing" $TCOMP/joined_data
+add wave -label "Post bit De-stuffing" $TCOMP/rx_data
+add wave -label "Inserted error data" -unsigned $TCOMP/err_data									 
 add wave -label "Bit De-stuffed" $TCOMP/destuffed
 add wave -label "Stuff error" $TCOMP/stuff_error
-add wave -label "Data after bit stuffing" $TCOMP/stuffed_data
-add wave -label "Data after bit De-stuffing" $TCOMP/rx_data
-add wave -label "Stuff count mod 8" -unsigned $TCOMP/bs_ctr
 add wave -label "De-Stuff count mod 8" -unsigned $TCOMP/bd_ctr
+
+add wave -noupdate -divider -height 20 "Testbench internals"
+add wave -label "Step settings" -unsigned $TCOMP/set
+add wave -label "NBS pointer" -unsigned $TCOMP/nbs_index
+add wave -label "WBS pointer" -unsigned $TCOMP/wbs_index
+
+
+
 
 add wave -noupdate -divider -height 20 "Internal DUT signals"								
 add wave $TCOMP/bitstufcomp/same_bits
