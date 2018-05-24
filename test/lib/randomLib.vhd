@@ -322,8 +322,7 @@ package randomLib is
     procedure rand_logic_vect_cons_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retVal         : inout std_logic_vector;
-        constant cons_chance    : in    real;
-        constant refresh        : in    boolean := true
+        constant cons_chance    : in    real
     );
 
 
@@ -1345,8 +1344,7 @@ package body randomLib is
     procedure rand_logic_vect_cons_s(
         signal   real_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         signal   retVal         : inout std_logic_vector;
-        constant cons_chance    : in    real;
-        constant refresh        : in    boolean := true
+        constant cons_chance    : in    real
     ) is
         variable tmp            :       std_logic;
         variable tmp_real       :       real;
@@ -1355,15 +1353,10 @@ package body randomLib is
         retVal(0) <= tmp;
 
         for i in 1 to retVal'length - 1 loop
-      
-            if (real_ctr = RAND_POOL_SIZE) then
-                real_ctr <= 0;
-            else
-                real_ctr <= real_ctr + 1;
-            end if;
-
+     
             -- Swap value with "p(1 - cons_chance)"
             rand_real_v(real_ctr, tmp_real);
+            wait for 0 ns;
             if (tmp_real > cons_chance) then
                 tmp := not tmp;
             end if;
@@ -1371,9 +1364,7 @@ package body randomLib is
             retVal(i) <= tmp;
         end loop;
 
-        if (refresh) then
-            wait for 0 ns;
-        end if;
+        wait for 0 ns;
     end procedure;
 
 
@@ -1390,14 +1381,9 @@ package body randomLib is
 
         for i in 1 to retVal'length - 1 loop
       
-            if (real_ctr = RAND_POOL_SIZE) then
-                real_ctr <= 0;
-            else
-                real_ctr <= real_ctr + 1;
-            end if;
-
             -- Swap value with "p(1 - cons_chance)"
             rand_real_v(real_ctr, tmp_real);
+            wait for 0 ns;
             if (tmp_real > cons_chance) then
                 tmp := not tmp;
             end if;
