@@ -62,12 +62,11 @@ pages:
     stage: deploy
     when: always
     #dependencies: [test_ip_unit, test_ip_sanity]
-    allow_failure: true # for debugging
     script:
         - mkdir -p public
-        - cp xunit.xsl public/
-        - cp test_*.xml public/
-        - mv code_html public/coverage || true
+        - cp test/xunit.xsl public/
+        - cp test/test_*.xml public/
+        - mv test/code_html public/coverage || true
     only:
         - master
     artifacts:
