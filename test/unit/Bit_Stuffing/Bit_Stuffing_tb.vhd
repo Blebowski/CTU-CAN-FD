@@ -726,7 +726,7 @@ begin
         
         -- Generate random stuff error;
         rand_real_v(rand_st_err_ctr, tmp);
-        if (tmp > 1.0) then
+        if (tmp > 0.98) then
             err_data <= '1';
             wait until rising_edge(clk_sys) and (bd_trig = '1');
             wait for 1 ns;
