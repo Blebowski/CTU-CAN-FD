@@ -136,7 +136,7 @@
                 <tr><th>Tests:</th><td><xsl:value-of select="@tests"/></td></tr>
                 <tr class="bad-{@errors &gt; 0}"><th>Errors:</th><td><xsl:value-of select="@errors"/></td></tr>
                 <tr class="bad-{@failures &gt; 0}"><th>Failures:</th><td><xsl:value-of select="@failures"/></td></tr>
-                <tr><th>Skipped:</th><td><xsl:value-of select="@skiped"/></td></tr>
+                <tr><th>Skipped:</th><td><xsl:value-of select="@skipped"/></td></tr>
             </table>
         </section>
 
@@ -154,10 +154,10 @@
         <!-- Passed tests tests -->
         <section class="good">
             <header>Passed tests</header>
-                <xsl:for-each select="testcase[not(failure)]">
-                    <xsl:sort select="concat(@classname, '.', @name)" />
-                    <xsl:apply-templates select='.' />
-                </xsl:for-each>
+            <xsl:for-each select="testcase[not(failure)]">
+                <xsl:sort select="concat(@classname, '.', @name)" />
+                <xsl:apply-templates select='.' />
+            </xsl:for-each>
         </section>
 
         <script type="text/javascript">
