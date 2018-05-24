@@ -257,11 +257,6 @@ entity txArbitrator is
   -- timstamp during the selection of TXT Buffer.
   signal txtb_pointer_meta        : natural range 0 to 19;
 
-  -- When TX Arbitrator state for selection of timestamp or frame format
-  -- word is entered, it needs to wait one clock cycle before TXT Buffer
-  -- data can be read. Wait state is controlled by this register
-  signal fsm_wait_state           : boolean;
-
 
   -- Comitted values of internal signals
   signal tran_dlc_com           : std_logic_vector(3 downto 0);
@@ -310,8 +305,8 @@ begin
   ------------------------------------------------------------------------------
   -- Selecting TXT Buffer output word based on the chosen TXT Buffer. We use
   -- the combinationally selected buffer. If change on selected buffer occurs
-  -- during selection, selection is restarted. Thus we can always during 
-  -- selection use combinationally selected buffer !!!
+  -- during selection, selection is restarted. Thus we can always during selection
+  -- use combinationally selected buffer !!!
   ------------------------------------------------------------------------------
   txtb_selected_input <= txt_buf_in(select_buf_index);
   
@@ -381,6 +376,32 @@ begin
   
 
   ------------------------------------------------------------------------------
+  -- Arbitrator pointer for loading Timestamp and Metadata from TXT Buffers.
+  -- Must be decoded combinationally, since it takes one clock cycle to read
+  -- the data from the TXT Buffer! If set on clock, additional delay would be
+  -- needed in each state, till the data are returned from TXT Buffer!
+  ------------------------------------------------------------------------------
+  txtb_pointer_meta     <= to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)))
+                           when ((select_buf_avail = false) or
+                                 (select_buf_index_reg /= select_buf_index) or
+                                 (tx_arb_fsm = arb_locked and 
+                                  txt_hw_cmd.unlock = '1')) else
+
+                           to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2)))
+                           when (tx_arb_fsm = arb_sel_low_ts) else
+
+                           to_integer(unsigned(TIMESTAMP_U_W_ADR(11 downto 2)))
+                           when (tx_arb_fsm = arb_sel_upp_ts and
+                                 timestamp_valid = false) else
+
+                           to_integer(unsigned(FRAME_FORM_W_ADR(11 downto 2)))
+                           when (tx_arb_fsm = arb_sel_upp_ts and
+                                 timestamp_valid) else
+
+                           to_integer(unsigned(TIMESTAMP_L_W_ADR(11 downto 2)));
+                            
+
+  ------------------------------------------------------------------------------
   -- State machine for selection of highest priority buffer and load of the
   -- metadata and identifier words on parallel outputs.
   ------------------------------------------------------------------------------
@@ -403,10 +424,6 @@ begin
         
         select_buf_index_reg  <= 0;
         select_buf_avail_reg  <= false;
-
-        fsm_wait_state        <= true;
-        txtb_pointer_meta     <= to_integer(unsigned(
-                                     TIMESTAMP_L_W_ADR(11 downto 2)));
         
     elsif rising_edge(clk_sys) then
       
@@ -426,18 +443,12 @@ begin
       select_buf_index_reg      <= select_buf_index;
       select_buf_avail_reg      <= select_buf_avail;
 
-      txtb_pointer_meta         <= txtb_pointer_meta;
-      fsm_wait_state            <= fsm_wait_state;
-
       --------------------------------------------------------------
       -- Finishing the transmission = unlocking the buffer
       --------------------------------------------------------------                
       if (tx_arb_fsm = arb_locked) then
           if (txt_hw_cmd.unlock = '1') then
             tx_arb_fsm            <= arb_sel_low_ts;
-            txtb_pointer_meta     <= to_integer(unsigned(
-                                     TIMESTAMP_L_W_ADR(11 downto 2)));
-            fsm_wait_state        <= true;
           end if;
       
       --------------------------------------------------------------
@@ -452,18 +463,13 @@ begin
       -- If Selected buffer changes, restart the selection.
       elsif ((select_buf_avail = false)) then
         tx_arb_fsm              <= arb_sel_low_ts;
-        fsm_wait_state          <= true;
-        txtb_pointer_meta       <= to_integer(unsigned(
-                                     TIMESTAMP_L_W_ADR(11 downto 2)));
         tran_frame_valid_com    <= '0';
       
       -- Selected buffer index on the output of priority decoder has changed
       -- during selection. Restart the selection!
       elsif (select_buf_index_reg /= select_buf_index) then
         tx_arb_fsm              <= arb_sel_low_ts;
-        fsm_wait_state          <= true;
-        txtb_pointer_meta       <= to_integer(unsigned(
-                                      TIMESTAMP_L_W_ADR(11 downto 2)));
+        
       else
       
         case tx_arb_fsm is   
@@ -472,31 +478,21 @@ begin
         -- Polling on Low timestamp of the highest prority TXT buffer
         --------------------------------------------------------------
         when arb_sel_low_ts =>
-            if (fsm_wait_state) then
-                fsm_wait_state     <= false;
-            else
-                tx_arb_fsm         <= arb_sel_upp_ts;
-                ts_low_internal    <= txtb_selected_input;
-                fsm_wait_state     <= true;
-                txtb_pointer_meta  <= to_integer(unsigned(
-                                        TIMESTAMP_U_W_ADR(11 downto 2)));
-            end if;        
-
+            tx_arb_fsm         <= arb_sel_upp_ts;
+            ts_low_internal    <= txtb_selected_input;
+        
         --------------------------------------------------------------
         -- Compare the timestamps,
         -- now output of TXT Buffers give the upper timestamp
         -- Lower timestamp is stored from previous state.
         --------------------------------------------------------------        
         when arb_sel_upp_ts =>
-            if (fsm_wait_state) then
-                fsm_wait_state          <= false;
-            else
-                if (timestamp_valid) then
-                    tx_arb_fsm         <= arb_sel_ffw;
-                    fsm_wait_state     <= true;
-                    txtb_pointer_meta  <= to_integer(unsigned(
-                                            FRAME_FORM_W_ADR(11 downto 2)));
-                end if;
+            if (timestamp_valid) then
+                tx_arb_fsm         <= arb_sel_ffw;
+                                    
+            -- If timestamp has not elapsed, repeat the whole process.
+            -- else
+            --    tx_arb_fsm       <= arb_sel_low_ts;
             end if;
 
         --------------------------------------------------------------
@@ -507,24 +503,16 @@ begin
         -- CAN Core.
         --------------------------------------------------------------        
         when arb_sel_ffw =>
-            if (fsm_wait_state) then
-                fsm_wait_state           <= false;
-            else
-                tran_frame_type_com      <= txtb_selected_input(FR_TYPE_IND);
-                tran_ident_type_com      <= txtb_selected_input(ID_TYPE_IND);
-                tran_dlc_com             <= txtb_selected_input(DLC_H downto 
-                                                                DLC_L);
-                tran_is_rtr_com          <= txtb_selected_input(RTR_IND);
-                tran_brs_com             <= txtb_selected_input(BRS_IND);
+            tran_frame_type_com      <= txtb_selected_input(FR_TYPE_IND);
+            tran_ident_type_com      <= txtb_selected_input(ID_TYPE_IND);
+            tran_dlc_com             <= txtb_selected_input(DLC_H downto 
+                                                            DLC_L);
+            tran_is_rtr_com          <= txtb_selected_input(RTR_IND);
+            tran_brs_com             <= txtb_selected_input(BRS_IND);
 
-                tran_frame_valid_com     <= '1';
-                int_txtb_index           <= select_buf_index;
-                tx_arb_fsm               <= arb_sel_low_ts;
-                fsm_wait_state           <= true;
-                
-                txtb_pointer_meta        <= to_integer(unsigned(
-                                               TIMESTAMP_L_W_ADR(11 downto 2)));
-            end if;
+            tran_frame_valid_com     <= '1';
+            int_txtb_index           <= select_buf_index;
+            tx_arb_fsm               <= arb_sel_low_ts;
                                   
         when others =>
           report "Error - Unknow TX Arbitrator state" severity error;
