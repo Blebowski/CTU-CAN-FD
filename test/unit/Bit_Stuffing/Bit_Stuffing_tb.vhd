@@ -40,12 +40,24 @@
 --  Unit test for bit stuffing and bit destuffing circuits.
 --  
 --  Unit test makes use of bit stuffing/destuffing symmetry. Random data are
---  generated on input of bit stuffing. Stuffed data are input to destuffing.
---  Data before bit stuffing and data after bit destuffing are compared and
---  evaluated.
+--  generated on input of bit stuffing. Data are stuffed and compared with
+--  reference SW model. Then data are destuffed and output is compared with
+--  generated data (before bit stuffing). Additional error might be generated
+--  on input of bit de-stuffing forcing n + 1 consecutive bits of equal value.
 --
---  Additional SW model for bit-stuffing is implemented to avoid symmetric
---  errors.
+--  SW model emulates behaviour of CAN Frame:
+--      1. Bit stuffing is enabled (non fixed) as in original CAN Frame.
+--      2. Some bits are stuffed.
+--      3. With random chance bit stuffing is switched to fixed stuffing as
+--         if in real CAN Frame.
+--      4. Extra stuff bit is inserted as special stuff bit in begining of
+--         CAN FD CRC.
+--      5. Next bits are stuffed with fixed stuffing.
+--
+--   Output of SW model is always compared with output of bit stuffing DUT.
+--   Note that upon stuff error, step is finished immediately (as if error
+--   frame transmission started). Note that SW model covers recursive behaviour
+--   of bit stuffing.
 --                                       
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -72,6 +84,9 @@ use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 use work.ID_transfer.all;
+
+use STD.textio.all;
+use IEEE.std_logic_textio.all;
 
 architecture bit_stuffing_unit_test of CAN_test is
 
@@ -182,6 +197,10 @@ architecture bit_stuffing_unit_test of CAN_test is
 
         -- Bit at matching position in "stuffed_data_seq" is stuffed
         stuffed_bits_mark       :   std_logic_vector(799 downto 0);
+
+        -- Stuffing counters
+        stuff_counter_fixed     :   natural;
+        stuff_counter_non_fixed :   natural;
     end record;
 
     ----------------------------------------------------------------------------
@@ -204,9 +223,17 @@ architecture bit_stuffing_unit_test of CAN_test is
   
     -- Bit stuffing step settings
     signal set                  :   bs_test_settings_type :=
-                                    (0, "000", false, 0, "000", (OTHERS => '0'),
-                                     (OTHERS => '0'), (OTHERS => '0'),
-                                     (OTHERS => '0'));
+                                    (0, "000", false, 0, "000", (OTHERS => '1'),
+                                     (OTHERS => '1'), (OTHERS => '1'),
+                                     (OTHERS => '1'), 0, 0);
+
+    signal nbs_index            :   natural := 0;
+    signal wbs_index            :   natural := 0;
+
+    -- Expected value on output of Bit stuffing circuit (as calculated by
+    --  SW model)
+    signal exp_stuffed          :   std_logic := '1';
+    signal should_be_stuffed    :   std_logic := '0';
 
     ----------------------------------------------------------------------------
     -- Calculates expected sequence on output of bit stuffing circuit
@@ -219,9 +246,9 @@ architecture bit_stuffing_unit_test of CAN_test is
         variable i              :       integer := 0;
         variable in_ptr         :       integer := 0;
         variable out_ptr        :       integer := 0;
-        variable stuff_ctr      :       integer := 0;
+        variable stuff_ctr      :       integer := 1;
         variable st_length      :       integer := 0;
-        variable prev_bit       :       std_logic := '0';
+        variable prev_bit       :       std_logic := '1';
     begin
 
         -- Check settings validity for circuits as well as for
@@ -240,20 +267,23 @@ architecture bit_stuffing_unit_test of CAN_test is
             
             -- Insert stuff bit
             if (stuff_ctr = st_length) then
-                stuff_ctr := 1;
                 set.stuffed_data_seq(out_ptr) <= not set.tx_data_seq(in_ptr - 1);
                 set.stuffed_bits_mark(out_ptr) <= '1';
+                set.stuff_counter_non_fixed <= set.stuff_counter_non_fixed + 1;
                 out_ptr := out_ptr + 1;
+                stuff_ctr := 1;
+                prev_bit := not set.tx_data_seq(in_ptr - 1);
+            end if;
 
             -- Check if next bit is equal to previous one            
-            elsif (set.tx_data_seq(in_ptr) = prev_bit) then
+            if (set.tx_data_seq(in_ptr) = prev_bit) then
                 stuff_ctr := stuff_ctr + 1;
             else
                 stuff_ctr := 1;
+                prev_bit := set.tx_data_seq(in_ptr);
             end if;
-            
+
             -- Insert bit from input sequence
-            prev_bit := set.tx_data_seq(in_ptr);
             set.stuffed_data_seq(out_ptr) <= set.tx_data_seq(in_ptr);
             in_ptr  := in_ptr + 1;
             out_ptr := out_ptr + 1;
@@ -265,9 +295,12 @@ architecture bit_stuffing_unit_test of CAN_test is
         -- Calculate fixed bit stuffing
         --------------------------------------
         if (set.change_to_fixed) then
+            stuff_ctr := 0;
+
             -- Insert one extra stuff bit as in beginning of CAN FD CRC!
-            set.stuffed_data_seq(out_ptr)  <= not set.tx_data_seq(in_ptr);
+            set.stuffed_data_seq(out_ptr)  <= not set.tx_data_seq(in_ptr - 1);
             set.stuffed_bits_mark(out_ptr) <= '1';
+            set.stuff_counter_fixed <= set.stuff_counter_fixed + 1;
             out_ptr := out_ptr + 1;
 
             st_length := to_integer(unsigned(set.stuff_length_fixed));
@@ -280,7 +313,10 @@ architecture bit_stuffing_unit_test of CAN_test is
                     set.stuffed_data_seq(out_ptr) <=
                         not set.tx_data_seq(in_ptr - 1);
                     set.stuffed_bits_mark(out_ptr) <= '1';
+                    set.stuff_counter_fixed <=
+                        set.stuff_counter_fixed + 1;
                     out_ptr := out_ptr + 1;
+                    --wait for 0 ns;
 
                 -- Stuff counter is incremented regardless of bit values since
                 -- stuffing is fixed!         
@@ -289,7 +325,6 @@ architecture bit_stuffing_unit_test of CAN_test is
                 end if;
                 
                 -- Insert bit from input sequence
-                prev_bit := set.tx_data_seq(in_ptr);
                 set.stuffed_data_seq(out_ptr) <= set.tx_data_seq(in_ptr);
                 in_ptr  := in_ptr + 1;
                 out_ptr := out_ptr + 1;
@@ -316,6 +351,7 @@ architecture bit_stuffing_unit_test of CAN_test is
         rand_int_v(rand_ctr, 3, tmp);
         set.stuff_length_non_fixed <=
             std_logic_vector(to_unsigned(tmp + 3, 3));
+        wait for 0 ns;
 
         rand_int_v(rand_ctr, 3, tmp);
         set.stuff_length_fixed <=
@@ -329,8 +365,8 @@ architecture bit_stuffing_unit_test of CAN_test is
         rand_int_s(rand_ctr, 550, set.bc_non_fixed, true);
         set.bc_non_fixed <= set.bc_non_fixed + 20;
 
-        rand_int_s(rand_ctr, 5, set.bc_non_fixed, true);
-        set.bc_non_fixed <= set.bc_non_fixed + 15;
+        rand_int_s(rand_ctr, 20, set.bc_fixed, true);
+        set.bc_fixed <= set.bc_fixed + 15;
 
         rand_int_v(rand_ctr, 10, tmp);
         if (tmp > 5) then
@@ -344,7 +380,7 @@ architecture bit_stuffing_unit_test of CAN_test is
         -- Generate random bit sequences in TX Data, use only data up to
         -- generated length
         ------------------------------------------------------------------------
-        rand_logic_vect_cons_v(rand_ctr, tmp_vect, 0.8);
+        rand_logic_vect_cons_v(rand_ctr, tmp_vect, 0.85);
         set.tx_data_seq(set.bc_non_fixed - 1 downto 0) <=
             tmp_vect(set.bc_non_fixed - 1 downto 0);
 
@@ -354,6 +390,8 @@ architecture bit_stuffing_unit_test of CAN_test is
                             set.bc_non_fixed) <=
                 tmp_vect(set.bc_fixed - 1 downto 0);
         end if;
+
+        wait for 0 ns;
 
         -- Calculate expected stuff sequence!
         calc_sw_bit_stuf_sequence(set);
@@ -404,6 +442,10 @@ architecture bit_stuffing_unit_test of CAN_test is
         signal bs_length    : inout std_logic_vector(2 downto 0);
         signal bd_length    : inout std_logic_vector(2 downto 0);
 
+        -- Pointers to input data
+        signal nbs_index    : out   natural;
+        signal wbs_index    : out   natural;
+
         -- Error behaviour stuff
         signal err_ctr      : inout natural;
         signal log_lvl      : in    log_lvl_type; 
@@ -412,13 +454,55 @@ architecture bit_stuffing_unit_test of CAN_test is
     ) is
         variable nbs_ptr    :       natural := 0;
         variable wbs_ptr    :       natural := 0;
+        variable msg1       :       line;
+        variable msg2       :       line;
+        variable msg3       :       line;
+        variable msg4       :       line;
     begin
         wait until no_trigger;
         wait until rising_edge(clk_sys);
 
+        set <= (0, "000", false, 0, "000", (OTHERS => '0'), (OTHERS => '0'),
+                (OTHERS => '0'), (OTHERS => '0'), 0, 0);
+
         -- Generate step settings
-        generate_bs_settings(rand_ctr, set);
-        
+        generate_bs_settings(rand_ctr, set);        
+        wait for 0 ns;
+
+        if (log_lvl = info_l) then
+            log("TX Data NON fixed: ", info_l, log_lvl);            
+            write(msg1, set.tx_data_seq(set.bc_non_fixed - 1 downto 0));
+            writeline(output, msg1);
+            
+            log("TX Data fixed: ", info_l, log_lvl);            
+            write(msg2, set.tx_data_seq(set.bc_non_fixed + set.bc_fixed - 1 
+                                       downto set.bc_non_fixed));
+            writeline(output, msg2);
+        end if;
+
+        if (log_lvl = info_l) then
+            log("Stuffed data NON fixed: ", info_l, log_lvl);
+            write(msg3, set.stuffed_data_seq(
+                        set.stuff_counter_non_fixed + set.bc_non_fixed - 1
+                        downto 0));
+            writeline(output, msg3);
+
+            log("Stuffed data fixed: ", info_l, log_lvl);
+            write(msg4, set.stuffed_data_seq(
+                        set.stuff_counter_non_fixed + set.bc_non_fixed +
+                        set.stuff_counter_fixed + set.bc_fixed - 1 downto
+                        set.stuff_counter_non_fixed + set.bc_non_fixed));
+            writeline(output, msg4);
+        end if;
+
+        log("Non-fixed length: " & integer'image(set.bc_non_fixed),
+            info_l, log_lvl);
+        if (set.change_to_fixed) then
+            log("Change to fixed should occur!", info_l, log_lvl);
+            log("Fixed length: " & integer'image(set.bc_fixed),
+            info_l, log_lvl);
+        end if;
+
         -- Enable Bit stuffing and destuffing. Set no fixed stuffing.
         bs_enable    <= '1';
         bd_enable    <= '1';
@@ -450,6 +534,26 @@ architecture bit_stuffing_unit_test of CAN_test is
                      process_error(err_ctr, error_beh, exit_imm);
                 end if;
                 nbs_ptr := nbs_ptr + 1;
+                nbs_index <= nbs_ptr;
+            end if;
+
+            -- Report if recursive bit stuffing occurred. This is just to
+            -- verify that circuit works recursively well!
+            -- (enough to detect one polarity to verify proper operation)
+            if (log_level = info_l) then
+                if (set.tx_data_seq(nbs_ptr) = '0' and
+                    set.tx_data_seq(nbs_ptr + 1) = '0' and
+                    set.tx_data_seq(nbs_ptr + 2) = '0' and
+                    set.tx_data_seq(nbs_ptr + 3) = '0' and
+                    set.tx_data_seq(nbs_ptr + 4) = '0' and
+                    set.tx_data_seq(nbs_ptr + 5) = '1' and
+                    set.tx_data_seq(nbs_ptr + 6) = '1' and
+                    set.tx_data_seq(nbs_ptr + 7) = '1' and
+                    set.tx_data_seq(nbs_ptr + 8) = '1' and
+                    bs_trig = '1')
+                then
+                    log("Recursive stuff ocurred!", info_l, log_level);
+                end if;
             end if;
 
             -- Checking Bit stuffed sequence and that bit was stuffed when
@@ -466,6 +570,7 @@ architecture bit_stuffing_unit_test of CAN_test is
                     process_error(err_ctr, error_beh, exit_imm);
                 end if;
                 wbs_ptr := wbs_ptr + 1;
+                wbs_index <= wbs_ptr;
             end if;
 
             -- Check for change to fixed stuffing
@@ -475,8 +580,11 @@ architecture bit_stuffing_unit_test of CAN_test is
 
                 -- Quit if fixed stuffing is not set for this step.
                 if (set.change_to_fixed = false) then
+                    log("End of data sequence.", info_l, log_lvl);
                     exit;
                 end if;
+
+                log("Change to fixed stuffing.", info_l, log_lvl);
 
                 fixed_stuff  <= '1';
                 bs_length    <= set.stuff_length_fixed;
@@ -484,13 +592,24 @@ architecture bit_stuffing_unit_test of CAN_test is
             end if;
 
             -- Check if we are in the end
-            if (no_trigger and (nbs_ptr = set.bc_non_fixed + set.bc_fixed - 1)
+            if (no_trigger and (nbs_ptr = set.bc_non_fixed + set.bc_fixed - 2)
                 and fixed_stuff = '1')
             then
+                log("End of data sequence.", info_l, log_lvl);
                 exit;
             end if;
 
         end loop;
+
+        -- Finish test step by turning bit stuffing off!
+        bs_enable    <= '0';
+        bd_enable    <= '0';
+        wbs_ptr      := 0;
+        nbs_ptr      := 0;
+        nbs_index    <= 0;
+        wbs_index    <= 0;
+        wait for 500 ns;
+        wait until no_trigger;
 
     end procedure;
 
@@ -572,10 +691,18 @@ begin
     rx_trig_ack <= rx_trig_intent and (not destuffed);
 
     no_trigger <= true when (tx_trig_intent = '0' and bs_trig = '0' and 
-                             bd_trig = '0' and tx_trig_intent = '0')
+                             bd_trig = '0' and rx_trig_intent = '0')
                        else
                   false;
  
+    -- Assigning only to have waveform of expected data and presence of
+    -- stuff bit!
+    sw_mod_prop_proc : process 
+    begin
+        wait until (rising_edge(clk_sys) and bs_trig = '1');
+        exp_stuffed         <= set.stuffed_data_seq(wbs_index);
+        should_be_stuffed   <= set.stuffed_bits_mark(wbs_index);
+    end process;
 
     ----------------------------------------------------------------------------
     -- When bit stuff occurs, value of next bit should be oposite of previous
@@ -599,10 +726,12 @@ begin
         
         -- Generate random stuff error;
         rand_real_v(rand_st_err_ctr, tmp);
-        if (tmp > 0.9) then
+        if (tmp > 1.0) then
             err_data <= '1';
             wait until rising_edge(clk_sys) and (bd_trig = '1');
             wait for 1 ns;
+
+            log("Stuff error inserted", info_l, log_level);
 
             -- Now stuff error should be fired by bit destuffing, since
             -- bit value was forced to be the same as previous bits!
@@ -653,9 +782,9 @@ begin
             exec_bs_test_step(rand_ctr, set, tx_trig_ack, rx_trig_ack, bs_trig,
                               bd_trig, no_trigger, tx_data, rx_data,
                               stuffed_data, err_data, bs_enable, bd_enable,
-                              fixed_stuff, bs_length, bd_length, stat_err_ctr,
-                              log_level, error_beh, exit_imm);
-
+                              fixed_stuff, bs_length, bd_length, nbs_index,
+                              wbs_index, stat_err_ctr, log_level, error_beh,
+                              exit_imm);
             loop_ctr <= loop_ctr + 1;
         end loop;
 
