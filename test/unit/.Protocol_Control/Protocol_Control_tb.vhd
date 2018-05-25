@@ -37,70 +37,79 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Unit test for Protocol Control. The architecture of this test is depicted in picture below. It is inherited
---  from original Protocol Control testbench created during the implementation of the CAN FD IP Core. This 
---  testbench only tests the state machine of protocol control! 
---  Following features of CAN are NOT tested here:
---    - bit stuffing and destuffing (frames transmitted from protocol control is without bit stuffing)
---    - CRC calculation  (CRC is provided to protocol control and in this circuit always fixed value is provided)
---    - stuff and destuff counters are always zero provided to the Protocol control
---    - Synchronization - triggerring signals are fixed in this testbench, no synchronization is happenning!
+--  Unit test for Protocol Control. The architecture of this test is depicted 
+--  in picture below. It is inherited from original Protocol Control testbench
+--  created during implementation of the CAN FD IP Core. This testbench only
+--  tests the state machine of protocol control! 
+-- 
+--  Following features of are NOT tested here:
+--    - bit stuffing and destuffing (frames transmitted from protocol control 
+--      is without bit stuffing)
+--    - CRC calculation  (CRC is provided to protocol control and in this 
+--      circuit always fixed value is provided)
+--    - stuff and destuff counters are always zero provided to 
+--      Protocol control
+--    - Synchronization - triggerring signals are fixed in this testbench, 
+--      no synchronization is happenning!
 --    - error detection!
---  This functionality is tested in according feature tests!!
+--
+-- Following features are tested here:
+--    - Correct bit sequence on the output of protocol control on TX and RX
+--      sides
+--    - Frame integrity, TX frame = RX Frame.
 --
 -- Architecture:
 --   
---            -----------        ---------------------
---      |-----| Receive |<-------| Protocol control 2|-----|
---      |     |  frame  |        ---------------------     |
---      |     -----------                                  |  bus_level
---      |                                                  |
---      |    -----------         ---------------------     |                  ---------------------
---      |    | Generate|-------->| Protocol control 1|-----|----------------->|Record the frame as|
---      |    |   frame |    |    ---------------------                        |   bit sequence    |
---      |    -----------    |                                                 ---------------------
---      |                   |         -----------------------                           |
---      |                   |-------->| SW CAN Imlementation|---------------------|     | 
---      |                        |    -----------------------   expcted frame     v     v recorded frame
---      |                        |                                               ----------
---      -------------------      |                                               | compare|
---                        |      |                                               ----------
---                        v      v                                                    |
---                        ---------                                                   |
---                        |compare|                                                   |
---                        ---------                                                   v
---                            |                                                    Error if
---                            v                                                  not matching
---                         Error if
---                       not matching
+--      -----------    ---------------------
+--  |---| Receive |<---| Protocol control 2|<-|
+--  |   |  frame  |    ---------------------  |  bus_level
+--  |   -----------                           |  
+--  |                                         |
+--  |  -----------    ---------------------   |  ---------------------
+--  |  | Generate|--->| Protocol control 1|----->|Record the frame as|
+--  |  |   frame | |  ---------------------      |   bit sequence    |
+--  |  ----------- |                             ---------------------
+--  |              |    ----------------                     |
+--  |              |--->| SW CAN Model |---------------|     | recorded frame
+--  |              |    ----------------   expected    v     v 
+--  |              |                        frame     ----------
+--  -----------    |                                  | compare|
+--            |    |                                  ----------
+--            v    v                                      |
+--           ---------                                    |
+--           |compare|                                    |
+--           ---------                                    v
+--               |                                     Error if
+--               v                                   not matching
+--            Error if
+--          not matching
 --
 --
 --  Test sequence:
 --    1. Generate random frame on input of Protocol Control 1
---    2. Calculate the expected bit sequence (frame) on the CAN bus including ACK and EOF!
+--    2. Calculate expected bit sequence (frame) on the CAN bus including 
+--       ACK and EOF!
 --    3. Transmitt the frame and record the bit sequence!
 --    4. Compare if Expected bit sequence is equal to recorded one
---    5. Compare if Generated frame (data,ident,type of frame...) is equal to received one!
+--    5. Compare if Generated frame (data,ident,type of frame...) is equal 
+--       to received one!
 --    6. If points 4 or 5 give mismatch increase error counter
 --    7. Loop points 1 to 6 until the number of iterations was reached!
 --
---    Note that since additional function for buidling CAN frame in "SW" is used it verifies the
---    protocol control towards errors which can be not detected when both PC1 and PC2 have the
---    error. E.g if PC has missing bit then it wont transmitt it, it wont receive it and it will
---    communicate hapilly further! But the transmitted frame would not be according to specification!s
---    Especially this was reason to implemnt CAN Frame buildup as SW(behavioral) procedure!
+--    Note that since additional function for buidling CAN frame in "SW" is used
+--    it verifies the protocol control towards errors which can be not detected
+--    when both PC1 and PC2 have the error. E.g if PC has missing bit then it 
+--    won't transmitt it, it won't receive it and it will communicate hapilly
+--    further! But the transmitted frame would not be according to spec!
+--    This is reason for SW model of CAN Frame!
 --
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Revision History:
 --    13.6.2016   Created file
---    22.6.2016   Modified tb to be compliant with latest bugfixes in protocol control!
+--    22.6.2016   Modified tb to be compliant with latest bugfixes in protocol
+--                control!
 --
------------------------------------------------------------------------------------------------------------------
-
-
------------------------------------------------------------------------------------------------------------------
--- Test implementation                                            
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
@@ -115,455 +124,629 @@ use work.CAN_FD_frame_format.all;
 
 architecture Protocol_Control_unit_test of CAN_test is
     
-    -----------------------------------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Common Signals from/to PC1 and PC2
-    -----------------------------------------------------------------------------------------------------------------  
-    signal clk_sys                  :  std_logic:='0'; --System clock
-    signal res_n                    :  std_logic:='0'; --Async reset   
-    signal drv_bus                  :  std_logic_vector(1023 downto 0)  :=  (OTHERS => '0');  --Driving bus signals
-    signal crc15                    :  std_logic_vector(14 downto 0)    :=  (OTHERS => '0');  --CRC 15
-    signal crc17                    :  std_logic_vector(16 downto 0)    :=  (OTHERS => '0');  --CRC 17
-    signal crc21                    :  std_logic_vector(20 downto 0)    :=  (OTHERS => '0');  --CRC 21
+    ----------------------------------------------------------------------------
+    signal clk_sys                  :  std_logic := '0';
+    signal res_n                    :  std_logic := '0';
+
+    -- Driving bus
+    signal drv_bus                  :  std_logic_vector(1023 downto 0) := 
+                                        (OTHERS => '0');
+
+    -- CRC results
+    signal crc15                    :  std_logic_vector(14 downto 0) := 
+                                        (OTHERS => '0');
+    signal crc17                    :  std_logic_vector(16 downto 0) :=
+                                        (OTHERS => '0');
+    signal crc21                    :  std_logic_vector(20 downto 0) := 
+                                        (OTHERS => '0');
       
-    -----------------------------------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Signals from/to PC1
-    -----------------------------------------------------------------------------------------------------------------  
-    signal tran_data_1              :  std_logic_vector(511 downto 0):=  (OTHERS => '0');
-    signal tran_ident_1             :  std_logic_vector(28 downto 0):=  (OTHERS => '0');
-    signal tran_dlc_1               :  std_logic_vector(3 downto 0):=  (OTHERS => '0');
-    signal tran_is_rtr_1            :  std_logic:='0';
-    signal tran_ident_type_1        :  std_logic:='0';
-    signal tran_frame_type_1        :  std_logic:='0';
-    signal tran_brs_1               :  std_logic:='0';     
-    signal frame_store_1            :  std_logic:='0'; --Store frame from TX Arbitrator to the Transcieve Buffer
-    signal tran_frame_valid_in_1    :  std_logic:='0'; --Valid frame ready to be stored into Transcieeve Buffer
-    signal tran_data_ack_1          :  std_logic:='0'; --Acknowledge that the frame was stored
-    signal rec_data_1               :  std_logic_vector(511 downto 0);
-    signal rec_ident_1              :  std_logic_vector(28 downto 0);
+    ----------------------------------------------------------------------------
+
+    -- TX Metadata
+    signal tran_dlc_1               :  std_logic_vector(3 downto 0) := "0000";
+    signal tran_is_rtr_1            :  std_logic := '0';
+    signal tran_ident_type_1        :  std_logic := '0';
+    signal tran_frame_type_1        :  std_logic := '0';
+    signal tran_brs_1               :  std_logic := '0'; 
+
+    -- TX Buffer interface (Identifier word + data words)
+    signal txt_data_word_1          :  std_logic_vector(31 downto 0);
+    signal txt_buf_ptr              :  natural range 0 to 19;
+
+    -- HW Command for TXT Buffers
+    signal txt_hw_cmd               :  txt_hw_cmd_type := ('0', '0', '0',
+                                                           '0', '0', '0');
+
+    -- Frame on output of TX Arbitrator is valid and can be locked for
+    -- transmission
+    signal tran_frame_valid_in_1    :  std_logic := '0';
+
+    -- RX metadata
     signal rec_dlc_1                :  std_logic_vector(3 downto 0);
     signal rec_is_rtr_1             :  std_logic;
     signal rec_ident_type_1         :  std_logic;
     signal rec_frame_type_1         :  std_logic;
     signal rec_brs_1                :  std_logic;
-    signal rec_crc_1                :  std_logic_vector(20 downto 0); --Recieved CRC value
-    signal rec_esi_1                :  std_logic; --Recieved Error state indicator
-    signal OP_state_1               :  oper_mode_type; --Operation mode state
-    signal arbitration_lost_1       :  std_logic; --Signal for Operational mode state mahine about loosing arbitration
-    signal is_idle_1                :  std_logic; --Signal to indicate transcieve or recieve finished and bus is idle
-    signal set_transciever_1        :  std_logic; --Set OP_State FSM into transciever state (Used at SOF)
-    signal set_reciever_1           :  std_logic; --Set OP_State FSM into reciever state
+    signal rec_esi_1                :  std_logic;
+
+    -- RX Identifier
+    signal rec_ident_1              :  std_logic_vector(28 downto 0);
+    
+    -- Recieved CRC value
+    signal rec_crc_1                :  std_logic_vector(20 downto 0);
+
+    -- Operation mode state
+    signal OP_state_1               :  oper_mode_type;
+
+    -- Signal for Operational mode state mahine about loosing arbitration
+    signal arbitration_lost_1       :  std_logic;
+
+    -- Signal to indicate transcieve or recieve finished and bus is idle
+    signal is_idle_1                :  std_logic;
+
+    -- Set OP_State FSM into transciever state (Used at SOF)
+    signal set_transciever_1        :  std_logic;
+
+    -- Set OP_State FSM into reciever state
+    signal set_reciever_1           :  std_logic;
+
+    -- Arbitration lost capture
     signal alc_1                    :  std_logic_vector(4 downto 0);
-    signal error_state_1            :  error_state_type; --Fault confinement state
-    signal form_Error_1             :  std_logic; --Form Error
-    signal CRC_Error_1              :  std_logic; --CRC Error
-    signal ack_Error_1              :  std_logic; --Acknowledge error
-    signal unknown_state_Error_1    :  std_logic; --Some of the state machines, 
-    signal bit_stuff_Error_valid_1  :  std_logic; 
+
+    -- Fault confinement state
+    signal error_state_1            :  error_state_type;
+
+    -- Form Error
+    signal form_Error_1             :  std_logic;
+
+    -- CRC Error
+    signal CRC_Error_1              :  std_logic;
+    
+    -- Acknowledge error
+    signal ack_Error_1              :  std_logic;
+
+    -- Protocol control in unknown state
+    signal unknown_state_Error_1    :  std_logic;
+
+    -- Bit or stuff error is valid
+    signal bit_stuff_Error_valid_1  :  std_logic;
+
+    -- Increment error counter by 1.
     signal inc_one_1                :  std_logic;
+
+    -- Increment error counter by 8.
     signal inc_eight_1              :  std_logic;
-    signal dec_one_1                :  std_logic;    
+
+    -- Decrement error counter by 1.
+    signal dec_one_1                :  std_logic;
+
+    -- Transmission was finished succesfully!
     signal tran_valid_1             :  std_logic;
+
+    -- Frame was received succesfully
     signal rec_valid_1              :  std_logic;
-    signal ack_recieved_out_1       :  std_logic;        
+
+    -- Acknowledge received
+    signal ack_recieved_out_1       :  std_logic;
+
+    -- Bit rate was shifted      
     signal br_shifted_1             :  std_logic;
-    signal data_tx_1                :  std_logic; --Transcieved data on CAN Bus
+
+    -- Transcieved data on CAN Bus
+    signal data_tx_1                :  std_logic;
+
+    -- Bit stuffing enabled
     signal stuff_enable_1           :  std_logic;
-    signal fixed_stuff_1            :  std_logic; --Log 1 - Fixed Stuffing, Log 0 - Normal stuffing
-    signal stuff_length_1           :  std_logic_vector(2 downto 0); --Stuffing length
-    signal destuff_enable_1         :  std_logic; --Enabling destuffing
-    signal stuff_error_enable_1     :  std_logic; --Enabling firing of destuffing error
-    signal fixed_destuff_1          :  std_logic; --Fixed stuffing method (log. 1), Normal stuffing (log 0);
-    signal destuff_length_1         :  std_logic_vector(2 downto 0); --Number of equal consequent bits before destuffed bit 
-    signal dst_ctr_1                :  natural range 0 to 7; --Number of stuffed bits modulo 8
-    signal crc_enable_1             :  std_logic; --Transition from 0 to 1 erases the CRC and operation holds as long as enable=1
-    signal sync_control_1           :  std_logic_vector(1 downto 0); 
-    signal sp_control_1             :  std_logic_vector(1 downto 0); --00 nominal, 01-data, 10 -secondary
-    signal ssp_reset_1              :  std_logic; --Clear the Shift register at the  beginning of Data Phase!!!    
-    signal trv_delay_calib_1        :  std_logic; --Calibration command for transciever delay compenstation (counter)
-    signal bit_err_enable_1         :  std_logic; --Bit Error detection enable (Ex. disabled when recieving data)
-    signal hard_sync_edge_1         :  std_logic; --Synchronisation edge validated by prescaler!!!
-    signal int_loop_back_ena_1      :  std_logic; --Internal loopBack enabled (for Bus monitoring mode)
+
+    -- Fixed bit stuffing ('1') / Standard Bit stuffing ('0')
+    signal fixed_stuff_1            :  std_logic;
+
+    -- Length of bit stuffing rule
+    signal stuff_length_1           :  std_logic_vector(2 downto 0);
+
+    -- Enable bit destuffing
+    signal destuff_enable_1         :  std_logic;
+
+    -- Enable stuff error detection
+    signal stuff_error_enable_1     :  std_logic;
+
+    -- Fixed bit de-stuffing ('1') / Standard Bit de-stuffing ('0')
+    signal fixed_destuff_1          :  std_logic;
+
+    -- Length of bit destuffing rule
+    signal destuff_length_1         :  std_logic_vector(2 downto 0);
+
+    -- Bit destuffing counter mod 8
+    signal dst_ctr_1                :  natural range 0 to 7;
+
+    -- Transition from 0 to 1 erases the CRC and operation holds as
+    -- long as "crc_enable = 1"
+    signal crc_enable_1             :  std_logic;
+
+    -- Synchronisation control (NO_SYNC, HARD_SYNC, RE_SYNC)
+    signal sync_control_1           :  std_logic_vector(1 downto 0);
+
+    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE) 
+    signal sp_control_1             :  std_logic_vector(1 downto 0);
+
+    -- Clear Secondary sampling point shift register (in begining of
+    -- Data phase)
+    signal ssp_reset_1              :  std_logic;
+
+    -- Calibration command for transciever delay compenstation
+    signal trv_delay_calib_1        :  std_logic;
+
+    -- Bit Error detection enable (Ex. disabled when recieving data)
+    signal bit_err_enable_1         :  std_logic;
+
+    -- Synchronisation edge validated by prescaler!!!
+    signal hard_sync_edge_1         :  std_logic;
+
+    -- Internal loopBack enabled (for Bus monitoring mode) 
+    signal int_loop_back_ena_1      :  std_logic;
+
+    -- Protocol state output.
     signal PC_State_out_1           :  protocol_type;
     
-    -----------------------------------------------------------------------------------------------------------------
+
+    ----------------------------------------------------------------------------
     -- Signals from/to PC2
-    -----------------------------------------------------------------------------------------------------------------  
-    signal tran_data_2              :  std_logic_vector(511 downto 0):=  (OTHERS => '0');
-    signal tran_ident_2             :  std_logic_vector(28 downto 0):=  (OTHERS => '0');
-    signal tran_dlc_2               :  std_logic_vector(3 downto 0):=  (OTHERS => '0');
-    signal tran_is_rtr_2            :  std_logic:='0';
-    signal tran_ident_type_2        :  std_logic:='0';
-    signal tran_frame_type_2        :  std_logic:='0';
-    signal tran_brs_2               :  std_logic:='0';     
-    signal frame_store_2            :  std_logic; --Store frame from TX Arbitrator to the Transcieve Buffer
-    signal tran_frame_valid_in_2    :  std_logic:='0'; --Valid frame ready to be stored into Transcieeve Buffer
-    signal tran_data_ack_2          :  std_logic; --Acknowledge that the frame was stored
-    signal rec_data_2               :  std_logic_vector(511 downto 0);
-    signal rec_ident_2              :  std_logic_vector(28 downto 0);
+    ----------------------------------------------------------------------------
+
+    -- TX Metadata
+    signal tran_dlc_2               :  std_logic_vector(3 downto 0) := "0000";
+    signal tran_is_rtr_2            :  std_logic := '0';
+    signal tran_ident_type_2        :  std_logic := '0';
+    signal tran_frame_type_2        :  std_logic := '0';
+    signal tran_brs_2               :  std_logic := '0'; 
+
+    -- TX Buffer interface (Identifier word + data words)
+    signal txt_data_word_2          :  std_logic_vector(31 downto 0);
+    signal txt_buf_ptr              :  natural range 0 to 19;
+
+    -- HW Command for TXT Buffers
+    signal txt_hw_cmd               :  txt_hw_cmd_type := ('0', '0', '0',
+                                                           '0', '0', '0');
+
+    -- Frame on output of TX Arbitrator is valid and can be locked for
+    -- transmission
+    signal tran_frame_valid_in_2    :  std_logic := '0';
+
+    -- RX metadata
     signal rec_dlc_2                :  std_logic_vector(3 downto 0);
     signal rec_is_rtr_2             :  std_logic;
     signal rec_ident_type_2         :  std_logic;
     signal rec_frame_type_2         :  std_logic;
     signal rec_brs_2                :  std_logic;
-    signal rec_crc_2                :  std_logic_vector(20 downto 0); --Recieved CRC value
-    signal rec_esi_2                :  std_logic; --Recieved Error state indicator
-    signal OP_state_2               :  oper_mode_type; --Operation mode state
-    signal arbitration_lost_2       :  std_logic; --Signal for Operational mode state mahine about loosing arbitration
-    signal is_idle_2                :  std_logic; --Signal to indicate transcieve or recieve finished and bus is idle
-    signal set_transciever_2        :  std_logic; --Set OP_State FSM into transciever state (Used at SOF)
-    signal set_reciever_2           :  std_logic; --Set OP_State FSM into reciever state
+    signal rec_esi_2                :  std_logic;
+
+    -- RX Identifier
+    signal rec_ident_2              :  std_logic_vector(28 downto 0);
+    
+    -- Recieved CRC value
+    signal rec_crc_2                :  std_logic_vector(20 downto 0);
+
+    -- Operation mode state
+    signal OP_state_2               :  oper_mode_type;
+
+    -- Signal for Operational mode state mahine about loosing arbitration
+    signal arbitration_lost_2       :  std_logic;
+
+    -- Signal to indicate transcieve or recieve finished and bus is idle
+    signal is_idle_2                :  std_logic;
+
+    -- Set OP_State FSM into transciever state (Used at SOF)
+    signal set_transciever_2        :  std_logic;
+
+    -- Set OP_State FSM into reciever state
+    signal set_reciever_2           :  std_logic;
+
+    -- Arbitration lost capture
     signal alc_2                    :  std_logic_vector(4 downto 0);
-    signal error_state_2            :  error_state_type; --Fault confinement state
-    signal form_Error_2             :  std_logic; --Form Error
-    signal CRC_Error_2              :  std_logic; --CRC Error
-    signal ack_Error_2              :  std_logic; --Acknowledge error
-    signal unknown_state_Error_2    :  std_logic; --Some of the state machines, 
-    signal bit_stuff_Error_valid_2  :  std_logic; 
+
+    -- Fault confinement state
+    signal error_state_2            :  error_state_type;
+
+    -- Form Error
+    signal form_Error_2             :  std_logic;
+
+    -- CRC Error
+    signal CRC_Error_2              :  std_logic;
+    
+    -- Acknowledge error
+    signal ack_Error_2              :  std_logic;
+
+    -- Protocol control in unknown state
+    signal unknown_state_Error_2    :  std_logic;
+
+    -- Bit or stuff error is valid
+    signal bit_stuff_Error_valid_2  :  std_logic;
+
+    -- Increment error counter by 1.
     signal inc_one_2                :  std_logic;
+
+    -- Increment error counter by 8.
     signal inc_eight_2              :  std_logic;
-    signal dec_one_2                :  std_logic;    
+
+    -- Decrement error counter by 1.
+    signal dec_one_2                :  std_logic;
+
+    -- Transmission was finished succesfully!
     signal tran_valid_2             :  std_logic;
+
+    -- Frame was received succesfully
     signal rec_valid_2              :  std_logic;
-    signal ack_recieved_out_2       :  std_logic;        
+
+    -- Acknowledge received
+    signal ack_recieved_out_2       :  std_logic;
+
+    -- Bit rate was shifted      
     signal br_shifted_2             :  std_logic;
-    signal data_tx_2                :  std_logic; --Transcieved data on CAN Bus
+
+    -- Transcieved data on CAN Bus
+    signal data_tx_2                :  std_logic;
+
+    -- Bit stuffing enabled
     signal stuff_enable_2           :  std_logic;
-    signal fixed_stuff_2            :  std_logic; --Log 1 - Fixed Stuffing, Log 0 - Normal stuffing
-    signal stuff_length_2           :  std_logic_vector(2 downto 0); --Stuffing length
-    signal destuff_enable_2          :  std_logic; --Enabling destuffing
-    signal stuff_error_enable_2     :  std_logic; --Enabling firing of destuffing error
-    signal fixed_destuff_2          :  std_logic; --Fixed stuffing method (log. 1), Normal stuffing (log 0);
-    signal destuff_length_2         :  std_logic_vector(2 downto 0); --Number of equal consequent bits before destuffed bit 
-    signal dst_ctr_2                :  natural range 0 to 7; --Number of stuffed bits modulo 8
-    signal crc_enable_2             :  std_logic; --Transition from 0 to 1 erases the CRC and operation holds as long as enable=1
-    signal sync_control_2           :  std_logic_vector(1 downto 0); 
-    signal sp_control_2             :  std_logic_vector(1 downto 0); --00 nominal, 01-data, 10 -secondary
-    signal ssp_reset_2              :  std_logic; --Clear the Shift register at the  beginning of Data Phase!!!    
-    signal trv_delay_calib_2        :  std_logic; --Calibration command for transciever delay compenstation (counter)
-    signal bit_err_enable_2         :  std_logic; --Bit Error detection enable (Ex. disabled when recieving data)
-    signal hard_sync_edge_2         :  std_logic; --Synchronisation edge validated by prescaler!!!
-    signal int_loop_back_ena_2      :  std_logic; --Internal loopBack enabled (for Bus monitoring mode)
-    signal PC_State_out_2           :  protocol_type;
-    
-    -----------------------------------------------------------------------------------------------------------------
+
+    -- Fixed bit stuffing ('1') / Standard Bit stuffing ('0')
+    signal fixed_stuff_2            :  std_logic;
+
+    -- Length of bit stuffing rule
+    signal stuff_length_2           :  std_logic_vector(2 downto 0);
+
+    -- Enable bit destuffing
+    signal destuff_enable_2         :  std_logic;
+
+    -- Enable stuff error detection
+    signal stuff_error_enable_2     :  std_logic;
+
+    -- Fixed bit de-stuffing ('1') / Standard Bit de-stuffing ('0')
+    signal fixed_destuff_2          :  std_logic;
+
+    -- Length of bit destuffing rule
+    signal destuff_length_2         :  std_logic_vector(2 downto 0);
+
+    -- Bit destuffing counter mod 8
+    signal dst_ctr_2                :  natural range 0 to 7;
+
+    -- Transition from 0 to 1 erases the CRC and operation holds as
+    -- long as "crc_enable = 1"
+    signal crc_enable_2             :  std_logic;
+
+    -- Synchronisation control (NO_SYNC, HARD_SYNC, RE_SYNC)
+    signal sync_control_2           :  std_logic_vector(1 downto 0);
+
+    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE) 
+    signal sp_control_2             :  std_logic_vector(1 downto 0);
+
+    -- Clear Secondary sampling point shift register (in begining of
+    -- Data phase)
+    signal ssp_reset_2              :  std_logic;
+
+    -- Calibration command for transciever delay compenstation
+    signal trv_delay_calib_2        :  std_logic;
+
+    -- Bit Error detection enable (Ex. disabled when recieving data)
+    signal bit_err_enable_2         :  std_logic;
+
+    -- Synchronisation edge validated by prescaler!!!
+    signal hard_sync_edge_2         :  std_logic;
+
+    -- Internal loopBack enabled (for Bus monitoring mode) 
+    signal int_loop_back_ena_2      :  std_logic;
+
+    -- Protocol state output.
+    signal PC_State_out_1           :  protocol_type;
+   
+
+    ----------------------------------------------------------------------------
     -- Internal testbench signals
-    -----------------------------------------------------------------------------------------------------------------  
+    ----------------------------------------------------------------------------
+
+    -- Logic level on CAN bus
     signal bus_level                :  std_logic;
-    signal rnd_ctr_tr               :  natural range 0 to RAND_POOL_SIZE:=0;
+
+    -- Random pool pointer
+    signal rnd_ctr_tr               :  natural range 0 to RAND_POOL_SIZE := 0;
+
+    -- Transmitt trigger
     signal tx_trig                  :  std_logic;
+
+    -- Receive trigger
     signal rx_trig                  :  std_logic;
-    signal tx_frame                 :  CAN_frame_type;
-    signal rx_frame                 :  CAN_frame_type;
+
+    -- Transmitted / Received frames    
+    signal tx_frame                 :  SW_CAN_frame_type;
+    signal rx_frame                 :  SW_CAN_frame_type;
+
+    -- Previous value of "bus_level" for sync. edge generation.
     signal prev_bus                 :  std_logic;
-    signal error_st                 :  error_state_type:=error_active;
+
+    -- Fault confinement state.
+    signal error_st                 :  error_state_type := error_active;
+
+
+    ------------------------
+    -- Driving bus aliases
+    ------------------------
+
+    -- RTR behavior setting
+    signal drv_rtr_pref             :     std_logic;
+
+    -- Whenever FD Frames are supported for reciever
+    signal drv_CAN_fd_ena           :     std_logic;
+
+    -- Bus Monitoring mode enabled
+    signal drv_bus_mon_ena          :     std_logic;
+
+    -- Retransmition limit enabled for errornous frames
+    signal drv_retr_lim_ena         :     std_logic;
+
+    -- Retransmittion treshold
+    signal drv_retr_th              :     std_logic_vector(3 downto 0);
+
+    -- Self Test Mode enabled
+    signal drv_self_test_ena        :     std_logic;
+
+    -- Immediately abort transmittion
+    signal drv_abort_tran           :     std_logic;
+
+    -- Forbidding acknowledge mode
+    signal drv_ack_forb             :     std_logic;
+
+    -- Enabling whole controller
+    signal drv_ena                  :     std_logic;
+
+    -- Type of FD Format Frame (ISO,non-ISO)
+    signal drv_fd_type              :     std_logic;
+
     
-    -----------------------
-    --Driving bus aliases--
-    -----------------------
-    signal drv_rtr_pref             :     std_logic; --RTR behavior setting
-    signal drv_CAN_fd_ena           :     std_logic; --Whenever FD Frames are supported for reciever
-    signal drv_bus_mon_ena          :     std_logic; --Bus Monitoring mode enabled
-    signal drv_retr_lim_ena         :     std_logic; --Retransmition limit enabled for errornous frames
-    signal drv_retr_th              :     std_logic_vector(3 downto 0); --Retransmittion treshold
-    signal drv_self_test_ena        :     std_logic; --Self Test Mode enabled
-    signal drv_abort_tran           :     std_logic; --Immediately abort transmittion
-    signal drv_ack_forb             :     std_logic; --Forbidding acknowledge mode
-    signal drv_ena                  :     std_logic; --Enabling the whole controller
-    signal drv_fd_type              :     std_logic; --Type of FD Format Frame (ISO,non-ISO)
-    
-    -----------------------------------------------------------------------------------------------------------------
-    -----------------------------------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Testbench procedures and functions
-    -----------------------------------------------------------------------------------------------------------------  
-    -----------------------------------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     
-    -----------------------------------------------------------------------------------------------------------------
-    --Generagtes Random CAN frame to be transmitted by PC1
-    -----------------------------------------------------------------------------------------------------------------
-    procedure generate_tx_frame(
-      signal rand_ctr   :inout     natural range 0 to RAND_POOL_SIZE;
-      signal tx_frame   :inout     CAN_frame_type
-    )is
+    procedure stuff_count_grey_code(
+        constant st_ctr           :in   natural range 0 to 7;
+        variable parity           :out  std_logic
+        variable result           :out  std_logic_vector(2 downto 0);
+    ) is
     begin
-      rand_logic_vect (rand_ctr, tx_frame.rec_ident_in,      0.3);
-      rand_logic_vect (rand_ctr, tx_frame.rec_data_in,       0.5);
-      rand_logic_vect (rand_ctr, tx_frame.rec_dlc_in,        0.5);
-      
-      rand_logic      (rand_ctr, tx_frame.rec_ident_type_in, 0.5);
-      rand_logic      (rand_ctr, tx_frame.rec_frame_type_in, 0.5);
-      rand_logic      (rand_ctr, tx_frame.rec_is_rtr,        0.5);
-      rand_logic      (rand_ctr, tx_frame.rec_brs,           0.5);
-      
-      if(tx_frame.rec_frame_type_in=NORMAL_CAN)then
-        tx_frame.rec_brs<='0';
-      end if;
-      
-      if(tx_frame.rec_frame_type_in=FD_CAN)then
-        tx_frame.rec_is_rtr<='0';
-      end if;
-      
-      --Here we test only the Protocol correct RTR behaviour
-      --That is if we send RTR FRAME then we send always zero DLC
-      if(tx_frame.rec_is_rtr='1')then
-        tx_frame.rec_dlc_in<="0000";
-      end if;
-      
+        case st_ctr is
+            when 0 =>   result  := "000";
+            when 1 =>   result  := "001";
+            when 2 =>   result  := "011";
+            when 3 =>   result  := "010";
+            when 4 =>   result  := "110";
+            when 5 =>   result  := "111";
+            when 6 =>   result  := "101";
+            when 7 =>   result  := "100";
+            when others =>
+                report "Invalid stuff counter value" severity failure;
+        end case;
+        
+        parity := result(0) xor result(1) xor(2);
     end procedure;
-    
-    -----------------------------------------------------------------------------------------------------------------
-    --Compare two frames
-    -----------------------------------------------------------------------------------------------------------------
-    procedure compare_frame(
-      signal    tx_frame    :in     CAN_frame_type;
-      signal    rx_frame    :in     CAN_frame_type;
-      variable  outcome     :out    boolean;
-      signal    log_level   :in     log_lvl_type
-    )is
-    variable    data_length :       natural;
-    begin
-      outcome:=true;
-      
-      --Frame type signals
-      if(tx_frame.rec_dlc_in          /= rx_frame.rec_dlc_in          OR
-         tx_frame.rec_frame_type_in   /= rx_frame.rec_frame_type_in   OR
-         tx_frame.rec_ident_type_in   /= rx_frame.rec_ident_type_in   OR
-         tx_frame.rec_is_rtr          /= rx_frame.rec_is_rtr          OR
-         tx_frame.rec_brs             /= rx_frame.rec_brs             )
-      then
-         log("Control signals mismatch between TX and RX frame",error_l,log_level);
-         outcome:=false;
-      end if;
-      
-      --Identifier comparison
-      if(tx_frame.rec_ident_type_in=BASE)then
-        if(tx_frame.rec_ident_in(10 downto 0) /= rx_frame.rec_ident_in(10 downto 0))then
-          log("Identifier mismatch between TX and RX frame",error_l,log_level);
-          outcome:=false;
-        end if;
-      else
-        if(tx_frame.rec_ident_in(28 downto 0) /= rx_frame.rec_ident_in(28 downto 0))then
-          log("Identifier mismatch between TX and RX frame",error_l,log_level);
-          outcome:=false;
-        end if;
-      end if;
-      
-      --Data comparison
-      decode_dlc(tx_frame.rec_dlc_in,data_length);
-      if(data_length>0)then
-        for i in 1 to data_length loop
-            if(tx_frame.rec_data_in(511-((i-1)*8) downto 504-((i-1)*8)) /= 
-               rx_frame.rec_data_in(511-((i-1)*8) downto 504-((i-1)*8)))then
-              log("Data mismatch between TX and RX frame",error_l,log_level);
-              outcome:=false; 
-            end if;
-        end loop;  
-      end if;
-      
-    end procedure;
-    
-    -----------------------------------------------------------------------------------------------------------------
-    --Generate expected bit sequence on the otput of Protocol Control
-    -- THis method is SW implementation of CAN protocol
-    -----------------------------------------------------------------------------------------------------------------
+
+    ----------------------------------------------------------------------------
+    -- SW model of Protocol control
+    ----------------------------------------------------------------------------
     procedure gen_sw_CAN(
-      signal   tx_frame   :in   CAN_frame_type;
-      signal   error_st   :in   error_state_type;
-      signal   iso_fd     :in   std_logic;
-      variable seq        :out  std_logic_vector(639 downto 0); --Generated bit sequence
-      variable length     :out  natural  --Length of the generated sequence
+        signal   tx_frame       :in   SW_CAN_frame_type;
+        signal   error_st       :in   error_state_type;
+        signal   iso_fd         :in   std_logic;
+        signal   crc15          :in   std_logic_vector(14 downto 0);
+        signal   crc17          :in   std_logic_vector(16 downto 0);
+        signal   crc21          :in   std_logic_vector(20 downto 0);
+        signal   stuff_cnt      :in   std_logic_vector(3 downto 0);
+
+        -- Generated bit sequence
+        variable seq            :out  std_logic_vector(639 downto 0);
+
+        -- Length of the generated sequence
+        variable length         :out  natural
     )is
-    variable join         :     std_logic_vector(1 downto 0);
-    variable pointer      :     natural;
-    variable data_length  :     natural;
-    variable crc_length   :     natural;
+        variable join           :     std_logic_vector(1 downto 0);
+        variable crc_length     :     natural;
+        variable id_word        :     std_logic_vector(28 downto 0);
+        variable ptr            :     natural := 0;
+        variable stuff_parity   :     std_logic;
+        variable stuff_cnt_grey :     std_logic_vector(2 downto 0);
+        variable tmp_crc        :     std_logic_vector(20 downto 0);
     begin
-      
-      --SOF bit
-      seq(0)  := DOMINANT;
-      
-      --Base identifier
-      for i in 0 to 10 loop
-        seq(1+i) := tx_frame.rec_ident_in(10-i);
-      end loop;
-      
-      --All fields until begginning of data phase
-      join       := tx_frame.rec_frame_type_in & tx_frame.rec_ident_type_in;
-      case join is
-      when "00" =>  --CAN Base
-              seq(12) := tx_frame.rec_is_rtr;
-              seq(13) := DOMINANT; --IDE bit
-              seq(14) := DOMINANT; --r0 bit
-              for j in 0 to 3 loop --DLC bits
-                seq(15+j):= tx_frame.rec_dlc_in(3-j);
-              end loop;
-              pointer:= 19;
-              
-      when "01" =>  --CAN Extended
-              seq(12) := RECESSIVE;
-              seq(13) := RECESSIVE;
-              for j in 0 to 17 loop
-                seq(14+j):= tx_frame.rec_ident_in(28-j);
-              end loop;
-              seq(32) := tx_frame.rec_is_rtr;
-              seq(33) := DOMINANT;
-              seq(34) := DOMINANT;
-              for j in 0 to 3 loop --DLC bits
-                seq(35+j):= tx_frame.rec_dlc_in(3-j);
-              end loop;
-              pointer:= 39;
-              
-      when "10" =>  --CAN FD Base
-              seq(12) := DOMINANT;
-              seq(13) := DOMINANT;
-              seq(14) := RECESSIVE; --EDL bit
-              seq(15) := DOMINANT;  --r0 bit
-              seq(16) := tx_frame.rec_brs;
-              
-              --ESI bit
-              if(error_st = error_active)then
-                seq(17) := DOMINANT;
-              else
-                seq(17) := RECESSIVE;
-              end if;
-              
-              for j in 0 to 3 loop --DLC bits
-                seq(18+j):= tx_frame.rec_dlc_in(3-j);
-              end loop;
-              pointer:= 22;
-              
-      when "11" =>  --CAN FD Extended
-              seq(12) := RECESSIVE;
-              seq(13) := RECESSIVE;
-              for j in 0 to 17 loop
-                seq(14+j):= tx_frame.rec_ident_in(28-j);
-              end loop;
-              seq(32) := DOMINANT;
-              seq(33) := RECESSIVE;
-              seq(34) := DOMINANT;
-              seq(35) := tx_frame.rec_brs;
-              --ESI bit
-              if(error_st = error_active)then
-                seq(36) := DOMINANT;
-              else
-                seq(36) := RECESSIVE;
-              end if;
-               for j in 0 to 3 loop --DLC bits
-                seq(37+j):= tx_frame.rec_dlc_in(3-j);
-              end loop;
-              pointer:= 41;
-              
-      when others =>
-      end case;
-      
-      --Data field
-      decode_dlc(tx_frame.rec_dlc_in,data_length);
-      if(data_length>0 and tx_frame.rec_is_rtr='0')then
-        
-        --Copy in the data by bits
-        for i in 0 to (data_length*8)-1 loop
-          seq(pointer):= tx_frame.rec_data_in(511-i);
-          pointer     := pointer+1;
+
+        -- SOF bit
+        seq(ptr)    := DOMINANT;
+        ptr         := ptr + 1;
+
+        -- Identifier BASE
+        id_sw_to_hw(tx_frame.identifier, tx_frame.ident_type, id_word);
+        for i in 0 to 10 loop
+            seq(ptr)    := id_word(IDENTIFIER_BASE_H - i);
+            ptr         := ptr + 1;
         end loop;
+
+        -- Two bits between BASE and EXTENSION (RTR,IDE / r1,IDE / SRR,IDE)
+        if (tx_frame.ident_type = EXTENDED) then
+            seq(ptr)        := RECESSIVE;   -- SRR
+            seq(ptr + 1)    := RECESSIVE;   -- IDE
         
-      end if;
-      
-      --CRC field
-      if(iso_fd = '0' and tx_frame.rec_frame_type_in=FD_CAN)then  --Stuff count       
-         --Stuff count is inserted fixed, we dont test CRC error detection here
-         seq(pointer)   :=  '0';
-         seq(pointer+1) :=  '0'; 
-         seq(pointer+2) :=  '0';
-         seq(pointer+3) :=  '0';
-         pointer        :=  pointer+4;
-      end if;
-      
-      if(data_length>16)then
-        crc_length      :=  21;
-      elsif(data_length>8)then
-        crc_length      :=  17;
-      else
-        crc_length      :=  15;
-      end if;
-      
-      --Here we put constant CRC, since we dont test CRC functionality here...
-      for i in 0 to crc_length-1 loop
-        if (i mod 2 = 0)then
-          seq(pointer)  := '1';
         else
-          seq(pointer)  := '0';
+            if (tx_frame.frame_format = NORMAL_CAN) then
+                seq(ptr)        := tx_frame.rtr; -- RTR
+            else
+                seq(ptr)        := DOMINANT;     -- r1
+            end if;
+            seq(ptr + 1)        := DOMINANT;     -- IDE
         end if;
-        pointer         :=  pointer+1;
-      end loop;
-      
-      --CRC delimiter
-      seq(pointer)      := RECESSIVE;
-      pointer           := pointer+1;
-      
-      --ACK bit
-      --We assume frame will be received correctly
-      seq(pointer)      := DOMINANT;
-      pointer           := pointer+1;
-      
-      --ACK delimiter
-      seq(pointer)      := RECESSIVE;
-      pointer           := pointer+1;
-      
-      --EOF
-      for i in 0 to 6 loop
-        seq(pointer)    := RECESSIVE;
-        pointer         := pointer+1;
-      end loop;
-      
-      --Now we propagate the length to the output
-      length              := pointer+1;
-      
+        ptr := ptr + 2;
+
+        -- Identifier EXTENSION     
+        if (tx_frame.ident_type = EXTENDED) then
+            for i in 0 to 17 loop
+                seq(ptr)    := id_word(IDENTIFIER_EXT_H - i);
+                ptr         := ptr + 1;
+            end loop;
+        end if;
+   
+        -- Remaining bits of control field (apart from DLC)
+        join       := tx_frame.frame_format & tx_frame.ident_type;
+        case join is
+        when NORMAL_CAN & BASE =>
+            seq(ptr)        := DOMINANT;       -- r0
+            ptr             := ptr + 1;
+              
+        when NORMAL_CAN & EXTENDED => 
+            seq(ptr)        := tx_frame.rtr;   -- RTR
+            seq(ptr + 1)    := DOMINANT;       -- r1
+            seq(ptr + 2)    := DOMINANT;       -- r0
+            ptr             := ptr + 3;
+
+        when FD_CAN & BASE =>
+            seq(ptr)        := RECESSIVE;      -- EDL
+            seq(ptr + 1)    := DOMINANT;       -- r0
+            seq(ptr + 2)    := tx_frame.brs;   -- BRS
+
+            -- ESI bit
+            if (error_st = error_active) then
+                seq(ptr + 3) := DOMINANT;
+            else
+                seq(ptr + 3) := RECESSIVE;
+            end if;
+            ptr             := ptr + 4;
+              
+        when FD_CAN & EXTENDED =>
+            seq(ptr)        := DOMINANT;       -- r1
+            seq(ptr + 1)    := RECESSIVE;      -- EDL
+            seq(ptr + 2)    := DOMINANT;       -- r0
+            seq(ptr + 3)    := tx_frame.brs;   -- BRS
+
+            -- ESI bit
+            if (error_st = error_active) then
+                seq(ptr + 4) := DOMINANT;
+            else
+                seq(ptr + 4) := RECESSIVE;
+            end if;
+            ptr             := ptr + 5;
+        when others =>
+            report "Invalid CAN FD Frame settings" severity error;
+        end case;
+
+        -- DLC field
+        for i in 0 to 3 loop
+            seq(ptr)        := tx_frame.dlc(3 - i);
+            ptr             := ptr + 1;
+        end loop;
+
+        -- Data field
+        if (tx_frame.data_length > 0) then
+            for i in 0 to tx_frame.data_length - 1 loop
+                seq(ptr + 7 downto ptr) := tx_frame.data(i);
+                ptr := ptr + 8;
+            end loop;
+        end if;
+
+        -- Stuff count field (Grey coded)
+        if (iso_fd = ISO_FD and tx_frame.frame_format = FD_CAN) then
+            stuff_count_grey_code(stuff_cnt, stuff_parity, stuff_cnt_grey);
+            seq(ptr)       :=  stuff_cnt_grey(2);
+            seq(ptr + 1)   :=  stuff_cnt_grey(1);
+            seq(ptr + 2)   :=  stuff_cnt_grey(0);
+            seq(ptr + 3)   :=  stuff_parity;
+            ptr            :=  ptr + 4;
+        end if;
+
+        -- CRC sequence
+        if (tx_frame.frame_format = NORMAL_CAN) then
+            crc_length     := 15;
+            tmp_crc        := crc15 & "000000";
+        elsif (tx_frame.data_length <= 16) then
+            crc_length     := 17;
+            tmp_crc        := crc17 & "0000";
+        else
+            crclength      := 21;
+            tmp_crc        := crc21;
+        end if;
+
+        for i in 21 downto 20 - crc_length loop
+            seq(ptr)       := tmp_crc(i);
+            ptr            := ptr + 1;
+        end loop;
+
+        -- CRC delimiter
+        seq(ptr)           := RECESSIVE;
+        ptr                := ptr + 1;
+
+        -- ACK bit (assume frame will be received correctly)
+        seq(ptr)           := DOMINANT;
+        ptr                := ptr + 1;
+
+        -- ACK delimiter
+        seq(ptr)           := RECESSIVE;
+        ptr                := ptr + 1;
+
+        -- EOF
+        for i in 0 to 6 loop
+            seq(ptr)       := RECESSIVE;
+            pointer        := pointer + 1;
+        end loop;
+
+        -- Now we propagate the length to the output
+        length              := ptr + 1;
+
     end procedure;
     
     
-    -----------------------------------------------------------------------------------------------------------------
-    --Record what is on the bus! With known length from SW CAN what should be there
-    -----------------------------------------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Record what is on bus! With known length from SW CAN, we know
+    -- what should be there!
+    ----------------------------------------------------------------------------
     procedure record_bit_seq(
-      signal   bus_line             :in   std_logic; --Bus level to be recorded
-      signal   sample               :in   std_logic; --Signal to sample the bus level
-      variable length               :in   natural;   --How many bits should be recorded
-      variable recorded             :out  std_logic_vector(639 downto 0);
-      signal tran_frame_valid_in_1  :out std_logic -- Frame valid must be disabled during the transmittion
+        -- Bus level to be recorded
+        signal   bus_line             :in   std_logic;
+
+        -- Signal to sample the bus level
+        signal   sample               :in   std_logic;
+
+        -- How many bits should be recorded
+        variable length               :in   natural;
+        variable recorded             :out  std_logic_vector(639 downto 0)
     )is
     begin
       
-      --First wait until we are on SOF bit
-      wait until bus_line=DOMINANT;
-      
-      for i in 1 to length loop
-        
-        if(i=10)then
-          tran_frame_valid_in_1<='0';
-        end if;
-        
-        wait until rising_edge(sample);
-        recorded(i-1):= bus_line;
-      end loop;
-      
+        -- Wait until we are on SOF bit
+        wait until bus_line = DOMINANT;
+
+        for i in 0 to length - 1 loop
+            wait until rising_edge(sample);
+            recorded(i) := bus_line;
+        end loop;
+
     end procedure;
     
-    -------------------------------------------------------------------------------
-    --Compare what is expected to be transmitted and what is acutally transmitted
-    -------------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Compare what is expected to be transmitted and what is transmitted
+    ----------------------------------------------------------------------------
     procedure compare_bit_seq(
-      variable bs1        :in   std_logic_vector(639 downto 0);
-      variable bs2        :in   std_logic_vector(639 downto 0);
-      variable mut_length :in   natural; --Mutual length of both vectors
-      variable outcome    :out  boolean
-    )is
+        variable bs1        :in   std_logic_vector(639 downto 0);
+        variable bs2        :in   std_logic_vector(639 downto 0);
+        variable mut_length :in   natural; -- Mutual length of both vectors
+        variable outcome    :out  boolean
+    ) is
     begin
-      outcome:= true;
-      
-      for i in 1 to mut_length-1 loop
-        if(bs1(i-1) /= bs2(i-1))then
-          outcome:=false;
-        end if;
-      end loop;
+        outcome:= true;
+
+        for i in 1 to mut_length - 1 loop
+            if (bs1(i - 1) /= bs2(i - 1)) then
+                outcome := false;
+            end if;
+        end loop;
       
     end procedure;
     
