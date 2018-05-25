@@ -221,6 +221,10 @@ begin
     wait for wait_time;
     wait until rising_edge(clk_sys);
 
+    -- Additional delay to be sure that we catch HW command lock as real
+    -- TX Arbitrator does by combinational path!
+    wait for 1 ns;
+
     -- Choose random TXT Buffer
     rand_real_v(rand_ctr_1, buf_index);
     buf_index := buf_index * 3.0;
@@ -228,8 +232,9 @@ begin
     -- Check whether the buffer is not locked by the Core, in this case one
     -- can't change the buffer state not to be ready. SW could only send command
     -- to abort transmission.
-    if (mod_locked = false or 
-        mod_buf_index /= integer(buf_index))
+    if ((mod_locked = false or 
+         mod_buf_index /= integer(buf_index))) and
+        (txt_hw_cmd.lock = '0')
     then
         -- Choose whether buffer will be set to ready or not
         rand_logic_v(rand_ctr_1, ready, 0.1);
@@ -383,9 +388,10 @@ begin
         del_counter   <= 1;
         wait until rising_edge(clk_sys);
 
-	-- Timestamp not yet elapsed!
+	-- Timestamp not yet elapsed! As if waiting now only two more clock
+    -- cycles for selection of frame format word!
 	elsif (to_integer(unsigned(tmp_timest)) >= to_integer(unsigned(timestamp))) then
-		del_counter   <= 1;
+		del_counter   <= 3;
 		wait until rising_edge(clk_sys);
 
 	-- HW Command lock came on previously loaded Frame / Buffer
