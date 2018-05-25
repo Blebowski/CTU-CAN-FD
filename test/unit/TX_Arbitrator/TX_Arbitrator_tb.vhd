@@ -354,7 +354,7 @@ begin
 
   ------------------------------------------------------------------------------
   -- Emulate selection process! Based on chosen highest priority buffer which
-  -- is ready, update outputs with two clock cycle delay!
+  -- is ready, update outputs with 6 clock cycle delay!
   -- This can be done only when TX Arbitrator is not locked for transmission!
   -- If buffer index changes, restart the selection process!
   ------------------------------------------------------------------------------
@@ -395,7 +395,7 @@ begin
 
     -- Count the delay
     else
-        if (del_counter < 3) then
+        if (del_counter < 6) then
             del_counter <= del_counter + 1;
 			update 	    := false;
         else
