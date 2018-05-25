@@ -64,7 +64,7 @@ architecture tx_arb_unit_test of CAN_test is
     -- DUT signals    
     ------------------------
     signal clk_sys                :  std_logic;
-    signal res_n                  :  std_logic := '0';
+    signal res_n                  :  std_logic := ACT_RESET;
     signal txt_buf_in             :  txtb_output_type :=
                                         (OTHERS => (OTHERS => '0'));
 
@@ -124,7 +124,7 @@ architecture tx_arb_unit_test of CAN_test is
 
      signal mod_buf_index         :  natural range 0 to TXT_BUFFER_COUNT - 1 :=
                                      0;
-     signal mod_frame_valid_out   :  std_logic;
+     signal mod_frame_valid_out   :  std_logic := '0';
 
     -- Model is locked (as if transmission in progress)
     signal mod_locked             :  boolean := false;
@@ -221,6 +221,10 @@ begin
     wait for wait_time;
     wait until rising_edge(clk_sys);
 
+    -- Additional delay to be sure that we catch HW command lock as real
+    -- TX Arbitrator does by combinational path!
+    wait for 1 ns;
+
     -- Choose random TXT Buffer
     rand_real_v(rand_ctr_1, buf_index);
     buf_index := buf_index * 3.0;
@@ -228,8 +232,9 @@ begin
     -- Check whether the buffer is not locked by the Core, in this case one
     -- can't change the buffer state not to be ready. SW could only send command
     -- to abort transmission.
-    if (mod_locked = false or 
-        mod_buf_index /= integer(buf_index))
+    if ((mod_locked = false or 
+         mod_buf_index /= integer(buf_index))) and
+        (txt_hw_cmd.lock = '0')
     then
         -- Choose whether buffer will be set to ready or not
         rand_logic_v(rand_ctr_1, ready, 0.1);
@@ -354,7 +359,7 @@ begin
 
   ------------------------------------------------------------------------------
   -- Emulate selection process! Based on chosen highest priority buffer which
-  -- is ready, update outputs with two clock cycle delay!
+  -- is ready, update outputs with 6 clock cycle delay!
   -- This can be done only when TX Arbitrator is not locked for transmission!
   -- If buffer index changes, restart the selection process!
   ------------------------------------------------------------------------------
@@ -383,9 +388,10 @@ begin
         del_counter   <= 1;
         wait until rising_edge(clk_sys);
 
-	-- Timestamp not yet elapsed!
+	-- Timestamp not yet elapsed! As if waiting now only two more clock
+    -- cycles for selection of frame format word!
 	elsif (to_integer(unsigned(tmp_timest)) >= to_integer(unsigned(timestamp))) then
-		del_counter   <= 1;
+		del_counter   <= 3;
 		wait until rising_edge(clk_sys);
 
 	-- HW Command lock came on previously loaded Frame / Buffer
@@ -395,7 +401,7 @@ begin
 
     -- Count the delay
     else
-        if (del_counter < 3) then
+        if (del_counter < 6) then
             del_counter <= del_counter + 1;
 			update 	    := false;
         else
@@ -495,29 +501,29 @@ begin
   ------------------------------------------------------------------------------
   cmp_proc : process
   begin
-    
-    if (mod_frame_valid_out    /= tran_frame_valid_out) then
+ 
+    if (mod_frame_valid_out    /= tran_frame_valid_out and now /= 0 fs) then
         log("DUT and Model Frame valid not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
-    if ((mod_dlc_out            /= tran_dlc_out) or
-        (mod_is_rtr             /= tran_is_rtr) or
-        (mod_ident_type_out     /= tran_ident_type_out) or
-        (mod_frame_type_out     /= tran_frame_type_out))
+    if (((mod_dlc_out            /= tran_dlc_out) or
+         (mod_is_rtr             /= tran_is_rtr) or
+         (mod_ident_type_out     /= tran_ident_type_out) or
+         (mod_frame_type_out     /= tran_frame_type_out)) and now /= 0 fs)
     then
         log("DUT and Model metadata not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
-    if (txt_hw_cmd_buf_index   /= mod_buf_index)
+    if (txt_hw_cmd_buf_index   /= mod_buf_index and now /= 0 fs)
     then
         log("DUT and Model buffer index not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
     if (last_locked_index   /= mod_buf_index and
-        txtb_changed = '0')
+        txtb_changed = '0' and now /= 0 fs)
     then
         log("Buffer change not detected!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
@@ -570,9 +576,7 @@ begin
 
       wait for 5000 ns;
  
-      -- Minus 1 due to strange value "1" in "cmp_err_ctr" which always stays
-      -- and is not caused by any error in "cmp_proc".
-      error_ctr <= cmp_err_ctr - 1;
+      error_ctr <= cmp_err_ctr;
 
       wait until rising_edge(clk_sys);
 
