@@ -64,7 +64,7 @@ architecture tx_arb_unit_test of CAN_test is
     -- DUT signals    
     ------------------------
     signal clk_sys                :  std_logic;
-    signal res_n                  :  std_logic := '0';
+    signal res_n                  :  std_logic := ACT_RESET;
     signal txt_buf_in             :  txtb_output_type :=
                                         (OTHERS => (OTHERS => '0'));
 
@@ -124,7 +124,7 @@ architecture tx_arb_unit_test of CAN_test is
 
      signal mod_buf_index         :  natural range 0 to TXT_BUFFER_COUNT - 1 :=
                                      0;
-     signal mod_frame_valid_out   :  std_logic;
+     signal mod_frame_valid_out   :  std_logic := '0';
 
     -- Model is locked (as if transmission in progress)
     signal mod_locked             :  boolean := false;
@@ -501,29 +501,29 @@ begin
   ------------------------------------------------------------------------------
   cmp_proc : process
   begin
-    
-    if (mod_frame_valid_out    /= tran_frame_valid_out) then
+ 
+    if (mod_frame_valid_out    /= tran_frame_valid_out and now /= 0 fs) then
         log("DUT and Model Frame valid not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
-    if ((mod_dlc_out            /= tran_dlc_out) or
-        (mod_is_rtr             /= tran_is_rtr) or
-        (mod_ident_type_out     /= tran_ident_type_out) or
-        (mod_frame_type_out     /= tran_frame_type_out))
+    if (((mod_dlc_out            /= tran_dlc_out) or
+         (mod_is_rtr             /= tran_is_rtr) or
+         (mod_ident_type_out     /= tran_ident_type_out) or
+         (mod_frame_type_out     /= tran_frame_type_out)) and now /= 0 fs)
     then
         log("DUT and Model metadata not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
-    if (txt_hw_cmd_buf_index   /= mod_buf_index)
+    if (txt_hw_cmd_buf_index   /= mod_buf_index and now /= 0 fs)
     then
         log("DUT and Model buffer index not matching!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
     end if;
 
     if (last_locked_index   /= mod_buf_index and
-        txtb_changed = '0')
+        txtb_changed = '0' and now /= 0 fs)
     then
         log("Buffer change not detected!", error_l, log_level);
         cmp_err_ctr          <= cmp_err_ctr + 1;
@@ -576,9 +576,7 @@ begin
 
       wait for 5000 ns;
  
-      -- Minus 1 due to strange value "1" in "cmp_err_ctr" which always stays
-      -- and is not caused by any error in "cmp_proc".
-      error_ctr <= cmp_err_ctr - 1;
+      error_ctr <= cmp_err_ctr;
 
       wait until rising_edge(clk_sys);
 
