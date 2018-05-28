@@ -891,14 +891,15 @@ begin
     );
   
     
-    -------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Creating bus level
-    -------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     bus_level             <= data_tx_2 AND data_tx_1;
     
-    -------------------------------------------------------------------
+
+    ----------------------------------------------------------------------------
     -- Assigning record types
-    -------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     tran_data_1           <= tx_frame.rec_data_in;
     tran_ident_1          <= tx_frame.rec_ident_in;
     tran_dlc_1            <= tx_frame.rec_dlc_in;
@@ -954,22 +955,24 @@ begin
     crc15                     <= "101010101010101";
     crc17                     <= "10101010101010101";
     crc21                     <= "101010101010101010101";
-    
+
+
     ---------------------------------
     --Clock generation
     ---------------------------------
-    clock_gen:process
-    variable period   :natural:=f100_Mhz;
-    variable duty     :natural:=50;
-    variable epsilon  :natural:=0;
+    clock_gen : process
+        variable period   :natural := f100_Mhz;
+        variable duty     :natural := 50;
+        variable epsilon  :natural := 0;
     begin
-      generate_clock(period,duty,epsilon,clk_sys);
+        generate_clock(period,duty,epsilon,clk_sys);
     end process;
-    
-    ---------------------------------
+
+
+    ----------------------------------------------------------------------------
     -- Sampling signals generation
-    ---------------------------------
-    sample_gen:process
+    ----------------------------------------------------------------------------
+    sample_gen : process
     
     variable min_diff: natural := 4;
     --Note: With this setting there must be minnimally two clock cycles
@@ -982,13 +985,14 @@ begin
     --      are transmitting at the same time!
     
     begin
-      generate_simple_trig(rnd_ctr_tr,tx_trig,rx_trig,clk_sys,min_diff);    
+        generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);    
     end process;
-    
-    ---------------------------------
+
+
+    ----------------------------------------------------------------------------
     -- Hard sync edge generation
     --  emulates the bus_sync
-    ---------------------------------
+    ----------------------------------------------------------------------------
     hs_edge_gen:process(res_n,clk_sys)
     begin
       if(res_n = '0')then
@@ -1012,67 +1016,69 @@ begin
     end process;
     
     
-    ---------------------------------
-    ---------------------------------
-    --Main Test process
-    ---------------------------------
-    ---------------------------------
-    test_proc:process
-    variable sw_seq     : std_logic_vector(639 downto 0):=(OTHERS => '0');
-    variable rec_seq    : std_logic_vector(639 downto 0):=(OTHERS => '0');
-    variable seq_length : natural;
-    variable out_seq    : boolean;
-    variable out_frm    : boolean;
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Main Test process
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    test_proc : process
+        variable sw_seq     : std_logic_vector(639 downto 0) := (OTHERS => '0');
+        variable rec_seq    : std_logic_vector(639 downto 0) := (OTHERS => '0');
+        variable seq_length : natural;
+        variable out_seq    : boolean;
+        variable out_frm    : boolean;
     begin
-      log("Restarting Protocol control unit test!",info_l,log_level);
-      wait for 5 ns;
-      reset_test(res_n,status,run,error_ctr);
-      log("Restarted Protocol control unit test",info_l,log_level);
-      print_test_info(iterations,log_level,error_beh,error_tol);
-      
-      -------------------------------
-      --Main loop of the test
-      -------------------------------
-      log("Starting Protocol control main loop",info_l,log_level);
-      
-      while (loop_ctr<iterations  or  exit_imm)
-      loop
-        log("Starting loop nr "&integer'image(loop_ctr),info_l,log_level);
-        
-        --Erase the sequences
-        sw_seq     :=(OTHERS => '0');
-        rec_seq    :=(OTHERS => '0');
-        
-        --Generate random frame
-        log("Generating frame for transmittion",info_l,log_level);
-        generate_tx_frame(rand_ctr,tx_frame);
-        rand_logic(rand_ctr,drv_fd_type,0.5);
-        
-        wait for 0 ns;
-        log("Calculating expected frame by SW CAN",info_l,log_level);
-        gen_sw_CAN(tx_frame,error_st,drv_fd_type,sw_seq,seq_length);
-        
-        --Start transmitting
-        log("Starting transmittion and recording on bus",info_l,log_level);
-        tran_frame_valid_in_1<='1';
-        
-        --Record what comes out of the controller
-        record_bit_seq(bus_level,rx_trig,seq_length,rec_seq,tran_frame_valid_in_1);
-           
-        --Compare the results
-        log("Comparing the results",info_l,log_level);
-        compare_frame(tx_frame,rx_frame,out_frm,log_level);
-        compare_bit_seq(sw_seq,rec_seq,seq_length,out_seq);
-        
-        --Evaluate the error
-        if(out_seq=false or out_frm=false)then
-          process_error(error_ctr,error_beh,exit_imm);
-        end if;
-        
-        loop_ctr<=loop_ctr+1;
-      end loop;
-      
-      evaluate_test(error_tol,error_ctr,status);
+        log("Restarting Protocol control unit test!", info_l, log_level);
+        wait for 5 ns;
+        reset_test(res_n, status, run, error_ctr);
+        log("Restarted Protocol control unit test", info_l, log_level);
+        print_test_info(iterations, log_level, error_beh, error_tol);
+
+        -------------------------------
+        -- Main loop of the test
+        -------------------------------
+        log("Starting Protocol control main loop", info_l, log_level);
+
+        while (loop_ctr < iterations  or  exit_imm)
+        loop
+            log("Starting loop nr " & integer'image(loop_ctr), info_l,
+                log_level);
+
+            --Erase the sequences
+            sw_seq     := (OTHERS => '0');
+            rec_seq    := (OTHERS => '0');
+
+            --Generate random frame
+            log("Generating frame for transmittion", info_l, log_level);
+            generate_tx_frame(rand_ctr, tx_frame);
+            rand_logic(rand_ctr, drv_fd_type, 0.5);
+
+            wait for 0 ns;
+            log("Calculating expected frame by SW CAN", info_l, log_level);
+            gen_sw_CAN(tx_frame, error_st, drv_fd_type, sw_seq, seq_length);
+
+            --Start transmitting
+            log("Starting transmittion and recording on bus", info_l, log_level);
+            tran_frame_valid_in_1 <= '1';
+
+            --Record what comes out of the controller
+            record_bit_seq(bus_level, rx_trig, seq_length, rec_seq,
+                            tran_frame_valid_in_1);
+               
+            --Compare the results
+            log("Comparing the results", info_l, log_level);
+            compare_frame(tx_frame, rx_frame, out_frm, log_level);
+            compare_bit_seq(sw_seq, rec_seq, seq_length, out_seq);
+
+            --Evaluate the error
+            if (out_seq = false or out_frm = false) then
+                process_error(error_ctr, error_beh, exit_imm);
+            end if;
+
+            loop_ctr <= loop_ctr + 1;
+        end loop;
+
+        evaluate_test(error_tol, error_ctr, status);
     end process;
   
 end architecture;
@@ -1083,40 +1089,24 @@ end architecture;
 -----------------------------------------------------------------------------------------------------------------
 architecture Protocol_Control_unit_test_wrapper of CAN_test_wrapper is
   
-  --Test component itself
-  component CAN_test is
-  port (
-    signal run            :in   boolean;                -- Input trigger, test starts running when true
-    signal iterations     :in   natural;                -- Number of iterations that test should do
-    signal log_level      :in   log_lvl_type;           -- Logging level, severity which should be shown
-    signal error_beh      :in   err_beh_type;           -- Test behaviour when error occurs: Quit, or Go on
-    signal error_tol      :in   natural;                -- Error tolerance, error counter should not
-                                                         -- exceed this value in order for the test to pass
-    signal status         :out  test_status_type;      -- Status of the test
-    signal errors         :out  natural                -- Amount of errors which appeared in the test
-    --TODO: Error log results 
-  );
-  end component;
-  
-  --Select architecture of the test
+  -- Select architecture of the test
   for test_comp : CAN_test use entity work.CAN_test(Protocol_Control_unit_test);
   
-    signal run              :   boolean;                -- Input trigger, test starts running when true                                                        -- exceed this value in order for the test to pass
-    signal status_int       :   test_status_type;      -- Status of the test
-    signal errors           :   natural;                -- Amount of errors which appeared in the test
+    signal run              :   boolean;                  
+    signal status_int       :   test_status_type;     
+    signal errors           :   natural;
 
 begin
   
-  --In this test wrapper generics are directly connected to the signals
+  -- In this test wrapper generics are directly connected to the signals
   -- of test entity
-  test_comp:CAN_test
+  test_comp : CAN_test
   port map(
      run              =>  run,
-     --iterations       =>  10000,
      iterations       =>  iterations , 
      log_level        =>  log_level,
      error_beh        =>  error_beh,
-     error_tol        =>  error_tol,                                                     
+     error_tol        =>  error_tol,
      status           =>  status_int,
      errors           =>  errors
   );
@@ -1124,7 +1114,7 @@ begin
   status              <= status_int;
   
   ------------------------------------
-  --Starts the test and lets it run
+  -- Starts the test and lets it run
   ------------------------------------
   test:process
   begin
