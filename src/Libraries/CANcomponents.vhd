@@ -525,29 +525,6 @@ package CANcomponents is
       );
   end component;
 
-  ------------------------------------------------------------------------------
-  -- Transcieve buffer
-  ------------------------------------------------------------------------------
-  component tranBuffer is
-    port(
-      signal clk_sys            : in  std_logic;
-      signal res_n              : in  std_logic;
-      signal tran_ident_in      : in  std_logic_vector(28 downto 0);
-      signal tran_dlc_in        : in  std_logic_vector(3 downto 0);
-      signal tran_is_rtr_in     : in  std_logic;
-      signal tran_ident_type_in : in  std_logic;
-      signal tran_frame_type_in : in  std_logic;
-      signal tran_brs_in        : in  std_logic;
-      signal frame_store        : in  std_logic;
-      signal tran_ident_base    : out std_logic_vector(10 downto 0);
-      signal tran_ident_ext     : out std_logic_vector(17 downto 0);
-      signal tran_dlc           : out std_logic_vector(3 downto 0);
-      signal tran_is_rtr        : out std_logic;
-      signal tran_ident_type    : out std_logic;
-      signal tran_frame_type    : out std_logic;
-      signal tran_brs           : out std_logic
-      );
-  end component;
 
   ------------------------------------------------------------------------------
   -- Bit Stuffing
