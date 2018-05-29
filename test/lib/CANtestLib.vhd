@@ -450,6 +450,11 @@ package CANtestLib is
     end record;
 
 
+    ----------------------------------------------------------------------------
+    -- Test storage memory
+    ----------------------------------------------------------------------------
+    type test_mem_type is array (0 to 255) of std_logic_vector(31 downto 0);
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -902,6 +907,50 @@ package CANtestLib is
         constant frame_B        : in    SW_CAN_frame_type;
         constant comp_ts        : in    boolean;
         variable outcome        : inout boolean
+    );
+
+
+ 	----------------------------------------------------------------------------
+    -- Stores CAN Frame to auxiliarly test memory. Used for creating SW models
+	-- of Buffers. Frame is stored in the same order as in TXT Buffer and RX
+	-- Buffer:
+	--		1. FRAME_FORMAT
+	--		2. IDENTIFIER
+	--		3. TIMESTAMP_L
+	--		4. TIMESTAMP_U
+	--		5-20. DATA 
+    -- 
+    -- Arguments:
+    --  frame         	Frame to store.
+    --  memory			Memory to store the frame into
+	--	pointer			Pointer to the memory index where frame shouldbe stored
+    ----------------------------------------------------------------------------
+	procedure store_frame_to_test_mem(
+        constant frame          :  in       SW_CAN_frame_type;
+        signal   memory         :  out      test_mem_type;
+        signal   pointer        :  inout    natural
+    );
+
+
+	----------------------------------------------------------------------------
+    -- Read frame from auxiliarly test memory. Used for creating SW models of
+	-- Buffers. Frame is expected to be in the same format as IN TXT Buffer and
+	-- RX Buffer:
+	--		1. FRAME_FORMAT
+	--		2. IDENTIFIER
+	--		3. TIMESTAMP_L
+	--		4. TIMESTAMP_U
+	--		5-20. DATA 
+	--
+    -- Arguments:
+    --  frame           Output variable in which CAN FD Frame sill be generated.
+    --  memory          Memory from which the CAN frame should be read.
+    --  pointer         Pointer to memory where CAN Frame is starting.
+    ---------------------------------------------------------------------------- 
+	procedure read_frame_from_test_mem(
+        variable frame          :  inout    SW_CAN_frame_type;
+        constant memory         :  in       test_mem_type;
+        variable pointer        :  inout    natural
     );
 
 
@@ -1680,6 +1729,7 @@ package body CANtestLib is
         sample      <=  '0';
         wait until rising_edge(clk_sys);
         wait until rising_edge(clk_sys);
+        wait until rising_edge(clk_sys);
         sync        <=  '1';
 
         rand_real_v(rand_ctr, diff);
@@ -2188,6 +2238,147 @@ package body CANtestLib is
                     end if;
                 end loop;
             end if;
+        end if;
+    end procedure;
+
+
+    procedure store_frame_to_test_mem(
+        constant frame          :  in       SW_CAN_frame_type;
+        signal   memory         :  out      test_mem_type;
+        signal   pointer        :  inout    natural
+    )is
+        variable ident_vect     :           std_logic_vector(28 downto 0);
+    begin
+        -- Frame format word
+        memory(pointer) <= "0000000000000000" &
+                            std_logic_vector(to_unsigned(frame.rwcnt, 5)) &
+                            '0' & --We dont store ESI bit
+                            frame.brs &
+                            '1' & 
+                            frame.frame_format &
+                            frame.ident_type &
+                            frame.rtr &
+                            '0' &
+                            frame.dlc;
+
+        -- Identifier
+        if (frame.ident_type = BASE and frame.identifier > 2047) then
+            report "Incorrect BASE Identifier length" severity error;
+
+        elsif (frame.ident_type = EXTENDED and 
+               frame.identifier > 536870911)
+        then
+            report "Incorrect EXTENDED Identifier length" severity error;
+        end if;
+
+        ident_vect := std_logic_vector(to_unsigned(frame.identifier, 29));
+        memory(pointer + 1)(31 downto 29) <= "000";
+
+        -- Base Identifier
+        if (frame.ident_type = BASE) then
+            memory(pointer + 1)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
+                                    ident_vect(10 downto 0);
+            memory(pointer + 1)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
+                                    (OTHERS => '0');
+        -- Extended Identifier
+        elsif (frame.ident_type = EXTENDED) then
+            memory(pointer + 1)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
+                                    ident_vect(17 downto 0);
+            memory(pointer + 1)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
+                                    ident_vect(28 downto 18);
+        else
+            report "Unsupported Identifier type" severity error;
+        end if;
+
+        -- Timestamp
+        memory(pointer + 2) <= frame.timestamp(63 downto 32);
+        memory(pointer + 3) <= frame.timestamp(31 downto 0);
+
+        pointer           <= pointer + 4;
+        wait for 0 ns;
+
+        -- Data words
+        if ((frame.rtr = '0' or frame.frame_format = '1') and
+            (frame.data_length /= 0))
+        then          
+            for i in 0 to ((frame.data_length - 1) / 4) loop
+                memory(pointer + i) <= frame.data((i * 4) + 3) &
+                                       frame.data((i * 4) + 2) &
+                                       frame.data((i * 4) + 1) &
+                                       frame.data((i * 4));
+                wait for 0 ns;
+            end loop;
+
+            pointer <= pointer + ((frame.data_length - 1) / 4) + 1;
+            wait for 0 ns;
+        end if; 
+    end procedure;
+
+
+    procedure read_frame_from_test_mem(
+        variable frame          :  inout    SW_CAN_frame_type;
+        constant memory         :  in       test_mem_type;
+        variable pointer        :  inout    natural
+    ) is
+        variable aux_vect       :           std_logic_vector(28 downto 0);
+    begin
+        -- Erase some unnecessary stuff
+        frame.data          := (OTHERS => (OTHERS => '0'));
+        frame.identifier    := 0;
+
+        -- Frame format
+        frame.dlc           := memory(pointer)(3 downto 0);
+        frame.rtr           := memory(pointer)(5);
+        frame.ident_type    := memory(pointer)(6);
+        frame.frame_format  := memory(pointer)(7);
+        frame.brs           := memory(pointer)(9);
+        decode_dlc_v(frame.dlc, frame.data_length);
+        frame.rwcnt         := 
+          to_integer(unsigned(memory(pointer)(15 downto 11)));
+
+        pointer             := pointer + 1;
+
+        -- Identifier
+        if (frame.ident_type = BASE) then
+            aux_vect        := "000000000000000000" & memory(pointer)
+                                (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+
+        elsif (frame.ident_type = EXTENDED) then
+            aux_vect        := memory(pointer)
+                                (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) &
+                               memory(pointer)
+                                (IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+        else
+            report "Unsupported Identifier type" severity error;
+        end if;
+               
+        frame.identifier  := to_integer(unsigned(aux_vect));
+        pointer           := pointer + 1;
+
+        -- Timestamp
+        frame.timestamp     := memory(pointer) &
+                               memory(pointer + 1);
+        pointer             := pointer + 2;
+
+        -- Data words
+        if ((frame.rtr = '0' or frame.frame_format = '1') and 
+            frame.data_length /= 0)
+        then
+            for i in 0 to ((frame.data_length - 1) / 4) loop
+                frame.data((i * 4) + 3) :=
+                    memory(pointer)(31 downto 24);
+
+                frame.data((i * 4) + 2) :=
+                    memory(pointer)(23 downto 16);
+
+                frame.data((i * 4) + 1) :=
+                    memory(pointer)(15 downto 8);
+
+                frame.data((i * 4)) :=
+                    memory(pointer)(7 downto 0);
+
+                pointer := pointer + 1;
+            end loop;
         end if;
     end procedure;
 
