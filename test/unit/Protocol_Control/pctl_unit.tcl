@@ -56,8 +56,21 @@ add wave -label "Bus level" -color "Cyan" $TCOMP/bus_level
 add wave -label "TX Trigger" $TCOMP/tx_trig
 add wave -label "RX Trigger" $TCOMP/rx_trig
 
-add wave -noupdate -divider -height 20 "Protocol Control 1 inputs"	
-add wave -label "Transmitted frame" $TCOMP/tx_frame
+add wave -noupdate -divider -height 20 "Protocol Control 1"	
+
+add wave -group "TX Frame metadata" $TCOMP/tran_dlc_1 \
+									$TCOMP/tran_is_rtr_1 \
+									$TCOMP/tran_ident_type_1 \
+									$TCOMP/tran_frame_type_1 \
+									$TCOMP/tran_brs_1 \
+									$TCOMP/txt_data_word_1 \
+									$TCOMP/txt_buf_ptr_1 \
+
+add wave -label "TX Frame Identifier BASE" $TCOMP/protocolControl_1_Comp/tran_ident_base_sr
+add wave -label "TX Frame Identifier EXT" $TCOMP/protocolControl_1_Comp/tran_ident_ext_sr
+
+
+
 add wave -label "Frame transmitted OK" $TCOMP/tran_valid_1
 add wave -label "Acknowledge received" $TCOMP/ack_recieved_out_1
 add wave -label "PC State" $TCOMP/pc_state_out_1
@@ -65,8 +78,7 @@ add wave -label "Operational State" $TCOMP/op_state_1
 add wave -label "Stuff length" -unsigned $TCOMP/stuff_length_1
 
 
-add wave -noupdate -divider -height 20 "Protocol Control 2 outputs"
-add wave -label "Received frame" $TCOMP/rx_frame
+add wave -noupdate -divider -height 20 "Protocol Control 2"
 add wave -label "Frame Received OK" $TCOMP/rec_valid_2
 add wave -label "PC State" $TCOMP/pc_state_out_2
 add wave -label "Operational State" $TCOMP/op_state_2
@@ -85,10 +97,14 @@ add wave -group "Protocol configuration" $TCOMP/drv_rtr_pref \
 
 add wave -noupdate -divider -height 20 "Testbench internal signals"
 add wave -label "SW CAN frame" $TCOMP/test_proc/sw_seq
-add wave -label "Frame on CAN bus" $TCOMP/test_proc/rec_seq
+add wave -label "Received bit sequence" $TCOMP/test_proc/rec_seq
 add wave -label "Expected frame length" $TCOMP/test_proc/seq_length
 add wave -label "TX/RX data equal" $TCOMP/test_proc/out_frm
-add wave -label "SW/Recieved sequence equal" $TCOMP/test_proc/out_seq						
+add wave -label "SW/Recieved sequence equal" $TCOMP/test_proc/out_seq
+add wave -label "TXT Mem contents" $TCOMP/txtb_mem
+add wave -label "TXT Mem pointer" $TCOMP/txtb_mem_ptr	
+add wave -label "RX Mem contents" $TCOMP/rxb_mem
+add wave -label "RX Mem pointer" $TCOMP/rxb_mem_ptr						
 									 
 ################################################################################
 # Execute the simulation, gather results
