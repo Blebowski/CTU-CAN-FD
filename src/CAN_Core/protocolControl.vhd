@@ -201,6 +201,8 @@
 --                   continous storing of CAN frame during reception.
 --                2. Added endian swap for transceived and received data to 
 --                   have Data byte 0 at address 0.
+--   29.5.2018    Removed obsolete "sof_skip" signal. Transition from Interframe
+--                to SOF is by received synchronsation edge!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -508,8 +510,7 @@ entity protocolControl is
   --SOF signals--
   ---------------
   --Signal whenever transcieve of SOF bit should be skypped 
-  --(detection of DOMINANT in intermission)
-  signal sof_skip                 :     std_logic; 
+  --(detection of DOMINANT in intermission) 
   signal sof_pulse_r              :     std_logic;
   
   -----------------------
@@ -868,8 +869,6 @@ begin
       rec_brs_r               <=  '0';
       rec_crc_r               <=  (OTHERS=>'0');
       rec_esi_r               <=  '0';
-      
-      sof_skip                <=  '0';
            
       arb_two_bits            <=  (OTHERS=>'0');
       arb_one_bit             <=  '0';
@@ -1022,7 +1021,6 @@ begin
        --Whenever one acknowledge recessive bit already was monitorred
        --by transciever (Delay compensation)
        sec_ack                <=  sec_ack;
-       sof_skip               <=  sof_skip;
        interm_state           <=  interm_state;
        err_frame_state        <=  err_frame_state;
        fixed_CRC_FD           <=  fixed_CRC_FD;
@@ -1111,142 +1109,156 @@ begin
       PC_State                <= control;
     
     else
-      case PC_state is 
-      
-      --------------------------------------------------------------------------
-      --Start of frame 
-      --------------------------------------------------------------------------
-      when sof => 
-            if(FSM_preset='1')then
-                
-                ack_recieved <= '0';
-                crc_check    <= '0';
-                sof_pulse_r  <= '1';
-                -- Bus monitoring mode is disabled
-                if(drv_bus_mon_ena='0')then
-                    
-                    -- If we already have frame locked, or we have frame to lock
-                    -- available
-                    if (is_txt_locked = '1' or (tran_frame_valid_in = '1')) then
-                      set_transciever_r <=  '1';
-                      stuff_enable_r    <=  '1';
-                      fixed_stuff_r     <=  '0';
-                      stuff_length_r    <=  std_logic_vector(
-                                            to_unsigned(BASE_STUFF_LENGTH,3));
-                    end if;
-                    
-                    -- If we dont have frame locked, but we have one available
-                    -- the we just lock it!
-                    if (is_txt_locked = '0' and (tran_frame_valid_in = '1')) then
-                       txt_hw_cmd.lock   <=  '1';
-           	           is_txt_locked     <=  '1';
-           	           
-           	           -- In case that TX Arbitrator provides different frame for
-           	           -- us, we need to erase the retranmsitt counter
-           	           if (txtb_changed = '1') then
-                          retr_count <= 0;
-                        end if;
-                    end if;
-                    
-                    -- If we dont have anything to lock, and have nothing locked
-          	     	   if (is_txt_locked = '0' and (tran_frame_valid_in = '0')) then
-          	     	     set_reciever_r      <=  '1';
-                    end if;
-                
-                else 
-                  set_reciever_r          <=  '1';
-                end if;
-                
-                --If this one bit should be skipped go directly to 
-                --arbitration field
-                if(sof_skip='1')then
-                  FSM_preset              <=  '1';
-                  PC_State                <=  arbitration;
-                  sync_control_r          <=  RE_SYNC; 
-                else
-                  FSM_preset              <=  '0';
-                end if;
-                
-                --Bus synchronisation settings
-                sp_control_r              <=  NOMINAL_SAMPLE;
-                ssp_reset_r               <=  '1';
-                trv_delay_calib_r         <=  '0';
-                bit_err_enable_r          <=  '1'; 
-                
-                --Erasing internal DLC
-                dlc_int                   <=  (OTHERS =>'0');
-                
-                --Configuration Bit Destuffing (Both transciever and reciever)
-                destuff_enable_r          <=  '1';
-                fixed_destuff_r           <=  '0';
-                destuff_length_r          <=  std_logic_vector(
-                                              to_unsigned(BASE_STUFF_LENGTH,3));
-                stuff_error_enable_r      <=  '1'; 
-              
-                --Clearing arbitration transcieve pointer for transcieving
-                --identifier. Restarting arbitration state machine
-                
-                --The index in tran_ident in where MSB bit of the 
-                --base ident is 10
-                tran_pointer              <=  10;
-                
-                -- Putting address of Identifier word, in beginning of Arbitr.
-                -- shift registers can be loaded!
-                txt_buf_ptr_r             <=  to_integer(unsigned(
-                                                IDENTIFIER_W_ADR(11 downto 2)));
-                
-                arb_state                 <=  base_id;
-                crc_enable_r              <=  '1';
-                
-                --Erasing the recieved data registers
-                rec_ident_base_sr         <=  (OTHERS =>'0');
-                rec_ident_ext_sr          <=  (OTHERS =>'0');
-                rec_dlc_r                 <=  (OTHERS =>'0');
- 	              rec_is_rtr_r              <=  '0';
-                rec_ident_type_r          <=  '0';
-                rec_frame_type_r          <=  '0';
-                rec_brs_r                 <=  '0';
-                rec_crc_r                 <=  (OTHERS =>'0');
-                rec_esi_r                 <=  '0';
-                
-                rx_parity                 <=  '0';
-                rx_count_grey             <=  (OTHERS =>'0');
-      
-                control_pointer           <=  0;
-                
-            else
-                
-                --Transcieving the data if we have what to transcieve
-                if(tran_trig='1')then
-                  if(OP_State=transciever or (tran_frame_valid_in='1'))then
-                    data_tx_r             <=  DOMINANT;
-                  else
-                    data_tx_r             <=  RECESSIVE;
-                  end if;
-                end if;
-                --Note: OP_State machine has to react and set the state to
-                --       transciever when SOF state and data are availiable!
-              
-                --Recieving the data
-                if(rec_trig='1')then
-                  if(data_rx=DOMINANT)then
-                    PC_state              <=  arbitration;
-                    sync_control_r        <=  RE_SYNC; 
-                  else
-                  
-                    --First bit detected recessive!
-                    PC_state              <=  error;
-                    if(OP_state=reciever)then
-                      inc_one_r           <=  '1';
-                    end if;
-                  end if;
-                  FSM_Preset              <=  '1';
-                end if; 
-                 
-            end if;
+
+    case PC_state is 
+    
     
     ----------------------------------------------------------------------------
-    --Arbitration
+    ----------------------------------------------------------------------------
+    -- Start of frame 
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when sof =>
+        if (FSM_preset = '1') then
+            
+
+            --------------------------------------------------------------------
+            -- Erase internal registers for CAN frame
+            --------------------------------------------------------------------
+            ack_recieved        <= '0';
+            crc_check           <= '0';
+            sof_pulse_r         <= '1';
+            FSM_preset          <= '0';
+            ssp_reset_r         <= '1';
+            trv_delay_calib_r   <= '0';
+            control_pointer     <=  0;
+
+            -- Erasing the recieved for ID and metadata
+            rec_ident_base_sr         <=  (OTHERS =>'0');
+            rec_ident_ext_sr          <=  (OTHERS =>'0');
+            rec_dlc_r                 <=  (OTHERS =>'0');
+            rec_is_rtr_r              <=  '0';
+            rec_ident_type_r          <=  '0';
+            rec_frame_type_r          <=  '0';
+            rec_brs_r                 <=  '0';
+            rec_crc_r                 <=  (OTHERS =>'0');
+            rec_esi_r                 <=  '0';
+            rx_parity                 <=  '0';
+            rx_count_grey             <=  (OTHERS =>'0');
+
+            -- Erasing internal DLC
+            dlc_int                   <=  (OTHERS => '0');
+
+
+            --------------------------------------------------------------------
+            -- Go to transceiver or receiver depending on TX frame availability,
+            -- Bus monitoring mode. Lock frame if necessary. Note that frame
+            -- could have already been locked in interframe space!
+            --------------------------------------------------------------------
+
+            -- Bus monitoring mode is disabled! In Bus monitoring mode, frames
+            -- are not transmitted!
+            if (drv_bus_mon_ena = '0') then
+                
+                -- If frame is already locked, or there is on to lock available,
+                -- Start transceiving!
+                if (is_txt_locked = '1' or (tran_frame_valid_in = '1')) then
+                    set_transciever_r   <=  '1';
+                    stuff_enable_r      <=  '1';
+                    fixed_stuff_r       <=  '0';
+                    stuff_length_r      <=  std_logic_vector(
+                                             to_unsigned(BASE_STUFF_LENGTH, 3));
+                end if;
+                
+                -- If we dont have frame locked, but we have one available
+                -- the we just lock it!
+                if (is_txt_locked = '0' and (tran_frame_valid_in = '1')) then
+                    txt_hw_cmd.lock     <=  '1';
+                    is_txt_locked       <=  '1';
+                   
+                    -- In case that TX Arbitrator provides frame from different
+                    -- buffer, we must erase error counter!
+                    if (txtb_changed = '1') then
+                        retr_count      <= 0;
+                    end if;
+                end if;
+                
+                -- If we dont have anything to lock, and have nothing locked
+             	if (is_txt_locked = '0' and (tran_frame_valid_in = '0')) then
+             	     set_reciever_r     <=  '1';
+                end if;
+
+            else 
+                set_reciever_r          <=  '1';
+            end if;
+
+
+            --------------------------------------------------------------------
+            -- Configure other circuits for CAN Frame transmission / reception
+            --------------------------------------------------------------------
+
+            -- Bus synchronisation settings
+            sp_control_r              <=  NOMINAL_SAMPLE;
+            bit_err_enable_r          <=  '1';
+
+            -- Configuration of Bit Destuffing (Both transciever and reciever)
+            destuff_enable_r          <=  '1';
+            stuff_error_enable_r      <=  '1'; 
+            fixed_destuff_r           <=  '0';
+            destuff_length_r          <=  std_logic_vector(
+                                          to_unsigned(BASE_STUFF_LENGTH,3));
+
+
+            -- Clearing arbitration transcieve pointer for transcieving
+            -- identifier. Restarting arbitration state machine
+
+            -- Configuration of Arbitration field:
+            --      1. Restart "tran_pointer" counter for ID bits
+            --      2. Configure IDENTIFIER WORD address in TXT Buffer so that
+            --         Arbitration state have ID available on TXT Buffer output.
+            --      3. Restart Arbitration state machine
+            tran_pointer              <=  10;
+            txt_buf_ptr_r             <=  to_integer(unsigned(
+                                            IDENTIFIER_W_ADR(11 downto 2)));
+            arb_state                 <=  base_id;
+            crc_enable_r              <=  '1';
+
+        else
+                
+            -- Transcieving the data if we have what to transcieve
+            if (tran_trig = '1') then
+                if (OP_State = transciever or (tran_frame_valid_in = '1')) then
+                    data_tx_r             <=  DOMINANT;
+                else
+                    data_tx_r             <=  RECESSIVE;
+                end if;
+            end if;
+            --Note: OP_State machine has to react and set the state to
+            --       transciever when SOF state and data are availiable!
+
+            -- Recieving the data
+            if (rec_trig = '1') then
+                if (data_rx = DOMINANT) then
+                    PC_state              <=  arbitration;
+                    sync_control_r        <=  RE_SYNC;
+
+                -- First bit detected recessive!
+                else
+                    PC_state              <=  error;
+                    if (OP_state = reciever) then
+                        inc_one_r         <=  '1';
+                    end if;
+                end if;
+                FSM_Preset                <=  '1';
+            end if; 
+
+        end if;
+
+
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Arbitration
+    ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     when arbitration =>
           if (FSM_Preset = '1') then
@@ -2255,8 +2267,7 @@ begin
                   -- We transfer to SOF When sample dominant or detect edge
                   --------------------------------------------------------------
                   if( hard_sync_edge = '1')then
-                    PC_State          <=  sof;
-                    sof_skip          <=  '0'; 
+                    PC_State          <=  sof; 
                     crc_enable_r      <=  '1';
                     FSM_preset        <=  '1';
                   elsif(rec_trig='1')then --Reciving intermission bits
@@ -2284,8 +2295,7 @@ begin
                     --Bugfix 30.6.2016
                     elsif(data_rx=DOMINANT)then
                       if(control_pointer=0)then --Third recessive bit sampled
-                        PC_State          <=  sof;
-                        sof_skip          <=  '0'; 
+                        PC_State          <=  sof; 
                         crc_enable_r      <=  '1';
                         FSM_preset        <=  '1';
                       else
@@ -2303,8 +2313,7 @@ begin
                   end if;
                   
                   if( hard_sync_edge = '1')then
-                    PC_State          <=  sof;
-                    sof_skip          <=  '0'; 
+                    PC_State          <=  sof; 
                     crc_enable_r      <=  '1';
                     FSM_preset        <=  '1';
                     set_reciever_r    <=  '1';
@@ -2320,7 +2329,6 @@ begin
                           PC_State        <=  sof;
                           is_txt_locked   <=  '1';
                           txt_hw_cmd.lock <=  '1';
-                          sof_skip        <=  '0';
                           crc_enable_r    <=  '1';
                           FSM_preset      <=  '1';
                           
@@ -2355,7 +2363,6 @@ begin
                   
                  if( hard_sync_edge = '1' and (OP_State /= integrating) )then
                     PC_State          <=  sof;
-                    sof_skip          <=  '0';
                     crc_enable_r      <=  '1';
                     FSM_preset        <=  '1';
                     
@@ -2372,8 +2379,7 @@ begin
                       then
                         PC_State        <=  sof;
                         is_txt_locked   <=  '1';
-                        txt_hw_cmd.lock <=  '1';
-                        sof_skip        <=  '0';                  
+                        txt_hw_cmd.lock <=  '1';                  
                         crc_enable_r    <=  '1';
                         FSM_Preset      <=  '1';
                         
