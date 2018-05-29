@@ -217,7 +217,7 @@ architecture behavioral of sanity_test is
     type trv_del_shift_reg is array (1 to NODE_COUNT) of tran_delay_type;
 
     signal transciever          : trv_del_shift_reg := 
-        (OTHERS => ((OTHERS => RECESSIVE),(OTHERS => RECESSIVE),'1','1'));
+        (OTHERS => ((OTHERS => RECESSIVE), (OTHERS => RECESSIVE), '1', '1'));
 
     -- Bus realisation signals
     type bus_delayed_type is
@@ -235,11 +235,8 @@ architecture behavioral of sanity_test is
                                     (OTHERS => '0');
 
     -- Traffic storage memories
-    type storage_mem            is
-        array (0 to 255) of std_logic_vector(31 downto 0);
-
     type storage_mem_array      is
-        array (1 to NODE_COUNT) of storage_mem;
+        array (1 to NODE_COUNT) of test_mem_type;
 
     signal tx_mems              : storage_mem_array :=
                                     (OTHERS => (OTHERS => (OTHERS => '0')));
@@ -303,146 +300,6 @@ architecture behavioral of sanity_test is
     ----------------------------------------------
     ----------------------------------------------
   
-    ----------------------------------------------------------------------------
-    -- Store frame to either TX or RX memory
-    ----------------------------------------------------------------------------
-    procedure store_frame_to_mem(
-        variable frame          :  in       SW_CAN_frame_type;
-        signal   memory         :  out      storage_mem;
-        signal   pointer        :  inout    natural
-    )is
-        variable ident_vect     :           std_logic_vector(28 downto 0);
-    begin
-        -- Frame format word
-        memory(pointer) <= "0000000000000000" &
-                            std_logic_vector(to_unsigned(frame.rwcnt, 5)) &
-                            '0' & --We dont store ESI bit
-                            frame.brs &
-                            '1' & 
-                            frame.frame_format &
-                            frame.ident_type &
-                            frame.rtr &
-                            '0' &
-                            frame.dlc;
-
-        -- Timestamp
-        memory(pointer + 1) <= frame.timestamp(63 downto 32);
-        memory(pointer + 2) <= frame.timestamp(31 downto 0);
-
-        -- Identifier
-        if (frame.ident_type = BASE and frame.identifier > 2047) then
-          report "Incorrect BASE Identifier length" severity error;
-
-        elsif (frame.ident_type = EXTENDED and 
-               frame.identifier > 536870911)
-        then
-          report "Incorrect EXTENDED Identifier length" severity error;
-        end if;
-
-        ident_vect := std_logic_vector(to_unsigned(frame.identifier, 29));
-
-        memory(pointer + 3)(31 downto 29) <= "000";
-
-        -- Base Identifier
-        if (frame.ident_type = BASE) then
-          memory(pointer + 3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
-                              ident_vect(10 downto 0);
-          memory(pointer + 3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
-                              (OTHERS => '0');
-        -- Extended Identifier
-        elsif (frame.ident_type = EXTENDED) then
-          memory(pointer + 3)(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <=
-                              ident_vect(17 downto 0);
-          memory(pointer + 3)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
-                              ident_vect(28 downto 18);
-        else
-          report "Unsupported Identifier type" severity error;
-        end if;
-
-        pointer           <= pointer + 4;
-        wait for 0 ns;
-
-        -- Data words
-        if ((frame.rtr = '0' or frame.frame_format = '1') and
-            (frame.data_length /= 0))
-        then          
-          for i in 0 to ((frame.data_length - 1) / 4) loop
-            memory(pointer + i) <= frame.data((i * 4) + 3) &
-                                   frame.data((i * 4) + 2) &
-                                   frame.data((i * 4) + 1) &
-                                   frame.data((i * 4));
-            wait for 0 ns;
-          end loop;
-          
-          pointer <= pointer + ((frame.data_length - 1) / 4) + 1;
-          wait for 0 ns;
-        end if; 
-    end procedure;
- 
-
-    -----------------------------------------------------
-    -- Read frame from either TX or RX memory
-    -----------------------------------------------------
-    procedure read_frame_from_mem(
-        variable frame          :  inout    SW_CAN_frame_type;
-        signal   memory         :  in       storage_mem_array;
-        constant mem_index      :  in       natural;
-        variable pointer        :  inout    natural
-    )is
-        variable aux_vect       :           std_logic_vector(28 downto 0);
-    begin
-        -- Erase some unnecessary stuff
-        frame.data          := (OTHERS => (OTHERS => '0'));
-        frame.identifier    := 0;
-
-        --Frame format
-        frame.dlc           := memory(mem_index)(pointer)(3 downto 0);
-        frame.rtr           := memory(mem_index)(pointer)(5);
-        frame.ident_type    := memory(mem_index)(pointer)(6);
-        frame.frame_format  := memory(mem_index)(pointer)(7);
-        frame.brs           := memory(mem_index)(pointer)(9);
-        decode_dlc_v(frame.dlc, frame.data_length);
-        frame.rwcnt         := 
-          to_integer(unsigned(memory(mem_index)(pointer)(15 downto 11)));
-
-        pointer             := pointer + 1;
-
-        --Timestamp
-        frame.timestamp     := memory(mem_index)(pointer) &
-                               memory(mem_index)(pointer + 1);
-        pointer             := pointer + 2;
-
-        --Identifier
-        if (frame.ident_type = BASE) then
-          aux_vect        := "000000000000000000" & memory(mem_index)(pointer)
-                                (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-
-        elsif (frame.ident_type = EXTENDED) then
-          aux_vect        := memory(mem_index)(pointer)
-                                (IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L)&
-                             memory(mem_index)(pointer)
-                                (IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
-        else
-          report "Unsupported Identifier type" severity error;
-        end if;
-               
-        frame.identifier  := to_integer(unsigned(aux_vect));
-        pointer           := pointer + 1;
-
-        -- Data words
-        if ((frame.rtr = '0' or frame.frame_format = '1') and 
-            frame.data_length /= 0)
-        then
-          for i in 0 to ((frame.data_length - 1) / 4) loop
-            frame.data((i * 4) + 3) := memory(mem_index)(pointer)(31 downto 24);
-            frame.data((i * 4) + 2) := memory(mem_index)(pointer)(23 downto 16);
-            frame.data((i * 4) + 1) := memory(mem_index)(pointer)(15 downto 8);
-            frame.data((i * 4)) := memory(mem_index)(pointer)(7 downto 0);
-            pointer := pointer + 1;
-          end loop;
-        end if;
-    end procedure;
-  
   
   ------------------------------------------------------------------------------
   -- Check if all frames from TX memory are found in RX memory
@@ -459,6 +316,7 @@ architecture behavioral of sanity_test is
         variable comp_out       :           boolean;
         variable detected       :           boolean := false;
         variable node_error     :           boolean := false;
+        variable tmp_mem        :           test_mem_type;
     begin
         outcome     := true;
         tx_r_ptr    := 0;
@@ -482,7 +340,8 @@ architecture behavioral of sanity_test is
                     while (tx_mems(i)(tx_r_ptr)(8) = '1') loop     
 
                         -- Read frame from TX Mem
-                        read_frame_from_mem(TX_frame, tx_mems, i, tx_r_ptr);
+                        tmp_mem := tx_mems(i);
+                        read_frame_from_test_mem(TX_frame, tmp_mem, tx_r_ptr);
 
                         -- Now browse trough the RX mem j and check if we find
                         -- his frame. Set "comp_out" if frame was found.
@@ -493,7 +352,8 @@ architecture behavioral of sanity_test is
                         while (rx_mems(j)(rx_r_ptr)(8) = '1' and
                                comp_out = false)
                         loop
-                            read_frame_from_mem(RX_frame, rx_mems, j, rx_r_ptr);
+                            tmp_mem := rx_mems(j);
+                            read_frame_from_test_mem(RX_frame, tmp_mem, rx_r_ptr);
                             CAN_compare_frames(TX_frame, RX_frame, false, comp_out);
                             if (comp_out) then
                                 detected := true;
@@ -515,7 +375,8 @@ architecture behavioral of sanity_test is
                 log("TX Memory Node " & integer'image(i) & ":",
                     error_l, log_level);
                 while (tx_mems(i)(tx_r_ptr)(8) = '1') loop
-                    read_frame_from_mem(TX_frame, tx_mems, i, tx_r_ptr);
+                    tmp_mem := tx_mems(i);
+                    read_frame_from_test_mem(TX_frame, tmp_mem, tx_r_ptr);
                     CAN_print_frame(TX_frame, error_l);
                 end loop;
 
@@ -523,7 +384,8 @@ architecture behavioral of sanity_test is
                     error_l, log_level);
                 rx_r_ptr := 0;
                 while (rx_mems(i)(rx_r_ptr)(8) = '1') loop
-                    read_frame_from_mem(RX_frame, rx_mems, i, rx_r_ptr);
+                    tmp_mem := rx_mems(i);
+                    read_frame_from_test_mem(RX_frame, tmp_mem, rx_r_ptr);
                     CAN_print_frame(RX_frame, error_l);
                 end loop;
             end if;
@@ -892,8 +754,8 @@ begin
                                 CAN_send_frame(TX_frame, 1, n_index, mb_arr(i), 
                                                frame_sent);
 
-                                store_frame_to_mem(TX_frame, tx_mems(i),
-                                                   tx_mem_pointers(i));
+                                store_frame_to_test_mem(TX_frame, tx_mems(i),
+                                                        tx_mem_pointers(i));
                             end if;
                         end if;
 
@@ -901,8 +763,8 @@ begin
                         get_rx_buf_state(rx_buf_state, n_index, mb_arr(i));
                         while (rx_buf_state.rx_empty = false) loop
                             CAN_read_frame(RX_frame, n_index, mb_arr(i));
-                            store_frame_to_mem(RX_frame, rx_mems(i),
-                                               rx_mem_pointers(i));
+                            store_frame_to_test_mem(RX_frame, rx_mems(i),
+                                                    rx_mem_pointers(i));
 
                             get_rx_buf_state(rx_buf_state, n_index, mb_arr(i));           
 
