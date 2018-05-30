@@ -53,7 +53,7 @@ USE work.CANtestLib.All;
 
 entity vunittb_wrapper is
   generic (
-    xrunner_cfg : string;
+    nested_runner_cfg : string;
     iterations : natural := 50;
     log_level  : log_lvl_type := info_l;
     error_beh  : err_beh_type := quit;           -- Test behaviour when error occurs: Quit, or Go on
@@ -79,9 +79,9 @@ begin
         );
     main:process
     begin
-        test_runner_setup(runner, xrunner_cfg);
-        --while test_suite loop
-            if true or run("all") then
+        test_runner_setup(runner, nested_runner_cfg);
+        while test_suite loop
+            if run("all") then
                 t_run <= true;
                 wait until t_status = passed or t_status = failed;
                 report "Done";
@@ -89,7 +89,7 @@ begin
                 wait for 100 ns;
                 t_run <= false;
             end if;
-        --end loop;
+        end loop;
         test_runner_cleanup(runner, t_errors > error_tol);
     end process;
 end architecture;

@@ -55,14 +55,16 @@ def create_wrapper(lib):
         ))
         tbs.append(dedent("""\
             library work;
-            USE work.CANtestLib.All;
+            use work.CANtestLib.All;
+            library vunit_lib;
+            context vunit_lib.vunit_context;
 
-            entity tb_{test} is generic (runner_cfg : string); end entity;
+            entity tb_{test} is generic (runner_cfg : string := runner_cfg_default); end entity;
             architecture tb of tb_{test} is
-                component vunittb_wrapper is generic (xrunner_cfg : string); end component;
+                component vunittb_wrapper is generic (nested_runner_cfg : string); end component;
                 for all:vunittb_wrapper use configuration work.tbconf_{test};
             begin
-                tb:vunittb_wrapper generic map(xrunner_cfg => runner_cfg);
+                tb:vunittb_wrapper generic map(nested_runner_cfg => runner_cfg);
             end architecture;
             -- -----------------------------------------------------------------------------
             """.format(test=test)
@@ -99,6 +101,9 @@ for pattern in ['../src/**/*.vhd', '*.vhd', 'unit/**/*.vhd', 'sanity/*.vhd', 'li
             lib.add_source_file(str(f))
 
 create_wrapper(lib)
+unit_tests = lib.get_test_benches('*_unit_test')
+for ut in unit_tests:
+    ut.scan_tests_from_file("../unit/vunittb_wrapper.vhd")
 
 #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
 
