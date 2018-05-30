@@ -10,10 +10,12 @@ from vunit.ui import VUnit
 from glob import glob
 from pprint import pprint
 import os
+from os.path import abspath
 import signal
 import subprocess
 import re
 from textwrap import dedent
+from pathlib import Path
 
 def get_children_pids(parent_pid):
     cmd = subprocess.run("ps -o pid --ppid {} --noheaders".format(parent_pid), shell=True, stdout=subprocess.PIPE, check=False)
@@ -84,7 +86,9 @@ signal.signal(signal.SIGTERM, sighandler)
 signal.signal(signal.SIGINT, sighandler)
 # ------------------------------------------------------------------------------
 
-root = dirname(__file__)
+root = abspath(dirname(__file__))
+Path('build').mkdir(exist_ok=True)
+os.chdir('build')
 
 ui = VUnit.from_argv()
 lib = ui.add_library("lib")
