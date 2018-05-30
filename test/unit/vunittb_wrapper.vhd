@@ -90,6 +90,6 @@ begin
                 t_run <= false;
             end if;
         --end loop;
-        test_runner_cleanup(runner, t_errors > 0);
+        test_runner_cleanup(runner, t_errors > error_tol);
     end process;
 end architecture;
