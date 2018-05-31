@@ -1757,7 +1757,7 @@ begin
                 if (data_rx = RECESSIVE) then
 
                     ------------------------------------------------------------    
-                    -- Check if CAN FD Frames are supported, if not throw
+                    -- Check if CAN FD Frames are supported. If not, throw
                     -- FORM Error.
                     ------------------------------------------------------------
                     if (drv_CAN_fd_ena = '1') then
@@ -1765,11 +1765,11 @@ begin
                         rec_is_rtr_r        <= '0';
                         FSM_preset          <= '0';
 
-                        -- sync_control_r  <=  HARD_SYNC;
+                        sync_control_r  <=  HARD_SYNC;
                         -- Note: hard synchronisation so far ommited. Newest 
                         --  implementation of prescaler didnt support hard
                         --  synchronisation in middle of data transfer!
-                        --report "Reciever EDL";
+                        report "Reciever EDL";
                     else
                         PC_State            <= error;
                         form_Error_r        <= '1';
@@ -1803,7 +1803,6 @@ begin
                 if (control_pointer > 0) then
                     control_pointer        <= control_pointer - 1;
                 end if;
-
 
                 case control_pointer is
 
@@ -1902,14 +1901,14 @@ begin
                         store_metadata_r            <= '1';
 
                     when others => 
-                        unknown_state_Error_r     <= '1'; 
-                        PC_State                  <= error;
-                        FSM_preset                <= '1';
+                        unknown_state_Error_r       <= '1'; 
+                        PC_State                    <= error;
+                        FSM_preset                  <= '1';
                 end case;   
                     
             end if;
         end if;
-            
+
 
 
     ----------------------------------------------------------------------------            
