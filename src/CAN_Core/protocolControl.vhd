@@ -1668,7 +1668,7 @@ begin
                     data_tx_r                 <= ctrl_tran_reg(control_pointer);
                 end if;
 
-                -- Receiving control field bits.
+                -- Receiving control field bits as Transmitter
                 if (rec_trig = '1') then
 
                     ------------------------------------------------------------
@@ -1765,10 +1765,10 @@ begin
                         rec_is_rtr_r        <= '0';
                         FSM_preset          <= '0';
 
-                        --sync_control_r  <=  HARD_SYNC;
-                        --Note: hard synchronisation so far ommited. Newest 
-                        -- implementation of prescaler didnt support hard
-                        -- synchronisation in middle of data transfer!
+                        -- sync_control_r  <=  HARD_SYNC;
+                        -- Note: hard synchronisation so far ommited. Newest 
+                        --  implementation of prescaler didnt support hard
+                        --  synchronisation in middle of data transfer!
                         --report "Reciever EDL";
                     else
                         PC_State            <= error;
@@ -1782,26 +1782,37 @@ begin
                 ----------------------------------------------------------------
                 else
 
-                    FSM_preset <= '0';
+                    FSM_preset              <= '0';
 
                     -- Difference for EXTENDED and BASE frames.
                     if (rec_ident_type_r = EXTENDED) then
-                        control_pointer     <= 4; -- r0 bit, 4 DLC
+                        control_pointer     <= 4; -- r0 bit, 4 bits DLC
                         rec_is_rtr_r        <= arb_one_bit;
                     else
-                        control_pointer     <= 3; -- DLC
+                        control_pointer     <= 3; -- 4 bits DLC
                         rec_is_rtr_r        <= arb_two_bits(1);
                     end if;
                 end if;
             
-
+            --------------------------------------------------------------------
             -- Receiving remaining bits
+            --------------------------------------------------------------------
             else
+
+                -- Decrement control pointer till the end of control field
+                if (control_pointer > 0) then
+                    control_pointer        <= control_pointer - 1;
+                end if;
+
+
                 case control_pointer is
 
+                    ------------------------------------------------------------
+                    -- r0 bit of FD Frame -> If detected RECESSIVE -> Error
+                    -- Return synchronisation back to RE_SYNC after HARD_SYNC
+                    -- was performed between EDL and r0 bits.
+                    ------------------------------------------------------------
                     when 6 =>
-                        control_pointer     <= control_pointer - 1;                       
-                        -- r0 bit of FD Frame detected recessive
                         if (data_rx = RECESSIVE) then
                             form_Error_r    <= '1';
                             inc_one_r       <= '1';
@@ -1810,23 +1821,27 @@ begin
                         end if;
                         sync_control_r      <= RE_SYNC;
    
-                    when 5 => -- BRS Bit
-                        control_pointer     <= control_pointer - 1;
+                    ------------------------------------------------------------
+                    -- BRS bit: Switch bit-rate if RECESSIVE
+                    ------------------------------------------------------------
+                    when 5 =>
                         rec_brs_r           <= data_rx;
                         if (data_rx = RECESSIVE) then
-                            sp_control_r    <= DATA_SAMPLE; --Switching bit rate
+                            sp_control_r    <= DATA_SAMPLE;
                             br_shifted      <= '1';
                         end if;
 
+                    ------------------------------------------------------------
+                    -- CAN FD Frame -> ESI bit
+                    -- CAN 2.0 Frame -> We get to "control_pointer=4" only if
+                    --      the frame is EXTENDED. Then it is r0 bit. If dete-
+                    --      cted RECESSIVE, FORM Error!
+                    ------------------------------------------------------------
                     when 4 =>
-                        control_pointer     <= control_pointer - 1;
                         if (rec_frame_type_r = FD_CAN) then
                             rec_esi_r       <= data_tx_r;       
                         else
-                            -- r0 bit of extended frame detected recessive
-                            if (rec_ident_type_r = EXTENDED and 
-                                data_rx = RECESSIVE)
-                            then
+                            if (data_rx = RECESSIVE) then
                                 form_Error_r    <= '1';
                                 inc_one_r       <= '1';
                                 PC_State        <= error;
@@ -1834,23 +1849,26 @@ begin
                             end if;
                         end if;
 
+                    ------------------------------------------------------------
+                    -- Last 4 bits of Control -> DLC field
+                    ------------------------------------------------------------
                     when 3 => 
-                        control_pointer         <= control_pointer - 1;
                         rec_dlc_r(3)            <= data_rx;
 
                     when 2 => 
-                        control_pointer         <= control_pointer - 1;
                         rec_dlc_r(2)            <= data_rx;
  
                     when 1 => 
-                        control_pointer         <= control_pointer - 1;
                         rec_dlc_r(1)            <= data_rx;
 
                     when 0 => 
                         rec_dlc_r(0)            <= data_rx;
                         FSM_preset              <= '1';
-                      
-                        -- If frame is RTR Frame or data length is zero
+                        
+                        --------------------------------------------------------
+                        -- Update PC State. For RTR Frames or DLC = 0000,
+                        -- go directly to CRC Phase!
+                        --------------------------------------------------------
                         if ((rec_is_rtr_r = RTR_FRAME and
                              rec_frame_type_r = NORMAL_CAN) or 
                             (rec_dlc_r(3 downto 1) = "000" and data_rx = '0'))
@@ -1860,12 +1878,14 @@ begin
                             PC_State            <= data;
                         end if;
                       
-                        --Bug fix 22.6.2016
-                        --If RTR frame is recieved, than actual DLC which is re-
-                        --cieved depends on rtr_pref behaviour of transciever! Thus
-                        --we can recieve DLC of e.g 12 bytes but frame is RTR so we
-                        --should decide about CRC length from RTR flag not recieved
-                        --DLC!!!
+                        --------------------------------------------------------
+                        -- Bug fix 22.6.2016
+                        -- If RTR frame is recieved, than actual DLC which is
+                        -- recieved depends on "rtr_pref" of transciever! Thus
+                        -- we can recieve DLC of e.g 12 bytes but frame is RTR,
+                        -- so we should decide about CRC length from RTR flag
+                        -- not recieved DLC!!!
+                        --------------------------------------------------------
                         if (rec_is_rtr_r = RTR_FRAME and
                             rec_frame_type_r = NORMAL_CAN)
                         then
@@ -1875,11 +1895,13 @@ begin
                             dlc_int(0)              <= data_rx;
                         end if;
 
+                        --------------------------------------------------------
                         -- Sending commands to RX Buffer, to store metadata, 
                         -- identifier and frame format words
-                        store_metadata_r          <= '1';
+                        --------------------------------------------------------
+                        store_metadata_r            <= '1';
 
-                    when others=> 
+                    when others => 
                         unknown_state_Error_r     <= '1'; 
                         PC_State                  <= error;
                         FSM_preset                <= '1';
