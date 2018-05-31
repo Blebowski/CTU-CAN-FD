@@ -1765,11 +1765,11 @@ begin
                         rec_is_rtr_r        <= '0';
                         FSM_preset          <= '0';
 
-                        sync_control_r  <=  HARD_SYNC;
-                        -- Note: hard synchronisation so far ommited. Newest 
-                        --  implementation of prescaler didnt support hard
-                        --  synchronisation in middle of data transfer!
-                        report "Reciever EDL";
+                        -- HARD Synchronisation in EDL -> r0 transition for
+                        -- receivers! (Transmitter does not necessarily have to
+                        -- perform Hard synchronisation, since now it is the
+                        -- only node which is transmitting!)
+                        sync_control_r      <= HARD_SYNC;
                     else
                         PC_State            <= error;
                         form_Error_r        <= '1';
