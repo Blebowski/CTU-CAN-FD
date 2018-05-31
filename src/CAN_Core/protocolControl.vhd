@@ -1556,7 +1556,10 @@ begin
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     when control => 
-            
+        
+        ------------------------------------------------------------------------
+        -- Transmitting control bits 
+        ------------------------------------------------------------------------
         if (OP_State = transciever) then 
             
             --------------------------------------------------------------------
@@ -1735,21 +1738,30 @@ begin
         end if;         
 
 
+        ------------------------------------------------------------------------
         -- Recieving control bits 
+        ------------------------------------------------------------------------
         if (OP_State = reciever and rec_trig = '1') then
 
+            --------------------------------------------------------------------
             -- First bit -> Set "control pointer" based on received bit (
+            --------------------------------------------------------------------
             if (FSM_preset = '1') then
 								
                 -- EDL bit -> CAN FD Frame, r0 bit -> CAN Frame
-                rec_frame_type_r  <=  data_rx;
+                rec_frame_type_r  <= data_rx;
 
-                if (data_rx = RECESSIVE) then --IF is FD Frame
-              
-                    -- If FD Frames are supported,go on, otherwise 
-                    -- throw Form error
+                ----------------------------------------------------------------
+                -- CAN FD Frame (EDL = RECESSIVE)
+                ----------------------------------------------------------------
+                if (data_rx = RECESSIVE) then
+
+                    ------------------------------------------------------------    
+                    -- Check if CAN FD Frames are supported, if not throw
+                    -- FORM Error.
+                    ------------------------------------------------------------
                     if (drv_CAN_fd_ena = '1') then
-                        control_pointer     <= 6; --r0,BRS,ESI,4DLC bits
+                        control_pointer     <= 6; -- r0,BRS,ESI,4DLC bits
                         rec_is_rtr_r        <= '0';
                         FSM_preset          <= '0';
 
@@ -1764,13 +1776,20 @@ begin
                         inc_one_r           <= '1';
                         FSM_preset          <= '1';
                     end if;
+
+                ----------------------------------------------------------------
+                -- CAN 2.0 Frame (EDL = DOMINANT)
+                ----------------------------------------------------------------
                 else
+
                     FSM_preset <= '0';
+
+                    -- Difference for EXTENDED and BASE frames.
                     if (rec_ident_type_r = EXTENDED) then
-                        control_pointer     <= 4; --r0 bit,4 DLC
+                        control_pointer     <= 4; -- r0 bit, 4 DLC
                         rec_is_rtr_r        <= arb_one_bit;
                     else
-                        control_pointer     <= 3; --DLC
+                        control_pointer     <= 3; -- DLC
                         rec_is_rtr_r        <= arb_two_bits(1);
                     end if;
                 end if;
