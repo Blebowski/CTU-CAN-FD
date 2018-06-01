@@ -168,17 +168,35 @@ architecture presc_unit_test of CAN_test is
         rand_logic_vect_s(rand_ctr, setting.drv_sjw_nbt, 0.2);
         rand_logic_vect_s(rand_ctr, setting.drv_sjw_dbt, 0.2);
 
+        ------------------------------------------------------------------------
         -- Here we check that settings are matching IPT!!
         -- This is stated in documentation and is up to responsible 
-        -- user to set. Otherwise controller is not working!
+        -- user to set. If minimal IPT is corrupted in Bit timing settings,
+        -- PH2 will last IPT (4 clock cycles), NOT shorter!
+        ------------------------------------------------------------------------
 
+        ------------------------------------------------------------------------
         -- NBT
+        ------------------------------------------------------------------------
+        -- PH2 can NOT be 0!
+        if (setting.drv_ph2_nbt = "000000") then
+            setting.drv_ph2_nbt <= "000001";
+        end if;
+
+        -- Time quanta cannot be 0!
+        if (setting.drv_tq_nbt = "00000000") then
+            setting.drv_tq_nbt <= "00000001";
+        end if;
+        wait for 0 ns;
+
+        -- Time quanta 1 -> PH2 must be minimum 4!
         if (setting.drv_tq_nbt = "00000001" and 
             unsigned(setting.drv_ph2_nbt) < 4)
         then
             setting.drv_ph2_nbt <= "000100";
         end if;
 
+        -- Time quanta 2 or 3 -> PH2 must be minimum 2!
         if ((setting.drv_tq_nbt = "00000010" or 
              setting.drv_tq_nbt = "00000011")
              and unsigned(setting.drv_ph2_nbt) < 2)
@@ -186,7 +204,19 @@ architecture presc_unit_test of CAN_test is
             setting.drv_ph2_nbt <= "000010";
         end if;
       
+        ------------------------------------------------------------------------
         -- DBT
+        ------------------------------------------------------------------------
+        if (setting.drv_ph2_dbt = "000000") then
+            setting.drv_ph2_dbt <= "000001";
+        end if;
+
+        -- Time quanta cannot be 0!
+        if (setting.drv_tq_dbt = "00000000") then
+            setting.drv_tq_dbt <= "00000001";
+        end if;
+        wait for 0 ns;
+
         if (setting.drv_tq_dbt = "00000001" and
             unsigned(setting.drv_ph2_dbt) < 4)
         then
@@ -509,6 +539,7 @@ test_proc:process
       for i in 1 to 5 loop
 
         -- Check distance between "SYNC" and "SAMPLE" trigger
+        log("Checking distance between SYNC and SAMPLE", info_l, log_level);
         wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
         count_cycles_until(clk_sys, check_ctr, sample_nbt, sample_dbt);
         
@@ -536,7 +567,8 @@ test_proc:process
 
 
         -- Check distance between two consecutive "SYNC" triggers
-        -- (whole bit time)
+        -- (whole bit time)        
+        log("Checking distance two consecutive SYNC", info_l, log_level);
         wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
         wait for 15 ns;
         count_cycles_until(clk_sys, check_ctr, sync_nbt, sync_dbt);
@@ -587,6 +619,8 @@ test_proc:process
       --------------------------------------------------------------------------
       -- Emulate a BRS bit
       --------------------------------------------------------------------------
+    
+      log("Checking duration of BRS bit", info_l, log_level);
 
       -- Nominal Bit-rate part, count length between sync trigger and sample
       -- trigger!
@@ -617,6 +651,7 @@ test_proc:process
       --------------------------------------------------------------------------
       -- Emulate CRC delimiter bit (as if switching back to Nominal data-rate)
       --------------------------------------------------------------------------
+      log("Checking duration of CRC delimiter bit", info_l, log_level);
       wait until bt_FSM_out = ph2;
       wait until falling_edge(clk_sys) and sync_dbt = '1';
       count_cycles_until(clk_sys, data_ctr, sample_dbt);
