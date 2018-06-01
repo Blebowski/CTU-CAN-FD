@@ -366,7 +366,7 @@ entity prescaler_v3 is
 
   -- It takes 3 clock cycles to determine following bus value after sample point
   -- during this time, the bit can't end!
-  constant INFORMATION_PROCESSING_TIME : natural := 3;
+  constant INFORMATION_PROCESSING_TIME : natural := 4;
 
 end entity;
 
@@ -413,7 +413,8 @@ architecture rtl of prescaler_v3 is
     begin
         brs_counter     <= ctr_pres;
         sp_control      <= sp_control_pres;
-        ipt_counter     <= INFORMATION_PROCESSING_TIME;
+        -- Minus 1 since counter counts till 0!
+        ipt_counter     <= INFORMATION_PROCESSING_TIME - 1;
     end procedure;
 
     ----------------------------------------------------------------------------
