@@ -168,6 +168,8 @@ architecture presc_unit_test of CAN_test is
         rand_logic_vect_s(rand_ctr, setting.drv_sjw_nbt, 0.2);
         rand_logic_vect_s(rand_ctr, setting.drv_sjw_dbt, 0.2);
 
+        wait for 0 ns;
+
         ------------------------------------------------------------------------
         -- Here we check that settings are matching IPT!!
         -- This is stated in documentation and is up to responsible 
@@ -207,8 +209,8 @@ architecture presc_unit_test of CAN_test is
         ------------------------------------------------------------------------
         -- DBT
         ------------------------------------------------------------------------
-        if (setting.drv_ph2_dbt = "000000") then
-            setting.drv_ph2_dbt <= "000001";
+        if (setting.drv_ph2_dbt = "00000") then
+            setting.drv_ph2_dbt <= "00001";
         end if;
 
         -- Time quanta cannot be 0!
