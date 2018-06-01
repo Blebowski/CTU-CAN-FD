@@ -153,6 +153,7 @@ architecture presc_unit_test of CAN_test is
         signal rand_ctr             : inout natural range 0 to RAND_POOL_SIZE;
         signal setting              : inout presc_drv_type
     ) is
+        variable tseg1_dur          :       natural;
     begin
         rand_logic_vect_bt_s(rand_ctr, setting.drv_tq_nbt, 0, 0.2);
         rand_logic_vect_bt_s(rand_ctr, setting.drv_tq_dbt, 0, 0.1);
@@ -205,6 +206,14 @@ architecture presc_unit_test of CAN_test is
         then
             setting.drv_ph2_nbt <= "000010";
         end if;
+
+        -- Making sure that PH1 + Prop lasts at least 2 cycles
+        tseg1_dur := to_integer(unsigned(setting.drv_tq_nbt)) *
+                     (to_integer(unsigned(setting.drv_prs_nbt)) + 
+                      to_integer(unsigned(setting.drv_ph1_nbt)));
+        if (tseg1_dur < 2) then
+            setting.drv_prs_nbt <= "0000011";
+        end if;
       
         ------------------------------------------------------------------------
         -- DBT
@@ -230,6 +239,14 @@ architecture presc_unit_test of CAN_test is
             and unsigned(setting.drv_ph2_dbt) < 2)
         then
             setting.drv_ph2_dbt <= "00010";
+        end if;
+
+        -- Making sure that PH1 + Prop lasts at least 2 cycles
+        tseg1_dur := to_integer(unsigned(setting.drv_tq_dbt)) *
+                     (to_integer(unsigned(setting.drv_prs_dbt)) + 
+                      to_integer(unsigned(setting.drv_ph1_dbt)));
+        if (tseg1_dur < 2) then
+            setting.drv_prs_dbt <= "000011";
         end if;
       
     end procedure;
