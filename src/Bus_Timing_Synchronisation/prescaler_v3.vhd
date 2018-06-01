@@ -133,6 +133,8 @@
 --                   and on RX (with Hard sync in EDL bit) only 960 ns, this
 --                   caused mismatch of 40 ns in Data Bit rate which caused
 --                   wrong bit value reception!
+--     1.6.2018   1. Bug-fix of missing sample trigger in direct transfer from
+--                   PROP to PH2 in case of PH1=0  
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -315,6 +317,7 @@ entity prescaler_v3 is
   signal prop_non_zero          :   boolean;
   signal ph1_non_zero           :   boolean;
   signal switch_prop_to_ph1     :   boolean;
+  signal reg_sample_cond        :   boolean;
 
   -- True if conditions for HARD Syncrhronisation are met
   signal hard_sync_condition    :   boolean;
@@ -710,10 +713,22 @@ begin
     ipt_ok               <= true when ipt_counter = 0 else
                             false;
 
+
+    ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Triggering signals decoders
     -- Decoded commbinationally to truly sample between PH1 and PH2!
+    -- Introduces little bit of combinational delay, but reduces latency! Bus
+    -- is sampled on time!
     ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+
+
+    ----------------------------------------------------------------------------
+    -- Transmit triggers (SYNC part of bit time). Fired when:
+    --      1. Change to "sync" occurred.
+    --      2. "sync_trig_spec" is activated by "h_sync" state.
+    ----------------------------------------------------------------------------   
     sync_nbt_r        <= '1' when (((sp_control  = NOMINAL_SAMPLE) and
                                     (bt_FSM_del /= sync) and
                                     (bt_FSM      = sync)) or
@@ -728,19 +743,32 @@ begin
                              else
                          '0';
 
-    -- Comparison of bt_FSM_del is to avoid glitches between PROP and PH1
-    sample_nbt_r      <= '1' when ((sp_control = NOMINAL_SAMPLE) and
-                                   (bt_FSM = ph1) and
-                                   (switch_ph1_to_ph2) and
-                                   (tq_edge = '1')) or
-				   (sample_trig_spec = '1')
+
+    ----------------------------------------------------------------------------
+    -- Sample point should be generated:
+    --      1. Change from PH1 to PH2.
+    --      2. Change from PROP to PH2 if PH1 = 0.
+    --      3. Special syn trigger is generated (by "hsync" state), only for
+    --         nominal sample, since HARD synchronisation is only during nominal
+    --         Bit rate!
+    ---------------------------------------------------------------------------- 
+    reg_sample_cond   <= true when ((bt_FSM = ph1) and switch_ph1_to_ph2) or
+                                   ((bt_FSM = prop) and switch_prop_to_ph1 and
+                                    (ph1_non_zero = false))
+                              else
+                         false;
+    
+    sample_nbt_r      <= '1' when ( (sp_control = NOMINAL_SAMPLE) and
+                                    (tq_edge = '1') and
+                                    reg_sample_cond)
+                                  or 
+                                  (sample_trig_spec = '1')
                              else
                          '0';
 
     sample_dbt_r      <= '1' when ((sp_control = DATA_SAMPLE or
                                     sp_control = SECONDARY_SAMPLE) and
-                                   (bt_FSM = ph1) and
-                                   (switch_ph1_to_ph2) and
+                                   reg_sample_cond and
                                    (tq_edge = '1'))
                              else
                          '0';
@@ -942,7 +970,7 @@ begin
                     bt_counter  <= 1;
                     FSM_Preset  <= '1';
                 end if;
-            else
+            elsif (bt_counter_sw > 0) then
                 bt_counter_sw   <= bt_counter_sw - 1; 
             end if;
 
