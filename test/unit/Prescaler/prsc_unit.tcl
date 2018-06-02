@@ -83,6 +83,9 @@ add wave -group "Triggerring signals" \
 add wave -label "Bit time state" $TCOMP/bt_fsm_out
 add wave -label "Hard sync appeared" $TCOMP/hard_sync_edge_valid
 
+add wave -noupdate -divider -height 20 "Testbench internals"
+add wave -label "Expected bit time with resync" -unsigned $TCOMP/resync_bit_time_length
+
 add wave -noupdate -divider -height 20 "Error counters"
 add wave -label "Inform. proc. time corrupted" \
 			-unsigned $TCOMP/ipt_err_ctr		
