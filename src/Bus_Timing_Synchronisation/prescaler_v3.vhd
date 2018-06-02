@@ -148,6 +148,14 @@
 --                   This bug was revealed when writing testbench for very high
 --                   bit rate (7 clock cycles per bit time).
 --                4. Added Mux for selection of Nominal vs. Data bit times
+--                5. Added "imm_ph2_end" to allow immediate finish of PH2
+--                   combinationally and not with "ph2_real". For very fast
+--                   data rates, resynchronisation edge coming 2 clock cycles
+--                   before end would cause that till "ph2_real" will get
+--                   updated, bit time will finish. Although this requires extra
+--                   resources (comparison and substraction), it makes sure that
+--                   negative resynchronisation shortens the frame to proper
+--                   lengths even at very high data rates.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -665,11 +673,10 @@ begin
                               else
                          false;
 
-    --imm_ph2_end        <= true when (neg_resync_cond and 
-    --                                 ((bt_counter - ph2_m) <= sjw_m))
-    --                           else
-    --                      false;
-    imm_ph2_end <= false;
+    imm_ph2_end        <= true when (neg_resync_cond and 
+                                     ((ph2_m - bt_counter) <= sjw_m))
+                               else
+                          false;
 
 
     switch_ph2_to_sync <= true when ((bt_counter = ph2_real) or
