@@ -186,15 +186,15 @@ int main(int argc, char *argv[])
            nom_timing.bitrate
     );
 
-    priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, 0xffff);
-    priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, 0xffff);
+    //priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, 0xffff);
+    //priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, 0xffff);
     ctu_can_fd_set_nom_bittiming(priv, &nom_timing);
-    ctu_can_fd_rel_rx_buf(priv);
+    //ctu_can_fd_rel_rx_buf(priv);
     //ctu_can_fd_set_ret_limit(priv, true, 1);
-    ctu_can_fd_set_ret_limit(priv, false, 0);
-    ctu_can_fd_abort_tx(priv);
-    ctu_can_fd_txt_set_abort(priv, CTU_CAN_FD_TXT_BUFFER_1);
-    ctu_can_fd_txt_set_empty(priv, CTU_CAN_FD_TXT_BUFFER_1);
+    //ctu_can_fd_set_ret_limit(priv, false, 0);
+    //ctu_can_fd_abort_tx(priv);
+    //ctu_can_fd_txt_set_abort(priv, CTU_CAN_FD_TXT_BUFFER_1);
+    //ctu_can_fd_txt_set_empty(priv, CTU_CAN_FD_TXT_BUFFER_1);
     ctu_can_fd_enable(priv, true);
     usleep(10000);
 

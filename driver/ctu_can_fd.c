@@ -160,7 +160,7 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 static int ctucan_chip_start(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	union ctu_can_fd_int_stat int_ena, int_msk;
+	union ctu_can_fd_int_stat int_ena, int_msk, int_enamask_mask;
 	int err;
 	struct can_ctrlmode mode;
 	netdev_info(ndev, "ctucan_chip_start");
@@ -193,7 +193,9 @@ static int ctucan_chip_start(struct net_device *ndev)
 	int_ena.s.epi = 1;
 	int_ena.s.doi = 1;
 
-	int_msk.u32 = 0xFFFFFFFF;
+	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
+
+	int_enamask_mask.u32 = 0xFFFFFFFF;
 
 	mode.flags = priv->can.ctrlmode;
 	mode.mask = 0xFFFFFFFF;
@@ -209,8 +211,8 @@ static int ctucan_chip_start(struct net_device *ndev)
 		int_ena.s.bei = 1;
 	}
 
-	ctu_can_fd_int_ena(&priv->p, int_ena, int_msk);
-	ctu_can_fd_int_mask(&priv->p, int_ena, int_msk);
+	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
+	ctu_can_fd_int_mask(&priv->p, int_msk, int_enamask_mask);
 
 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
 
@@ -475,6 +477,14 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	isr = ctu_can_fd_int_sts(&priv->p);
 	while (isr.s.rbnei && work_done < quota) {
 		ctu_can_fd_int_clr(&priv->p, iec);
+
+		u32 framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
+		netdev_info(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO", framecnt);
+		if (framecnt == 0) {
+			netdev_err(ndev, "rx_poll: RBNEI set, but there are no frames in the FIFO!");
+			break;
+		}
+
 		ctucan_rx(ndev);
 		work_done++;
 		isr = ctu_can_fd_int_sts(&priv->p);
@@ -641,11 +651,9 @@ static void ctucan_chip_stop(struct net_device *ndev)
 	netdev_info(ndev, "ctucan_chip_stop");
 
 	ena.u32 = 0;
-	mask.u32 = 0xFFFFFFFF;
 
 	/* Disable interrupts and disable can */
 	ctu_can_fd_int_ena(&priv->p, ena, mask);
-	ctu_can_fd_int_mask(&priv->p, ena, mask);
 	ctu_can_fd_enable(&priv->p, false);
 	priv->can.state = CAN_STATE_STOPPED;
 }
