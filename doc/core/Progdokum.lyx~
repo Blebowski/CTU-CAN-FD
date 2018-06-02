@@ -1,5 +1,5 @@
-#LyX 2.2 created this file. For more info see http://www.lyx.org/
-\lyxformat 508
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
 \begin_document
 \begin_header
 \save_transient_properties true
@@ -30,6 +30,8 @@ customHeadersFooters
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures false
 \graphics default
 \default_output_format default
 \output_sync 0
@@ -71,6 +73,7 @@ customHeadersFooters
 \suppress_date false
 \justification true
 \use_refstyle 1
+\use_minted 0
 \index Index
 \shortcut idx
 \color #008000
@@ -84,7 +87,10 @@ customHeadersFooters
 \tocdepth 5
 \paragraph_separation skip
 \defskip smallskip
-\quotes_language english
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
 \papercolumns 1
 \papersides 1
 \paperpagestyle headings
@@ -340,6 +346,7 @@ Implement CAN FD protocol according to
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -389,6 +396,7 @@ Be able to manipulate Fault confinement state and counters (see
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -1062,16 +1070,6 @@ Avalon bus
 
 \begin_layout Plain Layout
 Byte enable, active high.
- The signal has meaning only if 
-\begin_inset Quotes eld
-\end_inset
-
-use_be
-\begin_inset Quotes erd
-\end_inset
-
- is set to true.
- Otherwise connect this signal to logic 1s.
 \end_layout
 
 \end_inset
@@ -2220,6 +2218,7 @@ scripts/pyXact_generator
 LatexCommand href
 name "olofk/ipyxact"
 target "https://github.com/olofk/ipyxact"
+literal "false"
 
 \end_inset
 
@@ -2473,6 +2472,7 @@ Operation mode
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -2483,6 +2483,7 @@ key "key-1"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -2594,6 +2595,7 @@ dec_one
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -2773,6 +2775,7 @@ CRC module implements cyclic redundancy check calculation according to
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -6015,6 +6018,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/unit_test_diagram.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -6471,6 +6475,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/Feature_env.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -6880,6 +6885,7 @@ This test intends to test the behaviour of the controller when an invalid
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -6904,6 +6910,7 @@ Overload test intends to test transmission of two consecutive overload frames.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -7159,6 +7166,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/sanity_env.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7356,6 +7364,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/bus_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7433,6 +7442,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/star_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7510,6 +7520,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/tree_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -7587,6 +7598,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Visio_generated/ring_topology.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -8188,6 +8200,7 @@ CAN FD IP Core is synthesized as part of system developed in
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-20"
+literal "true"
 
 \end_inset
 
@@ -8210,6 +8223,7 @@ reference "tab:Design-size-in"
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-20"
+literal "true"
 
 \end_inset
 
@@ -9581,6 +9595,7 @@ The functionality of CAN FD IP Core is verified in real hardware.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-20"
+literal "true"
 
 \end_inset
 
@@ -9618,6 +9633,7 @@ In the second part CAN FD frames were verified.
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-13"
+literal "true"
 
 \end_inset
 
@@ -18363,6 +18379,7 @@ Bit Error appeared
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-1"
+literal "true"
 
 \end_inset
 
@@ -18374,6 +18391,7 @@ CAN with Flexible Data-Rate Specification v 1.0, Robert Bosch GmbH, April
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-2"
+literal "true"
 
 \end_inset
 
@@ -18384,6 +18402,7 @@ CAN 2.0 Protocol standard, Robert Bosch GmbH, Rev 3.0
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-3"
+literal "true"
 
 \end_inset
 
@@ -18397,6 +18416,7 @@ Controller Area Network - Basics, protocols, chips and applications, Prof.
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-4"
+literal "true"
 
 \end_inset
 
@@ -18407,6 +18427,7 @@ CRC for CAN with flexible data rate (CAN FD) - Whitepaper
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-20"
+literal "true"
 
 \end_inset
 
@@ -18418,6 +18439,7 @@ Software for Test Platform, DataSheet, Ille Ondrej, Czech Technical University,
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-21"
+literal "true"
 
 \end_inset
 
@@ -18429,6 +18451,7 @@ Implementation of unconventional CAN controller in VHDL, Diploma Thesis,
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-5"
+literal "true"
 
 \end_inset
 
@@ -18441,6 +18464,7 @@ Robustness of a CAN FD Bus System – About Oscillator Tolerance and Edge
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-6"
+literal "true"
 
 \end_inset
 
@@ -18451,6 +18475,7 @@ SJA1000 Standalone CAN Controller,Philips Semiconductors, January 2000
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-7"
+literal "true"
 
 \end_inset
 
@@ -18462,6 +18487,7 @@ TJA1041 High speed CAN transceiver Rev.
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-8"
+literal "true"
 
 \end_inset
 
@@ -18473,6 +18499,7 @@ ModelSim Advanced verification and debugging SE Command Reference, Mentor
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-9"
+literal "true"
 
 \end_inset
 
@@ -18483,6 +18510,7 @@ VHDL guidlines for synthesis, Siemens semiconductor group
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-10"
+literal "true"
 
 \end_inset
 
@@ -18494,6 +18522,7 @@ FPGA prakticky - Realizace číslicových systémů pro hradlová pole, Jakub
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-11"
+literal "true"
 
 \end_inset
 
@@ -18505,6 +18534,7 @@ key "key-11"
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-12"
+literal "true"
 
 \end_inset
 
@@ -18515,6 +18545,7 @@ key "key-12"
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-13"
+literal "true"
 
 \end_inset
 
@@ -18526,6 +18557,7 @@ SAM V71, SMART ARM-based Flash MCU, Preeliminary datasheet, Atmel, February
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-14"
+literal "true"
 
 \end_inset
 
@@ -18538,6 +18570,7 @@ VHDL Guides , Dr.
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-15"
+literal "true"
 
 \end_inset
 
@@ -18548,6 +18581,7 @@ Avalon Interface Specifications,ALTERA March 2015
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-16"
+literal "true"
 
 \end_inset
 
@@ -18559,6 +18593,7 @@ Methods for Testing the FlexRay Start-up Mechanism, Diploma thesis, Martin
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-17"
+literal "true"
 
 \end_inset
 
@@ -18569,6 +18604,7 @@ TimeQuest Timing Analyzer - Quick Start Tutorial, ALTERA, December 2009
 \begin_inset CommandInset bibitem
 LatexCommand bibitem
 key "key-19"
+literal "true"
 
 \end_inset
 

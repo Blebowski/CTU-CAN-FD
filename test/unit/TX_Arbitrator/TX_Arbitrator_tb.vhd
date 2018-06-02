@@ -178,8 +178,7 @@ begin
   ---------------------------------
   txArbitrator_comp : txArbitrator
   generic map(
-    buf_count               => TXT_BUFFER_COUNT,
-    tx_time_sup             => true
+    buf_count               => TXT_BUFFER_COUNT
   )
   port map( 
      clk_sys                => clk_sys,

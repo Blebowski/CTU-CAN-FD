@@ -99,8 +99,6 @@ entity CAN_top_level is
     constant sup_filtB      : boolean                := true;
     constant sup_filtC      : boolean                := true;
     constant sup_range      : boolean                := true;
-    constant tx_time_sup    : boolean                := true;
-    constant sup_be         : boolean                := true;
     constant logger_size    : natural range 0 to 512 := 8
     );
   port(
@@ -480,8 +478,7 @@ begin
       sup_filtB    => sup_filtB,
       sup_filtC    => sup_filtC,
       sup_range    => sup_range,
-      sup_be       => sup_be,
-      tx_time_sup  => tx_time_sup,
+      sup_be       => true,
       buf_count    => TXT_BUFFER_COUNT,
       ID           => ID
       )
@@ -590,8 +587,7 @@ begin
 
  tx_arb_comp: txArbitrator
   generic map(
-    buf_count               => TXT_BUFFER_COUNT,
-    tx_time_sup             => tx_time_sup
+    buf_count               => TXT_BUFFER_COUNT
   )
   port map( 
      clk_sys                => clk_sys,
