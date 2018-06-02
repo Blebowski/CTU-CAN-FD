@@ -835,8 +835,11 @@ begin
             wait until rising_edge(clk_sys);
             sync_control    <= NO_SYNC;
 
+            wait until rising_edge(clk_sys);
+
             -- Wait till next bit so that resynchronisation and bit rate switch
             -- does not affect each other!
+            wait until bt_fsm /= sync;
             wait until bt_fsm = sync;
 
             --------------------------------------------------------------------
