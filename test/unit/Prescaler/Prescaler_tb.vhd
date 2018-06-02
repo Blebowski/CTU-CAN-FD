@@ -839,8 +839,8 @@ begin
 
             -- Wait till next bit so that resynchronisation and bit rate switch
             -- does not affect each other!
-            wait until bt_fsm /= sync;
-            wait until bt_fsm = sync;
+            wait until bt_fsm_out /= sync;
+            wait until bt_fsm_out = sync;
 
             --------------------------------------------------------------------
             -- Test the duration of bits during bit-rate switching, to verify
