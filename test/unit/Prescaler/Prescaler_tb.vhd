@@ -835,6 +835,10 @@ begin
             wait until rising_edge(clk_sys);
             sync_control    <= NO_SYNC;
 
+            -- Wait till next bit so that resynchronisation and bit rate switch
+            -- does not affect each other!
+            wait until bt_fsm = sync;
+
             --------------------------------------------------------------------
             -- Test the duration of bits during bit-rate switching, to verify
             -- BRS realisation via two counters in Prescaler.
