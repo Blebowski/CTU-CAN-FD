@@ -476,8 +476,6 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	/* Get the interrupt status */
 	isr = ctu_can_fd_int_sts(&priv->p);
 	while (isr.s.rbnei && work_done < quota) {
-		ctu_can_fd_int_clr(&priv->p, iec);
-
 		u32 framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
 		netdev_info(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO", framecnt);
 		if (framecnt == 0) {
@@ -486,6 +484,7 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 		}
 
 		ctucan_rx(ndev);
+		ctu_can_fd_int_clr(&priv->p, iec);
 		work_done++;
 		isr = ctu_can_fd_int_sts(&priv->p);
 	}
