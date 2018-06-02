@@ -110,6 +110,7 @@
 --                obsolete signals
 --    21.02.2018  Removed "txt_frame_swap" since it is not needed with new,
 --                priority based implementation of TX Buffers.
+--      2.6.2018  Removed "tx_time_suport".
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -135,9 +136,6 @@ entity canfd_registers is
     
     --Support of byte enable signal on memory bus interface
     constant sup_be       :boolean                         := false;
-    
-    --Support of Transmission at given time
-    constant tx_time_sup  : boolean                        := true;
     
     -- Number of TXT Buffers
     constant buf_count    : natural range 0 to 7           := 4;
@@ -1475,12 +1473,6 @@ begin
                       data_out_int(TX4S_H downto TX4S_L) <= (OTHERS => '0');
                 end case;
 
-                -- TODO: Shouldn we add this to the register map as before??
-                -- if (tx_time_sup) then
-                --   data_out_int(TXTS_IND) <= '1';
-                -- else
-                --   data_out_int(TXTS_IND) <= '0';
-                -- end if;
 
             ----------------------------------------------------
             -- TX_COMMAND (TX_SETTINGS and TX_COMMAND)

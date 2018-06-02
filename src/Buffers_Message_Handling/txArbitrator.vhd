@@ -125,7 +125,7 @@
 --                   elapse with no jitter! Before it could have happend that
 --                   timestamp was elapse during reading lower timestamp word
 --                   but circuit reacted only one clock cycle later!
---                  
+--     2.6.2018   Removed "tx_time_suport".
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -138,8 +138,7 @@ use work.CAN_FD_frame_format.all;
 
 entity txArbitrator is
   generic(
-    buf_count   : natural range 1 to 8;
-    tx_time_sup : boolean := true
+    buf_count   : natural range 1 to 8
   );
   port( 
     ------------------------

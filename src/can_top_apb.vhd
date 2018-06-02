@@ -45,6 +45,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
+use work.CANcomponents.ALL;
 
 entity CTU_CAN_FD_v1_0 is
     generic(
@@ -55,8 +56,6 @@ entity CTU_CAN_FD_v1_0 is
         sup_filtB        : boolean                := true;
         sup_filtC        : boolean                := true;
         sup_range        : boolean                := true;
-        tx_time_sup      : boolean                := true;
-        sup_be           : boolean                := true;
         logger_size      : natural range 0 to 512 := 8
     );
     port(
@@ -84,42 +83,7 @@ entity CTU_CAN_FD_v1_0 is
 end entity CTU_CAN_FD_v1_0;
 
 architecture rtl of CTU_CAN_FD_v1_0 is
-    component CAN_top_level is
-        generic(
-            constant use_logger     : boolean                := true;
-            constant rx_buffer_size : natural range 4 to 512 := 128;
-            constant use_sync       : boolean                := true;
-            constant ID             : natural range 0 to 15  := 1;
-            constant sup_filtA      : boolean                := true;
-            constant sup_filtB      : boolean                := true;
-            constant sup_filtC      : boolean                := true;
-            constant sup_range      : boolean                := true;
-            constant tx_time_sup    : boolean                := true;
-            constant sup_be         : boolean                := true;
-            constant logger_size    : natural range 0 to 512 := 8
-        );
-        port(
-            signal clk_sys  : in std_logic;
-            signal res_n    : in std_logic;
-
-            signal data_in  : in  std_logic_vector(31 downto 0);
-            signal data_out : out std_logic_vector(31 downto 0);
-            signal adress   : in  std_logic_vector(23 downto 0);
-            signal scs      : in  std_logic;    --Chip select
-            signal srd      : in  std_logic;    --Serial read
-            signal swr      : in  std_logic;    --Serial write
-            signal sbe      : in  std_logic_vector(3 downto 0);
-
-            signal int      : out std_logic;
-
-            signal CAN_tx   : out std_logic;
-            signal CAN_rx   : in  std_logic;
-
-            signal time_quanta_clk : out std_logic;
-            signal timestamp : in std_logic_vector(63 downto 0)
-        );
-    end component;
-
+   
     component apb_ifc is
         generic (
             -- ID (bits  19-16 of reg_addr_o)
@@ -165,8 +129,6 @@ begin
             sup_filtB       => sup_filtB,
             sup_filtC       => sup_filtC,
             sup_range       => sup_range,
-            tx_time_sup     => tx_time_sup,
-            sup_be          => sup_be,
             logger_size     => logger_size
         )
         port map (

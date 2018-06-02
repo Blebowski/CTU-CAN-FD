@@ -61,8 +61,6 @@ architecture apb_unit_test of CAN_test is
             sup_filtB        : boolean                := true;
             sup_filtC        : boolean                := true;
             sup_range        : boolean                := true;
-            tx_time_sup      : boolean                := true;
-            sup_be           : boolean                := true;
             logger_size      : natural range 0 to 512 := 8
         );
         port(
@@ -110,9 +108,7 @@ begin
             sup_filtA   => false,
             sup_filtB   => false,
             sup_filtC   => false,
-            sup_range   => false,
-            tx_time_sup => false,
-            sup_be      => true
+            sup_range   => false
         )
         port map (
             CAN_rx           => '1',

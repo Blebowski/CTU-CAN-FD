@@ -73,8 +73,6 @@ package CANcomponents is
       constant sup_filtB      : boolean               := true;
       constant sup_filtC      : boolean               := true;
       constant sup_range      : boolean               := true;
-      constant tx_time_sup    : boolean               := true;
-      constant sup_be         : boolean               := false;
       constant logger_size    : natural --range 0 to 512:=8
       );
     port(
@@ -114,7 +112,6 @@ package CANcomponents is
       constant sup_filtC   : boolean                      := true;
       constant sup_range   : boolean                      := true;
       constant sup_be      : boolean                      := false;
-      constant tx_time_sup : boolean                      := true;
       constant buf_count   : natural range 0 to 7         := 2;
       constant ID          : natural
       );
@@ -253,8 +250,7 @@ package CANcomponents is
   ------------------------------------------------------------------------------
   component txArbitrator is
   generic(
-    buf_count   : natural range 1 to 8;
-    tx_time_sup : boolean := true
+    buf_count   : natural range 1 to 8
   );
   port( 
     signal clk_sys                :in  std_logic;
@@ -714,6 +710,36 @@ package CANcomponents is
       );
   end component;
 
+  ------------------------------------------------------------------------------
+  -- APB Interface
+  ------------------------------------------------------------------------------
+  component apb_ifc is
+        generic (
+            -- ID (bits  19-16 of reg_addr_o)
+            ID : natural := 1
+        );
+        port (
+            aclk             : in  std_logic;
+            arstn            : in  std_logic;
 
+            reg_data_in_o    : out std_logic_vector(31 downto 0);
+            reg_data_out_i   : in  std_logic_vector(31 downto 0);
+            reg_addr_o       : out std_logic_vector(23 downto 0);
+            reg_be_o         : out std_logic_vector(3 downto 0);
+            reg_rden_o       : out std_logic;
+            reg_wren_o       : out std_logic;
+
+            s_apb_paddr      : in  std_logic_vector(31 downto 0);
+            s_apb_penable    : in  std_logic;
+            s_apb_pprot      : in  std_logic_vector(2 downto 0);
+            s_apb_prdata     : out std_logic_vector(31 downto 0);
+            s_apb_pready     : out std_logic;
+            s_apb_psel       : in  std_logic;
+            s_apb_pslverr    : out std_logic;
+            s_apb_pstrb      : in  std_logic_vector(3 downto 0);
+            s_apb_pwdata     : in  std_logic_vector(31 downto 0);
+            s_apb_pwrite     : in  std_logic
+        );
+  end component;
 
 end package;
