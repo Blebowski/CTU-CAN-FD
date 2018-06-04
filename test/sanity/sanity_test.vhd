@@ -572,7 +572,7 @@ begin
             
             delay_matrix(j, i) <= bus_matrix_to_delay(bus_matrix(j, i));
 
-            i_txdelay : entity work.tb_signal_delayer 
+            i_txdelay : entity work.signal_delayer
                 generic map (
                     NSAMPLES    => 16
                 )

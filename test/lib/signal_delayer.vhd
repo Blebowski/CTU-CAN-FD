@@ -48,7 +48,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity tb_signal_delayer_vec is
+entity signal_delayer_vec is
     generic (
         NSAMPLES : positive;
         DWIDTH : positive
@@ -60,7 +60,7 @@ entity tb_signal_delayer_vec is
     );
 end entity;
 
-architecture tb of tb_signal_delayer_vec is
+architecture tb of signal_delayer_vec is
     type data_type is array(0 to NSAMPLES-1) of time;
     type dataval_type is array(0 to NSAMPLES-1) of std_logic_vector(DWIDTH-1 downto 0);
     signal first : boolean := true;
@@ -124,7 +124,7 @@ end;
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity tb_signal_delayer is
+entity signal_delayer is
     generic (
         NSAMPLES : positive
     );
@@ -135,10 +135,10 @@ entity tb_signal_delayer is
     );
 end entity;
 
-architecture tb of tb_signal_delayer is
+architecture tb of signal_delayer is
     signal input_v, delayed_v : std_logic_vector(0 downto 0);
 begin
-    i_sdv: entity work.tb_signal_delayer_vec
+    i_sdv: entity work.signal_delayer_vec
     generic map (
         NSAMPLES => NSAMPLES,
         DWIDTH => 1
