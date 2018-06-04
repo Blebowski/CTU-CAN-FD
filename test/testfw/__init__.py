@@ -13,8 +13,11 @@ from pprint import pprint
 from .log import MyLogRecord
 from . import vunit_ifc
 from vunit.ui import VUnit
+import re
 
 d = Path(abspath(__file__)).parent
+base = d.parent
+build = base / 'build'
 
 def setup_logging() -> None:
     with Path(d / 'logging.yaml').open('rt', encoding='utf-8') as f:
@@ -141,42 +144,102 @@ def create_wrapper(lib, fname):
 def cli(ctx, compile):
     setup_logging()
     ctx.obj = {'compile': compile}
+    sys.argv[0] = abspath(sys.argv[0])
     pass
 
 @cli.command()
 def create():
     pass
 
-@cli.group(cls=AliasedGroup)
-def test():
-    sys.argv[0] = abspath(sys.argv[0])
-    pass
-
-@test.command()
-@click.argument('config', type=click.Path())
-@click.argument('vunit_args', nargs=-1)
-@click.pass_obj
-def unit(obj, config, vunit_args):
-    config_file = d.parent / config
-    with config_file.open('rt', encoding='utf-8') as f:
-        config = yaml.load(f)
-    base = Path(config_file).resolve().parent
-    build = d.parent / 'build'
-    build.mkdir(exist_ok=True)
-    os.chdir(str(build))
-
+def create_vunit(obj, vunit_args):
+    # fill vunit arguments
     args = []
+    # hack for vunit_compile TCL command
     if obj['compile']:
         args += ['--compile']
     args += ['--xunit-xml', '../test_unit.xml1'] + list(vunit_args)
     ui = VUnit.from_argv(args)
+    return ui
+
+def vunit_run(ui, build):
+    try:
+        vunit_ifc.run(ui)
+        res = None
+    except SystemExit as e:
+        res = e.code
+    out = build / '../test_unit.xml1'
+    if out.exists():
+        with out.open('rt', encoding='utf-8') as f:
+            c = f.read()
+        with open('../test_unit.xml', 'wt', encoding='utf-8') as f:
+            print('<?xml version="1.0" encoding="utf-8"?>', file=f)
+            print('<?xml-stylesheet href="xunit.xsl" type="text/xsl"?>', file=f)
+            f.write(c)
+        out.unlink()
+    sys.exit(res)
+
+
+@cli.command()
+@click.argument('config', type=click.Path())
+@click.argument('vunit_args', nargs=-1)
+@click.pass_obj
+def test(obj, config, vunit_args):
+    config_file = base / config
+    with config_file.open('rt', encoding='utf-8') as f:
+        config = yaml.load(f)
+    build.mkdir(exist_ok=True)
+    os.chdir(str(build))
+
+    run_unit = 'unit' in config
+    run_feature = 'feature' in config
+    run_sanity = 'sanity' in config
+
+    ui = create_vunit(obj, vunit_args)
 
     lib = ui.add_library("lib")
     add_common_sources(lib)
-    add_sources(lib, ['unit/**/*.vhd'])
-    create_wrapper(lib, build / "tb_wrappers.vhd")
+
+    # unit tests
+    if run_unit:
+        add_sources(lib, ['unit/**/*.vhd'])
+        create_wrapper(lib, build / "tb_wrappers.vhd")
+
+    # sanity test
+    if run_sanity:
+        add_sources(lib, ['sanity/*.vhd'])
+
+    # feature tests
+    if run_feature:
+        add_sources(lib, ['feature/*.vhd'])
+
     add_flags(ui, lib, build)
 
+    if run_unit:
+        configure_unit_tests(ui, lib, config['unit'])
+    if run_sanity:
+        configure_sanity_tests(ui, lib, config['sanity'])
+    if run_feature:
+        configure_feature_tests(ui, lib, config['feature'])
+
+    # check for unconfigured unit tests
+    if run_unit:
+        unit_tests = lib.get_test_benches('*tb_*_unit_test')
+        configured = ['tb_{}_unit_test'.format(name) for name in config['unit']['tests'].keys()]
+        log.debug('Configured unit tests: {}'.format(', '.join(configured)))
+        unconfigured = [tb for tb in unit_tests if tb.name not in configured]
+        if len(unconfigured):
+            log.warn("Unit tests with no configuration found (defaults will be used): {}".format(', '.join(tb.name for tb in unconfigured)))
+
+    # check for unknown tests
+    all_benches = lib.get_test_benches('*')
+    unknown_tests = [tb for tb in all_benches if not re.match('tb_.*?_unit_test|tb_sanity', tb.name)]
+    if len(unknown_tests):
+        log.warn('Unknown tests (defaults will be used): {}'.format(', '.join(tb.name for tb in unknown_tests)))
+
+    vunit_run(ui, build)
+
+
+def configure_unit_tests(ui, lib, config):
     default = config['default']
     unit_tests = lib.get_test_benches('*_unit_test')
     for name, _cfg in config['tests'].items():
@@ -225,27 +288,11 @@ def unit(obj, config, vunit_args):
                     '''.format(name)), file=f)
             tb.set_sim_option("modelsim.init_file.gui", str(tcl))
 
-    # check for unconfigured testbenches
-    all_benches = lib.get_test_benches('*')
-    configured = ['tb_{}_unit_test'.format(name) for name in config['tests'].keys()]
-    log.debug('Configured tests: {}'.format(', '.join(configured)))
-    unconfigured = [tb for tb in all_benches if tb.name not in configured]
-    if len(unconfigured):
-        log.warn("Testbenches with no configuration found: {}".format(', '.join(x.name for x in unconfigured)))
+def configure_sanity_tests(ui, lib, config):
+    pass
 
-    try:
-        vunit_ifc.run(ui)
-    except SystemExit:
-        pass
-    out = build / '../test_unit.xml1'
-    if out.exists():
-        with out.open('rt', encoding='utf-8') as f:
-            c = f.read()
-        with open('../test_unit.xml', 'wt', encoding='utf-8') as f:
-            print('<?xml version="1.0" encoding="utf-8"?>', file=f)
-            print('<?xml-stylesheet href="xunit.xsl" type="text/xsl"?>', file=f)
-            f.write(c)
-        out.unlink()
+def configure_feature_tests(ui, lib, config):
+    pass
 
 """
 - vunit configurations
