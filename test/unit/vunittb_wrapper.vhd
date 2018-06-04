@@ -57,8 +57,9 @@ entity vunittb_wrapper is
     iterations : natural := 50;
     log_level  : log_lvl_type := info_l;
     error_beh  : err_beh_type := quit;           -- Test behaviour when error occurs: Quit, or Go on
-    error_tol  : natural := 0                    -- Error tolerance, error counter should not
+    error_tol  : natural := 0;                   -- Error tolerance, error counter should not
                                                  -- exceed this value in order for the test to pass
+    timeout    : string := "0 ms"                -- Timeout in simulation time. 0 means no limit.
   );
 end entity;
 
@@ -92,4 +93,9 @@ begin
         end loop;
         test_runner_cleanup(runner, t_errors > error_tol);
     end process;
+
+    watchdog: if time'value(timeout) > 0 ns generate
+        test_runner_watchdog(runner, time'value(timeout));
+    end generate;
+
 end architecture;

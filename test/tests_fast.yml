@@ -3,6 +3,7 @@ unit:
         log_level: warning
         error_tolerance: 0
         iterations: 50
+        timeout: 100 ms
     tests:
         bit_stuffing:
             iterations: 10

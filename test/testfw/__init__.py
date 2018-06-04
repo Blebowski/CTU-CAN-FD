@@ -112,7 +112,8 @@ def create_wrapper(lib, fname):
                 iterations : natural := 1;
                 log_level  : log_lvl_type := info_l;
                 error_beh  : err_beh_type := quit;
-                error_tol  : natural := 0
+                error_tol  : natural := 0;
+                timeout    : string := "0 ms"
             ); end entity;
             architecture tb of tb_{test} is
                 component vunittb_wrapper is generic (
@@ -120,11 +121,18 @@ def create_wrapper(lib, fname):
                     iterations : natural;
                     log_level  : log_lvl_type;
                     error_beh  : err_beh_type;
-                    error_tol  : natural
+                    error_tol  : natural;
+                    timeout    : string
                 ); end component;
                 for all:vunittb_wrapper use configuration work.tbconf_{test};
             begin
-                tb:vunittb_wrapper generic map(nested_runner_cfg => runner_cfg, iterations => iterations, log_level => log_level, error_beh => error_beh, error_tol => error_tol);
+                tb:vunittb_wrapper generic map(
+                    nested_runner_cfg => runner_cfg,
+                    iterations        => iterations,
+                    log_level         => log_level,
+                    error_beh         => error_beh,
+                    error_tol         => error_tol,
+                    timeout           => timeout);
             end architecture;
             -- -----------------------------------------------------------------------------
             """.format(test=test)
@@ -252,6 +260,7 @@ def configure_unit_tests(ui, lib, config):
             raise RuntimeError('Testbench {}_unit_test does not exist (but specified in config).'.format(name))
         assert len(tb) == 1
         tb = tb[0]
+        tb.set_generic('timeout', cfg['timeout'])
         tb.set_generic('iterations', cfg['iterations'])
         tb.set_generic('log_level', cfg['log_level'] + '_l')
         tb.set_generic('error_tol', cfg['error_tolerance'])
