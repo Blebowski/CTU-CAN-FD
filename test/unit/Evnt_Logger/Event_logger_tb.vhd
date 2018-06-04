@@ -520,7 +520,6 @@ begin
                 log("Recorded event not matching expected value",
                     error_l, log_level);
                 process_error(error_ctr, error_beh, exit_imm);
-                wait;
             end if;
 
             loop_ctr <= loop_ctr + 1;
