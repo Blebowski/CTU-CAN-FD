@@ -1527,15 +1527,17 @@ package body CANtestLib is
             status    <= passed;
             wait for 200 ns;
             report "Test result: SUCCESS" severity note; 
+            --std.env.stop(0);
         else
             status    <= failed;
             wait for 200 ns;
             report "Test result: FAILURE" severity error; 
+            --std.env.stop(1);
         end if;
 
         -- Finish the test
-        wait for 200 ns;
-        report "Test END" severity failure;
+        --wait for 200 ns;
+        --report "Test END" severity failure;
 
     end procedure;
 

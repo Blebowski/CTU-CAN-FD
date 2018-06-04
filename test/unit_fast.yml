@@ -1,22 +1,31 @@
 default:
-    log_level: info
+    log_level: warning
     error_tolerance: 0
     iterations: 50
 tests:
     bit_stuffing:
         iterations: 10
-        wave: Bit_Stuffing/Bit_Stuffing.tcl
-
+        wave: unit/Bit_Stuffing/bsdt_unit.tcl
     apb:
         iterations: 1
     bus_sync:
+        wave: unit/Bus_Sampling/bsnc_unit.tcl
     crc:
+        wave: unit/CRC/crct_unit.tcl
     fault_confinement:
+        wave: unit/Fault_confinement/fault_conf_unit.tcl
     int_man:
+        wave: unit/Int_Manager/intm_unit.tcl
     mess_filt:
+        wave: unit/Message_filter/msft_unit.tcl
     presc:
+        wave: unit/Prescaler/prsc_unit.tcl
     protocol_control:
+        wave: unit/Protocol_Control/pctl_unit.tcl
     rx_buf:
+        wave: unit/RX_Buffer/rxbf_unit.tcl
         iterations: 10
     tx_arb:
+        wave: unit/TX_Arbitrator/txar_unit.tcl
     tx_buf:
+        wave: unit/TX_Buffer/txbf_unit.tcl
