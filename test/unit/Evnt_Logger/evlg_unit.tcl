@@ -109,7 +109,18 @@ add wave -group "Capture settings" \
 			$TCOMP/can_logger_comp/drv_cap_ewl_reached \
 			$TCOMP/can_logger_comp/drv_cap_erp_changed \
 			$TCOMP/can_logger_comp/drv_cap_tran_start \
-			$TCOMP/can_logger_comp/drv_cap_rec_start		
+			$TCOMP/can_logger_comp/drv_cap_rec_start	
+
+add wave -label "Event inputs" $TCOMP/evnt_inputs	
+add wave -label "Event inputs edge" $TCOMP/evnt_inputs_edge	
+
+add wave -noupdate -divider -height 20 "SW model"							 
+add wave -label "Logger model memory" $TCOMP/log_mod_mem	
+add wave -label "Logger pointer" $TCOMP/ev_logger_model_proc/log_ptr
+add wave -label "Logger input edge" $TCOMP/evnt_inputs_edge
+add wave -label "Logger inputs reg" $TCOMP/evnt_inputs_reg
+add wave -label "Trigger settings" $TCOMP/drv_trig
+add wave -label "Trigger inputs" $TCOMP/trig_inputs
 									 
 ################################################################################
 # Execute the simulation, gather results
