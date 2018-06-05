@@ -1,3 +1,4 @@
+from textwrap import dedent
 from collections.abc import Iterable
 from glob import glob
 from os.path import join, dirname, abspath
@@ -20,6 +21,27 @@ class TestsBase:
 
     def add_sources(self): raise NotImplementedError()
     def configure(self): raise NotImplementedError()
+
+    def add_modelsim_gui_file(self, tb, cfg, name):
+        if 'wave' in cfg:
+            tcl = self.base / cfg['wave']
+            if not tcl.exists():
+                log.warn('Wave file {} not found'.format(cfg['wave']))
+        else:
+            tcl = self.build / 'modelsim_gui_{}.tcl'.format(name)
+            with tcl.open('wt', encoding='utf-8') as f:
+                print(dedent('''\
+                    start_CAN_simulation "dummy"
+                    global IgnoreAddWaveErrors
+                    puts "Automatically adding common waves. Failures are handled gracefully."
+                    set IgnoreAddWaveErrors 1
+                    add_test_status_waves
+                    add_system_waves
+                    set IgnoreAddWaveErrors 0
+                    run_simulation
+                    get_test_results
+                    '''.format(name)), file=f)
+        tb.set_sim_option("modelsim.init_file.gui", str(tcl))
 
 def add_sources(lib, patterns):
     for pattern in patterns:

@@ -37,27 +37,7 @@ class UnitTests(TestsBase):
             init_files = get_common_modelsim_init_files()
             init_files += [str(tcl)]
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
-
-            if 'wave' in cfg:
-                path = self.base / cfg['wave']
-                if not path.exists():
-                    log.warn('Wave file {} not found'.format(cfg['wave']))
-                tb.set_sim_option("modelsim.init_file.gui", str(path))
-            else:
-                tcl = build / 'modelsim_gui_{}.tcl'.format(name)
-                with tcl.open('wt', encoding='utf-8') as f:
-                    print(dedent('''\
-                        start_CAN_simulation "dummy"
-                        global IgnoreAddWaveErrors
-                        puts "Automatically adding common waves. Failures are handled gracefully."
-                        set IgnoreAddWaveErrors 1
-                        add_test_status_waves
-                        add_system_waves
-                        set IgnoreAddWaveErrors 0
-                        run_simulation
-                        get_test_results
-                        '''.format(name)), file=f)
-                tb.set_sim_option("modelsim.init_file.gui", str(tcl))
+            self.add_modelsim_gui_file(tb, cfg, name)
             self._check_for_unconfigured()
 
     def _check_for_unconfigured(self):

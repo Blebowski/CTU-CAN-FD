@@ -41,7 +41,12 @@ class SanityTests(TestsBase):
         # TODO: wave
         tb = self.lib.get_test_benches('*tb_sanity')[0]
         default = self.config['default']
+        self.add_modelsim_gui_file(tb, default, 'sanity')
         for name, cfg in self.config['tests'].items():
+            if 'wave' in cfg:
+                log.warn('"wave" in sanity test config {} is ignored' +
+                         ' (set it in default instead)'.format(name))
+
             dict_merge(cfg, default)
             bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
             generics = {
