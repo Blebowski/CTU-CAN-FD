@@ -603,12 +603,13 @@ entity protocolControl is
   --Data field registers--
   ------------------------
   
-  --Pointer for transcieving the data
+  -- Pointer for data transmission
   signal data_pointer             :     natural range 0 to 511;
-  
-  --Pointer for transcieving the stuf length field
-  signal stl_pointer              :     natural range 0 to 3;
-  signal data_size                :     natural range 0 to 511;
+
+  -- Pointer for TX data index within TX word.
+  -- (Shift register not used, due to additional delay after load of
+  --  txt word on output). 
+  signal data_tx_index            :     natural range 0 to 31;
 
 
   --Shift register for data reception
@@ -643,6 +644,8 @@ entity protocolControl is
   --Fixed stuff bit before CRC of FD Frame, for reciever
   signal fixed_CRC_FD_rec         :     std_logic;
   
+  --Pointer for transcieving the stuf length field
+  signal stl_pointer              :     natural range 0 to 3;
   
   -----------------------------------------
   --Added signals for ISO FD type
@@ -886,7 +889,9 @@ begin
 
         tran_pointer            <=  0;
         alc_r                   <=  (OTHERS=>'0');
-        data_size               <=  0;
+        
+        data_pointer            <=  0;
+        data_tx_index           <=  0;
 
         tran_ident_base_sr      <= (OTHERS => '0');
         tran_ident_ext_sr       <= (OTHERS => '0');
@@ -1028,7 +1033,7 @@ begin
         fixed_CRC_FD           <=  fixed_CRC_FD;
         fixed_CRC_FD_rec       <=  fixed_CRC_FD_rec;
         err_pas_bit_val        <=  err_pas_bit_val;
-        data_size              <=  data_size;
+        data_tx_index          <=  data_tx_index;
 
         --Retransmittion signals
         retr_count            <=  retr_count;
@@ -1928,39 +1933,40 @@ begin
         if (FSM_Preset = '1') then
             FSM_Preset  <= '0';
             
-            -- Note: We don't have to ask whenever frame is RTR frame, in RTR  
-            -- frame we never get into Data Phase!
+            --------------------------------------------------------------------
+            -- Set data pointer based on data size to be transmitted or received
+            -------------------------------------------------------------------- 
             case dlc_int is
-                when "0000" => data_size  <= 0; -- Zero bits
-                when "0001" => data_size  <= 7; -- 1 byte
-                when "0010" => data_size  <= 15; -- 2 bytes
-                when "0011" => data_size  <= 23; -- 3 bytes
-                when "0100" => data_size  <= 31; -- 4 bytes
-                when "0101" => data_size  <= 39; -- 5 bytes
-                when "0110" => data_size  <= 47; -- 6 bytes
-                when "0111" => data_size  <= 55; -- 7 bytes
-                when "1000" => data_size  <= 63; -- 8 bytes
-                when "1001" => data_size  <= 95; -- 12 bytes
-                when "1010" => data_size  <= 127; -- 16 bytes
-                when "1011" => data_size  <= 159; -- 20 bytes
-                when "1100" => data_size  <= 191; -- 24 bytes
-                when "1101" => data_size  <= 255; -- 32 bytes
-                when "1110" => data_size  <= 383; -- 48 bytes
-                when "1111" => data_size  <= 511; -- 64 bytes
-                when others => data_size  <= 0;
-                               unknown_state_Error_r  <=  '1'; 
-                               PC_State               <=  error;
-                               FSM_preset             <=  '1';
+                when "0000" => data_pointer  <= 0; -- Zero bits
+                when "0001" => data_pointer  <= 7; -- 1 byte
+                when "0010" => data_pointer  <= 15; -- 2 bytes
+                when "0011" => data_pointer  <= 23; -- 3 bytes
+                when "0100" => data_pointer  <= 31; -- 4 bytes
+                when "0101" => data_pointer  <= 39; -- 5 bytes
+                when "0110" => data_pointer  <= 47; -- 6 bytes
+                when "0111" => data_pointer  <= 55; -- 7 bytes
+                when "1000" => data_pointer  <= 63; -- 8 bytes
+                when "1001" => data_pointer  <= 95; -- 12 bytes
+                when "1010" => data_pointer  <= 127; -- 16 bytes
+                when "1011" => data_pointer  <= 159; -- 20 bytes
+                when "1100" => data_pointer  <= 191; -- 24 bytes
+                when "1101" => data_pointer  <= 255; -- 32 bytes
+                when "1110" => data_pointer  <= 383; -- 48 bytes
+                when "1111" => data_pointer  <= 511; -- 64 bytes
+                when others => 
+                        data_pointer           <= 0;
+                        unknown_state_Error_r  <= '1'; 
+                        PC_State               <= error;
+                        FSM_preset             <= '1';
             end case;
+            data_tx_index           <= 31;
             
-            data_pointer    <= 511;
-            
-            --Transmitter shall not synchronize in data phase of CAN FD Frame!
+            -- Transmitter shall not synchronize in data phase of CAN FD Frame!
             if (OP_State = transciever and tran_frame_type = FD_CAN) then
-                sync_control_r <= NO_SYNC;
+                sync_control_r      <= NO_SYNC;
             end if;
             
-            --Receive RAM signals
+            -- Receive RAM signals
             rec_word_ptr            <= 0;
             rec_word_bind           <= 0;
             rec_data_sr             <= (OTHERS => '0');
@@ -1968,7 +1974,7 @@ begin
             -- Pointer directly to TXT Buffer, First data word
             txt_buf_ptr_r           <= to_integer(unsigned(
                                         DATA_1_4_W_ADR(11 downto 2)));
-            
+
         else
 
             --------------------------------------------------------------------
@@ -1976,13 +1982,20 @@ begin
             --------------------------------------------------------------------
             if (OP_State = transciever) then
                 if (tran_trig = '1') then
-                    data_tx_r <= tx_data_word(data_pointer mod 32);
+                    data_tx_r               <= tx_data_word(data_tx_index);
 
-                    -- Move to the next word
-                    if ((data_pointer mod 32) = 0) then
+                    ------------------------------------------------------------
+                    -- Move to the next word :
+                    --      1. Increment adress in TXT Buffer
+                    --      2. Set "data_tx_index" to first bit of next word
+                    ------------------------------------------------------------
+                    if (data_tx_index = 0) then
                         if (txt_buf_ptr_r < 19) then
-                            txt_buf_ptr_r <= txt_buf_ptr_r + 1;
+                            txt_buf_ptr_r   <= txt_buf_ptr_r + 1;
                         end if;
+                        data_tx_index       <= 31;
+                    else
+                        data_tx_index       <= data_tx_index - 1;
                     end if;
                 end if;
             else
@@ -1995,15 +2008,20 @@ begin
             if (rec_trig = '1') then
               
                 -- Shift register and bits within one byte
-                rec_data_sr               <=  rec_data_sr(6 downto 0) & data_rx; 
-                rec_word_ptr              <=  (rec_word_ptr + 1) mod 8;
+                rec_data_sr               <= rec_data_sr(6 downto 0) & data_rx; 
+                rec_word_ptr              <= (rec_word_ptr + 1) mod 8;
 
+                ----------------------------------------------------------------
                 -- If whole byte was received store it to "store_data_word_r".
+                ----------------------------------------------------------------
                 if (rec_word_ptr = 7) then
-                    rec_word_bind <= (rec_word_bind + 1) mod 4;
+                    rec_word_bind         <= (rec_word_bind + 1) mod 4;
+
                     case rec_word_bind is
+                        --------------------------------------------------------
                         -- First byte of word, whole word is written to avoid
                         -- bytes from old frames!
+                        --------------------------------------------------------
                         when  0 =>
                             store_data_word_r <= "000000000000000000000000" &
                                                   rec_data_sr(6 downto 0) &
@@ -2021,25 +2039,32 @@ begin
                                                 rec_data_sr(6 downto 0) &
                                                 data_rx;
                         when others =>
-                          report "Unknown state" severity error;
-                          PC_State <= error;
+                            report "Unknown state" severity error;
+                            PC_State      <= error;
+                            FSM_Preset    <= '1';
                     end case;
 
-                    -- Give command to RX Buffer to store data word if 4 byte
-                    -- aligned data were received!
+                    ------------------------------------------------------------
+                    -- Give command to RX Buffer to store data word whole word
+                    -- was received (4 bytes aligned).
+                    ------------------------------------------------------------
                     if (rec_word_bind = 3 and OP_State = reciever) then
                         store_data_r          <= '1';
                     end if;
-
                 end if;
 
-                if (data_pointer > 511 - data_size) then
-                    data_pointer              <=  data_pointer - 1;
+                ----------------------------------------------------------------
+                -- Data pointer counts till 0 (end of data field).
+                ----------------------------------------------------------------                
+                if (data_pointer > 0) then
+                    data_pointer              <= data_pointer - 1;
                 else
 
-                    -- If we finish data field, and we did not receive 4 byte aligned
-                    -- data, we still did not store data since last aligned word!
-                    -- Remaining bytes must be stored
+                    ------------------------------------------------------------
+                    -- If we finish data field, and we did not receive 4 byte 
+                    -- aligned data, we still did not store data since last 
+                    -- aligned word! Remaining bytes must be stored.
+                    ------------------------------------------------------------
                     if (rec_word_bind /= 3 and OP_State = reciever) then
                         store_data_r          <= '1';
                     end if;
