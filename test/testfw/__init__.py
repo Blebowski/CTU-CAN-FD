@@ -68,6 +68,7 @@ def test(obj, config, vunit_args):
     build = base / 'build'
 
     config_file = base / config
+    out_basename = os.path.splitext(config)[0]
     with config_file.open('rt', encoding='utf-8') as f:
         config = yaml.load(f)
     build.mkdir(exist_ok=True)
@@ -77,7 +78,7 @@ def test(obj, config, vunit_args):
     run_feature = 'feature' in config
     run_sanity = 'sanity' in config
 
-    ui = create_vunit(obj, vunit_args)
+    ui = create_vunit(obj, vunit_args, out_basename)
 
     lib = ui.add_library("lib")
     add_common_sources(lib)
@@ -102,29 +103,30 @@ def test(obj, config, vunit_args):
     if len(unknown_tests):
         log.warn('Unknown tests (defaults will be used): {}'.format(', '.join(tb.name for tb in unknown_tests)))
 
-    vunit_run(ui, build)
+    vunit_run(ui, build, out_basename)
 
-def create_vunit(obj, vunit_args):
+def create_vunit(obj, vunit_args, out_basename):
     # fill vunit arguments
     args = []
     # hack for vunit_compile TCL command
     if obj['compile']:
         args += ['--compile']
-    args += ['--xunit-xml', '../test_unit.xml1'] + list(vunit_args)
+    args += ['--xunit-xml', '../{}.xml1'.format(out_basename)] + list(vunit_args)
     ui = VUnit.from_argv(args)
     return ui
 
-def vunit_run(ui, build):
+def vunit_run(ui, build, out_basename):
     try:
         vunit_ifc.run(ui)
         res = None
     except SystemExit as e:
         res = e.code
-    out = build / '../test_unit.xml1'
+    out = build / '../{}.xml1'.format(out_basename)
     if out.exists():
         with out.open('rt', encoding='utf-8') as f:
             c = f.read()
-        with open('../test_unit.xml', 'wt', encoding='utf-8') as f:
+        ofile = build / '../{}.xml'.format(out_basename)
+        with ofile.open('wt', encoding='utf-8') as f:
             print('<?xml version="1.0" encoding="utf-8"?>', file=f)
             print('<?xml-stylesheet href="xunit.xsl" type="text/xsl"?>', file=f)
             f.write(c)
@@ -132,21 +134,24 @@ def vunit_run(ui, build):
     sys.exit(res)
 
 """
-- vunit configurations
-- pass modelsim gui file via ui.set_sim_option("modelsim.init_file.gui", ...)
-- include the standard library files in ui.set_sim_option("modelsim.init_files.after_load", [...])
-- set TCOMP global variable
++ vunit configurations
++ pass modelsim gui file via ui.set_sim_option("modelsim.init_file.gui", ...)
++ include the standard library files in ui.set_sim_option("modelsim.init_files.after_load", [...])
++ set TCOMP global variable
 
 - allow preprocessed calls to log()
 - use some log from vunit?
 - use random from unit?
 
-- use per-test default configurations (with set tcl files etc.), different sanity configurations
-- pass encoded composite generics (sanity test)
++ use per-test default configurations (with set tcl files etc.), different sanity configurations
+x pass encoded composite generics (sanity test)
 
-- use watchdog - pass the time in config: test_runner_watchdog(runner, 10 ms);
++ use watchdog - pass the time in config: test_runner_watchdog(runner, 10 ms);
 
 - bash completion for files & tests:
     - click._bashcompletion.get_choices -> extend the if to check if the given argument is an instance of XXX
       and implement completion method for that instance. Complete test names.
+
+- feature tests
+- sanity - optimize bus delay shift registers
 """
