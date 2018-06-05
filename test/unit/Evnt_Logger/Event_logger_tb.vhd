@@ -53,7 +53,6 @@ use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
-use work.ID_transfer.all;
 use work.CAN_FD_register_map.all;
 
 architecture Event_logger_unit_test of CAN_test is
@@ -556,13 +555,13 @@ begin
 	-- of test entity
 	test_comp : CAN_test
 	port map(
-	 run              =>  run,
-	 iterations       =>  iterations , 
-	 log_level        =>  log_level,
-	 error_beh        =>  error_beh,
-	 error_tol        =>  error_tol,                                                     
-	 status           =>  status_int,
-	 errors           =>  errors
+        run              =>  run,
+        iterations       =>  iterations , 
+        log_level        =>  log_level,
+        error_beh        =>  error_beh,
+        error_tol        =>  error_tol,                                                     
+        status           =>  status_int,
+        errors           =>  errors
 	);
 
 	status              <= status_int;
