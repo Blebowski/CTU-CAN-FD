@@ -203,6 +203,8 @@
 --                   have Data byte 0 at address 0.
 --   29.5.2018    Removed obsolete "sof_skip" signal. Transition from Interframe
 --                to SOF is by received synchronsation edge!
+--    5.6.2018    Added "data_tx_index". Separated CRC check to "crc_valid"
+--                signal! Added "parity_valid" signal.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -646,6 +648,12 @@ entity protocolControl is
   
   --Pointer for transcieving the stuf length field
   signal stl_pointer              :     natural range 0 to 3;
+
+  -- True if received CRC is matching TX CRC
+  signal crc_and_parity_valid     :     boolean;
+  signal crc_valid                :     boolean;
+  signal parity_valid             :     boolean;
+
   
   -----------------------------------------
   --Added signals for ISO FD type
@@ -807,7 +815,36 @@ begin
    -------------------------------------
    stuff_parity <= '0' when (dst_ctr mod 2) = 0 else
                    '1';
-  
+
+   -----------------------------------------------------------------------------
+   -- Comparison of received CRC with calculated CRC
+   -----------------------------------------------------------------------------
+   crc_and_parity_valid <= crc_valid and parity_valid;
+
+   crc_valid <= true when ((crc_src = CRC_15_SRC) and
+                           (rec_crc_r(14 downto 0) = crc15)) 
+                          or
+                          ((crc_src = CRC_17_SRC) and
+                           (rec_crc_r(16 downto 0) = crc17)) 
+                          or
+                          ((crc_src = CRC_21_SRC) and
+                           (rec_crc_r = crc21))
+                     else
+                false;
+
+
+   parity_valid <= false when 
+                    ((OP_State = transciever and tran_frame_type = FD_CAN) or 
+                     (OP_State = reciever    and rec_frame_type_r = FD_CAN)) and
+                     (drv_fd_type = ISO_FD) and ((rx_parity /= stuff_parity) or 
+                      (stuff_count_grey /= rx_count_grey))
+                         else
+                   true;
+                     
+
+ 
+
+
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -2099,12 +2136,9 @@ begin
                 crc_src       <=  CRC_15_SRC;
             else
 
-                -- More than 16 bytes, CRC 21
                 if (unsigned(dlc_int) > 10) then
                     data_pointer  <= 20;
                     crc_src       <= CRC_21_SRC;
-
-                -- Less than 16 bytes, CRC 17
                 else
                     data_pointer  <= 16;
                     crc_src       <= CRC_17_SRC;   
@@ -2129,7 +2163,9 @@ begin
                 fixed_CRC_FD        <= '1';
                 fixed_CRC_FD_rec    <= '1';
 
-                -- Stuff count is transmitted only if ISO option is configured!!
+                ----------------------------------------------------------------
+                -- Go to stuff count transmission if ISO FD is configured.
+                ----------------------------------------------------------------
                 if (drv_fd_type = ISO_FD) then
                     crc_state       <= stuff_count;
                     stl_pointer     <= 3;
@@ -2186,25 +2222,23 @@ begin
                 ----------------------------------------------------------------
                 when real_crc =>
 
-                    if (OP_State = transciever) then
-                        if (tran_trig = '1') then
-                            case crc_src is
-                                when CRC_15_SRC =>
-                                    data_tx_r   <= crc15(data_pointer);
+                    if (OP_State = transciever and tran_trig = '1') then
+                        case crc_src is
+                            when CRC_15_SRC =>
+                                data_tx_r   <= crc15(data_pointer);
 
-                                when CRC_17_SRC =>
-                                    data_tx_r   <= crc17(data_pointer);
+                            when CRC_17_SRC =>
+                                data_tx_r   <= crc17(data_pointer);
 
-                                when CRC_21_SRC =>
-                                    data_tx_r   <= crc21(data_pointer);
+                            when CRC_21_SRC =>
+                                data_tx_r   <= crc21(data_pointer);
 
-                                when others=> 
-                                    data_tx_r             <=  data_tx_r;
-                                    unknown_state_Error_r <=  '1'; 
-                                    PC_State              <=  error;
-                                    FSM_preset            <=  '1';
-                            end case;
-                        end if;
+                            when others=> 
+                                data_tx_r             <=  data_tx_r;
+                                unknown_state_Error_r <=  '1'; 
+                                PC_State              <=  error;
+                                FSM_preset            <=  '1';
+                        end case;
                     end if;
 
                     if (rec_trig = '1') then
@@ -2233,7 +2267,10 @@ begin
             FSM_Preset        <= '0';
             ack_recieved      <= '0';
             sec_ack           <= '0';
-            -- Ack field is not coded by bit stuffing
+
+            --------------------------------------------------------------------
+            -- Disable bit stuffing, ACK field is not coded by bit stuffing
+            --------------------------------------------------------------------
             stuff_enable_r    <= '0';
             destuff_enable_r  <= '0';
             fixed_stuff_r     <= '0';
@@ -2243,27 +2280,10 @@ begin
             -- CRC check (for both reciever, and also for transciever if 
             -- loopbacked CRC matches the calculated one!
             --------------------------------------------------------------------
-            if ((rec_crc_r = "000000" & crc15) or
-			    (rec_crc_r = "0000" & crc17) or 
-			    (rec_crc_r = crc21))
-			then
-                -- Checking stuff count and parity of ISO FD
-                if (((OP_State = transciever and tran_frame_type  = FD_CAN) or 
-                     (OP_State = reciever    and rec_frame_type_r = FD_CAN))
-                    and (drv_fd_type = ISO_FD))
-                then
-                    if (rx_parity = stuff_parity and
-                        stuff_count_grey = rx_count_grey)
-                    then
-                        crc_check <= '1';
-                    else
-                        crc_check <= '0';
-                    end if;
-                else    
-                    crc_check     <= '1';
-                end if;
+            if (crc_and_parity_valid) then
+                crc_check     <= '1';
             else
-                crc_check         <=  '0';
+                crc_check     <= '0';
             end if;        
              
         else
