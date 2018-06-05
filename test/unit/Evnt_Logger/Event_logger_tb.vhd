@@ -292,7 +292,8 @@ begin
         variable epsilon  : natural := 0;
     begin
         generate_clock(period, duty, epsilon, clk_sys);
-        timestamp <= std_logic_vector(unsigned(timestamp) + 1);
+        timestamp <= std_logic_vector(
+                      to_unsigned(to_integer(unsigned(timestamp)) + 1, 64));
     end process;
 
 
@@ -545,7 +546,7 @@ architecture Event_logger_unit_test_wrapper of CAN_test_wrapper is
     --Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(Event_logger_unit_test);
   
-    signal run              :   boolean;                
+    signal run              :   boolean;
     signal status_int       :   test_status_type;      
     signal errors           :   natural;
 
