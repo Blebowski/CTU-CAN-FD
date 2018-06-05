@@ -295,84 +295,68 @@ begin
     event_inputs (0)    <= '1' when ((drv_cap_sof ='1') and (PC_state = sof))                 
                                else 
                            '0';
-    event_inputs (1)    <= '1' when (drv_cap_arb_lost = '1' and 
-                                     stat_bus(STAT_ARB_LOST_INDEX) = '1')
-                               else 
-                           '0';
-    event_inputs (2)    <= '1' when (drv_cap_rec_valid = '1' and 
-                                     stat_bus(STAT_REC_VALID_INDEX) = '1')
-                               else
-                           '0';
-    event_inputs (3)    <= '1' when (drv_cap_tran_valid = '1') and 
-                                     stat_bus(STAT_TRAN_VALID_INDEX) = '1'
-                               else
-                           '0';
+
+    event_inputs (1)    <= drv_cap_arb_lost and stat_bus(STAT_ARB_LOST_INDEX);
+
+    event_inputs (2)    <= drv_cap_rec_valid and stat_bus(STAT_REC_VALID_INDEX);
+
+    event_inputs (3)    <= drv_cap_tran_valid and stat_bus(STAT_TRAN_VALID_INDEX);
+
     event_inputs (4)    <= '1' when (drv_cap_ovl = '1') and 
                                     (PC_state = overload) 
                                else
                            '0';
+
     event_inputs (5)    <= drv_cap_error and (stat_bus(STAT_ERROR_VALID_INDEX));
-                                 
-    event_inputs (6)    <= '1' when (drv_cap_brs = '1') and 
-                                     stat_bus(STAT_BR_SHIFTED) = '1'
-                               else
-                           '0';
+
+    event_inputs (6)    <= drv_cap_brs and stat_bus(STAT_BR_SHIFTED);
+
     event_inputs (7)      <= '1' when (drv_cap_arb_start = '1') and 
                                       (PC_state = arbitration)
                                else
-                           '0';
+                             '0';
+
     event_inputs (8)      <= '1' when (drv_cap_contr_start = '1') and 
                                       (PC_state = control)
                                  else
                              '0';
+
     event_inputs (9)      <= '1' when (drv_cap_data_start = '1')  and 
                                       (PC_state = data)
                                  else
                              '0';
+
     event_inputs (10)     <= '1' when (drv_cap_crc_start = '1') and 
                                       (PC_state = crc)
                                  else
                              '0';
-    event_inputs (11)     <= '1' when (drv_cap_ack_rec = '1') and 
-                                       stat_bus(STAT_ACK_RECIEVED_OUT_INDEX) = '1' 
-                                 else
-                             '0';
-    event_inputs (12)     <= '1' when (drv_cap_ack_n_rec = '1') and 
-                                       stat_bus(STAT_ACK_ERROR_INDEX) = '1'
-                                 else
-                             '0';
-    event_inputs (13)     <= '1' when (drv_cap_ewl_reached = '1') and 
-                                       stat_bus(STAT_EWL_REACHED_INDEX) = '1'
-                                 else
-                             '0';
-    event_inputs (14)     <= '1' when (drv_cap_erp_changed = '1') and 
-                                       stat_bus(STAT_ERP_CHANGED_INDEX) = '1'
-                                 else
-                             '0';
-    event_inputs (15)     <= '1' when (drv_cap_tran_start = '1') and 
-                                       stat_bus(STAT_SET_TRANSC_INDEX) = '1'
-                                 else
-                             '0';
-    event_inputs (16)     <= '1' when (drv_cap_rec_start = '1') and 
-                                       stat_bus(STAT_SET_REC_INDEX) = '1' 
-                                 else
-                             '0';
-    event_inputs (17)     <= '1' when (drv_cap_sync_edge = '1' and 
-                                       sync_edge = '1')                           
-                                 else
-                             '0';
-    event_inputs (18)     <= '1' when (drv_cap_stuffed = '1') and 
-                                      (stat_bus(STAT_DATA_HALT_INDEX) = '1') 
-                                 else
-                             '0';
-    event_inputs (19)     <= '1' when (drv_cap_destuffed = '1') and
-                                      (stat_bus(STAT_DESTUFFED_INDEX) = '1')
-                                 else
-                             '0';
-    event_inputs (20)     <= '1' when (drv_cap_ovr = '1') and 
-                                      (data_overrun = '1') 
-                                 else
-                             '0';
+
+    event_inputs (11)     <= drv_cap_ack_rec and 
+                             stat_bus(STAT_ACK_RECIEVED_OUT_INDEX);
+
+    event_inputs (12)     <= drv_cap_ack_n_rec and 
+                             stat_bus(STAT_ACK_ERROR_INDEX);
+
+    event_inputs (13)     <= drv_cap_ewl_reached and 
+                             stat_bus(STAT_EWL_REACHED_INDEX);
+
+    event_inputs (14)     <= drv_cap_erp_changed and 
+                             stat_bus(STAT_ERP_CHANGED_INDEX);
+
+    event_inputs (15)     <= drv_cap_tran_start and 
+                             stat_bus(STAT_SET_TRANSC_INDEX);
+
+    event_inputs (16)     <= drv_cap_rec_start and stat_bus(STAT_SET_REC_INDEX);
+
+    event_inputs (17)     <= drv_cap_sync_edge and sync_edge;
+
+    event_inputs (18)     <= drv_cap_stuffed and stat_bus(STAT_DATA_HALT_INDEX);
+
+    event_inputs (19)     <= drv_cap_destuffed and 
+                             stat_bus(STAT_DESTUFFED_INDEX);
+
+    event_inputs (20)     <= drv_cap_ovr and data_overrun;
+
   
     ----------------------------------------------------------------------------
     -- Registering previous values, to detect change.
