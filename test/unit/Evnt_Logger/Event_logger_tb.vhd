@@ -189,7 +189,9 @@ architecture Event_logger_unit_test of CAN_test is
     begin
         log("Waiting for trigger", info_l, log_level);
 
-        wait until falling_edge(clk_sys) and log_state_out = ready;
+        wait until (falling_edge(clk_sys) and (log_state_out = ready));
+
+        log("Trigger here!", info_l, log_level);
 
         while ((trig_inputs and drv_trig) = trig_zero) loop
             wait until rising_edge(clk_sys);            
