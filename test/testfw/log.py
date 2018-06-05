@@ -2,10 +2,10 @@ import logging
 
 class MyLogRecord(logging.LogRecord):
     _slvls = {
-        logging.DEBUG: '--',
-        logging.INFO: 'II',
+        logging.DEBUG:   '--',
+        logging.INFO:    'II',
         logging.WARNING: 'WW',
-        logging.ERROR: 'EE',
+        logging.ERROR:   'EE',
     }
     _colors = {
         logging.DEBUG:   '',
