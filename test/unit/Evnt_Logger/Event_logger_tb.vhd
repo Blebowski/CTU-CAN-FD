@@ -186,8 +186,8 @@ architecture Event_logger_unit_test of CAN_test is
     procedure wait_till_trigger(
         signal   clk_sys          :in    std_logic;
         signal   log_state        :in    logger_state_type;
-        constant trig_inputs	  :in    std_logic_vector(trig_amount - 1 downto 0);
-	    constant drv_trig         :in    std_logic_vector(trig_amount - 1 downto 0);
+        signal   trig_inputs	  :in    std_logic_vector(trig_amount - 1 downto 0);
+	    signal   drv_trig         :in    std_logic_vector(trig_amount - 1 downto 0);
         signal   log_level        :in    log_lvl_type;
         variable outcome          :inout boolean
     ) is
