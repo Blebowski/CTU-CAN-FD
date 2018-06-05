@@ -790,11 +790,13 @@ union ctu_can_fd_err_capt_alc {
 		uint32_t err_pos                 : 5;
 		uint32_t err_type                : 3;
   /* ALC */
-		uint32_t alc_val                 : 5;
-		uint32_t reserved_31_13         : 19;
+		uint32_t alc_bit                 : 5;
+		uint32_t alc_id_field            : 3;
+		uint32_t reserved_31_16         : 16;
 #else
-		uint32_t reserved_31_13         : 19;
-		uint32_t alc_val                 : 5;
+		uint32_t reserved_31_16         : 16;
+		uint32_t alc_id_field            : 3;
+		uint32_t alc_bit                 : 5;
 		uint32_t err_type                : 3;
 		uint32_t err_pos                 : 5;
 #endif
@@ -820,6 +822,14 @@ enum ctu_can_fd_err_capt_err_type {
 	ERC_FRM_ERR        = 0x2,
 	ERC_ACK_ERR        = 0x3,
 	ERC_STUF_ERR       = 0x4,
+};
+
+enum ctu_can_fd_alc_alc_id_field {
+	ALC_BASE_ID         = 0x0,
+	ALC_SRR_RTR         = 0x1,
+	ALC_IDE             = 0x2,
+	ALC_EXTENSION       = 0x3,
+	ALC_RTR             = 0x4,
 };
 
 union ctu_can_fd_trv_delay {

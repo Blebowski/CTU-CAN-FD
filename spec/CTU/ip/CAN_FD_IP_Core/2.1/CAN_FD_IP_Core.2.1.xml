@@ -972,16 +972,16 @@
 				<ipxact:register>
 					<ipxact:name>ALC</ipxact:name>
 					<ipxact:displayName>ALC</ipxact:displayName>
-					<ipxact:description>Arbitration lost capture register. </ipxact:description>
+					<ipxact:description>Arbitration lost capture register. Determines bit position of last arbitration lost.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h75</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>ALC_VAL</ipxact:name>
-						<ipxact:displayName>ALC_VAL</ipxact:displayName>
-						<ipxact:description>Arbitration lost capture value. Not supported yet. Do not use!</ipxact:description>
+						<ipxact:name>ALC_BIT</ipxact:name>
+						<ipxact:displayName>ALC_BIT</ipxact:displayName>
+						<ipxact:description>Arbitration lost capture bit position. If ALC_ID_FIELD = ALC_BASE_ID  then bit index of BASE identifier in which arbitration was lost is given as: 11 - ALC_VAL. If ALC_ID_FIELD = ALC_EXTENSION  then bit index of EXTENDED identifier in which arbitration was lost is given as: 18 - ALC_VAL. For other values of ALC_ID_FIELD, this value is undefined.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -989,6 +989,50 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>5</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ALC_ID_FIELD</ipxact:name>
+						<ipxact:displayName>ALC_ID_FIELD</ipxact:displayName>
+						<ipxact:description>Sub field of CAN Identifier in which arbitration was lost.</ipxact:description>
+						<ipxact:bitOffset>5</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>3</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ALC_BASE_ID</ipxact:name>
+								<ipxact:displayName>ALC_BASE_ID</ipxact:displayName>
+								<ipxact:description>Arbitration was lost during base identifier.</ipxact:description>
+								<ipxact:value>00</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ALC_SRR_RTR</ipxact:name>
+								<ipxact:displayName>ALC_SRR_RTR</ipxact:displayName>
+								<ipxact:description>Arbitration was lost during first bit after Base identifier (SRR of  Extended Frame, RTR bit of CAN 2.0 Base Frame)</ipxact:description>
+								<ipxact:value>01</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ALC_IDE</ipxact:name>
+								<ipxact:displayName>ALC_IDE</ipxact:displayName>
+								<ipxact:description>Arbitration was lost during IDE bit.</ipxact:description>
+								<ipxact:value>02</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ALC_EXTENSION</ipxact:name>
+								<ipxact:displayName>ALC_EXTENSION</ipxact:displayName>
+								<ipxact:description>Arbitration was lost during Identifier extension.</ipxact:description>
+								<ipxact:value>03</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ALC_RTR</ipxact:name>
+								<ipxact:displayName>ALC_RTR</ipxact:displayName>
+								<ipxact:description>Arbitration was lost during RTR bit after Identifier extension!</ipxact:description>
+								<ipxact:value>04</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
