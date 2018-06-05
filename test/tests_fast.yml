@@ -31,9 +31,13 @@ unit:
             wave: unit/TX_Arbitrator/txar_unit.tcl
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
-.sanity:
+sanity:
     default:
         iterations: 1
+        timeout: 2 sec
+        log_level: info
+        error_tolerance: 0
+        gauss_iter: 40
     tests:
         "1Mb/10Mb 20 m Star":
             topology: star
@@ -45,4 +49,3 @@ unit:
             ng_mean: 300000.0
             ng_var:  100000.0
             timing_config: [4, 1, 8, 8, 8, 3, 3, 1, 5, 2]
-

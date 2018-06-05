@@ -43,6 +43,13 @@
 --    February 2018   First Implementation - Martin Jerabek
 --------------------------------------------------------------------------------
 
+library work;
+USE work.CANtestLib.All;
+package mypkg is
+    type bus_length_type is array(1 to 6) of real;
+    subtype natural_vector is anat_t;
+end package;
+
 library vunit_lib;
 context vunit_lib.vunit_context;
 
@@ -50,180 +57,213 @@ library ieee;
 library work;
 use ieee.std_logic_1164.all;
 USE work.CANtestLib.All;
+use work.mypkg.all;
 
 entity tb_sanity is
-  generic (
-    runner_cfg : string := runner_cfg_default;
-    log_level  : log_lvl_type := info_l;
-    error_beh  : err_beh_type := quit;           -- Test behaviour when error occurs: Quit, or Go on
-    error_tol  : natural := 0                    -- Error tolerance, error counter should not
-                                                 -- exceed this value in order for the test to pass
-  );
-end entity;
+    generic (
+        -- ghdl accepts only string, integral and enum top-level generics
+        runner_cfg    : string := runner_cfg_default;
+        log_level     : log_lvl_type := info_l;
 
-architecture tb of tb_sanity is
-  signal t_sanity_errors   : natural;
-  signal t_sanity_status   : test_status_type;
-  signal t_sanity_run      : boolean;
+        -- Test behaviour when error occurs: Quit, or Go on
+        error_beh     : err_beh_type := quit;
+        -- Error tolerance, error counter should not exceed this value
+        -- in order for the test to pass
+        error_tol     : natural := 0;
+        -- Timeout in simulation time. 0 means no limit.
+        timeout       : string := "0 ms";
 
-  procedure run_test(
-    variable errors : inout natural;
-    signal do_run : out boolean;
-    signal status : in test_status_type;
-    signal t_errors : in natural
-  ) is
-  begin
-    report "running";
-    wait for 1 ns;
-    do_run <= true;
-    wait until status = passed or status = failed;
-    report "Done";
-    report to_string(t_errors);
-    wait for 100 ns;
-    do_run <= false;
-    errors := errors + t_errors;
-  end;
+        topology      : string;
+        bus_len_v     : string; --bus_length_type;
+        trv_del_v     : string; --anat_nc_t;
+        osc_tol_v     : string; --anat_nc_t;
 
-  function strtolen(n : natural; src : string) return string is
-    variable s : string(1 to n) := (others => ' ');
-  begin
-    assert src'length <= n report "String too long." severity failure;
-    s(src'range) := src;
-    return s;
-  end;
+        -- Noise parameters
+        nw_mean       : string; -- real;
+        nw_var        : string; -- real;
+        ng_mean       : string; -- real;
+        ng_var        : string; -- real;
 
-  type bus_length_type is array(1 to 6) of real;
-  type config_t is record
-    topology    : string (1 to 50);
-    bus_length_v: bus_length_type;
-    trv_del_v   : anat_nc_t;
-    osc_tol_v   : anat_nc_t; -- epsilon_v
+        gauss_iter    : natural := 40;
 
-    -- Noise parameters
-    nw_mean     : real;
-    nw_var      : real;
-    ng_mean     : real;
-    ng_var      : real;
-
-    -- Bit time config
-    -- brp_nbt brp_dbt prop_nbt ph1_nbt ph2_nbt sjw_nbt prop_dbt ph1_dbt ph2_dbt sjw_dbt
-    timing_config : bit_time_config_type;
-
-    -- Name and iterations amount
-    name        : string (1 to 50);
-    niter       : natural;
-  end record;
-
-  function str_equal(a : string; b : string) return boolean is
-    variable l : integer;
-    variable r : integer;
-  begin
-    if a'left > b'left then
-      l := a'left;
-    else
-      l := b'left;
-    end if;
-    if a'right < b'right then
-      r := a'right;
-    else
-      r := b'right;
-    end if;
-    --report to_string(l) severity note;
-    --report to_string(r) severity note;
-    --report a(l to r) severity note;
-    --report b(l to r) severity note;
-    return a(l to r) = b(l to r);
-  end function;
-
-  function len_to_matrix(topology : string; l : bus_length_type)
-    return bus_matrix_type is
-    variable bm : bus_matrix_type;
-  begin
-    if str_equal(topology, "bus") then
-      bm := ((0.0,            l(1),           l(1)+l(2),      l(1)+l(2)+l(3)),
-             (l(1),           0.0,            l(2),           l(2)+l(3)),
-             (l(1)+l(2),      l(2),           0.0,            l(3)),
-             (l(1)+l(2)+l(3), l(2)+l(3),      l(3),           0.0));
-    elsif str_equal(topology, "star") then
-      bm := ((0.0,            l(1)+l(2),      l(1)+l(3),      l(1)+l(4)),
-             (l(1)+l(2),      0.0,            l(2)+l(3),      l(2)+l(4)),
-             (l(1)+l(3),      l(2)+l(3),      0.0,            l(3)+l(4)),
-             (l(1)+l(4),      l(2)+l(4),      l(3)+l(4),      0.0));
-    elsif str_equal(topology, "tree") then
-      bm := ((0.0,            l(1)+l(2),      l(1)+l(3)+l(5), l(1)+l(4)+l(5)),
-             (l(1)+l(2),      0.0,            l(2)+l(3)+l(5), l(2)+l(4)+l(5)),
-             (l(1)+l(3)+l(5), l(2)+l(3)+l(5), 0.0,            l(3)+l(4)),
-             (l(1)+l(4)+l(5), l(2)+l(4)+l(5), l(3)+l(4),      0.0));
-    elsif str_equal(topology, "ring") then
-      assert false report "Ring topology not implemented." severity failure;
-      -- TODO: Ring topology with min functions
-    elsif str_equal(topology, "custom") then
-      bm := ((0.0,  l(1), l(2), l(3)),
-             (l(1), 0.0,  l(4), l(5)),
-             (l(2), l(4), 0.0,  l(6)),
-             (l(3), l(6), l(6), 0.0));
-    else
-      assert false report "Invalid bus topology!" severity failure;
-    end if;
-    return bm;
-  end len_to_matrix;
-
-  signal config : config_t;
-  signal bm : bus_matrix_type;
-
-  -- ***** Configurations *****
-  constant config1 : config_t := (
-    topology      => strtolen(50, "star"),
-    bus_length_v  => (10.0, 10.0, 10.0, 10.0, 0.0, 0.0),
-    trv_del_v     => (10, 10, 10, 10),
-    osc_tol_v     => (0, 5, 10, 15),
-    nw_mean       => 70.0,
-    nw_var        => 5.0,
-    ng_mean       => 300000.0,
-    ng_var        => 100000.0,
-    timing_config => (4, 1, 8, 8, 8, 3, 3, 1, 5, 2),
-    name          => strtolen(50, "1Mb/10Mb 20 m Star"),
-    niter         => 5
-  );
-begin
-  main:process
-    variable errors : natural := 0;
-    variable var_config : config_t;
-  begin
-    test_runner_setup(runner, runner_cfg);
-
-    while test_suite loop
-      if run("1Mb/10Mb 20 m Star") then
-        var_config := config1;
-      end if;
-      config <= var_config;
-      bm <= len_to_matrix(var_config.topology, var_config.bus_length_v);
-      run_test(errors, t_sanity_run, t_sanity_status, t_sanity_errors);
-    end loop;
-
-    test_runner_cleanup(runner, errors > 0);
-  end process;
-
-  t_sanity: entity work.sanity_test
-    port map (
-      iterations => config.niter,
-      log_level  => log_level,
-      error_beh  => error_beh,
-      error_tol  => error_tol,
-      errors     => t_sanity_errors,
-      status     => t_sanity_status,
-      run        => t_sanity_run,
-      -- test params
-      epsilon_v  => config.osc_tol_v,
-      trv_del_v  => config.trv_del_v,
-      bus_matrix => bm,
-      iter_am    => config.niter,
-      nw_mean    => config.nw_mean,
-      nw_var     => config.nw_var,
-      ng_mean    => config.ng_mean,
-      ng_var     => config.ng_var,
-      topology   => config.topology,
-      timing_config => config.timing_config
+        -- brp_nbt brp_dbt prop_nbt ph1_nbt ph2_nbt sjw_nbt prop_dbt ph1_dbt ph2_dbt sjw_dbt
+        timing_config : string; --bit_time_config_type;
+        iterations    : natural
     );
+end entity;
+architecture tb of tb_sanity is
+    impure function decode_real_vec(s : string) return real_vector is
+        variable parts : lines_t := split(s(s'low+1 to s'high-1), ", ");
+        variable return_value : real_vector(parts'range);
+    begin
+        for i in parts'range loop
+            return_value(i) := real'value(parts(i).all);
+        end loop;
+        return return_value;
+    end function decode_real_vec;
 
+    impure function decode_integer_vec(s : string) return integer_vector is
+        variable parts : lines_t := split(s(s'low+1 to s'high-1), ", ");
+        variable return_value : integer_vector(parts'range);
+    begin
+        for i in parts'range loop
+            return_value(i) := integer'value(parts(i).all);
+        end loop;
+        return return_value;
+    end function decode_integer_vec;
+
+    impure function decode_natural_vec(s : string) return natural_vector is
+        variable parts : lines_t := split(s(s'low+1 to s'high-1), ", ");
+        variable return_value : natural_vector(parts'range);
+    begin
+        for i in parts'range loop
+            return_value(i) := natural'value(parts(i).all);
+        end loop;
+        return return_value;
+    end function decode_natural_vec;
+
+    function to_bit_time_config_type(v : natural_vector)
+      return bit_time_config_type is
+        variable ret : bit_time_config_type;
+    begin
+        ret.tq_nbt   := v(0);
+        ret.tq_dbt   := v(1);
+        ret.prop_nbt := v(2);
+        ret.ph1_nbt  := v(3);
+        ret.ph2_nbt  := v(4);
+        ret.sjw_nbt  := v(5);
+        ret.prop_dbt := v(6);
+        ret.ph1_dbt  := v(7);
+        ret.ph2_dbt  := v(8);
+        ret.sjw_dbt  := v(9);
+        return ret;
+    end function to_bit_time_config_type;
+
+    function str_equal(a : string; b : string) return boolean is
+        variable l : integer;
+        variable r : integer;
+        begin
+        if a'left > b'left then
+            l := a'left;
+        else
+            l := b'left;
+        end if;
+        if a'right < b'right then
+            r := a'right;
+        else
+            r := b'right;
+        end if;
+        return a(l to r) = b(l to r);
+    end function str_equal;
+
+    function strtolen(n : natural; src : string) return string is
+        variable s : string(1 to n) := (others => ' ');
+    begin
+        assert src'length <= n report "String too long." severity failure;
+        s(src'range) := src;
+        return s;
+    end function strtolen;
+
+    function len_to_matrix(topology : string; l : bus_length_type)
+      return bus_matrix_type is
+        variable bm : bus_matrix_type;
+    begin
+        if str_equal(topology, "bus") then
+            bm := ((0.0,            l(1),           l(1)+l(2),      l(1)+l(2)+l(3)),
+                   (l(1),           0.0,            l(2),           l(2)+l(3)),
+                   (l(1)+l(2),      l(2),           0.0,            l(3)),
+                   (l(1)+l(2)+l(3), l(2)+l(3),      l(3),           0.0));
+        elsif str_equal(topology, "star") then
+            bm := ((0.0,            l(1)+l(2),      l(1)+l(3),      l(1)+l(4)),
+                   (l(1)+l(2),      0.0,            l(2)+l(3),      l(2)+l(4)),
+                   (l(1)+l(3),      l(2)+l(3),      0.0,            l(3)+l(4)),
+                   (l(1)+l(4),      l(2)+l(4),      l(3)+l(4),      0.0));
+        elsif str_equal(topology, "tree") then
+            bm := ((0.0,            l(1)+l(2),      l(1)+l(3)+l(5), l(1)+l(4)+l(5)),
+                   (l(1)+l(2),      0.0,            l(2)+l(3)+l(5), l(2)+l(4)+l(5)),
+                   (l(1)+l(3)+l(5), l(2)+l(3)+l(5), 0.0,            l(3)+l(4)),
+                   (l(1)+l(4)+l(5), l(2)+l(4)+l(5), l(3)+l(4),      0.0));
+        elsif str_equal(topology, "ring") then
+            assert false report "Ring topology not implemented." severity failure;
+            -- TODO: Ring topology with min functions
+        elsif str_equal(topology, "custom") then
+            bm := ((0.0,  l(1), l(2), l(3)),
+                   (l(1), 0.0,  l(4), l(5)),
+                   (l(2), l(4), 0.0,  l(6)),
+                   (l(3), l(6), l(6), 0.0));
+        else
+            assert false report "Invalid bus topology!" severity failure;
+        end if;
+        return bm;
+    end len_to_matrix;
+
+    procedure run_test(
+        variable errors : inout natural;
+        signal do_run : out boolean;
+        signal status : in test_status_type;
+        signal t_errors : in natural
+    ) is
+    begin
+        report "running";
+        wait for 1 ns;
+        do_run <= true;
+        wait until status = passed or status = failed;
+        report "Done";
+        report to_string(t_errors);
+        wait for 100 ns;
+        do_run <= false;
+        errors := errors + t_errors;
+    end procedure run_test;
+
+    constant bm : bus_matrix_type
+        := len_to_matrix(topology, bus_length_type(decode_real_vec(bus_len_v)));
+    constant epsilon_v : epsilon_type
+        := epsilon_type(decode_integer_vec(osc_tol_v));
+    constant decoded_trv_del_v : trv_del_type
+        := trv_del_type(decode_integer_vec(trv_del_v));
+    constant decoded_timing_config : bit_time_config_type
+        := to_bit_time_config_type(decode_natural_vec(timing_config));
+    constant padded_topology : string(1 to 50) := strtolen(50, topology);
+    constant decoded_ng_mean : real := real'value(ng_mean);
+    constant decoded_ng_var  : real := real'value(ng_var);
+    constant decoded_nw_mean : real := real'value(nw_mean);
+    constant decoded_nw_var  : real := real'value(nw_var);
+
+    signal t_sanity_errors   : natural;
+    signal t_sanity_status   : test_status_type;
+    signal t_sanity_run      : boolean;
+begin
+    main:process
+        variable errors : natural := 0;
+    begin
+        test_runner_setup(runner, runner_cfg);
+        run_test(errors, t_sanity_run, t_sanity_status, t_sanity_errors);
+        test_runner_cleanup(runner, errors > 0);
+    end process;
+
+    watchdog: if time'value(timeout) > 0 ns generate
+        test_runner_watchdog(runner, time'value(timeout));
+    end generate;
+
+    t_sanity: entity work.sanity_test
+    port map (
+        iterations => iterations,
+        log_level  => log_level,
+        error_beh  => error_beh,
+        error_tol  => error_tol,
+        errors     => t_sanity_errors,
+        status     => t_sanity_status,
+        run        => t_sanity_run,
+        -- test params
+        epsilon_v  => epsilon_v,
+        trv_del_v  => decoded_trv_del_v,
+        bus_matrix => bm,
+        iter_am    => gauss_iter, -- gauss iteration count
+        nw_mean    => decoded_nw_mean,
+        nw_var     => decoded_nw_var,
+        ng_mean    => decoded_ng_mean,
+        ng_var     => decoded_ng_var,
+        topology   => padded_topology,
+        timing_config => decoded_timing_config
+    );
 end architecture;
