@@ -149,10 +149,17 @@ architecture Event_logger_unit_test of CAN_test is
         signal rand_ctr         :inout natural range 0 to RAND_POOL_SIZE;
         signal drv_trig         :inout std_logic_vector(trig_amount - 1 downto 0)
     ) is
+        constant trig_zero      :      std_logic_vector(trig_amount - 1 downto 0)
+                                        := (OTHERS => '0');
     begin
         -- Generate random events for capturing!
         rand_logic_vect_s(rand_ctr, drv_trig, 0.4);
+        wait for 0 ns;
         drv_trig(7) <= '0';
+        if (drv_trig = trig_zero) then
+            drv_trig(0) <= '1';
+        end if;
+        wait for 0 ns;
     end procedure;
 
 
