@@ -590,6 +590,7 @@ entity protocolControl is
   --------------------------
   --Pointer for counting DLC bits 
   signal control_pointer          :     natural range 0 to 7;
+  signal control_pointer_non_zero :     boolean;
   
   --Signal for presetting the state machine of control field into correct
   -- state  based on type of transcieved/recieved frame
@@ -799,6 +800,13 @@ begin
   -----------------------
   aux_tx_rx                 <=  data_tx_r & data_rx;
   aux_tran_frame_ident_type <=  tran_frame_type&tran_ident_type;
+
+  -------------------------------------------
+  -- Auxiliarly control pointer signals
+  -------------------------------------------
+  control_pointer_non_zero  <= true when (control_pointer > 0)
+                                    else
+                               false;
   
   -------------------------------------
   --Gray coding of stuff bit counter  
@@ -1734,7 +1742,7 @@ begin
                     -- Count down on "control_pointer" till 0. When end of
                     -- control field was reached -> switch state.
                     ------------------------------------------------------------
-                    if (control_pointer > 0) then
+                    if (control_pointer_non_zero) then
                         control_pointer        <= control_pointer - 1;
 
                     else
@@ -1859,7 +1867,7 @@ begin
             else
 
                 -- Decrement control pointer till the end of control field
-                if (control_pointer > 0) then
+                if (control_pointer_non_zero) then
                     control_pointer        <= control_pointer - 1;
                 end if;
 
@@ -2277,7 +2285,7 @@ begin
     ----------------------------------------------------------------------------
     when delim_ack =>
         if (FSM_Preset = '1') then
-            control_pointer   <= 0;
+            control_pointer   <= 2;
             FSM_Preset        <= '0';
             ack_recieved      <= '0';
             sec_ack           <= '0';
@@ -2321,7 +2329,7 @@ begin
                         --------------------------------------------------------
                         -- CRC delimiter -> Switch back to Nominal bit rate
                         --------------------------------------------------------
-                        when 0 =>
+                        when 2 =>
                             if (tran_brs = BR_SHIFT and
                                 tran_frame_type = FD_CAN)
                             then
@@ -2329,7 +2337,7 @@ begin
                                 sp_control_r    <= NOMINAL_SAMPLE;
                             end if;
                             
-                            control_pointer     <= control_pointer + 1;
+                            control_pointer     <= control_pointer - 1;
 
                         --------------------------------------------------------
                         -- ACK field -> When dominant is received, ACK is valid.
@@ -2339,7 +2347,7 @@ begin
                                 drv_self_test_ena = '1')
                             then 
                                 ack_recieved        <= '1';
-                                control_pointer     <= control_pointer + 1;
+                                control_pointer     <= control_pointer - 1;
                             else
 
                                 ------------------------------------------------
@@ -2365,7 +2373,7 @@ begin
                         -- ACK Delimiter. If ACK was received -> OK, Error
                         -- frame otherwise.
                         --------------------------------------------------------
-                        when 2 =>
+                        when 0 =>
                             if (ack_recieved = '1') then
                                 PC_State            <= eof;
                             else
@@ -2394,7 +2402,7 @@ begin
                         --------------------------------------------------------
                         -- CRC delimiter bit
                         --------------------------------------------------------
-                        when 0 => 
+                        when 2 => 
                             data_tx_r           <= RECESSIVE;
                             
                         --------------------------------------------------------
@@ -2420,7 +2428,7 @@ begin
                         --------------------------------------------------------
                         -- ACK field. Send if CRC match and ACK is not forbidden
                         --------------------------------------------------------
-                        when 2 =>
+                        when 0 =>
                             data_tx_r               <= RECESSIVE;
                             int_loop_back_ena_r     <= '0'; 
   
@@ -2440,7 +2448,7 @@ begin
                         --------------------------------------------------------
                         -- CRC delimiter, switch back to NOMINAL bit rate.
                         --------------------------------------------------------
-                        when 0 =>
+                        when 2 =>
                             if (rec_brs_r = BR_SHIFT and
                                 rec_frame_type_r = FD_CAN)
                             then
@@ -2473,7 +2481,7 @@ begin
                         --------------------------------------------------------
                         -- ACK delimiter
                         --------------------------------------------------------
-                        when 2 => 
+                        when 0 => 
                             if (ack_recieved = '1' and crc_check = '1') then
                                 PC_State            <= eof;
                             else
@@ -2484,8 +2492,11 @@ begin
                             FSM_preset              <= '1';
 
                         when others =>
-                    end case;        
-                    control_pointer                 <= control_pointer + 1;
+                    end case;
+
+                    if (control_pointer_non_zero) then
+                        control_pointer             <= control_pointer - 1;
+                    end if;
               end if;
 
             end if;
@@ -2521,13 +2532,13 @@ begin
                 ----------------------------------------------------------------
                 if (data_rx = DOMINANT) then
 
-                    if (control_pointer = 0) then
-                        PC_State                    <= overload;
-                    else
+                    if (control_pointer_non_zero) then
                         PC_State                    <= error;
                         if (OP_State = reciever) then
                             inc_one_r               <= '1';
                         end if;
+                    else
+                        PC_State                    <= overload;
                     end if;
                     FSM_Preset <= '1';
 
@@ -2560,7 +2571,7 @@ begin
                     ------------------------------------------------------------
                     -- Count till 0 -> Go to interframe then.
                     ------------------------------------------------------------
-                    if (control_pointer > 0) then
+                    if (control_pointer_non_zero) then
                         control_pointer         <= control_pointer - 1;                        
                     else
                         PC_State                <= interframe; 
@@ -2587,7 +2598,7 @@ begin
         else
             case interm_state is
                 when intermission =>
-                    if (tran_trig = '1') then --Transmition of intermission
+                    if (tran_trig = '1') then -- Transmition of intermission
                         data_tx_r               <= RECESSIVE;
                         if (control_pointer < 2) then 
                             -- Hard synchronisation during second or third bit
@@ -2596,16 +2607,16 @@ begin
                         end if;
                     end if;
                         
-                    --------------------------------------------------------------
+                    ------------------------------------------------------------
                     -- We transfer to SOF When sample dominant or detect edge
-                    --------------------------------------------------------------
+                    ------------------------------------------------------------
                     if (hard_sync_edge = '1') then
                         PC_State                    <= sof; 
                         crc_enable_r                <= '1';
                         FSM_preset                  <= '1';
                     elsif (rec_trig = '1') then --Reciving intermission bits
 
-                        if (control_pointer > 0) then
+                        if (control_pointer_non_zero) then
                             control_pointer         <= control_pointer - 1;
                         end if;
 
@@ -2653,7 +2664,7 @@ begin
 
                     elsif (rec_trig = '1') then
 
-                        if (control_pointer > 0) then
+                        if (control_pointer_non_zero) then
                             control_pointer         <= control_pointer - 1;
                         end if;
 
@@ -2816,7 +2827,7 @@ begin
                 -- flag superposition 
                 when err_flg_sup =>
                     if (tran_trig = '1') then
-                        if (control_pointer > 0 and
+                        if (control_pointer_non_zero and
                             error_state = error_active)
                         then
                             data_tx_r <=  DOMINANT; -- Sending active error flag
@@ -2841,7 +2852,7 @@ begin
                             if (error_state = error_active) then
                           
                                 -- Decreasing counters
-                                if (control_pointer > 0) then
+                                if (control_pointer_non_zero) then
                                     control_pointer     <= control_pointer - 1;
                                 end if;
 
@@ -2926,7 +2937,7 @@ begin
                     end if;
 
                     if (rec_trig = '1') then
-                        if (control_pointer > 0) then
+                        if (control_pointer_non_zero) then
                             control_pointer <=  control_pointer - 1;
                         else
                             if (data_rx = DOMINANT) then
@@ -2978,7 +2989,7 @@ begin
                 when ovr_flg_sup =>
                         
                     if (tran_trig = '1') then
-                        if (control_pointer > 0) then
+                        if (control_pointer_non_zero) then
                             data_tx_r   <= DOMINANT; --Sending overload flag
                         else 
                             data_tx_r   <= RECESSIVE;
@@ -2987,7 +2998,7 @@ begin
                         
                     if (rec_trig = '1') then
                       
-                        if (control_pointer > 0) then
+                        if (control_pointer_non_zero) then
                             control_pointer     <= control_pointer - 1;
                         end if;
                         if (tran_pointer > 0) then
@@ -2997,7 +3008,7 @@ begin
                         if (data_rx = RECESSIVE) then
                             -- Still sending overload flag, but recessive 
                             -- detected -> error frame + increase counter 
-                            if (control_pointer > 0) then
+                            if (control_pointer_non_zero) then
                                 PC_State            <= error; 
                                 if (OP_State = reciever) then
                                     --For reciever error counter increased by 8.
@@ -3029,7 +3040,7 @@ begin
                         data_tx_r   <=  RECESSIVE;
                     end if;
                     if (rec_trig = '1') then
-                        if (control_pointer > 0) then
+                        if (control_pointer_non_zero) then
                             control_pointer     <= control_pointer - 1;
                         else
                             PC_State            <= interframe;
