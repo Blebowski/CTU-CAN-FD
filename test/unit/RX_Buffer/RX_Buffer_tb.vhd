@@ -1,60 +1,60 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for the RX Buffer circuit.
 --
---  Following test instantiates RX Buffer. Stimuli generator generates input 
---  frames as CAN_Core would do. Then it checks whether frame was stored into 
+--  Following test instantiates RX Buffer. Stimuli generator generates input
+--  frames as CAN_Core would do. Then it checks whether frame was stored into
 --  the buffer! Another process reads the data as user would do by memory access.
 --  Both, data written into the buffer, and data read from the buffer are stored
---  into test memories (in_mem,out_mem). When test memory is full content of 
+--  into test memories (in_mem,out_mem). When test memory is full content of
 --  both memories is compared! When mismatch occurs test fails. Each time memory
 --  is filled test moves to the next iteration.
 --
 --------------------------------------------------------------------------------
 -- Revision History:
 --    1.6.2016   Created file
---   22.6.2016   Updated testbench to cover also the modified functionality of 
---               RX Buffer. Now ESI bit is also stored and compared. Also RTR 
---               frame of CAN normal frame does not store any data words into 
+--   22.6.2016   Updated testbench to cover also the modified functionality of
+--               RX Buffer. Now ESI bit is also stored and compared. Also RTR
+--               frame of CAN normal frame does not store any data words into
 --               the buffer.
---               
+--
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -71,7 +71,7 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 architecture rx_buf_unit_test of CAN_test is
-  
+
     -- System clock and reset
     signal clk_sys                  :    std_logic := '0';
     signal res_n                    :    std_logic := '0';
@@ -111,7 +111,7 @@ architecture rx_buf_unit_test of CAN_test is
     signal rx_read_pointer_pos      :    std_logic_vector(11 downto 0);
     signal rx_write_pointer_pos     :    std_logic_vector(11 downto 0);
     signal rx_data_overrun          :    std_logic;
-    
+
     signal rx_read_buff             :    std_logic_vector(31 downto 0);
 
     -- Driving bus aliases
@@ -131,8 +131,8 @@ architecture rx_buf_unit_test of CAN_test is
     -- Error counters
     signal stim_errs                :    natural     := 0;
     signal read_errs                :    natural     := 0;
-    signal status_errs              :    natural     := 0; 
-    signal cons_errs                :    natural     := 0;  
+    signal status_errs              :    natural     := 0;
+    signal cons_errs                :    natural     := 0;
 
     -- Dummy signals
     signal exit_imm_d               :    boolean     := false;
@@ -157,7 +157,7 @@ architecture rx_buf_unit_test of CAN_test is
     signal in_pointer               :    natural := 0;
     signal out_pointer              :    natural := 0;
     signal mod_pointer              :    natural := 0;
-  
+
     constant buff_size              :    natural := 32;
 
 
@@ -189,12 +189,12 @@ architecture rx_buf_unit_test of CAN_test is
         memory(in_pointer + 1) <= "000" & hw_id;
 
 
-        -- TIMESTAMP_U_W and TIMESTAMP_L_W        
+        -- TIMESTAMP_U_W and TIMESTAMP_L_W
         memory(in_pointer + 2) <= frame.timestamp(31 downto 0);
 
         -- Note that here we have to store timestamp increased by two, because
-        -- timestamp is in this test increasing by one every clock cycle!! 
-        -- thus when timestamp is acutally stored into RX buffer it is two 
+        -- timestamp is in this test increasing by one every clock cycle!!
+        -- thus when timestamp is acutally stored into RX buffer it is two
         -- clock cycles later!!!
         memory(in_pointer + 3) <= std_logic_vector(unsigned(
                                    frame.timestamp(63 downto 32)));
@@ -206,7 +206,7 @@ architecture rx_buf_unit_test of CAN_test is
         if (frame.rtr = RTR_FRAME) then
             length := 0;
         else
-            decode_dlc_v(frame.dlc, length);            
+            decode_dlc_v(frame.dlc, length);
         end if;
 
         -- Store the data
@@ -259,7 +259,7 @@ architecture rx_buf_unit_test of CAN_test is
     ----------------------------------------------------------------------------
     -- Executes following steps:
     --  1. Generates random CAN frame.
-    --  2. Inserts the frame to RX Buffer as CAN Core. Randomized abort of 
+    --  2. Inserts the frame to RX Buffer as CAN Core. Randomized abort of
     --     storing is generated (as if error frame was generated)!
     --  3. Checks for data overrun flag during storing. If overrun appeared, or
     --     error frame was generated, data are not stored in test memory.
@@ -301,14 +301,14 @@ architecture rx_buf_unit_test of CAN_test is
         variable abort_present      :       boolean := false;
         variable id_out             :       std_logic_vector(28 downto 0);
     begin
-        
+
         CAN_generate_frame(rand_ctr, CAN_frame);
         stored_ts := (OTHERS => '0');
 
         ------------------------------------------------------------------------
         -- Initiate frame storing by clearing possible overrun from before.
         -- It might have happened that Overrun was generated at the same time
-        -- as there was intent abort. In that case, the frame was aborted, 
+        -- as there was intent abort. In that case, the frame was aborted,
         -- overrun was not cleared and stayed till next frame. Storing of
         -- next frame then evaluated overrun as present and did not store the
         -- frame to input memory!
@@ -323,7 +323,7 @@ architecture rx_buf_unit_test of CAN_test is
             log("Overrun not cleared!", error_l, log_level);
         end if;
 
-        ------------------------------------------------------------------------   
+        ------------------------------------------------------------------------
         -- Initiate Frame by SOF pulse and store timestamp!
         ------------------------------------------------------------------------
         sof_pulse           <= '1';
@@ -388,7 +388,7 @@ architecture rx_buf_unit_test of CAN_test is
                                    CAN_frame.data((i * 4) + 1) &
                                    CAN_frame.data((i * 4));
 
-                store_data      <= '1';   
+                store_data      <= '1';
                 log("Storing data word", info_l, log_level);
                 wait until rising_edge(clk_sys);
                 store_data      <= '0';
@@ -447,7 +447,7 @@ architecture rx_buf_unit_test of CAN_test is
 
 
     ----------------------------------------------------------------------------
-    -- Read frame from the RX buffer and store it into the common model 
+    -- Read frame from the RX buffer and store it into the common model
     -- and output memory!
     ----------------------------------------------------------------------------
     procedure read_frame(
@@ -469,7 +469,7 @@ architecture rx_buf_unit_test of CAN_test is
         for i in 0 to rwcnt loop
             drv_read_start        <= '1';
             out_mem(out_pointer)  <= buff_out;
-            
+
             -- Check that word is exactly matching the word in in_mem at the
             -- same position
             if (buff_out /= in_mem(out_pointer)) then
@@ -503,11 +503,11 @@ architecture rx_buf_unit_test of CAN_test is
             end if;
         end loop;
     end procedure;
-  
+
   for rx_Buffer_comp : rxBuffer use entity work.rxBuffer(rtl);
-    
+
 begin
-   
+
     ----------------------------------------------------------------------------
     -- Buffer component
     ----------------------------------------------------------------------------
@@ -542,8 +542,8 @@ begin
         rx_write_pointer_pos     => rx_write_pointer_pos,
         rx_data_overrun          => rx_data_overrun,
         rx_read_buff             => rx_read_buff
-    );  
-  
+    );
+
 
     ----------------------------------------------------------------------------
     -- Clock and timestamp generation
@@ -558,13 +558,13 @@ begin
     end process;
 
     -- Overall amount of errors is sum of errors from all processes
-    error_ctr   <=  stim_errs + read_errs + status_errs + cons_errs;               
+    error_ctr   <=  stim_errs + read_errs + status_errs + cons_errs;
 
 	-- Common input memory is not filled totally so that one iteration
 	-- of test won't take too long!
     in_mem_full <= true when in_pointer + buff_size + 1 > 300 else
                    false;
-                 
+
     out_mem_full <= true when out_pointer + buff_size + 1 > 300 else
                  false;
 
@@ -662,7 +662,7 @@ begin
         ------------------------------------------------------------------------
         while (out_mem_full = false) loop
             if (rx_empty = '0') then
-                read_frame(rx_read_buff, drv_read_start, clk_sys, out_mem, 
+                read_frame(rx_read_buff, drv_read_start, clk_sys, out_mem,
                            in_mem, out_pointer);
                 wait_rand_cycles(rand_ctr_3, clk_sys, 200, 250);
             end if;
@@ -683,7 +683,7 @@ begin
         wait for 10 ns;
     end process;
 
-  
+
     ----------------------------------------------------------------------------
     -- Data consistency checker
     ----------------------------------------------------------------------------
@@ -706,7 +706,7 @@ begin
 
         if (cons_res = false) then
             process_error(cons_errs, error_beh, exit_imm_d_3);
-            log("Data consistency check failed !", error_l, log_level); 
+            log("Data consistency check failed !", error_l, log_level);
         end if;
 
         -- Now we can tell to the other circuits that one iteration is over
@@ -715,15 +715,15 @@ begin
     end process;
 
     errors <= error_ctr;
-  
+
 end architecture;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                   
+-- Test wrapper and control signals generator
 --------------------------------------------------------------------------------
 architecture rx_buf_unit_test_wrapper of CAN_test_wrapper is
-    
+
     -- Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(rx_buf_unit_test);
 
@@ -732,22 +732,22 @@ architecture rx_buf_unit_test_wrapper of CAN_test_wrapper is
     signal errors           :   natural;
 
 begin
-  
+
     -- In this test wrapper generics are directly connected to the signals of
     -- test entity
     test_comp : CAN_test
     port map(
         run              =>  run,
-        iterations       =>  iterations, 
+        iterations       =>  iterations,
         log_level        =>  log_level,
         error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
+        error_tol        =>  error_tol,
         status           =>  status_int,
         errors           =>  errors
     );
 
     status              <= status_int;
-  
+
     ----------------------------------------------------------------------------
     -- Starts the test and lets it run
     ----------------------------------------------------------------------------
@@ -757,11 +757,10 @@ begin
         wait for 1 ns;
 
         -- Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
+        wait until (status_int = passed or status_int = failed);
 
         wait for 100 ns;
         run               <= false;
     end process;
 
 end architecture;
-

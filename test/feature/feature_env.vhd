@@ -1,44 +1,44 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Main environment for feature tests  
---                                       
+--  Main environment for feature tests
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    20.6.2016   Created file
@@ -58,7 +58,7 @@ use work.ID_transfer.all;
 architecture feature_env_test of CAN_feature_test is
 
     ----------------------------------------------------------------------------
-    -- Controller 1 signals 
+    -- Controller 1 signals
     ----------------------------------------------------------------------------
     signal clk_sys_1            : std_logic := '0';
     signal res_n_1              : std_logic := '0';
@@ -81,7 +81,7 @@ architecture feature_env_test of CAN_feature_test is
 
 
     ----------------------------------------------------------------------------
-    -- Controller 2 signals 
+    -- Controller 2 signals
     ----------------------------------------------------------------------------
     signal clk_sys_2            : std_logic := '0';
     signal res_n_2              : std_logic := '0';
@@ -110,12 +110,12 @@ architecture feature_env_test of CAN_feature_test is
     ----------------------------------------------------------------------------
     signal hw_reset_on_new_test   : boolean := true;
     signal iteration_done         : boolean := false;
-    
+
     -- Test name to be loaded by the TCL script from TCL test FIFO
     -- Note that string always have to have fixed length
     signal test_name              : string (1 to 20) :=
                                         "            overload";
-        
+
     -- CAN bus signals
     signal bus_level              : std_logic := RECESSIVE;
     signal tr_del_1_sr            : std_logic_vector(255 downto 0) :=
@@ -124,10 +124,10 @@ architecture feature_env_test of CAN_feature_test is
                                         (OTHERS => RECESSIVE);
     signal tr_del_1               : natural := 20;
     signal tr_del_2               : natural := 20;
-    
+
 begin
-  
-    CAN_inst_1 : CAN_top_level 
+
+    CAN_inst_1 : CAN_top_level
     generic map(
         use_logger       => true,
         rx_buffer_size   => 64,
@@ -199,8 +199,8 @@ begin
     srd_2                   <=  mem_bus_2.srd;
     sbe_2                   <=  mem_bus_2.sbe;
     mem_bus_2.data_out      <=  data_out_2;
-  
-  
+
+
     ----------------------------------------------------------------------------
     -- Transciever and CAN bus realization
     ----------------------------------------------------------------------------
@@ -216,15 +216,15 @@ begin
         tr_del_2_sr <= tr_del_2_sr(254 downto 0) & CAN_tx_2;
     end process;
 
-    bus_level    <= tr_del_1_sr(tr_del_1) and tr_del_2_sr(tr_del_2) 
+    bus_level    <= tr_del_1_sr(tr_del_1) and tr_del_2_sr(tr_del_2)
                         when (bl_force = false)
                         else
                     bl_inject;
-  
+
     CAN_rx_1     <= bus_level;
     CAN_rx_2     <= bus_level;
 
-  
+
     ----------------------------------------------------------------------------
     -- Clock generation (1)
     ----------------------------------------------------------------------------
@@ -248,9 +248,9 @@ begin
     begin
         generate_clock(period, duty, epsilon, clk_sys_2);
         timestamp_2 <= std_logic_vector(unsigned(timestamp_2) + 1);
-    end process; 
+    end process;
 
-  
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Test process listening to higher hierarchy wrapper!
@@ -281,8 +281,8 @@ begin
         loop
             log("Starting loop nr " & integer'image(loop_ctr),
                 info_l, log_level);
-            
-            -- Wait on signal from higher level wrapper to move to 
+
+            -- Wait on signal from higher level wrapper to move to
             -- next iteration.
             wait until iteration_done = true;
 
@@ -293,7 +293,7 @@ begin
         wait until run = false;
         wait until run = true;
   end process;
-  
+
 end architecture;
 
 Library ieee;
@@ -322,10 +322,10 @@ use work.overload_feature.All;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
+-- Test wrapper and control signals generator
 --------------------------------------------------------------------------------
-architecture feature_env_test_wrapper of CAN_test_wrapper is  
-  
+architecture feature_env_test_wrapper of CAN_test_wrapper is
+
     -- Test component itself
     component CAN_feature_test is
     port (
@@ -343,13 +343,13 @@ architecture feature_env_test_wrapper of CAN_test_wrapper is
     );
     end component;
 
-    for test_comp : CAN_feature_test use entity 
+    for test_comp : CAN_feature_test use entity
                         work.CAN_feature_test(feature_env_test);
-  
+
     signal run              :    boolean;
     signal status_int       :    test_status_type;
     signal errors           :    natural;
-    
+
     signal mem_bus_1        :    Avalon_mem_type := ('0', (OTHERS => '0'),
                                 (OTHERS => '0'), (OTHERS => '0'), '0', '0', '0',
                                 (OTHERS => '0'));
@@ -384,7 +384,7 @@ architecture feature_env_test_wrapper of CAN_test_wrapper is
             arbitration_feature_exec(outcome, rand_ctr, mem_bus_1, mem_bus_2,
                                      bus_level, drv_bus_1, drv_bus_2,
                                      stat_bus_1, stat_bus_2);
-        
+
         elsif (test_name = "           rx_status") then
             rx_status_feature_exec(outcome, rand_ctr, mem_bus_1, mem_bus_2,
                                    bus_level, drv_bus_1, drv_bus_2, stat_bus_1,
@@ -444,17 +444,17 @@ architecture feature_env_test_wrapper of CAN_test_wrapper is
             retr_limit_feature_exec(outcome, rand_ctr, mem_bus_1, mem_bus_2,
                                     bus_level, drv_bus_1, drv_bus_2, stat_bus_1,
                                     stat_bus_2);
- 
+
         elsif (test_name = "            overload") then
             overload_feature_exec(outcome, rand_ctr, mem_bus_1, mem_bus_2,
                                   bus_level, drv_bus_1, drv_bus_2, stat_bus_1,
-                                  stat_bus_2, bl_inject, bl_force);     
+                                  stat_bus_2, bl_inject, bl_force);
         end if;
     end procedure;
-    
+
 
     ----------------------------------------------------------------------------
-    -- Restarts memory buses for 
+    -- Restarts memory buses for
     ----------------------------------------------------------------------------
     procedure restart_mem_bus(
         signal mem_bus_1          :out  Avalon_mem_type;
@@ -488,9 +488,9 @@ architecture feature_env_test_wrapper of CAN_test_wrapper is
 
     signal bl_inject        : std_logic := RECESSIVE;
     signal bl_force         : boolean := false;
-  
+
 begin
-  
+
     error_tol_int           <=  error_tol;
     error_beh_int           <=  error_beh;
 
@@ -510,7 +510,7 @@ begin
         bl_inject        =>  bl_inject,
         bl_force         =>  bl_force
     );
- 
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -520,10 +520,10 @@ begin
     test : process
         variable outcome    : boolean := false;
 
-        alias iteration_done is 
+        alias iteration_done is
             <<signal test_comp.iteration_done : boolean>>;
 
-        alias hw_reset is 
+        alias hw_reset is
             <<signal test_comp.hw_reset_on_new_test : boolean>>;
 
         alias test_name is
@@ -535,7 +535,7 @@ begin
         alias hw_reset_2 is
             <<signal test_comp.res_n_2  : std_logic>>;
 
-        ------------------------------------------------------------------------        
+        ------------------------------------------------------------------------
         -- Internal signals of CAN controllers
         ------------------------------------------------------------------------
         alias bus_level is
@@ -565,20 +565,20 @@ begin
         variable ID_1 : natural range 0 to 15 := 1;
         variable ID_2 : natural range 0 to 15 := 2;
     begin
-    
+
         -- Set the process to run and wait until it comes out of reset
         iteration_done    <= false;
         hw_reset          <= true;
         run               <= true;
         error_ctr         <= 0;
         restart_mem_bus(mem_bus_1, mem_bus_2);
-         
+
         wait for 10 ns;
         wait until hw_reset_1 = '1' and hw_reset_2 = '1';
         wait for 10 ns;
 
         status            <= running;
-    
+
         -- Execute the controllers configuration
         CAN_turn_controller(true, ID_1, mem_bus_1);
         CAN_turn_controller(true, ID_2, mem_bus_2);
@@ -589,7 +589,7 @@ begin
         ------------------------------------------------------------------------
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus_1);
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus_2);
-    
+
         ------------------------------------------------------------------------
         -- Main test loop
         ------------------------------------------------------------------------
@@ -597,10 +597,10 @@ begin
             iteration_done <=false;
 
             exec_feature_test(test_name, outcome, rand_ctr, mem_bus_1,
-                              mem_bus_2, int_1, int_2, bus_level, drv_bus_1, 
+                              mem_bus_2, int_1, int_2, bus_level, drv_bus_1,
                               drv_bus_2, stat_bus_1, stat_bus_2, bl_inject,
                               bl_force);
-          
+
             if (outcome = false) then
                 process_error(error_ctr, error_beh_int, exit_imm);
             end if;
@@ -610,9 +610,9 @@ begin
             wait for 10 ns;
         end loop;
 
-        run               <= false; 
+        run               <= false;
         evaluate_test(error_tol_int, error_ctr, status);
         wait for 100 ns;
     end process;
-  
+
 end;
