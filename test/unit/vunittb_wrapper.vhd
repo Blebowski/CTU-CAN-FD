@@ -52,15 +52,21 @@ use ieee.std_logic_1164.all;
 USE work.CANtestLib.All;
 
 entity vunittb_wrapper is
-  generic (
-    nested_runner_cfg : string;
-    iterations : natural := 50;
-    log_level  : log_lvl_type := info_l;
-    error_beh  : err_beh_type := quit;           -- Test behaviour when error occurs: Quit, or Go on
-    error_tol  : natural := 0;                   -- Error tolerance, error counter should not
-                                                 -- exceed this value in order for the test to pass
-    timeout    : string := "0 ms"                -- Timeout in simulation time. 0 means no limit.
-  );
+    generic (
+        nested_runner_cfg : string;
+        iterations : natural := 50;
+        log_level  : log_lvl_type := info_l;
+
+        -- Test behaviour when error occurs: Quit, or Go on
+        error_beh  : err_beh_type := quit;
+
+        -- Error tolerance, error counter should not exceed this value
+        -- in order for the test to pass
+        error_tol  : natural := 0;
+
+        -- Timeout in simulation time. 0 means no limit
+        timeout    : string := "0 ms"
+    );
 end entity;
 
 architecture tb of vunittb_wrapper is

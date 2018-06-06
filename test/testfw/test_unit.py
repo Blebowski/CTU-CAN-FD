@@ -1,6 +1,6 @@
-from textwrap import dedent
 import re
 import logging
+from textwrap import dedent
 from .test_common import *
 
 log = logging.getLogger(__name__)
@@ -8,7 +8,7 @@ log = logging.getLogger(__name__)
 class UnitTests(TestsBase):
     def add_sources(self):
         add_sources(self.lib, ['unit/**/*.vhd'])
-        create_wrapper(self.lib, self.build / "tb_wrappers.vhd")
+        self._create_wrapper(self.build / "tb_wrappers.vhd")
 
     def configure(self):
         ui, lib, config, build = self.ui, self.lib, self.config, self.build
@@ -50,69 +50,21 @@ class UnitTests(TestsBase):
         if len(unconfigured):
             log.warn("Unit tests with no configuration found (defaults will be used): {}".format(', '.join(tb.name for tb in unconfigured)))
 
-def create_wrapper(lib, fname):
-    fname = str(fname)
-    files = lib.get_source_files()
-    tests = []
-    r = re.compile(r'^architecture\s+(\S+)\s+of\s+CAN_test\s+is$')
-    for file in files:
-        with open(file.name, 'rt', encoding='utf-8') as f:
-            for l in f:
-                m = r.match(l)
-                if m:
-                    tests.append(m.group(1))
-    configs = []
-    tbs = []
-    for test in tests:
-        configs.append(dedent("""\
-            configuration tbconf_{test} of vunittb_wrapper is
-            for tb
-                for i_test : CAN_test use entity work.CAN_test({test}); end for;
-            end for;
-            end configuration;
-            -- -----------------------------------------------------------------------------
-            """.format(test=test)
-        ))
-        tbs.append(dedent("""\
-            library work;
-            use work.CANtestLib.All;
-            library vunit_lib;
-            context vunit_lib.vunit_context;
-
-            entity tb_{test} is generic (
-                runner_cfg : string := runner_cfg_default;
-                iterations : natural := 1;
-                log_level  : log_lvl_type := info_l;
-                error_beh  : err_beh_type := quit;
-                error_tol  : natural := 0;
-                timeout    : string := "0 ms"
-            ); end entity;
-            architecture tb of tb_{test} is
-                component vunittb_wrapper is generic (
-                    nested_runner_cfg : string;
-                    iterations : natural;
-                    log_level  : log_lvl_type;
-                    error_beh  : err_beh_type;
-                    error_tol  : natural;
-                    timeout    : string
-                ); end component;
-                for all:vunittb_wrapper use configuration work.tbconf_{test};
-            begin
-                tb:vunittb_wrapper generic map(
-                    nested_runner_cfg => runner_cfg,
-                    iterations        => iterations,
-                    log_level         => log_level,
-                    error_beh         => error_beh,
-                    error_tol         => error_tol,
-                    timeout           => timeout);
-            end architecture;
-            -- -----------------------------------------------------------------------------
-            """.format(test=test)
-        ))
-    with open(fname, "wt", encoding='utf-8') as f:
-        for c in configs:
+    def _create_wrapper(self, fname):
+        fname = str(fname)
+        files = self.lib.get_source_files()
+        tests = []
+        r = re.compile(r'^architecture\s+(\S+)\s+of\s+CAN_test\s+is$')
+        for file in files:
+            with open(file.name, 'rt', encoding='utf-8') as f:
+                for l in f:
+                    m = r.match(l)
+                    if m:
+                        tests.append(m.group(1))
+        configs = []
+        tbs = []
+        c = self.jinja_env.get_template('unit_wrappers.vhd').render(tests=tests)
+        with open(fname, "wt", encoding='utf-8') as f:
             f.write(c)
-        for t in tbs:
-            f.write(t)
 
-    lib.add_source_file(fname)
+        self.lib.add_source_file(fname)

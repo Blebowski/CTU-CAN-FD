@@ -4,12 +4,15 @@ from glob import glob
 from os.path import join, dirname, abspath
 import logging
 from pathlib import Path
+from jinja2 import Environment, PackageLoader
 
 __all__ = ['add_sources', 'add_common_sources', 'get_common_modelsim_init_files',
     'add_flags', 'dict_merge', 'vhdl_serialize', 'dump_sim_options', 'TestsBase']
 
 d = Path(abspath(__file__)).parent
 log = logging.getLogger(__name__)
+
+jinja_env = Environment(loader=PackageLoader(__package__, 'data'), autoescape=False)
 
 class TestsBase:
     def __init__(self, ui, lib, config, build, base):
@@ -18,6 +21,10 @@ class TestsBase:
         self.config = config
         self.build = build
         self.base = base
+
+    @property
+    def jinja_env(self):
+        return jinja_env
 
     def add_sources(self): raise NotImplementedError()
     def configure(self): raise NotImplementedError()
