@@ -1498,7 +1498,7 @@ begin
                 data_out_int                      <=  (OTHERS =>'0');
                 data_out_int(7 downto 0)
                     <= stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW);
-                data_out_int(ALC_VAL_H downto ALC_VAL_L)
+                data_out_int(ALC_ID_FIELD_H downto ALC_BIT_L)
                     <= stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW);
 
             -------------------------------------------------------

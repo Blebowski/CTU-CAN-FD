@@ -213,7 +213,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal set_reciever_1           :  std_logic;
 
     -- Arbitration lost capture
-    signal alc_1                    :  std_logic_vector(4 downto 0);
+    signal alc_1                    :  std_logic_vector(7 downto 0);
 
     -- Fault confinement state
     signal error_state_1            :  error_state_type;
@@ -379,7 +379,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal set_reciever_2           :  std_logic;
 
     -- Arbitration lost capture
-    signal alc_2                    :  std_logic_vector(4 downto 0);
+    signal alc_2                    :  std_logic_vector(7 downto 0);
 
     -- Fault confinement state
     signal error_state_2            :  error_state_type;

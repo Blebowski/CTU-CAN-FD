@@ -373,7 +373,7 @@ entity core_top is
    signal set_transciever         :     std_logic;
    signal set_reciever            :     std_logic;
    signal is_idle                 :     std_logic;
-   signal alc                     :     std_logic_vector(4 downto 0);
+   signal alc                     :     std_logic_vector(7 downto 0);
    
    --Transcieve buffer output
    signal tran_dlc                :     std_logic_vector(3 downto 0);
@@ -1017,7 +1017,8 @@ begin
  --STATUS Bus Implementation --
  ------------------------------ 
  stat_bus(511 downto 370)                                  <=  (OTHERS=>'0');
- stat_bus(299 downto 289)                                  <=  (OTHERS=>'0');
+ stat_bus(299 downto 297)                                  <=  (OTHERS=>'0');
+ stat_bus(187 downto 183)                                  <=  (OTHERS=>'0');
  stat_bus(99 downto 90)                                    <=  (OTHERS=>'0');
  stat_bus(60 downto 32)                                    <= (OTHERS => '0');
  

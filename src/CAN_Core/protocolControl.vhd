@@ -204,7 +204,8 @@
 --   29.5.2018    Removed obsolete "sof_skip" signal. Transition from Interframe
 --                to SOF is by received synchronsation edge!
 --    5.6.2018    Added "data_tx_index". Separated CRC check to "crc_valid"
---                signal! Added "parity_valid" signal.
+--                signal! Added "parity_valid" signal. Added "alc_val" for
+--                arbitration lost capture combinational decoder!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -291,7 +292,7 @@ entity protocolControl is
     signal set_reciever           :out  std_logic;
     
     --Arbitration lost capture
-    signal alc                    :out  std_logic_vector(4 downto 0);
+    signal alc                    :out  std_logic_vector(7 downto 0);
     
     -------------------------------
     --Fault confinement Interface--
@@ -494,7 +495,7 @@ entity protocolControl is
   --Bit Error detection enable (Ex. disabled when recieving data)
   signal bit_err_enable_r         :     std_logic;
   signal sync_control_r           :     std_logic_vector(1 downto 0);
-  signal alc_r                    :     std_logic_vector(4 downto 0);
+  signal alc_r                    :     std_logic_vector(7 downto 0);
 
   signal form_Error_r             :     std_logic; --Form Error
   signal CRC_Error_r              :     std_logic; --CRC Error
@@ -579,7 +580,10 @@ entity protocolControl is
   
   --Transceive identifier shift registers
   signal tran_ident_base_sr       :     std_logic_vector(10 downto 0);
-  signal tran_ident_ext_sr        :     std_logic_vector(17 downto 0);  
+  signal tran_ident_ext_sr        :     std_logic_vector(17 downto 0);
+  
+  -- Arbitration lost capture value
+  signal alc_val                  :     std_logic_vector(7 downto 0);
   
   --------------------------
   --Control field registers-
@@ -840,9 +844,19 @@ begin
                       (stuff_count_grey /= rx_count_grey))
                          else
                    true;
-                     
 
- 
+    ----------------------------------------------------------------------------
+    -- Arbitration lost capture decoder
+    ----------------------------------------------------------------------------
+    alc_val(7 downto 5) <=
+        ALC_BASE_ID    when (arb_state = base_id) else
+        ALC_EXTENSION  when (arb_state = ext_id) else
+        ALC_SRR_RTR    when (arb_state = two_bits and tran_pointer = 1) else
+        ALC_IDE        when (arb_state = two_bits and tran_pointer = 0) else
+        ALC_RTR        when (arb_state = one_bit) else
+        (OTHERS => '0');
+
+    alc_val(4 downto 0) <= std_logic_vector(to_unsigned(tran_pointer, 5));
 
 
   ------------------------------------------------------------------------------
@@ -1408,11 +1422,9 @@ begin
                                                 data_rx;
                     end if;
 
-                    -- TODO: Repair!
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r             <= std_logic_vector(
-                        --                      to_unsigned(9 - tran_pointer, 5));
+                        alc_r <= alc_val;
                     end if;
 
                 ----------------------------------------------------------------
@@ -1516,11 +1528,9 @@ begin
                         end if;
                     end if;
 
-                    -- TODO: Repair!
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r         <=  std_logic_vector(
-                        --                    to_unsigned(1 - tran_pointer, 5));
+                        alc_r <= alc_val;
                     end if;
 
                 ----------------------------------------------------------------
@@ -1554,11 +1564,9 @@ begin
                         end if;                        
                     end if;    
 
-                    -- TODO: Repair !!!
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r   <=  std_logic_vector(to_unsigned(
-                        --                42 - tran_pointer, 5));
+                        alc_r <= alc_val;
                     end if;
             
                 ----------------------------------------------------------------
@@ -1588,9 +1596,9 @@ begin
                         FSM_preset              <=  '1';
                     end if;
 
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r         <=  std_logic_vector(to_unsigned(31,5));
+                        alc_r <= alc_val;
                     end if;
 
                 when others =>
@@ -2222,6 +2230,9 @@ begin
                 ----------------------------------------------------------------
                 when real_crc =>
 
+                    ------------------------------------------------------------
+                    -- Transmitt CRC sequence
+                    ------------------------------------------------------------
                     if (OP_State = transciever and tran_trig = '1') then
                         case crc_src is
                             when CRC_15_SRC =>
@@ -2241,6 +2252,9 @@ begin
                         end case;
                     end if;
 
+                    ------------------------------------------------------------
+                    -- Receive CRC sequence
+                    ------------------------------------------------------------
                     if (rec_trig = '1') then
                         rec_crc_r <= rec_crc_r(19 downto 0) & data_rx;
                         if (data_pointer = 0) then
@@ -2287,32 +2301,39 @@ begin
             end if;        
              
         else
+
             if (OP_State = transciever) then
-                if (tran_trig = '1') then --Sending data as transciever
-                    --As transciever we send only recessive bits in these fields
+
+                ----------------------------------------------------------------
+                -- Transmitter sends only recessice during CRC Delim, ACK and
+                -- ACK delim
+                ----------------------------------------------------------------
+                if (tran_trig = '1') then
                     data_tx_r <=  RECESSIVE; 
                 end if;
 
-                if (rec_trig = '1') then --Monitoring data as transciever
+                ----------------------------------------------------------------
+                -- Monitoring received data 
+                ----------------------------------------------------------------
+                if (rec_trig = '1') then
                     case control_pointer is
 
-                        when 0 => 
-                            sp_control_r        <= NOMINAL_SAMPLE;
+                        --------------------------------------------------------
+                        -- CRC delimiter -> Switch back to Nominal bit rate
+                        --------------------------------------------------------
+                        when 0 =>
                             if (tran_brs = BR_SHIFT and
                                 tran_frame_type = FD_CAN)
                             then
                                 br_shifted      <= '1';
+                                sp_control_r    <= NOMINAL_SAMPLE;
                             end if;
-                            -- Note : no condition is necessary because in normal 
-                            -- frame sp_control remains NORMAL_SAMPLE!
+                            
                             control_pointer     <= control_pointer + 1;
 
-                            --Bit Error detected on CRC delimiter bit
-                            --if(data_rx=DOMINANT) then
-                            --  PC_State<=error;
-                            --  FSM_Preset<='1';
-                            --end if;
-
+                        --------------------------------------------------------
+                        -- ACK field -> When dominant is received, ACK is valid.
+                        --------------------------------------------------------
                         when 1 =>
                             if (data_rx = DOMINANT or 
                                 drv_self_test_ena = '1')
@@ -2320,14 +2341,18 @@ begin
                                 ack_recieved        <= '1';
                                 control_pointer     <= control_pointer + 1;
                             else
+
+                                ------------------------------------------------
+                                -- Allow receiving first bit RECEESIVE, only
+                                -- if second consecutive RECESSIVE is received,
+                                -- ACK is considered as ERROR. This is defined
+                                -- by spec. and allows for compensation of
+                                -- mismatch caused by bit-rate switching!
+                                ------------------------------------------------
                                 if (sec_ack = '0') then
-                                    -- Still OK, just one recesive sampled by 
-                                    -- transciever
                                     sec_ack         <= '1';
-                                    ack_recieved    <= ack_recieved;
+                                    ack_recieved    <= '0';
                                 else
-                                    --Three recessive bits registered -->
-                                    -- no acknowledge, ACK Error
                                     ack_recieved    <= '0';
                                     sec_ack         <= sec_ack;
                                     PC_State        <= error;
@@ -2336,32 +2361,45 @@ begin
                                 end if;  
                             end if;
 
-                        when 2 => -- This state represents ack delimiter
+                        --------------------------------------------------------
+                        -- ACK Delimiter. If ACK was received -> OK, Error
+                        -- frame otherwise.
+                        --------------------------------------------------------
+                        when 2 =>
                             if (ack_recieved = '1') then
                                 PC_State            <= eof;
                             else
                                 PC_State            <= error;
                             end if;
                             FSM_Preset              <= '1';
+
                         when others =>
                             unknown_state_Error_r   <= '1'; 
                             PC_State                <= error;
                             FSM_preset              <= '1';
                     end case;
                 end if;
+            end if;
 
-            elsif (OP_State = reciever) then
+
+            if (OP_State = reciever) then
+
+                ----------------------------------------------------------------
+                -- Receiver sends acknowledge if it is allowed to and if CRC
+                -- was checked OK!
+                ----------------------------------------------------------------
                 if (tran_trig = '1') then
                     case control_pointer is
 
-                        --CRC delimiter bit
+                        --------------------------------------------------------
+                        -- CRC delimiter bit
+                        --------------------------------------------------------
                         when 0 => 
                             data_tx_r           <= RECESSIVE;
-                            --Switching the bit rate back
-                            --sp_control_r  <=  NOMINAL_SAMPLE;
-                            --
-
-                        -- Send acknowledge if CRC Match and is not forbidden
+                            
+                        --------------------------------------------------------
+                        -- ACK field. Send if CRC match and ACK is not forbidden
+                        --------------------------------------------------------
                         when 1 => 
                             if (crc_check = '1' and drv_ack_forb = '0') then
                                 data_tx_r       <= DOMINANT;
@@ -2369,16 +2407,21 @@ begin
                                 data_tx_r       <= RECESSIVE;
                             end if;
 
+                            ----------------------------------------------------
                             -- If Bus Monitoring mode is enabled then data has
                             -- to be looped back before sending on the bus!
+                            -- Thisway node itself will NOT detec error due to
+                            -- missing acknowledge!
+                            ----------------------------------------------------
                             if (drv_bus_mon_ena = '1') then
                                 int_loop_back_ena_r     <= '1';
                             end if;
-                                
+
+                        --------------------------------------------------------
+                        -- ACK field. Send if CRC match and ACK is not forbidden
+                        --------------------------------------------------------
                         when 2 =>
                             data_tx_r               <= RECESSIVE;
-                            --Loop-Back is turned off either in Bus Mon mode or 
-                            --normal mode
                             int_loop_back_ena_r     <= '0'; 
   
                         when others =>
@@ -2387,9 +2430,49 @@ begin
                             FSM_preset              <= '1';
                     end case;
                 end if;
-              
+
+                ----------------------------------------------------------------
+                -- Receiver also monitors if ACK was received!
+                ----------------------------------------------------------------
                 if (rec_trig = '1') then
                     case control_pointer is
+
+                        --------------------------------------------------------
+                        -- CRC delimiter, switch back to NOMINAL bit rate.
+                        --------------------------------------------------------
+                        when 0 =>
+                            if (rec_brs_r = BR_SHIFT and
+                                rec_frame_type_r = FD_CAN)
+                            then
+                                br_shifted          <= '1';
+                                sp_control_r        <= NOMINAL_SAMPLE;
+                            end if;
+
+                            -- Receiving DOMINANT means error!
+                            if (data_rx = DOMINANT) then
+                                PC_State            <= error;
+                                FSM_Preset          <= '1';
+                                form_Error_r        <= '1';
+                                -- Increment recieve error counter by one!
+                                inc_one_r           <= '1';
+                            end if;
+
+                        --------------------------------------------------------
+                        -- ACK field. Sending DOMINANT and receiving RECESSIVE
+                        -- signals ERROR. Receiving DOMINANT means ACK present.
+                        --------------------------------------------------------
+                        when 1 =>
+                            if (data_tx_r = DOMINANT and data_rx = RECESSIVE) then
+                                PC_State            <= error;
+                                FSM_Preset          <= '1';
+                            end if;
+                            if (data_rx = DOMINANT or drv_self_test_ena = '1') then
+                                ack_recieved        <= '1';
+                            end if;
+
+                        --------------------------------------------------------
+                        -- ACK delimiter
+                        --------------------------------------------------------
                         when 2 => 
                             if (ack_recieved = '1' and crc_check = '1') then
                                 PC_State            <= eof;
@@ -2400,42 +2483,11 @@ begin
                             end if; 
                             FSM_preset              <= '1';
 
-                        -- Acknowledge sent but recessive monitored
-                        when 1 =>
-                            if (data_tx_r = DOMINANT and data_rx = RECESSIVE) then
-                                PC_State            <= error;
-                                FSM_Preset          <= '1';
-                            end if;
-                            if (data_rx = DOMINANT or drv_self_test_ena = '1') then
-                                ack_recieved        <=  '1';
-                            end if;
-                        when 0 =>
-                            sp_control_r            <=  NOMINAL_SAMPLE;
-
-                            if (rec_brs_r = BR_SHIFT and
-                                rec_frame_type_r = FD_CAN)
-                            then
-                                br_shifted          <=  '1';
-                            end if;
-
-                            -- CRC Delimiter bit
-                            if (data_rx = DOMINANT) then
-                                PC_State            <= error;
-                                FSM_Preset          <= '1';
-                                form_Error_r        <= '1';
-                                --Increment recieve error counter by one!
-                                inc_one_r           <= '1';
-                            end if;
                         when others =>
                     end case;        
                     control_pointer                 <= control_pointer + 1;
               end if;
-            else
-              --If we get here it is absolute fail... 
-              --(Not transciever, Not reciever) in ACK field...
-              unknown_state_Error_r <=  '1'; 
-              PC_State              <=  error;
-              FSM_preset            <=  '1';
+
             end if;
         end if;
 
@@ -2448,42 +2500,69 @@ begin
     when eof =>
         if (FSM_Preset = '1') then
             FSM_Preset                          <= '0';
-            stuff_enable_r                      <= '0';
-            destuff_enable_r                    <= '0';
             control_pointer                     <= 6;
         else
+
+            --------------------------------------------------------------------
+            -- Sending only RECESSIVE during EOF
+            --------------------------------------------------------------------
             if (tran_trig = '1') then
                 data_tx_r                       <= RECESSIVE;
             end if;           
 
+            --------------------------------------------------------------------
+            -- Receiving EOF
+            --------------------------------------------------------------------
             if (rec_trig = '1') then
 
-                -- Detection of dominant bit during EOF means Error frame
+                ----------------------------------------------------------------
+                -- DOMINANT bit during EOF. In last bit -> Overload , In
+                -- previous bits -> Error frame
+                ----------------------------------------------------------------
                 if (data_rx = DOMINANT) then
-                    PC_State                    <= error;  
-                    FSM_Preset                  <= '1';
-                    if (OP_State = reciever) then
-                        --Increment recieve error counter by one!
-                        inc_one_r               <= '1';
-                    end if;
-                else 
-                    if (control_pointer > 0) then
-                        control_pointer         <= control_pointer - 1;
-                        --Message is recieved as valid one bit before the end of frame
-                        if (control_pointer = 1 and OP_State = reciever) then
-                            rec_valid_r         <= '1';
-                            dec_one_r           <= '1';
-                        end if; 
+
+                    if (control_pointer = 0) then
+                        PC_State                    <= overload;
                     else
-                        -- Message is sucessfully transcieved
-                        if (OP_State = transciever) then
-                            tran_valid_r        <= '1';
-                            dec_one_r           <= '1';            
-                            txt_hw_cmd.unlock   <= '1';
-                            txt_hw_cmd.valid    <= '1';
-                            is_txt_locked       <= '0';
-                            retr_count          <= 0;
+                        PC_State                    <= error;
+                        if (OP_State = reciever) then
+                            inc_one_r               <= '1';
                         end if;
+                    end if;
+                    FSM_Preset <= '1';
+
+                ----------------------------------------------------------------
+                -- RECESSIVE bit during EOF.
+                ----------------------------------------------------------------
+                else
+                    ------------------------------------------------------------
+                    -- RX Frame is considered as valid one bit before finishing
+                    -- EOF. Thisway Data are stored even if Overload flag is
+                    -- present!
+                    ------------------------------------------------------------
+                    if (control_pointer = 1 and OP_State = reciever) then
+                        rec_valid_r         <= '1';
+                        dec_one_r           <= '1';
+                    end if; 
+
+                    ------------------------------------------------------------
+                    -- TX Frame is considered as valid at the end of EOF!
+                    ------------------------------------------------------------
+                    if (control_pointer = 0 and OP_State = transciever) then
+                        tran_valid_r        <= '1';
+                        dec_one_r           <= '1';            
+                        txt_hw_cmd.unlock   <= '1';
+                        txt_hw_cmd.valid    <= '1';
+                        is_txt_locked       <= '0';
+                        retr_count          <= 0;
+                    end if; 
+
+                    ------------------------------------------------------------
+                    -- Count till 0 -> Go to interframe then.
+                    ------------------------------------------------------------
+                    if (control_pointer > 0) then
+                        control_pointer         <= control_pointer - 1;                        
+                    else
                         PC_State                <= interframe; 
                         FSM_Preset              <= '1';
                     end if;
