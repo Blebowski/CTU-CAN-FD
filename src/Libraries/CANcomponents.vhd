@@ -591,7 +591,7 @@ package CANcomponents is
       signal drv_bus               : in  std_logic_vector(1023 downto 0);
       signal int_loop_back_ena     : out std_logic;
       signal PC_State_out          : out protocol_type;
-      signal alc                   : out std_logic_vector(4 downto 0);
+      signal alc                   : out std_logic_vector(7 downto 0);
       signal tran_data             : in  std_logic_vector(31 downto 0);
       signal tran_dlc              : in  std_logic_vector(3 downto 0);
       signal tran_is_rtr           : in  std_logic;

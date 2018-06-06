@@ -921,13 +921,24 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- ALC register
   --
-  -- Arbitration lost capture register. 
+  -- Arbitration lost capture register. Determines bit position of last arbitrat
+  -- ion lost.
   ------------------------------------------------------------------------------
-  constant ALC_VAL_L              : natural := 8;
-  constant ALC_VAL_H             : natural := 12;
+  constant ALC_BIT_L              : natural := 8;
+  constant ALC_BIT_H             : natural := 12;
+  constant ALC_ID_FIELD_L        : natural := 13;
+  constant ALC_ID_FIELD_H        : natural := 15;
+
+  -- "ALC_ID_FIELD" field enumerated values
+  constant ALC_BASE_ID : std_logic_vector(2 downto 0) := "000";
+  constant ALC_SRR_RTR : std_logic_vector(2 downto 0) := "001";
+  constant ALC_IDE : std_logic_vector(2 downto 0) := "010";
+  constant ALC_EXTENSION : std_logic_vector(2 downto 0) := "011";
+  constant ALC_RTR : std_logic_vector(2 downto 0) := "100";
 
   -- ALC register reset values
-  constant ALC_VAL_RSTVAL : std_logic_vector(4 downto 0) := "00000";
+  constant ALC_BIT_RSTVAL : std_logic_vector(4 downto 0) := "00000";
+  constant ALC_ID_FIELD_RSTVAL : std_logic_vector(2 downto 0) := "000";
 
   ------------------------------------------------------------------------------
   -- TRV_DELAY register

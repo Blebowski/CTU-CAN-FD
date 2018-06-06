@@ -657,8 +657,8 @@ package CANconstants is
   constant STAT_REC_TRIG             : natural := 182;
 
   --Arbitration lost capture
-  constant STAT_ALC_HIGH : natural := 187;
-  constant STAT_ALC_LOW  : natural := 183;
+  constant STAT_ALC_HIGH : natural := 296;
+  constant STAT_ALC_LOW  : natural := 289;
 
   --Bus traffic registers
   constant STAT_RX_CTR_HIGH : natural := 219;

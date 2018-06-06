@@ -28306,7 +28306,7 @@ Address: 0x75
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Arbitration lost capture register. 
+Arbitration lost capture register. Determines bit position of last arbitration lost.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -28410,7 +28410,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ALC_ID_FIELD\end_layout
 
 \end_inset
 </cell>
@@ -28418,7 +28418,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ALC_ID_FIELD\end_layout
 
 \end_inset
 </cell>
@@ -28426,7 +28426,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ALC_ID_FIELD\end_layout
 
 \end_inset
 </cell>
@@ -28434,7 +28434,7 @@ Reserved\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+ALC_BIT\end_layout
 
 \end_inset
 </cell>
@@ -28442,7 +28442,7 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+ALC_BIT\end_layout
 
 \end_inset
 </cell>
@@ -28450,7 +28450,7 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+ALC_BIT\end_layout
 
 \end_inset
 </cell>
@@ -28458,7 +28458,7 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+ALC_BIT\end_layout
 
 \end_inset
 </cell>
@@ -28466,7 +28466,7 @@ ALC_VAL\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ALC_VAL\end_layout
+ALC_BIT\end_layout
 
 \end_inset
 </cell>
@@ -28484,7 +28484,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -28492,7 +28492,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -28500,7 +28500,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -28552,7 +28552,15 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-ALC_VAL Arbitration lost capture value. Not supported yet. Do not use!
+ALC_BIT Arbitration lost capture bit position. If ALC_ID_FIELD = ALC_BASE_ID  then bit index of BASE identifier in which arbitration was lost is given as: 11 - ALC_VAL. If ALC_ID_FIELD = ALC_EXTENSION  then bit index of EXTENDED identifier in which arbitration was lost is given as: 18 - ALC_VAL. For other values of ALC_ID_FIELD, this value is undefined.
+\end_layout
+\begin_layout Description
+ALC_ID_FIELD Sub field of CAN Identifier in which arbitration was lost.\begin_inset Newline newline\end_inset
+		0b000  - ALC_BASE_ID - Arbitration was lost during base identifier.\begin_inset Newline newline\end_inset
+		0b001  - ALC_SRR_RTR - Arbitration was lost during first bit after Base identifier (SRR of  Extended Frame, RTR bit of CAN 2.0 Base Frame)\begin_inset Newline newline\end_inset
+		0b010  - ALC_IDE - Arbitration was lost during IDE bit.\begin_inset Newline newline\end_inset
+		0b011  - ALC_EXTENSION - Arbitration was lost during Identifier extension.\begin_inset Newline newline\end_inset
+		0b100  - ALC_RTR - Arbitration was lost during RTR bit after Identifier extension!
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

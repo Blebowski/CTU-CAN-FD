@@ -203,6 +203,12 @@
 --                   have Data byte 0 at address 0.
 --   29.5.2018    Removed obsolete "sof_skip" signal. Transition from Interframe
 --                to SOF is by received synchronsation edge!
+--    5.6.2018    Added "data_tx_index". Separated CRC check to "crc_valid"
+--                signal! Added "parity_valid" signal. Added "alc_val" for
+--                arbitration lost capture combinational decoder! Added
+--                "control_pointer_non_zero". Changed counting on
+--                "control_pointer" to 0 in delim_ack! Now counting is done
+--                from value to zero on all instances of control_pointer!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -289,7 +295,7 @@ entity protocolControl is
     signal set_reciever           :out  std_logic;
     
     --Arbitration lost capture
-    signal alc                    :out  std_logic_vector(4 downto 0);
+    signal alc                    :out  std_logic_vector(7 downto 0);
     
     -------------------------------
     --Fault confinement Interface--
@@ -492,7 +498,7 @@ entity protocolControl is
   --Bit Error detection enable (Ex. disabled when recieving data)
   signal bit_err_enable_r         :     std_logic;
   signal sync_control_r           :     std_logic_vector(1 downto 0);
-  signal alc_r                    :     std_logic_vector(4 downto 0);
+  signal alc_r                    :     std_logic_vector(7 downto 0);
 
   signal form_Error_r             :     std_logic; --Form Error
   signal CRC_Error_r              :     std_logic; --CRC Error
@@ -577,13 +583,17 @@ entity protocolControl is
   
   --Transceive identifier shift registers
   signal tran_ident_base_sr       :     std_logic_vector(10 downto 0);
-  signal tran_ident_ext_sr        :     std_logic_vector(17 downto 0);  
+  signal tran_ident_ext_sr        :     std_logic_vector(17 downto 0);
+  
+  -- Arbitration lost capture value
+  signal alc_val                  :     std_logic_vector(7 downto 0);
   
   --------------------------
   --Control field registers-
   --------------------------
   --Pointer for counting DLC bits 
   signal control_pointer          :     natural range 0 to 7;
+  signal control_pointer_non_zero :     boolean;
   
   --Signal for presetting the state machine of control field into correct
   -- state  based on type of transcieved/recieved frame
@@ -603,12 +613,13 @@ entity protocolControl is
   --Data field registers--
   ------------------------
   
-  --Pointer for transcieving the data
+  -- Pointer for data transmission
   signal data_pointer             :     natural range 0 to 511;
-  
-  --Pointer for transcieving the stuf length field
-  signal stl_pointer              :     natural range 0 to 3;
-  signal data_size                :     natural range 0 to 511;
+
+  -- Pointer for TX data index within TX word.
+  -- (Shift register not used, due to additional delay after load of
+  --  txt word on output). 
+  signal data_tx_index            :     natural range 0 to 31;
 
 
   --Shift register for data reception
@@ -643,6 +654,14 @@ entity protocolControl is
   --Fixed stuff bit before CRC of FD Frame, for reciever
   signal fixed_CRC_FD_rec         :     std_logic;
   
+  --Pointer for transcieving the stuf length field
+  signal stl_pointer              :     natural range 0 to 3;
+
+  -- True if received CRC is matching TX CRC
+  signal crc_and_parity_valid     :     boolean;
+  signal crc_valid                :     boolean;
+  signal parity_valid             :     boolean;
+
   
   -----------------------------------------
   --Added signals for ISO FD type
@@ -784,6 +803,13 @@ begin
   -----------------------
   aux_tx_rx                 <=  data_tx_r & data_rx;
   aux_tran_frame_ident_type <=  tran_frame_type&tran_ident_type;
+
+  -------------------------------------------
+  -- Auxiliarly control pointer signals
+  -------------------------------------------
+  control_pointer_non_zero  <= true when (control_pointer > 0)
+                                    else
+                               false;
   
   -------------------------------------
   --Gray coding of stuff bit counter  
@@ -802,317 +828,367 @@ begin
    -------------------------------------
    --Parity of the stuff length field
    -------------------------------------
-   stuff_parity <= '0' when (dst_ctr mod 2)=0 else
+   stuff_parity <= '0' when (dst_ctr mod 2) = 0 else
                    '1';
-  
-  ---------------------------------------
-  ---------------------------------------
-  --Protocol control process
-  ---------------------------------------
-  ---------------------------------------
-  PC_proc:process(clk_sys,res_n)
+
+   -----------------------------------------------------------------------------
+   -- Comparison of received CRC with calculated CRC
+   -----------------------------------------------------------------------------
+   crc_and_parity_valid <= crc_valid and parity_valid;
+
+   crc_valid <= true when ((crc_src = CRC_15_SRC) and
+                           (rec_crc_r(14 downto 0) = crc15)) 
+                          or
+                          ((crc_src = CRC_17_SRC) and
+                           (rec_crc_r(16 downto 0) = crc17)) 
+                          or
+                          ((crc_src = CRC_21_SRC) and
+                           (rec_crc_r = crc21))
+                     else
+                false;
+
+
+   parity_valid <= false when 
+                    ((OP_State = transciever and tran_frame_type = FD_CAN) or 
+                     (OP_State = reciever    and rec_frame_type_r = FD_CAN)) and
+                     (drv_fd_type = ISO_FD) and ((rx_parity /= stuff_parity) or 
+                      (stuff_count_grey /= rx_count_grey))
+                         else
+                   true;
+
+    ----------------------------------------------------------------------------
+    -- Arbitration lost capture decoder
+    ----------------------------------------------------------------------------
+    alc_val(7 downto 5) <=
+        ALC_BASE_ID    when (arb_state = base_id) else
+        ALC_EXTENSION  when (arb_state = ext_id) else
+        ALC_SRR_RTR    when (arb_state = two_bits and tran_pointer = 1) else
+        ALC_IDE        when (arb_state = two_bits and tran_pointer = 0) else
+        ALC_RTR        when (arb_state = one_bit) else
+        (OTHERS => '0');
+
+    alc_val(4 downto 0) <= std_logic_vector(to_unsigned(tran_pointer, 5));
+
+
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  ---- Protocol control process
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  ------------------------------------------------------------------------------
+  PC_proc : process(clk_sys, res_n)
   begin
-    if(res_n=ACT_RESET)then
-      --Presetting the state
-      PC_State                <=  off;
-      interm_state            <=  interm_idle;
-      int_loop_back_ena_r     <=  '0';
-      retr_count              <=  0;
-      is_txt_locked           <=  '0';
-      
-      --------------------------------
-      --Configuring output registers--
-      --------------------------------
-      txt_hw_cmd.lock         <=  '0';
-      txt_hw_cmd.unlock       <=  '0';
-      txt_hw_cmd.valid        <=  '0';
-      txt_hw_cmd.err          <=  '0';
-      txt_hw_cmd.arbl         <=  '0';
-      txt_hw_cmd.failed       <=  '0';
-      
-      --FSM starts from intermission.interm_idle state, we dont need 
-      --preseting for intermission then!!! We CANT preeset then!!
-      FSM_preset              <=  '0';
-      crc_enable_r            <=  '0';
-      data_tx_r               <=  RECESSIVE;
-      arbitration_lost_r      <=  '0';
-      is_idle_r               <=  '0';
-      
-      --Configure Bit Stuffing
-      stuff_enable_r          <=  '0';
-      fixed_stuff_r           <=  '0';
-      stuff_length_r          <=  std_logic_vector(
+    if (res_n = ACT_RESET) then
+        -- Presetting the state
+        PC_State                <=  off;
+        interm_state            <=  interm_idle;
+        int_loop_back_ena_r     <=  '0';
+        retr_count              <=  0;
+        is_txt_locked           <=  '0';
+
+        --------------------------------
+        --Configuring output registers--
+        --------------------------------
+        txt_hw_cmd.lock         <=  '0';
+        txt_hw_cmd.unlock       <=  '0';
+        txt_hw_cmd.valid        <=  '0';
+        txt_hw_cmd.err          <=  '0';
+        txt_hw_cmd.arbl         <=  '0';
+        txt_hw_cmd.failed       <=  '0';
+
+        --FSM starts from intermission.interm_idle state, we dont need 
+        --preseting for intermission then!!! We CANT preeset then!!
+        FSM_preset              <=  '0';
+        crc_enable_r            <=  '0';
+        data_tx_r               <=  RECESSIVE;
+        arbitration_lost_r      <=  '0';
+        is_idle_r               <=  '0';
+
+        --Configure Bit Stuffing
+        stuff_enable_r          <=  '0';
+        fixed_stuff_r           <=  '0';
+        stuff_length_r          <=  std_logic_vector(
                                   to_unsigned(BASE_STUFF_LENGTH,3));
             
-      --Configuring Bit Destuffing
-      destuff_enable_r        <=  '0';
-      fixed_destuff_r         <=  '0';
-      destuff_length_r        <=  std_logic_vector(
+        --Configuring Bit Destuffing
+        destuff_enable_r        <=  '0';
+        fixed_destuff_r         <=  '0';
+        destuff_length_r        <=  std_logic_vector(
                                   to_unsigned(BASE_STUFF_LENGTH,3));
-      stuff_error_enable_r    <=  '0';
-      
-      inc_one_r               <=  '0';
-      inc_eight_r             <=  '0';
-      dec_one_r               <=  '0';
+        stuff_error_enable_r    <=  '0';
 
-      br_shifted              <=  '0';
-      
-      tran_valid_r            <=  '0';
-      rec_valid_r             <=  '0';
-      
-      err_pas_bit_val         <=  RECESSIVE;
-      stuff_err_arb_int       <=  '0';
-      
-      --------------------------------
-      --Prestting internal registers--
-      -------------------------------- 
-      rec_brs_r               <=  '0';
-      rec_crc_r               <=  (OTHERS=>'0');
-      rec_esi_r               <=  '0';
+        inc_one_r               <=  '0';
+        inc_eight_r             <=  '0';
+        dec_one_r               <=  '0';
+
+        br_shifted              <=  '0';
+
+        tran_valid_r            <=  '0';
+        rec_valid_r             <=  '0';
+
+        err_pas_bit_val         <=  RECESSIVE;
+        stuff_err_arb_int       <=  '0';
+
+        --------------------------------
+        --Prestting internal registers--
+        -------------------------------- 
+        rec_brs_r               <=  '0';
+        rec_crc_r               <=  (OTHERS=>'0');
+        rec_esi_r               <=  '0';
            
-      arb_two_bits            <=  (OTHERS=>'0');
-      arb_one_bit             <=  '0';
-      
-      ctrl_tran_reg           <=  (OTHERS =>'0');
-      dlc_int                 <=  (OTHERS=>'0');
-      
-      crc_src                 <=  "11";
-      crc_check               <=  '0';
-      
-      ack_recieved            <=  '0';
-      sec_ack                 <=  '0';
-      
-      tran_pointer            <=  0;
-      alc_r                   <=  (OTHERS=>'0');
-      data_size               <=  0;
-      
-      tran_ident_base_sr      <= (OTHERS => '0');
-      tran_ident_ext_sr       <= (OTHERS => '0');
-      
-      -- Nulling recieve registers
-      rec_ident_base_sr       <=  (OTHERS=>'0');
-      rec_ident_ext_sr        <=  (OTHERS=>'0');
-      rec_dlc_r               <=  (OTHERS=>'0');
-      rec_is_rtr_r            <=  '0';
-      rec_ident_type_r        <=  '0';
-      rec_frame_type_r        <=  '0';
+        arb_two_bits            <=  (OTHERS=>'0');
+        arb_one_bit             <=  '0';
 
-      -- Commands for RX Buffer for storing received frame
-      store_metadata_r        <=  '0';
-      rec_abort_r             <=  '0';
-      store_data_r            <=  '0';
-      store_data_word_r       <=  (OTHERS=>'0');
-      
-      -- Receive data RAM
-      rec_word_ptr            <= 0;
-      rec_word_bind           <= 0;
-      rec_data_sr             <= (OTHERS => '0');
-      
-      -- Pointer directly to TXT Buffer RAM
-      txt_buf_ptr_r           <= to_integer(unsigned(
+        ctrl_tran_reg           <=  (OTHERS =>'0');
+        dlc_int                 <=  (OTHERS=>'0');
+
+        crc_src                 <=  "11";
+        crc_check               <=  '0';
+
+        ack_recieved            <=  '0';
+        sec_ack                 <=  '0';
+
+        tran_pointer            <=  0;
+        alc_r                   <=  (OTHERS=>'0');
+        
+        data_pointer            <=  0;
+        data_tx_index           <=  0;
+
+        tran_ident_base_sr      <= (OTHERS => '0');
+        tran_ident_ext_sr       <= (OTHERS => '0');
+
+        -- Nulling recieve registers
+        rec_ident_base_sr       <=  (OTHERS=>'0');
+        rec_ident_ext_sr        <=  (OTHERS=>'0');
+        rec_dlc_r               <=  (OTHERS=>'0');
+        rec_is_rtr_r            <=  '0';
+        rec_ident_type_r        <=  '0';
+        rec_frame_type_r        <=  '0';
+
+        -- Commands for RX Buffer for storing received frame
+        store_metadata_r        <=  '0';
+        rec_abort_r             <=  '0';
+        store_data_r            <=  '0';
+        store_data_word_r       <=  (OTHERS=>'0');
+
+        -- Receive data RAM
+        rec_word_ptr            <= 0;
+        rec_word_bind           <= 0;
+        rec_data_sr             <= (OTHERS => '0');
+
+        -- Pointer directly to TXT Buffer RAM
+        txt_buf_ptr_r           <= to_integer(unsigned(
                                     IDENTIFIER_W_ADR(11 downto 2)));
-      
-      --Presetting the sampling point control
-      sp_control_r            <=  NOMINAL_SAMPLE;
-      ssp_reset_r             <=  '0';
-      trv_delay_calib_r       <=  '0';
-      bit_err_enable_r        <=  '0';
-      fixed_CRC_FD            <=  '0';
-      fixed_CRC_FD_rec        <=  '0';
-      sync_control_r          <=  NO_SYNC;
-      
-      --Error presetting
-      form_Error_r            <=  '0';
-      CRC_Error_r             <=  '0';
-      ack_Error_r             <=  '0';
-      unknown_state_Error_r   <=  '0';
-      set_transciever_r       <=  '0';
-      set_reciever_r          <=  '0';
-      
-      delay_control_trans     <=  '0';
-      
-      rx_parity               <=  '0';
-      rx_count_grey           <=  (OTHERS =>'0');
-      
-      sof_pulse_r             <=  '0';
-       
-    elsif rising_edge(clk_sys)then
-        
-      -----------------------------------------------------
-      --Assigning previous values to avoid latch creation--
-      -----------------------------------------------------
-      
-       PC_state               <=  PC_state; --Protocol register
-       data_tx_r              <=  data_tx_r; --Registered value of tx data
-       arbitration_lost_r     <=  '0'; 
-       crc_enable_r           <=  crc_enable_r;
-       is_txt_locked          <=  is_txt_locked;
-       
-       -- These TX arbitrator control signals are set only for one
-       -- clock cycle
-       txt_hw_cmd.lock         <=  '0';
-       txt_hw_cmd.unlock       <=  '0';
-       txt_hw_cmd.valid        <=  '0';
-       txt_hw_cmd.err          <=  '0';
-       txt_hw_cmd.arbl         <=  '0';
-       txt_hw_cmd.failed       <=  '0';
-     
-       stuff_enable_r         <=  stuff_enable_r;
-       fixed_stuff_r          <=  fixed_stuff_r;
-       stuff_length_r         <=  stuff_length_r;
-       destuff_enable_r       <=  destuff_enable_r;
-       fixed_destuff_r        <=  fixed_destuff_r;
-       destuff_length_r       <=  destuff_length_r;
-       stuff_error_enable_r   <=  stuff_error_enable_r;
 
-       rec_ident_base_sr      <=  rec_ident_base_sr;
-       rec_ident_ext_sr       <=  rec_ident_ext_sr;
-       rec_dlc_r              <=  rec_dlc_r;
-       rec_is_rtr_r           <=  rec_is_rtr_r;
-       rec_ident_type_r       <=  rec_ident_type_r;
-       rec_frame_type_r       <=  rec_frame_type_r;
-       rec_brs_r              <=  rec_brs_r;
-       rec_crc_r              <=  rec_crc_r;
-       rec_esi_r              <=  rec_esi_r;
+        --Presetting the sampling point control
+        sp_control_r            <=  NOMINAL_SAMPLE;
+        ssp_reset_r             <=  '0';
+        trv_delay_calib_r       <=  '0';
+        bit_err_enable_r        <=  '0';
+        fixed_CRC_FD            <=  '0';
+        fixed_CRC_FD_rec        <=  '0';
+        sync_control_r          <=  NO_SYNC;
 
-       store_metadata_r       <=  '0';
-       rec_abort_r            <=  '0';
-       store_data_r           <=  '0';
-       store_data_word_r      <=  store_data_word_r;
+        --Error presetting
+        form_Error_r            <=  '0';
+        CRC_Error_r             <=  '0';
+        ack_Error_r             <=  '0';
+        unknown_state_Error_r   <=  '0';
+        set_transciever_r       <=  '0';
+        set_reciever_r          <=  '0';
 
-       tran_pointer           <=  tran_pointer;
-       arb_state              <=  arb_state;--Arbitration control state machine
-       arb_two_bits           <=  arb_two_bits;
+        delay_control_trans     <=  '0';
+
+        rx_parity               <=  '0';
+        rx_count_grey           <=  (OTHERS =>'0');
+
+        sof_pulse_r             <=  '0';
        
-       tran_ident_base_sr     <= tran_ident_base_sr;
-       tran_ident_ext_sr      <= tran_ident_ext_sr;
-       
-       --Stored value of bit behind Identifier extension (RTR,r1)
-       arb_one_bit            <=  arb_one_bit;
-       
-       --Pointer for counting DLC bits
-       control_pointer        <=  control_pointer;
-       
-       --Signal for presetting the state machine of control field into 
-       --correct state
-       FSM_preset             <=  FSM_preset;
-       
-       --State machine for managing the bits inside the control field
-       control_state          <=  control_state;
-       
-       --Register for transcieving the data in control field bits
-       ctrl_tran_reg          <=  ctrl_tran_reg;
-       
-       --Internal registered value of DLC field (transcieved or recieved)
-       dlc_int                <=  dlc_int;
-       
-       --Pointer for transcieving the data
-       data_pointer           <=  data_pointer;
-       
-       --CRC Source , 00-CRC15, 01-CRC17, 10-CRC21,11-Invalid
-       crc_src                <=  crc_src;
-       
-       --Recieved CRC matches the calculated one
-       crc_check              <=  crc_check;
-       
-       --Acknowledge was recieved;
-       ack_recieved           <=  ack_recieved;
-       
-       --Whenever one acknowledge recessive bit already was monitorred
-       --by transciever (Delay compensation)
-       sec_ack                <=  sec_ack;
-       interm_state           <=  interm_state;
-       err_frame_state        <=  err_frame_state;
-       fixed_CRC_FD           <=  fixed_CRC_FD;
-       fixed_CRC_FD_rec       <=  fixed_CRC_FD_rec;
-       err_pas_bit_val        <=  err_pas_bit_val;
-       data_size              <=  data_size;
-       
-       --Retransmittion signals
-       retr_count            <=  retr_count;
-  
-       --Control signals for OP_State FSM
-       is_idle_r              <=  '0';
-       set_transciever_r      <=  '0';
-       set_reciever_r         <=  '0';
-       
-       --Error signals(are in logic one only for one clk_sys cycle!)
-       form_Error_r           <=  '0';
-       CRC_Error_r            <=  '0';
-       ack_Error_r            <=  '0';
-       unknown_state_Error_r  <=  '0';
-       int_loop_back_ena_r    <=  int_loop_back_ena_r;
-       crc_state              <=  crc_state;
-       
-       inc_one_r              <=  '0';
-       inc_eight_r            <=  '0';
-       dec_one_r              <=  '0';
-       
-       tran_valid_r           <=  '0';
-       rec_valid_r            <=  '0';
-       
-       br_shifted             <=  '0';
-       
-       stuff_err_arb_int      <=  '0'; --Stuff error appeared during arbitration
-       
-       --Bus synchronisation interface registers
-       sp_control_r           <=  sp_control_r;
-       ssp_reset_r            <=  '0';
-       trv_delay_calib_r      <=  trv_delay_calib_r;
-       bit_err_enable_r       <=  bit_err_enable_r;
-      
-       sync_control_r         <=  sync_control_r;
-       
-       delay_control_trans    <=  '0';    
-    
-       rx_parity              <=  rx_parity;
-       rx_count_grey          <=  rx_count_grey;
-    
-       rec_data_sr            <=  rec_data_sr;
-       rec_word_ptr           <=  rec_word_ptr;
-       rec_word_bind          <=  rec_word_bind;
+    elsif rising_edge(clk_sys) then
         
-       txt_buf_ptr_r          <=  txt_buf_ptr_r;
-       
-       sof_pulse_r            <=  '0';
+        ------------------------------------------------------
+        -- Assigning previous values to avoid latch creation
+        ------------------------------------------------------
+
+        PC_state               <=  PC_state; --Protocol register
+        data_tx_r              <=  data_tx_r; --Registered value of tx data
+        arbitration_lost_r     <=  '0'; 
+        crc_enable_r           <=  crc_enable_r;
+        is_txt_locked          <=  is_txt_locked;
+
+        -- These TX arbitrator control signals are set only for one
+        -- clock cycle
+        txt_hw_cmd.lock         <=  '0';
+        txt_hw_cmd.unlock       <=  '0';
+        txt_hw_cmd.valid        <=  '0';
+        txt_hw_cmd.err          <=  '0';
+        txt_hw_cmd.arbl         <=  '0';
+        txt_hw_cmd.failed       <=  '0';
+
+        stuff_enable_r         <=  stuff_enable_r;
+        fixed_stuff_r          <=  fixed_stuff_r;
+        stuff_length_r         <=  stuff_length_r;
+        destuff_enable_r       <=  destuff_enable_r;
+        fixed_destuff_r        <=  fixed_destuff_r;
+        destuff_length_r       <=  destuff_length_r;
+        stuff_error_enable_r   <=  stuff_error_enable_r;
+
+        rec_ident_base_sr      <=  rec_ident_base_sr;
+        rec_ident_ext_sr       <=  rec_ident_ext_sr;
+        rec_dlc_r              <=  rec_dlc_r;
+        rec_is_rtr_r           <=  rec_is_rtr_r;
+        rec_ident_type_r       <=  rec_ident_type_r;
+        rec_frame_type_r       <=  rec_frame_type_r;
+        rec_brs_r              <=  rec_brs_r;
+        rec_crc_r              <=  rec_crc_r;
+        rec_esi_r              <=  rec_esi_r;
+
+        store_metadata_r       <=  '0';
+        rec_abort_r            <=  '0';
+        store_data_r           <=  '0';
+        store_data_word_r      <=  store_data_word_r;
+
+        tran_pointer           <=  tran_pointer;
+        arb_state              <=  arb_state;--Arbitration control state machine
+        arb_two_bits           <=  arb_two_bits;
+
+        tran_ident_base_sr     <= tran_ident_base_sr;
+        tran_ident_ext_sr      <= tran_ident_ext_sr;
+
+        --Stored value of bit behind Identifier extension (RTR,r1)
+        arb_one_bit            <=  arb_one_bit;
+
+        --Pointer for counting DLC bits
+        control_pointer        <=  control_pointer;
+
+        --Signal for presetting the state machine of control field into 
+        --correct state
+        FSM_preset             <=  FSM_preset;
+
+        --State machine for managing the bits inside the control field
+        control_state          <=  control_state;
+
+        --Register for transcieving the data in control field bits
+        ctrl_tran_reg          <=  ctrl_tran_reg;
+
+        --Internal registered value of DLC field (transcieved or recieved)
+        dlc_int                <=  dlc_int;
+
+        --Pointer for transcieving the data
+        data_pointer           <=  data_pointer;
+
+        --CRC Source , 00-CRC15, 01-CRC17, 10-CRC21,11-Invalid
+        crc_src                <=  crc_src;
+
+        --Recieved CRC matches the calculated one
+        crc_check              <=  crc_check;
+
+        --Acknowledge was recieved;
+        ack_recieved           <=  ack_recieved;
+
+        --Whenever one acknowledge recessive bit already was monitorred
+        --by transciever (Delay compensation)
+        sec_ack                <=  sec_ack;
+        interm_state           <=  interm_state;
+        err_frame_state        <=  err_frame_state;
+        fixed_CRC_FD           <=  fixed_CRC_FD;
+        fixed_CRC_FD_rec       <=  fixed_CRC_FD_rec;
+        err_pas_bit_val        <=  err_pas_bit_val;
+        data_tx_index          <=  data_tx_index;
+
+        --Retransmittion signals
+        retr_count            <=  retr_count;
+
+        --Control signals for OP_State FSM
+        is_idle_r              <=  '0';
+        set_transciever_r      <=  '0';
+        set_reciever_r         <=  '0';
+
+        --Error signals(are in logic one only for one clk_sys cycle!)
+        form_Error_r           <=  '0';
+        CRC_Error_r            <=  '0';
+        ack_Error_r            <=  '0';
+        unknown_state_Error_r  <=  '0';
+        int_loop_back_ena_r    <=  int_loop_back_ena_r;
+        crc_state              <=  crc_state;
+
+        inc_one_r              <=  '0';
+        inc_eight_r            <=  '0';
+        dec_one_r              <=  '0';
+
+        tran_valid_r           <=  '0';
+        rec_valid_r            <=  '0';
+
+        br_shifted             <=  '0';
+
+        stuff_err_arb_int      <=  '0'; --Stuff error appeared during arbitration
+
+        --Bus synchronisation interface registers
+        sp_control_r           <=  sp_control_r;
+        ssp_reset_r            <=  '0';
+        trv_delay_calib_r      <=  trv_delay_calib_r;
+        bit_err_enable_r       <=  bit_err_enable_r;
+
+        sync_control_r         <=  sync_control_r;
+
+        delay_control_trans    <=  '0';    
+
+        rx_parity              <=  rx_parity;
+        rx_count_grey          <=  rx_count_grey;
+
+        rec_data_sr            <=  rec_data_sr;
+        rec_word_ptr           <=  rec_word_ptr;
+        rec_word_bind          <=  rec_word_bind;
+
+        txt_buf_ptr_r          <=  txt_buf_ptr_r;
+
+        sof_pulse_r            <=  '0';
     
-    if(drv_ena='0')then
-      PC_State                <=  off;
-      
-    elsif(bit_Error_valid='1' or stuff_Error_valid='1')then     
-      PC_State                <=  error;
-      FSM_preset              <=  '1';
-      
-      if(OP_State=reciever)then
-				
-        --Bit Error or Stuff Error detected by reciever (Control,data,CRC) , 
-        -- Increase by one
-        inc_one_r             <=  '1';
-        
-      elsif(OP_State=transciever and PC_State=arbitration)then
-        stuff_err_arb_int     <=  '1';
-      end if;
-      
-    elsif(OP_State=transciever and drv_abort_tran='1')then 
-      PC_State                <=  interframe;
-      FSM_Preset              <=  '1';
-      CRC_enable_r            <=  '0';
-      stuff_enable_r          <=  '0';
-      destuff_enable_r        <=  '0';
-      is_idle_r               <=  '1'; 
-      
-      txt_hw_cmd.unlock       <=  '1';
-      txt_hw_cmd.failed       <=  '1';
-      
-        --Bug fix 21.6.2016
-    elsif(delay_control_trans  =  '1')then
-      PC_State                <= control;
-    
-    else
+        if (drv_ena = '0') then
+            PC_State                    <= off;
+          
+        elsif (bit_Error_valid = '1' or stuff_Error_valid = '1') then     
+            PC_State                    <= error;
+            FSM_preset                  <= '1';
+
+            if (OP_State = reciever) then
+
+                -- Bit Error or Stuff Error detected by reciever 
+                -- (Control,data,CRC), Increase by one
+                inc_one_r               <= '1';
+
+            elsif (OP_State = transciever and PC_State = arbitration) then
+                stuff_err_arb_int       <= '1';
+            end if;
+
+        elsif (OP_State = transciever and drv_abort_tran = '1') then 
+            PC_State                    <= interframe;
+            FSM_Preset                  <= '1';
+            CRC_enable_r                <= '0';
+            stuff_enable_r              <= '0';
+            destuff_enable_r            <= '0';
+            is_idle_r                   <= '1';  
+            txt_hw_cmd.unlock           <= '1';
+            txt_hw_cmd.failed           <= '1';
+
+        -- Bug fix 21.6.2016
+        elsif (delay_control_trans = '1') then
+          PC_State                      <= control;
+
+        else
+
+
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ---- Protocol control state machine
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 
     case PC_state is 
-    
-    
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Start of frame 
@@ -1156,8 +1232,10 @@ begin
             --------------------------------------------------------------------
 
             -- Bus monitoring mode is disabled! In Bus monitoring mode, frames
-            -- are not transmitted!
-            if (drv_bus_mon_ena = '0') then
+            -- are not transmitted! Also, if unit was forced to be receiver
+            -- during transition from SUSPEND to SOF, we must NOT lock buffer
+            -- for transmission!
+            if (drv_bus_mon_ena = '0' and set_reciever_r = '0') then
                 
                 -- If frame is already locked, or there is on to lock available,
                 -- Start transceiving!
@@ -1357,11 +1435,9 @@ begin
                                                 data_rx;
                     end if;
 
-                    -- TODO: Repair!
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r             <= std_logic_vector(
-                        --                      to_unsigned(9 - tran_pointer, 5));
+                        alc_r <= alc_val;
                     end if;
 
                 ----------------------------------------------------------------
@@ -1465,11 +1541,9 @@ begin
                         end if;
                     end if;
 
-                    -- TODO: Repair!
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r         <=  std_logic_vector(
-                        --                    to_unsigned(1 - tran_pointer, 5));
+                        alc_r <= alc_val;
                     end if;
 
                 ----------------------------------------------------------------
@@ -1503,11 +1577,9 @@ begin
                         end if;                        
                     end if;    
 
-                    -- TODO: Repair !!!
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r   <=  std_logic_vector(to_unsigned(
-                        --                42 - tran_pointer, 5));
+                        alc_r <= alc_val;
                     end if;
             
                 ----------------------------------------------------------------
@@ -1537,9 +1609,9 @@ begin
                         FSM_preset              <=  '1';
                     end if;
 
+                    -- Marking arbitration lost capture
                     if (arbitration_lost_r = '1') then
-                        report "ALC function temporarily disabled";
-                        --alc_r         <=  std_logic_vector(to_unsigned(31,5));
+                        alc_r <= alc_val;
                     end if;
 
                 when others =>
@@ -1675,7 +1747,7 @@ begin
                     -- Count down on "control_pointer" till 0. When end of
                     -- control field was reached -> switch state.
                     ------------------------------------------------------------
-                    if (control_pointer > 0) then
+                    if (control_pointer_non_zero) then
                         control_pointer        <= control_pointer - 1;
 
                     else
@@ -1800,7 +1872,7 @@ begin
             else
 
                 -- Decrement control pointer till the end of control field
-                if (control_pointer > 0) then
+                if (control_pointer_non_zero) then
                     control_pointer        <= control_pointer - 1;
                 end if;
 
@@ -1910,7 +1982,6 @@ begin
         end if;
 
 
-
     ----------------------------------------------------------------------------            
     ----------------------------------------------------------------------------
     -- Data Phase
@@ -1920,39 +1991,40 @@ begin
         if (FSM_Preset = '1') then
             FSM_Preset  <= '0';
             
-            -- Note: We don't have to ask whenever frame is RTR frame, in RTR  
-            -- frame we never get into Data Phase!
+            --------------------------------------------------------------------
+            -- Set data pointer based on data size to be transmitted or received
+            -------------------------------------------------------------------- 
             case dlc_int is
-                when "0000" => data_size  <= 0; -- Zero bits
-                when "0001" => data_size  <= 7; -- 1 byte
-                when "0010" => data_size  <= 15; -- 2 bytes
-                when "0011" => data_size  <= 23; -- 3 bytes
-                when "0100" => data_size  <= 31; -- 4 bytes
-                when "0101" => data_size  <= 39; -- 5 bytes
-                when "0110" => data_size  <= 47; -- 6 bytes
-                when "0111" => data_size  <= 55; -- 7 bytes
-                when "1000" => data_size  <= 63; -- 8 bytes
-                when "1001" => data_size  <= 95; -- 12 bytes
-                when "1010" => data_size  <= 127; -- 16 bytes
-                when "1011" => data_size  <= 159; -- 20 bytes
-                when "1100" => data_size  <= 191; -- 24 bytes
-                when "1101" => data_size  <= 255; -- 32 bytes
-                when "1110" => data_size  <= 383; -- 48 bytes
-                when "1111" => data_size  <= 511; -- 64 bytes
-                when others => data_size  <= 0;
-                               unknown_state_Error_r  <=  '1'; 
-                               PC_State               <=  error;
-                               FSM_preset             <=  '1';
+                when "0000" => data_pointer  <= 0; -- Zero bits
+                when "0001" => data_pointer  <= 7; -- 1 byte
+                when "0010" => data_pointer  <= 15; -- 2 bytes
+                when "0011" => data_pointer  <= 23; -- 3 bytes
+                when "0100" => data_pointer  <= 31; -- 4 bytes
+                when "0101" => data_pointer  <= 39; -- 5 bytes
+                when "0110" => data_pointer  <= 47; -- 6 bytes
+                when "0111" => data_pointer  <= 55; -- 7 bytes
+                when "1000" => data_pointer  <= 63; -- 8 bytes
+                when "1001" => data_pointer  <= 95; -- 12 bytes
+                when "1010" => data_pointer  <= 127; -- 16 bytes
+                when "1011" => data_pointer  <= 159; -- 20 bytes
+                when "1100" => data_pointer  <= 191; -- 24 bytes
+                when "1101" => data_pointer  <= 255; -- 32 bytes
+                when "1110" => data_pointer  <= 383; -- 48 bytes
+                when "1111" => data_pointer  <= 511; -- 64 bytes
+                when others => 
+                        data_pointer           <= 0;
+                        unknown_state_Error_r  <= '1'; 
+                        PC_State               <= error;
+                        FSM_preset             <= '1';
             end case;
+            data_tx_index           <= 31;
             
-            data_pointer    <= 511;
-            
-            --Transmitter shall not synchronize in data phase of CAN FD Frame!
+            -- Transmitter shall not synchronize in data phase of CAN FD Frame!
             if (OP_State = transciever and tran_frame_type = FD_CAN) then
-                sync_control_r <= NO_SYNC;
+                sync_control_r      <= NO_SYNC;
             end if;
             
-            --Receive RAM signals
+            -- Receive RAM signals
             rec_word_ptr            <= 0;
             rec_word_bind           <= 0;
             rec_data_sr             <= (OTHERS => '0');
@@ -1960,906 +2032,1055 @@ begin
             -- Pointer directly to TXT Buffer, First data word
             txt_buf_ptr_r           <= to_integer(unsigned(
                                         DATA_1_4_W_ADR(11 downto 2)));
-            
-          else
 
-            if(OP_State=transciever)then
-              if(tran_trig='1')then
-              
-                data_tx_r <= tx_data_word(data_pointer mod 32);
-                
-                -- Move to the next word
-                if ((data_pointer mod 32) = 0) then
-                  if (txt_buf_ptr_r < 19) then
-                    txt_buf_ptr_r <= txt_buf_ptr_r + 1;
-                  end if;
-                end if;
-                
-              end if;
-            else
-              data_tx_r   <=  RECESSIVE;
-            end if;
-            
-            --Recieving data (also transmitter recieves the same data)
-            if(rec_trig='1')then
-              
-              -- Shift register and bits within one byte
-              rec_data_sr               <=  rec_data_sr(6 downto 0) & data_rx; 
-              rec_word_ptr              <=  (rec_word_ptr + 1) mod 8;
-              
-              -- If whole byte was received store it to "store_data_word_r".
-              if (rec_word_ptr = 7) then
-                rec_word_bind <= (rec_word_bind + 1) mod 4;
-                case rec_word_bind is
-                  when  0 =>
-                    -- First byte of word, whole word is written to avoid
-                    -- bytes from old frames!
-                    store_data_word_r         <= "000000000000000000000000" &
-                                                 rec_data_sr(6 downto 0) &
-                                                 data_rx;
-                  when  1 =>
-                    store_data_word_r(15 downto 8) <= 
-                                                rec_data_sr(6 downto 0) &
-                                                data_rx;
-                  when  2 =>
-                    store_data_word_r(23 downto 16) <= 
-                                                rec_data_sr(6 downto 0) &
-                                                data_rx;
-                  when  3 =>
-                    store_data_word_r(31 downto 24) <= 
-                                              rec_data_sr(6 downto 0) &
-                                              data_rx;
-                  when others =>
-                      report "Unknown state" severity error;
-                      PC_State <= error;
-                end case;
-                
-                -- Give command to RX Buffer to store data word if 4 byte
-                -- aligned data were received!
-                if (rec_word_bind = 3 and OP_State = reciever) then
-                    store_data_r <= '1';
-                end if;
+        else
 
-              end if;
-              
-              if(data_pointer>511-data_size)then
-                data_pointer            <=  data_pointer-1;
-              else
+            --------------------------------------------------------------------
+            -- Transmitting data
+            --------------------------------------------------------------------
+            if (OP_State = transciever) then
+                if (tran_trig = '1') then
+                    data_tx_r               <= tx_data_word(data_tx_index);
 
-                -- If we finish data field, and we did not receive 4 byte aligned
-                -- data, we still did not store data since last aligned word!
-                -- Remaining bytes must be stored
-                if (rec_word_bind /= 3 and OP_State = reciever) then
-                    store_data_r          <= '1';
-                end if;
-
-                PC_State      <=  crc;
-                FSM_Preset    <=  '1';
-              end if;
-            end if;
-            
-          end if;
-          
-          
-      --------------------------------------------------------------------------
-      -- CRC Field
-      --------------------------------------------------------------------------
-      when crc =>
-        
-          if(FSM_Preset='1')then
-            
-            ssp_reset_r     <=  '0';
-            
-            --CRC for normal CAN is always 15 bit, even if non-standard frame
-            -- longer than 8 bytes is on the bus!
-            if ((OP_State  = transciever and tran_frame_type = NORMAL_CAN) or
-                (OP_State = reciever    and rec_frame_type_r = NORMAL_CAN))then
-              data_pointer  <=  14; --CRC 15
-              crc_src       <=  CRC_15_SRC;
-            else    
-              if(unsigned(dlc_int)>10)then --More than 16 bytes, CRC 21
-                data_pointer  <=  20;
-                crc_src<=CRC_21_SRC;
-              else --Less than 16 bytes, CRC 17
-                data_pointer  <=  16;
-                crc_src       <=  CRC_17_SRC;   
-              end if;
-            end if;
-           
-            
-            --Chaning the bit Stuffing for CRC of CAN FD
-            if(OP_State=transciever and tran_frame_type=FD_CAN) or 
-              (OP_State=reciever    and rec_frame_type_r=FD_CAN)
-            then
-              fixed_stuff_r     <=  '1';
-              fixed_destuff_r   <=  '1';
-              stuff_length_r    <=  std_logic_vector(
-                                    to_unsigned(FD_STUFF_LENGTH,3));
-              destuff_length_r  <=  std_logic_vector(
-                                    to_unsigned(FD_STUFF_LENGTH,3));
-              fixed_CRC_FD      <=  '1';
-              fixed_CRC_FD_rec  <=  '1';
-              
-              --Stuff count is transmitted only if ISO option is configured!!
-              if(drv_fd_type=ISO_FD)then
-                crc_state       <= stuff_count;
-                stl_pointer     <= 3;
-              else
-                crc_state       <= real_crc;
-                crc_enable_r    <= '0';
-              end if;
-              
-            else
-              fixed_CRC_FD      <=  '0';
-              fixed_CRC_FD_rec  <=  '0';
-              crc_state         <=  real_crc;
-              crc_enable_r      <=  '0';
-            end if;
-            
-            rec_crc_r           <=  (OTHERS => '0');
-            FSM_Preset          <=  '0';
-            --sync_control_r<=RE_SYNC;
-          else
-            
-            case crc_state is
-              when stuff_count =>
-                                
-                if(OP_State=transciever)then
-                  if(tran_trig='1')then 
-                      --Transmitting stuff count field and the parity
-                      if (stl_pointer>0)then
-                        data_tx_r   <= stuff_count_grey(stl_pointer-1);
-                      else
-                        data_tx_r   <= stuff_parity;
-                      end if;                                 
-                  end if;
-                else
-                  data_tx_r<=RECESSIVE;
-                end if;
-                
-                if(rec_trig='1')then          
-                    if (stl_pointer>0)then
-                      stl_pointer                   <=  stl_pointer-1;
-                      rx_count_grey(stl_pointer-1)  <=  data_rx;
-                    else 
-                      crc_state                     <=  real_crc;
-                      crc_enable_r                  <=  '0';
-                      rx_parity                     <=  data_rx; 
-                    end if;
-                end if; 
-                                
-              when real_crc =>
-                
-                if(OP_State=transciever)then
-                 if(tran_trig='1')then
-                    case crc_src is
-                      when CRC_15_SRC => data_tx_r  <=  crc15(data_pointer);
-                      when CRC_17_SRC => data_tx_r  <=  crc17(data_pointer);
-                      when CRC_21_SRC => data_tx_r  <=  crc21(data_pointer);
-                      when others=> 
-                            data_tx_r             <=  data_tx_r;
-                            unknown_state_Error_r <=  '1'; 
-                            PC_State              <=  error;
-                            FSM_preset            <=  '1';
-                    end case;
-                  end if;
-                end if;
-                
-                if(rec_trig='1')then
-                    rec_crc_r <= rec_crc_r(19 downto 0)&data_rx;
-                    if(data_pointer=0)then
-                      PC_State              <=  delim_ack;
-                      FSM_Preset            <=  '1';
+                    ------------------------------------------------------------
+                    -- Move to the next word :
+                    --      1. Increment adress in TXT Buffer
+                    --      2. Set "data_tx_index" to first bit of next word
+                    ------------------------------------------------------------
+                    if (data_tx_index = 0) then
+                        if (txt_buf_ptr_r < 19) then
+                            txt_buf_ptr_r   <= txt_buf_ptr_r + 1;
+                        end if;
+                        data_tx_index       <= 31;
                     else
-                      data_pointer          <=  data_pointer-1;
+                        data_tx_index       <= data_tx_index - 1;
                     end if;
-                end if; 
-                   
-              when others =>
+                end if;
+            else
+                data_tx_r   <=  RECESSIVE;
+            end if;
+
+            --------------------------------------------------------------------
+            -- Recieving data (also transmitter recieves the same data)
+            --------------------------------------------------------------------
+            if (rec_trig = '1') then
+              
+                -- Shift register and bits within one byte
+                rec_data_sr               <= rec_data_sr(6 downto 0) & data_rx; 
+                rec_word_ptr              <= (rec_word_ptr + 1) mod 8;
+
+                ----------------------------------------------------------------
+                -- If whole byte was received store it to "store_data_word_r".
+                ----------------------------------------------------------------
+                if (rec_word_ptr = 7) then
+                    rec_word_bind         <= (rec_word_bind + 1) mod 4;
+
+                    case rec_word_bind is
+                        --------------------------------------------------------
+                        -- First byte of word, whole word is written to avoid
+                        -- bytes from old frames!
+                        --------------------------------------------------------
+                        when  0 =>
+                            store_data_word_r <= "000000000000000000000000" &
+                                                  rec_data_sr(6 downto 0) &
+                                                  data_rx;
+                        when  1 =>
+                            store_data_word_r(15 downto 8) <= 
+                                                rec_data_sr(6 downto 0) &
+                                                data_rx;
+                        when  2 =>
+                            store_data_word_r(23 downto 16) <= 
+                                                rec_data_sr(6 downto 0) &
+                                                data_rx;
+                        when  3 =>
+                            store_data_word_r(31 downto 24) <= 
+                                                rec_data_sr(6 downto 0) &
+                                                data_rx;
+                        when others =>
+                            report "Unknown state" severity error;
+                            PC_State      <= error;
+                            FSM_Preset    <= '1';
+                    end case;
+
+                    ------------------------------------------------------------
+                    -- Give command to RX Buffer to store data word whole word
+                    -- was received (4 bytes aligned).
+                    ------------------------------------------------------------
+                    if (rec_word_bind = 3 and OP_State = reciever) then
+                        store_data_r          <= '1';
+                    end if;
+                end if;
+
+                ----------------------------------------------------------------
+                -- Data pointer counts till 0 (end of data field).
+                ----------------------------------------------------------------                
+                if (data_pointer > 0) then
+                    data_pointer              <= data_pointer - 1;
+                else
+
+                    ------------------------------------------------------------
+                    -- If we finish data field, and we did not receive 4 byte 
+                    -- aligned data, we still did not store data since last 
+                    -- aligned word! Remaining bytes must be stored.
+                    ------------------------------------------------------------
+                    if (rec_word_bind /= 3 and OP_State = reciever) then
+                        store_data_r          <= '1';
+                    end if;
+                    PC_State                  <= crc;
+                    FSM_Preset                <= '1';
+                end if;
+
+            end if;            
+        end if;
+  
+          
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- CRC field
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when crc =>
+        
+        if (FSM_Preset = '1') then
+            ssp_reset_r     <= '0';
+
+            --------------------------------------------------------------------
+            -- Calculate length of CRC sequence:
+            --  1. For all CAN 2.0 Frames it is 15
+            --  2. For CAN FD frames less than 16 bytes (dlc=0xA), it is 17
+            --  3. For longer CAN FD frames it is 21.
+            --------------------------------------------------------------------
+            if ((OP_State  = transciever and tran_frame_type = NORMAL_CAN) or
+                (OP_State = reciever    and rec_frame_type_r = NORMAL_CAN))
+            then
+                data_pointer  <=  14; --CRC 15
+                crc_src       <=  CRC_15_SRC;
+            else
+
+                if (unsigned(dlc_int) > 10) then
+                    data_pointer  <= 20;
+                    crc_src       <= CRC_21_SRC;
+                else
+                    data_pointer  <= 16;
+                    crc_src       <= CRC_17_SRC;   
+                end if;
+
+            end if;
+
+            --------------------------------------------------------------------
+            -- Change the bit Stuffing for CRC of CAN FD:
+            --  1. Fixed stuffing
+            --  2. Stuff rule lenght is FD_STUFF_LENGTH (4)
+            --------------------------------------------------------------------
+            if (OP_State = transciever and tran_frame_type = FD_CAN) or 
+               (OP_State = reciever    and rec_frame_type_r = FD_CAN)
+            then
+                fixed_stuff_r       <= '1';
+                fixed_destuff_r     <= '1';
+                stuff_length_r      <= std_logic_vector(
+                                            to_unsigned(FD_STUFF_LENGTH, 3));
+                destuff_length_r    <= std_logic_vector(
+                                            to_unsigned(FD_STUFF_LENGTH, 3));
+                fixed_CRC_FD        <= '1';
+                fixed_CRC_FD_rec    <= '1';
+
+                ----------------------------------------------------------------
+                -- Go to stuff count transmission if ISO FD is configured.
+                ----------------------------------------------------------------
+                if (drv_fd_type = ISO_FD) then
+                    crc_state       <= stuff_count;
+                    stl_pointer     <= 3;
+                else
+                    crc_state       <= real_crc;
+                    crc_enable_r    <= '0';
+                end if;
+
+            else
+                fixed_CRC_FD        <= '0';
+                fixed_CRC_FD_rec    <= '0';
+                crc_state           <= real_crc;
+                crc_enable_r        <= '0';
+            end if;
+
+            rec_crc_r               <= (OTHERS => '0');
+            FSM_Preset              <= '0';
+
+
+        else
+            case crc_state is
+
+                ----------------------------------------------------------------
+                -- Stuff count field + stuff parity
+                ----------------------------------------------------------------              
+                when stuff_count =>
+                                
+                    if (OP_State = transciever) then
+                        if (tran_trig = '1') then 
+                            -- Transmitting stuff count field and the parity
+                            if (stl_pointer > 0) then
+                                data_tx_r   <= stuff_count_grey(stl_pointer - 1);
+                            else
+                                data_tx_r   <= stuff_parity;
+                            end if;                                 
+                        end if;
+                    else
+                        data_tx_r           <= RECESSIVE;
+                    end if;
+
+                    if (rec_trig = '1') then          
+                        if (stl_pointer > 0) then
+                            stl_pointer                     <= stl_pointer - 1;
+                            rx_count_grey(stl_pointer - 1)  <= data_rx;
+                        else 
+                            crc_state                       <= real_crc;
+                            crc_enable_r                    <= '0';
+                            rx_parity                       <= data_rx; 
+                        end if;
+                    end if; 
+
+                ----------------------------------------------------------------
+                -- Real CRC sequence
+                ----------------------------------------------------------------
+                when real_crc =>
+
+                    ------------------------------------------------------------
+                    -- Transmitt CRC sequence
+                    ------------------------------------------------------------
+                    if (OP_State = transciever and tran_trig = '1') then
+                        case crc_src is
+                            when CRC_15_SRC =>
+                                data_tx_r   <= crc15(data_pointer);
+
+                            when CRC_17_SRC =>
+                                data_tx_r   <= crc17(data_pointer);
+
+                            when CRC_21_SRC =>
+                                data_tx_r   <= crc21(data_pointer);
+
+                            when others=> 
+                                data_tx_r             <=  data_tx_r;
+                                unknown_state_Error_r <=  '1'; 
+                                PC_State              <=  error;
+                                FSM_preset            <=  '1';
+                        end case;
+                    end if;
+
+                    ------------------------------------------------------------
+                    -- Receive CRC sequence
+                    ------------------------------------------------------------
+                    if (rec_trig = '1') then
+                        rec_crc_r <= rec_crc_r(19 downto 0) & data_rx;
+                        if (data_pointer = 0) then
+                            PC_State              <= delim_ack;
+                            FSM_Preset            <= '1';
+                        else
+                            data_pointer          <= data_pointer - 1;
+                        end if;
+                    end if;
+
+                when others =>
              end case;
+        end if;
+
+
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- CRC Delimiter, Acknowledge and Acknowledge delimiter
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when delim_ack =>
+        if (FSM_Preset = '1') then
+            control_pointer   <= 2;
+            FSM_Preset        <= '0';
+            ack_recieved      <= '0';
+            sec_ack           <= '0';
+
+            --------------------------------------------------------------------
+            -- Disable bit stuffing, ACK field is not coded by bit stuffing
+            --------------------------------------------------------------------
+            stuff_enable_r    <= '0';
+            destuff_enable_r  <= '0';
+            fixed_stuff_r     <= '0';
+            fixed_destuff_r   <= '0';
+
+            --------------------------------------------------------------------
+            -- CRC check (for both reciever, and also for transciever if 
+            -- loopbacked CRC matches the calculated one!
+            --------------------------------------------------------------------
+            if (crc_and_parity_valid) then
+                crc_check     <= '1';
+            else
+                crc_check     <= '0';
+            end if;        
+             
+        else
+
+            if (OP_State = transciever) then
+
+                ----------------------------------------------------------------
+                -- Transmitter sends only recessice during CRC Delim, ACK and
+                -- ACK delim
+                ----------------------------------------------------------------
+                if (tran_trig = '1') then
+                    data_tx_r <=  RECESSIVE; 
+                end if;
+
+                ----------------------------------------------------------------
+                -- Monitoring received data 
+                ----------------------------------------------------------------
+                if (rec_trig = '1') then
+                    case control_pointer is
+
+                        --------------------------------------------------------
+                        -- CRC delimiter -> Switch back to Nominal bit rate
+                        --------------------------------------------------------
+                        when 2 =>
+                            if (tran_brs = BR_SHIFT and
+                                tran_frame_type = FD_CAN)
+                            then
+                                br_shifted      <= '1';
+                                sp_control_r    <= NOMINAL_SAMPLE;
+                            end if;
+                            
+                            control_pointer     <= control_pointer - 1;
+
+                        --------------------------------------------------------
+                        -- ACK field -> When dominant is received, ACK is valid.
+                        --------------------------------------------------------
+                        when 1 =>
+                            if (data_rx = DOMINANT or 
+                                drv_self_test_ena = '1')
+                            then 
+                                ack_recieved        <= '1';
+                                control_pointer     <= control_pointer - 1;
+                            else
+
+                                ------------------------------------------------
+                                -- Allow receiving first bit RECEESIVE, only
+                                -- if second consecutive RECESSIVE is received,
+                                -- ACK is considered as ERROR. This is defined
+                                -- by spec. and allows for compensation of
+                                -- mismatch caused by bit-rate switching!
+                                ------------------------------------------------
+                                if (sec_ack = '0') then
+                                    sec_ack         <= '1';
+                                    ack_recieved    <= '0';
+                                else
+                                    ack_recieved    <= '0';
+                                    sec_ack         <= sec_ack;
+                                    PC_State        <= error;
+                                    ack_Error_r     <= '1'; 
+                                    FSM_Preset      <= '1';
+                                end if;  
+                            end if;
+
+                        --------------------------------------------------------
+                        -- ACK Delimiter. If ACK was received -> OK, Error
+                        -- frame otherwise.
+                        --------------------------------------------------------
+                        when 0 =>
+                            if (ack_recieved = '1') then
+                                PC_State            <= eof;
+                            else
+                                PC_State            <= error;
+                            end if;
+                            FSM_Preset              <= '1';
+
+                        when others =>
+                            unknown_state_Error_r   <= '1'; 
+                            PC_State                <= error;
+                            FSM_preset              <= '1';
+                    end case;
+                end if;
+            end if;
+
+
+            if (OP_State = reciever) then
+
+                ----------------------------------------------------------------
+                -- Receiver sends acknowledge if it is allowed to and if CRC
+                -- was checked OK!
+                ----------------------------------------------------------------
+                if (tran_trig = '1') then
+                    case control_pointer is
+
+                        --------------------------------------------------------
+                        -- CRC delimiter bit
+                        --------------------------------------------------------
+                        when 2 => 
+                            data_tx_r           <= RECESSIVE;
+                            
+                        --------------------------------------------------------
+                        -- ACK field. Send if CRC match and ACK is not forbidden
+                        --------------------------------------------------------
+                        when 1 => 
+                            if (crc_check = '1' and drv_ack_forb = '0') then
+                                data_tx_r       <= DOMINANT;
+                            else
+                                data_tx_r       <= RECESSIVE;
+                            end if;
+
+                            ----------------------------------------------------
+                            -- If Bus Monitoring mode is enabled then data has
+                            -- to be looped back before sending on the bus!
+                            -- Thisway node itself will NOT detec error due to
+                            -- missing acknowledge!
+                            ----------------------------------------------------
+                            if (drv_bus_mon_ena = '1') then
+                                int_loop_back_ena_r     <= '1';
+                            end if;
+
+                        --------------------------------------------------------
+                        -- ACK field. Send if CRC match and ACK is not forbidden
+                        --------------------------------------------------------
+                        when 0 =>
+                            data_tx_r               <= RECESSIVE;
+                            int_loop_back_ena_r     <= '0'; 
+  
+                        when others =>
+                            unknown_state_Error_r   <= '1'; 
+                            PC_State                <= error;
+                            FSM_preset              <= '1';
+                    end case;
+                end if;
+
+                ----------------------------------------------------------------
+                -- Receiver also monitors if ACK was received!
+                ----------------------------------------------------------------
+                if (rec_trig = '1') then
+                    case control_pointer is
+
+                        --------------------------------------------------------
+                        -- CRC delimiter, switch back to NOMINAL bit rate.
+                        --------------------------------------------------------
+                        when 2 =>
+                            if (rec_brs_r = BR_SHIFT and
+                                rec_frame_type_r = FD_CAN)
+                            then
+                                br_shifted          <= '1';
+                                sp_control_r        <= NOMINAL_SAMPLE;
+                            end if;
+
+                            -- Receiving DOMINANT means error!
+                            if (data_rx = DOMINANT) then
+                                PC_State            <= error;
+                                FSM_Preset          <= '1';
+                                form_Error_r        <= '1';
+                                -- Increment recieve error counter by one!
+                                inc_one_r           <= '1';
+                            end if;
+
+                        --------------------------------------------------------
+                        -- ACK field. Sending DOMINANT and receiving RECESSIVE
+                        -- signals ERROR. Receiving DOMINANT means ACK present.
+                        --------------------------------------------------------
+                        when 1 =>
+                            if (data_tx_r = DOMINANT and data_rx = RECESSIVE) then
+                                PC_State            <= error;
+                                FSM_Preset          <= '1';
+                            end if;
+                            if (data_rx = DOMINANT or drv_self_test_ena = '1') then
+                                ack_recieved        <= '1';
+                            end if;
+
+                        --------------------------------------------------------
+                        -- ACK delimiter
+                        --------------------------------------------------------
+                        when 0 => 
+                            if (ack_recieved = '1' and crc_check = '1') then
+                                PC_State            <= eof;
+                            else
+                                PC_State            <= error;
+                                ack_Error_r         <= '1';
+                                inc_one_r           <= '1';
+                            end if; 
+                            FSM_preset              <= '1';
+
+                        when others =>
+                    end case;
+
+                    if (control_pointer_non_zero) then
+                        control_pointer             <= control_pointer - 1;
+                    end if;
+              end if;
+
+            end if;
+        end if;
+
+
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- End of frame
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when eof =>
+        if (FSM_Preset = '1') then
+            FSM_Preset                          <= '0';
+            control_pointer                     <= 6;
+        else
+
+            --------------------------------------------------------------------
+            -- Sending only RECESSIVE during EOF
+            --------------------------------------------------------------------
+            if (tran_trig = '1') then
+                data_tx_r                       <= RECESSIVE;
+            end if;           
+
+            --------------------------------------------------------------------
+            -- Receiving EOF
+            --------------------------------------------------------------------
+            if (rec_trig = '1') then
+
+                ----------------------------------------------------------------
+                -- DOMINANT bit during EOF. In last bit -> Overload , In
+                -- previous bits -> Error frame
+                ----------------------------------------------------------------
+                if (data_rx = DOMINANT) then
+
+                    if (control_pointer_non_zero) then
+                        PC_State                    <= error;
+                        if (OP_State = reciever) then
+                            inc_one_r               <= '1';
+                        end if;
+                    else
+                        PC_State                    <= overload;
+                    end if;
+                    FSM_Preset <= '1';
+
+                ----------------------------------------------------------------
+                -- RECESSIVE bit during EOF.
+                ----------------------------------------------------------------
+                else
+                    ------------------------------------------------------------
+                    -- RX Frame is considered as valid one bit before finishing
+                    -- EOF. Thisway Data are stored even if Overload flag is
+                    -- present!
+                    ------------------------------------------------------------
+                    if (control_pointer = 1 and OP_State = reciever) then
+                        rec_valid_r         <= '1';
+                        dec_one_r           <= '1';
+                    end if; 
+
+                    ------------------------------------------------------------
+                    -- TX Frame is considered as valid at the end of EOF!
+                    ------------------------------------------------------------
+                    if (control_pointer = 0 and OP_State = transciever) then
+                        tran_valid_r        <= '1';
+                        dec_one_r           <= '1';            
+                        txt_hw_cmd.unlock   <= '1';
+                        txt_hw_cmd.valid    <= '1';
+                        is_txt_locked       <= '0';
+                        retr_count          <= 0;
+                    end if; 
+
+                    ------------------------------------------------------------
+                    -- Count till 0 -> Go to interframe then.
+                    ------------------------------------------------------------
+                    if (control_pointer_non_zero) then
+                        control_pointer         <= control_pointer - 1;                        
+                    else
+                        PC_State                <= interframe; 
+                        FSM_Preset              <= '1';
+                    end if;
+                end if;
+            end if;
+
+        end if;
+
+
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- Interframe space
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when interframe =>
+        if (FSM_Preset = '1') then
+            FSM_Preset                          <= '0';
+            control_pointer                     <= 2;
+            interm_state                        <= intermission;
+            stuff_enable_r                      <= '0';
+            destuff_enable_r                    <= '0';
+        else
+            case interm_state is
+
+                ----------------------------------------------------------------
+                -- Intermission
+                ----------------------------------------------------------------
+                when intermission =>
+
+                    ------------------------------------------------------------
+                    -- Transmitting RECESSIVE. From second bit on, react on
+                    -- edge by HARD_SYNC.
+                    ------------------------------------------------------------
+                    if (tran_trig = '1') then 
+                        data_tx_r               <= RECESSIVE;
+                        if (control_pointer < 2) then 
+                            sync_control_r      <= HARD_SYNC; 
+                        end if;
+                    end if;
+                        
+                    ------------------------------------------------------------
+                    -- We transfer to SOF When sample dominant or detect edge
+                    ------------------------------------------------------------
+                    if (hard_sync_edge = '1') then
+                        PC_State                    <= sof; 
+                        crc_enable_r                <= '1';
+                        FSM_preset                  <= '1';
+
+                    ------------------------------------------------------------
+                    -- Receiving intermission bits
+                    ------------------------------------------------------------
+                    elsif (rec_trig = '1') then
+
+                        if (control_pointer_non_zero) then
+                            control_pointer         <= control_pointer - 1;
+                        end if;
+
+                        --------------------------------------------------------
+                        -- Sampling RECESSIVE bit. In the last RECESSIVE bit
+                        -- Transmitting error passive node goes to SUSPEND,
+                        -- otherwise goes to intermission idle.
+                        --------------------------------------------------------
+                        if (data_rx = RECESSIVE) then
+
+                            if (not control_pointer_non_zero) then
+                                if (OP_State = transciever and 
+                                    error_state = error_passive)
+                                then
+                                  interm_state      <= suspend;
+                                  control_pointer   <= 7;   
+                                else
+                                  interm_state      <= interm_idle; 
+                                end if;
+                            end if;
+
+                        --------------------------------------------------------
+                        -- Sampling DOMINANT bit. Third bit should be
+                        -- interpreted as SOF, previous bits as Overload
+                        -- condition. (Bugfix 30.6.2016)
+                        --------------------------------------------------------
+                        else
+                            if (control_pointer_non_zero) then
+                                PC_State            <= overload;                                 
+                            else
+                                PC_State            <= sof;
+                                -- TODO: is it really necessary to enable here?
+                                crc_enable_r        <= '1';
+                           end if;
+                           FSM_preset          <= '1';
+                        end if;  
+                    end if;  
+
+
+                ----------------------------------------------------------------
+                -- Suspend transmission. If Hard sync edge comes, go to SOF,
+                -- but turn receiver! 
+                ----------------------------------------------------------------
+                when suspend =>
+                    sync_control_r                  <= HARD_SYNC;
+                    if (tran_trig = '1') then
+                        data_tx_r                   <= RECESSIVE;
+                    end if;
+
+                    if (hard_sync_edge = '1') then
+                        PC_State                    <= sof; 
+                        crc_enable_r                <= '1';
+                        FSM_preset                  <= '1';
+                        set_reciever_r              <= '1';
+
+                    elsif (rec_trig = '1') then
+
+                        if (control_pointer_non_zero) then
+                            control_pointer         <= control_pointer - 1;
+                        else
+                            interm_state            <= interm_idle;
+                        end if;
+
+                    end if;
+
+                ----------------------------------------------------------------
+                -- Intermission idle
+                ----------------------------------------------------------------
+                when interm_idle =>
+                    is_idle_r               <=  '1';
+
+                    if (tran_trig = '1') then
+                        data_tx_r           <= RECESSIVE;
+                    end if;
+
+                    if (OP_State /= integrating) then
+                        sync_control_r      <= HARD_SYNC;
+                    end if;
+
+                    if (hard_sync_edge = '1' and (OP_State /= integrating)) then
+                        PC_State            <= sof;
+                        crc_enable_r        <= '1';
+                        FSM_preset          <= '1';
+
+                    elsif (rec_trig = '1' and (OP_State /= integrating)) then 
+                      
+                        -- If any frame is available here for transmission 
+                        -- we lock it already here. If we moved to SOF and
+                        -- locked only there, the frame might have been
+                        -- aborted in that one clock cycle! Thus we would
+                        -- then lock invalid frame!
+                        if ((drv_bus_mon_ena = '0') and 
+                            (tran_frame_valid_in  = '1')) -- Next data are availiable 
+                        then
+                            PC_State        <= sof;
+                            is_txt_locked   <= '1';
+                            txt_hw_cmd.lock <= '1';                  
+                            crc_enable_r    <= '1';
+                            FSM_Preset      <= '1';
+
+                            -- In case that TX Arbitrator provides different frame 
+                            -- for us, we need to erase the retranmsitt counter
+                            if (txtb_changed = '1') then
+                                retr_count   <= 0;
+                            end if;
+                        else
+                            FSM_Preset       <= '0';                    
+                        end if;
+                    end if;
+                
+            when others =>
+                  unknown_state_Error_r     <= '1'; 
+                  PC_State                  <= error;
+                  FSM_preset                <= '1';
+            end case;
+          end if;
+
+
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- Error frame
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when error =>
+        if (FSM_Preset = '1') then
+            FSM_Preset          <= '0';
+            control_pointer     <= 6; -- Pointer for sending error flag
+            stuff_enable_r      <= '0';
+            fixed_stuff_r       <= '0';
+            fixed_destuff_r     <= '0';
+
+            --Pointer for recieving the superposition of error flags
+            tran_pointer        <= 12; 
+            err_frame_state     <= err_flg_sup;
+            destuff_enable_r    <= '0';
+
+            --If Error appears within FD Data Phase node has to switch back
+            sp_control_r        <= NOMINAL_SAMPLE;
+            crc_enable_r        <= '0';
+
+            --Here we force data to be dominant event if not trigger is used! 
+            --This helps in situations when error is detected during Data bit 
+            --rates!!
+            data_tx_r           <= DOMINANT;
+
+            -- Storing in RX Buffer must be aborted regardless of OP State.
+            rec_abort_r         <= '1';
+
+            -- If unit is transciever and Error appears then rettransmitt
+            -- counter should be incremented
+            if (OP_State = transciever) then
+                if ((drv_retr_lim_ena = '0') or --Retransmitt limit is disabled 
+                    (drv_retr_lim_ena = '1' and --Enabled, but not reached
+                    retr_count < to_integer(unsigned(drv_retr_th))))
+                then
+                    retr_count         <= (retr_count + 1) mod 16;            
+                    txt_hw_cmd.unlock  <= '1';
+                    txt_hw_cmd.err     <= '1';
+                else
+
+                    -- Retransmitt limit reached, signal transmission failure
+                    -- Erase the retransmitt counter, since the next frame
+                    -- can be from the same buffer, but it can be different frame!
+                    -- Thus retr_counter wont be erased on "txt_buf_changed"!
+                    retr_count            <= 0;
+                    txt_hw_cmd.unlock     <= '1';
+                    txt_hw_cmd.failed     <= '1';
+                end if;
+
+                is_txt_locked               <= '0';
+
+                -- Transmitter started to transmitt error flag -> increase by 8 
+                -- except ack error for error passive
+                -- Or Stuff Error appeared during arbitration!
+                if ((error_state = error_passive and ack_error_r = '1') or 
+                    (stuff_err_arb_int = '1'))
+                then
+                    inc_eight_r             <= '0';
+                else  
+                    inc_eight_r             <= '1';
+                end if;
+            end if;
+
+            -- If Bus Monitoring mode is enabled then data has to be looped 
+            -- back before sending on the bus!
+            if (drv_bus_mon_ena = '1') then 
+                int_loop_back_ena_r         <= '1';
+            end if;
+          
+        else
+          
+            case  err_frame_state is
+
+                -- Transmition of error flag and reception of Error
+                -- flag superposition 
+                when err_flg_sup =>
+                    if (tran_trig = '1') then
+                        if (control_pointer_non_zero and
+                            error_state = error_active)
+                        then
+                            data_tx_r <=  DOMINANT; -- Sending active error flag
+                        else 
+                            -- Sending passive error flag or one bit after
+                            -- active error flag!
+                            data_tx_r <=  RECESSIVE;
+                        end if;
+                    end if;
+
+                    if (rec_trig = '1') then 
+                      
+                        -- Bit error detection during active error flag
+                        if (data_tx_r = DOMINANT and data_rx = RECESSIVE)then
+                            FSM_Preset      <= '1';
+
+                            if (OP_State = reciever) then
+                              -- Reciever error counter increased by 8.s
+                              inc_eight_r   <= '1';
+                            end if;
+                        else
+                            if (error_state = error_active) then
+                          
+                                -- Decreasing counters
+                                if (control_pointer_non_zero) then
+                                    control_pointer     <= control_pointer - 1;
+                                end if;
+
+                                if (tran_pointer > 0) then
+                                    tran_pointer        <= tran_pointer - 1;
+                                end if;
+
+                                -- Only in the last bit, if detected earlier  
+                                -- then bit error apeared
+                                if (data_rx = RECESSIVE) then
+                                    err_frame_state     <= err_delim;
+                                    control_pointer     <= 6; 
+                                    -- Note: this has to be 6 not 7 (duration of 
+                                    -- err_delim is 8) because one bit is sent 
+                                    -- recessive and detected
+
+                                    -- We accepted 13-th consecutive DOMINANT bit -> 
+                                    -- Error again??
+                                elsif (data_rx = DOMINANT and 
+                                       tran_pointer = 0)
+                                then
+                                    FSM_preset              <= '1';
+                                    int_loop_back_ena_r     <= '0';
+                                    if (OP_State = reciever) then
+                                        inc_eight_r         <= '1'; 
+                                        --For reciever error counter increased by 8. 
+                                        --For transciever this is done in FSM_Preset!
+                                    end if;
+                                end if;
+
+                                -- This condition is causes that Reciever that was 
+                                -- the first to detect the error has error counter
+                                -- increased by 8! Transciever counter is increased
+                                -- in FSM preset! Any next reciever that will hook
+                                -- up, will hook up at the end of error flag super-
+                                -- position Thus after transmitting its error flag
+                                -- there will be recessive bit, not dominant!
+                                if ((tran_pointer = 5) and
+                                    (OP_State = reciever))
+                                then
+                                    -- First bit detected Dominant after active 
+                                    -- error flag was sent!
+                                    inc_eight_r             <= '1';
+                                end if;
+                        
+                            elsif (error_state = error_passive) then
+                          
+                                -- Storing last recieved data
+                                err_pas_bit_val <=  data_rx;
+                            
+                                -- Detecting 6 consecutive bits of equal polarity
+                                if (control_pointer = 6) then
+                                    control_pointer   <= control_pointer - 1;
+                                else
+                                    if (data_rx = err_pas_bit_val) then
+                                        if (control_pointer > 1) then
+                                            control_pointer <= 
+                                                control_pointer - 1;
+                                        else --Six equal consecutive bits detected
+                                            err_frame_state   <= err_delim;
+                                            control_pointer   <= 6; 
+                                        end if;
+                                    else
+                                        control_pointer       <=  5; 
+                                        --Restart the detection (with one bit less
+                                        --because then the first bit is already the 
+                                        --bit where mismatch appeared)
+                                    end if;
+                                end if;
+                            -- Node must be Bus-off here                           
+                            else
+                                PC_State    <= off;
+                                FSM_Preset  <= '1';
+                            end if;
+                        end if;
+                    end if;  
+
+
+                when err_delim =>
+                    if (tran_trig = '1') then 
+                        data_tx_r   <=  RECESSIVE;
+                    end if;
+
+                    if (rec_trig = '1') then
+                        if (control_pointer_non_zero) then
+                            control_pointer <=  control_pointer - 1;
+                        else
+                            if (data_rx = DOMINANT) then
+                                PC_State    <= overload;
+                            else
+                                PC_State    <= interframe;
+                            end if;
+                            FSM_Preset          <= '1';
+                            int_loop_back_ena_r <= '0';
+                        end if;
+                    end if;
+
+                when others =>
+                      unknown_state_Error_r     <= '1'; 
+                      PC_State                  <= error;
+                      FSM_preset                <= '1';
+                      int_loop_back_ena_r       <= '0';
+            end case;
         end if;
       
       
-      --------------------------------------------------------------------------
-      --CRC Delimiter, Acknowledge and Acknowledge delim
-      --------------------------------------------------------------------------
-      when delim_ack =>
-          if(FSM_Preset='1')then
-            control_pointer   <=  0;
-            FSM_Preset        <=  '0';
-            ack_recieved      <=  '0';
-            sec_ack           <=  '0';
-            --Ack field is not coded by bit stuffing
-            stuff_enable_r    <=  '0';
-            destuff_enable_r  <=  '0';
-            
-            fixed_stuff_r     <=  '0';
-            fixed_destuff_r   <=  '0';
-                  
-            --Crc checking (for both reciever, and also for transciever if 
-            -- loopbacked CRC matches the calculated one!
-            if((rec_crc_r="000000"&crc15) or
-						   (rec_crc_r="0000"&crc17) or 
-						   (rec_crc_r=crc21))
-						then
-              --Checking stuff count and parity of ISO FD
-              if( ((OP_State=transciever  and tran_frame_type   = FD_CAN) or 
-                   (OP_State=reciever     and rec_frame_type_r  = FD_CAN)
-                   )and 
-                   (drv_fd_type = ISO_FD)
-                 )
-               then
-                  
-                  if(rx_parity=stuff_parity and stuff_count_grey=rx_count_grey)
-                  then
-                    crc_check <=  '1';
-                  else
-                    crc_check <=  '0';
-                  end if;
-                  
-               else    
-                crc_check     <=  '1';
-               end if;
-                             
-            else
-              crc_check       <=  '0';
-            end if;        
-             
-          else
-            if(OP_State=transciever)then
-              if(tran_trig='1')then --Sending data as transciever
-                --As transciever we send only recessive bits in these fields
-                data_tx_r <=  RECESSIVE; 
-              end if;
-            
-              if(rec_trig='1')then --Monitoring data as transciever
-                case control_pointer is
-                when 0 => sp_control_r    <=  NOMINAL_SAMPLE;
-                          if(tran_brs=BR_SHIFT and tran_frame_type=FD_CAN)then
-                            br_shifted    <=  '1';
-                          end if;
-                          --Note : no condition is necessary because in normal 
-                          --frame sp_control remains NORMAL_SAMPLE!
-                          control_pointer <=  control_pointer+1;
-                          
-                          --Bit Error detected on CRC delimiter bit
-                          --if(data_rx=DOMINANT) then
-                          --  PC_State<=error;
-                          --  FSM_Preset<='1';
-                          --end if;
-                when 1 => if(data_rx=DOMINANT or drv_self_test_ena='1')then 
-                            ack_recieved    <=  '1';
-                            control_pointer <=  control_pointer+1;
-                          else
-                            if(sec_ack='0')then
-                              --Still OK, just one recesive sampled by transciever
-                              sec_ack       <=  '1';
-                              ack_recieved  <=  ack_recieved;
-                            else
-                              --Three recessive bits registered -->
-                              -- no acknowledge, ACK Error
-                              ack_recieved  <=  '0';
-                              sec_ack       <=  sec_ack;
-                              PC_State      <=  error;
-                              ack_Error_r   <=  '1'; 
-                              FSM_Preset    <=  '1';
-                            end if;  
-                          end if;
-                when 2 => --This state represents ack delimiter
-                          if(ack_recieved='1')then
-                            PC_State        <=  eof;
-                          else
-                            PC_State        <=  error;
-                          end if;
-                          FSM_Preset        <=  '1';
-                when others=> unknown_state_Error_r <=  '1'; 
-                              PC_State              <=  error;
-                              FSM_preset            <=  '1';
-                end case;
-              end if;
-            elsif(OP_State=reciever)then
-              if(tran_trig='1')then
-                case control_pointer is
-                
-                  --CRC delimiter bit
-                  when 0 => data_tx_r       <=  RECESSIVE;
-                            --Switching the bit rate back
-                            --sp_control_r  <=  NOMINAL_SAMPLE;
-                            --
-                  
-                  --Send acknowledge if CRC Match and is not forbidden
-                  when 1 => if(crc_check='1' and drv_ack_forb='0')then
-                              data_tx_r     <=  DOMINANT;
-                            else
-                              data_tx_r     <=  RECESSIVE;
-                            end if;
-                            
-                            --If Bus Monitoring mode is enabled then data has to
-                            --be looped back before sending on the bus!
-                            if(drv_bus_mon_ena='1')then 
-                              int_loop_back_ena_r <=  '1';
-                            end if;
-                            
-                  when 2 => data_tx_r                   <=  RECESSIVE;
-                            --Loop-Back is turned off either in Bus Mon mode or 
-                            --normal mode
-                            int_loop_back_ena_r         <=  '0'; 
-                            
-                  when others => unknown_state_Error_r  <=  '1'; 
-                                 PC_State               <=  error;
-                                 FSM_preset             <=  '1';
-                end case;
-              end if;
-              
-              if(rec_trig='1')then
-                case control_pointer is
-                  when 2 =>  if(ack_recieved='1' and crc_check='1')then
-                              PC_State      <=  eof;
-                             else
-                              PC_State      <=  error;
-                              ack_Error_r   <=  '1';
-                              inc_one_r     <=  '1';
-                             end if; 
-                             FSM_preset     <=  '1';
-                  
-                  --Acknowledge sent but recessive monitored
-                  when 1 =>  if(data_tx_r=DOMINANT and data_rx=RECESSIVE)then
-                              PC_State      <=  error;
-                              FSM_Preset    <=  '1';
-                             end if;
-                             if(data_rx=DOMINANT or drv_self_test_ena='1')then
-                              ack_recieved  <=  '1';
-                             end if;
-                  when 0 =>  sp_control_r   <=  NOMINAL_SAMPLE;
-                    
-                             if(rec_brs_r=BR_SHIFT and rec_frame_type_r=FD_CAN)then
-                              br_shifted    <=  '1';
-                             end if;
-                   
-                             if(data_rx=DOMINANT)then --CRC Delimiter bit
-                                PC_State      <=  error;
-                                FSM_Preset    <=  '1';
-                                form_Error_r  <=  '1';
-                                --Increment recieve error counter by one!
-                                inc_one_r     <=  '1';
-                             end if;
-                  when others=>
-                end case;        
-                control_pointer               <=  control_pointer+1;
-              end if;
-            else
-              --If we get here it is absolute fail... 
-              --(Not transciever, Not reciever) in ACK field...
-              unknown_state_Error_r <=  '1'; 
-              PC_State              <=  error;
-              FSM_preset            <=  '1';
-            end if;
-          end if;
-      
-      --------------------------------------------------------------------------
-      --End of Frame
-      --------------------------------------------------------------------------
-      when eof =>
-          if(FSM_Preset='1')then
-            FSM_Preset        <=  '0';
-            --Eof is not bit-Stuffed
-            stuff_enable_r    <=  '0';
-            destuff_enable_r  <=  '0';
-            control_pointer   <=  6;
-          else
-            if(tran_trig='1')then
-              data_tx_r       <=  RECESSIVE;
-            end if;           
-            if(rec_trig='1')then
-            
-             --Detection of dominant bit during EOF means error, 
-             --or Overload condition 
-             if(data_rx=DOMINANT)then
-                 --if(control_pointer>1)then
-                  PC_State      <=  error;  
-                  FSM_Preset    <=  '1';
-                  if(OP_State=reciever)then
-                    --Increment recieve error counter by one!
-                    inc_one_r   <=  '1';
-                  end if;
-                -- else
-                --  PC_State      <=  overload;  
-                --  FSM_Preset    <=  '1';
-                --end if;
-             else 
-              if(control_pointer>0)then
-                control_pointer <=  control_pointer-1;
-                --Message is recieved as valid one bit before the end of frame
-                if(control_pointer=1 and OP_State=reciever)then
-                  rec_valid_r   <=  '1';
-                  dec_one_r     <=  '1';
-                end if; 
-              else
-                if(OP_State=transciever)then --Message is sucessfully transcieved
-                  tran_valid_r        <=  '1';
-                  dec_one_r           <=  '1';            
-                  txt_hw_cmd.unlock   <=  '1';
-                  txt_hw_cmd.valid    <=  '1';
-                  is_txt_locked       <=  '0';
-                  retr_count          <=  0;
-                end if;
-                PC_State        <=  interframe; 
-                FSM_Preset      <=  '1';
-              end if;
-             end if;
-            end if;
-           end if;
-           
-      --------------------------------------------------------------------------
-      --Interframe space
-      --------------------------------------------------------------------------
-      when interframe =>
-          if(FSM_Preset='1')then
-            FSM_Preset        <=  '0';
-            control_pointer   <=  2;
-            interm_state      <=  intermission;
-            stuff_enable_r    <=  '0';
-            destuff_enable_r  <=  '0';
-          else
-            case interm_state is
-            when intermission =>
-                  if(tran_trig='1')then --Transmition of intermission
-                    data_tx_r <=  RECESSIVE;
-                    if(control_pointer<2)then 
-                      --Hard synchronisation during second or third bit of 
-                      -- intermission!
-                      sync_control_r  <=  HARD_SYNC; 
-                    end if;
-                  end if;
-                        
-                  --------------------------------------------------------------
-                  -- We transfer to SOF When sample dominant or detect edge
-                  --------------------------------------------------------------
-                  if( hard_sync_edge = '1')then
-                    PC_State          <=  sof; 
-                    crc_enable_r      <=  '1';
-                    FSM_preset        <=  '1';
-                  elsif(rec_trig='1')then --Reciving intermission bits
-                    
-                    if(control_pointer>0)then
-                      control_pointer <=  control_pointer-1;
-                    end if;
-                    
-                    if(data_rx=RECESSIVE)then 
-                      if(control_pointer=0)then --Third recessive bit sampled
-                        if(OP_State=transciever and 
-                           error_state=error_passive)
-                        then
-                          --Transmitting error passive node always suspends
-                          -- after transmition
-                          interm_state    <=  suspend;
-                          --Preseting the pointer for Suspend field. In error
-                          --field it is preset by FSM_preset
-                          control_pointer <=  7;   
-                        else
-                          interm_state    <=  interm_idle; 
-                        end if;
-                     end if;
-                    
-                    --Bugfix 30.6.2016
-                    elsif(data_rx=DOMINANT)then
-                      if(control_pointer=0)then --Third recessive bit sampled
-                        PC_State          <=  sof; 
-                        crc_enable_r      <=  '1';
-                        FSM_preset        <=  '1';
-                      else
-                        PC_State          <=  overload;
-                        FSM_preset        <=  '1'; 
-                      end if;
-                    end if;  
-                    
-                  end if;  
-                  
-            when suspend =>
-                  sync_control_r<=HARD_SYNC;
-                  if(tran_trig='1')then
-                    data_tx_r             <=  RECESSIVE;
-                  end if;
-                  
-                  if( hard_sync_edge = '1')then
-                    PC_State          <=  sof; 
-                    crc_enable_r      <=  '1';
-                    FSM_preset        <=  '1';
-                    set_reciever_r    <=  '1';
-                  elsif(rec_trig='1')then
-                    if(control_pointer>0)then
-                      control_pointer     <=  control_pointer-1;
-                    end if;
-                     if(control_pointer=0)then  
-                      if ((drv_bus_mon_ena       = '0') and
-                         --Next data are availiable
-                         (tran_frame_valid_in  = '1'))
-                      then
-                          PC_State        <=  sof;
-                          is_txt_locked   <=  '1';
-                          txt_hw_cmd.lock <=  '1';
-                          crc_enable_r    <=  '1';
-                          FSM_preset      <=  '1';
-                          
-                          --Bug fix 28.6.2016
-                          --Preset reciever already here, not in SOF, otherwise
-                          -- if there is nothing to transmitt SOF will be trans-
-                          -- mitted anyway. If we were transmitter of previous 
-                          -- message and we have nothing more to transmitt and 
-                          -- we turn reciever, we dont want SOF to be
-                          -- tranmsmitted by reciever!!
-                          set_reciever_r      <=  '1';
-                      
-                      else
-                          interm_state    <=  interm_idle;
-                      end if;
-                    end if;
-                  end if;
-                  
-            when interm_idle =>
-                  --Note : Integrating condition has to be checked, otherwise 
-                  --       any dominant bit can be interpreted as SOF, therefore 
-                  --       causing transmittion of Error_frame
-                  --Signal for OP_State machine that bus is idle
-                  is_idle_r         <=  '1';
-                  
-                  if(tran_trig='1')then
-                    data_tx_r       <=  RECESSIVE;
-                  end if;  
-                  if(OP_State /= integrating )then
-                    sync_control_r  <=  hard_sync;
-                  end if;
-                  
-                 if( hard_sync_edge = '1' and (OP_State /= integrating) )then
-                    PC_State          <=  sof;
-                    crc_enable_r      <=  '1';
-                    FSM_preset        <=  '1';
-                    
-                 elsif(rec_trig='1' and (OP_State /= integrating) )then 
-                      
-                      -- If any frame is available here for transmission 
-                      -- we lock it already here. If we moved to SOF and
-                      -- locked only there, the frame might have been
-                      -- aborted in that one clock cycle! Thus we would
-                      -- then lock invalid frame!
-                      if ((drv_bus_mon_ena = '0') and 
-  												 -- Next data are availiable
-                         (tran_frame_valid_in  = '1')) 
-                      then
-                        PC_State        <=  sof;
-                        is_txt_locked   <=  '1';
-                        txt_hw_cmd.lock <=  '1';                  
-                        crc_enable_r    <=  '1';
-                        FSM_Preset      <=  '1';
-                        
-                        -- In case that TX Arbitrator provides different frame for
-           	            -- us, we need to erase the retranmsitt counter
-           	            if (txtb_changed = '1') then
-                          retr_count    <= 0;
-                        end if;
-                      else
-                        FSM_Preset      <=  '0';                    
-                      end if;
-                    
-                 end if;
-                
-            when others =>
-                  unknown_state_Error_r <=  '1'; 
-                  PC_State              <=  error;
-                  FSM_preset            <=  '1';
-            end case;
-          end if;
-          
-      --------------------------------------------------------------------------
-      --Error frame
-      --------------------------------------------------------------------------
-      when error =>
-            if(FSM_Preset='1')then
-              FSM_Preset        <=  '0';
-              control_pointer   <=  6; --Pointer for sending the error flag
-              stuff_enable_r    <=  '0';
-              fixed_stuff_r     <=  '0';
-              fixed_destuff_r   <=  '0';
-              
-              --Pointer for recieving the superposition of error flags
-              tran_pointer      <=  12; 
-              err_frame_state   <=  err_flg_sup;
-              destuff_enable_r  <=  '0';
-              
-              --If Error appears within FD Data Phase node has to switch back
-              sp_control_r      <=  NOMINAL_SAMPLE;
-              crc_enable_r      <=  '0';
-              
-              --Here we force data to be dominant event if not trigger is used! 
-              --This helps in situations when error is detected during Data bit 
-              --rates!!
-              data_tx_r         <=  DOMINANT;
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- Overload frame
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when overload =>  
+        if (FSM_Preset = '1') then
+            FSM_Preset          <= '0';
+            control_pointer     <= 6; --Pointer for sending the overload flag
+            --Pointer for recieving the superposition of ovverload flags
+            tran_pointer        <= 12;
+            ovr_frame_state     <= ovr_flg_sup;
+            stuff_enable_r      <= '0';
+            destuff_enable_r    <= '0'; 
+            crc_enable_r        <= '0';
 
-              -- Storing in RX Buffer must be aborted regardless of OP State.
-              rec_abort_r       <= '1';
-              
-              --If unit is transciever and Error appears then rettransmitt
-              -- counter should be incremented
-              if(OP_State=transciever)then
-                if ((drv_retr_lim_ena='0') or --Retransmitt limit is disabled 
-                    (drv_retr_lim_ena='1' and --Enabled, but not reached
-                     retr_count<to_integer(unsigned(drv_retr_th))))
-                then
-                  retr_count         <=  (retr_count + 1) mod 16;            
-                  txt_hw_cmd.unlock  <=  '1';
-                  txt_hw_cmd.err     <=  '1';
-                else
-                  
-                  -- Retransmitt limit reached, signal transmission failure
-                  -- Erase the retransmitt counter, since the next frame
-                  -- can be from the same buffer, but it can be different frame!
-                  -- Thus retr_counter wont be erased on "txt_buf_changed"!
-                  retr_count          <=  0;
-                  txt_hw_cmd.unlock   <=  '1';
-                  txt_hw_cmd.failed   <=  '1';
-                end if;
-                
-                is_txt_locked         <=  '0';
-               
-                --Transmitter started to transmitt error flag -> increase by 8 
-                -- except ack error for error passive
-                --Or Stuff Error appeared during arbitration!
-                if((error_state=error_passive and ack_error_r='1') or 
-									(stuff_err_arb_int='1'))
-							  then
-                  inc_eight_r   <=  '0';
-                else  
-                  inc_eight_r   <=  '1';
-                end if;
-              end if;
-              
-              --If Bus Monitoring mode is enabled then data has to be looped 
-              -- back before sending on the bus!
-              if(drv_bus_mon_ena='1')then 
-                int_loop_back_ena_r <=  '1';
-              end if;
-              
-            else
-              
-              case  err_frame_state is
-              
-                --Transmition of error flag and reception of Error 
-                --flag superposition 
-                when err_flg_sup =>
-                                              
-                        if(tran_trig='1')then
-                          if(control_pointer>0 and error_state=error_active)then
-                            data_tx_r <=  DOMINANT; --Sending active error flag
-                          else 
-                            --Sending passive error flag or one bit after
-                            --active error flag!
-                            data_tx_r <=  RECESSIVE;
-                          end if;
-                        end if;
-                        
-                        if(rec_trig='1')then 
-                          
-                          --Bit error detection during active error flag
-                          if(data_tx_r=DOMINANT and data_rx=RECESSIVE)then
-                            FSM_Preset    <=  '1';
-                            
-                            if(OP_State=reciever)then
-                              --Reciever error counter increased by 8.s
-                              inc_eight_r <=  '1';
-                            end if;
-                          else
-                            if(error_state=error_active)then
-                              
-                              --Decreasing counters
-                              if(control_pointer>0)then
-                                control_pointer <=  control_pointer-1;
-                              end if;
-                              if(tran_pointer>0)then
-                                tran_pointer    <=  tran_pointer-1;
-                              end if;
-                              
-                              --Only in the last bit, if detected earlier then 
-                              --bit error apeared
-                              if(data_rx=RECESSIVE)then
-                                err_frame_state <=  err_delim;
-                                control_pointer <=  6; 
-                                --Note: this has to be 6 not 7 (duration of 
-                                -- err_delim is 8) because one bit is sent 
-                                -- recessive and detected
-                                
-                               --We accepted 13-th consecutive DOMINANT bit -> 
-                               -- Error again??
-                              elsif(data_rx=DOMINANT and tran_pointer=0)then
-                                FSM_preset            <=  '1';
-                                int_loop_back_ena_r   <=  '0';
-                                if(OP_State=reciever)then
-                                  inc_eight_r         <=  '1'; 
-                                  --For reciever error counter increased by 8. 
-                                  --For transciever this is done in FSM_Preset!
-                                end if;
-                              end if;
-                              
-                              --This condition is causes that Reciever that was 
-                              -- the first to detect the error has error counter
-                              -- increased by 8! Transciever counter is increased
-                              -- in FSM preset! Any next reciever that will hook
-                              -- up, will hook up at the end of error flag super-
-                              -- position Thus after transmitting its error flag
-                              -- there will be recessive bit, not dominant!
-                              if((tran_pointer=5) and (OP_State=reciever))then
-                               --First bit detected Dominant after active error
-                               --flag was sent!
-                                inc_eight_r   <=  '1';
-                              end if;
-                            
-                            elsif(error_state=error_passive)then
-                              
-                              --Storing last recieved data
-                              err_pas_bit_val <=  data_rx;
-                                
-                              --Detecting 6 consecutive bits of equal polarity
-                              if(control_pointer=6)then
-                                control_pointer <=  control_pointer-1;
-                              else
-                                if(data_rx=err_pas_bit_val)then
-                                  if(control_pointer>1)then
-                                    control_pointer   <=  control_pointer-1;
-                                  else --Six equal consecutive bits detected
-                                    err_frame_state   <=  err_delim;
-                                    control_pointer   <=  6; 
-                                  end if;
-                                else
-                                  control_pointer     <=  5; 
-                                  --Restart the detection (with one bit less
-                                  --because then the first bit is already the 
-                                  --bit where mismatch appeared)
-                                end if;
-                              end if;                             
-                             else --Node must be Bus-off here
-                                PC_State    <=  off;
-                                FSM_Preset  <=  '1';
-                             end if;
-                          end if;
-                        end if;  
-                        
-                when err_delim =>
-                        if(tran_trig='1')then 
-                          data_tx_r   <=  RECESSIVE;
-                        end if;
-                        if(rec_trig='1')then
-                          if(control_pointer>0)then
-                            control_pointer <=  control_pointer-1;
-                          else
-                            if(data_rx=DOMINANT)then
-                              PC_State  <=  overload;
-                            else
-                              PC_State  <=  interframe;
-                            end if;
-                            FSM_Preset          <=  '1';
-                            int_loop_back_ena_r <=  '0';
-                          end if;
-                        end if;
-                when others=>
-                      unknown_state_Error_r   <=  '1'; 
-                      PC_State                <=  error;
-                      FSM_preset              <=  '1';
-                      int_loop_back_ena_r     <=  '0';
-              end case;
+            --If Bus Monitoring mode is enabled then data has to be 
+            --looped back before sending on the bus!
+            if (drv_bus_mon_ena = '1') then 
+                int_loop_back_ena_r     <= '1';
             end if;
-      
-      
-      --------------------------------------------------------------------------
-      -- Overload frame
-      --------------------------------------------------------------------------
-      when overload =>  
-            if(FSM_Preset='1')then
-              FSM_Preset        <=  '0';
-              control_pointer   <=  6; --Pointer for sending the overload flag
-              --Pointer for recieving the superposition of ovverload flags
-              tran_pointer      <=  12;
-              ovr_frame_state   <=  ovr_flg_sup;
-              stuff_enable_r    <=  '0';
-              destuff_enable_r  <=  '0'; 
-              crc_enable_r      <=  '0';
-              
-              --If Bus Monitoring mode is enabled then data has to be 
-              --looped back before sending on the bus!
-              if(drv_bus_mon_ena='1')then 
-                int_loop_back_ena_r <=  '1';
-              end if;
-                    
-            else
-              case  ovr_frame_state is
-                --Transmition of overload flag and reception of 
-                --overload flag superposition 
+
+        else
+            case  ovr_frame_state is
+
+                -- Transmition of overload flag and reception of 
+                -- overload flag superposition 
                 when ovr_flg_sup =>
                         
-                        if(tran_trig='1')then
-                          if(control_pointer>0)then
-                            data_tx_r <=  DOMINANT; --Sending overload flag
-                          else 
-                            data_tx_r <=  RECESSIVE;
-                          end if;
+                    if (tran_trig = '1') then
+                        if (control_pointer_non_zero) then
+                            data_tx_r   <= DOMINANT; --Sending overload flag
+                        else 
+                            data_tx_r   <= RECESSIVE;
                         end if;
+                    end if;
                         
-                        if(rec_trig='1')then
-                          
-                          
-                          if(control_pointer>0)then
-                            control_pointer <=  control_pointer-1;
-                          end if;
-                          if(tran_pointer>0)then
-                            tran_pointer    <=  tran_pointer-1;
-                          end if;
-                          
-                          if(data_rx=RECESSIVE)then
-                            --Still sending overload flag, but recessive 
-                            --detected -> error frame + increase counter 
-                            if(control_pointer>0)then
-                              PC_State        <=  error; 
-                              if(OP_State=reciever)then
-                                --For reciever error counter increased by 8.
-                                --For transciever this is done in FSM_Preset!
-                                inc_eight_r   <=  '1';
-                              end if;
-                              FSM_Preset      <=  '1';
-                            else
-                              ovr_frame_state <=  ovr_delim;
-                              control_pointer <=  7; 
-                            end if;
-                          
-                          --We accepted 13-th consecutive DOMINANT bit in 
-                          --superposition --> 
-                          elsif(data_rx=DOMINANT and tran_pointer=0)then
-                            if(OP_State=reciever)then
-                              --For reciever error counter increased by 8. For 
-                              --transciever this is done in FSM_Preset!
-                              inc_eight_r <=  '1'; 
-                            end if;
-                            PC_State            <=  error;
-                            FSM_preset          <=  '1';
-                            int_loop_back_ena_r <=  '0';
-                          end if;
+                    if (rec_trig = '1') then
+                      
+                        if (control_pointer_non_zero) then
+                            control_pointer     <= control_pointer - 1;
                         end if;
+                        if (tran_pointer > 0) then
+                            tran_pointer        <= tran_pointer - 1;
+                        end if;
+
+                        if (data_rx = RECESSIVE) then
+                            -- Still sending overload flag, but recessive 
+                            -- detected -> error frame + increase counter 
+                            if (control_pointer_non_zero) then
+                                PC_State            <= error; 
+                                if (OP_State = reciever) then
+                                    --For reciever error counter increased by 8.
+                                    --For transciever this is done in FSM_Preset!
+                                    inc_eight_r     <= '1';
+                                end if;
+                                FSM_Preset          <= '1';
+                            else
+                                ovr_frame_state     <= ovr_delim;
+                                control_pointer     <= 7; 
+                            end if;
+
+                        -- We accepted 13-th consecutive DOMINANT bit in 
+                        -- superposition --> 
+                        elsif (data_rx = DOMINANT and tran_pointer = 0) then
+                            if (OP_State = reciever) then
+                                -- For reciever error counter increased by 8. 
+                                -- For transciever this is done in FSM_Preset!
+                                inc_eight_r     <= '1'; 
+                            end if;
+                            PC_State            <= error;
+                            FSM_preset          <= '1';
+                            int_loop_back_ena_r <= '0';
+                        end if;
+                    end if;
                         
                 when ovr_delim => --Overlad delimiter
-                        if(tran_trig='1')then 
-                          data_tx_r   <=  RECESSIVE;
-                        end if;
-                        if(rec_trig='1')then
-                          if(control_pointer>0)then
-                            control_pointer <=  control_pointer-1;
-                          else
-                            PC_State            <=  interframe;
-                            FSM_preset          <=  '1';
-                            int_loop_back_ena_r <=  '0';
-                          end if;  
-                        end if;
-                when others=>
-                      unknown_state_Error_r <=  '1'; 
-                      PC_State              <=  error;
-                      FSM_preset            <=  '1';
-                      int_loop_back_ena_r   <=  '0';
+                    if (tran_trig = '1') then 
+                        data_tx_r   <=  RECESSIVE;
+                    end if;
+                    if (rec_trig = '1') then
+                        if (control_pointer_non_zero) then
+                            control_pointer     <= control_pointer - 1;
+                        else
+                            PC_State            <= interframe;
+                            FSM_preset          <= '1';
+                            int_loop_back_ena_r <= '0';
+                        end if;  
+                    end if;
+
+                when others =>
+                      unknown_state_Error_r     <= '1'; 
+                      PC_State                  <= error;
+                      FSM_preset                <= '1';
+                      int_loop_back_ena_r       <= '0';
               end case;
             end if;
-            
-      --------------------------------------------------------------------------
-      -- Unit is turned off
-      --------------------------------------------------------------------------
-      when off =>
+
+        
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- Unit is turned off
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    when off =>
            
-            if(drv_ena=ENABLED)then
-              if(not (error_state=bus_off))then
-                FSM_Preset    <=  '1';
-                PC_State      <=  interframe;  
-              end if;
+        if (drv_ena = ENABLED) then
+            if (not (error_state = bus_off)) then
+                FSM_Preset          <= '1';
+                PC_State            <= interframe;  
             end if;
+        end if;
   
-      when others=>
-            unknown_state_Error_r <=  '1'; 
-            PC_State              <=  error;
-            FSM_preset            <=  '1';
-      end case;
+    when others =>
+        unknown_state_Error_r   <= '1'; 
+        PC_State                <= error;
+        FSM_preset              <= '1';
+    end case;
+
     end if;
     end if;
   end process;
