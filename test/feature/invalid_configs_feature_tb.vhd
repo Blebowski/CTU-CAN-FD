@@ -60,9 +60,9 @@ USE work.randomLib.All;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-package invalid_config_feature is
+package invalid_configs_feature is
   
-    procedure invalid_config_feature_exec(
+    procedure invalid_configs_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
         signal      mem_bus_1       : inout Avalon_mem_type;
@@ -77,9 +77,9 @@ package invalid_config_feature is
 end package;
 
 
-package body invalid_config_feature is
+package body invalid_configs_feature is
   
-    procedure invalid_config_feature_exec(
+    procedure invalid_configs_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
         signal      mem_bus_1       : inout Avalon_mem_type;

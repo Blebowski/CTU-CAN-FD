@@ -57,9 +57,9 @@ USE work.randomLib.All;
 
 use work.CAN_FD_register_map.all;
 
-package fault_conf_feature is
+package fault_confinement_feature is
   
-    procedure fault_conf_feature_exec(
+    procedure fault_confinement_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
         signal      mem_bus_1       : inout Avalon_mem_type;
@@ -74,9 +74,9 @@ package fault_conf_feature is
 end package;
 
 
-package body fault_conf_feature is
+package body fault_confinement_feature is
   
-    procedure fault_conf_feature_exec(
+    procedure fault_confinement_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
         signal      mem_bus_1       : inout Avalon_mem_type;

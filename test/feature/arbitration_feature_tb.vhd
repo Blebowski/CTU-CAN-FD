@@ -80,7 +80,7 @@ USE work.randomLib.All;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-package Arbitration_feature is
+package arbitration_feature is
   
     procedure arbitration_feature_exec(
         variable outcome         :inout  boolean;
