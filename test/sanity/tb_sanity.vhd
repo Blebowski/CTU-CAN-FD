@@ -139,31 +139,6 @@ architecture tb of tb_sanity is
         return ret;
     end function to_bit_time_config_type;
 
-    function str_equal(a : string; b : string) return boolean is
-        variable l : integer;
-        variable r : integer;
-        begin
-        if a'left > b'left then
-            l := a'left;
-        else
-            l := b'left;
-        end if;
-        if a'right < b'right then
-            r := a'right;
-        else
-            r := b'right;
-        end if;
-        return a(l to r) = b(l to r);
-    end function str_equal;
-
-    function strtolen(n : natural; src : string) return string is
-        variable s : string(1 to n) := (others => ' ');
-    begin
-        assert src'length <= n report "String too long." severity failure;
-        s(src'range) := src;
-        return s;
-    end function strtolen;
-
     function len_to_matrix(topology : string; l : bus_length_type)
       return bus_matrix_type is
         variable bm : bus_matrix_type;

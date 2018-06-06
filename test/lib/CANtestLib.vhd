@@ -441,7 +441,6 @@ package CANtestLib is
         -- Note that this value is valid only for received frames and has
         -- no meaning in TXT Buffer.
         rwcnt                   :   natural;
-
     end record;
 
     ----------------------------------------------------------------------------
@@ -489,9 +488,9 @@ package CANtestLib is
     --  status          Status to be updated
     ----------------------------------------------------------------------------
     procedure evaluate_test(
-        signal error_th         : in    natural;
-        signal errors           : in    natural;
-        signal status           : out   test_status_type
+        constant error_th         : in    natural;
+        constant errors           : in    natural;
+        signal   status           : out   test_status_type
     );
 
 
@@ -561,9 +560,9 @@ package CANtestLib is
     --  exit_imm        Immediate exit flag to assert.
     ----------------------------------------------------------------------------
     procedure process_error(
-        signal error_ctr        : inout natural;
-        signal error_beh        : in    err_beh_type;
-        signal exit_imm         : out   boolean
+        signal   error_ctr      : inout natural;
+        constant error_beh      : in    err_beh_type;
+        signal   exit_imm       : out   boolean
     );
 
 
@@ -609,20 +608,6 @@ package CANtestLib is
     --  length          Length of CAN Frame in bytes
     ----------------------------------------------------------------------------
     procedure decode_dlc(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
-        variable length         : out   natural
-    );
-
-
-    ----------------------------------------------------------------------------
-    -- Decode data length code from value as defined in CAN FD Standard to
-    -- length of frame in bytes. (Variable output)
-    --
-    -- Arguments:
-    --  dlc             Data length code as received or transmitted.
-    --  length          Length of CAN Frame in bytes
-    ----------------------------------------------------------------------------
-    procedure decode_dlc_v(
         constant dlc            : in    std_logic_vector(3 downto 0);
         variable length         : out   natural
     );
@@ -652,7 +637,7 @@ package CANtestLib is
     --  buff_space      Number of 32-bit words.
     ----------------------------------------------------------------------------
     procedure decode_dlc_buff(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
+        constant dlc            : in    std_logic_vector(3 downto 0);
         variable buff_space     : out   natural
     );
 
@@ -1402,6 +1387,14 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
+    -- Compare strings of possibly different length.
+    -- The strings are considered equal if the longer one starts with
+    -- the shorter one and the rest are spaces.
+    function str_equal(a : string; b : string) return boolean;
+
+    -- Pad string with spaces.
+    function strtolen(n : natural; src : string) return string;
+
 
     ----------------------------------------------------------------------------
     -- Set Error counters from CTU CAN FD Core. 
@@ -1513,12 +1506,10 @@ end package;
 --------------------------------------------------------------------------------
 
 package body CANtestLib is
-
-
     procedure evaluate_test(
-        signal error_th         : in    natural;
-        signal errors           : in    natural;
-        signal status           : out   test_status_type
+        constant error_th         : in    natural;
+        constant errors           : in    natural;
+        signal   status           : out   test_status_type
     ) is
     begin
 
@@ -1650,9 +1641,9 @@ package body CANtestLib is
 
 
     procedure process_error(
-        signal error_ctr        : inout natural;
-        signal error_beh        : in    err_beh_type;
-        signal exit_imm         : out   boolean
+        signal   error_ctr      : inout natural;
+        constant error_beh      : in    err_beh_type;
+        signal   exit_imm       : out   boolean
     )is
     begin
         error_ctr       <= error_ctr + 1;
@@ -1709,33 +1700,6 @@ package body CANtestLib is
 
 
     procedure decode_dlc(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
-        variable length         : out   natural
-    )is
-    begin
-        case dlc is
-        when "0000" => length := 0;
-        when "0001" => length := 1;
-        when "0010" => length := 2;
-        when "0011" => length := 3;
-        when "0100" => length := 4;
-        when "0101" => length := 5;
-        when "0110" => length := 6;
-        when "0111" => length := 7;
-        when "1000" => length := 8;
-        when "1001" => length := 12;
-        when "1010" => length := 16;
-        when "1011" => length := 20;
-        when "1100" => length := 24;
-        when "1101" => length := 32;
-        when "1110" => length := 48;
-        when "1111" => length := 64;
-        when others => length := 0;
-        end case;
-    end procedure;
-
-
-    procedure decode_dlc_v(
         constant dlc            : in    std_logic_vector(3 downto 0);
         variable length         : out   natural
     )is
@@ -1790,7 +1754,7 @@ package body CANtestLib is
 
 
     procedure decode_dlc_buff(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
+        constant dlc            : in    std_logic_vector(3 downto 0);
         variable buff_space     : out   natural
     )is
     begin
@@ -2241,7 +2205,7 @@ package body CANtestLib is
         end if;
         frame.identifier := to_integer(unsigned(aux));
 
-        decode_dlc_v(frame.dlc, frame.data_length);
+        decode_dlc(frame.dlc, frame.data_length);
         frame.timestamp := (OTHERS => '0');
 
         if (frame.rtr = RTR_FRAME) then
@@ -2487,7 +2451,7 @@ package body CANtestLib is
         frame.ident_type    := memory(pointer)(6);
         frame.frame_format  := memory(pointer)(7);
         frame.brs           := memory(pointer)(9);
-        decode_dlc_v(frame.dlc, frame.data_length);
+        decode_dlc(frame.dlc, frame.data_length);
         frame.rwcnt         :=
           to_integer(unsigned(memory(pointer)(15 downto 11)));
 
@@ -2587,7 +2551,7 @@ package body CANtestLib is
                   ID, mem_bus);
 
         -- Data words
-        decode_dlc_v(frame.dlc, length);
+        decode_dlc(frame.dlc, length);
         for i in 0 to (length - 1) / 4 loop
             w_data := frame.data((i * 4) + 3) &
                       frame.data((i * 4) + 2) &
@@ -2655,7 +2619,7 @@ package body CANtestLib is
         frame.brs           := r_data(BRS_IND);
         frame.rwcnt         := to_integer(unsigned(
                                r_data(RWCNT_H downto RWCNT_L)));
-        decode_dlc_v(frame.dlc, frame.data_length);
+        decode_dlc(frame.dlc, frame.data_length);
 
         --Read identifier
         CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
@@ -2751,7 +2715,7 @@ package body CANtestLib is
         variable aux            :       std_logic_vector(1 downto 0);
         variable data_length    :       natural;
     begin
-        decode_dlc_v(frame.dlc, data_length);
+        decode_dlc(frame.dlc, data_length);
         if (frame.rtr = RTR_FRAME and frame.frame_format = NORMAL_CAN) then
             data_length := 0;
         end if;
@@ -3451,6 +3415,23 @@ package body CANtestLib is
                 to_integer(unsigned(data(ERR_FD_VAL_H downto ERR_FD_VAL_L)));
     end procedure;
 
+    function str_equal(a : string; b : string) return boolean is
+        constant len : natural := MINIMUM(a'length, b'length);
+        constant atail : string(a'left+len to a'right) := (others => ' ');
+        constant btail : string(b'left+len to b'right) := (others => ' ');
+    begin
+        return     a(a'left to a'left+len-1) = b(b'left to b'left+len-1)
+               and a(a'left+len to a'right) = atail
+               and b(b'left+len to b'right) = btail;
+    end function str_equal;
+
+    function strtolen(n : natural; src : string) return string is
+        variable s : string(1 to n) := (others => ' ');
+    begin
+        assert src'length <= n report "String too long." severity failure;
+        s(src'range) := src;
+        return s;
+    end function strtolen;
 
     procedure set_error_counters(
         constant err_counters   : in    SW_error_counters;
@@ -3546,8 +3527,6 @@ package body CANtestLib is
         trv_delay := to_integer(unsigned(data(
                             TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)));
     end procedure;
-
-
 end package body;
 
 

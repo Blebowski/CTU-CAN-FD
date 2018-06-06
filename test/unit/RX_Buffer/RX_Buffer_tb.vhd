@@ -206,7 +206,7 @@ architecture rx_buf_unit_test of CAN_test is
         if (frame.rtr = RTR_FRAME) then
             length := 0;
         else
-            decode_dlc_v(frame.dlc, length);
+            decode_dlc(frame.dlc, length);
         end if;
 
         -- Store the data
