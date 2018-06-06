@@ -115,7 +115,7 @@ architecture rx_buf_unit_test of CAN_test is
     signal rx_read_buff             :    std_logic_vector(31 downto 0);
 
     -- Driving bus aliases
-    signal drv_rtsopt               :    std_logic   := RTS_BEG;
+    signal drv_rtsopt               :    std_logic   := RTS_END;
     signal drv_read_start           :    std_logic   := '0';
 
  
@@ -283,6 +283,8 @@ architecture rx_buf_unit_test of CAN_test is
         signal   rec_abort          :out    std_logic;
         signal   rec_message_valid  :out    std_logic;
 
+        signal   drv_rtsopt         :in     std_logic;
+
         signal   memory             :inout  eval_mem_test;
         signal   in_pointer         :inout  natural;
         signal   timestamp          :in     std_logic_vector(63 downto 0);
@@ -374,6 +376,7 @@ architecture rx_buf_unit_test of CAN_test is
         -- We commit frame to the buffer and store it to test memories!
         rec_message_valid <= '1';
         log("Frame valid!", info_l, log_level);
+        wait until rising_edge(clk_sys);
 
         -- Timestamp must be marked, if we are interested in END OF Frame
         -- Timestamp!
@@ -382,9 +385,9 @@ architecture rx_buf_unit_test of CAN_test is
         else
             CAN_frame.timestamp  := stored_ts;
         end if;
+        rec_message_valid <= '0';
 
         wait until rising_edge(clk_sys);
-        rec_message_valid <= '0';
         wait until rising_edge(clk_sys);
 
         insert_frame_test_mem(CAN_frame, memory, in_pointer);
@@ -421,7 +424,8 @@ architecture rx_buf_unit_test of CAN_test is
         end loop;
 
     end procedure;
-  
+
+
     ----------------------------------------------------------------------------
     -- Compare contents of input and output memory, if data stored to the buffer
     -- are equal to data read from the buffer!
@@ -506,7 +510,8 @@ begin
 
     drv_bus(DRV_READ_START_INDEX)   <= drv_read_start;
     drv_bus(DRV_RTSOPT_INDEX)      <= drv_rtsopt;
-  
+
+
     ----------------------------------------------------------------------------
     -- Stimuli generator - Main test process
     ----------------------------------------------------------------------------
@@ -521,11 +526,6 @@ begin
         reset_test(res_n, status, run, stim_errs);
         log("Restarted RX Bufrer test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
-        log("Consider adding RX Buffer model into this testbench!", warning_l,
-            log_level);
-        log("Note that RX buffer content is NOT initialized on purpose!" &
-            "If initialized during reset, it is impossible to do" &
-            "synthesis into RAM!", warning_l, log_level);
 
         ------------------------------------------------------------------------
         -- Main loop of the test
@@ -534,24 +534,35 @@ begin
 
         while (loop_ctr < iterations or exit_imm)
         loop
-          
+
+            --------------------------------------------------------------------
+            -- Change setting for timestamp options (store timestamp
+            --  at beginning or end of frame)
+            --------------------------------------------------------------------
+            if (drv_rtsopt = RTS_BEG) then
+                drv_rtsopt <= RTS_END;
+            else
+                drv_rtsopt <= RTS_BEG;
+            end if;
+
+            --------------------------------------------------------------------
             -- Start generating the frames on Input as long as there is enough
-            -- space available in the common memory
+            -- space available in the common memory.
+            --------------------------------------------------------------------
             while (in_mem_full = false) loop
-            --while (rx_message_count = "00000000000") loop   
                 -- Now buffer has for sure space. Frame is inserted into the
                 -- RX Buffer, Model and stored also into common memory
                 insert_frame_to_RX_Buffer(rand_ctr, clk_sys, rec_ident_in,
-                    rec_dlc_in, rec_frame_type_in, rec_ident_type_in, rec_brs, rec_esi,          
-                    rec_is_rtr, sof_pulse, store_metadata, store_data, store_data_word, 
-                    rec_abort, rec_message_valid, in_mem, in_pointer, timestamp,          
-                    log_level);          
+                    rec_dlc_in, rec_frame_type_in, rec_ident_type_in, rec_brs,
+                    rec_esi, rec_is_rtr, sof_pulse, store_metadata, store_data,
+                    store_data_word, rec_abort, rec_message_valid, drv_rtsopt,
+                    in_mem, in_pointer, timestamp, log_level);
 
             end loop;
 
             -- Now input memory is full
             -- We need to wait for Data reader to read all frames into common
-            -- memory from rx buffer and its model. Then it checks data
+            -- memory from rx buffer. Then it checks data
             -- consistency and next iteration can start
             wait until iteration_done = true;
 
@@ -581,8 +592,6 @@ begin
         end if;
 
         while (out_mem_full = false) loop
-        --while (rx_empty = '0') loop
-
             if (rx_empty = '0') then
                 read_frame(rx_read_buff, drv_read_start, clk_sys, out_mem,
                            out_pointer);            
