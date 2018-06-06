@@ -1232,8 +1232,10 @@ begin
             --------------------------------------------------------------------
 
             -- Bus monitoring mode is disabled! In Bus monitoring mode, frames
-            -- are not transmitted!
-            if (drv_bus_mon_ena = '0') then
+            -- are not transmitted! Also, if unit was forced to be receiver
+            -- during transition from SUSPEND to SOF, we must NOT lock buffer
+            -- for transmission!
+            if (drv_bus_mon_ena = '0' and set_reciever_r = '0') then
                 
                 -- If frame is already locked, or there is on to lock available,
                 -- Start transceiving!
@@ -2671,7 +2673,8 @@ begin
 
 
                 ----------------------------------------------------------------
-                -- Suspend transmission
+                -- Suspend transmission. If Hard sync edge comes, go to SOF,
+                -- but turn receiver! 
                 ----------------------------------------------------------------
                 when suspend =>
                     sync_control_r                  <= HARD_SYNC;
@@ -2689,42 +2692,16 @@ begin
 
                         if (control_pointer_non_zero) then
                             control_pointer         <= control_pointer - 1;
+                        else
+                            interm_state            <= interm_idle;
                         end if;
 
-                        if (control_pointer = 0) then  
-                            if ((drv_bus_mon_ena = '0') and
-                                -- Next data are availiable
-                                (tran_frame_valid_in  = '1'))
-                            then
-                                PC_State        <=  sof;
-                                is_txt_locked   <=  '1';
-                                txt_hw_cmd.lock <=  '1';
-                                crc_enable_r    <=  '1';
-                                FSM_preset      <=  '1';
-
-                                -- Bug fix 28.6.2016
-                                -- Preset reciever already here, not in SOF, otherwise
-                                -- if there is nothing to transmitt SOF will be trans-
-                                -- mitted anyway. If we were transmitter of previous 
-                                -- message and we have nothing more to transmitt and 
-                                -- we turn reciever, we dont want SOF to be
-                                -- tranmsmitted by reciever!!
-                                set_reciever_r      <=  '1';
-
-                            else
-                                interm_state    <=  interm_idle;
-                            end if;
-                        end if;
                     end if;
 
                 ----------------------------------------------------------------
                 -- Intermission idle
                 ----------------------------------------------------------------
                 when interm_idle =>
-                    -- Note : Integrating condition has to be checked, otherwise 
-                    --        any dominant bit can be interpreted as SOF, therefore 
-                    --        causing transmittion of Error_frame
-                    -- Signal for OP_State machine that bus is idle
                     is_idle_r               <=  '1';
 
                     if (tran_trig = '1') then
@@ -2732,7 +2709,7 @@ begin
                     end if;
 
                     if (OP_State /= integrating) then
-                        sync_control_r      <= hard_sync;
+                        sync_control_r      <= HARD_SYNC;
                     end if;
 
                     if (hard_sync_edge = '1' and (OP_State /= integrating)) then
