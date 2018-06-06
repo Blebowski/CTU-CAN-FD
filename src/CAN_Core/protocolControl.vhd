@@ -205,7 +205,10 @@
 --                to SOF is by received synchronsation edge!
 --    5.6.2018    Added "data_tx_index". Separated CRC check to "crc_valid"
 --                signal! Added "parity_valid" signal. Added "alc_val" for
---                arbitration lost capture combinational decoder!
+--                arbitration lost capture combinational decoder! Added
+--                "control_pointer_non_zero". Changed counting on
+--                "control_pointer" to 0 in delim_ack! Now counting is done
+--                from value to zero on all instances of control_pointer!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -2597,12 +2600,19 @@ begin
             destuff_enable_r                    <= '0';
         else
             case interm_state is
+
+                ----------------------------------------------------------------
+                -- Intermission
+                ----------------------------------------------------------------
                 when intermission =>
-                    if (tran_trig = '1') then -- Transmition of intermission
+
+                    ------------------------------------------------------------
+                    -- Transmitting RECESSIVE. From second bit on, react on
+                    -- edge by HARD_SYNC.
+                    ------------------------------------------------------------
+                    if (tran_trig = '1') then 
                         data_tx_r               <= RECESSIVE;
                         if (control_pointer < 2) then 
-                            -- Hard synchronisation during second or third bit
-                            -- of intermission!
                             sync_control_r      <= HARD_SYNC; 
                         end if;
                     end if;
@@ -2614,42 +2624,55 @@ begin
                         PC_State                    <= sof; 
                         crc_enable_r                <= '1';
                         FSM_preset                  <= '1';
-                    elsif (rec_trig = '1') then --Reciving intermission bits
+
+                    ------------------------------------------------------------
+                    -- Receiving intermission bits
+                    ------------------------------------------------------------
+                    elsif (rec_trig = '1') then
 
                         if (control_pointer_non_zero) then
                             control_pointer         <= control_pointer - 1;
                         end if;
 
-                        if (data_rx = RECESSIVE) then 
-                            if (control_pointer = 0) then -- Third recessive bit sampled
+                        --------------------------------------------------------
+                        -- Sampling RECESSIVE bit. In the last RECESSIVE bit
+                        -- Transmitting error passive node goes to SUSPEND,
+                        -- otherwise goes to intermission idle.
+                        --------------------------------------------------------
+                        if (data_rx = RECESSIVE) then
+
+                            if (not control_pointer_non_zero) then
                                 if (OP_State = transciever and 
                                     error_state = error_passive)
                                 then
-                                  -- Transmitting error passive node always 
-                                  -- suspends after transmition
                                   interm_state      <= suspend;
-                                  -- Preseting the pointer for Suspend field.
-                                  --  In error field it is preset by FSM_preset.
                                   control_pointer   <= 7;   
                                 else
                                   interm_state      <= interm_idle; 
                                 end if;
                             end if;
 
-                        -- Bugfix 30.6.2016
-                        elsif (data_rx = DOMINANT) then
-                            -- Third recessive bit sampled
-                            if (control_pointer = 0) then
-                                PC_State            <= sof; 
-                                crc_enable_r        <= '1';
-                                FSM_preset          <= '1';
+                        --------------------------------------------------------
+                        -- Sampling DOMINANT bit. Third bit should be
+                        -- interpreted as SOF, previous bits as Overload
+                        -- condition. (Bugfix 30.6.2016)
+                        --------------------------------------------------------
+                        else
+                            if (control_pointer_non_zero) then
+                                PC_State            <= overload;                                 
                             else
-                                PC_State            <= overload;
-                                FSM_preset          <= '1'; 
-                            end if;
+                                PC_State            <= sof;
+                                -- TODO: is it really necessary to enable here?
+                                crc_enable_r        <= '1';
+                           end if;
+                           FSM_preset          <= '1';
                         end if;  
                     end if;  
-                  
+
+
+                ----------------------------------------------------------------
+                -- Suspend transmission
+                ----------------------------------------------------------------
                 when suspend =>
                     sync_control_r                  <= HARD_SYNC;
                     if (tran_trig = '1') then
@@ -2670,7 +2693,7 @@ begin
 
                         if (control_pointer = 0) then  
                             if ((drv_bus_mon_ena = '0') and
-                                --Next data are availiable
+                                -- Next data are availiable
                                 (tran_frame_valid_in  = '1'))
                             then
                                 PC_State        <=  sof;
@@ -2679,7 +2702,7 @@ begin
                                 crc_enable_r    <=  '1';
                                 FSM_preset      <=  '1';
 
-                                --Bug fix 28.6.2016
+                                -- Bug fix 28.6.2016
                                 -- Preset reciever already here, not in SOF, otherwise
                                 -- if there is nothing to transmitt SOF will be trans-
                                 -- mitted anyway. If we were transmitter of previous 
@@ -2693,7 +2716,10 @@ begin
                             end if;
                         end if;
                     end if;
-                  
+
+                ----------------------------------------------------------------
+                -- Intermission idle
+                ----------------------------------------------------------------
                 when interm_idle =>
                     -- Note : Integrating condition has to be checked, otherwise 
                     --        any dominant bit can be interpreted as SOF, therefore 
