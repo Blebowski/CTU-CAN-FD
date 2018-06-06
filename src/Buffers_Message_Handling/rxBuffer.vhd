@@ -614,8 +614,7 @@ begin
             timestamp_capture       <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
-            timestamp_capture       <= timestamp_capture;
-
+            
             if ((drv_rtsopt = RTS_END and rec_message_valid = '1') or
                 (drv_rtsopt = RTS_BEG and sof_pulse = '1')) 
             then  
@@ -746,8 +745,11 @@ begin
             -- Store first TIMESTAMP_U_W from beginning of frame.
             --------------------------------------------------------------------
             when rxb_store_beg_ts_high =>
-                rx_fsm      <= rxb_store_data;
-
+                if (rec_abort = '1') then
+                    rx_fsm      <= rxb_idle;
+                else                
+                    rx_fsm      <= rxb_store_data;
+                end if;
 
             --------------------------------------------------------------------
             -- Store DATA_W. If error ocurrs, abort the storing. If storing is
