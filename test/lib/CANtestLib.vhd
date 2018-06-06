@@ -2105,6 +2105,7 @@ package body CANtestLib is
         
         -- Generate random data 
         -- Unused bytes of data can be set to 0
+        frame.data := (OTHERS => (OTHERS => '0'));
         if (frame.data_length > 0) then
             for i in 0 to frame.data_length - 1 loop
                 rand_logic_vect_v(rand_ctr, data_byte, 0.5);
