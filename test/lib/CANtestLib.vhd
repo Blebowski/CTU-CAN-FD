@@ -580,6 +580,22 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Sets random counter based on the seed that was given. To differentiate
+    -- individual counters, fixed offset can be added.
+    --
+    -- Arguments:
+    --  seed            Random seed input.
+    --  offset          Offset of counter
+    --  rand_ctr        Random counter to set.
+    ----------------------------------------------------------------------------
+    procedure apply_rand_seed(
+        constant seed            : in   natural;
+        constant offset          : in   natural;
+        signal   rand_ctr        : out  natural range 0 to RAND_POOL_SIZE
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Decode data length code from value as defined in CAN FD Standard to
     -- length of frame in bytes.
     -- 
@@ -1349,6 +1365,9 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     component CAN_test is
+    generic (
+        constant seed         :in   natural := 0
+    );
     port (
         signal run            :in   boolean;
         signal iterations     :in   natural;
@@ -1552,6 +1571,19 @@ package body CANtestLib is
           
         report "Error tolerance: " & integer'image(error_tol);
     end;
+
+
+    procedure apply_rand_seed(
+        constant seed            : in   natural;
+        constant offset          : in   natural;
+        signal   rand_ctr        : out  natural range 0 to RAND_POOL_SIZE
+    )is
+        variable tmp             :      natural;
+    begin
+        tmp := seed + offset;
+        rand_ctr    <= tmp mod RAND_POOL_SIZE; 
+        wait for 0 ns;
+    end procedure;
 
 
     procedure decode_dlc(
@@ -3254,36 +3286,37 @@ end package body;
 
 USE work.CANtestLib.All;
 
--------------------------------------------------------------
--- Main test entity. Each test of  the unit test environment
--- implements architecture of this entity!       
--------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Main test entity. Each test implements architecture of this entity.
+--------------------------------------------------------------------------------
 entity CAN_test is
-  port (
+    generic (
+        constant seed           :in     natural := 0
+    );
+    port (
 
-    -- Input trigger, test starts running when true
-    signal run              :in     boolean;
+        -- Input trigger, test starts running when true
+        signal run              :in     boolean;
 
-    -- Number of iterations that test should do
-    signal iterations       :in     natural;
+        -- Number of iterations that test should do
+        signal iterations       :in     natural;
 
-    -- Logging level, severity which should be shown
-    signal log_level        :in     log_lvl_type;
+        -- Logging level, severity which should be shown
+        signal log_level        :in     log_lvl_type;
 
-    -- Test behaviour when error occurs: Quit, or Go on
-    signal error_beh        :in     err_beh_type;
+        -- Test behaviour when error occurs: Quit, or Go on
+        signal error_beh        :in     err_beh_type;
 
-    -- Error tolerance, error counter should not
-    -- exceed this value in order for the test to pass
-    signal error_tol        :in     natural;
-                                                 
-    -- Status of the test        
-    signal status           :out    test_status_type;
+        -- Error tolerance, error counter should not
+        -- exceed this value in order for the test to pass
+        signal error_tol        :in     natural;
+                                                     
+        -- Status of the test        
+        signal status           :out    test_status_type;
 
-    -- Amount of errors which appeared in the test
-    signal errors           :out    natural
-    --TODO: Error log results 
-  );
+        -- Amount of errors which appeared in the test
+        signal errors           :out    natural
+    );
   
     --Internal test signals
     signal error_ctr           :       natural := 0;
