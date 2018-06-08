@@ -142,6 +142,9 @@
 --                2. Separated "write_raw_increment" to "write_raw_intent" and
 --                   "write_raw_OK" which is valid only when there is enough
 --                   space in the buffer and overrun did not occur before!
+--    7.6.2018    Changed detection of buffer full to equality of 
+--                "read_pointer" and "write_pointer_raw" and nonzero amount
+--                of frames stored.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -349,12 +352,12 @@ entity rxBuffer is
      -- RX Buffer is empty (no frame is stored in it)
     signal rx_empty_int             :       std_logic;
 
-    -- Internal number of free memory words. Updated during the frame after
-    -- each word is stored!
-    signal rx_mem_free_raw          :       natural range 0 to buff_size;
-
     -- Number of free memory words available to SW after frame was committed.
     signal rx_mem_free_int          :       natural range 0 to buff_size;
+
+    -- Number of free memory words calculated during frame storing, before
+    -- commit.
+    signal rx_mem_free_raw          :       natural range 0 to buff_size;
 
     -- Indicator of at least one free word in RX FIFO!
     signal is_free_word             :       boolean;
@@ -385,6 +388,11 @@ entity rxBuffer is
     -- and provide "rec_message_valid"! Thus RX FSM sets "commit_rx_frame" only
     -- if "data_overrun" did not occur during the frame!
     signal commit_rx_frame          :       std_logic;
+
+    -- When overrun occurred at any point in the frame and some word was not
+    -- stored, frame can not be committed, and write_pointer must be moved
+    -- back to last committed value!
+    signal commit_overrun_abort     :       std_logic;
 
     -- Indicates that read occurred, and that it is valid (there is something
     -- to read), thus read pointer can be incremented.
@@ -483,7 +491,8 @@ begin
                              false;
 
     write_extra_ts        <= true when ((rx_fsm = rxb_store_end_ts_low) or
-                                        (rx_fsm = rxb_store_end_ts_high))
+                                        (rx_fsm = rxb_store_end_ts_high)) and
+                                        (data_overrun_int = '0')
                                   else
                              false;
 
@@ -498,12 +507,17 @@ begin
                             false;
 
     ----------------------------------------------------------------------------
-    -- Store of the memory can be executed only if there is at least one
-    -- free word in the memory!
+    -- Store of new word can be executed only if there is space in the buffer.
+    -- We don't need exact amount of words. We only need to know if there is
+    -- space! When "read_pointer" and "write_pointer_raw" are equal, then 
+    -- memory is either empty, or full! If there is no frame stored and pointers
+    -- are equal, then memory is empty! If there is at least one frame and
+    -- pointers are equal, then memory must be full!
     ----------------------------------------------------------------------------
-    is_free_word          <= false when (rx_mem_free_raw = 0) else
+    is_free_word          <= false when (read_pointer = write_pointer_raw and
+                                        message_count > 0)
+                                  else
                              true;
-
 
     ----------------------------------------------------------------------------
     -- Overrun condition. Following conditions must be met:
@@ -512,12 +526,8 @@ begin
     --      words which were already written, thus there is no need to watch
     --      for overrun!
     --  2. There is no free word in the memory remaining!
-    --  3. There is no read intent from SW. If there is read intent, and no
-    --     space in the buffer, data can be stored to the position which is
-    --     just being read!
     ----------------------------------------------------------------------------
     overrun_condition    <= true when (write_raw_intent and 
-                                       (read_increment = false) and
                                        (is_free_word = false))
                                  else
                             false;
@@ -614,8 +624,7 @@ begin
             timestamp_capture       <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
-            timestamp_capture       <= timestamp_capture;
-
+            
             if ((drv_rtsopt = RTS_END and rec_message_valid = '1') or
                 (drv_rtsopt = RTS_BEG and sof_pulse = '1')) 
             then  
@@ -644,40 +653,41 @@ begin
             message_count                <= message_count;
             read_frame_counter           <= read_frame_counter;
 
-            -- Start the counter only if there is something to read!
+            --------------------------------------------------------------------
+            -- Reading frame by user when there is active read and there is
+            -- something to read
+            --------------------------------------------------------------------
             if (read_increment) then
 
+                ----------------------------------------------------------------
                 -- During the read of FRAME_FORMAT word store the length
                 -- of the frame to "read_frame_counter", thus we know how much
                 -- we have to read before decrementing the "message_count".
+                ----------------------------------------------------------------
                 if (read_frame_counter = 0) then
                     read_frame_counter    <=
                         to_integer(unsigned(memory(read_pointer)
                                                   (RWCNT_H downto RWCNT_L)));
 
-                -- The last word is read during decrement from 1 to 0. We can 
-                -- decrease number of frames then, NOT earlier! If decremented 
-                -- earlier, reading of last frame would get stuck, since 
-                -- read_pointer in memory access is incremented only with 
-                -- non-zero message count! If "commit_frame_counter" is '1' we 
-                -- don't decrement since new frame has arrived at the same 
-                -- moment as reading has finished!
-                elsif (read_frame_counter = 1) then  
-                    if (commit_rx_frame = '0') then
-                        message_count     <= message_count - 1;
-                    end if; 
-                    read_frame_counter    <= read_frame_counter - 1;
-
-                -- Just count down during the read of all remaining words...
                 else
-                    if (commit_rx_frame = '1') then
-                        message_count     <= message_count + 1;
-                    end if;
-                    read_frame_counter    <= read_frame_counter - 1;
+                    read_frame_counter <= read_frame_counter - 1;
                 end if;
-                    
-            elsif (commit_rx_frame = '1') then 
-                message_count             <= message_count + 1;
+            end if;
+
+            --------------------------------------------------------------------
+            -- Manipulation of "message_count". When last word is read from
+            -- frame (read_frame_counter = 1 and read_increment), "message_count"
+            -- is decreased, when new frame is committed, message count
+            -- is increased. If both at the same time, no change since one frame
+            -- is added, next is removed!
+            --------------------------------------------------------------------
+            if (read_increment and (read_frame_counter = 1)) then
+                if (commit_rx_frame = '0') then
+                    message_count           <= message_count - 1;
+                end if;
+
+            elsif (commit_rx_frame = '1') then
+                message_count               <= message_count + 1;
             end if;
 
         end if;    
@@ -746,8 +756,11 @@ begin
             -- Store first TIMESTAMP_U_W from beginning of frame.
             --------------------------------------------------------------------
             when rxb_store_beg_ts_high =>
-                rx_fsm      <= rxb_store_data;
-
+                if (rec_abort = '1') then
+                    rx_fsm      <= rxb_idle;
+                else                
+                    rx_fsm      <= rxb_store_data;
+                end if;
 
             --------------------------------------------------------------------
             -- Store DATA_W. If error ocurrs, abort the storing. If storing is
@@ -794,16 +807,22 @@ begin
     commit_proc : process(res_n, clk_sys)
     begin
         if (res_n = ACT_RESET) then
-            commit_rx_frame     <= '0';
+            commit_rx_frame       <= '0';
+            commit_overrun_abort  <= '0';
 
         elsif (rising_edge(clk_sys)) then
 
             if (((rec_message_valid = '1' and drv_rtsopt = RTS_BEG) or
-                 (rx_fsm = rxb_store_end_ts_high)) and (data_overrun_int = '0'))
+                 (rx_fsm = rxb_store_end_ts_high)))
             then
-                commit_rx_frame <= '1';
+                if (data_overrun_int = '0') then
+                    commit_rx_frame         <= '1';
+                else
+                    commit_overrun_abort    <= '1';
+                end if;
             else
-                commit_rx_frame <= '0';
+                commit_rx_frame             <= '0';
+                commit_overrun_abort        <= '0';
             end if;
 
         end if;
@@ -827,8 +846,8 @@ begin
             write_pointer_raw       <= 0;
             write_pointer_extra_ts  <= 0;
 
-            rx_mem_free_raw         <= buff_size;
             rx_mem_free_int         <= buff_size;
+            rx_mem_free_raw         <= buff_size;
 
         elsif (rising_edge(clk_sys)) then
 
@@ -839,24 +858,30 @@ begin
                 read_pointer        <= (read_pointer + 1) mod buff_size;
             end if;
 
-
             --------------------------------------------------------------------
-            -- Commiting "write_pointer_raw", resetting or incrementing during
-            -- write...
+            -- Loading "write_pointer_raw" to  "write_pointer" when frame is
+            -- committed.
             --------------------------------------------------------------------
             if (commit_rx_frame = '1') then
                 write_pointer       <= write_pointer_raw;
-                
-            elsif (rec_abort = '1' or overrun_condition) then
+            end if;
+
+            --------------------------------------------------------------------
+            -- Updating "write_pointer_raw":
+            --      1. Increment when word is written to memory.
+            --      2. Reset when "rec_abort" is active (Error frame) or 
+            --         frame finished and overrun occurred meanwhile. Reset to
+            --         value of last commited write pointer.
+            --------------------------------------------------------------------
+            if (write_raw_OK) then
+                write_pointer_raw   <= (write_pointer_raw + 1) mod buff_size;
+                        
+            elsif (rec_abort = '1' or commit_overrun_abort = '1') then
                 write_pointer_raw   <= write_pointer;
 
-            elsif (write_raw_OK) then
-                write_pointer_raw   <= (write_pointer_raw + 1) mod buff_size;
-            
             else
                 write_pointer_raw   <= write_pointer_raw;
             end if;
-
 
             --------------------------------------------------------------------
             -- Setting extra write pointer for write of timestamp from end of
@@ -877,30 +902,36 @@ begin
 
 
             --------------------------------------------------------------------
-            -- Calculating free memory. The same way as write_pointer_raw. 
-            -- Free memory for the user is available only after the commit!
-            -- However, here we must consider also reads!
+            -- Calculate free memory internally (raw)
             --------------------------------------------------------------------
-            if (commit_rx_frame = '1') then
-                if (read_increment) then
-                    rx_mem_free_int <= rx_mem_free_raw + 1;
-                else
-                    rx_mem_free_int <= rx_mem_free_raw;
-                end if;
-
-            elsif (rec_abort = '1') then
-                if (read_increment) then
+            if (read_increment) then
+                if (rec_abort = '1' or commit_overrun_abort = '1') then
                     rx_mem_free_raw <= rx_mem_free_int + 1;
-                else
-                    rx_mem_free_raw <= rx_mem_free_int;
+                elsif (not write_raw_OK) then
+                    rx_mem_free_raw <= rx_mem_free_raw + 1;
                 end if;
+            else
+                if (rec_abort = '1' or commit_overrun_abort = '1') then
+                    rx_mem_free_raw <= rx_mem_free_int;
+                elsif (write_raw_OK) then
+                    rx_mem_free_raw <= rx_mem_free_raw - 1;
+                end if;
+            end if;
 
-            elsif (write_raw_OK and (not read_increment)) then
-                rx_mem_free_raw <= rx_mem_free_raw - 1;
-
-            elsif read_increment then
-                rx_mem_free_int     <= rx_mem_free_int + 1;
-                rx_mem_free_raw     <= rx_mem_free_raw + 1;
+            --------------------------------------------------------------------
+            -- Calculate free memory for user:
+            --      1. Increment when user reads the frame.
+            --      2. Load RAW value when comitt occurs
+            --------------------------------------------------------------------
+            if (read_increment) then
+                if (commit_rx_frame = '1') then        
+                    rx_mem_free_int     <= rx_mem_free_raw + 1;
+                else
+                    rx_mem_free_int     <= rx_mem_free_int + 1;
+                end if;
+    
+            elsif (commit_rx_frame = '1') then
+                rx_mem_free_int         <= rx_mem_free_raw;
             end if;
 
         end if;
@@ -977,7 +1008,7 @@ begin
     -- Assertions
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
- 
+
 
     ----------------------------------------------------------------------------
     -- RX Buffer size can be only powers of 2. Since modulo arithmetics is used
@@ -1089,5 +1120,28 @@ begin
         end if;
         -- pragma translate_on
     end process;
+
+
+    ----------------------------------------------------------------------------
+    -- Checking consistency of "mem_free" calculation.
+    -- If buffer is idle (no storing is in progress), and message_count is 0,
+    -- then the buffer should be completely empty, thus, mem_free should be
+    -- equal to size of buffer.
+    ----------------------------------------------------------------------------
+    --mem_free_calc_process : process(clk_sys)
+    --begin
+        -- pragma translate_off
+    --    if (rising_edge(clk_sys) and now /= 0 fs) then
+
+--            if (rx_fsm = rxb_idle and message_count = 0 and rx_mem_free_int /=
+--                buff_size and commit_rx_frame = '0')
+--            then
+--                report "Buffer should be empty, but 'rx_mem_free_raw' is " &
+--                       "not equal to 'buff_size'" severity error;
+--            end if;
+--            
+--        end if;
+        -- pragma translate_on
+--    end process;
 
 end architecture;

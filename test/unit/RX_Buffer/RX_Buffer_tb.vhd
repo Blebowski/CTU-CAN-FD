@@ -115,10 +115,11 @@ architecture rx_buf_unit_test of CAN_test is
     signal rx_read_buff             :    std_logic_vector(31 downto 0);
 
     -- Driving bus aliases
-    signal drv_rtsopt               :    std_logic   := RTS_BEG;
+    signal drv_rtsopt               :    std_logic   := RTS_END;
     signal drv_read_start           :    std_logic   := '0';
+    signal drv_clr_ovr              :    std_logic   := '0';
 
- 
+
     ----------------------------------------------------------------------------
     -- Test specific signals
     ----------------------------------------------------------------------------
@@ -137,6 +138,9 @@ architecture rx_buf_unit_test of CAN_test is
     signal exit_imm_d               :    boolean     := false;
     signal exit_imm_d_2             :    boolean     := false;
     signal exit_imm_d_3             :    boolean     := false;
+
+    -- Additional random counter
+    signal rand_ctr_3               :    natural range 0 to RAND_POOL_SIZE := 0;
 
     ----------------------------------------------------------------------------
     -- Memory declarations for memories where data are read out
@@ -216,7 +220,7 @@ architecture rx_buf_unit_test of CAN_test is
                 wait for 0 ns;
             end loop;
         end if;
-         
+
         -- At the end we need to move one more time
         -- in_pointer              <= in_pointer+1;
         wait for 0 ns;
@@ -283,6 +287,9 @@ architecture rx_buf_unit_test of CAN_test is
         signal   rec_abort          :out    std_logic;
         signal   rec_message_valid  :out    std_logic;
 
+        signal   drv_rtsopt         :in     std_logic;
+        signal   drv_clr_ovr        :inout  std_logic;
+
         signal   memory             :inout  eval_mem_test;
         signal   in_pointer         :inout  natural;
         signal   timestamp          :in     std_logic_vector(63 downto 0);
@@ -291,14 +298,34 @@ architecture rx_buf_unit_test of CAN_test is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable stored_ts          :       std_logic_vector(63 downto 0);
         variable rand_val           :       natural;
-        variable abort_present      :       boolean;
+        variable abort_present      :       boolean := false;
         variable id_out             :       std_logic_vector(28 downto 0);
     begin
         
         CAN_generate_frame(rand_ctr, CAN_frame);
         stored_ts := (OTHERS => '0');
 
+        ------------------------------------------------------------------------
+        -- Initiate frame storing by clearing possible overrun from before.
+        -- It might have happened that Overrun was generated at the same time
+        -- as there was intent abort. In that case, the frame was aborted, 
+        -- overrun was not cleared and stayed till next frame. Storing of
+        -- next frame then evaluated overrun as present and did not store the
+        -- frame to input memory!
+        ------------------------------------------------------------------------
+        drv_clr_ovr <= '1';
+        wait until rising_edge(clk_sys);
+        drv_clr_ovr <= '0';
+        wait for 1 ns;
+
+        -- Check that overrun was cleared
+        if (rx_data_overrun = '1') then
+            log("Overrun not cleared!", error_l, log_level);
+        end if;
+
+        ------------------------------------------------------------------------   
         -- Initiate Frame by SOF pulse and store timestamp!
+        ------------------------------------------------------------------------
         sof_pulse           <= '1';
         if (drv_rtsopt = RTS_BEG) then
             stored_ts   := std_logic_vector(to_unsigned(
@@ -308,16 +335,20 @@ architecture rx_buf_unit_test of CAN_test is
         sof_pulse           <= '0';
         wait until rising_edge(clk_sys);
 
+        ------------------------------------------------------------------------
         -- Wait Random time (to emulate CAN ID). No real need to emulate real
         -- length of Identifier! Emulate random error also during this time,
         -- error frame may come also before any storing started and can not FUCK
         -- UP the buffer.
+        ------------------------------------------------------------------------
         wait_rand_cycles(rand_ctr, clk_sys, 10, 50);
 
         generate_random_abort(rand_ctr, rec_abort, clk_sys, abort_present, 0.1,
                               log_level);
 
         if (abort_present) then
+            wait until rising_edge(clk_sys);
+            wait until rising_edge(clk_sys);
             return;
         end if;
 
@@ -332,6 +363,7 @@ architecture rx_buf_unit_test of CAN_test is
         rec_brs            <= CAN_frame.brs;
         rec_esi            <= CAN_frame.esi;
         rec_rtr            <= CAN_frame.rtr;
+
         log("Storing metadata", info_l, log_level);
         wait until rising_edge(clk_sys);
 
@@ -341,13 +373,15 @@ architecture rx_buf_unit_test of CAN_test is
         store_metadata     <= '0';
         wait until rising_edge(clk_sys);
 
+        ------------------------------------------------------------------------
         -- Store data words
+        ------------------------------------------------------------------------
         if (CAN_frame.data_length > 0) then
             for i in 0 to ((CAN_frame.data_length - 1) / 4) loop
 
                 -- Wait random time between store of individual data bytes!
                 wait_rand_cycles(rand_ctr, clk_sys, 10, 50);
-                
+
                 -- Send signal to store data
                 store_data_word <= CAN_frame.data((i * 4) + 3) &
                                    CAN_frame.data((i * 4) + 2) &
@@ -363,6 +397,8 @@ architecture rx_buf_unit_test of CAN_test is
                 generate_random_abort(rand_ctr, rec_abort, clk_sys, abort_present,
                                       0.05, log_level);
                 if (abort_present) then
+                    wait until rising_edge(clk_sys);
+                    wait until rising_edge(clk_sys);
                     return;
                 end if;
             end loop;
@@ -370,24 +406,42 @@ architecture rx_buf_unit_test of CAN_test is
 
         wait_rand_cycles(rand_ctr, clk_sys, 30, 100);
 
+        ------------------------------------------------------------------------
         -- If we got here, no abort was generated, thus frame was stored OK!
         -- We commit frame to the buffer and store it to test memories!
+        ------------------------------------------------------------------------
         rec_message_valid <= '1';
         log("Frame valid!", info_l, log_level);
+        wait until rising_edge(clk_sys);
 
+        ------------------------------------------------------------------------
         -- Timestamp must be marked, if we are interested in END OF Frame
         -- Timestamp!
+        ------------------------------------------------------------------------
         if (drv_rtsopt = RTS_END) then
             CAN_frame.timestamp  := timestamp;
         else
             CAN_frame.timestamp  := stored_ts;
         end if;
-
-        wait until rising_edge(clk_sys);
         rec_message_valid <= '0';
-        wait until rising_edge(clk_sys);
 
-        insert_frame_test_mem(CAN_frame, memory, in_pointer);
+        ------------------------------------------------------------------------
+        -- Check that during whole storing of this frame data overrun did not
+        -- occur!
+        ------------------------------------------------------------------------
+        if (rx_data_overrun = '1') then
+            log("Data overrun appeared!", info_l, log_level);
+
+        ------------------------------------------------------------------------
+        -- If overrun did not happend, insert frame to input test memory!
+        ------------------------------------------------------------------------
+        else
+            insert_frame_test_mem(CAN_frame, memory, in_pointer);
+        end if;
+
+        wait until rising_edge(clk_sys);
+        wait until rising_edge(clk_sys);
+        wait until rising_edge(clk_sys);
 
     end procedure;
 
@@ -401,6 +455,7 @@ architecture rx_buf_unit_test of CAN_test is
         signal drv_read_start  :inout std_logic;
         signal clk_sys         :in    std_logic;
         signal out_mem         :out   eval_mem_test;
+        signal in_mem          :in    eval_mem_test;
         signal out_pointer     :inout natural
     )is
         variable rwcnt         :      natural;
@@ -414,6 +469,14 @@ architecture rx_buf_unit_test of CAN_test is
         for i in 0 to rwcnt loop
             drv_read_start        <= '1';
             out_mem(out_pointer)  <= buff_out;
+            
+            -- Check that word is exactly matching the word in in_mem at the
+            -- same position
+            if (buff_out /= in_mem(out_pointer)) then
+                log("Buffer FUCKED UP, inex: " & integer'image(out_pointer),
+                    error_l, log_level);
+            end if;
+
             out_pointer           <= out_pointer + 1;
             wait until rising_edge(clk_sys);
             drv_read_start        <= '0';
@@ -421,7 +484,8 @@ architecture rx_buf_unit_test of CAN_test is
         end loop;
 
     end procedure;
-  
+
+
     ----------------------------------------------------------------------------
     -- Compare contents of input and output memory, if data stored to the buffer
     -- are equal to data read from the buffer!
@@ -505,8 +569,10 @@ begin
                  false;
 
     drv_bus(DRV_READ_START_INDEX)   <= drv_read_start;
-    drv_bus(DRV_RTSOPT_INDEX)      <= drv_rtsopt;
-  
+    drv_bus(DRV_RTSOPT_INDEX)       <= drv_rtsopt;
+    drv_bus(DRV_CLR_OVR_INDEX)      <= drv_clr_ovr;
+
+
     ----------------------------------------------------------------------------
     -- Stimuli generator - Main test process
     ----------------------------------------------------------------------------
@@ -521,11 +587,6 @@ begin
         reset_test(res_n, status, run, stim_errs);
         log("Restarted RX Bufrer test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
-        log("Consider adding RX Buffer model into this testbench!", warning_l,
-            log_level);
-        log("Note that RX buffer content is NOT initialized on purpose!" &
-            "If initialized during reset, it is impossible to do" &
-            "synthesis into RAM!", warning_l, log_level);
 
         ------------------------------------------------------------------------
         -- Main loop of the test
@@ -534,24 +595,34 @@ begin
 
         while (loop_ctr < iterations or exit_imm)
         loop
-          
+
+            --------------------------------------------------------------------
+            -- Change setting for timestamp options (store timestamp
+            --  at beginning or end of frame)
+            --------------------------------------------------------------------
+            if (drv_rtsopt = RTS_BEG) then
+                drv_rtsopt <= RTS_END;
+            else
+                drv_rtsopt <= RTS_BEG;
+            end if;
+
+            --------------------------------------------------------------------
             -- Start generating the frames on Input as long as there is enough
-            -- space available in the common memory
+            -- space available in the common memory.
+            --------------------------------------------------------------------
             while (in_mem_full = false) loop
-            --while (rx_message_count = "00000000000") loop   
                 -- Now buffer has for sure space. Frame is inserted into the
                 -- RX Buffer, Model and stored also into common memory
                 insert_frame_to_RX_Buffer(rand_ctr, clk_sys, rec_ident_in,
-                    rec_dlc_in, rec_frame_type_in, rec_ident_type_in, rec_brs, rec_esi,          
-                    rec_is_rtr, sof_pulse, store_metadata, store_data, store_data_word, 
-                    rec_abort, rec_message_valid, in_mem, in_pointer, timestamp,          
-                    log_level);          
-
+                    rec_dlc_in, rec_frame_type_in, rec_ident_type_in, rec_brs,
+                    rec_esi, rec_is_rtr, sof_pulse, store_metadata, store_data,
+                    store_data_word, rec_abort, rec_message_valid, drv_rtsopt,
+                    drv_clr_ovr, in_mem, in_pointer, timestamp, log_level);
             end loop;
 
             -- Now input memory is full
             -- We need to wait for Data reader to read all frames into common
-            -- memory from rx buffer and its model. Then it checks data
+            -- memory from rx buffer. Then it checks data
             -- consistency and next iteration can start
             wait until iteration_done = true;
 
@@ -580,14 +651,16 @@ begin
             wait for 5 ns;
         end if;
 
+        ------------------------------------------------------------------------
+        -- Read frames as long as Output memory is not filled. Wait random time
+        -- in between, to allow for data overrun to occur!
+        ------------------------------------------------------------------------
         while (out_mem_full = false) loop
-        --while (rx_empty = '0') loop
-
             if (rx_empty = '0') then
-                read_frame(rx_read_buff, drv_read_start, clk_sys, out_mem,
-                           out_pointer);            
+                read_frame(rx_read_buff, drv_read_start, clk_sys, out_mem, 
+                           in_mem, out_pointer);
+                wait_rand_cycles(rand_ctr_3, clk_sys, 200, 250);
             end if;
-            
             wait until rising_edge(clk_sys);
         end loop;
 
@@ -616,15 +689,11 @@ begin
 
         iteration_done <= false;
 
-        -- Wait until data we inserted from the buffer and model
-        wait until in_mem_full = true;
+        -- Wait until data we inserted into input memory and read back by
+        -- data reader.
+        wait until (in_mem_full = true) and (out_mem_full = true);
 
-        -- Wait until data are read!
-        wait until rx_message_count = "00000000000";
-
-        -- Now that all the data wer inserted into the buffer we will wait until
-        -- it it for  sure read back OK. That means buffer_size*2 clock cycles!
-        wait for buff_size * 2 * clk_time;
+        wait for 3000 ns;
 
         -- Now compare the data
         cons_res := false;
@@ -646,7 +715,7 @@ end architecture;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
+-- Test wrapper and control signals generator                                   
 --------------------------------------------------------------------------------
 architecture rx_buf_unit_test_wrapper of CAN_test_wrapper is
     
