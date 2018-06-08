@@ -83,6 +83,7 @@ add wave -label "Free 32bit words" -unsigned $TCOMP/rx_mem_free
 add wave -label "Read pointer" -unsigned $TCOMP/rx_read_pointer_pos
 add wave -label "Write pointer" -unsigned $TCOMP/rx_write_pointer_pos
 add wave -label "Output word" -hexadecimal $TCOMP/rx_read_buff
+add wave -label "Data overrun" -hexadecimal $TCOMP/rx_data_overrun
 
 add wave -noupdate -divider -height 20 "RX Buffer internal signals"
 add wave -label "RX Buffer FSM" -hexadecimal $TCOMP/rx_Buffer_comp/rx_fsm
@@ -99,7 +100,6 @@ add wave -label "Memory write pointer" -hexadecimal $TCOMP/rx_Buffer_comp/memory
 add wave -label "Captured timestamp" -hexadecimal $TCOMP/rx_Buffer_comp/timestamp_capture
 add wave -label "Commit RX Frame" -hexadecimal $TCOMP/rx_Buffer_comp/commit_rx_frame
 add wave -label "Data overrun internal" -hexadecimal $TCOMP/rx_Buffer_comp/data_overrun_int
-add wave -label "Mem free raw" $TCOMP/rx_Buffer_comp/rx_mem_free_raw
 
 
 add wave -noupdate -divider -height 20 "Testbench internal signals"
