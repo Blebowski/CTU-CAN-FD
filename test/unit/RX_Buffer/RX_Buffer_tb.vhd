@@ -585,6 +585,7 @@ begin
         log("Restarting RX Buffer test!", info_l, log_level);
         wait for 5 ns;
         reset_test(res_n, status, run, stim_errs);
+        apply_rand_seed(seed, 0, rand_ctr);
         log("Restarted RX Bufrer test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
 
@@ -649,6 +650,10 @@ begin
         -- Offset in time only in first clock cycle
         if (loop_ctr = 0) then
             wait for 5 ns;
+        end if;
+
+        if (res_n = ACT_RESET) then
+            apply_rand_seed(seed, 1, rand_ctr_3);
         end if;
 
         ------------------------------------------------------------------------
