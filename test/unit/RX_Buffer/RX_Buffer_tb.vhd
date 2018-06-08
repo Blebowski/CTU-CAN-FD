@@ -715,7 +715,7 @@ end architecture;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
+-- Test wrapper and control signals generator                                   
 --------------------------------------------------------------------------------
 architecture rx_buf_unit_test_wrapper of CAN_test_wrapper is
     
