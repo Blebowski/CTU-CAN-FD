@@ -518,7 +518,7 @@ begin
             end if;
 
         else
-        --TODO...
+            report "Only NOMINAL and DATA sampling is supported" severity error;
         end if;
     end process;
  
@@ -604,6 +604,9 @@ begin
         variable sync_time          : integer;
         variable skip_sync          : boolean;
     begin
+        if (res_n = ACT_RESET) then
+            apply_rand_seed(seed, 1, rand_ctr_sync_edge);
+        end if;
 
         -- Generate parameters for new resynchronisation
         wait until falling_edge(clk_sys) and bt_FSM_out = sync;
@@ -689,7 +692,8 @@ begin
 
         -- Generates random initial bit time settings to avoid having zero 
         -- values on the input of DUT after reset!
-        gen_bit_time_setting(rand_ctr, setting);   
+        apply_rand_seed(seed, 0, rand_ctr);
+        gen_bit_time_setting(rand_ctr, setting);
 
         reset_test(res_n, status, run, main_err_ctr);
         log("Restarted Prescaler unit test", info_l, log_level);

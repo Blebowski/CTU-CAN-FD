@@ -187,7 +187,7 @@ architecture Event_logger_unit_test of CAN_test is
         signal   clk_sys          :in    std_logic;
         signal   log_state        :in    logger_state_type;
         signal   trig_inputs	  :in    std_logic_vector(trig_amount - 1 downto 0);
-	    signal   drv_trig         :in    std_logic_vector(trig_amount - 1 downto 0);
+        signal   drv_trig         :in    std_logic_vector(trig_amount - 1 downto 0);
         signal   log_level        :in    log_lvl_type;
         variable outcome          :inout boolean
     ) is
@@ -269,7 +269,10 @@ architecture Event_logger_unit_test of CAN_test is
     end procedure;
 
 begin
-    
+
+    ----------------------------------------------------------------------------
+    -- DUT
+    ----------------------------------------------------------------------------
     CAN_logger_comp : CAN_logger 
     generic map(
         memory_size                =>  16 --Only 2^k possible!
@@ -369,6 +372,7 @@ begin
     trig_inputs(T_TRS_IND)               <= evnt_inputs(C_TRS_IND);
     trig_inputs(T_CRCS_IND)              <= evnt_inputs(C_CRCS_IND);
 
+
     ----------------------------------------------------------------------------
     -- Generation of random events. Is completely not synced with event logger
     -- generation.
@@ -378,6 +382,10 @@ begin
         variable rand_val : real := 0.0;
     begin
         wait until rising_edge(clk_sys);
+
+        if (res_n = ACT_RESET) then
+            apply_rand_seed(seed, 1, rand_ctr_2);
+        end if;
 
         -- Generate random events
         rand_logic_vect_s(rand_ctr_2, evnt_inputs, 0.1);
@@ -494,6 +502,7 @@ begin
 
     errors <= error_ctr;  
 
+
     ----------------------------------------------------------------------------
     -- Main test process 
     ----------------------------------------------------------------------------
@@ -504,6 +513,7 @@ begin
         log("Restarting Event logget unit test!", info_l, log_level);
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
+        apply_rand_seed(seed, 0, rand_ctr);
         log("Restarted Event logget unit test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
 
@@ -552,7 +562,7 @@ end architecture;
 
 architecture Event_logger_unit_test_wrapper of CAN_test_wrapper is
 
-    --Select architecture of the test
+    -- Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(Event_logger_unit_test);
   
     signal run              :   boolean;
@@ -573,7 +583,6 @@ begin
         status           =>  status_int,
         errors           =>  errors
 	);
-
 	status              <= status_int;
 
 

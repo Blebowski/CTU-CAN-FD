@@ -1159,6 +1159,7 @@ begin
         log("Restarting Protocol control unit test!", info_l, log_level);
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
+        apply_rand_seed(seed, 0, rand_ctr);
         log("Restarted Protocol control unit test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
 

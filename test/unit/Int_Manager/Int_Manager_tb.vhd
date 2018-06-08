@@ -124,7 +124,6 @@ architecture int_man_unit_test of CAN_test is
                                             (OTHERS => '0');
 
     signal rand_ctr_1             :   natural range 0 to RAND_POOL_SIZE;
-    signal rand_ctr_2             :   natural range 0 to RAND_POOL_SIZE;
 
     signal error_ctr_2            :   natural;
 
@@ -159,122 +158,122 @@ architecture int_man_unit_test of CAN_test is
     -- Generates random interrupt sources
     ----------------------------------------------------------------------------
     procedure generate_sources(
-      signal rand_ctr               :inout   natural range 0 to RAND_POOL_SIZE;
+        signal rand_ctr               :inout   natural range 0 to RAND_POOL_SIZE;
 
-      -- Valid Error appeared for interrupt
-      signal error_valid            :inout   std_logic;
+        -- Valid Error appeared for interrupt
+        signal error_valid            :inout   std_logic;
 
-      -- Error pasive /Error acitve functionality changed
-      signal error_passive_changed  :inout   std_logic;
+        -- Error pasive /Error acitve functionality changed
+        signal error_passive_changed  :inout   std_logic;
 
-      -- Error warning limit reached
-      signal error_warning_limit    :inout   std_logic;
+        -- Error warning limit reached
+        signal error_warning_limit    :inout   std_logic;
 
-      -- Arbitration was lost input
-      signal arbitration_lost       :inout   std_logic;
+        -- Arbitration was lost input
+        signal arbitration_lost       :inout   std_logic;
 
-      -- Message stored in CAN Core was sucessfully transmitted
-      signal tx_finished            :inout   std_logic;
+        -- Message stored in CAN Core was sucessfully transmitted
+        signal tx_finished            :inout   std_logic;
 
-      -- Bit Rate Was Shifted
-      signal br_shifted             :inout   std_logic;
+        -- Bit Rate Was Shifted
+        signal br_shifted             :inout   std_logic;
 
-      -- Income message was discarded
-      signal rx_message_disc        :inout   std_logic;
+        -- Income message was discarded
+        signal rx_message_disc        :inout   std_logic;
 
-      -- Message recieved!
-      signal rec_message_valid      :inout   std_logic;
+        -- Message recieved!
+        signal rec_message_valid      :inout   std_logic;
 
-      -- RX Buffer full
-      signal rx_full                :inout   std_logic;
+        -- RX Buffer full
+        signal rx_full                :inout   std_logic;
 
-      -- Event loggging finished
-      signal loger_finished         :inout   std_logic;
+        -- Event loggging finished
+        signal loger_finished         :inout   std_logic;
 
-      -- RX Buffer empty
-      signal rx_empty               :inout   std_logic;
+        -- RX Buffer empty
+        signal rx_empty               :inout   std_logic;
 
-      -- TXT HW Command
-      signal txt_hw_cmd             :inout   txt_hw_cmd_type
+        -- TXT HW Command
+        signal txt_hw_cmd             :inout   txt_hw_cmd_type
     )is
     begin
-      if (error_valid = '1') then
-        rand_logic_s(rand_ctr, error_valid, 0.85);
-      else
-        rand_logic_s(rand_ctr, error_valid, 0.1);
-      end if;
-      
-      if (error_passive_changed = '1') then
-        rand_logic_s(rand_ctr, error_passive_changed, 0.85);
-      else
-        rand_logic_s(rand_ctr, error_passive_changed, 0.05);
-      end if;
-      
-      if (error_warning_limit = '1') then
-        rand_logic_s(rand_ctr, error_warning_limit, 0.85);
-      else
-        rand_logic_s(rand_ctr, error_warning_limit, 0.05);
-      end if;
-      
-      if (arbitration_lost = '1') then
-        rand_logic_s(rand_ctr, arbitration_lost, 0.95);
-      else
-        rand_logic_s(rand_ctr, arbitration_lost, 0.05);
-      end if;
-      
-      if (tx_finished = '1') then
-        rand_logic_s(rand_ctr, tx_finished, 0.95);
-      else
-        rand_logic_s(rand_ctr, tx_finished, 0.05);
-      end if;
-      
-      if (br_shifted = '1') then
-        rand_logic_s(rand_ctr, br_shifted, 0.95);
-      else
-        rand_logic_s(rand_ctr, br_shifted, 0.05);
-      end if;
-      
-      if (rx_message_disc = '1') then
-        rand_logic_s(rand_ctr, rx_message_disc, 0.95);
-      else
-        rand_logic_s(rand_ctr, rx_message_disc, 0.05);
-      end if;
-      
-      if (rec_message_valid = '1') then
-        rand_logic_s(rand_ctr, rec_message_valid, 0.95);
-      else
-        rand_logic_s(rand_ctr, rec_message_valid, 0.05);
-      end if;
-      
-      if (rx_full = '1') then
-        rand_logic_s(rand_ctr, rx_full, 0.95);
-      else
-        rand_logic_s(rand_ctr, rx_full, 0.05);
-      end if;
-      
-      if (loger_finished = '1') then
-        rand_logic_s(rand_ctr, loger_finished, 0.95);
-      else
-        rand_logic_s(rand_ctr, loger_finished, 0.05);
-      end if;
-      
-      if (rx_empty = '0') then
-        rand_logic_s(rand_ctr, rx_empty, 0.95);
-      else
-        rand_logic_s(rand_ctr, rx_empty, 0.05);
-      end if;
+        if (error_valid = '1') then
+            rand_logic_s(rand_ctr, error_valid, 0.85);
+        else
+            rand_logic_s(rand_ctr, error_valid, 0.1);
+        end if;
 
-      if (txt_hw_cmd.lock = '1') then
-        rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.95);
-      else
-        rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.05);
-      end if;
+        if (error_passive_changed = '1') then
+            rand_logic_s(rand_ctr, error_passive_changed, 0.85);
+        else
+            rand_logic_s(rand_ctr, error_passive_changed, 0.05);
+        end if;
 
-      if (txt_hw_cmd.lock = '1') then
-        rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.95);
-      else
-        rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.05);
-      end if;
+        if (error_warning_limit = '1') then
+            rand_logic_s(rand_ctr, error_warning_limit, 0.85);
+        else
+            rand_logic_s(rand_ctr, error_warning_limit, 0.05);
+        end if;
+
+        if (arbitration_lost = '1') then
+            rand_logic_s(rand_ctr, arbitration_lost, 0.95);
+        else
+            rand_logic_s(rand_ctr, arbitration_lost, 0.05);
+        end if;
+
+        if (tx_finished = '1') then
+            rand_logic_s(rand_ctr, tx_finished, 0.95);
+        else
+            rand_logic_s(rand_ctr, tx_finished, 0.05);
+        end if;
+
+        if (br_shifted = '1') then
+            rand_logic_s(rand_ctr, br_shifted, 0.95);
+        else
+            rand_logic_s(rand_ctr, br_shifted, 0.05);
+        end if;
+
+        if (rx_message_disc = '1') then
+            rand_logic_s(rand_ctr, rx_message_disc, 0.95);
+        else
+            rand_logic_s(rand_ctr, rx_message_disc, 0.05);
+        end if;
+
+        if (rec_message_valid = '1') then
+            rand_logic_s(rand_ctr, rec_message_valid, 0.95);
+        else
+            rand_logic_s(rand_ctr, rec_message_valid, 0.05);
+        end if;
+
+        if (rx_full = '1') then
+            rand_logic_s(rand_ctr, rx_full, 0.95);
+        else
+            rand_logic_s(rand_ctr, rx_full, 0.05);
+        end if;
+
+        if (loger_finished = '1') then
+            rand_logic_s(rand_ctr, loger_finished, 0.95);
+        else
+            rand_logic_s(rand_ctr, loger_finished, 0.05);
+        end if;
+
+        if (rx_empty = '0') then
+            rand_logic_s(rand_ctr, rx_empty, 0.95);
+        else
+            rand_logic_s(rand_ctr, rx_empty, 0.05);
+        end if;
+
+        if (txt_hw_cmd.lock = '1') then
+            rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.95);
+        else
+            rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.05);
+        end if;
+
+        if (txt_hw_cmd.lock = '1') then
+            rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.95);
+        else
+            rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.05);
+        end if;
       
     end procedure;    
     
@@ -284,12 +283,12 @@ architecture int_man_unit_test of CAN_test is
     -- registers!
     ----------------------------------------------------------------------------
     procedure generate_commands(
-      signal drv_int_clear       :out std_logic_vector(int_count - 1 downto 0);
-      signal drv_int_ena_set     :out std_logic_vector(int_count - 1 downto 0);
-      signal drv_int_ena_clear   :out std_logic_vector(int_count - 1 downto 0);
-      signal drv_int_mask_set    :out std_logic_vector(int_count - 1 downto 0);
-      signal drv_int_mask_clear  :out std_logic_vector(int_count - 1 downto 0);
-      signal rand_ctr            :inout natural range 0 to RAND_POOL_SIZE
+        signal drv_int_clear       :out std_logic_vector(int_count - 1 downto 0);
+        signal drv_int_ena_set     :out std_logic_vector(int_count - 1 downto 0);
+        signal drv_int_ena_clear   :out std_logic_vector(int_count - 1 downto 0);
+        signal drv_int_mask_set    :out std_logic_vector(int_count - 1 downto 0);
+        signal drv_int_mask_clear  :out std_logic_vector(int_count - 1 downto 0);
+        signal rand_ctr            :inout natural range 0 to RAND_POOL_SIZE
     ) is
         variable tmp             : real;
     begin
@@ -326,31 +325,34 @@ architecture int_man_unit_test of CAN_test is
 
 begin
 
-  int_man_comp : intManager
-  GENERIC map(
-     int_count             => int_count
+    ----------------------------------------------------------------------------
+    -- DUT
+    ----------------------------------------------------------------------------
+    int_man_comp : intManager
+    GENERIC map(
+        int_count             => int_count
     )
-  PORT map(
-     clk_sys               =>   clk_sys,
-     res_n                 =>   res_n,
-     error_valid           =>   error_valid,
-     error_passive_changed =>   error_passive_changed,
-     error_warning_limit   =>   error_warning_limit,
-     arbitration_lost      =>   arbitration_lost,
-     tx_finished           =>   tx_finished ,
-     br_shifted            =>   br_shifted,
-     rx_empty              =>   rx_empty,
-     txt_hw_cmd            =>   txt_hw_cmd,
-     rx_message_disc       =>   rx_message_disc ,
-     rec_message_valid     =>   rec_message_valid ,
-     rx_full               =>   rx_full,
-     loger_finished        =>   loger_finished,
-     drv_bus               =>   drv_bus ,
-     int_out               =>   int_out,
-     int_vector            =>   int_vector,
-     int_mask              =>   int_mask,
-     int_ena               =>   int_ena
-  );
+    PORT map(
+        clk_sys               =>   clk_sys,
+        res_n                 =>   res_n,
+        error_valid           =>   error_valid,
+        error_passive_changed =>   error_passive_changed,
+        error_warning_limit   =>   error_warning_limit,
+        arbitration_lost      =>   arbitration_lost,
+        tx_finished           =>   tx_finished ,
+        br_shifted            =>   br_shifted,
+        rx_empty              =>   rx_empty,
+        txt_hw_cmd            =>   txt_hw_cmd,
+        rx_message_disc       =>   rx_message_disc ,
+        rec_message_valid     =>   rec_message_valid ,
+        rx_full               =>   rx_full,
+        loger_finished        =>   loger_finished,
+        drv_bus               =>   drv_bus ,
+        int_out               =>   int_out,
+        int_vector            =>   int_vector,
+        int_mask              =>   int_mask,
+        int_ena               =>   int_ena
+    );
 
     -- Joining interrupt inputs to interrupt status
     int_input(BEI_IND)            <=  error_valid;
@@ -367,176 +369,183 @@ begin
     int_input(TXBHCI_IND)         <=  txt_hw_cmd.lock or txt_hw_cmd.unlock; 
   
 
-  ---------------------------------
-  -- Clock generation
-  ---------------------------------
-  clock_gen : process
-  variable period   :natural := f100_Mhz;
-  variable duty     :natural := 50;
-  variable epsilon  :natural := 0;
-  begin
-      generate_clock(period, duty, epsilon, clk_sys);
-  end process;
-  
-  ---------------------------------
-  -- Generating random sources
-  ---------------------------------
-  src_gen : process
-  begin
-    wait for 195 ns;
-    while true loop
-      wait until falling_edge(clk_sys);
-      generate_sources(rand_ctr_2, error_valid, error_passive_changed ,
-                       error_warning_limit , arbitration_lost, tx_finished,
-                       br_shifted, rx_message_disc , rec_message_valid ,
-                       rx_full , loger_finished, rx_empty, txt_hw_cmd );
-    end loop;
-  end process;
+    ----------------------------------------------------------------------------
+    -- Clock generation
+    ----------------------------------------------------------------------------
+    clock_gen : process
+        variable period   :natural := f100_Mhz;
+        variable duty     :natural := 50;
+        variable epsilon  :natural := 0;
+    begin
+        generate_clock(period, duty, epsilon, clk_sys);
+    end process;
 
 
-  ---------------------------------------
-  -- Connection to Driving bus
-  ---------------------------------------
-  drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW)          
+    ----------------------------------------------------------------------------
+    -- Generating random sources
+    ----------------------------------------------------------------------------
+    src_gen : process
+    begin
+        wait for 195 ns;
+        if (res_n = ACT_RESET) then
+            apply_rand_seed(seed, 1, rand_ctr_1);
+        end if;
+        
+        while true loop
+            wait until falling_edge(clk_sys);
+            generate_sources(rand_ctr_1, error_valid, error_passive_changed ,
+                           error_warning_limit , arbitration_lost, tx_finished,
+                           br_shifted, rx_message_disc , rec_message_valid ,
+                           rx_full , loger_finished, rx_empty, txt_hw_cmd );
+        end loop;
+    end process;
+
+
+    ----------------------------------------------------------------------------
+    -- Connection to Driving bus
+    ----------------------------------------------------------------------------
+    drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW)          
             <= drv_int_clear;
 
-  drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW)
+    drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW)
             <= drv_int_ena_set;
 
-  drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW)
+    drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW)
             <= drv_int_ena_clear;
 
-  drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW)
+    drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW)
             <= drv_int_mask_set; 
 
-  drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW)
+    drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW)
             <= drv_int_mask_clear;
-  
 
-  ---------------------------------------
-  -- Calculate expected outputs
-  ---------------------------------------
-  int_emu_proc : process
-    variable int_output     : boolean;
-    variable outcome        : boolean;
-    variable exp_output     : boolean;
-    constant zeroes         : std_logic_vector(int_count - 1 downto 0) :=
-                                  (OTHERS => '0');
-  begin
 
-    while (run = false) loop
+    ----------------------------------------------------------------------------
+    -- Calculate expected outputs
+    ----------------------------------------------------------------------------
+    int_emu_proc : process
+        variable int_output     : boolean;
+        variable outcome        : boolean;
+        variable exp_output     : boolean;
+        constant zeroes         : std_logic_vector(int_count - 1 downto 0) :=
+                                      (OTHERS => '0');
+    begin
+
+        while (run = false) loop
+            wait until rising_edge(clk_sys);
+        end loop;
+
         wait until rising_edge(clk_sys);
-    end loop;
 
-    wait until rising_edge(clk_sys);
- 
-    outcome := true;
+        outcome := true;
 
-    for i in 0 to int_count - 1 loop
+        for i in 0 to int_count - 1 loop
 
-        -- Interrupt enable
-        if (drv_int_ena_set(i) = '1') then
-            int_ena_exp(i) <= '1';
-        elsif (drv_int_ena_clear(i) = '1') then
-            int_ena_exp(i) <= '0';
+            -- Interrupt enable
+            if (drv_int_ena_set(i) = '1') then
+                int_ena_exp(i) <= '1';
+            elsif (drv_int_ena_clear(i) = '1') then
+                int_ena_exp(i) <= '0';
+            end if;
+
+            -- Interrupt mask
+            if (drv_int_mask_set(i) = '1') then
+                int_mask_exp(i) <= '1';
+            elsif (drv_int_mask_clear(i) = '1') then
+                int_mask_exp(i) <= '0';
+            end if;
+
+            -- Interrupt clear and capturing!
+            if (int_input(i) = '1' and int_mask_exp(i) = '0') then
+                int_status_exp(i) <= '1';
+            elsif (drv_int_clear(i) = '1') then
+                int_status_exp(i) <= '0';
+            end if;
+        end loop;
+
+        -- Calculating expected interrupt output
+        if ((int_vector AND int_ena_exp) = zeroes) then
+            exp_output      := false;
+        else
+            exp_output      := true;
         end if;
 
-        -- Interrupt mask
-        if (drv_int_mask_set(i) = '1') then
-            int_mask_exp(i) <= '1';
-        elsif (drv_int_mask_clear(i) = '1') then
-            int_mask_exp(i) <= '0';
+        -- Checking the expected and real outputs
+        if (int_ena         /= int_ena_exp) then
+            outcome         := false;
+            log("Interrupt enable mismatch", error_l, log_level);
         end if;
 
-        -- Interrupt clear and capturing!
-        if (int_input(i) = '1' and int_mask_exp(i) = '0') then
-            int_status_exp(i) <= '1';
-        elsif (drv_int_clear(i) = '1') then
-            int_status_exp(i) <= '0';
+        if (int_mask        /= int_mask_exp) then
+            outcome         := false;
+            log("Interrupt mask mismatch", error_l, log_level);
         end if;
-    end loop;
 
-    -- Calculating expected interrupt output
-    if ((int_vector AND int_ena_exp) = zeroes) then
-        exp_output      := false;
-    else
-        exp_output      := true;
-    end if;
-   
-    -- Checking the expected and real outputs
-    if (int_ena         /= int_ena_exp) then
-        outcome         := false;
-        log("Interrupt enable mismatch", error_l, log_level);
-    end if;
+        if (int_vector      /= int_status_exp) then
+            outcome         := false;
+            log("Interrupt vector mismatch", error_l, log_level);
+        end if;
 
-    if (int_mask        /= int_mask_exp) then
-        outcome         := false;
-        log("Interrupt mask mismatch", error_l, log_level);
-    end if;
+        if ((exp_output = true  and int_out = '0') or
+            (exp_output = false and int_out = '1')) then
+            outcome         := false;
+            log("Interrupt output mismatch", error_l, log_level);
+        end if;
 
-    if (int_vector      /= int_status_exp) then
-        outcome         := false;
-        log("Interrupt vector mismatch", error_l, log_level);
-    end if;
+        -- Checking the outputs
+        if (outcome = false) then
+            process_error(error_ctr_2, error_beh, exit_imm); 
+        end if;
 
-    if ((exp_output = true  and int_out = '0') or
-        (exp_output = false and int_out = '1')) then
-        outcome         := false;
-        log("Interrupt output mismatch", error_l, log_level);
-    end if;
+    end process;
 
-    -- Checking the outputs
-    if (outcome = false) then
-        process_error(error_ctr_2, error_beh, exit_imm); 
-    end if;
-
-  end process;
-
-  -- Error propagation to the output
-  errors <= error_ctr;
-
-  ---------------------------------
-  ---------------------------------
-  -- Main Test process
-  ---------------------------------
-  ---------------------------------
-  test_proc : process
-  variable outcome : boolean := false;
-  begin
-    log("Restarting Interrupt test!", info_l, log_level);
-    wait for 5 ns;
-    reset_test(res_n, status, run, error_ctr);
-    log("Restarted Interrupttest", info_l, log_level);
-    print_test_info(iterations, log_level, error_beh, error_tol);
-    
-    -------------------------------
-    -- Main loop of the test
-    -------------------------------
-    log("Starting Interrupt main loop", info_l, log_level);
-    
-    while (loop_ctr < iterations  or  exit_imm)
-    loop
-      log("Starting loop nr "&integer'image(loop_ctr), info_l, log_level);
-      
-      wait until falling_edge(clk_sys);
-
-      -- Generate commands as coming from user registers
-      generate_commands(drv_int_clear    , drv_int_ena_set   , drv_int_ena_clear,
-                        drv_int_mask_set , drv_int_mask_clear, rand_ctr_1);          
-      wait for 50 ns;
-      
-      -- Errors are evaluated in separate process.
-      error_ctr <= error_ctr_2;      
+    -- Error propagation to the output
+    errors <= error_ctr;
 
 
-      loop_ctr <= loop_ctr + 1;
-    end loop;
-    
-    evaluate_test(error_tol, error_ctr, status);
-  end process;
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Main Test process
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    test_proc : process
+        variable outcome : boolean := false;
+    begin
+        log("Restarting Interrupt test!", info_l, log_level);
+        wait for 5 ns;
+        reset_test(res_n, status, run, error_ctr);
+        apply_rand_seed(seed, 1, rand_ctr);
+        log("Restarted Interrupttest", info_l, log_level);
+        print_test_info(iterations, log_level, error_beh, error_tol);
+
+        -------------------------------
+        -- Main loop of the test
+        -------------------------------
+        log("Starting Interrupt main loop", info_l, log_level);
+
+        while (loop_ctr < iterations  or  exit_imm)
+        loop
+              log("Starting loop nr "&integer'image(loop_ctr), info_l,
+                    log_level);
+              
+              wait until falling_edge(clk_sys);
+
+              -- Generate commands as coming from user registers
+              generate_commands(drv_int_clear, drv_int_ena_set,
+                                drv_int_ena_clear, drv_int_mask_set,
+                                drv_int_mask_clear, rand_ctr);
+              wait for 50 ns;
+              
+              -- Errors are evaluated in separate process.
+              error_ctr <= error_ctr_2;
+
+              loop_ctr <= loop_ctr + 1;
+        end loop;
+
+        evaluate_test(error_tol, error_ctr, status);
+    end process;
   
 end architecture;
-
 
 
 --------------------------------------------------------------------------------
@@ -544,8 +553,8 @@ end architecture;
 --------------------------------------------------------------------------------
 architecture int_man_test_wrapper of CAN_test_wrapper is
    
-  -- Select architecture of the test
-  for test_comp : CAN_test use entity work.CAN_test(int_man_unit_test);
+    -- Select architecture of the test
+    for test_comp : CAN_test use entity work.CAN_test(int_man_unit_test);
 
     -- Input trigger, test starts running when true
     signal run              :   boolean;
@@ -558,37 +567,35 @@ architecture int_man_test_wrapper of CAN_test_wrapper is
 
 begin
   
-  -- In this test wrapper generics are directly connected to the signals
-  -- of test entity
-  test_comp : CAN_test
-  port map(
-     run              =>  run,
-     iterations       =>  iterations , 
-     log_level        =>  log_level,
-     error_beh        =>  error_beh,
-     error_tol        =>  error_tol,                                                     
-     status           =>  status_int,
-     errors           =>  errors
-  );
+    -- In this test wrapper generics are directly connected to the signals
+    -- of test entity
+    test_comp : CAN_test
+    port map(
+        run              =>  run,
+        iterations       =>  iterations , 
+        log_level        =>  log_level,
+        error_beh        =>  error_beh,
+        error_tol        =>  error_tol,                                                     
+        status           =>  status_int,
+        errors           =>  errors
+    );
   
   status              <= status_int;
   
-  ------------------------------------
-  -- Starts the test and lets it run
-  ------------------------------------
-  test : process
-  begin
-    run               <= true;
-    wait for 1 ns;
-    
-    --Wait until the only test finishes and then propagate the results
-    wait until (status_int = passed or status_int = failed);  
-    
-    wait for 100 ns;
-    run               <= false;
-        
-  end process;
-  
+    ----------------------------------------------------------------------------
+    -- Starts the test and lets it run
+    ----------------------------------------------------------------------------
+    test : process
+    begin
+        run               <= true;
+        wait for 1 ns;
+
+        --Wait until the only test finishes and then propagate the results
+        wait until (status_int = passed or status_int = failed);  
+
+        wait for 100 ns;
+        run               <= false;
+    end process;
   
 end;
 

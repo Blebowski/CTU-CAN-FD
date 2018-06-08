@@ -767,6 +767,7 @@ begin
         log("Restarting Bit stuffing-destuffing test!", info_l, log_level);
         wait for 5 ns;
         reset_test(res_n, status, run, stat_err_ctr);
+        apply_rand_seed(seed, 0, rand_ctr);
         log("Restarted Bit stuffing-destuffing test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
 

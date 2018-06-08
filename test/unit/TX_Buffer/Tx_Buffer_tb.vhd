@@ -206,7 +206,7 @@ architecture tx_buf_unit_test of CAN_test is
 begin
    
     ----------------------------------------------------------------------------
-    -- Buffer components - create only one instance
+    -- DUT - Create only one buffer instance
     ----------------------------------------------------------------------------
     txt_Buf_comp : txtBuffer 
     generic map(
@@ -228,28 +228,30 @@ begin
         txt_addr                => txt_addr,
         txt_buf_ready           => txt_buf_ready
     );
-  
-    ---------------------------------
+
+
+    ----------------------------------------------------------------------------
     -- Clock generation
-    ---------------------------------
+    ----------------------------------------------------------------------------
     clock_gen : process
-    variable period         : natural := f100_Mhz;
-    variable duty           : natural := 50;
-    variable epsilon        : natural := 0;
+        variable period         : natural := f100_Mhz;
+        variable duty           : natural := 50;
+        variable epsilon        : natural := 0;
     begin
-      generate_clock(period, duty, epsilon, clk_sys);
+        generate_clock(period, duty, epsilon, clk_sys);
     end process;
     
 
-    --------------------------------------------
+    ----------------------------------------------------------------------------
     -- Data generation - stored by user writes
-    -------------------------------------------- 
+    ----------------------------------------------------------------------------
     data_gen_proc : process
         variable buf_fsm : txt_fsm_type;
     begin
         tran_cs      <= '0';
         while res_n = ACT_RESET loop
-            wait until rising_edge(clk_sys);        
+            wait until rising_edge(clk_sys);                
+            apply_rand_seed(seed, 3, rand_gen_ctr);      
         end loop;
 
         -- Generate random address and data and attempt to store it 
@@ -279,18 +281,18 @@ begin
 
         tran_cs <=  '0';
         wait until rising_edge(clk_sys);
-
     end process;
 
 
-    ---------------------------------------------
+    ----------------------------------------------------------------------------
     -- Reading the data like as If from CAN Core
-    ---------------------------------------------
+    ----------------------------------------------------------------------------
     data_read_proc : process
         variable tmp   : std_logic_vector(4 downto 0);
     begin        
         while res_n = ACT_RESET loop
-            wait until rising_edge(clk_sys);        
+            wait until rising_edge(clk_sys);            
+            apply_rand_seed(seed, 2, rand_read_ctr);    
         end loop;
 
         data_coh_err_ctr <= 0;
@@ -314,15 +316,16 @@ begin
     end process;
 
 
-    ---------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Sending random commands to the buffer from SW and HW
-    ---------------------------------------------------------
+    ----------------------------------------------------------------------------
     commands_proc : process
         variable tmp_real : real;
     begin
         
         while res_n = ACT_RESET loop
-            wait until rising_edge(clk_sys);        
+            wait until rising_edge(clk_sys);
+            apply_rand_seed(seed, 1, rand_com_gen_ctr);
         end loop;
 
         wait until falling_edge(clk_sys);
@@ -359,7 +362,7 @@ begin
         rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_rdy, 0.2);
         rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_ety, 0.2);
         rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_abt, 0.2);
-	wait for 0 ns;
+        wait for 0 ns;
 
         -- Calculate the expected state
         calc_exp_state(txt_sw_cmd, txt_hw_cmd, txtb_state, txtb_exp_state);
@@ -375,8 +378,8 @@ begin
                   error_l, log_level);
         end if;
 
-	-- Set all the commands to be inactive
-	txt_hw_cmd.valid   <= '0';
+        -- Set all the commands to be inactive
+        txt_hw_cmd.valid   <= '0';
         txt_hw_cmd.err     <= '0';
         txt_hw_cmd.arbl    <= '0';
         txt_hw_cmd.failed  <= '0';
@@ -388,11 +391,12 @@ begin
  
     end process;
 
-    ---------------------------------
-    ---------------------------------
+
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Main Test process
-    ---------------------------------
-    ---------------------------------
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     test_proc : process
         variable rand_nr    : real;
         variable rand_time  : time;
@@ -400,6 +404,7 @@ begin
         log("Restarting TXT Buffer test!", info_l, log_level);
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
+        apply_rand_seed(seed, 0, rand_ctr);
         log("Restarted TXT Buffer test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
 
@@ -438,9 +443,9 @@ end architecture;
 --------------------------------------------------------------------------------
 architecture tx_buf_unit_test_wrapper of CAN_test_wrapper is
   
-  --Select architecture of the test
-  for test_comp : CAN_test use entity work.CAN_test(tx_buf_unit_test);
-  
+    -- Select architecture of the test
+    for test_comp : CAN_test use entity work.CAN_test(tx_buf_unit_test);
+
 
     -- Input trigger, test starts running when true
     signal run              :   boolean;
@@ -450,38 +455,37 @@ architecture tx_buf_unit_test_wrapper of CAN_test_wrapper is
 
     -- Amount of errors which appeared in the test
     signal errors           :   natural;
+
 begin
   
-  -- In this test wrapper generics are directly connected to the signals
-  -- of test entity
-  test_comp : CAN_test
-  port map(
-     run              =>  run,
-     --iterations       =>  10000,
-     iterations       =>  iterations , 
-     log_level        =>  log_level,
-     error_beh        =>  error_beh,
-     error_tol        =>  error_tol,
-     status           =>  status_int,
-     errors           =>  errors
-  );
+    -- In this test wrapper generics are directly connected to the signals
+    -- of test entity
+    test_comp : CAN_test
+    port map(
+        run              =>  run,
+        iterations       =>  iterations , 
+        log_level        =>  log_level,
+        error_beh        =>  error_beh,
+        error_tol        =>  error_tol,
+        status           =>  status_int,
+        errors           =>  errors
+    );
   
-  status              <= status_int;
+    status              <= status_int;
   
-  ------------------------------------
-  -- Starts the test and lets it run
-  ------------------------------------
-  test : process
-  begin
-    run               <= true;
-    wait for 1 ns;
-    
-    -- Wait until the only test finishes and then propagate the results
-    wait until (status_int = passed or status_int = failed);  
-    
-    wait for 100 ns;
-    run               <= false;
-        
-  end process;
+    ----------------------------------------------------------------------------
+    -- Starts the test and lets it run
+    ----------------------------------------------------------------------------
+    test : process
+    begin
+        run               <= true;
+        wait for 1 ns;
+
+        -- Wait until the only test finishes and then propagate the results
+        wait until (status_int = passed or status_int = failed);  
+
+        wait for 100 ns;
+        run               <= false;
+    end process;
   
 end;
