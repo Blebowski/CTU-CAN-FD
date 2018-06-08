@@ -175,9 +175,9 @@ architecture Fault_Confinement_unit_test of CAN_test is
     
 begin
 
-    -------------------
+    ----------------------------------------------------------------------------
     -- DUT
-    -------------------
+    ----------------------------------------------------------------------------
     faultConf_comp : faultConf 
     port map(
         clk_sys                => clk_sys,
@@ -215,17 +215,18 @@ begin
     );
 
 
-    --------------------------------------
+    ----------------------------------------------------------------------------
     -- Connection of driving bus aliases
-    --------------------------------------
+    ----------------------------------------------------------------------------
     drv_bus(DRV_EWL_HIGH downto DRV_EWL_LOW)            <= drv_ewl;
     drv_bus(DRV_ERP_HIGH downto DRV_ERP_LOW)            <= drv_erp;
     drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW)    <= drv_ctr_val;
     drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW)    <= drv_ctr_sel;
 
-    ---------------------------------
+
+    ----------------------------------------------------------------------------
     -- Clock generation
-    ---------------------------------
+    ----------------------------------------------------------------------------
     clock_gen : process
         variable period   :natural := f100_Mhz;
         variable duty     :natural := 50;
@@ -248,6 +249,7 @@ begin
 
         while (res_n = ACT_RESET) loop
             wait until rising_edge(clk_sys);
+            apply_rand_seed(seed, 0, rand_ctr);
         end loop;
 
         wait until rising_edge(clk_sys);        
@@ -363,9 +365,9 @@ begin
     end process;
 
 
-    -----------------------------------
+    ----------------------------------------------------------------------------
     -- Checking the Fault conf. state
-    -----------------------------------
+    ----------------------------------------------------------------------------
     fc_check_state_proc : process
     begin
 
@@ -392,12 +394,12 @@ begin
 
     end process;
 
-
     errors <= error_ctr;    
 
-    ---------------------------------
+
+    ----------------------------------------------------------------------------
     -- Main test process 
-    ---------------------------------
+    ----------------------------------------------------------------------------
     test_proc : process
     begin
         log("Restarting Fault confinement test!", info_l, log_level);
