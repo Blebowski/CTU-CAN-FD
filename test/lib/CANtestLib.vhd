@@ -1420,6 +1420,22 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Read transceiver delay register.
+    -- 
+    -- Arguments:
+    --  ctr             Variable in which traffic counters will be stored
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_trv_delay(
+        variable trv_delay      : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+
+    ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- sanity test Stuff; must be in a package
     ----------------------------------------------------------------------------
@@ -3449,6 +3465,18 @@ package body CANtestLib is
                             TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
     end procedure;
 
+
+    procedure read_trv_delay(
+        variable trv_delay      : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, TRV_DELAY_ADR, ID, mem_bus);
+        trv_delay := to_integer(unsigned(data(
+                            TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)));
+    end procedure;
 
 
 end package body;
