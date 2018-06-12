@@ -1368,6 +1368,21 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Set Error counters from CTU CAN FD Core. 
+    -- 
+    -- Arguments:
+    --  err_counters    Variable from which error counters will be set.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure set_error_counters(
+        constant err_counters   : in    SW_error_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Read arbitration lost capture register.
     -- 
     -- Arguments:
@@ -1886,9 +1901,9 @@ package body CANtestLib is
 
         if (size = BIT_16) then
             if (address (1) = '0') then
-                return "1100";
-            else
                 return "0011";
+            else
+                return "1100";
             end if;
         end if;
 
@@ -3307,9 +3322,11 @@ package body CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     ) is
         variable data           :       std_logic_vector(31 downto 0);
+        variable msg            :       line;
     begin
         -- Reading separately for possible future separation of RXC and TXC!
         CAN_read(data, RXC_ADR, ID, mem_bus, BIT_16);
+
         err_counters.rx_counter := 
                 to_integer(unsigned(data(RXC_VAL_H downto RXC_VAL_L)));
 
@@ -3324,6 +3341,45 @@ package body CANtestLib is
         CAN_read(data, ERR_FD_ADR, ID, mem_bus, BIT_16);
         err_counters.err_fd :=
                 to_integer(unsigned(data(ERR_FD_VAL_H downto ERR_FD_VAL_L)));
+    end procedure;
+
+
+    procedure set_error_counters(
+        constant err_counters   : in    SW_error_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        data := (OTHERS => '0');
+
+        -- TX Error counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.tx_counter, 9));
+        data(PTX_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(PTX_IND) := '0';
+        
+        -- RX Error counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.rx_counter, 9));
+        data(PRX_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(PRX_IND) := '0';
+
+        -- Nominal bit rate counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.err_norm, 9));
+        data(ENORM_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(ENORM_IND) := '0';
+
+        -- Data bit rate counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.err_fd, 9));
+        data(EFD_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(EFD_IND) := '0';
     end procedure;
 
 
