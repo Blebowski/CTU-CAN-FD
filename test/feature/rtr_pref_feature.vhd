@@ -104,14 +104,16 @@ package body rtr_pref_feature is
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
         signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
     )is
-        variable ID_1           	:        natural := 1;
-        variable ID_2           	:        natural := 2;
+        variable ID_1               :        natural := 1;
+        variable ID_2               :        natural := 2;
         variable tx_frame           :        SW_CAN_frame_type;
         variable rx_frame           :        SW_CAN_frame_type;
         variable frame_sent         :        boolean := false;
         variable command            :        SW_command := (false, false, false);
         variable status             :        SW_status;
-        variable mode               :        SW_mode;
+        variable mode               :        SW_mode := (false, false, false,
+                                                false, false, false, false,
+                                                false, false, false);
     begin
         outcome := true;
 
