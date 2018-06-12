@@ -94,8 +94,8 @@ package body traf_meas_feature is
         signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
         signal      stat_bus_2      : in    std_logic_vector(511 downto 0) 
     )is
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
+        variable ID_1               :       natural := 1;
+        variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
         variable rand_value         :       natural;
