@@ -142,7 +142,6 @@ package body traf_meas_feature is
         if (ctr_1_2.rx_frames + rand_value /= ctr_2_2.rx_frames) then
             outcome := false;
         end if;
-
     end procedure;
   
 end package body;
