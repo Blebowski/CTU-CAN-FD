@@ -35,23 +35,24 @@
 -- 
 --------------------------------------------------------------------------------
 
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Purpose:
---  Traffic measurment feature test implementation
+--  Traffic measurment feature test implementation.
 -- 
---  Test sequence is like so:
---    1. Generate random number N from 0 to 5
---    2. Measure TX counter of node 1 and RX counter of node 2
---    3. Send N random frames
---    4. Measure TX counter of node 1 and RX counter of node 2 again
---    5. Compare if both counters were increased by N 
---  
+--  Test sequence:
+--  	1. Generate random number N from 0 to 5
+--  	2. Measure TX counter of node 1 and RX counter of node 2
+--  	3. Send N random frames
+--  	4. Measure TX counter of node 1 and RX counter of node 2 again
+--  	5. Compare if both counters were increased by N 
 --
------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Revision History:
 --
 --    24.6.2016   Created file
------------------------------------------------------------------------------------------------------------------
+--    11.6.2018   Modified to use CAN Test lib instead of direct register
+--                acccess.
+--------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
@@ -65,92 +66,83 @@ use work.CAN_FD_register_map.all;
 
 package traf_meas_feature is
   
-  procedure traf_meas_feature_exec(
-    variable   outcome      : inout boolean;
-    signal      rand_ctr        :inout  natural range 0 to RAND_POOL_SIZE;
-    signal      mem_bus_1       :inout  Avalon_mem_type;
-    signal      mem_bus_2       :inout  Avalon_mem_type;
-    --Additional signals for tests
-    --Pretty much everything can be read out of stat bus...
-    signal      bus_level       :in     std_logic;
-    signal      drv_bus_1       :in     std_logic_vector(1023 downto 0);
-    signal      drv_bus_2       :in     std_logic_vector(1023 downto 0);
-    signal      stat_bus_1      :in     std_logic_vector(511 downto 0);
-    signal      stat_bus_2      :in     std_logic_vector(511 downto 0) 
-  );
+    procedure traf_meas_feature_exec(
+        variable    outcome         : inout  boolean;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      mem_bus_1       : inout  Avalon_mem_type;
+        signal      mem_bus_2       : inout  Avalon_mem_type;
+        signal      bus_level       : in     std_logic;
+        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
+        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
+        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+    );
   
 end package;
 
 
 package body traf_meas_feature is
   
-  procedure traf_meas_feature_exec(
-    variable   outcome      : inout boolean;
-    signal      rand_ctr        :inout  natural range 0 to RAND_POOL_SIZE;
-    signal      mem_bus_1       :inout  Avalon_mem_type;
-    signal      mem_bus_2       :inout  Avalon_mem_type;
-    --Additional signals for tests
-    --Pretty much everything can be read out of stat bus...
-    signal      bus_level       :in     std_logic;
-    signal      drv_bus_1       :in     std_logic_vector(1023 downto 0);
-    signal      drv_bus_2       :in     std_logic_vector(1023 downto 0);
-    signal      stat_bus_1      :in     std_logic_vector(511 downto 0);
-    signal      stat_bus_2      :in     std_logic_vector(511 downto 0) 
-  )is
-  variable r_data               :       std_logic_vector(31 downto 0):=(OTHERS => '0');
-  variable w_data               :       std_logic_vector(31 downto 0):=(OTHERS => '0');
-  variable size_of_buf          :       natural;
-  variable ID_1           	     :     natural:=1;
-  variable ID_2           	     :     natural:=2;
-  variable CAN_frame            :     SW_CAN_frame_type;
-  variable frame_sent           :     boolean:=false;
-  variable aux                 :     natural range 0 to 1023;
-  variable rand_value           :     real;
-  variable tx_ctr               :    natural range 0 to 536870912;
-  variable rx_ctr               :    natural range 0 to 536870912;
-  variable tx_ctr_2               :    natural range 0 to 536870912;
-  variable rx_ctr_2               :    natural range 0 to 536870912;
-  begin
-    outcome:= true;
-    --------------------------------------------
-    -- Check the TX RX counters
-    --------------------------------------------
-    CAN_read(r_data,TX_COUNTER_ADR,ID_1,mem_bus_1);
-    tx_ctr:= to_integer(unsigned(r_data(TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
-    CAN_read(r_data,RX_COUNTER_ADR,ID_2,mem_bus_2);
-    rx_ctr:= to_integer(unsigned(r_data(RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
-    
-    --------------------------------------------
-    -- Generate the CAN frames to send
-    --------------------------------------------
-    rand_real_v(rand_ctr,rand_value);
-    aux:=integer(5.0*rand_value);
-    
-    for i in 0 to aux loop
-      
-      CAN_generate_frame(rand_ctr,CAN_frame);
-      CAN_send_frame(CAN_frame,1,ID_1,mem_bus_1,frame_sent);
-      CAN_wait_frame_sent(ID_1,mem_bus_1);
-      
-    end loop;
-    
-    --------------------------------------------
-    -- Check the TX RX counters
-    --------------------------------------------
-    CAN_read(r_data,TX_COUNTER_ADR,ID_1,mem_bus_1);
-    tx_ctr_2:= to_integer(unsigned(r_data(TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
-    CAN_read(r_data,RX_COUNTER_ADR,ID_2,mem_bus_2);
-    rx_ctr_2:= to_integer(unsigned(r_data(RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
-    
-    if(tx_ctr+aux+1 /= tx_ctr_2)then
-      outcome:=false;
-    end if;
-    
-    if(rx_ctr+aux+1 /= rx_ctr_2)then
-      outcome:=false;
-    end if;
-    
-    
-  end procedure;
+    procedure traf_meas_feature_exec(
+        variable    outcome         : inout boolean;
+        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
+        signal      mem_bus_1       : inout Avalon_mem_type;
+        signal      mem_bus_2       : inout Avalon_mem_type;
+        signal      bus_level       : in    std_logic;
+        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
+        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
+        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
+        signal      stat_bus_2      : in    std_logic_vector(511 downto 0) 
+    )is
+        variable ID_1           	:       natural := 1;
+        variable ID_2           	:       natural := 2;
+        variable CAN_frame          :       SW_CAN_frame_type;
+        variable frame_sent         :       boolean := false;
+        variable rand_value         :       natural;
+
+        variable ctr_1_1            :       SW_traffic_counters;
+        variable ctr_1_2            :       SW_traffic_counters;
+        variable ctr_2_1            :       SW_traffic_counters;
+        variable ctr_2_2            :       SW_traffic_counters;
+    begin
+        outcome := true;
+
+        ------------------------------------------------------------------------
+        -- Check the TX RX counters
+        ------------------------------------------------------------------------
+        read_traffic_counters(ctr_1_1, ID_1, mem_bus_1);
+        read_traffic_counters(ctr_1_2, ID_2, mem_bus_2);
+
+        ------------------------------------------------------------------------
+        -- Generate the CAN frames to send
+        ------------------------------------------------------------------------
+        rand_int_v(rand_ctr, 5, rand_value);
+        for i in 0 to rand_value - 1 loop
+            CAN_generate_frame(rand_ctr, CAN_frame);
+            CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+            CAN_wait_frame_sent(ID_1, mem_bus_1);
+        end loop;
+
+        ------------------------------------------------------------------------
+        -- Check the TX RX counters
+        ------------------------------------------------------------------------
+        read_traffic_counters(ctr_2_1, ID_1, mem_bus_1);
+        read_traffic_counters(ctr_2_2, ID_2, mem_bus_2);
+        
+        ------------------------------------------------------------------------
+        -- Check That TX counters were increased accordingly
+        ------------------------------------------------------------------------
+        if (ctr_1_1.tx_frames + rand_value /= ctr_2_1.tx_frames) then
+            outcome := false;
+        end if;
+
+        ------------------------------------------------------------------------
+        -- Check That RX counters were increased accordingly
+        ------------------------------------------------------------------------
+        if (ctr_1_2.rx_frames + rand_value /= ctr_2_2.rx_frames) then
+            outcome := false;
+        end if;
+
+    end procedure;
   
 end package body;
