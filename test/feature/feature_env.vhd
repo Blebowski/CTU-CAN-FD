@@ -74,7 +74,7 @@ architecture feature_env_test of CAN_feature_test is
                                         (OTHERS => '0');
     signal adress_1             : std_logic_vector(23 downto 0) :=
                                         (OTHERS => '0');
-  	signal scs_1                : std_logic := '0'; --Chip select
+	signal scs_1                : std_logic := '0'; --Chip select
     signal srd_1                : std_logic := '0'; --Serial read
     signal swr_1                : std_logic := '0'; --Serial write
     signal sbe_1                : std_logic_vector(3 downto 0) := x"F";
@@ -97,7 +97,7 @@ architecture feature_env_test of CAN_feature_test is
                                         (OTHERS => '0');
     signal adress_2             : std_logic_vector(23 downto 0) :=
                                         (OTHERS => '0');
-  	signal scs_2                : std_logic := '0'; --Chip select
+	signal scs_2                : std_logic := '0'; --Chip select
     signal srd_2                : std_logic := '0'; --Serial read
     signal swr_2                : std_logic := '0'; --Serial write
     signal sbe_2                : std_logic_vector(3 downto 0) := x"F";
@@ -141,7 +141,7 @@ begin
         data_in            =>  data_in_1,
         data_out           =>  data_out_1,
         adress             =>  adress_1,
-          scs                =>  scs_1,
+		scs                =>  scs_1,
         srd                =>  srd_1,
         swr                =>  swr_1,
         sbe                =>  sbe_1,
@@ -167,7 +167,7 @@ begin
         data_in            =>  data_in_2,
         data_out           =>  data_out_2,
         adress             =>  adress_2,
-          scs                =>  scs_2,
+		scs                =>  scs_2,
         srd                =>  srd_2,
         swr                =>  swr_2,
         sbe                =>  sbe_2,
@@ -188,6 +188,7 @@ begin
     scs_1                   <=  mem_bus_1.scs;
     swr_1                 	<=  mem_bus_1.swr;
     srd_1                   <=  mem_bus_1.srd;
+	sbe_1					<=  mem_bus_1.sbe;
     mem_bus_1.data_out      <=  data_out_1;
 
     mem_bus_2.clk_sys       <=  clk_sys_2;
@@ -196,6 +197,7 @@ begin
     scs_2                   <=  mem_bus_2.scs;
     swr_2                 	<=  mem_bus_2.swr;
     srd_2                   <=  mem_bus_2.srd;
+	sbe_2					<=  mem_bus_2.sbe;
     mem_bus_2.data_out      <=  data_out_2;
   
   
@@ -312,7 +314,6 @@ use work.tx_arb_time_tran_feature.All;
 use work.traf_meas_feature.All;
 use work.spec_mode_feature.All;
 use work.interrupt_feature.All;
-use work.soft_reset_feature.All;
 use work.tran_delay_feature.All;
 use work.invalid_config_feature.All;
 use work.fault_conf_feature.All;
@@ -349,20 +350,21 @@ architecture feature_env_test_wrapper of CAN_test_wrapper is
     signal status_int       :    test_status_type;
     signal errors           :    natural;
     
-    signal mem_bus_1        : Avalon_mem_type;
-    signal mem_bus_2        : Avalon_mem_type;
+    signal mem_bus_1        :    Avalon_mem_type := ('0', (OTHERS => '0'),
+                                (OTHERS => '0'), (OTHERS => '0'), '0', '0', '0',
+                                (OTHERS => '0'));
 
+    signal mem_bus_2        :    Avalon_mem_type := ('0', (OTHERS => '0'),
+                                (OTHERS => '0'), (OTHERS => '0'), '0', '0', '0',
+                                (OTHERS => '0'));
 
     ----------------------------------------------------------------------------
     -- Procedure for processing feature tests!
     ----------------------------------------------------------------------------
     procedure exec_feature_test(
-        -- Common test parameters
         signal   test_name          :in     String;
         variable outcome            :inout  boolean;
         signal   rand_ctr           :inout  natural range 0 to RAND_POOL_SIZE;
-        -- Additional signals for tests
-        -- Pretty much everything can be read out of stat bus...
         signal   mem_bus_1          :inout  Avalon_mem_type;
         signal   mem_bus_2          :inout  Avalon_mem_type;
         signal   int_1              :in     std_logic;
@@ -423,11 +425,6 @@ architecture feature_env_test_wrapper of CAN_test_wrapper is
                                    int_1, int_2, bus_level, drv_bus_1,
                                    drv_bus_2, stat_bus_1, stat_bus_2);
 
-        elsif (test_name = "          soft_reset") then
-            soft_reset_feature_exec(outcome, rand_ctr, mem_bus_1, mem_bus_2,
-                                    bus_level, drv_bus_1, drv_bus_2, stat_bus_1,
-                                    stat_bus_2);
-
         elsif (test_name = "           trv_delay") then
             tran_delay_feature_exec(outcome, rand_ctr, mem_bus_1, mem_bus_2,
                                     bus_level, drv_bus_1, drv_bus_2, stat_bus_1,
@@ -466,20 +463,22 @@ architecture feature_env_test_wrapper of CAN_test_wrapper is
         mem_bus_1.scs         <= '0';
         mem_bus_1.swr         <= '0';
         mem_bus_1.srd         <= '0';
-        mem_bus_1.address     <= (OTHERS =>'0');
-        mem_bus_1.data_in     <= (OTHERS =>'0');
+        mem_bus_1.sbe	      <= x"F";
+        mem_bus_1.address     <= (OTHERS => '0');
+        mem_bus_1.data_in     <= (OTHERS => '0');
         mem_bus_1.clk_sys     <= 'Z';
-        mem_bus_1.data_out    <= (OTHERS =>'Z');
+        mem_bus_1.data_out    <= (OTHERS => 'Z');
 
         mem_bus_2.scs         <= '0';
         mem_bus_2.swr         <= '0';
         mem_bus_2.srd         <= '0';
-        mem_bus_2.address     <= (OTHERS =>'0');
-        mem_bus_2.data_in     <= (OTHERS =>'0');
+        mem_bus_2.sbe	      <= x"F";
+        mem_bus_2.address     <= (OTHERS => '0');
+        mem_bus_2.data_in     <= (OTHERS => '0');
         mem_bus_2.clk_sys     <= 'Z';
-        mem_bus_2.data_out    <= (OTHERS =>'Z');
+        mem_bus_2.data_out    <= (OTHERS => 'Z');
     end procedure;
-  
+
 
     -- Additional signals definitions
     signal error_ctr        : natural := 0;
@@ -503,7 +502,7 @@ begin
         iterations       =>  iterations ,
         log_level        =>  log_level,
         error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
+        error_tol        =>  error_tol,
         status           =>  status_int,
         errors           =>  errors,
         mem_bus_1        =>  mem_bus_1,
@@ -587,7 +586,7 @@ begin
         ------------------------------------------------------------------------
         -- Set default retransmitt limit to 0. Failed frames are not
         -- retransmitted by default!!!
-        ------------------------------------------------------------------------            
+        ------------------------------------------------------------------------
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus_1);
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus_2);
     
