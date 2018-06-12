@@ -207,6 +207,13 @@ package CANtestLib is
     end record;
 
 
+    -- Traffic counters
+    type SW_traffic_counters is record
+        rx_frames               :   natural;
+        tx_frames               :   natural;
+    end record;
+
+
     -- RX Buffer info and status
     type SW_RX_Buffer_info is record
         rx_buff_size            :   natural range 0 to 2 ** 13 - 1;
@@ -1395,6 +1402,22 @@ package CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+
+
+    ----------------------------------------------------------------------------
+    -- Read traffic counters.
+    -- 
+    -- Arguments:
+    --  ctr             Variable in which traffic counters will be stored
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_traffic_counters(
+        variable ctr            : out   SW_traffic_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -3408,6 +3431,24 @@ package body CANtestLib is
         end case;
 
     end procedure;
+
+
+    procedure read_traffic_counters(
+        variable ctr            : out   SW_traffic_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, RX_COUNTER_ADR, ID, mem_bus);
+        ctr.rx_frames := to_integer(unsigned(data(
+                            RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
+
+        CAN_read(data, TX_COUNTER_ADR, ID, mem_bus);
+        ctr.tx_frames := to_integer(unsigned(data(
+                            TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
+    end procedure;
+
 
 
 end package body;
