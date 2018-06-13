@@ -54,7 +54,7 @@ USE work.CANtestLib.All;
 entity vunittb_wrapper is
   generic (
     xrunner_cfg : string;
-    iterations : natural := 1;
+    iterations : natural := 30;
     log_level  : log_lvl_type := info_l;
     error_beh  : err_beh_type := quit;           -- Test behaviour when error occurs: Quit, or Go on
     error_tol  : natural := 0                    -- Error tolerance, error counter should not
