@@ -180,15 +180,7 @@ package CANtestLib is
         bit_rate_shift_int      :   boolean;
         rx_buffer_not_empty_int :   boolean;
         tx_buffer_hw_cmd        :   boolean;
-    end record;
-
-
-    -- Error limits (Normal and special)
-    type SW_err_counters is record
-        error_warning_limit     :   natural range 0 to 255;
-        error_passive_limit     :   natural range 0 to 255;
-    end record;
-    
+    end record;    
 
     -- Fault confinement states
     type SW_fault_state is (
