@@ -132,8 +132,19 @@ package body Arbitration_feature is
         -- Node status
         variable stat_1          :     SW_status;
         variable stat_2          :     SW_status;
+
+        -- Temporary variables for IDs recalculated to decimal value with
+        -- identifier type taken into account
+        variable ident_1         :     natural;
+        variable ident_2         :     natural;
     begin
         outcome := true;
+
+        ------------------------------------------------------------------------
+        -- Forbid retransmitt limiting!
+        ------------------------------------------------------------------------
+         CAN_enable_retr_limit(false, 0, ID_1, mem_bus_1);
+         CAN_enable_retr_limit(false, 0, ID_2, mem_bus_2);
 
         ------------------------------------------------------------------------
         -- Generate Two random CAN Frames.
@@ -169,18 +180,41 @@ package body Arbitration_feature is
             frame_1.rtr := not frame_2.rtr;
         end if;
     
+        ------------------------------------------------------------------------
+        -- Recalc ID to decimal value with Ident type
+        ------------------------------------------------------------------------
+        if (frame_1.ident_type = EXTENDED) then
+            ident_1 := frame_1.identifier;
+        else
+            ident_1 := to_integer(unsigned(std_logic_vector'(
+                        std_logic_vector(to_unsigned(frame_1.identifier, 11))
+                        & "000000000000000000")));
+        end if;
+
+        if (frame_2.ident_type = EXTENDED) then
+            ident_2 := frame_2.identifier;
+        else
+            ident_2 := to_integer(unsigned(std_logic_vector'(
+                        std_logic_vector(to_unsigned(frame_2.identifier, 11))
+                        & "000000000000000000")));
+        end if;
 
         ------------------------------------------------------------------------
         -- Evaluate who should win the arbitration:
         --   1. Matching ID -> Decide based on ID type and RTR
         --   2. NON Matching ID -> Lower ID should win!
         ------------------------------------------------------------------------
-        if (frame_1.identifier = frame_2.identifier) then
+        if (ident_1 = ident_2) then
             
             -- ID Type, ID, RTR the same -> collision!
             if (frame_1.rtr = frame_2.rtr and 
                 frame_1.ident_type = frame_2.ident_type)
             then
+                exp_winner := 2;
+                report "Expecting collision";
+
+            -- CAN 2.0 and CAN FD frames with matching ID will cause collision!
+            elsif (frame_1.frame_format /= frame_2.frame_format) then
                 exp_winner := 2;
                 report "Expecting collision";
 
@@ -214,13 +248,13 @@ package body Arbitration_feature is
         ------------------------------------------------------------------------
         -- Frame 2 should win
         ------------------------------------------------------------------------
-        elsif (frame_1.identifier > frame_2.identifier) then
+        elsif (ident_1 > ident_2) then
             exp_winner := 1;
 
         ------------------------------------------------------------------------
         -- Frame 1 should win
         ------------------------------------------------------------------------
-        elsif (frame_2.identifier > frame_1.identifier) then
+        elsif (ident_2 > ident_1) then
             exp_winner := 0;
         end if;
 
@@ -253,7 +287,7 @@ package body Arbitration_feature is
                 exit;
             end if;
         end loop;
-
+        
         ------------------------------------------------------------------------
         -- Loop as long as one of the units turns to be reciever, or error
         -- appears.
@@ -290,9 +324,27 @@ package body Arbitration_feature is
         if (unit_rec = 1 and exp_winner = 0) or 
            (unit_rec = 2 and exp_winner = 1) 
         then
+            report "Wrong unit lost arbitration. Expected: " &
+                integer'image(exp_winner) & " Real: " & integer'image(unit_rec)
+            severity error;
+
+            report "Frame 1:";
+            CAN_print_frame(frame_1, info_l);
+            report "Frame 2:";
+            CAN_print_frame(frame_2, info_l);
+
             outcome := false;
         end if;
 
+        ------------------------------------------------------------------------
+        -- Send abort transmission to both frames so that no unit will
+        -- attempt to retransmitt.
+        ------------------------------------------------------------------------
+        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus_1);
+        send_TXT_buf_cmd(buf_set_abort, 1, ID_2, mem_bus_2);
+        
+        CAN_wait_frame_sent(ID_1, mem_bus_1);
+        
         ------------------------------------------------------------------------
         -- Check what is the value in the ALC register
         ------------------------------------------------------------------------
@@ -309,20 +361,17 @@ package body Arbitration_feature is
         -- If error frame is transmitted and collision not have appeared
         ------------------------------------------------------------------------
         if (unit_rec = 3 and exp_winner /= 2) then
+            report "Collision should have appeared" severity error;
+
+            report "Frame 1:";
+            CAN_print_frame(frame_1, info_l);
+            report "Frame 2:";
+            CAN_print_frame(frame_2, info_l);
+
             outcome := false;
         end if;
     
-        ------------------------------------------------------------------------
-        -- Wait definitely until the bus is idle.
-        ------------------------------------------------------------------------
-        while unit_rec = 0 loop
-            get_controller_status(stat_1, ID_1, mem_bus_1);
-            if (stat_1.bus_status) then
-                exit;
-            end if;
-        end loop;
-
-        wait for 300000 ns;
+        wait for 100000 ns;
   end procedure;
   
 end package body;
