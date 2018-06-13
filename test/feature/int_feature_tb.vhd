@@ -182,11 +182,13 @@ package body interrupt_feature is
         if (not int_stat.receive_int) then
             outcome := false;
         end if;
+        clear_int_status(int_stat, ID_1, mem_bus_1);
         
         read_int_status(int_stat, ID_2, mem_bus_2);
         if (not int_stat.transmitt_int) then
             outcome := false;
         end if;
+        clear_int_status(int_stat, ID_2, mem_bus_2);
   
         ------------------------------------------------------------------------
         -- Part 2
@@ -222,12 +224,15 @@ package body interrupt_feature is
         if (not int_stat.bus_error_int) then
             outcome := false;
         end if;
+        clear_int_status(int_stat, ID_1, mem_bus_1);
 
         read_int_status(int_stat, ID_2, mem_bus_2);
         if (not int_stat.bus_error_int) then
+            report "FUCK" severity error;
             outcome := false;
-        end if;
-        CAN_wait_frame_sent(ID_1,mem_bus_1);
+        end if;        
+        CAN_wait_frame_sent(ID_1, mem_bus_1);        
+        clear_int_status(int_stat, ID_2, mem_bus_2);        
         wait for 15000 ns;
 
 
@@ -237,7 +242,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Data overrun interrupt and recieve buffer full interrupt node 2
         ------------------------------------------------------------------------
-        report "Starting Data overrun recieve buffer interrupt";
+        report "Starting Data overrun, recieve buffer interrupt";
         int_ena.data_overrun_int := true;
         int_ena.rx_buffer_full_int := true;
         write_int_enable(int_ena, ID_2, mem_bus_2);
@@ -246,7 +251,7 @@ package body interrupt_feature is
 
         -- Give release receive buffer command
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus_1);
+        give_controller_command(command, ID_2, mem_bus_2);
         command.release_rec_buffer := false;
 
         ------------------------------------------------------------------------
@@ -255,22 +260,30 @@ package body interrupt_feature is
         -- multiple of 4!
         ------------------------------------------------------------------------
         get_rx_buf_state(buf_info, ID_2, mem_bus_2);
-    
+
+        --report "Buffer size: " & Integer'image(buf_info.rx_buff_size);
+
         -- Send RTR frames till we fill the buffer
         CAN_frame.rtr := RTR_FRAME;
         CAN_frame.frame_format := NORMAL_CAN;
-        for i in 0 to (size_of_buf / 4) + 1 loop
+        for i in 0 to (buf_info.rx_buff_size / 4) + 1 loop
             CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
 
-            if (i < size_of_buf / 4) then
-                CAN_wait_frame_sent(ID_1,mem_bus_1);
-            else
-                wait until rising_edge(int_2);
-            end if;
+            CAN_wait_frame_sent(ID_1, mem_bus_1);
 
+            -- On last frame RX Buffer should be full. Check if interrupt was
+            -- fired and clear it!
+            if (i = (buf_info.rx_buff_size / 4)) then
+                if (int_2 = '0') then
+                    outcome := false;
+                else
+                    read_int_status(int_stat, ID_2, mem_bus_2);
+                    clear_int_status(int_stat, ID_2, mem_bus_2);
+                end if;
+            end if;
         end loop;
-        CAN_wait_frame_sent(ID_1, mem_bus_1);
-    
+
+
         ------------------------------------------------------------------------
         -- Detect the data overrun interrupt flag and recieve buffer full flag
         ------------------------------------------------------------------------
@@ -281,7 +294,8 @@ package body interrupt_feature is
         end if;        
         if (not int_stat.data_overrun_int) then
             outcome := false;
-        end if;
+        end if;        
+        clear_int_status(int_stat, ID_2, mem_bus_2);
         wait for 30000 ns;
 
 
@@ -306,7 +320,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Wait on bit rate shift
         ------------------------------------------------------------------------
-        wait until rising_edge(int_1);
+        wait until rising_edge(int_2);
 
         ------------------------------------------------------------------------
         -- Detect the Bit rate shift interrupt flag
@@ -315,8 +329,11 @@ package body interrupt_feature is
         if (not int_stat.bit_rate_shift_int) then
             outcome := false;
         end if;
-        CAN_wait_frame_sent(ID_2,mem_bus_2);
+        CAN_wait_frame_sent(ID_2,mem_bus_2);        
+        clear_int_status(int_stat, ID_2, mem_bus_2);
 
+        read_int_status(int_stat, ID_1, mem_bus_1);
+        clear_int_status(int_stat, ID_1, mem_bus_1);
 
         ------------------------------------------------------------------------
         -- Part 5
@@ -324,6 +341,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Arbitration lost interrupt in node 1
         ------------------------------------------------------------------------
+        report "Starting arbitration lost int";
         int_ena.arb_lost_int := true;
         write_int_enable(int_ena, ID_1, mem_bus_1);    
     
@@ -343,14 +361,26 @@ package body interrupt_feature is
         read_int_status(int_stat, ID_1, mem_bus_1);
         if (not int_stat.arb_lost_int) then
             outcome := false;
-        end if;
+        end if;        
+        clear_int_status(int_stat, ID_1, mem_bus_1);
 
-        -- Wait till transmission is done on both nodes.
+        -- Send abort command on node that lost arbitration so that it does
+        -- not try to transmitt again.
+        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus_1);
+
+        -- Wait till transmission is done
         CAN_wait_frame_sent(ID_1, mem_bus_1);
-        CAN_wait_frame_sent(ID_1, mem_bus_1);
+
+        ------------------------------------------------------------------------
+        -- Clear all interrupts in both nodes
+        ------------------------------------------------------------------------
+        read_int_status(int_stat, ID_1, mem_bus_1);
+        clear_int_status(int_stat, ID_1, mem_bus_1);
+        read_int_status(int_stat, ID_2, mem_bus_2);
+        clear_int_status(int_stat, ID_2, mem_bus_2);
 
         report "Finished interrupt test";
-        wait for 750000 ns;
+        wait for 300000 ns;
 
     end procedure;
   
