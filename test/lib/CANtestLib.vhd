@@ -197,6 +197,11 @@ package CANtestLib is
         fc_bus_off
     );
 
+    -- Fault confinement state thresholds
+    type SW_fault_thresholds is record
+        ewl                     :   natural range 0 to 255;
+        erp                     :   natural range 0 to 255;
+    end record;
 
     -- Error counters (Normal and Special)
     type SW_error_counters is record
@@ -1354,6 +1359,38 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure get_fault_state(
         variable fault_state    : out   SW_fault_state;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Error passive.
+    -- 
+    -- Arguments:
+    --  fault_th        Variable with fault confinement thresholds.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure set_fault_thresholds(
+        constant fault_th       : in    SW_fault_thresholds;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Error passive.
+    -- 
+    -- Arguments:
+    --  fault_th        Variable with fault confinement thresholds.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure get_fault_thresholds(
+        variable fault_th       : out   SW_fault_thresholds;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -3353,6 +3390,43 @@ package body CANtestLib is
         elsif (data(BOF_IND) = '1') then
             fault_state         := fc_bus_off;        
         end if;
+    end procedure;
+
+
+    procedure set_fault_thresholds(
+        constant fault_th       : in    SW_fault_thresholds;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+        data(EWL_LIMIT_H downto EWL_LIMIT_L) :=
+            std_logic_vector(to_unsigned(fault_th.ewl, 8));
+
+        data(ERP_LIMIT_H downto ERP_LIMIT_L) :=
+            std_logic_vector(to_unsigned(fault_th.erp, 8));
+
+        CAN_write(data, EWL_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, ERP_ADR, ID, mem_bus, BIT_8);
+    end procedure;
+
+
+    procedure get_fault_thresholds(
+        variable fault_th       : out   SW_fault_thresholds;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+        CAN_read(data, EWL_ADR, ID, mem_bus, BIT_16);
+        fault_th.ewl := to_integer(unsigned(
+                          data(EWL_LIMIT_H downto EWL_LIMIT_L)));
+
+        CAN_read(data, ERP_ADR, ID, mem_bus, BIT_16);
+        fault_th.erp := to_integer(unsigned(
+                          data(ERP_LIMIT_H downto ERP_LIMIT_L)));
     end procedure;
 
 
