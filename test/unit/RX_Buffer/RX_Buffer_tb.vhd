@@ -560,12 +560,12 @@ begin
     -- Overall amount of errors is sum of errors from all processes
     error_ctr   <=  stim_errs + read_errs + status_errs + cons_errs;               
 
-    -- Common input memory is considered full once there is less space
-    -- than RX buffer size!
-    in_mem_full <= true when in_pointer + buff_size + 1 > 1024 else
+	-- Common input memory is not filled totally so that one iteration
+	-- of test won't take too long!
+    in_mem_full <= true when in_pointer + buff_size + 1 > 300 else
                    false;
                  
-    out_mem_full <= true when out_pointer + buff_size + 1 > 1024 else
+    out_mem_full <= true when out_pointer + buff_size + 1 > 300 else
                  false;
 
     drv_bus(DRV_READ_START_INDEX)   <= drv_read_start;

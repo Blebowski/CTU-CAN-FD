@@ -437,9 +437,9 @@ end architecture;
 
 architecture Fault_confinement_unit_test_wrapper of CAN_test_wrapper is
   
-  --Select architecture of the test
-  for test_comp : CAN_test use entity work.CAN_test(Fault_confinement_unit_test);
-  
+    --Select architecture of the test
+    for test_comp : CAN_test use entity work.CAN_test(Fault_confinement_unit_test);
+
     -- Input trigger, test starts running when true 
     signal run              :   boolean;
 
@@ -451,36 +451,36 @@ architecture Fault_confinement_unit_test_wrapper of CAN_test_wrapper is
 
 begin
   
-  -- In this test wrapper generics are directly connected to the signals
-  -- of test entity
-  test_comp : CAN_test
-  port map(
-     run              =>  run,
-     iterations       =>  iterations , 
-     log_level        =>  log_level,
-     error_beh        =>  error_beh,
-     error_tol        =>  error_tol,                                                     
-     status           =>  status_int,
-     errors           =>  errors
-  );
-  
-  status              <= status_int;
-  
-  ------------------------------------
-  -- Starts the test and lets it run
-  ------------------------------------
-  test:process
-  begin
-    run               <= true;
-    wait for 1 ns;
+    -- In this test wrapper generics are directly connected to the signals
+    -- of test entity
+    test_comp : CAN_test
+    port map(
+        run              =>  run,
+        iterations       =>  iterations , 
+        log_level        =>  log_level,
+        error_beh        =>  error_beh,
+        error_tol        =>  error_tol,                                                     
+        status           =>  status_int,
+        errors           =>  errors
+    );
+
+    status              <= status_int;
+
+    ------------------------------------
+    -- Starts the test and lets it run
+    ------------------------------------
+    test : process
+    begin
+        run               <= true;
+        wait for 1 ns;
+
+        --Wait until the only test finishes and then propagate the results
+        wait until (status_int = passed or status_int = failed);  
+
+        wait for 100 ns;
+        run               <= false;
     
-    --Wait until the only test finishes and then propagate the results
-    wait until (status_int = passed or status_int = failed);  
-    
-    wait for 100 ns;
-    run               <= false;
-        
-  end process;
+    end process;
   
   
 end;
