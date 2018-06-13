@@ -2764,7 +2764,8 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
-        variable data           :         std_logic_vector(31 downto 0);
+        variable data           :         std_logic_vector(31 downto 0)
+                                            := (OTHERS => '0');
     begin
         -- Set active command bit in TX_COMMAND register based on input command
         data(TXCE_IND) := '0';
