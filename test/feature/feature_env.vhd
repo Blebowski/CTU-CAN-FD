@@ -167,7 +167,7 @@ begin
         data_in            =>  data_in_2,
         data_out           =>  data_out_2,
         adress             =>  adress_2,
-		scs                =>  scs_2,
+        scs                =>  scs_2,
         srd                =>  srd_2,
         swr                =>  swr_2,
         sbe                =>  sbe_2,
@@ -186,18 +186,18 @@ begin
     data_in_1               <=  mem_bus_1.data_in;
     adress_1                <=  mem_bus_1.address;
     scs_1                   <=  mem_bus_1.scs;
-    swr_1                 	<=  mem_bus_1.swr;
+    swr_1                   <=  mem_bus_1.swr;
     srd_1                   <=  mem_bus_1.srd;
-	sbe_1					<=  mem_bus_1.sbe;
+    sbe_1                   <=  mem_bus_1.sbe;
     mem_bus_1.data_out      <=  data_out_1;
 
     mem_bus_2.clk_sys       <=  clk_sys_2;
     data_in_2               <=  mem_bus_2.data_in;
     adress_2                <=  mem_bus_2.address;
     scs_2                   <=  mem_bus_2.scs;
-    swr_2                 	<=  mem_bus_2.swr;
+    swr_2                   <=  mem_bus_2.swr;
     srd_2                   <=  mem_bus_2.srd;
-	sbe_2					<=  mem_bus_2.sbe;
+    sbe_2                   <=  mem_bus_2.sbe;
     mem_bus_2.data_out      <=  data_out_2;
   
   
