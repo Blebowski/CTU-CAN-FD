@@ -89,10 +89,14 @@ add wave -group "RX Buffer (1)" \
 	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
 	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
 
+add wave -group "Interrupt manager (1)" \
+	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
+	-label "Interrupt enable" $TCOMP/$INST1/int_ena \
+	-label "Interrupt mask" $TCOMP/$INST1/int_mask
+
 add wave -group "Frame to transmit (1)" \
 	-label "Frame is valid" $TCOMP/$INST1/tran_frame_valid_out \
 	-label "data" -hexadecimal $TCOMP/$INST1/tran_data_out \
-	-label "identifier" $TCOMP/$INST1/tran_ident_out \
 	-label "DLC" $TCOMP/$INST1/tran_dlc_out \
 	-label "RTR" $TCOMP/$INST1/tran_is_rtr \
 	-label "Identifier type" $TCOMP/$INST1/tran_ident_type_out \
@@ -101,7 +105,8 @@ add wave -group "Frame to transmit (1)" \
 	
 add wave -group "Frame to recieve (1)" \
 	-label "Frame is valid" $TCOMP/$INST1/rec_message_valid \
-	-label "data" -hexadecimal $TCOMP/$INST1/rec_data_in \
+	-label "Data word" -hexadecimal $TCOMP/$INST1/rx_store_data_word \
+	-label "Store Data word" -hexadecimal $TCOMP/$INST1/rx_store_data \
 	-label "identifier" $TCOMP/$INST1/rec_ident_in \
 	-label "DLC" $TCOMP/$INST1/rec_dlc_in \
 	-label "RTR" $TCOMP/$INST1/rec_is_rtr \
@@ -128,7 +133,8 @@ add wave -group "CAN Core (1)" \
 	-label "Error state" $TCOMP/$INST1/$CORE/error_state \
 	-label "TX error counter" $TCOMP/$INST1/$CORE/tx_counter_out \
 	-label "RX error counter" $TCOMP/$INST1/$CORE/rx_counter_out \
-	-label "Bit or stuff error" $TCOMP/$INST1/$CORE/bit_stuff_error_valid \
+	-label "Bit error" $TCOMP/$INST1/$CORE/bit_error_valid \
+	-label "Stuff error" $TCOMP/$INST1/$CORE/stuff_error_valid \
 	-label "Ack error" $TCOMP/$INST1/$CORE/ack_error \
 	-label "CRC error" $TCOMP/$INST1/$CORE/crc_error \
 	-label "Form error" $TCOMP/$INST1/$CORE/form_error \
@@ -168,11 +174,11 @@ add wave -group "Bus sampling (1)" \
 add wave -noupdate -divider -height 20 "Node 2"
 quietly set INST1 "can_inst_2"
 
-add wave -label "Memory bus" $TCOMP/mem_bus_1
-add wave -label "CAN_TX" $TCOMP/can_tx_1
-add wave -label "CAN_RX" $TCOMP/can_rx_1
-add wave -label "Interrupt" $TCOMP/int_1
-add wave -label "Transciever delay" $TCOMP/tr_del_1
+add wave -label "Memory bus" $TCOMP/mem_bus_2
+add wave -label "CAN_TX" $TCOMP/can_tx_2
+add wave -label "CAN_RX" $TCOMP/can_rx_2
+add wave -label "Interrupt" $TCOMP/int_2
+add wave -label "Transciever delay" $TCOMP/tr_del_2
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
 								
@@ -187,10 +193,14 @@ add wave -group "RX Buffer (2)" \
 	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
 	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
 
+add wave -group "Interrupt manager (2)" \
+	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
+	-label "Interrupt enable" $TCOMP/$INST1/int_ena \
+	-label "Interrupt mask" $TCOMP/$INST1/int_mask
+
 add wave -group "Frame to transmit (2)" \
 	-label "Frame is valid" $TCOMP/$INST1/tran_frame_valid_out \
 	-label "data" -hexadecimal $TCOMP/$INST1/tran_data_out \
-	-label "identifier" $TCOMP/$INST1/tran_ident_out \
 	-label "DLC" $TCOMP/$INST1/tran_dlc_out \
 	-label "RTR" $TCOMP/$INST1/tran_is_rtr \
 	-label "Identifier type" $TCOMP/$INST1/tran_ident_type_out \
@@ -199,7 +209,8 @@ add wave -group "Frame to transmit (2)" \
 	
 add wave -group "Frame to recieve (2)" \
 	-label "Frame is valid" $TCOMP/$INST1/rec_message_valid \
-	-label "data" -hexadecimal $TCOMP/$INST1/rec_data_in \
+	-label "Data word" -hexadecimal $TCOMP/$INST1/rx_store_data_word \
+	-label "Store Data word" -hexadecimal $TCOMP/$INST1/rx_store_data \
 	-label "identifier" $TCOMP/$INST1/rec_ident_in \
 	-label "DLC" $TCOMP/$INST1/rec_dlc_in \
 	-label "RTR" $TCOMP/$INST1/rec_is_rtr \
@@ -226,7 +237,8 @@ add wave -group "CAN Core (2)" \
 	-label "Error state" $TCOMP/$INST1/$CORE/error_state \
 	-label "TX error counter" $TCOMP/$INST1/$CORE/tx_counter_out \
 	-label "RX error counter" $TCOMP/$INST1/$CORE/rx_counter_out \
-	-label "Bit or stuff error" $TCOMP/$INST1/$CORE/bit_stuff_error_valid \
+	-label "Bit error" $TCOMP/$INST1/$CORE/bit_error_valid \
+	-label "Stuff error" $TCOMP/$INST1/$CORE/stuff_error_valid \
 	-label "Ack error" $TCOMP/$INST1/$CORE/ack_error \
 	-label "CRC error" $TCOMP/$INST1/$CORE/crc_error \
 	-label "Form error" $TCOMP/$INST1/$CORE/form_error \

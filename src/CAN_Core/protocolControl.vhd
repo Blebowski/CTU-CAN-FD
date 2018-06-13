@@ -1171,6 +1171,7 @@ begin
             is_idle_r                   <= '1';  
             txt_hw_cmd.unlock           <= '1';
             txt_hw_cmd.failed           <= '1';
+            is_txt_locked               <= '0';
 
         -- Bug fix 21.6.2016
         elsif (delay_control_trans = '1') then
@@ -1372,8 +1373,7 @@ begin
                             (drv_retr_lim_ena = '1' and
                             retr_count < to_integer(unsigned(drv_retr_th))))
                         then
-                            retr_count         <=  (retr_count + 1) mod 16;        
-                            txt_hw_cmd.unlock  <=  '1';
+                            retr_count         <=  (retr_count + 1) mod 16;
                             txt_hw_cmd.arbl    <=  '1';
                         else
 
@@ -1383,7 +1383,6 @@ begin
                             -- different frame! Thus retr_counter wont be erased
                             -- on "txt_buf_changed"!
                             retr_count          <=  0;
-                            txt_hw_cmd.unlock   <=  '1';
                             txt_hw_cmd.failed   <=  '1';
                         end if;
 
@@ -2788,8 +2787,7 @@ begin
                     (drv_retr_lim_ena = '1' and --Enabled, but not reached
                     retr_count < to_integer(unsigned(drv_retr_th))))
                 then
-                    retr_count         <= (retr_count + 1) mod 16;            
-                    txt_hw_cmd.unlock  <= '1';
+                    retr_count         <= (retr_count + 1) mod 16;
                     txt_hw_cmd.err     <= '1';
                 else
 
@@ -2798,10 +2796,10 @@ begin
                     -- can be from the same buffer, but it can be different frame!
                     -- Thus retr_counter wont be erased on "txt_buf_changed"!
                     retr_count            <= 0;
-                    txt_hw_cmd.unlock     <= '1';
                     txt_hw_cmd.failed     <= '1';
                 end if;
 
+                txt_hw_cmd.unlock           <= '1';
                 is_txt_locked               <= '0';
 
                 -- Transmitter started to transmitt error flag -> increase by 8 

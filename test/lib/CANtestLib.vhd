@@ -64,6 +64,7 @@
 --     28.4.2018  Converted TXT Buffer access functions to use generated macros.
 --      1.5.2018  1. Added HAL layer types and functions.
 --                2. Added Byte enable support to memory access functions.
+--      7.6.2018  Added "CAN_insert_TX_frame" procedure.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -179,15 +180,7 @@ package CANtestLib is
         bit_rate_shift_int      :   boolean;
         rx_buffer_not_empty_int :   boolean;
         tx_buffer_hw_cmd        :   boolean;
-    end record;
-
-
-    -- Error limits (Normal and special)
-    type SW_err_counters is record
-        error_warning_limit     :   natural range 0 to 255;
-        error_passive_limit     :   natural range 0 to 255;
-    end record;
-    
+    end record;    
 
     -- Fault confinement states
     type SW_fault_state is (
@@ -196,6 +189,11 @@ package CANtestLib is
         fc_bus_off
     );
 
+    -- Fault confinement state thresholds
+    type SW_fault_thresholds is record
+        ewl                     :   natural range 0 to 255;
+        erp                     :   natural range 0 to 255;
+    end record;
 
     -- Error counters (Normal and Special)
     type SW_error_counters is record
@@ -203,6 +201,13 @@ package CANtestLib is
         tx_counter              :   natural range 0 to 2 ** 16 - 1;
         err_norm                :   natural range 0 to 2 ** 16 - 1;
         err_fd                  :   natural range 0 to 2 ** 16 - 1;
+    end record;
+
+
+    -- Traffic counters
+    type SW_traffic_counters is record
+        rx_frames               :   natural;
+        tx_frames               :   natural;
     end record;
 
 
@@ -941,7 +946,7 @@ package CANtestLib is
     --  memory			Memory to store the frame into
 	--	pointer			Pointer to the memory index where frame shouldbe stored
     ----------------------------------------------------------------------------
-	procedure store_frame_to_test_mem(
+    procedure store_frame_to_test_mem(
         constant frame          :  in       SW_CAN_frame_type;
         signal   memory         :  out      test_mem_type;
         signal   pointer        :  inout    natural
@@ -963,10 +968,32 @@ package CANtestLib is
     --  memory          Memory from which the CAN frame should be read.
     --  pointer         Pointer to memory where CAN Frame is starting.
     ---------------------------------------------------------------------------- 
-	procedure read_frame_from_test_mem(
+    procedure read_frame_from_test_mem(
         variable frame          :  inout    SW_CAN_frame_type;
         constant memory         :  in       test_mem_type;
         variable pointer        :  inout    natural
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Inserts frame to TXT Buffer. Function does NOT check state of the
+    -- buffer.
+    -- 
+    -- Arguments:
+    --  frame           CAN FD Frame to send
+    --  buf_nr          Number of TXT Buffer from which the frame should be
+    --                  sent (1:4)
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    --  outcome         Returns "true" if the frame was inserted properly, 
+    --                  "false" if TXT Buffer was in states : Ready,
+    --                  TX in progress, Abort in progress
+    ---------------------------------------------------------------------------- 
+    procedure CAN_insert_TX_frame(
+        constant frame          : in    SW_CAN_frame_type;
+        constant buf_nr         : in    natural range 1 to 4;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
     );
 
 
@@ -1330,6 +1357,38 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Error passive.
+    -- 
+    -- Arguments:
+    --  fault_th        Variable with fault confinement thresholds.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure set_fault_thresholds(
+        constant fault_th       : in    SW_fault_thresholds;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Error passive.
+    -- 
+    -- Arguments:
+    --  fault_th        Variable with fault confinement thresholds.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure get_fault_thresholds(
+        variable fault_th       : out   SW_fault_thresholds;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Read Error counters from CTU CAN FD Core. 
     -- 
     -- Arguments:
@@ -1342,6 +1401,67 @@ package CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+
+
+    ----------------------------------------------------------------------------
+    -- Set Error counters from CTU CAN FD Core. 
+    -- 
+    -- Arguments:
+    --  err_counters    Variable from which error counters will be set.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure set_error_counters(
+        constant err_counters   : in    SW_error_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Read arbitration lost capture register.
+    -- 
+    -- Arguments:
+    --  alc             Bit index in which the arbitration was lost.
+    --  ID              Index of CTU CAN FD Core instance.    
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_alc(
+        variable alc            : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Read traffic counters.
+    -- 
+    -- Arguments:
+    --  ctr             Variable in which traffic counters will be stored
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_traffic_counters(
+        variable ctr            : out   SW_traffic_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Read transceiver delay register.
+    -- 
+    -- Arguments:
+    --  ctr             Variable in which traffic counters will be stored
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure read_trv_delay(
+        variable trv_delay      : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
 
 
     ----------------------------------------------------------------------------
@@ -1849,9 +1969,9 @@ package body CANtestLib is
 
         if (size = BIT_16) then
             if (address (1) = '0') then
-                return "1100";
-            else
                 return "0011";
+            else
+                return "1100";
             end if;
         end if;
 
@@ -2416,41 +2536,19 @@ package body CANtestLib is
     end procedure;
 
 
-    procedure CAN_send_frame(
+    procedure CAN_insert_TX_frame(
         constant frame          : in    SW_CAN_frame_type;
         constant buf_nr         : in    natural range 1 to 4;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type;
-        variable outcome        : out   boolean
+        signal   mem_bus        : inout Avalon_mem_type
     )is
         variable w_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
         variable ident_vect     :       std_logic_vector(28 downto 0) :=
                                         (OTHERS => '0');
         variable length         :       natural;
-        variable iter_limit     :       natural;
-        variable aux_out        :       boolean;
-        variable buf_index      :       natural range 0 to 31;
-        variable buf_state      :       SW_TXT_Buffer_state_type;
-        variable bind_int       :       natural;
         variable buf_offset     :       std_logic_vector(11 downto 0);
     begin
-        outcome     := true;
-
-        -- Read Status of TXT Buffer.
-        get_tx_buf_state(buf_nr, buf_state, ID, mem_bus);
-
-        -- If TXT Buffer was already locked -> Fail to insert and transmitt!
-        if (buf_state = buf_tx_progress or
-            buf_state = buf_ab_progress or
-            buf_state = buf_ready)
-        then
-            report "Unable to send the frame, TXT buffer is READY, " &
-                   "TX is in progress, or Abort is in progress" severity error;
-            outcome     := false;
-            return;
-        end if;
-
         -- Set Buffer address
         case buf_nr is
         when 1 => buf_offset := TXTB1_DATA_1_ADR;
@@ -2497,10 +2595,43 @@ package body CANtestLib is
                               unsigned(DATA_1_4_W_ADR) + i * 4),
                       ID, mem_bus);
         end loop;
+    end procedure;
+
+
+    procedure CAN_send_frame(
+        constant frame          : in    SW_CAN_frame_type;
+        constant buf_nr         : in    natural range 1 to 4;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type;
+        variable outcome        : out   boolean
+    )is 
+        variable buf_state      :       SW_TXT_Buffer_state_type;
+    begin
+        outcome     := true;
+
+        -- Read Status of TXT Buffer.
+        get_tx_buf_state(buf_nr, buf_state, ID, mem_bus);
+
+        -- If TXT Buffer was already locked -> Fail to insert and transmitt!
+        if (buf_state = buf_tx_progress or
+            buf_state = buf_ab_progress or
+            buf_state = buf_ready)
+        then
+            report "Unable to send the frame, TXT buffer is READY, " &
+                   "TX is in progress, or Abort is in progress" severity error;
+            outcome     := false;
+            return;
+        end if;
+
+        -- Insert frame to TXT Buffer
+        CAN_insert_TX_frame(frame, buf_nr, ID, mem_bus);
 
         -- Give "Set ready" command to the buffer
         send_TXT_buf_cmd(buf_set_ready, buf_nr, ID, mem_bus);
     end procedure;
+
+
+    
   
 
     procedure CAN_read_frame(
@@ -2662,7 +2793,8 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
-        variable data           :         std_logic_vector(31 downto 0);
+        variable data           :         std_logic_vector(31 downto 0)
+                                            := (OTHERS => '0');
     begin
         -- Set active command bit in TX_COMMAND register based on input command
         data(TXCE_IND) := '0';
@@ -3152,7 +3284,7 @@ package body CANtestLib is
 
 
     procedure read_int_status(
-        variable interrupts    : out   SW_interrupts;
+        variable interrupts     : out   SW_interrupts;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
@@ -3253,15 +3385,54 @@ package body CANtestLib is
     end procedure;
 
 
+    procedure set_fault_thresholds(
+        constant fault_th       : in    SW_fault_thresholds;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+        data(EWL_LIMIT_H downto EWL_LIMIT_L) :=
+            std_logic_vector(to_unsigned(fault_th.ewl, 8));
+
+        data(ERP_LIMIT_H downto ERP_LIMIT_L) :=
+            std_logic_vector(to_unsigned(fault_th.erp, 8));
+
+        CAN_write(data, EWL_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, ERP_ADR, ID, mem_bus, BIT_8);
+    end procedure;
+
+
+    procedure get_fault_thresholds(
+        variable fault_th       : out   SW_fault_thresholds;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+        CAN_read(data, EWL_ADR, ID, mem_bus, BIT_16);
+        fault_th.ewl := to_integer(unsigned(
+                          data(EWL_LIMIT_H downto EWL_LIMIT_L)));
+
+        CAN_read(data, ERP_ADR, ID, mem_bus, BIT_16);
+        fault_th.erp := to_integer(unsigned(
+                          data(ERP_LIMIT_H downto ERP_LIMIT_L)));
+    end procedure;
+
+
     procedure read_error_counters(
         variable err_counters   : out   SW_error_counters;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
         variable data           :       std_logic_vector(31 downto 0);
+        variable msg            :       line;
     begin
         -- Reading separately for possible future separation of RXC and TXC!
         CAN_read(data, RXC_ADR, ID, mem_bus, BIT_16);
+
         err_counters.rx_counter := 
                 to_integer(unsigned(data(RXC_VAL_H downto RXC_VAL_L)));
 
@@ -3279,6 +3450,100 @@ package body CANtestLib is
     end procedure;
 
 
+    procedure set_error_counters(
+        constant err_counters   : in    SW_error_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        data := (OTHERS => '0');
+
+        -- TX Error counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.tx_counter, 9));
+        data(PTX_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(PTX_IND) := '0';
+        
+        -- RX Error counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.rx_counter, 9));
+        data(PRX_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(PRX_IND) := '0';
+
+        -- Nominal bit rate counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.err_norm, 9));
+        data(ENORM_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(ENORM_IND) := '0';
+
+        -- Data bit rate counter
+        data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
+                                        err_counters.err_fd, 9));
+        data(EFD_IND) := '1';
+        CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
+        data(EFD_IND) := '0';
+    end procedure;
+
+
+    procedure read_alc(
+        variable alc            : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, ALC_ADR, ID, mem_bus, BIT_8);
+
+        case data(ALC_ID_FIELD_H downto ALC_ID_FIELD_L) is
+        when ALC_BASE_ID =>
+            alc := 12 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
+        when ALC_EXTENSION =>
+            alc := 32 - to_integer(unsigned(data(ALC_BIT_H downto ALC_BIT_L)));
+        when ALC_SRR_RTR =>
+            alc := 12;
+        when ALC_IDE =>
+            alc := 13;
+        when ALC_RTR =>
+            alc := 33;
+        when others =>
+            report "Unsupported ALC type" severity error;
+        end case;
+
+    end procedure;
+
+
+    procedure read_traffic_counters(
+        variable ctr            : out   SW_traffic_counters;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, RX_COUNTER_ADR, ID, mem_bus);
+        ctr.rx_frames := to_integer(unsigned(data(
+                            RX_COUNTER_VAL_H downto RX_COUNTER_VAL_L)));
+
+        CAN_read(data, TX_COUNTER_ADR, ID, mem_bus);
+        ctr.tx_frames := to_integer(unsigned(data(
+                            TX_COUNTER_VAL_H downto TX_COUNTER_VAL_L)));
+    end procedure;
+
+
+    procedure read_trv_delay(
+        variable trv_delay      : out   natural;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(data, TRV_DELAY_ADR, ID, mem_bus);
+        trv_delay := to_integer(unsigned(data(
+                            TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)));
+    end procedure;
 
 
 end package body;
