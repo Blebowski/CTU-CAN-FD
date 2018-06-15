@@ -1,7 +1,9 @@
+_default: &default
+    log_level: info
+    error_tolerance: 0
 unit:
     default:
-        log_level: warning
-        error_tolerance: 0
+        <<: *default
         iterations: 50
         timeout: 100 ms
     tests:
@@ -33,8 +35,7 @@ unit:
             wave: unit/TX_Buffer/txbf_unit.tcl
 feature:
     default:
-        log_level: warning
-        error_tolerance: 0
+        <<: *default
         iterations: 50
         timeout: 1 ms
     tests:
@@ -52,11 +53,11 @@ feature:
         tran_delay:
         tx_arb_time_tran:
 
-.sanity:
+sanity:
     default:
-        iterations: 1
+        <<: *default
+        iterations: 10
         timeout: 2 sec
-        log_level: info
         error_tolerance: 0
         gauss_iter: 40
     tests:

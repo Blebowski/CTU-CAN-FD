@@ -33,7 +33,7 @@ begin
 
     if false then
     {% for test in tests %}
-    elsif run("{{ test }}") then
+    elsif str_equal(test_name, "{{ test }}") then
         {{ test }}_feature_exec(
             o => o,
             rand_ctr => rand_ctr,

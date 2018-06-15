@@ -14,7 +14,6 @@ build_ip_and_tests:
     only: &only
         - master     # Run on all changes to master branch
         - tags       # Run on all tags
-        - schedules  # Run on schedule
         - triggers   # Run by trigger (on merge request)
         - web        # Run by manual request from web UI
 
@@ -26,34 +25,34 @@ build_ip_and_tests:
         - cd driver
         - "make -j`nproc`"
 
-test_ip_unit:
+test_ip_fast:
     stage: test
     only: *only
     dependencies: [build_ip_and_tests]
     script:
         - cd test
-        - make test_unit XUNIT=1
+        - make test_fast
         - make coverage
     coverage: "/lines......: ([^%]+%)/"
     artifacts:
         when: always
         paths:
             - test/code_html
-            - test/test_unit.xml
+            - test/tests_fast.xml
             - test/xunit.xsl
 
-test_ip_sanity:
+test_ip_nightly:
     stage: test
     dependencies: [build_ip_and_tests]
     only:
         - schedules
     script:
         - cd test
-        - make test_sanity XUNIT=1
+        - make test_nightly
     artifacts:
         when: always
         paths:
-            - test/test_sanity.xml
+            - test/test_nightly.xml
             - test/xunit.xsl
 
 pages:
