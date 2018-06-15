@@ -92,8 +92,7 @@ entity CAN_feature_test is
         signal iteration_done   : in boolean := false;
         signal hw_reset_on_new_test         : in boolean := true;
 
-        signal iin  : out  instance_inputs_arr_t;
-        signal iout : in   instance_outputs_arr_t;
+        signal iout             : out instance_outputs_arr_t;
         signal rand_ctr         : in natural range 0 to RAND_POOL_SIZE;
 
         --CAN bus signals
@@ -199,10 +198,10 @@ begin
         p(i).swr              <= mem_bus(i).swr;
         p(i).srd              <= mem_bus(i).srd;
         mem_bus(i).data_out   <= p(i).data_out;
-        iin(i).irq            <= p(i).int;
-        iin(i).drv_bus        <= p(i).drv_bus;
-        iin(i).stat_bus       <= p(i).stat_bus;
-        iin(i).hw_reset       <= p(i).res_n;
+        iout(i).irq           <= p(i).int;
+        iout(i).drv_bus       <= p(i).drv_bus;
+        iout(i).stat_bus      <= p(i).stat_bus;
+        iout(i).hw_reset      <= p(i).res_n;
 
         ---------------------------------
         --Transceiver and bus realization
@@ -352,7 +351,6 @@ architecture tb of tb_feature is
 
     signal mem_bus        : mem_bus_arr_t := (OTHERS => mem_bus_init);
 
-    signal iin            : instance_inputs_arr_t;
     signal iout           : instance_outputs_arr_t;
 
     signal bus_level      : std_logic;
@@ -383,7 +381,6 @@ begin
         hw_reset_on_new_test => hw_reset_on_new_test,
         test_name        => padded_test_name,
         iout             => iout,
-        iin              => iin,
         --Internal signals of CAN controllers
         bus_level        => bus_level,
         rand_ctr         => rand_ctr
@@ -408,7 +405,7 @@ begin
         restart_mem_bus(mem_bus(2));
 
         wait for 10 ns;
-        wait until iin(1).hw_reset = '1' and iin(2).hw_reset = '1';
+        wait until iout(1).hw_reset = '1' and iout(2).hw_reset = '1';
         wait for 10 ns;
 
         --Execute the controllers configuration
@@ -428,11 +425,11 @@ begin
             report "Iteration ...";
             iteration_done <= false;
             exec_feature_test(test_name => test_name,
-                              o => o,
-                              rand_ctr => rand_ctr,
-                              mem_bus => mem_bus,
-                              iout => iin,
-                              so => so,
+                              o         => o,
+                              rand_ctr  => rand_ctr,
+                              mem_bus   => mem_bus,
+                              iout      => iout,
+                              so        => so,
                               bus_level => bus_level
                               );
 

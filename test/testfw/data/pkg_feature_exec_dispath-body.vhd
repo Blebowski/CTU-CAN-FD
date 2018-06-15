@@ -24,7 +24,7 @@ procedure exec_feature_test(
     variable o            : out    feature_outputs_t;
     signal   so           : out    feature_signal_outputs_t;
     signal   rand_ctr     : inout  natural range 0 to RAND_POOL_SIZE;
-    signal   iout         : in     instance_inputs_arr_t;
+    signal   iout         : in     instance_outputs_arr_t;
     signal   mem_bus      : inout  mem_bus_arr_t;
     signal   bus_level    : in     std_logic
 ) is

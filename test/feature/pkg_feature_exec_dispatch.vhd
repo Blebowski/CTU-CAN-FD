@@ -20,19 +20,13 @@ package pkg_feature_exec_dispath is
 
     constant NINST : natural := 2;
 
-    -- TODO: rename to outputs
-    type instance_inputs_t is record
+    type instance_outputs_t is record
         drv_bus    : std_logic_vector(1023 downto 0);
         stat_bus   : std_logic_vector(511 downto 0);
         irq        : std_logic;
         hw_reset   : std_logic;
     end record;
 
-    type instance_outputs_t is record
-        nothing : boolean;
-    end record;
-
-    type instance_inputs_arr_t is array (1 to NINST) of instance_inputs_t;
     type instance_outputs_arr_t is array (1 to NINST) of instance_outputs_t;
     type mem_bus_arr_t is array (1 to NINST) of Avalon_mem_type;
 
@@ -42,7 +36,7 @@ package pkg_feature_exec_dispath is
         variable o            : out    feature_outputs_t;
         signal   so           : out    feature_signal_outputs_t;
         signal   rand_ctr     : inout  natural range 0 to RAND_POOL_SIZE;
-        signal   iout         : in     instance_inputs_arr_t;
+        signal   iout         : in     instance_outputs_arr_t;
         signal   mem_bus      : inout  mem_bus_arr_t;
         signal   bus_level    : in     std_logic
     );
