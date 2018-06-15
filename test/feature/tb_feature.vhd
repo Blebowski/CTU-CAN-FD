@@ -81,9 +81,6 @@ entity CAN_feature_test is
         -- Status of the test
         signal status           : out   test_status_type;
 
-        -- Amount of errors which appeared in the test
-        signal errors           : out   natural;
-
         -- Memory access buses
         signal mem_bus          : inout mem_bus_arr_t;
 
@@ -95,8 +92,8 @@ entity CAN_feature_test is
         signal iteration_done   : in boolean := false;
         signal hw_reset_on_new_test         : in boolean := true;
 
-        signal iin  : in  instance_inputs_arr_t;
-        signal iout : out instance_outputs_arr_t;
+        signal iin  : out  instance_inputs_arr_t;
+        signal iout : in   instance_outputs_arr_t;
         signal rand_ctr         : in natural range 0 to RAND_POOL_SIZE;
 
         --CAN bus signals
@@ -133,6 +130,9 @@ architecture feature_env_test of CAN_feature_test is
         srd             : std_logic; --Serial read
         swr             : std_logic; --Serial write
         sbe             : std_logic_vector(3 downto 0); --Byte enable
+
+        drv_bus         : std_logic_vector(1023 downto 0);
+        stat_bus        : std_logic_vector(511 downto 0);
     end record;
     type instance_signals_arr_t is array(1 to NINST) of instance_signals_t;
 
@@ -153,14 +153,15 @@ architecture feature_env_test of CAN_feature_test is
         scs             => '0',
         srd             => '0',
         swr             => '0',
-        sbe             => (OTHERS => '1')
+        sbe             => (OTHERS => '1'),
+        drv_bus         => (OTHERS => 'X'),
+        stat_bus        => (OTHERS => 'X')
     ));
 
     signal s_bus_level : std_logic := RECESSIVE;
 begin
 
     g_inst: for i in 1 to 2 generate
-        iout(i).hw_reset <= p(i).res_n;
         CAN_inst: CAN_top_level
         generic map(
             use_logger        => true,
@@ -170,32 +171,38 @@ begin
             logger_size       => 16
         )
         port map(
-            clk_sys           =>  p(i).clk_sys,
-            res_n             =>  p(i).res_n,
-            data_in           =>  p(i).data_in,
-            data_out          =>  p(i).data_out,
-            adress            =>  p(i).adress,
-            scs               =>  p(i).scs,
-            srd               =>  p(i).srd,
-            swr               =>  p(i).swr,
-            sbe               =>  p(i).sbe,
-            int               =>  p(i).int,
-            CAN_tx            =>  p(i).CAN_tx,
-            CAN_rx            =>  p(i).CAN_rx,
-            time_quanta_clk   =>  p(i).time_quanta_clk,
-            timestamp         =>  p(i).timestamp
+            clk_sys           => p(i).clk_sys,
+            res_n             => p(i).res_n,
+            data_in           => p(i).data_in,
+            data_out          => p(i).data_out,
+            adress            => p(i).adress,
+            scs               => p(i).scs,
+            srd               => p(i).srd,
+            swr               => p(i).swr,
+            sbe               => p(i).sbe,
+            int               => p(i).int,
+            CAN_tx            => p(i).CAN_tx,
+            CAN_rx            => p(i).CAN_rx,
+            time_quanta_clk   => p(i).time_quanta_clk,
+            timestamp         => p(i).timestamp,
+            drv_bus_o         => p(i).drv_bus,
+            stat_bus_o        => p(i).stat_bus
         );
 
         -------------------------------------------------
         --Connect individual bus signals of memory buses
         -------------------------------------------------
-        mem_bus(i).clk_sys    <=  p(i).clk_sys;
-        p(i).data_in          <=  mem_bus(i).data_in;
-        p(i).adress           <=  mem_bus(i).address;
-        p(i).scs              <=  mem_bus(i).scs;
-        p(i).swr              <=  mem_bus(i).swr;
-        p(i).srd              <=  mem_bus(i).srd;
-        mem_bus(i).data_out   <=  p(i).data_out;
+        mem_bus(i).clk_sys    <= p(i).clk_sys;
+        p(i).data_in          <= mem_bus(i).data_in;
+        p(i).adress           <= mem_bus(i).address;
+        p(i).scs              <= mem_bus(i).scs;
+        p(i).swr              <= mem_bus(i).swr;
+        p(i).srd              <= mem_bus(i).srd;
+        mem_bus(i).data_out   <= p(i).data_out;
+        iin(i).irq            <= p(i).int;
+        iin(i).drv_bus        <= p(i).drv_bus;
+        iin(i).stat_bus       <= p(i).stat_bus;
+        iin(i).hw_reset       <= p(i).res_n;
 
         ---------------------------------
         --Transceiver and bus realization
@@ -237,8 +244,12 @@ begin
         if hw_reset_on_new_test then
             log("HW Restart of feature test environment started!",info_l,log_level);
             wait for 5 ns;
-            reset_test(p(1).res_n, status, run, error_ctr);
-            reset_test(p(2).res_n, status, run, error_ctr);
+            error_ctr <= 0;
+            p(1).res_n <= '0';
+            p(2).res_n <= '0';
+            wait for 100 ns;
+            p(1).res_n <= '1';
+            p(2).res_n <= '1';
             log("HW Restart of feature test environment finished",info_l,log_level);
         end if;
 
@@ -304,7 +315,6 @@ end entity;
 architecture tb of tb_feature is
     signal run         : boolean;          -- Input trigger, test starts running when true                                                        -- exceed this value in order for the test to pass
     signal status_int  : test_status_type; -- Status of the test
-    signal errors      : natural;          -- Amount of errors which appeared in the test
 
     constant mem_bus_init : Avalon_mem_type := (
         scs         => '0',
@@ -365,7 +375,6 @@ begin
         error_beh        =>  error_beh,
         error_tol        =>  error_tol,
         status           =>  status_int,
-        errors           =>  errors,
         mem_bus          =>  mem_bus,
         bl_inject        =>  bl_inject,
         bl_force         =>  bl_force,
@@ -399,7 +408,7 @@ begin
         restart_mem_bus(mem_bus(2));
 
         wait for 10 ns;
-        wait until iout(1).hw_reset = '1' and iout(2).hw_reset = '1';
+        wait until iin(1).hw_reset = '1' and iin(2).hw_reset = '1';
         wait for 10 ns;
 
         --Execute the controllers configuration
@@ -415,7 +424,8 @@ begin
         -------------------------------------------------
         -- Main test loop
         -------------------------------------------------
-        while test_suite loop
+        while status_int /= passed loop
+            report "Iteration ...";
             iteration_done <= false;
             exec_feature_test(test_name => test_name,
                               o => o,

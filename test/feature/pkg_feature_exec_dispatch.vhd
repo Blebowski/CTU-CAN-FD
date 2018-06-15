@@ -20,14 +20,16 @@ package pkg_feature_exec_dispath is
 
     constant NINST : natural := 2;
 
+    -- TODO: rename to outputs
     type instance_inputs_t is record
         drv_bus    : std_logic_vector(1023 downto 0);
         stat_bus   : std_logic_vector(511 downto 0);
         irq        : std_logic;
+        hw_reset   : std_logic;
     end record;
 
     type instance_outputs_t is record
-        hw_reset   : std_logic;
+        nothing : boolean;
     end record;
 
     type instance_inputs_arr_t is array (1 to NINST) of instance_inputs_t;

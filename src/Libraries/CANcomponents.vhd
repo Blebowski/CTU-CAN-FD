@@ -89,6 +89,10 @@ package CANcomponents is
       signal CAN_tx          : out std_logic;
       signal CAN_rx          : in  std_logic;
       signal time_quanta_clk : out std_logic;
+      -- synthesis translate_off
+      signal drv_bus_o    : out std_logic_vector(1023 downto 0);
+      signal stat_bus_o   : out std_logic_vector(511 downto 0);
+      -- synthesis translate_on
       signal timestamp       : in  std_logic_vector(63 downto 0)
       );
   end component;

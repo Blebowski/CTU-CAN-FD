@@ -137,6 +137,14 @@ entity CAN_top_level is
     --Time Quantum clocks possible to be used for synchronisation
     signal time_quanta_clk : out std_logic;
 
+    -----------------------------------
+    -- Internal signals for testbenches
+    -----------------------------------
+    -- synthesis translate_off
+    signal drv_bus_o    : out std_logic_vector(1023 downto 0);
+    signal stat_bus_o   : out std_logic_vector(511 downto 0);
+    -- synthesis translate_on
+
     -------------------------------------------
     -- Timestamp value for time based messages
     -------------------------------------------
@@ -462,6 +470,10 @@ architecture rtl of CAN_top_level is
   --for log_comp : CAN_logger use entity work.CAN_logger(rtl);
 
 begin
+  -- synthesis translate_off
+  drv_bus_o   <= drv_bus;
+  stat_bus_o  <= stat_bus;
+  -- synthesis translate_on
 
   rst_sync_comp : rst_sync
     port map(
