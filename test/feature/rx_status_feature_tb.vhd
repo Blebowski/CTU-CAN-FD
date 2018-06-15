@@ -1,44 +1,44 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  RX Buffer status feature test implementation.
--- 
+--
 --  Test sequence:
 --    1. RX Buffer size is read and buffer is cleared.
 --    2. Free memory, buffer status and message count is checked.
@@ -69,7 +69,7 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package rx_status_feature is
-  
+
     procedure rx_status_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
@@ -79,14 +79,14 @@ package rx_status_feature is
         signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
     );
-  
+
 end package;
 
 
 package body rx_status_feature is
-  
+
     procedure rx_status_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
@@ -96,7 +96,7 @@ package body rx_status_feature is
         signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
     ) is
         variable ID_1           	:       natural range 0 to 15 := 1;
         variable ID_2           	:       natural range 0 to 15 := 2;
@@ -108,7 +108,7 @@ package body rx_status_feature is
 
         variable buf_info           :       SW_RX_Buffer_info;
         variable command            :       SW_command := (false, false, false);
-        variable status             :       SW_status;   
+        variable status             :       SW_status;
     begin
         outcome := true;
 
@@ -123,7 +123,7 @@ package body rx_status_feature is
         -- Read the size of the synthesized buffer
         ------------------------------------------------------------------------
         get_rx_buf_state(buf_info, ID_1, mem_bus_1);
-        
+
         ------------------------------------------------------------------------
         -- Check that buffer is empty
         ------------------------------------------------------------------------
@@ -193,10 +193,10 @@ package body rx_status_feature is
                 and send_more)
             then
                 outcome := false;
-            end if; 
+            end if;
 
         end loop;
-    
+
         ------------------------------------------------------------------------
         -- Check that data overrun status is set (we sent one more frame than
         -- needed... Overrun should be present
@@ -205,7 +205,7 @@ package body rx_status_feature is
         if (not status.data_overrun) then
             outcome := false;
         end if;
-     
+
         ------------------------------------------------------------------------
         -- Clear the data overrun flag
         ------------------------------------------------------------------------
@@ -220,7 +220,7 @@ package body rx_status_feature is
         if (status.data_overrun) then
             outcome := false;
         end if;
-    
+
     end procedure;
-  
+
 end package body;

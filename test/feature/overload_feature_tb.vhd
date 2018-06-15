@@ -1,44 +1,44 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Feature test for generation of overload frame.
---                                      
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --
@@ -57,7 +57,7 @@ USE work.randomLib.All;
 use work.CAN_FD_register_map.all;
 
 package overload_feature is
-  
+
 	procedure overload_feature_exec(
         variable    outcome      	: inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
@@ -71,12 +71,12 @@ package overload_feature is
         signal      bl_inject       : inout std_logic;
         signal      bl_force        : inout boolean
 	);
-  
+
 end package;
 
 
 package body overload_feature is
-  
+
     procedure overload_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
@@ -108,7 +108,7 @@ package body overload_feature is
         ------------------------------------------------------------------------
         -- Generate CAN Frame and start transmission
         ------------------------------------------------------------------------
-        CAN_generate_frame(rand_ctr, CAN_frame);     
+        CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
 
         for i in 0 to 3 loop
@@ -131,7 +131,7 @@ package body overload_feature is
             --------------------------------------------------------------------
             wait until protocol_type'VAL(to_integer(unsigned(
                    stat_bus_1(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW)))) /=
-                        interframe;    
+                        interframe;
 
             --------------------------------------------------------------------
             -- Check if overload started
@@ -146,9 +146,9 @@ package body overload_feature is
 
             bl_inject <= RECESSIVE;
             bl_force <= false;
-        end loop;    
+        end loop;
 
         CAN_wait_frame_sent(ID_1,mem_bus_1);
     end procedure;
-  
+
 end package body;

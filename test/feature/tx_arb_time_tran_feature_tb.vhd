@@ -1,51 +1,51 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  TX arbitration and time transmittion feature test
--- 
+--
 --  Test sequence:
 --    1. Part 1:
 --      1.1 Measure timestamp from status bus
---      1.2 Insert frame to be transmitted from actual time further by random 
+--      1.2 Insert frame to be transmitted from actual time further by random
 --          interval.
 --      1.3 Wait until frame is started to be transmitted
---      1.4 Check whether difference between actual timestamp and time when 
+--      1.4 Check whether difference between actual timestamp and time when
 --          frame should have been transmitted is less than 150. Note that
 --          timestamp is in feature environment increased every clock cycle.
 --          One bit time in default configuration has 130 clock cycles. Thus if
@@ -57,10 +57,10 @@
 -- Revision History:
 --    23.6.2016   Created file
 --    06.02.2018  Modified to work with the IP-XACT generated memory map
---    13.06.2018  1. Used CAN Test lib instead of register access functions. 
+--    13.06.2018  1. Used CAN Test lib instead of register access functions.
 --                2. Removed transmission from multiple buffers, since buffers
 --                   are now compared with priority. This will be covered in
---                   separate test.   
+--                   separate test.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -74,7 +74,7 @@ USE work.randomLib.All;
 use work.CAN_FD_register_map.all;
 
 package tx_arb_time_tran_feature is
-  
+
     procedure tx_arb_time_tran_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
@@ -84,14 +84,14 @@ package tx_arb_time_tran_feature is
         signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
     );
 
 end package;
 
 
 package body tx_arb_time_tran_feature is
-  
+
     procedure tx_arb_time_tran_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
@@ -101,7 +101,7 @@ package body tx_arb_time_tran_feature is
         signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
     )is
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
@@ -115,7 +115,7 @@ package body tx_arb_time_tran_feature is
         variable aux2               :       natural;
         variable status             :       SW_Status;
     begin
-        
+
         outcome := true;
 
         ------------------------------------------------------------------------
@@ -124,18 +124,18 @@ package body tx_arb_time_tran_feature is
         ------------------------------------------------------------------------
         -- Measure timestamp and generate frame
         ------------------------------------------------------------------------
-        CAN_generate_frame(rand_ctr, CAN_frame); 
-        CAN_generate_frame(rand_ctr, CAN_frame_2);   
+        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_generate_frame(rand_ctr, CAN_frame_2);
         act_ts := stat_bus_1(STAT_TS_HIGH downto STAT_TS_LOW);
 
         ------------------------------------------------------------------------
-        -- Add random value 
+        -- Add random value
         ------------------------------------------------------------------------
         rand_real_v(rand_ctr, rand_value);
 
         -- Here we assume this test will  use only lowest 32 bits!
         CAN_frame.timestamp(63 downto 32) := act_ts(63 downto 32);
-        CAN_frame.timestamp(31 downto 0)  := 
+        CAN_frame.timestamp(31 downto 0)  :=
             std_logic_vector(unsigned(act_ts(31 downto 0)) + 30 +
                              integer(rand_value * 10000.0));
 
@@ -155,7 +155,7 @@ package body tx_arb_time_tran_feature is
         aux2 := to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
 
         ------------------------------------------------------------------------
-        -- We tolerate up to 150 clock cycles between actual timestamp and 
+        -- We tolerate up to 150 clock cycles between actual timestamp and
         -- transmitt time. This fits to the default setting of up to 130 clock
         -- cycles per bit time!
         ------------------------------------------------------------------------
@@ -173,12 +173,12 @@ package body tx_arb_time_tran_feature is
         act_ts := stat_bus_1(STAT_TS_HIGH downto STAT_TS_LOW);
 
         ------------------------------------------------------------------------
-        -- Add random value 
+        -- Add random value
         ------------------------------------------------------------------------
         rand_real_v(rand_ctr, rand_value);
         --Here we assume this test will  use only lowest 32 bits!
         CAN_frame.timestamp(63 downto 32) := act_ts(63 downto 32);
-        CAN_frame.timestamp(31 downto 0) := 
+        CAN_frame.timestamp(31 downto 0) :=
             std_logic_vector(unsigned(act_ts(31 downto 0)) + 30 +
                                 integer(rand_value * 10000.0));
 
@@ -205,8 +205,8 @@ package body tx_arb_time_tran_feature is
         if (aux1 - aux2 > 150) then
             outcome := false;
         end if;
-        CAN_wait_bus_idle(ID_1, mem_bus_1);   
-     
+        CAN_wait_bus_idle(ID_1, mem_bus_1);
+
   end procedure;
-  
+
 end package body;

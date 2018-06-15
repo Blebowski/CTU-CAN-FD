@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -53,7 +53,7 @@
 --         was decreased.
 --      9. If error counters are over 70, restart them so that nodes won't
 --         turn error passive.
---                                      
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    21.6.2016   Created file
@@ -73,7 +73,7 @@ use work.CAN_FD_frame_format.all;
 
 
 package forbid_fd_feature is
-  
+
     procedure forbid_fd_feature_exec(
         variable    outcome         : inout  boolean;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -83,14 +83,14 @@ package forbid_fd_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
     );
-  
+
 end package;
 
 
 package body forbid_fd_feature is
-  
+
     procedure forbid_fd_feature_exec(
         variable    outcome         : inout  boolean;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -100,7 +100,7 @@ package body forbid_fd_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
     ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
@@ -130,7 +130,7 @@ package body forbid_fd_feature is
         -- Read RX Error counter node 1
         ------------------------------------------------------------------------
         read_error_counters(err_counters_1, ID_1, mem_bus_1);
-     
+
         ------------------------------------------------------------------------
         -- Send FD frame by node 2 and wait for error frame...
         ------------------------------------------------------------------------
@@ -164,7 +164,7 @@ package body forbid_fd_feature is
 
         ------------------------------------------------------------------------
         -- Counter should be decreased by one now due to sucesfull reception.
-        -- But it should be increased by 8 since it is the first node that 
+        -- But it should be increased by 8 since it is the first node that
         -- detected the error!
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 8) /= err_counters_2.rx_counter) then
@@ -196,7 +196,7 @@ package body forbid_fd_feature is
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 7) /= err_counters_2.rx_counter) then
             outcome := false;
-        end if; 
+        end if;
 
         ------------------------------------------------------------------------
         -- Since counter is incremented more than decremented, after many
@@ -213,5 +213,3 @@ package body forbid_fd_feature is
   end procedure;
 
 end package body;
-
-

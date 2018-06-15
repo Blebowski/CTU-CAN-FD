@@ -1,45 +1,45 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Special modes feature testbench. Verifies behaviour of Self-test mode,
 --  Acknowledge forbidden mode and Listen only mode.
--- 
+--
 --  Test sequence:
 --      1. Part 1:
 --          1.1 Set STM in Node 1, STM and ACF in Node 2.
@@ -61,7 +61,7 @@
 --          1.6 Wait till end of frame. Read traffic counters again.
 --          1.7 Check that TX counter was incremented in Node 1 and RX counter
 --              was incremented in Node 2.
---              
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    24.6.2016   Created file
@@ -81,7 +81,7 @@ USE work.randomLib.All;
 use work.CAN_FD_register_map.all;
 
 package spec_mode_feature is
-  
+
     procedure spec_mode_feature_exec(
         variable   outcome          : inout  boolean;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -91,14 +91,14 @@ package spec_mode_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
     );
-  
+
 end package;
 
 
 package body spec_mode_feature is
-  
+
     procedure spec_mode_feature_exec(
         variable    outcome         : inout boolean;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -108,7 +108,7 @@ package body spec_mode_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
     )is
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
@@ -138,19 +138,19 @@ package body spec_mode_feature is
 
         mode.self_test := false;
         mode.acknowledge_forbidden := false;
-       
+
         ------------------------------------------------------------------------
         -- Check the TX RX counters
         ------------------------------------------------------------------------
         read_traffic_counters(ctr_1_1, ID_1, mem_bus_1);
         read_traffic_counters(ctr_1_2, ID_2, mem_bus_2);
-    
+
         ------------------------------------------------------------------------
         -- Send frame by node 1
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
-    
+
         ------------------------------------------------------------------------
         -- Wait until one of the nodes is in ack field plus one more clock
         -- cycles since after CRC we are in ack_delim immediately, thus bus
@@ -165,11 +165,11 @@ package body spec_mode_feature is
         if (bus_level = DOMINANT) then
             wait until rising_edge(bus_level);
         end if;
-    
+
         ------------------------------------------------------------------------
         -- Now monitor the bus level to see if it is recessive during whole
         -- acknowledge field. Monitor always on reciever! IN FD transciever
-        -- workaround is used for state switching in TX trigger just slightly 
+        -- workaround is used for state switching in TX trigger just slightly
         -- delayed!!!
         ------------------------------------------------------------------------
         while (protocol_type'VAL(to_integer(unsigned(
@@ -250,9 +250,9 @@ package body spec_mode_feature is
                 outcome := false;
             end if;
         end loop;
-    
+
         CAN_wait_bus_idle(ID_1,mem_bus_1);
-    
+
         ------------------------------------------------------------------------
         -- Check the TX RX counters
         ------------------------------------------------------------------------
@@ -268,5 +268,5 @@ package body spec_mode_feature is
         end if;
 
   end procedure;
-  
+
 end package body;

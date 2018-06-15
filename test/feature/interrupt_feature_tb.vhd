@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package interrupt_feature is
-  
+
     procedure interrupt_feature_exec(
         variable    outcome         : inout  boolean;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -94,14 +94,14 @@ package interrupt_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
     );
-  
+
 end package;
 
 
 package body interrupt_feature is
-  
+
     procedure interrupt_feature_exec(
         variable    outcome         : inout  boolean;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -113,7 +113,7 @@ package body interrupt_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
     ) is
         variable r_data             :     std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
@@ -147,7 +147,7 @@ package body interrupt_feature is
         -- Unmask all Interrupts. Should be by default, but rather do it...
         ------------------------------------------------------------------------
         write_int_mask(int_mask, ID_1, mem_bus_1);
-        write_int_mask(int_mask, ID_2, mem_bus_2); 
+        write_int_mask(int_mask, ID_2, mem_bus_2);
 
         ------------------------------------------------------------------------
         -- Part 1
@@ -159,7 +159,7 @@ package body interrupt_feature is
         int_ena.receive_int := true;
         write_int_enable(int_ena, ID_1, mem_bus_1);
         int_ena.receive_int := false;
-        
+
         int_ena.transmitt_int := true;
         write_int_enable(int_ena, ID_2, mem_bus_2);
         int_ena.transmitt_int := false;
@@ -183,13 +183,13 @@ package body interrupt_feature is
             outcome := false;
         end if;
         clear_int_status(int_stat, ID_1, mem_bus_1);
-        
+
         read_int_status(int_stat, ID_2, mem_bus_2);
         if (not int_stat.transmitt_int) then
             outcome := false;
         end if;
         clear_int_status(int_stat, ID_2, mem_bus_2);
-  
+
         ------------------------------------------------------------------------
         -- Part 2
         ------------------------------------------------------------------------
@@ -216,7 +216,7 @@ package body interrupt_feature is
 
         wait until rising_edge(int_1) or rising_edge(int_2);
         wait until rising_edge(int_1) or rising_edge(int_2);
-    
+
         ------------------------------------------------------------------------
         -- Detect interrupt error flag
         ------------------------------------------------------------------------
@@ -230,9 +230,9 @@ package body interrupt_feature is
         if (not int_stat.bus_error_int) then
             report "FUCK" severity error;
             outcome := false;
-        end if;        
-        CAN_wait_frame_sent(ID_1, mem_bus_1);        
-        clear_int_status(int_stat, ID_2, mem_bus_2);        
+        end if;
+        CAN_wait_frame_sent(ID_1, mem_bus_1);
+        clear_int_status(int_stat, ID_2, mem_bus_2);
         wait for 15000 ns;
 
 
@@ -256,7 +256,7 @@ package body interrupt_feature is
 
         ------------------------------------------------------------------------
         -- Size of buffer 2
-        -- Note that size of RTR is 4. Each synthesizable size of buffer is 
+        -- Note that size of RTR is 4. Each synthesizable size of buffer is
         -- multiple of 4!
         ------------------------------------------------------------------------
         get_rx_buf_state(buf_info, ID_2, mem_bus_2);
@@ -288,13 +288,13 @@ package body interrupt_feature is
         -- Detect the data overrun interrupt flag and recieve buffer full flag
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_2, mem_bus_2);
-        
+
         if (not int_stat.rx_buffer_full_int) then
             outcome := false;
-        end if;        
+        end if;
         if (not int_stat.data_overrun_int) then
             outcome := false;
-        end if;        
+        end if;
         clear_int_status(int_stat, ID_2, mem_bus_2);
         wait for 30000 ns;
 
@@ -316,7 +316,7 @@ package body interrupt_feature is
         CAN_frame.rtr := NO_RTR_FRAME;
         CAN_frame.brs := BR_SHIFT;
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
-    
+
         ------------------------------------------------------------------------
         -- Wait on bit rate shift
         ------------------------------------------------------------------------
@@ -329,7 +329,7 @@ package body interrupt_feature is
         if (not int_stat.bit_rate_shift_int) then
             outcome := false;
         end if;
-        CAN_wait_frame_sent(ID_2,mem_bus_2);        
+        CAN_wait_frame_sent(ID_2,mem_bus_2);
         clear_int_status(int_stat, ID_2, mem_bus_2);
 
         read_int_status(int_stat, ID_1, mem_bus_1);
@@ -343,8 +343,8 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         report "Starting arbitration lost int";
         int_ena.arb_lost_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus_1);    
-    
+        write_int_enable(int_ena, ID_1, mem_bus_1);
+
         ------------------------------------------------------------------------
         -- Send frames by both nodes with IDs fabricated so that Node 1 loses.
         ------------------------------------------------------------------------
@@ -357,11 +357,11 @@ package body interrupt_feature is
         CAN_frame.identifier := 4;
         CAN_send_frame(CAN_frame, 2, ID_2, mem_bus_2, frame_sent);
         wait until rising_edge(int_1);
-    
+
         read_int_status(int_stat, ID_1, mem_bus_1);
         if (not int_stat.arb_lost_int) then
             outcome := false;
-        end if;        
+        end if;
         clear_int_status(int_stat, ID_1, mem_bus_1);
 
         -- Send abort command on node that lost arbitration so that it does
@@ -383,5 +383,5 @@ package body interrupt_feature is
         wait for 300000 ns;
 
     end procedure;
-  
+
 end package body;
