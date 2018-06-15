@@ -39,10 +39,14 @@
 ################################################################################
 global TCOMP
 global INST1
+global SIG1
+global SIG2
 global CORE
 
 start_CAN_simulation "feature_env_test_wrapper"
-quietly set INST1 "can_inst_1"
+quietly set INST1 "g_inst(1)/can_inst"
+quietly set SIG1 "p(1)"
+quietly set SIG2 "p(2)"
 quietly set CORE  "core_top_comp"
 
 ################################################################################
@@ -57,12 +61,12 @@ add wave -label "Name of test" $TCOMP/test_name
 #Add circuit specific signals
 
 add wave -noupdate -divider -height 20 "System and CAN bus"
-add wave -label "Node 1 clock" $TCOMP/clk_sys_1
-add wave -label "Node 2 clock" $TCOMP/clk_sys_2
-add wave -label "Node 1 reset" $TCOMP/res_n_1
-add wave -label "Node 2 reset" $TCOMP/res_n_2
-add wave -label "Timestamp 1" $TCOMP/timestamp_1
-add wave -label "Timestamp 2" $TCOMP/timestamp_2
+add wave -label "Node 1 clock" $TCOMP/$SIG1.clk_sys
+add wave -label "Node 2 clock" $TCOMP/$SIG2.clk_sys
+add wave -label "Node 1 reset" $TCOMP/$SIG1.res_n
+add wave -label "Node 2 reset" $TCOMP/$SIG2.res_n
+add wave -label "Timestamp 1" $TCOMP/$SIG1.timestamp
+add wave -label "Timestamp 2" $TCOMP/$SIG2.timestamp
 add wave -label "Bus level" $TCOMP/bus_level
 add wave -label "Inject to bus" $TCOMP/bl_force
 add wave -label "Value to inject" $TCOMP/bl_inject
@@ -70,11 +74,11 @@ add wave -label "Value to inject" $TCOMP/bl_inject
 
 add wave -noupdate -divider -height 20 "Node 1"
 
-add wave -label "Memory bus" $TCOMP/mem_bus_1
-add wave -label "CAN_TX" $TCOMP/can_tx_1
-add wave -label "CAN_RX" $TCOMP/can_rx_1
-add wave -label "Interrupt" $TCOMP/int_1
-add wave -label "Transciever delay" $TCOMP/tr_del_1
+add wave -label "Memory bus" "$TCOMP/mem_bus(1)"
+add wave -label "CAN_TX" $TCOMP/$SIG1.can_tx
+add wave -label "CAN_RX" $TCOMP/$SIG1.can_rx
+add wave -label "Interrupt" $TCOMP/$SIG1.int
+add wave -label "Transceiver delay" $TCOMP/$SIG1.tr_del
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
 
@@ -162,8 +166,8 @@ add wave -group "CAN Core (1)" \
 	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
 
 add wave -group "Bus sampling (1)" \
-	-label "Measure transciever delay" $TCOMP/$INST1/trv_delay_calib \
-	-label "Transciever delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
+	-label "Measure transceiver delay" $TCOMP/$INST1/trv_delay_calib \
+	-label "Transceiver delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
 	-label "Measurment running" $TCOMP/$INST1/bus_sync_comp/trv_running \
 	-label "Reset secondary sampling" $TCOMP/$INST1/ssp_reset \
 	-label "Bit error secondary sampling" $TCOMP/$INST1/bit_error_sec_sam \
@@ -172,13 +176,13 @@ add wave -group "Bus sampling (1)" \
 
 
 add wave -noupdate -divider -height 20 "Node 2"
-quietly set INST1 "can_inst_2"
+quietly set INST1 "g_inst(2)/can_inst"
 
-add wave -label "Memory bus" $TCOMP/mem_bus_2
-add wave -label "CAN_TX" $TCOMP/can_tx_2
-add wave -label "CAN_RX" $TCOMP/can_rx_2
-add wave -label "Interrupt" $TCOMP/int_2
-add wave -label "Transciever delay" $TCOMP/tr_del_2
+add wave -label "Memory bus" "$TCOMP/mem_bus(2)"
+add wave -label "CAN_TX" $TCOMP/$SIG2.can_tx
+add wave -label "CAN_RX" $TCOMP/$SIG2.can_rx
+add wave -label "Interrupt" $TCOMP/$SIG2.int
+add wave -label "Transceiver delay" $TCOMP/$SIG2.tr_del
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
 
@@ -260,8 +264,8 @@ add wave -group "CAN Core (2)" \
 	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
 
 add wave -group "Bus sampling (2)" \
-	-label "Measure transciever delay" $TCOMP/$INST1/trv_delay_calib \
-	-label "Transciever delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
+	-label "Measure transceiver delay" $TCOMP/$INST1/trv_delay_calib \
+	-label "Transceiver delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
 	-label "Measurment running" $TCOMP/$INST1/bus_sync_comp/trv_running \
 	-label "Reset secondary sampling" $TCOMP/$INST1/ssp_reset \
 	-label "Bit error secondary sampling" $TCOMP/$INST1/bit_error_sec_sam \

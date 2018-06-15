@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
-from .test_common import add_sources, TestsBase, dict_merge, vhdl_serialize
+from .test_common import add_sources, TestsBase, dict_merge, get_common_modelsim_init_files
+from textwrap import dedent
 
 log = logging.getLogger(__name__)
 
@@ -27,6 +28,18 @@ class FeatureTests(TestsBase):
         tb = self.lib.get_test_benches('*tb_feature')[0]
         default = self.config['default']
         self.add_modelsim_gui_file(tb, default, 'feature')
+
+        # generate & set per-test modelsim tcl file
+        tcl = self.build / 'modelsim_init_feature.tcl'
+        with tcl.open('wt', encoding='utf-8') as f:
+            print(dedent('''\
+                global TCOMP
+                set TCOMP tb_feature/test_comp
+                '''), file=f)
+        init_files = get_common_modelsim_init_files()
+        init_files += [str(tcl)]
+        tb.set_sim_option("modelsim.init_files.after_load", init_files)
+
         for name, cfg in self.config['tests'].items():
             if cfg is None:
                 cfg = dict()

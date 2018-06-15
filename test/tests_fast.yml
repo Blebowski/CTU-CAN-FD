@@ -37,6 +37,7 @@ feature:
         error_tolerance: 0
         iterations: 1
         timeout: 1 ms
+        wave: feature/feature_env_setup.tcl
     tests:
         abort_transmittion:
         arbitration:

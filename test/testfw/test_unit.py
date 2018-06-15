@@ -1,9 +1,11 @@
 import re
 import logging
 from textwrap import dedent
-from .test_common import *
+from .test_common import add_sources, dict_merge, TestsBase, get_common_modelsim_init_files
+from pprint import pprint
 
 log = logging.getLogger(__name__)
+
 
 class UnitTests(TestsBase):
     def add_sources(self):
@@ -11,7 +13,7 @@ class UnitTests(TestsBase):
         self._create_wrapper(self.build / "tb_wrappers.vhd")
 
     def configure(self):
-        ui, lib, config, build = self.ui, self.lib, self.config, self.build
+        lib, config, build = self.lib, self.config, self.build
         default = config['default']
         unit_tests = lib.get_test_benches('*_unit_test')
         for name, cfg in config['tests'].items():
