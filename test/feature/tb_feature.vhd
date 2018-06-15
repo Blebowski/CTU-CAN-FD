@@ -109,11 +109,10 @@ entity CAN_feature_test is
     signal exit_imm             :       boolean :=  false;
 end entity;
 
--- TODO: split implementation and wrapper
 architecture feature_env_test of CAN_feature_test is
     type instance_signals_t is record
-        tr_del_sr       : std_logic_vector(255 downto 0);
-        tr_del          : natural;
+        tr_del          : time;
+        tr_delayed      : std_logic;
         clk_sys         : std_logic;
         res_n           : std_logic;
         int             : std_logic;
@@ -136,8 +135,8 @@ architecture feature_env_test of CAN_feature_test is
     type instance_signals_arr_t is array(1 to NINST) of instance_signals_t;
 
     signal p : instance_signals_arr_t := (others => (
-        tr_del_sr       => (others => RECESSIVE),
-        tr_del          => 20,
+        tr_del          => 20 * f100_Mhz * 1 ps,
+        tr_delayed      => RECESSIVE,
         clk_sys         => '0',
         res_n           => '0',
         int             => '0',
@@ -188,6 +187,16 @@ begin
             stat_bus_o        => p(i).stat_bus
         );
 
+        i_txdelay : entity work.signal_delayer
+            generic map (
+                NSAMPLES    => 16
+            )
+            port map (
+                input       => p(i).CAN_tx,
+                delay       => p(i).tr_del,
+                delayed     => p(i).tr_delayed
+            );
+
         -------------------------------------------------
         --Connect individual bus signals of memory buses
         -------------------------------------------------
@@ -206,14 +215,8 @@ begin
         ---------------------------------
         --Transceiver and bus realization
         ---------------------------------
-        tr_proc:process
-        begin
-            wait until falling_edge(p(i).clk_sys);
-            p(i).tr_del_sr <= p(i).tr_del_sr(254 downto 0) & p(i).CAN_tx;
-        end process;
-
-        p(i).CAN_rx     <= s_bus_level;
-        bus_level <= s_bus_level;
+        p(i).CAN_rx           <= s_bus_level;
+        bus_level             <= s_bus_level;
 
         ---------------------------------
         --Clock generation
@@ -228,8 +231,21 @@ begin
         end process;
     end generate;
 
-    s_bus_level    <= p(1).tr_del_sr(p(1).tr_del) AND p(2).tr_del_sr(p(2).tr_del) when bl_force=false else
-                      bl_inject;
+    -- TODO: might get faster by constraining the sensitivity list
+    tr_proc:process(all)
+        variable busl : std_logic;
+    begin
+        if bl_force then
+            s_bus_level <= bl_inject;
+        else
+            busl := RECESSIVE;
+            for i in 1 to 2
+            loop
+                busl := busl and p(i).tr_delayed;
+            end loop;
+            s_bus_level <= busl;
+        end if;
+    end process;
 
     ---------------------------------
     --Test process listening to the
