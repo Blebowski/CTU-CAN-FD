@@ -1,7 +1,8 @@
 import logging
-from .test_common import *
+from .test_common import TestsBase, add_sources, dict_merge, vhdl_serialize
 
 log = logging.getLogger(__name__)
+
 
 def len_to_matrix(topology, bus_len):
     l = bus_len
@@ -33,6 +34,7 @@ def len_to_matrix(topology, bus_len):
 
     return bm
 
+
 class SanityTests(TestsBase):
     def add_sources(self):
         add_sources(self.lib, ['sanity/**/*.vhd'])
@@ -48,7 +50,7 @@ class SanityTests(TestsBase):
                          ' (set it in default instead)'.format(name))
 
             dict_merge(cfg, default)
-            bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
+            # bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
             generics = {
                 'timeout'      : cfg['timeout'],
                 'iterations'   : cfg['iterations'],

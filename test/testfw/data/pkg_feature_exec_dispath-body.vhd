@@ -20,7 +20,7 @@ package body pkg_feature_exec_dispath is
 --Procedure for processing the feature tests!
 procedure exec_feature_test(
     --Common test parameters
-    signal   test_name    : in     string;
+    constant test_name    : in     string;
     variable o            : out    feature_outputs_t;
     signal   so           : out    feature_signal_outputs_t;
     signal   rand_ctr     : inout  natural range 0 to RAND_POOL_SIZE;

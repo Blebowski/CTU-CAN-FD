@@ -92,7 +92,7 @@ entity CAN_feature_test is
         signal bl_force         : in    boolean;
 
         -- Internal signals; TODO: direction
-        signal iteration_done   : out boolean := false;
+        signal iteration_done   : in boolean := false;
         signal hw_reset_on_new_test         : in boolean := true;
 
         signal iin  : in  instance_inputs_arr_t;
@@ -421,8 +421,10 @@ begin
                               o => o,
                               rand_ctr => rand_ctr,
                               mem_bus => mem_bus,
-                              iout => iout,
-                              so => so);
+                              iout => iin,
+                              so => so,
+                              bus_level => bus_level
+                              );
 
             if o.outcome = false then
                 process_error(error_ctr, error_beh, exit_imm);

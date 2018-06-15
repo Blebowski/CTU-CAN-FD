@@ -33,6 +33,10 @@
             wave: unit/TX_Buffer/txbf_unit.tcl
 feature:
     default:
+        log_level: warning
+        error_tolerance: 0
+        iterations: 50
+        timeout: 100 ms
     tests:
         abort_transmittion:
         arbitration:

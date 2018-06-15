@@ -1,10 +1,11 @@
 from textwrap import dedent
 from collections.abc import Iterable
 from glob import glob
-from os.path import join, dirname, abspath
+from os.path import join, abspath
 import logging
 from pathlib import Path
 from jinja2 import Environment, PackageLoader
+from pprint import pprint
 
 __all__ = ['add_sources', 'add_common_sources', 'get_common_modelsim_init_files',
     'add_flags', 'dict_merge', 'vhdl_serialize', 'dump_sim_options', 'TestsBase']
@@ -13,6 +14,7 @@ d = Path(abspath(__file__)).parent
 log = logging.getLogger(__name__)
 
 jinja_env = Environment(loader=PackageLoader(__package__, 'data'), autoescape=False)
+
 
 class TestsBase:
     def __init__(self, ui, lib, config, build, base):
@@ -26,8 +28,11 @@ class TestsBase:
     def jinja_env(self):
         return jinja_env
 
-    def add_sources(self): raise NotImplementedError()
-    def configure(self): raise NotImplementedError()
+    def add_sources(self):
+        raise NotImplementedError()
+
+    def configure(self):
+        raise NotImplementedError()
 
     def add_modelsim_gui_file(self, tb, cfg, name):
         if 'wave' in cfg:
@@ -50,6 +55,7 @@ class TestsBase:
                     '''.format(name)), file=f)
         tb.set_sim_option("modelsim.init_file.gui", str(tcl))
 
+
 def add_sources(lib, patterns):
     for pattern in patterns:
         p = join(str(d.parent), pattern)
@@ -58,13 +64,16 @@ def add_sources(lib, patterns):
             if f != "tb_wrappers.vhd":
                 lib.add_source_file(str(f))
 
+
 def add_common_sources(lib):
     return add_sources(lib, ['../src/**/*.vhd', '*.vhd', 'lib/*.vhd'])
+
 
 def get_common_modelsim_init_files():
     modelsim_init_files = '../lib/test_lib.tcl,modelsim_init.tcl'
     modelsim_init_files = [str(d/x) for x in modelsim_init_files.split(',')]
     return modelsim_init_files
+
 
 def add_flags(ui, lib, build):
     unit_tests = lib.get_test_benches('*_unit_test', allow_empty=True)
@@ -78,11 +87,13 @@ def add_flags(ui, lib, build):
     modelsim_init_files = get_common_modelsim_init_files()
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
 
+
 def dict_merge(up, *lowers):
     for lower in lowers:
         for k, v in lower.items():
             if k not in up:
                 up[k] = v
+
 
 def vhdl_serialize(o):
     if isinstance(o, Iterable):
@@ -92,6 +103,7 @@ def vhdl_serialize(o):
         return ''.join(['(', ', '.join(ss), ')'])
     else:
         return str(o)
+
 
 def dump_sim_options(lib):
     for tb in lib.get_test_benches('*'):
