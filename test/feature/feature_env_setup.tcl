@@ -1,36 +1,36 @@
 ################################################################################
-## 
-## CAN with Flexible Data-Rate IP Core 
-## 
+##
+## CAN with Flexible Data-Rate IP Core
+##
 ## Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
-## 
+##
 ## Project advisor: Jiri Novak <jnovak@fel.cvut.cz>
 ## Department of Measurement         (http://meas.fel.cvut.cz/)
 ## Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 ## Czech Technical University        (http://www.cvut.cz/)
-## 
-## Permission is hereby granted, free of charge, to any person obtaining a copy 
-## of this VHDL component and associated documentation files (the "Component"), 
-## to deal in the Component without restriction, including without limitation 
-## the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-## and/or sell copies of the Component, and to permit persons to whom the 
+##
+## Permission is hereby granted, free of charge, to any person obtaining a copy
+## of this VHDL component and associated documentation files (the "Component"),
+## to deal in the Component without restriction, including without limitation
+## the rights to use, copy, modify, merge, publish, distribute, sublicense,
+## and/or sell copies of the Component, and to permit persons to whom the
 ## Component is furnished to do so, subject to the following conditions:
-## 
-## The above copyright notice and this permission notice shall be included in 
+##
+## The above copyright notice and this permission notice shall be included in
 ## all copies or substantial portions of the Component.
-## 
-## THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-## IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-## AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+##
+## THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+## IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+## FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+## AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 ## LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-## FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+## FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 ## IN THE COMPONENT.
-## 
-## The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
-## Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+##
+## The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+## Anybody who wants to implement this IP core on silicon has to obtain a CAN
 ## protocol license from Bosch.
-## 
+##
 ################################################################################
 
 ################################################################################
@@ -68,7 +68,7 @@ add wave -label "Inject to bus" $TCOMP/bl_force
 add wave -label "Value to inject" $TCOMP/bl_inject
 
 
-add wave -noupdate -divider -height 20 "Node 1"	
+add wave -noupdate -divider -height 20 "Node 1"
 
 add wave -label "Memory bus" $TCOMP/mem_bus_1
 add wave -label "CAN_TX" $TCOMP/can_tx_1
@@ -77,7 +77,7 @@ add wave -label "Interrupt" $TCOMP/int_1
 add wave -label "Transciever delay" $TCOMP/tr_del_1
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
-								
+
 add wave -group "RX Buffer (1)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
 	-label "Buffer size" -unsigned $TCOMP/$INST1/rx_buf_size \
@@ -102,7 +102,7 @@ add wave -group "Frame to transmit (1)" \
 	-label "Identifier type" $TCOMP/$INST1/tran_ident_type_out \
 	-label "Frame format" $TCOMP/$INST1/tran_frame_type_out \
 	-label "BRS" $TCOMP/$INST1/tran_brs_out
-	
+
 add wave -group "Frame to recieve (1)" \
 	-label "Frame is valid" $TCOMP/$INST1/rec_message_valid \
 	-label "Data word" -hexadecimal $TCOMP/$INST1/rx_store_data_word \
@@ -114,7 +114,7 @@ add wave -group "Frame to recieve (1)" \
 	-label "Frame format" $TCOMP/$INST1/rec_frame_type_in \
 	-label "BRS" $TCOMP/$INST1/rec_brs \
 	-label "ESI" $TCOMP/$INST1/rec_esi
-	
+
 add wave -group "Prescaler (1)" \
 	-label "Time quantum (Nominal)" $TCOMP/$INST1/clk_tq_nbt \
 	-label "Time quantum (Data)" $TCOMP/$INST1/clk_tq_dbt \
@@ -126,7 +126,7 @@ add wave -group "Prescaler (1)" \
 	-label "Synchronization type" $TCOMP/$INST1/sync_control \
 	-label "Bit time state" $TCOMP/$INST1/bt_fsm_out \
 	-label "Hard synchronization" $TCOMP/$INST1/hard_sync_edge_valid
-	
+
 add wave -group "CAN Core (1)" \
 	-label "Protocol state" $TCOMP/$INST1/$CORE/pc_state \
 	-label "Operational state" $TCOMP/$INST1/$CORE/op_state \
@@ -159,8 +159,8 @@ add wave -group "CAN Core (1)" \
 	-label "Rx parity" $TCOMP/$INST1/$CORE/PC_State_comp/rx_parity \
 	-label "Rx count grey" $TCOMP/$INST1/$CORE/PC_State_comp/rx_count_grey \
 	-label "Rx CRC" -hexadecimal $TCOMP/$INST1/$CORE/PC_State_comp/rec_crc_r \
-	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved		
-			
+	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
+
 add wave -group "Bus sampling (1)" \
 	-label "Measure transciever delay" $TCOMP/$INST1/trv_delay_calib \
 	-label "Transciever delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
@@ -181,7 +181,7 @@ add wave -label "Interrupt" $TCOMP/int_2
 add wave -label "Transciever delay" $TCOMP/tr_del_2
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
-								
+
 add wave -group "RX Buffer (2)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
 	-label "Buffer size" -unsigned $TCOMP/$INST1/rx_buf_size \
@@ -206,7 +206,7 @@ add wave -group "Frame to transmit (2)" \
 	-label "Identifier type" $TCOMP/$INST1/tran_ident_type_out \
 	-label "Frame format" $TCOMP/$INST1/tran_frame_type_out \
 	-label "BRS" $TCOMP/$INST1/tran_brs_out
-	
+
 add wave -group "Frame to recieve (2)" \
 	-label "Frame is valid" $TCOMP/$INST1/rec_message_valid \
 	-label "Data word" -hexadecimal $TCOMP/$INST1/rx_store_data_word \
@@ -218,7 +218,7 @@ add wave -group "Frame to recieve (2)" \
 	-label "Frame format" $TCOMP/$INST1/rec_frame_type_in \
 	-label "BRS" $TCOMP/$INST1/rec_brs \
 	-label "ESI" $TCOMP/$INST1/rec_esi
-	
+
 add wave -group "Prescaler (2)" \
 	-label "Time quantum (Nominal)" $TCOMP/$INST1/clk_tq_nbt \
 	-label "Time quantum (Data)" $TCOMP/$INST1/clk_tq_dbt \
@@ -230,7 +230,7 @@ add wave -group "Prescaler (2)" \
 	-label "Synchronization type" $TCOMP/$INST1/sync_control \
 	-label "Bit time state" $TCOMP/$INST1/bt_fsm_out \
 	-label "Hard synchronization" $TCOMP/$INST1/hard_sync_edge_valid
-	
+
 add wave -group "CAN Core (2)" \
 	-label "Protocol state" $TCOMP/$INST1/$CORE/pc_state \
 	-label "Operational state" $TCOMP/$INST1/$CORE/op_state \
@@ -257,8 +257,8 @@ add wave -group "CAN Core (2)" \
 	-label "DeStuffing enabled" $TCOMP/$INST1/$CORE/bds_enable \
 	-label "Fixed stuff" $TCOMP/$INST1/$CORE/fixed_stuff \
 	-label "Fixed de-stuff" $TCOMP/$INST1/$CORE/fixed_destuff \
-	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved		
-			
+	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
+
 add wave -group "Bus sampling (2)" \
 	-label "Measure transciever delay" $TCOMP/$INST1/trv_delay_calib \
 	-label "Transciever delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
@@ -266,6 +266,3 @@ add wave -group "Bus sampling (2)" \
 	-label "Reset secondary sampling" $TCOMP/$INST1/ssp_reset \
 	-label "Bit error secondary sampling" $TCOMP/$INST1/bit_error_sec_sam \
 	-label "Tripple sampling registers" $TCOMP/$INST1/bus_sync_comp/trs_reg \
-
-
-
