@@ -180,7 +180,7 @@ package CANtestLib is
         bit_rate_shift_int      :   boolean;
         rx_buffer_not_empty_int :   boolean;
         tx_buffer_hw_cmd        :   boolean;
-    end record;    
+    end record;
 
     -- Fault confinement states
     type SW_fault_state is (
@@ -963,17 +963,17 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Inserts frame to TXT Buffer. Function does NOT check state of the
     -- buffer.
-    -- 
+    --
     -- Arguments:
     --  frame           CAN FD Frame to send
     --  buf_nr          Number of TXT Buffer from which the frame should be
     --                  sent (1:4)
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
-    --  outcome         Returns "true" if the frame was inserted properly, 
+    --  outcome         Returns "true" if the frame was inserted properly,
     --                  "false" if TXT Buffer was in states : Ready,
     --                  TX in progress, Abort in progress
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure CAN_insert_TX_frame(
         constant frame          : in    SW_CAN_frame_type;
         constant buf_nr         : in    natural range 1 to 4;
@@ -1342,12 +1342,12 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Set fault confinement thresholds for Error warning limit and for
     -- Error passive.
-    -- 
+    --
     -- Arguments:
     --  fault_th        Variable with fault confinement thresholds.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure set_fault_thresholds(
@@ -1358,12 +1358,12 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Set fault confinement thresholds for Error warning limit and for
     -- Error passive.
-    -- 
+    --
     -- Arguments:
     --  fault_th        Variable with fault confinement thresholds.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure get_fault_thresholds(
@@ -1397,11 +1397,11 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Set Error counters from CTU CAN FD Core. 
-    -- 
+    -- Set Error counters from CTU CAN FD Core.
+    --
     -- Arguments:
     --  err_counters    Variable from which error counters will be set.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure set_error_counters(
@@ -1413,10 +1413,10 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read arbitration lost capture register.
-    -- 
+    --
     -- Arguments:
     --  alc             Bit index in which the arbitration was lost.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure read_alc(
@@ -1428,7 +1428,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read traffic counters.
-    -- 
+    --
     -- Arguments:
     --  ctr             Variable in which traffic counters will be stored
     --  ID              Index of CTU CAN FD Core instance.
@@ -1443,7 +1443,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read transceiver delay register.
-    -- 
+    --
     -- Arguments:
     --  ctr             Variable in which traffic counters will be stored
     --  ID              Index of CTU CAN FD Core instance.
@@ -1694,7 +1694,7 @@ package body CANtestLib is
         variable tmp             :      natural;
     begin
         tmp := seed + offset;
-        rand_ctr    <= tmp mod RAND_POOL_SIZE; 
+        rand_ctr    <= tmp mod RAND_POOL_SIZE;
         wait for 0 ns;
     end procedure;
 
@@ -2570,7 +2570,7 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type;
         variable outcome        : out   boolean
-    )is 
+    )is
         variable buf_state      :       SW_TXT_Buffer_state_type;
     begin
         outcome     := true;
@@ -2597,8 +2597,8 @@ package body CANtestLib is
     end procedure;
 
 
-    
-  
+
+
 
     procedure CAN_read_frame(
         variable frame          : inout SW_CAN_frame_type;
@@ -3448,7 +3448,7 @@ package body CANtestLib is
         data(PTX_IND) := '1';
         CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
         data(PTX_IND) := '0';
-        
+
         -- RX Error counter
         data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
                                         err_counters.rx_counter, 9));
@@ -3570,24 +3570,4 @@ entity CAN_test is
     signal exit_imm            :       boolean := false;
     signal rand_ctr            :       natural range 0 to 3800 := 0;
 
-end entity;
-
-
-USE work.CANtestLib.All;
-
---------------------------------------------------------------------------------
--- Test wrapper. When executable test is created it implements architecture of
--- this entity! Note that within one test wrapper architecture several tests
--- can be implemented!!
---------------------------------------------------------------------------------
-entity CAN_test_wrapper is
-    generic(
-        constant iterations   :     natural       :=  1000;
-        constant log_level    :     log_lvl_type  :=  warning_l;
-        constant error_beh    :     err_beh_type  :=  go_on;
-        constant error_tol    :     natural       :=  0
-    );
-    port(
-        signal status         :out  test_status_type
-    );
 end entity;
