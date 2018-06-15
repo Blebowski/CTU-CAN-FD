@@ -1,43 +1,43 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Unit test for TX Arbitrator circuit                                                 
+--  Unit test for TX Arbitrator circuit
 --------------------------------------------------------------------------------
 -- Revision History:
 --    30.5.2016   Created file
@@ -59,9 +59,9 @@ use work.CAN_FD_frame_format.all;
 use work.ID_transfer.all;
 
 architecture tx_arb_unit_test of CAN_test is
-    
+
     ------------------------
-    -- DUT signals    
+    -- DUT signals
     ------------------------
     signal clk_sys                :  std_logic;
     signal res_n                  :  std_logic := ACT_RESET;
@@ -91,7 +91,7 @@ architecture tx_arb_unit_test of CAN_test is
                                         (OTHERS => '0');
 
     ----------------------------------------------------------------------------
-    -- Internal TB signals   
+    -- Internal TB signals
     ----------------------------------------------------------------------------
 
     -- Memories as if connected to TXT Buffers
@@ -111,7 +111,7 @@ architecture tx_arb_unit_test of CAN_test is
     signal high_prio_buf_index    : natural range 0 to TXT_BUFFER_COUNT - 1;
     signal high_prio_buf_index_d  : natural range 0 to TXT_BUFFER_COUNT - 1;
     signal high_prio_valid        : boolean;
-    signal high_prio_valid_d      : boolean;    
+    signal high_prio_valid_d      : boolean;
 
      -- Modeled outputs
      signal mod_dlc_out           :  std_logic_vector(3 downto 0) := "0000";
@@ -133,7 +133,7 @@ architecture tx_arb_unit_test of CAN_test is
     -- Last locked buffer to detect functionality of txtb_changed
     signal last_locked_index      : natural range 0 to TXT_BUFFER_COUNT - 1 :=
                                     0;
-    
+
     -- Error counters
     signal cmp_err_ctr            :  natural := 0;
 
@@ -148,8 +148,8 @@ architecture tx_arb_unit_test of CAN_test is
         signal   b       : in std_logic_vector(63 downto 0)
     ) return boolean is
     begin
-        if (unsigned(a(63 downto 32)) < unsigned(b(63 downto 32))) or 
-          ((a(63 downto 32) = b(63 downto 32)) and 
+        if (unsigned(a(63 downto 32)) < unsigned(b(63 downto 32))) or
+          ((a(63 downto 32) = b(63 downto 32)) and
           (unsigned(a(31 downto 0)) < unsigned(b(31 downto 0))))
         then
             return true;
@@ -173,7 +173,7 @@ architecture tx_arb_unit_test of CAN_test is
             txt_buf_prio(i)      <= tmp;
         end loop;
     end procedure;
-    
+
 
 begin
 
@@ -184,7 +184,7 @@ begin
     generic map(
         buf_count              => TXT_BUFFER_COUNT
     )
-    port map( 
+    port map(
         clk_sys                => clk_sys,
         res_n                  => res_n,
         txt_buf_in             => txt_buf_in,
@@ -225,13 +225,13 @@ begin
         wait until rising_edge(clk_sys);
 
         if (res_n = ACT_RESET) then
-            apply_rand_seed(seed, 3, rand_ctr_1);        
+            apply_rand_seed(seed, 3, rand_ctr_1);
         end if;
-        
+
         ------------------------------------------------------------------------
         -- Additional delay to be sure that we catch HW command lock as real
         -- TX Arbitrator does by combinational path!
-        ------------------------------------------------------------------------        
+        ------------------------------------------------------------------------
         wait for 1 ns;
 
         -- Choose random TXT Buffer
@@ -240,10 +240,10 @@ begin
 
         ------------------------------------------------------------------------
         -- Check whether the buffer is not locked by the Core, in this case one
-        -- can't change the buffer state not to be ready. SW could only send 
+        -- can't change the buffer state not to be ready. SW could only send
         -- command to abort transmission.
         ------------------------------------------------------------------------
-        if ((mod_locked = false or 
+        if ((mod_locked = false or
              mod_buf_index /= integer(buf_index))) and
             (txt_hw_cmd.lock = '0')
         then
@@ -289,7 +289,7 @@ begin
         ------------------------------------------------------------------------
         -- Make sure that timestamp words in the buffer have some normal value,
         -- otherwise no buffer would ever get on output...
-        -- Set the time to transmit to actual timestamp + some extra time        
+        -- Set the time to transmit to actual timestamp + some extra time
         ------------------------------------------------------------------------
         shadow_mem(integer(buf_index))(3) <= timestamp(63 downto 32);
         rand_logic_vect_v(rand_ctr_4, extra_time, 0.3);
@@ -300,7 +300,7 @@ begin
 
         ------------------------------------------------------------------------
         -- Wait some extra time not to have too many data changes in buffer and
-        -- avoid confusion during test bring-up! 
+        -- avoid confusion during test bring-up!
         ------------------------------------------------------------------------
         wait for 5000 ns;
 
@@ -309,7 +309,7 @@ begin
 
     ------------------------------------------------------------------------------
     -- Connect TX Arbitrator to the shadow memories which emulate TXT Buffers
-    -- Note that data must be returned one clock cycle later exactly as TXT 
+    -- Note that data must be returned one clock cycle later exactly as TXT
     -- Buffer does it!
     ------------------------------------------------------------------------------
     buf_access_emu_proc : process (res_n, clk_sys)
@@ -337,8 +337,8 @@ begin
         variable tmp_prio     : natural;
         variable txt_valid    : boolean;
     begin
-    
-        
+
+
         ------------------------------------------------------------------------
         -- By default we have to assume index 3 (The highest one)
         -- This is default returned index by priority decoder when there is no
@@ -391,7 +391,7 @@ begin
     begin
 
         update 		:= false;
-        tmp_timest 	:= shadow_mem(integer(high_prio_buf_index))(3) & 
+        tmp_timest 	:= shadow_mem(integer(high_prio_buf_index))(3) &
                        shadow_mem(integer(high_prio_buf_index))(2);
 
         -- Model is locked
@@ -432,7 +432,7 @@ begin
                 update      := true;
             end if;
 
-            if (update = true) then    
+            if (update = true) then
                 -- Propagate metadata to the output
                 mod_buf_index        <= high_prio_buf_index;
                 mod_dlc_out          <= shadow_mem(high_prio_buf_index)(0)
@@ -455,10 +455,10 @@ begin
 
     mod_frame_valid_out <= '1' when ((mod_frame_com = '1' and
                                     high_prio_valid = true) or
-                                    (mod_locked = true)) 
+                                    (mod_locked = true))
                              else
                          '0';
-  
+
 
     ----------------------------------------------------------------------------
     -- Model LOCK and UNLOCK commands as if coming from CAN Core.
@@ -470,7 +470,7 @@ begin
 
         -- Wait till test start
         while res_n = ACT_RESET loop
-            wait until rising_edge(clk_sys);            
+            wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 1, rand_ctr_3);
         end loop;
 
@@ -496,7 +496,7 @@ begin
             last_locked_index   <= mod_buf_index;
 
             --------------------------------------------------------------------
-            -- Wait some time (as if Frame transmission was in progress). Have 
+            -- Wait some time (as if Frame transmission was in progress). Have
             -- realistic waiting time (at least 1000 ns) to cover for SOF bit.
             --------------------------------------------------------------------
             rand_real_v(rand_ctr_3, wait_time_r);
@@ -508,17 +508,17 @@ begin
 
             -- Unlock the Buffer
             txt_hw_cmd.unlock   <= '1';
-            wait until rising_edge(clk_sys);    
+            wait until rising_edge(clk_sys);
             mod_locked          <= false;
             txt_hw_cmd.unlock   <= '0';
 
             --------------------------------------------------------------------
             -- Before the next possible LOCK command, buffers must be evaluated.
             -- This takes up to 3 states of TX Arbitrator FSM.
-            -- We can be less strict here, since unlock occurs at the end of the 
+            -- We can be less strict here, since unlock occurs at the end of the
             -- frame (either Normal or Error).
             -- After that there is at least 3 bits of interframe space. Assuming
-            -- 10 clock cycles per bit, this gives at least 30 clock cycles! 
+            -- 10 clock cycles per bit, this gives at least 30 clock cycles!
             --------------------------------------------------------------------
             for i in 1 to 30 loop
                 wait until rising_edge(clk_sys);
@@ -533,7 +533,7 @@ begin
     ----------------------------------------------------------------------------
     cmp_proc : process
     begin
- 
+
         if (mod_frame_valid_out    /= tran_frame_valid_out and now /= 0 fs) then
             log("DUT and Model Frame valid not matching!", error_l, log_level);
             cmp_err_ctr          <= cmp_err_ctr + 1;
@@ -576,7 +576,7 @@ begin
         generate_clock(period, duty, epsilon, clk_sys);
         timestamp <= std_logic_vector(unsigned(timestamp) + 1);
     end process;
-  
+
     errors <= error_ctr;
 
 
@@ -619,16 +619,16 @@ begin
 
         evaluate_test(error_tol, error_ctr, status);
   end process;
-  
+
 end architecture;
 
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator        
+-- Test wrapper and control signals generator
 --------------------------------------------------------------------------------
 architecture tx_arb_unit_test_wrapper of CAN_test_wrapper is
-  
+
     -- Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(tx_arb_unit_test);
 
@@ -642,22 +642,22 @@ architecture tx_arb_unit_test_wrapper of CAN_test_wrapper is
     signal errors           :   natural;
 
 begin
-  
+
     -- In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp : CAN_test
     port map(
         run              =>  run,
-        iterations       =>  iterations , 
+        iterations       =>  iterations ,
         log_level        =>  log_level,
         error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
+        error_tol        =>  error_tol,
         status           =>  status_int,
         errors           =>  errors
     );
-  
+
     status              <= status_int;
-  
+
     ------------------------------------
     -- Starts the test and lets it run
     ------------------------------------
@@ -667,11 +667,10 @@ begin
         wait for 1 ns;
 
         --Wait until the only test finishes and then propagate the results
-        wait until (status_int=passed or status_int=failed);  
+        wait until (status_int=passed or status_int=failed);
 
         wait for 100 ns;
         run               <= false;
     end process;
-  
-end;
 
+end;

@@ -1,44 +1,44 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for bit stuffing and bit destuffing circuits.
---  
+--
 --  Unit test makes use of bit stuffing/destuffing symmetry. Random data are
 --  generated on input of bit stuffing. Data are stuffed and compared with
 --  reference SW model. Then data are destuffed and output is compared with
@@ -58,7 +58,7 @@
 --   Note that upon stuff error, step is finished immediately (as if error
 --   frame transmission started). Note that SW model covers recursive behaviour
 --   of bit stuffing.
---                                       
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --
@@ -96,10 +96,10 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal clk_sys              :   std_logic := '0';
     signal res_n                :   std_logic := '0';
 
-    ----------------------------------------------------------------------------    
+    ----------------------------------------------------------------------------
     -- Triggering signals
     ----------------------------------------------------------------------------
-    
+
     -- Trigger with intention to transmitt the data.
     signal tx_trig_intent       :   std_logic := '0';
 
@@ -120,7 +120,7 @@ architecture bit_stuffing_unit_test of CAN_test is
     -- data are destuffed ("destuffed" is active)!
     signal rx_trig_ack          :   std_logic := '0';
 
-    ----------------------------------------------------------------------------    
+    ----------------------------------------------------------------------------
     -- Datapath
     ----------------------------------------------------------------------------
     -- Transmitted data (before bit stuffing)
@@ -138,9 +138,9 @@ architecture bit_stuffing_unit_test of CAN_test is
     -- Received data (after bit-destuffing)
     signal rx_data              :   std_logic := '1';
 
-    ----------------------------------------------------------------------------    
+    ----------------------------------------------------------------------------
     -- Control signals
-    ----------------------------------------------------------------------------    
+    ----------------------------------------------------------------------------
     signal bs_enable            :   std_logic := '0';
     signal bd_enable            :   std_logic := '0';
     signal fixed_stuff          :   std_logic := '0';  -- Common for both
@@ -148,7 +148,7 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal bd_length            :   std_logic_vector(2 downto 0) := "100";
     signal stuff_error_enable   :   std_logic := '1';
 
-    ----------------------------------------------------------------------------    
+    ----------------------------------------------------------------------------
     -- Status signals
     ----------------------------------------------------------------------------
     signal data_halt            :   std_logic := '0';
@@ -159,7 +159,7 @@ architecture bit_stuffing_unit_test of CAN_test is
 
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------    
+    ----------------------------------------------------------------------------
     -- Testbench signals
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -215,12 +215,12 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal rand_set_ctr         :   natural range 0 to RAND_POOL_SIZE := 0;
     signal rand_st_err_ctr      :   natural range 0 to RAND_POOL_SIZE := 0;
     signal exit_imm_1           :   boolean := false;
-   
+
 
     -- Signal that no trigger is active and bit stuffing settings can be
     -- changed
     signal no_trigger           :   boolean := false;
-  
+
     -- Bit stuffing step settings
     signal set                  :   bs_test_settings_type :=
                                     (0, "000", false, 0, "000", (OTHERS => '1'),
@@ -256,7 +256,7 @@ architecture bit_stuffing_unit_test of CAN_test is
         if (to_integer(unsigned(set.stuff_length_fixed))     < 3 or
             to_integer(unsigned(set.stuff_length_non_fixed)) < 3)
         then
-            report "Invalid bit stuffing settings!" severity failure;            
+            report "Invalid bit stuffing settings!" severity failure;
         end if;
 
         --------------------------------------
@@ -264,7 +264,7 @@ architecture bit_stuffing_unit_test of CAN_test is
         --------------------------------------
         st_length := to_integer(unsigned(set.stuff_length_non_fixed));
         while (i < (set.bc_non_fixed - 1)) loop
-            
+
             -- Insert stuff bit
             if (stuff_ctr = st_length) then
                 set.stuffed_data_seq(out_ptr) <= not set.tx_data_seq(in_ptr - 1);
@@ -275,7 +275,7 @@ architecture bit_stuffing_unit_test of CAN_test is
                 prev_bit := not set.tx_data_seq(in_ptr - 1);
             end if;
 
-            -- Check if next bit is equal to previous one            
+            -- Check if next bit is equal to previous one
             if (set.tx_data_seq(in_ptr) = prev_bit) then
                 stuff_ctr := stuff_ctr + 1;
             else
@@ -290,7 +290,7 @@ architecture bit_stuffing_unit_test of CAN_test is
             i       := i + 1;
         end loop;
 
-        
+
         --------------------------------------
         -- Calculate fixed bit stuffing
         --------------------------------------
@@ -304,9 +304,9 @@ architecture bit_stuffing_unit_test of CAN_test is
             out_ptr := out_ptr + 1;
 
             st_length := to_integer(unsigned(set.stuff_length_fixed));
-            i := 0;   
+            i := 0;
             while (i < (set.bc_fixed - 1)) loop
-                
+
                 -- Insert stuff bit
                 if (stuff_ctr = st_length) then
                     stuff_ctr := 1;
@@ -319,11 +319,11 @@ architecture bit_stuffing_unit_test of CAN_test is
                     --wait for 0 ns;
 
                 -- Stuff counter is incremented regardless of bit values since
-                -- stuffing is fixed!         
+                -- stuffing is fixed!
                 else
                     stuff_ctr := stuff_ctr + 1;
                 end if;
-                
+
                 -- Insert bit from input sequence
                 set.stuffed_data_seq(out_ptr) <= set.tx_data_seq(in_ptr);
                 in_ptr  := in_ptr + 1;
@@ -408,7 +408,7 @@ architecture bit_stuffing_unit_test of CAN_test is
     --  3. Transmit TX data , receive RX data. Sample data after bit stuffing.
     --     In each step, evaluate if data after bit stuffing match expected data
     --     in "set.stuffed_data". Throw an error if not.
-    --  4. After "set.bc_non_fixed" change to fixed bit stuffing if 
+    --  4. After "set.bc_non_fixed" change to fixed bit stuffing if
     --     "set.change_fixed = true".
     --  5. TX, RX and sample stuffed data for rest of the sequence with fixed
     --     bit stuffing. Evaluate if TX data = RX data and if stuffed sequence
@@ -448,7 +448,7 @@ architecture bit_stuffing_unit_test of CAN_test is
 
         -- Error behaviour stuff
         signal err_ctr      : inout natural;
-        signal log_lvl      : in    log_lvl_type; 
+        signal log_lvl      : in    log_lvl_type;
         signal error_beh    : in    err_beh_type;
         signal exit_imm     : inout boolean
     ) is
@@ -466,16 +466,16 @@ architecture bit_stuffing_unit_test of CAN_test is
                 (OTHERS => '0'), (OTHERS => '0'), 0, 0);
 
         -- Generate step settings
-        generate_bs_settings(rand_ctr, set);        
+        generate_bs_settings(rand_ctr, set);
         wait for 0 ns;
 
         if (log_lvl = info_l) then
-            log("TX Data NON fixed: ", info_l, log_lvl);            
+            log("TX Data NON fixed: ", info_l, log_lvl);
             write(msg1, set.tx_data_seq(set.bc_non_fixed - 1 downto 0));
             writeline(output, msg1);
-            
-            log("TX Data fixed: ", info_l, log_lvl);            
-            write(msg2, set.tx_data_seq(set.bc_non_fixed + set.bc_fixed - 1 
+
+            log("TX Data fixed: ", info_l, log_lvl);
+            write(msg2, set.tx_data_seq(set.bc_non_fixed + set.bc_fixed - 1
                                        downto set.bc_non_fixed));
             writeline(output, msg2);
         end if;
@@ -615,10 +615,10 @@ architecture bit_stuffing_unit_test of CAN_test is
 
 
 begin
-  
-    bitStufComp : bitStuffing_v2 
+
+    bitStufComp : bitStuffing_v2
     port map(
-        clk_sys            =>  clk_sys, 
+        clk_sys            =>  clk_sys,
         res_n              =>  res_n,
         tran_trig_1        =>  bs_trig,
         enable             =>  bs_enable,
@@ -629,25 +629,25 @@ begin
         bst_ctr            =>  bs_ctr,
         data_out           =>  stuffed_data
     );
-  
-  
+
+
     bitDestComp : bitDestuffing
     PORT map(
-        clk_sys            =>  clk_sys,      
-        res_n              =>  res_n,  
+        clk_sys            =>  clk_sys,
+        res_n              =>  res_n,
         data_in            =>  joined_data,
         trig_spl_1         =>  bd_trig,
-        stuff_Error        =>  stuff_error,  
-        data_out           =>  rx_data,  
+        stuff_Error        =>  stuff_error,
+        data_out           =>  rx_data,
         destuffed          =>  destuffed,
         enable             =>  bd_enable,
-        stuff_Error_enable =>  stuff_error_enable, 
+        stuff_Error_enable =>  stuff_error_enable,
         fixed_stuff        =>  fixed_stuff,
         length             =>  bd_length,
         dst_ctr            =>  bd_ctr
     );
-  
- 
+
+
     ----------------------------------------------------------------------------
     -- Clock generation
     ----------------------------------------------------------------------------
@@ -668,15 +668,15 @@ begin
         wait until falling_edge(clk_sys);
         tx_trig_intent       <= '1';
         wait until falling_edge(clk_sys);
-        tx_trig_intent       <= '0'; 
+        tx_trig_intent       <= '0';
         bs_trig              <= '1';
-        wait until falling_edge(clk_sys);  
+        wait until falling_edge(clk_sys);
         bs_trig              <= '0';
         bd_trig              <= '1';
-        wait until falling_edge(clk_sys);  
+        wait until falling_edge(clk_sys);
         bd_trig              <= '0';
-        rx_trig_intent       <= '1';  
-        wait until falling_edge(clk_sys);  
+        rx_trig_intent       <= '1';
+        wait until falling_edge(clk_sys);
         rx_trig_intent       <= '0';
         wait until falling_edge(clk_sys);
         wait until falling_edge(clk_sys);
@@ -690,14 +690,14 @@ begin
     tx_trig_ack <= tx_trig_intent and (not data_halt);
     rx_trig_ack <= rx_trig_intent and (not destuffed);
 
-    no_trigger <= true when (tx_trig_intent = '0' and bs_trig = '0' and 
+    no_trigger <= true when (tx_trig_intent = '0' and bs_trig = '0' and
                              bd_trig = '0' and rx_trig_intent = '0')
                        else
                   false;
- 
+
     -- Assigning only to have waveform of expected data and presence of
     -- stuff bit!
-    sw_mod_prop_proc : process 
+    sw_mod_prop_proc : process
     begin
         wait until (rising_edge(clk_sys) and bs_trig = '1');
         exp_stuffed         <= set.stuffed_data_seq(wbs_index);
@@ -723,7 +723,7 @@ begin
 
         -- Wait until bit was stuffed
         wait until rising_edge(data_halt);
-        
+
         -- Generate random stuff error;
         rand_real_v(rand_st_err_ctr, tmp);
         if (tmp > 0.98) then
@@ -749,13 +749,13 @@ begin
 
 
     -- Stuffed data are inverted if error should be forced! Bit destuffing will
-    -- receive inversion of stuffed bits (the same as original value), thus 
+    -- receive inversion of stuffed bits (the same as original value), thus
     -- causing error!
     joined_data   <=  stuffed_data when (err_data = '0') else
                       not stuffed_data;
 
     errors        <= error_ctr;
-  
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -791,15 +791,15 @@ begin
 
         evaluate_test(error_tol, error_ctr, status);
     end process;
-    
+
 end architecture;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
+-- Test wrapper and control signals generator
 --------------------------------------------------------------------------------
 architecture bit_stuffing_unit_test_wrapper of CAN_test_wrapper is
-   
+
     -- Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(bit_stuffing_unit_test);
 
@@ -813,22 +813,22 @@ architecture bit_stuffing_unit_test_wrapper of CAN_test_wrapper is
     signal errors          :    natural;
 
 begin
-  
+
     -- In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp : CAN_test
     port map(
         run              =>  run,
-        iterations       =>  iterations , 
+        iterations       =>  iterations ,
         log_level        =>  log_level,
         error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
+        error_tol        =>  error_tol,
         status           =>  status_int,
         errors           =>  errors
     );
 
     status              <= status_int;
-  
+
     ----------------------------------------------------------------------------
     -- Starts the test and lets it run
     ----------------------------------------------------------------------------
@@ -838,10 +838,10 @@ begin
         wait for 1 ns;
 
         -- Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
+        wait until (status_int = passed or status_int = failed);
 
         wait for 100 ns;
         run               <= false;
     end process;
-  
+
 end;

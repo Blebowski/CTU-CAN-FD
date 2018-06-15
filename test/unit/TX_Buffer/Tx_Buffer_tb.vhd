@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -46,7 +46,7 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Test implementation                                            
+-- Test implementation
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -60,44 +60,44 @@ USE work.randomLib.All;
 use work.ID_transfer.all;
 
 architecture tx_buf_unit_test of CAN_test is
-  
+
     -- Clocking and reset
     signal clk_sys                :   std_logic:='0';
     signal res_n                  :   std_logic:='0';
-    
+
     -------------------------------
     --Driving Registers Interface--
     -------------------------------
-    
+
     -- Data and address for SW access into the RAM of TXT Buffer
     signal tran_data              :     std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
     signal tran_addr              :     std_logic_vector(4 downto 0) :=
                                             (OTHERS => '0');
     signal tran_cs                :     std_logic := '0';
-    
+
     -- SW commands from user registers
     signal txt_sw_cmd             :     txt_sw_cmd_type := ('0','0','0');
     signal txt_sw_buf_cmd_index   :     std_logic_vector(3 downto 0) :=
                                         (OTHERS => '1');
-    ------------------     
+    ------------------
     --Status signals--
     ------------------
     signal txtb_state             :     txt_fsm_type;
-    
+
     ------------------------------------
     --CAN Core and TX Arbiter Interface-
     ------------------------------------
-    
-    -- Commands from the CAN Core for manipulation of the CAN 
+
+    -- Commands from the CAN Core for manipulation of the CAN
     signal txt_hw_cmd             :     txt_hw_cmd_type :=
-                                          ('0', '0', '0', '0', '0', '0'); 
+                                          ('0', '0', '0', '0', '0', '0');
     signal txt_hw_cmd_buf_index   :     natural range 0 to 3;
-  
+
     -- Buffer output and pointer to the RAM memory
     signal txt_word               :     std_logic_vector(31 downto 0);
     signal txt_addr               :     natural range 0 to 19 := 0;
-    
+
     -- Signals to the TX Arbitrator that it can be selected for transmission
     -- (used as input to priority decoder)
     signal txt_buf_ready          :     std_logic;
@@ -106,7 +106,7 @@ architecture tx_buf_unit_test of CAN_test is
     ------------------------------------
     -- Internal testbench signals
     ------------------------------------
-    type shadow_memory_type is array (0 to 19) of std_logic_vector(31 downto 0);  
+    type shadow_memory_type is array (0 to 19) of std_logic_vector(31 downto 0);
     signal shadow_mem             :     shadow_memory_type
             := (OTHERS => (OTHERS => '0'));
 
@@ -122,7 +122,7 @@ architecture tx_buf_unit_test of CAN_test is
     -- Immediate exits
     signal exit_imm_1             :     boolean;
     signal exit_imm_2             :     boolean;
-    
+
     signal txtb_exp_state         :     txt_fsm_type;
 
     procedure calc_exp_state(
@@ -202,19 +202,19 @@ architecture tx_buf_unit_test of CAN_test is
         when others =>
         end case;
     end procedure;
-  
+
 begin
-   
+
     ----------------------------------------------------------------------------
     -- DUT - Create only one buffer instance
     ----------------------------------------------------------------------------
-    txt_Buf_comp : txtBuffer 
+    txt_Buf_comp : txtBuffer
     generic map(
         buf_count               => 4,
         ID                      => 0
     )
     port map(
-        clk_sys                 => clk_sys,    
+        clk_sys                 => clk_sys,
         res_n                   => res_n,
         tran_data               => tran_data,
         tran_addr               => tran_addr,
@@ -240,7 +240,7 @@ begin
     begin
         generate_clock(period, duty, epsilon, clk_sys);
     end process;
-    
+
 
     ----------------------------------------------------------------------------
     -- Data generation - stored by user writes
@@ -250,11 +250,11 @@ begin
     begin
         tran_cs      <= '0';
         while res_n = ACT_RESET loop
-            wait until rising_edge(clk_sys);                
-            apply_rand_seed(seed, 3, rand_gen_ctr);      
+            wait until rising_edge(clk_sys);
+            apply_rand_seed(seed, 3, rand_gen_ctr);
         end loop;
 
-        -- Generate random address and data and attempt to store it 
+        -- Generate random address and data and attempt to store it
         -- to the buffer.
         wait until rising_edge(clk_sys);
         rand_logic_vect_s(rand_gen_ctr, tran_data, 0.5);
@@ -289,10 +289,10 @@ begin
     ----------------------------------------------------------------------------
     data_read_proc : process
         variable tmp   : std_logic_vector(4 downto 0);
-    begin        
+    begin
         while res_n = ACT_RESET loop
-            wait until rising_edge(clk_sys);            
-            apply_rand_seed(seed, 2, rand_read_ctr);    
+            wait until rising_edge(clk_sys);
+            apply_rand_seed(seed, 2, rand_read_ctr);
         end loop;
 
         data_coh_err_ctr <= 0;
@@ -302,9 +302,9 @@ begin
         if (to_integer(unsigned(tmp)) > 19) then
             tmp    := "00000";
         end if;
-        
+
         txt_addr <= to_integer(unsigned(tmp));
-        
+
         wait until falling_edge(clk_sys) and tran_cs = '0';
 
         -- At any point the data should be matching the data in
@@ -322,7 +322,7 @@ begin
     commands_proc : process
         variable tmp_real : real;
     begin
-        
+
         while res_n = ACT_RESET loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 1, rand_com_gen_ctr);
@@ -333,7 +333,7 @@ begin
         -- Generate HW commands
         rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.lock, 0.2);
         rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.unlock, 0.2);
-    
+
         if (txtb_state /= txt_ready) then
             txt_hw_cmd.lock   <= '0';
         end if;
@@ -355,7 +355,7 @@ begin
             else
                  txt_hw_cmd.failed <='1';
             end if;
-        
+
         end if;
 
         -- Generate SW commands
@@ -368,7 +368,7 @@ begin
         calc_exp_state(txt_sw_cmd, txt_hw_cmd, txtb_state, txtb_exp_state);
 
         wait until rising_edge(clk_sys);
-        wait until falling_edge(clk_sys);        
+        wait until falling_edge(clk_sys);
         -- Check whether the state ended up as expected
         if (txtb_state /= txtb_exp_state) then
             process_error(state_coh_error_ctr, error_beh, exit_imm_2);
@@ -388,7 +388,7 @@ begin
         txt_sw_cmd.set_rdy <= '0';
         txt_sw_cmd.set_ety <= '0';
         txt_sw_cmd.set_abt <= '0';
- 
+
     end process;
 
 
@@ -430,7 +430,7 @@ begin
 
         evaluate_test(error_tol, error_ctr, status);
     end process;
-      
+
     errors <= error_ctr;
 
 end architecture;
@@ -439,10 +439,10 @@ end architecture;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
+-- Test wrapper and control signals generator
 --------------------------------------------------------------------------------
 architecture tx_buf_unit_test_wrapper of CAN_test_wrapper is
-  
+
     -- Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(tx_buf_unit_test);
 
@@ -450,29 +450,29 @@ architecture tx_buf_unit_test_wrapper of CAN_test_wrapper is
     -- Input trigger, test starts running when true
     signal run              :   boolean;
 
-    -- Status of the test        
+    -- Status of the test
     signal status_int       :   test_status_type;
 
     -- Amount of errors which appeared in the test
     signal errors           :   natural;
 
 begin
-  
+
     -- In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp : CAN_test
     port map(
         run              =>  run,
-        iterations       =>  iterations , 
+        iterations       =>  iterations ,
         log_level        =>  log_level,
         error_beh        =>  error_beh,
         error_tol        =>  error_tol,
         status           =>  status_int,
         errors           =>  errors
     );
-  
+
     status              <= status_int;
-  
+
     ----------------------------------------------------------------------------
     -- Starts the test and lets it run
     ----------------------------------------------------------------------------
@@ -482,10 +482,10 @@ begin
         wait for 1 ns;
 
         -- Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
+        wait until (status_int = passed or status_int = failed);
 
         wait for 100 ns;
         run               <= false;
     end process;
-  
+
 end;

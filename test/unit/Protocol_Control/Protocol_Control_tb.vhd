@@ -1,55 +1,55 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Unit test for Protocol Control. The architecture of this test is depicted 
+--  Unit test for Protocol Control. The architecture of this test is depicted
 --  in picture below. It is inherited from original Protocol Control testbench
 --  created during implementation of the CAN FD IP Core. This testbench only
---  tests the state machine of protocol control! 
--- 
+--  tests the state machine of protocol control!
+--
 --  Following features of are NOT tested here:
---    - bit stuffing and destuffing (frames transmitted from protocol control 
+--    - bit stuffing and destuffing (frames transmitted from protocol control
 --      is without bit stuffing)
---    - CRC calculation  (CRC is provided to protocol control and in this 
+--    - CRC calculation  (CRC is provided to protocol control and in this
 --      circuit always fixed value is provided)
---    - stuff and destuff counters are always zero provided to 
+--    - stuff and destuff counters are always zero provided to
 --      Protocol control
---    - Synchronization - triggerring signals are fixed in this testbench, 
+--    - Synchronization - triggerring signals are fixed in this testbench,
 --      no synchronization is happenning!
 --    - error detection!
 --
@@ -59,11 +59,11 @@
 --    - Frame integrity, TX frame = RX Frame.
 --
 -- Architecture:
---   
+--
 --      -----------    ---------------------
 --  |---| Receive |<---| Protocol control 2|<-|
 --  |   |  frame  |    ---------------------  |  bus_level
---  |   -----------                           |  
+--  |   -----------                           |
 --  |                                         |
 --  |  -----------    ---------------------   |  ---------------------
 --  |  | Generate|--->| Protocol control 1|----->|Record the frame as|
@@ -71,7 +71,7 @@
 --  |  ----------- |                             ---------------------
 --  |              |    ----------------                     |
 --  |              |--->| SW CAN Model |---------------|     | recorded frame
---  |              |    ----------------   expected    v     v 
+--  |              |    ----------------   expected    v     v
 --  |              |                        frame     ----------
 --  -----------    |                                  | compare|
 --            |    |                                  ----------
@@ -87,18 +87,18 @@
 --
 --  Test sequence:
 --    1. Generate random frame on input of Protocol Control 1
---    2. Calculate expected bit sequence (frame) on the CAN bus including 
+--    2. Calculate expected bit sequence (frame) on the CAN bus including
 --       ACK and EOF!
 --    3. Transmitt the frame and record the bit sequence!
 --    4. Compare if Expected bit sequence is equal to recorded one
---    5. Compare if Generated frame (data,ident,type of frame...) is equal 
+--    5. Compare if Generated frame (data,ident,type of frame...) is equal
 --       to received one!
 --    6. If points 4 or 5 give mismatch increase error counter
 --    7. Loop points 1 to 6 until the number of iterations was reached!
 --
 --    Note that since additional function for buidling CAN frame in "SW" is used
 --    it verifies the protocol control towards errors which can be not detected
---    when both PC1 and PC2 have the error. E.g if PC has missing bit then it 
+--    when both PC1 and PC2 have the error. E.g if PC has missing bit then it
 --    won't transmitt it, it won't receive it and it will communicate hapilly
 --    further! But the transmitted frame would not be according to spec!
 --    This is reason for SW model of CAN Frame!
@@ -131,7 +131,7 @@ use STD.textio.all;
 use IEEE.std_logic_textio.all;
 
 architecture Protocol_Control_unit_test of CAN_test is
-    
+
     ----------------------------------------------------------------------------
     -- Common Signals from/to PC1 and PC2
     ----------------------------------------------------------------------------
@@ -139,17 +139,17 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal res_n                    :  std_logic := '0';
 
     -- Driving bus
-    signal drv_bus                  :  std_logic_vector(1023 downto 0) := 
+    signal drv_bus                  :  std_logic_vector(1023 downto 0) :=
                                         (OTHERS => '0');
 
     -- CRC results
-    signal crc15                    :  std_logic_vector(14 downto 0) := 
+    signal crc15                    :  std_logic_vector(14 downto 0) :=
                                         (OTHERS => '0');
     signal crc17                    :  std_logic_vector(16 downto 0) :=
                                         (OTHERS => '0');
-    signal crc21                    :  std_logic_vector(20 downto 0) := 
+    signal crc21                    :  std_logic_vector(20 downto 0) :=
                                         (OTHERS => '0');
-      
+
     ----------------------------------------------------------------------------
     -- Signals from/to PC1
     ----------------------------------------------------------------------------
@@ -159,10 +159,10 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal tran_is_rtr_1            :  std_logic := '0';
     signal tran_ident_type_1        :  std_logic := '0';
     signal tran_frame_type_1        :  std_logic := '0';
-    signal tran_brs_1               :  std_logic := '0'; 
+    signal tran_brs_1               :  std_logic := '0';
 
     -- TX Buffer interface (Identifier word + data words)
-    signal txt_data_word_1          :  std_logic_vector(31 downto 0) := 
+    signal txt_data_word_1          :  std_logic_vector(31 downto 0) :=
                                          (OTHERS => '0');
     signal txt_buf_ptr_1            :  natural range 0 to 19;
 
@@ -193,7 +193,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- RX Identifier
     signal rec_ident_1              :  std_logic_vector(28 downto 0);
-    
+
     -- Recieved CRC value
     signal rec_crc_1                :  std_logic_vector(20 downto 0);
 
@@ -223,7 +223,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- CRC Error
     signal CRC_Error_1              :  std_logic;
-    
+
     -- Acknowledge error
     signal ack_Error_1              :  std_logic;
 
@@ -254,7 +254,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Acknowledge received
     signal ack_recieved_out_1       :  std_logic;
 
-    -- Bit rate was shifted      
+    -- Bit rate was shifted
     signal br_shifted_1             :  std_logic;
 
     -- Transcieved data on CAN Bus
@@ -291,7 +291,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Synchronisation control (NO_SYNC, HARD_SYNC, RE_SYNC)
     signal sync_control_1           :  std_logic_vector(1 downto 0);
 
-    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE) 
+    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE)
     signal sp_control_1             :  std_logic_vector(1 downto 0);
 
     -- Clear Secondary sampling point shift register (in begining of
@@ -307,7 +307,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Synchronisation edge validated by prescaler!!!
     signal hard_sync_edge_1         :  std_logic;
 
-    -- Internal loopBack enabled (for Bus monitoring mode) 
+    -- Internal loopBack enabled (for Bus monitoring mode)
     signal int_loop_back_ena_1      :  std_logic;
 
     -- Protocol state output.
@@ -315,7 +315,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- Start of frame pulse
     signal sof_pulse_1              :  std_logic;
-    
+
 
     ----------------------------------------------------------------------------
     -- Signals from/to PC2
@@ -326,7 +326,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal tran_is_rtr_2            :  std_logic := '0';
     signal tran_ident_type_2        :  std_logic := '0';
     signal tran_frame_type_2        :  std_logic := '0';
-    signal tran_brs_2               :  std_logic := '0'; 
+    signal tran_brs_2               :  std_logic := '0';
 
     -- TX Buffer interface (Identifier word + data words)
     signal txt_data_word_2          :  std_logic_vector(31 downto 0) :=
@@ -359,7 +359,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- RX Identifier
     signal rec_ident_2              :  std_logic_vector(28 downto 0);
-    
+
     -- Recieved CRC value
     signal rec_crc_2                :  std_logic_vector(20 downto 0);
 
@@ -389,7 +389,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- CRC Error
     signal CRC_Error_2              :  std_logic;
-    
+
     -- Acknowledge error
     signal ack_Error_2              :  std_logic;
 
@@ -421,7 +421,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Acknowledge received
     signal ack_recieved_out_2       :  std_logic;
 
-    -- Bit rate was shifted      
+    -- Bit rate was shifted
     signal br_shifted_2             :  std_logic;
 
     -- Transcieved data on CAN Bus
@@ -458,7 +458,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Synchronisation control (NO_SYNC, HARD_SYNC, RE_SYNC)
     signal sync_control_2           :  std_logic_vector(1 downto 0);
 
-    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE) 
+    -- Sample point control (NOMINAL_SAMPLE, DATA_SAMPLE, SECONDARY_SAMPLE)
     signal sp_control_2             :  std_logic_vector(1 downto 0);
 
     -- Clear Secondary sampling point shift register (in begining of
@@ -474,7 +474,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Synchronisation edge validated by prescaler!!!
     signal hard_sync_edge_2         :  std_logic;
 
-    -- Internal loopBack enabled (for Bus monitoring mode) 
+    -- Internal loopBack enabled (for Bus monitoring mode)
     signal int_loop_back_ena_2      :  std_logic;
 
     -- Protocol state output.
@@ -482,7 +482,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- Start of frame pulse
     signal sof_pulse_2              :  std_logic;
-   
+
 
     ----------------------------------------------------------------------------
     -- Internal testbench signals
@@ -511,11 +511,11 @@ architecture Protocol_Control_unit_test of CAN_test is
                                         (OTHERS => (OTHERS => '0'));
     signal txtb_mem_ptr             :  natural := 0;
 
-    -- RX Buffer memory model    
+    -- RX Buffer memory model
     signal rxb_mem                  :  test_mem_type :=
                                         (OTHERS => (OTHERS => '0'));
     signal rxb_mem_ptr              :  natural := 0;
-    
+
     ------------------------
     -- Driving bus aliases
     ------------------------
@@ -550,13 +550,13 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Type of FD Format Frame (ISO,non-ISO)
     signal drv_fd_type              :     std_logic;
 
-    
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Testbench procedures and functions
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
-    
+
     procedure stuff_count_grey_code(
         constant st_ctr           :in   natural range 0 to 7;
         variable parity           :out  std_logic;
@@ -576,7 +576,7 @@ architecture Protocol_Control_unit_test of CAN_test is
             when others =>
                 report "Invalid stuff counter value" severity failure;
         end case;
-        
+
         parity := tmp(0) xor tmp(1) xor tmp(2);
         result := tmp;
     end procedure;
@@ -624,7 +624,7 @@ architecture Protocol_Control_unit_test of CAN_test is
         if (tx_frame.ident_type = EXTENDED) then
             seq(ptr)        := RECESSIVE;   -- SRR
             seq(ptr + 1)    := RECESSIVE;   -- IDE
-        
+
         else
             if (tx_frame.frame_format = NORMAL_CAN) then
                 seq(ptr)        := tx_frame.rtr; -- RTR
@@ -635,22 +635,22 @@ architecture Protocol_Control_unit_test of CAN_test is
         end if;
         ptr := ptr + 2;
 
-        -- Identifier EXTENSION     
+        -- Identifier EXTENSION
         if (tx_frame.ident_type = EXTENDED) then
             for i in 0 to 17 loop
                 seq(ptr)    := id_word(IDENTIFIER_EXT_H - i);
                 ptr         := ptr + 1;
             end loop;
         end if;
-   
+
         -- Remaining bits of control field (apart from DLC)
         join       := tx_frame.frame_format & tx_frame.ident_type;
         case join is
         when NORMAL_CAN & BASE =>
             seq(ptr)        := DOMINANT;       -- r0
             ptr             := ptr + 1;
-              
-        when NORMAL_CAN & EXTENDED => 
+
+        when NORMAL_CAN & EXTENDED =>
             seq(ptr)        := tx_frame.rtr;   -- RTR
             seq(ptr + 1)    := DOMINANT;       -- r1
             seq(ptr + 2)    := DOMINANT;       -- r0
@@ -668,7 +668,7 @@ architecture Protocol_Control_unit_test of CAN_test is
                 seq(ptr + 3) := RECESSIVE;
             end if;
             ptr             := ptr + 4;
-              
+
         when FD_CAN & EXTENDED =>
             seq(ptr)        := DOMINANT;       -- r1
             seq(ptr + 1)    := RECESSIVE;      -- EDL
@@ -751,8 +751,8 @@ architecture Protocol_Control_unit_test of CAN_test is
         length              := ptr + 1;
 
     end procedure;
-    
-    
+
+
     ----------------------------------------------------------------------------
     -- Record what is on bus! With known length from SW CAN, we know
     -- what should be there!
@@ -769,7 +769,7 @@ architecture Protocol_Control_unit_test of CAN_test is
         variable recorded             :out  std_logic_vector(639 downto 0)
     )is
     begin
-      
+
         -- Wait until we are on SOF bit
         wait until bus_line = DOMINANT;
 
@@ -779,7 +779,7 @@ architecture Protocol_Control_unit_test of CAN_test is
         end loop;
 
     end procedure;
-    
+
 
     ----------------------------------------------------------------------------
     -- Compare what is expected to be transmitted and what is transmitted
@@ -798,12 +798,12 @@ architecture Protocol_Control_unit_test of CAN_test is
                 outcome := false;
             end if;
         end loop;
-      
+
     end procedure;
 
-    
+
 begin
-  
+
     protocolControl_1_Comp : protocolControl
     port map(
         clk_sys               => clk_sys,
@@ -958,9 +958,9 @@ begin
     -- Creating bus level
     ----------------------------------------------------------------------------
     bus_level             <= data_tx_2 AND data_tx_1;
-    
-    
-    ----------------------------------------------------------------------------    
+
+
+    ----------------------------------------------------------------------------
     -- Driving bus aliases (equal for both nodes)
     ----------------------------------------------------------------------------
     drv_bus(DRV_RTR_PREF_INDEX)                       <=  drv_rtr_pref;
@@ -985,7 +985,7 @@ begin
     drv_self_test_ena                                 <= '0';
     drv_abort_tran                                    <= '0';
     drv_ack_forb                                      <= '0';
-    drv_ena                                           <= '1';    
+    drv_ena                                           <= '1';
 
     ----------------------------------------------------------------------------
     -- Following test the protocol control properly
@@ -1000,7 +1000,7 @@ begin
     stuff_Error_valid_2       <= '0';
 
     -- CRCs are hardcoded, no need to check proper CRC Calculation. Only need
-    -- to check that CRC is matching 
+    -- to check that CRC is matching
     crc15                     <= "101010101010101";
     crc17                     <= "10101010101010101";
     crc21                     <= "101010101010101010101";
@@ -1022,7 +1022,7 @@ begin
     -- Sampling signals generation
     ----------------------------------------------------------------------------
     sample_gen : process
-    
+
         variable min_diff   :   natural := 4;
         --Note: With this setting there must be minnimally two clock cycles
         --      between the RX trig and TX trig. When 2 or 1 is set here
@@ -1032,9 +1032,9 @@ begin
         --      in this test PC can do it with 3. One clock cycle is
         --      reserved and is of use in situations where both nodes
         --      are transmitting at the same time!
-    
+
     begin
-        generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);    
+        generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);
     end process;
 
 
@@ -1049,17 +1049,17 @@ begin
             hard_sync_edge_1 <= '0';
             prev_bus         <= RECESSIVE;
         elsif rising_edge(clk_sys) then
-         
+
             prev_bus <= bus_level;
-                
+
             if (prev_bus /= bus_level and bus_level = DOMINANT) then
                 hard_sync_edge_2 <= '1';
                 hard_sync_edge_1 <= '1';
             else
                 hard_sync_edge_2 <= '0';
                 hard_sync_edge_1 <= '0';
-            end if; 
-        end if;  
+            end if;
+        end if;
     end process;
 
 
@@ -1093,8 +1093,8 @@ begin
                                 rec_esi_2 &
                                 rec_brs_2 & '1' &
                                 rec_frame_type_2 &
-                                rec_ident_type_2 & 
-                                rec_is_rtr_2 & '0' & 
+                                rec_ident_type_2 &
+                                rec_is_rtr_2 & '0' &
                                 rec_dlc_2;
         rxb_mem(rxb_mem_ptr + 1) <= "000" & rec_ident_2;
 
@@ -1103,7 +1103,7 @@ begin
         rxb_mem(rxb_mem_ptr + 3) <= (OTHERS => '0');
 
         rxb_mem_ptr <= rxb_mem_ptr + 4;
-        
+
         -- We are sure that frame is received! If not maximum amount of received
         -- words is 16, break if this is exceeded!
         while true loop
@@ -1115,10 +1115,10 @@ begin
 
                 -- Finally store RWCNT here (we dont care when it is stored)!
                 rxb_mem(0)(RWCNT_H downto RWCNT_L) <=
-                    std_logic_vector(to_unsigned(rxb_mem_ptr - 1, 
+                    std_logic_vector(to_unsigned(rxb_mem_ptr - 1,
                                         RWCNT_H - RWCNT_L + 1));
                 exit;
-            end if;          
+            end if;
 
             -- Break if there is more data than expected!
             if (rxb_mem_ptr > 19) then
@@ -1135,7 +1135,7 @@ begin
 
     end process;
 
-    
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Main Test process
@@ -1214,7 +1214,7 @@ begin
             gen_sw_CAN(tx_frame, error_st, drv_fd_type, CRC15, CRC17, CRC21,
                         dst_ctr_1, sw_seq, seq_length);
 
-            --------------------------------------------------------------------           
+            --------------------------------------------------------------------
             -- Start transmitting by Protocol control 1
             --------------------------------------------------------------------
             log("Starting transmittion and recording on bus", info_l, log_level);
@@ -1253,7 +1253,7 @@ begin
                 process_error(error_ctr, error_beh, exit_imm);
                 wait;
             end if;
-            
+
             loop_ctr <= loop_ctr + 1;
         end loop;
 
@@ -1261,30 +1261,30 @@ begin
     end process;
 
     errors <= error_ctr;
-  
+
 end architecture;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
+-- Test wrapper and control signals generator
 --------------------------------------------------------------------------------
 architecture Protocol_Control_unit_test_wrapper of CAN_test_wrapper is
-  
+
     -- Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(Protocol_Control_unit_test);
-  
-    signal run              :   boolean;                  
-    signal status_int       :   test_status_type;     
+
+    signal run              :   boolean;
+    signal status_int       :   test_status_type;
     signal errors           :   natural;
 
 begin
-  
+
     -- In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp : CAN_test
     port map(
      run              =>  run,
-     iterations       =>  iterations , 
+     iterations       =>  iterations ,
      log_level        =>  log_level,
      error_beh        =>  error_beh,
      error_tol        =>  error_tol,
@@ -1293,7 +1293,7 @@ begin
     );
 
     status              <= status_int;
-  
+
     ----------------------------------------------------------------------------
     -- Starts the test and lets it run
     ----------------------------------------------------------------------------
@@ -1303,11 +1303,10 @@ begin
         wait for 1 ns;
 
         -- Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
+        wait until (status_int = passed or status_int = failed);
 
         wait for 100 ns;
-        run               <= false;   
+        run               <= false;
     end process;
-  
-end;
 
+end;

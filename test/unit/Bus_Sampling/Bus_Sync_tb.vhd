@@ -1,43 +1,43 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Unit test for Bus synchronizer                                        
+--  Unit test for Bus synchronizer
 --------------------------------------------------------------------------------
 -- Revision History:
 --
@@ -67,7 +67,7 @@ architecture bus_sync_unit_test of CAN_test is
 
     -- CAN data output to transciever
     signal CAN_tx                   :   std_logic := '0';
-    signal drv_bus                  :   std_logic_vector(1023 downto 0) := 
+    signal drv_bus                  :   std_logic_vector(1023 downto 0) :=
                                             (OTHERS => '0');
 
     -- Sample command for nominal bit time
@@ -86,14 +86,14 @@ architecture bus_sync_unit_test of CAN_test is
     signal data_rx                  :   std_logic:= '0';
     signal sp_control               :   std_logic_vector(1 downto 0) :=
                                             (OTHERS => '0');
-    signal ssp_reset                :   std_logic:= '0'; 
-    signal trv_delay_calib          :   std_logic:= '0'; 
+    signal ssp_reset                :   std_logic:= '0';
+    signal trv_delay_calib          :   std_logic:= '0';
     signal bit_err_enable           :   std_logic:= '1';
 
-    -- Secondary sample signal 
+    -- Secondary sample signal
     signal sample_sec_out           :   std_logic:= '0';
 
-    -- Bit destuffing trigger for secondary sample point 
+    -- Bit destuffing trigger for secondary sample point
     signal sample_sec_del_1_out     :   std_logic:= '0';
 
     -- Rec trig for secondary sample point
@@ -101,7 +101,7 @@ architecture bus_sync_unit_test of CAN_test is
 
     signal trv_delay_out            :   std_logic_vector(15 downto 0);
     signal bit_Error                :   std_logic:= '0';
-    
+
     -- Internal testbench signals
     signal seg1                     :   natural     := 20;
     signal seg2                     :   natural     := 10;
@@ -112,13 +112,13 @@ architecture bus_sync_unit_test of CAN_test is
                                              (OTHERS => RECESSIVE);
     signal tx_trig                  :   std_logic   := '0';
     signal rx_trig                  :   std_logic   := '0';
-    
+
     -- Additional random counters
     signal rand_ctr_data_gen        :   natural range 0 to RAND_POOL_SIZE := 0;
     signal rand_ctr_noise_gen       :   natural range 0 to RAND_POOL_SIZE := 0;
-    
+
     signal drv_ena                  :   std_logic;
-    
+
     signal generate_ones            :   boolean := false;
 
 
@@ -151,33 +151,33 @@ architecture bus_sync_unit_test of CAN_test is
     end procedure;
 
 begin
-  
-    bus_Sync_comp : busSync 
+
+    bus_Sync_comp : busSync
     GENERIC map(
-        use_Sync              =>  true 
-    )  
+        use_Sync              =>  true
+    )
     PORT map(
-        clk_sys                =>  clk_sys,  
-        res_n                  =>  res_n , 
+        clk_sys                =>  clk_sys,
+        res_n                  =>  res_n ,
         CAN_rx                 =>  CAN_rx,
         CAN_tx                 =>  CAN_tx,
         drv_bus                =>  drv_bus,
         sample_nbt             =>  sample_nbt,
-        sample_dbt             =>  sample_dbt,    
-        sync_edge              =>  sync_edge,  
-        data_tx                =>  data_tx,  
-        data_rx                =>  data_rx, 
-        sp_control             =>  sp_control,  
-        ssp_reset              =>  ssp_reset,  
-        trv_delay_calib        =>  trv_delay_calib,  
-        bit_err_enable         =>  bit_err_enable, 
+        sample_dbt             =>  sample_dbt,
+        sync_edge              =>  sync_edge,
+        data_tx                =>  data_tx,
+        data_rx                =>  data_rx,
+        sp_control             =>  sp_control,
+        ssp_reset              =>  ssp_reset,
+        trv_delay_calib        =>  trv_delay_calib,
+        bit_err_enable         =>  bit_err_enable,
         sample_sec_out         =>  sample_sec_out ,
-        sample_sec_del_1_out   =>  sample_sec_del_1_out,  
-        sample_sec_del_2_out   =>  sample_sec_del_2_out,  
-        trv_delay_out          =>  trv_delay_out,  
-        bit_Error              =>  bit_Error  
+        sample_sec_del_1_out   =>  sample_sec_del_1_out,
+        sample_sec_del_2_out   =>  sample_sec_del_2_out,
+        trv_delay_out          =>  trv_delay_out,
+        bit_Error              =>  bit_Error
     );
-   
+
     drv_ena                    <= '1';
     drv_bus(DRV_ENA_INDEX)     <= drv_ena;
 
@@ -197,12 +197,12 @@ begin
     ----------------------------------------------------------------------------
     -- Sampling signals generation
     ----------------------------------------------------------------------------
-    sample_gen : process    
-        variable min_diff : natural := 3; 
+    sample_gen : process
+        variable min_diff : natural := 3;
     begin
         generate_trig(tx_trig, rx_trig, clk_sys, seg1, seg2);
-    end process; 
-  
+    end process;
+
     sample_nbt <= rx_trig;
     sample_dbt <= rx_trig;
 
@@ -235,7 +235,7 @@ begin
         variable rand_max   : real := 0.0;
     begin
         wait until rising_edge(clk_sys);
-    
+
         if (res_n = ACT_RESET) then
             apply_rand_seed(seed, 1, rand_ctr_noise_gen);
         end if;
@@ -256,7 +256,7 @@ begin
         -- This is weak spot of FD protocol since not only
         -- sampling wrong value in sample point, but
         -- ANY glitch during duration of EDL and r0 bits
-        -- will be sampled as edge! 
+        -- will be sampled as edge!
         -- It should be considered to use tripple sampling
         -- and selection from 3 values as in tripple sampling
         -- mode!!!
@@ -281,10 +281,10 @@ begin
         ------------------------------------------------------------------------
         tran_data_sr <= tran_data_sr(159 downto 0) & data_tx;
     end process;
-  
+
     CAN_rx <= tran_del_sr(tran_del);
-  
-  
+
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Main Test process
@@ -315,8 +315,8 @@ begin
             -- NOMINAL sampling
             --------------------------------------------------------------------
 
-            -- Generates bit time setting 
-            generate_settings(rand_ctr, tran_del, seg1, seg2, false);      
+            -- Generates bit time setting
+            generate_settings(rand_ctr, tran_del, seg1, seg2, false);
             sp_control <= NOMINAL_SAMPLE;
 
             -- Wait until there is for sure first bit
@@ -328,18 +328,18 @@ begin
                 wait for 20 ns;
 
                 if ((data_tx /= data_rx) and bit_Error = '0') then
-                    process_error(error_ctr, error_beh, exit_imm); 
+                    process_error(error_ctr, error_beh, exit_imm);
                     log("TX and RX Data mismatch and no bit error fired!",
                       error_l, log_level);
                 end if;
             end loop;
-          
+
             --------------------------------------------------------------------
             -- Data sampling
             --------------------------------------------------------------------
 
-            -- Generates bit time setting 
-            generate_settings(rand_ctr, tran_del, seg1, seg2, false);      
+            -- Generates bit time setting
+            generate_settings(rand_ctr, tran_del, seg1, seg2, false);
             sp_control <= DATA_SAMPLE;
 
             -- Wait until there is for sure first bit
@@ -351,26 +351,26 @@ begin
                 wait for 20 ns;
 
                 if ((data_tx /= data_rx) and bit_Error = '0') then
-                    process_error(error_ctr, error_beh, exit_imm); 
+                    process_error(error_ctr, error_beh, exit_imm);
                     log("TX and RX Data are mismatching and no bit error fired!",
                       error_l, log_level);
-                end if; 
+                end if;
             end loop;
-          
-          
+
+
             --------------------------------------------------------------------
             -- Secondary sampling
             --------------------------------------------------------------------
-          
-            -- Generates bit time setting 
-            generate_settings(rand_ctr, tran_del, seg1, seg2, true);      
+
+            -- Generates bit time setting
+            generate_settings(rand_ctr, tran_del, seg1, seg2, true);
 
             --------------------------------------------------------------------
             -- Here we wait until the bus truly works with this delay!!
             -- We want longest possible delay to be really propagated!
             -- Additionally we say that now we generate only Recessive
             -- bits to the BUS. Since now we have arbitrarily fast bit
-            -- time in testbench, it can happend that due to too large 
+            -- time in testbench, it can happend that due to too large
             -- delay previous bits were not received yet! Then earlier
             -- edge on RX can be captured and wrong transciever delay
             -- measured!
@@ -389,7 +389,7 @@ begin
             generate_ones <= true;
             wait for 2000 ns;
             generate_ones <= false;
-          
+
             --We set the circuit to measure transciever delay
             trv_delay_calib <= '1';
             wait until falling_edge(can_tx);
@@ -400,10 +400,10 @@ begin
             trv_delay_calib <= '0';
 
             sp_control <= SECONDARY_SAMPLE;
-                
+
             -- Wait for next bit
             wait until tx_trig'event;
-          
+
             --Check the bits
             for i in 0 to 50 loop
                 wait until rising_edge(sample_sec_out);
@@ -415,7 +415,7 @@ begin
                      data_rx) and
                      bit_Error='0')
                 then
-                    process_error(error_ctr, error_beh, exit_imm); 
+                    process_error(error_ctr, error_beh, exit_imm);
                     log("TX and RX Data mismatch, and no bit error fired!",
                        error_l, log_level);
                 end if;
@@ -426,44 +426,44 @@ begin
 
         evaluate_test(error_tol, error_ctr, status);
   end process;
-  
+
 end architecture;
 
 
 --------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
+-- Test wrapper and control signals generator
 --------------------------------------------------------------------------------
 architecture bus_sync_test_wrapper of CAN_test_wrapper is
-  
+
     -- Select architecture of the test
     for test_comp : CAN_test use entity work.CAN_test(bus_sync_unit_test);
 
-    -- Input trigger, test starts running when  
+    -- Input trigger, test starts running when
     signal run              :   boolean;
 
-    -- Status of the test       
+    -- Status of the test
     signal status_int       :   test_status_type;
 
     -- Amount of errors which appeared in the test
     signal errors           :   natural;
 
 begin
-  
+
     -- In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp : CAN_test
     port map(
         run              =>  run,
-        iterations       =>  iterations , 
+        iterations       =>  iterations ,
         log_level        =>  log_level,
         error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
+        error_tol        =>  error_tol,
         status           =>  status_int,
         errors           =>  errors
     );
-  
+
     status              <= status_int;
-  
+
     ------------------------------------
     -- Starts the test and lets it run
     ------------------------------------
@@ -473,10 +473,10 @@ begin
         wait for 1 ns;
 
         --Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
+        wait until (status_int = passed or status_int = failed);
 
         wait for 100 ns;
         run               <= false;
     end process;
-  
+
 end;
