@@ -64,39 +64,29 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package rx_status_feature is
-
     procedure rx_status_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body rx_status_feature is
-
     procedure rx_status_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     ) is
         variable ID_1           	:       natural range 0 to 15 := 1;
         variable ID_2           	:       natural range 0 to 15 := 2;
@@ -110,32 +100,32 @@ package body rx_status_feature is
         variable command            :       SW_command := (false, false, false);
         variable status             :       SW_status;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Restart the content of the buffer...
         ------------------------------------------------------------------------
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus_1);
+        give_controller_command(command, ID_1, mem_bus(1));
         command.release_rec_buffer := false;
 
         ------------------------------------------------------------------------
         -- Read the size of the synthesized buffer
         ------------------------------------------------------------------------
-        get_rx_buf_state(buf_info, ID_1, mem_bus_1);
+        get_rx_buf_state(buf_info, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Check that buffer is empty
         ------------------------------------------------------------------------
         if (not buf_info.rx_empty) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Check that free memory is equal to buffer size
         ------------------------------------------------------------------------
         if (buf_info.rx_buff_size /= buf_info.rx_mem_free) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
@@ -145,7 +135,7 @@ package body rx_status_feature is
         if (buf_info.rx_frame_count /= 0 or buf_info.rx_write_pointer /= 0 or
             buf_info.rx_read_pointer /= 0)
         then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
@@ -177,22 +167,22 @@ package body rx_status_feature is
                 end if;
             end if;
 
-            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus_1);
+            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+            CAN_wait_frame_sent(ID_1, mem_bus(1));
             number_frms_sent := number_frms_sent + 1;
             in_RX_buf := in_RX_buf + CAN_frame.rwcnt + 1;
 
             --------------------------------------------------------------------
             -- Check that message count was incremented and memfree is correct!
             --------------------------------------------------------------------
-            get_rx_buf_state(buf_info, ID_1, mem_bus_1);
+            get_rx_buf_state(buf_info, ID_1, mem_bus(1));
             if (number_frms_sent /= buf_info.rx_frame_count and send_more) then
-                outcome := false;
+                o.outcome := false;
             end if;
             if ((buf_info.rx_mem_free + in_RX_buf) /= buf_info.rx_buff_size
                 and send_more)
             then
-                outcome := false;
+                o.outcome := false;
             end if;
 
         end loop;
@@ -201,24 +191,24 @@ package body rx_status_feature is
         -- Check that data overrun status is set (we sent one more frame than
         -- needed... Overrun should be present
         ------------------------------------------------------------------------
-        get_controller_status(status, ID_1, mem_bus_1);
+        get_controller_status(status, ID_1, mem_bus(1));
         if (not status.data_overrun) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Clear the data overrun flag
         ------------------------------------------------------------------------
         command.clear_data_overrun := true;
-        give_controller_command(command, ID_1, mem_bus_1);
+        give_controller_command(command, ID_1, mem_bus(1));
         command.clear_data_overrun := false;
 
         ------------------------------------------------------------------------
         -- Check that overrun flag was cleared
         ------------------------------------------------------------------------
-        get_controller_status(status, ID_1, mem_bus_1);
+        get_controller_status(status, ID_1, mem_bus(1));
         if (status.data_overrun) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
     end procedure;

@@ -45,10 +45,6 @@
 --------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
--- Test implementation
---------------------------------------------------------------------------------
-
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
@@ -60,37 +56,6 @@ USE work.randomLib.All;
 USE work.pkg_feature_exec_dispath.All;
 
 use work.ID_transfer.all;
-
-package feature_test_pkg is
-    constant NINST : natural := 2;
-
-    type instance_inputs_t is record
-        drv_bus    : std_logic_vector(1023 downto 0);
-        stat_bus   : std_logic_vector(511 downto 0);
-        irq        : std_logic;
-    end record;
-
-    type instance_outputs_t is record
-        hw_reset   : std_logic;
-    end record;
-
-    type instance_inputs_arr_t is array (1 to NINST) of instance_inputs_t;
-    type instance_outputs_arr_t is array (1 to NINST) of instance_outputs_t;
-    type mem_bus_arr_t is array (1 to NINST) of Avalon_mem_type;
-end package;
-
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-USE work.pkg_feature_exec_dispath.All;
-
-use work.ID_transfer.all;
-use work.feature_test_pkg.all;
 --------------------------------------------------------------------------------
 -- Test enity for feature tests. Additional signals representing two memory
 -- buses are present to connect two DUTs of feature tests!
@@ -265,7 +230,7 @@ begin
     begin
         status <= waiting;
         loop_ctr <= 0;
-        wait until run=true;
+        wait until run = true;
         if hw_reset_on_new_test then
             log("HW Restart of feature test environment started!",info_l,log_level);
             wait for 5 ns;
@@ -303,7 +268,6 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
-use work.feature_test_pkg.all;
 
 entity tb_feature is
     generic (
@@ -378,7 +342,12 @@ architecture tb of tb_feature is
 
     signal rand_ctr       : natural range 0 to RAND_POOL_SIZE;
     constant padded_test_name : string(1 to 20) := strtolen(20, test_name);
+
+    signal so : feature_signal_outputs_t;
 begin
+    bl_inject <= so.bl_inject;
+    bl_force  <= so.bl_force;
+
     --In this test wrapper generics are directly connected to the signals
     -- of test entity
     test_comp: entity work.CAN_feature_test
@@ -410,9 +379,9 @@ begin
     ---------------------------------------
     ---------------------------------------
     test:process
-        variable outcome : boolean := false;
         constant ID_1    : natural range 0 to 15 := 1;
         constant ID_2    : natural range 0 to 15 := 2;
+        variable outputs : feature_outputs_t;
     begin
         test_runner_setup(runner, runner_cfg);
         --Set the process to run and wait until it comes out of reset
@@ -441,14 +410,14 @@ begin
         -------------------------------------------------
         while test_suite loop
             iteration_done <= false;
-            exec_feature_test(test_name, outcome, rand_ctr,
-                              mem_bus(1), mem_bus(2),
-                              iout(1).irq, iout(2).irq,
-                              bus_level,
-                              iout(1).drv_bus, iout(2).drv_bus,
-                              iout(1).stat_bus, iout(2).stat_bus,
-                              bl_inject, bl_force);
-            if outcome = false then
+            exec_feature_test(test_name => test_name,
+                              o => o,
+                              rand_ctr => rand_ctr,
+                              mem_bus => mem_bus,
+                              iout => iout,
+                              so => so);
+
+            if o.outcome = false then
                 process_error(error_ctr, error_beh, exit_imm);
             end if;
 

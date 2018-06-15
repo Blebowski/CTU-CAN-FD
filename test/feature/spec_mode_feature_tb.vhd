@@ -77,39 +77,29 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 
 package spec_mode_feature is
-
     procedure spec_mode_feature_exec(
-        variable   outcome          : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body spec_mode_feature is
-
     procedure spec_mode_feature_exec(
-        variable    outcome         : inout boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
-    )is
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
@@ -122,7 +112,7 @@ package body spec_mode_feature is
         variable ctr_2_1            :       SW_traffic_counters;
         variable ctr_2_2            :       SW_traffic_counters;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Part 1
@@ -131,10 +121,10 @@ package body spec_mode_feature is
         -- Set STM in node 1 and STM, ACF in node 2
         ------------------------------------------------------------------------
         mode.self_test := true;
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         mode.acknowledge_forbidden := true;
-        set_core_mode(mode, ID_2, mem_bus_2);
+        set_core_mode(mode, ID_2, mem_bus(2));
 
         mode.self_test := false;
         mode.acknowledge_forbidden := false;
@@ -142,14 +132,14 @@ package body spec_mode_feature is
         ------------------------------------------------------------------------
         -- Check the TX RX counters
         ------------------------------------------------------------------------
-        read_traffic_counters(ctr_1_1, ID_1, mem_bus_1);
-        read_traffic_counters(ctr_1_2, ID_2, mem_bus_2);
+        read_traffic_counters(ctr_1_1, ID_1, mem_bus(1));
+        read_traffic_counters(ctr_1_2, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Send frame by node 1
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
         -- Wait until one of the nodes is in ack field plus one more clock
@@ -157,10 +147,10 @@ package body spec_mode_feature is
         -- level can still be last bit of CRC which can be dominant!
         ------------------------------------------------------------------------
         while (protocol_type'VAL(to_integer(unsigned(
-               stat_bus_2(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
+               iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
                /= delim_ack)
         loop
-            wait until rising_edge(mem_bus_1.clk_sys);
+            wait until rising_edge(mem_bus(1).clk_sys);
         end loop;
         if (bus_level = DOMINANT) then
             wait until rising_edge(bus_level);
@@ -173,29 +163,29 @@ package body spec_mode_feature is
         -- delayed!!!
         ------------------------------------------------------------------------
         while (protocol_type'VAL(to_integer(unsigned(
-               stat_bus_2(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
+               iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
                = delim_ack)
         loop
-            wait until rising_edge(mem_bus_1.clk_sys);
+            wait until rising_edge(mem_bus(1).clk_sys);
             if (bus_level = DOMINANT) then
-                outcome := false;
+                o.outcome := false;
             end if;
         end loop;
 
-        CAN_wait_bus_idle(ID_1, mem_bus_1);
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Check the TX RX counters
         ------------------------------------------------------------------------
-        read_traffic_counters(ctr_2_1, ID_1, mem_bus_1);
-        read_traffic_counters(ctr_2_2, ID_2, mem_bus_2);
+        read_traffic_counters(ctr_2_1, ID_1, mem_bus(1));
+        read_traffic_counters(ctr_2_2, ID_2, mem_bus(2));
 
         if (ctr_1_1.tx_frames + 1 /= ctr_2_1.tx_frames) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         if (ctr_1_2.rx_frames + 1 /= ctr_2_2.rx_frames) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
 
@@ -209,28 +199,28 @@ package body spec_mode_feature is
         -- the bus!
         ------------------------------------------------------------------------
         mode.self_test := true;
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_1, mem_bus(1));
         mode.self_test := false;
 
         mode.listen_only := true;
-        set_core_mode(mode, ID_2, mem_bus_2);
+        set_core_mode(mode, ID_2, mem_bus(2));
         mode.listen_only := false;
 
         ------------------------------------------------------------------------
         -- Send frame by node 1
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
         -- Wait until node 2 is in ack field Since bus is delayed we have to
         -- wait until the first rising edge on income data!
         ------------------------------------------------------------------------
         while (protocol_type'VAL(to_integer(unsigned(
-                stat_bus_2(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
+                iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
                 /= delim_ack)
         loop
-            wait until rising_edge(mem_bus_1.clk_sys);
+            wait until rising_edge(mem_bus(1).clk_sys);
         end loop;
 
         if (bus_level = DOMINANT) then
@@ -242,29 +232,29 @@ package body spec_mode_feature is
         -- acknowledge field.
         ------------------------------------------------------------------------
         while (protocol_type'VAL(to_integer(unsigned(
-                stat_bus_2(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
+                iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
                 = delim_ack)
         loop
-            wait until rising_edge(mem_bus_1.clk_sys);
+            wait until rising_edge(mem_bus(1).clk_sys);
             if (bus_level = DOMINANT) then
-                outcome := false;
+                o.outcome := false;
             end if;
         end loop;
 
-        CAN_wait_bus_idle(ID_1,mem_bus_1);
+        CAN_wait_bus_idle(ID_1,mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Check the TX RX counters
         ------------------------------------------------------------------------
-        read_traffic_counters(ctr_2_1, ID_1, mem_bus_1);
-        read_traffic_counters(ctr_2_2, ID_2, mem_bus_2);
+        read_traffic_counters(ctr_2_1, ID_1, mem_bus(1));
+        read_traffic_counters(ctr_2_2, ID_2, mem_bus(2));
 
         if (ctr_1_1.tx_frames + 2 /= ctr_2_1.tx_frames) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         if (ctr_1_2.rx_frames + 2 /= ctr_2_2.rx_frames) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
   end procedure;

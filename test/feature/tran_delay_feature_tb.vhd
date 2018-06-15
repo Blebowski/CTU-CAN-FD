@@ -60,40 +60,31 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package tran_delay_feature is
-
     procedure tran_delay_feature_exec(
-        variable    outcome         : inout boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
 
 end package;
 
 
 package body tran_delay_feature is
-
     procedure tran_delay_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
-    )is
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable w_data             :       std_logic_vector(31 downto 0) :=
@@ -104,7 +95,7 @@ package body tran_delay_feature is
         variable frame_sent         :       boolean := false;
         variable delay              :       natural;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Generate CAN frame
@@ -113,20 +104,20 @@ package body tran_delay_feature is
         CAN_frame.rtr := NO_RTR_FRAME;
         CAN_frame.frame_format := FD_CAN;
         CAN_frame.brs := BR_SHIFT;
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Read the transciever delay compensation register
         ------------------------------------------------------------------------
-        read_trv_delay(delay, ID_1, mem_bus_1);
+        read_trv_delay(delay, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Check if delay is matching environment transceiver delay...
         -- Note, that 2 DFFs sync. chain must be taken into account
         ------------------------------------------------------------------------
         if (delay /= 22) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
   end procedure;

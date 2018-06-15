@@ -77,43 +77,29 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package interrupt_feature is
-
     procedure interrupt_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      int_1           : in     std_logic;
-        signal      int_2           : in     std_logic;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body interrupt_feature is
-
     procedure interrupt_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      int_1           : in     std_logic;
-        signal      int_2           : in     std_logic;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     ) is
         variable r_data             :     std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
@@ -141,13 +127,13 @@ package body interrupt_feature is
         variable command            :     SW_command := (false, false, false);
         variable buf_info           :     SW_RX_Buffer_info;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Unmask all Interrupts. Should be by default, but rather do it...
         ------------------------------------------------------------------------
-        write_int_mask(int_mask, ID_1, mem_bus_1);
-        write_int_mask(int_mask, ID_2, mem_bus_2);
+        write_int_mask(int_mask, ID_1, mem_bus(1));
+        write_int_mask(int_mask, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Part 1
@@ -157,38 +143,38 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         report "Starting TX RX interrupt";
         int_ena.receive_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus_1);
+        write_int_enable(int_ena, ID_1, mem_bus(1));
         int_ena.receive_int := false;
 
         int_ena.transmitt_int := true;
-        write_int_enable(int_ena, ID_2, mem_bus_2);
+        write_int_enable(int_ena, ID_2, mem_bus(2));
         int_ena.transmitt_int := false;
 
         ------------------------------------------------------------------------
         -- Send by node 2
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
 
-        wait until rising_edge(int_1) or rising_edge(int_2);
-        wait until rising_edge(int_1) or rising_edge(int_2);
+        wait until rising_edge(iout(1).irq) or rising_edge(iout(2).irq);
+        wait until rising_edge(iout(1).irq) or rising_edge(iout(2).irq);
 
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Check that interrupt was generated
         ------------------------------------------------------------------------
-        read_int_status(int_stat, ID_1, mem_bus_1);
+        read_int_status(int_stat, ID_1, mem_bus(1));
         if (not int_stat.receive_int) then
-            outcome := false;
+            o.outcome := false;
         end if;
-        clear_int_status(int_stat, ID_1, mem_bus_1);
+        clear_int_status(int_stat, ID_1, mem_bus(1));
 
-        read_int_status(int_stat, ID_2, mem_bus_2);
+        read_int_status(int_stat, ID_2, mem_bus(2));
         if (not int_stat.transmitt_int) then
-            outcome := false;
+            o.outcome := false;
         end if;
-        clear_int_status(int_stat, ID_2, mem_bus_2);
+        clear_int_status(int_stat, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Part 2
@@ -198,8 +184,8 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         report "Starting Error interrupt";
         int_ena.bus_error_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus_1);
-        write_int_enable(int_ena, ID_2, mem_bus_2);
+        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, ID_2, mem_bus(2));
         int_ena.bus_error_int := false;
 
         ------------------------------------------------------------------------
@@ -207,32 +193,32 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         CAN_frame.data(0) := x"AB";
         CAN_frame.rtr := NO_RTR_FRAME;
-        CAN_insert_TX_frame(CAN_frame, 1, ID_2, mem_bus_2);
+        CAN_insert_TX_frame(CAN_frame, 1, ID_2, mem_bus(2));
         CAN_frame.data(0) := x"CD";
-        CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus_1);
+        CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
 
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus_1);
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus_2);
+        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
 
-        wait until rising_edge(int_1) or rising_edge(int_2);
-        wait until rising_edge(int_1) or rising_edge(int_2);
+        wait until rising_edge(iout(1).irq) or rising_edge(iout(2).irq);
+        wait until rising_edge(iout(1).irq) or rising_edge(iout(2).irq);
 
         ------------------------------------------------------------------------
         -- Detect interrupt error flag
         ------------------------------------------------------------------------
-        read_int_status(int_stat, ID_1, mem_bus_1);
+        read_int_status(int_stat, ID_1, mem_bus(1));
         if (not int_stat.bus_error_int) then
-            outcome := false;
+            o.outcome := false;
         end if;
-        clear_int_status(int_stat, ID_1, mem_bus_1);
+        clear_int_status(int_stat, ID_1, mem_bus(1));
 
-        read_int_status(int_stat, ID_2, mem_bus_2);
+        read_int_status(int_stat, ID_2, mem_bus(2));
         if (not int_stat.bus_error_int) then
             report "FUCK" severity error;
-            outcome := false;
+            o.outcome := false;
         end if;
-        CAN_wait_frame_sent(ID_1, mem_bus_1);
-        clear_int_status(int_stat, ID_2, mem_bus_2);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        clear_int_status(int_stat, ID_2, mem_bus(2));
         wait for 15000 ns;
 
 
@@ -245,13 +231,13 @@ package body interrupt_feature is
         report "Starting Data overrun, recieve buffer interrupt";
         int_ena.data_overrun_int := true;
         int_ena.rx_buffer_full_int := true;
-        write_int_enable(int_ena, ID_2, mem_bus_2);
+        write_int_enable(int_ena, ID_2, mem_bus(2));
         int_ena.data_overrun_int := false;
         int_ena.rx_buffer_full_int := false;
 
         -- Give release receive buffer command
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_2, mem_bus_2);
+        give_controller_command(command, ID_2, mem_bus(2));
         command.release_rec_buffer := false;
 
         ------------------------------------------------------------------------
@@ -259,7 +245,7 @@ package body interrupt_feature is
         -- Note that size of RTR is 4. Each synthesizable size of buffer is
         -- multiple of 4!
         ------------------------------------------------------------------------
-        get_rx_buf_state(buf_info, ID_2, mem_bus_2);
+        get_rx_buf_state(buf_info, ID_2, mem_bus(2));
 
         --report "Buffer size: " & Integer'image(buf_info.rx_buff_size);
 
@@ -267,18 +253,18 @@ package body interrupt_feature is
         CAN_frame.rtr := RTR_FRAME;
         CAN_frame.frame_format := NORMAL_CAN;
         for i in 0 to (buf_info.rx_buff_size / 4) + 1 loop
-            CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+            CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
-            CAN_wait_frame_sent(ID_1, mem_bus_1);
+            CAN_wait_frame_sent(ID_1, mem_bus(1));
 
             -- On last frame RX Buffer should be full. Check if interrupt was
             -- fired and clear it!
             if (i = (buf_info.rx_buff_size / 4)) then
-                if (int_2 = '0') then
-                    outcome := false;
+                if (iout(2).irq = '0') then
+                    o.outcome := false;
                 else
-                    read_int_status(int_stat, ID_2, mem_bus_2);
-                    clear_int_status(int_stat, ID_2, mem_bus_2);
+                    read_int_status(int_stat, ID_2, mem_bus(2));
+                    clear_int_status(int_stat, ID_2, mem_bus(2));
                 end if;
             end if;
         end loop;
@@ -287,15 +273,15 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Detect the data overrun interrupt flag and recieve buffer full flag
         ------------------------------------------------------------------------
-        read_int_status(int_stat, ID_2, mem_bus_2);
+        read_int_status(int_stat, ID_2, mem_bus(2));
 
         if (not int_stat.rx_buffer_full_int) then
-            outcome := false;
+            o.outcome := false;
         end if;
         if (not int_stat.data_overrun_int) then
-            outcome := false;
+            o.outcome := false;
         end if;
-        clear_int_status(int_stat, ID_2, mem_bus_2);
+        clear_int_status(int_stat, ID_2, mem_bus(2));
         wait for 30000 ns;
 
 
@@ -308,32 +294,32 @@ package body interrupt_feature is
         report "Starting Bit rate shift interrupt";
 
         int_ena.bit_rate_shift_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus_1);
-        write_int_enable(int_ena, ID_2, mem_bus_2);
+        write_int_enable(int_ena, ID_1, mem_bus(1));
+        write_int_enable(int_ena, ID_2, mem_bus(2));
         int_ena.bit_rate_shift_int := false;
 
         CAN_frame.frame_format := FD_CAN;
         CAN_frame.rtr := NO_RTR_FRAME;
         CAN_frame.brs := BR_SHIFT;
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
         -- Wait on bit rate shift
         ------------------------------------------------------------------------
-        wait until rising_edge(int_2);
+        wait until rising_edge(iout(2).irq);
 
         ------------------------------------------------------------------------
         -- Detect the Bit rate shift interrupt flag
         ------------------------------------------------------------------------
-        read_int_status(int_stat, ID_2, mem_bus_2);
+        read_int_status(int_stat, ID_2, mem_bus(2));
         if (not int_stat.bit_rate_shift_int) then
-            outcome := false;
+            o.outcome := false;
         end if;
-        CAN_wait_frame_sent(ID_2,mem_bus_2);
-        clear_int_status(int_stat, ID_2, mem_bus_2);
+        CAN_wait_frame_sent(ID_2,mem_bus(2));
+        clear_int_status(int_stat, ID_2, mem_bus(2));
 
-        read_int_status(int_stat, ID_1, mem_bus_1);
-        clear_int_status(int_stat, ID_1, mem_bus_1);
+        read_int_status(int_stat, ID_1, mem_bus(1));
+        clear_int_status(int_stat, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Part 5
@@ -343,7 +329,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         report "Starting arbitration lost int";
         int_ena.arb_lost_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus_1);
+        write_int_enable(int_ena, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Send frames by both nodes with IDs fabricated so that Node 1 loses.
@@ -353,31 +339,31 @@ package body interrupt_feature is
         CAN_frame.brs := BR_NO_SHIFT;
         CAN_frame.ident_type := EXTENDED;
         CAN_frame.identifier := 5;
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_frame.identifier := 4;
-        CAN_send_frame(CAN_frame, 2, ID_2, mem_bus_2, frame_sent);
-        wait until rising_edge(int_1);
+        CAN_send_frame(CAN_frame, 2, ID_2, mem_bus(2), frame_sent);
+        wait until rising_edge(iout(1).irq);
 
-        read_int_status(int_stat, ID_1, mem_bus_1);
+        read_int_status(int_stat, ID_1, mem_bus(1));
         if (not int_stat.arb_lost_int) then
-            outcome := false;
+            o.outcome := false;
         end if;
-        clear_int_status(int_stat, ID_1, mem_bus_1);
+        clear_int_status(int_stat, ID_1, mem_bus(1));
 
         -- Send abort command on node that lost arbitration so that it does
         -- not try to transmitt again.
-        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus_1);
+        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
 
         -- Wait till transmission is done
-        CAN_wait_frame_sent(ID_1, mem_bus_1);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Clear all interrupts in both nodes
         ------------------------------------------------------------------------
-        read_int_status(int_stat, ID_1, mem_bus_1);
-        clear_int_status(int_stat, ID_1, mem_bus_1);
-        read_int_status(int_stat, ID_2, mem_bus_2);
-        clear_int_status(int_stat, ID_2, mem_bus_2);
+        read_int_status(int_stat, ID_1, mem_bus(1));
+        clear_int_status(int_stat, ID_1, mem_bus(1));
+        read_int_status(int_stat, ID_2, mem_bus(2));
+        clear_int_status(int_stat, ID_2, mem_bus(2));
 
         report "Finished interrupt test";
         wait for 300000 ns;

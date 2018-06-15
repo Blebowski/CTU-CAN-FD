@@ -35,15 +35,14 @@ feature:
     default:
     tests:
         abort_transmittion:
-        #arbitration:
+        arbitration:
         fault_confinement:
         forbid_fd:
-        #interrupt:
+        interrupt:
         invalid_configs:
         overload:
         retr_limit:
-        #rx_status:
-        #soft_reset:
+        rx_status:
         spec_mode:
         traf_meas:
         tran_delay:

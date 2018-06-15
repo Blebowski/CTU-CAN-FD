@@ -61,39 +61,30 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 
 package traf_meas_feature is
-
     procedure traf_meas_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
 
 end package;
 
 
 package body traf_meas_feature is
-
     procedure traf_meas_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
-    )is
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
@@ -105,13 +96,13 @@ package body traf_meas_feature is
         variable ctr_2_1            :       SW_traffic_counters;
         variable ctr_2_2            :       SW_traffic_counters;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Check the TX RX counters
         ------------------------------------------------------------------------
-        read_traffic_counters(ctr_1_1, ID_1, mem_bus_1);
-        read_traffic_counters(ctr_1_2, ID_2, mem_bus_2);
+        read_traffic_counters(ctr_1_1, ID_1, mem_bus(1));
+        read_traffic_counters(ctr_1_2, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Generate the CAN frames to send
@@ -119,28 +110,28 @@ package body traf_meas_feature is
         rand_int_v(rand_ctr, 5, rand_value);
         for i in 0 to rand_value - 1 loop
             CAN_generate_frame(rand_ctr, CAN_frame);
-            CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus_1);
+            CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+            CAN_wait_frame_sent(ID_1, mem_bus(1));
         end loop;
 
         ------------------------------------------------------------------------
         -- Check the TX RX counters
         ------------------------------------------------------------------------
-        read_traffic_counters(ctr_2_1, ID_1, mem_bus_1);
-        read_traffic_counters(ctr_2_2, ID_2, mem_bus_2);
+        read_traffic_counters(ctr_2_1, ID_1, mem_bus(1));
+        read_traffic_counters(ctr_2_2, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Check That TX counters were increased accordingly
         ------------------------------------------------------------------------
         if (ctr_1_1.tx_frames + rand_value /= ctr_2_1.tx_frames) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Check That RX counters were increased accordingly
         ------------------------------------------------------------------------
         if (ctr_1_2.rx_frames + rand_value /= ctr_2_2.rx_frames) then
-            outcome := false;
+            o.outcome := false;
         end if;
     end procedure;
 

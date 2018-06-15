@@ -70,41 +70,31 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 
 package tx_arb_time_tran_feature is
-
     procedure tx_arb_time_tran_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body tx_arb_time_tran_feature is
-
     procedure tx_arb_time_tran_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
-    )is
-        variable ID_1           	:       natural := 1;
-        variable ID_2           	:       natural := 2;
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
+        constant ID_1           	:       natural := 1;
+        constant ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable CAN_frame_2        :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
@@ -116,7 +106,7 @@ package body tx_arb_time_tran_feature is
         variable status             :       SW_Status;
     begin
 
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Part 1
@@ -126,7 +116,7 @@ package body tx_arb_time_tran_feature is
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_generate_frame(rand_ctr, CAN_frame_2);
-        act_ts := stat_bus_1(STAT_TS_HIGH downto STAT_TS_LOW);
+        act_ts := iout(1).stat_bus(STAT_TS_HIGH downto STAT_TS_LOW);
 
         ------------------------------------------------------------------------
         -- Add random value
@@ -142,16 +132,16 @@ package body tx_arb_time_tran_feature is
         ------------------------------------------------------------------------
         -- Send frame and check when TX started
         ------------------------------------------------------------------------
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         loop
-            get_controller_status(status, ID_1, mem_bus_1);
+            get_controller_status(status, ID_1, mem_bus(1));
             if (status.transmitter) then
                 exit;
             end if;
         end loop;
 
         aux1 := to_integer(unsigned(
-                    stat_bus_1(STAT_TS_HIGH - 32 downto STAT_TS_LOW)));
+                    iout(1).stat_bus(STAT_TS_HIGH - 32 downto STAT_TS_LOW)));
         aux2 := to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
 
         ------------------------------------------------------------------------
@@ -161,16 +151,16 @@ package body tx_arb_time_tran_feature is
         ------------------------------------------------------------------------
         if (aux1 - aux2 > 150) then
             report "FUCK";
-            outcome := false;
+            o.outcome := false;
         else
             report "OK";
         end if;
-        CAN_wait_bus_idle(ID_1, mem_bus_1);
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Do  the same with buffer 2
         ------------------------------------------------------------------------
-        act_ts := stat_bus_1(STAT_TS_HIGH downto STAT_TS_LOW);
+        act_ts := iout(1).stat_bus(STAT_TS_HIGH downto STAT_TS_LOW);
 
         ------------------------------------------------------------------------
         -- Add random value
@@ -185,16 +175,16 @@ package body tx_arb_time_tran_feature is
         ------------------------------------------------------------------------
         -- Send frame and check when TX started
         ------------------------------------------------------------------------
-        CAN_send_frame(CAN_frame, 2, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 2, ID_1, mem_bus(1), frame_sent);
         loop
-            get_controller_status(status, ID_1, mem_bus_1);
+            get_controller_status(status, ID_1, mem_bus(1));
             if (status.transmitter) then
                 exit;
             end if;
         end loop;
 
         aux1 := to_integer(unsigned(
-                    stat_bus_1(STAT_TS_HIGH - 32 downto STAT_TS_LOW)));
+                    iout(1).stat_bus(STAT_TS_HIGH - 32 downto STAT_TS_LOW)));
         aux2 := to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
 
         ------------------------------------------------------------------------
@@ -203,9 +193,9 @@ package body tx_arb_time_tran_feature is
         -- cycles per bit time!
         ------------------------------------------------------------------------
         if (aux1 - aux2 > 150) then
-            outcome := false;
+            o.outcome := false;
         end if;
-        CAN_wait_bus_idle(ID_1, mem_bus_1);
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
 
   end procedure;
 

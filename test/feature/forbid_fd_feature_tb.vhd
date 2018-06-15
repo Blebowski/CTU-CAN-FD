@@ -67,40 +67,31 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 
 package forbid_fd_feature is
-
     procedure forbid_fd_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body forbid_fd_feature is
 
     procedure forbid_fd_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
@@ -115,52 +106,52 @@ package body forbid_fd_feature is
         variable err_counters_1     :       SW_error_counters;
         variable err_counters_2     :       SW_error_counters;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- First disable the FD support of both Nodes. This is done to make
         -- sure that both nodes have the same ISO type set.
         ------------------------------------------------------------------------
         mode.flexible_data_rate := true;
-        set_core_mode(mode, ID_2, mem_bus_2);
+        set_core_mode(mode, ID_2, mem_bus(2));
         mode.flexible_data_rate := false;
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_1, ID_1, mem_bus_1);
+        read_error_counters(err_counters_1, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Send FD frame by node 2 and wait for error frame...
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.frame_format := FD_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
-        CAN_wait_error_transmitted(ID_2, mem_bus_2);
-        CAN_wait_bus_idle(ID_2, mem_bus_2);
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_error_transmitted(ID_2, mem_bus(2));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1 again
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_2, ID_1, mem_bus_1);
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
 
         -- Counter should be increased
         if ((err_counters_1.rx_counter + 1 + 8) /= err_counters_2.rx_counter) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Now send the same frame, but not the FD type. Wait until bus is idle
         ------------------------------------------------------------------------
         CAN_frame.frame_format := NORMAL_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1 again
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_2, ID_1, mem_bus_1);
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Counter should be decreased by one now due to sucesfull reception.
@@ -168,34 +159,34 @@ package body forbid_fd_feature is
         -- detected the error!
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 8) /= err_counters_2.rx_counter) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Now enable the FD support of Node 1
         ------------------------------------------------------------------------
         mode.flexible_data_rate := true;
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Now again send the same frame but FD type now unit should accept
         -- the frame OK!
         ------------------------------------------------------------------------
         CAN_frame.frame_format := FD_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1 again
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_2, ID_1, mem_bus_1);
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Counter should be less than the value read now or both should be
         -- zeroes when counter cannnot already be lowered...
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 7) /= err_counters_2.rx_counter) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
@@ -207,8 +198,8 @@ package body forbid_fd_feature is
             report "Resetting error counters";
             err_counters_2.rx_counter := 0;
             err_counters_2.tx_counter := 0;
-            set_error_counters(err_counters_2, ID_1, mem_bus_1);
-            set_error_counters(err_counters_2, ID_2, mem_bus_2);
+            set_error_counters(err_counters_2, ID_1, mem_bus(1));
+            set_error_counters(err_counters_2, ID_2, mem_bus(2));
         end if;
   end procedure;
 

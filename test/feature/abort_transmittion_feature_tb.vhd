@@ -64,21 +64,18 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 
 package abort_transmittion_feature is
 
     procedure abort_transmittion_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
 
 end package;
@@ -87,15 +84,11 @@ end package;
 package body abort_transmittion_feature is
 
     procedure abort_transmittion_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     )is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
@@ -115,7 +108,7 @@ package body abort_transmittion_feature is
         variable command            :       SW_command := (false, false, false);
         variable status             :       SW_status;
   begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Generate CAN frame
@@ -125,13 +118,13 @@ package body abort_transmittion_feature is
         ------------------------------------------------------------------------
         -- Insert the frame for transmittion
         ------------------------------------------------------------------------
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
         -- Wait until unit turns transmitter
         ------------------------------------------------------------------------
         loop
-            get_controller_status(status, ID_1, mem_bus_1);
+            get_controller_status(status, ID_1, mem_bus(1));
             if (status.transmitter) then
                 exit;
             end if;
@@ -143,7 +136,7 @@ package body abort_transmittion_feature is
         -- aborts immediately after the frame was commited and SOF was not
         -- yet sent!
         ------------------------------------------------------------------------
-        wait_rand_cycles(rand_ctr, mem_bus_1.clk_sys, 200, 25000);
+        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 200, 25000);
 
         ------------------------------------------------------------------------
         -- Check that unit is not transciever anymore, unit should be now as if
@@ -151,7 +144,7 @@ package body abort_transmittion_feature is
         -- space. So we check the PC_State from status bus explicitly.
         ------------------------------------------------------------------------
         PC_State := protocol_type'VAL(to_integer(unsigned(
-                     stat_bus_1(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))));
+                     iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))));
 
         report "PC State: " & protocol_type'Image(PC_State);
         if (PC_State = sof or PC_State = arbitration or PC_State = control or
@@ -169,18 +162,18 @@ package body abort_transmittion_feature is
             -- Now send the command to abort the transmittion
             --------------------------------------------------------------------
             command.abort_transmission := true;
-            give_controller_command(command, ID_1, mem_bus_1);
+            give_controller_command(command, ID_1, mem_bus(1));
 
             --------------------------------------------------------------------
             -- Now wait for few clock cycles until Node aborts the transmittion
             --------------------------------------------------------------------
             for i in 0 to 5 loop
-                wait until rising_edge(mem_bus_1.clk_sys);
+                wait until rising_edge(mem_bus(1).clk_sys);
             end loop;
 
-            get_controller_status(status, ID_1, mem_bus_1);
+            get_controller_status(status, ID_1, mem_bus(1));
             if (status.transmitter) then
-                outcome := false;
+                o.outcome := false;
             end if;
 
             --------------------------------------------------------------------
@@ -191,28 +184,28 @@ package body abort_transmittion_feature is
             -- frame. It stays idle since it recieves recessive error passive
             -- error frame from 2!
             --------------------------------------------------------------------
-            CAN_wait_error_transmitted(ID_2, mem_bus_2);
+            CAN_wait_error_transmitted(ID_2, mem_bus(2));
 
             --------------------------------------------------------------------
             -- Now wait until bus is idle in both units
             --------------------------------------------------------------------
-            CAN_wait_bus_idle(ID_2, mem_bus_2);
-            CAN_wait_bus_idle(ID_1, mem_bus_1);
+            CAN_wait_bus_idle(ID_2, mem_bus(2));
+            CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         else
 
             --------------------------------------------------------------------
             -- Now wait until bus is idle in both units
             --------------------------------------------------------------------
-            CAN_wait_bus_idle(ID_2, mem_bus_2);
-            CAN_wait_bus_idle(ID_1, mem_bus_1);
+            CAN_wait_bus_idle(ID_2, mem_bus(2));
+            CAN_wait_bus_idle(ID_1, mem_bus(1));
 
             --------------------------------------------------------------------
             -- Check that unit is now idle since it is after transmittion already
             --------------------------------------------------------------------
-            get_controller_status(status, ID_1, mem_bus_1);
+            get_controller_status(status, ID_1, mem_bus(1));
             if (not status.bus_status) then
-                outcome := false;
+                o.outcome := false;
             end if;
 
         end if;
@@ -228,7 +221,7 @@ package body abort_transmittion_feature is
         err_counters.err_fd     := 0;
         err_counters.rx_counter := 0;
         err_counters.tx_counter := 0;
-        set_error_counters(err_counters, ID_1, mem_bus_1);
+        set_error_counters(err_counters, ID_1, mem_bus(1));
 
   end procedure;
 

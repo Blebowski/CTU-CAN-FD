@@ -54,40 +54,30 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package retr_limit_feature is
-
     procedure retr_limit_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body retr_limit_feature is
-
     procedure retr_limit_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
-    )is
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable CAN_frame          :       SW_CAN_frame_type;
@@ -107,27 +97,27 @@ package body retr_limit_feature is
         variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
         variable buf_state          :       SW_TXT_Buffer_state_type;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Set both nodes to forbid acknowledge
         ------------------------------------------------------------------------
         mode.acknowledge_forbidden := true;
-        set_core_mode(mode, ID_2, mem_bus_2);
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_2, mem_bus(2));
+        set_core_mode(mode, ID_1, mem_bus(1));
         mode.acknowledge_forbidden := false;
 
         ------------------------------------------------------------------------
         -- Erase error counters node 1
         ------------------------------------------------------------------------
-        set_error_counters(err_counters, ID_1, mem_bus_1);
+        set_error_counters(err_counters, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Set Node 1 retransmitt limit
         ------------------------------------------------------------------------
         rand_int_v(rand_ctr, 15, retr_th);
         report "Retransmitt threshold: " & Integer'image(retr_th);
-        CAN_enable_retr_limit(true, retr_th, ID_1, mem_bus_1);
+        CAN_enable_retr_limit(true, retr_th, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Generate and send frame by Node 1
@@ -135,25 +125,25 @@ package body retr_limit_feature is
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.rtr := RTR_FRAME;
         CAN_frame.frame_format := NORMAL_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
         -- Wait number of retransmissions. After each one, TXT Buffer should
         -- be back in ready. After last one, it should be in failed.
         ------------------------------------------------------------------------
         for i in 0 to retr_th loop
-            CAN_wait_frame_sent(ID_1, mem_bus_1);
-            get_tx_buf_state(1, buf_state, ID_1, mem_bus_1);
+            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
             if (i /= retr_th) then
                 if (buf_state /= buf_ready) then
                     report "Buffer not ready";
-                    outcome := false;
+                    o.outcome := false;
                     exit;
                 end if;
             else
                 if (buf_state /= buf_failed) then
                     report "Buffer not failed";
-                    outcome := false;
+                    o.outcome := false;
                 end if;
             end if;
         end loop;
@@ -162,18 +152,18 @@ package body retr_limit_feature is
         -- Read TX Counter, it should be equal to 8 times number of retransmitts
         -- plus one original transmittion does not count as retransmittion.
         ------------------------------------------------------------------------
-        read_error_counters(err_counters, ID_1, mem_bus_1);
+        read_error_counters(err_counters, ID_1, mem_bus(1));
         if (err_counters.tx_counter /= 8 * (retr_th + 1)) then
             report "Counters exp: " & Integer'Image(err_counters.tx_counter) &
                    " coutners real: " & Integer'image(8 * (retr_th + 1));
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Set node  2 to allow acknowledge again
         ------------------------------------------------------------------------
-        set_core_mode(mode, ID_2, mem_bus_2);
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_2, mem_bus(2));
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         wait for 40000 ns;
   end procedure;

@@ -21,31 +21,33 @@ package body pkg_feature_exec_dispath is
 procedure exec_feature_test(
     --Common test parameters
     signal   test_name    : in     string;
-    variable outcome      : inout  boolean;
+    variable o            : out    feature_outputs_t;
+    signal   so           : out    feature_signal_outputs_t;
     signal   rand_ctr     : inout  natural range 0 to RAND_POOL_SIZE;
-    --Additional signals for tests
-    --Pretty much everything can be read out of stat bus...
-    signal   mem_bus_1    : inout  Avalon_mem_type;
-    signal   mem_bus_2    : inout  Avalon_mem_type;
-    signal   int_1        : in     std_logic;
-    signal   int_2        : in     std_logic;
-    signal   bus_level    : in     std_logic;
-    signal   drv_bus_1    : in     std_logic_vector(1023 downto 0);
-    signal   drv_bus_2    : in     std_logic_vector(1023 downto 0);
-    signal   stat_bus_1   : in     std_logic_vector(511 downto 0);
-    signal   stat_bus_2   : in     std_logic_vector(511 downto 0);
-    signal   bl_inject    : inout  std_logic;
-    signal   bl_force     : inout  boolean
+    signal   iout         : in     instance_inputs_arr_t;
+    signal   mem_bus      : inout  mem_bus_arr_t;
+    signal   bus_level    : in     std_logic
 ) is
 begin
-    outcome:=false;
+    o.outcome := false;
 
-    -- TODO: generate this procedure
     if false then
     {% for test in tests %}
     elsif run("{{ test }}") then
-        {{ test }}_feature_exec(outcome,rand_ctr,mem_bus_1,mem_bus_2,bus_level,
-                                 drv_bus_1,drv_bus_2,stat_bus_1,stat_bus_2);
+        {{ test }}_feature_exec(
+            o => o,
+            rand_ctr => rand_ctr,
+            mem_bus_1 => mem_bus(1),
+            mem_bus_2 => mem_bus(2),
+            int_1 => iout(1).irq,
+            int_2 => iout(2).irq,
+            bus_level => bus_level,
+            drv_bus_1 => iout(1).drv_bus,
+            drv_bus_2 => iout(2).drv_bus,
+            stat_bus_1 => iout(1).stat_bus,
+            stat_bus_2 => iout(2).stat_bus,
+            so => so
+        );
     {% endfor %}
     end if;
 end procedure;

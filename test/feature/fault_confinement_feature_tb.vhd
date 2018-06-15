@@ -54,39 +54,29 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 
 package fault_confinement_feature is
-
     procedure fault_confinement_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body fault_confinement_feature is
-
     procedure fault_confinement_feature_exec(
-        variable    outcome         : inout boolean;
-        signal      rand_ctr        : inout natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout Avalon_mem_type;
-        signal      mem_bus_2       : inout Avalon_mem_type;
-        signal      bus_level       : in    std_logic;
-        signal      drv_bus_1       : in    std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in    std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in    std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in    std_logic_vector(511 downto 0)
-    )is
+        variable    o               : out    feature_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable CAN_frame          :       SW_CAN_frame_type;
@@ -105,7 +95,7 @@ package body fault_confinement_feature is
         variable fault_th_2         :       SW_fault_thresholds := (0, 0);
         variable fault_state        :       SW_fault_state;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Generate random setting of ERP treshold and RX counters to preset
@@ -123,43 +113,43 @@ package body fault_confinement_feature is
         ------------------------------------------------------------------------
         -- Set the counter and tresholds
         ------------------------------------------------------------------------
-        set_error_counters(err_counters, ID_1, mem_bus_1);
-        set_fault_thresholds(fault_th, ID_1, mem_bus_1);
+        set_error_counters(err_counters, ID_1, mem_bus(1));
+        set_fault_thresholds(fault_th, ID_1, mem_bus(1));
 
 
         ------------------------------------------------------------------------
         -- Read counters back
         ------------------------------------------------------------------------
-        get_fault_thresholds(fault_th_2, ID_1, mem_bus_1);
+        get_fault_thresholds(fault_th_2, ID_1, mem_bus(1));
 
         if (fault_th.ewl /= fault_th_2.ewl) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         if (fault_th.erp /= fault_th_2.erp) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Read fault confinement state
         ------------------------------------------------------------------------
-        get_fault_state(fault_state, ID_1, mem_bus_1);
+        get_fault_state(fault_state, ID_1, mem_bus(1));
 
         if (err_counters.tx_counter > 255 or
             err_counters.rx_counter > 255)
         then
             if (fault_state /= fc_bus_off) then
-                outcome := false;
+                o.outcome := false;
             end if;
         elsif (err_counters.tx_counter < fault_th.ewl and
                err_counters.rx_counter < fault_th.ewl)
         then
             if (fault_state /= fc_error_active) then
-                outcome := false;
+                o.outcome := false;
             end if;
         else
           if (fault_state /= fc_error_passive) then
-                outcome := false;
+                o.outcome := false;
             end if;
         end if;
 

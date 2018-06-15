@@ -70,6 +70,7 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
@@ -85,7 +86,8 @@ package rtr_pref_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0);
+        signal      so              : out    feature_signal_outputs_t
     );
 
 end package;
@@ -102,7 +104,8 @@ package body rtr_pref_feature is
         signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
         signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
         signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0)
+        signal      stat_bus_2      : in     std_logic_vector(511 downto 0);
+        signal      so              : out    feature_signal_outputs_t
     )is
         variable ID_1               :        natural := 1;
         variable ID_2               :        natural := 2;
