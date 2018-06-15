@@ -100,7 +100,7 @@ entity CAN_feature_test is
         signal rand_ctr         : in natural range 0 to RAND_POOL_SIZE;
 
         --CAN bus signals
-        signal bus_level        : in std_logic := RECESSIVE;
+        signal bus_level        : out std_logic := RECESSIVE;
 
         --Test name to be loaded by the TCL script from TCL test FIFO
         --Note that string always have to have fixed length
@@ -155,6 +155,8 @@ architecture feature_env_test of CAN_feature_test is
         swr             => '0',
         sbe             => (OTHERS => '1')
     ));
+
+    signal s_bus_level : std_logic := RECESSIVE;
 begin
 
     g_inst: for i in 1 to 2 generate
@@ -204,7 +206,8 @@ begin
             p(i).tr_del_sr <= p(i).tr_del_sr(254 downto 0) & p(i).CAN_tx;
         end process;
 
-        p(i).CAN_rx     <= bus_level;
+        p(i).CAN_rx     <= s_bus_level;
+        bus_level <= s_bus_level;
 
         ---------------------------------
         --Clock generation
@@ -219,8 +222,8 @@ begin
         end process;
     end generate;
 
-    bus_level    <= p(1).tr_del_sr(p(1).tr_del) AND p(2).tr_del_sr(p(2).tr_del) when bl_force=false else
-                    bl_inject;
+    s_bus_level    <= p(1).tr_del_sr(p(1).tr_del) AND p(2).tr_del_sr(p(2).tr_del) when bl_force=false else
+                      bl_inject;
 
     ---------------------------------
     --Test process listening to the
@@ -262,12 +265,16 @@ end architecture;
 
 
 Library ieee;
+library vunit_lib;
+context vunit_lib.vunit_context;
+
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 entity tb_feature is
     generic (
@@ -381,7 +388,7 @@ begin
     test:process
         constant ID_1    : natural range 0 to 15 := 1;
         constant ID_2    : natural range 0 to 15 := 2;
-        variable outputs : feature_outputs_t;
+        variable o       : feature_outputs_t;
     begin
         test_runner_setup(runner, runner_cfg);
         --Set the process to run and wait until it comes out of reset

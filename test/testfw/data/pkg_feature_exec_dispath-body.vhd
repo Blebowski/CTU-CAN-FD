@@ -37,15 +37,9 @@ begin
         {{ test }}_feature_exec(
             o => o,
             rand_ctr => rand_ctr,
-            mem_bus_1 => mem_bus(1),
-            mem_bus_2 => mem_bus(2),
-            int_1 => iout(1).irq,
-            int_2 => iout(2).irq,
+            mem_bus => mem_bus,
+            iout => iout,
             bus_level => bus_level,
-            drv_bus_1 => iout(1).drv_bus,
-            drv_bus_2 => iout(2).drv_bus,
-            stat_bus_1 => iout(1).stat_bus,
-            stat_bus_2 => iout(2).stat_bus,
             so => so
         );
     {% endfor %}

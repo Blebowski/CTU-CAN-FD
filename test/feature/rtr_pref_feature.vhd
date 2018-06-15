@@ -76,37 +76,26 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package rtr_pref_feature is
-
     procedure rtr_pref_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0);
-        signal      so              : out    feature_signal_outputs_t
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body rtr_pref_feature is
-
     procedure rtr_pref_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0);
-        signal      so              : out    feature_signal_outputs_t
-    )is
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
         variable ID_1               :        natural := 1;
         variable ID_2               :        natural := 2;
         variable tx_frame           :        SW_CAN_frame_type;

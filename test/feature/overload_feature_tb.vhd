@@ -60,6 +60,7 @@ use work.CAN_FD_register_map.all;
 package overload_feature is
     procedure overload_feature_exec(
         variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_inputs_arr_t;
         signal      mem_bus         : inout  mem_bus_arr_t;
@@ -71,6 +72,7 @@ end package;
 package body overload_feature is
     procedure overload_feature_exec(
         variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_inputs_arr_t;
         signal      mem_bus         : inout  mem_bus_arr_t;
