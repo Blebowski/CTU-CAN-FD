@@ -454,6 +454,9 @@ architecture behavioral of sanity_test is
         return 10.0 * bm * 500 ps;
     end function;
 
+    type tr_del_t is array (1 to NODE_COUNT) of time;
+    signal tr_del : tr_del_t;
+    signal tr_tx_and_rx : std_logic_vector(1 to NODE_COUNT);
 begin
 
     ----------------------------------------------------------------------------
@@ -516,35 +519,28 @@ begin
     -- Realisation of transciever delay
     ----------------------------------------------------------------------------
     tr_del_gen : for i in 1 to NODE_COUNT generate
-        trv_del_gen_proc : process
-            variable index  : natural;
-        begin
-            if (res_n_v(i) = ACT_RESET) then
-                transciever(i).tx_delay_sr <= (OTHERS => RECESSIVE);
-                transciever(i).rx_delay_sr <= (OTHERS => RECESSIVE);
-                transciever(i).tx_point    <= RECESSIVE;
-                wait for 5 ns;
-            else
-                wait until rising_edge(mb_arr(i).clk_sys);
-
-                -- TX shift register
-                transciever(i).tx_delay_sr <=
-                    transciever(i).tx_delay_sr(254 downto 0) & CAN_tx_v(i);
-
-                index:= trv_del_v(i) / 2;
-                if (index > 1) then
-                    index := index - 2;
-                end if;
-                transciever(i).tx_point    <= transciever(i).tx_delay_sr(index);
-
-                -- RX Shift register
-                transciever(i).rx_delay_sr <=
-                    transciever(i).rx_delay_sr(254 downto 0) &
-                    (transciever(i).tx_point AND transciever(i).rx_point);
-
-                CAN_rx_v(i)                <= transciever(i).rx_delay_sr(index);
-            end if;
-        end process;
+        tr_del(i) <= (trv_del_v(i) / 2 - 2) * f100_mhz * 1 ps
+                      when trv_del_v(i)/2 > 1 else
+                           trv_del_v(i)/2 * f100_mhz * 1 ps;
+        trv_del_gen_tx_delayer : entity work.signal_delayer
+            generic map (
+                NSAMPLES => 16
+            )
+            port map (
+                input   => CAN_tx_v(i),
+                delay   => tr_del(i),
+                delayed => transciever(i).tx_point
+            );
+        tr_tx_and_rx(i) <= (transciever(i).tx_point AND transciever(i).rx_point);
+        trv_del_gen_rx_delayer : entity work.signal_delayer
+            generic map (
+                NSAMPLES => 16
+            )
+            port map (
+                input   => tr_tx_and_rx(i),
+                delay   => tr_del(i),
+                delayed => CAN_rx_v(i)
+            );
     end generate tr_del_gen;
 
 
