@@ -1,4 +1,4 @@
-image: mjerabek/ghdl
+image: mjerabek/ghdl:upstream-gcc
 before_script:
     - "export PATH=/opt/ghdl/bin:$PATH"
 
