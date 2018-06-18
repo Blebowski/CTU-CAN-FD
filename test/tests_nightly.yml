@@ -4,6 +4,7 @@ _default: &default
 unit:
     default:
         <<: *default
+        log_level: warning
         iterations: 50
         timeout: 100 ms
     tests:
@@ -36,8 +37,9 @@ unit:
 feature:
     default:
         <<: *default
-        iterations: 50
-        timeout: 1 ms
+        iterations: 1
+        timeout: 100 ms
+        wave: feature/feature_env_setup.tcl
     tests:
         abort_transmittion:
         arbitration:
@@ -58,7 +60,6 @@ sanity:
         <<: *default
         iterations: 10
         timeout: 2 sec
-        error_tolerance: 0
         gauss_iter: 40
     tests:
         "1Mb/10Mb 20 m Star":

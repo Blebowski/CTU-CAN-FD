@@ -5,7 +5,6 @@ before_script:
     - export LANG=C.UTF-8
 
 build_ip_and_tests:
-    allow_failure: true
     stage: build
     artifacts:
         paths: &vunit_build_paths
@@ -29,7 +28,6 @@ build_ip_and_tests:
         - "make -j`nproc`"
 
 test_ip_fast:
-    allow_failure: true
     stage: test
     only: *only
     dependencies: [build_ip_and_tests]
