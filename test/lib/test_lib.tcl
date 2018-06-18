@@ -47,9 +47,9 @@ proc add_test_status_waves {} {
 	global TCOMP
 	
 	add wave -noupdate -divider -height 20 "Test details"
-	add wave status
-	add wave run
-	add wave errors
+	#add wave status
+	#add wave run
+	#add wave errors
 	add wave $TCOMP/iterations
 	add wave $TCOMP/log_level
 	add wave $TCOMP/error_beh

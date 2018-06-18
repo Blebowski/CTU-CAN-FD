@@ -37,14 +37,20 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Feature test for retransmitt limitation
+--  Transceiver delay compensation feature test.
+--
+--  Test sequence is like so:
+--    1. Generate random CAN FD Frame with BRS.
+--    2. Send frame on the bus.
+--    3. Wait unil frame is sent.
+--    4. Read value of transceiver delay and check if it is matching constant
+--       value set in environment.
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---    30.6.2016   Created file
---    06.02.2018  Modified to work with the IP-XACT generated memory map
---    12.06.2018  Modified to use CAN Test lib instead of direct register
---                access functions.
+--
+--    28.6.2016   Created file
+--    12.6.2018   Changed to use CAN test lib instead of direct register access.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -59,8 +65,8 @@ use work.pkg_feature_exec_dispath.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-package retr_limit_feature is
-    procedure retr_limit_feature_exec(
+package tran_delay_feature is
+    procedure tran_delay_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -68,11 +74,12 @@ package retr_limit_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     );
+
 end package;
 
 
-package body retr_limit_feature is
-    procedure retr_limit_feature_exec(
+package body tran_delay_feature is
+    procedure tran_delay_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -82,92 +89,39 @@ package body retr_limit_feature is
     ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
-        variable CAN_frame          :       SW_CAN_frame_type;
-        variable frame_sent         :       boolean := false;
-        variable ctr_1              :       natural;
-        variable ctr_2              :       natural;
+        variable w_data             :       std_logic_vector(31 downto 0) :=
+                                                (OTHERS => '0');
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable rand_val           :       real;
-        variable retr_th            :       natural;
-        variable mode_backup        :       std_logic_vector(31 downto 0) :=
-                                                (OTHERS => '0');
-
-        variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false, false,
-                                                false, false, false);
-        variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
-        variable buf_state          :       SW_TXT_Buffer_state_type;
+        variable CAN_frame          :       SW_CAN_frame_type;
+        variable frame_sent         :       boolean := false;
+        variable delay              :       natural;
     begin
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- Set both nodes to forbid acknowledge
-        ------------------------------------------------------------------------
-        mode.acknowledge_forbidden := true;
-        set_core_mode(mode, ID_2, mem_bus(2));
-        set_core_mode(mode, ID_1, mem_bus(1));
-        mode.acknowledge_forbidden := false;
-
-        ------------------------------------------------------------------------
-        -- Erase error counters node 1
-        ------------------------------------------------------------------------
-        set_error_counters(err_counters, ID_1, mem_bus(1));
-
-        ------------------------------------------------------------------------
-        -- Set Node 1 retransmitt limit
-        ------------------------------------------------------------------------
-        rand_int_v(rand_ctr, 15, retr_th);
-        report "Retransmitt threshold: " & Integer'image(retr_th);
-        CAN_enable_retr_limit(true, retr_th, ID_1, mem_bus(1));
-
-        ------------------------------------------------------------------------
-        -- Generate and send frame by Node 1
+        -- Generate CAN frame
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_frame.rtr := RTR_FRAME;
-        CAN_frame.frame_format := NORMAL_CAN;
+        CAN_frame.rtr := NO_RTR_FRAME;
+        CAN_frame.frame_format := FD_CAN;
+        CAN_frame.brs := BR_SHIFT;
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
-        -- Wait number of retransmissions. After each one, TXT Buffer should
-        -- be back in ready. After last one, it should be in failed.
+        -- Read the transciever delay compensation register
         ------------------------------------------------------------------------
-        for i in 0 to retr_th loop
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
-            get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
-            if (i /= retr_th) then
-                if (buf_state /= buf_ready) then
-                    report "Buffer not ready";
-                    o.outcome := false;
-                    exit;
-                end if;
-            else
-                if (buf_state /= buf_failed) then
-                    report "Buffer not failed";
-                    o.outcome := false;
-                end if;
-            end if;
-        end loop;
+        read_trv_delay(delay, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
-        -- Read TX Counter, it should be equal to 8 times number of retransmitts
-        -- plus one original transmittion does not count as retransmittion.
+        -- Check if delay is matching environment transceiver delay...
+        -- Note, that 2 DFFs sync. chain must be taken into account
         ------------------------------------------------------------------------
-        read_error_counters(err_counters, ID_1, mem_bus(1));
-        if (err_counters.tx_counter /= 8 * (retr_th + 1)) then
-            report "Counters exp: " & Integer'Image(err_counters.tx_counter) &
-                   " coutners real: " & Integer'image(8 * (retr_th + 1));
+        if (delay /= 22) then
             o.outcome := false;
         end if;
 
-        ------------------------------------------------------------------------
-        -- Set node  2 to allow acknowledge again
-        ------------------------------------------------------------------------
-        set_core_mode(mode, ID_2, mem_bus(2));
-        set_core_mode(mode, ID_1, mem_bus(1));
-
-        wait for 40000 ns;
   end procedure;
 
 end package body;

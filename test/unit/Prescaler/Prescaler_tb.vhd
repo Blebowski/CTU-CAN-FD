@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ USE work.randomLib.All;
 use work.ID_transfer.all;
 
 architecture presc_unit_test of CAN_test is
-  
+
     -- System clock
     signal clk_sys              : std_logic := '0';
 
@@ -73,10 +73,10 @@ architecture presc_unit_test of CAN_test is
 
     -- Protocol control state
     signal OP_State             : oper_mode_type := reciever;
-    signal drv_bus              : std_logic_vector(1023 downto 0) := 
+    signal drv_bus              : std_logic_vector(1023 downto 0) :=
                                     (OTHERS => '0');
 
-    -- Time quantum clock - Nominal bit time    
+    -- Time quantum clock - Nominal bit time
     signal clk_tq_nbt           : std_logic := '0';
 
     -- Bit time - Nominal bit time
@@ -97,15 +97,15 @@ architecture presc_unit_test of CAN_test is
     signal sync_nbt             : std_logic := '0';
     signal sync_dbt             : std_logic := '0';
     signal sync_nbt_del_1       : std_logic := '0';
-    signal sync_dbt_del_1       : std_logic := '0';    
+    signal sync_dbt_del_1       : std_logic := '0';
     signal bt_FSM_out           : bit_time_type;
-    signal hard_sync_edge_valid : std_logic := '0'; 
+    signal hard_sync_edge_valid : std_logic := '0';
     signal sp_control           : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
     signal sync_control         : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
     signal data_tx              : std_logic := RECESSIVE;
-    
+
     -- Driving bus aliases
     signal drv_tq_nbt           :   std_logic_vector (7 downto 0) := "00000000";
     signal drv_tq_dbt           :   std_logic_vector (7 downto 0) := "00000000";
@@ -120,11 +120,11 @@ architecture presc_unit_test of CAN_test is
 
     signal drv_sjw_nbt          :   std_logic_vector (4 downto 0) := "00000";
     signal drv_sjw_dbt          :   std_logic_vector (4 downto 0) := "00000";
-    
+
     ---------------------------------------
     --Internal test signals and constants
     ---------------------------------------
-    signal setting              :   presc_drv_type := 
+    signal setting              :   presc_drv_type :=
                                      ((OTHERS => '0'), (OTHERS => '0'),
                                       (OTHERS => '0'), (OTHERS => '0'),
                                       (OTHERS => '0'), (OTHERS => '0'),
@@ -134,21 +134,21 @@ architecture presc_unit_test of CAN_test is
     signal trig_signals         :   presc_triggers_type;
     constant  inf_proc_time     :   natural := 3; --Information processing time
     signal clock_counter        :   natural := 0;
-    
+
     --Additional error counters
     signal ipt_err_ctr            :   natural := 0;
     signal coh_err_ctr            :   natural := 0;
     signal sync_seq_err_ctr       :   natural := 0;
     signal sample_seq_err_ctr     :   natural := 0;
     signal main_err_ctr           :   natural := 0;
-    
+
     --Additional exit_imm
-    signal exit_imm_2             :   boolean := false; 
+    signal exit_imm_2             :   boolean := false;
     signal exit_imm_3             :   boolean := false;
     signal exit_imm_4             :   boolean := false;
     signal exit_imm_5             :   boolean := false;
 
-    -- Expected duration of bit time during re-synchronisation (in clock cycles) 
+    -- Expected duration of bit time during re-synchronisation (in clock cycles)
     signal resync_bit_time_length :   integer := 1;
 
     -- Random counter for synchronisation edge generation
@@ -179,7 +179,7 @@ architecture presc_unit_test of CAN_test is
 
         ------------------------------------------------------------------------
         -- Here we check that settings are matching IPT!!
-        -- This is stated in documentation and is up to responsible 
+        -- This is stated in documentation and is up to responsible
         -- user to set. If minimal IPT is corrupted in Bit timing settings,
         -- PH2 will last IPT (4 clock cycles), NOT shorter!
         ------------------------------------------------------------------------
@@ -199,14 +199,14 @@ architecture presc_unit_test of CAN_test is
         wait for 0 ns;
 
         -- Time quanta 1 -> PH2 must be minimum 4!
-        if (setting.drv_tq_nbt = "00000001" and 
+        if (setting.drv_tq_nbt = "00000001" and
             unsigned(setting.drv_ph2_nbt) < 4)
         then
             setting.drv_ph2_nbt <= "000100";
         end if;
 
         -- Time quanta 2 or 3 -> PH2 must be minimum 2!
-        if ((setting.drv_tq_nbt = "00000010" or 
+        if ((setting.drv_tq_nbt = "00000010" or
              setting.drv_tq_nbt = "00000011")
              and unsigned(setting.drv_ph2_nbt) < 2)
         then
@@ -215,12 +215,12 @@ architecture presc_unit_test of CAN_test is
 
         -- Making sure that PH1 + Prop lasts at least 2 cycles
         tseg1_dur := to_integer(unsigned(setting.drv_tq_nbt)) *
-                     (to_integer(unsigned(setting.drv_prs_nbt)) + 
+                     (to_integer(unsigned(setting.drv_prs_nbt)) +
                       to_integer(unsigned(setting.drv_ph1_nbt)));
         if (tseg1_dur < 2) then
             setting.drv_prs_nbt <= "0000011";
         end if;
-      
+
         ------------------------------------------------------------------------
         -- DBT
         ------------------------------------------------------------------------
@@ -239,7 +239,7 @@ architecture presc_unit_test of CAN_test is
         then
             setting.drv_ph2_dbt <= "00100";
         end if;
-      
+
         if ((setting.drv_tq_dbt = "00000010" or
              setting.drv_tq_dbt = "00000011")
             and unsigned(setting.drv_ph2_dbt) < 2)
@@ -249,15 +249,15 @@ architecture presc_unit_test of CAN_test is
 
         -- Making sure that PH1 + Prop lasts at least 2 cycles
         tseg1_dur := to_integer(unsigned(setting.drv_tq_dbt)) *
-                     (to_integer(unsigned(setting.drv_prs_dbt)) + 
+                     (to_integer(unsigned(setting.drv_prs_dbt)) +
                       to_integer(unsigned(setting.drv_ph1_dbt)));
         if (tseg1_dur < 2) then
             setting.drv_prs_dbt <= "000011";
         end if;
-      
+
     end procedure;
-        
-    
+
+
     procedure count_cycles_until(
         signal    clk_sys          : in      std_logic;
         variable  counter          : inout   natural;
@@ -269,7 +269,7 @@ architecture presc_unit_test of CAN_test is
         while condition1 = '0' and condition2 = '0' loop
             wait until falling_edge(clk_sys);
             counter := counter + 1;
-        end loop;      
+        end loop;
     end procedure;
 
 
@@ -308,7 +308,7 @@ architecture presc_unit_test of CAN_test is
             is_positive := false;
         end if;
 
-        -- Calculate maximum possible time to wait before sync. edge 
+        -- Calculate maximum possible time to wait before sync. edge
         if (is_positive) then
             sync_max := (brp * (prs + ph1 + 1)) - 1;
         else
@@ -317,7 +317,7 @@ architecture presc_unit_test of CAN_test is
 
         -- Generate waiting time
         if (sync_max = 0) then
-            sync_max := 1;        
+            sync_max := 1;
         end if;
         rand_int_v(rand_ctr, sync_max, sync_time);
 
@@ -360,7 +360,7 @@ architecture presc_unit_test of CAN_test is
 
         -- For positive resynchronisation, amount to lengthen is equal to
         -- synchronisation time.
-        if (positive_resync) then    
+        if (positive_resync) then
             tmp := sync_time;
 
         -- For negative resynchronisation, amount to shorten is equal to
@@ -384,11 +384,11 @@ architecture presc_unit_test of CAN_test is
             -- to MIN 4 clock cycles
             if ( (ph2 * brp) - tmp < 4) then
                 tmp := (ph2 * brp) - 4;
-            end if; 
+            end if;
 
             exp_bit_time    <= nom_bit_time - tmp;
         end if;
-      
+
 
     end procedure;
 
@@ -408,19 +408,19 @@ architecture presc_unit_test of CAN_test is
             counter := counter + 1;
         end loop;
     end procedure;
-    
+
 begin
-  
+
     ----------------------------------------------------------------------------
     -- Instance of Prescaler
     ----------------------------------------------------------------------------
     prescaler_comp : prescaler_v3
     PORT map(
-        clk_sys              =>  clk_sys,            
+        clk_sys              =>  clk_sys,
         res_n                =>  res_n,
         sync_edge            =>  sync_edge,
         OP_State             =>  OP_State,
-        drv_bus              =>  drv_bus  , 
+        drv_bus              =>  drv_bus  ,
         clk_tq_nbt           =>  clk_tq_nbt,
         clk_tq_dbt           =>  clk_tq_dbt,
         sample_nbt           =>  sample_nbt,
@@ -433,13 +433,13 @@ begin
         sync_dbt             =>  sync_dbt,
         data_tx              =>  data_tx,
         sync_nbt_del_1       =>  sync_nbt_del_1,
-        sync_dbt_del_1       =>  sync_dbt_del_1 ,   
+        sync_dbt_del_1       =>  sync_dbt_del_1 ,
         bt_FSM_out           =>  bt_FSM_out,
         hard_sync_edge_valid =>  hard_sync_edge_valid,
         sp_control           =>  sp_control,
         sync_control         =>  sync_control
     );
-  
+
     drv_bus(DRV_TQ_NBT_HIGH downto DRV_TQ_NBT_LOW)    <= drv_tq_nbt;
     drv_bus(DRV_TQ_DBT_HIGH downto DRV_TQ_DBT_LOW)    <= drv_tq_dbt;
     drv_bus(DRV_PRS_NBT_HIGH downto DRV_PRS_NBT_LOW)  <= drv_prs_nbt;
@@ -450,23 +450,23 @@ begin
     drv_bus(DRV_PH2_DBT_HIGH downto DRV_PH2_DBT_LOW)  <= drv_ph2_dbt;
     drv_bus(DRV_SJW_HIGH downto DRV_SJW_LOW)          <= drv_sjw_nbt;
     drv_bus(DRV_SJW_DBT_HIGH downto DRV_SJW_DBT_LOW)  <= drv_sjw_dbt;
-  
-  
+
+
     ----------------------------------------------------------------------------
     -- Joining of signal groups into records
     ----------------------------------------------------------------------------
-    drv_tq_nbt    <=  setting.drv_tq_nbt;     
-    drv_tq_dbt    <=  setting.drv_tq_dbt;      
-    drv_prs_nbt   <=  setting.drv_prs_nbt;     
-    drv_ph1_nbt   <=  setting.drv_ph1_nbt;    
-    drv_ph2_nbt   <=  setting.drv_ph2_nbt;     
-    drv_prs_dbt   <=  setting.drv_prs_dbt;     
-    drv_ph1_dbt   <=  setting.drv_ph1_dbt;       
-    drv_ph2_dbt   <=  setting.drv_ph2_dbt;     
-    drv_sjw_nbt   <=  setting.drv_sjw_nbt;  
-    drv_sjw_dbt   <=  setting.drv_sjw_dbt;    
-  
-    trig_signals.sample_nbt        <=  sample_nbt;      
+    drv_tq_nbt    <=  setting.drv_tq_nbt;
+    drv_tq_dbt    <=  setting.drv_tq_dbt;
+    drv_prs_nbt   <=  setting.drv_prs_nbt;
+    drv_ph1_nbt   <=  setting.drv_ph1_nbt;
+    drv_ph2_nbt   <=  setting.drv_ph2_nbt;
+    drv_prs_dbt   <=  setting.drv_prs_dbt;
+    drv_ph1_dbt   <=  setting.drv_ph1_dbt;
+    drv_ph2_dbt   <=  setting.drv_ph2_dbt;
+    drv_sjw_nbt   <=  setting.drv_sjw_nbt;
+    drv_sjw_dbt   <=  setting.drv_sjw_dbt;
+
+    trig_signals.sample_nbt        <=  sample_nbt;
     trig_signals.sample_dbt        <=  sample_dbt;
     trig_signals.sample_nbt_del_1  <=  sample_nbt_del_1;
     trig_signals.sample_dbt_del_1  <=  sample_dbt_del_1;
@@ -494,25 +494,25 @@ begin
     ----------------------------------------------------------------------------
     -- Checking of Information processing time
     ----------------------------------------------------------------------------
-    ipt_proc_check : process 
+    ipt_proc_check : process
         variable store : natural := 0;
     begin
         if (sp_control = NOMINAL_SAMPLE) then
-         
+
             wait until rising_edge(sample_nbt);
-            store := clock_counter; 
-            wait until rising_edge(sync_nbt); 
-            if ((clock_counter - store) < inf_proc_time) then 
+            store := clock_counter;
+            wait until rising_edge(sync_nbt);
+            if ((clock_counter - store) < inf_proc_time) then
                 log("Information processing time corrupted", error_l, log_level);
-                process_error(ipt_err_ctr, error_beh, exit_imm_2); 
-            end if; 
+                process_error(ipt_err_ctr, error_beh, exit_imm_2);
+            end if;
 
         elsif (sp_control = DATA_SAMPLE) then
 
-            wait until rising_edge(sample_dbt); 
+            wait until rising_edge(sample_dbt);
             store := clock_counter;
             wait until rising_edge(sync_dbt);
-            if ((clock_counter - store) < inf_proc_time) then 
+            if ((clock_counter - store) < inf_proc_time) then
                 log("Information processing time corrupted", error_l, log_level);
                 process_error(ipt_err_ctr, error_beh, exit_imm_2);
             end if;
@@ -521,37 +521,37 @@ begin
             report "Only NOMINAL and DATA sampling is supported" severity error;
         end if;
     end process;
- 
- 
+
+
     ----------------------------------------------------------------------------
     -- Checking that two consecutive sync or sample signals are not present!!
     ----------------------------------------------------------------------------
     trig_coherency_proc : process
         variable was_sync : boolean := false;
     begin
-        wait until falling_edge(clk_sys) and 
+        wait until falling_edge(clk_sys) and
                     (sync_nbt = '1' or sample_nbt = '1' or
                      sync_dbt = '1' or sample_dbt = '1');
 
         if (sync_nbt = '1' or sync_dbt = '1') then
-  
+
             -- Here error occures due to two consecutive sync signals
             if (was_sync = true) then
                 log("Two consecutive sync signals!", error_l, log_level);
                 process_error(coh_err_ctr, error_beh, exit_imm_3);
-            end if; 
+            end if;
             was_sync := true;
 
         elsif (sample_nbt = '1' or sample_dbt = '1') then
-          
+
             -- Here error occures due to two consecutive sample signals
             if (was_sync = false) then
                 log("Two consecutive sample signals!", error_l, log_level);
                 process_error(coh_err_ctr, error_beh, exit_imm_3);
-            end if;  
-            was_sync := false;  
+            end if;
+            was_sync := false;
         end if;
-    end process; 
+    end process;
 
 
     ----------------------------------------------------------------------------
@@ -565,25 +565,25 @@ begin
         if (sync_nbt_del_1 = '0' and sync_dbt_del_1 = '0') then
            log("Sync sequnce not complete, delay 1 CLK signal missing!",
                 error_l, log_level);
-           process_error(sync_seq_err_ctr, error_beh, exit_imm_4);  
+           process_error(sync_seq_err_ctr, error_beh, exit_imm_4);
         end if;
     end process;
-  
-  
+
+
     ----------------------------------------------------------------------------
     -- Checking that all sample signals in the sequence are generated every
     -- time!
     ----------------------------------------------------------------------------
     sample_seq_check_proc : process
     begin
-        wait until falling_edge(clk_sys) and 
+        wait until falling_edge(clk_sys) and
                     (sample_nbt = '1' or sample_dbt = '1');
 
         wait for 10 ns; -- One and half clock cycle
         if (sample_nbt_del_1 = '0' and sample_dbt_del_1 = '0') then
            log("Sample sequnce not complete, delay 1 CLK signal missing!",
                 error_l, log_level);
-           process_error(sample_seq_err_ctr, error_beh, exit_imm_5);  
+           process_error(sample_seq_err_ctr, error_beh, exit_imm_5);
         end if;
 
         wait for 10 ns;
@@ -591,7 +591,7 @@ begin
         if (sample_nbt_del_2 = '0' and sample_dbt_del_2 = '0') then
            log("Sample sequnce not complete, delay 2 CLK signal missing!",
                 error_l, log_level);
-           process_error(sample_seq_err_ctr, error_beh, exit_imm_5);  
+           process_error(sample_seq_err_ctr, error_beh, exit_imm_5);
         end if;
     end process;
 
@@ -612,7 +612,7 @@ begin
         wait until falling_edge(clk_sys) and bt_FSM_out = sync;
         gen_sync_edge_settings(rand_ctr_sync_edge, setting, sp_control,
                                     sync_time, positive_resync);
-        
+
         calc_resync_bit_time(setting, positive_resync, sync_time, sp_control,
                                resync_bit_time_length);
 
@@ -628,7 +628,7 @@ begin
             wait until (bt_FSM_out /= sync);
         else
 
-            -- For positive resync -> start from PROP(or PH1) phase, for 
+            -- For positive resync -> start from PROP(or PH1) phase, for
             -- Negative resync -> start by PH2 phase
             if (positive_resync) then
                 wait until (bt_FSM_out /= sync);
@@ -654,16 +654,16 @@ begin
             end if;
 
         end if;
-        
+
     end process;
 
 
     -- Sum of error counters
-    error_ctr <= sample_seq_err_ctr + sync_seq_err_ctr + 
+    error_ctr <= sample_seq_err_ctr + sync_seq_err_ctr +
                    coh_err_ctr + ipt_err_ctr + main_err_ctr;
     errors    <= error_ctr;
 
-  
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Main Test process
@@ -676,7 +676,7 @@ begin
         variable data_ctr         : natural := 0;
         variable exp_dur          : integer;
 
-        -- Expected duration of Bit Rate shift bit 
+        -- Expected duration of Bit Rate shift bit
         variable exp_dur_BRS      : integer;
 
         -- Expected duration of CRC delimiter
@@ -690,7 +690,7 @@ begin
         log("Restarting Prescaler unit test!", info_l, log_level);
         wait for 5 ns;
 
-        -- Generates random initial bit time settings to avoid having zero 
+        -- Generates random initial bit time settings to avoid having zero
         -- values on the input of DUT after reset!
         apply_rand_seed(seed, 0, rand_ctr);
         gen_bit_time_setting(rand_ctr, setting);
@@ -698,20 +698,20 @@ begin
         reset_test(res_n, status, run, main_err_ctr);
         log("Restarted Prescaler unit test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh,  error_tol);
-        
+
 
         ------------------------------------------------------------------------
         -- Main test loop
         ------------------------------------------------------------------------
         log("Starting Prescaler unit main loop", info_l, log_level);
-        
+
         while (loop_ctr < iterations or exit_imm) loop
             log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
 
             -- Generates random bit time settings for new bits.
             wait until bt_FSM_out = ph2;
             wait until bt_FSM_out = sync;
-            gen_bit_time_setting(rand_ctr, setting); 
+            gen_bit_time_setting(rand_ctr, setting);
 
             -- Sets random sampling
             rand_real_v(rand_ctr, rand_real_value);
@@ -721,10 +721,10 @@ begin
                 sp_control <= NOMINAL_SAMPLE;
             end if;
 
-            -- After applying the Bit time settings the first bit can be fucked 
-            -- up due to register updates. Wait for a bit which starts with 
-            -- clean new timing set properly (tq_edge update takes one clock 
-            -- cycle, thus it can happend that SYNC will last only one clock 
+            -- After applying the Bit time settings the first bit can be fucked
+            -- up due to register updates. Wait for a bit which starts with
+            -- clean new timing set properly (tq_edge update takes one clock
+            -- cycle, thus it can happend that SYNC will last only one clock
             -- cycle instead of one time quanta). Note that Bit Timing does not
             -- have to be changed during the bit duration, but is set only once
             -- at controller configuration!
@@ -745,16 +745,16 @@ begin
                 count_cycles_until(clk_sys, check_ctr, sample_nbt, sample_dbt);
 
                 if (sp_control = NOMINAL_SAMPLE) then
-                    exp_dur := ( (to_integer(unsigned(drv_ph1_nbt)) + 
+                    exp_dur := ( (to_integer(unsigned(drv_ph1_nbt)) +
                                 to_integer(unsigned(drv_prs_nbt)) + 1)
                                *
                                to_integer(unsigned(drv_tq_nbt)));
-                    tmp_text := "Nominal   "; 
+                    tmp_text := "Nominal   ";
                 else
                     exp_dur := ( (to_integer(unsigned(drv_ph1_dbt)) +
                                 to_integer(unsigned(drv_prs_dbt)) + 1)
                                *
-                               to_integer(unsigned(drv_tq_dbt)) 
+                               to_integer(unsigned(drv_tq_dbt))
                               );
                     tmp_text := "Data      ";
                 end if;
@@ -766,7 +766,7 @@ begin
                 end if;
 
                 -- Check distance between two consecutive "SYNC" triggers
-                -- (whole bit time)        
+                -- (whole bit time)
                 log("Checking distance two consecutive SYNC", info_l, log_level);
                 wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
                 wait for 15 ns;
@@ -814,11 +814,11 @@ begin
 
                 ----------------------------------------------------------------
                 -- Evaluate outcome of resynchronisation. Resynchronisation can
-                -- come any time, but bit time is processed only with time 
-                -- quanta! Calculated expected time with one clock cycle 
+                -- come any time, but bit time is processed only with time
+                -- quanta! Calculated expected time with one clock cycle
                 -- precision, not time quanta precision! Thus real difference
-                -- between calculated and measured difference should be less 
-                -- than Time quanta. Note that this is totally exact for Time 
+                -- between calculated and measured difference should be less
+                -- than Time quanta. Note that this is totally exact for Time
                 -- quanta = 1.
                 ----------------------------------------------------------------
                 if (sp_control = NOMINAL_SAMPLE) then
@@ -851,14 +851,14 @@ begin
             -- BRS realisation via two counters in Prescaler.
             --------------------------------------------------------------------
             exp_dur_BRS := (to_integer(unsigned(drv_tq_nbt)) *
-                         (to_integer(unsigned(drv_prs_nbt)) + 
+                         (to_integer(unsigned(drv_prs_nbt)) +
                           to_integer(unsigned(drv_ph1_nbt)) + 1))
                          +
                          (to_integer(unsigned(drv_tq_dbt)) *
                           to_integer(unsigned(drv_ph2_dbt)));
 
             exp_dur_CRC_del := to_integer(unsigned(drv_tq_dbt)) *
-                             (to_integer(unsigned(drv_prs_dbt)) + 
+                             (to_integer(unsigned(drv_prs_dbt)) +
                               to_integer(unsigned(drv_ph1_dbt)) + 1)
                              +
                              (to_integer(unsigned(drv_tq_nbt)) *
@@ -869,14 +869,14 @@ begin
             --------------------------------------------------------------------
             log("Checking duration of BRS bit", info_l, log_level);
 
-            -- Nominal Bit-rate part, count length between sync trigger and 
+            -- Nominal Bit-rate part, count length between sync trigger and
             -- sample trigger!
             sp_control <= NOMINAL_SAMPLE;
             wait until bt_FSM_out = ph2;
             wait until falling_edge(clk_sys) and sync_nbt = '1';
             count_cycles_until(clk_sys, nom_ctr, sample_nbt);
 
-            -- Delay before Sampling type switching as if caused by Protocol 
+            -- Delay before Sampling type switching as if caused by Protocol
             -- Control! (three clock cycles)
             wait until rising_edge(clk_sys);
             wait until rising_edge(clk_sys);
@@ -890,13 +890,13 @@ begin
             if (exp_dur_BRS /= nom_ctr + data_ctr + 2) then
                 log("BRS bit length not as expected, " &
                     "Expected: " & integer'image(exp_dur_BRS) &
-                    "Real: " & integer'image(nom_ctr + data_ctr + 2), 
+                    "Real: " & integer'image(nom_ctr + data_ctr + 2),
                      error_l, log_level);
                 process_error(main_err_ctr, error_beh, exit_imm);
             end if;
 
             --------------------------------------------------------------------
-            -- Emulate CRC delimiter bit (as if switching back to Nominal 
+            -- Emulate CRC delimiter bit (as if switching back to Nominal
             -- data-rate)
             --------------------------------------------------------------------
             log("Checking duration of CRC delimiter bit", info_l, log_level);
@@ -917,7 +917,7 @@ begin
             if (exp_dur_CRC_del /= nom_ctr + data_ctr + 2) then
                 log("CRC delimiter bit length not as expected, " &
                     "Expected: " & integer'image(exp_dur_CRC_del) &
-                    "Real: " & integer'image(nom_ctr + data_ctr + 2), 
+                    "Real: " & integer'image(nom_ctr + data_ctr + 2),
                      error_l, log_level);
                 process_error(main_err_ctr, error_beh, exit_imm);
             end if;
@@ -926,61 +926,8 @@ begin
 
             loop_ctr <= loop_ctr + 1;
         end loop;
-        
+
         evaluate_test(error_tol, error_ctr, status);
     end process;
-  
+
 end architecture;
-
-
-
---------------------------------------------------------------------------------
--- Test wrapper and control signals generator
---------------------------------------------------------------------------------
-architecture presc_unit_test_wrapper of CAN_test_wrapper is
-  
-    --Select architecture of the test
-    for test_comp : CAN_test use entity work.CAN_test(presc_unit_test);
-
-    -- Input trigger, test starts running when
-    signal run              :   boolean;
-
-    -- Status of the test
-    signal status_int       :   test_status_type;
-
-    -- Amount of errors which appeared in the test
-    signal errors           :   natural;
-
-begin
-  
-    -- In this test wrapper generics are directly connected to the signals
-    -- of test entity
-    test_comp : CAN_test
-    port map(
-     run              =>  run,
-     iterations       =>  iterations , 
-     log_level        =>  log_level,
-     error_beh        =>  error_beh,
-     error_tol        =>  error_tol,
-     status           =>  status_int,
-     errors           =>  errors
-    );
-
-    status              <= status_int;
-  
-    ------------------------------------
-    -- Starts the test and lets it run
-    ------------------------------------
-    test : process
-    begin
-        run               <= true;
-        wait for 1 ns;
-
-        -- Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
-
-        wait for 100 ns;
-        run               <= false;
-    end process;
-  
-end;

@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ use work.CAN_FD_register_map.all;
 use work.ID_transfer.all;
 
 architecture Fault_Confinement_unit_test of CAN_test is
-  
+
     ----------------------------------------------------------------------------
     -- DUT Interface
     ----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ architecture Fault_Confinement_unit_test of CAN_test is
 
     --Stuffing Error from bit destuffing
     signal stuff_Error            :    std_logic := '0';
-      
+
     -- At least one error appeared
     signal error_valid            :    std_logic;
 
@@ -79,16 +79,16 @@ architecture Fault_Confinement_unit_test of CAN_test is
     signal error_passive_changed  :    std_logic;
 
     --Error warning limit was reached
-    signal error_warning_limit    :    std_logic; 
+    signal error_warning_limit    :    std_logic;
 
     signal OP_State               :    oper_mode_type := transciever;
 
     -- Recieved data. Valid with the same signal as rec_trig in CAN Core
     signal data_rx                :    std_logic := RECESSIVE;
 
-    -- Transcieved data by CAN Core. Valid with one clk_sys delay from 
+    -- Transcieved data by CAN Core. Valid with one clk_sys delay from
     -- tran_trig! The same trigger signal as Bit-Stuffing!
-    signal data_tx                :    std_logic := RECESSIVE; 
+    signal data_tx                :    std_logic := RECESSIVE;
     signal rec_trig               :    std_logic := '0';
 
     -- Transcieve data trigger one clk_sys delayed behind the tran_trig
@@ -107,7 +107,7 @@ architecture Fault_Confinement_unit_test of CAN_test is
     -- Acknowledge Error from PC
     signal ack_Error              :     std_logic := '0';
 
-    -- Some of the state machines, or signals 
+    -- Some of the state machines, or signals
     -- reached unknown state!! Shouldnt happend!!
     signal unknown_state_Error    :     std_logic := '0';
 
@@ -115,7 +115,7 @@ architecture Fault_Confinement_unit_test of CAN_test is
     -- confinement unit (Bit error or Stuff Error appeared)
     signal bit_Error_valid        :    std_logic;
     signal stuff_Error_valid      :    std_logic;
-     
+
     signal bit_Error_out          :    std_logic;
 
     -- Interface for increment and decrementing error counters
@@ -139,7 +139,7 @@ architecture Fault_Confinement_unit_test of CAN_test is
     -- Fault confinement status
     signal error_state_out        :     error_state_type;
 
-    
+
     ----------------------------------------------------------------------------
     -- Internal testbench signals
     ----------------------------------------------------------------------------
@@ -172,13 +172,13 @@ architecture Fault_Confinement_unit_test of CAN_test is
 
     -- Modeled state
     signal fc_model               :     error_state_type;
-    
+
 begin
 
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    faultConf_comp : faultConf 
+    faultConf_comp : faultConf
     port map(
         clk_sys                => clk_sys,
         res_n                  => res_n,
@@ -233,9 +233,9 @@ begin
         variable epsilon  :natural := 0;
     begin
         generate_clock(period, duty, epsilon, clk_sys);
-    end process;  
+    end process;
 
-  
+
     ----------------------------------------------------------------------------
     -- Generation of Increase, Decrease and Preset signals on error counters.
     -- Checking whether counter was increased, decreased properly!
@@ -252,7 +252,7 @@ begin
             apply_rand_seed(seed, 0, rand_ctr);
         end loop;
 
-        wait until rising_edge(clk_sys);        
+        wait until rising_edge(clk_sys);
 
         -- Generate random command for error counters
         rand_real_v(rand_ctr_1, rand_nr);
@@ -264,7 +264,7 @@ begin
         drv_ctr_sel <= (OTHERS => '0');
         drv_ctr_val <= (OTHERS => '0');
         SW_preset   := false;
-     
+
         -- If counters are bigger than would ever occur in real core, erase
         -- them!
         if (rx_err_model > 264 or tx_err_model > 264) then
@@ -316,7 +316,7 @@ begin
             if (drv_ctr_sel(3) = '1') then
                 fd_err_model    <= to_integer(unsigned(drv_ctr_val));
             end if;
-        
+
         -- Calculate expected value for error counters
         else
             if (OP_State = transciever) then
@@ -337,7 +337,7 @@ begin
             if (exp_increment > 0) then
                 if (sp_control = NOMINAL_SAMPLE) then
                     norm_err_model  <= norm_err_model + 1;
-                elsif (sp_control = DATA_SAMPLE or 
+                elsif (sp_control = DATA_SAMPLE or
                        sp_control = SECONDARY_SAMPLE)
                 then
                     fd_err_model    <= fd_err_model + 1;
@@ -394,11 +394,11 @@ begin
 
     end process;
 
-    errors <= error_ctr;    
+    errors <= error_ctr;
 
 
     ----------------------------------------------------------------------------
-    -- Main test process 
+    -- Main test process
     ----------------------------------------------------------------------------
     test_proc : process
     begin
@@ -412,75 +412,17 @@ begin
         loop
             log("Starting loop nr " & integer'image(loop_ctr), info_l,
                 log_level);
-            
+
             wait until rising_edge(clk_sys);
             wait until rising_edge(clk_sys);
             wait until rising_edge(clk_sys);
             wait until rising_edge(clk_sys);
 
             error_ctr <= err_ctr_1 + err_ctr_2;
-            
+
             loop_ctr <= loop_ctr + 1;
         end loop;
 
         evaluate_test(error_tol, error_ctr, status);
     end process;
-  
-  
 end architecture;
-
-
-
---------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
---------------------------------------------------------------------------------
-
-architecture Fault_confinement_unit_test_wrapper of CAN_test_wrapper is
-  
-    --Select architecture of the test
-    for test_comp : CAN_test use entity work.CAN_test(Fault_confinement_unit_test);
-
-    -- Input trigger, test starts running when true 
-    signal run              :   boolean;
-
-    -- Status of the test       
-    signal status_int       :   test_status_type;
-
-    -- Amount of errors which appeared in the test
-    signal errors           :   natural;   
-
-begin
-  
-    -- In this test wrapper generics are directly connected to the signals
-    -- of test entity
-    test_comp : CAN_test
-    port map(
-        run              =>  run,
-        iterations       =>  iterations , 
-        log_level        =>  log_level,
-        error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
-        status           =>  status_int,
-        errors           =>  errors
-    );
-
-    status              <= status_int;
-
-    ------------------------------------
-    -- Starts the test and lets it run
-    ------------------------------------
-    test : process
-    begin
-        run               <= true;
-        wait for 1 ns;
-
-        --Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
-
-        wait for 100 ns;
-        run               <= false;
-    
-    end process;
-  
-  
-end;

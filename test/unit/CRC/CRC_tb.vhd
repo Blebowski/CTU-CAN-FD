@@ -1,51 +1,51 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for the CRC circuit.
---  Unit test generates bit sequence 10 to 620 bits long as well as random 
+--  Unit test generates bit sequence 10 to 620 bits long as well as random
 --  drv_fd_type setting. Then it precalculates the CRC values by calc_crc pro-
 --  cedure. Afterwads it emulates reception of this sequence on input of CRC
 --  circuit. Sync signal is  used for enable transition. Simple rx trigger signal
---  is used as trigger signal for processing input data. After the calculation, 
---  software precalculated CRC and CRC from DUT are compared! If mismatch occurs 
---  error is detected and test fails. Whole procedure is repeated "iterations" 
---  times.                          
+--  is used as trigger signal for processing input data. After the calculation,
+--  software precalculated CRC and CRC from DUT are compared! If mismatch occurs
+--  error is detected and test fails. Whole procedure is repeated "iterations"
+--  times.
 --------------------------------------------------------------------------------
 -- Revision History:
 --    4.6.2016   Created file
@@ -53,7 +53,7 @@
 
 
 --------------------------------------------------------------------------------
--- Test implementation                                            
+-- Test implementation
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -69,21 +69,21 @@ use work.CAN_FD_register_map.all;
 use work.ID_transfer.all;
 
 architecture CRC_unit_test of CAN_test is
-  
+
     signal data_in     :   std_logic := '0'; --Serial data input
     signal clk_sys     :   std_logic := '0'; --System clock input
     signal trig        :   std_logic := '0'; --Trigger to sample the input value
     signal res_n       :   std_logic := '0'; --Asynchronous reset
-    signal enable      :   std_logic := '0'; 
+    signal enable      :   std_logic := '0';
     signal drv_bus     :   std_logic_vector(1023 downto 0) := (OTHERS => '0');
-    
+
     signal crc15       :   std_logic_vector(14 downto 0) := (OTHERS => '0');
     signal crc17       :   std_logic_vector(16 downto 0) := (OTHERS => '0');
     signal crc21       :   std_logic_vector(20 downto 0) := (OTHERS => '0');
-  
+
     --TX trigger for crc, corresponds to trigger
     -- signal delayed by one from Protocol control trigger
-    signal tx_trig     :   std_logic := '0'; 
+    signal tx_trig     :   std_logic := '0';
     signal rx_trig     :   std_logic := '0';
     signal rnd_ctr_tr  :   natural range 0 to RAND_POOL_SIZE := 0;
     signal drv_fd_type :   std_logic := '0';
@@ -102,13 +102,13 @@ architecture CRC_unit_test of CAN_test is
         variable rand_nr       :real;
     begin
         rand_real_v(rand_ctr, rand_nr);
-        act_length := min_length + 
+        act_length := min_length +
                       integer(real(max_length - min_length) * rand_nr);
         rand_logic_vect_v(rand_ctr, bit_seq, 0.5);
 
         ------------------------------------------------------------------------
         -- From length until the end of vector we should have zeroes
-        -- Here we left enough space at the end of the vector for 
+        -- Here we left enough space at the end of the vector for
         -- right alignment by zeroes from right!
         ------------------------------------------------------------------------
         for i in 0 to 660 - act_length loop
@@ -116,7 +116,7 @@ architecture CRC_unit_test of CAN_test is
         end loop;
     end procedure;
 
-  
+
     ----------------------------------------------------------------------------
     -- Calculate the CRC in behavioral way
     ----------------------------------------------------------------------------
@@ -136,7 +136,7 @@ architecture CRC_unit_test of CAN_test is
         variable crc_21_next  :       std_logic;
         variable iterator     :       natural;
     begin
-    
+
         --Set up the initial polynomials
         crc_15_res := (OTHERS => '0');
         crc_17_res := (OTHERS => '0');
@@ -145,7 +145,7 @@ architecture CRC_unit_test of CAN_test is
            crc_17_res(16) := '1';
            crc_21_res(20) := '1';
         end if;
-    
+
 
         ------------------------------------------------------------------------
         -- Calculate CRC in behavioral way use the same algorithm as in the
@@ -153,9 +153,9 @@ architecture CRC_unit_test of CAN_test is
         -- division. FOllowing algorythm is the same as in CAN FD spec.
         ------------------------------------------------------------------------
 
-        iterator := 0;    
+        iterator := 0;
         while (iterator < act_length) loop
-          
+
             -- Check whether we go XORing
             crc_15_next := crc_15_res(14) xor bit_seq(660 - iterator);
             crc_17_next := crc_17_res(16) xor bit_seq(660 - iterator);
@@ -185,7 +185,7 @@ architecture CRC_unit_test of CAN_test is
 
 
     ----------------------------------------------------------------------------
-    -- Puts the CRC on the input of the  
+    -- Puts the CRC on the input of the
     ----------------------------------------------------------------------------
     procedure put_to_dut(
         signal    sync         :in     std_logic;
@@ -204,7 +204,7 @@ architecture CRC_unit_test of CAN_test is
 
 
         iterator := 0;
-        while (iterator < act_length) loop  
+        while (iterator < act_length) loop
             log("Putting bit nr " & integer'image(iterator), info_l, log_level);
             data_in <= bit_seq(660 - iterator);
             wait until rising_edge(sample);
@@ -226,7 +226,7 @@ architecture CRC_unit_test of CAN_test is
         signal    crc_21_dut  :in     std_logic_vector(20 downto 0);
         variable  crc_15_mod  :in     std_logic_vector(14 downto 0);
         variable  crc_17_mod  :in     std_logic_vector(16 downto 0);
-        variable  crc_21_mod  :in     std_logic_vector(20 downto 0); 
+        variable  crc_21_mod  :in     std_logic_vector(20 downto 0);
         variable  c15_mism    :out    boolean;
         variable  c17_mism    :out    boolean;
         variable  c21_mism    :out    boolean
@@ -250,7 +250,7 @@ architecture CRC_unit_test of CAN_test is
             c21_mism := true;
         end if;
   end procedure;
-    
+
 begin
 
     ----------------------------------------------------------------------------
@@ -270,7 +270,7 @@ begin
         enable     =>  enable,
         drv_bus    =>  drv_bus,
 
-        crc15      =>  crc15, 
+        crc15      =>  crc15,
         crc17      =>  crc17,
         crc21      =>  crc21
     );
@@ -290,7 +290,7 @@ begin
         generate_clock(period, duty, epsilon, clk_sys);
     end process;
 
-  
+
     ----------------------------------------------------------------------------
     -- Sampling signals generation
     ----------------------------------------------------------------------------
@@ -300,15 +300,15 @@ begin
         if (res_n = ACT_RESET) then
             apply_rand_seed(seed, 1, rnd_ctr_tr);
         end if;
-        generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);    
+        generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);
     end process;
-  
+
     -- Propagate the trigger to the CRC circuit...
     trig <= rx_trig;
 
 
     ----------------------------------------------------------------------------
-    -- Main test process 
+    -- Main test process
     ----------------------------------------------------------------------------
     test_proc : process
         variable bit_seq    : std_logic_vector(660 downto 0);
@@ -338,13 +338,13 @@ begin
             --Generate bit sequence
             log("Generating random bit sequence", info_l,  log_level);
             gen_bit_sequence(rand_ctr, 10, 620, bit_seq, gen_length);
-                
+
             log("Calculating software CRC", info_l, log_level);
             calc_crc(bit_seq, gen_length, CRC15_POL, CRC17_POL, CRC21_POL,
                    drv_fd_type, crc_15_mod, crc_17_mod, crc_21_mod);
 
             log("Putting bit sequence to DUT", info_l, log_level);
-            put_to_dut(tx_trig, rx_trig, enable, data_in, clk_sys, bit_seq, 
+            put_to_dut(tx_trig, rx_trig, enable, data_in, clk_sys, bit_seq,
                        gen_length);
 
             log("Comparing SW CRC and DUT output", info_l, log_level);
@@ -365,64 +365,11 @@ begin
                 process_error(error_ctr, error_beh, exit_imm);
                 log("Mismatch in CRC21", error_l, log_level);
             end if;
-              
+
             loop_ctr <= loop_ctr + 1;
         end loop;
 
         evaluate_test(error_tol, error_ctr, status);
     end process;
-  
+
 end architecture;
-
-
---------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
---------------------------------------------------------------------------------
-
-architecture CRC_unit_test_wrapper of CAN_test_wrapper is
-  
-    --Select architecture of the test
-    for test_comp : CAN_test use entity work.CAN_test(CRC_unit_test);
-
-    -- Input trigger, test starts running when true 
-    signal run              :   boolean;
-
-    -- Status of the test       
-    signal status_int       :   test_status_type;
-
-    -- Amount of errors which appeared in the test
-    signal errors           :   natural;   
-
-begin
-  
-    -- In this test wrapper generics are directly connected to the signals
-    -- of test entity
-    test_comp : CAN_test
-    port map(
-        run              =>  run,
-        iterations       =>  iterations , 
-        log_level        =>  log_level,
-        error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
-        status           =>  status_int,
-        errors           =>  errors
-    );
-  
-    status              <= status_int;
-  
-    ----------------------------------------------------------------------------
-    -- Starts the test and lets it run
-    ----------------------------------------------------------------------------
-    test : process
-    begin
-        run               <= true;
-        wait for 1 ns;
-
-        --Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
-
-        wait for 100 ns;
-        run               <= false;    
-    end process;
-  
-end;

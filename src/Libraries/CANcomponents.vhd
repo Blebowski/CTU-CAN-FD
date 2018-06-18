@@ -1,51 +1,51 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Package for components declarations to avoid writing component declarations 
---  every time into architecture itself. Do not use comments on signals in this 
+--  Package for components declarations to avoid writing component declarations
+--  every time into architecture itself. Do not use comments on signals in this
 --  file, comment the signal in the entity declaration!
 --------------------------------------------------------------------------------
 -- Revision History:
 --    15.11.2017   Created file
 --    27.11.2017   Added "rst_sync" asynchronous rest synchroniser circuit
---    29.11.2017   Removed "rec_data" between Protocol control and RX Buffer, 
+--    29.11.2017   Removed "rec_data" between Protocol control and RX Buffer,
 --                                 replaced with rec_dram_word and
 --                 rec_dram_addr as part of resource optimization.
 --    30.11.2017   Updated "txt_buffer" for direct access to buffer
@@ -66,7 +66,7 @@ package CANcomponents is
   component CAN_top_level is
     generic(
       constant use_logger     : boolean               := true;
-      constant rx_buffer_size : natural range 32 to 4096 := 128; 
+      constant rx_buffer_size : natural range 32 to 4096 := 128;
       constant use_sync       : boolean               := true;
       constant ID             : natural range 0 to 15 := 1;
       constant sup_filtA      : boolean               := true;
@@ -89,6 +89,10 @@ package CANcomponents is
       signal CAN_tx          : out std_logic;
       signal CAN_rx          : in  std_logic;
       signal time_quanta_clk : out std_logic;
+      -- synthesis translate_off
+      signal drv_bus_o    : out std_logic_vector(1023 downto 0);
+      signal stat_bus_o   : out std_logic_vector(511 downto 0);
+      -- synthesis translate_on
       signal timestamp       : in  std_logic_vector(63 downto 0)
       );
   end component;
@@ -139,11 +143,11 @@ package CANcomponents is
       signal rx_data_overrun      : in  std_logic;
       signal tran_data            : out std_logic_vector(31 downto 0);
       signal tran_addr            : out std_logic_vector(4 downto 0);
-      signal txtb_cs              : out std_logic_vector(buf_count - 1 downto 0);   
+      signal txtb_cs              : out std_logic_vector(buf_count - 1 downto 0);
       signal txtb_fsms            : in  txt_fsms_type;
       signal txt_sw_cmd           : out txt_sw_cmd_type;
       signal txt_buf_cmd_index    : out std_logic_vector(buf_count - 1 downto 0);
-      signal txt_buf_prior_out    : out txtb_priorities_type;      
+      signal txt_buf_prior_out    : out txtb_priorities_type;
       signal trv_delay_out        : in  std_logic_vector(15 downto 0);
       signal int_vector           : in  std_logic_vector(INT_COUNT - 1 downto 0);
       signal int_ena              : in  std_logic_vector(INT_COUNT - 1 downto 0);
@@ -193,7 +197,7 @@ package CANcomponents is
     );
   end component;
 
-  
+
   ------------------------------------------------------------------------------
   --TX Buffer  module
   ------------------------------------------------------------------------------
@@ -237,7 +241,7 @@ package CANcomponents is
     signal txt_sw_cmd             :in   txt_sw_cmd_type;
     signal txt_sw_buf_cmd_index   :in   std_logic_vector(buf_count - 1 downto 0);
     signal txtb_state             :out  txt_fsm_type;
-    signal txt_hw_cmd             :in   txt_hw_cmd_type;  
+    signal txt_hw_cmd             :in   txt_hw_cmd_type;
     signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
     signal txt_word               :out  std_logic_vector(31 downto 0);
     signal txt_addr               :in   natural range 0 to 19;
@@ -252,7 +256,7 @@ package CANcomponents is
   generic(
     buf_count   : natural range 1 to 8
   );
-  port( 
+  port(
     signal clk_sys                :in  std_logic;
     signal res_n                  :in  std_logic;
     signal txt_buf_in             :in txtb_output_type;
@@ -265,7 +269,7 @@ package CANcomponents is
     signal tran_frame_type_out    :out std_logic;
     signal tran_brs_out           :out std_logic;
     signal tran_frame_valid_out   :out std_logic;
-    signal txt_hw_cmd             :in txt_hw_cmd_type;  
+    signal txt_hw_cmd             :in txt_hw_cmd_type;
     signal txtb_changed           :out std_logic;
     signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
     signal txtb_core_pointer      :in natural range 0 to 19;
@@ -274,8 +278,8 @@ package CANcomponents is
     signal timestamp              :in std_logic_vector(63 downto 0)
   );
   end component;
-  
-  
+
+
   ------------------------------------------------------------------------------
   -- Priority decoder for TXT Buffer selection
   ------------------------------------------------------------------------------
@@ -283,11 +287,11 @@ package CANcomponents is
   generic(
     buf_count :  natural range 1 to 8
   );
-  port( 
+  port(
     signal prio               : in  txtb_priorities_type;
     signal prio_valid         : in  std_logic_vector(buf_count - 1 downto 0);
     signal output_valid       : out  boolean;
-    signal output_index       : out  natural range 0 to buf_count - 1   
+    signal output_index       : out  natural range 0 to buf_count - 1
   );
   end component;
 
@@ -322,7 +326,7 @@ package CANcomponents is
 		  constant int_count          :     natural range 0 to 32 := 11
     );
   PORT(
-    signal clk_sys                :in   std_logic; 
+    signal clk_sys                :in   std_logic;
     signal res_n                  :in   std_logic;
     signal error_valid            :in   std_logic;
     signal error_passive_changed  :in   std_logic;
@@ -343,7 +347,7 @@ package CANcomponents is
     signal int_ena                :out  std_logic_vector(int_count - 1 downto 0)
   );
   end component;
-  
+
   ------------------------------------------------------------------------------
   --CAN Core module --
   ------------------------------------------------------------------------------
@@ -626,8 +630,8 @@ package CANcomponents is
       signal CRC_Error             : out std_logic;
       signal ack_Error             : out std_logic;
       signal unknown_state_Error   : out std_logic;
-      signal bit_Error_valid       : in  std_logic; 
-      signal stuff_Error_valid     : in  std_logic; 
+      signal bit_Error_valid       : in  std_logic;
+      signal stuff_Error_valid     : in  std_logic;
       signal inc_one               : out std_logic;
       signal inc_eight             : out std_logic;
       signal dec_one               : out std_logic;
@@ -700,7 +704,7 @@ package CANcomponents is
   end component;
 
   ------------------------------------------------------------------------------
-  -- Asynchronous resset synchroniser 
+  -- Asynchronous resset synchroniser
   ------------------------------------------------------------------------------
   component rst_sync is
     port (

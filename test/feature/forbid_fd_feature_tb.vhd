@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -53,7 +53,7 @@
 --         was decreased.
 --      9. If error counters are over 70, restart them so that nodes won't
 --         turn error passive.
---                                      
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --    21.6.2016   Created file
@@ -67,40 +67,33 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 
 package forbid_fd_feature is
-  
     procedure forbid_fd_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      iout            : in     instance_outputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-  
 end package;
 
 
 package body forbid_fd_feature is
-  
+
     procedure forbid_fd_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      iout            : in     instance_outputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
@@ -115,88 +108,88 @@ package body forbid_fd_feature is
         variable err_counters_1     :       SW_error_counters;
         variable err_counters_2     :       SW_error_counters;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- First disable the FD support of both Nodes. This is done to make
         -- sure that both nodes have the same ISO type set.
         ------------------------------------------------------------------------
         mode.flexible_data_rate := true;
-        set_core_mode(mode, ID_2, mem_bus_2);
+        set_core_mode(mode, ID_2, mem_bus(2));
         mode.flexible_data_rate := false;
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_1, ID_1, mem_bus_1);
-     
+        read_error_counters(err_counters_1, ID_1, mem_bus(1));
+
         ------------------------------------------------------------------------
         -- Send FD frame by node 2 and wait for error frame...
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.frame_format := FD_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
-        CAN_wait_error_transmitted(ID_2, mem_bus_2);
-        CAN_wait_bus_idle(ID_2, mem_bus_2);
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_error_transmitted(ID_2, mem_bus(2));
+        CAN_wait_bus_idle(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1 again
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_2, ID_1, mem_bus_1);
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
 
         -- Counter should be increased
         if ((err_counters_1.rx_counter + 1 + 8) /= err_counters_2.rx_counter) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Now send the same frame, but not the FD type. Wait until bus is idle
         ------------------------------------------------------------------------
         CAN_frame.frame_format := NORMAL_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1 again
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_2, ID_1, mem_bus_1);
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Counter should be decreased by one now due to sucesfull reception.
-        -- But it should be increased by 8 since it is the first node that 
+        -- But it should be increased by 8 since it is the first node that
         -- detected the error!
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 8) /= err_counters_2.rx_counter) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Now enable the FD support of Node 1
         ------------------------------------------------------------------------
         mode.flexible_data_rate := true;
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Now again send the same frame but FD type now unit should accept
         -- the frame OK!
         ------------------------------------------------------------------------
         CAN_frame.frame_format := FD_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus_2, frame_sent);
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Read RX Error counter node 1 again
         ------------------------------------------------------------------------
-        read_error_counters(err_counters_2, ID_1, mem_bus_1);
+        read_error_counters(err_counters_2, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Counter should be less than the value read now or both should be
         -- zeroes when counter cannnot already be lowered...
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 7) /= err_counters_2.rx_counter) then
-            outcome := false;
-        end if; 
+            o.outcome := false;
+        end if;
 
         ------------------------------------------------------------------------
         -- Since counter is incremented more than decremented, after many
@@ -207,11 +200,9 @@ package body forbid_fd_feature is
             report "Resetting error counters";
             err_counters_2.rx_counter := 0;
             err_counters_2.tx_counter := 0;
-            set_error_counters(err_counters_2, ID_1, mem_bus_1);
-            set_error_counters(err_counters_2, ID_2, mem_bus_2);
+            set_error_counters(err_counters_2, ID_1, mem_bus(1));
+            set_error_counters(err_counters_2, ID_2, mem_bus(2));
         end if;
   end procedure;
 
 end package body;
-
-

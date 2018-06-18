@@ -1,43 +1,43 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 --  Purpose:
---    Main test library for CTU CAN FD controller. Contains all test resources 
+--    Main test library for CTU CAN FD controller. Contains all test resources
 --    for running CANTest framework and low-level access functions.
 --
 --    Note that in this library several types are (nearly) the same as types
@@ -47,8 +47,8 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    27.5.2016   Created file
---    13.1.2017   Added formatting of identifier in CAN_send_frame, 
---                CAN_read_frame to fit the native decimal interpretation 
+--    13.1.2017   Added formatting of identifier in CAN_send_frame,
+--                CAN_read_frame to fit the native decimal interpretation
 --                (the same way as in C driver)
 --    27.11.2017  Added "reset_test" function fix. Implemented reset synchroniser
 --                to avoid async reset in the core. As consequnce after the core
@@ -57,7 +57,7 @@
 --    06.02.2018  Modified the library to work with generated constants from the
 --                8 bit register map generated from IP-XACT.
 --    09.02.2018  Added support fow RWCNT field in the SW_CAN_Frame.
---    15.02.2018  Added support for TXT Buffer commands in CAN Send frame 
+--    15.02.2018  Added support for TXT Buffer commands in CAN Send frame
 --                procedure.
 --    23.02.2018  Corrected "CAN_generate_frame" function for proper placement
 --                of BASE identifier to unsigned value.
@@ -129,7 +129,7 @@ package CANtestLib is
     -- Implemented to create HAL like abstraction and allow easier modifications
     -- of register map without touching the test code!
     ----------------------------------------------------------------------------
-   
+
     -- Controller modes
     type SW_mode is record
         reset                   :   boolean;
@@ -180,7 +180,7 @@ package CANtestLib is
         bit_rate_shift_int      :   boolean;
         rx_buffer_not_empty_int :   boolean;
         tx_buffer_hw_cmd        :   boolean;
-    end record;    
+    end record;
 
     -- Fault confinement states
     type SW_fault_state is (
@@ -244,12 +244,12 @@ package CANtestLib is
     -- Message filter types
     ----------------------------------------------------------------------------
 
-    -- Frame information on input of message filter    
+    -- Frame information on input of message filter
     type mess_filter_input_type is record
         rec_ident_in            :   std_logic_vector(28 downto 0);
         ident_type              :   std_logic;
         frame_type              :   std_logic;
-        rec_ident_valid         :   std_logic; 
+        rec_ident_valid         :   std_logic;
     end record;
 
     -- Driving bus values on the input off message filter
@@ -259,17 +259,17 @@ package CANtestLib is
         drv_filter_A_mask       :   std_logic_vector(28 downto 0);
         drv_filter_A_ctrl       :   std_logic_vector(3 downto 0);
         drv_filter_A_bits       :   std_logic_vector(28 downto 0);
-      
+
         -- Filter B bit mask, control bits and bit value
         drv_filter_B_mask       :   std_logic_vector(28 downto 0);
         drv_filter_B_ctrl       :   std_logic_vector(3 downto 0);
         drv_filter_B_bits       :   std_logic_vector(28 downto 0);
-      
+
         -- Filter C bit mask, control bits and bit value
         drv_filter_C_mask       :   std_logic_vector(28 downto 0);
         drv_filter_C_ctrl       :   std_logic_vector(3 downto 0);
         drv_filter_C_bits       :   std_logic_vector(28 downto 0);
-       
+
         -- Range filter control bits, lower and upper thresholds
         drv_filter_ran_ctrl     :   std_logic_vector(3 downto 0);
         drv_filter_ran_lo_th    :   std_logic_vector(28 downto 0);
@@ -283,10 +283,10 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Prescaler types
     ----------------------------------------------------------------------------
-    
+
     -- Driving bus settings for prescaler
     type presc_drv_type is record
-         
+
         -- Time quanta (Nominal and Data)
         drv_tq_nbt              :   std_logic_vector (7 downto 0);
         drv_tq_dbt              :   std_logic_vector (7 downto 0);
@@ -300,8 +300,8 @@ package CANtestLib is
         drv_ph1_dbt             :   std_logic_vector (4 downto 0);
 
         -- Phase 2 segment (Nominal and Data)
-        drv_ph2_nbt             :   std_logic_vector (5 downto 0); 
-        drv_ph2_dbt             :   std_logic_vector (4 downto 0); 
+        drv_ph2_nbt             :   std_logic_vector (5 downto 0);
+        drv_ph2_dbt             :   std_logic_vector (4 downto 0);
 
         -- Synchronisation jump width (Nominal and Data)
         drv_sjw_nbt             :   std_logic_vector(4 downto 0);
@@ -311,7 +311,7 @@ package CANtestLib is
 
     -- Triggering signals joined to single record
     type presc_triggers_type is record
-       
+
         -- Sample signal (Nominal and Data)
         -- (Used for bus sampling)
         sample_nbt              :   std_logic;
@@ -342,7 +342,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- TXT Buffer types
     ----------------------------------------------------------------------------
-    
+
     -- TXT Buffer state (used in test access, not in synthesizable code)
     type SW_TXT_Buffer_state_type is (
         buf_empty,
@@ -441,7 +441,6 @@ package CANtestLib is
         -- Note that this value is valid only for received frames and has
         -- no meaning in TXT Buffer.
         rwcnt                   :   natural;
-
     end record;
 
     ----------------------------------------------------------------------------
@@ -476,7 +475,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
 
-  
+
     ----------------------------------------------------------------------------
     -- Function called at the end of the test which evaluates results of test.
     -- If Error threshold is bigger than number of errors which ocurred in the
@@ -486,12 +485,12 @@ package CANtestLib is
     -- Arguments:
     --  error_th        Error threshold.
     --  errors          Number of errors which occurred in the test
-    --  status          Status to be updated 
+    --  status          Status to be updated
     ----------------------------------------------------------------------------
     procedure evaluate_test(
-        signal error_th         : in    natural;
-        signal errors           : in    natural;
-        signal status           : out   test_status_type
+        constant error_th         : in    natural;
+        constant errors           : in    natural;
+        signal   status           : out   test_status_type
     );
 
 
@@ -554,22 +553,22 @@ package CANtestLib is
     --  1. Increment error counter
     --  2. If Error behaviour is "quit", assert Immediate exit flag to "true".
     --     Otherwise assert Immediate exit flag to "false".
-    -- 
+    --
     -- Arguments:
     --  error_ctr       Error counter to increment.
     --  error_beh       Error behaviour to evaluate.
     --  exit_imm        Immediate exit flag to assert.
     ----------------------------------------------------------------------------
     procedure process_error(
-        signal error_ctr        : inout natural;
-        signal error_beh        : in    err_beh_type;
-        signal exit_imm         : out   boolean
+        signal   error_ctr      : inout natural;
+        constant error_beh      : in    err_beh_type;
+        signal   exit_imm       : out   boolean
     );
 
 
     ----------------------------------------------------------------------------
     -- Print basic testbench information.
-    -- 
+    --
     -- Arguments:
     --  iterations      Number of iterations to execute in test.
     --  log_level       Severity level which is set in actual frame.
@@ -603,26 +602,12 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Decode data length code from value as defined in CAN FD Standard to
     -- length of frame in bytes.
-    -- 
+    --
     -- Arguments:
     --  dlc             Data length code as received or transmitted.
-    --  length          Length of CAN Frame in bytes       
+    --  length          Length of CAN Frame in bytes
     ----------------------------------------------------------------------------
     procedure decode_dlc(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
-        variable length         : out   natural
-    );
-
-
-    ----------------------------------------------------------------------------
-    -- Decode data length code from value as defined in CAN FD Standard to
-    -- length of frame in bytes. (Variable output)
-    -- 
-    -- Arguments:
-    --  dlc             Data length code as received or transmitted.
-    --  length          Length of CAN Frame in bytes       
-    ----------------------------------------------------------------------------
-    procedure decode_dlc_v(
         constant dlc            : in    std_logic_vector(3 downto 0);
         variable length         : out   natural
     );
@@ -632,7 +617,7 @@ package CANtestLib is
     -- Decode Read word count value as present in FRAME_FORMAT_W of RX Buffer
     -- from DLC. Read word count value indicates how many 32-bit words will the
     -- buffer occupy in RX Buffer without Frame Format word.
-    -- 
+    --
     -- Arguments:
     --  dlc             Data length code to decode as transmitted or received.
     --  rwcnt           Read word count value.
@@ -646,21 +631,21 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Decode number of 32-bit words CAN Frame will occupy in RX Buffer
     -- (together with Frame format word).
-    -- 
+    --
     -- Arguments:
     --  dlc             Data length code to decode as transmitted or received.
     --  buff_space      Number of 32-bit words.
     ----------------------------------------------------------------------------
     procedure decode_dlc_buff(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
+        constant dlc            : in    std_logic_vector(3 downto 0);
         variable buff_space     : out   natural
     );
-    
+
 
     ----------------------------------------------------------------------------
     -- Convert identifier from register format (as stored in IDENTIFIER_W of
     --  TXT Buffers and RX Buffer) to integer value as used by SW.
-    -- 
+    --
     -- Arguments:
     --  identifier      Input identifier as stored in IDENTIFIER_W
     --  id_type         Type of identifier (BASE or EXTENDED)
@@ -674,9 +659,9 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Convert identifier from SW format to register format (as stored in 
+    -- Convert identifier from SW format to register format (as stored in
     --  IDENTIFIER_W of TXT Buffers and RX Buffer).
-    -- 
+    --
     -- Arguments:
     --  identifier      Input identifier in integer format (as used by SW).
     --  id_type         Type of identifier (BASE or EXTENDED)
@@ -692,11 +677,11 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Generate simple triggering signals.
     -- Two signals are generated, "sync" and "sample". No bit rate switch is
-    -- implemented in this procedure. There is random amount of clock cycles 
-    -- between sync and sample, but not less than "min_diff" and not more than 
-    -- 10 clock cycles! "min_diff" is intended for determining how many clock 
+    -- implemented in this procedure. There is random amount of clock cycles
+    -- between sync and sample, but not less than "min_diff" and not more than
+    -- 10 clock cycles! "min_diff" is intended for determining how many clock
     -- cycles each circuit needs between bit transmittion and reception!
-    -- 
+    --
     -- Arguments:
     --  rand_ctr        Pointer to random pool.
     --  sync            Synchronisation trigger (for transmission)
@@ -721,7 +706,7 @@ package CANtestLib is
         signal    seg1          : in    natural;
         signal    seg2          : in    natural
     );
-  
+
 
     ----------------------------------------------------------------------------
     -- Memory access routines
@@ -730,7 +715,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Execute write access on Avalon memory bus. Does not support unaligned
     -- accesses.
-    -- 
+    --
     -- Arguments:
     --  w_data          Data to write.
     --  w_address       Address where to write the data
@@ -748,7 +733,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Execute read access on Avalon memory bus. Does not supports unaligned
     -- accesses.
-    -- 
+    --
     -- Arguments:
     --  r_data          Variable in which Read data will be returned.
     --  r_address       Address to read the data from.
@@ -772,7 +757,7 @@ package CANtestLib is
     --  [15:12]     Identifier (Index) of core. Allows to distinguish between
     --              up to 16 instances of CTU CAN FD Core.
     --  [11:0]      Register or Buffer offset within a the core.
-    -- 
+    --
     -- Arguments:
     --  w_data          Data to write to CTU CAN FD Core.
     --  w_offset        Register or buffer offset (bits 11:0).
@@ -797,7 +782,7 @@ package CANtestLib is
     --  [15:12]     Identifier (Index) of core. Allows to distinguish between
     --              up to 16 instances of CTU CAN FD Core.
     --  [11:0]      Register or Buffer offset within a the core.
-    -- 
+    --
     -- Arguments:
     --  r_data          Variable in which Read data will be returned.
     --  r_offset        Register or buffer offset (bits 11:0).
@@ -810,7 +795,7 @@ package CANtestLib is
         constant  ID            : in    natural range 0 to 15;
         signal    mem_bus       : inout Avalon_mem_type;
         constant  r_size        : in    aval_access_size := BIT_32
-    ); 
+    );
 
 
 
@@ -818,11 +803,11 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- CAN configuration routines
     ----------------------------------------------------------------------------
-    
+
     ----------------------------------------------------------------------------
     -- Configure Bus timing on CTU CAN FD Core.
     -- (duration of bit phases, synchronisation jump width, baud-rate prescaler)
-    -- 
+    --
     -- Arguments:
     --  bus_timing      Bus timing structure that contains timing configuration
     --  ID              Index of CTU CAN FD Core instance
@@ -831,14 +816,14 @@ package CANtestLib is
     procedure CAN_configure_timing(
         constant bus_timing     : in    bit_time_config_type;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type
     );
 
 
     ----------------------------------------------------------------------------
     -- Read Bus timing configuration from CTU CAN FD Core.
     -- (duration of bit phases, synchronisation jump width, baud-rate prescaler)
-    -- 
+    --
     -- Arguments:
     --  bus_timing      Bus timing structure that will be filled by timing
     --                  configuration.
@@ -848,13 +833,13 @@ package CANtestLib is
     procedure CAN_read_timing(
         signal   bus_timing     : out   bit_time_config_type;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type  
+        signal   mem_bus        : inout Avalon_mem_type
     );
 
 
     ----------------------------------------------------------------------------
     -- Turn on/off CTU_CAN_FD Core.
-    -- 
+    --
     -- Arguments:
     --  turn_on         Turns on the Core when "true". Turns off otherwise.
     --  ID              Index of CTU CAN FD Core instance
@@ -863,13 +848,13 @@ package CANtestLib is
     procedure CAN_turn_controller(
         constant turn_on        : in    boolean;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type
     );
 
 
     ----------------------------------------------------------------------------
     -- Enables/Disabled Retransmitt limiting in CTU CAN FD Core.
-    -- 
+    --
     -- Arguments:
     --  enable          Enables retransmitt limiting when "true".
     --                  Disables rettransmitt limiting otherwise.
@@ -881,17 +866,17 @@ package CANtestLib is
         constant enable         : in    boolean;
         constant limit          : in    natural range 0 to 15;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type
     );
 
 
     ----------------------------------------------------------------------------
     -- Generate random CAN FD Frame.
-    -- 
+    --
     -- Arguments:
     --  rand_ctr        Pointer to pool of random values.
     --  frame           Output variable in which CAN FD Frame sill be generated.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure CAN_generate_frame(
         signal   rand_ctr       : inout natural range 0 to RAND_POOL_SIZE;
         variable frame          : inout SW_CAN_frame_type
@@ -900,11 +885,11 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Prints CAN Frame to simulator output
-    -- 
+    --
     -- Arguments:
     --  frame           Frame to print
     --  severity        Severity level that should be used to print the frame.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure CAN_print_frame(
         constant frame          : in    SW_CAN_frame_type;
         constant log_level      : in    log_lvl_type
@@ -913,7 +898,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Compare two CAN FD frames and decide if they are equal.
-    -- 
+    --
     -- Arguments:
     --  frame_A         First frame in comparison
     --  frame_B         Second frame in comparison
@@ -922,7 +907,7 @@ package CANtestLib is
     --                  considered.
     --  outcome         Variable to store result of comparison into. When frames
     --                  are equal "true" is stored, "false" otherwise.
-    ----------------------------------------------------------------------------   
+    ----------------------------------------------------------------------------
     procedure CAN_compare_frames(
         constant frame_A        : in    SW_CAN_frame_type;
         constant frame_B        : in    SW_CAN_frame_type;
@@ -939,8 +924,8 @@ package CANtestLib is
 	--		2. IDENTIFIER
 	--		3. TIMESTAMP_L
 	--		4. TIMESTAMP_U
-	--		5-20. DATA 
-    -- 
+	--		5-20. DATA
+    --
     -- Arguments:
     --  frame         	Frame to store.
     --  memory			Memory to store the frame into
@@ -961,13 +946,13 @@ package CANtestLib is
 	--		2. IDENTIFIER
 	--		3. TIMESTAMP_L
 	--		4. TIMESTAMP_U
-	--		5-20. DATA 
+	--		5-20. DATA
 	--
     -- Arguments:
     --  frame           Output variable in which CAN FD Frame sill be generated.
     --  memory          Memory from which the CAN frame should be read.
     --  pointer         Pointer to memory where CAN Frame is starting.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure read_frame_from_test_mem(
         variable frame          :  inout    SW_CAN_frame_type;
         constant memory         :  in       test_mem_type;
@@ -978,17 +963,17 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Inserts frame to TXT Buffer. Function does NOT check state of the
     -- buffer.
-    -- 
+    --
     -- Arguments:
     --  frame           CAN FD Frame to send
     --  buf_nr          Number of TXT Buffer from which the frame should be
     --                  sent (1:4)
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
-    --  outcome         Returns "true" if the frame was inserted properly, 
+    --  outcome         Returns "true" if the frame was inserted properly,
     --                  "false" if TXT Buffer was in states : Ready,
     --                  TX in progress, Abort in progress
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure CAN_insert_TX_frame(
         constant frame          : in    SW_CAN_frame_type;
         constant buf_nr         : in    natural range 1 to 4;
@@ -1001,17 +986,17 @@ package CANtestLib is
     -- Check whether TXT Buffer is accessible (Empty, Aborted, TX Failed or Done)
     -- If yes, insert the frame to TXT Buffer and give "set_ready" command.
     -- The function does not wait until the frame is transmitted.
-    -- 
+    --
     -- Arguments:
     --  frame           CAN FD Frame to send
     --  buf_nr          Number of TXT Buffer from which the frame should be
     --                  sent (1:4)
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
-    --  outcome         Returns "true" if the frame was inserted properly, 
+    --  outcome         Returns "true" if the frame was inserted properly,
     --                  "false" if TXT Buffer was in states : Ready,
     --                  TX in progress, Abort in progress
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure CAN_send_frame(
         constant frame          : in    SW_CAN_frame_type;
         constant buf_nr         : in    natural range 1 to 4;
@@ -1023,7 +1008,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Reads CAN Frame from RX Buffer FIFO.
-    -- 
+    --
     -- Arguments:
     --  frame           Output variable where CAN FD Frame will be stored
     --  ID              Index of CTU CAN FD Core instance
@@ -1041,7 +1026,7 @@ package CANtestLib is
     -- and then waits until frame finishes (bus becomes idle).
     --
     -- Procedure is polling on status of CTU CAN FD Core over Avalon bus!
-    -- 
+    --
     -- Arguments:
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
@@ -1054,7 +1039,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Waits until CAN bus becomes idle (no frame in progress).
-    -- 
+    --
     -- Procedure is polling on status of CTU CAN FD Core over Avalon bus!
     --
     -- Arguments:
@@ -1071,7 +1056,7 @@ package CANtestLib is
     -- Waits until CAN bus becomes idle (no frame in progress).
     --
     -- Procedure is polling on status of CTU CAN FD Core over Avalon bus!
-    -- 
+    --
     -- Arguments:
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
@@ -1080,11 +1065,11 @@ package CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
-  
+
 
     ----------------------------------------------------------------------------
     -- Calculate length of CAN Frame in bits (stuff bits not included).
-    -- 
+    --
     -- Arguments:
     --  frame           CAN Frame whose length should be calculated.
     --  bit_length      Variable in which the length of CAN Frame in bits is
@@ -1094,8 +1079,8 @@ package CANtestLib is
         constant frame          : in    SW_CAN_frame_type;
         variable bit_length     : inout natural
     );
-    
-  
+
+
     function CAN_add_unsigned(
         operator1               : in    std_logic_vector(11 downto 0);
         operator2               : in    std_logic_vector(11 downto 0)
@@ -1104,7 +1089,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Give command to TXT Buffer.
-    -- 
+    --
     -- Arguments:
     --  cmd             Command to give to TXT Buffer.
     --  buf_index       Number of TXT Buffer which should receive the command.
@@ -1121,14 +1106,14 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read state of TXT Buffer.
-    -- 
+    --
     -- Arguments:
     --  buf_index       TXT Buffer number.
     --  retVal          Variable in which return state of the buffer will be
     --                  returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure get_tx_buf_state(
         constant buf_n          : in    natural range 1 to 4;
         variable retVal         : out   SW_TXT_Buffer_state_type;
@@ -1139,13 +1124,13 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read state of RX Buffer.
-    -- 
+    --
     -- Arguments:
     --  retVal          Variable in which return state of the buffer will be
     --                  returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure get_rx_buf_state(
         variable retVal         : out   SW_RX_Buffer_info;
         constant ID             : in    natural range 0 to 15;
@@ -1156,12 +1141,12 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Read version register and return the actual version of the core like so:
     --  MAJOR_VERSION * 10 + MINOR_VERSION.
-    -- 
+    --
     -- Arguments:
     --  retVal          Variable in which return version will be returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure get_core_version(
         variable retVal         : out   natural;
         constant ID             : in    natural range 0 to 15;
@@ -1171,12 +1156,12 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Sets mode of CTU CAN FD Core.
-    -- 
+    --
     -- Arguments:
     --  mode            Mode to set.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure set_core_mode(
         constant mode           : in    SW_mode;
         constant ID             : in    natural range 0 to 15;
@@ -1186,12 +1171,12 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Reads mode from CTU CAN FD Core.
-    -- 
+    --
     -- Arguments:
     --  mode            Variable to which returned mode will be stored.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure get_core_mode(
         variable mode           : out   SW_mode;
         constant ID             : in    natural range 0 to 15;
@@ -1201,11 +1186,11 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Send command to execute SW reset
-    -- 
+    --
     -- Arguments:
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure exec_SW_reset(
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
@@ -1214,12 +1199,12 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Send arbitrary command to the controller.
-    -- 
+    --
     -- Arguments:
     --  command         Command to send to the controller.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
-    ---------------------------------------------------------------------------- 
+    ----------------------------------------------------------------------------
     procedure give_controller_command(
         constant command        : in    SW_command;
         constant ID             : in    natural range 0 to 15;
@@ -1229,10 +1214,10 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read status of CTU CAN FD controller.
-    -- 
+    --
     -- Arguments:
     --  status          Variable in which status of the Core will be returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure get_controller_status(
@@ -1245,10 +1230,10 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Read captured interrupt vector (status). "true" indicates interrupt
     -- occurred.
-    -- 
+    --
     -- Arguments:
     --  interrupts      Variable in which Interrupt vector will be returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure read_int_status(
@@ -1261,10 +1246,10 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Clear captured interrupt vector (status). "true" indicates interrupt
     -- should be cleared.
-    -- 
+    --
     -- Arguments:
     --  interrupts      Interrupts which should be cleared.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure clear_int_status(
@@ -1277,11 +1262,11 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Read interrupt enable vector. "true" indicates interrupt
     -- is enabled for capturing.
-    -- 
+    --
     -- Arguments:
-    --  interrupts      Variable in which interrupt enable vector will be 
+    --  interrupts      Variable in which interrupt enable vector will be
     --                  returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure read_int_enable(
@@ -1295,10 +1280,10 @@ package CANtestLib is
     -- Write interrupt enable vector (status). "true" indicates interrupt
     -- will be enabled for capturing, "false" indicates interrupt will be
     -- disabled for capturing.
-    -- 
+    --
     -- Arguments:
     --  interrupts      Variable in which status of the Core will be returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure write_int_enable(
@@ -1309,12 +1294,12 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Read interrupt mask. "true" indicates interrupt is masked, thus it does 
+    -- Read interrupt mask. "true" indicates interrupt is masked, thus it does
     -- not affect "int" output of CTU CAN FD Core.
-    -- 
+    --
     -- Arguments:
     --  interrupts      Variable in which interrupt mask will be returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure read_int_mask(
@@ -1327,10 +1312,10 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Write interrupt mask. "true" indicates interrupt is masked, thus it does
     -- not affect "int" output of CTU CAN FD Core.
-    -- 
+    --
     -- Arguments:
     --  interrupts      Interrupt mask to write.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure write_int_mask(
@@ -1341,12 +1326,12 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Read fault confinement state of CTU CAN FD Core. 
-    -- 
+    -- Read fault confinement state of CTU CAN FD Core.
+    --
     -- Arguments:
     --  fault_state     Variable in which fault confinement state will be
     --                  returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure get_fault_state(
@@ -1357,12 +1342,12 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Set fault confinement thresholds for Error warning limit and for
     -- Error passive.
-    -- 
+    --
     -- Arguments:
     --  fault_th        Variable with fault confinement thresholds.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure set_fault_thresholds(
@@ -1373,12 +1358,12 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Set fault confinement thresholds for Error warning limit and for 
+    -- Set fault confinement thresholds for Error warning limit and for
     -- Error passive.
-    -- 
+    --
     -- Arguments:
     --  fault_th        Variable with fault confinement thresholds.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure get_fault_thresholds(
@@ -1389,11 +1374,11 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Read Error counters from CTU CAN FD Core. 
-    -- 
+    -- Read Error counters from CTU CAN FD Core.
+    --
     -- Arguments:
     --  err_counters    Variable in which error counters will be returned.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure read_error_counters(
@@ -1402,13 +1387,21 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
+    -- Compare strings of possibly different length.
+    -- The strings are considered equal if the longer one starts with
+    -- the shorter one and the rest are spaces.
+    function str_equal(a : string; b : string) return boolean;
+
+    -- Pad string with spaces.
+    function strtolen(n : natural; src : string) return string;
+
 
     ----------------------------------------------------------------------------
-    -- Set Error counters from CTU CAN FD Core. 
-    -- 
+    -- Set Error counters from CTU CAN FD Core.
+    --
     -- Arguments:
     --  err_counters    Variable from which error counters will be set.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure set_error_counters(
@@ -1420,10 +1413,10 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read arbitration lost capture register.
-    -- 
+    --
     -- Arguments:
     --  alc             Bit index in which the arbitration was lost.
-    --  ID              Index of CTU CAN FD Core instance.    
+    --  ID              Index of CTU CAN FD Core instance.
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure read_alc(
@@ -1435,7 +1428,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read traffic counters.
-    -- 
+    --
     -- Arguments:
     --  ctr             Variable in which traffic counters will be stored
     --  ID              Index of CTU CAN FD Core instance.
@@ -1450,7 +1443,7 @@ package CANtestLib is
 
     ----------------------------------------------------------------------------
     -- Read transceiver delay register.
-    -- 
+    --
     -- Arguments:
     --  ctr             Variable in which traffic counters will be stored
     --  ID              Index of CTU CAN FD Core instance.
@@ -1477,7 +1470,7 @@ package CANtestLib is
     subtype epsilon_type is anat_nc_t;
     subtype trv_del_type is anat_nc_t;
     subtype timing_config_t is anat_t(1 to 10);
-  
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -1495,10 +1488,10 @@ package CANtestLib is
         signal error_beh      :in   err_beh_type;
         signal error_tol      :in   natural;
         signal status         :out  test_status_type;
-        signal errors         :out  natural 
+        signal errors         :out  natural
     );
     end component;
-  
+
 end package;
 
 
@@ -1513,12 +1506,10 @@ end package;
 --------------------------------------------------------------------------------
 
 package body CANtestLib is
-
-
     procedure evaluate_test(
-        signal error_th         : in    natural;
-        signal errors           : in    natural;
-        signal status           : out   test_status_type
+        constant error_th         : in    natural;
+        constant errors           : in    natural;
+        signal   status           : out   test_status_type
     ) is
     begin
 
@@ -1526,16 +1517,18 @@ package body CANtestLib is
         if (errors < error_th or errors = error_th) then
             status    <= passed;
             wait for 200 ns;
-            report "Test result: SUCCESS" severity note; 
+            report "Test result: SUCCESS" severity note;
+            --std.env.stop(0);
         else
             status    <= failed;
             wait for 200 ns;
-            report "Test result: FAILURE" severity error; 
+            report "Test result: FAILURE" severity error;
+            --std.env.stop(1);
         end if;
 
         -- Finish the test
-        wait for 200 ns;
-        report "Test END" severity failure;
+        --wait for 200 ns;
+        --report "Test END" severity failure;
 
     end procedure;
 
@@ -1553,10 +1546,10 @@ package body CANtestLib is
         variable high_time      :       time;
         variable low_time       :       time;
     begin
-  
+
         -- If clock has uncertainty then it is constantly added to the clock!
         -- This covers the worst case!!
-        real_period   := real(period) + 
+        real_period   := real(period) +
                          (real(period * epsilon_ppm)) / 1000000.0;
         high_per      := ((real(duty)) * real_period) / 100.0;
         low_per       := ((real(100-duty)) * real_period) / 100.0;
@@ -1570,7 +1563,7 @@ package body CANtestLib is
         wait for high_time;
         out_clk       <= '0';
         wait for low_time;
-  
+
     end procedure;
 
 
@@ -1588,15 +1581,15 @@ package body CANtestLib is
         constant log_severity   : in    log_lvl_type;
         signal log_level        : in    log_lvl_type
    )is
-    begin 
-  
+    begin
+
     if (log_level = info_l) then
         if (log_severity = info_l) then
             report Message severity NOTE;
         elsif (log_severity = warning_l)then
             report Message severity WARNING;
         elsif (log_severity = error_l) then
-            report Message severity ERROR; 
+            report Message severity ERROR;
         else
             report "Unsupported log severity type in 'log' function"
             severity failure;
@@ -1607,13 +1600,13 @@ package body CANtestLib is
         if (log_severity = warning_l) then
             report Message severity WARNING;
         elsif (log_severity = error_l) then
-            report Message severity ERROR; 
+            report Message severity ERROR;
         end if;
 
     elsif (log_level = error_l) then
 
         if (log_severity = error_l) then
-            report Message severity ERROR; 
+            report Message severity ERROR;
         end if;
 
     else
@@ -1648,9 +1641,9 @@ package body CANtestLib is
 
 
     procedure process_error(
-        signal error_ctr        : inout natural;
-        signal error_beh        : in    err_beh_type;
-        signal exit_imm         : out   boolean
+        signal   error_ctr      : inout natural;
+        constant error_beh      : in    err_beh_type;
+        signal   exit_imm       : out   boolean
     )is
     begin
         error_ctr       <= error_ctr + 1;
@@ -1660,7 +1653,7 @@ package body CANtestLib is
         else
             exit_imm    <= false;
         end if;
-        
+
         wait for 0 ns;
     end procedure;
 
@@ -1675,7 +1668,7 @@ package body CANtestLib is
         report "Test info:";
         report "Number of iterations: " & integer'image(iterations);
 
-        if (log_level = info_l) then 
+        if (log_level = info_l) then
             report "Log level: INFO,WARNING,ERROR logs are shown!";
         elsif (log_level = warning_l) then
             report "Log level: WARNING,ERROR logs are shown!";
@@ -1683,12 +1676,12 @@ package body CANtestLib is
             report "Log level: ERROR logs are shown!";
         end if;
 
-        if (error_beh = go_on) then    
+        if (error_beh = go_on) then
             report "When error is detected test runs on";
         else
             report "When error is detected test quits";
         end if;
-          
+
         report "Error tolerance: " & integer'image(error_tol);
     end;
 
@@ -1701,51 +1694,24 @@ package body CANtestLib is
         variable tmp             :      natural;
     begin
         tmp := seed + offset;
-        rand_ctr    <= tmp mod RAND_POOL_SIZE; 
+        rand_ctr    <= tmp mod RAND_POOL_SIZE;
         wait for 0 ns;
     end procedure;
 
 
     procedure decode_dlc(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
-        variable length         : out   natural
-    )is 
-    begin
-        case dlc is
-        when "0000" => length := 0;
-        when "0001" => length := 1;
-        when "0010" => length := 2;
-        when "0011" => length := 3;
-        when "0100" => length := 4;  
-        when "0101" => length := 5;  
-        when "0110" => length := 6;  
-        when "0111" => length := 7;
-        when "1000" => length := 8;
-        when "1001" => length := 12;
-        when "1010" => length := 16;
-        when "1011" => length := 20;
-        when "1100" => length := 24;
-        when "1101" => length := 32;
-        when "1110" => length := 48;
-        when "1111" => length := 64;
-        when others => length := 0;
-        end case;  
-    end procedure;
-
-
-    procedure decode_dlc_v(
         constant dlc            : in    std_logic_vector(3 downto 0);
         variable length         : out   natural
-    )is 
+    )is
     begin
         case dlc is
         when "0000" => length := 0;
         when "0001" => length := 1;
         when "0010" => length := 2;
         when "0011" => length := 3;
-        when "0100" => length := 4;  
-        when "0101" => length := 5;  
-        when "0110" => length := 6;  
+        when "0100" => length := 4;
+        when "0101" => length := 5;
+        when "0110" => length := 6;
         when "0111" => length := 7;
         when "1000" => length := 8;
         when "1001" => length := 12;
@@ -1763,16 +1729,16 @@ package body CANtestLib is
     procedure decode_dlc_rx_buff(
         constant dlc            : in    std_logic_vector(3 downto 0);
         variable rwcnt          : out   natural
-    )is 
+    )is
     begin
         case dlc is
         when "0000" => rwcnt := 3;
         when "0001" => rwcnt := 4;
         when "0010" => rwcnt := 4;
         when "0011" => rwcnt := 4;
-        when "0100" => rwcnt := 4;  
-        when "0101" => rwcnt := 5;  
-        when "0110" => rwcnt := 5;  
+        when "0100" => rwcnt := 4;
+        when "0101" => rwcnt := 5;
+        when "0110" => rwcnt := 5;
         when "0111" => rwcnt := 5;
         when "1000" => rwcnt := 5;
         when "1001" => rwcnt := 6;
@@ -1783,12 +1749,12 @@ package body CANtestLib is
         when "1110" => rwcnt := 15;
         when "1111" => rwcnt := 19;
         when others => rwcnt := 0;
-        end case;  
+        end case;
     end procedure;
 
 
     procedure decode_dlc_buff(
-        signal   dlc            : in    std_logic_vector(3 downto 0);
+        constant dlc            : in    std_logic_vector(3 downto 0);
         variable buff_space     : out   natural
     )is
     begin
@@ -1813,7 +1779,7 @@ package body CANtestLib is
         end case;
     end procedure;
 
-    
+
     procedure id_hw_to_sw(
         constant id_in          : in    std_logic_vector(28 downto 0);
         constant id_type        : in    std_logic;
@@ -1822,9 +1788,9 @@ package body CANtestLib is
         variable tmp_vect       :       std_logic_vector(28 downto 0);
     begin
         if (id_type = EXTENDED) then
-            tmp_vect := id_in(IDENTIFIER_BASE_H downto 
+            tmp_vect := id_in(IDENTIFIER_BASE_H downto
                               IDENTIFIER_BASE_L) &
-                        id_in(IDENTIFIER_EXT_H downto 
+                        id_in(IDENTIFIER_EXT_H downto
                               IDENTIFIER_EXT_L);
             id_out   := to_integer(unsigned(tmp_vect));
         else
@@ -1849,16 +1815,16 @@ package body CANtestLib is
             end if;
             id_vect := std_logic_vector(to_unsigned(id_in, 29));
 
-            id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) := 
+            id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
                 id_vect(28 downto 18);
-            id_out(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) := 
+            id_out(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) :=
                 id_vect(17 downto 0);
         else
             if (id_in > 2047) then
                 report "Base Identifier Exceeds the maximal value!"
                 severity error;
             end if;
-            id_vect := "000000000000000000" & 
+            id_vect := "000000000000000000" &
                            std_logic_vector(to_unsigned(id_in, 11));
             id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
                 id_vect(10 downto 0);
@@ -1917,21 +1883,21 @@ package body CANtestLib is
         sync <= '1';
         wait until rising_edge(clk_sys);
         sync <= '0';
-        
+
         for i in 1 to seg1 - 1 loop
             wait until rising_edge(clk_sys);
         end loop;
-        
+
         sample <= '1';
         wait until rising_edge(clk_sys);
         sample <= '0';
-        
+
         for i in 1 to seg2 - 1 loop
             wait until rising_edge(clk_sys);
         end loop;
     end procedure;
-  
-  
+
+
     function aval_is_aligned(
         constant  address       : in    std_logic_vector(23 downto 0);
         constant  size          : in    aval_access_size
@@ -1952,7 +1918,7 @@ package body CANtestLib is
             else
                 return false;
             end if;
-        when others => 
+        when others =>
             return false;
         end case;
     end function;
@@ -1998,10 +1964,10 @@ package body CANtestLib is
 
         -- Check for access alignment
         if (not aval_is_aligned(w_address, w_size)) then
-            write(msg, string'("Unaligned Avalon write, Adress :"));            
+            write(msg, string'("Unaligned Avalon write, Adress :"));
             hwrite(msg, w_address);
             write(msg, string'(" Size: "));
-            write(msg, aval_access_size'image(w_size)); 
+            write(msg, aval_access_size'image(w_size));
             writeline(output, msg);
         else
             wait until falling_edge(mem_bus.clk_sys);
@@ -2035,10 +2001,10 @@ package body CANtestLib is
 
         -- Check for access alignment
         if (not aval_is_aligned(r_address, r_size)) then
-            write(msg, string'("Unaligned Avalon Read, Adress :"));            
+            write(msg, string'("Unaligned Avalon Read, Adress :"));
             hwrite(msg, r_address);
             write(msg, string'(" Size: "));
-            write(msg, aval_access_size'image(r_size)); 
+            write(msg, aval_access_size'image(r_size));
             writeline(output, msg);
         else
             wait until falling_edge(mem_bus.clk_sys);
@@ -2074,7 +2040,7 @@ package body CANtestLib is
                              "0000" & w_offset;
         aval_write(w_data, int_address, w_size, mem_bus);
     end procedure;
-  
+
 
     procedure CAN_read(
         variable  r_data        : out   std_logic_vector(31 downto 0);
@@ -2090,17 +2056,17 @@ package body CANtestLib is
                              "0000" & r_offset;
         aval_read(r_data, int_address, r_size, mem_bus);
     end procedure;
- 
+
 
     procedure CAN_configure_timing(
         constant bus_timing     : in    bit_time_config_type;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type
     )is
         variable data           :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-     
+
         -- Bit timing register - Nominal
         data(BRP_H downto BRP_L) := std_logic_vector(to_unsigned(
                 bus_timing.tq_nbt, BRP_H - BRP_L + 1));
@@ -2112,7 +2078,7 @@ package body CANtestLib is
                 bus_timing.ph2_nbt, PH2_H - PH2_L + 1));
         data(SJW_H downto SJW_L) := std_logic_vector(to_unsigned(
                 bus_timing.sjw_nbt, SJW_H - SJW_L + 1));
-        CAN_write(data, BTR_ADR, ID, mem_bus);     
+        CAN_write(data, BTR_ADR, ID, mem_bus);
 
         -- Bit timing register - Data
         data(BRP_FD_H downto BRP_FD_L) := std_logic_vector(to_unsigned(
@@ -2127,12 +2093,12 @@ package body CANtestLib is
                 bus_timing.sjw_dbt, SJW_FD_H - SJW_FD_L + 1));
         CAN_write(data, BTR_FD_ADR, ID, mem_bus);
     end procedure;
-  
-  
+
+
     procedure CAN_read_timing(
         signal   bus_timing     : out   bit_time_config_type;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type
     )is
         variable data           :       std_logic_vector(31 downto 0);
     begin
@@ -2163,7 +2129,7 @@ package body CANtestLib is
     procedure CAN_turn_controller(
         constant turn_on        : in    boolean;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type
     )is
         variable data           :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
@@ -2174,15 +2140,15 @@ package body CANtestLib is
         else
             data(ENA_IND) := DISABLED;
         end if;
-        CAN_write(data, MODE_ADR, ID, mem_bus);  
+        CAN_write(data, MODE_ADR, ID, mem_bus);
     end procedure;
-  
-   
+
+
     procedure CAN_enable_retr_limit(
         constant enable         : in    boolean;
         constant limit          : in    natural range 0 to 15;
         constant ID             : in    natural range 0 to 15;
-        signal   mem_bus        : inout Avalon_mem_type    
+        signal   mem_bus        : inout Avalon_mem_type
     )is
         variable data           :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
@@ -2206,7 +2172,7 @@ package body CANtestLib is
         variable aux            : std_logic_vector(28 downto 0);
         variable data_byte      : std_logic_vector(7 downto 0);
     begin
-       
+
         rand_logic_v(rand_ctr, frame.ident_type, 0.5);
         rand_logic_v(rand_ctr, frame.frame_format, 0.5);
         rand_logic_v(rand_ctr, frame.rtr, 0.5);
@@ -2223,7 +2189,7 @@ package body CANtestLib is
 
         if (frame.frame_format = NORMAL_CAN) then
             frame.brs := BR_NO_SHIFT;
-        end if; 
+        end if;
 
         -- If base identifier, the lowest bits of unsigned ID contain the
         -- basic value!
@@ -2231,15 +2197,15 @@ package body CANtestLib is
         if (frame.ident_type = BASE) then
             rand_value          := rand_value * 2047.0;
             aux(10 downto 0)    := std_logic_vector(
-                                   to_unsigned(integer(rand_value), 11)); 
+                                   to_unsigned(integer(rand_value), 11));
         else
             rand_value          := rand_value * 536870911.0;
             aux(28 downto 0)    := std_logic_vector(
-                                   to_unsigned(integer(rand_value), 29)); 
+                                   to_unsigned(integer(rand_value), 29));
         end if;
         frame.identifier := to_integer(unsigned(aux));
 
-        decode_dlc_v(frame.dlc, frame.data_length);
+        decode_dlc(frame.dlc, frame.data_length);
         frame.timestamp := (OTHERS => '0');
 
         if (frame.rtr = RTR_FRAME) then
@@ -2254,8 +2220,8 @@ package body CANtestLib is
 
         -- ESI is read only, but is is better to have initialized value in it!
         frame.esi := '0';
-        
-        -- Generate random data 
+
+        -- Generate random data
         -- Unused bytes of data can be set to 0
         frame.data := (OTHERS => (OTHERS => '0'));
         if (frame.data_length > 0) then
@@ -2266,7 +2232,7 @@ package body CANtestLib is
         end if;
 
     end procedure;
-  
+
 
     procedure CAN_print_frame(
         constant frame          : in    SW_CAN_frame_type;
@@ -2277,12 +2243,12 @@ package body CANtestLib is
     begin
 
         write(msg, string'("CAN Frame:"));
-        
+
         -- Identifier
         write(msg, string'(" ID : 0x"));
         hwrite(msg, std_logic_vector(to_unsigned(frame.identifier, 32)), RIGHT,
                     8);
-        
+
         -- Metadata
         write(msg, string'("    DLC: "));
         hwrite(msg, frame.dlc);
@@ -2305,7 +2271,7 @@ package body CANtestLib is
             write(msg, string'("    CAN FD frame "));
         end if;
 
-        write(msg, string'("    RWCNT (read word count): "));        
+        write(msg, string'("    RWCNT (read word count): "));
         write(msg, Integer'image(frame.rwcnt));
 
         -- Data words
@@ -2320,7 +2286,7 @@ package body CANtestLib is
         end if;
 
         writeline(output, msg);
-        
+
 --        info_l,
 --        warning_l,
 --        error_l
@@ -2336,15 +2302,15 @@ package body CANtestLib is
     )is
     begin
         outcome := true;
-    
+
         if (frame_A.frame_format /= frame_B.frame_format) then
             outcome := false;
         end if;
-    
+
         if (frame_A.ident_type /= frame_B.ident_type) then
             outcome := false;
         end if;
-    
+
         -- RTR should be te same only in normal CAN Frame. In FD Frame there is
         -- no RTR bit!
         if (frame_A.frame_format = NORMAL_CAN) then
@@ -2352,21 +2318,21 @@ package body CANtestLib is
                 outcome := false;
             end if;
         end if;
-    
+
         -- BRS bit is compared only in FD frame
         if (frame_A.frame_format = FD_CAN) then
             if (frame_A.brs /= frame_B.brs) then
                 outcome := false;
             end if;
         end if;
-    
+
         -- Received word count
         if (frame_A.rwcnt /= frame_B.rwcnt) then
             outcome := false;
         end if;
-    
+
         -- DLC is compared only in non-RTR frames!
-        -- In RTR frames it does not necessarily have to be equal due to 
+        -- In RTR frames it does not necessarily have to be equal due to
         -- RTR-pref feature (though it should be zero in normal controllers).
         if ((frame_A.rtr = NO_RTR_FRAME or frame_A.frame_format = FD_CAN)
             and (frame_A.dlc /= frame_B.dlc))
@@ -2407,7 +2373,7 @@ package body CANtestLib is
                             std_logic_vector(to_unsigned(frame.rwcnt, 5)) &
                             '0' & --We dont store ESI bit
                             frame.brs &
-                            '1' & 
+                            '1' &
                             frame.frame_format &
                             frame.ident_type &
                             frame.rtr &
@@ -2418,7 +2384,7 @@ package body CANtestLib is
         if (frame.ident_type = BASE and frame.identifier > 2047) then
             report "Incorrect BASE Identifier length" severity error;
 
-        elsif (frame.ident_type = EXTENDED and 
+        elsif (frame.ident_type = EXTENDED and
                frame.identifier > 536870911)
         then
             report "Incorrect EXTENDED Identifier length" severity error;
@@ -2453,7 +2419,7 @@ package body CANtestLib is
         -- Data words
         if ((frame.rtr = '0' or frame.frame_format = '1') and
             (frame.data_length /= 0))
-        then          
+        then
             for i in 0 to ((frame.data_length - 1) / 4) loop
                 memory(pointer + i) <= frame.data((i * 4) + 3) &
                                        frame.data((i * 4) + 2) &
@@ -2464,7 +2430,7 @@ package body CANtestLib is
 
             pointer <= pointer + ((frame.data_length - 1) / 4) + 1;
             wait for 0 ns;
-        end if; 
+        end if;
     end procedure;
 
 
@@ -2485,8 +2451,8 @@ package body CANtestLib is
         frame.ident_type    := memory(pointer)(6);
         frame.frame_format  := memory(pointer)(7);
         frame.brs           := memory(pointer)(9);
-        decode_dlc_v(frame.dlc, frame.data_length);
-        frame.rwcnt         := 
+        decode_dlc(frame.dlc, frame.data_length);
+        frame.rwcnt         :=
           to_integer(unsigned(memory(pointer)(15 downto 11)));
 
         pointer             := pointer + 1;
@@ -2504,7 +2470,7 @@ package body CANtestLib is
         else
             report "Unsupported Identifier type" severity error;
         end if;
-               
+
         frame.identifier  := to_integer(unsigned(aux_vect));
         pointer           := pointer + 1;
 
@@ -2514,7 +2480,7 @@ package body CANtestLib is
         pointer             := pointer + 2;
 
         -- Data words
-        if ((frame.rtr = '0' or frame.frame_format = '1') and 
+        if ((frame.rtr = '0' or frame.frame_format = '1') and
             frame.data_length /= 0)
         then
             for i in 0 to ((frame.data_length - 1) / 4) loop
@@ -2558,7 +2524,7 @@ package body CANtestLib is
         when others =>
             report "Unsupported TX buffer number" severity error;
         end case;
-          
+
         -- Frame format word
         w_data                      := (OTHERS => '0');
         w_data(DLC_H downto DLC_L)  := frame.dlc;
@@ -2568,8 +2534,8 @@ package body CANtestLib is
         w_data(TBF_IND)             := '1';
         w_data(BRS_IND)             := frame.brs;
         w_data(ESI_RESVD_IND)       := '0'; -- ESI is receive only
-        CAN_write(w_data, buf_offset, ID, mem_bus);          
-             
+        CAN_write(w_data, buf_offset, ID, mem_bus);
+
         -- Identifier
         id_sw_to_hw(frame.identifier, frame.ident_type, ident_vect);
         w_data := "000" & ident_vect;
@@ -2577,15 +2543,15 @@ package body CANtestLib is
                   ID, mem_bus);
 
         -- Timestamp
-        w_data := frame.timestamp(31 downto 0);  
+        w_data := frame.timestamp(31 downto 0);
         CAN_write(w_data, CAN_add_unsigned(buf_offset, TIMESTAMP_L_W_ADR),
                   ID, mem_bus);
-        w_data := frame.timestamp(63 downto 32);  
+        w_data := frame.timestamp(63 downto 32);
         CAN_write(w_data, CAN_add_unsigned(buf_offset, TIMESTAMP_U_W_ADR),
                   ID, mem_bus);
 
         -- Data words
-        decode_dlc_v(frame.dlc, length);
+        decode_dlc(frame.dlc, length);
         for i in 0 to (length - 1) / 4 loop
             w_data := frame.data((i * 4) + 3) &
                       frame.data((i * 4) + 2) &
@@ -2604,7 +2570,7 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type;
         variable outcome        : out   boolean
-    )is 
+    )is
         variable buf_state      :       SW_TXT_Buffer_state_type;
     begin
         outcome     := true;
@@ -2631,8 +2597,8 @@ package body CANtestLib is
     end procedure;
 
 
-    
-  
+
+
 
     procedure CAN_read_frame(
         variable frame          : inout SW_CAN_frame_type;
@@ -2645,7 +2611,7 @@ package body CANtestLib is
                                         (OTHERS => '0');
     begin
         -- Read Frame format word
-        CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);   
+        CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
         frame.dlc           := r_data(DLC_H downto DLC_L);
         frame.rtr           := r_data(RTR_IND);
         frame.ident_type    := r_data(ID_TYPE_IND);
@@ -2653,7 +2619,7 @@ package body CANtestLib is
         frame.brs           := r_data(BRS_IND);
         frame.rwcnt         := to_integer(unsigned(
                                r_data(RWCNT_H downto RWCNT_L)));
-        decode_dlc_v(frame.dlc, frame.data_length);
+        decode_dlc(frame.dlc, frame.data_length);
 
         --Read identifier
         CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
@@ -2661,13 +2627,13 @@ package body CANtestLib is
         id_hw_to_sw(aux_vect, frame.ident_type, frame.identifier);
 
         -- Read timestamp
-        CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);  
+        CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
         frame.timestamp(31 downto 0)  := r_data;
-        CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);  
+        CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);
         frame.timestamp(63 downto 32) := r_data;
 
         -- Now read data frames
-        if ((frame.rtr = NO_RTR_FRAME or frame.frame_format = FD_CAN) 
+        if ((frame.rtr = NO_RTR_FRAME or frame.frame_format = FD_CAN)
              and frame.data_length /= 0)
         then
             for i in 0 to (frame.data_length - 1) / 4 loop
@@ -2679,7 +2645,7 @@ package body CANtestLib is
             end loop;
         end if;
     end procedure;
-  
+
 
     procedure CAN_wait_frame_sent(
         constant ID             : in    natural range 0 to 15;
@@ -2688,7 +2654,7 @@ package body CANtestLib is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-     
+
         -- Wait until unit starts to transmitt or reciesve
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
         while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
@@ -2700,9 +2666,9 @@ package body CANtestLib is
         while (r_data(BS_IND) = '0') loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
-     
+
     end procedure;
-  
+
 
     procedure CAN_wait_bus_idle(
         constant ID             : in    natural range 0 to 15;
@@ -2726,21 +2692,21 @@ package body CANtestLib is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-     
+
      -- Wait until unit starts to transmitt or recieve
      CAN_read(r_data, MODE_ADR, ID, mem_bus);
      while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
      end loop;
-     
+
      -- Wait until error frame is not being transmitted
      CAN_read(r_data, MODE_ADR, ID, mem_bus);
      while (r_data(ET_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
      end loop;
-     
+
     end procedure;
-  
+
 
     procedure CAN_calc_frame_length(
         constant frame          : in    SW_CAN_frame_type;
@@ -2749,7 +2715,7 @@ package body CANtestLib is
         variable aux            :       std_logic_vector(1 downto 0);
         variable data_length    :       natural;
     begin
-        decode_dlc_v(frame.dlc, data_length);
+        decode_dlc(frame.dlc, data_length);
         if (frame.rtr = RTR_FRAME and frame.frame_format = NORMAL_CAN) then
             data_length := 0;
         end if;
@@ -2761,16 +2727,16 @@ package body CANtestLib is
         case aux is
         when "00" =>
             bit_length := 18;
-        when "01" =>   
+        when "01" =>
             bit_length := 23;
-        when "10" =>   
-            bit_length := 39;   
-        when "11" =>   
+        when "10" =>
+            bit_length := 39;
+        when "11" =>
             bit_length := 41;
         when others =>
-        end case; 
+        end case;
 
-        -- Add the data length field    
+        -- Add the data length field
         bit_length := bit_length + data_length;
 
         -- Add CRC
@@ -2785,7 +2751,7 @@ package body CANtestLib is
         -- Add CRC delimiter, Acknowledge and Acknowledge delimiter
         bit_length := bit_length + 3;
     end procedure;
- 
+
 
     procedure send_TXT_buf_cmd(
         constant cmd            : in    SW_TXT_Buffer_command_type;
@@ -2814,8 +2780,8 @@ package body CANtestLib is
         -- Give the command
         CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
     end procedure;
-  
-  
+
+
     procedure get_tx_buf_state(
         constant buf_n          : in    natural range 1 to 4;
         variable retVal         : out   SW_TXT_Buffer_state_type;
@@ -2839,8 +2805,8 @@ package body CANtestLib is
         when TXT_ABT  => retVal := buf_aborted;
         when TXT_ETY  => retVal := buf_empty;
         when others =>
-        report "Invalid TXT Buffer state: " & 
-                  integer'image(to_integer(unsigned(b_state))) severity error;  
+        report "Invalid TXT Buffer state: " &
+                  integer'image(to_integer(unsigned(b_state))) severity error;
         end case;
 
     end procedure;
@@ -2869,9 +2835,9 @@ package body CANtestLib is
 
         -- Read memory status
         CAN_read(data, RX_STATUS_ADR, ID, mem_bus, BIT_16);
-        retVal.rx_full          := false;        
-        retVal.rx_empty         := false;        
-        
+        retVal.rx_full          := false;
+        retVal.rx_empty         := false;
+
         if (data(RX_FULL_IND) = '1') then
             retVal.rx_full      := true;
         end if;
@@ -2894,7 +2860,7 @@ package body CANtestLib is
     begin
         CAN_read(data, VERSION_ADR, ID, mem_bus, BIT_16);
 
-        retVal := (10 * to_integer(unsigned(data(VER_MAJOR_H downto 
+        retVal := (10 * to_integer(unsigned(data(VER_MAJOR_H downto
                                                  VER_MAJOR_L)))) +
                   to_integer(unsigned(data(VER_MINOR_H downto VER_MINOR_L)));
     end procedure;
@@ -2946,7 +2912,7 @@ package body CANtestLib is
 
         -- Following modes are stored in SETTINGS register
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
-        
+
         if (mode.iso_fd_support) then
             data(FD_TYPE_IND)   := '0';
         else
@@ -3014,7 +2980,7 @@ package body CANtestLib is
         end if;
 
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
-  
+
         if (data(FD_TYPE_IND) = '0') then
             mode.iso_fd_support         := true;
         else
@@ -3053,7 +3019,7 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0);
     begin
         data := (OTHERS => '0');
-        
+
         if (command.abort_transmission) then
             data(AT_IND)        := '1';
         end if;
@@ -3111,7 +3077,7 @@ package body CANtestLib is
         if (data(TS_IND) = '1') then
             status.transmitter          := true;
         end if;
-     
+
         if (data(ES_IND) = '1') then
             status.error_warning        := true;
         end if;
@@ -3138,12 +3104,12 @@ package body CANtestLib is
             data(ENA_IND)       := '0';
         end if;
 
-        data(RTR_TH_H downto RTR_TH_L) := 
+        data(RTR_TH_H downto RTR_TH_L) :=
             std_logic_vector(to_unsigned(limit, RTR_TH_H - RTR_TH_L + 1));
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
     end procedure;
-  
+
 
     procedure enable_controller(
         constant enable         : in    boolean;
@@ -3153,7 +3119,7 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0);
     begin
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
-        
+
         if (enable) then
             data(ENA_IND) := '1';
         else
@@ -3170,11 +3136,11 @@ package body CANtestLib is
         variable tmp            :       std_logic_vector(31 downto 0);
     begin
         tmp := (OTHERS => '0');
-        
+
         if (interrupts.receive_int) then
             tmp(RI_IND)         :=  '1';
         end if;
-        
+
         if (interrupts.transmitt_int) then
             tmp(TI_IND)         :=  '1';
         end if;
@@ -3230,11 +3196,11 @@ package body CANtestLib is
     begin
         tmp := (false, false, false, false, false, false,
                 false, false, false, false, false, false);
-        
+
         if (int_reg(RI_IND) = '1') then
             tmp.receive_int              :=  true;
         end if;
-        
+
         if (int_reg(TI_IND) = '1') then
             tmp.transmitt_int            :=  true;
         end if;
@@ -3380,7 +3346,7 @@ package body CANtestLib is
         elsif (data(ERP_IND) = '1') then
             fault_state         := fc_error_passive;
         elsif (data(BOF_IND) = '1') then
-            fault_state         := fc_bus_off;        
+            fault_state         := fc_bus_off;
         end if;
     end procedure;
 
@@ -3433,7 +3399,7 @@ package body CANtestLib is
         -- Reading separately for possible future separation of RXC and TXC!
         CAN_read(data, RXC_ADR, ID, mem_bus, BIT_16);
 
-        err_counters.rx_counter := 
+        err_counters.rx_counter :=
                 to_integer(unsigned(data(RXC_VAL_H downto RXC_VAL_L)));
 
         CAN_read(data, TXC_ADR, ID, mem_bus, BIT_16);
@@ -3449,6 +3415,23 @@ package body CANtestLib is
                 to_integer(unsigned(data(ERR_FD_VAL_H downto ERR_FD_VAL_L)));
     end procedure;
 
+    function str_equal(a : string; b : string) return boolean is
+        constant len : natural := MINIMUM(a'length, b'length);
+        constant atail : string(a'left+len to a'right) := (others => ' ');
+        constant btail : string(b'left+len to b'right) := (others => ' ');
+    begin
+        return     a(a'left to a'left+len-1) = b(b'left to b'left+len-1)
+               and a(a'left+len to a'right) = atail
+               and b(b'left+len to b'right) = btail;
+    end function str_equal;
+
+    function strtolen(n : natural; src : string) return string is
+        variable s : string(1 to n) := (others => ' ');
+    begin
+        assert src'length <= n report "String too long." severity failure;
+        s(src'range) := src;
+        return s;
+    end function strtolen;
 
     procedure set_error_counters(
         constant err_counters   : in    SW_error_counters;
@@ -3465,7 +3448,7 @@ package body CANtestLib is
         data(PTX_IND) := '1';
         CAN_write(data, CTR_PRES_ADR, ID, mem_bus, BIT_16);
         data(PTX_IND) := '0';
-        
+
         -- RX Error counter
         data(CTPV_H downto CTPV_L) := std_logic_vector(to_unsigned(
                                         err_counters.rx_counter, 9));
@@ -3544,8 +3527,6 @@ package body CANtestLib is
         trv_delay := to_integer(unsigned(data(
                             TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)));
     end procedure;
-
-
 end package body;
 
 
@@ -3575,93 +3556,18 @@ entity CAN_test is
         -- Error tolerance, error counter should not
         -- exceed this value in order for the test to pass
         signal error_tol        :in     natural;
-                                                     
-        -- Status of the test        
+
+    -- Status of the test
         signal status           :out    test_status_type;
 
         -- Amount of errors which appeared in the test
         signal errors           :out    natural
     );
-  
+
     --Internal test signals
     signal error_ctr           :       natural := 0;
     signal loop_ctr            :       natural := 0;
     signal exit_imm            :       boolean := false;
     signal rand_ctr            :       natural range 0 to 3800 := 0;
 
-end entity;
-
-
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-USE work.randomLib.All;
-use work.CANconstants.all;
-USE work.CANtestLib.All;
- 
---------------------------------------------------------------------------------
--- Test enity for feature tests. Additional signals representing two memory
--- buses are present to connect two DUTs of feature tests!     
---------------------------------------------------------------------------------
-entity CAN_feature_test is
-    port (
-
-        -- Input trigger, test starts running when true
-        signal run              : in    boolean;
-
-        -- Number of iterations that test should do
-        signal iterations       : in    natural;
-
-        -- Logging level, severity which should be shown
-        signal log_level        : in    log_lvl_type;
-
-        -- Test behaviour when error occurs: Quit, or Go on
-        signal error_beh        : in    err_beh_type;
-
-        -- Error tolerance, error counter should not
-        -- exceed this value in order for the test to pass
-        signal error_tol        : in    natural;
-
-        -- Status of the test                       
-        signal status           : out   test_status_type;
-
-        -- Amount of errors which appeared in the test
-        signal errors           : out   natural;
-
-        -- Memory access buses
-        signal mem_bus_1        : inout Avalon_mem_type;
-        signal mem_bus_2        : inout Avalon_mem_type;
-
-        -- Bus level injected value and whether it should be forced on bus
-        signal bl_inject        : in    std_logic;
-        signal bl_force         : in    boolean
-    );
-  
-    -- Internal test signals
-    signal error_ctr            :       natural :=  0;
-    signal loop_ctr             :       natural :=  0;
-    signal exit_imm             :       boolean :=  false;
-    signal rand_ctr             :       natural range 0 to 3800 := 0;
- 
-end entity;
- 
-
-USE work.CANtestLib.All; 
-  
---------------------------------------------------------------------------------
--- Test wrapper. When executable test is created it implements architecture of
--- this entity! Note that within one test wrapper architecture several tests
--- can be implemented!!
---------------------------------------------------------------------------------
-entity CAN_test_wrapper is
-    generic(
-        constant iterations   :     natural       :=  1000;
-        constant log_level    :     log_lvl_type  :=  warning_l;
-        constant error_beh    :     err_beh_type  :=  go_on;
-        constant error_tol    :     natural       :=  0
-    );
-    port(
-        signal status         :out  test_status_type
-    );
 end entity;

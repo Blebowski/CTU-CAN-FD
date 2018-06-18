@@ -1,44 +1,44 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Unit test for the Event Logger circuit.
---   For simplicity always only one type of event is logged at a time!                     
+--   For simplicity always only one type of event is logged at a time!
 --------------------------------------------------------------------------------
 -- Revision History:
 --    4.6.2016   Created file
@@ -56,7 +56,7 @@ USE work.randomLib.All;
 use work.CAN_FD_register_map.all;
 
 architecture Event_logger_unit_test of CAN_test is
-  
+
     signal clk_sys              :   std_logic := '0';
     signal res_n                :   std_logic := '0';
 
@@ -68,13 +68,13 @@ architecture Event_logger_unit_test of CAN_test is
 
     signal sync_edge            :   std_logic := '0';
     signal data_overrun         :   std_logic := '0';
-    
+
     signal timestamp            :   std_logic_vector(63 downto 0) :=
                                         (OTHERS => '0');
 
     signal bt_FSM               :   bit_time_type;
     signal loger_finished       :   std_logic;
-    
+
     signal loger_act_data       :   std_logic_vector(63 downto 0) :=
                                         (OTHERS => '0');
 
@@ -84,7 +84,7 @@ architecture Event_logger_unit_test of CAN_test is
     signal log_read_pointer     :   std_logic_vector(7 downto 0) :=
                                         (OTHERS => '0');
 
-    signal log_size             :   std_logic_vector(7 downto 0) := 
+    signal log_size             :   std_logic_vector(7 downto 0) :=
                                         (OTHERS => '0');
 
     signal log_state_out        :   logger_state_type;
@@ -95,7 +95,7 @@ architecture Event_logger_unit_test of CAN_test is
 
 	----------------------------------------------------------------------------
 	-- Internal testbench signals
-	----------------------------------------------------------------------------	
+	----------------------------------------------------------------------------
 
     signal PC_State             :   protocol_type := sof;
     signal OP_State             :   oper_mode_type := transciever;
@@ -113,7 +113,7 @@ architecture Event_logger_unit_test of CAN_test is
                                        := (OTHERS => '0');
 	signal evnt_inputs_reg      :   std_logic_vector(event_amount - 1 downto 0)
                                        := (OTHERS => '0');
-	
+
 	-- Settings of Event logger generated by testbench
 	signal drv_trig             :	std_logic_vector(trig_amount - 1 downto 0)
                                         := (OTHERS => '0');
@@ -126,7 +126,7 @@ architecture Event_logger_unit_test of CAN_test is
     type log_mod_mem_type is array (0 to 20) of std_logic_vector(63 downto 0);
     signal log_mod_mem          :   log_mod_mem_type :=
                                         (OTHERS => (OTHERS => '0'));
-    
+
     ----------------------------------------------------------------------------
     -- Generates random capture setting of event logger
     ----------------------------------------------------------------------------
@@ -201,13 +201,13 @@ architecture Event_logger_unit_test of CAN_test is
         log("Trigger here!", info_l, log_level);
 
         while ((trig_inputs and drv_trig) = trig_zero) loop
-            wait until rising_edge(clk_sys);            
+            wait until rising_edge(clk_sys);
         end loop;
 
         wait until rising_edge(clk_sys);
 
         log("Trigger condition met!", info_l, log_level);
-        wait until rising_edge(clk_sys);            
+        wait until rising_edge(clk_sys);
         wait for 1 ns;
 
         if (log_state /= running) then
@@ -273,7 +273,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    CAN_logger_comp : CAN_logger 
+    CAN_logger_comp : CAN_logger
     generic map(
         memory_size                =>  16 --Only 2^k possible!
     )
@@ -293,7 +293,7 @@ begin
         log_size                   =>  log_size,
         log_state_out              =>  log_state_out
     );
-   
+
 
     ----------------------------------------------------------------------------
     -- Clock generation
@@ -312,7 +312,7 @@ begin
 	----------------------------------------------------------------------------
     -- Connection of event logger settings to DUT
     ----------------------------------------------------------------------------
-	drv_bus(552 + trig_amount - 1 downto 552)   <= drv_trig; 
+	drv_bus(552 + trig_amount - 1 downto 552)   <= drv_trig;
 	drv_bus(580 + event_amount - 1 downto 580)  <= drv_capt;
     drv_bus(DRV_LOG_CMD_STR_INDEX)              <= drv_start_logger;
 
@@ -389,7 +389,7 @@ begin
 
         -- Generate random events
         rand_logic_vect_s(rand_ctr_2, evnt_inputs, 0.1);
-        
+
         -- Make sure that protocol control is one  hot encoded for SW model!
         if (evnt_inputs(C_SOF_IND) = '1') then
             evnt_inputs(C_ARBS_IND) <= '0';
@@ -404,21 +404,21 @@ begin
             evnt_inputs(C_DATS_IND) <= '0';
             evnt_inputs(C_CRCS_IND) <= '0';
             evnt_inputs(C_OVL_IND) <= '0';
-        
+
         elsif (evnt_inputs(C_CTRS_IND) = '1') then
             evnt_inputs(C_SOF_IND)  <= '0';
             evnt_inputs(C_ARBS_IND) <= '0';
             evnt_inputs(C_DATS_IND) <= '0';
             evnt_inputs(C_CRCS_IND) <= '0';
             evnt_inputs(C_OVL_IND) <= '0';
-        
+
         elsif (evnt_inputs(C_DATS_IND) = '1') then
             evnt_inputs(C_SOF_IND)  <= '0';
             evnt_inputs(C_ARBS_IND) <= '0';
             evnt_inputs(C_CTRS_IND) <= '0';
             evnt_inputs(C_CRCS_IND) <= '0';
             evnt_inputs(C_OVL_IND) <= '0';
-        
+
         elsif (evnt_inputs(C_CRCS_IND) = '1') then
             evnt_inputs(C_SOF_IND)  <= '0';
             evnt_inputs(C_ARBS_IND) <= '0';
@@ -486,7 +486,7 @@ begin
             for i in (event_amount - 1) downto 0 loop
                 if (evnt_inputs_edge(i) = '1') then
                     -- Index of event corresponds to encoding in EVNT_TYPE !!
-                    log_mod_mem(log_ptr)(4 downto 0) <= 
+                    log_mod_mem(log_ptr)(4 downto 0) <=
                         std_logic_vector(to_unsigned(i + 1, 5));
 
                     -- Record Only 48 bits of timestamp
@@ -500,11 +500,11 @@ begin
         end loop;
     end process;
 
-    errors <= error_ctr;  
+    errors <= error_ctr;
 
 
     ----------------------------------------------------------------------------
-    -- Main test process 
+    -- Main test process
     ----------------------------------------------------------------------------
     test_proc : process
         variable ev_type    :  integer := 0;
@@ -550,55 +550,5 @@ begin
 
         evaluate_test(error_tol, error_ctr, status);
     end process;
-  
+
 end architecture;
-
-
-
-
---------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                   
---------------------------------------------------------------------------------
-
-architecture Event_logger_unit_test_wrapper of CAN_test_wrapper is
-
-    -- Select architecture of the test
-    for test_comp : CAN_test use entity work.CAN_test(Event_logger_unit_test);
-  
-    signal run              :   boolean;
-    signal status_int       :   test_status_type;      
-    signal errors           :   natural;
-
-begin
-  
-	-- In this test wrapper generics are directly connected to the signals
-	-- of test entity
-	test_comp : CAN_test
-	port map(
-        run              =>  run,
-        iterations       =>  iterations , 
-        log_level        =>  log_level,
-        error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
-        status           =>  status_int,
-        errors           =>  errors
-	);
-	status              <= status_int;
-
-
-	----------------------------------------------------------------------------
-	-- Starts the test and lets it run
-	----------------------------------------------------------------------------
-	test : process
-	begin
-		run               <= true;
-		wait for 1 ns;
-
-		--Wait until the only test finishes and then propagate the results
-		wait until (status_int = passed or status_int = failed);  
-
-		wait for 100 ns;
-		run               <= false;
-	end process;
-  
-end;

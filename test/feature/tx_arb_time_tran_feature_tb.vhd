@@ -37,24 +37,30 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  RX Buffer status feature test implementation.
+--  TX arbitration and time transmittion feature test
 --
 --  Test sequence:
---    1. RX Buffer size is read and buffer is cleared.
---    2. Free memory, buffer status and message count is checked.
---    3. Random frames are sent on the bus by node 2 and recieved by node 1
---    4. After each frame amount of remaining memory is checked towards expected
---       value.
---    5. When buffer is filled Data overrun flag is checked and cleared.
---    6. After clearing Overrun flag, it is checked it was really cleared.
+--    1. Part 1:
+--      1.1 Measure timestamp from status bus
+--      1.2 Insert frame to be transmitted from actual time further by random
+--          interval.
+--      1.3 Wait until frame is started to be transmitted
+--      1.4 Check whether difference between actual timestamp and time when
+--          frame should have been transmitted is less than 150. Note that
+--          timestamp is in feature environment increased every clock cycle.
+--          One bit time in default configuration has 130 clock cycles. Thus if
+--          we insert the frame in begining of bit time in takes nearly whole
+--          bit time until its transmittion is started.
+--      1.5 Repeat steps 1-4 but use Buffer 2 for transmittion.
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---
---    21.6.2016   Created file
+--    23.6.2016   Created file
 --    06.02.2018  Modified to work with the IP-XACT generated memory map
---     11.6.2018  Modified to use CAN Test lib functions instead of direct
---                register access.
+--    13.06.2018  1. Used CAN Test lib instead of register access functions.
+--                2. Removed transmission from multiple buffers, since buffers
+--                   are now compared with priority. This will be covered in
+--                   separate test.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -67,10 +73,9 @@ USE work.randomLib.All;
 use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
-use work.CAN_FD_frame_format.all;
 
-package rx_status_feature is
-    procedure rx_status_feature_exec(
+package tx_arb_time_tran_feature is
+    procedure tx_arb_time_tran_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -81,8 +86,8 @@ package rx_status_feature is
 end package;
 
 
-package body rx_status_feature is
-    procedure rx_status_feature_exec(
+package body tx_arb_time_tran_feature is
+    procedure tx_arb_time_tran_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -90,129 +95,110 @@ package body rx_status_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
-        variable ID_1           	:       natural range 0 to 15 := 1;
-        variable ID_2           	:       natural range 0 to 15 := 2;
+        constant ID_1           	:       natural := 1;
+        constant ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
-        variable send_more          :       boolean := true;
-        variable in_RX_buf          :       natural range 0 to 1023;
+        variable CAN_frame_2        :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable number_frms_sent   :       natural range 0 to 1023;
-
-        variable buf_info           :       SW_RX_Buffer_info;
-        variable command            :       SW_command := (false, false, false);
-        variable status             :       SW_status;
+        variable act_ts             :       std_logic_vector(63 downto 0);
+        variable rand_value         :       real := 0.0;
+        variable rand_value_2       :       real := 0.0;
+        variable aux1               :       natural;
+        variable aux2               :       natural;
+        variable status             :       SW_Status;
     begin
+
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- Restart the content of the buffer...
+        -- Part 1
         ------------------------------------------------------------------------
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        command.release_rec_buffer := false;
+        ------------------------------------------------------------------------
+        -- Measure timestamp and generate frame
+        ------------------------------------------------------------------------
+        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_generate_frame(rand_ctr, CAN_frame_2);
+        act_ts := iout(1).stat_bus(STAT_TS_HIGH downto STAT_TS_LOW);
 
         ------------------------------------------------------------------------
-        -- Read the size of the synthesized buffer
+        -- Add random value
         ------------------------------------------------------------------------
-        get_rx_buf_state(buf_info, ID_1, mem_bus(1));
+        rand_real_v(rand_ctr, rand_value);
+
+        -- Here we assume this test will  use only lowest 32 bits!
+        CAN_frame.timestamp(63 downto 32) := act_ts(63 downto 32);
+        CAN_frame.timestamp(31 downto 0)  :=
+            std_logic_vector(unsigned(act_ts(31 downto 0)) + 30 +
+                             integer(rand_value * 10000.0));
 
         ------------------------------------------------------------------------
-        -- Check that buffer is empty
+        -- Send frame and check when TX started
         ------------------------------------------------------------------------
-        if (not buf_info.rx_empty) then
-            o.outcome := false;
-        end if;
-
-        ------------------------------------------------------------------------
-        -- Check that free memory is equal to buffer size
-        ------------------------------------------------------------------------
-        if (buf_info.rx_buff_size /= buf_info.rx_mem_free) then
-            o.outcome := false;
-        end if;
-
-        ------------------------------------------------------------------------
-        -- Check that both pointers are 0 as well
-        -- as message count
-        ------------------------------------------------------------------------
-        if (buf_info.rx_frame_count /= 0 or buf_info.rx_write_pointer /= 0 or
-            buf_info.rx_read_pointer /= 0)
-        then
-            o.outcome := false;
-        end if;
-
-        ------------------------------------------------------------------------
-        -- Generate the CAN frames and send them by Node 2
-        ------------------------------------------------------------------------
-        while send_more loop
-            CAN_generate_frame(rand_ctr, CAN_frame);
-
-            -- Evaluate if next frame should be sent
-            if (CAN_frame.rtr = RTR_FRAME and
-                CAN_frame.frame_format = NORMAL_CAN)
-            then
-                if (in_RX_buf + 4 > buf_info.rx_buff_size) then
-                    send_more := false;
-                end if;
-            else
-                if (CAN_frame.data_length mod 4 = 0) then
-                    if ((in_RX_buf + CAN_frame.data_length / 4 + 4) >
-                        buf_info.rx_buff_size)
-                    then
-                        send_more := false;
-                    end if;
-                else
-                    if ((in_RX_buf + CAN_frame.data_length / 4 + 5) >
-                        buf_info.rx_buff_size)
-                    then
-                        send_more := false;
-                    end if;
-                end if;
+        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        loop
+            get_controller_status(status, ID_1, mem_bus(1));
+            if (status.transmitter) then
+                exit;
             end if;
-
-            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
-            number_frms_sent := number_frms_sent + 1;
-            in_RX_buf := in_RX_buf + CAN_frame.rwcnt + 1;
-
-            --------------------------------------------------------------------
-            -- Check that message count was incremented and memfree is correct!
-            --------------------------------------------------------------------
-            get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-            if (number_frms_sent /= buf_info.rx_frame_count and send_more) then
-                o.outcome := false;
-            end if;
-            if ((buf_info.rx_mem_free + in_RX_buf) /= buf_info.rx_buff_size
-                and send_more)
-            then
-                o.outcome := false;
-            end if;
-
         end loop;
 
+        aux1 := to_integer(unsigned(
+                    iout(1).stat_bus(STAT_TS_HIGH - 32 downto STAT_TS_LOW)));
+        aux2 := to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
+
         ------------------------------------------------------------------------
-        -- Check that data overrun status is set (we sent one more frame than
-        -- needed... Overrun should be present
+        -- We tolerate up to 150 clock cycles between actual timestamp and
+        -- transmitt time. This fits to the default setting of up to 130 clock
+        -- cycles per bit time!
         ------------------------------------------------------------------------
-        get_controller_status(status, ID_1, mem_bus(1));
-        if (not status.data_overrun) then
+        if (aux1 - aux2 > 150) then
+            report "FUCK";
+            o.outcome := false;
+        else
+            report "OK";
+        end if;
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+
+        ------------------------------------------------------------------------
+        -- Do  the same with buffer 2
+        ------------------------------------------------------------------------
+        act_ts := iout(1).stat_bus(STAT_TS_HIGH downto STAT_TS_LOW);
+
+        ------------------------------------------------------------------------
+        -- Add random value
+        ------------------------------------------------------------------------
+        rand_real_v(rand_ctr, rand_value);
+        --Here we assume this test will  use only lowest 32 bits!
+        CAN_frame.timestamp(63 downto 32) := act_ts(63 downto 32);
+        CAN_frame.timestamp(31 downto 0) :=
+            std_logic_vector(unsigned(act_ts(31 downto 0)) + 30 +
+                                integer(rand_value * 10000.0));
+
+        ------------------------------------------------------------------------
+        -- Send frame and check when TX started
+        ------------------------------------------------------------------------
+        CAN_send_frame(CAN_frame, 2, ID_1, mem_bus(1), frame_sent);
+        loop
+            get_controller_status(status, ID_1, mem_bus(1));
+            if (status.transmitter) then
+                exit;
+            end if;
+        end loop;
+
+        aux1 := to_integer(unsigned(
+                    iout(1).stat_bus(STAT_TS_HIGH - 32 downto STAT_TS_LOW)));
+        aux2 := to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
+
+        ------------------------------------------------------------------------
+        -- We tolerate up to 150 clock cycles between actual timestamp and
+        -- transmitt time. This fits to the default setting of up to 130 clock
+        -- cycles per bit time!
+        ------------------------------------------------------------------------
+        if (aux1 - aux2 > 150) then
             o.outcome := false;
         end if;
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
 
-        ------------------------------------------------------------------------
-        -- Clear the data overrun flag
-        ------------------------------------------------------------------------
-        command.clear_data_overrun := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        command.clear_data_overrun := false;
-
-        ------------------------------------------------------------------------
-        -- Check that overrun flag was cleared
-        ------------------------------------------------------------------------
-        get_controller_status(status, ID_1, mem_bus(1));
-        if (status.data_overrun) then
-            o.outcome := false;
-        end if;
-
-    end procedure;
+  end procedure;
 
 end package body;

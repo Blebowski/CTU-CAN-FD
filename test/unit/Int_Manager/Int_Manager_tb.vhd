@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -40,7 +40,7 @@
 --  Unit test for the Interrupt manager.
 --  Random interrupt source signals are generated in the testbench. Periodically
 --  random setting of interrupt generator is used. Then test waits and evaluates
---  whether interrupt prediction (int_test_ctr) matches the actual number of 
+--  whether interrupt prediction (int_test_ctr) matches the actual number of
 --  interrupts measured on the int_out rising and falling edges. Also interrupt
 --  vector is read and compared with modeled interrupt vector.
 --------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ use work.CAN_FD_register_map.all;
 use work.ID_transfer.all;
 
 architecture int_man_unit_test of CAN_test is
-    
+
     -- System Clock and reset
     signal clk_sys                :   std_logic := '0';
     signal res_n                  :   std_logic := '0';
@@ -120,7 +120,7 @@ architecture int_man_unit_test of CAN_test is
     ----------------------------------------------
     -- Internal testbench signals
     ----------------------------------------------
-    signal drv_bus                :   std_logic_vector(1023 downto 0) := 
+    signal drv_bus                :   std_logic_vector(1023 downto 0) :=
                                             (OTHERS => '0');
 
     signal rand_ctr_1             :   natural range 0 to RAND_POOL_SIZE;
@@ -274,9 +274,9 @@ architecture int_man_unit_test of CAN_test is
         else
             rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.05);
         end if;
-      
-    end procedure;    
-    
+
+    end procedure;
+
 
     ----------------------------------------------------------------------------
     -- Generates interrupt commands as if comming on driving bus from memory
@@ -305,7 +305,7 @@ architecture int_man_unit_test of CAN_test is
         -- coming from different registers!
         if (tmp < 0.2) then
             rand_logic_vect_s(rand_ctr, drv_int_clear, 0.4);
-        
+
         elsif (tmp < 0.4) then
             rand_logic_vect_s(rand_ctr, drv_int_ena_set, 0.2);
 
@@ -366,8 +366,8 @@ begin
     int_input(RFI_IND)            <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
-    int_input(TXBHCI_IND)         <=  txt_hw_cmd.lock or txt_hw_cmd.unlock; 
-  
+    int_input(TXBHCI_IND)         <=  txt_hw_cmd.lock or txt_hw_cmd.unlock;
+
 
     ----------------------------------------------------------------------------
     -- Clock generation
@@ -390,7 +390,7 @@ begin
         if (res_n = ACT_RESET) then
             apply_rand_seed(seed, 1, rand_ctr_1);
         end if;
-        
+
         while true loop
             wait until falling_edge(clk_sys);
             generate_sources(rand_ctr_1, error_valid, error_passive_changed ,
@@ -404,7 +404,7 @@ begin
     ----------------------------------------------------------------------------
     -- Connection to Driving bus
     ----------------------------------------------------------------------------
-    drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW)          
+    drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW)
             <= drv_int_clear;
 
     drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW)
@@ -414,7 +414,7 @@ begin
             <= drv_int_ena_clear;
 
     drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW)
-            <= drv_int_mask_set; 
+            <= drv_int_mask_set;
 
     drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW)
             <= drv_int_mask_clear;
@@ -494,7 +494,7 @@ begin
 
         -- Checking the outputs
         if (outcome = false) then
-            process_error(error_ctr_2, error_beh, exit_imm); 
+            process_error(error_ctr_2, error_beh, exit_imm);
         end if;
 
     end process;
@@ -527,7 +527,7 @@ begin
         loop
               log("Starting loop nr "&integer'image(loop_ctr), info_l,
                     log_level);
-              
+
               wait until falling_edge(clk_sys);
 
               -- Generate commands as coming from user registers
@@ -535,7 +535,7 @@ begin
                                 drv_int_ena_clear, drv_int_mask_set,
                                 drv_int_mask_clear, rand_ctr);
               wait for 50 ns;
-              
+
               -- Errors are evaluated in separate process.
               error_ctr <= error_ctr_2;
 
@@ -544,59 +544,5 @@ begin
 
         evaluate_test(error_tol, error_ctr, status);
     end process;
-  
+
 end architecture;
-
-
---------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
---------------------------------------------------------------------------------
-architecture int_man_test_wrapper of CAN_test_wrapper is
-   
-    -- Select architecture of the test
-    for test_comp : CAN_test use entity work.CAN_test(int_man_unit_test);
-
-    -- Input trigger, test starts running when true
-    signal run              :   boolean;
-
-    -- Status of the test
-    signal status_int       :   test_status_type;
-
-    -- Amount of errors which appeared in the test
-    signal errors           :   natural;                
-
-begin
-  
-    -- In this test wrapper generics are directly connected to the signals
-    -- of test entity
-    test_comp : CAN_test
-    port map(
-        run              =>  run,
-        iterations       =>  iterations , 
-        log_level        =>  log_level,
-        error_beh        =>  error_beh,
-        error_tol        =>  error_tol,                                                     
-        status           =>  status_int,
-        errors           =>  errors
-    );
-  
-  status              <= status_int;
-  
-    ----------------------------------------------------------------------------
-    -- Starts the test and lets it run
-    ----------------------------------------------------------------------------
-    test : process
-    begin
-        run               <= true;
-        wait for 1 ns;
-
-        --Wait until the only test finishes and then propagate the results
-        wait until (status_int = passed or status_int = failed);  
-
-        wait for 100 ns;
-        run               <= false;
-    end process;
-  
-end;
-
-

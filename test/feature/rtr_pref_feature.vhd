@@ -1,46 +1,46 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Feature test for RTR preferred behaviour of CTU CAN FD. RTR preffered
 --  behaviour determines whether inserted DLC will be sent as part of RTR frame
---  or all zeroes will be sent in RTR Frame. 
--- 
+--  or all zeroes will be sent in RTR Frame.
+--
 --  Test sequence is like so:
 --      1. Part 1:
 --          1.1 Generate frame with arbitrary DLC and force RTR flag
@@ -48,7 +48,7 @@
 --          1.3 Send frame by Node 1.
 --          1.4 Wait until Node 2 receives the frame. Read frame from Node 2
 --          1.5 Check if received DLC is 0.
---      2. Part 2: 
+--      2. Part 2:
 --          2.1 Configure RTR behaviour to send the original value
 --          2.2 Send frame by Node 1.
 --          2.3 Wait until Node 2 receives the frame. Read frame from Node 2
@@ -70,40 +70,32 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 package rtr_pref_feature is
-  
     procedure rtr_pref_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
 package body rtr_pref_feature is
-  
     procedure rtr_pref_feature_exec(
-        variable    outcome         : inout  boolean;
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      mem_bus_1       : inout  Avalon_mem_type;
-        signal      mem_bus_2       : inout  Avalon_mem_type;
-        signal      bus_level       : in     std_logic;
-        signal      drv_bus_1       : in     std_logic_vector(1023 downto 0);
-        signal      drv_bus_2       : in     std_logic_vector(1023 downto 0);
-        signal      stat_bus_1      : in     std_logic_vector(511 downto 0);
-        signal      stat_bus_2      : in     std_logic_vector(511 downto 0) 
-    )is
+        signal      iout            : in     instance_inputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
+    ) is
         variable ID_1               :        natural := 1;
         variable ID_2               :        natural := 2;
         variable tx_frame           :        SW_CAN_frame_type;
@@ -192,9 +184,7 @@ package body rtr_pref_feature is
         if (rx_frame.dlc /= tx_frame.dlc) then
             outcome := false;
         end if;
-    
+
   end procedure;
-  
+
 end package body;
-
-

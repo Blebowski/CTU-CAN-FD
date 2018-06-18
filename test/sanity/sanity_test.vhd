@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -42,17 +42,17 @@
 --  "signalDelayer". Random bit noise is inserted to the bus simulation.
 --  Each node is clocked with different clock, to cover clock jitter and clock
 --  uncertainty of real bus controllers!
---                                       
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --
 --    7.7.2016   Created file
---    23.9.2017  Added bugfix for proper identifier correction. Identifier 
---               layout change from 13.1.2017 caused that identifier correction 
---               did not avoid collisions due to assumption of old identifier 
+--    23.9.2017  Added bugfix for proper identifier correction. Identifier
+--               layout change from 13.1.2017 caused that identifier correction
+--               did not avoid collisions due to assumption of old identifier
 --               layout.
---    09.2.2018  Added support fow RWCNT field in the SW_CAN_Frame. RWCNT is 
---               stored also to TX Memory. Thus when read on RX side, it should 
+--    09.2.2018  Added support fow RWCNT field in the SW_CAN_Frame. RWCNT is
+--               stored also to TX Memory. Thus when read on RX side, it should
 --               match the calculated value on TX.
 --    17.2.2018  1. Modified to support prioritized version of TXT Buffers.
 --               2. Added TXT frame counter
@@ -86,8 +86,8 @@ entity sanity_test is
 
     -- Test behaviour when error occurs: Quit, or Go on
     signal error_beh        :in     err_beh_type;
-    
-    -- Error tolerance, error counter should not exceed this value in order 
+
+    -- Error tolerance, error counter should not exceed this value in order
     -- for the test to pass
     signal error_tol        :in     natural;
 
@@ -118,7 +118,7 @@ entity sanity_test is
     signal nw_mean          :       real;
 
     -- Noise pulse width variance
-    signal nw_var           :       real;    
+    signal nw_var           :       real;
 
     -- Gap between two noise pulses mean in nanoseconds
     signal ng_mean          :       real;
@@ -153,13 +153,13 @@ architecture behavioral of sanity_test is
     -- Memory interfaces
     type mem_bus_arr_type is array (1 to NODE_COUNT) of Avalon_mem_type;
     signal mb_arr : mem_bus_arr_type;
-  
+
     -- Auxiliarly memory signals used due to no support for connecting
     -- record types to components!
-    type mem_vect_arr_type is 
+    type mem_vect_arr_type is
         array (1 to NODE_COUNT) of std_logic_vector(31 downto 0);
 
-    type mem_contr_arr_type is 
+    type mem_contr_arr_type is
         array (1 to NODE_COUNT) of std_logic;
 
     type mem_be_arr_type is
@@ -177,22 +177,22 @@ architecture behavioral of sanity_test is
     signal mem_aux_address      : mem_addr_arr_type :=
                                     (OTHERS => (OTHERS => '0'));
 
-    signal mem_aux_scs          : mem_contr_arr_type := 
+    signal mem_aux_scs          : mem_contr_arr_type :=
                                     (OTHERS => '0');
 
-    signal mem_aux_swr          : mem_contr_arr_type := 
+    signal mem_aux_swr          : mem_contr_arr_type :=
                                     (OTHERS => '0');
 
     signal mem_aux_srd          : mem_contr_arr_type :=
                                     (OTHERS => '0');
 
     -- By default all accesses are 32 bit!
-    signal mem_aux_sbe          : mem_be_arr_type := 
+    signal mem_aux_sbe          : mem_be_arr_type :=
                                     (OTHERS => (OTHERS => '1'));
 
     signal mem_aux_clk          : mem_contr_arr_type :=
                                     (OTHERS => '0');
-  
+
     signal res_n_v              : std_logic_vector(1 to NODE_COUNT) :=
                                     (OTHERS => '0');
 
@@ -205,7 +205,7 @@ architecture behavioral of sanity_test is
 
     signal time_quanta_clk_v    : std_logic_vector(1 to NODE_COUNT) :=
                                     (OTHERS => '0');
-  
+
     -- Timestamp signals
     type timestamp_arr_type is
         array (1 to NODE_COUNT) of std_logic_vector(63 downto 0);
@@ -216,14 +216,14 @@ architecture behavioral of sanity_test is
     -- Transceiver delay shift registers
     type trv_del_shift_reg is array (1 to NODE_COUNT) of tran_delay_type;
 
-    signal transciever          : trv_del_shift_reg := 
+    signal transciever          : trv_del_shift_reg :=
         (OTHERS => ((OTHERS => RECESSIVE), (OTHERS => RECESSIVE), '1', '1'));
 
     -- Bus realisation signals
     type bus_delayed_type is
         array (1 to NODE_COUNT, 1 to NODE_COUNT) of std_logic;
 
-    signal bus_delayed          : bus_delayed_type := 
+    signal bus_delayed          : bus_delayed_type :=
                                     (OTHERS => (OTHERS => RECESSIVE));
     signal bus_clk              : std_logic := '0';
 
@@ -258,7 +258,7 @@ architecture behavioral of sanity_test is
     -- Indicator whether traffic storage memories are full
     signal tx_full              : mem_status_array_type := (OTHERS => false);
 
-    -- Control signals 
+    -- Control signals
     type control_bool_array_type is array (1 to NODE_COUNT) of boolean;
     signal do_wait              : control_bool_array_type := (OTHERS => true);
     signal do_config            : control_bool_array_type := (OTHERS => false);
@@ -269,7 +269,7 @@ architecture behavioral of sanity_test is
     signal do_restart_mem_if    : control_bool_array_type := (OTHERS => true);
     signal do_noise             : boolean := false;
 
-    signal erp_detected         : control_bool_array_type := (OTHERS => false);  
+    signal erp_detected         : control_bool_array_type := (OTHERS => false);
     signal test_desc            : string (1 to 50) :=
         "                                                  ";
 
@@ -289,7 +289,7 @@ architecture behavioral of sanity_test is
         is array (1 to NODE_COUNT) of natural;
 
     -- Frame counters for each node
-    signal frame_counters       : frame_counter_array_type; 
+    signal frame_counters       : frame_counter_array_type;
 
     -- Frame counter for all frames on the bus
     signal overal_frame_counter : natural;
@@ -299,8 +299,8 @@ architecture behavioral of sanity_test is
     -- Test procedures and functions
     ----------------------------------------------
     ----------------------------------------------
-  
-  
+
+
   ------------------------------------------------------------------------------
   -- Check if all frames from TX memory are found in RX memory
   ------------------------------------------------------------------------------
@@ -322,8 +322,8 @@ architecture behavioral of sanity_test is
         tx_r_ptr    := 0;
         rx_r_ptr    := 0;
 
-        -- Now we check that content of each TX memory is located in each RX 
-        -- memory except the one with the same index (node does not recieve its 
+        -- Now we check that content of each TX memory is located in each RX
+        -- memory except the one with the same index (node does not recieve its
         -- own frames)!
         for i in 1 to NODE_COUNT loop
 
@@ -334,10 +334,10 @@ architecture behavioral of sanity_test is
 
                 if (i /= j) then
                     rx_r_ptr := 0;
-                    -- Detect frame based on TBF bit which is always 1. If 
+                    -- Detect frame based on TBF bit which is always 1. If
                     -- this bit is set we assume frame is there. We have to
                     -- keep policy of erasing the memory properly then!
-                    while (tx_mems(i)(tx_r_ptr)(8) = '1') loop     
+                    while (tx_mems(i)(tx_r_ptr)(8) = '1') loop
 
                         -- Read frame from TX Mem
                         tmp_mem := tx_mems(i);
@@ -392,10 +392,10 @@ architecture behavioral of sanity_test is
 
         end loop;
     end procedure;
-    
-  
+
+
     ----------------------------------------------------------------------------
-    -- To avoid collisions, we have to make sure that we have different IDs. 
+    -- To avoid collisions, we have to make sure that we have different IDs.
     -- So we set last 3 bits to unsigned value of the controller index.
     -- Additionally we modify the identifiers to have first N bits matching
     -- (N is random), so that arbitration is lost in random bit. With absolutely
@@ -414,27 +414,27 @@ architecture behavioral of sanity_test is
     begin
         ------------------------------------------------------------------------
         -- Correct first bits to have interesting arbitration...
-        -- Correct the last bits to avoid collisions 
+        -- Correct the last bits to avoid collisions
         ------------------------------------------------------------------------
         rand_real_v(rand_ctr, rand_val);
         aux_common := std_logic_vector(to_unsigned(com_id, 29));
-          
+
         if (frame.ident_type = EXTENDED) then
             rand_index := integer(25.0 * rand_val);
             aux_vect   := std_logic_vector(to_unsigned(frame.identifier, 29));
-            aux_vect (28 downto 28 - rand_index) := 
+            aux_vect (28 downto 28 - rand_index) :=
                         aux_common(28 downto 28 - rand_index);
         else
             rand_index := integer(7.0 * rand_val);
             aux_vect   := "000000000000000000" &
                         std_logic_vector(to_unsigned(frame.identifier, 11));
-            aux_vect (10 downto 10 - rand_index) := 
+            aux_vect (10 downto 10 - rand_index) :=
                         aux_common(28 downto 28 - rand_index);
         end if;
         aux_vect (2 downto 0)   := std_logic_vector(to_unsigned(index, 3));
         frame.identifier        := to_integer(unsigned(aux_vect));
     end procedure;
-  
+
 
     procedure restart_mem_bus(
         signal mem_bus          : out       Avalon_mem_type
@@ -446,21 +446,24 @@ architecture behavioral of sanity_test is
         mem_bus.address     <= (OTHERS => '0');
         mem_bus.data_in     <= (OTHERS => '0');
         mem_bus.data_out    <= (OTHERS => 'Z');
-        mem_bus.clk_sys     <= 'Z';       
+        mem_bus.clk_sys     <= 'Z';
     end procedure;
 
     function bus_matrix_to_delay(signal bm : in real) return time is
     begin
         return 10.0 * bm * 500 ps;
     end function;
-    
+
+    type tr_del_t is array (1 to NODE_COUNT) of time;
+    signal tr_del : tr_del_t;
+    signal tr_tx_and_rx : std_logic_vector(1 to NODE_COUNT);
 begin
-  
+
     ----------------------------------------------------------------------------
     -- CAN Nodes instances
     ----------------------------------------------------------------------------
     comp_gen : for i in 1 to NODE_COUNT generate
-        node_1_comp : CAN_top_level 
+        node_1_comp : CAN_top_level
         generic map(
              use_logger       => true,
              rx_buffer_size   => 64,
@@ -492,10 +495,10 @@ begin
         mem_aux_swr(i)          <=  mb_arr(i).swr;
         mem_aux_srd(i)          <=  mb_arr(i).srd;
         mb_arr(i).data_out      <=  mem_aux_data_out(i);
-    end generate comp_gen;  
+    end generate comp_gen;
 
-  
-  
+
+
     ----------------------------------------------------------------------------
     -- Clock generation
     ----------------------------------------------------------------------------
@@ -508,45 +511,38 @@ begin
           epsilon := epsilon_v(i);
           generate_clock(period, duty, epsilon, mem_aux_clk(i));
           timestamp_v(i) <= std_logic_vector(unsigned(timestamp_v(i)) + 1);
-        end process; 
+        end process;
     end generate clock_generic;
-  
-  
+
+
     ----------------------------------------------------------------------------
     -- Realisation of transciever delay
     ----------------------------------------------------------------------------
     tr_del_gen : for i in 1 to NODE_COUNT generate
-        trv_del_gen_proc : process
-            variable index  : natural;
-        begin
-            if (res_n_v(i) = ACT_RESET) then
-                transciever(i).tx_delay_sr <= (OTHERS => RECESSIVE);
-                transciever(i).rx_delay_sr <= (OTHERS => RECESSIVE);
-                transciever(i).tx_point    <= RECESSIVE;
-                wait for 5 ns;
-            else
-                wait until rising_edge(mb_arr(i).clk_sys);
-
-                -- TX shift register
-                transciever(i).tx_delay_sr <=
-                    transciever(i).tx_delay_sr(254 downto 0) & CAN_tx_v(i);
-
-                index:= trv_del_v(i) / 2;
-                if (index > 1) then
-                    index := index - 2;
-                end if;
-                transciever(i).tx_point    <= transciever(i).tx_delay_sr(index);
-
-                -- RX Shift register   
-                transciever(i).rx_delay_sr <=
-                    transciever(i).rx_delay_sr(254 downto 0) &
-                    (transciever(i).tx_point AND transciever(i).rx_point);
-
-                CAN_rx_v(i)                <= transciever(i).rx_delay_sr(index);
-            end if;   
-        end process;
+        tr_del(i) <= (trv_del_v(i) / 2 - 2) * f100_mhz * 1 ps
+                      when trv_del_v(i)/2 > 1 else
+                           trv_del_v(i)/2 * f100_mhz * 1 ps;
+        trv_del_gen_tx_delayer : entity work.signal_delayer
+            generic map (
+                NSAMPLES => 16
+            )
+            port map (
+                input   => CAN_tx_v(i),
+                delay   => tr_del(i),
+                delayed => transciever(i).tx_point
+            );
+        tr_tx_and_rx(i) <= (transciever(i).tx_point AND transciever(i).rx_point);
+        trv_del_gen_rx_delayer : entity work.signal_delayer
+            generic map (
+                NSAMPLES => 16
+            )
+            port map (
+                input   => tr_tx_and_rx(i),
+                delay   => tr_del(i),
+                delayed => CAN_rx_v(i)
+            );
     end generate tr_del_gen;
-  
+
 
     ----------------------------------------------------------------------------
     -- Bus clock generation
@@ -569,10 +565,10 @@ begin
     ----------------------------------------------------------------------------
     bus_gen_delay_tx : for i in 1 to NODE_COUNT generate
         bus_gen_delay_tx2 : for j in 1 to NODE_COUNT generate
-            
+
             delay_matrix(j, i) <= bus_matrix_to_delay(bus_matrix(j, i));
 
-            i_txdelay : entity work.tb_signal_delayer 
+            i_txdelay : entity work.signal_delayer
                 generic map (
                     NSAMPLES    => 16
                 )
@@ -596,7 +592,7 @@ begin
             wait until rising_edge(bus_clk);
             rx_lvl := RECESSIVE;
 
-            -- In one recieving node iterate trough all nodes 
+            -- In one recieving node iterate trough all nodes
             -- and AND all delayed signals.
             for j in 1 to NODE_COUNT loop
                 rx_lvl := rx_lvl AND bus_delayed(j, i);
@@ -638,7 +634,7 @@ begin
 
             --Generate noise polarity and info whether noise
             -- should be forced to the node
-            -- We cant put noise to all. That would be global 
+            -- We cant put noise to all. That would be global
             -- error at all times
             rand_logic_vect_v(rand_ctr ,aux,0.5);
             noise_reg   <= aux;
@@ -665,15 +661,15 @@ begin
         rand_real_v(rand_ident_ctr, rand_value);
         common_ident <= integer(rand_value * 536870911.0);
     end process;
-  
-  
+
+
     ----------------------------------------------------------------------------
     -- Calculation of frame counter
     ----------------------------------------------------------------------------
     overal_frame_counter <= (frame_counters(1) + frame_counters(2) +
                              frame_counters(3) + frame_counters(4)) / 3;
-  
-  
+
+
     ------------------------------------------------------------------------------
     -- Node access - Traffic generation and error states
     ------------------------------------------------------------------------------
@@ -694,7 +690,7 @@ begin
             if (do_restart_mem_if(i)) then
                 restart_mem_bus(mb_arr(i));
                 wait for 10 ns;
-            
+
             elsif (do_wait(i)) then
                 wait until rising_edge(mb_arr(i).clk_sys);
 
@@ -709,30 +705,30 @@ begin
                 if (do_config(i)) then
 
                     config_done (i) <= false;
-                          
+
                     -- Perform the configuration of the node
                     CAN_turn_controller(true, n_index, mb_arr(i));
-                    CAN_configure_timing(timing_config, n_index, mb_arr(i));       
+                    CAN_configure_timing(timing_config, n_index, mb_arr(i));
 
                     -- Signal back to main process config finished
                     config_done(i)  <= true;
                     wait for 100 ns;
-  
+
                 else
                     if (do_traffic(i)) then
 
-                        -- Check if first TXT Buffer is Empty or previous 
+                        -- Check if first TXT Buffer is Empty or previous
                         -- transmission was Done...
                         get_tx_buf_state(used_txtb, txtb_state, n_index,
                                          mb_arr(i));
 
                         -- Send frame if yes...
                         if (txtb_state = buf_empty or txtb_state = buf_done) then
-                          
+
                             -- Generate and transmitt frames until TX memory
                             -- of given node is full.
                             if (not tx_full(i)) then
-                             
+
                                 -- To avoid having the same frames from all nodes
                                 -- we modify "rand_counter" by index of node
                                 if (rand_ctr_gen(i) + i > RAND_POOL_SIZE) then
@@ -751,7 +747,7 @@ begin
 
                                 -- Finally insert the frame for transmission
                                 -- and also to test memories!
-                                CAN_send_frame(TX_frame, 1, n_index, mb_arr(i), 
+                                CAN_send_frame(TX_frame, 1, n_index, mb_arr(i),
                                                frame_sent);
 
                                 store_frame_to_test_mem(TX_frame, tx_mems(i),
@@ -766,7 +762,7 @@ begin
                             store_frame_to_test_mem(RX_frame, rx_mems(i),
                                                     rx_mem_pointers(i));
 
-                            get_rx_buf_state(rx_buf_state, n_index, mb_arr(i));           
+                            get_rx_buf_state(rx_buf_state, n_index, mb_arr(i));
 
                             -- Count the received frames
                             frame_counters(i) <= frame_counters(i) + 1;
@@ -774,17 +770,17 @@ begin
 
                     end if;
 
-                    -- Check if unit is not error passive. If node is error 
+                    -- Check if unit is not error passive. If node is error
                     -- passive data consitency will be corrupted!!!
                     -- That should never happend !!!
-                    if (do_read_errors(n_index)) then   
-                        get_fault_state(fault_state, n_index, mb_arr(i));        
+                    if (do_read_errors(n_index)) then
+                        get_fault_state(fault_state, n_index, mb_arr(i));
                         if (fault_state /= fc_error_active) then
                             erp_detected(i) <= true;
                         end if;
                     end if;
                 end if;
-            end if;      
+            end if;
         end process;
 
         ----------------------------------------------
@@ -792,25 +788,25 @@ begin
         ----------------------------------------------
         -- Note that we keep reserve of up to 60 words, thats
         -- exactly how much we need to fit 3 times longest frame...
-        tx_full(i) <= true when 
+        tx_full(i) <= true when
                            tx_mem_pointers(i) + 245 >= tx_mems(i)'length
                            else
                       false;
-        
+
     end generate access_gen;
 
 
     tx_mem_pointers_done <= true when
-                                    ((tx_mem_pointers(1) + 
+                                    ((tx_mem_pointers(1) +
                                       tx_mem_pointers(2) +
-                                      tx_mem_pointers(3)) = 
-                                     rx_mem_pointers(4)) 
+                                      tx_mem_pointers(3)) =
+                                     rx_mem_pointers(4))
                                     and
                                     ((tx_mem_pointers(2) +
                                       tx_mem_pointers(3) +
                                       tx_mem_pointers(4)) =
                                      rx_mem_pointers(1))
-                                    and 
+                                    and
                                     ((tx_mem_pointers(3) +
                                       tx_mem_pointers(4) +
                                       tx_mem_pointers(1)) =
@@ -821,8 +817,8 @@ begin
                                       tx_mem_pointers(4)) =
                                      rx_mem_pointers(3))
                                 else
-                            false; 
-    
+                            false;
+
 
     ----------------------------------------------------------------------------
     -- Main test process
@@ -832,9 +828,10 @@ begin
         variable step_done  : boolean  := false;
     begin
         print_test_info(iterations, log_level, error_beh, error_tol);
+        -- TODO: print sanity test params
 
         wait for 5 ns;
-        do_restart_mem_if <= (OTHERS => false);      
+        do_restart_mem_if <= (OTHERS => false);
         wait for 5 ns;
         reset_test(res_n_v(1), status, run, error_ctr);
         reset_test(res_n_v(2), status, run, error_ctr);
@@ -866,7 +863,7 @@ begin
 
             -- Here is a special case when previous step failed.
             -- We need to reset and reconfigure node
-            if (erp_detected(1) or erp_detected(2) or 
+            if (erp_detected(1) or erp_detected(2) or
                 erp_detected(3) or erp_detected(4))
             then
                 res_n_v <= (OTHERS => '0');
@@ -898,7 +895,7 @@ begin
 
             wait for 2000 ns;
 
-            -- Units stop transmiting when they reach tx_full! We wait until 
+            -- Units stop transmiting when they reach tx_full! We wait until
             -- everything what was transmitted is also recieved!
             step_done :=false;
             while (step_done = false) loop
@@ -931,7 +928,7 @@ begin
 
             if (outcome = false) then
                 log("Traffic consitency check error!", error_l, log_level);
-                process_error(error_ctr, error_beh, exit_imm); 
+                process_error(error_ctr, error_beh, exit_imm);
             end if;
 
             wait for 1000 ns;
@@ -939,11 +936,11 @@ begin
             wait for 0 ns;
         end loop;
 
-        evaluate_test(error_tol, error_ctr, status);   
+        evaluate_test(error_tol, error_ctr, status);
     end process;
-  
+
   errors <= error_ctr;
-  
+
 end architecture;
 
 architecture sanity_test of CAN_test is
@@ -997,54 +994,3 @@ begin
         timing_config   => timing_config
     );
 end architecture;
-
-
-
---------------------------------------------------------------------------------
--- Test wrapper and control signals generator                                           
---------------------------------------------------------------------------------
-
-architecture sanity_test_wrapper of CAN_test_wrapper is
-   
-    -- Select architecture of the test
-    for test_comp : CAN_test use entity work.CAN_test(sanity_test);
-
-    signal run              :   boolean;
-    signal status_int       :   test_status_type;
-    signal errors           :   natural;
-    signal error_ctr        :   natural;
-
-begin
-  
-    -- In this test wrapper generics are directly connected to the signals
-    -- of test entity
-    test_comp : CAN_test
-    port map(
-     run              =>  run,
-     iterations       =>  iterations , 
-     log_level        =>  log_level,
-     error_beh        =>  error_beh,
-     error_tol        =>  error_tol,                                                     
-     status           =>  status_int,
-     errors           =>  errors
-    );
-  
-  status              <=  status_int;
-  error_ctr           <=  errors;
-  
-  ------------------------------------------------------------------------------
-  -- Starts the test and lets it run
-  ------------------------------------------------------------------------------
-  test : process
-  begin
-    run               <= true;
-    wait for 1 ns;
-
-    --Wait until the only test finishes and then propagate the results
-    wait until (status_int=passed or status_int=failed);  
-
-    wait for 100 ns;
-    run               <= false;     
-  end process;
-  
-end;

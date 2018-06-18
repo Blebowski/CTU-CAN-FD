@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -57,9 +57,9 @@
 --      5. Insert frames for transmission and give "set_ready" command.
 --      6. Wait until units start transmission.
 --      7. Wait until one of the units turn receiver or collision appears.
---      8. Compare expected outcome with actual outcome.
+--      8. Compare expected o.outcome with actual o.outcome.
 --      9. Wait until bus is idle.
---                                       
+--
 --------------------------------------------------------------------------------
 -- Revision History:
 --
@@ -76,75 +76,66 @@ USE ieee.math_real.ALL;
 use work.CANconstants.all;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-package Arbitration_feature is
-  
+package arbitration_feature is
     procedure arbitration_feature_exec(
-        variable outcome         :inout  boolean;
-        signal   rand_ctr        :inout  natural range 0 to RAND_POOL_SIZE;
-        signal   mem_bus_1       :inout  Avalon_mem_type;
-        signal   mem_bus_2       :inout  Avalon_mem_type;
-        signal   bus_level       :in     std_logic;
-        signal   drv_bus_1       :in     std_logic_vector(1023 downto 0);
-        signal   drv_bus_2       :in     std_logic_vector(1023 downto 0);
-        signal   stat_bus_1      :in     std_logic_vector(511 downto 0);
-        signal   stat_bus_2      :in     std_logic_vector(511 downto 0) 
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_outputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
-
 package body Arbitration_feature is
-  
     procedure arbitration_feature_exec(
-        variable outcome         :inout  boolean;
-        signal   rand_ctr        :inout  natural range 0 to RAND_POOL_SIZE;
-        signal   mem_bus_1       :inout  Avalon_mem_type;
-        signal   mem_bus_2       :inout  Avalon_mem_type;
-        signal   bus_level       :in     std_logic;
-        signal   drv_bus_1       :in     std_logic_vector(1023 downto 0);
-        signal   drv_bus_2       :in     std_logic_vector(1023 downto 0);
-        signal   stat_bus_1      :in     std_logic_vector(511 downto 0);
-        signal   stat_bus_2      :in     std_logic_vector(511 downto 0) 
+        variable    o               : out    feature_outputs_t;
+        signal      so              : out    feature_signal_outputs_t;
+        signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
+        signal      iout            : in     instance_outputs_arr_t;
+        signal      mem_bus         : inout  mem_bus_arr_t;
+        signal      bus_level       : in     std_logic
     ) is
-        variable rand_value      :       real;
-        variable alc             :       natural;
+        variable rand_value         :       real;
+        variable alc                :       natural;
 
         -- 0-Node 1; 1-Node 2; 2-Collision
-        variable exp_winner      :     natural := 0;
+        variable exp_winner         :     natural := 0;
 
         -- Some unit lost the arbitration...
         -- 0 - initial , 1-Node 1 turned rec, 2 - Node 2 turned rec
-        variable unit_rec        :     natural := 0;
+        variable unit_rec           :     natural := 0;
 
-        variable ID_1            :     natural := 1;
-        variable ID_2            :     natural := 2;
-        variable r_data          :     std_logic_vector(31 downto 0) :=
-                                            (OTHERS => '0');
+        variable ID_1               :     natural := 1;
+        variable ID_2               :     natural := 2;
+        variable r_data             :     std_logic_vector(31 downto 0) :=
+                                               (OTHERS => '0');
         -- Generated frames
-        variable frame_1         :     SW_CAN_frame_type;
-        variable frame_2         :     SW_CAN_frame_type;
+        variable frame_1            :     SW_CAN_frame_type;
+        variable frame_2            :     SW_CAN_frame_type;
 
         -- Node status
-        variable stat_1          :     SW_status;
-        variable stat_2          :     SW_status;
+        variable stat_1             :     SW_status;
+        variable stat_2             :     SW_status;
 
         -- Temporary variables for IDs recalculated to decimal value with
         -- identifier type taken into account
-        variable ident_1         :     natural;
-        variable ident_2         :     natural;
+        variable ident_1            :     natural;
+        variable ident_2            :     natural;
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Forbid retransmitt limiting!
         ------------------------------------------------------------------------
-         CAN_enable_retr_limit(false, 0, ID_1, mem_bus_1);
-         CAN_enable_retr_limit(false, 0, ID_2, mem_bus_2);
+         CAN_enable_retr_limit(false, 0, ID_1, mem_bus(1));
+         CAN_enable_retr_limit(false, 0, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Generate Two random CAN Frames.
@@ -179,7 +170,7 @@ package body Arbitration_feature is
             frame_1.ident_type := frame_2.ident_type;
             frame_1.rtr := not frame_2.rtr;
         end if;
-    
+
         ------------------------------------------------------------------------
         -- Recalc ID to decimal value with Ident type
         ------------------------------------------------------------------------
@@ -205,9 +196,9 @@ package body Arbitration_feature is
         --   2. NON Matching ID -> Lower ID should win!
         ------------------------------------------------------------------------
         if (ident_1 = ident_2) then
-            
+
             -- ID Type, ID, RTR the same -> collision!
-            if (frame_1.rtr = frame_2.rtr and 
+            if (frame_1.rtr = frame_2.rtr and
                 frame_1.ident_type = frame_2.ident_type)
             then
                 exp_winner := 2;
@@ -268,34 +259,34 @@ package body Arbitration_feature is
         ------------------------------------------------------------------------
         -- Insert both frames to transmitt.
         ------------------------------------------------------------------------
-        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus_1);
-        CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus_2);
+        CAN_insert_TX_frame(frame_1, 1, ID_1, mem_bus(1));
+        CAN_insert_TX_frame(frame_2, 1, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Give "set_ready" command to TXT Buffers in both CAN Nodes!
         ------------------------------------------------------------------------
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus_1);
-        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus_2);
+        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Now we have to wait until both units starts to transmitt!!!
         ------------------------------------------------------------------------
         loop
-            get_controller_status(stat_1, ID_1, mem_bus_1);
-            get_controller_status(stat_2, ID_2, mem_bus_2);
+            get_controller_status(stat_1, ID_1, mem_bus(1));
+            get_controller_status(stat_2, ID_2, mem_bus(2));
             if (stat_1.transmitter and stat_2.transmitter) then
                 exit;
             end if;
         end loop;
-        
+
         ------------------------------------------------------------------------
         -- Loop as long as one of the units turns to be reciever, or error
         -- appears.
         ------------------------------------------------------------------------
         while (unit_rec = 0) loop
 
-            get_controller_status(stat_1, ID_1, mem_bus_1);
-            get_controller_status(stat_2, ID_2, mem_bus_2);
+            get_controller_status(stat_1, ID_1, mem_bus(1));
+            get_controller_status(stat_2, ID_2, mem_bus(2));
 
             -- Unit 1 turned reciever
             if (stat_1.receiver) then
@@ -317,12 +308,12 @@ package body Arbitration_feature is
                 unit_rec := 3;
             end if;
         end loop;
-    
+
         ------------------------------------------------------------------------
         -- Check whether expected winner is the unit which lost the arbitration
         ------------------------------------------------------------------------
-        if (unit_rec = 1 and exp_winner = 0) or 
-           (unit_rec = 2 and exp_winner = 1) 
+        if (unit_rec = 1 and exp_winner = 0) or
+           (unit_rec = 2 and exp_winner = 1)
         then
             report "Wrong unit lost arbitration. Expected: " &
                 integer'image(exp_winner) & " Real: " & integer'image(unit_rec)
@@ -333,25 +324,25 @@ package body Arbitration_feature is
             report "Frame 2:";
             CAN_print_frame(frame_2, info_l);
 
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
         -- Send abort transmission to both frames so that no unit will
         -- attempt to retransmitt.
         ------------------------------------------------------------------------
-        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus_1);
-        send_TXT_buf_cmd(buf_set_abort, 1, ID_2, mem_bus_2);
-        
-        CAN_wait_frame_sent(ID_1, mem_bus_1);
-        
+        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_abort, 1, ID_2, mem_bus(2));
+
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+
         ------------------------------------------------------------------------
         -- Check what is the value in the ALC register
         ------------------------------------------------------------------------
         if (unit_rec = 1) then
-            read_alc(alc, ID_1, mem_bus_1);
+            read_alc(alc, ID_1, mem_bus(1));
         elsif (unit_rec = 2) then
-            read_alc(alc, ID_2, mem_bus_2);
+            read_alc(alc, ID_2, mem_bus(2));
         end if;
 
         -- TODO: Compare ALC value with expected value where node should
@@ -368,11 +359,10 @@ package body Arbitration_feature is
             report "Frame 2:";
             CAN_print_frame(frame_2, info_l);
 
-            outcome := false;
+            o.outcome := false;
         end if;
-    
+
         wait for 100000 ns;
   end procedure;
-  
-end package body;
 
+end package body;

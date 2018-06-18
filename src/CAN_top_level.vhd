@@ -1,38 +1,38 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
--- 
--- Project advisors and co-authors: 
+--
+-- Project advisors and co-authors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
 -- 	Martin Jerabek <jerabma7@fel.cvut.cz>
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
--- Permission is hereby granted, free of charge, to any person obtaining a copy 
--- of this VHDL component and associated documentation files (the "Component"), 
--- to deal in the Component without restriction, including without limitation 
--- the rights to use, copy, modify, merge, publish, distribute, sublicense, 
--- and/or sell copies of the Component, and to permit persons to whom the 
+--
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this VHDL component and associated documentation files (the "Component"),
+-- to deal in the Component without restriction, including without limitation
+-- the rights to use, copy, modify, merge, publish, distribute, sublicense,
+-- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
--- The above copyright notice and this permission notice shall be included in 
+--
+-- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
--- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
--- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
--- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
--- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+--
+-- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHTHOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
--- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS 
+-- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
--- The CAN protocol is developed by Robert Bosch GmbH and protected by patents. 
--- Anybody who wants to implement this IP core on silicon has to obtain a CAN 
+--
+-- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
+-- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -51,17 +51,17 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    July 2015   Created file
---    22.6.2016   1. Added rec_esi signal for error state propagation into 
+--    22.6.2016   1. Added rec_esi signal for error state propagation into
 --                   RX buffer.
 --                2. Added explicit architecture selection for each component
 --                   (RTL)
 --    24.8.2016   Added "use_logger" generic to the registers module.
 --    28.11.2017  Added "rst_sync_comp" reset synchroniser.
---    30.11.2017  Changed TXT buffer to registers interface. The user is now 
+--    30.11.2017  Changed TXT buffer to registers interface. The user is now
 --                directly accessing the buffer by avalon access.
 --    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
 --                time and save some LUTs.
---    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid 
+--    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid
 --                possible name conflicts.
 --    20.12.2017  Removed obsolete "tran_data_in" signal.
 --     10.2.2017  Removed "useFDsize" generic. When TX Buffer goes completely
@@ -81,18 +81,18 @@ entity CAN_top_level is
   generic(
 		-- Whenever event logger should be synthetised
     constant use_logger     : boolean                := true;
-    
+
     -- Receive Buffer size
-    constant rx_buffer_size : natural range 32 to 4096 := 128; 
-    
-    -- Whenever internal synchroniser chain should be used for incoming bus 
+    constant rx_buffer_size : natural range 32 to 4096 := 128;
+
+    -- Whenever internal synchroniser chain should be used for incoming bus
     -- signals. Dont turn off unless external synchronisation chain is put on
     -- input of FPGA by synthetiser
-    constant use_sync       : boolean                := true; 
-    
-    -- ID (bits  19-16 of adress) 
-    constant ID             : natural range 0 to 15  := 1; 
-    
+    constant use_sync       : boolean                := true;
+
+    -- ID (bits  19-16 of adress)
+    constant ID             : natural range 0 to 15  := 1;
+
     -- Optional synthesis of received message filters
     -- By default the behaviour is as if all the filters are present
     constant sup_filtA      : boolean                := true;
@@ -135,7 +135,15 @@ entity CAN_top_level is
     -- Synchronisation signals
     ---------------------------
     --Time Quantum clocks possible to be used for synchronisation
-    signal time_quanta_clk : out std_logic;  
+    signal time_quanta_clk : out std_logic;
+
+    -----------------------------------
+    -- Internal signals for testbenches
+    -----------------------------------
+    -- synthesis translate_off
+    signal drv_bus_o    : out std_logic_vector(1023 downto 0);
+    signal stat_bus_o   : out std_logic_vector(511 downto 0);
+    -- synthesis translate_on
 
     -------------------------------------------
     -- Timestamp value for time based messages
@@ -143,25 +151,25 @@ entity CAN_top_level is
     signal timestamp : in std_logic_vector(63 downto 0)
     );
 
-  
-  
+
+
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
   ---- Internal signals
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
-  
+
   ------------------------------------------------------------------------------
   -- Common control signals
   ------------------------------------------------------------------------------
-  
+
 	-- Overal reset (External+Reset by memory access)
   signal res_n_int  : std_logic;
-  
+
   signal res_n_sync : std_logic;  -- Synchronised reset
   signal drv_bus    : std_logic_vector(1023 downto 0);
   signal stat_bus   : std_logic_vector(511 downto 0);
-  
+
   --Interrupt signals
   signal int_vector :   std_logic_vector(INT_COUNT - 1 downto 0);
   signal int_ena    :   std_logic_vector(INT_COUNT - 1 downto 0);
@@ -170,34 +178,34 @@ entity CAN_top_level is
 	------------------------------------------------------------------------------
   -- Registers <--> RX Buffer Interface
   ------------------------------------------------------------------------------
-  
+
   --Actually loaded data for reading
   signal rx_read_buff         : std_logic_vector(31 downto 0);
-  
+
   --Actual size of synthetised message buffer (in 32 bit words)
   signal rx_buf_size          : std_logic_vector(12 downto 0);
-  
+
   --Signal whenever buffer is full
   signal rx_full              : std_logic;
-  
+
   --Signal whenever buffer is empty
   signal rx_empty             : std_logic;
-  
+
   --Number of messaged stored in recieve buffer
   signal rx_message_count     : std_logic_vector(10 downto 0);
-  
+
   --Number of free 32 bit wide ''windows''
   signal rx_mem_free          : std_logic_vector(12 downto 0);
-  
+
   --Position of read pointer
   signal rx_read_pointer_pos  : std_logic_vector(11 downto 0);
-  
+
   --Position of write pointer
   signal rx_write_pointer_pos : std_logic_vector(11 downto 0);
-  
+
   --Message was discarded since Memory is full
   signal rx_message_disc      : std_logic;
-  
+
   --Some data were discarded, register
   signal rx_data_overrun      : std_logic;
 
@@ -205,20 +213,20 @@ entity CAN_top_level is
 	------------------------------------------------------------------------------
   -- Registers <--> TX Buffer, TXT Buffer
   ------------------------------------------------------------------------------
-    
+
   --Data, Address and chip select into the RAM of TXT Buffer
   signal tran_data            : std_logic_vector(31 downto 0);
   signal tran_addr            : std_logic_vector(4 downto 0);
   signal tran_cs              : std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
-  
+
   -- Finite state machine types for TXT Buffer
-  signal txtb_fsms            : txt_fsms_type;  
+  signal txtb_fsms            : txt_fsms_type;
 
   -- Software commands + buffer indices that should be activated
   signal txt_sw_cmd           :  txt_sw_cmd_type;
   signal txt_buf_cmd_index    :  std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
   signal txt_buf_prior        :  txtb_priorities_type;
-  
+
   -- Indicates that TXT Buffer has changed and that Retrransmitt counter
   -- should be erased by Protocol control.
   signal txtb_changed         :  std_logic;
@@ -226,7 +234,7 @@ entity CAN_top_level is
 	------------------------------------------------------------------------------
   -- Registers <--> event logger
   ------------------------------------------------------------------------------
- 
+
   signal loger_act_data    : std_logic_vector(63 downto 0);
   signal log_write_pointer : std_logic_vector(7 downto 0);
   signal log_read_pointer  : std_logic_vector(7 downto 0);
@@ -243,44 +251,44 @@ entity CAN_top_level is
 
   -- Frames in TXT buffers on output - Data(addressed), Metadata (paralell)
   signal txt_word             : txtb_output_type;
-  
-  
+
+
   ------------------------------------------------------------------------------
   -- TX Arbitrator <--> CAN Core
   ------------------------------------------------------------------------------
-  
+
   --TX Message data
   signal tran_data_out        : std_logic_vector(31 downto 0);
-  
+
   --TX Data length code
   signal tran_dlc_out         : std_logic_vector(3 downto 0);
-  
+
   --TX is remote frame
   signal tran_is_rtr          : std_logic;
-  
+
   --TX Identifier type (0-Basic,1-Extended);
   signal tran_ident_type_out  : std_logic;
-  
+
   --TX Frame type
   signal tran_frame_type_out  : std_logic;
-  
+
   --Bit rate shift for CAN FD frames
   signal tran_brs_out         : std_logic;
-  
-  --Signal for CAN Core that frame on the output is valid and can be 
+
+  --Signal for CAN Core that frame on the output is valid and can be
   --stored for transmitting
   signal tran_frame_valid_out : std_logic;
-  
+
   -- Hardware commands to TXT Buffer from Protocol control
   signal txt_hw_cmd           : txt_hw_cmd_type;
-  
+
   -- Hardware command index set by TX Arbitrator based on the current
   -- internal state
   signal txt_hw_cmd_index     : natural range 0 to TXT_BUFFER_COUNT - 1;
-  
+
   --Pointer to TXT buffer memory (from TX Arbitrator)
   signal txt_buf_ptr          : natural range 0 to 19;
-  
+
   -- Pointer to TXT Buffer memory (from CAN Core)
   signal txtb_core_pointer    : natural range 0 to 19;
 
@@ -288,31 +296,31 @@ entity CAN_top_level is
 	------------------------------------------------------------------------------
   --RX Buffer <--> CAN Core
   ------------------------------------------------------------------------------
-  
+
   --Message Identifier
   signal rec_ident_in      : std_logic_vector(28 downto 0);
-  
+
   --Data length code
   signal rec_dlc_in        : std_logic_vector(3 downto 0);
-  
+
   --Recieved identifier type (0-BASE Format, 1-Extended Format);
   signal rec_ident_type_in : std_logic;
-  
+
   --Recieved frame type (0-Normal CAN, 1- CAN FD)
   signal rec_frame_type_in : std_logic;
-  
+
   --Recieved frame is RTR Frame(0-No, 1-Yes)
   signal rec_is_rtr        : std_logic;
-  
+
   --Frame is received properly (can be committed to RX Buffer)
   signal rec_message_valid : std_logic;
-  
-  --Whenever frame was recieved with BIT Rate shift 
+
+  --Whenever frame was recieved with BIT Rate shift
   signal rec_brs           : std_logic;
-  
+
   -- Received Error state indicator
   signal rec_esi           : std_logic;
-  
+
   -- Signals start of frame for storing timestamp
   signal sof_pulse         : std_logic;
 
@@ -332,7 +340,7 @@ entity CAN_top_level is
 	------------------------------------------------------------------------------
   -- RX Buffer <--> Message filters
   ------------------------------------------------------------------------------
- 
+
   --Signal whenever identifier matches the filter identifiers
   signal out_ident_valid : std_logic;
 
@@ -343,51 +351,51 @@ entity CAN_top_level is
 
   --Valid Error appeared for interrupt
   signal error_valid           : std_logic;
-  
+
   --Error pasive /Error acitve functionality changed
   signal error_passive_changed : std_logic;
-  
+
   --Error warning limit reached
   signal error_warning_limit   : std_logic;
-  
+
   --Arbitration was lost input
   signal arbitration_lost      : std_logic;
-  
+
   --Wake up appeared
   signal wake_up_valid         : std_logic;
-  
+
   --Message stored in CAN Core was sucessfully transmitted
   signal tx_finished           : std_logic;
-  
+
   --Bit Rate Was Shifted
   signal br_shifted            : std_logic;
 
-	--Event logging finsihed 
+	--Event logging finsihed
   signal loger_finished : std_logic;
-  
-  
+
+
   ------------------------------------------------------------------------------
-  -- Prescaler <--> CAN Core 
+  -- Prescaler <--> CAN Core
   ------------------------------------------------------------------------------
 
   --Edge for synchronisation
   signal sync_edge      : std_logic;
-  
+
   --Protocol control state
   signal OP_State       : oper_mode_type;
 
 	--Time quantum clock - Nominal bit time
   signal clk_tq_nbt : std_logic;
-  
+
   --Bit time - Nominal bit time
   signal clk_tq_dbt : std_logic;
 
 	--Sample signal for nominal bit time
   signal sample_nbt       : std_logic;
-  
+
   --Sample signal of data bit time
   signal sample_dbt       : std_logic;
-  
+
   --Delay sample signals by 1 or 2 clock cycle
   signal sample_nbt_del_1 : std_logic;
   signal sample_dbt_del_1 : std_logic;
@@ -407,9 +415,9 @@ entity CAN_top_level is
 
  --Validated hard synchronisation edge to start Protocol control FSM
   signal hard_sync_edge_valid : std_logic;
-  --Note: Sync edge from busSync.vhd cant be used! If it comes during sample 
-  -- nbt, sequence it causes errors! It needs to be strictly before or 
-  -- strictly after this sequence!!! 
+  --Note: Sync edge from busSync.vhd cant be used! If it comes during sample
+  -- nbt, sequence it causes errors! It needs to be strictly before or
+  -- strictly after this sequence!!!
 
 
 	------------------------------------------------------------------------------
@@ -418,28 +426,28 @@ entity CAN_top_level is
 
   --Transcieve data value
   signal data_tx           : std_logic;
-  
+
   --Recieved data value
   signal data_rx           : std_logic;
-  
+
   --Clear the Shift register at the  beginning of Data Phase!!!
   signal ssp_reset         : std_logic;
-  
+
   --Calibration command for transciever delay compenstation (counter)
   signal trv_delay_calib   : std_logic;
-  
+
   --Bit error with secondary sampling transciever!
   signal bit_Error_sec_sam : std_logic;
 
 	--Secondary sample signal
   signal sample_sec       : std_logic;
-  
+
   --Bit destuffing trigger for secondary sample point
   signal sample_sec_del_1 : std_logic;
-  
+
   --Rec trig for secondary sample point
   signal sample_sec_del_2 : std_logic;
-	
+
 	-- Transceiver delay output
   signal trv_delay_out : std_logic_vector(15 downto 0);
 
@@ -462,6 +470,10 @@ architecture rtl of CAN_top_level is
   --for log_comp : CAN_logger use entity work.CAN_logger(rtl);
 
 begin
+  -- synthesis translate_off
+  drv_bus_o   <= drv_bus;
+  stat_bus_o  <= stat_bus;
+  -- synthesis translate_on
 
   rst_sync_comp : rst_sync
     port map(
@@ -553,7 +565,7 @@ begin
         rx_read_pointer_pos  => rx_read_pointer_pos,
         rx_write_pointer_pos => rx_write_pointer_pos,
         rx_data_overrun      => rx_data_overrun,
-        timestamp            => timestamp, 
+        timestamp            => timestamp,
         rx_read_buff         => rx_read_buff,
         drv_bus              => drv_bus
     );
@@ -583,13 +595,13 @@ begin
       txt_buf_ready         => txt_buf_ready(i)
     );
   end generate;
-  
+
 
  tx_arb_comp: txArbitrator
   generic map(
     buf_count               => TXT_BUFFER_COUNT
   )
-  port map( 
+  port map(
      clk_sys                => clk_sys,
      res_n                  => res_n_int,
      txt_buf_in             => txt_word,
@@ -624,7 +636,7 @@ begin
       rec_ident_in    => rec_ident_in,
       ident_type      => rec_ident_type_in,
       frame_type      => rec_frame_type_in,
- 
+
       -- Identifier comparison can be done when metadata are received!
       rec_ident_valid => rx_store_metadata,
       drv_bus         => drv_bus,
@@ -760,11 +772,11 @@ begin
       sp_control           => sp_control,
       ssp_reset            => ssp_reset,
       trv_delay_calib      => trv_delay_calib,
-      
-      --Note: Bit Error detection enabled always. bit_Error signal from this 
+
+      --Note: Bit Error detection enabled always. bit_Error signal from this
       -- block used only for secondary sample point bit error detection!!
       bit_err_enable       => '1',
-      
+
       sample_sec_out       => sample_sec,
       sample_sec_del_1_out => sample_sec_del_1,
       sample_sec_del_2_out => sample_sec_del_2,
@@ -807,10 +819,10 @@ begin
   end generate LOG_GEN2;
 
   --Bit time clock output propagation
-  time_quanta_clk <= clk_tq_nbt when sp_control = NOMINAL_SAMPLE else 
+  time_quanta_clk <= clk_tq_nbt when sp_control = NOMINAL_SAMPLE else
 										 clk_tq_dbt;
 
   OP_State <= oper_mode_type'val(to_integer(unsigned(
 					 stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));
-  
+
 end architecture;
