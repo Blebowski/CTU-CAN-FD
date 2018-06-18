@@ -36,7 +36,7 @@ feature:
         log_level: info
         error_tolerance: 0
         iterations: 1
-        timeout: 1 ms
+        timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
         abort_transmittion:
