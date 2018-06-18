@@ -65,6 +65,7 @@
 --      1.5.2018  1. Added HAL layer types and functions.
 --                2. Added Byte enable support to memory access functions.
 --      7.6.2018  Added "CAN_insert_TX_frame" procedure.
+--     18.6.2018  Added optimized clock_gen_proc, timestamp_gen_proc procedures.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -459,6 +460,14 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     type test_mem_type is array (0 to 255) of std_logic_vector(31 downto 0);
 
+    ----------------------------------------------------------------------------
+    -- Clock params
+    ----------------------------------------------------------------------------
+    type generate_clock_precomputed_t is record
+        low_time : time;
+        high_time : time;
+    end record;
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -499,12 +508,15 @@ package CANtestLib is
     -- clock jitter.
     --
     -- Arguments:
-    --  period          Period of generated clock in picoseconds.
-    --  duty            Duty cycle of generated clock in percents.
-    --  epsilon_ppm     Clock uncertainty (jitter) which is always added to the
-    --                  default clock period.
+    --  par             Precomputed parameters.
     --  out_clk         Generated clock.
     ----------------------------------------------------------------------------
+    procedure generate_clock(
+        constant par            : in    generate_clock_precomputed_t;
+        signal   out_clk        : out   std_logic
+    );
+
+    -- deprecated compatibility wrapper (lower performance)
     procedure generate_clock(
         constant period         : in    natural;
         constant duty           : in    natural;
@@ -512,6 +524,52 @@ package CANtestLib is
         signal   out_clk        : out   std_logic
     );
 
+    ----------------------------------------------------------------------------
+    -- Combinatorial procedure, which infinitely generates clock signal.
+    --
+    -- Arguments:
+    --  period          Period of generated clock in picoseconds.
+    --  duty            Duty cycle of generated clock in percents.
+    --  epsilon_ppm     Clock uncertainty (jitter) which is always added to the
+    --                  default clock period.
+    ----------------------------------------------------------------------------
+    procedure clock_gen_proc(
+        constant period         : in    natural;
+        constant duty           : in    natural;
+        constant epsilon_ppm    : in    natural;
+        signal   out_clk        : out   std_logic
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Combinatorial procedure, which infinitely generates timestamp.
+    --
+    -- Arguments:
+    --  clk             Input clock.
+    --  timestamp       Output timestamp counter.
+    ----------------------------------------------------------------------------
+    procedure timestamp_gen_proc(
+        signal     clk           : in    std_logic;
+        signal     timestamp     : out   std_logic_vector(63 downto 0)
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Precompute constants for clock signal generation for the test with
+    -- custom period, duty cycle and clock jitter.
+    --
+    -- Arguments:
+    --  period          Period of generated clock in picoseconds.
+    --  duty            Duty cycle of generated clock in percents.
+    --  epsilon_ppm     Clock uncertainty (jitter) which is always added to the
+    --                  default clock period.
+    -- Returns: precomputed params
+    ----------------------------------------------------------------------------
+    function precompute_clock(
+        constant period         : in    natural;
+        constant duty           : in    natural;
+        constant epsilon_ppm    : in    natural
+    ) return generate_clock_precomputed_t;
 
     ----------------------------------------------------------------------------
     -- Reports message when severity level is lower or equal than severity
@@ -1533,37 +1591,89 @@ package body CANtestLib is
     end procedure;
 
 
+    function precompute_clock(
+        constant period         : in    natural;
+        constant duty           : in    natural;
+        constant epsilon_ppm    : in    natural
+    ) return generate_clock_precomputed_t is
+        variable real_period    :       real;
+        variable rand_nr        :       real;
+        variable high_per       :       real;
+        variable low_per        :       real;
+        variable res            :       generate_clock_precomputed_t;
+    begin
+        -- If clock has uncertainty then it is constantly added to the clock.
+        -- This covers the worst case.
+        real_period   := real(period) +
+                         (real(period * epsilon_ppm)) / 1000000.0;
+        high_per      := ((real(duty)) * real_period) / 100.0;
+        low_per       := ((real(100-duty)) * real_period) / 100.0;
+        res.high_time := integer(high_per * 1000.0) * 1 ns;
+        res.high_time := res.high_time / 1000000;
+        res.low_time  := integer(low_per * 1000.0) * 1 ns;
+        res.low_time  := res.low_time / 1000000;
+        return res;
+    end function;
+
+
+    procedure generate_clock(
+        constant par            : in    generate_clock_precomputed_t;
+        signal   out_clk        : out   std_logic
+    ) is
+    begin
+        out_clk       <= '1';
+        wait for par.high_time;
+        out_clk       <= '0';
+        wait for par.low_time;
+    end procedure;
+
+
     procedure generate_clock(
         constant period         : in    natural;
         constant duty           : in    natural;
         constant epsilon_ppm    : in    natural;
         signal   out_clk        : out   std_logic
     ) is
-        variable real_period    :       real;
-        variable rand_nr        :       real;
-        variable high_per       :       real;
-        variable low_per        :       real;
-        variable high_time      :       time;
-        variable low_time       :       time;
+        constant par : generate_clock_precomputed_t := precompute_clock(period, duty, epsilon_ppm);
     begin
+        generate_clock(par, out_clk);
+    end procedure;
 
-        -- If clock has uncertainty then it is constantly added to the clock!
-        -- This covers the worst case!!
-        real_period   := real(period) +
-                         (real(period * epsilon_ppm)) / 1000000.0;
-        high_per      := ((real(duty)) * real_period) / 100.0;
-        low_per       := ((real(100-duty)) * real_period) / 100.0;
-        high_time     := integer(high_per * 1000.0) * 1 ns;
-        high_time     := high_time / 1000000;
-        low_time      := integer(low_per * 1000.0) * 1 ns;
-        low_time      := low_time / 1000000;
 
-        --Generate the clock itself
-        out_clk       <= '1';
-        wait for high_time;
-        out_clk       <= '0';
-        wait for low_time;
+    procedure clock_gen_proc(
+        constant period         : in    natural;
+        constant duty           : in    natural;
+        constant epsilon_ppm    : in    natural;
+        signal   out_clk        : out   std_logic
+    ) is
+        constant par : generate_clock_precomputed_t := precompute_clock(period, duty, epsilon_ppm);
+    begin
+        loop
+            generate_clock(par, out_clk);
+        end loop;
+    end procedure;
 
+
+    procedure timestamp_gen_proc(
+        signal     clk           : in    std_logic;
+        signal     timestamp     : out   std_logic_vector(63 downto 0)
+    ) is
+        variable ts_lo    : natural := 0;
+        variable tmp      : natural := 0;
+        variable ts_hi    : natural := 0;
+    begin
+        loop
+            -- falling edge, because on rising edge, the value must stay stable
+            -- even after `wait for 0 ns`
+            wait until falling_edge(clk);
+            tmp := ts_lo + 1;
+            if tmp < ts_lo then
+                ts_hi := ts_hi + 1;
+            end if;
+            ts_lo := tmp;
+            timestamp <= std_logic_vector(  to_unsigned(ts_hi, 32)
+                                          & to_unsigned(ts_lo, 32));
+        end loop;
     end procedure;
 
 
@@ -2133,6 +2243,7 @@ package body CANtestLib is
     )is
         variable data           :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
+        variable readback       :       std_logic_vector(31 downto 0);
     begin
         CAN_read(data, MODE_ADR, ID, mem_bus);
         if turn_on then
@@ -2141,6 +2252,8 @@ package body CANtestLib is
             data(ENA_IND) := DISABLED;
         end if;
         CAN_write(data, MODE_ADR, ID, mem_bus);
+        CAN_read(readback, MODE_ADR, ID, mem_bus);
+        assert readback = data;
     end procedure;
 
 
