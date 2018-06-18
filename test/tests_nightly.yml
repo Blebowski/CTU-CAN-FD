@@ -5,22 +5,24 @@ unit:
     default:
         <<: *default
         log_level: warning
-        iterations: 50
-        timeout: 100 ms
+        iterations: 500
+        timeout: 1000 ms
     tests:
         bit_stuffing:
-            iterations: 10
+            iterations: 100
             wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
         bus_sync:
             wave: unit/Bus_Sampling/bsnc_unit.tcl
+            iterations: 100
         crc:
             wave: unit/CRC/crct_unit.tcl
         fault_confinement:
             wave: unit/Fault_confinement/fault_conf_unit.tcl
         int_man:
             wave: unit/Int_Manager/intm_unit.tcl
+            iterations: 5000
         mess_filt:
             wave: unit/Message_filter/msft_unit.tcl
         presc:
@@ -29,7 +31,6 @@ unit:
             wave: unit/Protocol_Control/pctl_unit.tcl
         rx_buf:
             wave: unit/RX_Buffer/rxbf_unit.tcl
-            iterations: 10
         tx_arb:
             wave: unit/TX_Arbitrator/txar_unit.tcl
         tx_buf:
