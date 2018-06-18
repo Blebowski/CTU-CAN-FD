@@ -54,7 +54,7 @@ test_ip_nightly:
     artifacts:
         when: always
         paths:
-            - test/test_nightly.xml
+            - test/tests_nightly.xml
             - test/xunit.xsl
 
 pages:
@@ -64,7 +64,7 @@ pages:
     script:
         - mkdir -p public
         - cp test/xunit.xsl public/
-        - cp test/test_*.xml public/
+        - cp test/tests_*.xml public/
         - mv test/code_html public/coverage || true
     only:
         - master
