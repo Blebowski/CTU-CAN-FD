@@ -206,6 +206,7 @@ begin
         p(i).scs              <= mem_bus(i).scs;
         p(i).swr              <= mem_bus(i).swr;
         p(i).srd              <= mem_bus(i).srd;
+	p(i).sbe              <= mem_bus(i).sbe;
         mem_bus(i).data_out   <= p(i).data_out;
         iout(i).irq           <= p(i).int;
         iout(i).drv_bus       <= p(i).drv_bus;
