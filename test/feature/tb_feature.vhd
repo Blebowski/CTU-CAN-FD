@@ -42,6 +42,7 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    20.6.2016   Created file
+--    June 2018   Major rewrite for support of new unified testing framework.
 --------------------------------------------------------------------------------
 
 
@@ -93,7 +94,6 @@ entity CAN_feature_test is
         signal hw_reset_on_new_test         : in boolean := true;
 
         signal iout             : out instance_outputs_arr_t;
-        signal rand_ctr         : in natural range 0 to RAND_POOL_SIZE;
 
         --CAN bus signals
         signal bus_level        : out std_logic := RECESSIVE;
@@ -266,6 +266,7 @@ begin
             p(1).res_n <= '1';
             p(2).res_n <= '1';
             log("HW Restart of feature test environment finished",info_l,log_level);
+            wait for 250 ns; -- wait until the core is really out of reset
         end if;
 
         --Status is restarted no matter the HW reset
@@ -275,7 +276,7 @@ begin
         -------------------------------
         --Main loop of the test
         -------------------------------
-        while (loop_ctr<iterations or exit_imm)
+        while (loop_ctr<iterations and not exit_imm)
         loop
             log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
             --Wait on signal from higher level wrapper to move to the next iteration
@@ -398,8 +399,7 @@ begin
         test_name        => padded_test_name,
         iout             => iout,
         --Internal signals of CAN controllers
-        bus_level        => bus_level,
-        rand_ctr         => rand_ctr
+        bus_level        => bus_level
     );
 
     ---------------------------------------
@@ -417,16 +417,22 @@ begin
         iteration_done    <= false;
         run               <= true;
         error_ctr         <= 0;
+        report "Restarting mem_bus(1)";
         restart_mem_bus(mem_bus(1));
+        report "Restarting mem_bus(1)";
         restart_mem_bus(mem_bus(2));
+        report "Waiting for out of reset";
 
-        wait for 10 ns;
-        wait until iout(1).hw_reset = '1' and iout(2).hw_reset = '1';
-        wait for 10 ns;
+        --wait for 10 ns;
+        wait until status_int = running;
+        --wait until iout(1).hw_reset = '1' and iout(2).hw_reset = '1';
+        --wait for 10 ns;
+        report "... ready .. let's begin";
 
         --Execute the controllers configuration
         CAN_turn_controller(true, ID_1, mem_bus(1));
         CAN_turn_controller(true, ID_2, mem_bus(2));
+        report "Controllers are ON";
 
         --Set default retransmitt limit to 0
         -- Failed frames are not retransmited
@@ -434,6 +440,7 @@ begin
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
+        report "RETR limit set";
         -------------------------------------------------
         -- Main test loop
         -------------------------------------------------
@@ -448,6 +455,7 @@ begin
                               so        => so,
                               bus_level => bus_level
                               );
+            report "... out of exec function";
 
             if o.outcome = false then
                 process_error(error_ctr, error_beh, exit_imm);
