@@ -657,6 +657,12 @@ package CANtestLib is
     );
 
 
+    -- variation of above, only returns the seed value
+    function apply_rand_seed(
+        constant seed            : in   natural;
+        constant offset          : in   natural
+    ) return natural;
+
     ----------------------------------------------------------------------------
     -- Decode data length code from value as defined in CAN FD Standard to
     -- length of frame in bytes.
@@ -1796,15 +1802,25 @@ package body CANtestLib is
     end;
 
 
+    function apply_rand_seed(
+        constant seed            : in   natural;
+        constant offset          : in   natural
+    ) return natural is
+        variable tmp             :      natural;
+    begin
+        tmp := seed + offset;
+        report "Random initialized with seed " & natural'image(seed);
+        return tmp mod RAND_POOL_SIZE;
+    end function;
+
+
     procedure apply_rand_seed(
         constant seed            : in   natural;
         constant offset          : in   natural;
         signal   rand_ctr        : out  natural range 0 to RAND_POOL_SIZE
     )is
-        variable tmp             :      natural;
     begin
-        tmp := seed + offset;
-        rand_ctr    <= tmp mod RAND_POOL_SIZE;
+        rand_ctr    <= apply_rand_seed(seed, offset);
         wait for 0 ns;
     end procedure;
 
