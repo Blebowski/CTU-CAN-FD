@@ -73,6 +73,9 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity sanity_test is
+  generic (
+    seed                    : natural := 0
+  );
   port (
 
     -- Input trigger, test starts running when true
@@ -503,15 +506,13 @@ begin
     -- Clock generation
     ----------------------------------------------------------------------------
     clock_generic : for i in 1 to NODE_COUNT generate
-        clock_gen_1 : process
-            constant period   : natural := f100_Mhz;
-            constant duty     : natural := 50;
-            variable epsilon  : natural;
+        clock_gen_1:process
         begin
-          epsilon := epsilon_v(i);
-          generate_clock(period, duty, epsilon, mem_aux_clk(i));
-          timestamp_v(i) <= std_logic_vector(unsigned(timestamp_v(i)) + 1);
+            wait for 0 ns;
+            report "Epsilon:" & natural'image(epsilon_v(i));
+            clock_gen_proc(f100_mhz, 50, epsilon_v(i), mem_aux_clk(i));
         end process;
+        timestamp_gen_proc(mem_aux_clk(i), timestamp_v(i));
     end generate clock_generic;
 
 
@@ -550,6 +551,7 @@ begin
     -- 500 ps equals approximately 10 cm of conductor! This is coarse estimate,
     -- however purpose of this simulation is not to examine exact propagation
     -- delays via different physical channels! This simple estimate is enough.
+    -- TODO: may be optimized by eschewing bus_clk and delaying the signals directly
     ----------------------------------------------------------------------------
     bus_clk_proc : process
     begin
@@ -617,35 +619,36 @@ begin
         variable gaus_par   : rand_distribution_par_type;
         variable exp_par    : rand_distribution_par_type;
     begin
-        if (do_noise) then
+        apply_rand_seed(seed, 0, rand_ctr);
+        loop
+            if (do_noise) then
+                -- Generate noise pulse with gauss distribution
+                gaus_par(GAUSS_iterations)  := real(iter_am);
+                gaus_par(GAUSS_mean)        := nw_mean;
+                gaus_par(GAUSS_variance)    := nw_var;
+                rand_real_distr_v(rand_ctr, noise_time, GAUSS, gaus_par);
 
-            -- Generate noise pulse with gauss distribution
-            gaus_par(GAUSS_iterations)  := real(iter_am);
-            gaus_par(GAUSS_mean)        := nw_mean;
-            gaus_par(GAUSS_variance)    := nw_var;
-            rand_real_distr_v(rand_ctr, noise_time, GAUSS, gaus_par);
+                -- Generate noise pulse gap with exponential distribution
+                exp_par(EXPONENTIAL_mean)   := ng_mean;
+                rand_real_distr_v(rand_ctr, noise_gap, EXPONENTIAL, exp_par);
 
-            -- Generate noise pulse gap with exponential distribution
-            exp_par(EXPONENTIAL_mean)   := ng_mean;
-            rand_real_distr_v(rand_ctr, noise_gap, EXPONENTIAL, exp_par);
+                noise_force <= (OTHERS => '0');
+                wait for integer(noise_gap) * 1 ns;
 
-            noise_force <= (OTHERS => '0');
-            wait for integer(noise_gap) * 1 ns;
+                --Generate noise polarity and info whether noise
+                -- should be forced to the node
+                -- We cant put noise to all. That would be global
+                -- error at all times
+                rand_logic_vect_v(rand_ctr ,aux,0.5);
+                noise_reg   <= aux;
+                rand_logic_vect_v(rand_ctr ,aux,0.5);
+                noise_force <= aux;
 
-            --Generate noise polarity and info whether noise
-            -- should be forced to the node
-            -- We cant put noise to all. That would be global
-            -- error at all times
-            rand_logic_vect_v(rand_ctr ,aux,0.5);
-            noise_reg   <= aux;
-            rand_logic_vect_v(rand_ctr ,aux,0.5);
-            noise_force <= aux;
-
-            wait for integer(noise_time) * 1 ns;
-
-        else
-            wait for 10 ns;
-        end if;
+                wait for integer(noise_time) * 1 ns;
+            else
+                wait for 10 ns;
+            end if;
+        end loop;
     end process;
 
     ----------------------------------------------------------------------------
@@ -688,6 +691,7 @@ begin
             variable fault_state    :       SW_fault_state;
         begin
             if (do_restart_mem_if(i)) then
+                apply_rand_seed(seed, i, rand_ctr_gen(i));
                 restart_mem_bus(mb_arr(i));
                 wait for 10 ns;
 

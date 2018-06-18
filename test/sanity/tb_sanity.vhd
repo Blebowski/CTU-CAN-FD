@@ -73,6 +73,8 @@ entity tb_sanity is
         -- Timeout in simulation time. 0 means no limit.
         timeout       : string := "0 ms";
 
+        seed          : natural := 0;
+
         topology      : string;
         bus_len_v     : string; --bus_length_type;
         trv_del_v     : string; --anat_nc_t;
@@ -221,6 +223,9 @@ begin
     end generate;
 
     t_sanity: entity work.sanity_test
+    generic map (
+        seed       => seed
+    )
     port map (
         iterations => iterations,
         log_level  => log_level,

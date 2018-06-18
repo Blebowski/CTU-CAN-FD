@@ -1,7 +1,8 @@
 import re
 import logging
 from textwrap import dedent
-from .test_common import add_sources, dict_merge, TestsBase, get_common_modelsim_init_files
+from .test_common import add_sources, dict_merge, TestsBase, \
+                         get_common_modelsim_init_files, get_seed
 from pprint import pprint
 
 log = logging.getLogger(__name__)
@@ -18,16 +19,19 @@ class UnitTests(TestsBase):
         unit_tests = lib.get_test_benches('*_unit_test')
         for name, cfg in config['tests'].items():
             dict_merge(cfg, default)
-            tb = lib.get_test_benches('*tb_{}_unit_test'.format(name), allow_empty=True)
+            tb = lib.get_test_benches('*tb_{}_unit_test'.format(name),
+                                      allow_empty=True)
             if not len(tb):
                 pprint([x.name for x in unit_tests])
-                raise RuntimeError('Testbench {}_unit_test does not exist (but specified in config).'.format(name))
+                raise RuntimeError('Testbench {}_unit_test does not exist'
+                                   + ' (but specified in config).'.format(name))
             assert len(tb) == 1
             tb = tb[0]
             tb.set_generic('timeout', cfg['timeout'])
             tb.set_generic('iterations', cfg['iterations'])
             tb.set_generic('log_level', cfg['log_level'] + '_l')
             tb.set_generic('error_tol', cfg['error_tolerance'])
+            tb.set_generic('seed', get_seed(cfg))
 
             # generate & set per-test modelsim tcl file
             tcl = build / 'modelsim_init_{}.tcl'.format(name)

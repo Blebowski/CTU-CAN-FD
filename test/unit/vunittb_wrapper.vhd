@@ -65,7 +65,9 @@ entity vunittb_wrapper is
         error_tol  : natural := 0;
 
         -- Timeout in simulation time. 0 means no limit
-        timeout    : string := "0 ms"
+        timeout    : string := "0 ms";
+
+        seed       : natural := 0
     );
 end entity;
 
@@ -75,6 +77,9 @@ architecture tb of vunittb_wrapper is
     signal t_run      : boolean;
 begin
     i_test: CAN_test
+        generic map (
+            seed => seed
+        )
         port map (
             iterations => iterations,
             log_level  => log_level,

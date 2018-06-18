@@ -1,6 +1,7 @@
 _default: &default
     log_level: info
     error_tolerance: 0
+    randomize: true
 unit:
     default:
         <<: *default

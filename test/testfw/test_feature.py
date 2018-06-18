@@ -1,6 +1,7 @@
 import logging
 from pathlib import Path
-from .test_common import add_sources, TestsBase, dict_merge, get_common_modelsim_init_files
+from .test_common import add_sources, TestsBase, dict_merge, \
+                         get_common_modelsim_init_files, get_seed
 from textwrap import dedent
 
 log = logging.getLogger(__name__)
@@ -54,7 +55,8 @@ class FeatureTests(TestsBase):
                 'iterations'   : cfg['iterations'],
                 'log_level'    : cfg['log_level'] + '_l',
                 'error_tol'    : cfg['error_tolerance'],
-                'test_name'    : name
+                'test_name'    : name,
+                'seed'         : get_seed(cfg)
             }
             tb.add_config(name, generics=generics)
 

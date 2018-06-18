@@ -315,6 +315,8 @@ entity tb_feature is
         -- Timeout in simulation time. 0 means no limit
         timeout    : string := "0 ms";
 
+        seed       : natural := 0;
+
         hw_reset_on_new_test : boolean := true;
 
         test_name : string
@@ -360,7 +362,7 @@ architecture tb of tb_feature is
     signal bl_force       : boolean := false;
 
     -- test internal signals
-    signal iteration_done : boolean;
+    signal iteration_done : boolean := false;
 
     signal mem_bus        : mem_bus_arr_t := (OTHERS => mem_bus_init);
 
@@ -409,10 +411,14 @@ begin
         variable o       : feature_outputs_t;
     begin
         test_runner_setup(runner, runner_cfg);
+
         --Set the process to run and wait until it comes out of reset
         iteration_done    <= false;
         run               <= true;
         error_ctr         <= 0;
+
+        apply_rand_seed(seed, 0, rand_ctr);
+
         report "Restarting mem_bus(1)";
         restart_mem_bus(mem_bus(1));
         report "Restarting mem_bus(1)";
