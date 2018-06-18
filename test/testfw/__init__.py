@@ -6,13 +6,8 @@ import os
 import re
 import sys
 from pathlib import Path
-
-from .log import MyLogRecord
-from . import vunit_ifc
-from . import test_unit, test_sanity, test_feature
-from vunit.ui import VUnit
 from os.path import abspath
-from .test_common import add_common_sources, add_flags
+from .log import MyLogRecord
 
 d = Path(abspath(__file__)).parent
 
@@ -24,6 +19,16 @@ def setup_logging() -> None:
     logging.config.dictConfig(cfg)
     global log
     log = logging.getLogger('fw')
+
+
+setup_logging()
+
+from . import vunit_ifc
+from . import test_unit, test_sanity, test_feature
+from vunit.ui import VUnit
+from .test_common import add_common_sources, add_flags
+
+
 #-------------------------------------------------------------------------------
 
 
@@ -55,7 +60,6 @@ class AliasedGroup(click.Group):
 @click.option('--compile', is_flag=True) #, hidden=True
 @click.pass_context
 def cli(ctx, compile):
-    setup_logging()
     ctx.obj = {'compile': compile}
     sys.argv[0] = abspath(sys.argv[0])
     pass
