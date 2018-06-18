@@ -1,6 +1,8 @@
 _default: &default
     log_level: info
     error_tolerance: 0
+    # seed: 0 # optional; use to reconstruct results from randomized runs
+    # randomize: false
 unit:
     default:
         <<: *default
@@ -34,6 +36,8 @@ unit:
             wave: unit/TX_Arbitrator/txar_unit.tcl
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
+        event_logger:
+            wave: unit/Evnt_Logger/evlg_unit.tcl
 feature:
     default:
         <<: *default

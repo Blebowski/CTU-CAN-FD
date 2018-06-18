@@ -23,7 +23,8 @@ entity tb_{{test}} is generic (
     log_level  : log_lvl_type := info_l;
     error_beh  : err_beh_type := quit;
     error_tol  : natural := 0;
-    timeout    : string := "0 ms"
+    timeout    : string := "0 ms";
+    seed       : natural := 0
 ); end entity;
 architecture tb of tb_{{test}} is
     component vunittb_wrapper is generic (
@@ -32,7 +33,8 @@ architecture tb of tb_{{test}} is
         log_level  : log_lvl_type;
         error_beh  : err_beh_type;
         error_tol  : natural;
-        timeout    : string
+        timeout    : string;
+        seed       : natural
     ); end component;
     for all:vunittb_wrapper use configuration work.tbconf_{{test}};
 begin
@@ -42,7 +44,8 @@ begin
         log_level         => log_level,
         error_beh         => error_beh,
         error_tol         => error_tol,
-        timeout           => timeout);
+        timeout           => timeout,
+        seed              => seed);
 end architecture;
 -- -----------------------------------------------------------------------------
 {% endfor %}

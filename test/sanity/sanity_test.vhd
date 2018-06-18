@@ -73,62 +73,62 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity sanity_test is
-  port (
-
-    -- Input trigger, test starts running when true
-    signal run              :in     boolean;
-
+  generic (
+    seed                    : natural := 0;
     -- Number of iterations that test should do
-    signal iterations       :in     natural;
+    iterations       :     natural;
 
     -- Logging level, severity which should be shown
-    signal log_level        :in     log_lvl_type;
+    log_level        :     log_lvl_type;
 
     -- Test behaviour when error occurs: Quit, or Go on
-    signal error_beh        :in     err_beh_type;
+    error_beh        :     err_beh_type;
 
     -- Error tolerance, error counter should not exceed this value in order
     -- for the test to pass
-    signal error_tol        :in     natural;
-
-    -- Status of the test
-    signal status           :out    test_status_type;
-
-    -- Amount of errors which appeared in the test
-    signal errors           :out    natural ;
-    --TODO: Error log results
-
+    error_tol        :     natural;
     ----------------------------------------------
     -- Test configuration
     ----------------------------------------------
 
     -- Uncertainties of each clock (in ppm)
-    signal epsilon_v        :       epsilon_type;
+    epsilon_v        :       epsilon_type;
 
     -- Transceiver delay parameters
-    signal trv_del_v        :       trv_del_type;
+    trv_del_v        :       trv_del_type;
 
     -- Configuration of bus topology
-    signal bus_matrix       :       bus_matrix_type;
+    bus_matrix       :       bus_matrix_type;
 
     -- Number of iterations in Gauss distribution calculation
-    signal iter_am          :       natural := 40;
+    iter_am          :       natural := 40;
 
     -- Noise pulse width mean in nanaoseconds
-    signal nw_mean          :       real;
+    nw_mean          :       real;
 
     -- Noise pulse width variance
-    signal nw_var           :       real;
+    nw_var           :       real;
 
     -- Gap between two noise pulses mean in nanoseconds
-    signal ng_mean          :       real;
+    ng_mean          :       real;
 
     -- Gap variance
-    signal ng_var           :       real;
+    ng_var           :       real;
 
-    signal topology         :       string (1 to 50);
+    topology         :       string (1 to 50);
 
-    signal timing_config    :       bit_time_config_type
+    timing_config    :       bit_time_config_type
+  );
+  port (
+    -- Input trigger, test starts running when true
+    signal run              :in     boolean;
+
+    -- Status of the test
+    signal status           :out    test_status_type;
+
+    -- Amount of errors which appeared in the test
+    signal errors           :out    natural
+    --TODO: Error log results
   );
 end entity;
 
@@ -278,7 +278,8 @@ architecture behavioral of sanity_test is
         array (1 to NODE_COUNT) of natural range 0 to RAND_POOL_SIZE;
 
     signal rand_ctr_gen         : rand_ctr_array_type;
-    signal rand_ident_ctr       : natural range 0 to RAND_POOL_SIZE := 0;
+    signal rand_ident_ctr       : natural range 0 to RAND_POOL_SIZE
+                                   := apply_rand_seed(seed, NODE_COUNT+1);
 
     -- Auxiliarly signal for identifier correction to have similiar identifiers
     -- and interesting arbitration!
@@ -405,7 +406,7 @@ architecture behavioral of sanity_test is
         signal   rand_ctr       : inout     natural range 0 to RAND_POOL_SIZE;
         variable frame          : inout     SW_CAN_frame_type;
         constant index          : in        natural;
-        signal   com_id         : in        natural
+        constant com_id         : in        natural
     )is
         variable aux_vect       :           std_logic_vector(28 downto 0);
         variable aux_common     :           std_logic_vector(28 downto 0);
@@ -449,7 +450,7 @@ architecture behavioral of sanity_test is
         mem_bus.clk_sys     <= 'Z';
     end procedure;
 
-    function bus_matrix_to_delay(signal bm : in real) return time is
+    function bus_matrix_to_delay(bm : in real) return time is
     begin
         return 10.0 * bm * 500 ps;
     end function;
@@ -503,15 +504,8 @@ begin
     -- Clock generation
     ----------------------------------------------------------------------------
     clock_generic : for i in 1 to NODE_COUNT generate
-        clock_gen_1 : process
-            constant period   : natural := f100_Mhz;
-            constant duty     : natural := 50;
-            variable epsilon  : natural;
-        begin
-          epsilon := epsilon_v(i);
-          generate_clock(period, duty, epsilon, mem_aux_clk(i));
-          timestamp_v(i) <= std_logic_vector(unsigned(timestamp_v(i)) + 1);
-        end process;
+        clock_gen_proc(f100_mhz, 50, epsilon_v(i), mem_aux_clk(i));
+        timestamp_gen_proc(mem_aux_clk(i), timestamp_v(i));
     end generate clock_generic;
 
 
@@ -550,6 +544,7 @@ begin
     -- 500 ps equals approximately 10 cm of conductor! This is coarse estimate,
     -- however purpose of this simulation is not to examine exact propagation
     -- delays via different physical channels! This simple estimate is enough.
+    -- TODO: may be optimized by eschewing bus_clk and delaying the signals directly
     ----------------------------------------------------------------------------
     bus_clk_proc : process
     begin
@@ -617,35 +612,36 @@ begin
         variable gaus_par   : rand_distribution_par_type;
         variable exp_par    : rand_distribution_par_type;
     begin
-        if (do_noise) then
+        apply_rand_seed(seed, 0, rand_ctr);
+        loop
+            if (do_noise) then
+                -- Generate noise pulse with gauss distribution
+                gaus_par(GAUSS_iterations)  := real(iter_am);
+                gaus_par(GAUSS_mean)        := nw_mean;
+                gaus_par(GAUSS_variance)    := nw_var;
+                rand_real_distr_v(rand_ctr, noise_time, GAUSS, gaus_par);
 
-            -- Generate noise pulse with gauss distribution
-            gaus_par(GAUSS_iterations)  := real(iter_am);
-            gaus_par(GAUSS_mean)        := nw_mean;
-            gaus_par(GAUSS_variance)    := nw_var;
-            rand_real_distr_v(rand_ctr, noise_time, GAUSS, gaus_par);
+                -- Generate noise pulse gap with exponential distribution
+                exp_par(EXPONENTIAL_mean)   := ng_mean;
+                rand_real_distr_v(rand_ctr, noise_gap, EXPONENTIAL, exp_par);
 
-            -- Generate noise pulse gap with exponential distribution
-            exp_par(EXPONENTIAL_mean)   := ng_mean;
-            rand_real_distr_v(rand_ctr, noise_gap, EXPONENTIAL, exp_par);
+                noise_force <= (OTHERS => '0');
+                wait for integer(noise_gap) * 1 ns;
 
-            noise_force <= (OTHERS => '0');
-            wait for integer(noise_gap) * 1 ns;
+                --Generate noise polarity and info whether noise
+                -- should be forced to the node
+                -- We cant put noise to all. That would be global
+                -- error at all times
+                rand_logic_vect_v(rand_ctr ,aux,0.5);
+                noise_reg   <= aux;
+                rand_logic_vect_v(rand_ctr ,aux,0.5);
+                noise_force <= aux;
 
-            --Generate noise polarity and info whether noise
-            -- should be forced to the node
-            -- We cant put noise to all. That would be global
-            -- error at all times
-            rand_logic_vect_v(rand_ctr ,aux,0.5);
-            noise_reg   <= aux;
-            rand_logic_vect_v(rand_ctr ,aux,0.5);
-            noise_force <= aux;
-
-            wait for integer(noise_time) * 1 ns;
-
-        else
-            wait for 10 ns;
-        end if;
+                wait for integer(noise_time) * 1 ns;
+            else
+                wait for 10 ns;
+            end if;
+        end loop;
     end process;
 
     ----------------------------------------------------------------------------
@@ -688,6 +684,7 @@ begin
             variable fault_state    :       SW_fault_state;
         begin
             if (do_restart_mem_if(i)) then
+                apply_rand_seed(seed, i, rand_ctr_gen(i));
                 restart_mem_bus(mb_arr(i));
                 wait for 10 ns;
 
@@ -939,58 +936,5 @@ begin
         evaluate_test(error_tol, error_ctr, status);
     end process;
 
-  errors <= error_ctr;
-
-end architecture;
-
-architecture sanity_test of CAN_test is
-    signal epsilon_v    : epsilon_type := (0,150,300,450);
-    signal trv_del_v    : trv_del_type := (5,5,5,5);
-
-    signal bus_matrix   : bus_matrix_type := (  ( 0.0,10.0,20.0,30.0),
-                                                (10.0, 0.0,10.0,20.0),
-                                                (20.0,10.0, 0.0,10.0),
-                                                (30.0,20.0,10.0, 0.0));
-    ---------------------
-    -- Noise parameters
-    ---------------------
-    signal iter_am     : natural := 40;
-
-    -- Noise pulse width mean in nanaoseconds
-    signal nw_mean     : real := 15.0;
-
-    -- Noise pulse width variance
-    signal nw_var      : real := 5.0;
-
-    -- Gap between two noise pulses mean in nanoseconds
-    signal ng_mean     : real := 10000.0;
-
-    -- Gap variance
-    signal ng_var      : real :=  6000.0;
-    signal topology    : string (1 to 50) :=
-        "                                                  ";
-
-    -- With 100 MHz this is 1Mbit(nom)/2Mbit(Data)
-    signal timing_config : bit_time_config_type := (5,5,9,5,5,3,3,3,3,2);
-begin
-    i_st: entity work.sanity_test
-    port map(
-        run             => run,
-        iterations      => iterations,
-        log_level       => log_level,
-        error_beh       => error_beh,
-        error_tol       => error_tol,
-        status          => status,
-        errors          => errors,
-        epsilon_v       => epsilon_v,
-        trv_del_v       => trv_del_v,
-        bus_matrix      => bus_matrix,
-        iter_am         => iter_am,
-        nw_mean         => nw_mean,
-        nw_var          => nw_var,
-        ng_mean         => ng_mean,
-        ng_var          => ng_var,
-        topology        => topology,
-        timing_config   => timing_config
-    );
+    errors <= error_ctr;
 end architecture;

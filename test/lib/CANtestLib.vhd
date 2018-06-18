@@ -583,7 +583,7 @@ package CANtestLib is
     procedure log(
         constant message        : in    String;
         constant log_severity   : in    log_lvl_type;
-        signal   log_level      : in    log_lvl_type
+        constant log_level      : in    log_lvl_type
     );
 
 
@@ -634,10 +634,10 @@ package CANtestLib is
     --  error_tol       Error tolerance of test.
     ----------------------------------------------------------------------------
     procedure print_test_info(
-        signal iterations       : in    natural;
-        signal log_level        : in    log_lvl_type;
-        signal error_beh        : in    err_beh_type;
-        signal error_tol        : in    natural
+        constant iterations     : in    natural;
+        constant log_level      : in    log_lvl_type;
+        constant error_beh      : in    err_beh_type;
+        constant error_tol      : in    natural
     );
 
 
@@ -656,6 +656,12 @@ package CANtestLib is
         signal   rand_ctr        : out  natural range 0 to RAND_POOL_SIZE
     );
 
+
+    -- variation of above, only returns the seed value
+    function apply_rand_seed(
+        constant seed            : in   natural;
+        constant offset          : in   natural
+    ) return natural;
 
     ----------------------------------------------------------------------------
     -- Decode data length code from value as defined in CAN FD Standard to
@@ -1689,7 +1695,7 @@ package body CANtestLib is
     procedure log(
         constant Message        : in    String;
         constant log_severity   : in    log_lvl_type;
-        signal log_level        : in    log_lvl_type
+        constant log_level      : in    log_lvl_type
    )is
     begin
 
@@ -1769,10 +1775,10 @@ package body CANtestLib is
 
 
     procedure print_test_info(
-        signal iterations       :in    natural;
-        signal log_level        :in    log_lvl_type;
-        signal error_beh        :in    err_beh_type;
-        signal error_tol        :in    natural
+        constant iterations     : in    natural;
+        constant log_level      : in    log_lvl_type;
+        constant error_beh      : in    err_beh_type;
+        constant error_tol      : in    natural
     )is
     begin
         report "Test info:";
@@ -1796,15 +1802,25 @@ package body CANtestLib is
     end;
 
 
+    function apply_rand_seed(
+        constant seed            : in   natural;
+        constant offset          : in   natural
+    ) return natural is
+        variable tmp             :      natural;
+    begin
+        tmp := seed + offset;
+        report "Random initialized with seed " & natural'image(seed);
+        return tmp mod RAND_POOL_SIZE;
+    end function;
+
+
     procedure apply_rand_seed(
         constant seed            : in   natural;
         constant offset          : in   natural;
         signal   rand_ctr        : out  natural range 0 to RAND_POOL_SIZE
     )is
-        variable tmp             :      natural;
     begin
-        tmp := seed + offset;
-        rand_ctr    <= tmp mod RAND_POOL_SIZE;
+        rand_ctr    <= apply_rand_seed(seed, offset);
         wait for 0 ns;
     end procedure;
 

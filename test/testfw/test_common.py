@@ -6,9 +6,11 @@ import logging
 from pathlib import Path
 from jinja2 import Environment, PackageLoader
 from pprint import pprint
+import random
 
 __all__ = ['add_sources', 'add_common_sources', 'get_common_modelsim_init_files',
-    'add_flags', 'dict_merge', 'vhdl_serialize', 'dump_sim_options', 'TestsBase']
+           'add_flags', 'dict_merge', 'vhdl_serialize', 'dump_sim_options',
+           'TestsBase', 'get_seed']
 
 d = Path(abspath(__file__)).parent
 log = logging.getLogger(__name__)
@@ -86,6 +88,19 @@ def add_flags(ui, lib, build):
     ui.set_sim_option("ghdl.sim_flags", ["--ieee-asserts=disable-at-0"])
     modelsim_init_files = get_common_modelsim_init_files()
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
+
+
+def get_seed(cfg):
+    if 'seed' in cfg and 'randomize' in cfg:
+        log.warning('Both "seed" and "randomize" are set - seed takes precedence')
+    if 'seed' in cfg:
+        seed = cfg['seed']
+    elif cfg.get('randomize', False):
+        # only 31 bits
+        seed = int(random.random() * 2**31) & 0x7FFFFFFF
+    else:
+        seed = 0
+    return seed
 
 
 def dict_merge(up, *lowers):

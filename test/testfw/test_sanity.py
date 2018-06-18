@@ -1,5 +1,6 @@
 import logging
-from .test_common import TestsBase, add_sources, dict_merge, vhdl_serialize
+from .test_common import TestsBase, add_sources, dict_merge, vhdl_serialize, \
+                         get_seed
 
 log = logging.getLogger(__name__)
 
@@ -56,6 +57,7 @@ class SanityTests(TestsBase):
                 'iterations'   : cfg['iterations'],
                 'log_level'    : cfg['log_level'] + '_l',
                 'error_tol'    : cfg['error_tolerance'],
+                'seed'         : get_seed(cfg),
                 'topology'     : cfg['topology'],
                 #'bm'           : vhdl_serialize(bm),
                 'bus_len_v'    : vhdl_serialize(cfg['bus_len_v']),
