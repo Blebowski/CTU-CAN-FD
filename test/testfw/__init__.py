@@ -16,6 +16,7 @@ from .test_common import add_common_sources, add_flags
 
 d = Path(abspath(__file__)).parent
 
+
 def setup_logging() -> None:
     with Path(d / 'logging.yaml').open('rt', encoding='utf-8') as f:
         cfg = yaml.load(f)
@@ -25,9 +26,11 @@ def setup_logging() -> None:
     log = logging.getLogger('fw')
 #-------------------------------------------------------------------------------
 
+
 class AttrDict:
     def __init__(self, data):
         self.data = data
+
     def __getitem__(self, key):
         return getattr(self.data, key)
 
@@ -46,6 +49,7 @@ class AliasedGroup(click.Group):
         ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
 #-------------------------------------------------------------------------------
 
+
 @click.group(cls=AliasedGroup)
 @click.option('--compile', is_flag=True) #, hidden=True
 @click.pass_context
@@ -55,15 +59,37 @@ def cli(ctx, compile):
     sys.argv[0] = abspath(sys.argv[0])
     pass
 
+
 @cli.command()
 def create():
     pass
+
 
 @cli.command()
 @click.argument('config', type=click.Path())
 @click.argument('vunit_args', nargs=-1)
 @click.pass_obj
 def test(obj, config, vunit_args):
+    """Run the tests. Configuration is passed in YAML config file.
+
+    You mas pass arguments directly to VUnit by appending them at the command end.
+    NOTE: Be sure to include delimiter "--" before vunit options!
+
+    Examples:
+
+    # run all tests from tests_fast.yml
+    ./run test tests_fast.yml
+
+    # list tests
+    ./run test tests_fast.yml -- --list
+
+    # configure tests from tests_fast.yml, but run just one
+    ./run test tests_fast.yml lib.tb_feature.retr_limit
+
+    # run all feature tests (configured in config file)
+    ./run test tests_fast.yml 'lib.tb_feature.*'
+    """
+
     base = d.parent
     build = base / 'build'
 
@@ -105,6 +131,7 @@ def test(obj, config, vunit_args):
 
     vunit_run(ui, build, out_basename)
 
+
 def create_vunit(obj, vunit_args, out_basename):
     # fill vunit arguments
     args = []
@@ -114,6 +141,7 @@ def create_vunit(obj, vunit_args, out_basename):
     args += ['--xunit-xml', '../{}.xml1'.format(out_basename)] + list(vunit_args)
     ui = VUnit.from_argv(args)
     return ui
+
 
 def vunit_run(ui, build, out_basename):
     try:
@@ -132,6 +160,7 @@ def vunit_run(ui, build, out_basename):
             f.write(c)
         out.unlink()
     sys.exit(res)
+
 
 """
 + vunit configurations
