@@ -47,6 +47,7 @@ class AliasedGroup(click.Group):
         elif len(matches) == 1:
             return click.Group.get_command(self, ctx, matches[0])
         ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
+
 #-------------------------------------------------------------------------------
 
 
@@ -77,16 +78,16 @@ def test(obj, config, vunit_args):
 
     Examples:
 
-    # run all tests from tests_fast.yml
+    # run all tests from tests_fast.yml\n
     ./run test tests_fast.yml
 
-    # list tests
+    # list tests\n
     ./run test tests_fast.yml -- --list
 
-    # configure tests from tests_fast.yml, but run just one
+    # configure tests from tests_fast.yml, but run just one\n
     ./run test tests_fast.yml lib.tb_feature.retr_limit
 
-    # run all feature tests (configured in config file)
+    # run all feature tests (configured in config file)\n
     ./run test tests_fast.yml 'lib.tb_feature.*'
     """
 
