@@ -88,7 +88,7 @@ package body invalid_configs_feature is
         variable frame_sent         :       boolean := false;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable command            :       SW_command;
+        variable command            :       SW_command := (others => false);
     begin
         o.outcome := true;
 
@@ -100,7 +100,6 @@ package body invalid_configs_feature is
         ------------------------------------------------------------------------
         command.release_rec_buffer := true;
         give_controller_command(command, ID_2, mem_bus(2));
-        command.release_rec_buffer := false;
 
         ------------------------------------------------------------------------
         -- Send NORMAL frame with BRS = 1
