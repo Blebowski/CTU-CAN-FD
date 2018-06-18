@@ -285,13 +285,8 @@ begin
     ----------------------------------------------------------------------------
     -- Clock generation
     ----------------------------------------------------------------------------
-    clock_gen:process
-        variable period     : natural := f100_Mhz;
-        variable duty       : natural := 50;
-        variable epsilon    : natural := 0;
-    begin
-        generate_clock(period,duty, epsilon, clk_sys);
-    end process;
+    clock_gen_proc(period => f100_Mhz, duty => 50, epsilon_ppm => 0,
+                   out_clk => clk_sys);
 
     -- Propagate driving bus to driving bus signals
     drv_bus(DRV_FILTER_A_MASK_HIGH downto DRV_FILTER_A_MASK_LOW) <=

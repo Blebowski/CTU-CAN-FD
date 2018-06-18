@@ -129,11 +129,7 @@ begin
             s_apb_pwrite   => s_apb_pwrite
         );
 
-    clk:process
-    begin
-        wait for 100 ns;
-        aclk <= not aclk;
-    end process;
+    aclk <= not aclk after 100 ns;
 
     assert s_apb_pslverr = '0' or arstn = '0' or now = 0 fs report "Slave error!" severity error;
 

@@ -220,16 +220,11 @@ begin
         bus_level             <= s_bus_level;
 
         ---------------------------------
-        --Clock generation
+        -- Clock & timestamp generation
         ---------------------------------
-        clock_gen:process
-            constant period   : natural := f100_Mhz;
-            constant duty     : natural := 50;
-            constant epsilon  : natural := 0;
-        begin
-            generate_clock(period, duty, epsilon, p(i).clk_sys);
-            p(i).timestamp <= std_logic_vector(unsigned(p(i).timestamp)+1);
-        end process;
+        clock_gen_proc(period => f100_Mhz, duty => 50, epsilon_ppm => 0,
+                       out_clk => p(i).clk_sys);
+        timestamp_gen_proc(p(i).clk_sys, p(i).timestamp);
     end generate;
 
     -- TODO: might get faster by constraining the sensitivity list

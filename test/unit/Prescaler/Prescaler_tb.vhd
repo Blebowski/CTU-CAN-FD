@@ -482,12 +482,16 @@ begin
     -- Clock generation
     ----------------------------------------------------------------------------
     clock_gen : process
-        variable period   : natural := f100_Mhz;
-        variable duty     : natural := 50;
-        variable epsilon  : natural := 0;
+        constant period   : natural := f100_Mhz;
+        constant duty     : natural := 50;
+        constant epsilon  : natural := 0;
+        constant par      : generate_clock_precomputed_t
+                             := precompute_clock(period, duty, epsilon);
     begin
-        generate_clock(period, duty, epsilon, clk_sys);
-        clock_counter <= clock_counter + 1;
+        loop
+            generate_clock(par, clk_sys);
+            clock_counter <= clock_counter + 1;
+        end loop;
     end process;
 
 
