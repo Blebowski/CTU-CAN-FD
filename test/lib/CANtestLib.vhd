@@ -583,7 +583,7 @@ package CANtestLib is
     procedure log(
         constant message        : in    String;
         constant log_severity   : in    log_lvl_type;
-        signal   log_level      : in    log_lvl_type
+        constant log_level      : in    log_lvl_type
     );
 
 
@@ -634,10 +634,10 @@ package CANtestLib is
     --  error_tol       Error tolerance of test.
     ----------------------------------------------------------------------------
     procedure print_test_info(
-        signal iterations       : in    natural;
-        signal log_level        : in    log_lvl_type;
-        signal error_beh        : in    err_beh_type;
-        signal error_tol        : in    natural
+        constant iterations     : in    natural;
+        constant log_level      : in    log_lvl_type;
+        constant error_beh      : in    err_beh_type;
+        constant error_tol      : in    natural
     );
 
 
@@ -1695,7 +1695,7 @@ package body CANtestLib is
     procedure log(
         constant Message        : in    String;
         constant log_severity   : in    log_lvl_type;
-        signal log_level        : in    log_lvl_type
+        constant log_level      : in    log_lvl_type
    )is
     begin
 
@@ -1775,10 +1775,10 @@ package body CANtestLib is
 
 
     procedure print_test_info(
-        signal iterations       :in    natural;
-        signal log_level        :in    log_lvl_type;
-        signal error_beh        :in    err_beh_type;
-        signal error_tol        :in    natural
+        constant iterations     : in    natural;
+        constant log_level      : in    log_lvl_type;
+        constant error_beh      : in    err_beh_type;
+        constant error_tol      : in    natural
     )is
     begin
         report "Test info:";
