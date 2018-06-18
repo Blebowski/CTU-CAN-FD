@@ -1,6 +1,8 @@
 image: mjerabek/ghdl:upstream-gcc
 before_script:
     - "export PATH=/opt/ghdl/bin:$PATH"
+    - export LC_ALL=C.UTF-8
+    - export LANG=C.UTF-8
 
 build_ip_and_tests:
     allow_failure: true
