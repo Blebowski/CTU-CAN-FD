@@ -3,6 +3,7 @@ before_script:
     - "export PATH=/opt/ghdl/bin:$PATH"
     - export LC_ALL=C.UTF-8
     - export LANG=C.UTF-8
+    - export PYTHONUNBUFFERED=1
 
 build_ip_and_tests:
     stage: build
