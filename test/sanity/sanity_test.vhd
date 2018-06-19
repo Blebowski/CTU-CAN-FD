@@ -676,9 +676,9 @@ begin
             variable TX_frame       :       SW_CAN_frame_type;
             variable RX_frame       :       SW_CAN_frame_type;
             variable r_data         :       std_logic_vector(31 downto 0);
-            variable n_index        :       natural := i;
+            constant n_index        :       natural := i;
             variable frame_sent     :       boolean := false;
-            variable used_txtb      :       natural := 1;
+            constant used_txtb      :       natural := 1;
             variable txtb_state     :       SW_TXT_Buffer_state_type;
             variable rx_buf_state   :       SW_RX_Buffer_info;
             variable fault_state    :       SW_fault_state;

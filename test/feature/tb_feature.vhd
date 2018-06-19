@@ -128,9 +128,6 @@ architecture feature_env_test of CAN_feature_test is
         srd             : std_logic; --Serial read
         swr             : std_logic; --Serial write
         sbe             : std_logic_vector(3 downto 0); --Byte enable
-
-        drv_bus         : std_logic_vector(1023 downto 0);
-        stat_bus        : std_logic_vector(511 downto 0);
     end record;
     type instance_signals_arr_t is array(1 to NINST) of instance_signals_t;
 
@@ -151,9 +148,7 @@ architecture feature_env_test of CAN_feature_test is
         scs             => '0',
         srd             => '0',
         swr             => '0',
-        sbe             => (OTHERS => '1'),
-        drv_bus         => (OTHERS => 'X'),
-        stat_bus        => (OTHERS => 'X')
+        sbe             => (OTHERS => '1')
     ));
 
     signal s_bus_level : std_logic := RECESSIVE;
@@ -183,8 +178,8 @@ begin
             CAN_rx            => p(i).CAN_rx,
             time_quanta_clk   => p(i).time_quanta_clk,
             timestamp         => p(i).timestamp,
-            drv_bus_o         => p(i).drv_bus,
-            stat_bus_o        => p(i).stat_bus
+            drv_bus_o         => iout(i).drv_bus,
+            stat_bus_o        => iout(i).stat_bus
         );
 
         i_txdelay : entity work.signal_delayer
@@ -198,36 +193,35 @@ begin
             );
 
         -------------------------------------------------
-        --Connect individual bus signals of memory buses
+        -- Connect individual bus signals of memory buses
         -------------------------------------------------
-        mem_bus(i).clk_sys    <= p(i).clk_sys;
-        p(i).data_in          <= mem_bus(i).data_in;
-        p(i).adress           <= mem_bus(i).address;
-        p(i).scs              <= mem_bus(i).scs;
-        p(i).swr              <= mem_bus(i).swr;
-        p(i).srd              <= mem_bus(i).srd;
-        p(i).sbe              <= mem_bus(i).sbe;
-        mem_bus(i).data_out   <= p(i).data_out;
-        iout(i).irq           <= p(i).int;
-        iout(i).drv_bus       <= p(i).drv_bus;
-        iout(i).stat_bus      <= p(i).stat_bus;
-        iout(i).hw_reset      <= p(i).res_n;
+        x1: mem_bus(i).clk_sys    <= p(i).clk_sys;
+        x2: p(i).data_in          <= mem_bus(i).data_in;
+        x3: p(i).adress           <= mem_bus(i).address;
+        x4: p(i).scs              <= mem_bus(i).scs;
+        x5: p(i).swr              <= mem_bus(i).swr;
+        x6: p(i).srd              <= mem_bus(i).srd;
+        x7: p(i).sbe              <= mem_bus(i).sbe;
+        x8: mem_bus(i).data_out   <= p(i).data_out;
+        x9: iout(i).irq           <= p(i).int;
+        xc: iout(i).hw_reset      <= p(i).res_n;
+        -- stat_bus and drv_bus passwd directly, as indirection costs
+        -- 10% of simulation time
 
         ---------------------------------
         --Transceiver and bus realization
         ---------------------------------
-        p(i).CAN_rx           <= s_bus_level;
-        bus_level             <= s_bus_level;
+        xd: p(i).CAN_rx           <= s_bus_level;
+        xe: bus_level             <= s_bus_level;
 
         ---------------------------------
         -- Clock & timestamp generation
         ---------------------------------
-        clock_gen_proc(period => f100_Mhz, duty => 50, epsilon_ppm => 0,
+        clk_gen_proc: clock_gen_proc(period => f100_Mhz, duty => 50, epsilon_ppm => 0,
                        out_clk => p(i).clk_sys);
-        timestamp_gen_proc(p(i).clk_sys, p(i).timestamp);
+        tsgen_proc: timestamp_gen_proc(p(i).clk_sys, p(i).timestamp);
     end generate;
 
-    -- TODO: might get faster by constraining the sensitivity list
     tr_proc:process(all)
         variable busl : std_logic;
     begin
