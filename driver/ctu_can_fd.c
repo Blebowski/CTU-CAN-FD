@@ -193,8 +193,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 	int_ena.s.epi = 1;
 	int_ena.s.doi = 1;
 
-	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
-
 	int_enamask_mask.u32 = 0xFFFFFFFF;
 
 	mode.flags = priv->can.ctrlmode;
@@ -210,6 +208,8 @@ static int ctucan_chip_start(struct net_device *ndev)
 		int_ena.s.ali = 1;
 		int_ena.s.bei = 1;
 	}
+
+	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
 
 	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
 	ctu_can_fd_int_mask(&priv->p, int_msk, int_enamask_mask);
@@ -864,7 +864,13 @@ static int ctucan_probe(struct platform_device *pdev)
 	//priv->can.do_set_data_bittiming = ctucan_set_data_bittiming;
 	priv->can.do_get_berr_counter = ctucan_get_berr_counter;
 	//priv->can.do_get_state = ctucan_get_state;
-	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK /*| CAN_CTRLMODE_LISTENONLY | CAN_CTRLMODE_3_SAMPLES | CAN_CTRLMODE_FD | CAN_CTRLMODE_PRESUME_ACK | CAN_CTRLMODE_FD_NON_ISO | CAN_CTRLMODE_ONE_SHOT*/;
+	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK
+					| CAN_CTRLMODE_LISTENONLY
+					| CAN_CTRLMODE_3_SAMPLES
+					| CAN_CTRLMODE_FD
+					| CAN_CTRLMODE_PRESUME_ACK
+					| CAN_CTRLMODE_FD_NON_ISO
+					| CAN_CTRLMODE_ONE_SHOT;
 	priv->p.mem_base = addr;
 
 	/* Get IRQ for the device */
