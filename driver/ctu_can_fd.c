@@ -1,31 +1,31 @@
 /*******************************************************************************
- * 
+ *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
- * 
- * Project advisors and co-authors: 
+ *
+ * Project advisors and co-authors:
  * 	Jiri Novak <jnovak@fel.cvut.cz>
  * 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
  * 	Martin Jerabek <jerabma7@fel.cvut.cz>
- * 
+ *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
  * Czech Technical University        (http://www.cvut.cz/)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
 *******************************************************************************/
 
 #include <linux/clk.h>
@@ -193,8 +193,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 	int_ena.s.epi = 1;
 	int_ena.s.doi = 1;
 
-	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
-
 	int_enamask_mask.u32 = 0xFFFFFFFF;
 
 	mode.flags = priv->can.ctrlmode;
@@ -210,6 +208,8 @@ static int ctucan_chip_start(struct net_device *ndev)
 		int_ena.s.ali = 1;
 		int_ena.s.bei = 1;
 	}
+
+	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
 
 	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
 	ctu_can_fd_int_mask(&priv->p, int_msk, int_enamask_mask);
@@ -477,9 +477,11 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	isr = ctu_can_fd_int_sts(&priv->p);
 	while (isr.s.rbnei && work_done < quota) {
 		u32 framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
-		netdev_info(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO", framecnt);
+		netdev_info(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO",
+			    framecnt);
 		if (framecnt == 0) {
-			netdev_err(ndev, "rx_poll: RBNEI set, but there are no frames in the FIFO!");
+			netdev_err(ndev, "rx_poll: RBNEI set, but there are "
+					 "no frames in the FIFO!");
 			break;
 		}
 
@@ -507,7 +509,8 @@ static void ctucan_rotate_txb_prio(struct net_device *ndev)
 	u32 nbuffersm1 = priv->txb_mask; /* nbuffers - 1 */
 
 	prio = (prio << 4) | ((prio >> (nbuffersm1*4)) & 0xF);
-	netdev_info(ndev, "ctucan_rotate_txb_prio: from 0x%08x to 0x%08x", priv->txb_prio, prio);
+	netdev_info(ndev, "ctucan_rotate_txb_prio: from 0x%08x to 0x%08x",
+		    priv->txb_prio, prio);
 	priv->txb_prio = prio;
 	priv->p.write_reg(&priv->p, CTU_CAN_FD_TX_PRIORITY, prio);
 }
@@ -532,7 +535,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 	*/
 
 
-	while ((priv->txb_head - priv->txb_tail > 0)) {
+	while ((int)(priv->txb_head - priv->txb_tail) > 0) {
 		u32 txb_idx = priv->txb_tail & priv->txb_mask;
 		u32 status = ctu_can_fd_get_tx_status(&priv->p, txb_idx);
 
@@ -612,7 +615,9 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	#define CTUCANFD_INT_BSI     BIT(9)
 	#define CTUCANFD_INT_RBNEI   BIT(10)
 	#define CTUCANFD_INT_TXBHCI  BIT(11)
-	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | CTUCANFD_INT_BEI)
+	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | \
+		                    CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
+				    CTUCANFD_INT_BEI)
 
 	/* TX Buffer HW Command Interrupt */
 	if (isr.s.txbhci) {
@@ -864,7 +869,13 @@ static int ctucan_probe(struct platform_device *pdev)
 	//priv->can.do_set_data_bittiming = ctucan_set_data_bittiming;
 	priv->can.do_get_berr_counter = ctucan_get_berr_counter;
 	//priv->can.do_get_state = ctucan_get_state;
-	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK /*| CAN_CTRLMODE_LISTENONLY | CAN_CTRLMODE_3_SAMPLES | CAN_CTRLMODE_FD | CAN_CTRLMODE_PRESUME_ACK | CAN_CTRLMODE_FD_NON_ISO | CAN_CTRLMODE_ONE_SHOT*/;
+	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK
+					| CAN_CTRLMODE_LISTENONLY
+					| CAN_CTRLMODE_3_SAMPLES
+					| CAN_CTRLMODE_FD
+					| CAN_CTRLMODE_PRESUME_ACK
+					| CAN_CTRLMODE_FD_NON_ISO
+					| CAN_CTRLMODE_ONE_SHOT;
 	priv->p.mem_base = addr;
 
 	/* Get IRQ for the device */
