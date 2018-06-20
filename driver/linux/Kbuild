@@ -1,0 +1,2 @@
+obj-m := ctucanfd.o
+ctucanfd-y := ctu_can_fd.o ctu_can_fd_hw.o

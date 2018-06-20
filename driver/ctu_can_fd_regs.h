@@ -81,7 +81,7 @@ enum ctu_can_fd_regs {
 	CTU_CAN_FD_TX_COUNTER            = 0x80,
 	CTU_CAN_FD_DEBUG_REGISTER        = 0x84,
 	CTU_CAN_FD_YOLO_REG              = 0x88,
-	CTU_CAN_FD_TXTB1_DATA_1         = 0x100,
+	CTU_CAN_FD_TXTB1_DATA_1         = 0x100, // TODO: really count from 1?
 	CTU_CAN_FD_TXTB1_DATA_2         = 0x104,
 	CTU_CAN_FD_TXTB1_DATA_20        = 0x14c,
 	CTU_CAN_FD_TXTB2_DATA_1         = 0x200,

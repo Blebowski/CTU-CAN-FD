@@ -35,6 +35,95 @@
 #ifndef __CTU_CAN_FD_LINUX_DEFS__
 #define __CTU_CAN_FD_LINUX_DEFS__
 
+#include <stdint.h>
+#include <stdio.h>
+#include <stddef.h>
+//#include <linux/types.h>
+#include <linux/socket.h>
+#include <arpa/inet.h>
+#define likely(x) __builtin_expect(!!(x), 1)
+#define unlikely(x) __builtin_expect(!!(x), 0)
+#define __iomem volatile
+
+typedef uint8_t   __u8;
+typedef uint16_t  __u16;
+typedef uint32_t  __u32;
+typedef uint64_t  __u64;
+
+typedef int8_t   __s8;
+typedef int16_t  __s16;
+typedef int32_t  __s32;
+typedef int64_t  __s64;
+
+typedef __u8  u8;
+typedef __u16 u16;
+typedef __u32 u32;
+typedef __u64 u64;
+
+typedef __s8  s8;
+typedef __s16 s16;
+typedef __s32 s32;
+typedef __s64 s64;
+
+#ifndef __cplusplus
+typedef _Bool			bool;
+enum {
+	false	= 0,
+	true	= 1
+};
+#endif
+
+#define __WARN_printf printf
+#ifndef WARN
+#define WARN(condition, format...) ({						\
+int __ret_warn_on = !!(condition);				\
+if (unlikely(__ret_warn_on))					\
+    __WARN_printf(format);					\
+    unlikely(__ret_warn_on);					\
+})
+#endif
+
+/*
+// from include/uapi/linux/types.h
+#define __bitwise
+
+typedef __u16 __bitwise __le16;
+typedef __u16 __bitwise __be16;
+typedef __u32 __bitwise __le32;
+typedef __u32 __bitwise __be32;
+typedef __u64 __bitwise __le64;
+typedef __u64 __bitwise __be64;
+
+typedef __u16 __bitwise __sum16;
+typedef __u32 __bitwise __wsum;
+*/
+
+__attribute__((noinline))
+static inline void iowrite32(u32 value, void *addr) {*(volatile u32*)addr = value;}
+__attribute__((noinline))
+static inline void iowrite16(u16 value, void *addr) {*(volatile u16*)addr = value;}
+__attribute__((noinline))
+static inline void iowrite8(u8 value, void *addr) {*(volatile u8*)addr = value;}
+
+__attribute__((noinline))
+static inline u32 ioread32(const void *addr) {return *(const volatile u32*)addr;}
+__attribute__((noinline))
+static inline u16 ioread16(const void *addr) {return *(const volatile u16*)addr;}
+__attribute__((noinline))
+static inline u8 ioread8(const void *addr) {return *(const volatile u8*)addr;}
+
+static inline u32 cpu_to_be32(u32 v) {return htonl(v);}
+static inline u32 be32_to_cpu(u32 v) {return ntohl(v);}
+
+__attribute__((noinline))
+static inline void iowrite32be(u32 value, void *addr) {*(volatile u32*)addr = cpu_to_be32(value);}
+__attribute__((noinline))
+static inline u32 ioread32be(const void *addr) {return be32_to_cpu(*(const volatile u32*)addr);}
+
+/* CAN DLC to real data length conversion helpers */
+u8 can_dlc2len(u8 can_dlc);
+u8 can_len2dlc(u8 len);
+
 /*
  * CAN bit-timing parameters
  *
@@ -204,8 +293,6 @@ enum {
 #ifndef _UAPI_CAN_H
 #define _UAPI_CAN_H
 
-#include <linux/types.h>
-#include <linux/socket.h>
 
 
 
@@ -388,5 +475,83 @@ struct can_filter {
 
 #define CAN_INV_FILTER 0x20000000U /* to be set in can_filter.can_id */
 #define CAN_RAW_FILTER_MAX 512 /* maximum number of can_filter set via setsockopt() */
+#endif /* _UAPI_CAN_H */
 
-#endif
+
+struct can_priv {
+    struct can_bittiming bittiming, data_bittiming;
+    const struct can_bittiming_const *bittiming_const,
+        *data_bittiming_const;
+    //const u16 *termination_const;
+    //unsigned int termination_const_cnt;
+    //u16 termination;
+    const u32 *bitrate_const;
+    unsigned int bitrate_const_cnt;
+    const u32 *data_bitrate_const;
+    unsigned int data_bitrate_const_cnt;
+    struct can_clock clock;
+};
+
+struct net_device {
+    struct can_priv can;
+};
+
+#define netdev_priv(nd) (&((nd)->can))
+
+int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt,
+                      const struct can_bittiming_const *btc,
+                      const u32 *bitrate_const,
+                      const unsigned int bitrate_const_cnt);
+
+#define min(a, b) (a < b ? a : b)
+#define max(a, b) (a > b ? a : b)
+#define clamp(val, lo, hi)  min((typeof(val))max(val, lo), hi)
+
+/**
+ * do_div - returns 2 values: calculate remainder and update new dividend
+ * @n: pointer to uint64_t dividend (will be updated)
+ * @base: uint32_t divisor
+ *
+ * Summary:
+ * ``uint32_t remainder = *n % base;``
+ * ``*n = *n / base;``
+ *
+ * Return: (uint32_t)remainder
+ *
+ * NOTE: macro parameter @n is evaluated multiple times,
+ * beware of side effects!
+ */
+# define do_div(n,base) ({					\
+	uint32_t __base = (base);				\
+	uint32_t __rem;						\
+	__rem = ((uint64_t)(n)) % __base;			\
+	(n) = ((uint64_t)(n)) / __base;				\
+	__rem;							\
+ })
+/**
+ * abs - return absolute value of an argument
+ * @x: the value.  If it is unsigned type, it is converted to signed type first.
+ *     char is treated as if it was signed (regardless of whether it really is)
+ *     but the macro's return type is preserved as char.
+ *
+ * Return: an absolute value of x.
+ */
+#define abs(x)	__abs_choose_expr(x, long long,				\
+		__abs_choose_expr(x, long,				\
+		__abs_choose_expr(x, int,				\
+		__abs_choose_expr(x, short,				\
+		__abs_choose_expr(x, char,				\
+		__builtin_choose_expr(					\
+			__builtin_types_compatible_p(typeof(x), char),	\
+			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
+			((void)0)))))))
+
+#define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
+	__builtin_types_compatible_p(typeof(x),   signed type) ||	\
+	__builtin_types_compatible_p(typeof(x), unsigned type),		\
+	({ signed type __x = (x); __x < 0 ? -__x : __x; }), other)
+
+#define netdev_warn(dev, format, ...) printf("%s" format, "netdev_warn: ", ##__VA_ARGS__);
+#define netdev_err(dev, format, ...) printf("%s" format, "netdev_err: ", ##__VA_ARGS__);
+
+#endif /* __CTU_CAN_FD_LINUX_DEFS__ */
