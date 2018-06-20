@@ -1,31 +1,31 @@
 /*******************************************************************************
- * 
+ *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
- * 
- * Project advisors and co-authors: 
+ *
+ * Project advisors and co-authors:
  * 	Jiri Novak <jnovak@fel.cvut.cz>
  * 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
  * 	Martin Jerabek <jerabma7@fel.cvut.cz>
- * 
+ *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
  * Czech Technical University        (http://www.cvut.cz/)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
 *******************************************************************************/
 
 #include <linux/clk.h>
@@ -477,9 +477,11 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	isr = ctu_can_fd_int_sts(&priv->p);
 	while (isr.s.rbnei && work_done < quota) {
 		u32 framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
-		netdev_info(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO", framecnt);
+		netdev_info(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO",
+			    framecnt);
 		if (framecnt == 0) {
-			netdev_err(ndev, "rx_poll: RBNEI set, but there are no frames in the FIFO!");
+			netdev_err(ndev, "rx_poll: RBNEI set, but there are "
+					 "no frames in the FIFO!");
 			break;
 		}
 
@@ -507,7 +509,8 @@ static void ctucan_rotate_txb_prio(struct net_device *ndev)
 	u32 nbuffersm1 = priv->txb_mask; /* nbuffers - 1 */
 
 	prio = (prio << 4) | ((prio >> (nbuffersm1*4)) & 0xF);
-	netdev_info(ndev, "ctucan_rotate_txb_prio: from 0x%08x to 0x%08x", priv->txb_prio, prio);
+	netdev_info(ndev, "ctucan_rotate_txb_prio: from 0x%08x to 0x%08x",
+		    priv->txb_prio, prio);
 	priv->txb_prio = prio;
 	priv->p.write_reg(&priv->p, CTU_CAN_FD_TX_PRIORITY, prio);
 }
@@ -612,7 +615,9 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	#define CTUCANFD_INT_BSI     BIT(9)
 	#define CTUCANFD_INT_RBNEI   BIT(10)
 	#define CTUCANFD_INT_TXBHCI  BIT(11)
-	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | CTUCANFD_INT_BEI)
+	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | \
+		                    CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
+				    CTUCANFD_INT_BEI)
 
 	/* TX Buffer HW Command Interrupt */
 	if (isr.s.txbhci) {
