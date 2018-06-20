@@ -80,7 +80,13 @@ use work.CANconstants.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
+library vunit_lib;
+use vunit_lib.log_levels_pkg.all;
+use vunit_lib.logger_pkg.all;
+use vunit_lib.log_handler_pkg.all;
+
 package CANtestLib is
+    constant logger : logger_t := get_logger("root");
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -581,10 +587,40 @@ package CANtestLib is
     --  log_level       Severity of message
     ----------------------------------------------------------------------------
     procedure log(
-        constant message        : in    String;
+        constant message        : in    string;
         constant log_severity   : in    log_lvl_type;
+        constant line_num       : in    natural := 0;
+        constant file_name      : in    string  := ""
+   );
+
+   ----------------------------------------------------------------------------
+   -- Reports message when severity level is lower or equal than severity
+   -- of message.
+   -- Deprecated.
+   --
+   -- Arguments:
+   --  message         String to be reported.
+   --  log_severity    Severity level which is set in current test.
+   --  log_level       Severity of message
+   ----------------------------------------------------------------------------
+   procedure log(
+       constant message        : in    string;
+       constant log_severity   : in    log_lvl_type;
+       constant log_level      : in    log_lvl_type;
+       constant line_num       : in    natural := 0;
+       constant file_name      : in    string  := ""
+  );
+
+
+  ----------------------------------------------------------------------------
+  -- Set highest loglevel that should be shown.
+  --
+  -- Arguments:
+  --  log_level        Severity level which is set in current test.
+  ----------------------------------------------------------------------------
+   procedure set_loglevel(
         constant log_level      : in    log_lvl_type
-    );
+   );
 
 
     ----------------------------------------------------------------------------
@@ -1691,44 +1727,60 @@ package body CANtestLib is
         return std_logic_vector(unsigned(operator1) + unsigned(operator2));
     end function;
 
+    procedure set_loglevel(
+         constant log_level      : in    log_lvl_type
+    ) is
+    begin
+        case log_level is
+            when error_l =>
+                show_all(logger, display_handler);
+                hide(logger, display_handler, debug);
+                hide(logger, display_handler, info);
+                hide(logger, display_handler, warning);
+            when warning_l =>
+                show_all(logger, display_handler);
+                hide(logger, display_handler, debug);
+                hide(logger, display_handler, info);
+            when info_l =>
+                show_all(logger, display_handler);
+                --hide(logger, display_handler, debug);
+            when others =>
+                failure(logger, "Unknwon log level.");
+        end case;
+    end procedure;
 
     procedure log(
-        constant Message        : in    String;
+        constant message        : in    string;
         constant log_severity   : in    log_lvl_type;
-        constant log_level      : in    log_lvl_type
+        constant log_level      : in    log_lvl_type;
+        constant line_num       : in    natural := 0;
+        constant file_name      : in    string  := ""
    )is
     begin
+        debug(logger, "Using deprecated variant of log function.",
+              line_num => line_num, file_name => file_name);
+        set_loglevel(log_level);
+        log(message, log_severity, line_num => line_num, file_name => file_name);
+    end procedure;
 
-    if (log_level = info_l) then
-        if (log_severity = info_l) then
-            report Message severity NOTE;
-        elsif (log_severity = warning_l)then
-            report Message severity WARNING;
-        elsif (log_severity = error_l) then
-            report Message severity ERROR;
-        else
-            report "Unsupported log severity type in 'log' function"
-            severity failure;
-        end if;
 
-    elsif (log_level = warning_l) then
-
-        if (log_severity = warning_l) then
-            report Message severity WARNING;
-        elsif (log_severity = error_l) then
-            report Message severity ERROR;
-        end if;
-
-    elsif (log_level = error_l) then
-
-        if (log_severity = error_l) then
-            report Message severity ERROR;
-        end if;
-
-    else
-        report "Unsupported severity type in 'log' function" severity failure;
-    end if;
-
+    procedure log(
+        constant message        : in    string;
+        constant log_severity   : in    log_lvl_type;
+        constant line_num       : in    natural := 0;
+        constant file_name      : in    string  := ""
+   )is
+    begin
+        case log_severity is
+            when error_l =>
+                error(logger, message, line_num => line_num, file_name => file_name);
+            when warning_l =>
+                warning(logger, message, line_num => line_num, file_name => file_name);
+            when info_l =>
+                info(logger, message, line_num => line_num, file_name => file_name);
+            when others =>
+                failure(logger, "Unsupported log severity type in 'log' function");
+        end case;
     end procedure;
 
 

@@ -122,7 +122,7 @@ architecture mess_filt_unit_test of CAN_test is
     end procedure;
 
 
-    function validate(
+    impure function validate(
         signal drv_settings   :in     mess_filter_drv_type;
         signal filt_res       :in     std_logic;
         signal log_level      :in     log_lvl_type;
