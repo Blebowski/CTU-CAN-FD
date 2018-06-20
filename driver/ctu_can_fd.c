@@ -532,7 +532,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 	*/
 
 
-	while ((priv->txb_head - priv->txb_tail > 0)) {
+	while ((int)(priv->txb_head - priv->txb_tail) > 0) {
 		u32 txb_idx = priv->txb_tail & priv->txb_mask;
 		u32 status = ctu_can_fd_get_tx_status(&priv->p, txb_idx);
 
