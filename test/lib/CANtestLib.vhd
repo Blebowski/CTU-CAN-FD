@@ -468,6 +468,24 @@ package CANtestLib is
         high_time : time;
     end record;
 
+    ----------------------------------------------------------------------------
+    -- Bit sequence generator
+    ----------------------------------------------------------------------------
+    
+    -- Longest possible CAN FD Frame is aroud 700 bits. If each bit has opposite
+    -- polarity than previous one, this could use up to 700 entries. Have some
+    -- reserve...
+    constant BS_MAX_LENGTH      :   natural := 1024;
+
+    type bs_durations_type is array (1 to BS_MAX_LENGTH) of natural;
+    type bs_values_type is array (1 to BS_MAX_LENGTH) of std_logic;
+
+    type bit_seq_type is record
+        bit_durations           :   bs_durations_type;
+        bit_values              :   bs_values_type;
+        length                  :   natural;
+    end record;
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -690,6 +708,19 @@ package CANtestLib is
         constant dlc            : in    std_logic_vector(3 downto 0);
         variable rwcnt          : out   natural
     );
+
+
+	----------------------------------------------------------------------------
+    -- Decode length do DLC code.
+    --
+    -- Arguments:
+    --  length          Data lenght in bytes.
+    --  dlc				Variable where output Data lenght code  will be stored.
+    ----------------------------------------------------------------------------
+	procedure decode_length(
+		constant length			: in	natural;
+		variable dlc			: out	std_logic_vector(3 downto 0)
+	);
 
 
     ----------------------------------------------------------------------------
@@ -1556,6 +1587,39 @@ package CANtestLib is
     );
     end component;
 
+	component CAN_reference_test is
+    generic (
+        constant seed         :in   natural := 0;
+        constant config_path  :in   string
+    );
+    port (
+        signal run            :in   boolean;
+        signal iterations     :in   natural;
+        signal log_level      :in   log_lvl_type;
+        signal error_beh      :in   err_beh_type;
+        signal error_tol      :in   natural;
+        signal status         :out  test_status_type;
+        signal errors         :out  natural
+    );
+	end component;
+
+	component bit_generator is
+    generic (
+        constant prescaler  :        natural := 1;
+        constant invert     :        boolean := true
+    );
+    port (
+        signal bit_seq      : in     bit_seq_type;
+        signal clk_sys      : in     std_logic;
+
+        -- Control signals
+        signal run          : in     boolean := false;
+        signal done         : buffer boolean := false;
+
+        signal output       : out    std_logic
+    );
+	end component;
+
 end package;
 
 
@@ -1823,6 +1887,35 @@ package body CANtestLib is
         rand_ctr    <= apply_rand_seed(seed, offset);
         wait for 0 ns;
     end procedure;
+
+
+	procedure decode_length(
+		constant length			: in	natural;
+		variable dlc			: out	std_logic_vector(3 downto 0)
+	) is
+	begin
+		case length is
+        when 0 => dlc := "0000";
+        when 1 => dlc := "0001";
+        when 2 => dlc := "0010";
+        when 3 => dlc := "0011";
+        when 4 => dlc := "0100";
+        when 5 => dlc := "0101";
+        when 6 => dlc := "0110";
+        when 7 => dlc := "0111";
+        when 8 => dlc := "1000";
+        when 12 => dlc := "1001";
+        when 16 => dlc := "1010";
+        when 20 => dlc := "1011";
+        when 24 => dlc := "1100";
+        when 32 => dlc := "1101";
+        when 48 => dlc := "1110";
+        when 64 => dlc := "1111";
+        when others =>
+			report "Invalid data length" severity error;
+			dlc := "0000";
+        end case;
+	end procedure;
 
 
     procedure decode_dlc(
