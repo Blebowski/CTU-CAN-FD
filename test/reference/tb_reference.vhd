@@ -70,8 +70,8 @@ entity CAN_reference_test is
     );
     port (
         signal run            :in   boolean := true;
-        signal iterations     :in   natural := 50;
-        signal log_level      :in   log_lvl_type := info_l;
+        signal iterations     :in   natural := 1000;
+        signal log_level      :in   log_lvl_type := error_l;
         signal error_beh      :in   err_beh_type := go_on;
         signal error_tol      :in   natural := 0;
         signal status         :out  test_status_type;
@@ -369,12 +369,23 @@ begin
         variable TX_frame         : SW_CAN_frame_type;
         variable RX_frame         : SW_CAN_frame_type;
         variable result           : boolean;
+        variable real_iterations  : natural;
     begin
         log("Restarting Reference test!", info_l, log_level);
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
 		restart_mem_bus(mem_bus);
+
+        -- Input files contain 1K frames. It does not have sense to have longer
+        -- test!
+        if (iterations > 1000) then
+            real_iterations := 1000;
+            log("Number of refference test iterations truncated to 1000!",
+                warning_l, log_level);
+        else
+            real_iterations := iterations;
+        end if;
 
         log("Restarted Reference test", info_l, log_level);
         print_test_info(iterations, log_level, error_beh, error_tol);
@@ -386,7 +397,7 @@ begin
         log("Opening test config file", info_l, log_level);
         file_open(config_file, config_path, read_mode);
 
-        while (loop_ctr < iterations or exit_imm)
+        while (loop_ctr < real_iterations or exit_imm)
         loop
             log("Starting loop nr " & integer'image(loop_ctr), info_l,
                 log_level);
