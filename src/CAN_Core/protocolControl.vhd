@@ -209,6 +209,10 @@
 --                "control_pointer_non_zero". Changed counting on
 --                "control_pointer" to 0 in delim_ack! Now counting is done
 --                from value to zero on all instances of control_pointer!
+--	 22.6.2018    Bug-fix of bit stuffing, bit destuffing. Turned of upon
+--                reception of first bit of delim_ack. Thisway if last 5
+--                bits of CRC are matching one stuff bit is still inserted as
+--                expected!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -2295,14 +2299,6 @@ begin
             sec_ack           <= '0';
 
             --------------------------------------------------------------------
-            -- Disable bit stuffing, ACK field is not coded by bit stuffing
-            --------------------------------------------------------------------
-            stuff_enable_r    <= '0';
-            destuff_enable_r  <= '0';
-            fixed_stuff_r     <= '0';
-            fixed_destuff_r   <= '0';
-
-            --------------------------------------------------------------------
             -- CRC check (for both reciever, and also for transciever if 
             -- loopbacked CRC matches the calculated one!
             --------------------------------------------------------------------
@@ -2313,6 +2309,19 @@ begin
             end if;        
              
         else
+
+            --------------------------------------------------------------------
+            -- Disable bit stuffing, ACK field is not coded by bit stuffing.
+            -- Disable in first bit of ACK field, so that if there is stuff
+            -- bit at the end of CRC field, it is still destuffed/stuffed!
+            --------------------------------------------------------------------
+            if (rec_trig = '1' and control_pointer = 2) then
+                stuff_enable_r    <= '0';
+                destuff_enable_r  <= '0';
+                fixed_stuff_r     <= '0';
+                fixed_destuff_r   <= '0';
+            end if;
+
 
             if (OP_State = transciever) then
 
