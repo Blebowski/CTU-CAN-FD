@@ -47,32 +47,33 @@ global TCOMP
 #add_test_status_waves
 #add_system_waves
 
-add wave run
-add wave loop_ctr
-add wave errors
-add wave status
+#TODO: Will be replace by calls above. So far disabled to allow manual debug!
+add wave $TCOMP/run
+add wave $TCOMP/loop_ctr
+add wave $TCOMP/errors
+add wave $TCOMP/status
 
 add wave -noupdate -divider -height 20 "System signals"
-add wave -label "Clock" clk_sys
-add wave -label "Timestamp" timestamp
+add wave -label "Clock" $TCOMP/clk_sys
+add wave -label "Timestamp" $TCOMP/timestamp
 
-add wave -label "Memory bus" mem_bus
+add wave -label "Memory bus" $TCOMP/mem_bus
 
 add wave -noupdate -divider -height 20 "Bit generator"
-add wave -label "Run" bit_gen_run
-add wave -label "Done" bit_gen_done
-add wave -label "Sequence" bit_sequence
-add wave -label "Tick" bit_gen_comp/tick
-add wave -label "Counter" bit_gen_comp/counter
-add wave -label "Index" bit_gen_comp/bit_gen/index
+add wave -label "Run" $TCOMP/bit_gen_run
+add wave -label "Done" $TCOMP/bit_gen_done
+add wave -label "Sequence" $TCOMP/bit_sequence
+add wave -label "Tick" $TCOMP/bit_gen_comp/tick
+add wave -label "Counter" $TCOMP/bit_gen_comp/counter
+add wave -label "Index" $TCOMP/bit_gen_comp/bit_gen/index
 
 add wave -noupdate -divider -height 20 "CAN Bus"
-add wave -label "Generator output" bit_gen_out
-add wave -label "CAN TX" can_tx
-add wave -label "CAN RX" can_rx
+add wave -label "Generator output" $TCOMP/bit_gen_out
+add wave -label "CAN TX" $TCOMP/can_tx
+add wave -label "CAN RX" $TCOMP/can_rx
 
 add wave -noupdate -divider -height 20 "CAN Node"
-add wave -label "Protocol control" CAN_inst/core_top_comp/PC_State
-add wave -label "Bit timing state" CAN_inst/bt_FSM_out
+add wave -label "Protocol control" $TCOMP/CAN_inst/core_top_comp/PC_State
+add wave -label "Bit timing state" $TCOMP/CAN_inst/bt_FSM_out
 
 

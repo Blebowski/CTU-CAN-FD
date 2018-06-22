@@ -1,0 +1,16 @@
+_default: &default
+    log_level: info
+    error_tolerance: 0
+    # seed: 0 # optional; use to reconstruct results from randomized runs
+    # randomize: false
+reference:
+    default:
+        <<: *default
+        log_level: warning
+        iterations: 1000
+        timeout: 1000 ms
+	wave: unit/Bit_Stuffing/bsdt_unit.tcl
+	error_tolerance: 0
+    tests:
+        data_set_1:
+            path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
