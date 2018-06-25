@@ -21,7 +21,7 @@ class ReferenceTests(TestsBase):
         self.add_modelsim_gui_file(tb, default, 'sanity')
 
         for data_set,cfg in config['tests'].items():
-	        dict_merge(cfg, default)
+            dict_merge(cfg, default)
             # bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
             generics = {
                 'timeout'      : cfg['timeout'],
