@@ -53,7 +53,7 @@ USE work.CANtestLib.All;
 
 entity tb_reference_wrapper is
     generic (
-        nested_runner_cfg   : string;
+        runner_cfg          : string  := runner_cfg_default; 
         iterations          : natural := 50;
         log_level           : log_lvl_type := info_l;
 
@@ -67,7 +67,8 @@ entity tb_reference_wrapper is
         -- Timeout in simulation time. 0 means no limit
         timeout             : string := "0 ms";
 
-        seed                : natural := 0
+        seed                : natural := 0;
+        data_path           : string
     );
 end entity;
 
@@ -78,7 +79,8 @@ architecture tb of tb_reference_wrapper is
 begin
     i_test: CAN_test
         generic map (
-            seed => seed
+            seed => seed,
+	    data_path => data_path
         )
         port map (
             iterations => iterations,
@@ -91,7 +93,7 @@ begin
         );
     main:process
     begin
-        test_runner_setup(runner, nested_runner_cfg);
+        test_runner_setup(runner, runner_cfg);
         while test_suite loop
             if run("all") then
                 t_run <= true;
