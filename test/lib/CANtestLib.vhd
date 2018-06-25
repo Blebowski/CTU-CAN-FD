@@ -1574,7 +1574,8 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     component CAN_test is
     generic (
-        constant seed         :in   natural := 0
+        constant seed         :in   natural := 0;
+        constant data_path    :in   string  := " "
     );
     port (
         signal run            :in   boolean;
@@ -1586,22 +1587,6 @@ package CANtestLib is
         signal errors         :out  natural
     );
     end component;
-
-	component CAN_reference_test is
-    generic (
-        constant seed         :in   natural := 0;
-        constant config_path  :in   string
-    );
-    port (
-        signal run            :in   boolean;
-        signal iterations     :in   natural;
-        signal log_level      :in   log_lvl_type;
-        signal error_beh      :in   err_beh_type;
-        signal error_tol      :in   natural;
-        signal status         :out  test_status_type;
-        signal errors         :out  natural
-    );
-	end component;
 
 	component bit_generator is
     generic (
@@ -3759,7 +3744,11 @@ USE work.CANtestLib.All;
 --------------------------------------------------------------------------------
 entity CAN_test is
     generic (
-        constant seed           :in     natural := 0
+        constant seed           :in     natural := 0;
+
+        -- Used only for "reference" test
+        constant data_path      :in     string  :=
+                    "test/reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1" 
     );
     port (
 
