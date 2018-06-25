@@ -14,4 +14,7 @@ reference:
     tests:
         data_set_1:
             iterations: 100
-            data_path: ../reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
+        data_set_2:
+            iterations: 100
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_2

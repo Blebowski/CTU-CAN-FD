@@ -32,6 +32,6 @@ class ReferenceTests(TestsBase):
                 'log_level'    : cfg['log_level'] + '_l',
                 'error_tol'    : cfg['error_tolerance'],
                 'seed'         : get_seed(cfg),
-                'data_path'    : cfg['data_path'],
+                'data_path'    : '../' + cfg['data_path'],
             }
             tb.add_config(data_set, generics=generics)
