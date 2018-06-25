@@ -82,7 +82,7 @@ def add_flags(ui, lib, build):
         ut.scan_tests_from_file(str(build / "../unit/vunittb_wrapper.vhd"))
 
     reference_tests = lib.get_test_benches('*reference*', allow_empty=True)
-    for rt in reference_tests
+    for rt in reference_tests:
         rt.scan_tests_from_file(str(build / "../reference/vunit_reference_wrapper.vhd"))
 
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
