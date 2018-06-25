@@ -16,12 +16,12 @@ class ReferenceTests(TestsBase):
         add_sources(self.lib, ['reference/tb_reference.vhd'])
 
     def configure(self) -> None:
-		tb = self.lib.get_test_benches('*tb_reference')[0]
+        tb = self.lib.get_test_benches('*tb_reference')[0]
         default = self.config['default']
         self.add_modelsim_gui_file(tb, default, 'sanity')
 
-		for data_set,cfg in config['tests'].items():
-			dict_merge(cfg, default)
+        for data_set,cfg in config['tests'].items():
+	        dict_merge(cfg, default)
             # bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
             generics = {
                 'timeout'      : cfg['timeout'],
