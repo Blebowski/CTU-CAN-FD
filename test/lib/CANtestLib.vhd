@@ -1629,13 +1629,13 @@ package body CANtestLib is
         -- Evaluate the test result
         if (errors < error_th or errors = error_th) then
             status    <= passed;
-            wait for 200 ns;
             report "Test result: SUCCESS" severity note;
+            wait for 200 ns;
             --std.env.stop(0);
         else
             status    <= failed;
-            wait for 200 ns;
             report "Test result: FAILURE" severity error;
+            wait for 200 ns;
             --std.env.stop(1);
         end if;
 
