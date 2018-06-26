@@ -395,6 +395,8 @@ begin
             CAN_compare_frames(TX_frame, RX_frame, false, result);
  
             if (not result) then
+                log("Iteration nr: " & integer'image(loop_ctr), info_l, 
+                    log_level);
                 log("TX, RX frames mismatch!", error_l, log_level);
                 log("TX Frame:", error_l, log_level);
                 CAN_print_frame(TX_frame, log_level);
