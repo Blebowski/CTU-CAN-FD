@@ -61,7 +61,7 @@
 					<ipxact:field>
 						<ipxact:name>RST</ipxact:name>
 						<ipxact:displayName>RST</ipxact:displayName>
-						<ipxact:description>Writing logic 1 resets the core. It has the same effect as logic 0 on &quot;res_n&quot; input of the controller.</ipxact:description>
+						<ipxact:description>Writing logic 1 resets the core. It has the same effect as logic 0 on &quot;res_n&quot; input of the controller. After writing logic 1,  logic 0 does not need to be written, this bit is automatically cleared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>

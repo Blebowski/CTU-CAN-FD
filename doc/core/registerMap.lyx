@@ -3836,7 +3836,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RST Writing logic 1 resets the core. It has the same effect as logic 0 on "res_n" input of the controller.
+RST Writing logic 1 resets the core. It has the same effect as logic 0 on "res_n" input of the controller. After writing logic 1,  logic 0 does not need to be written, this bit is automatically cleared.
 \end_layout
 \begin_layout Description
 LOM Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!\begin_inset Newline newline\end_inset
