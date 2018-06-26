@@ -370,6 +370,8 @@ begin
 		CAN_configure_timing(timing_config, 0, mem_bus);
 		CAN_turn_controller(true, 0, mem_bus);
         
+        loop_ctr <= 1;
+
         log("Opening test config file", info_l, log_level);
         file_open(config_file, data_path, read_mode);
 
