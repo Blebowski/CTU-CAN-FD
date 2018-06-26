@@ -50,6 +50,7 @@ global TCOMP
 #TODO: Will be replace by calls above. So far disabled to allow manual debug!
 add wave $TCOMP/run
 add wave $TCOMP/loop_ctr
+add wave $TCOMP/iterations
 add wave $TCOMP/errors
 add wave $TCOMP/status
 
