@@ -27463,10 +27463,10 @@ TXI1 Command is applied on TXT Buffer 1.
 TXI2 Command is applied on TXT Buffer 2.
 \end_layout
 \begin_layout Description
-TXI3 
+TXI3 Command is applied on TXT Buffer 3.
 \end_layout
 \begin_layout Description
-TXI4 
+TXI4 Command is applied on TXT Buffer 4.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

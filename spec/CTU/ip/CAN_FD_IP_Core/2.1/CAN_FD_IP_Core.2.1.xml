@@ -1314,6 +1314,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXI3</ipxact:name>
+						<ipxact:displayName>TXI3</ipxact:displayName>
+						<ipxact:description>Command is applied on TXT Buffer 3.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1324,6 +1326,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXI4</ipxact:name>
+						<ipxact:displayName>TXI4</ipxact:displayName>
+						<ipxact:description>Command is applied on TXT Buffer 4.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
