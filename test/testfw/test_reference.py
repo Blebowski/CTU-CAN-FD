@@ -41,7 +41,7 @@ class ReferenceTests(TestsBase):
                 print(dedent('''\
                     global TCOMP
                     set TCOMP i_test
-                    '''.format(name)), file=f)
+                    '''), file=f)
 
             init_files = get_common_modelsim_init_files()
             init_files += [str(tcl)]
