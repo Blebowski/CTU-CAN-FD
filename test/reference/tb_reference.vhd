@@ -104,7 +104,7 @@ architecture CAN_reference_test of CAN_test is
 
     signal bit_sequence     : bit_seq_type := ((OTHERS => 1), (OTHERS => '0'), 1);
 
-    constant ITER_PRESET    : natural := 56;
+    constant ITER_PRESET    : natural := 0;
 
     ----------------------------------------------------------------------------
     -- Config file with generated bit sequences
