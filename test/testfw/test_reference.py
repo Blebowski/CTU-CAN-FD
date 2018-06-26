@@ -32,11 +32,11 @@ class ReferenceTests(TestsBase):
                 'log_level'    : cfg['log_level'] + '_l',
                 'error_tol'    : cfg['error_tolerance'],
                 'seed'         : get_seed(cfg),
-                'data_path'    : '../' + cfg['data_path'],
+                'data_path'    : self.build + '/../' + cfg['data_path'],
             }
             tb.add_config(data_set, generics=generics)
 
-            tcl = build / 'modelsim_init_{}.tcl'.format(data_set)
+            tcl = self.build / 'modelsim_init_{}.tcl'.format(data_set)
             with tcl.open('wt', encoding='utf-8') as f:
                 print(dedent('''\
                     global TCOMP
