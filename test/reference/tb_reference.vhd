@@ -104,6 +104,8 @@ architecture CAN_reference_test of CAN_test is
 
     signal bit_sequence     : bit_seq_type := ((OTHERS => 1), (OTHERS => '0'), 1);
 
+    constant ITER_PRESET    : natural := 56;
+
     ----------------------------------------------------------------------------
     -- Config file with generated bit sequences
     ----------------------------------------------------------------------------
@@ -374,6 +376,17 @@ begin
 
         log("Opening test config file", info_l, log_level);
         file_open(config_file, data_path, read_mode);
+
+        ------------------------------------------------------------------------
+        -- Read ITER_PRESET dummy entries without sending. This is for manual
+        -- debug only, to avoid long waiting until error occurs. Thisway we
+        -- can quickly move to failing frames!
+        ------------------------------------------------------------------------
+        if (ITER_PRESET > 0) then
+            for i in 0 to ITER_PRESET loop
+                read_bit_sequence(config_file, TX_frame, bit_sequence, rand_ctr);
+            end loop;
+        end if;
 
         while (loop_ctr < real_iterations or exit_imm)
         loop
