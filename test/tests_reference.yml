@@ -15,30 +15,30 @@ reference:
         data_set_1:
             iterations: 100
             data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
-        data_set_2:
-            iterations: 110
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_2
-        data_set_3:
-            iterations: 120
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_3
-        data_set_4:
-            iterations: 130
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_4
-        data_set_5:
-            iterations: 140
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_5
-        data_set_6:
-            iterations: 80
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_6
-        data_set_7:
-            iterations: 90
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_7
-        data_set_8:
-            iterations: 100
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_8
-        data_set_9:
-            iterations: 101
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
-        data_set_10:
-            iterations: 102
-            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10
+        # data_set_2:
+        #   iterations: 110
+        #   data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_2
+        # data_set_3:
+        #     iterations: 120
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_3
+        # data_set_4:
+        #     iterations: 130
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_4
+        # data_set_5:
+        #     iterations: 140
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_5
+        # data_set_6:
+        #     iterations: 80
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_6
+        # data_set_7:
+        #     iterations: 90
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_7
+        # data_set_8:
+        #     iterations: 100
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_8
+        # data_set_9:
+        #     iterations: 101
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
+        # data_set_10:
+        #     iterations: 102
+        #     data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10
