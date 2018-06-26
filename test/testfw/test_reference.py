@@ -36,6 +36,14 @@ class ReferenceTests(TestsBase):
             }
             tb.add_config(data_set, generics=generics)
 
+            tcl = build / 'modelsim_init_{}.tcl'.format(data_set)
+            with tcl.open('wt', encoding='utf-8') as f:
+                print(dedent('''\
+                    global TCOMP
+                    set TCOMP i_test
+                    '''.format(name)), file=f)
+
             init_files = get_common_modelsim_init_files()
+            init_files += [str(tcl)]
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
-            self.add_modelsim_gui_file(tb, cfg, name)
+            self.add_modelsim_gui_file(tb, cfg, data_set)
