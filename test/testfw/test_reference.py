@@ -35,3 +35,7 @@ class ReferenceTests(TestsBase):
                 'data_path'    : '../' + cfg['data_path'],
             }
             tb.add_config(data_set, generics=generics)
+
+            init_files = get_common_modelsim_init_files()
+            tb.set_sim_option("modelsim.init_files.after_load", init_files)
+            self.add_modelsim_gui_file(tb, cfg, name)

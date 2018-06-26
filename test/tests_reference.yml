@@ -9,7 +9,7 @@ reference:
         log_level: warning
         iterations: 1000
         timeout: 1000 ms
-        wave: unit/Bit_Stuffing/bsdt_unit.tcl
+        wave: reference/reference_env_setup.tcl
         error_tolerance: 0
     tests:
         data_set_1:
