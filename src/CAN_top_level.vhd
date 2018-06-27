@@ -292,6 +292,8 @@ entity CAN_top_level is
   -- Pointer to TXT Buffer memory (from CAN Core)
   signal txtb_core_pointer    : natural range 0 to 19;
 
+  -- Transition of fault confinement state to bus-off
+  signal bus_off_start        : std_logic;
 
 	------------------------------------------------------------------------------
   --RX Buffer <--> CAN Core
@@ -725,6 +727,7 @@ begin
       trv_delay_calib       => trv_delay_calib,
       hard_sync_edge        => hard_sync_edge_valid,
       bit_Error_sec_sam     => bit_Error_sec_sam,
+      bus_off_start         => bus_off_start,
       sof_pulse             => sof_pulse
       );
 

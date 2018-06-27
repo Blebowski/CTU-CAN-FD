@@ -242,6 +242,7 @@ package CANcomponents is
     signal txt_sw_buf_cmd_index   :in   std_logic_vector(buf_count - 1 downto 0);
     signal txtb_state             :out  txt_fsm_type;
     signal txt_hw_cmd             :in   txt_hw_cmd_type;
+    signal bus_off_start          :in   std_logic;
     signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
     signal txt_word               :out  std_logic_vector(31 downto 0);
     signal txt_addr               :in   natural range 0 to 19;
@@ -407,6 +408,7 @@ package CANcomponents is
       signal trv_delay_calib       : out std_logic;
       signal bit_Error_sec_sam     : in  std_logic;
       signal hard_sync_edge        : in  std_logic;
+	  signal bus_off_start         : out std_logic;
       signal sof_pulse             : out std_logic
       );
   end component;
@@ -695,6 +697,7 @@ package CANcomponents is
       signal bit_Error_sec_sam     : in  std_logic;
       signal err_capt              : out std_logic_vector(7 downto 0);
       signal bit_Error_out         : out std_logic;
+      signal bus_off_start         : out std_logic;
       signal tx_counter_out        : out std_logic_vector(8 downto 0);
       signal rx_counter_out        : out std_logic_vector(8 downto 0);
       signal err_counter_norm_out  : out std_logic_vector(15 downto 0);

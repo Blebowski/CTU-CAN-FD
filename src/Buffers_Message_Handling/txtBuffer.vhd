@@ -117,6 +117,8 @@ entity txtBuffer is
     signal txt_word               :out  std_logic_vector(31 downto 0);
     signal txt_addr               :in   natural range 0 to 19;
     
+    signal bus_off_start          :in   std_logic;
+
     -- Signals to the TX Arbitrator that it can be selected for transmission
     -- (used as input to priority decoder)
     signal txt_buf_ready          :out  std_logic
@@ -354,7 +356,15 @@ begin
           end if;
           
         end case;
-         
+
+		------------------------------------------------------------------------
+		-- If Core goes to bus-off, TXT Buffer goes to failed, regardless of
+		-- any other SW or HW commands
+		------------------------------------------------------------------------
+		if (bus_off_start = '1') then
+			buf_fsm       <= txt_error;
+		end if;
+
       end if;
     end process;
 
