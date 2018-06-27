@@ -118,7 +118,7 @@ begin
 
             if (set_transciever = '1') then
                 OP_State_r                <= transciever;
-            elsif(set_reciever='1')then
+            elsif (set_reciever = '1') then
                 OP_State_r                <= reciever;
             else
                 case OP_State_r is
@@ -136,15 +136,15 @@ begin
                                 integ_counter       <= 1;
                             else
                                 if (data_rx = RECESSIVE) then 
-                                    integ_counter   <=  integ_counter + 1;
+                                    integ_counter   <= integ_counter + 1;
                                 else
-                                    integ_counter   <=  1;
+                                    integ_counter   <= 1;
                                 end if;
                             end if;
                         end if;
                     else
-                        integ_counter      <=  1;
-                        OP_State_r         <=  OP_State_r;
+                        integ_counter      <= 1;
+                        OP_State_r         <= OP_State_r;
                     end if;
 
                 ----------------------------------------------------------------
@@ -173,9 +173,9 @@ begin
                     
                 when reciever =>
                     if (is_idle = '1') then
-                        OP_State_r          <=  idle;
+                        OP_State_r          <= idle;
                     end if;              
-                when others =>--TODO:Error
+                when others => --TODO:Error
                 end case;
             end if;
         end if;
