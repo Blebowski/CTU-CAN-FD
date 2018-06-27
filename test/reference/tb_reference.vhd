@@ -313,8 +313,8 @@ begin
     mem_bus.data_out <= data_out;
     mem_bus.clk_sys <= clk_sys;
 
-	-- CAN Bus
-	CAN_rx <= bit_gen_out and CAN_tx;
+    -- CAN Bus
+    CAN_rx <= bit_gen_out and CAN_tx;
 
     ----------------------------------------------------------------------------
     -- Clock generation
