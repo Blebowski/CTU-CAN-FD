@@ -412,11 +412,11 @@ begin
             if (not result) then
                 log("Iteration nr: " & integer'image(loop_ctr), info_l, 
                     log_level);
-                log("TX, RX frames mismatch!", error_l, log_level);
-                log("TX Frame:", error_l, log_level);
+                log("TX Frame:", info_l, log_level);
                 CAN_print_frame(TX_frame, log_level);
-                log("RX Frame:", error_l, log_level);
+                log("RX Frame:", info_l, log_level);
                 CAN_print_frame(RX_frame, log_level);
+				log("TX, RX frames mismatch!", error_l, log_level);
                 process_error(error_ctr, error_beh, exit_imm);
             end if;
 
