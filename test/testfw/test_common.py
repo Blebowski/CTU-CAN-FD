@@ -76,11 +76,14 @@ def get_common_modelsim_init_files():
     modelsim_init_files = [str(d/x) for x in modelsim_init_files.split(',')]
     return modelsim_init_files
 
-
 def add_flags(ui, lib, build):
     unit_tests = lib.get_test_benches('*_unit_test', allow_empty=True)
     for ut in unit_tests:
         ut.scan_tests_from_file(str(build / "../unit/vunittb_wrapper.vhd"))
+
+    reference_tests = lib.get_test_benches('*reference*', allow_empty=True)
+    for rt in reference_tests:
+        rt.scan_tests_from_file(str(build / "../reference/vunit_reference_wrapper.vhd"))
 
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
     lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage"])

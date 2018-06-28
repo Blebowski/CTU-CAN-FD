@@ -844,7 +844,9 @@ package CAN_FD_register_map is
   -- it TXBI(1..4) to logic 1. Command and index must be set by single access. R
   -- egister is automatically erased upon the command completion and 0 does not 
   -- need to be written. Reffer to description of TXT Buffer circuit for TXT buf
-  -- fer State machine.
+  -- fer State machine.   If TXCE and TXCR are applied simultaneously, only TXCE
+  --  command is applied. If multiple commands are applied, only those which hav
+  -- e effect in immediate state of the buffer are applied on a buffer.
   ------------------------------------------------------------------------------
   constant TXCE_IND               : natural := 0;
   constant TXCR_IND               : natural := 1;

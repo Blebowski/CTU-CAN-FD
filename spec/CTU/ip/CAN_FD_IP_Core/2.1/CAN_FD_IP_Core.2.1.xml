@@ -61,7 +61,7 @@
 					<ipxact:field>
 						<ipxact:name>RST</ipxact:name>
 						<ipxact:displayName>RST</ipxact:displayName>
-						<ipxact:description>Writing logic 1 resets the core. It has the same effect as logic 0 on &quot;res_n&quot; input of the controller.</ipxact:description>
+						<ipxact:description>Writing logic 1 resets the core. It has the same effect as logic 0 on &quot;res_n&quot; input of the controller. After writing logic 1,  logic 0 does not need to be written, this bit is automatically cleared.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1246,7 +1246,7 @@
 				<ipxact:register>
 					<ipxact:name>TX_COMMAND</ipxact:name>
 					<ipxact:displayName>TX_COMMAND</ipxact:displayName>
-					<ipxact:description>Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 does not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.</ipxact:description>
+					<ipxact:description>Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 does not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.   If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied, only those which have effect in immediate state of the buffer are applied on a buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6C</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1255,7 +1255,7 @@
 					<ipxact:field>
 						<ipxact:name>TXCE</ipxact:name>
 						<ipxact:displayName>TXCE</ipxact:displayName>
-						<ipxact:description>Activates &quot;set_empty&quot; command. Transits frone TX Done, TX Error or TX Aborted to Done.</ipxact:description>
+						<ipxact:description>Activates &quot;set_empty&quot; command. Transits frone TX Done, TX Error or TX Aborted to Done. Does not have any effect in other states.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1267,7 +1267,7 @@
 					<ipxact:field>
 						<ipxact:name>TXCR</ipxact:name>
 						<ipxact:displayName>TXCR</ipxact:displayName>
-						<ipxact:description>Activates &quot;set_ready&quot; command. Transits frone TX Done, TX Error, TX Aborted or Empty to Ready.</ipxact:description>
+						<ipxact:description>Activates &quot;set_ready&quot; command. Transits frone TX Done, TX Error, TX Aborted or Empty to Ready. Does not have any effect in other states.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1279,7 +1279,7 @@
 					<ipxact:field>
 						<ipxact:name>TXCA</ipxact:name>
 						<ipxact:displayName>TXCA</ipxact:displayName>
-						<ipxact:description>Activates &quot;set_abort&quot; command. Transits from Ready to TX Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to TX Aborted if current transmission is not succesfull. If the transmission is sucesfull, it has no effect.</ipxact:description>
+						<ipxact:description>Activates &quot;set_abort&quot; command. Transits from Ready to TX Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to TX Aborted if current transmission is not succesfull. If the transmission is sucesfull, it has no effect. Does not have any effect in other states.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1314,6 +1314,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXI3</ipxact:name>
+						<ipxact:displayName>TXI3</ipxact:displayName>
+						<ipxact:description>Command is applied on TXT Buffer 3.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1324,6 +1326,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXI4</ipxact:name>
+						<ipxact:displayName>TXI4</ipxact:displayName>
+						<ipxact:description>Command is applied on TXT Buffer 4.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>

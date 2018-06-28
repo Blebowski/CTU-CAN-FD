@@ -1,0 +1,34 @@
+_default: &default
+    log_level: info
+    error_tolerance: 0
+    # seed: 0 # optional; use to reconstruct results from randomized runs
+    # randomize: false
+reference:
+    default:
+        <<: *default
+        log_level: warning
+        iterations: 1000
+        timeout: 1000 ms
+        wave: reference/reference_env_setup.tcl
+        error_tolerance: 0
+    tests:
+        data_set_1:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1
+        data_set_2:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_2
+        data_set_3:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_3
+        data_set_4:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_4
+        data_set_5:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_5
+        data_set_6:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_6
+        data_set_7:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_7
+        data_set_8:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_8
+        data_set_9:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
+        data_set_10:
+            data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10

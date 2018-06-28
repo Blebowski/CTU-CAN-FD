@@ -3836,7 +3836,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RST Writing logic 1 resets the core. It has the same effect as logic 0 on "res_n" input of the controller.
+RST Writing logic 1 resets the core. It has the same effect as logic 0 on "res_n" input of the controller. After writing logic 1,  logic 0 does not need to be written, this bit is automatically cleared.
 \end_layout
 \begin_layout Description
 LOM Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!\begin_inset Newline newline\end_inset
@@ -26959,7 +26959,7 @@ Address: 0x6C
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 does not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.
+Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 does not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.   If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied, only those which have effect in immediate state of the buffer are applied on a buffer.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -27448,13 +27448,13 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-TXCE Activates "set_empty" command. Transits frone TX Done, TX Error or TX Aborted to Done.
+TXCE Activates "set_empty" command. Transits frone TX Done, TX Error or TX Aborted to Done. Does not have any effect in other states.
 \end_layout
 \begin_layout Description
-TXCR Activates "set_ready" command. Transits frone TX Done, TX Error, TX Aborted or Empty to Ready.
+TXCR Activates "set_ready" command. Transits frone TX Done, TX Error, TX Aborted or Empty to Ready. Does not have any effect in other states.
 \end_layout
 \begin_layout Description
-TXCA Activates "set_abort" command. Transits from Ready to TX Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to TX Aborted if current transmission is not succesfull. If the transmission is sucesfull, it has no effect.
+TXCA Activates "set_abort" command. Transits from Ready to TX Aborted. If transmission is in progress (state TX in Progress) from the buffer, transits to TX Aborted if current transmission is not succesfull. If the transmission is sucesfull, it has no effect. Does not have any effect in other states.
 \end_layout
 \begin_layout Description
 TXI1 Command is applied on TXT Buffer 1.
@@ -27463,10 +27463,10 @@ TXI1 Command is applied on TXT Buffer 1.
 TXI2 Command is applied on TXT Buffer 2.
 \end_layout
 \begin_layout Description
-TXI3 
+TXI3 Command is applied on TXT Buffer 3.
 \end_layout
 \begin_layout Description
-TXI4 
+TXI4 Command is applied on TXT Buffer 4.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

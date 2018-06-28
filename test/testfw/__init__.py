@@ -24,7 +24,7 @@ def setup_logging() -> None:
 setup_logging()
 
 from . import vunit_ifc
-from . import test_unit, test_sanity, test_feature
+from . import test_unit, test_sanity, test_feature, test_reference
 from vunit.ui import VUnit
 from .test_common import add_common_sources, add_flags
 
@@ -108,6 +108,7 @@ def test(obj, config, vunit_args):
     run_unit = 'unit' in config
     run_feature = 'feature' in config
     run_sanity = 'sanity' in config
+    run_reference = 'reference' in config
 
     ui = create_vunit(obj, vunit_args, out_basename)
 
@@ -121,6 +122,9 @@ def test(obj, config, vunit_args):
         tests.append(test_sanity.SanityTests(ui, lib, config['sanity'], build, base))
     if run_feature:
         tests.append(test_feature.FeatureTests(ui, lib, config['feature'], build, base))
+    if run_reference:
+        tests.append(test_reference.ReferenceTests(ui, lib, config['reference'], build, base))
+
 
     for t in tests:
         t.add_sources()

@@ -3258,8 +3258,8 @@ reference "fig:TXT_Buffer"
 .
  The buffer is write-only and it can be accessed only when CAN Core is not
  transmitting from the buffer (in states: Empty, Done, Aborted, TX error).
- Once the user signals the buffer into Ready state, the CAN Core will lock
- the buffer as soon as the bus is free (transit to 
+ Once user sets the buffer to Ready state, the CAN Core will lock the buffer
+ as soon as the bus is free (transit to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -3267,9 +3267,9 @@ TX In Progress
 \begin_inset Quotes erd
 \end_inset
 
- state) and start transmitting the frame.
+ state) and start transmission from the buffer.
  If arbitration is lost, or error frame occurs, the CAN Core will unlock
- the buffer and attempt to retransmitt at the next Intermission field.
+ the buffer, and attempt to retransmitt at the next Intermission field.
  If the retransmitt limit is disabled, the CAN Core will attempt to retransmitt
  the buffer infinite amount of times.
  If the retransmitt limit is enabled and reached (either by loosing arbitration
@@ -3282,7 +3282,6 @@ TX Error
 \end_inset
 
  State.
- 
 \end_layout
 
 \begin_layout Standard
