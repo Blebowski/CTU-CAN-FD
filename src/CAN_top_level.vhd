@@ -620,6 +620,7 @@ begin
      txtb_changed           => txtb_changed,
      txt_hw_cmd_buf_index   => txt_hw_cmd_buf_index,
      txtb_core_pointer      => txtb_core_pointer,
+     bus_off_start          => bus_off_start,
      drv_bus                => drv_bus,
      txt_buf_prio           => txt_buf_prior,
      timestamp              => timestamp
