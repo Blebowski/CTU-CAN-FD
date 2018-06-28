@@ -125,6 +125,9 @@ entity core_top is
     
     --Pointer to TXT buffer memory
     signal txt_buf_ptr            :out  natural range 0 to 19;
+
+    -- Transition to bus off has occurred
+    signal bus_off_start          :out  std_logic;
     
     -----------------------------------------------
     --Recieve Buffer and Message Filter Interface--
@@ -382,10 +385,6 @@ entity core_top is
    signal tran_frame_type         :     std_logic;
    signal tran_brs                :     std_logic;
    
-   --signal tran_lock_i             :     std_logic;
-   --signal tran_unlock_i           :     std_logic;
-   --signal tran_drop_i             :     std_logic;
-   
    signal txt_hw_cmd_i            :  txt_hw_cmd_type;
    
    --Fault confinement signals
@@ -429,6 +428,8 @@ entity core_top is
     signal inc_one                :     std_logic;
     signal inc_eight              :     std_logic;
     signal dec_one                :     std_logic;
+
+   signal bus_off_start_int       :     std_logic;
     
    --Protocol control signals
    signal rec_ident               :     std_logic_vector(28 downto 0);
@@ -518,9 +519,6 @@ begin
   data_tx               <=  data_tx_int;
   sp_control            <=  sp_control_int;
   sync_control          <=  sync_control_int;
-  --tran_lock             <=  tran_lock_i;            
-  --tran_unlock           <=  tran_unlock_i;          
-  --tran_drop             <=  tran_drop_i;    
   txt_hw_cmd            <= txt_hw_cmd_i;
   
   rec_ident_out         <=  rec_ident;
@@ -582,10 +580,6 @@ begin
      hard_sync_edge     =>  hard_sync_edge,
      
      tran_frame_valid_in=>  tran_frame_valid_in,
-     
-     --tran_lock          =>  tran_lock_i,
-     --tran_unlock        =>  tran_unlock_i,
-     --tran_drop          =>  tran_drop_i,
      
      txt_hw_cmd         =>  txt_hw_cmd_i,
      txtb_changed       =>  txtb_changed,
@@ -693,6 +687,7 @@ begin
      stuff_Error_valid      => stuff_Error_valid,
         
      err_capt               => err_capt,
+     bus_off_start          => bus_off_start_int,
      
      enable                 =>  '1',
      bit_Error_sec_sam      =>  bit_Error_sec_sam,
@@ -834,6 +829,8 @@ begin
  tx_finished            <=  tran_valid;
  
  sof_pulse              <=  sof_pulse_r;
+
+ bus_off_start          <=  bus_off_start_int;
  
  --Note TODO: signal for signalling the shifted bit Rate for interrupt
  br_shifted             <=  br_shifted_int;

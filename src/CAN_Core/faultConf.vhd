@@ -147,6 +147,9 @@ entity faultConf is
         signal bit_Error_sec_sam      :in   std_logic; 
         signal err_capt               :out  std_logic_vector(7 downto 0);
 
+        -- Signals transition from any Fault confinement state to Bus-off
+        signal bus_off_start          :out  std_logic;
+
         -------------------
         -- Status outputs
         -------------------
@@ -465,6 +468,26 @@ begin
             end if;           
         end if;
     end process;
+
+
+    ----------------------------------------------------------------------------
+    -- Detection of Transition to Bus-off to put TXT Buffers to "failed"
+    ----------------------------------------------------------------------------
+    bus_off_transition_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = ACT_RESET) then
+            bus_off_start   <= '0';
+
+        elsif rising_edge(clk_sys) then
+            if (error_state = bus_off and erp_prev_state /= bus_off) then
+                bus_off_start <= '1';
+            else
+                bus_off_start <= '0';
+            end if;
+
+        end if;
+    end process;
+
   
     -------------------------------------------------------------------
     -- Interrupt Signalling for Error warning limit and State changed 

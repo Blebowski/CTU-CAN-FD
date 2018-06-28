@@ -102,6 +102,8 @@ architecture tx_buf_unit_test of CAN_test is
     -- (used as input to priority decoder)
     signal txt_buf_ready          :     std_logic;
 
+    -- Signals that immediate transition to Bus-off state occurred!
+    signal bus_off_start          :     std_logic := '0';
 
     ------------------------------------
     -- Internal testbench signals
@@ -224,6 +226,7 @@ begin
         txtb_state              => txtb_state,
         txt_hw_cmd              => txt_hw_cmd,
         txt_hw_cmd_buf_index    => txt_hw_cmd_buf_index,
+        bus_off_start           => bus_off_start,
         txt_word                => txt_word,
         txt_addr                => txt_addr,
         txt_buf_ready           => txt_buf_ready
