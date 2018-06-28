@@ -408,7 +408,7 @@ package CANcomponents is
       signal trv_delay_calib       : out std_logic;
       signal bit_Error_sec_sam     : in  std_logic;
       signal hard_sync_edge        : in  std_logic;
-	  signal bus_off_start         : out std_logic;
+      signal bus_off_start         : out std_logic;
       signal sof_pulse             : out std_logic
       );
   end component;

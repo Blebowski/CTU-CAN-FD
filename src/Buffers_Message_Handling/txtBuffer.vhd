@@ -357,13 +357,13 @@ begin
           
         end case;
 
-		------------------------------------------------------------------------
-		-- If Core goes to bus-off, TXT Buffer goes to failed, regardless of
-		-- any other SW or HW commands
-		------------------------------------------------------------------------
-		if (bus_off_start = '1') then
-			buf_fsm       <= txt_error;
-		end if;
+        ------------------------------------------------------------------------
+        -- If Core goes to bus-off, TXT Buffer goes to failed, regardless of
+        -- any other SW or HW commands
+        ------------------------------------------------------------------------
+        if (bus_off_start = '1') then
+	        buf_fsm       <= txt_error;
+        end if;
 
       end if;
     end process;
