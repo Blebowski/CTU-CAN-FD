@@ -134,7 +134,7 @@ def test(obj, config, vunit_args):
 
     # check for unknown tests
     all_benches = lib.get_test_benches('*')
-    unknown_tests = [tb for tb in all_benches if not re.match('tb_.*?_unit_test|tb_sanity|tb_feature', tb.name)]
+    unknown_tests = [tb for tb in all_benches if not re.match('tb_.*?_unit_test|tb_sanity|tb_feature|tb_reference_wrapper', tb.name)]
     if len(unknown_tests):
         log.warn('Unknown tests (defaults will be used): {}'.format(', '.join(tb.name for tb in unknown_tests)))
 
