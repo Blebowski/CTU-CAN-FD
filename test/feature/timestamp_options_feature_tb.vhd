@@ -84,6 +84,8 @@ package body timestamp_options_feature is
         variable options            :        SW_RX_Buffer_options;
         variable ts_beg             :        std_logic_vector(31 downto 0);
         variable ts_end             :        std_logic_vector(31 downto 0);
+        variable ID_1               :        natural := 1;
+        variable ID_2               :        natural := 2;
         variable diff               :        integer;
     begin
         o.outcome := true;
@@ -111,7 +113,7 @@ package body timestamp_options_feature is
                 to_integer(unsigned(ts_beg));
         if (diff > 100) then
             report "Timestamp difference is too big from SOF!" severity error;
-            outcome := false;
+            o.outcome := false;
         end if;
 
         ------------------------------------------------------------------------
@@ -137,7 +139,7 @@ package body timestamp_options_feature is
                 to_integer(unsigned(CAN_frame.timestamp));
         if (diff > 100) then
             report "Timestamp difference is too big from EOF!" severity error;
-            outcome := false;
+            o.outcome := false;
         end if;
 
     end procedure;
