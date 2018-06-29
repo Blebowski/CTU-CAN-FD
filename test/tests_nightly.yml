@@ -87,7 +87,7 @@ feature:
         traf_meas:
         tran_delay:
         tx_arb_time_tran:
-
+        timestamp_options:
 sanity:
     default:
         <<: *default
