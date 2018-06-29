@@ -90,9 +90,13 @@ package body timestamp_options_feature is
     begin
         o.outcome := true;
 
+        ------------------------------------------------------------------------
         -- If this is the only test, wait until controller will come out
         -- of integration phase!
-        wait for 1500 ns;
+        ------------------------------------------------------------------------
+        for i in 0 to 1700 loop
+            wait until rising_edge(mem_bus(1).clk_sys);
+        end loop;
 
         ------------------------------------------------------------------------
         -- Configure timestamp options to the begining of CAN Frame.
@@ -115,6 +119,10 @@ package body timestamp_options_feature is
         CAN_read_frame(CAN_frame, ID_2, mem_bus(2));
         diff := to_integer(unsigned(CAN_frame.timestamp(31 downto 0))) -
                 to_integer(unsigned(ts_beg));
+
+        ------------------------------------------------------------------------
+        -- Bit time in default config is 160 clock cycles. Give some reserve.
+        ------------------------------------------------------------------------  
         if (diff > 200) then
             report "Timestamp difference is too big from SOF! " & 
                     integer'image(diff);
@@ -147,9 +155,11 @@ package body timestamp_options_feature is
         diff := to_integer(unsigned(ts_end)) -
                 to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
 
+        ------------------------------------------------------------------------
         -- Timestamp is taken in EOF. CAN_wait_frame_sent is exited after
         -- intermission, when controller is in idle! Thus there are 3
         -- extra bits of difference in timestamp!
+        ------------------------------------------------------------------------
         if (diff > 600) then
             report "Timestamp difference is too big from EOF!" &
                     integer'image(diff);
