@@ -109,10 +109,11 @@ package body timestamp_options_feature is
         ------------------------------------------------------------------------      
         CAN_wait_frame_sent(ID_1, mem_bus(1));
         CAN_read_frame(CAN_frame, ID_2, mem_bus(2));
-        diff := to_integer(unsigned(CAN_frame.timestamp)) -
+        diff := to_integer(unsigned(CAN_frame.timestamp(31 downto 0))) -
                 to_integer(unsigned(ts_beg));
         if (diff > 100) then
-            report "Timestamp difference is too big from SOF!" severity error;
+            report "Timestamp difference is too big from SOF! " & 
+                    integer'image(diff) severity error;
             o.outcome := false;
         end if;
 
@@ -136,9 +137,10 @@ package body timestamp_options_feature is
         ts_end := iout(2).stat_bus(STAT_TS_LOW + 31 downto STAT_TS_LOW);
         CAN_read_frame(CAN_frame, ID_2, mem_bus(2));
         diff := to_integer(unsigned(ts_end)) -
-                to_integer(unsigned(CAN_frame.timestamp));
+                to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
         if (diff > 100) then
-            report "Timestamp difference is too big from EOF!" severity error;
+            report "Timestamp difference is too big from EOF!" &
+                    integer'image(diff) severity error;
             o.outcome := false;
         end if;
 
