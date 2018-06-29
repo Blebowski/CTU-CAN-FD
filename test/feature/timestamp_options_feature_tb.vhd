@@ -113,7 +113,7 @@ package body timestamp_options_feature is
                 to_integer(unsigned(ts_beg));
         if (diff > 100) then
             report "Timestamp difference is too big from SOF! " & 
-                    integer'image(diff) severity error;
+                    integer'image(diff);
             o.outcome := false;
         end if;
 
@@ -140,7 +140,7 @@ package body timestamp_options_feature is
                 to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
         if (diff > 100) then
             report "Timestamp difference is too big from EOF!" &
-                    integer'image(diff) severity error;
+                    integer'image(diff);
             o.outcome := false;
         end if;
 
