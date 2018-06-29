@@ -1234,6 +1234,21 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Set options of RX Buffer. 
+    --
+    -- Arguments:
+    --  options         Options to be applied on RX Buffer.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure set_rx_buf_options(
+        constant options        : in    SW_RX_Buffer_options;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Read version register and return the actual version of the core like so:
     --  MAJOR_VERSION * 10 + MINOR_VERSION.
     --
@@ -3055,6 +3070,24 @@ package body CANtestLib is
 
         retVal.rx_frame_count   := to_integer(unsigned(
                                     data(RX_FRC_H downto RX_FRC_L)));
+    end procedure;
+
+
+    procedure set_rx_buf_options(
+        constant options        : in    SW_RX_Buffer_options;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0)
+                                            := (OTHERS => '0');
+    begin
+        if (options.rx_time_stamp_options) then
+            data(RTSOP_IND) := RTS_BEG;
+        else
+            data(RTSOP_IND) := RTS_END;
+        end if;
+
+        CAN_write(data, RX_SETTINGS_ADR, ID, mem_bus, BIT_8);
     end procedure;
 
 
