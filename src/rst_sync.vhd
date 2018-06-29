@@ -48,24 +48,24 @@ Library ieee;
 use ieee.std_logic_1164.all;
 
 entity rst_sync is
-  port (
-      signal clk    : in  std_logic;
-      signal arst_n : in  std_logic;
-      signal rst_n  : out std_logic
-  );
+    port (
+        signal clk      : in    std_logic;
+        signal arst_n   : in    std_logic;
+        signal rst_n    : out   std_logic
+    );
 end rst_sync;
 
 architecture rtl of rst_sync is
-  signal rff : std_logic; 	
+    signal rff          :       std_logic; 	
 begin
- process (clk, arst_n)
- begin
-  if (arst_n = '0') then
-    rff <= '0';
-    rst_n <= '0';
-  elsif (rising_edge(clk)) then
-    rff <= '1';
-    rst_n <= rff;
-  end if;
- end process;
+    process (clk, arst_n)
+    begin
+        if (arst_n = '0') then
+            rff     <= '0';
+            rst_n   <= '0';
+        elsif (rising_edge(clk)) then
+            rff     <= '1';
+            rst_n   <= rff;
+        end if;
+    end process;
 end rtl;
