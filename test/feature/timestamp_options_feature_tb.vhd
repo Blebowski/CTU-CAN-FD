@@ -111,7 +111,7 @@ package body timestamp_options_feature is
         -- Wait until frame was send, read by node 2 and check that timestamp
         -- is very close to captured one from beginning...
         ------------------------------------------------------------------------      
-        CAN_wait_frame_sent(ID_1, mem_bus(2));
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
         CAN_read_frame(CAN_frame, ID_2, mem_bus(2));
         diff := to_integer(unsigned(CAN_frame.timestamp(31 downto 0))) -
                 to_integer(unsigned(ts_beg));
@@ -137,7 +137,7 @@ package body timestamp_options_feature is
         -- Wait until frame was send, read by node 2 and check that timestamp
         -- is very close to captured one from beginning...
         ------------------------------------------------------------------------      
-        CAN_wait_frame_sent(ID_1, mem_bus(2));
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
         ts_end := iout(2).stat_bus(STAT_TS_LOW + 31 downto STAT_TS_LOW);
         wait until rising_edge(mem_bus(2).clk_sys);
         wait until rising_edge(mem_bus(2).clk_sys);
