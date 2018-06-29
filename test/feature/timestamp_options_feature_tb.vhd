@@ -115,7 +115,7 @@ package body timestamp_options_feature is
         CAN_read_frame(CAN_frame, ID_2, mem_bus(2));
         diff := to_integer(unsigned(CAN_frame.timestamp(31 downto 0))) -
                 to_integer(unsigned(ts_beg));
-        if (diff > 100) then
+        if (diff > 200) then
             report "Timestamp difference is too big from SOF! " & 
                     integer'image(diff);
             o.outcome := false;
@@ -146,7 +146,11 @@ package body timestamp_options_feature is
         CAN_read_frame(CAN_frame, ID_2, mem_bus(2));
         diff := to_integer(unsigned(ts_end)) -
                 to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
-        if (diff > 100) then
+
+        -- Timestamp is taken in EOF. CAN_wait_frame_sent is exited after
+        -- intermission, when controller is in idle! Thus there are 3
+        -- extra bits of difference in timestamp!
+        if (diff > 600) then
             report "Timestamp difference is too big from EOF!" &
                     integer'image(diff);
             o.outcome := false;
