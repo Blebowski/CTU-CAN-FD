@@ -76,8 +76,11 @@ architecture tb of tb_reference_wrapper is
     signal t_errors   : natural := 0;
     signal t_status   : test_status_type;
     signal t_run      : boolean;
+
+    for i_test        : CAN_test use entity work.CAN_test(CAN_reference_test); 
+
 begin
-    i_test: CAN_test
+    i_test : CAN_test
         generic map (
             seed => seed,
 	    data_path => data_path
