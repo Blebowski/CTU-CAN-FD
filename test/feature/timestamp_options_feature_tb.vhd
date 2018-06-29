@@ -94,7 +94,7 @@ package body timestamp_options_feature is
         -- Configure timestamp options to the begining of CAN Frame.
         ------------------------------------------------------------------------
         options.rx_time_stamp_options := true;
-        set_rx_buf_options(options, ID_1, mem_bus(1));
+        set_rx_buf_options(options, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Generate CAN Frame and start transmission, capture actual timestamp
@@ -121,7 +121,7 @@ package body timestamp_options_feature is
         -- Configure timestamp options to the end of CAN Frame.
         ------------------------------------------------------------------------
         options.rx_time_stamp_options := false;
-        set_rx_buf_options(options, ID_1, mem_bus(1));
+        set_rx_buf_options(options, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Generate CAN Frame and start transmission
