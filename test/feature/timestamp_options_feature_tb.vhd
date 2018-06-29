@@ -90,6 +90,10 @@ package body timestamp_options_feature is
     begin
         o.outcome := true;
 
+        -- If this is the only test, wait until controller will come out
+        -- of integration phase!
+        wait for 1500 ns;
+
         ------------------------------------------------------------------------
         -- Configure timestamp options to the begining of CAN Frame.
         ------------------------------------------------------------------------
