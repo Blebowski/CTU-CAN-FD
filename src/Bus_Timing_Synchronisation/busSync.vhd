@@ -394,7 +394,7 @@ begin
                 ----------------------------------------------------------------
                 if (edge_tx_valid = '1') then
                     trv_delay       <= (OTHERS => '0');
-                elsif(trv_running='1')then
+                elsif (trv_running = '1') then
                     trv_delay       <= std_logic_vector(unsigned(trv_delay) + 1);
                 else 
                     trv_delay       <= trv_delay;
@@ -467,7 +467,7 @@ begin
         if (res_n = ACT_RESET) then
             trs_reg             <= (OTHERS => RECESSIVE); 
 
-        elsif (rising_edge(clk_sys))then
+        elsif (rising_edge(clk_sys)) then
             -- Shift register realisation
             trs_reg(0)          <= sync_Data;
             trs_reg(2 downto 1) <= trs_reg(1 downto 0);
@@ -480,10 +480,10 @@ begin
     ----------------------------------------------------------------------------
     sample_proc : process(res_n, clk_sys)
     begin
-        if (res_n ='0') then
+        if (res_n = '0') then
             prev_Sample           <=  RECESSIVE;
             bit_Error_reg         <=  '0';
-        elsif rising_edge(clk_sys)then
+        elsif rising_edge(clk_sys) then
             if (drv_ena = ENABLED) then
                 case sp_control is
 
@@ -492,7 +492,7 @@ begin
                 -- (normal CAN, transciever, reciever)
                 ----------------------------------------------------------------                
                 when NOMINAL_SAMPLE =>
-                    if (sample_nbt = 1') then
+                    if (sample_nbt = '1') then
 
                         -- Tripple sampling option selects the majority from last 
                         -- three sampled values
