@@ -130,9 +130,11 @@ begin
     -- that input values are properly defined
     l0_val_proc:process(prio_valid)
     begin
+      -- pragma translate_off
       if (prio_valid(i) /= '0' and prio_valid(i) /= '1' and now /= 0 fs) then
         report "Input values not exactly defined" severity error;
       end if;
+      -- pragma translate_on
     end process;
   
     l0_prio(i)  <= prio(i);
