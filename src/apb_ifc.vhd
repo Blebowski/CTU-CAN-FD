@@ -82,18 +82,31 @@ begin
     reg_data_in_o <= s_apb_pwdata;
     s_apb_prdata  <= reg_data_out_i;
 
-    reg_addr_o(COMP_TYPE_ADRESS_HIGHER downto COMP_TYPE_ADRESS_LOWER) <= CAN_COMPONENT_TYPE;
-    reg_addr_o(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) <= std_logic_vector(to_unsigned(ID,4));
-    -- forward only aligned addresses (the bridge/CPU will then pick the bytes itself)
-    reg_addr_o(ID_ADRESS_LOWER-1 downto 2) <= s_apb_paddr(ID_ADRESS_LOWER-1 downto 2);
+    reg_addr_o(COMP_TYPE_ADRESS_HIGHER downto COMP_TYPE_ADRESS_LOWER) <=
+        CAN_COMPONENT_TYPE;
+
+    reg_addr_o(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) <=
+        std_logic_vector(to_unsigned(ID, 4));
+
+    -- forward only aligned addresses 
+    -- (the bridge/CPU will then pick the bytes itself)
+    reg_addr_o(ID_ADRESS_LOWER - 1 downto 2) <=
+        s_apb_paddr(ID_ADRESS_LOWER - 1 downto 2);
+    
     reg_addr_o(1 downto 0) <= (others => '0');
 
-    reg_be_o   <= s_apb_pstrb when s_apb_pwrite = '1' else (others => '1'); -- path can be shortened by registering
-    reg_rden_o <= s_apb_psel and not s_apb_pwrite;
-    reg_wren_o <= s_apb_psel and s_apb_pwrite and s_apb_penable; -- path can be shortened by registering it
-    -- ignore s_apb_pprot
+    -- path can be shortened by registering
+    reg_be_o   <= s_apb_pstrb when s_apb_pwrite = '1' 
+                              else
+                  (others => '1');
 
-    p_rready:process(arstn, aclk)
+    reg_rden_o <= s_apb_psel and not s_apb_pwrite;
+
+    -- path can be shortened by registering it
+    -- ignore s_apb_pprot
+    reg_wren_o <= s_apb_psel and s_apb_pwrite and s_apb_penable; 
+
+    p_rready : process(arstn, aclk)
     begin
         if arstn = '0' then
             rst_countdown_reg <= 3;

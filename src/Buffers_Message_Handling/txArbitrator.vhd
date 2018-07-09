@@ -409,129 +409,133 @@ begin
         
     elsif rising_edge(clk_sys) then
       
-      -- Keeping signals values to avoid latch inference
-      int_txtb_index            <= int_txtb_index;
-      tx_arb_fsm                <= tx_arb_fsm;
-      ts_low_internal           <= ts_low_internal;
-      last_txtb_index           <= last_txtb_index;
-      
-      tran_dlc_com              <= tran_dlc_com;
-      tran_is_rtr_com           <= tran_is_rtr_com;
-      tran_ident_type_com       <= tran_ident_type_com;
-      tran_frame_type_com       <= tran_frame_type_com;
-      tran_brs_com              <= tran_brs_com;
-      tran_frame_valid_com      <= tran_frame_valid_com;
-      
-      select_buf_index_reg      <= select_buf_index;
-      select_buf_avail_reg      <= select_buf_avail;
+        -- Keeping signals values to avoid latch inference
+        int_txtb_index            <= int_txtb_index;
+        tx_arb_fsm                <= tx_arb_fsm;
+        ts_low_internal           <= ts_low_internal;
+        last_txtb_index           <= last_txtb_index;
 
-      txtb_pointer_meta         <= txtb_pointer_meta;
-      fsm_wait_state            <= fsm_wait_state;
+        tran_dlc_com              <= tran_dlc_com;
+        tran_is_rtr_com           <= tran_is_rtr_com;
+        tran_ident_type_com       <= tran_ident_type_com;
+        tran_frame_type_com       <= tran_frame_type_com;
+        tran_brs_com              <= tran_brs_com;
+        tran_frame_valid_com      <= tran_frame_valid_com;
 
-      --------------------------------------------------------------
-      -- Finishing the transmission = unlocking the buffer
-      --------------------------------------------------------------                
-      if (tx_arb_fsm = arb_locked) then
-          if (txt_hw_cmd.unlock = '1') then
-            tx_arb_fsm            <= arb_sel_low_ts;
-            txtb_pointer_meta     <= to_integer(unsigned(
-                                     TIMESTAMP_L_W_ADR(11 downto 2)));
-            fsm_wait_state        <= true;
-          end if;
-      
-      --------------------------------------------------------------
-      -- Locking the buffer
-      --------------------------------------------------------------
-      elsif (txt_hw_cmd.lock     = '1') then
-        tx_arb_fsm              <= arb_locked;
-        last_txtb_index         <= int_txtb_index;
-    
-      -- Keep the arbitrator in selection of the lowest word as
-      -- long as there is no buffer with valid frame.
-      -- If Selected buffer changes, restart the selection.
-      elsif ((select_buf_avail = false)) then
-        tx_arb_fsm              <= arb_sel_low_ts;
-        fsm_wait_state          <= true;
-        txtb_pointer_meta       <= to_integer(unsigned(
-                                     TIMESTAMP_L_W_ADR(11 downto 2)));
-        tran_frame_valid_com    <= '0';
-      
-      -- Selected buffer index on the output of priority decoder has changed
-      -- during selection. Restart the selection!
-      elsif (select_buf_index_reg /= select_buf_index) then
-        tx_arb_fsm              <= arb_sel_low_ts;
-        fsm_wait_state          <= true;
-        txtb_pointer_meta       <= to_integer(unsigned(
-                                      TIMESTAMP_L_W_ADR(11 downto 2)));
-      else
-      
-        case tx_arb_fsm is   
-        
-        --------------------------------------------------------------
-        -- Polling on Low timestamp of the highest prority TXT buffer
-        --------------------------------------------------------------
-        when arb_sel_low_ts =>
-            if (fsm_wait_state) then
-                fsm_wait_state     <= false;
-            else
-                tx_arb_fsm         <= arb_sel_upp_ts;
-                ts_low_internal    <= txtb_selected_input;
-                fsm_wait_state     <= true;
-                txtb_pointer_meta  <= to_integer(unsigned(
-                                        TIMESTAMP_U_W_ADR(11 downto 2)));
-            end if;        
+        select_buf_index_reg      <= select_buf_index;
+        select_buf_avail_reg      <= select_buf_avail;
 
-        --------------------------------------------------------------
-        -- Compare the timestamps,
-        -- now output of TXT Buffers give the upper timestamp
-        -- Lower timestamp is stored from previous state.
-        --------------------------------------------------------------        
-        when arb_sel_upp_ts =>
-            if (fsm_wait_state) then
-                fsm_wait_state          <= false;
-            else
-                if (timestamp_valid) then
-                    tx_arb_fsm         <= arb_sel_ffw;
+        txtb_pointer_meta         <= txtb_pointer_meta;
+        fsm_wait_state            <= fsm_wait_state;
+
+        ------------------------------------------------------------------------
+        -- Finishing the transmission = unlocking the buffer
+        ------------------------------------------------------------------------      
+        if (tx_arb_fsm = arb_locked) then
+            if (txt_hw_cmd.unlock = '1') then
+                tx_arb_fsm            <= arb_sel_low_ts;
+                txtb_pointer_meta     <= to_integer(unsigned(
+                                         TIMESTAMP_L_W_ADR(11 downto 2)));
+                fsm_wait_state        <= true;
+            end if;
+
+        ------------------------------------------------------------------------
+        -- Locking the buffer
+        ------------------------------------------------------------------------
+        elsif (txt_hw_cmd.lock     = '1') then
+            tx_arb_fsm              <= arb_locked;
+            last_txtb_index         <= int_txtb_index;
+
+        ------------------------------------------------------------------------
+        -- Keep the arbitrator in selection of the lowest word as
+        -- long as there is no buffer with valid frame.
+        -- If Selected buffer changes, restart the selection.
+        ------------------------------------------------------------------------
+        elsif ((select_buf_avail = false)) then
+            tx_arb_fsm              <= arb_sel_low_ts;
+            fsm_wait_state          <= true;
+            txtb_pointer_meta       <= to_integer(unsigned(
+                                         TIMESTAMP_L_W_ADR(11 downto 2)));
+            tran_frame_valid_com    <= '0';
+
+        ------------------------------------------------------------------------
+        -- Selected buffer index on the output of priority decoder has changed
+        -- during selection. Restart the selection!
+        ------------------------------------------------------------------------
+        elsif (select_buf_index_reg /= select_buf_index) then
+            tx_arb_fsm              <= arb_sel_low_ts;
+            fsm_wait_state          <= true;
+            txtb_pointer_meta       <= to_integer(unsigned(
+                                          TIMESTAMP_L_W_ADR(11 downto 2)));
+        else
+      
+            case tx_arb_fsm is   
+
+            --------------------------------------------------------------------
+            -- Polling on Low timestamp of the highest prority TXT buffer
+            --------------------------------------------------------------------
+            when arb_sel_low_ts =>
+                if (fsm_wait_state) then
+                    fsm_wait_state     <= false;
+                else
+                    tx_arb_fsm         <= arb_sel_upp_ts;
+                    ts_low_internal    <= txtb_selected_input;
                     fsm_wait_state     <= true;
                     txtb_pointer_meta  <= to_integer(unsigned(
-                                            FRAME_FORM_W_ADR(11 downto 2)));
+                                            TIMESTAMP_U_W_ADR(11 downto 2)));
+                end if;        
+
+            --------------------------------------------------------------------
+            -- Compare the timestamps,
+            -- now output of TXT Buffers give the upper timestamp
+            -- Lower timestamp is stored from previous state.
+            --------------------------------------------------------------------  
+            when arb_sel_upp_ts =>
+                if (fsm_wait_state) then
+                    fsm_wait_state          <= false;
+                else
+                    if (timestamp_valid) then
+                        tx_arb_fsm         <= arb_sel_ffw;
+                        fsm_wait_state     <= true;
+                        txtb_pointer_meta  <= to_integer(unsigned(
+                                                FRAME_FORM_W_ADR(11 downto 2)));
+                    end if;
                 end if;
-            end if;
 
-        --------------------------------------------------------------
-        -- Store the Frame format info to the output. We can do this
-        -- directly, since it is all done in one clock cycle!
-        -- Buffer input did not change during the whole selection, we 
-        -- can store its index to the output and us it for access from 
-        -- CAN Core.
-        --------------------------------------------------------------        
-        when arb_sel_ffw =>
-            if (fsm_wait_state) then
-                fsm_wait_state           <= false;
-            else
-                tran_frame_type_com      <= txtb_selected_input(FR_TYPE_IND);
-                tran_ident_type_com      <= txtb_selected_input(ID_TYPE_IND);
-                tran_dlc_com             <= txtb_selected_input(DLC_H downto 
-                                                                DLC_L);
-                tran_is_rtr_com          <= txtb_selected_input(RTR_IND);
-                tran_brs_com             <= txtb_selected_input(BRS_IND);
+            --------------------------------------------------------------------
+            -- Store the Frame format info to the output. We can do this
+            -- directly, since it is all done in one clock cycle!
+            -- Buffer input did not change during the whole selection, we 
+            -- can store its index to the output and us it for access from 
+            -- CAN Core.
+            --------------------------------------------------------------------  
+            when arb_sel_ffw =>
+                if (fsm_wait_state) then
+                    fsm_wait_state           <= false;
+                else
+                    tran_frame_type_com      <= txtb_selected_input(FR_TYPE_IND);
+                    tran_ident_type_com      <= txtb_selected_input(ID_TYPE_IND);
+                    tran_dlc_com             <= txtb_selected_input(DLC_H downto 
+                                                                    DLC_L);
+                    tran_is_rtr_com          <= txtb_selected_input(RTR_IND);
+                    tran_brs_com             <= txtb_selected_input(BRS_IND);
 
-                tran_frame_valid_com     <= '1';
-                int_txtb_index           <= select_buf_index;
-                tx_arb_fsm               <= arb_sel_low_ts;
-                fsm_wait_state           <= true;
-                
-                txtb_pointer_meta        <= to_integer(unsigned(
-                                               TIMESTAMP_L_W_ADR(11 downto 2)));
-            end if;
-                                  
-        when others =>
-          report "Error - Unknow TX Arbitrator state" severity error;
-        end case;
+                    tran_frame_valid_com     <= '1';
+                    int_txtb_index           <= select_buf_index;
+                    tx_arb_fsm               <= arb_sel_low_ts;
+                    fsm_wait_state           <= true;
+                    
+                    txtb_pointer_meta        <= to_integer(unsigned(
+                                                   TIMESTAMP_L_W_ADR(11 downto 2)));
+                end if;
+                                      
+            when others =>
+                report "Error - Unknow TX Arbitrator state" severity error;
+            end case;
         
       end if;
       
     end if;
   end process;
-        
+
 end architecture;

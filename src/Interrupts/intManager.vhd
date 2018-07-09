@@ -68,171 +68,193 @@ USE WORK.CANconstants.ALL;
 use work.CAN_FD_register_map.all;
 
 entity intManager is
-  GENERIC(
-		--Length in clock cycles how long will interrupt stay active
-    constant int_count            :natural range 0 to 32 := 11
+    generic(
+        --Length in clock cycles how long will interrupt stay active
+        constant int_count            :natural range 0 to 32 := 11
     );
-  PORT(
-    --------------------------
-    --System Clock and reset--
-    --------------------------
-    signal clk_sys                :in   std_logic; --System Clock
-    signal res_n                  :in   std_logic; --Async Reset
-    
-    ---------------------
-    --Interrupt sources -
-    ---------------------
-    --Valid Error appeared for interrupt
-    signal error_valid            :in   std_logic;
-    
-    --Error pasive /Error acitve functionality changed
-    signal error_passive_changed  :in   std_logic;
-    
-    --Error warning limit reached
-    signal error_warning_limit    :in   std_logic;
-    
-    --Arbitration was lost input
-    signal arbitration_lost       :in   std_logic;
-    
-    --Message stored in CAN Core was sucessfully transmitted
-    signal tx_finished            :in   std_logic;
-    
-    --Bit Rate Was Shifted
-    signal br_shifted             :in   std_logic;
-    
-    --Rx Buffer
-    signal rx_message_disc        :in   std_logic; --Income frame was discarded
-    signal rec_message_valid      :in   std_logic; --Message recieved!
-    --Note : use the "out_ident_valid" signal of messageFilters. Therefore only
-    --interrupt is started for signals which pass income filters
-    
-    signal rx_full                :in   std_logic;
-    --RX Buffer is full (the last income message filled the remaining space)
-    --NOTE! rec_message_valid will be in logic one for two clock cycles
-    
-    --Recieve buffer is empty
-    signal rx_empty               :in   std_logic;
-    
-    --HW commands on TXT Buffer
-    signal txt_hw_cmd             :in   txt_hw_cmd_type;
-    
-    --Event logger
-    signal loger_finished         :in   std_logic;  --Event logging finsihed
-    
-    -------------------------------
-    --Driving registers Interface--
-    -------------------------------
-    signal drv_bus                :in   std_logic_vector(1023 downto 0);
-    signal int_out                :out  std_logic; --Interrupt output
-    
-    --Interrupt vector (Interrupt register of SJA1000)
-    signal int_vector             :out  std_logic_vector(int_count - 1 downto 0);
-    signal int_mask               :out  std_logic_vector(int_count - 1 downto 0);
-    signal int_ena                :out  std_logic_vector(int_count - 1 downto 0)
-  );
+    port(
+        ------------------------------------------------------------------------
+        -- System Clock and reset
+        ------------------------------------------------------------------------
+        signal clk_sys                :in   std_logic; --System Clock
+        signal res_n                  :in   std_logic; --Async Reset
+
+        ------------------------------------------------------------------------
+        -- Interrupt sources
+        ------------------------------------------------------------------------
+        -- Valid Error appeared for interrupt
+        signal error_valid            :in   std_logic;
+
+        -- Error pasive /Error acitve functionality changed
+        signal error_passive_changed  :in   std_logic;
+
+        -- Error warning limit reached
+        signal error_warning_limit    :in   std_logic;
+
+        -- Arbitration was lost input
+        signal arbitration_lost       :in   std_logic;
+
+        -- Message stored in CAN Core was sucessfully transmitted
+        signal tx_finished            :in   std_logic;
+
+        -- Bit Rate Was Shifted
+        signal br_shifted             :in   std_logic;
+
+        -- Rx Buffer
+        signal rx_message_disc        :in   std_logic; --Income frame was discarded
+        signal rec_message_valid      :in   std_logic; --Message recieved!
+        -- Note : use the "out_ident_valid" signal of messageFilters. 
+        -- Therefore only interrupt is started for signals which pass income 
+        -- filters
+
+        signal rx_full                :in   std_logic;
+        -- RX Buffer is full (the last income message filled the remaining space)
+        -- NOTE! rec_message_valid will be in logic one for two clock cycles
+
+        -- Recieve buffer is empty
+        signal rx_empty               :in   std_logic;
+
+        -- HW commands on TXT Buffer
+        signal txt_hw_cmd             :in   txt_hw_cmd_type;
+
+        -- Event logger
+        signal loger_finished         :in   std_logic;  --Event logging finsihed
+
+        ------------------------------------------------------------------------
+        -- Driving registers Interface
+        ------------------------------------------------------------------------
+        signal drv_bus                :in   std_logic_vector(1023 downto 0);
+
+        -- Interrupt output
+        signal int_out                :out  std_logic; 
+
+        -- Interrupt vector (Interrupt register of SJA1000)
+        signal int_vector             :out  std_logic_vector(
+                                                int_count - 1 downto 0);
+
+        signal int_mask               :out  std_logic_vector(
+                                                int_count - 1 downto 0);
+
+        signal int_ena                :out  std_logic_vector(
+                                                int_count - 1 downto 0)
+    );
   
-  -----------------------
-  --Driving bus aliases--
-  -----------------------
-  
-  signal drv_int_vect_clr         :     std_logic_vector(int_count - 1 downto 0);
-  signal drv_int_ena_set          :     std_logic_vector(int_count - 1 downto 0);
-  signal drv_int_ena_clr          :     std_logic_vector(int_count - 1 downto 0);
-  signal drv_int_mask_set         :     std_logic_vector(int_count - 1 downto 0);
-  signal drv_int_mask_clr         :     std_logic_vector(int_count - 1 downto 0);
-  
-  ----------------------------------
-  --Internal registers and signals--
-  ----------------------------------
-  
-  signal int_ena_reg              :     std_logic_vector(int_count - 1 downto 0);
-  signal int_mask_reg             :     std_logic_vector(int_count - 1 downto 0);
-  signal int_vect_reg             :     std_logic_vector(int_count - 1 downto 0);
-  
-  signal int_input_active         :     std_logic_vector(int_count - 1 downto 0);
-  
-  --Registered value of interrupt
-  constant zero_mask              :     std_logic_vector(int_count - 1 downto 0)
-                                              := (OTHERS => '0');
+    ----------------------------------------------------------------------------
+    -- Driving bus aliases 
+    ----------------------------------------------------------------------------
+    signal drv_int_vect_clr         :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    signal drv_int_ena_set          :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    signal drv_int_ena_clr          :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    signal drv_int_mask_set         :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    signal drv_int_mask_clr         :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    ----------------------------------------------------------------------------
+    -- Internal registers and signals
+    ----------------------------------------------------------------------------
+
+    signal int_ena_reg              :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    signal int_mask_reg             :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    signal int_vect_reg             :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    signal int_input_active         :     std_logic_vector(
+                                                int_count - 1 downto 0);
+
+    -- Registered value of interrupt
+    constant zero_mask              :     std_logic_vector(
+                                                int_count - 1 downto 0)
+                                                := (OTHERS => '0');
   
 end entity;
 
 architecture rtl of intManager is
 begin
   
-  -- Driving bus aliases
-  drv_int_vect_clr  <= drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW);
-  drv_int_ena_set   <= drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW);
-  drv_int_ena_clr   <= drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW);
-  drv_int_mask_set  <= drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW);
-  drv_int_mask_clr  <= drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW);
+    -- Driving bus aliases
+    drv_int_vect_clr  <= drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW);
+    drv_int_ena_set   <= drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW);
+    drv_int_ena_clr   <= drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW);
+    drv_int_mask_set  <= drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW);
+    drv_int_mask_clr  <= drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW);
              
-  -- Register to output propagation
-  int_vector                          <=  int_vect_reg;
-  int_mask                            <=  int_mask_reg;
-  int_ena                             <=  int_ena_reg;  
+    -- Register to output propagation
+    int_vector                          <= int_vect_reg;
+    int_mask                            <= int_mask_reg;
+    int_ena                             <= int_ena_reg;  
 
-  int_out  <= '0' when (int_vect_reg and int_ena_reg) = zero_mask else
-              '1';
-  
-  -- Interrupt register masking and enabling
-  int_input_active(BEI_IND)       <=  error_valid;
-  int_input_active(ALI_IND)       <=  arbitration_lost;
-  int_input_active(EPI_IND)       <=  error_passive_changed;
-  int_input_active(DOI_IND)       <=  rx_message_disc;
-  int_input_active(EI_IND)        <=  error_warning_limit;
-  int_input_active(TI_IND)        <=  tx_finished;
-  int_input_active(RI_IND)        <=  rec_message_valid;
-  int_input_active(LFI_IND)       <=  loger_finished;
-  int_input_active(RFI_IND)       <=  rx_full;
-  int_input_active(BSI_IND)       <=  br_shifted;
-  int_input_active(RBNEI_IND)     <=  not rx_empty;
-  int_input_active(TXBHCI_IND)    <=  '1' when (txt_hw_cmd.lock = '1' or
-                                               txt_hw_cmd.unlock = '1')
-                                          else
-                                      '0';
+    int_out  <= '0' when (int_vect_reg and int_ena_reg) = zero_mask else
+                '1';
 
-  int_proc:process(res_n, clk_sys)
-  begin
-    if (res_n = ACT_RESET) then
-      int_ena_reg   <= (OTHERS => '0');
-      int_mask_reg  <= (OTHERS => '0');
-      int_vect_reg  <= (OTHERS => '0');
-    elsif rising_edge(clk_sys) then
-      
-      for i in 0 to int_count - 1 loop
-        
-        -- Interrupt enable
-        if (drv_int_ena_set(i) = '1') then
-          int_ena_reg(i) <= '1';
-        elsif (drv_int_ena_clr(i) = '1') then
-          int_ena_reg(i) <= '0';
-        else
-          int_ena_reg(i) <= int_ena_reg(i);
-        end if;
-        
-        -- Interrupt mask
-        if (drv_int_mask_set(i) = '1') then
-          int_mask_reg(i) <= '1';
-        elsif (drv_int_mask_clr(i) = '1') then
-          int_mask_reg(i) <= '0';
-        else
-          int_mask_reg(i) <= int_mask_reg(i);
-        end if;
-        
-        -- Interrupt status (vector)
-        if (int_input_active(i) = '1' and int_mask_reg(i) = '0') then
-          int_vect_reg(i) <= '1';
-        elsif (drv_int_vect_clr(i) = '1') then
-          int_vect_reg(i) <= '0';
-        else
-          int_vect_reg(i) <= int_vect_reg(i); 
-        end if;
-        
-      end loop;
+    -- Interrupt register masking and enabling
+    int_input_active(BEI_IND)       <= error_valid;
+    int_input_active(ALI_IND)       <= arbitration_lost;
+    int_input_active(EPI_IND)       <= error_passive_changed;
+    int_input_active(DOI_IND)       <= rx_message_disc;
+    int_input_active(EI_IND)        <= error_warning_limit;
+    int_input_active(TI_IND)        <= tx_finished;
+    int_input_active(RI_IND)        <= rec_message_valid;
+    int_input_active(LFI_IND)       <= loger_finished;
+    int_input_active(RFI_IND)       <= rx_full;
+    int_input_active(BSI_IND)       <= br_shifted;
+    int_input_active(RBNEI_IND)     <= not rx_empty;
+    int_input_active(TXBHCI_IND)    <= '1' when (txt_hw_cmd.lock = '1' or
+                                                 txt_hw_cmd.unlock = '1')
+                                           else
+                                       '0';
 
-    end if;
-  end process;
-  
-  
+    int_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = ACT_RESET) then
+            int_ena_reg   <= (OTHERS => '0');
+            int_mask_reg  <= (OTHERS => '0');
+            int_vect_reg  <= (OTHERS => '0');
+        elsif rising_edge(clk_sys) then
+          
+            for i in 0 to int_count - 1 loop
+
+                -- Interrupt enable
+                if (drv_int_ena_set(i) = '1') then
+                    int_ena_reg(i) <= '1';
+                elsif (drv_int_ena_clr(i) = '1') then
+                    int_ena_reg(i) <= '0';
+                else
+                    int_ena_reg(i) <= int_ena_reg(i);
+                end if;
+
+                -- Interrupt mask
+                if (drv_int_mask_set(i) = '1') then
+                    int_mask_reg(i) <= '1';
+                elsif (drv_int_mask_clr(i) = '1') then
+                    int_mask_reg(i) <= '0';
+                else
+                    int_mask_reg(i) <= int_mask_reg(i);
+                end if;
+
+                -- Interrupt status (vector)
+                if (int_input_active(i) = '1' and int_mask_reg(i) = '0') then
+                    int_vect_reg(i) <= '1';
+                elsif (drv_int_vect_clr(i) = '1') then
+                    int_vect_reg(i) <= '0';
+                else
+                    int_vect_reg(i) <= int_vect_reg(i); 
+                end if;
+
+            end loop;
+
+        end if;
+    end process;
+
 end architecture;

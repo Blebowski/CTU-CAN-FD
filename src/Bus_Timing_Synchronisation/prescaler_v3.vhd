@@ -810,7 +810,7 @@ begin
     ----------------------------------------------------------------------------
     bt_proc : process(clk_sys, res_n)
     begin
-	    if (res_n = ACT_RESET) then
+        if (res_n = ACT_RESET) then
             bt_FSM            <=  reset;
             bt_counter        <=  0;
             FSM_Preset        <=  '1';

@@ -1288,7 +1288,7 @@ begin
             stuff_error_enable_r      <=  '1'; 
             fixed_destuff_r           <=  '0';
             destuff_length_r          <=  std_logic_vector(
-                                          to_unsigned(BASE_STUFF_LENGTH,3));
+                                          to_unsigned(BASE_STUFF_LENGTH, 3));
 
 
             -- Clearing arbitration transcieve pointer for transcieving
@@ -2772,38 +2772,52 @@ begin
             fixed_stuff_r       <= '0';
             fixed_destuff_r     <= '0';
 
-            --Pointer for recieving the superposition of error flags
-            tran_pointer        <= 12; 
+            --------------------------------------------------------------------
+            -- Pointer for recieving the superposition of error flags
+            --------------------------------------------------------------------
+            tran_pointer        <= 12;
             err_frame_state     <= err_flg_sup;
             destuff_enable_r    <= '0';
 
-            --If Error appears within FD Data Phase node has to switch back
+            --------------------------------------------------------------------
+            -- If Error appears within FD Data Phase node has to switch back
+            --------------------------------------------------------------------
             sp_control_r        <= NOMINAL_SAMPLE;
             crc_enable_r        <= '0';
 
-            --Here we force data to be dominant event if not trigger is used! 
-            --This helps in situations when error is detected during Data bit 
-            --rates!!
+            --------------------------------------------------------------------
+            -- Here we force data to be dominant event if not trigger is used! 
+            -- This helps in situations when error is detected during Data bit 
+            -- rates!!
+            --------------------------------------------------------------------
             data_tx_r           <= DOMINANT;
 
             -- Storing in RX Buffer must be aborted regardless of OP State.
             rec_abort_r         <= '1';
 
+            --------------------------------------------------------------------
             -- If unit is transciever and Error appears then rettransmitt
             -- counter should be incremented
+            --------------------------------------------------------------------
             if (OP_State = transciever) then
-                if ((drv_retr_lim_ena = '0') or --Retransmitt limit is disabled 
-                    (drv_retr_lim_ena = '1' and --Enabled, but not reached
-                    retr_count < to_integer(unsigned(drv_retr_th))))
+
+                ----------------------------------------------------------------
+                -- Retransmitt limit is disabled, or enabled and not reached.
+                ----------------------------------------------------------------
+                if ((drv_retr_lim_ena = '0') or 
+                    (drv_retr_lim_ena = '1' and
+                     retr_count < to_integer(unsigned(drv_retr_th))))
                 then
                     retr_count         <= (retr_count + 1) mod 16;
                     txt_hw_cmd.err     <= '1';
                 else
 
+                    ------------------------------------------------------------
                     -- Retransmitt limit reached, signal transmission failure
                     -- Erase the retransmitt counter, since the next frame
                     -- can be from the same buffer, but it can be different frame!
                     -- Thus retr_counter wont be erased on "txt_buf_changed"!
+                    ------------------------------------------------------------
                     retr_count            <= 0;
                     txt_hw_cmd.failed     <= '1';
                 end if;
@@ -2811,9 +2825,11 @@ begin
                 txt_hw_cmd.unlock           <= '1';
                 is_txt_locked               <= '0';
 
+                ----------------------------------------------------------------
                 -- Transmitter started to transmitt error flag -> increase by 8 
-                -- except ack error for error passive
+                -- except ACK error for error passive
                 -- Or Stuff Error appeared during arbitration!
+                ----------------------------------------------------------------
                 if ((error_state = error_passive and ack_error_r = '1') or 
                     (stuff_err_arb_int = '1'))
                 then
@@ -2823,8 +2839,10 @@ begin
                 end if;
             end if;
 
+            --------------------------------------------------------------------
             -- If Bus Monitoring mode is enabled then data has to be looped 
             -- back before sending on the bus!
+            --------------------------------------------------------------------
             if (drv_bus_mon_ena = '1') then 
                 int_loop_back_ena_r         <= '1';
             end if;
@@ -2833,35 +2851,46 @@ begin
           
             case  err_frame_state is
 
-                -- Transmition of error flag and reception of Error
+                ----------------------------------------------------------------
+                -- Transmition of error flag and Reception of Error
                 -- flag superposition 
+                ----------------------------------------------------------------
                 when err_flg_sup =>
+
                     if (tran_trig = '1') then
                         if (control_pointer_non_zero and
                             error_state = error_active)
+
+                        -- Sending active error flag
                         then
-                            data_tx_r <=  DOMINANT; -- Sending active error flag
-                        else 
-                            -- Sending passive error flag or one bit after
-                            -- active error flag!
+                            data_tx_r <=  DOMINANT;
+
+                        -- Sending passive error flag or one bit after
+                        -- active error flag!
+                        else  
                             data_tx_r <=  RECESSIVE;
                         end if;
                     end if;
 
                     if (rec_trig = '1') then 
-                      
-                        -- Bit error detection during active error flag
-                        if (data_tx_r = DOMINANT and data_rx = RECESSIVE)then
+
+                        --------------------------------------------------------
+                        -- Bit error detection during active error flag ->
+                        -- next Error and increase counter by 8!
+                        --------------------------------------------------------
+                        if (data_tx_r = DOMINANT and data_rx = RECESSIVE) then
                             FSM_Preset      <= '1';
 
+                            -- Reciever error counter increased by 8.s
                             if (OP_State = reciever) then
-                              -- Reciever error counter increased by 8.s
-                              inc_eight_r   <= '1';
+                                inc_eight_r   <= '1';
                             end if;
                         else
                             if (error_state = error_active) then
-                          
+
+                                ------------------------------------------------
                                 -- Decreasing counters
+                                ------------------------------------------------
                                 if (control_pointer_non_zero) then
                                     control_pointer     <= control_pointer - 1;
                                 end if;
@@ -2870,8 +2899,10 @@ begin
                                     tran_pointer        <= tran_pointer - 1;
                                 end if;
 
+                                ------------------------------------------------
                                 -- Only in the last bit, if detected earlier  
                                 -- then bit error apeared
+                                ------------------------------------------------
                                 if (data_rx = RECESSIVE) then
                                     err_frame_state     <= err_delim;
                                     control_pointer     <= 6; 
@@ -2879,68 +2910,86 @@ begin
                                     -- err_delim is 8) because one bit is sent 
                                     -- recessive and detected
 
-                                    -- We accepted 13-th consecutive DOMINANT bit -> 
-                                    -- Error again??
-                                elsif (data_rx = DOMINANT and 
-                                       tran_pointer = 0)
+                                ------------------------------------------------
+                                -- We accepted 13-th consecutive DOMINANT bit ->
+                                -- Error again??
+                                ------------------------------------------------
+                                elsif (data_rx = DOMINANT and tran_pointer = 0)
                                 then
                                     FSM_preset              <= '1';
                                     int_loop_back_ena_r     <= '0';
+
+                                    -- For reciever error counter increased by 8. 
+                                    -- For transciever this is done in FSM_Preset!
                                     if (OP_State = reciever) then
                                         inc_eight_r         <= '1'; 
-                                        --For reciever error counter increased by 8. 
-                                        --For transciever this is done in FSM_Preset!
                                     end if;
                                 end if;
 
-                                -- This condition is causes that Reciever that was 
-                                -- the first to detect the error has error counter
-                                -- increased by 8! Transciever counter is increased
-                                -- in FSM preset! Any next reciever that will hook
-                                -- up, will hook up at the end of error flag super-
-                                -- position Thus after transmitting its error flag
-                                -- there will be recessive bit, not dominant!
-                                if ((tran_pointer = 5) and
-                                    (OP_State = reciever))
+                                ------------------------------------------------
+                                -- This condition is causes that Reciever that 
+                                -- was the first to detect the error has error 
+                                -- counter increased by 8! Transciever counter 
+                                -- is increased in FSM preset! Any next reciever
+                                -- that will hook up, will hook up at the end of
+                                -- error flag superposition Thus after
+                                -- transmitting its error flag there will be
+                                -- recessive bit, not dominant!
+                                ------------------------------------------------
+                                if ((tran_pointer = 5) and (OP_State = reciever))
                                 then
                                     -- First bit detected Dominant after active 
                                     -- error flag was sent!
                                     inc_eight_r             <= '1';
                                 end if;
-                        
-                            elsif (error_state = error_passive) then
+                            end if;
+
+                            if (error_state = error_passive) then
                           
                                 -- Storing last recieved data
                                 err_pas_bit_val <=  data_rx;
-                            
-                                -- Detecting 6 consecutive bits of equal polarity
+                                
+                                ------------------------------------------------
+                                -- Detecting 6 consecutive bits of
+                                -- equal polarity
+                                ------------------------------------------------
                                 if (control_pointer = 6) then
                                     control_pointer   <= control_pointer - 1;
                                 else
                                     if (data_rx = err_pas_bit_val) then
+
+                                        -- So far less than 6 bits -> count down
                                         if (control_pointer > 1) then
                                             control_pointer <= 
                                                 control_pointer - 1;
-                                        else --Six equal consecutive bits detected
+
+                                        -- Six equal consecutive bits detected
+                                        else
                                             err_frame_state   <= err_delim;
                                             control_pointer   <= 6; 
                                         end if;
+
+                                    -- Restart the detection (with one bit less
+                                    -- because then the first bit is already the 
+                                    -- bit where mismatch appeared)
                                     else
                                         control_pointer       <=  5; 
-                                        --Restart the detection (with one bit less
-                                        --because then the first bit is already the 
-                                        --bit where mismatch appeared)
                                     end if;
                                 end if;
-                            -- Node must be Bus-off here                           
-                            else
+
+                            end if;
+
+                            -- Transition to bus-off                           
+                            if (error_state = bus_off) then
                                 PC_State    <= off;
                                 FSM_Preset  <= '1';
                             end if;
                         end if;
                     end if;  
 
-
+                ----------------------------------------------------------------
+                -- Error delimiter
+                ----------------------------------------------------------------
                 when err_delim =>
                     if (tran_trig = '1') then 
                         data_tx_r   <=  RECESSIVE;
@@ -2950,6 +2999,10 @@ begin
                         if (control_pointer_non_zero) then
                             control_pointer <=  control_pointer - 1;
                         else
+                            ----------------------------------------------------
+                            -- DOMINANT in last bit of Error delimiter is
+                            -- overload condition! Otherwise Interframe!
+                            ----------------------------------------------------
                             if (data_rx = DOMINANT) then
                                 PC_State    <= overload;
                             else
@@ -2960,6 +3013,9 @@ begin
                         end if;
                     end if;
 
+                ----------------------------------------------------------------
+                -- Other, invalid states!
+                ----------------------------------------------------------------
                 when others =>
                       unknown_state_Error_r     <= '1'; 
                       PC_State                  <= error;
@@ -2977,16 +3033,22 @@ begin
     when overload =>  
         if (FSM_Preset = '1') then
             FSM_Preset          <= '0';
-            control_pointer     <= 6; --Pointer for sending the overload flag
-            --Pointer for recieving the superposition of ovverload flags
+
+            -- Pointer for sending the overload flag
+            control_pointer     <= 6;
+
+            -- Pointer for recieving the superposition of ovverload flags
             tran_pointer        <= 12;
+
             ovr_frame_state     <= ovr_flg_sup;
             stuff_enable_r      <= '0';
             destuff_enable_r    <= '0'; 
             crc_enable_r        <= '0';
 
-            --If Bus Monitoring mode is enabled then data has to be 
-            --looped back before sending on the bus!
+            --------------------------------------------------------------------
+            -- If Bus Monitoring mode is enabled then data has to be 
+            -- looped back before sending on the bus!
+            --------------------------------------------------------------------
             if (drv_bus_mon_ena = '1') then 
                 int_loop_back_ena_r     <= '1';
             end if;
@@ -2994,35 +3056,52 @@ begin
         else
             case  ovr_frame_state is
 
+                ----------------------------------------------------------------
                 -- Transmition of overload flag and reception of 
-                -- overload flag superposition 
+                -- overload flag superposition!
+                ----------------------------------------------------------------
                 when ovr_flg_sup =>
-                        
+
+                    ------------------------------------------------------------
+                    -- Transmitting overload flag
+                    ------------------------------------------------------------
                     if (tran_trig = '1') then
                         if (control_pointer_non_zero) then
-                            data_tx_r   <= DOMINANT; --Sending overload flag
+                            data_tx_r   <= DOMINANT;
                         else 
                             data_tx_r   <= RECESSIVE;
                         end if;
                     end if;
-                        
+                    
+                    ------------------------------------------------------------
+                    -- Receiving Overload flag superposition                    
+                    ------------------------------------------------------------
                     if (rec_trig = '1') then
-                      
+
+                        --------------------------------------------------------
+                        -- Decreasing counters
+                        --------------------------------------------------------
                         if (control_pointer_non_zero) then
                             control_pointer     <= control_pointer - 1;
                         end if;
+
                         if (tran_pointer > 0) then
                             tran_pointer        <= tran_pointer - 1;
                         end if;
 
+                        --------------------------------------------------------
+                        -- Still sending overload flag, but recessive 
+                        -- detected -> error frame + increase counter
+                        --------------------------------------------------------
                         if (data_rx = RECESSIVE) then
-                            -- Still sending overload flag, but recessive 
-                            -- detected -> error frame + increase counter 
                             if (control_pointer_non_zero) then
-                                PC_State            <= error; 
+                                PC_State            <= error;
+
+                                ------------------------------------------------
+                                -- For reciever error counter increased by 8.
+                                -- For transciever this is done in FSM_Preset! 
+                                ------------------------------------------------
                                 if (OP_State = reciever) then
-                                    --For reciever error counter increased by 8.
-                                    --For transciever this is done in FSM_Preset!
                                     inc_eight_r     <= '1';
                                 end if;
                                 FSM_Preset          <= '1';
@@ -3031,21 +3110,30 @@ begin
                                 control_pointer     <= 7; 
                             end if;
 
+                        --------------------------------------------------------
                         -- We accepted 13-th consecutive DOMINANT bit in 
-                        -- superposition --> 
+                        -- superposition --> Error!
+                        --------------------------------------------------------
                         elsif (data_rx = DOMINANT and tran_pointer = 0) then
+
+                            ----------------------------------------------------
+                            -- For reciever error counter increased by 8. 
+                            -- For transciever this is done in FSM_Preset!
+                            ----------------------------------------------------
                             if (OP_State = reciever) then
-                                -- For reciever error counter increased by 8. 
-                                -- For transciever this is done in FSM_Preset!
                                 inc_eight_r     <= '1'; 
                             end if;
+
                             PC_State            <= error;
                             FSM_preset          <= '1';
                             int_loop_back_ena_r <= '0';
                         end if;
                     end if;
-                        
-                when ovr_delim => --Overlad delimiter
+
+                ----------------------------------------------------------------
+                -- Overlad delimiter
+                ----------------------------------------------------------------
+                when ovr_delim =>
                     if (tran_trig = '1') then 
                         data_tx_r   <=  RECESSIVE;
                     end if;
@@ -3073,15 +3161,20 @@ begin
     -- Unit is turned off
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
-    when off =>
-           
+    when off =>     
         if (drv_ena = ENABLED) then
             if (not (error_state = bus_off)) then
                 FSM_Preset          <= '1';
                 PC_State            <= interframe;  
             end if;
         end if;
-  
+
+
+    ----------------------------------------------------------------------------            
+    ----------------------------------------------------------------------------
+    -- Unknown state
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     when others =>
         unknown_state_Error_r   <= '1'; 
         PC_State                <= error;
@@ -3089,7 +3182,8 @@ begin
     end case;
 
     end if;
-    end if;
-  end process;
+
+end if;
+end process;
 
 end architecture;

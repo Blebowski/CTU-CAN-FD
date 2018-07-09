@@ -54,42 +54,49 @@ use work.CAN_FD_frame_format.all;
 
 package ID_transfer is
 
-  --Register value to decimal value
-  procedure ID_reg_to_decimal
-        (signal ID_reg:in std_logic_vector(28 downto 0);
-         signal ID_dec : out natural);
+    -- Register value to decimal value
+    procedure ID_reg_to_decimal(
+        signal ID_reg   : in    std_logic_vector(28 downto 0);
+        signal ID_dec   : out   natural
+    );
 
-  --Decimal value to register value
-  procedure ID_decimal_to_reg
-    (signal ID_dec : in  natural;
-     signal ID_reg : out std_logic_vector(28 downto 0));
+    -- Decimal value to register value
+    procedure ID_decimal_to_reg(
+        signal ID_dec   : in    natural;
+        signal ID_reg   : out   std_logic_vector(28 downto 0)
+    );
 
 end package ID_transfer;
 
 package body ID_transfer is
-  procedure ID_reg_to_decimal
-    (signal ID_reg : in  std_logic_vector(28 downto 0);
-     signal ID_dec : out natural) is
-    variable base : std_logic_vector(10 downto 0);
-    variable ext  : std_logic_vector(17 downto 0);
-    variable conc : std_logic_vector(28 downto 0);
-  begin
-    base   := ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-    ext    := ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
-    conc   := base&ext;
-    ID_dec <= to_integer(unsigned(conc));
-  end procedure ID_reg_to_decimal;
 
-  procedure ID_decimal_to_reg
-    (signal ID_dec : in  natural;
-     signal ID_reg : out std_logic_vector(28 downto 0)) is
-    variable vector : std_logic_vector(28 downto 0);
-  begin
-    vector := std_logic_vector(to_unsigned(ID_dec, 29));
-    ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) 
-          <= vector(28 downto 18);    
-    ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) 
-          <= vector(17 downto 0);
-  end procedure ID_decimal_to_reg;
+
+    procedure ID_reg_to_decimal(
+        signal ID_reg   : in  std_logic_vector(28 downto 0);
+        signal ID_dec   : out natural
+    ) is
+        variable base : std_logic_vector(10 downto 0);
+        variable ext  : std_logic_vector(17 downto 0);
+        variable conc : std_logic_vector(28 downto 0);
+    begin
+        base   := ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+        ext    := ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+        conc   := base&ext;
+        ID_dec <= to_integer(unsigned(conc));
+    end procedure ID_reg_to_decimal;
+
+
+    procedure ID_decimal_to_reg(
+        signal ID_dec : in  natural;
+        signal ID_reg : out std_logic_vector(28 downto 0)
+    ) is
+        variable vector : std_logic_vector(28 downto 0);
+    begin
+        vector := std_logic_vector(to_unsigned(ID_dec, 29));
+        ID_reg(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) 
+              <= vector(28 downto 18);    
+        ID_reg(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) 
+              <= vector(17 downto 0);
+    end procedure ID_decimal_to_reg;
 
 end ID_transfer;

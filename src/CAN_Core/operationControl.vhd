@@ -61,36 +61,36 @@ entity operationControl is
         signal clk_sys              :in   std_logic; 
         signal res_n                :in   std_logic;
 
-        --Driving bus
+        -- Driving bus
         signal drv_bus              :in   std_logic_vector(1023 downto 0);
 
-        --Driving signals
+        -- Driving signals
         signal arbitration_lost     :in   std_logic;
         signal PC_State             :in   protocol_type;
         signal tran_data_valid_in   :in   std_logic;
 
-        --Set OP_State FSM into transciever state (Used at SOF)
+        -- Set OP_State FSM into transciever state (Used at SOF)
         signal set_transciever      :in   std_logic; 
 
-        --Set OP_State FSM into reciever state
+        -- Set OP_State FSM into reciever state
         signal set_reciever         :in   std_logic;
 
         signal is_idle              :in   std_logic; --Unit is idle
 
-        --Bit time triggering signals
+        -- Bit time triggering signals
         signal tran_trig            :in   std_logic;
         signal rec_trig             :in   std_logic;
 
         signal data_rx              :in   std_logic;
 
-        --Status outputs
+        -- Status outputs
         signal OP_State             :out  oper_mode_type
     );
 
     ----------------------------------------------------------------------------
     -- Internal registers
     ----------------------------------------------------------------------------
-    signal OP_State_r               :     oper_mode_type; --Operational mode
+    signal OP_State_r               :     oper_mode_type; -- Operational mode
 
     -- Counter to INTEGRATING_DURATION, to switch from integrating to bus idle
     signal integ_counter            :     natural range 0 to 11; 
@@ -112,7 +112,7 @@ begin
             OP_State_r                    <= integrating;
             integ_counter                 <= 1;
         elsif rising_edge(clk_sys) then
-            --Presetting the registers to avoid latches
+            -- Presetting the registers to avoid latches
             OP_State_r                    <= OP_State_r;
             integ_counter                 <= integ_counter;
 
@@ -175,7 +175,8 @@ begin
                     if (is_idle = '1') then
                         OP_State_r          <= idle;
                     end if;              
-                when others => --TODO:Error
+                when others =>
+                    report "Unknown operational state" severity failure;
                 end case;
             end if;
         end if;

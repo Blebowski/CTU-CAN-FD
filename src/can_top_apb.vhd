@@ -83,36 +83,7 @@ entity CTU_CAN_FD_v1_0 is
 end entity CTU_CAN_FD_v1_0;
 
 architecture rtl of CTU_CAN_FD_v1_0 is
-   
-    component apb_ifc is
-        generic (
-            -- ID (bits  19-16 of reg_addr_o)
-            ID : natural := 1
-        );
-        port (
-            aclk             : in  std_logic;
-            arstn            : in  std_logic;
-
-            reg_data_in_o    : out std_logic_vector(31 downto 0);
-            reg_data_out_i   : in  std_logic_vector(31 downto 0);
-            reg_addr_o       : out std_logic_vector(23 downto 0);
-            reg_be_o         : out std_logic_vector(3 downto 0);
-            reg_rden_o       : out std_logic;
-            reg_wren_o       : out std_logic;
-
-            s_apb_paddr      : in  std_logic_vector(31 downto 0);
-            s_apb_penable    : in  std_logic;
-            s_apb_pprot      : in  std_logic_vector(2 downto 0);
-            s_apb_prdata     : out std_logic_vector(31 downto 0);
-            s_apb_pready     : out std_logic;
-            s_apb_psel       : in  std_logic;
-            s_apb_pslverr    : out std_logic;
-            s_apb_pstrb      : in  std_logic_vector(3 downto 0);
-            s_apb_pwdata     : in  std_logic_vector(31 downto 0);
-            s_apb_pwrite     : in  std_logic
-        );
-    end component;
-
+ 
     signal reg_data_in      : std_logic_vector(31 downto 0);
     signal reg_data_out     : std_logic_vector(31 downto 0);
     signal reg_addr         : std_logic_vector(23 downto 0);
@@ -120,7 +91,8 @@ architecture rtl of CTU_CAN_FD_v1_0 is
     signal reg_rden         : std_logic;
     signal reg_wren         : std_logic;
 begin
-    i_can: CAN_top_level
+
+    i_can : CAN_top_level
         generic map (
             use_logger      => use_logger,
             rx_buffer_size  => rx_buffer_size,
@@ -151,7 +123,8 @@ begin
             time_quanta_clk => time_quanta_clk,
             timestamp       => timestamp
         );
-    i_apb: apb_ifc
+
+    i_apb : apb_ifc
         port map (
             aclk           => aclk,
             arstn          => arstn,
