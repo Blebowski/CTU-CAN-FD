@@ -58,669 +58,682 @@ use WORK.CANconstants.all;
 
 package CANcomponents is
 
-  ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-  ---- CAN FD Core top level entity
-  ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-  component CAN_top_level is
-    generic(
-      constant use_logger     : boolean               := true;
-      constant rx_buffer_size : natural range 32 to 4096 := 128;
-      constant use_sync       : boolean               := true;
-      constant ID             : natural range 0 to 15 := 1;
-      constant sup_filtA      : boolean               := true;
-      constant sup_filtB      : boolean               := true;
-      constant sup_filtC      : boolean               := true;
-      constant sup_range      : boolean               := true;
-      constant logger_size    : natural --range 0 to 512:=8
-      );
-    port(
-      signal clk_sys         : in  std_logic;
-      signal res_n           : in  std_logic;
-      signal data_in         : in  std_logic_vector(31 downto 0);
-      signal data_out        : out std_logic_vector(31 downto 0);
-      signal adress          : in  std_logic_vector(23 downto 0);
-      signal scs             : in  std_logic;
-      signal srd             : in  std_logic;
-      signal swr             : in  std_logic;
-      signal sbe             : in  std_logic_vector(3 downto 0);
-      signal int             : out std_logic;
-      signal CAN_tx          : out std_logic;
-      signal CAN_rx          : in  std_logic;
-      signal time_quanta_clk : out std_logic;
-      -- synthesis translate_off
-      signal drv_bus_o    : out std_logic_vector(1023 downto 0);
-      signal stat_bus_o   : out std_logic_vector(511 downto 0);
-      -- synthesis translate_on
-      signal timestamp       : in  std_logic_vector(63 downto 0)
-      );
-  end component;
-
-
-  ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-  ---- CAN Top level components
-  ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-
-  ------------------------------------------------------------------------------
-  -- Registers
-  ------------------------------------------------------------------------------
-  component canfd_registers is
-    generic(
-      constant compType    : std_logic_vector(3 downto 0) := CAN_COMPONENT_TYPE;
-      constant use_logger  : boolean                      := true;
-      constant sup_filtA   : boolean                      := true;
-      constant sup_filtB   : boolean                      := true;
-      constant sup_filtC   : boolean                      := true;
-      constant sup_range   : boolean                      := true;
-      constant sup_be      : boolean                      := false;
-      constant buf_count   : natural range 0 to 7         := 2;
-      constant ID          : natural
-      );
-    port(
-      signal clk_sys              : in  std_logic;
-      signal res_n                : in  std_logic;
-      signal res_out              : out std_logic;
-      signal data_in              : in  std_logic_vector(31 downto 0);
-      signal data_out             : out std_logic_vector(31 downto 0);
-      signal adress               : in  std_logic_vector(23 downto 0);
-      signal scs                  : in  std_logic;
-      signal srd                  : in  std_logic;
-      signal swr                  : in  std_logic;
-      signal sbe                  : in  std_logic_vector(3 downto 0);
-      signal drv_bus              : out std_logic_vector(1023 downto 0);
-      signal stat_bus             : in  std_logic_vector(511 downto 0);
-      signal rx_read_buff         : in  std_logic_vector(31 downto 0);
-      signal rx_buf_size          : in  std_logic_vector(12 downto 0);
-      signal rx_full              : in  std_logic;
-      signal rx_empty             : in  std_logic;
-      signal rx_message_count     : in  std_logic_vector(10 downto 0);
-      signal rx_mem_free          : in  std_logic_vector(12 downto 0);
-      signal rx_read_pointer_pos  : in  std_logic_vector(11 downto 0);
-      signal rx_write_pointer_pos : in  std_logic_vector(11 downto 0);
-      signal rx_data_overrun      : in  std_logic;
-      signal tran_data            : out std_logic_vector(31 downto 0);
-      signal tran_addr            : out std_logic_vector(4 downto 0);
-      signal txtb_cs              : out std_logic_vector(buf_count - 1 downto 0);
-      signal txtb_fsms            : in  txt_fsms_type;
-      signal txt_sw_cmd           : out txt_sw_cmd_type;
-      signal txt_buf_cmd_index    : out std_logic_vector(buf_count - 1 downto 0);
-      signal txt_buf_prior_out    : out txtb_priorities_type;
-      signal trv_delay_out        : in  std_logic_vector(15 downto 0);
-      signal int_vector           : in  std_logic_vector(INT_COUNT - 1 downto 0);
-      signal int_ena              : in  std_logic_vector(INT_COUNT - 1 downto 0);
-      signal int_mask             : in  std_logic_vector(INT_COUNT - 1 downto 0);
-      signal loger_act_data       : in  std_logic_vector(63 downto 0);
-      signal log_write_pointer    : in  std_logic_vector(7 downto 0);
-      signal log_read_pointer     : in  std_logic_vector(7 downto 0);
-      signal log_size             : in  std_logic_vector(7 downto 0);
-      signal log_state_out        : in  logger_state_type
-      );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- RX Buffer module
-  ------------------------------------------------------------------------------
-  component rxBuffer is
-    generic(
-        buff_size                   :       natural range 32 to 4096 := 32
-    );
-    port(
-        signal clk_sys              :in     std_logic; --System clock
-        signal res_n                :in     std_logic; --Async. reset
-        signal rec_ident_in         :in     std_logic_vector(28 downto 0);
-        signal rec_dlc_in           :in     std_logic_vector(3 downto 0);
-        signal rec_ident_type_in    :in     std_logic;
-        signal rec_frame_type_in    :in     std_logic;
-        signal rec_is_rtr           :in     std_logic;
-        signal rec_brs              :in     std_logic;
-        signal rec_esi              :in     std_logic;
-        signal store_metadata       :in     std_logic;
-        signal store_data           :in     std_logic;
-        signal store_data_word      :in     std_logic_vector(31 downto 0);
-        signal rec_message_valid    :in     std_logic;
-        signal rec_abort            :in     std_logic;
-        signal sof_pulse            :in     std_logic;
-        signal rx_buf_size          :out    std_logic_vector(12 downto 0);
-        signal rx_full              :out    std_logic;
-        signal rx_empty             :out    std_logic;
-        signal rx_message_count     :out    std_logic_vector(10 downto 0);
-        signal rx_mem_free          :out    std_logic_vector(12 downto 0);
-        signal rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
-        signal rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
-        signal rx_data_overrun      :out    std_logic;
-        signal timestamp            :in     std_logic_vector(63 downto 0);
-        signal rx_read_buff         :out    std_logic_vector(31 downto 0);
-        signal drv_bus              :in     std_logic_vector(1023 downto 0)
-    );
-  end component;
-
-
-  ------------------------------------------------------------------------------
-  --TX Buffer  module
-  ------------------------------------------------------------------------------
-  component txBuffer is
-    generic (
-      buff_size : natural
-      );
-    port(
-      signal clk_sys              : in  std_logic;
-      signal res_n                : in  std_logic;
-      signal drv_bus              : in  std_logic_vector(1023 downto 0);
-      signal tran_data_in         : in  std_logic_vector(639 downto 0);
-      signal tx_buffer_out        : out std_logic_vector(639 downto 0);
-      signal tx_buffer_valid      : out std_logic;
-      signal tx_buffer_ack        : in  std_logic;
-      signal tx_buff_size         : out std_logic_vector(7 downto 0);
-      signal tx_full              : out std_logic;
-      signal tx_message_count     : out std_logic_vector(7 downto 0);
-      signal tx_empty             : out std_logic;
-      signal tx_mem_free          : out std_logic_vector (7 downto 0);
-      signal tx_read_pointer_pos  : out std_logic_vector(7 downto 0);
-      signal tx_write_pointer_pos : out std_logic_vector(7 downto 0);
-      signal tx_message_disc      : out std_logic
-      );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- TXT Buffer module
-  ------------------------------------------------------------------------------
-  component txtBuffer is
-  generic(
-    constant buf_count            :     natural range 1 to 8;
-    constant ID                   :     natural :=1
-  );
-  PORT(
-    signal clk_sys                :in   std_logic;
-    signal res_n                  :in   std_logic; --Async reset
-    signal tran_data              :in   std_logic_vector(31 downto 0);
-    signal tran_addr              :in   std_logic_vector(4 downto 0);
-    signal tran_cs                :in   std_logic;
-    signal txt_sw_cmd             :in   txt_sw_cmd_type;
-    signal txt_sw_buf_cmd_index   :in   std_logic_vector(buf_count - 1 downto 0);
-    signal txtb_state             :out  txt_fsm_type;
-    signal txt_hw_cmd             :in   txt_hw_cmd_type;
-    signal bus_off_start          :in   std_logic;
-    signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
-    signal txt_word               :out  std_logic_vector(31 downto 0);
-    signal txt_addr               :in   natural range 0 to 19;
-    signal txt_buf_ready          :out  std_logic
-    );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- TXT Arbitrator module
-  ------------------------------------------------------------------------------
-  component txArbitrator is
-  generic(
-    buf_count   : natural range 1 to 8
-  );
-  port(
-    signal clk_sys                :in  std_logic;
-    signal res_n                  :in  std_logic;
-    signal txt_buf_in             :in txtb_output_type;
-    signal txt_buf_ready          :in std_logic_vector(buf_count - 1 downto 0);
-    signal txtb_ptr               :out natural range 0 to 19;
-    signal tran_data_word_out     :out std_logic_vector(31 downto 0);
-    signal tran_dlc_out           :out std_logic_vector(3 downto 0);
-    signal tran_is_rtr            :out std_logic;
-    signal tran_ident_type_out    :out std_logic;
-    signal tran_frame_type_out    :out std_logic;
-    signal tran_brs_out           :out std_logic;
-    signal tran_frame_valid_out   :out std_logic;
-    signal txt_hw_cmd             :in txt_hw_cmd_type;
-    signal txtb_changed           :out std_logic;
-    signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
-    signal txtb_core_pointer      :in natural range 0 to 19;
-    signal drv_bus                :in std_logic_vector(1023 downto 0);
-    signal txt_buf_prio           :in txtb_priorities_type;
-    signal timestamp              :in std_logic_vector(63 downto 0)
-  );
-  end component;
-
-
-  ------------------------------------------------------------------------------
-  -- Priority decoder for TXT Buffer selection
-  ------------------------------------------------------------------------------
-  component priorityDecoder is
-  generic(
-    buf_count :  natural range 1 to 8
-  );
-  port(
-    signal prio               : in  txtb_priorities_type;
-    signal prio_valid         : in  std_logic_vector(buf_count - 1 downto 0);
-    signal output_valid       : out  boolean;
-    signal output_index       : out  natural range 0 to buf_count - 1
-  );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- Message filter module
-  ------------------------------------------------------------------------------
-  component messageFilter is
-    generic
-      (
-        constant sup_filtA : boolean := true;
-        constant sup_filtB : boolean := true;
-        constant sup_filtC : boolean := true;
-        constant sup_range : boolean := true
+    ------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------
+    ---- CAN FD Core top level entity
+    ------------------------------------------------------------------------------
+    ------------------------------------------------------------------------------
+    component CAN_top_level is
+        generic(
+            constant use_logger     : boolean               := true;
+            constant rx_buffer_size : natural range 32 to 4096 := 128;
+            constant use_sync       : boolean               := true;
+            constant ID             : natural range 0 to 15 := 1;
+            constant sup_filtA      : boolean               := true;
+            constant sup_filtB      : boolean               := true;
+            constant sup_filtC      : boolean               := true;
+            constant sup_range      : boolean               := true;
+            constant logger_size    : natural --range 0 to 512:=8
         );
-    port(
-      signal clk_sys         : in  std_logic;
-      signal res_n           : in  std_logic;
-      signal rec_ident_in    : in  std_logic_vector(28 downto 0);
-      signal ident_type      : in  std_logic;
-      signal frame_type      : in  std_logic;
-      signal rec_ident_valid : in  std_logic;
-      signal drv_bus         : in  std_logic_vector(1023 downto 0);
-      signal out_ident_valid : out std_logic
+        port(
+            signal clk_sys         : in  std_logic;
+            signal res_n           : in  std_logic;
+            signal data_in         : in  std_logic_vector(31 downto 0);
+            signal data_out        : out std_logic_vector(31 downto 0);
+            signal adress          : in  std_logic_vector(23 downto 0);
+            signal scs             : in  std_logic;
+            signal srd             : in  std_logic;
+            signal swr             : in  std_logic;
+            signal sbe             : in  std_logic_vector(3 downto 0);
+            signal int             : out std_logic;
+            signal CAN_tx          : out std_logic;
+            signal CAN_rx          : in  std_logic;
+            signal time_quanta_clk : out std_logic;
+            -- synthesis translate_off
+            signal drv_bus_o    : out std_logic_vector(1023 downto 0);
+            signal stat_bus_o   : out std_logic_vector(511 downto 0);
+            -- synthesis translate_on
+            signal timestamp       : in  std_logic_vector(63 downto 0)
       );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- Interrupt manager module
-  ------------------------------------------------------------------------------
-  component intManager is
-  GENERIC(
-		  constant int_count          :     natural range 0 to 32 := 11
-    );
-  PORT(
-    signal clk_sys                :in   std_logic;
-    signal res_n                  :in   std_logic;
-    signal error_valid            :in   std_logic;
-    signal error_passive_changed  :in   std_logic;
-    signal error_warning_limit    :in   std_logic;
-    signal arbitration_lost       :in   std_logic;
-    signal tx_finished            :in   std_logic;
-    signal br_shifted             :in   std_logic;
-    signal rx_message_disc        :in   std_logic;
-    signal rec_message_valid      :in   std_logic;
-    signal rx_full                :in   std_logic;
-    signal rx_empty               :in   std_logic;
-    signal txt_hw_cmd             :in   txt_hw_cmd_type;
-    signal loger_finished         :in   std_logic;
-    signal drv_bus                :in   std_logic_vector(1023 downto 0);
-    signal int_out                :out  std_logic;
-    signal int_vector             :out  std_logic_vector(int_count - 1 downto 0);
-    signal int_mask               :out  std_logic_vector(int_count - 1 downto 0);
-    signal int_ena                :out  std_logic_vector(int_count - 1 downto 0)
-  );
-  end component;
-
-  ------------------------------------------------------------------------------
-  --CAN Core module --
-  ------------------------------------------------------------------------------
-  component core_top is
-    port(
-      signal clk_sys               : in  std_logic;
-      signal res_n                 : in  std_logic;
-      signal drv_bus               : in  std_logic_vector(1023 downto 0);
-      signal stat_bus              : out std_logic_vector(511 downto 0);
-      signal tran_data_in          : in  std_logic_vector(31 downto 0);
-      signal tran_dlc_in           : in  std_logic_vector(3 downto 0);
-      signal tran_is_rtr_in        : in  std_logic;
-      signal tran_ident_type_in    : in  std_logic;
-      signal tran_frame_type_in    : in  std_logic;
-      signal tran_brs_in           : in  std_logic;
-      signal tran_frame_valid_in   : in  std_logic;
-      signal txt_hw_cmd            : out txt_hw_cmd_type;
-      signal txtb_changed          : in  std_logic;
-      signal txt_buf_ptr           : out natural range 0 to 19;
-
-      signal rec_ident_out         : out std_logic_vector(28 downto 0);
-      signal rec_dlc_out           : out std_logic_vector(3 downto 0);
-      signal rec_ident_type_out    : out std_logic;
-      signal rec_frame_type_out    : out std_logic;
-      signal rec_is_rtr_out        : out std_logic;
-      signal rec_brs_out           : out std_logic;
-      signal rec_esi_out           : out std_logic;
-      signal rec_message_valid_out : out std_logic;
-      signal store_metadata        : out std_logic;
-      signal store_data            : out std_logic;
-      signal store_data_word       : out std_logic_vector(31 downto 0);
-      signal rec_abort             : out std_logic;
-
-      signal arbitration_lost_out  : out std_logic;
-      signal tx_finished           : out std_logic;
-      signal br_shifted            : out std_logic;
-      signal error_valid           : out std_logic;
-      signal error_passive_changed : out std_logic;
-      signal error_warning_limit   : out std_logic;
-      signal sample_nbt_del_2      : in  std_logic;
-      signal sample_dbt_del_2      : in  std_logic;
-      signal sample_nbt_del_1      : in  std_logic;
-      signal sample_dbt_del_1      : in  std_logic;
-      signal sync_nbt              : in  std_logic;
-      signal sync_dbt              : in  std_logic;
-      signal sync_nbt_del_1        : in  std_logic;
-      signal sync_dbt_del_1        : in  std_logic;
-      signal sample_sec            : in  std_logic;
-      signal sample_sec_del_1      : in  std_logic;
-      signal sample_sec_del_2      : in  std_logic;
-      signal sync_control          : out std_logic_vector(1 downto 0);
-      signal data_rx               : in  std_logic;
-      signal data_tx               : out std_logic;
-      signal timestamp             : in  std_logic_vector(63 downto 0);
-      signal sp_control            : out std_logic_vector(1 downto 0);
-      signal ssp_reset             : out std_logic;
-      signal trv_delay_calib       : out std_logic;
-      signal bit_Error_sec_sam     : in  std_logic;
-      signal hard_sync_edge        : in  std_logic;
-      signal bus_off_start         : out std_logic;
-      signal sof_pulse             : out std_logic
-      );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- Prescaler module
-  ------------------------------------------------------------------------------
-  component prescaler_v3 is
-    port(
-      signal clk_sys              : in  std_logic;
-      signal res_n                : in  std_logic;
-      signal sync_edge            : in  std_logic;
-      signal OP_State             : in  oper_mode_type;
-      signal drv_bus              : in  std_logic_vector(1023 downto 0);
-      signal clk_tq_nbt           : out std_logic;
-      signal clk_tq_dbt           : out std_logic;
-      signal sample_nbt           : out std_logic;
-      signal sample_dbt           : out std_logic;
-      signal sample_nbt_del_1     : out std_logic;
-      signal sample_dbt_del_1     : out std_logic;
-      signal sample_nbt_del_2     : out std_logic;
-      signal sample_dbt_del_2     : out std_logic;
-      signal sync_nbt             : out std_logic;
-      signal sync_dbt             : out std_logic;
-      signal sync_nbt_del_1       : out std_logic;
-      signal sync_dbt_del_1       : out std_logic;
-      signal bt_FSM_out           : out bit_time_type;
-      signal data_tx              : in  std_logic;
-      signal hard_sync_edge_valid : out std_logic;
-      signal sp_control           : in  std_logic_vector(1 downto 0);
-      signal sync_control         : in  std_logic_vector(1 downto 0)
-      );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- Bus synchroniser module
-  ------------------------------------------------------------------------------
-  component busSync is
-    generic (
-      use_Sync : boolean
-      );
-    port(
-      signal clk_sys              : in  std_logic;
-      signal res_n                : in  std_logic;
-      signal CAN_rx               : in  std_logic;
-      signal CAN_tx               : out std_logic;
-      signal drv_bus              : in  std_logic_vector(1023 downto 0);
-      signal sample_nbt           : in  std_logic;
-      signal sample_dbt           : in  std_logic;
-      signal sync_edge            : out std_logic;
-      signal data_tx              : in  std_logic;
-      signal data_rx              : out std_logic;
-      signal sp_control           : in  std_logic_vector(1 downto 0);
-      signal ssp_reset            : in  std_logic;
-      signal trv_delay_calib      : in  std_logic;
-      signal bit_err_enable       : in  std_logic;
-      signal sample_sec_out       : out std_logic;
-      signal sample_sec_del_1_out : out std_logic;
-      signal sample_sec_del_2_out : out std_logic;
-      signal trv_delay_out        : out std_logic_vector(15 downto 0);
-      signal bit_Error            : out std_logic
-      );
-  end component;
-
-  ------------------------------------------------------------------------------
-  -- CAN Logger module
-  ------------------------------------------------------------------------------
-  component CAN_logger is
-    generic(
-      constant memory_size : natural := 16
-      );
-    port(
-      signal clk_sys           : in  std_logic;
-      signal res_n             : in  std_logic;
-      signal drv_bus           : in  std_logic_vector(1023 downto 0);
-      signal stat_bus          : in  std_logic_vector(511 downto 0);
-      signal sync_edge         : in  std_logic;
-      signal data_overrun      : in  std_logic;
-      signal timestamp         : in  std_logic_vector(63 downto 0);
-      signal bt_FSM            : in  bit_time_type;
-      signal loger_finished    : out std_logic;
-      signal loger_act_data    : out std_logic_vector(63 downto 0);
-      signal log_write_pointer : out std_logic_vector(7 downto 0);
-      signal log_read_pointer  : out std_logic_vector(7 downto 0);
-      signal log_size          : out std_logic_vector(7 downto 0);
-      signal log_state_out     : out logger_state_type
-      );
-  end component;
+    end component;
 
 
-  ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-  ---- CORE Top level components
-  ------------------------------------------------------------------------------
-  ------------------------------------------------------------------------------
-
-  ------------------------------------------------------------------------------
-  -- CRC module
-  ------------------------------------------------------------------------------
-  component canCRC is
-    generic(
-      constant crc15_pol : std_logic_vector(15 downto 0) := x"C599";
-      constant crc17_pol : std_logic_vector(19 downto 0) := x"3685B";
-      constant crc21_pol : std_logic_vector(23 downto 0) := x"302899"
-      );
-    port(
-      signal data_in : in  std_logic;
-      signal clk_sys : in  std_logic;
-      signal trig    : in  std_logic;
-      signal res_n   : in  std_logic;
-      signal enable  : in  std_logic;
-      signal drv_bus : in  std_logic_vector(1023 downto 0);
-      signal crc15   : out std_logic_vector(14 downto 0);
-      signal crc17   : out std_logic_vector(16 downto 0);
-      signal crc21   : out std_logic_vector(20 downto 0)
-      );
-  end component;
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ---- CAN Top level components
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
 
 
-  ------------------------------------------------------------------------------
-  -- Bit Stuffing
-  ------------------------------------------------------------------------------
-  component bitStuffing_v2 is
-    port(
-      signal clk_sys     : in  std_logic;
-      signal res_n       : in  std_logic;
-      signal tran_trig_1 : in  std_logic;
-      signal enable      : in  std_logic;
-      signal data_in     : in  std_logic;
-      signal fixed_stuff : in  std_logic;
-      signal data_halt   : out std_logic;
-      signal length      : in  std_logic_vector(2 downto 0);
-      signal bst_ctr     : out natural range 0 to 7;
-      signal data_out    : out std_logic
-      );
-  end component;
+    ----------------------------------------------------------------------------
+    -- Registers
+    ----------------------------------------------------------------------------
+    component canfd_registers is
+        generic(
+            constant compType    : std_logic_vector(3 downto 0) := CAN_COMPONENT_TYPE;
+            constant use_logger  : boolean                      := true;
+            constant sup_filtA   : boolean                      := true;
+            constant sup_filtB   : boolean                      := true;
+            constant sup_filtC   : boolean                      := true;
+            constant sup_range   : boolean                      := true;
+            constant sup_be      : boolean                      := false;
+            constant buf_count   : natural range 0 to 7         := 2;
+            constant ID          : natural
+        );
+        port(
+            signal clk_sys              : in  std_logic;
+            signal res_n                : in  std_logic;
+            signal res_out              : out std_logic;
+            signal data_in              : in  std_logic_vector(31 downto 0);
+            signal data_out             : out std_logic_vector(31 downto 0);
+            signal adress               : in  std_logic_vector(23 downto 0);
+            signal scs                  : in  std_logic;
+            signal srd                  : in  std_logic;
+            signal swr                  : in  std_logic;
+            signal sbe                  : in  std_logic_vector(3 downto 0);
+            signal drv_bus              : out std_logic_vector(1023 downto 0);
+            signal stat_bus             : in  std_logic_vector(511 downto 0);
+            signal rx_read_buff         : in  std_logic_vector(31 downto 0);
+            signal rx_buf_size          : in  std_logic_vector(12 downto 0);
+            signal rx_full              : in  std_logic;
+            signal rx_empty             : in  std_logic;
+            signal rx_message_count     : in  std_logic_vector(10 downto 0);
+            signal rx_mem_free          : in  std_logic_vector(12 downto 0);
+            signal rx_read_pointer_pos  : in  std_logic_vector(11 downto 0);
+            signal rx_write_pointer_pos : in  std_logic_vector(11 downto 0);
+            signal rx_data_overrun      : in  std_logic;
+            signal tran_data            : out std_logic_vector(31 downto 0);
+            signal tran_addr            : out std_logic_vector(4 downto 0);
 
-  ------------------------------------------------------------------------------
-  -- Bit Destuffing
-  ------------------------------------------------------------------------------
-  component bitDestuffing is
-    port(
-      signal clk_sys            : in  std_logic;
-      signal res_n              : in  std_logic;
-      signal data_in            : in  std_logic;
-      signal trig_spl_1         : in  std_logic;
-      signal stuff_Error        : out std_logic;
-      signal data_out           : out std_logic;
-      signal destuffed          : out std_logic;
-      signal enable             : in  std_logic;
-      signal stuff_Error_enable : in  std_logic;
-      signal fixed_stuff        : in  std_logic;
-      signal length             : in  std_logic_vector(2 downto 0);
-      signal dst_ctr            : out natural range 0 to 7
-      );
-  end component;
+            signal txtb_cs              : out std_logic_vector(
+                                                buf_count - 1 downto 0);
 
-  ------------------------------------------------------------------------------
-  -- Operation control FSM
-  ------------------------------------------------------------------------------
-  component operationControl is
-    port(
-      signal clk_sys            : in  std_logic;
-      signal res_n              : in  std_logic;
-      signal drv_bus            : in  std_logic_vector(1023 downto 0);
-      signal arbitration_lost   : in  std_logic;
-      signal PC_State           : in  protocol_type;
-      signal tran_data_valid_in : in  std_logic;
-      signal set_transciever    : in  std_logic;
-      signal set_reciever       : in  std_logic;
-      signal is_idle            : in  std_logic;
-      signal tran_trig          : in  std_logic;
-      signal rec_trig           : in  std_logic;
-      signal data_rx            :     std_logic;
-      signal OP_State           : out oper_mode_type
-      );
-  end component;
+            signal txtb_fsms            : in  txt_fsms_type;
+            signal txt_sw_cmd           : out txt_sw_cmd_type;
 
-  ------------------------------------------------------------------------------
-  -- Protocol Control FSM
-  ------------------------------------------------------------------------------
-  component protocolControl is
-    port(
-      signal clk_sys               : in  std_logic;
-      signal res_n                 : in  std_logic;
-      signal drv_bus               : in  std_logic_vector(1023 downto 0);
-      signal int_loop_back_ena     : out std_logic;
-      signal PC_State_out          : out protocol_type;
-      signal alc                   : out std_logic_vector(7 downto 0);
-      signal tran_data             : in  std_logic_vector(31 downto 0);
-      signal tran_dlc              : in  std_logic_vector(3 downto 0);
-      signal tran_is_rtr           : in  std_logic;
-      signal tran_ident_type       : in  std_logic;
-      signal tran_frame_type       : in  std_logic;
-      signal tran_brs              : in  std_logic;
-      signal txt_buf_ptr           : out natural range 0 to 19;
-      signal tran_frame_valid_in   : in  std_logic;
-      signal txt_hw_cmd            : out txt_hw_cmd_type;
-      signal txtb_changed          : in  std_logic;
-      signal br_shifted            : out std_logic;
-      signal rec_ident             : out std_logic_vector(28 downto 0);
-      signal rec_dlc               : out std_logic_vector(3 downto 0);
-      signal rec_is_rtr            : out std_logic;
-      signal rec_ident_type        : out std_logic;
-      signal rec_frame_type        : out std_logic;
-      signal rec_brs               : out std_logic;
-      signal rec_crc               : out std_logic_vector(20 downto 0);
-      signal rec_esi               : out std_logic;
-      signal store_metadata        : out std_logic;
-      signal rec_abort             : out std_logic;
-      signal store_data            : out std_logic;
-      signal store_data_word       : out std_logic_vector(31 downto 0);
-      signal OP_state              : in  oper_mode_type;
-      signal arbitration_lost      : out std_logic;
-      signal is_idle               : out std_logic;
-      signal set_transciever       : out std_logic;
-      signal set_reciever          : out std_logic;
-      signal ack_recieved_out      : out std_logic;
-      signal error_state           : in  error_state_type;
-      signal form_Error            : out std_logic;
-      signal CRC_Error             : out std_logic;
-      signal ack_Error             : out std_logic;
-      signal unknown_state_Error   : out std_logic;
-      signal bit_Error_valid       : in  std_logic;
-      signal stuff_Error_valid     : in  std_logic;
-      signal inc_one               : out std_logic;
-      signal inc_eight             : out std_logic;
-      signal dec_one               : out std_logic;
-      signal tran_valid            : out std_logic;
-      signal rec_valid             : out std_logic;
-      signal tran_trig             : in  std_logic;
-      signal rec_trig              : in  std_logic;
-      signal data_tx               : out std_logic;
-      signal stuff_enable          : out std_logic;
-      signal fixed_stuff           : out std_logic;
-      signal stuff_length          : out std_logic_vector(2 downto 0);
-      signal data_rx               : in  std_logic;
-      signal destuff_enable        : out std_logic;
-      signal stuff_error_enable    : out std_logic;
-      signal fixed_destuff         : out std_logic;
-      signal destuff_length        : out std_logic_vector(2 downto 0);
-      signal dst_ctr               : in  natural range 0 to 7;
-      signal crc_enable            : out std_logic;
-      signal crc15                 : in  std_logic_vector(14 downto 0);
-      signal crc17                 : in  std_logic_vector(16 downto 0);
-      signal crc21                 : in  std_logic_vector(20 downto 0);
-      signal sync_control          : out std_logic_vector(1 downto 0);
-      signal sp_control            : out std_logic_vector(1 downto 0);
-      signal ssp_reset             : out std_logic;
-      signal trv_delay_calib       : out std_logic;
-      signal bit_err_enable        : out std_logic;
-      signal hard_sync_edge        : in  std_logic;
-      signal sof_pulse             : out std_logic
-      );
-  end component;
+            signal txt_buf_cmd_index    : out std_logic_vector(
+                                                buf_count - 1 downto 0);
 
-  ------------------------------------------------------------------------------
-  -- Fault confinement
-  ------------------------------------------------------------------------------
-  component faultConf is
-    port(
-      signal clk_sys               : in  std_logic;
-      signal res_n                 : in  std_logic;
-      signal drv_bus               : in  std_logic_vector(1023 downto 0);
-      signal stuff_Error           : in  std_logic;
-      signal error_valid           : out std_logic;
-      signal error_passive_changed : out std_logic;
-      signal error_warning_limit   : out std_logic;
-      signal OP_State              : in  oper_mode_type;
-      signal data_rx               : in  std_logic;
-      signal data_tx               : in  std_logic;
-      signal rec_trig              : in  std_logic;
-      signal tran_trig_1           : in  std_logic;
-      signal PC_State              : in  protocol_type;
-      signal sp_control            : in  std_logic_vector(1 downto 0);
-      signal form_Error            : in  std_logic;
-      signal CRC_Error             : in  std_logic;
-      signal ack_Error             : in  std_logic;
-      signal unknown_state_Error   : in  std_logic;
-      signal bit_Error_valid       : out std_logic;
-      signal stuff_Error_valid     : out std_logic;
-      signal inc_one               : in  std_logic;
-      signal inc_eight             : in  std_logic;
-      signal dec_one               : in  std_logic;
-      signal enable                : in  std_logic;
-      signal bit_Error_sec_sam     : in  std_logic;
-      signal err_capt              : out std_logic_vector(7 downto 0);
-      signal bit_Error_out         : out std_logic;
-      signal bus_off_start         : out std_logic;
-      signal tx_counter_out        : out std_logic_vector(8 downto 0);
-      signal rx_counter_out        : out std_logic_vector(8 downto 0);
-      signal err_counter_norm_out  : out std_logic_vector(15 downto 0);
-      signal err_counter_fd_out    : out std_logic_vector(15 downto 0);
-      signal error_state_out       : out error_state_type
-      );
-  end component;
+            signal txt_buf_prior_out    : out txtb_priorities_type;
+            signal trv_delay_out        : in  std_logic_vector(15 downto 0);
 
-  ------------------------------------------------------------------------------
-  -- Asynchronous resset synchroniser
-  ------------------------------------------------------------------------------
-  component rst_sync is
-    port (
-      signal clk    : in  std_logic;
-      signal arst_n : in  std_logic;
-      signal rst_n  : out std_logic
-      );
-  end component;
+            signal int_vector           : in  std_logic_vector(
+                                                INT_COUNT - 1 downto 0);
 
-  ------------------------------------------------------------------------------
-  -- APB Interface
-  ------------------------------------------------------------------------------
-  component apb_ifc is
+            signal int_ena              : in  std_logic_vector(
+                                                INT_COUNT - 1 downto 0);
+
+            signal int_mask             : in  std_logic_vector(
+                                                INT_COUNT - 1 downto 0);
+
+            signal loger_act_data       : in  std_logic_vector(63 downto 0);
+            signal log_write_pointer    : in  std_logic_vector(7 downto 0);
+            signal log_read_pointer     : in  std_logic_vector(7 downto 0);
+            signal log_size             : in  std_logic_vector(7 downto 0);
+            signal log_state_out        : in  logger_state_type
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- RX Buffer module
+    ----------------------------------------------------------------------------
+    component rxBuffer is
+        generic(
+            buff_size                   :       natural range 32 to 4096 := 32
+        );
+        port(
+            signal clk_sys              :in     std_logic; --System clock
+            signal res_n                :in     std_logic; --Async. reset
+            signal rec_ident_in         :in     std_logic_vector(28 downto 0);
+            signal rec_dlc_in           :in     std_logic_vector(3 downto 0);
+            signal rec_ident_type_in    :in     std_logic;
+            signal rec_frame_type_in    :in     std_logic;
+            signal rec_is_rtr           :in     std_logic;
+            signal rec_brs              :in     std_logic;
+            signal rec_esi              :in     std_logic;
+            signal store_metadata       :in     std_logic;
+            signal store_data           :in     std_logic;
+            signal store_data_word      :in     std_logic_vector(31 downto 0);
+            signal rec_message_valid    :in     std_logic;
+            signal rec_abort            :in     std_logic;
+            signal sof_pulse            :in     std_logic;
+            signal rx_buf_size          :out    std_logic_vector(12 downto 0);
+            signal rx_full              :out    std_logic;
+            signal rx_empty             :out    std_logic;
+            signal rx_message_count     :out    std_logic_vector(10 downto 0);
+            signal rx_mem_free          :out    std_logic_vector(12 downto 0);
+            signal rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
+            signal rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
+            signal rx_data_overrun      :out    std_logic;
+            signal timestamp            :in     std_logic_vector(63 downto 0);
+            signal rx_read_buff         :out    std_logic_vector(31 downto 0);
+            signal drv_bus              :in     std_logic_vector(1023 downto 0)
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- TXT Buffer module
+    ----------------------------------------------------------------------------
+    component txtBuffer is
+        generic(
+            constant buf_count            :     natural range 1 to 8;
+            constant ID                   :     natural := 1
+        );
+        port(
+            signal clk_sys                :in   std_logic;
+            signal res_n                  :in   std_logic; --Async reset
+            signal tran_data              :in   std_logic_vector(31 downto 0);
+            signal tran_addr              :in   std_logic_vector(4 downto 0);
+            signal tran_cs                :in   std_logic;
+            signal txt_sw_cmd             :in   txt_sw_cmd_type;
+
+            signal txt_sw_buf_cmd_index   :in   std_logic_vector(
+                                                    buf_count - 1 downto 0);
+
+            signal txtb_state             :out  txt_fsm_type;
+            signal txt_hw_cmd             :in   txt_hw_cmd_type;
+            signal bus_off_start          :in   std_logic;
+            signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
+            signal txt_word               :out  std_logic_vector(31 downto 0);
+            signal txt_addr               :in   natural range 0 to 19;
+            signal txt_buf_ready          :out  std_logic
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- TXT Arbitrator module
+    ----------------------------------------------------------------------------
+    component txArbitrator is
+        generic(
+            buf_count   : natural range 1 to 8
+        );
+        port(
+            signal clk_sys                :in  std_logic;
+            signal res_n                  :in  std_logic;
+            signal txt_buf_in             :in txtb_output_type;
+
+            signal txt_buf_ready          :in std_logic_vector(
+                                                buf_count - 1 downto 0);
+
+            signal txtb_ptr               :out natural range 0 to 19;
+            signal tran_data_word_out     :out std_logic_vector(31 downto 0);
+            signal tran_dlc_out           :out std_logic_vector(3 downto 0);
+            signal tran_is_rtr            :out std_logic;
+            signal tran_ident_type_out    :out std_logic;
+            signal tran_frame_type_out    :out std_logic;
+            signal tran_brs_out           :out std_logic;
+            signal tran_frame_valid_out   :out std_logic;
+            signal txt_hw_cmd             :in txt_hw_cmd_type;
+            signal txtb_changed           :out std_logic;
+            signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
+            signal txtb_core_pointer      :in natural range 0 to 19;
+            signal drv_bus                :in std_logic_vector(1023 downto 0);
+            signal txt_buf_prio           :in txtb_priorities_type;
+            signal timestamp              :in std_logic_vector(63 downto 0)
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Priority decoder for TXT Buffer selection
+    ----------------------------------------------------------------------------
+    component priorityDecoder is
+        generic(
+            buf_count :  natural range 1 to 8
+        );
+        port(
+            signal prio               : in  txtb_priorities_type;
+            signal prio_valid         : in  std_logic_vector(
+                                                buf_count - 1 downto 0);
+            signal output_valid       : out  boolean;
+            signal output_index       : out  natural range 0 to buf_count - 1
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Message filter module
+    ----------------------------------------------------------------------------
+    component messageFilter is
+        generic(
+            constant sup_filtA : boolean := true;
+            constant sup_filtB : boolean := true;
+            constant sup_filtC : boolean := true;
+            constant sup_range : boolean := true
+        );
+        port(
+            signal clk_sys         : in  std_logic;
+            signal res_n           : in  std_logic;
+            signal rec_ident_in    : in  std_logic_vector(28 downto 0);
+            signal ident_type      : in  std_logic;
+            signal frame_type      : in  std_logic;
+            signal rec_ident_valid : in  std_logic;
+            signal drv_bus         : in  std_logic_vector(1023 downto 0);
+            signal out_ident_valid : out std_logic
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Interrupt manager module
+    ----------------------------------------------------------------------------
+    component intManager is
+        generic(
+            constant int_count          :     natural range 0 to 32 := 11
+        );
+        port(
+            signal clk_sys                :in   std_logic;
+            signal res_n                  :in   std_logic;
+            signal error_valid            :in   std_logic;
+            signal error_passive_changed  :in   std_logic;
+            signal error_warning_limit    :in   std_logic;
+            signal arbitration_lost       :in   std_logic;
+            signal tx_finished            :in   std_logic;
+            signal br_shifted             :in   std_logic;
+            signal rx_message_disc        :in   std_logic;
+            signal rec_message_valid      :in   std_logic;
+            signal rx_full                :in   std_logic;
+            signal rx_empty               :in   std_logic;
+            signal txt_hw_cmd             :in   txt_hw_cmd_type;
+            signal loger_finished         :in   std_logic;
+            signal drv_bus                :in   std_logic_vector(1023 downto 0);
+            signal int_out                :out  std_logic;
+
+            signal int_vector             :out  std_logic_vector(
+                                                    int_count - 1 downto 0);
+
+            signal int_mask               :out  std_logic_vector(
+                                                    int_count - 1 downto 0);
+
+            signal int_ena                :out  std_logic_vector(
+                                                    int_count - 1 downto 0)
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- CAN Core module
+    ----------------------------------------------------------------------------
+    component core_top is
+        port(
+            signal clk_sys               : in  std_logic;
+            signal res_n                 : in  std_logic;
+            signal drv_bus               : in  std_logic_vector(1023 downto 0);
+            signal stat_bus              : out std_logic_vector(511 downto 0);
+            signal tran_data_in          : in  std_logic_vector(31 downto 0);
+            signal tran_dlc_in           : in  std_logic_vector(3 downto 0);
+            signal tran_is_rtr_in        : in  std_logic;
+            signal tran_ident_type_in    : in  std_logic;
+            signal tran_frame_type_in    : in  std_logic;
+            signal tran_brs_in           : in  std_logic;
+            signal tran_frame_valid_in   : in  std_logic;
+            signal txt_hw_cmd            : out txt_hw_cmd_type;
+            signal txtb_changed          : in  std_logic;
+            signal txt_buf_ptr           : out natural range 0 to 19;
+
+            signal rec_ident_out         : out std_logic_vector(28 downto 0);
+            signal rec_dlc_out           : out std_logic_vector(3 downto 0);
+            signal rec_ident_type_out    : out std_logic;
+            signal rec_frame_type_out    : out std_logic;
+            signal rec_is_rtr_out        : out std_logic;
+            signal rec_brs_out           : out std_logic;
+            signal rec_esi_out           : out std_logic;
+            signal rec_message_valid_out : out std_logic;
+            signal store_metadata        : out std_logic;
+            signal store_data            : out std_logic;
+            signal store_data_word       : out std_logic_vector(31 downto 0);
+            signal rec_abort             : out std_logic;
+
+            signal arbitration_lost_out  : out std_logic;
+            signal tx_finished           : out std_logic;
+            signal br_shifted            : out std_logic;
+            signal error_valid           : out std_logic;
+            signal error_passive_changed : out std_logic;
+            signal error_warning_limit   : out std_logic;
+            signal sample_nbt_del_2      : in  std_logic;
+            signal sample_dbt_del_2      : in  std_logic;
+            signal sample_nbt_del_1      : in  std_logic;
+            signal sample_dbt_del_1      : in  std_logic;
+            signal sync_nbt              : in  std_logic;
+            signal sync_dbt              : in  std_logic;
+            signal sync_nbt_del_1        : in  std_logic;
+            signal sync_dbt_del_1        : in  std_logic;
+            signal sample_sec            : in  std_logic;
+            signal sample_sec_del_1      : in  std_logic;
+            signal sample_sec_del_2      : in  std_logic;
+            signal sync_control          : out std_logic_vector(1 downto 0);
+            signal data_rx               : in  std_logic;
+            signal data_tx               : out std_logic;
+            signal timestamp             : in  std_logic_vector(63 downto 0);
+            signal sp_control            : out std_logic_vector(1 downto 0);
+            signal ssp_reset             : out std_logic;
+            signal trv_delay_calib       : out std_logic;
+            signal bit_Error_sec_sam     : in  std_logic;
+            signal hard_sync_edge        : in  std_logic;
+            signal bus_off_start         : out std_logic;
+            signal sof_pulse             : out std_logic
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Prescaler module
+    ----------------------------------------------------------------------------
+    component prescaler_v3 is
+        port(
+            signal clk_sys              : in  std_logic;
+            signal res_n                : in  std_logic;
+            signal sync_edge            : in  std_logic;
+            signal OP_State             : in  oper_mode_type;
+            signal drv_bus              : in  std_logic_vector(1023 downto 0);
+            signal clk_tq_nbt           : out std_logic;
+            signal clk_tq_dbt           : out std_logic;
+            signal sample_nbt           : out std_logic;
+            signal sample_dbt           : out std_logic;
+            signal sample_nbt_del_1     : out std_logic;
+            signal sample_dbt_del_1     : out std_logic;
+            signal sample_nbt_del_2     : out std_logic;
+            signal sample_dbt_del_2     : out std_logic;
+            signal sync_nbt             : out std_logic;
+            signal sync_dbt             : out std_logic;
+            signal sync_nbt_del_1       : out std_logic;
+            signal sync_dbt_del_1       : out std_logic;
+            signal bt_FSM_out           : out bit_time_type;
+            signal data_tx              : in  std_logic;
+            signal hard_sync_edge_valid : out std_logic;
+            signal sp_control           : in  std_logic_vector(1 downto 0);
+            signal sync_control         : in  std_logic_vector(1 downto 0)
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Bus synchroniser module
+    ----------------------------------------------------------------------------
+    component busSync is
+        generic (
+            use_Sync : boolean
+        );
+        port(
+            signal clk_sys              : in  std_logic;
+            signal res_n                : in  std_logic;
+            signal CAN_rx               : in  std_logic;
+            signal CAN_tx               : out std_logic;
+            signal drv_bus              : in  std_logic_vector(1023 downto 0);
+            signal sample_nbt           : in  std_logic;
+            signal sample_dbt           : in  std_logic;
+            signal sync_edge            : out std_logic;
+            signal data_tx              : in  std_logic;
+            signal data_rx              : out std_logic;
+            signal sp_control           : in  std_logic_vector(1 downto 0);
+            signal ssp_reset            : in  std_logic;
+            signal trv_delay_calib      : in  std_logic;
+            signal bit_err_enable       : in  std_logic;
+            signal sample_sec_out       : out std_logic;
+            signal sample_sec_del_1_out : out std_logic;
+            signal sample_sec_del_2_out : out std_logic;
+            signal trv_delay_out        : out std_logic_vector(15 downto 0);
+            signal bit_Error            : out std_logic
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- CAN Logger module
+    ----------------------------------------------------------------------------
+    component CAN_logger is
+        generic(
+            constant memory_size        :   natural := 16
+        );
+        port(
+            signal clk_sys              : in  std_logic;
+            signal res_n                : in  std_logic;
+            signal drv_bus              : in  std_logic_vector(1023 downto 0);
+            signal stat_bus             : in  std_logic_vector(511 downto 0);
+            signal sync_edge            : in  std_logic;
+            signal data_overrun         : in  std_logic;
+            signal timestamp            : in  std_logic_vector(63 downto 0);
+            signal bt_FSM               : in  bit_time_type;
+            signal loger_finished       : out std_logic;
+            signal loger_act_data       : out std_logic_vector(63 downto 0);
+            signal log_write_pointer    : out std_logic_vector(7 downto 0);
+            signal log_read_pointer     : out std_logic_vector(7 downto 0);
+            signal log_size             : out std_logic_vector(7 downto 0);
+            signal log_state_out        : out logger_state_type
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    ---- CORE Top level components
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+
+    ----------------------------------------------------------------------------
+    -- CRC module
+    ----------------------------------------------------------------------------
+    component canCRC is
+        generic(
+            constant crc15_pol : std_logic_vector(15 downto 0) := x"C599";
+            constant crc17_pol : std_logic_vector(19 downto 0) := x"3685B";
+            constant crc21_pol : std_logic_vector(23 downto 0) := x"302899"
+        );
+        port(
+            signal data_in      : in  std_logic;
+            signal clk_sys      : in  std_logic;
+            signal trig         : in  std_logic;
+            signal res_n        : in  std_logic;
+            signal enable       : in  std_logic;
+            signal drv_bus      : in  std_logic_vector(1023 downto 0);
+            signal crc15        : out std_logic_vector(14 downto 0);
+            signal crc17        : out std_logic_vector(16 downto 0);
+            signal crc21        : out std_logic_vector(20 downto 0)
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Bit Stuffing
+    ----------------------------------------------------------------------------
+    component bitStuffing_v2 is
+        port(
+            signal clk_sys     : in  std_logic;
+            signal res_n       : in  std_logic;
+            signal tran_trig_1 : in  std_logic;
+            signal enable      : in  std_logic;
+            signal data_in     : in  std_logic;
+            signal fixed_stuff : in  std_logic;
+            signal data_halt   : out std_logic;
+            signal length      : in  std_logic_vector(2 downto 0);
+            signal bst_ctr     : out natural range 0 to 7;
+            signal data_out    : out std_logic
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Bit Destuffing
+    ----------------------------------------------------------------------------
+    component bitDestuffing is
+        port(
+            signal clk_sys            : in  std_logic;
+            signal res_n              : in  std_logic;
+            signal data_in            : in  std_logic;
+            signal trig_spl_1         : in  std_logic;
+            signal stuff_Error        : out std_logic;
+            signal data_out           : out std_logic;
+            signal destuffed          : out std_logic;
+            signal enable             : in  std_logic;
+            signal stuff_Error_enable : in  std_logic;
+            signal fixed_stuff        : in  std_logic;
+            signal length             : in  std_logic_vector(2 downto 0);
+            signal dst_ctr            : out natural range 0 to 7
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Operation control FSM
+    ----------------------------------------------------------------------------
+    component operationControl is
+        port(
+            signal clk_sys            : in  std_logic;
+            signal res_n              : in  std_logic;
+            signal drv_bus            : in  std_logic_vector(1023 downto 0);
+            signal arbitration_lost   : in  std_logic;
+            signal PC_State           : in  protocol_type;
+            signal tran_data_valid_in : in  std_logic;
+            signal set_transciever    : in  std_logic;
+            signal set_reciever       : in  std_logic;
+            signal is_idle            : in  std_logic;
+            signal tran_trig          : in  std_logic;
+            signal rec_trig           : in  std_logic;
+            signal data_rx            :     std_logic;
+            signal OP_State           : out oper_mode_type
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Protocol Control FSM
+    ----------------------------------------------------------------------------
+    component protocolControl is
+        port(
+            signal clk_sys               : in  std_logic;
+            signal res_n                 : in  std_logic;
+            signal drv_bus               : in  std_logic_vector(1023 downto 0);
+            signal int_loop_back_ena     : out std_logic;
+            signal PC_State_out          : out protocol_type;
+            signal alc                   : out std_logic_vector(7 downto 0);
+            signal tran_data             : in  std_logic_vector(31 downto 0);
+            signal tran_dlc              : in  std_logic_vector(3 downto 0);
+            signal tran_is_rtr           : in  std_logic;
+            signal tran_ident_type       : in  std_logic;
+            signal tran_frame_type       : in  std_logic;
+            signal tran_brs              : in  std_logic;
+            signal txt_buf_ptr           : out natural range 0 to 19;
+            signal tran_frame_valid_in   : in  std_logic;
+            signal txt_hw_cmd            : out txt_hw_cmd_type;
+            signal txtb_changed          : in  std_logic;
+            signal br_shifted            : out std_logic;
+            signal rec_ident             : out std_logic_vector(28 downto 0);
+            signal rec_dlc               : out std_logic_vector(3 downto 0);
+            signal rec_is_rtr            : out std_logic;
+            signal rec_ident_type        : out std_logic;
+            signal rec_frame_type        : out std_logic;
+            signal rec_brs               : out std_logic;
+            signal rec_crc               : out std_logic_vector(20 downto 0);
+            signal rec_esi               : out std_logic;
+            signal store_metadata        : out std_logic;
+            signal rec_abort             : out std_logic;
+            signal store_data            : out std_logic;
+            signal store_data_word       : out std_logic_vector(31 downto 0);
+            signal OP_state              : in  oper_mode_type;
+            signal arbitration_lost      : out std_logic;
+            signal is_idle               : out std_logic;
+            signal set_transciever       : out std_logic;
+            signal set_reciever          : out std_logic;
+            signal ack_recieved_out      : out std_logic;
+            signal error_state           : in  error_state_type;
+            signal form_Error            : out std_logic;
+            signal CRC_Error             : out std_logic;
+            signal ack_Error             : out std_logic;
+            signal unknown_state_Error   : out std_logic;
+            signal bit_Error_valid       : in  std_logic;
+            signal stuff_Error_valid     : in  std_logic;
+            signal inc_one               : out std_logic;
+            signal inc_eight             : out std_logic;
+            signal dec_one               : out std_logic;
+            signal tran_valid            : out std_logic;
+            signal rec_valid             : out std_logic;
+            signal tran_trig             : in  std_logic;
+            signal rec_trig              : in  std_logic;
+            signal data_tx               : out std_logic;
+            signal stuff_enable          : out std_logic;
+            signal fixed_stuff           : out std_logic;
+            signal stuff_length          : out std_logic_vector(2 downto 0);
+            signal data_rx               : in  std_logic;
+            signal destuff_enable        : out std_logic;
+            signal stuff_error_enable    : out std_logic;
+            signal fixed_destuff         : out std_logic;
+            signal destuff_length        : out std_logic_vector(2 downto 0);
+            signal dst_ctr               : in  natural range 0 to 7;
+            signal crc_enable            : out std_logic;
+            signal crc15                 : in  std_logic_vector(14 downto 0);
+            signal crc17                 : in  std_logic_vector(16 downto 0);
+            signal crc21                 : in  std_logic_vector(20 downto 0);
+            signal sync_control          : out std_logic_vector(1 downto 0);
+            signal sp_control            : out std_logic_vector(1 downto 0);
+            signal ssp_reset             : out std_logic;
+            signal trv_delay_calib       : out std_logic;
+            signal bit_err_enable        : out std_logic;
+            signal hard_sync_edge        : in  std_logic;
+            signal sof_pulse             : out std_logic
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Fault confinement
+    ----------------------------------------------------------------------------
+    component faultConf is
+        port(
+            signal clk_sys               : in  std_logic;
+            signal res_n                 : in  std_logic;
+            signal drv_bus               : in  std_logic_vector(1023 downto 0);
+            signal stuff_Error           : in  std_logic;
+            signal error_valid           : out std_logic;
+            signal error_passive_changed : out std_logic;
+            signal error_warning_limit   : out std_logic;
+            signal OP_State              : in  oper_mode_type;
+            signal data_rx               : in  std_logic;
+            signal data_tx               : in  std_logic;
+            signal rec_trig              : in  std_logic;
+            signal tran_trig_1           : in  std_logic;
+            signal PC_State              : in  protocol_type;
+            signal sp_control            : in  std_logic_vector(1 downto 0);
+            signal form_Error            : in  std_logic;
+            signal CRC_Error             : in  std_logic;
+            signal ack_Error             : in  std_logic;
+            signal unknown_state_Error   : in  std_logic;
+            signal bit_Error_valid       : out std_logic;
+            signal stuff_Error_valid     : out std_logic;
+            signal inc_one               : in  std_logic;
+            signal inc_eight             : in  std_logic;
+            signal dec_one               : in  std_logic;
+            signal enable                : in  std_logic;
+            signal bit_Error_sec_sam     : in  std_logic;
+            signal err_capt              : out std_logic_vector(7 downto 0);
+            signal bit_Error_out         : out std_logic;
+            signal bus_off_start         : out std_logic;
+            signal tx_counter_out        : out std_logic_vector(8 downto 0);
+            signal rx_counter_out        : out std_logic_vector(8 downto 0);
+            signal err_counter_norm_out  : out std_logic_vector(15 downto 0);
+            signal err_counter_fd_out    : out std_logic_vector(15 downto 0);
+            signal error_state_out       : out error_state_type
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Asynchronous resset synchroniser
+    ----------------------------------------------------------------------------
+    component rst_sync is
+        port (
+            signal clk    : in  std_logic;
+            signal arst_n : in  std_logic;
+            signal rst_n  : out std_logic
+        );
+    end component;
+
+    ----------------------------------------------------------------------------
+    -- APB Interface
+    ----------------------------------------------------------------------------
+    component apb_ifc is
         generic (
             -- ID (bits  19-16 of reg_addr_o)
             ID : natural := 1
@@ -747,6 +760,6 @@ package CANcomponents is
             s_apb_pwdata     : in  std_logic_vector(31 downto 0);
             s_apb_pwrite     : in  std_logic
         );
-  end component;
+    end component;
 
 end package;
