@@ -2,8 +2,8 @@
 # Vivado v2017.3 (64-bit)
 # SW Build 2018833 on Wed Oct  4 19:58:07 MDT 2017
 # IP Build 2016188 on Wed Oct  4 21:52:56 MDT 2017
-# Start of session at: Thu Apr 19 18:21:31 2018
-# Process ID: 27518
+# Start of session at: Mon Jul  9 13:54:56 2018
+# Process ID: 14570
 # Current directory: /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Vivado/xilinx_benchmark/xilinx_benchmark.runs/synth_1
 # Command line: vivado -log CAN_top_level.vds -product Vivado -mode batch -messageDb vivado.pb -notrace -source CAN_top_level.tcl
 # Log file: /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Vivado/xilinx_benchmark/xilinx_benchmark.runs/synth_1/CAN_top_level.vds
@@ -15,11 +15,11 @@ Starting synth_design
 Attempting to get a license for feature 'Synthesis' and/or device 'xc7z007s'
 INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z007s'
 INFO: Launching helper process for spawning children vivado processes
-INFO: Helper process launched with PID 27639 
+INFO: Helper process launched with PID 14680 
 ---------------------------------------------------------------------------------
-Starting Synthesize : Time (s): cpu = 00:00:09 ; elapsed = 00:00:09 . Memory (MB): peak = 1282.676 ; gain = 87.996 ; free physical = 5943 ; free virtual = 10364
+Starting RTL Elaboration : Time (s): cpu = 00:00:09 ; elapsed = 00:00:10 . Memory (MB): peak = 1282.684 ; gain = 87.996 ; free physical = 2414 ; free virtual = 8426
 ---------------------------------------------------------------------------------
-INFO: [Synth 8-638] synthesizing module 'CAN_top_level' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:448]
+INFO: [Synth 8-638] synthesizing module 'CAN_top_level' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:458]
 	Parameter use_logger bound to: 1 - type: bool 
 	Parameter rx_buffer_size bound to: 128 - type: integer 
 	Parameter use_sync bound to: 1 - type: bool 
@@ -28,10 +28,8 @@ INFO: [Synth 8-638] synthesizing module 'CAN_top_level' [/DOKUMENTY/Skola/CVUT-F
 	Parameter sup_filtB bound to: 1 - type: bool 
 	Parameter sup_filtC bound to: 1 - type: bool 
 	Parameter sup_range bound to: 1 - type: bool 
-	Parameter tx_time_sup bound to: 1 - type: bool 
-	Parameter sup_be bound to: 1 - type: bool 
 	Parameter logger_size bound to: 8 - type: integer 
-INFO: [Synth 8-3491] module 'rst_sync' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/rst_sync.vhd:50' bound to instance 'rst_sync_comp' of component 'rst_sync' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:466]
+INFO: [Synth 8-3491] module 'rst_sync' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/rst_sync.vhd:50' bound to instance 'rst_sync_comp' of component 'rst_sync' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:480]
 INFO: [Synth 8-638] synthesizing module 'rst_sync' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/rst_sync.vhd:58]
 INFO: [Synth 8-256] done synthesizing module 'rst_sync' (1#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/rst_sync.vhd:58]
 	Parameter compType bound to: 4'b0100 
@@ -41,11 +39,10 @@ INFO: [Synth 8-256] done synthesizing module 'rst_sync' (1#1) [/DOKUMENTY/Skola/
 	Parameter sup_filtC bound to: 1 - type: bool 
 	Parameter sup_range bound to: 1 - type: bool 
 	Parameter sup_be bound to: 1 - type: bool 
-	Parameter tx_time_sup bound to: 1 - type: bool 
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 1 - type: integer 
-INFO: [Synth 8-3491] module 'canfd_registers' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd:121' bound to instance 'reg_comp' of component 'canfd_registers' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:473]
-INFO: [Synth 8-638] synthesizing module 'canfd_registers' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd:368]
+INFO: [Synth 8-3491] module 'canfd_registers' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd:122' bound to instance 'reg_comp' of component 'canfd_registers' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:487]
+INFO: [Synth 8-638] synthesizing module 'canfd_registers' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd:363]
 	Parameter compType bound to: 4'b0100 
 	Parameter use_logger bound to: 1 - type: bool 
 	Parameter sup_filtA bound to: 1 - type: bool 
@@ -53,70 +50,66 @@ INFO: [Synth 8-638] synthesizing module 'canfd_registers' [/DOKUMENTY/Skola/CVUT
 	Parameter sup_filtC bound to: 1 - type: bool 
 	Parameter sup_range bound to: 1 - type: bool 
 	Parameter sup_be bound to: 1 - type: bool 
-	Parameter tx_time_sup bound to: 1 - type: bool 
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 1 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'canfd_registers' (2#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd:368]
+INFO: [Synth 8-256] done synthesizing module 'canfd_registers' (2#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Registers_Memory_Interface/canfd_registers.vhd:363]
 	Parameter buff_size bound to: 128 - type: integer 
-INFO: [Synth 8-3491] module 'rxBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:142' bound to instance 'rx_buf_comp' of component 'rxBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:527]
-INFO: [Synth 8-638] synthesizing module 'rxBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:315]
+INFO: [Synth 8-3491] module 'rxBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:157' bound to instance 'rx_buf_comp' of component 'rxBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:540]
+INFO: [Synth 8-638] synthesizing module 'rxBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:437]
 	Parameter buff_size bound to: 128 - type: integer 
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:346]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:521]
-WARNING: [Synth 8-6014] Unused sequential element data_length_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:519]
-INFO: [Synth 8-256] done synthesizing module 'rxBuffer' (3#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:315]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:575]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:707]
+INFO: [Synth 8-256] done synthesizing module 'rxBuffer' (3#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:437]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 0 - type: integer 
-INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:565]
-INFO: [Synth 8-638] synthesizing module 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:579]
+INFO: [Synth 8-638] synthesizing module 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 0 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'txtBuffer' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-256] done synthesizing module 'txtBuffer' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 1 - type: integer 
-INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:565]
-INFO: [Synth 8-638] synthesizing module 'txtBuffer__parameterized1' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:579]
+INFO: [Synth 8-638] synthesizing module 'txtBuffer__parameterized1' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 1 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'txtBuffer__parameterized1' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-256] done synthesizing module 'txtBuffer__parameterized1' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 2 - type: integer 
-INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:565]
-INFO: [Synth 8-638] synthesizing module 'txtBuffer__parameterized3' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:579]
+INFO: [Synth 8-638] synthesizing module 'txtBuffer__parameterized3' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 2 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'txtBuffer__parameterized3' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-256] done synthesizing module 'txtBuffer__parameterized3' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 3 - type: integer 
-INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:565]
-INFO: [Synth 8-638] synthesizing module 'txtBuffer__parameterized5' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-3491] module 'txtBuffer' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:78' bound to instance 'txtBuffer_comp' of component 'txtBuffer' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:579]
+INFO: [Synth 8-638] synthesizing module 'txtBuffer__parameterized5' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
 	Parameter ID bound to: 3 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'txtBuffer__parameterized5' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:128]
+INFO: [Synth 8-256] done synthesizing module 'txtBuffer__parameterized5' (4#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txtBuffer.vhd:130]
 	Parameter buf_count bound to: 4 - type: integer 
-	Parameter tx_time_sup bound to: 1 - type: bool 
-INFO: [Synth 8-3491] module 'txArbitrator' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:114' bound to instance 'tx_arb_comp' of component 'txArbitrator' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:588]
-INFO: [Synth 8-638] synthesizing module 'txArbitrator' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:261]
+INFO: [Synth 8-3491] module 'txArbitrator' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:139' bound to instance 'tx_arb_comp' of component 'txArbitrator' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:603]
+INFO: [Synth 8-638] synthesizing module 'txArbitrator' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:291]
 	Parameter buf_count bound to: 4 - type: integer 
-	Parameter tx_time_sup bound to: 1 - type: bool 
 	Parameter buf_count bound to: 4 - type: integer 
-INFO: [Synth 8-3491] module 'priorityDecoder' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:56' bound to instance 'priorityDecoder_comp' of component 'priorityDecoder' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:268]
+INFO: [Synth 8-3491] module 'priorityDecoder' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:56' bound to instance 'priorityDecoder_comp' of component 'priorityDecoder' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:298]
 INFO: [Synth 8-638] synthesizing module 'priorityDecoder' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:85]
 	Parameter buf_count bound to: 4 - type: integer 
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:158]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:158]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:158]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:158]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:203]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:203]
-WARNING: [Synth 8-614] signal 'l0_valid' is read in the process but is not in the sensitivity list [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:197]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:160]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:160]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:160]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:160]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:205]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:205]
 INFO: [Synth 8-256] done synthesizing module 'priorityDecoder' (5#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/priorityDecoder.vhd:85]
-INFO: [Synth 8-256] done synthesizing module 'txArbitrator' (6#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:261]
+WARNING: [Synth 8-6014] Unused sequential element select_buf_avail_reg_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:404]
+INFO: [Synth 8-256] done synthesizing module 'txArbitrator' (6#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/txArbitrator.vhd:291]
 	Parameter sup_filtA bound to: 1 - type: bool 
 	Parameter sup_filtB bound to: 1 - type: bool 
 	Parameter sup_filtC bound to: 1 - type: bool 
 	Parameter sup_range bound to: 1 - type: bool 
-INFO: [Synth 8-3491] module 'messageFilter' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd:65' bound to instance 'mes_filt_comp' of component 'messageFilter' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:615]
+INFO: [Synth 8-3491] module 'messageFilter' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd:65' bound to instance 'mes_filt_comp' of component 'messageFilter' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:629]
 INFO: [Synth 8-638] synthesizing module 'messageFilter' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd:185]
 	Parameter sup_filtA bound to: 1 - type: bool 
 	Parameter sup_filtB bound to: 1 - type: bool 
@@ -125,39 +118,39 @@ INFO: [Synth 8-638] synthesizing module 'messageFilter' [/DOKUMENTY/Skola/CVUT-F
 INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd:218]
 INFO: [Synth 8-256] done synthesizing module 'messageFilter' (7#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd:185]
 	Parameter int_count bound to: 12 - type: integer 
-INFO: [Synth 8-3491] module 'intManager' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Interrupts/intManager.vhd:70' bound to instance 'int_man_comp' of component 'intManager' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:633]
+INFO: [Synth 8-3491] module 'intManager' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Interrupts/intManager.vhd:70' bound to instance 'int_man_comp' of component 'intManager' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:649]
 INFO: [Synth 8-638] synthesizing module 'intManager' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Interrupts/intManager.vhd:160]
 	Parameter int_count bound to: 12 - type: integer 
 INFO: [Synth 8-256] done synthesizing module 'intManager' (8#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Interrupts/intManager.vhd:160]
-INFO: [Synth 8-3491] module 'core_top' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:87' bound to instance 'core_top_comp' of component 'core_top' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:659]
-INFO: [Synth 8-638] synthesizing module 'core_top' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:500]
-INFO: [Synth 8-3491] module 'operationControl' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:56' bound to instance 'OP_State_comp' of component 'operationControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:546]
-INFO: [Synth 8-638] synthesizing module 'operationControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:101]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:123]
-INFO: [Synth 8-256] done synthesizing module 'operationControl' (9#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:101]
-INFO: [Synth 8-3491] module 'protocolControl' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:208' bound to instance 'PC_State_comp' of component 'protocolControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:563]
-INFO: [Synth 8-638] synthesizing module 'protocolControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:675]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:757]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1224]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1276]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1312]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1464]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1719]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1786]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1883]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:2406]
-INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:2554]
-WARNING: [Synth 8-6014] Unused sequential element control_state_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:961]
-WARNING: [Synth 8-6014] Unused sequential element fixed_CRC_FD_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:887]
-WARNING: [Synth 8-6014] Unused sequential element fixed_CRC_FD_rec_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:888]
-INFO: [Synth 8-256] done synthesizing module 'protocolControl' (10#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:675]
-INFO: [Synth 8-3491] module 'faultConf' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:68' bound to instance 'faultConf_comp' of component 'faultConf' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:658]
-INFO: [Synth 8-638] synthesizing module 'faultConf' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:220]
-INFO: [Synth 8-256] done synthesizing module 'faultConf' (11#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:220]
+INFO: [Synth 8-3491] module 'core_top' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:87' bound to instance 'core_top_comp' of component 'core_top' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:675]
+INFO: [Synth 8-638] synthesizing module 'core_top' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:504]
+INFO: [Synth 8-3491] module 'operationControl' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:56' bound to instance 'OP_State_comp' of component 'operationControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:544]
+INFO: [Synth 8-638] synthesizing module 'operationControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:102]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:124]
+INFO: [Synth 8-256] done synthesizing module 'operationControl' (9#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd:102]
+INFO: [Synth 8-3491] module 'protocolControl' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:227' bound to instance 'PC_State_comp' of component 'protocolControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:561]
+INFO: [Synth 8-638] synthesizing module 'protocolControl' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:722]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:821]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1359]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1410]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1465]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1672]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:2000]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:2081]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:2213]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:2834]
+INFO: [Synth 8-226] default block is never used [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:2995]
+WARNING: [Synth 8-6014] Unused sequential element control_state_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:1074]
+WARNING: [Synth 8-6014] Unused sequential element fixed_CRC_FD_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:993]
+WARNING: [Synth 8-6014] Unused sequential element fixed_CRC_FD_rec_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:994]
+INFO: [Synth 8-256] done synthesizing module 'protocolControl' (10#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:722]
+INFO: [Synth 8-3491] module 'faultConf' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:69' bound to instance 'faultConf_comp' of component 'faultConf' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:655]
+INFO: [Synth 8-638] synthesizing module 'faultConf' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:228]
+INFO: [Synth 8-256] done synthesizing module 'faultConf' (11#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:228]
 	Parameter crc15_pol bound to: 16'b1100010110011001 
 	Parameter crc17_pol bound to: 20'b00110110100001011011 
 	Parameter crc21_pol bound to: 24'b001100000010100010011001 
-INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_wbs_rx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:705]
+INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_wbs_rx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:703]
 INFO: [Synth 8-638] synthesizing module 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:116]
 	Parameter crc15_pol bound to: 16'b1100010110011001 
 	Parameter crc17_pol bound to: 20'b00110110100001011011 
@@ -169,37 +162,37 @@ INFO: [Synth 8-256] done synthesizing module 'canCRC' (12#1) [/DOKUMENTY/Skola/C
 	Parameter crc15_pol bound to: 16'b1100010110011001 
 	Parameter crc17_pol bound to: 20'b00110110100001011011 
 	Parameter crc21_pol bound to: 24'b001100000010100010011001 
-INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_nbs_rx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:723]
+INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_nbs_rx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:721]
 	Parameter crc15_pol bound to: 16'b1100010110011001 
 	Parameter crc17_pol bound to: 20'b00110110100001011011 
 	Parameter crc21_pol bound to: 24'b001100000010100010011001 
-INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_wbs_tx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:742]
+INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_wbs_tx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:740]
 	Parameter crc15_pol bound to: 16'b1100010110011001 
 	Parameter crc17_pol bound to: 20'b00110110100001011011 
 	Parameter crc21_pol bound to: 24'b001100000010100010011001 
-INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_nbs_tx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:760]
-INFO: [Synth 8-3491] module 'bitStuffing_v2' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitStuffing_v2.vhd:76' bound to instance 'bs_comp' of component 'bitStuffing_v2' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:781]
+INFO: [Synth 8-3491] module 'canCRC' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd:66' bound to instance 'crc_nbs_tx_comp' of component 'canCRC' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:758]
+INFO: [Synth 8-3491] module 'bitStuffing_v2' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitStuffing_v2.vhd:76' bound to instance 'bs_comp' of component 'bitStuffing_v2' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:779]
 INFO: [Synth 8-638] synthesizing module 'bitStuffing_v2' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitStuffing_v2.vhd:146]
 INFO: [Synth 8-256] done synthesizing module 'bitStuffing_v2' (13#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitStuffing_v2.vhd:146]
-INFO: [Synth 8-3491] module 'bitDestuffing' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd:81' bound to instance 'bitDest_comp' of component 'bitDestuffing' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:795]
-INFO: [Synth 8-638] synthesizing module 'bitDestuffing' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd:154]
-INFO: [Synth 8-256] done synthesizing module 'bitDestuffing' (14#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd:154]
+INFO: [Synth 8-3491] module 'bitDestuffing' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd:78' bound to instance 'bitDest_comp' of component 'bitDestuffing' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:793]
+INFO: [Synth 8-638] synthesizing module 'bitDestuffing' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd:151]
+INFO: [Synth 8-256] done synthesizing module 'bitDestuffing' (14#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/bitDeStuffing.vhd:151]
 WARNING: [Synth 8-6014] Unused sequential element tran_trig_del_2_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:892]
-INFO: [Synth 8-256] done synthesizing module 'core_top' (15#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:500]
-INFO: [Synth 8-3491] module 'prescaler_v3' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:133' bound to instance 'prescaler_comp' of component 'prescaler_v3' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:715]
-INFO: [Synth 8-638] synthesizing module 'prescaler_v3' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:354]
-INFO: [Synth 8-256] done synthesizing module 'prescaler_v3' (16#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:354]
+INFO: [Synth 8-256] done synthesizing module 'core_top' (15#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:504]
+INFO: [Synth 8-3491] module 'prescaler_v3' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:166' bound to instance 'prescaler_comp' of component 'prescaler_v3' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:735]
+INFO: [Synth 8-638] synthesizing module 'prescaler_v3' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:404]
+INFO: [Synth 8-256] done synthesizing module 'prescaler_v3' (16#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:404]
 	Parameter use_Sync bound to: 1 - type: bool 
-INFO: [Synth 8-3491] module 'busSync' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:87' bound to instance 'bus_sync_comp' of component 'busSync' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:741]
-INFO: [Synth 8-638] synthesizing module 'busSync' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:243]
+INFO: [Synth 8-3491] module 'busSync' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:92' bound to instance 'bus_sync_comp' of component 'busSync' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:761]
+INFO: [Synth 8-638] synthesizing module 'busSync' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:255]
 	Parameter use_Sync bound to: 1 - type: bool 
-INFO: [Synth 8-256] done synthesizing module 'busSync' (17#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:243]
+INFO: [Synth 8-256] done synthesizing module 'busSync' (17#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:255]
 	Parameter memory_size bound to: 8 - type: integer 
-INFO: [Synth 8-3491] module 'CAN_logger' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Event_Logger/logger.vhd:87' bound to instance 'log_comp' of component 'CAN_logger' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:773]
-INFO: [Synth 8-638] synthesizing module 'CAN_logger' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Event_Logger/logger.vhd:209]
+INFO: [Synth 8-3491] module 'CAN_logger' declared at '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Event_Logger/logger.vhd:87' bound to instance 'log_comp' of component 'CAN_logger' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:793]
+INFO: [Synth 8-638] synthesizing module 'CAN_logger' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Event_Logger/logger.vhd:212]
 	Parameter memory_size bound to: 8 - type: integer 
-INFO: [Synth 8-256] done synthesizing module 'CAN_logger' (18#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Event_Logger/logger.vhd:209]
-INFO: [Synth 8-256] done synthesizing module 'CAN_top_level' (19#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:448]
+INFO: [Synth 8-256] done synthesizing module 'CAN_logger' (18#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Event_Logger/logger.vhd:212]
+INFO: [Synth 8-256] done synthesizing module 'CAN_top_level' (19#1) [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_top_level.vhd:458]
 WARNING: [Synth 8-3331] design CAN_logger has unconnected port drv_bus[1023]
 WARNING: [Synth 8-3331] design CAN_logger has unconnected port drv_bus[1022]
 WARNING: [Synth 8-3331] design CAN_logger has unconnected port drv_bus[1021]
@@ -302,19 +295,51 @@ WARNING: [Synth 8-3331] design CAN_logger has unconnected port drv_bus[925]
 WARNING: [Synth 8-3331] design CAN_logger has unconnected port drv_bus[924]
 INFO: [Common 17-14] Message 'Synth 8-3331' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
 ---------------------------------------------------------------------------------
-Finished Synthesize : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 1388.207 ; gain = 193.527 ; free physical = 5840 ; free virtual = 10327
+Finished RTL Elaboration : Time (s): cpu = 00:00:14 ; elapsed = 00:00:15 . Memory (MB): peak = 1385.215 ; gain = 190.527 ; free physical = 2353 ; free virtual = 8379
 ---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
 ---------------------------------------------------------------------------------
-Finished Constraint Validation : Time (s): cpu = 00:00:14 ; elapsed = 00:00:16 . Memory (MB): peak = 1388.207 ; gain = 193.527 ; free physical = 5845 ; free virtual = 10343
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:15 ; elapsed = 00:00:16 . Memory (MB): peak = 1385.215 ; gain = 190.527 ; free physical = 2357 ; free virtual = 8395
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xc7z007sclg225-2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Constraints/CTU_CAN_FD_Xilinx.sdc]
+can't read "rs_sync_chain_1": no such variable
+can't read "rs_sync_chain_2": no such variable
+Finished Parsing XDC File [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Constraints/CTU_CAN_FD_Xilinx.sdc]
+Completed Processing XDC Constraints
+
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.02 . Memory (MB): peak = 1745.840 ; gain = 0.000 ; free physical = 2148 ; free virtual = 8165
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:38 ; elapsed = 00:00:57 . Memory (MB): peak = 1745.840 ; gain = 551.152 ; free physical = 2235 ; free virtual = 8259
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Loading Part and Timing Information
 ---------------------------------------------------------------------------------
 Loading part: xc7z007sclg225-2
 ---------------------------------------------------------------------------------
-Finished Loading Part and Timing Information : Time (s): cpu = 00:00:14 ; elapsed = 00:00:16 . Memory (MB): peak = 1396.211 ; gain = 201.531 ; free physical = 5845 ; free virtual = 10343
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:38 ; elapsed = 00:00:57 . Memory (MB): peak = 1745.840 ; gain = 551.152 ; free physical = 2235 ; free virtual = 8259
 ---------------------------------------------------------------------------------
-INFO: [Device 21-403] Loading part xc7z007sclg225-2
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property ASYNC_REG = true for bus_sync_comp/sync_Chain_1_reg. (constraint file  /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Constraints/CTU_CAN_FD_Xilinx.sdc, line 56).
+Applied set_property ASYNC_REG = true for bus_sync_comp/sync_Chain_2_reg. (constraint file  /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Constraints/CTU_CAN_FD_Xilinx.sdc, line 57).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:38 ; elapsed = 00:00:57 . Memory (MB): peak = 1745.840 ; gain = 551.152 ; free physical = 2237 ; free virtual = 8260
+---------------------------------------------------------------------------------
 INFO: [Synth 8-5544] ROM "status_reg" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "status_reg" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "status_reg" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
@@ -336,69 +361,59 @@ INFO: [Synth 8-5546] ROM "tx_ctr_set" won't be mapped to RAM because it is too s
 INFO: [Synth 8-5544] ROM "mode_reg0" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "mode_reg0" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
 INFO: [Synth 8-5546] ROM "RX_buff_read_first" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-41] '+' operator could not be merged with '+' operator due to loss of accuracy [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:542]
-INFO: [Synth 8-41] '+' operator could not be merged with '+' operator due to loss of accuracy [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:542]
-INFO: [Synth 8-41] '+' operator could not be merged with '+' operator due to loss of accuracy [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:542]
-INFO: [Synth 8-5546] ROM "rx_empty_int" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5818] HDL ADVISOR - The operator resource <adder> is shared. To prevent sharing consider applying a KEEP on the output of the operator [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:684]
 INFO: [Synth 8-5546] ROM "rx_full" won't be mapped to RAM because it is too sparse
-WARNING: [Synth 8-6014] Unused sequential element message_count_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:405]
-WARNING: [Synth 8-6014] Unused sequential element read_pointer_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:421]
-WARNING: [Synth 8-6014] Unused sequential element write_pointer_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:326]
+INFO: [Synth 8-5546] ROM "rx_empty_int" won't be mapped to RAM because it is too sparse
+WARNING: [Synth 8-6014] Unused sequential element message_count_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:648]
+WARNING: [Synth 8-6014] Unused sequential element read_pointer_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:669]
 INFO: [Synth 8-5544] ROM "l3_valid" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5546] ROM "int_out" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5544] ROM "OP_State_r" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
-INFO: [Synth 8-4471] merging register 'tran_valid_r_reg' into 'txt_hw_cmd_reg[valid]' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:718]
-INFO: [Synth 8-4471] merging register 'sof_pulse_r_reg' into 'stuff_error_enable_r_reg' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:746]
-WARNING: [Synth 8-6014] Unused sequential element tran_valid_r_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:718]
-WARNING: [Synth 8-6014] Unused sequential element sof_pulse_r_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:746]
+INFO: [Synth 8-4471] merging register 'tran_valid_r_reg' into 'txt_hw_cmd_reg[valid]' [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:765]
+WARNING: [Synth 8-6014] Unused sequential element tran_valid_r_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd:765]
+INFO: [Synth 8-5544] ROM "alc_val" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5546] ROM "PC_state" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5544] ROM "PC_state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "PC_state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5546] ROM "PC_state" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5544] ROM "PC_state" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "PC_state" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "stuff_parity" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "data_tx_r" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5546] ROM "data_tx_r" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5544] ROM "tran_valid_r" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "is_txt_locked" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5546] ROM "rec_ident_type_r" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "arb_state" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "arb_two_bits" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "tran_pointer" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5546] ROM "tran_pointer" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5544] ROM "control_pointer" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "ctrl_tran_reg" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5546] ROM "data_pointer" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "unknown_state_Error_r" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "ack_recieved" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "inc_one_r" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "sp_control_r" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "sp_control_r" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "ssp_reset_r" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "rec_dram_bind" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5546] ROM "txt_buf_ptr_r" won't be mapped to RAM because it is too sparse
+INFO: [Synth 8-5544] ROM "rec_word_bind" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "tx_counter" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-WARNING: [Synth 8-6014] Unused sequential element err_counter_norm_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:232]
-WARNING: [Synth 8-6014] Unused sequential element err_counter_fd_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:233]
+WARNING: [Synth 8-6014] Unused sequential element err_counter_norm_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:246]
+WARNING: [Synth 8-6014] Unused sequential element err_counter_fd_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:248]
 INFO: [Synth 8-5544] ROM "tx_counter" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "erc_capt_r" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
 WARNING: [Synth 8-6014] Unused sequential element tx_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:992]
 WARNING: [Synth 8-6014] Unused sequential element rx_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:993]
-INFO: [Synth 8-5545] ROM "tq_edge" won't be mapped to RAM because address size (31) is larger than maximum supported(25)
 INFO: [Synth 8-5544] ROM "clk_tq_nbt_r" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "ipt_ok" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "ph2_real" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-INFO: [Synth 8-5544] ROM "brs_resync" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-WARNING: [Synth 8-6014] Unused sequential element tq_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:549]
+WARNING: [Synth 8-6014] Unused sequential element tq_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:581]
 INFO: [Synth 8-5544] ROM "p_1_in" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
-WARNING: [Synth 8-6014] Unused sequential element trv_delay_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:256]
+WARNING: [Synth 8-6014] Unused sequential element trv_delay_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:284]
 INFO: [Synth 8-5544] ROM "hw_cbs" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "hw_cbs" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "hw_cbs" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "hw_cbs" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "s_up" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "loger_finished" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
+INFO: [Synth 8-5544] ROM "s_up" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "loger_finished" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "log_state" won't be mapped to Block RAM because address size (1) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "loger_finished" won't be mapped to Block RAM because address size (2) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "bit_type_vect" won't be mapped to Block RAM because address size (3) smaller than threshold (5)
 ---------------------------------------------------------------------------------
-Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:22 ; elapsed = 00:00:22 . Memory (MB): peak = 1416.258 ; gain = 221.578 ; free physical = 5769 ; free virtual = 10262
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:44 ; elapsed = 00:01:04 . Memory (MB): peak = 1745.840 ; gain = 551.152 ; free physical = 2249 ; free virtual = 8272
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -406,7 +421,6 @@ Report RTL Partitions:
 | |RTL Partition |Replication |Instances |
 +-+--------------+------------+----------+
 +-+--------------+------------+----------+
-No constraint files found.
 ---------------------------------------------------------------------------------
 Start RTL Component Statistics 
 ---------------------------------------------------------------------------------
@@ -414,16 +428,16 @@ Detailed RTL Component Info :
 +---Adders : 
 	   2 Input     14 Bit       Adders := 1     
 	   4 Input     10 Bit       Adders := 1     
-	   3 Input      9 Bit       Adders := 1     
 	   2 Input      9 Bit       Adders := 7     
-	   3 Input      8 Bit       Adders := 1     
-	   2 Input      8 Bit       Adders := 5     
-	   2 Input      7 Bit       Adders := 5     
-	   2 Input      6 Bit       Adders := 2     
-	   3 Input      6 Bit       Adders := 1     
-	   2 Input      5 Bit       Adders := 9     
-	   2 Input      4 Bit       Adders := 4     
-	   2 Input      3 Bit       Adders := 11    
+	   4 Input      9 Bit       Adders := 1     
+	   3 Input      9 Bit       Adders := 1     
+	   2 Input      8 Bit       Adders := 6     
+	   2 Input      7 Bit       Adders := 7     
+	   3 Input      7 Bit       Adders := 1     
+	   2 Input      6 Bit       Adders := 1     
+	   2 Input      5 Bit       Adders := 5     
+	   2 Input      4 Bit       Adders := 3     
+	   2 Input      3 Bit       Adders := 10    
 	   2 Input      2 Bit       Adders := 3     
 +---XORs : 
 	   2 Input     21 Bit         XORs := 4     
@@ -433,35 +447,36 @@ Detailed RTL Component Info :
 +---Registers : 
 	              130 Bit    Registers := 2     
 	               64 Bit    Registers := 1     
-	               32 Bit    Registers := 10    
+	               32 Bit    Registers := 11    
 	               29 Bit    Registers := 8     
 	               21 Bit    Registers := 7     
 	               18 Bit    Registers := 2     
 	               17 Bit    Registers := 4     
+	               16 Bit    Registers := 1     
 	               15 Bit    Registers := 4     
 	               14 Bit    Registers := 2     
-	               13 Bit    Registers := 1     
 	               12 Bit    Registers := 8     
 	               11 Bit    Registers := 2     
-	                9 Bit    Registers := 5     
-	                8 Bit    Registers := 12    
-	                7 Bit    Registers := 4     
+	                9 Bit    Registers := 4     
+	                8 Bit    Registers := 14    
+	                7 Bit    Registers := 6     
 	                6 Bit    Registers := 5     
-	                5 Bit    Registers := 11    
+	                5 Bit    Registers := 10    
 	                4 Bit    Registers := 16    
-	                3 Bit    Registers := 19    
+	                3 Bit    Registers := 20    
 	                2 Bit    Registers := 19    
-	                1 Bit    Registers := 130   
+	                1 Bit    Registers := 135   
 +---RAMs : 
 	               4K Bit         RAMs := 1     
 	              640 Bit         RAMs := 4     
-	              512 Bit         RAMs := 2     
+	              512 Bit         RAMs := 1     
 +---Muxes : 
 	   2 Input    130 Bit        Muxes := 2     
 	   2 Input     64 Bit        Muxes := 1     
 	   2 Input     32 Bit        Muxes := 22    
+	   8 Input     32 Bit        Muxes := 1     
 	   4 Input     32 Bit        Muxes := 3     
-	   7 Input     32 Bit        Muxes := 1     
+	  18 Input     32 Bit        Muxes := 1     
 	   2 Input     29 Bit        Muxes := 32    
 	  12 Input     21 Bit        Muxes := 1     
 	   2 Input     21 Bit        Muxes := 11    
@@ -477,57 +492,53 @@ Detailed RTL Component Info :
 	   2 Input     11 Bit        Muxes := 1     
 	  12 Input     11 Bit        Muxes := 1     
 	   2 Input      9 Bit        Muxes := 11    
+	  16 Input      9 Bit        Muxes := 1     
 	  12 Input      9 Bit        Muxes := 1     
 	   4 Input      9 Bit        Muxes := 2     
-	   2 Input      8 Bit        Muxes := 53    
+	   2 Input      8 Bit        Muxes := 55    
 	  12 Input      8 Bit        Muxes := 1     
 	   4 Input      8 Bit        Muxes := 2     
-	   7 Input      8 Bit        Muxes := 1     
-	   6 Input      8 Bit        Muxes := 1     
-	   2 Input      7 Bit        Muxes := 7     
-	   2 Input      6 Bit        Muxes := 24    
-	   2 Input      5 Bit        Muxes := 31    
-	  17 Input      5 Bit        Muxes := 1     
-	   3 Input      5 Bit        Muxes := 2     
-	   6 Input      5 Bit        Muxes := 1     
+	   2 Input      7 Bit        Muxes := 10    
+	   2 Input      6 Bit        Muxes := 22    
+	   2 Input      5 Bit        Muxes := 27    
+	  16 Input      5 Bit        Muxes := 1     
+	   7 Input      5 Bit        Muxes := 1     
+	   5 Input      5 Bit        Muxes := 1     
 	  12 Input      5 Bit        Muxes := 2     
-	   4 Input      5 Bit        Muxes := 1     
-	  21 Input      5 Bit        Muxes := 1     
-	   2 Input      4 Bit        Muxes := 68    
-	   8 Input      4 Bit        Muxes := 6     
+	   3 Input      5 Bit        Muxes := 1     
+	  22 Input      5 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 67    
+	   8 Input      4 Bit        Muxes := 5     
 	   4 Input      4 Bit        Muxes := 2     
-	  11 Input      4 Bit        Muxes := 1     
+	  21 Input      4 Bit        Muxes := 1     
 	  12 Input      4 Bit        Muxes := 3     
-	  13 Input      4 Bit        Muxes := 1     
 	   3 Input      4 Bit        Muxes := 3     
-	   5 Input      4 Bit        Muxes := 1     
-	   6 Input      4 Bit        Muxes := 1     
-	   2 Input      3 Bit        Muxes := 69    
-	   4 Input      3 Bit        Muxes := 9     
-	   8 Input      3 Bit        Muxes := 3     
-	  12 Input      3 Bit        Muxes := 4     
+	   6 Input      4 Bit        Muxes := 5     
+	   7 Input      4 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 78    
+	   3 Input      3 Bit        Muxes := 5     
+	   4 Input      3 Bit        Muxes := 10    
+	   8 Input      3 Bit        Muxes := 2     
+	  12 Input      3 Bit        Muxes := 5     
+	   6 Input      3 Bit        Muxes := 1     
 	   5 Input      3 Bit        Muxes := 2     
-	   3 Input      3 Bit        Muxes := 4     
-	   2 Input      2 Bit        Muxes := 34    
-	   3 Input      2 Bit        Muxes := 4     
+	   2 Input      2 Bit        Muxes := 35    
+	   3 Input      2 Bit        Muxes := 3     
 	   8 Input      2 Bit        Muxes := 2     
-	   4 Input      2 Bit        Muxes := 1     
 	   6 Input      2 Bit        Muxes := 2     
 	  16 Input      2 Bit        Muxes := 1     
-	  20 Input      2 Bit        Muxes := 1     
-	  11 Input      2 Bit        Muxes := 1     
-	  12 Input      2 Bit        Muxes := 2     
-	   5 Input      2 Bit        Muxes := 1     
+	  12 Input      2 Bit        Muxes := 3     
+	   4 Input      2 Bit        Muxes := 2     
+	   9 Input      2 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 2     
 	  29 Input      1 Bit        Muxes := 12    
-	   2 Input      1 Bit        Muxes := 584   
+	   2 Input      1 Bit        Muxes := 553   
 	  38 Input      1 Bit        Muxes := 1     
-	   5 Input      1 Bit        Muxes := 1     
+	   8 Input      1 Bit        Muxes := 14    
+	   3 Input      1 Bit        Muxes := 3     
 	   4 Input      1 Bit        Muxes := 83    
-	   3 Input      1 Bit        Muxes := 2     
-	   9 Input      1 Bit        Muxes := 1     
-	  12 Input      1 Bit        Muxes := 83    
-	   8 Input      1 Bit        Muxes := 12    
-	   6 Input      1 Bit        Muxes := 12    
+	  12 Input      1 Bit        Muxes := 81    
+	   6 Input      1 Bit        Muxes := 8     
 ---------------------------------------------------------------------------------
 Finished RTL Component Statistics 
 ---------------------------------------------------------------------------------
@@ -570,38 +581,38 @@ Detailed RTL Component Info :
 	   8 Input      4 Bit        Muxes := 4     
 	   2 Input      3 Bit        Muxes := 12    
 	  29 Input      1 Bit        Muxes := 12    
-	   2 Input      1 Bit        Muxes := 60    
+	   2 Input      1 Bit        Muxes := 64    
 	  38 Input      1 Bit        Muxes := 1     
 Module rxBuffer 
 Detailed RTL Component Info : 
 +---Adders : 
-	   3 Input      9 Bit       Adders := 1     
-	   3 Input      8 Bit       Adders := 1     
-	   2 Input      8 Bit       Adders := 1     
-	   2 Input      7 Bit       Adders := 3     
-	   2 Input      6 Bit       Adders := 2     
-	   2 Input      5 Bit       Adders := 3     
-	   2 Input      4 Bit       Adders := 1     
+	   2 Input      8 Bit       Adders := 3     
+	   2 Input      7 Bit       Adders := 5     
+	   2 Input      6 Bit       Adders := 1     
+	   2 Input      5 Bit       Adders := 1     
 +---Registers : 
 	               64 Bit    Registers := 1     
-	               13 Bit    Registers := 1     
-	                8 Bit    Registers := 1     
-	                7 Bit    Registers := 2     
+	                8 Bit    Registers := 2     
+	                7 Bit    Registers := 4     
 	                6 Bit    Registers := 1     
-	                5 Bit    Registers := 3     
-	                1 Bit    Registers := 5     
+	                5 Bit    Registers := 1     
+	                3 Bit    Registers := 1     
+	                1 Bit    Registers := 4     
 +---RAMs : 
 	               4K Bit         RAMs := 1     
 +---Muxes : 
-	   2 Input     32 Bit        Muxes := 5     
-	   2 Input      8 Bit        Muxes := 4     
-	   2 Input      6 Bit        Muxes := 2     
-	  17 Input      5 Bit        Muxes := 1     
-	   3 Input      5 Bit        Muxes := 1     
-	   2 Input      5 Bit        Muxes := 6     
-	   2 Input      4 Bit        Muxes := 1     
-	   5 Input      1 Bit        Muxes := 1     
+	   8 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 5     
+	   2 Input      7 Bit        Muxes := 3     
+	  16 Input      5 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
+	   3 Input      3 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 2     
+	   8 Input      1 Bit        Muxes := 1     
 	   2 Input      1 Bit        Muxes := 15    
+	   3 Input      1 Bit        Muxes := 1     
 Module priorityDecoder 
 Detailed RTL Component Info : 
 +---Muxes : 
@@ -609,23 +620,23 @@ Detailed RTL Component Info :
 	   2 Input      3 Bit        Muxes := 3     
 	   2 Input      2 Bit        Muxes := 1     
 	   3 Input      2 Bit        Muxes := 2     
-	   4 Input      1 Bit        Muxes := 6     
-	   2 Input      1 Bit        Muxes := 1     
+	   4 Input      1 Bit        Muxes := 7     
 	   3 Input      1 Bit        Muxes := 1     
 Module txArbitrator 
 Detailed RTL Component Info : 
 +---Registers : 
 	               32 Bit    Registers := 1     
+	                5 Bit    Registers := 1     
 	                4 Bit    Registers := 1     
 	                2 Bit    Registers := 4     
-	                1 Bit    Registers := 5     
+	                1 Bit    Registers := 6     
 +---Muxes : 
 	   4 Input     32 Bit        Muxes := 2     
+	   7 Input      5 Bit        Muxes := 1     
 	   2 Input      5 Bit        Muxes := 1     
 	   8 Input      2 Bit        Muxes := 1     
-	   4 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 7     
-	   4 Input      1 Bit        Muxes := 3     
+	   2 Input      1 Bit        Muxes := 18    
+	   4 Input      1 Bit        Muxes := 6     
 Module messageFilter 
 Detailed RTL Component Info : 
 +---Registers : 
@@ -638,7 +649,7 @@ Detailed RTL Component Info :
 +---Registers : 
 	               12 Bit    Registers := 3     
 +---Muxes : 
-	   2 Input      1 Bit        Muxes := 48    
+	   2 Input      1 Bit        Muxes := 37    
 Module operationControl 
 Detailed RTL Component Info : 
 +---Adders : 
@@ -656,25 +667,25 @@ Module protocolControl
 Detailed RTL Component Info : 
 +---Adders : 
 	   2 Input      9 Bit       Adders := 1     
-	   2 Input      5 Bit       Adders := 5     
+	   2 Input      5 Bit       Adders := 3     
 	   2 Input      4 Bit       Adders := 1     
-	   2 Input      3 Bit       Adders := 4     
+	   2 Input      3 Bit       Adders := 3     
 	   2 Input      2 Bit       Adders := 2     
 +---Registers : 
+	               32 Bit    Registers := 1     
 	               21 Bit    Registers := 1     
 	               18 Bit    Registers := 2     
 	               11 Bit    Registers := 2     
-	                9 Bit    Registers := 2     
-	                8 Bit    Registers := 2     
+	                9 Bit    Registers := 1     
+	                8 Bit    Registers := 3     
 	                5 Bit    Registers := 3     
 	                4 Bit    Registers := 3     
 	                3 Bit    Registers := 5     
 	                2 Bit    Registers := 8     
-	                1 Bit    Registers := 48    
-+---RAMs : 
-	              512 Bit         RAMs := 1     
+	                1 Bit    Registers := 51    
 +---Muxes : 
-	   7 Input     32 Bit        Muxes := 1     
+	  18 Input     32 Bit        Muxes := 1     
+	   2 Input     32 Bit        Muxes := 4     
 	   4 Input     32 Bit        Muxes := 1     
 	  12 Input     21 Bit        Muxes := 1     
 	   2 Input     21 Bit        Muxes := 1     
@@ -682,41 +693,41 @@ Detailed RTL Component Info :
 	  12 Input     18 Bit        Muxes := 1     
 	   2 Input     11 Bit        Muxes := 1     
 	  12 Input     11 Bit        Muxes := 1     
+	  16 Input      9 Bit        Muxes := 1     
 	  12 Input      9 Bit        Muxes := 1     
 	   2 Input      9 Bit        Muxes := 2     
 	   2 Input      8 Bit        Muxes := 7     
 	  12 Input      8 Bit        Muxes := 1     
 	   4 Input      8 Bit        Muxes := 2     
-	   2 Input      5 Bit        Muxes := 4     
-	   6 Input      5 Bit        Muxes := 1     
+	   2 Input      5 Bit        Muxes := 5     
+	   5 Input      5 Bit        Muxes := 1     
 	  12 Input      5 Bit        Muxes := 2     
 	   3 Input      5 Bit        Muxes := 1     
-	   4 Input      5 Bit        Muxes := 1     
-	  11 Input      4 Bit        Muxes := 1     
+	  21 Input      4 Bit        Muxes := 1     
 	   2 Input      4 Bit        Muxes := 24    
 	  12 Input      4 Bit        Muxes := 3     
-	   8 Input      4 Bit        Muxes := 2     
-	  13 Input      4 Bit        Muxes := 1     
+	   8 Input      4 Bit        Muxes := 1     
 	   3 Input      4 Bit        Muxes := 3     
-	   5 Input      4 Bit        Muxes := 1     
-	   6 Input      4 Bit        Muxes := 1     
-	   8 Input      3 Bit        Muxes := 3     
-	   2 Input      3 Bit        Muxes := 37    
-	  12 Input      3 Bit        Muxes := 4     
-	   4 Input      3 Bit        Muxes := 2     
+	   6 Input      4 Bit        Muxes := 5     
+	   7 Input      4 Bit        Muxes := 1     
+	   8 Input      3 Bit        Muxes := 2     
+	   2 Input      3 Bit        Muxes := 40    
+	  12 Input      3 Bit        Muxes := 5     
+	   4 Input      3 Bit        Muxes := 3     
+	   6 Input      3 Bit        Muxes := 1     
 	  16 Input      2 Bit        Muxes := 1     
-	  20 Input      2 Bit        Muxes := 1     
-	   2 Input      2 Bit        Muxes := 9     
+	   2 Input      2 Bit        Muxes := 12    
+	  12 Input      2 Bit        Muxes := 3     
+	   4 Input      2 Bit        Muxes := 1     
 	   3 Input      2 Bit        Muxes := 1     
 	   6 Input      2 Bit        Muxes := 1     
-	  11 Input      2 Bit        Muxes := 1     
-	  12 Input      2 Bit        Muxes := 2     
+	   9 Input      2 Bit        Muxes := 1     
 	   8 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 313   
-	   9 Input      1 Bit        Muxes := 1     
-	   4 Input      1 Bit        Muxes := 61    
-	  12 Input      1 Bit        Muxes := 83    
-	   8 Input      1 Bit        Muxes := 11    
+	   2 Input      1 Bit        Muxes := 280   
+	   4 Input      1 Bit        Muxes := 58    
+	  12 Input      1 Bit        Muxes := 81    
+	   8 Input      1 Bit        Muxes := 12    
+	   6 Input      1 Bit        Muxes := 1     
 Module faultConf 
 Detailed RTL Component Info : 
 +---Adders : 
@@ -725,7 +736,7 @@ Detailed RTL Component Info :
 	                9 Bit    Registers := 2     
 	                8 Bit    Registers := 1     
 	                2 Bit    Registers := 2     
-	                1 Bit    Registers := 6     
+	                1 Bit    Registers := 7     
 +---Muxes : 
 	   2 Input      9 Bit        Muxes := 5     
 	   4 Input      9 Bit        Muxes := 2     
@@ -761,7 +772,7 @@ Detailed RTL Component Info :
 	                1 Bit    Registers := 4     
 +---Muxes : 
 	   2 Input      3 Bit        Muxes := 6     
-	   2 Input      1 Bit        Muxes := 12    
+	   2 Input      1 Bit        Muxes := 11    
 Module bitDestuffing 
 Detailed RTL Component Info : 
 +---Adders : 
@@ -774,7 +785,7 @@ Detailed RTL Component Info :
 +---Muxes : 
 	   2 Input      4 Bit        Muxes := 5     
 	   2 Input      3 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 13    
+	   2 Input      1 Bit        Muxes := 12    
 Module core_top 
 Detailed RTL Component Info : 
 +---Registers : 
@@ -788,38 +799,39 @@ Detailed RTL Component Info :
 +---Adders : 
 	   2 Input     14 Bit       Adders := 1     
 	   4 Input     10 Bit       Adders := 1     
-	   2 Input      8 Bit       Adders := 4     
+	   4 Input      9 Bit       Adders := 1     
+	   3 Input      9 Bit       Adders := 1     
+	   2 Input      8 Bit       Adders := 3     
+	   3 Input      7 Bit       Adders := 1     
 	   2 Input      7 Bit       Adders := 1     
-	   3 Input      6 Bit       Adders := 1     
 	   2 Input      2 Bit       Adders := 1     
 +---Registers : 
 	               14 Bit    Registers := 2     
 	                8 Bit    Registers := 3     
 	                3 Bit    Registers := 2     
 	                2 Bit    Registers := 2     
-	                1 Bit    Registers := 15    
+	                1 Bit    Registers := 16    
 +---Muxes : 
 	   2 Input     14 Bit        Muxes := 1     
 	   6 Input     14 Bit        Muxes := 1     
-	   2 Input      8 Bit        Muxes := 13    
-	   7 Input      8 Bit        Muxes := 1     
-	   6 Input      8 Bit        Muxes := 1     
+	   2 Input      8 Bit        Muxes := 14    
 	   2 Input      7 Bit        Muxes := 1     
 	   2 Input      6 Bit        Muxes := 2     
 	   2 Input      5 Bit        Muxes := 1     
 	   2 Input      3 Bit        Muxes := 1     
-	   2 Input      2 Bit        Muxes := 16    
-	   3 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 36    
-	   4 Input      1 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 12    
+	   4 Input      2 Bit        Muxes := 1     
+	   5 Input      2 Bit        Muxes := 1     
+	   2 Input      1 Bit        Muxes := 32    
+	   6 Input      1 Bit        Muxes := 7     
 	   3 Input      1 Bit        Muxes := 1     
-	   6 Input      1 Bit        Muxes := 12    
 Module busSync 
 Detailed RTL Component Info : 
 +---Adders : 
 	   2 Input      7 Bit       Adders := 1     
 +---Registers : 
 	              130 Bit    Registers := 2     
+	               16 Bit    Registers := 1     
 	                7 Bit    Registers := 1     
 	                3 Bit    Registers := 1     
 	                1 Bit    Registers := 13    
@@ -837,11 +849,11 @@ Detailed RTL Component Info :
 +---RAMs : 
 	              640 Bit         RAMs := 1     
 +---Muxes : 
-	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
 	   4 Input      3 Bit        Muxes := 1     
 	   3 Input      3 Bit        Muxes := 1     
 	   2 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 7     
+	   2 Input      1 Bit        Muxes := 8     
 Module txtBuffer__parameterized1 
 Detailed RTL Component Info : 
 +---Registers : 
@@ -850,11 +862,11 @@ Detailed RTL Component Info :
 +---RAMs : 
 	              640 Bit         RAMs := 1     
 +---Muxes : 
-	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
 	   4 Input      3 Bit        Muxes := 1     
 	   3 Input      3 Bit        Muxes := 1     
 	   2 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 7     
+	   2 Input      1 Bit        Muxes := 8     
 Module txtBuffer__parameterized3 
 Detailed RTL Component Info : 
 +---Registers : 
@@ -863,11 +875,11 @@ Detailed RTL Component Info :
 +---RAMs : 
 	              640 Bit         RAMs := 1     
 +---Muxes : 
-	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
 	   4 Input      3 Bit        Muxes := 1     
 	   3 Input      3 Bit        Muxes := 1     
 	   2 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 7     
+	   2 Input      1 Bit        Muxes := 8     
 Module txtBuffer__parameterized5 
 Detailed RTL Component Info : 
 +---Registers : 
@@ -876,11 +888,11 @@ Detailed RTL Component Info :
 +---RAMs : 
 	              640 Bit         RAMs := 1     
 +---Muxes : 
-	   2 Input      3 Bit        Muxes := 1     
+	   2 Input      3 Bit        Muxes := 2     
 	   4 Input      3 Bit        Muxes := 1     
 	   3 Input      3 Bit        Muxes := 1     
 	   2 Input      2 Bit        Muxes := 1     
-	   2 Input      1 Bit        Muxes := 7     
+	   2 Input      1 Bit        Muxes := 8     
 Module CAN_logger 
 Detailed RTL Component Info : 
 +---Adders : 
@@ -899,14 +911,14 @@ Detailed RTL Component Info :
 	   2 Input     64 Bit        Muxes := 1     
 	   2 Input     21 Bit        Muxes := 6     
 	   2 Input      8 Bit        Muxes := 5     
-	  21 Input      5 Bit        Muxes := 1     
+	  22 Input      5 Bit        Muxes := 1     
 	   2 Input      4 Bit        Muxes := 1     
 	   4 Input      4 Bit        Muxes := 1     
 	   2 Input      3 Bit        Muxes := 3     
 	   5 Input      2 Bit        Muxes := 1     
 	   2 Input      2 Bit        Muxes := 1     
 	   4 Input      1 Bit        Muxes := 3     
-	   2 Input      1 Bit        Muxes := 8     
+	   2 Input      1 Bit        Muxes := 9     
 ---------------------------------------------------------------------------------
 Finished RTL Hierarchical Component Statistics
 ---------------------------------------------------------------------------------
@@ -919,7 +931,6 @@ BRAMs: 100 (col length: RAMB18 40 RAMB36 20)
 ---------------------------------------------------------------------------------
 Finished Part Resource Summary
 ---------------------------------------------------------------------------------
-No constraint files found.
 ---------------------------------------------------------------------------------
 Start Cross Boundary and Area Optimization
 ---------------------------------------------------------------------------------
@@ -949,30 +960,30 @@ INFO: [Synth 8-5544] ROM "PC_state_reg_vect" won't be mapped to Block RAM becaus
 INFO: [Synth 8-5544] ROM "PC_state_reg_vect" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
 INFO: [Synth 8-5544] ROM "PC_state_reg_vect" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
 INFO: [Synth 8-5546] ROM "RX_buff_read_first" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "tx_ctr_set" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "rx_ctr_set" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-41] '+' operator could not be merged with '+' operator due to loss of accuracy [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:542]
+INFO: [Synth 8-5546] ROM "tx_ctr_set" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "rx_full" won't be mapped to RAM because it is too sparse
-WARNING: [Synth 8-6014] Unused sequential element write_pointer_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:326]
-WARNING: [Synth 8-6014] Unused sequential element message_count_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:405]
-WARNING: [Synth 8-6014] Unused sequential element read_pointer_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:421]
+INFO: [Synth 8-5544] ROM "p_0_out" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+WARNING: [Synth 8-6014] Unused sequential element read_pointer_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:669]
+WARNING: [Synth 8-6014] Unused sequential element message_count_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/rxBuffer.vhd:648]
+INFO: [Synth 8-5546] ROM "int_out" won't be mapped to RAM because it is too sparse
 INFO: [Synth 8-5546] ROM "data_pointer" won't be mapped to RAM because it is too sparse
-INFO: [Synth 8-5546] ROM "txt_buf_ptr_r" won't be mapped to RAM because it is too sparse
-WARNING: [Synth 8-6014] Unused sequential element err_counter_norm_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:232]
-WARNING: [Synth 8-6014] Unused sequential element err_counter_fd_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:233]
+INFO: [Synth 8-5544] ROM "p_0_out" won't be mapped to Block RAM because address size (4) smaller than threshold (5)
+WARNING: [Synth 8-6014] Unused sequential element err_counter_norm_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:246]
+WARNING: [Synth 8-6014] Unused sequential element err_counter_fd_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd:248]
 WARNING: [Synth 8-6014] Unused sequential element rx_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:993]
 WARNING: [Synth 8-6014] Unused sequential element tx_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/core_top.vhd:992]
-WARNING: [Synth 8-6014] Unused sequential element tq_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:549]
-WARNING: [Synth 8-6014] Unused sequential element trv_delay_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:256]
+WARNING: [Synth 8-6014] Unused sequential element tq_counter_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/prescaler_v3.vhd:581]
+WARNING: [Synth 8-6014] Unused sequential element trv_delay_reg was removed.  [/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Bus_Timing_Synchronisation/busSync.vhd:284]
 INFO: [Synth 8-3886] merging instance 'bus_sync_comp/edge_rx_det_reg' (FDP) to 'bus_sync_comp/trs_reg_reg[0]'
+INFO: [Synth 8-3886] merging instance 'tx_arb_comp/txtb_pointer_meta_reg[2]' (FDCE) to 'tx_arb_comp/txtb_pointer_meta_reg[4]'
+INFO: [Synth 8-3886] merging instance 'tx_arb_comp/txtb_pointer_meta_reg[3]' (FDCE) to 'tx_arb_comp/txtb_pointer_meta_reg[4]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (tx_arb_comp/\txtb_pointer_meta_reg[4] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (core_top_comp/PC_State_comp/\ctrl_tran_reg_reg[6] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (core_top_comp/bitDest_comp/\same_bits_reg[3] )
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (core_top_comp/PC_State_comp/CRC_Error_r_reg)
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (core_top_comp/PC_State_comp/\destuff_length_r_reg[1] )
 INFO: [Synth 8-3333] propagating constant 1 across sequential element (core_top_comp/PC_State_comp/\destuff_length_r_reg[2] )
-INFO: [Synth 8-3886] merging instance 'core_top_comp/PC_State_comp/data_size_reg[0]' (FDCE) to 'core_top_comp/PC_State_comp/data_size_reg[2]'
-INFO: [Synth 8-3886] merging instance 'core_top_comp/PC_State_comp/data_size_reg[1]' (FDCE) to 'core_top_comp/PC_State_comp/data_size_reg[2]'
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (core_top_comp/PC_State_comp/sof_skip_reg)
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (core_top_comp/PC_State_comp/\stuff_length_r_reg[1] )
 INFO: [Synth 8-3333] propagating constant 1 across sequential element (core_top_comp/PC_State_comp/\stuff_length_r_reg[2] )
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[0]' (FDC) to 'reg_comp/aux_data_reg[31]'
@@ -982,14 +993,23 @@ INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[3]' (FDC) to 'reg_c
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[4]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[5]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[6]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[7]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[7]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[8]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[8]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[9]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[9]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[10]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[10]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[11]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[11]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[12]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[12]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[13]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[13]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3886] merging instance 'bus_sync_comp/trv_delay_out_reg[14]' (FDCE) to 'bus_sync_comp/trv_delay_out_reg[15]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[14]' (FDC) to 'reg_comp/aux_data_reg[31]'
+INFO: [Synth 8-3333] propagating constant 0 across sequential element (bus_sync_comp/\trv_delay_out_reg[15] )
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[15]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[16]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[17]' (FDC) to 'reg_comp/aux_data_reg[31]'
@@ -1000,22 +1020,16 @@ INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[21]' (FDC) to 'reg_
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[22]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[23]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[24]' (FDC) to 'reg_comp/aux_data_reg[31]'
-INFO: [Synth 8-3886] merging instance 'rx_buf_comp/rx_mem_free_int_reg[8]' (FDC) to 'rx_buf_comp/rx_mem_free_int_reg[9]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[25]' (FDC) to 'reg_comp/aux_data_reg[31]'
-INFO: [Synth 8-3886] merging instance 'rx_buf_comp/rx_mem_free_int_reg[9]' (FDC) to 'rx_buf_comp/rx_mem_free_int_reg[10]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[26]' (FDC) to 'reg_comp/aux_data_reg[31]'
-INFO: [Synth 8-3886] merging instance 'rx_buf_comp/rx_mem_free_int_reg[10]' (FDC) to 'rx_buf_comp/rx_mem_free_int_reg[11]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[27]' (FDC) to 'reg_comp/aux_data_reg[31]'
-INFO: [Synth 8-3886] merging instance 'rx_buf_comp/rx_mem_free_int_reg[11]' (FDC) to 'rx_buf_comp/rx_mem_free_int_reg[12]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[28]' (FDC) to 'reg_comp/aux_data_reg[31]'
-INFO: [Synth 8-3333] propagating constant 0 across sequential element (rx_buf_comp/\rx_mem_free_int_reg[12] )
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[29]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3886] merging instance 'reg_comp/aux_data_reg[30]' (FDC) to 'reg_comp/aux_data_reg[31]'
 INFO: [Synth 8-3333] propagating constant 0 across sequential element (reg_comp/\aux_data_reg[31] )
 WARNING: [Synth 8-3332] Sequential element (mode_reg_reg[0]) is unused and will be removed from module canfd_registers.
 WARNING: [Synth 8-3332] Sequential element (aux_data_reg[31]) is unused and will be removed from module canfd_registers.
-WARNING: [Synth 8-3332] Sequential element (rec_message_ack_reg) is unused and will be removed from module rxBuffer.
-WARNING: [Synth 8-3332] Sequential element (rx_mem_free_int_reg[12]) is unused and will be removed from module rxBuffer.
+WARNING: [Synth 8-3332] Sequential element (txtb_pointer_meta_reg[4]) is unused and will be removed from module txArbitrator.
 WARNING: [Synth 8-3332] Sequential element (arb_two_bits_reg[0]) is unused and will be removed from module protocolControl.
 WARNING: [Synth 8-3332] Sequential element (ctrl_tran_reg_reg[6]) is unused and will be removed from module protocolControl.
 WARNING: [Synth 8-3332] Sequential element (rec_data_sr_reg[7]) is unused and will be removed from module protocolControl.
@@ -1025,18 +1039,18 @@ WARNING: [Synth 8-3332] Sequential element (stuff_length_r_reg[2]) is unused and
 WARNING: [Synth 8-3332] Sequential element (stuff_length_r_reg[1]) is unused and will be removed from module protocolControl.
 WARNING: [Synth 8-3332] Sequential element (destuff_length_r_reg[2]) is unused and will be removed from module protocolControl.
 WARNING: [Synth 8-3332] Sequential element (destuff_length_r_reg[1]) is unused and will be removed from module protocolControl.
-WARNING: [Synth 8-3332] Sequential element (sof_skip_reg) is unused and will be removed from module protocolControl.
 WARNING: [Synth 8-3332] Sequential element (bit_err_enable_r_reg) is unused and will be removed from module protocolControl.
 WARNING: [Synth 8-3332] Sequential element (same_bits_reg[3]) is unused and will be removed from module bitDestuffing.
 WARNING: [Synth 8-3332] Sequential element (sample_sec_shift_reg[129]) is unused and will be removed from module busSync.
 WARNING: [Synth 8-3332] Sequential element (sample_sec_shift_reg[128]) is unused and will be removed from module busSync.
 WARNING: [Synth 8-3332] Sequential element (sample_sec_del_1_reg) is unused and will be removed from module busSync.
 WARNING: [Synth 8-3332] Sequential element (sample_sec_del_2_reg) is unused and will be removed from module busSync.
+WARNING: [Synth 8-3332] Sequential element (trv_delay_out_reg[15]) is unused and will be removed from module busSync.
 WARNING: [Synth 8-3332] Sequential element (ssp_shift_reg[129]) is unused and will be removed from module busSync.
 WARNING: [Synth 8-3332] Sequential element (ssp_shift_reg[128]) is unused and will be removed from module busSync.
 WARNING: [Synth 8-3332] Sequential element (error_type_vect_reg[2]) is unused and will be removed from module CAN_logger.
 ---------------------------------------------------------------------------------
-Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:02 ; elapsed = 00:01:16 . Memory (MB): peak = 1626.906 ; gain = 432.227 ; free physical = 5626 ; free virtual = 10127
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:23 ; elapsed = 00:01:45 . Memory (MB): peak = 1745.840 ; gain = 551.152 ; free physical = 2081 ; free virtual = 8128
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP and Shift Register Reporting
@@ -1055,13 +1069,12 @@ Block RAM: Preliminary Mapping  Report (see note below)
 Note: The tale above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
 
 Distributed RAM: Preliminary Mapping  Report (see note below)
-+----------------------------+--------------+-----------+----------------------+-----------------------------+
-|Module Name                 | RTL Object   | Inference | Size (Depth x Width) | Primitives                  | 
-+----------------------------+--------------+-----------+----------------------+-----------------------------+
-|rx_buf_comp                 | memory_reg   | Implied   | 128 x 32             | RAM64X1D x 4  RAM64M x 20   | 
-|core_top_comp/PC_State_comp | rec_dram_reg | Implied   | 16 x 32              | RAM16X1D x 32               | 
-|\LOG_GEN.log_comp           | memory_reg   | Implied   | 8 x 64               | RAM32M x 11                 | 
-+----------------------------+--------------+-----------+----------------------+-----------------------------+
++-------------------+------------+-----------+----------------------+-----------------------------+
+|Module Name        | RTL Object | Inference | Size (Depth x Width) | Primitives                  | 
++-------------------+------------+-----------+----------------------+-----------------------------+
+|rx_buf_comp        | memory_reg | Implied   | 128 x 32             | RAM64X1D x 4  RAM64M x 20   | 
+|\LOG_GEN.log_comp  | memory_reg | Implied   | 8 x 64               | RAM32M x 11                 | 
++-------------------+------------+-----------+----------------------+-----------------------------+
 
 Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
 ---------------------------------------------------------------------------------
@@ -1073,12 +1086,17 @@ Report RTL Partitions:
 | |RTL Partition |Replication |Instances |
 +-+--------------+------------+----------+
 +-+--------------+------------+----------+
-No constraint files found.
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:01:32 ; elapsed = 00:01:57 . Memory (MB): peak = 1757.824 ; gain = 563.137 ; free physical = 2105 ; free virtual = 8135
+---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Timing Optimization
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Timing Optimization : Time (s): cpu = 00:01:03 ; elapsed = 00:01:17 . Memory (MB): peak = 1626.906 ; gain = 432.227 ; free physical = 5625 ; free virtual = 10128
+Finished Timing Optimization : Time (s): cpu = 00:01:37 ; elapsed = 00:02:03 . Memory (MB): peak = 1850.855 ; gain = 656.168 ; free physical = 2023 ; free virtual = 8052
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start ROM, RAM, DSP and Shift Register Reporting
@@ -1096,13 +1114,12 @@ Block RAM: Final Mapping  Report
 
 
 Distributed RAM: Final Mapping  Report
-+----------------------------+--------------+-----------+----------------------+-----------------------------+
-|Module Name                 | RTL Object   | Inference | Size (Depth x Width) | Primitives                  | 
-+----------------------------+--------------+-----------+----------------------+-----------------------------+
-|rx_buf_comp                 | memory_reg   | Implied   | 128 x 32             | RAM64X1D x 4  RAM64M x 20   | 
-|core_top_comp/PC_State_comp | rec_dram_reg | Implied   | 16 x 32              | RAM16X1D x 32               | 
-|\LOG_GEN.log_comp           | memory_reg   | Implied   | 8 x 64               | RAM32M x 11                 | 
-+----------------------------+--------------+-----------+----------------------+-----------------------------+
++-------------------+------------+-----------+----------------------+-----------------------------+
+|Module Name        | RTL Object | Inference | Size (Depth x Width) | Primitives                  | 
++-------------------+------------+-----------+----------------------+-----------------------------+
+|rx_buf_comp        | memory_reg | Implied   | 128 x 32             | RAM64X1D x 4  RAM64M x 20   | 
+|\LOG_GEN.log_comp  | memory_reg | Implied   | 8 x 64               | RAM32M x 11                 | 
++-------------------+------------+-----------+----------------------+-----------------------------+
 
 ---------------------------------------------------------------------------------
 Finished ROM, RAM, DSP and Shift Register Reporting
@@ -1128,7 +1145,7 @@ INFO: [Synth 8-4480] The timing for the instance txt_buf_comp_gen[1].txtBuffer_c
 INFO: [Synth 8-4480] The timing for the instance txt_buf_comp_gen[2].txtBuffer_comp/txt_buffer_mem_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
 INFO: [Synth 8-4480] The timing for the instance txt_buf_comp_gen[3].txtBuffer_comp/txt_buffer_mem_reg (implemented as a block RAM) might be sub-optimal as no optional output register could be merged into the block ram. Providing additional output register may help in improving timing.
 ---------------------------------------------------------------------------------
-Finished Technology Mapping : Time (s): cpu = 00:01:06 ; elapsed = 00:01:20 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5624 ; free virtual = 10125
+Finished Technology Mapping : Time (s): cpu = 00:01:40 ; elapsed = 00:02:06 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2019 ; free virtual = 8048
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -1152,7 +1169,7 @@ Start Final Netlist Cleanup
 Finished Final Netlist Cleanup
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished IO Insertion : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5622 ; free virtual = 10125
+Finished IO Insertion : Time (s): cpu = 00:01:42 ; elapsed = 00:02:08 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2018 ; free virtual = 8047
 ---------------------------------------------------------------------------------
 
 Report Check Netlist: 
@@ -1165,7 +1182,7 @@ Report Check Netlist:
 Start Renaming Generated Instances
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Instances : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5622 ; free virtual = 10125
+Finished Renaming Generated Instances : Time (s): cpu = 00:01:42 ; elapsed = 00:02:08 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2018 ; free virtual = 8047
 ---------------------------------------------------------------------------------
 
 Report RTL Partitions: 
@@ -1177,25 +1194,25 @@ Report RTL Partitions:
 Start Rebuilding User Hierarchy
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Rebuilding User Hierarchy : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5622 ; free virtual = 10125
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:01:42 ; elapsed = 00:02:08 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2018 ; free virtual = 8047
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Ports
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Ports : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5622 ; free virtual = 10125
+Finished Renaming Generated Ports : Time (s): cpu = 00:01:42 ; elapsed = 00:02:08 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2018 ; free virtual = 8047
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Handling Custom Attributes
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Handling Custom Attributes : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5624 ; free virtual = 10125
+Finished Handling Custom Attributes : Time (s): cpu = 00:01:43 ; elapsed = 00:02:09 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2018 ; free virtual = 8047
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Renaming Generated Nets
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
-Finished Renaming Generated Nets : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5624 ; free virtual = 10125
+Finished Renaming Generated Nets : Time (s): cpu = 00:01:43 ; elapsed = 00:02:09 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2018 ; free virtual = 8047
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 Start Writing Synthesis Report
@@ -1212,79 +1229,77 @@ Report Cell Usage:
 |      |Cell     |Count |
 +------+---------+------+
 |1     |BUFG     |     1|
-|2     |CARRY4   |   126|
-|3     |LUT1     |    32|
-|4     |LUT2     |   774|
-|5     |LUT3     |   424|
-|6     |LUT4     |   610|
-|7     |LUT5     |   424|
-|8     |LUT6     |  1418|
-|9     |MUXF7    |    44|
-|10    |MUXF8    |    18|
-|11    |RAM16X1D |    32|
-|12    |RAM32M   |    11|
-|13    |RAM64M   |    20|
-|14    |RAM64X1D |     4|
-|15    |RAMB18E1 |     4|
-|16    |FDCE     |  1618|
-|17    |FDPE     |   199|
-|18    |FDRE     |    19|
-|19    |IBUF     |   126|
-|20    |OBUF     |    35|
+|2     |CARRY4   |   127|
+|3     |LUT1     |    33|
+|4     |LUT2     |   758|
+|5     |LUT3     |   378|
+|6     |LUT4     |   616|
+|7     |LUT5     |   472|
+|8     |LUT6     |  1499|
+|9     |MUXF7    |    88|
+|10    |MUXF8    |    21|
+|11    |RAM32M   |    11|
+|12    |RAM64M   |    20|
+|13    |RAM64X1D |     4|
+|14    |RAMB18E1 |     4|
+|15    |FDCE     |  1684|
+|16    |FDPE     |   200|
+|17    |FDRE     |    10|
+|18    |IBUF     |   126|
+|19    |OBUF     |    35|
 +------+---------+------+
 
 Report Instance Areas: 
 +------+---------------------------------------+--------------------------+------+
 |      |Instance                               |Module                    |Cells |
 +------+---------------------------------------+--------------------------+------+
-|1     |top                                    |                          |  5939|
-|2     |  \LOG_GEN.log_comp                    |CAN_logger                |   233|
-|3     |  bus_sync_comp                        |busSync                   |   540|
-|4     |  core_top_comp                        |core_top                  |  2199|
-|5     |    OP_State_comp                      |operationControl          |   183|
-|6     |    PC_State_comp                      |protocolControl           |  1195|
+|1     |top                                    |                          |  6087|
+|2     |  \LOG_GEN.log_comp                    |CAN_logger                |   231|
+|3     |  bus_sync_comp                        |busSync                   |   546|
+|4     |  core_top_comp                        |core_top                  |  2131|
+|5     |    OP_State_comp                      |operationControl          |   185|
+|6     |    PC_State_comp                      |protocolControl           |  1148|
 |7     |    bitDest_comp                       |bitDestuffing             |    31|
-|8     |    bs_comp                            |bitStuffing_v2            |    25|
+|8     |    bs_comp                            |bitStuffing_v2            |    26|
 |9     |    crc_nbs_rx_comp                    |canCRC                    |    53|
 |10    |    crc_nbs_tx_comp                    |canCRC_0                  |    71|
 |11    |    crc_wbs_rx_comp                    |canCRC_1                  |   221|
 |12    |    crc_wbs_tx_comp                    |canCRC_2                  |    73|
-|13    |    faultConf_comp                     |faultConf                 |   269|
-|14    |  int_man_comp                         |intManager                |    53|
-|15    |  mes_filt_comp                        |messageFilter             |     4|
-|16    |  prescaler_comp                       |prescaler_v3              |   367|
-|17    |  reg_comp                             |canfd_registers           |  1805|
-|18    |  rst_sync_comp                        |rst_sync                  |     4|
-|19    |  rx_buf_comp                          |rxBuffer                  |   338|
-|20    |  tx_arb_comp                          |txArbitrator              |   164|
+|13    |    faultConf_comp                     |faultConf                 |   253|
+|14    |  int_man_comp                         |intManager                |    74|
+|15    |  mes_filt_comp                        |messageFilter             |     1|
+|16    |  prescaler_comp                       |prescaler_v3              |   361|
+|17    |  reg_comp                             |canfd_registers           |  1890|
+|18    |  rst_sync_comp                        |rst_sync                  |    15|
+|19    |  rx_buf_comp                          |rxBuffer                  |   406|
+|20    |  tx_arb_comp                          |txArbitrator              |   191|
 |21    |  \txt_buf_comp_gen[0].txtBuffer_comp  |txtBuffer                 |    18|
-|22    |  \txt_buf_comp_gen[1].txtBuffer_comp  |txtBuffer__parameterized1 |    16|
-|23    |  \txt_buf_comp_gen[2].txtBuffer_comp  |txtBuffer__parameterized3 |    20|
-|24    |  \txt_buf_comp_gen[3].txtBuffer_comp  |txtBuffer__parameterized5 |    16|
+|22    |  \txt_buf_comp_gen[1].txtBuffer_comp  |txtBuffer__parameterized1 |    19|
+|23    |  \txt_buf_comp_gen[2].txtBuffer_comp  |txtBuffer__parameterized3 |    21|
+|24    |  \txt_buf_comp_gen[3].txtBuffer_comp  |txtBuffer__parameterized5 |    21|
 +------+---------------------------------------+--------------------------+------+
 ---------------------------------------------------------------------------------
-Finished Writing Synthesis Report : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5624 ; free virtual = 10125
+Finished Writing Synthesis Report : Time (s): cpu = 00:01:43 ; elapsed = 00:02:09 . Memory (MB): peak = 1905.887 ; gain = 711.199 ; free physical = 2018 ; free virtual = 8047
 ---------------------------------------------------------------------------------
-Synthesis finished with 0 errors, 0 critical warnings and 21062 warnings.
-Synthesis Optimization Runtime : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.922 ; gain = 460.242 ; free physical = 5624 ; free virtual = 10125
-Synthesis Optimization Complete : Time (s): cpu = 00:01:07 ; elapsed = 00:01:21 . Memory (MB): peak = 1654.930 ; gain = 460.242 ; free physical = 5632 ; free virtual = 10133
+Synthesis finished with 0 errors, 0 critical warnings and 9504 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:01:29 ; elapsed = 00:01:38 . Memory (MB): peak = 1905.887 ; gain = 350.574 ; free physical = 2077 ; free virtual = 8106
+Synthesis Optimization Complete : Time (s): cpu = 00:01:43 ; elapsed = 00:02:09 . Memory (MB): peak = 1905.895 ; gain = 711.199 ; free physical = 2084 ; free virtual = 8113
 INFO: [Project 1-571] Translating synthesized netlist
-INFO: [Netlist 29-17] Analyzing 385 Unisim elements for replacement
+INFO: [Netlist 29-17] Analyzing 401 Unisim elements for replacement
 INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
 INFO: [Project 1-570] Preparing netlist for logic optimization
 INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
 INFO: [Project 1-111] Unisim Transformation Summary:
-  A total of 67 instances were transformed.
-  RAM16X1D => RAM32X1D (RAMD32, RAMD32): 32 instances
+  A total of 35 instances were transformed.
   RAM32M => RAM32M (RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMD32, RAMS32, RAMS32): 11 instances
   RAM64M => RAM64M (RAMD64E, RAMD64E, RAMD64E, RAMD64E): 20 instances
   RAM64X1D => RAM64X1D (RAMD64E, RAMD64E): 4 instances
 
 INFO: [Common 17-83] Releasing license: Synthesis
-255 Infos, 157 Warnings, 0 Critical Warnings and 0 Errors encountered.
+254 Infos, 152 Warnings, 0 Critical Warnings and 0 Errors encountered.
 synth_design completed successfully
-synth_design: Time (s): cpu = 00:01:12 ; elapsed = 00:01:25 . Memory (MB): peak = 1730.949 ; gain = 561.098 ; free physical = 5706 ; free virtual = 10224
+synth_design: Time (s): cpu = 00:01:47 ; elapsed = 00:02:13 . Memory (MB): peak = 1937.902 ; gain = 768.043 ; free physical = 2210 ; free virtual = 8239
 INFO: [Common 17-1381] The checkpoint '/DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Vivado/xilinx_benchmark/xilinx_benchmark.runs/synth_1/CAN_top_level.dcp' has been generated.
 INFO: [runtcl-4] Executing : report_utilization -file CAN_top_level_utilization_synth.rpt -pb CAN_top_level_utilization_synth.pb
-report_utilization: Time (s): cpu = 00:00:00.12 ; elapsed = 00:00:00.16 . Memory (MB): peak = 1754.961 ; gain = 0.000 ; free physical = 5713 ; free virtual = 10225
-INFO: [Common 17-206] Exiting Vivado at Thu Apr 19 18:23:10 2018...
+report_utilization: Time (s): cpu = 00:00:00.13 ; elapsed = 00:00:00.18 . Memory (MB): peak = 1961.914 ; gain = 0.000 ; free physical = 2201 ; free virtual = 8239
+INFO: [Common 17-206] Exiting Vivado at Mon Jul  9 13:57:24 2018...

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<GenRun Id="synth_1" LaunchPart="xc7z007sclg225-2" LaunchTime="1524154889">
+<GenRun Id="synth_1" LaunchPart="xc7z007sclg225-2" LaunchTime="1531137294">
   <File Type="VDS-TIMING-PB" Name="CAN_top_level_timing_summary_synth.pb"/>
   <File Type="VDS-TIMINGSUMMARY" Name="CAN_top_level_timing_summary_synth.rpt"/>
   <File Type="RDS-DCP" Name="CAN_top_level.dcp"/>
+  <File Type="RDS-UTIL-PB" Name="CAN_top_level_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="CAN_top_level_utilization_synth.rpt"/>
+  <File Type="RDS-PROPCONSTRS" Name="CAN_top_level_drc_synth.rpt"/>
+  <File Type="RDS-RDS" Name="CAN_top_level.vds"/>
   <File Type="REPORTS-TCL" Name="CAN_top_level_reports.tcl"/>
   <File Type="PA-TCL" Name="CAN_top_level.tcl"/>
-  <File Type="RDS-RDS" Name="CAN_top_level.vds"/>
-  <File Type="RDS-PROPCONSTRS" Name="CAN_top_level_drc_synth.rpt"/>
-  <File Type="RDS-UTIL" Name="CAN_top_level_utilization_synth.rpt"/>
-  <File Type="RDS-UTIL-PB" Name="CAN_top_level_utilization_synth.pb"/>
   <FileSet Name="sources" Type="DesignSrcs" RelSrcDir="$PSRCDIR/sources_1">
     <Filter Type="Srcs"/>
     <File Path="$PPRDIR/../../../src/Libraries/CAN_FD_frame_format.vhd">
@@ -72,6 +72,12 @@
       </FileInfo>
     </File>
     <File Path="$PPRDIR/../../../src/CAN_Core/operationControl.vhd">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="simulation"/>
+      </FileInfo>
+    </File>
+    <File Path="$PPRDIR/../../../src/endian_swap.vhd">
       <FileInfo>
         <Attr Name="UsedIn" Val="synthesis"/>
         <Attr Name="UsedIn" Val="simulation"/>
@@ -155,27 +161,6 @@
         <Attr Name="UsedIn" Val="simulation"/>
       </FileInfo>
     </File>
-    <File Path="$PPRDIR/../../../src/Deprecated/bitStuffing.vhd">
-      <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PPRDIR/../../../src/Deprecated/timeStampGen.vhd">
-      <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
-    <File Path="$PPRDIR/../../../src/Deprecated/txBuffer.vhd">
-      <FileInfo>
-        <Attr Name="AutoDisabled" Val="1"/>
-        <Attr Name="UsedIn" Val="synthesis"/>
-        <Attr Name="UsedIn" Val="simulation"/>
-      </FileInfo>
-    </File>
     <Config>
       <Option Name="DesignMode" Val="RTL"/>
       <Option Name="TopModule" Val="CAN_top_level"/>
@@ -184,14 +169,18 @@
   </FileSet>
   <FileSet Name="constrs_in" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
     <Filter Type="Constrs"/>
+    <File Path="$PPRDIR/../../Constraints/CTU_CAN_FD_Xilinx.sdc">
+      <FileInfo>
+        <Attr Name="UsedIn" Val="synthesis"/>
+        <Attr Name="UsedIn" Val="implementation"/>
+      </FileInfo>
+    </File>
     <Config>
       <Option Name="ConstrsType" Val="XDC"/>
     </Config>
   </FileSet>
   <Strategy Version="1" Minor="2">
-    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2017">
-      <Desc>Vivado Synthesis Defaults</Desc>
-    </StratHandle>
+    <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2017"/>
     <Step Id="synth_design"/>
   </Strategy>
 </GenRun>
