@@ -39,6 +39,7 @@ read_vhdl -library xil_defaultlib {
   /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Buffers_Message_Handling/messageFilter.vhd
   /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/Interrupts/intManager.vhd
   /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/operationControl.vhd
+  /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/endian_swap.vhd
   /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/protocolControl.vhd
   /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/faultConf.vhd
   /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/src/CAN_Core/CRC.vhd
@@ -61,6 +62,9 @@ read_vhdl -library xil_defaultlib {
 foreach dcp [get_files -quiet -all -filter file_type=="Design\ Checkpoint"] {
   set_property used_in_implementation false $dcp
 }
+read_xdc /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Constraints/CTU_CAN_FD_Xilinx.sdc
+set_property used_in_implementation false [get_files /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/synthesis/Constraints/CTU_CAN_FD_Xilinx.sdc]
+
 
 synth_design -top CAN_top_level -part xc7z007sclg225-2
 
