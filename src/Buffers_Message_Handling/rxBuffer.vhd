@@ -615,7 +615,7 @@ begin
     ----------------------------------------------------------------------------
     frame_form_w(RWCNT_H downto RWCNT_L)  <=
         "00011" when (rec_is_rtr = RTR_FRAME) else
-        "00101" when ((rec_frame_type = NORMAL_CAN) and (rec_dlc_in(3) = '1')) else
+        "00101" when ((rec_frame_type_in = NORMAL_CAN) and (rec_dlc_in(3) = '1')) else
          std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)));
 
     frame_form_w(31 downto 16)            <= (OTHERS => '0');
