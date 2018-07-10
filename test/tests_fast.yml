@@ -88,10 +88,10 @@ reference:
             data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_9
         data_set_10:
             data_path: reference/data_sets/log_500Kb_2Mb_80p_1K_samples_10
-.sanity:
+sanity:
     default:
         <<: *default
-        iterations: 1
+        iterations: 5
         timeout: 2 sec
         gauss_iter: 40
     tests:

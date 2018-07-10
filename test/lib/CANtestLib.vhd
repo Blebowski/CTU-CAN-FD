@@ -2403,14 +2403,25 @@ package body CANtestLib is
 
         rand_real_v(rand_ctr, rand_value);
 
+		------------------------------------------------------------------------
         -- We generate only valid frame combinations to avoid problems...
         -- FD frames has no RTR frame, neither the RTR field!
+		------------------------------------------------------------------------
         if (frame.frame_format = FD_CAN) then
             frame.rtr := NO_RTR_FRAME;
         end if;
 
+        ------------------------------------------------------------------------
+        -- CAN 2.0 Frame has no BRS bit. Furthermore maximal data length
+        -- of CAN 2.0 Frame is 8 bytes.
+        ------------------------------------------------------------------------
         if (frame.frame_format = NORMAL_CAN) then
             frame.brs := BR_NO_SHIFT;
+
+            -- Limit DLCs higher than 8 to max. 8!
+            if (frame.dlc(3) = '1' and frame.dlc(2 downto 0) /= "000") then
+                frame.dlc(3) := '0';
+            end if;
         end if;
 
         -- If base identifier, the lowest bits of unsigned ID contain the

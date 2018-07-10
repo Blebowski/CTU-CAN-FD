@@ -213,6 +213,9 @@
 --                reception of first bit of delim_ack. Thisway if last 5
 --                bits of CRC are matching one stuff bit is still inserted as
 --                expected!
+--   10.7.2018    Changed length of data length field for DLC > 8 in case of
+--                CAN 2.0 frame! For CAN 2.0 frame DLC higher than 8 should be
+--                interpreted as 8!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -1076,7 +1079,8 @@ begin
         --Register for transcieving the data in control field bits
         ctrl_tran_reg          <=  ctrl_tran_reg;
 
-        --Internal registered value of DLC field (transcieved or recieved)
+        -- Internal registered value of DLC field (transcieved or recieved)
+        -- Always corresponds to length of Data lenght field!
         dlc_int                <=  dlc_int;
 
         --Pointer for transcieving the data
@@ -1488,6 +1492,7 @@ begin
                                     FSM_preset              <= '1'; 
                             end case;
 
+                        --------------------------------------------------------
                         -- IDE bit
                         --
                         -- Note: IDE for Base frame is part of Control field ,
@@ -1495,6 +1500,7 @@ begin
                         -- ration field, because then node which sends it 
                         -- always wins arbitration, thus it will never loose
                         -- during it!
+                        --------------------------------------------------------
                         else
                             data_tx_r               <= tran_ident_type; 
                         end if;
@@ -1524,10 +1530,12 @@ begin
                         -- field, or extended ID
                         else
 
+                            ----------------------------------------------------
                             -- Go to control field, but via "delay_control_trans"
                             -- which is one clock cycle delayed, to give time
                             -- to Operation control to update "OP_State"!
                             -- (Bug fix 21.6.2016)
+                            ----------------------------------------------------
                             if (data_rx = DOMINANT) then
                                 delay_control_trans     <= '1';
                                 arb_state               <= arb_state;
@@ -1655,20 +1663,42 @@ begin
                 bit_err_enable_r                <=  '1';
 
                 ----------------------------------------------------------------
-                -- Store DLC for transmission -> For RTR Frames DLC should be
-                -- all zeroes ! 
+                -- Calculate real length of data field, which does not
+                -- always correspond to DLC!
                 ----------------------------------------------------------------
-                if (tran_frame_type = NORMAL_CAN and
-                    tran_is_rtr = RTR_FRAME)
-                then
-                    dlc_int     <= (OTHERS => '0');
+                if (tran_frame_type = NORMAL_CAN) then
+
+                    ------------------------------------------------------------
+                    -- For RTR frames data length is 0
+                    ------------------------------------------------------------
+                    if (tran_is_rtr = RTR_FRAME) then
+                        dlc_int     <= (OTHERS => '0');
+
+                    ------------------------------------------------------------
+                    -- For CAN Frames with DLC > 8. Data length is only 8!
+                    ------------------------------------------------------------
+                    elsif (tran_dlc(3) = '1') then
+                        dlc_int     <= "1000";
+
+                    ------------------------------------------------------------
+                    -- DLC matching data length value!
+                    ------------------------------------------------------------
+                    else
+                        dlc_int     <= tran_dlc;
+                    end if;
+
+                ----------------------------------------------------------------
+                -- For FD Frames, Data length corresponds to DLC.
+                ----------------------------------------------------------------
                 else
-                    dlc_int     <= tran_dlc;
+                    dlc_int         <= tran_dlc;
                 end if;
 
 
+                ----------------------------------------------------------------
                 -- Building shift register for transmission of control field
                 -- bits.
+                ----------------------------------------------------------------
                 case aux_tran_frame_ident_type is
 
                     -- CAN 2.0 BASE format
@@ -1951,20 +1981,38 @@ begin
                         else
                             PC_State            <= data;
                         end if;
-                      
+
                         --------------------------------------------------------
-                        -- Bug fix 22.6.2016
-                        -- If RTR frame is recieved, than actual DLC which is
-                        -- recieved depends on "rtr_pref" of transciever! Thus
-                        -- we can recieve DLC of e.g 12 bytes but frame is RTR,
-                        -- so we should decide about CRC length from RTR flag
-                        -- not recieved DLC!!!
+                        -- Real length of data field does not always correspond
+                        -- to received DLC!
                         --------------------------------------------------------
-                        if (rec_is_rtr_r = RTR_FRAME and
-                            rec_frame_type_r = NORMAL_CAN)
-                        then
-                            dlc_int                 <= (OTHERS => '0');
-                        else
+                        if (rec_frame_type_r = NORMAL_CAN) then
+
+                            ----------------------------------------------------
+                            -- RTR Frame -> Data length = 0
+                            ----------------------------------------------------
+                            if (rec_is_rtr_r = RTR_FRAME) then
+                                dlc_int             <= (OTHERS => '0');
+
+                            ----------------------------------------------------
+                            -- CAN Frame with more than 8 bytes -> 8 only!
+                            ----------------------------------------------------
+                            elsif (rec_dlc_r(3) = '1') then
+                                dlc_int             <= "1000";
+
+                            ----------------------------------------------------
+                            -- Data length as received DLC!
+                            ----------------------------------------------------
+                            else
+                                dlc_int(3 downto 1) <= rec_dlc_r(3 downto 1);
+                                dlc_int(0)          <= data_rx;
+                            end if;
+
+                        --------------------------------------------------------
+                        -- For FD Frames, there is no RTR flag, and full length
+                        -- of 64 bytes is supported.
+                        --------------------------------------------------------
+                        else                            
                             dlc_int(3 downto 1)     <= rec_dlc_r(3 downto 1);
                             dlc_int(0)              <= data_rx;
                         end if;
