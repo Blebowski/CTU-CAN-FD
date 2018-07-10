@@ -128,7 +128,6 @@ entity sanity_test is
 
     -- Amount of errors which appeared in the test
     signal errors           :out    natural
-    --TODO: Error log results
   );
 end entity;
 
@@ -825,8 +824,39 @@ begin
         variable step_done  : boolean  := false;
     begin
         print_test_info(iterations, log_level, error_beh, error_tol);
-        -- TODO: print sanity test params
+        
+        ------------------------------------------------------------------------
+        -- Print Test configuration
+        ------------------------------------------------------------------------
+        log("Sanity test configuration:", info_l, log_level);
+        log("Clock jitters (ppm): "
+            & integer'image(epsilon_v(1)) & " " 
+            & integer'image(epsilon_v(2)) & " "
+            & integer'image(epsilon_v(3)) & " "
+            & integer'image(epsilon_v(4)) & " ",
+            info_l, log_level);
 
+        log("Transceiver delays (ns): "
+            & integer'image(trv_del_v(1)) & " " 
+            & integer'image(trv_del_v(2)) & " "
+            & integer'image(trv_del_v(3)) & " "
+            & integer'image(trv_del_v(4)) & " ",
+            info_l, log_level);
+        
+        log(" Noise width (mean): " & real'image(nw_mean) &
+            " Noise width (var): " & real'image(nw_var) &
+            " Noise gap (mean): " & real'image(ng_mean) &
+            " Noise gap (var): " & real'image(ng_var),
+            info_l, log_level);
+
+        log ("Bus topology: " & topology, info_l, log_level);
+
+        CAN_print_timing(timing_config);
+        CAN_print_bus_matrix(bus_matrix);
+
+        ------------------------------------------------------------------------
+        -- Execute test reset
+        ------------------------------------------------------------------------
         wait for 5 ns;
         do_restart_mem_if <= (OTHERS => false);
         wait for 5 ns;

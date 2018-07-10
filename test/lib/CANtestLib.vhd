@@ -495,6 +495,20 @@ package CANtestLib is
     constant f100_MHZ           :   natural := 10000;
 
 
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- sanity test Stuff; must be in a package
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    constant NODE_COUNT : natural := 4;
+    type bus_matrix_type is array(1 to NODE_COUNT, 1 to NODE_COUNT) of real;
+    type anat_t is array (integer range <>) of natural;
+    subtype anat_nc_t is anat_t (1 to NODE_COUNT);
+
+    subtype epsilon_type is anat_nc_t;
+    subtype trv_del_type is anat_nc_t;
+    subtype timing_config_t is anat_t(1 to 10);
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -929,6 +943,31 @@ package CANtestLib is
         signal   bus_timing     : out   bit_time_config_type;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Print Bus timing configuration of CTU CAN FD Core.
+    -- (duration of bit phases, synchronisation jump width, baud-rate prescaler)
+    --
+    -- Arguments:
+    --  bus_timing      Bus timing structure that will be printed in simulator.
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_print_timing(
+        constant   bus_timing     : in   bit_time_config_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Print Bus matrix from sanity test configuration.
+    --
+    -- Arguments:
+    --  bus_matrix      Bus Matrix to be printed.
+    ----------------------------------------------------------------------------
+    procedure CAN_print_bus_matrix(
+        constant   bus_matrix     : in   bus_matrix_type
     );
 
 
@@ -1565,23 +1604,6 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
-
-
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    -- sanity test Stuff; must be in a package
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    constant NODE_COUNT : natural := 4;
-    type bus_matrix_type is array(1 to NODE_COUNT,1 to NODE_COUNT) of real;
-    type anat_t is array (integer range <>) of natural;
-    subtype anat_nc_t is anat_t (1 to NODE_COUNT);
-
-    subtype epsilon_type is anat_nc_t;
-    subtype trv_del_type is anat_nc_t;
-    subtype timing_config_t is anat_t(1 to 10);
-
-
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Component declarations
@@ -1816,7 +1838,7 @@ package body CANtestLib is
         res_n     <= '1';
         status    <= running;
         error_ctr <= 0;
-        wait for 250 ns; -- TODO: is it necessary?
+        wait for 250 ns;
     end procedure;
 
 
@@ -2342,6 +2364,67 @@ package body CANtestLib is
                                                          PH2_FD_L)));
         bus_timing.sjw_dbt   <= to_integer(unsigned(data(SJW_FD_H downto
                                                          SJW_FD_L)));
+    end procedure;
+
+
+    procedure CAN_print_timing(
+        constant   bus_timing       : in    bit_time_config_type
+    )is
+        variable msg                :       line;
+    begin
+        write(msg, string'("Nominal Bit timing: "));
+
+        -- Baud Rate Prescaler
+        write(msg, string'("BRP: " & integer'image(bus_timing.tq_nbt) & " "));
+
+        -- Propagation segment
+        write(msg, string'("PROP: " & integer'image(bus_timing.prop_nbt) & " "));
+
+        -- Phase 1 segment
+        write(msg, string'("PH1: " & integer'image(bus_timing.ph1_nbt) & " "));
+
+        -- Phase 2 segment
+        write(msg, string'("PH2: " & integer'image(bus_timing.ph2_nbt) & " "));
+      
+        -- SJW
+        write(msg, string'("SJW: " & integer'image(bus_timing.sjw_nbt) & " "));
+
+        write(msg, string'("Data Bit timing: "));
+
+        -- Baud Rate Prescaler - FD
+        write(msg, string'("BRP: " & integer'image(bus_timing.tq_dbt) & " "));
+
+        -- Propagation segment - FD
+        write(msg, string'("PROP: " & integer'image(bus_timing.prop_dbt) & " "));
+
+        -- Phase 1 segment - FD
+        write(msg, string'("PH1: " & integer'image(bus_timing.ph1_dbt) & " "));
+
+        -- Phase 2 segment - FD
+        write(msg, string'("PH2: " & integer'image(bus_timing.ph2_dbt) & " "));
+      
+        -- SJW - FD
+        write(msg, string'("SJW: " & integer'image(bus_timing.sjw_dbt) & " "));
+
+        writeline(output, msg);
+    end procedure;
+
+
+    procedure CAN_print_bus_matrix(
+        constant   bus_matrix     : in   bus_matrix_type
+    )is
+        variable msg              :       line;
+    begin
+        write(msg, string'("Bus matrix: "));
+        writeline(output, msg);
+
+        for i in 1 to NODE_COUNT loop
+            for j in 1 to NODE_COUNT loop
+                write(msg, string'(real'image(bus_matrix(i, j)) & " "));
+            end loop;
+            writeline(output, msg);
+        end loop;
+
     end procedure;
 
 

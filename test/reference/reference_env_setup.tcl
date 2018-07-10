@@ -44,15 +44,8 @@ global TCOMP
 ################################################################################
 
 #Add common waves for each test entity
-#add_test_status_waves
-#add_system_waves
-
-#TODO: Will be replace by calls above. So far disabled to allow manual debug!
-add wave $TCOMP/run
-add wave $TCOMP/loop_ctr
-add wave $TCOMP/iterations
-add wave $TCOMP/errors
-add wave $TCOMP/status
+add_test_status_waves
+add_system_waves
 
 add wave -noupdate -divider -height 20 "System signals"
 add wave -label "Clock" $TCOMP/clk_sys

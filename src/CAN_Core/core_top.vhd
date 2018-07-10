@@ -902,8 +902,7 @@ begin
     sof_pulse              <=  sof_pulse_r;
 
     bus_off_start          <=  bus_off_start_int;
- 
-    -- Note TODO: signal for signalling the shifted bit Rate for interrupt
+
     br_shifted             <=  br_shifted_int;
 
     ssp_reset              <=  ssp_reset_int;

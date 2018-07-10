@@ -345,9 +345,6 @@ package body Arbitration_feature is
             read_alc(alc, ID_2, mem_bus(2));
         end if;
 
-        -- TODO: Compare ALC value with expected value where node should
-        --       have lost arbitration!
-
         ------------------------------------------------------------------------
         -- If error frame is transmitted and collision not have appeared
         ------------------------------------------------------------------------
