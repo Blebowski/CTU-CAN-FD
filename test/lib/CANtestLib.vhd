@@ -1816,7 +1816,7 @@ package body CANtestLib is
         res_n     <= '1';
         status    <= running;
         error_ctr <= 0;
-        wait for 250 ns; -- TODO: is it necessary?
+        wait for 250 ns;
     end procedure;
 
 
