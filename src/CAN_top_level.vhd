@@ -209,6 +209,15 @@ entity CAN_top_level is
     --Some data were discarded, register
     signal rx_data_overrun      : std_logic;
 
+    -- Validated commands after Message filter
+    signal rx_store_metadata_valid  : std_logic;
+    signal rx_abort_valid           : std_logic;
+    signal rx_store_data_valid      : std_logic;
+    signal rec_message_store        : std_logic;
+
+    -- With new RX Buffer commands, ID valid input to message filter can be constantly valid!
+    signal mess_filt_input_valid    : std_logic := '1';
+
 
     ----------------------------------------------------------------------------
     -- Registers <--> TX Buffer, TXT Buffer
@@ -553,11 +562,11 @@ begin
         rec_brs              => rec_brs,
         rec_esi              => rec_esi,
 
-        store_metadata       => out_ident_valid,
-        store_data           => rx_store_data,
+        store_metadata       => rx_store_metadata_valid,
+        store_data           => rx_store_data_valid,
         store_data_word      => rx_store_data_word,
-        rec_message_valid    => rec_message_valid,
-        rec_abort            => rx_abort,
+        rec_message_valid    => rec_message_store,
+        rec_abort            => rx_abort_valid,
 
         sof_pulse            => sof_pulse,
         rx_buf_size          => rx_buf_size,
@@ -642,10 +651,19 @@ begin
         frame_type      => rec_frame_type_in,
 
         -- Identifier comparison can be done when metadata are received!
-        rec_ident_valid => rx_store_metadata,
+        rec_ident_valid => mess_filt_input_valid,
         drv_bus         => drv_bus,
         out_ident_valid => out_ident_valid
     );
+
+    ----------------------------------------------------------------------------
+    -- Commands for storing Frame to RX Buffer are valid only when it passed
+    -- message filter
+    ----------------------------------------------------------------------------
+    rx_store_metadata_valid <= rx_store_metadata and out_ident_valid;
+    rx_abort_valid          <= rx_abort and out_ident_valid;
+    rx_store_data_valid     <= rx_store_data and out_ident_valid;
+    rec_message_store       <= rec_message_valid and out_ident_valid;
 
     int_man_comp : intManager
     generic map(
@@ -825,9 +843,9 @@ begin
 
     --Bit time clock output propagation
     time_quanta_clk <= clk_tq_nbt when sp_control = NOMINAL_SAMPLE else
-									     clk_tq_dbt;
+                       clk_tq_dbt;
 
     OP_State <= oper_mode_type'val(to_integer(unsigned(
-				     stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));
+                    stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));
 
 end architecture;
