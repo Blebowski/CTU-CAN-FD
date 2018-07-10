@@ -23,8 +23,10 @@ def len_to_matrix(topology, bus_len):
               [l[1]+l[3]+l[5], l[2]+l[3]+l[5], 0.0,            l[3]+l[4]],
               [l[1]+l[4]+l[5], l[2]+l[4]+l[5], l[3]+l[4],      0.0]]
     elif topology == 'ring':
-        raise RuntimeError("Ring topology not implemented.")
-        # TODO: Ring topology with min functions
+        bm = [[0.0, min(l[1], l[2]+l[3]+l[4]), min(l[1]+l[2],l[3]+l[4]), min(l[4],l[1]+l[2]+l[3])],
+              [min(l[1], l[2]+l[3]+l[4]), 0.0, min(l[2], l[1]+l[3]+l[4]), min(l[2]+l[3],l[1]+l[4])],
+              [min(l[1]+l[2],l[3]+l[4]), min(l[2], l[1]+l[3]+l[4]), 0.0, min(l[3],l[1]+l[2]+l[4])],
+              [min(l[4],l[1]+l[2]+l[3]), min(l[2]+l[3],l[1]+l[4]), min(l[3],l[1]+l[2]+l[4]), 0.0]]
     elif topology == 'custom':
         bm = [[0.0,  l[1], l[2], l[3]],
               [l[1], 0.0,  l[4], l[5]],
