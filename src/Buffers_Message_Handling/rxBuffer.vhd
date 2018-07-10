@@ -145,6 +145,9 @@
 --    7.6.2018    Changed detection of buffer full to equality of 
 --                "read_pointer" and "write_pointer_raw" and nonzero amount
 --                of frames stored.
+--   10.7.2018    Changed decoding of RWCNT field. Added exception for CAN 
+--                frames with DLC higher than 8, to store only 8 bytes (2 data
+--                words).
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -603,13 +606,17 @@ begin
     frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RESVD_IND)           <= rec_esi;
-    
-    -- In case of RTR frame RWCNT should be only 3 (no data words), no matter
-    -- the data words!s
-    frame_form_w(RWCNT_H downto RWCNT_L)  <= 
-        std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)))
-            when (rec_is_rtr = NO_RTR_FRAME) else
-        "00011"; 
+
+    ----------------------------------------------------------------------------
+    -- RWCNT (Read word count is calculated like so:
+    --  1. For RTR Frames -> 3 (Only ID + 2 Timestamp words)
+    --  2. For Normal CAN Frames with DLC > 8 max. 8 bytes -> RWCNT = 5
+    --  3. Otherwise Number of data bytes is matching Received DLC!
+    ----------------------------------------------------------------------------
+    frame_form_w(RWCNT_H downto RWCNT_L)  <=
+        "00011" when (rec_is_rtr = RTR_FRAME) else
+        "00101" when ((rec_frame_type = NORMAL_CAN) and (rec_dlc_in(3) = '1')) else
+         std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)))
 
     frame_form_w(31 downto 16)            <= (OTHERS => '0');
 
