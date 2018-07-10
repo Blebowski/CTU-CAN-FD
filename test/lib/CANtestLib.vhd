@@ -2420,7 +2420,7 @@ package body CANtestLib is
 
         for i in 1 to NODE_COUNT loop
             for j in 1 to NODE_COUNT loop
-                write(msg, string'(integer'image(bus_matrix(i, j) & " ")));
+                write(msg, string'(integer'image(bus_matrix(i, j)) & " "));
             end loop;
             writeline(output, msg);
         end loop;
