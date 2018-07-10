@@ -128,7 +128,6 @@ entity sanity_test is
 
     -- Amount of errors which appeared in the test
     signal errors           :out    natural
-    --TODO: Error log results
   );
 end entity;
 
