@@ -2720,7 +2720,6 @@ begin
                                 PC_State            <= overload;                                 
                             else
                                 PC_State            <= sof;
-                                -- TODO: is it really necessary to enable here?
                                 crc_enable_r        <= '1';
                            end if;
                            FSM_preset          <= '1';
