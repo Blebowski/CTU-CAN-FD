@@ -830,17 +830,24 @@ begin
         -- Print Test configuration
         ------------------------------------------------------------------------
         log("Sanity test configuration:", info_l, log_level);
-        log("Clock jitters (ppm): " & epsilon_v(1) & " " 
-            & epsilon_v(2) & " " & epsilon_v(3) & " " & epsilon_v(4) & " ",
+        log("Clock jitters (ppm): "
+            & integer'image(epsilon_v(1)) & " " 
+            & integer'image(epsilon_v(2)) & " "
+            & integer'image(epsilon_v(3)) & " "
+            & integer'image(epsilon_v(4)) & " ",
             info_l, log_level);
-        log("Transceiver delays (ns): " & trv_del_v(1) & " " 
-            & trv_del_v(2) & " " & trv_del_v(3) & " " & trv_del_v(4) & " ",
+
+        log("Transceiver delays (ns): "
+            & integer'image(trv_del_v(1)) & " " 
+            & integer'image(trv_del_v(2)) & " "
+            & integer'image(trv_del_v(3)) & " "
+            & integer'image(trv_del_v(4)) & " ",
             info_l, log_level);
         
-        log(" Noise width (mean): " & nw_mean(1) &
-            " Noise width (var): " & nw_var(1) &
-            " Noise gap (mean): " & ng_mean(1) &
-            " Noise gap (var): " & ng_var(1),
+        log(" Noise width (mean): " & real'image(nw_mean) &
+            " Noise width (var): " & real'image(nw_var) &
+            " Noise gap (mean): " & real'image(ng_mean) &
+            " Noise gap (var): " & real'image(ng_var),
             info_l, log_level);
 
         log ("Bus topology: " & topology, info_l, log_level);
