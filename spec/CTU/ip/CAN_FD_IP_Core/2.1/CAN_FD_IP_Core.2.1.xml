@@ -298,6 +298,18 @@
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>ERCRST</ipxact:name>
+						<ipxact:displayName>ERCRST</ipxact:displayName>
+						<ipxact:description>Error counter reset. Issuing this command will erase TX, RX error counters after 128 conecutive ocurrences of 11 recessive bits. This command can be used as protocol compliant transition from Bus-off to Error Active. Upon completion, TX RX Error counters are erased and fault confinement state is set to Error Active.</ipxact:description>
+						<ipxact:bitOffset>4</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>STATUS</ipxact:name>
