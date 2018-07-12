@@ -187,14 +187,14 @@ package body byte_enable_feature is
 
             address := std_logic_vector(to_unsigned(
 		            (to_integer(unsigned(FILTER_A_MASK_ADR)) + i), 12));
-            data(8 * i + 7 downto 0) := x"0A";
+            data(8 * i + 7 downto 8 * i) := x"0A";
             CAN_write(data, address, ID, mem_bus(1), BIT_8);
             data := (OTHERS => '0');
 
             CAN_read(data, address, ID, mem_bus(1), BIT_8);
             
             -- Checking if one written byte was written OK!
-            if (data(8 * i + 7 downto 0) /= x"0A") then
+            if (data(8 * i + 7 downto 8 * i) /= x"0A") then
                 o.outcome := false;
                 report "8 bit write error (valid byte), Index :" &
                     Integer'image(i) severity error; 
