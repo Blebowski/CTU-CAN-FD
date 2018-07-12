@@ -1344,42 +1344,42 @@ begin
                         --------------------------------------------------------
                         when FILTER_A_VAL_ADR =>
                             if (sup_filtA) then
-                                data_out_int(28 downto 0)    <=  filter_A_mask;
+                                data_out_int(28 downto 0)    <=  filter_A_value;
                                 data_out_int(31 downto 29)   <=  (OTHERS => '0');
                             else
                                 data_out_int <= (OTHERS => '0');
                             end if;
                         when FILTER_A_MASK_ADR =>
                             if (sup_filtA) then
-                                data_out_int(28 downto 0)    <=  filter_A_value;
+                                data_out_int(28 downto 0)    <=  filter_A_mask;
                                 data_out_int(31 downto 29)   <=  (OTHERS => '0');
                             else
                                 data_out_int <= (OTHERS => '0');
                             end if;
                         when FILTER_B_VAL_ADR =>
                             if (sup_filtB) then
-                                data_out_int(28 downto 0)    <=  filter_B_mask;
+                                data_out_int(28 downto 0)    <=  filter_B_value;
                                 data_out_int(31 downto 29)   <=  (OTHERS => '0');
                             else
                                 data_out_int <= (OTHERS => '0');
                             end if;
                         when FILTER_B_MASK_ADR =>
                             if (sup_filtB) then
-                                data_out_int(28 downto 0)    <=  filter_B_value;
+                                data_out_int(28 downto 0)    <=  filter_B_mask;
                                 data_out_int(31 downto 29)   <=  (OTHERS => '0');
                             else
                                 data_out_int <= (OTHERS => '0');
                             end if;
                         when FILTER_C_VAL_ADR =>
                             if (sup_filtC) then
-                                data_out_int(28 downto 0)    <=  filter_C_mask;
+                                data_out_int(28 downto 0)    <=  filter_C_value;
                                 data_out_int(31 downto 29)   <=  (OTHERS => '0');
                             else
                                 data_out_int <= (OTHERS => '0');
                             end if;
                         when FILTER_C_MASK_ADR =>
                             if (sup_filtC) then
-                                data_out_int(28 downto 0)    <=  filter_C_value;
+                                data_out_int(28 downto 0)    <=  filter_C_mask;
                                 data_out_int(31 downto 29)   <=  (OTHERS => '0');
                             else
                                 data_out_int <= (OTHERS => '0');
