@@ -4021,11 +4021,11 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+ERCRST\end_layout
 
 \end_inset
 </cell>
@@ -4099,7 +4099,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -4150,6 +4150,9 @@ RRB Release Receive buffer. This command deletes all data from the Receive buffe
 \end_layout
 \begin_layout Description
 CDO Clear data overrun flag. This command will clear data overrun flag on RX Buffer.
+\end_layout
+\begin_layout Description
+ERCRST Error counter reset. Issuing this command will erase TX, RX error counters after 128 conecutive ocurrences of 11 recessive bits. This command can be used as protocol compliant transition from Bus-off to Error Active. Upon completion, TX RX Error counters are erased and fault confinement state is set to Error Active.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

@@ -143,7 +143,8 @@ union ctu_can_fd_mode_command_status_settings {
 		uint32_t at                      : 1;
 		uint32_t rrb                     : 1;
 		uint32_t cdo                     : 1;
-		uint32_t reserved_15_12          : 4;
+		uint32_t ercrst                  : 1;
+		uint32_t reserved_15_13          : 3;
   /* STATUS */
 		uint32_t rbs                     : 1;
 		uint32_t dos                     : 1;
@@ -173,7 +174,8 @@ union ctu_can_fd_mode_command_status_settings {
 		uint32_t tbs                     : 1;
 		uint32_t dos                     : 1;
 		uint32_t rbs                     : 1;
-		uint32_t reserved_15_12          : 4;
+		uint32_t reserved_15_13          : 3;
+		uint32_t ercrst                  : 1;
 		uint32_t cdo                     : 1;
 		uint32_t rrb                     : 1;
 		uint32_t at                      : 1;

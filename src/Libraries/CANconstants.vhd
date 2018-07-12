@@ -454,6 +454,8 @@ package CANconstants is
     constant DRV_CTR_SEL_LOW  : natural := 425;
     constant DRV_CTR_SEL_HIGH : natural := 428;
 
+    constant DRV_ERR_CTR_CLR  : natural := 429;
+
     -- Operation control FSM
     constant DRV_CAN_FD_ENA_INDEX    : natural := 460;
     constant DRV_RTR_PREF_INDEX      : natural := 461;

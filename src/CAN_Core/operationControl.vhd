@@ -170,7 +170,11 @@ begin
                     elsif (is_idle = '1') then
                         OP_State_r          <= idle;
                     end if;
-                    
+
+                ----------------------------------------------------------------
+                -- Receiver
+                -- Unit is receiver of a frame.
+                ----------------------------------------------------------------
                 when reciever =>
                     if (is_idle = '1') then
                         OP_State_r          <= idle;

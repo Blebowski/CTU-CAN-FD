@@ -247,11 +247,13 @@ package CAN_FD_register_map is
   constant AT_IND                 : natural := 9;
   constant RRB_IND               : natural := 10;
   constant CDO_IND               : natural := 11;
+  constant ERCRST_IND            : natural := 12;
 
   -- COMMAND register reset values
   constant AT_RSTVAL          : std_logic := '0';
   constant RRB_RSTVAL         : std_logic := '0';
   constant CDO_RSTVAL         : std_logic := '0';
+  constant ERCRST_RSTVAL      : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- STATUS register
