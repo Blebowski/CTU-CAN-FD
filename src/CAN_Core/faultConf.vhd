@@ -59,6 +59,9 @@
 --    05.1.2018  Added "erc_capt_r" register for last error capture.
 --    08.5.2018  Added pragmas for one-hot decoding on increment, decrement
 --               error counters.
+--    12.7.2018  Added counters for erasing error counters upon reception of
+--               128 consecutive 11 recessive bits as protocol compliant way
+--               to transfer from Bus-off to Error active!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -210,6 +213,25 @@ entity faultConf is
     signal erc_capt_r                :     std_logic_vector(7 downto 0);
 
     signal joined_ctr                :     std_logic_vector(2 downto 0);
+
+    ----------------------------------------------------------------------------
+    -- Counters for Bus-off to Error active transition according to 
+    -- CAN FD standard
+    ----------------------------------------------------------------------------
+
+    -- Counter for 11 consecutive recessive bits!
+    signal cons_rec_ctr              :     natural range 0 to 15;
+
+    -- Counter for 128 ocurrences of 11 consecutive bits
+    signal cons_128_11_rec_ctr       :     natural range 0 to 127;
+
+    -- Command that is generated upon ocurrence of 11 consecutive recessive bits
+    -- 128 times. Upon this command, TX, RX error counters are erased and thus
+    -- Fault confinement state is set to error_active.
+    signal reset_err_counters        :     std_logic;
+
+    -- Counting has started and is in progress...
+    signal cons_128_11_progress      :     std_logic;
  
     ------------------------
     -- Driving bus aliases  
@@ -218,6 +240,7 @@ entity faultConf is
     signal drv_erp                   :     std_logic_vector(7 downto 0);
     signal drv_ctr_val               :     std_logic_vector(8 downto 0);
     signal drv_ctr_sel               :     std_logic_vector(3 downto 0);
+    signal drv_clr_err_ctrs          :     std_logic;
 
     -- Bus off treshold
     constant bus_off_th              :     natural := 255;
@@ -237,6 +260,9 @@ begin
 
     drv_ctr_sel             <=  drv_bus(DRV_CTR_SEL_HIGH downto
                                       DRV_CTR_SEL_LOW);
+
+    drv_clr_err_ctrs        <=  drv_bus(DRV_ERR_CTR_CLR);
+
 
     -- Counters to output propagation
     tx_counter_out          <=  std_logic_vector(to_unsigned(tx_counter, 9));
@@ -327,6 +353,10 @@ begin
             if (drv_ctr_sel(0) = '1') then 
                 tx_counter                      <=
                     to_integer(unsigned(drv_ctr_val));
+
+            elsif (reset_err_counters = '1') then
+                tx_counter                      <= 0;
+
             else
                 -- Counting the errors when transmitting
                 if (OP_State = transciever) then
@@ -362,6 +392,10 @@ begin
             if (drv_ctr_sel(1) = '1') then 
                 rx_counter                              <=
                     to_integer(unsigned(drv_ctr_val));
+
+            elsif (reset_err_counters = '1') then
+                rx_counter                      <= 0;
+
             else
 
                 if (OP_State = reciever) then
@@ -605,6 +639,70 @@ begin
           
         end if;
     end process;
+
+
+    ----------------------------------------------------------------------------
+    -- Counting 128 ocurrences of 11 consecutive RECESSIVE bits. Generating
+    -- error counter erase command upon completion!
+    ----------------------------------------------------------------------------
+    err_ctr_erase_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = ACT_RESET) then
+            cons_128_11_progress    <= '0';
+
+            cons_rec_ctr            <= 0;
+            cons_128_11_rec_ctr     <= 0;
+            reset_err_counters      <= '0';
+
+        elsif (rising_edge(clk_sys)) then
+
+            reset_err_counters <= '0';
+
+            -- Setting / Clearing "in progress" flag
+            if (drv_clr_err_ctrs = '1') then
+                cons_128_11_progress <= '1';
+            elsif (reset_err_counters = '1') then
+                cons_128_11_progress <= '0';
+            end if;
+
+            -- Counting 11 consecutive recessive bits!
+            if (cons_128_11_progress = '1') then
+                if (rec_trig = '1') then
+                    if (data_rx = RECESSIVE) then
+                        if (cons_rec_ctr = 10) then
+                            cons_rec_ctr <= 0;
+                        else
+                            cons_rec_ctr <= cons_rec_ctr + 1;
+                        end if;
+                    else
+                        cons_rec_ctr <= 0;
+                    end if;
+                end if;
+            else
+                cons_rec_ctr <= 0;
+            end if;
+
+            -- Counting 128 ocurrences
+            if (cons_128_11_progress = '1') then
+
+                -- 128 ocurrences reached -> Erase error counters command
+                if (cons_128_11_rec_ctr = 127) then
+                    cons_128_11_rec_ctr <= 0;
+                    reset_err_counters <= '1';
+
+                -- Not reached, but 11 consecutive are reached -> add 1!
+                elsif (rec_trig = '1' and data_rx = RECESSIVE and
+                       cons_rec_ctr = 10) then
+                    cons_128_11_rec_ctr <= cons_128_11_rec_ctr + 1;
+                end if;
+            else
+                cons_128_11_rec_ctr <= 0;
+            end if;
+
+        end if;
+    end process;
+
+
   
   -- Internal register to output propagation
   err_capt <= erc_capt_r;

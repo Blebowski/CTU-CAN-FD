@@ -250,6 +250,7 @@ entity canfd_registers is
     signal release_recieve        :     std_logic;
     signal abort_transmittion     :     std_logic;
     signal ack_forb               :     std_logic;
+    signal clr_err_ctrs           :     std_logic;
 
     -- Retransmit limited is enabled
     signal retr_lim_ena           :     std_logic;
@@ -442,7 +443,8 @@ architecture rtl of canfd_registers is
         signal CAN_enable             :out  std_logic;
         signal FD_type                :out  std_logic;
         signal mode_reg               :out  std_logic_vector(5 downto 0);
-        signal rtsopt                 :out  std_logic
+        signal rtsopt                 :out  std_logic;
+        signal clr_err_ctrs           :out  std_logic
     ) is
     begin
     
@@ -544,6 +546,8 @@ architecture rtl of canfd_registers is
         int_mask_clear              <= INT_MASK_CLR_RSTVAL;
 
         rtsopt                      <= RTSOP_RSTVAL;
+
+        clr_err_ctrs                <= ERCRST_RSTVAL;
     end procedure;
   
   
@@ -734,7 +738,8 @@ begin
             intLoopbackEna     ,log_trig_config        ,
             log_capt_config    ,log_cmd                ,rx_ctr_set          ,
             tx_ctr_set         ,ctr_val_set            ,CAN_enable          ,
-            FD_type            ,mode_reg               ,rtsopt
+            FD_type            ,mode_reg               ,rtsopt              ,
+            clr_err_ctrs
             );
 
             RX_buff_read_first    <= false;
@@ -776,7 +781,7 @@ begin
                 log_capt_config    ,log_cmd                ,
                 rx_ctr_set         ,tx_ctr_set             ,
                 ctr_val_set        ,CAN_enable             ,FD_type            ,
-                mode_reg           ,rtsopt
+                mode_reg           ,rtsopt                 ,clr_err_ctrs
                 );
 
                 RX_buff_read_first    <= false;
@@ -842,6 +847,7 @@ begin
                 ctr_val_set               <=  (OTHERS =>'0');
                 rx_ctr_set                <=  '0';
                 tx_ctr_set                <=  '0';
+                clr_err_ctrs              <=  '0';
                 ack_forb                  <=  ack_forb;
                 data_out_int              <=  (OTHERS=>'0');
                 log_cmd                   <=  (OTHERS =>'0');
@@ -908,6 +914,7 @@ begin
                             write_be_s(clear_overrun, CDO_IND, data_in, sbe);
                             write_be_s(release_recieve, RRB_IND, data_in, sbe);
                             write_be_s(abort_transmittion, AT_IND, data_in, sbe);
+                            write_be_s(clr_err_ctrs, ERCRST_IND, data_in, sbe);
 
                             --Status register is read only!
 
@@ -1846,7 +1853,7 @@ begin
     drv_bus(609 downto 601)                           <=  (OTHERS => '0');
     drv_bus(579 downto 570)                           <=  (OTHERS => '0');
     drv_bus(519 downto 511)                           <=  (OTHERS => '0');
-    drv_bus(444 downto 429)                           <=  (OTHERS => '0');
+    drv_bus(444 downto 430)                           <=  (OTHERS => '0');
 
     drv_bus(1023 downto 876)                          <=  (OTHERS => '0');
 
@@ -1937,6 +1944,8 @@ begin
 
     drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW)  <=  erctr_pres_value;
     drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW)  <=  erctr_pres_mask;
+
+    drv_bus(DRV_ERR_CTR_CLR)                          <=  clr_err_ctrs;
 
     -- CAN Core
     drv_bus(DRV_ABORT_TRAN_INDEX)                     <=  abort_transmittion;
