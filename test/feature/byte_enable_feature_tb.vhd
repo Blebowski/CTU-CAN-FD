@@ -89,11 +89,11 @@ package body byte_enable_feature is
         ------------------------------------------------------------------------
         -- First read full YOLO register (32 BIT)
         ------------------------------------------------------------------------
-        address := YOLO_REG_ADDR;
+        address := YOLO_REG_ADR;
         CAN_read(data, address, ID, mem_bus(1), BIT_32);
 
         if (data /= x"DEADBEEF") then
-            outcome := false;
+            o.outcome := false;
             report "32 bit read error" severity error;
         end if;
 
@@ -112,14 +112,14 @@ package body byte_enable_feature is
             then
                 report "16 bit read error (valid byte), Index :" &
                     Integer'image(i) severity error; 
-	            outcome := false;
+	            o.outcome := false;
             end if;
 
             -- Checking invalid 2 bytes are 0
             if (data(16 * (1 - i) + 15 downto 16 * (1 - i)) /= x"0000") then
                 report "16 bit read error (empty byte), Index :" &
                     Integer'image(i) severity error; 
-	            outcome := false;
+	            o.outcome := false;
             end if;
         end loop;
 
@@ -136,7 +136,7 @@ package body byte_enable_feature is
             if (data(8 * i + 7 downto 8 * i) /= 
 	            YOLO_VAL_RSTVAL(8 * i + 7 downto 8 * i))
             then
-	            outcome := false;
+	            o.outcome := false;
                 report "8 bit read error (valid byte), Index :" &
                     Integer'image(i) severity error; 
             end if;
@@ -145,26 +145,26 @@ package body byte_enable_feature is
             case i is
             when 0 =>
                 if (data(31 downto 8) /= x"000000") then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit read error (Empty byte 0)" severity error;
                 end if;
             when 1 =>
                 if (data(31 downto 16) /= x"0000" or
                     data(7 downto 0) /= x"00")
                 then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit read error (Empty byte 1)" severity error;
                 end if;
             when 2 =>
                 if (data(31 downto 24) /= x"00" or
                     data(15 downto 0) /= x"0000")
                 then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit read error (Empty byte 2)" severity error;
                 end if;
             when 3 =>
                 if (data(23 downto 0) /= x"000000") then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit read error (Empty byte 3)" severity error;
                 end if;
             when others =>
@@ -195,7 +195,7 @@ package body byte_enable_feature is
             
             -- Checking if one written byte was written OK!
             if (data(8 * i + 7 downto 0) /= x"0A") then
-                outcome := false;
+                o.outcome := false;
                 report "8 bit write error (valid byte), Index :" &
                     Integer'image(i) severity error; 
             end if;
@@ -204,26 +204,26 @@ package body byte_enable_feature is
             case i is
             when 0 =>
                 if (data(31 downto 8) /= x"000000") then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit write error (Empty byte 0)" severity error;
                 end if;
             when 1 =>
                 if (data(31 downto 16) /= x"0000" or
                     data(7 downto 0) /= x"00")
                 then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit write error (Empty byte 1)" severity error;
                 end if;
             when 2 =>
                 if (data(31 downto 24) /= x"00" or
                     data(15 downto 0) /= x"0000")
                 then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit write error (Empty byte 2)" severity error;
                 end if;
             when 3 =>
                 if (data(23 downto 0) /= x"000000") then
-                    outcome := false;
+                    o.outcome := false;
                     report "8 bit write error (Empty byte 3)" severity error;
                 end if;
             when others =>
