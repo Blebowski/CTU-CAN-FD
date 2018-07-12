@@ -108,7 +108,7 @@ package body byte_enable_feature is
 
             -- Checking if valid 2 bytes match register value
             if (data(16 * i + 15 downto 16 * i) /= 
-	            YOLO_VAL_RSTVAL(16 * i + 15 downto 15 * i))
+	            YOLO_VAL_RSTVAL(16 * i + 15 downto 16 * i))
             then
                 report "16 bit read error (valid byte), Index :" &
                     Integer'image(i) severity error; 
