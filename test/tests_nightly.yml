@@ -88,6 +88,7 @@ feature:
         tran_delay:
         tx_arb_time_tran:
         timestamp_options:
+        byte_enable:
 sanity:
     default:
         <<: *default
