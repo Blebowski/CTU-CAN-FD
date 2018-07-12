@@ -103,7 +103,7 @@ package body byte_enable_feature is
         for i in 0 to 1 loop        
             data := (OTHERS => '0');
             address := std_logic_vector(to_unsigned(
-		            (to_integer(unsigned(YOLO_REG_ADDR)) + i * 2), 12));
+		            (to_integer(unsigned(YOLO_REG_ADR)) + i * 2), 12));
             CAN_read(data, address, ID, mem_bus(1), BIT_16);
 
             -- Checking if valid 2 bytes match register value
@@ -129,7 +129,7 @@ package body byte_enable_feature is
         for i in 0 to 3 loop        
             data := (OTHERS => '0');
             address := std_logic_vector(to_unsigned(
-		            (to_integer(unsigned(YOLO_REG_ADDR)) + i), 12));
+		            (to_integer(unsigned(YOLO_REG_ADR)) + i), 12));
             CAN_read(data, address, ID, mem_bus(1), BIT_8);
 
             -- Checking if valid 1 byte matches register value
