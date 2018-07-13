@@ -616,9 +616,6 @@ entity protocolControl is
   -- state  based on type of transcieved/recieved frame
   signal FSM_preset               :     std_logic; 
   
-  --State machine for managing the bits inside the control field
-  signal control_state            :     control_type;
-  
   --Register for transcieving the data in control field bits
   signal ctrl_tran_reg            :     std_logic_vector(7 downto 0);
   
@@ -1070,9 +1067,6 @@ begin
         --Signal for presetting the state machine of control field into 
         --correct state
         FSM_preset             <=  FSM_preset;
-
-        --State machine for managing the bits inside the control field
-        control_state          <=  control_state;
 
         --Register for transcieving the data in control field bits
         ctrl_tran_reg          <=  ctrl_tran_reg;

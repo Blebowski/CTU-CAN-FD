@@ -202,18 +202,6 @@ package CANconstants is
         one_bit
     );
 
-    -- State machine type for sending control field bits
-    -- Note: control_type is only for sending. For recieving frame 
-    --        type is unknown until EDL bit
-    type control_type is (
-        r0,
-        r1,
-        edl,
-        brs,
-        esi,
-        dlc
-    );
-
     -- Within ISO CAN FD new field stuff count is needed!
     type crc_type is(
         stuff_count,
