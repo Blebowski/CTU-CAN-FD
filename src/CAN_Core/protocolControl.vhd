@@ -216,6 +216,18 @@
 --   10.7.2018    Changed length of data length field for DLC > 8 in case of
 --                CAN 2.0 frame! For CAN 2.0 frame DLC higher than 8 should be
 --                interpreted as 8!
+--   13.7.2018    Removed "unknown_state_Error_r" since it was unused. Unified
+--                all "when others" statements to go to "error" state an cause
+--                error frame transmission! This is however synthesis tool
+--                dependent! If FSM synthesis on invalid state (e.g. glitch)
+--                would jump to reset state, then node would become off, and
+--                communication would not continue! If synthesis tool would
+--                use "others" to detect invalid FSM state, and go to "error"
+--                state, then this would be "safety" feature for possible
+--                glitches. From CAN Node perspective, this would be another
+--                "internal" error, which would cause transmission of error
+--                frame! Such a behaviour is not defined by standard, but it
+--                is logical to do it like so!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -510,7 +522,6 @@ entity protocolControl is
   signal form_Error_r             :     std_logic; --Form Error
   signal CRC_Error_r              :     std_logic; --CRC Error
   signal ack_Error_r              :     std_logic; --Acknowledge error
-  signal unknown_state_Error_r    :     std_logic; --Unknown state Error
   
   signal inc_one_r                :     std_logic;
   signal inc_eight_r              :     std_logic;
@@ -758,7 +769,6 @@ begin
   form_Error            <=  form_Error_r;
   CRC_Error             <=  CRC_Error_r;
   ack_Error             <=  ack_Error_r;
-  unknown_state_Error   <=  unknown_state_Error_r;
   int_loop_back_ena     <=  int_loop_back_ena_r;
   
   inc_one               <=  inc_one_r;
@@ -941,14 +951,14 @@ begin
         --Prestting internal registers--
         -------------------------------- 
         rec_brs_r               <=  '0';
-        rec_crc_r               <=  (OTHERS=>'0');
+        rec_crc_r               <=  (OTHERS => '0');
         rec_esi_r               <=  '0';
            
-        arb_two_bits            <=  (OTHERS=>'0');
+        arb_two_bits            <=  (OTHERS => '0');
         arb_one_bit             <=  '0';
 
-        ctrl_tran_reg           <=  (OTHERS =>'0');
-        dlc_int                 <=  (OTHERS=>'0');
+        ctrl_tran_reg           <=  (OTHERS => '0');
+        dlc_int                 <=  (OTHERS => '0');
 
         crc_src                 <=  "11";
         crc_check               <=  '0';
@@ -957,7 +967,7 @@ begin
         sec_ack                 <=  '0';
 
         tran_pointer            <=  0;
-        alc_r                   <=  (OTHERS=>'0');
+        alc_r                   <=  (OTHERS => '0');
         
         data_pointer            <=  0;
         data_tx_index           <=  0;
@@ -966,9 +976,9 @@ begin
         tran_ident_ext_sr       <= (OTHERS => '0');
 
         -- Nulling recieve registers
-        rec_ident_base_sr       <=  (OTHERS=>'0');
-        rec_ident_ext_sr        <=  (OTHERS=>'0');
-        rec_dlc_r               <=  (OTHERS=>'0');
+        rec_ident_base_sr       <=  (OTHERS => '0');
+        rec_ident_ext_sr        <=  (OTHERS => '0');
+        rec_dlc_r               <=  (OTHERS => '0');
         rec_is_rtr_r            <=  '0';
         rec_ident_type_r        <=  '0';
         rec_frame_type_r        <=  '0';
@@ -977,7 +987,7 @@ begin
         store_metadata_r        <=  '0';
         rec_abort_r             <=  '0';
         store_data_r            <=  '0';
-        store_data_word_r       <=  (OTHERS=>'0');
+        store_data_word_r       <=  (OTHERS => '0');
 
         -- Receive data RAM
         rec_word_ptr            <= 0;
@@ -1001,14 +1011,13 @@ begin
         form_Error_r            <=  '0';
         CRC_Error_r             <=  '0';
         ack_Error_r             <=  '0';
-        unknown_state_Error_r   <=  '0';
         set_transciever_r       <=  '0';
         set_reciever_r          <=  '0';
 
         delay_control_trans     <=  '0';
 
         rx_parity               <=  '0';
-        rx_count_grey           <=  (OTHERS =>'0');
+        rx_count_grey           <=  (OTHERS => '0');
 
         sof_pulse_r             <=  '0';
        
@@ -1117,7 +1126,6 @@ begin
         form_Error_r           <=  '0';
         CRC_Error_r            <=  '0';
         ack_Error_r            <=  '0';
-        unknown_state_Error_r  <=  '0';
         int_loop_back_ena_r    <=  int_loop_back_ena_r;
         crc_state              <=  crc_state;
 
@@ -1218,17 +1226,17 @@ begin
             control_pointer     <=  0;
 
             -- Erasing the recieved for ID and metadata
-            rec_ident_base_sr         <=  (OTHERS =>'0');
-            rec_ident_ext_sr          <=  (OTHERS =>'0');
-            rec_dlc_r                 <=  (OTHERS =>'0');
+            rec_ident_base_sr         <=  (OTHERS => '0');
+            rec_ident_ext_sr          <=  (OTHERS => '0');
+            rec_dlc_r                 <=  (OTHERS => '0');
             rec_is_rtr_r              <=  '0';
             rec_ident_type_r          <=  '0';
             rec_frame_type_r          <=  '0';
             rec_brs_r                 <=  '0';
-            rec_crc_r                 <=  (OTHERS =>'0');
+            rec_crc_r                 <=  (OTHERS => '0');
             rec_esi_r                 <=  '0';
             rx_parity                 <=  '0';
-            rx_count_grey             <=  (OTHERS =>'0');
+            rx_count_grey             <=  (OTHERS => '0');
 
             -- Erasing internal DLC
             dlc_int                   <=  (OTHERS => '0');
@@ -1401,8 +1409,7 @@ begin
                       
                     when RECESSIVE_RECESSIVE =>
                     when DOMINANT_DOMINANT =>
-                    when others => 
-                          unknown_state_Error_r <=  '1';
+                    when others =>
                           PC_State              <=  error;
                           FSM_preset            <=  '1';
                 end case;
@@ -1487,7 +1494,6 @@ begin
                                 -- Error if undefined
                                 when others =>
                                     data_tx_r               <= RECESSIVE;
-                                    unknown_state_Error_r   <= '1'; 
                                     PC_State                <= error;
                                     FSM_preset              <= '1'; 
                             end case;
@@ -1626,7 +1632,6 @@ begin
                     end if;
 
                 when others =>
-                    unknown_state_Error_r   <=  '1'; 
                     PC_State                <=  error;
                     FSM_preset              <=  '1';
                 end case;
@@ -1740,7 +1745,6 @@ begin
                         control_pointer         <= 7;
                           
                     when others =>
-                          unknown_state_Error_r <=  '1'; 
                           PC_State              <=  error;
                           FSM_preset            <=  '1';
                 end case;
@@ -2023,8 +2027,7 @@ begin
                         --------------------------------------------------------
                         store_metadata_r            <= '1';
 
-                    when others => 
-                        unknown_state_Error_r       <= '1'; 
+                    when others =>
                         PC_State                    <= error;
                         FSM_preset                  <= '1';
                 end case;   
@@ -2064,7 +2067,6 @@ begin
                 when "1111" => data_pointer  <= 511; -- 64 bytes
                 when others => 
                         data_pointer           <= 0;
-                        unknown_state_Error_r  <= '1'; 
                         PC_State               <= error;
                         FSM_preset             <= '1';
             end case;
@@ -2148,7 +2150,6 @@ begin
                                                 rec_data_sr(6 downto 0) &
                                                 data_rx;
                         when others =>
-                            report "Unknown state" severity error;
                             PC_State      <= error;
                             FSM_Preset    <= '1';
                     end case;
@@ -2256,7 +2257,6 @@ begin
             rec_crc_r               <= (OTHERS => '0');
             FSM_Preset              <= '0';
 
-
         else
             case crc_state is
 
@@ -2308,9 +2308,8 @@ begin
                             when CRC_21_SRC =>
                                 data_tx_r   <= crc21(data_pointer);
 
-                            when others=> 
-                                data_tx_r             <=  data_tx_r;
-                                unknown_state_Error_r <=  '1'; 
+                            when others => 
+                                data_tx_r             <=  RECESSIVE;
                                 PC_State              <=  error;
                                 FSM_preset            <=  '1';
                         end case;
@@ -2330,6 +2329,8 @@ begin
                     end if;
 
                 when others =>
+                    PC_State                      <= error;
+                    FSM_preset                    <= '1';
              end case;
         end if;
 
@@ -2443,7 +2444,6 @@ begin
                             FSM_Preset              <= '1';
 
                         when others =>
-                            unknown_state_Error_r   <= '1'; 
                             PC_State                <= error;
                             FSM_preset              <= '1';
                     end case;
@@ -2494,7 +2494,6 @@ begin
                             int_loop_back_ena_r     <= '0'; 
   
                         when others =>
-                            unknown_state_Error_r   <= '1'; 
                             PC_State                <= error;
                             FSM_preset              <= '1';
                     end case;
@@ -2553,6 +2552,8 @@ begin
                             FSM_preset              <= '1';
 
                         when others =>
+                            PC_State                <= error;
+                            FSM_preset              <= '1';
                     end case;
 
                     if (control_pointer_non_zero) then
@@ -2799,7 +2800,6 @@ begin
                     end if;
                 
             when others =>
-                  unknown_state_Error_r     <= '1'; 
                   PC_State                  <= error;
                   FSM_preset                <= '1';
             end case;
@@ -3064,7 +3064,6 @@ begin
                 -- Other, invalid states!
                 ----------------------------------------------------------------
                 when others =>
-                      unknown_state_Error_r     <= '1'; 
                       PC_State                  <= error;
                       FSM_preset                <= '1';
                       int_loop_back_ena_r       <= '0';
@@ -3195,7 +3194,6 @@ begin
                     end if;
 
                 when others =>
-                      unknown_state_Error_r     <= '1'; 
                       PC_State                  <= error;
                       FSM_preset                <= '1';
                       int_loop_back_ena_r       <= '0';
@@ -3223,7 +3221,6 @@ begin
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     when others =>
-        unknown_state_Error_r   <= '1'; 
         PC_State                <= error;
         FSM_preset              <= '1';
     end case;
