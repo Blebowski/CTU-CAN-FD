@@ -74,6 +74,11 @@
 --              on the output of TX Arbitrator combinationally ! During the
 --              transmission  metadata will not change since TX arbitrator is
 --              locked!
+--  13.7.2018   Removed obsolete "drv_bus_mon_ena". Bus monitoring mode (or 
+--              Listen only mode, it is the same thing) is realized by Protocol
+--              Control which sets "int_loop_back_ena" to perform internal
+--              loopback upon transmission of DOMINANT bit which should not
+--              get to the bus!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -279,7 +284,6 @@ entity core_top is
     signal drv_set_rx_ctr          :     std_logic;
     signal drv_set_tx_ctr          :     std_logic;
     signal drv_int_loopback_ena    :     std_logic;
-    signal drv_lom_ena             :     std_logic;
    
    
     ----------------------------------------------------------------------------
@@ -896,7 +900,6 @@ begin
     drv_set_rx_ctr        <=  drv_bus(DRV_SET_RX_CTR_INDEX);
     drv_set_tx_ctr        <=  drv_bus(DRV_SET_TX_CTR_INDEX);
     drv_int_loopback_ena  <=  drv_bus(DRV_INT_LOOBACK_ENA_INDEX);
-    drv_lom_ena           <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
   
     -- Output propagation
     arbitration_lost_out   <=  arbitration_lost;
@@ -1068,7 +1071,17 @@ begin
     error_warning_limit    <=  error_warning_limit_int;
 
     ----------------------------------------------------------------------------
-    -- Internal loopback multiplexing     
+    -- Data Received by Protocol control are from Bit Destuffing, apart from
+    -- following cases:
+    --  1. Internal loopback is set by Protocol control (due to some special
+    --     mode such as LOM), or rerouting acknowledge internally in case of
+    --     STM mode.
+    --  2. Internal loopback is permanently turned on from SW for debugging!
+    --  3. Secondary sampling point is set. This is ONLY in Data phase of
+    --     CAN FD Transmitter after Bit rate shift! This is needed for proper
+    --     reception of own data in the same bit! Note that Bit error in this
+    --     case is detected by Bus Sync circuit which has shift registers for
+    --     secondary sampling point!   
     ----------------------------------------------------------------------------
     data_rx_int <= data_tx_from_PC when (int_loop_back_ena = '1' or 
                                          drv_int_loopback_ena = '1' or 
@@ -1077,8 +1090,11 @@ begin
                    data_rx;
  
     ----------------------------------------------------------------------------
-    --Note: int_loop_back_ena is for bus monitoring mode. drv_int_loopback_ena  
-    --      is for internal loopback set by user!
+    -- Data transmitted by Protocol control are sent out of CAN Core to
+    -- Bit stuffing, apart from following cases:
+    --  1. Protocol Control has "int_loop_back_ena" which forbids bit to be
+    --     transmitted further!
+    --  2. User has set (for debugging purposes) permanent Internal Loopback!
     ----------------------------------------------------------------------------
     data_tx_before_stuff <= RECESSIVE when (int_loop_back_ena = '1' or 
                                             drv_int_loopback_ena = '1') 
