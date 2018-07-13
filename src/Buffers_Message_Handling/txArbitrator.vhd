@@ -228,7 +228,6 @@ entity txArbitrator is
   
   -- Registered values for detection of change
   signal select_buf_index_reg     : natural range 0 to buf_count - 1;
-  signal select_buf_avail_reg     : boolean;
   
   -- State machine for following when the frame was already transmitted!
   signal tx_arb_fsm               : tx_arb_state_type;  
@@ -401,7 +400,6 @@ begin
         int_txtb_index        <= 0;
         
         select_buf_index_reg  <= 0;
-        select_buf_avail_reg  <= false;
 
         fsm_wait_state        <= true;
         txtb_pointer_meta     <= to_integer(unsigned(
@@ -423,7 +421,6 @@ begin
         tran_frame_valid_com      <= tran_frame_valid_com;
 
         select_buf_index_reg      <= select_buf_index;
-        select_buf_avail_reg      <= select_buf_avail;
 
         txtb_pointer_meta         <= txtb_pointer_meta;
         fsm_wait_state            <= fsm_wait_state;

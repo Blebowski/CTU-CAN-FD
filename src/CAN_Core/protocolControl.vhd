@@ -216,18 +216,24 @@
 --   10.7.2018    Changed length of data length field for DLC > 8 in case of
 --                CAN 2.0 frame! For CAN 2.0 frame DLC higher than 8 should be
 --                interpreted as 8!
---   13.7.2018    Removed "unknown_state_Error_r" since it was unused. Unified
---                all "when others" statements to go to "error" state an cause
---                error frame transmission! This is however synthesis tool
---                dependent! If FSM synthesis on invalid state (e.g. glitch)
---                would jump to reset state, then node would become off, and
---                communication would not continue! If synthesis tool would
---                use "others" to detect invalid FSM state, and go to "error"
---                state, then this would be "safety" feature for possible
---                glitches. From CAN Node perspective, this would be another
---                "internal" error, which would cause transmission of error
---                frame! Such a behaviour is not defined by standard, but it
---                is logical to do it like so!
+--   13.7.2018    1. Removed "unknown_state_Error_r" since it was unused. Unified
+--                   all "when others" statements to go to "error" state an cause
+--                   error frame transmission! This is however synthesis tool
+--                   dependent! If FSM synthesis on invalid state (e.g. glitch)
+--                   would jump to reset state, then node would become off, and
+--                   communication would not continue! If synthesis tool would
+--                   use "others" to detect invalid FSM state, and go to "error"
+--                   state, then this would be "safety" feature for possible
+--                   glitches. From CAN Node perspective, this would be another
+--                   "internal" error, which would cause transmission of error
+--                   frame! Such a behaviour is not defined by standard, but it
+--                   is logical to do it like so!
+--                2. Removed "bit_err_ena" since it was unused! Selection of
+--                   valid bit error is done by Fault confinement!
+--   13.8.2018    fixed_CRC_FD removed since fixed stuff bit before CRC field
+--                is inserted by Bit Stuffing and discarded by Bit Destuffing
+--                automatically upon detection of 0 -> 1 transition on
+--                "fixed_stuff" / "fixed_destuff" signals.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -418,11 +424,6 @@ entity protocolControl is
     --Calibration command for transciever delay compenstation (counter)
     signal trv_delay_calib        :out  std_logic;
     
-    --Bit Error detection enable (Ex. disabled when recieving data)
-    signal bit_err_enable         :out  std_logic;
-    --Note: In the end bit Error detection is always enabled, Fault confinement 
-    -- module decides whenever the bit Error is VALID!!!
-    
     --Synchronisation edge validated by prescaler!!!
     signal hard_sync_edge         :in   std_logic;
     
@@ -514,7 +515,6 @@ entity protocolControl is
   signal trv_delay_calib_r        :     std_logic;
   
   --Bit Error detection enable (Ex. disabled when recieving data)
-  signal bit_err_enable_r         :     std_logic;
   signal sync_control_r           :     std_logic_vector(1 downto 0);
   signal alc_r                    :     std_logic_vector(7 downto 0);
 
@@ -616,9 +616,6 @@ entity protocolControl is
   -- state  based on type of transcieved/recieved frame
   signal FSM_preset               :     std_logic; 
   
-  --State machine for managing the bits inside the control field
-  signal control_state            :     control_type;
-  
   --Register for transcieving the data in control field bits
   signal ctrl_tran_reg            :     std_logic_vector(7 downto 0);
   
@@ -664,12 +661,6 @@ entity protocolControl is
   
   --Recieved CRC matches the calculated one
   signal crc_check                :     std_logic;
-  
-  --Fixed stuff bit before CRC of FD Frame
-  signal fixed_CRC_FD             :     std_logic;
-  
-  --Fixed stuff bit before CRC of FD Frame, for reciever
-  signal fixed_CRC_FD_rec         :     std_logic;
   
   --Pointer for transcieving the stuf length field
   signal stl_pointer              :     natural range 0 to 3;
@@ -782,7 +773,6 @@ begin
   sp_control            <=  sp_control_r;
   ssp_reset             <=  ssp_reset_r;
   trv_delay_calib       <=  trv_delay_calib_r;
-  bit_err_enable        <=  bit_err_enable_r;
   --Synchronisation control
   sync_control          <=  sync_control_r;
   
@@ -1001,9 +991,6 @@ begin
         sp_control_r            <=  NOMINAL_SAMPLE;
         ssp_reset_r             <=  '0';
         trv_delay_calib_r       <=  '0';
-        bit_err_enable_r        <=  '0';
-        fixed_CRC_FD            <=  '0';
-        fixed_CRC_FD_rec        <=  '0';
         sync_control_r          <=  NO_SYNC;
 
         --Error presetting
@@ -1081,9 +1068,6 @@ begin
         --correct state
         FSM_preset             <=  FSM_preset;
 
-        --State machine for managing the bits inside the control field
-        control_state          <=  control_state;
-
         --Register for transcieving the data in control field bits
         ctrl_tran_reg          <=  ctrl_tran_reg;
 
@@ -1108,8 +1092,6 @@ begin
         sec_ack                <=  sec_ack;
         interm_state           <=  interm_state;
         err_frame_state        <=  err_frame_state;
-        fixed_CRC_FD           <=  fixed_CRC_FD;
-        fixed_CRC_FD_rec       <=  fixed_CRC_FD_rec;
         err_pas_bit_val        <=  err_pas_bit_val;
         data_tx_index          <=  data_tx_index;
 
@@ -1143,7 +1125,6 @@ begin
         sp_control_r           <=  sp_control_r;
         ssp_reset_r            <=  '0';
         trv_delay_calib_r      <=  trv_delay_calib_r;
-        bit_err_enable_r       <=  bit_err_enable_r;
 
         sync_control_r         <=  sync_control_r;
 
@@ -1294,7 +1275,6 @@ begin
 
             -- Bus synchronisation settings
             sp_control_r              <=  NOMINAL_SAMPLE;
-            bit_err_enable_r          <=  '1';
 
             -- Configuration of Bit Destuffing (Both transciever and reciever)
             destuff_enable_r          <=  '1';
@@ -1660,13 +1640,6 @@ begin
             --------------------------------------------------------------------
             if (FSM_preset = '1') then
                 FSM_preset                      <=  '0';
-
-                ----------------------------------------------------------------
-                -- Enable Bit Error detection. From now on everything that
-                -- we transceive, we must also receive (Either by NOMINAL or
-                -- SECONDARY sampling).
-                ----------------------------------------------------------------
-                bit_err_enable_r                <=  '1';
 
                 ----------------------------------------------------------------
                 -- Calculate real length of data field, which does not
@@ -2234,8 +2207,6 @@ begin
                                             to_unsigned(FD_STUFF_LENGTH, 3));
                 destuff_length_r    <= std_logic_vector(
                                             to_unsigned(FD_STUFF_LENGTH, 3));
-                fixed_CRC_FD        <= '1';
-                fixed_CRC_FD_rec    <= '1';
 
                 ----------------------------------------------------------------
                 -- Go to stuff count transmission if ISO FD is configured.
@@ -2249,8 +2220,6 @@ begin
                 end if;
 
             else
-                fixed_CRC_FD        <= '0';
-                fixed_CRC_FD_rec    <= '0';
                 crc_state           <= real_crc;
                 crc_enable_r        <= '0';
             end if;

@@ -74,6 +74,11 @@
 --              on the output of TX Arbitrator combinationally ! During the
 --              transmission  metadata will not change since TX arbitrator is
 --              locked!
+--  13.7.2018   Removed obsolete "drv_bus_mon_ena". Bus monitoring mode (or 
+--              Listen only mode, it is the same thing) is realized by Protocol
+--              Control which sets "int_loop_back_ena" to perform internal
+--              loopback upon transmission of DOMINANT bit which should not
+--              get to the bus!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -279,7 +284,6 @@ entity core_top is
     signal drv_set_rx_ctr          :     std_logic;
     signal drv_set_tx_ctr          :     std_logic;
     signal drv_int_loopback_ena    :     std_logic;
-    signal drv_lom_ena             :     std_logic;
    
    
     ----------------------------------------------------------------------------
@@ -314,7 +318,6 @@ entity core_top is
     signal sp_control_int          :     std_logic_vector(1 downto 0);
     signal ssp_reset_int           :     std_logic;
     signal trv_delay_calib_int     :     std_logic;
-    signal bit_err_enable_int      :     std_logic;
 
     -- Synchronisation control signal
     signal sync_control_int        :     std_logic_vector(1 downto 0);
@@ -510,7 +513,6 @@ entity core_top is
     signal sync_nbt_del_2          :     std_logic;
 
     signal tran_trig_del_1         :     std_logic;
-    signal tran_trig_del_2         :     std_logic;
    
     -- Bus traffic measurment
     signal tx_counter              :     std_logic_vector(31 downto 0);
@@ -694,7 +696,6 @@ begin
             sp_control         =>  sp_control_int,
             ssp_reset          =>  ssp_reset_int,
             trv_delay_calib    =>  trv_delay_calib_int,
-            bit_err_enable     =>  bit_err_enable_int,
 
             sof_pulse          =>  sof_pulse_r
         );
@@ -880,40 +881,53 @@ begin
             dst_ctr                =>  dst_ctr
         );
   
-  
-    -- Temporary different data source of crc for transciever FD!!!
-    -- CRC calculated from transcieved data!!
+
+
+    ----------------------------------------------------------------------------
+    -- CRC From RX Data can't be always calculated from RX Data! In case of
+    -- secondary sampling, bit length might be shorter than Propagation from TX
+    -- to RX over transceiver! Thus in case of secondary sampling, even CRC
+    -- from RX data is calculated from TX Data!
+    ----------------------------------------------------------------------------
     data_crc_wbs  <=  data_tx_int when sp_control_int = SECONDARY_SAMPLE else 
                       data_rx_int;
                     
     data_crc_nbs  <=  data_tx_before_stuff when sp_control_int = SECONDARY_SAMPLE
                                            else 
-                      data_destuffed ;
+                      data_destuffed;
 
+
+    ----------------------------------------------------------------------------
     -- Driving bus aliases
+    ----------------------------------------------------------------------------
     drv_set_ctr_val       <=  drv_bus(DRV_SET_CTR_VAL_HIGH downto 
-                                    DRV_SET_CTR_VAL_LOW);
+                                      DRV_SET_CTR_VAL_LOW);
     drv_set_rx_ctr        <=  drv_bus(DRV_SET_RX_CTR_INDEX);
     drv_set_tx_ctr        <=  drv_bus(DRV_SET_TX_CTR_INDEX);
     drv_int_loopback_ena  <=  drv_bus(DRV_INT_LOOBACK_ENA_INDEX);
-    drv_lom_ena           <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
-  
+
+
+    ----------------------------------------------------------------------------
     -- Output propagation
+    ----------------------------------------------------------------------------
     arbitration_lost_out   <=  arbitration_lost;
     tx_finished            <=  tran_valid;
-
     sof_pulse              <=  sof_pulse_r;
-
     bus_off_start          <=  bus_off_start_int;
-
     br_shifted             <=  br_shifted_int;
-
     ssp_reset              <=  ssp_reset_int;
     trv_delay_calib        <=  trv_delay_calib_int;
- 
-    ---------------------
-    --CRC Multiplexing --
-    ---------------------
+
+
+    ----------------------------------------------------------------------------
+    -- CRC Multiplexors.
+    -- 
+    -- CRC data sources like so:
+    --  1. Transceiver, CAN FD Frame  -> TX Data after bit stuffing.
+    --  2. Transceiver, CAN 2.0 Frame -> TX Data before bit stuffing.
+    --  3. Receiver,    CAN FD Frame  -> RX Data before bit destuffing.
+    --  4. Receiver,    CAN 2.0 Frame -> RX Data after bit destuffing.
+    ----------------------------------------------------------------------------
     crc15   <=  crc15_wbs_tx when (OP_State = transciever and 
                                    tran_frame_type = FD_CAN) else
 
@@ -958,7 +972,7 @@ begin
  
  
     ----------------------------------------------------------------------------
-    -- Multiplexing of stuff counter and destuff counter 
+    -- Multiplexing of stuff counter and destuff counter
     ----------------------------------------------------------------------------
     st_ctr_resolved <= dst_ctr when (OP_State = reciever) else
                        bst_ctr when (OP_State = transciever) else
@@ -966,7 +980,7 @@ begin
       	 	           
  
     ----------------------------------------------------------------------------
-    -- Trigger signals multiplexing
+    -- Trigger signals registering. Creating delayed signals
     ----------------------------------------------------------------------------
     trig_cr : process(clk_sys, res_n)
     begin
@@ -974,17 +988,22 @@ begin
             sync_dbt_del_2        <=  '0';
             sync_nbt_del_2        <=  '0';
             tran_trig_del_1       <=  '0';
-            tran_trig_del_2       <=  '0';
+            bds_trig_del_1        <=  '0';
         elsif rising_edge(clk_sys) then
             sync_dbt_del_2        <=  sync_dbt_del_1;
             sync_nbt_del_2        <=  sync_nbt_del_1;
             tran_trig_del_1       <=  tran_trig;
-            tran_trig_del_2       <=  tran_trig_del_1;
+            bds_trig_del_1        <=  bds_trig;
         end if;
     end process;
- 
-    -- Note: when secondary sampling point is used transcieve signals 
-    --      remains the same
+
+
+    ----------------------------------------------------------------------------
+    -- Multiplexors for TX/RX Triggers. These Triggers are used to
+    -- transmitt/receive data from/to Protocol Control.
+    -- Note that Secondary sampling point is used only by Bus sync for bit
+    -- error detection!
+    ----------------------------------------------------------------------------
     tran_trig   <=  sync_nbt and (not data_halt) 
                         when (sp_control_int = NOMINAL_SAMPLE) else
 
@@ -1006,13 +1025,14 @@ begin
                         when (sp_control_int = SECONDARY_SAMPLE) else
 
                     '0';
- 
-    ----------------------------------------------------------------------------
-    --Note: Due to not functioning Secondary sample point normal data phasee 
-    --      sample point used!!! Secondary sample point used only for bit error 
-    --      detection during Data Phase!!!
-    ----------------------------------------------------------------------------
 
+
+    ----------------------------------------------------------------------------
+    -- Multiplexors for Bit Stuffing/Destuffing triggers. These are used to
+    -- process data by Bit Stuffing/Destuffing circuits.
+    -- Note that Secondary sampling point is used only by Bus sync for bit
+    -- error detection!
+    ----------------------------------------------------------------------------
     bs_trig  <= sync_nbt_del_1 when (sp_control_int = NOMINAL_SAMPLE)     else
                 sync_dbt_del_1 when (sp_control_int = DATA_SAMPLE)        else
                 sync_dbt_del_1 when (sp_control_int = SECONDARY_SAMPLE)   else
@@ -1022,6 +1042,7 @@ begin
                 sample_dbt_del_1  when (sp_control_int = DATA_SAMPLE)       else
                 sync_dbt_del_1    when (sp_control_int = SECONDARY_SAMPLE)  else
                 '0';
+
 
     ----------------------------------------------------------------------------
     -- According to CAN FD specification fixed stuff bits are never included in
@@ -1042,16 +1063,6 @@ begin
                                   else 
                   bds_trig_del_1;
 
-
-    bds_del_proc : process(clk_sys, res_n)
-    begin
-        if (res_n = ACT_RESET) then
-            bds_trig_del_1 <= '0';
-        elsif rising_edge(clk_sys) then
-            bds_trig_del_1 <= bds_trig;
-        end if;
-    end process;
-
                   
     crc_nbs_trig <=  (sync_dbt and (not data_halt))  
                      when (sp_control_int = SECONDARY_SAMPLE) 
@@ -1067,8 +1078,19 @@ begin
     error_passive_changed  <=  error_passive_changed_int;
     error_warning_limit    <=  error_warning_limit_int;
 
+
     ----------------------------------------------------------------------------
-    -- Internal loopback multiplexing     
+    -- Data Received by Protocol control are from Bit Destuffing, apart from
+    -- following cases:
+    --  1. Internal loopback is set by Protocol control (due to some special
+    --     mode such as LOM), or rerouting acknowledge internally in case of
+    --     STM mode.
+    --  2. Internal loopback is permanently turned on from SW for debugging!
+    --  3. Secondary sampling point is set. This is ONLY in Data phase of
+    --     CAN FD Transmitter after Bit rate shift! This is needed for proper
+    --     reception of own data in the same bit! Note that Bit error in this
+    --     case is detected by Bus Sync circuit which has shift registers for
+    --     secondary sampling point!   
     ----------------------------------------------------------------------------
     data_rx_int <= data_tx_from_PC when (int_loop_back_ena = '1' or 
                                          drv_int_loopback_ena = '1' or 
@@ -1077,14 +1099,18 @@ begin
                    data_rx;
  
     ----------------------------------------------------------------------------
-    --Note: int_loop_back_ena is for bus monitoring mode. drv_int_loopback_ena  
-    --      is for internal loopback set by user!
+    -- Data transmitted by Protocol control are sent out of CAN Core to
+    -- Bit stuffing, apart from following cases:
+    --  1. Protocol Control has "int_loop_back_ena" which forbids bit to be
+    --     transmitted further!
+    --  2. User has set (for debugging purposes) permanent Internal Loopback!
     ----------------------------------------------------------------------------
     data_tx_before_stuff <= RECESSIVE when (int_loop_back_ena = '1' or 
                                             drv_int_loopback_ena = '1') 
                                       else
                             data_tx_from_PC;
- 
+
+
     ----------------------------------------------------------------------------
     -- Bus traffic measurement
     ----------------------------------------------------------------------------
@@ -1099,19 +1125,25 @@ begin
 
             if (drv_set_rx_ctr = '1') then
                 rx_counter        <=  drv_set_ctr_val;
-            elsif(rec_valid='1')then
-                rx_counter        <=  std_logic_vector(unsigned(rx_counter) + 1);
+            elsif (rec_valid = '1') then
+                rx_counter        <=  std_logic_vector(to_unsigned(
+                                        to_integer(unsigned(rx_counter)) + 1,
+                                        rx_counter'length));
+
             end if;
 
             if (drv_set_tx_ctr = '1') then
                 tx_counter        <=  drv_set_ctr_val;
             elsif (tran_valid = '1') then
-                tx_counter        <= std_logic_vector(unsigned(tx_counter) + 1);
+                tx_counter        <=  std_logic_vector(to_unsigned(
+                                        to_integer(unsigned(tx_counter)) + 1,
+                                        tx_counter'length));
             end if;
 
         end if;
     end process;
- 
+
+
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
     ----------------------------------------------------------------------------
