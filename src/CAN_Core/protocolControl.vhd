@@ -230,6 +230,10 @@
 --                   is logical to do it like so!
 --                2. Removed "bit_err_ena" since it was unused! Selection of
 --                   valid bit error is done by Fault confinement!
+--   13.8.2018    fixed_CRC_FD removed since fixed stuff bit before CRC field
+--                is inserted by Bit Stuffing and discarded by Bit Destuffing
+--                automatically upon detection of 0 -> 1 transition on
+--                "fixed_stuff" / "fixed_destuff" signals.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -661,12 +665,6 @@ entity protocolControl is
   --Recieved CRC matches the calculated one
   signal crc_check                :     std_logic;
   
-  --Fixed stuff bit before CRC of FD Frame
-  signal fixed_CRC_FD             :     std_logic;
-  
-  --Fixed stuff bit before CRC of FD Frame, for reciever
-  signal fixed_CRC_FD_rec         :     std_logic;
-  
   --Pointer for transcieving the stuf length field
   signal stl_pointer              :     natural range 0 to 3;
 
@@ -996,8 +994,6 @@ begin
         sp_control_r            <=  NOMINAL_SAMPLE;
         ssp_reset_r             <=  '0';
         trv_delay_calib_r       <=  '0';
-        fixed_CRC_FD            <=  '0';
-        fixed_CRC_FD_rec        <=  '0';
         sync_control_r          <=  NO_SYNC;
 
         --Error presetting
@@ -1102,8 +1098,6 @@ begin
         sec_ack                <=  sec_ack;
         interm_state           <=  interm_state;
         err_frame_state        <=  err_frame_state;
-        fixed_CRC_FD           <=  fixed_CRC_FD;
-        fixed_CRC_FD_rec       <=  fixed_CRC_FD_rec;
         err_pas_bit_val        <=  err_pas_bit_val;
         data_tx_index          <=  data_tx_index;
 
@@ -2219,8 +2213,6 @@ begin
                                             to_unsigned(FD_STUFF_LENGTH, 3));
                 destuff_length_r    <= std_logic_vector(
                                             to_unsigned(FD_STUFF_LENGTH, 3));
-                fixed_CRC_FD        <= '1';
-                fixed_CRC_FD_rec    <= '1';
 
                 ----------------------------------------------------------------
                 -- Go to stuff count transmission if ISO FD is configured.
@@ -2234,8 +2226,6 @@ begin
                 end if;
 
             else
-                fixed_CRC_FD        <= '0';
-                fixed_CRC_FD_rec    <= '0';
                 crc_state           <= real_crc;
                 crc_enable_r        <= '0';
             end if;
