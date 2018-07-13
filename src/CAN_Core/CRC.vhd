@@ -53,7 +53,9 @@
 --                will be needed to implement both ways still since ISO and 
 --                non-ISO FD will be changable via configuration bit! 
 --    4.6.2016    Added drv_is_fd to cover differencce in highest bit of crc17
---                and crc21 polynomial             
+--                and crc21 polynomial.
+--   13.7.2018    Replaced "crc15_nxt", "crc17_nxt", "crc21_nxt" by
+--                signals instead of variable inside process.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -116,7 +118,12 @@ entity canCRC is
     signal start_reg    :     std_logic;
 
     -- ISO CAN FD or NON ISO CAN FD Value
-    signal drv_fd_type  :     std_logic; 
+    signal drv_fd_type  :     std_logic;
+
+    -- Combinational signals for next value of CRC
+    signal crc15_nxt    :     std_logic;
+    signal crc17_nxt    :     std_logic;
+    signal crc21_nxt    :     std_logic; 
   
 end entity;
 
@@ -127,6 +134,13 @@ begin
     crc17               <= crc17_reg;
     crc21               <= crc21_reg;
     drv_fd_type         <= drv_bus(DRV_FD_TYPE_INDEX); 
+
+    ----------------------------------------------------------------------------
+    -- Calculation of next CRC bit
+    ----------------------------------------------------------------------------
+    crc15_nxt           <= data_in xor crc15_reg(14);
+    crc17_nxt           <= data_in xor crc17_reg(16);
+    crc21_nxt           <= data_in xor crc21_reg(20);
   
     ----------------------------------------------------------------------------
     -- Registering previous value of enable input to detec 0 to 1 transition
@@ -144,11 +158,9 @@ begin
     -- Calculation of CRC15 value 
     ----------------------------------------------------------------------------
     crc15_cycle : process(res_n, clk_sys)
-        variable crc15_nxt : std_logic;
     begin 
         if (res_n = ACT_RESET) then
             crc15_reg         <= (OTHERS => '0');
-            crc15_nxt         := '0';
         elsif rising_edge(clk_sys) then 
 
             -- Erase the CRC value at the begining of calculation
@@ -158,7 +170,6 @@ begin
 
                 -- Calculate the next value when triggered
                 if (enable = '1' and trig = '1') then
-                    crc15_nxt   := data_in xor crc15_reg(14);
 
                     ------------------------------------------------------------
                     -- CRC calculation
@@ -187,12 +198,10 @@ begin
     -- Calculation of CRC17 value 
     ----------------------------------------------------------------------------
     crc17_cycle : process(res_n, clk_sys)
-        variable crc17_nxt : std_logic;
     begin 
         if (res_n = '0') then
             crc17_reg         <= (OTHERS => '0');
             crc17_reg(16)     <= '1';
-            crc17_nxt         := '0';
         elsif rising_edge(clk_sys) then 
 
             -- Erase the CRC value at the begining of calculation
@@ -207,7 +216,6 @@ begin
       
                 -- Calculate the next value only when triggered
                 if (enable = '1'and trig = '1') then
-                    crc17_nxt     := data_in xor crc17_reg(16);
 
                     ------------------------------------------------------------
                     -- CRC calculation
@@ -234,12 +242,10 @@ begin
     -- Calculation of CRC21 value 
     ----------------------------------------------------------------------------
     crc21_cycle : process(res_n, clk_sys)
-        variable crc21_nxt : std_logic;
     begin 
         if (res_n = '0') then
             crc21_reg         <= (OTHERS => '0');
             crc21_reg(20)     <= '1';
-            crc21_nxt         := '0';
         elsif rising_edge(clk_sys) then
 
             -- Erase the CRC value at the begining of calculation
@@ -254,7 +260,6 @@ begin
      
                 -- Calculate the next value only when triggered
                 if (enable = '1'and trig = '1') then
-                    crc21_nxt    := data_in xor crc21_reg(20);
 
                     ------------------------------------------------------------
                     -- CRC calculation
