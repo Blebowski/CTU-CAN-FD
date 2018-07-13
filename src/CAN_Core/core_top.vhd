@@ -513,7 +513,6 @@ entity core_top is
     signal sync_nbt_del_2          :     std_logic;
 
     signal tran_trig_del_1         :     std_logic;
-    signal tran_trig_del_2         :     std_logic;
    
     -- Bus traffic measurment
     signal tx_counter              :     std_logic_vector(31 downto 0);
@@ -975,12 +974,10 @@ begin
             sync_dbt_del_2        <=  '0';
             sync_nbt_del_2        <=  '0';
             tran_trig_del_1       <=  '0';
-            tran_trig_del_2       <=  '0';
         elsif rising_edge(clk_sys) then
             sync_dbt_del_2        <=  sync_dbt_del_1;
             sync_nbt_del_2        <=  sync_nbt_del_1;
             tran_trig_del_1       <=  tran_trig;
-            tran_trig_del_2       <=  tran_trig_del_1;
         end if;
     end process;
  

@@ -216,18 +216,20 @@
 --   10.7.2018    Changed length of data length field for DLC > 8 in case of
 --                CAN 2.0 frame! For CAN 2.0 frame DLC higher than 8 should be
 --                interpreted as 8!
---   13.7.2018    Removed "unknown_state_Error_r" since it was unused. Unified
---                all "when others" statements to go to "error" state an cause
---                error frame transmission! This is however synthesis tool
---                dependent! If FSM synthesis on invalid state (e.g. glitch)
---                would jump to reset state, then node would become off, and
---                communication would not continue! If synthesis tool would
---                use "others" to detect invalid FSM state, and go to "error"
---                state, then this would be "safety" feature for possible
---                glitches. From CAN Node perspective, this would be another
---                "internal" error, which would cause transmission of error
---                frame! Such a behaviour is not defined by standard, but it
---                is logical to do it like so!
+--   13.7.2018    1. Removed "unknown_state_Error_r" since it was unused. Unified
+--                   all "when others" statements to go to "error" state an cause
+--                   error frame transmission! This is however synthesis tool
+--                   dependent! If FSM synthesis on invalid state (e.g. glitch)
+--                   would jump to reset state, then node would become off, and
+--                   communication would not continue! If synthesis tool would
+--                   use "others" to detect invalid FSM state, and go to "error"
+--                   state, then this would be "safety" feature for possible
+--                   glitches. From CAN Node perspective, this would be another
+--                   "internal" error, which would cause transmission of error
+--                   frame! Such a behaviour is not defined by standard, but it
+--                   is logical to do it like so!
+--                2. Removed "bit_err_ena" since it was unused! Selection of
+--                   valid bit error is done by Fault confinement!
 --------------------------------------------------------------------------------
 
 Library ieee;
