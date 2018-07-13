@@ -1125,14 +1125,19 @@ begin
 
             if (drv_set_rx_ctr = '1') then
                 rx_counter        <=  drv_set_ctr_val;
-            elsif(rec_valid='1')then
-                rx_counter        <=  std_logic_vector(unsigned(rx_counter) + 1);
+            elsif (rec_valid = '1') then
+                rx_counter        <=  std_logic_vector(unsigned(
+                                        to_integer(unsigned(rx_counter)) + 1,
+                                        rx_counter'length));
+
             end if;
 
             if (drv_set_tx_ctr = '1') then
                 tx_counter        <=  drv_set_ctr_val;
             elsif (tran_valid = '1') then
-                tx_counter        <= std_logic_vector(unsigned(tx_counter) + 1);
+                tx_counter        <=  std_logic_vector(unsigned(
+                                        to_integer(unsigned(tx_counter)) + 1,
+                                        tx_counter'length));
             end if;
 
         end if;
