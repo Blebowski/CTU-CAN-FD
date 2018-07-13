@@ -298,9 +298,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Calibration command for transciever delay compenstation
     signal trv_delay_calib_1        :  std_logic;
 
-    -- Bit Error detection enable (Ex. disabled when recieving data)
-    signal bit_err_enable_1         :  std_logic;
-
     -- Synchronisation edge validated by prescaler!!!
     signal hard_sync_edge_1         :  std_logic;
 
@@ -464,9 +461,6 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- Calibration command for transciever delay compenstation
     signal trv_delay_calib_2        :  std_logic;
-
-    -- Bit Error detection enable (Ex. disabled when recieving data)
-    signal bit_err_enable_2         :  std_logic;
 
     -- Synchronisation edge validated by prescaler!!!
     signal hard_sync_edge_2         :  std_logic;
@@ -873,7 +867,6 @@ begin
         sp_control            => sp_control_1,
         ssp_reset             => ssp_reset_1,
         trv_delay_calib       => trv_delay_calib_1,
-        bit_err_enable        => bit_err_enable_1,
         hard_sync_edge        => hard_sync_edge_1,
         sof_pulse             => sof_pulse_1
       );
@@ -948,7 +941,6 @@ begin
         sp_control            => sp_control_2,
         ssp_reset             => ssp_reset_2,
         trv_delay_calib       => trv_delay_calib_2,
-        bit_err_enable        => bit_err_enable_2,
         hard_sync_edge        => hard_sync_edge_2,
         sof_pulse             => sof_pulse_2
       );

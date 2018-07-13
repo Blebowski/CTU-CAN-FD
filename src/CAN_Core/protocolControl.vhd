@@ -418,11 +418,6 @@ entity protocolControl is
     --Calibration command for transciever delay compenstation (counter)
     signal trv_delay_calib        :out  std_logic;
     
-    --Bit Error detection enable (Ex. disabled when recieving data)
-    signal bit_err_enable         :out  std_logic;
-    --Note: In the end bit Error detection is always enabled, Fault confinement 
-    -- module decides whenever the bit Error is VALID!!!
-    
     --Synchronisation edge validated by prescaler!!!
     signal hard_sync_edge         :in   std_logic;
     
@@ -514,7 +509,6 @@ entity protocolControl is
   signal trv_delay_calib_r        :     std_logic;
   
   --Bit Error detection enable (Ex. disabled when recieving data)
-  signal bit_err_enable_r         :     std_logic;
   signal sync_control_r           :     std_logic_vector(1 downto 0);
   signal alc_r                    :     std_logic_vector(7 downto 0);
 
@@ -782,7 +776,6 @@ begin
   sp_control            <=  sp_control_r;
   ssp_reset             <=  ssp_reset_r;
   trv_delay_calib       <=  trv_delay_calib_r;
-  bit_err_enable        <=  bit_err_enable_r;
   --Synchronisation control
   sync_control          <=  sync_control_r;
   
@@ -1001,7 +994,6 @@ begin
         sp_control_r            <=  NOMINAL_SAMPLE;
         ssp_reset_r             <=  '0';
         trv_delay_calib_r       <=  '0';
-        bit_err_enable_r        <=  '0';
         fixed_CRC_FD            <=  '0';
         fixed_CRC_FD_rec        <=  '0';
         sync_control_r          <=  NO_SYNC;
@@ -1143,7 +1135,6 @@ begin
         sp_control_r           <=  sp_control_r;
         ssp_reset_r            <=  '0';
         trv_delay_calib_r      <=  trv_delay_calib_r;
-        bit_err_enable_r       <=  bit_err_enable_r;
 
         sync_control_r         <=  sync_control_r;
 
@@ -1294,7 +1285,6 @@ begin
 
             -- Bus synchronisation settings
             sp_control_r              <=  NOMINAL_SAMPLE;
-            bit_err_enable_r          <=  '1';
 
             -- Configuration of Bit Destuffing (Both transciever and reciever)
             destuff_enable_r          <=  '1';
@@ -1660,13 +1650,6 @@ begin
             --------------------------------------------------------------------
             if (FSM_preset = '1') then
                 FSM_preset                      <=  '0';
-
-                ----------------------------------------------------------------
-                -- Enable Bit Error detection. From now on everything that
-                -- we transceive, we must also receive (Either by NOMINAL or
-                -- SECONDARY sampling).
-                ----------------------------------------------------------------
-                bit_err_enable_r                <=  '1';
 
                 ----------------------------------------------------------------
                 -- Calculate real length of data field, which does not

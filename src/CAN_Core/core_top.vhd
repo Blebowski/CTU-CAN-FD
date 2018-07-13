@@ -318,7 +318,6 @@ entity core_top is
     signal sp_control_int          :     std_logic_vector(1 downto 0);
     signal ssp_reset_int           :     std_logic;
     signal trv_delay_calib_int     :     std_logic;
-    signal bit_err_enable_int      :     std_logic;
 
     -- Synchronisation control signal
     signal sync_control_int        :     std_logic_vector(1 downto 0);
@@ -698,7 +697,6 @@ begin
             sp_control         =>  sp_control_int,
             ssp_reset          =>  ssp_reset_int,
             trv_delay_calib    =>  trv_delay_calib_int,
-            bit_err_enable     =>  bit_err_enable_int,
 
             sof_pulse          =>  sof_pulse_r
         );

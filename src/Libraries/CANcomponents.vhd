@@ -671,7 +671,6 @@ package CANcomponents is
             signal sp_control            : out std_logic_vector(1 downto 0);
             signal ssp_reset             : out std_logic;
             signal trv_delay_calib       : out std_logic;
-            signal bit_err_enable        : out std_logic;
             signal hard_sync_edge        : in  std_logic;
             signal sof_pulse             : out std_logic
         );
