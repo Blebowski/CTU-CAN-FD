@@ -127,10 +127,6 @@ entity faultConf is
         signal CRC_Error              :in   std_logic; --CRC Error from PC State
         signal ack_Error              :in   std_logic; --Acknowledge Error from PC
 
-        -- Some of the state machines, or signals 
-        -- reached unknown state!! Shouldnt happend!!
-        signal unknown_state_Error    :in   std_logic; 
-
         -- Error signal for PC control FSM from fault
         -- confinement unit (Bit error or Stuff Error appeared)
         signal bit_Error_valid        :out  std_logic;

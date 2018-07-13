@@ -113,7 +113,7 @@
 --                   RX Storing protocol.
 --                2. Added dynamically generated stuff lenght and SW model
 --                   for grey coding of sutff length.
---
+--    13.7.2018   Added Unknown operational state signals!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -227,9 +227,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Acknowledge error
     signal ack_Error_1              :  std_logic;
 
-    -- Protocol control in unknown state
-    signal unknown_state_Error_1    :  std_logic;
-
     -- Bit error is valid
     signal bit_Error_valid_1        :  std_logic;
 
@@ -309,6 +306,9 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- Internal loopBack enabled (for Bus monitoring mode)
     signal int_loop_back_ena_1      :  std_logic;
+
+    -- Unknown operational state
+    signal unknown_OP_state_1       :  std_logic;
 
     -- Protocol state output.
     signal PC_State_out_1           :  protocol_type;
@@ -393,9 +393,6 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Acknowledge error
     signal ack_Error_2              :  std_logic;
 
-    -- Protocol control in unknown state
-    signal unknown_state_Error_2    :  std_logic;
-
     -- Bit error is valid
     signal bit_Error_valid_2        :  std_logic;
 
@@ -476,6 +473,9 @@ architecture Protocol_Control_unit_test of CAN_test is
 
     -- Internal loopBack enabled (for Bus monitoring mode)
     signal int_loop_back_ena_2      :  std_logic;
+
+    -- Unknown operational state
+    signal unknown_OP_state_2       :  std_logic;
 
     -- Protocol state output.
     signal PC_State_out_2           :  protocol_type;
@@ -845,9 +845,9 @@ begin
         form_Error            => form_Error_1,
         CRC_Error             => CRC_Error_1,
         ack_Error             => ack_Error_1,
-        unknown_state_Error   => unknown_state_Error_1,
         bit_Error_valid       => bit_Error_valid_1,
         stuff_Error_valid     => stuff_Error_valid_1,
+        unknown_OP_state      => unknown_OP_state_1,
         inc_one               => inc_one_1,
         inc_eight             => inc_eight_1,
         dec_one               => dec_one_1,
@@ -920,9 +920,9 @@ begin
         form_Error            => form_Error_2,
         CRC_Error             => CRC_Error_2,
         ack_Error             => ack_Error_2,
-        unknown_state_Error   => unknown_state_Error_2,
         bit_Error_valid       => bit_Error_valid_2,
         stuff_Error_valid     => stuff_Error_valid_2,
+        unknown_OP_state      => unknown_OP_state_2,
         inc_one               => inc_one_2,
         inc_eight             => inc_eight_2,
         dec_one               => dec_one_2,

@@ -107,10 +107,6 @@ architecture Fault_Confinement_unit_test of CAN_test is
     -- Acknowledge Error from PC
     signal ack_Error              :     std_logic := '0';
 
-    -- Some of the state machines, or signals
-    -- reached unknown state!! Shouldnt happend!!
-    signal unknown_state_Error    :     std_logic := '0';
-
     -- Error signal for PC control FSM from fault
     -- confinement unit (Bit error or Stuff Error appeared)
     signal bit_Error_valid        :    std_logic;
@@ -197,7 +193,6 @@ begin
         form_Error             => form_Error,
         CRC_Error              => CRC_Error,
         ack_Error              => ack_Error,
-        unknown_state_Error    => unknown_state_Error,
         bit_Error_valid        => bit_Error_valid,
         stuff_Error_valid      => stuff_Error_valid,
         bit_Error_out          => bit_Error_out,

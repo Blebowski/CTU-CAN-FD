@@ -77,6 +77,8 @@ entity operationControl is
 
         signal is_idle              :in   std_logic; --Unit is idle
 
+        signal unknown_OP_state     :out  std_logic;
+
         -- Bit time triggering signals
         signal tran_trig            :in   std_logic;
         signal rec_trig             :in   std_logic;
@@ -111,10 +113,13 @@ begin
         if (res_n = ACT_RESET) then
             OP_State_r                    <= integrating;
             integ_counter                 <= 1;
+            unknown_OP_state              <= '0';
+
         elsif rising_edge(clk_sys) then
             -- Presetting the registers to avoid latches
             OP_State_r                    <= OP_State_r;
             integ_counter                 <= integ_counter;
+            unknown_OP_state              <= '0';
 
             if (set_transciever = '1') then
                 OP_State_r                <= transciever;
@@ -180,7 +185,7 @@ begin
                         OP_State_r          <= idle;
                     end if;              
                 when others =>
-                    report "Unknown operational state" severity failure;
+                    unknown_OP_state        <= '1';
                 end case;
             end if;
         end if;

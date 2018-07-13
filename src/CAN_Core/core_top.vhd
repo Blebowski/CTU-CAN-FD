@@ -391,6 +391,8 @@ entity core_top is
     signal is_idle                 :     std_logic;
     signal alc                     :     std_logic_vector(7 downto 0);
 
+    signal unknown_OP_state        :     std_logic;
+
     -- Transcieve buffer output
     signal tran_dlc                :     std_logic_vector(3 downto 0);
     signal tran_is_rtr             :     std_logic;
@@ -590,6 +592,7 @@ begin
             tran_data_valid_in  =>  tran_frame_valid_in,
             set_transciever     =>  set_transciever,
             set_reciever        =>  set_reciever,
+            unknown_OP_state    =>  unknown_OP_state,
             is_idle             =>  is_idle,
             tran_trig           =>  tran_trig,
             rec_trig            =>  rec_trig,
@@ -651,7 +654,6 @@ begin
             form_Error             =>  form_Error,
             CRC_Error              =>  CRC_Error,
             ack_Error              =>  ack_Error,
-            unknown_state_Error    =>  unknown_state_Error,
 
             bit_Error_valid        =>  bit_Error_valid,
             stuff_Error_valid      =>  stuff_Error_valid,
@@ -677,6 +679,8 @@ begin
             fixed_destuff      =>  fixed_destuff,
             destuff_length     =>  bds_length,
             dst_ctr            =>  st_ctr_resolved,
+
+            unknown_OP_state   =>  unknown_OP_state,
 
             crc_enable         =>  crc_enable,
             crc15              =>  crc15,
@@ -728,7 +732,6 @@ begin
             form_Error             =>  form_Error,
             CRC_Error              =>  CRC_Error,
             ack_Error              =>  ack_Error,
-            unknown_state_Error    =>  unknown_state_Error,
 
             bit_Error_valid        => bit_Error_valid,
             stuff_Error_valid      => stuff_Error_valid,
@@ -957,9 +960,9 @@ begin
     ----------------------------------------------------------------------------
     -- Multiplexing of stuff counter and destuff counter 
     ----------------------------------------------------------------------------
-    st_ctr_resolved <= dst_ctr when OP_State = reciever    else
-        	 	       bst_ctr when OP_State = transciever else
-      	 	           0;
+    st_ctr_resolved <= dst_ctr when (OP_State = reciever) else
+                       bst_ctr when (OP_State = transciever) else
+                       0;
       	 	           
  
     ----------------------------------------------------------------------------
@@ -1010,14 +1013,14 @@ begin
     --      detection during Data Phase!!!
     ----------------------------------------------------------------------------
 
-    bs_trig  <= sync_nbt_del_1 when sp_control_int = NOMINAL_SAMPLE     else
-                sync_dbt_del_1 when sp_control_int = DATA_SAMPLE        else
-                sync_dbt_del_1 when sp_control_int = SECONDARY_SAMPLE   else
+    bs_trig  <= sync_nbt_del_1 when (sp_control_int = NOMINAL_SAMPLE)     else
+                sync_dbt_del_1 when (sp_control_int = DATA_SAMPLE)        else
+                sync_dbt_del_1 when (sp_control_int = SECONDARY_SAMPLE)   else
                 '0';
           
-    bds_trig <= sample_nbt_del_1  when sp_control_int = NOMINAL_SAMPLE    else
-                sample_dbt_del_1  when sp_control_int = DATA_SAMPLE       else
-                sync_dbt_del_1    when sp_control_int = SECONDARY_SAMPLE  else
+    bds_trig <= sample_nbt_del_1  when (sp_control_int = NOMINAL_SAMPLE)    else
+                sample_dbt_del_1  when (sp_control_int = DATA_SAMPLE)       else
+                sync_dbt_del_1    when (sp_control_int = SECONDARY_SAMPLE)  else
                 '0';
 
     ----------------------------------------------------------------------------
@@ -1055,9 +1058,9 @@ begin
                      else  rec_trig;
 
     crc_tx_wbs_trig <= '0'         when (fixed_stuff = '1' and data_halt = '1') else
-                    sync_nbt_del_2 when sp_control_int = NOMINAL_SAMPLE else
-                    sync_dbt_del_2 when sp_control_int = DATA_SAMPLE else
-                    sync_dbt_del_2 when sp_control_int = SECONDARY_SAMPLE else
+                    sync_nbt_del_2 when (sp_control_int = NOMINAL_SAMPLE) else
+                    sync_dbt_del_2 when (sp_control_int = DATA_SAMPLE) else
+                    sync_dbt_del_2 when (sp_control_int = SECONDARY_SAMPLE) else
                     '0';
               
     error_valid            <=  error_valid_int;
@@ -1203,7 +1206,7 @@ begin
     stat_bus(STAT_FORM_ERROR_INDEX)                      <=  form_Error;
     stat_bus(STAT_CRC_ERROR_INDEX)                       <=  CRC_Error;
     stat_bus(STAT_ACK_ERROR_INDEX)                       <=  ack_Error;
-    stat_bus(STAT_UNKNOWN_STATE_ERROR_INDEX)             <=  unknown_state_Error;
+    stat_bus(STAT_UNKNOWN_STATE_ERROR_INDEX)             <=  '0';
     stat_bus(STAT_BIT_STUFF_ERROR_INDEX)                 
         <=  bit_Error_valid or stuff_Error_valid;
  
