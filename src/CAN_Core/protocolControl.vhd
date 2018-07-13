@@ -315,6 +315,9 @@ entity protocolControl is
     
     --Arbitration lost capture
     signal alc                    :out  std_logic_vector(7 downto 0);
+
+    --Unknown Operational state -> Error frame!
+    signal unknown_OP_state		  :in 	std_logic;
     
     -------------------------------
     --Fault confinement Interface--
@@ -325,11 +328,7 @@ entity protocolControl is
     --Error signals for fault confinement
     signal form_Error             :out  std_logic; --Form Error
     signal CRC_Error              :out  std_logic; --CRC Error
-    signal ack_Error              :out  std_logic; --Acknowledge error
-    
-    --Some of the state machines, 
-    --or signals reached unknown state!!
-    signal unknown_state_Error    :out  std_logic; 
+    signal ack_Error              :out  std_logic; --Acknowledge error    
     
     --Error signal for PC control FSM from fault confinement 
     --unit (Bit error or Stuff Error appeared)
@@ -1164,7 +1163,9 @@ begin
         if (drv_ena = '0') then
             PC_State                    <= off;
           
-        elsif (bit_Error_valid = '1' or stuff_Error_valid = '1') then     
+        elsif (bit_Error_valid = '1' or stuff_Error_valid = '1' or
+			   unknown_OP_state = '1')
+		then     
             PC_State                    <= error;
             FSM_preset                  <= '1';
 

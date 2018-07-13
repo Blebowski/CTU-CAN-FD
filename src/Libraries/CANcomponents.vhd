@@ -590,9 +590,10 @@ package CANcomponents is
             signal set_transciever    : in  std_logic;
             signal set_reciever       : in  std_logic;
             signal is_idle            : in  std_logic;
+            signal unknown_OP_state   : out std_logic;
             signal tran_trig          : in  std_logic;
             signal rec_trig           : in  std_logic;
-            signal data_rx            :     std_logic;
+            signal data_rx            : in  std_logic;
             signal OP_State           : out oper_mode_type
         );
     end component;
@@ -642,7 +643,6 @@ package CANcomponents is
             signal form_Error            : out std_logic;
             signal CRC_Error             : out std_logic;
             signal ack_Error             : out std_logic;
-            signal unknown_state_Error   : out std_logic;
             signal bit_Error_valid       : in  std_logic;
             signal stuff_Error_valid     : in  std_logic;
             signal inc_one               : out std_logic;
@@ -663,6 +663,7 @@ package CANcomponents is
             signal destuff_length        : out std_logic_vector(2 downto 0);
             signal dst_ctr               : in  natural range 0 to 7;
             signal crc_enable            : out std_logic;
+            signal unknown_OP_state      : in  std_logic;
             signal crc15                 : in  std_logic_vector(14 downto 0);
             signal crc17                 : in  std_logic_vector(16 downto 0);
             signal crc21                 : in  std_logic_vector(20 downto 0);
@@ -699,7 +700,6 @@ package CANcomponents is
             signal form_Error            : in  std_logic;
             signal CRC_Error             : in  std_logic;
             signal ack_Error             : in  std_logic;
-            signal unknown_state_Error   : in  std_logic;
             signal bit_Error_valid       : out std_logic;
             signal stuff_Error_valid     : out std_logic;
             signal inc_one               : in  std_logic;
