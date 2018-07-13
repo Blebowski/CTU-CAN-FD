@@ -881,39 +881,53 @@ begin
             dst_ctr                =>  dst_ctr
         );
   
-  
-    -- Temporary different data source of crc for transciever FD!!!
-    -- CRC calculated from transcieved data!!
+
+
+    ----------------------------------------------------------------------------
+    -- CRC From RX Data can't be always calculated from RX Data! In case of
+    -- secondary sampling, bit length might be shorter than Propagation from TX
+    -- to RX over transceiver! Thus in case of secondary sampling, even CRC
+    -- from RX data is calculated from TX Data!
+    ----------------------------------------------------------------------------
     data_crc_wbs  <=  data_tx_int when sp_control_int = SECONDARY_SAMPLE else 
                       data_rx_int;
                     
     data_crc_nbs  <=  data_tx_before_stuff when sp_control_int = SECONDARY_SAMPLE
                                            else 
-                      data_destuffed ;
+                      data_destuffed;
 
+
+    ----------------------------------------------------------------------------
     -- Driving bus aliases
+    ----------------------------------------------------------------------------
     drv_set_ctr_val       <=  drv_bus(DRV_SET_CTR_VAL_HIGH downto 
-                                    DRV_SET_CTR_VAL_LOW);
+                                      DRV_SET_CTR_VAL_LOW);
     drv_set_rx_ctr        <=  drv_bus(DRV_SET_RX_CTR_INDEX);
     drv_set_tx_ctr        <=  drv_bus(DRV_SET_TX_CTR_INDEX);
     drv_int_loopback_ena  <=  drv_bus(DRV_INT_LOOBACK_ENA_INDEX);
-  
+
+
+    ----------------------------------------------------------------------------
     -- Output propagation
+    ----------------------------------------------------------------------------
     arbitration_lost_out   <=  arbitration_lost;
     tx_finished            <=  tran_valid;
-
     sof_pulse              <=  sof_pulse_r;
-
     bus_off_start          <=  bus_off_start_int;
-
     br_shifted             <=  br_shifted_int;
-
     ssp_reset              <=  ssp_reset_int;
     trv_delay_calib        <=  trv_delay_calib_int;
- 
-    ---------------------
-    --CRC Multiplexing --
-    ---------------------
+
+
+    ----------------------------------------------------------------------------
+    -- CRC Multiplexors.
+    -- 
+    -- CRC data sources like so:
+    --  1. Transceiver, CAN FD Frame  -> TX Data after bit stuffing.
+    --  2. Transceiver, CAN 2.0 Frame -> TX Data before bit stuffing.
+    --  3. Receiver,    CAN FD Frame  -> RX Data before bit destuffing.
+    --  4. Receiver,    CAN 2.0 Frame -> RX Data after bit destuffing.
+    ----------------------------------------------------------------------------
     crc15   <=  crc15_wbs_tx when (OP_State = transciever and 
                                    tran_frame_type = FD_CAN) else
 
@@ -958,7 +972,7 @@ begin
  
  
     ----------------------------------------------------------------------------
-    -- Multiplexing of stuff counter and destuff counter 
+    -- Multiplexing of stuff counter and destuff counter
     ----------------------------------------------------------------------------
     st_ctr_resolved <= dst_ctr when (OP_State = reciever) else
                        bst_ctr when (OP_State = transciever) else
@@ -966,7 +980,7 @@ begin
       	 	           
  
     ----------------------------------------------------------------------------
-    -- Trigger signals multiplexing
+    -- Trigger signals registering. Creating delayed signals
     ----------------------------------------------------------------------------
     trig_cr : process(clk_sys, res_n)
     begin
@@ -974,15 +988,22 @@ begin
             sync_dbt_del_2        <=  '0';
             sync_nbt_del_2        <=  '0';
             tran_trig_del_1       <=  '0';
+            bds_trig_del_1        <=  '0';
         elsif rising_edge(clk_sys) then
             sync_dbt_del_2        <=  sync_dbt_del_1;
             sync_nbt_del_2        <=  sync_nbt_del_1;
             tran_trig_del_1       <=  tran_trig;
+            bds_trig_del_1        <=  bds_trig;
         end if;
     end process;
- 
-    -- Note: when secondary sampling point is used transcieve signals 
-    --      remains the same
+
+
+    ----------------------------------------------------------------------------
+    -- Multiplexors for TX/RX Triggers. These Triggers are used to
+    -- transmitt/receive data from/to Protocol Control.
+    -- Note that Secondary sampling point is used only by Bus sync for bit
+    -- error detection!
+    ----------------------------------------------------------------------------
     tran_trig   <=  sync_nbt and (not data_halt) 
                         when (sp_control_int = NOMINAL_SAMPLE) else
 
@@ -1004,13 +1025,14 @@ begin
                         when (sp_control_int = SECONDARY_SAMPLE) else
 
                     '0';
- 
-    ----------------------------------------------------------------------------
-    --Note: Due to not functioning Secondary sample point normal data phasee 
-    --      sample point used!!! Secondary sample point used only for bit error 
-    --      detection during Data Phase!!!
-    ----------------------------------------------------------------------------
 
+
+    ----------------------------------------------------------------------------
+    -- Multiplexors for Bit Stuffing/Destuffing triggers. These are used to
+    -- process data by Bit Stuffing/Destuffing circuits.
+    -- Note that Secondary sampling point is used only by Bus sync for bit
+    -- error detection!
+    ----------------------------------------------------------------------------
     bs_trig  <= sync_nbt_del_1 when (sp_control_int = NOMINAL_SAMPLE)     else
                 sync_dbt_del_1 when (sp_control_int = DATA_SAMPLE)        else
                 sync_dbt_del_1 when (sp_control_int = SECONDARY_SAMPLE)   else
@@ -1020,6 +1042,7 @@ begin
                 sample_dbt_del_1  when (sp_control_int = DATA_SAMPLE)       else
                 sync_dbt_del_1    when (sp_control_int = SECONDARY_SAMPLE)  else
                 '0';
+
 
     ----------------------------------------------------------------------------
     -- According to CAN FD specification fixed stuff bits are never included in
@@ -1040,16 +1063,6 @@ begin
                                   else 
                   bds_trig_del_1;
 
-
-    bds_del_proc : process(clk_sys, res_n)
-    begin
-        if (res_n = ACT_RESET) then
-            bds_trig_del_1 <= '0';
-        elsif rising_edge(clk_sys) then
-            bds_trig_del_1 <= bds_trig;
-        end if;
-    end process;
-
                   
     crc_nbs_trig <=  (sync_dbt and (not data_halt))  
                      when (sp_control_int = SECONDARY_SAMPLE) 
@@ -1064,6 +1077,7 @@ begin
     error_valid            <=  error_valid_int;
     error_passive_changed  <=  error_passive_changed_int;
     error_warning_limit    <=  error_warning_limit_int;
+
 
     ----------------------------------------------------------------------------
     -- Data Received by Protocol control are from Bit Destuffing, apart from
@@ -1095,7 +1109,8 @@ begin
                                             drv_int_loopback_ena = '1') 
                                       else
                             data_tx_from_PC;
- 
+
+
     ----------------------------------------------------------------------------
     -- Bus traffic measurement
     ----------------------------------------------------------------------------
@@ -1122,7 +1137,8 @@ begin
 
         end if;
     end process;
- 
+
+
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
     ----------------------------------------------------------------------------
