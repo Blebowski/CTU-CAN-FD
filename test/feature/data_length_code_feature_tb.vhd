@@ -99,7 +99,7 @@ package body data_length_code_feature is
         CAN_generate_frame(rand_ctr, CAN_frame);
         rand_logic_vect_v(rand_ctr, CAN_frame.dlc, 0.5);
         CAN_frame.dlc(3) := '1';
-        CAN_frame.frame_format = NORMAL_CAN;
+        CAN_frame.frame_format := NORMAL_CAN;
         decode_dlc(CAN_frame.dlc, CAN_frame.data_length);
         for i in 0 to data_length - 1 loop
             rand_logic_vect_v(rand_ctr, CAN_frame.data(i), 0.5);
@@ -128,8 +128,6 @@ package body data_length_code_feature is
                     severity error;
             end if;
         end loop;
-    );
-
 
   end procedure;
 
