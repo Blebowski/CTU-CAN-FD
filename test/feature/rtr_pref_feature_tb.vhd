@@ -92,7 +92,7 @@ package body rtr_pref_feature is
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_inputs_arr_t;
+        signal      iout            : in     instance_outputs_arr_t;
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     ) is
@@ -123,29 +123,29 @@ package body rtr_pref_feature is
         -- Set the RTR preferred behaviour to send the DLC all zeroes..
         ------------------------------------------------------------------------
         mode.rtr_pref := true;
-        set_core_mode(mode, ID_2, mem_bus_2);
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_2, mem_bus(2));
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Restart the content of the Node 2 RX Buffer
         ------------------------------------------------------------------------
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_2, mem_bus_2);
+        give_controller_command(command, ID_2, mem_bus(2));
         command.release_rec_buffer := false;
 
         ------------------------------------------------------------------------
         -- Insert the frame for transmittion and wait until it was sent
         ------------------------------------------------------------------------
-        CAN_send_frame(tx_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
         if (not frame_sent) then
             o.outcome := false;
         end if;
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Check that recieved DLC is zero
         ------------------------------------------------------------------------
-        CAN_read_frame(rx_frame, ID_2, mem_bus_2);
+        CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         if (rx_frame.dlc /= x"0") then
             o.outcome := false;
         end if;
@@ -158,29 +158,29 @@ package body rtr_pref_feature is
         -- Set the RTR preferred behaviour to send the original DLC
         ------------------------------------------------------------------------
         mode.rtr_pref := false;
-        set_core_mode(mode, ID_2, mem_bus_2);
-        set_core_mode(mode, ID_1, mem_bus_1);
+        set_core_mode(mode, ID_2, mem_bus(2));
+        set_core_mode(mode, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Restart the content of the Node 2 RX Buffer
         ------------------------------------------------------------------------
         command.release_rec_buffer := true;
-        give_controller_command(command, ID_2, mem_bus_2);
+        give_controller_command(command, ID_2, mem_bus(2));
         command.release_rec_buffer := false;
 
         ------------------------------------------------------------------------
         -- Insert the frame for transmittion and wait until recieved
         ------------------------------------------------------------------------
-        CAN_send_frame(tx_frame, 1, ID_1, mem_bus_1, frame_sent);
+        CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
         if (not frame_sent) then
             o.outcome := false;
         end if;
-        CAN_wait_frame_sent(ID_2, mem_bus_2);
+        CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Check that recieved DLC is matching transmitted DLC
         ------------------------------------------------------------------------
-        CAN_read_frame(rx_frame, ID_2, mem_bus_2);
+        CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         if (rx_frame.dlc /= tx_frame.dlc) then
             o.outcome := false;
         end if;
