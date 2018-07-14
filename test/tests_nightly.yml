@@ -90,6 +90,7 @@ feature:
         timestamp_options:
         byte_enable:
         rtr_pref:
+        data_length_code:
 sanity:
     default:
         <<: *default
