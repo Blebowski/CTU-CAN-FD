@@ -44,8 +44,8 @@
 --    1. Generate CAN 2.0 Frame and set DLC higher than 8. Set higher data
 --       bytes accordingly!
 --    2. Send the CAN Frame via Node 1.
---    3. Verify that frame received by Node 2, has only DLC 8 received and
---       that higher data bytes are 0!
+--    3. Verify that frame received by Node 2, has the same DLC, but is has
+--       received only 8 bytes of Data!
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.7.2018   Created file
