@@ -95,11 +95,14 @@ package body data_length_code_feature is
         o.outcome := true;
 
         ------------------------------------------------------------------------
-        -- Generate CAN Frame and force CAN 2.0 and DLC higher than 8!
+        -- Generate CAN Frame and force CAN 2.0 and DLC higher than 8! This
+        -- DLC will be transmitted in DLC bits, but only 8 bytes of data
+        -- should be transmitted!
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
         rand_logic_vect_v(rand_ctr, CAN_frame.dlc, 0.5);
         CAN_frame.dlc(3) := '1';
+        CAN_frame.rtr := NO_RTR_FRAME;
         CAN_frame.frame_format := NORMAL_CAN;
         decode_dlc(CAN_frame.dlc, CAN_frame.data_length);
         for i in 0 to CAN_frame.data_length - 1 loop
@@ -114,11 +117,14 @@ package body data_length_code_feature is
         wait for 500 ns;
 
         ------------------------------------------------------------------------
-        -- Read frame by Node 2 and Check that DLC is equal to 8 and higher
-        -- data bytes are 0!
+        -- Read frame by Node 2. Received DLC should be matching the transmitted
+        -- DLC, but only 8 bytes of data should be received (int_dlc was forced
+        -- to 8!). Thus RWCNT field should be 5!
         ------------------------------------------------------------------------
         CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
-        if (CAN_frame_2.dlc /= "1000") then
+        if (CAN_frame_2.rwcnt /= 5 or 
+            CAN_frame_2.dlc /= CAN_frame.dlc)
+        then
             o.outcome := false;
             CAN_print_frame(CAN_frame_2, info_l);
             report "Invalid DLC received!" severity error;
