@@ -80,7 +80,7 @@ package rtr_pref_feature is
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
-        signal      iout            : in     instance_inputs_arr_t;
+        signal      iout            : in     instance_outputs_arr_t;
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     );
@@ -107,7 +107,7 @@ package body rtr_pref_feature is
                                                 false, false, false, false,
                                                 false, false, false);
     begin
-        outcome := true;
+        o.outcome := true;
 
         ------------------------------------------------------------------------
         -- Part 1
@@ -138,7 +138,7 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus_1, frame_sent);
         if (not frame_sent) then
-            outcome := false;
+            o.outcome := false;
         end if;
         CAN_wait_frame_sent(ID_2, mem_bus_2);
 
@@ -147,7 +147,7 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus_2);
         if (rx_frame.dlc /= x"0") then
-            outcome := false;
+            o.outcome := false;
         end if;
 
 
@@ -173,7 +173,7 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus_1, frame_sent);
         if (not frame_sent) then
-            outcome := false;
+            o.outcome := false;
         end if;
         CAN_wait_frame_sent(ID_2, mem_bus_2);
 
@@ -182,7 +182,7 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus_2);
         if (rx_frame.dlc /= tx_frame.dlc) then
-            outcome := false;
+            o.outcome := false;
         end if;
 
   end procedure;
