@@ -2486,10 +2486,10 @@ package body CANtestLib is
 
         rand_real_v(rand_ctr, rand_value);
 
-		------------------------------------------------------------------------
+        ------------------------------------------------------------------------
         -- We generate only valid frame combinations to avoid problems...
         -- FD frames has no RTR frame, neither the RTR field!
-		------------------------------------------------------------------------
+        ------------------------------------------------------------------------
         if (frame.frame_format = FD_CAN) then
             frame.rtr := NO_RTR_FRAME;
         end if;
