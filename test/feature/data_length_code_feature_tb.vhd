@@ -61,6 +61,7 @@ USE work.randomLib.All;
 use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 package data_length_code_feature is
     procedure data_length_code_feature_exec(
@@ -101,7 +102,7 @@ package body data_length_code_feature is
         CAN_frame.dlc(3) := '1';
         CAN_frame.frame_format := NORMAL_CAN;
         decode_dlc(CAN_frame.dlc, CAN_frame.data_length);
-        for i in 0 to data_length - 1 loop
+        for i in 0 to CAN_frame.data_length - 1 loop
             rand_logic_vect_v(rand_ctr, CAN_frame.data(i), 0.5);
         end loop;
 
