@@ -89,6 +89,7 @@ feature:
         tx_arb_time_tran:
         timestamp_options:
         byte_enable:
+        rtr_pref:
 sanity:
     default:
         <<: *default
