@@ -120,6 +120,7 @@ package body data_length_code_feature is
         CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
         if (CAN_frame_2.dlc /= "1000") then
             o.outcome := false;
+            CAN_print_frame(CAN_frame_2, info_l);
             report "Invalid DLC received!" severity error;
         end if;
 
