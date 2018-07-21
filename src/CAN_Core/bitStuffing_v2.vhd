@@ -222,7 +222,7 @@ begin
                 same_bits       <=  same_bits;
             end if; 
 
-            else
+		else
             same_bits           <=  1;
             halt_reg            <=  '0';
 

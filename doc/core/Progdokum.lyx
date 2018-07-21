@@ -727,7 +727,7 @@ SDC and XDC design constraints for synthesis to Altera and Xilinx FPGAs.
 \end_layout
 
 \begin_layout Standard
-The CTU_CAN_FD IP core is published under MIT License:
+CTU_CAN_FD IP core is published under MIT License:
 \end_layout
 
 \begin_layout Quote
@@ -3998,7 +3998,7 @@ buses
 
  are used: 
 \series bold
-Driving bus
+Driving Bus
 \series default
  (
 \family roman
@@ -4008,7 +4008,7 @@ drv_bus
 \shape default
 ) and
 \series bold
- Status bus
+ Status Bus
 \series default
  (
 \family roman
@@ -4022,7 +4022,7 @@ stat_bus
 \end_layout
 
 \begin_layout Subsection
-2.4.1 Driving bus
+2.4.1 Driving Bus
 \end_layout
 
 \begin_layout Standard
@@ -4030,7 +4030,7 @@ The Driving bus is used to control functionality of every module from user
  registers.
  It is driven in 
 \series bold
-Memory registers
+Memory Registers
 \series default
  (
 \begin_inset CommandInset ref
@@ -4058,7 +4058,7 @@ signal drv_bus : std_logic_vector(1023 downto 0)
 \end_layout
 
 \begin_layout Subsection
-2.4.2 Status bus
+2.4.2 Status Bus
 \end_layout
 
 \begin_layout Standard
@@ -4524,6 +4524,13 @@ name "fig:IP-function-block"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 2.3 Pipeline architecture
 \end_layout
@@ -4623,6 +4630,13 @@ name "fig:Pipeline-Architecture"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -4851,7 +4865,7 @@ name "fig:CAN-Core-block"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.1 Protocol control
+2.5.1.1 Protocol Control
 \end_layout
 
 \begin_layout Description
@@ -4955,8 +4969,52 @@ reference "fig:PC_control-1"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_protocol_control.pdf
+	lyxscale 20
+	scale 130
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Protocol Control State Machine
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:PC_control-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -6281,44 +6339,7 @@ name "tab: PC_most_important_signals"
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_protocol_control.pdf
-	lyxscale 20
-	scale 130
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Protocol Control State Machine
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:PC_control-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -7223,6 +7244,50 @@ interframe
  
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_Interframe.pdf
+	lyxscale 20
+	scale 130
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Interframe State Machine
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Interframe-FSM-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Paragraph*
 interframe
 \end_layout
@@ -7360,50 +7425,6 @@ sof
 .
 \end_layout
 
-\begin_layout Standard
-\begin_inset Float figure
-placement h
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_Interframe.pdf
-	lyxscale 20
-	scale 130
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Interframe State Machine
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Interframe-FSM-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
 \begin_layout Paragraph*
 error
 \end_layout
@@ -7495,6 +7516,94 @@ interframe
 .
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_Error.pdf
+	lyxscale 20
+	scale 130
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Error Frame State Machine
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Error-Frame-FSM-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_Overload.pdf
+	lyxscale 20
+	scale 130
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Overload Frame State Machine
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Overload-Frame-FSM-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Paragraph*
 overload
 \end_layout
@@ -7584,88 +7693,7 @@ interframe
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_Error.pdf
-	lyxscale 20
-	scale 130
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Error Frame State Machine
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Error-Frame-FSM-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement h
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/FSM_Overload.pdf
-	lyxscale 20
-	scale 130
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Overload Frame State Machine
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:Overload-Frame-FSM-1-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -7856,6 +7884,13 @@ name "fig:OP_control"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 2.5.1.3 Fault confinement
 \end_layout
@@ -7880,7 +7915,7 @@ faultConf
 \end_layout
 
 \begin_layout Standard
-Fault confinement module implements Fault confinement state (
+Fault confinement module implements Fault Confinement state (
 \family roman
 \shape italic
 error_state
@@ -7899,7 +7934,17 @@ rx_counter
 \family default
 \shape default
 ), Bit error and Stuff error validation.
- Block diagram of this module is shown in Figure TODO.
+ Block diagram of this module is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Fault-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Error counters for Fault confinement (
 \family roman
 \shape italic
@@ -7938,7 +7983,7 @@ literal "true"
 
 \end_inset
 
- (Fault Confinement chapter) are managed by Protocol Control FSM.
+ (Fault Confinement Chapter) are managed by Protocol Control FSM.
  These error counters are implemented to be read / write (via Driving Bus,
  signals 
 \family roman
@@ -8010,8 +8055,14 @@ counter is incremented.
 cons_128_11_rec_ctr
 \family default
 \shape default
- reaches 127, reset_err_counters is set, Error counters are set to 0 and
- both Fault confinement state is set to 
+ reaches 127, 
+\family roman
+\shape italic
+reset_err_counters
+\family default
+\shape default
+ is set, Error counters are set to 0 and both Fault confinement state is
+ set to 
 \family roman
 \shape italic
 error_active
@@ -8020,12 +8071,63 @@ error_active
 .
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Fault_State_Block_diagram.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fault Confinement block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Fault-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 2.5.1.4 Bit stuffing
 \end_layout
 
 \begin_layout Description
-File bitStuffing.vhd
+File bitStuffing_v2.vhd
 \end_layout
 
 \begin_layout Description
@@ -8037,71 +8139,127 @@ in core_top.vhd
 \end_layout
 
 \begin_layout Description
-Entity bitStuffing
+Entity 
+\family roman
+\shape italic
+bitStuffing
 \end_layout
 
 \begin_layout Standard
 Bit stuffing module implements functionality stuff bit insertion into a
  serial data stream.
- The number of equal consecutive bits is variable (
-\begin_inset Quotes eld
-\end_inset
-
-stuff_length
-\begin_inset Quotes erd
-\end_inset
-
- input) as well as fixed bit stuffing method for CRC field of CAN FD frames
- (
-\begin_inset Quotes eld
-\end_inset
-
+ Number of equal consecutive bits is configurable via 
+\family roman
+\shape italic
+length
+\family default
+\shape default
+ input.
+ Fixed Bit Stuffing method for CRC field of CAN FD frames can be set by
+ 
+\family roman
+\shape italic
 fixed_stuff
-\begin_inset Quotes erd
-\end_inset
-
- input).
- Since CAN FD Protocol requires fixed stuff bit to be inserted in the first
- bit of CRC field, bit stuffing circuit automatically stuffs first bit after
- a change on 
-\begin_inset Quotes eld
-\end_inset
-
+\family default
+\shape default
+ input.
+ Since CAN FD Protocol requires Fixed Stuff Bit to be inserted in first
+ bit of CRC field, Bit Stuffing circuit automatically inserts Stuff Bit
+ after change on 
+\family roman
+\shape italic
 fixed_stuff
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
  input (0->1).
- Circuit processes input data with triggering signal (
-\begin_inset Quotes eld
-\end_inset
-
-trig_spl_1
-\begin_inset Quotes erd
-\end_inset
-
-) one clock cycle delayed from transmit trigger (
-\begin_inset Quotes eld
-\end_inset
-
-tran_trig_1
-\begin_inset Quotes erd
-\end_inset
-
- input).
- Stuff bit insertion is signaled to Protocol Control to stop the data transmissi
-on via 
-\begin_inset Quotes eld
-\end_inset
-
+ Circuit operates with Bit Stuffing Trigger (see TODOREF), which is one
+ clock cycle delayed from Transmitt Trigger.
+ Insertion of Stuff-bit is signalled via 
+\family roman
+\shape italic
 data_halt
-\begin_inset Quotes erd
+\family default
+\shape default
+ signal which is used to suspend Protocol Control State machine for one
+ Bit time.
+ Number of equal consecutive bits is kept in 
+\family roman
+\shape italic
+same_bits 
+\family default
+\shape default
+counter.
+ Circuit also counts number of stuffed bits modulo 8 in 
+\family roman
+\shape italic
+stuff_ctr 
+\family default
+\shape default
+signal.
+ Module is implemented as single process.
+ Decision diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Bit-stuffing-logic"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
- signal.
- Circuit also provides the number of stuffed bits modulo 8 to implement
- ISO FD functionality.
- Decision diagram is shown in Figure TODO.
+, note that this Figure is not FSM, but rather decision tree which is evaluated
+ upon clock rising edge.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Bit_Stuffing_Logic.pdf
+	lyxscale 20
+	scale 130
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Stuffing Logic
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Bit-stuffing-logic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -8121,52 +8279,129 @@ in core_top.vhd
 \end_layout
 
 \begin_layout Description
-Entity bitDestuffing
+Entity 
+\family roman
+\shape italic
+bitDestuffing
 \end_layout
 
 \begin_layout Standard
 Bit de-stuffing module implements the functionality of Bit de-stuffing from
  serial data stream.
- The number of equal consecutive bits is variable (
-\begin_inset Quotes eld
-\end_inset
-
-stuff_length
-\begin_inset Quotes erd
-\end_inset
-
- input) as well as fixed bit stuffing method for CRC field of CAN FD frames
- (fixed_stuff input).
- Since CAN FD Protocol requires fixed stuff bit to be discarded in the first
- bit of CRC field, Bit destuffing circuit automatically discards first bit
- after the change on 
-\begin_inset Quotes eld
-\end_inset
-
+ The number of equal configurable via 
+\family roman
+\shape italic
+length
+\family default
+\shape default
+ input.
+ Fixed Bit Destuffing method for CRC field of CAN FD frames is configurable
+ via 
+\family roman
+\shape italic
 fixed_stuff
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
+ input.
+ Since CAN FD Protocol requires Fixed Stuff Bit to be discarded in the first
+ bit of CRC field, Bit Destuffing circuit automatically discards first bit
+ after the change on 
+\family roman
+\shape italic
+fixed_stuff
+\family default
+\shape default
  input (0->1).
- Circuit processes input data with triggering signal (trig_spl_1) one clock
- cycle delayed from sample trigger (trig_spl_1 input).
- Stuff bit discarded is signaled to Protocol Control to stop the data transmissi
-on via 
-\begin_inset Quotes eld
-\end_inset
-
+ Circuit processes input data with Bit Stuffing Trigger (see TODOREF) one
+ clock cycle delayed from Sample trigger.
+ Stuff bit discarded is signaled to Protocol Control to stop the data reception
+ via 
+\family roman
+\shape italic
 destuffed
-\begin_inset Quotes erd
+\family default
+\shape default
+ signal.
+ Circuit also provides number of destuffed bits modulo 8 to to Implement
+ ISO FD functionality (
+\family roman
+\shape italic
+dst_bit_ctr
+\family default
+\shape default
+).
+ Stuff Error is detected when N-th bit is not inverse preceding bit where
+ N value of 
+\family roman
+\shape italic
+length
+\family default
+\shape default
+ input.
+ When circuit is disabled, it by-passes data from input to output without
+ Bit Destuffing.
+ Decision diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Bit-Destuffing-logic"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
- signal.
- Circuit also provides the number of destuffed bits modulo 8 to to Implement
- ISO FD functionality.
- Stuff error is detected when N-th bit is not inverse preceding bit where
- N is length of bit stuffing rule.
- When circuit is disabled it by-passes data from input to output without
- bit de-stuffing.
- Decision diagram is shown in Figure TODO.
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Bit_Destuffing_Logic.pdf
+	lyxscale 20
+	scale 130
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Destuffing Logic
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Bit-Destuffing-logic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -8270,6 +8505,13 @@ crc21
  Architecture of CRC module is shown in FIgure TODO.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 2.5.2 CAN bus sampling
 \end_layout
@@ -8371,6 +8613,13 @@ trv_delay
  Diagram of this module is shown in Figure TODO.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 2.5.3 Prescaler
 \end_layout
@@ -8453,7 +8702,68 @@ sample_control
  signal Nominal bit time or Data bit time is used\SpecialChar endofsentence
  Bit time FSM state transition
  diagram is Shown in Figure TODO.
- Block diagram of whole Prescaler module is shown in Figure TODO.
+ Block diagram of whole Prescaler module is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Bit-Time-FSM"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_Bit_time.pdf
+	lyxscale 20
+	scale 130
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Time FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Bit-Time-FSM"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -8473,29 +8783,219 @@ in CAN_top_level.vhd
 \end_layout
 
 \begin_layout Description
-Entity messageFilter
+Entity 
+\family roman
+\shape italic
+messageFilter
 \end_layout
 
 \begin_layout Standard
-Message filter validates received frame on the output of CAN Core.
- If frame identifier matches one of three (A,B,C) mask filters or one range
- filter and has a valid type and format (NORMAL-FD, BASE-EXTENDED), then
- 
-\begin_inset Quotes eld
+Message filter validates received frame on output of CAN Core.
+ Block diagram of Message Filter circuit is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Message-filter-block"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
+.
+ If frame identifier matches one of three (A,B,C) Mask Filters or one Range
+ Filter and has a valid Frame Type and Identifier Type (CAN 2.0 / CAN FD,
+ BASE / EXTENDED), then 
+\family roman
+\shape italic
 out_ident_valid
-\begin_inset Quotes erd
+\family default
+\shape default
+ is set with one clock cycle delay.
+ Message Filter is configured via Driving Bus from User Registers.
+ In case of Mask Filter, active bits (logic 1) in configured mask (
+\family roman
+\shape italic
+drv_filter_A_mask
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+drv_filter_B_mask
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+drv_filter_C_mask
+\family default
+\shape default
+) are compared between RX Identifier (
+\family roman
+\shape italic
+rec_ident_in
+\family default
+\shape default
+) and filter settings (
+\family roman
+\shape italic
+drv_filter_A_bits
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+drv_filter_B_bits
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+drv_filter_C_bits
+\family default
+\shape default
+).
+ Received Frame Type (
+\family roman
+\shape italic
+frame_type
+\family default
+\shape default
+) and Identifier Type (
+\family roman
+\shape italic
+ident_type
+\family default
+\shape default
+) are compared with accepted Frame and Identifier types (
+\family roman
+\shape italic
+drv_filter_A_ctrl
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+drv_filter_B_ctrl
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+drv_filter_C_ctrl
+\family default
+\shape default
+).
+ Range Filter converts Received Identifier to decimal value (
+\family roman
+\shape italic
+rec_ident_dec
+\family default
+\shape default
+) and compares whether it is between Lower Range Threshold (
+\family roman
+\shape italic
+drv_filter_ran_lo_th
+\family default
+\shape default
+) and Upper Range Threshold (
+\family roman
+\shape italic
+drv_filter_ran_hi_th
+\family default
+\shape default
+).
+ The output is valid if identifier matches at least one filter (logic OR).
+ Message Filters are configurable before synthesis via 
+\family roman
+\shape italic
+sup_filtA
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+sup_filtB
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+sup_filtC
+\family default
+\shape default
+ and 
+\family roman
+\shape italic
+sup_range
+\family default
+\shape default
+ generics.
+ If filter is not synthesized (generic set to 
+\family roman
+\shape italic
+false
+\family default
+\shape default
+), then the outcome of filter is as if the filter is not passing.
+ If no filter is synthesized (all generics set to false), the output of
+ Message Filter is set to 
+\family roman
+\shape italic
+true
+\family default
+\shape default
+, accepting every Received Frame.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Message_filter_block_diagram.pdf
+	lyxscale 20
+
 \end_inset
 
- is set with one clock cycle delay.
- Filter logic is combinational but one flip-flop is inserted on the output
- (out_ident_valid) to avoid long combinational paths.
- The output is valid if identifier matches at least one filter, forming
- logic OR function.
- The filter is configured via driving bus from user registers.
- Note that for range comparison identifier is first converted to its decimal
- value! Block diagram of message filter circuit is shown in Figure TODO.
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Message Filter block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Message-filter-block"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -9153,6 +9653,13 @@ name "fig:RX-buffer-FSM"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 2.5.6 Transmit buffer - Time (TXT) 
 \begin_inset CommandInset label
@@ -9497,6 +10004,13 @@ name "fig:TXT_Buffer-FSM"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -9934,6 +10448,13 @@ name "fig:TX_Arbitrator-FSM-1"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 2.5.8 Interrupt manager
 \end_layout
@@ -10079,6 +10600,13 @@ name "fig:INT-manager-block-1-1"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 2.5.9 Memory registers
 \begin_inset CommandInset label
@@ -10114,8 +10642,15 @@ Memory Registers provide the interface between SoC Memory Bus (Avalon or
  APB) and all control and Status signals of CTU CAN FD IP function.
  Address decoder for access to TXT Buffers is implemented in this module.
  Driving bus assignments are implemented in this module.
- Register structure is in described in Chapter 3.
+ Register structure is in described in Chapter 3 TODOREF.
  Frame Format in TXT Buffers and RX Buffer is described in Chapter 4 TODOREF.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -10336,6 +10871,13 @@ name "fig:Event_logger"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -10655,6 +11197,13 @@ name "fig:Max_bitrate-1"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
