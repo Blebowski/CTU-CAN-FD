@@ -64,8 +64,10 @@ package body endian_swap is
     ) return std_logic_vector is
     begin
         if (input'length /= 32) then
+            -- LCOV_EXCL_START
             report "Invalid input length to endian swap" severity error;
             return x"00000000";
+            -- LCOV_EXCL_STOP
         else
             return input(7 downto 0) &
                    input(15 downto 8) &
