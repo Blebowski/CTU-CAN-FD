@@ -170,7 +170,11 @@ package body spec_mode_feature is
         loop
             wait until rising_edge(mem_bus(1).clk_sys);
             if (bus_level = DOMINANT) then
+                -- LCOV_EXCL_START
                 o.outcome := false;
+                report "ACK detected when there should be no ACK!"
+                    severity error;
+                -- LCOV_EXCL_STOP
             end if;
         end loop;
 
@@ -183,11 +187,19 @@ package body spec_mode_feature is
         read_traffic_counters(ctr_2_2, ID_2, mem_bus(2));
 
         if (ctr_1_1.tx_frames + 1 /= ctr_2_1.tx_frames) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "TX Frames counter incremented unexpectedly!"
+                severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         if (ctr_1_2.rx_frames + 1 /= ctr_2_2.rx_frames) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "RX Frames counter incremented unexpectedly!"
+                severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
 
@@ -252,11 +264,19 @@ package body spec_mode_feature is
         read_traffic_counters(ctr_2_2, ID_2, mem_bus(2));
 
         if (ctr_1_1.tx_frames + 2 /= ctr_2_1.tx_frames) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "TX Frames counter incremented unexpectedly!"
+                severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         if (ctr_1_2.rx_frames + 2 /= ctr_2_2.rx_frames) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "RX Frames counter incremented unexpectedly!"
+                severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
   end procedure;

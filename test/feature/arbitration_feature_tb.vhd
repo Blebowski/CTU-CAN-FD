@@ -315,6 +315,7 @@ package body Arbitration_feature is
         if (unit_rec = 1 and exp_winner = 0) or
            (unit_rec = 2 and exp_winner = 1)
         then
+            -- LCOV_EXCL_START
             report "Wrong unit lost arbitration. Expected: " &
                 integer'image(exp_winner) & " Real: " & integer'image(unit_rec)
             severity error;
@@ -325,6 +326,7 @@ package body Arbitration_feature is
             CAN_print_frame(frame_2, info_l);
 
             o.outcome := false;
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------
@@ -349,6 +351,7 @@ package body Arbitration_feature is
         -- If error frame is transmitted and collision not have appeared
         ------------------------------------------------------------------------
         if (unit_rec = 3 and exp_winner /= 2) then
+            -- LCOV_EXCL_START
             report "Collision should have appeared" severity error;
 
             report "Frame 1:";
@@ -357,6 +360,7 @@ package body Arbitration_feature is
             CAN_print_frame(frame_2, info_l);
 
             o.outcome := false;
+            -- LCOV_EXCL_STOP
         end if;
 
         wait for 100000 ns;

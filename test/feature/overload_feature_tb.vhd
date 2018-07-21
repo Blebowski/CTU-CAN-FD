@@ -128,8 +128,10 @@ package body overload_feature is
                 iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW)))) /=
                 overload)
             then
-                report "Overload did not start";
+                -- LCOV_EXCL_START
+                report "Overload Frame did not start" severity error;
                 o.outcome:=false;
+                -- LCOV_EXCL_STOP
             end if;
 
             so.bl_inject <= RECESSIVE;

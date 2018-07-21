@@ -124,9 +124,11 @@ package body timestamp_options_feature is
         -- Bit time in default config is 160 clock cycles. Give some reserve.
         ------------------------------------------------------------------------  
         if (diff > 200) then
+            -- LCOV_EXCL_START
             report "Timestamp difference is too big from SOF! " & 
-                    integer'image(diff);
+                    integer'image(diff) severity error;
             o.outcome := false;
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------
@@ -161,9 +163,11 @@ package body timestamp_options_feature is
         -- extra bits of difference in timestamp!
         ------------------------------------------------------------------------
         if (diff > 600) then
+            -- LCOV_EXCL_START
             report "Timestamp difference is too big from EOF!" &
-                    integer'image(diff);
+                    integer'image(diff) severity error;
             o.outcome := false;
+            -- LCOV_EXCL_STOP
         end if;
 
     end procedure;

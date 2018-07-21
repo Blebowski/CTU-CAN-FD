@@ -115,7 +115,11 @@ package body invalid_configs_feature is
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         if (rx_frame.brs = BR_SHIFT or rx_frame.frame_format = FD_CAN) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "Frame with BRS Bit or CAN FD Frame received!"
+                severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
 
@@ -136,12 +140,18 @@ package body invalid_configs_feature is
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_wait_frame_sent(ID_1, mem_bus(1));
 
+        wait for 100 ns;
+
         ------------------------------------------------------------------------
         -- Read frame. CAN FD Frame without RTR bit should be read
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         if (rx_frame.frame_format = NORMAL_CAN or rx_frame.rtr = RTR_FRAME) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "CAN 2.0 Frame or RTR Flag Frame received!"
+                severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
     end procedure;

@@ -79,10 +79,10 @@ package body byte_enable_feature is
         signal      bus_level       : in     std_logic
     ) is
         variable data               :        std_logic_vector(31 downto 0) :=
-                                                 (OTHERS => '0');
-		variable address			:		 std_logic_vector(11 downto 0) :=
-												 (OTHERS => '0');
-        variable ID                 :     natural := 1;
+                                                (OTHERS => '0');
+        variable address			:		 std_logic_vector(11 downto 0) :=
+                                                (OTHERS => '0');
+        variable ID                 :        natural := 1;
     begin
         o.outcome := true;
 
@@ -93,8 +93,10 @@ package body byte_enable_feature is
         CAN_read(data, address, ID, mem_bus(1), BIT_32);
 
         if (data /= x"DEADBEEF") then
+            -- LCOV_EXCL_START
             o.outcome := false;
             report "32 bit read error" severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------
@@ -110,16 +112,20 @@ package body byte_enable_feature is
             if (data(16 * i + 15 downto 16 * i) /= 
 	            YOLO_VAL_RSTVAL(16 * i + 15 downto 16 * i))
             then
+                -- LCOV_EXCL_START
                 report "16 bit read error (valid byte), Index :" &
                     Integer'image(i) severity error; 
 	            o.outcome := false;
+                -- LCOV_EXCL_STOP
             end if;
 
             -- Checking invalid 2 bytes are 0
             if (data(16 * (1 - i) + 15 downto 16 * (1 - i)) /= x"0000") then
+                -- LCOV_EXCL_START
                 report "16 bit read error (empty byte), Index :" &
                     Integer'image(i) severity error; 
 	            o.outcome := false;
+                -- LCOV_EXCL_STOP
             end if;
         end loop;
 
@@ -136,39 +142,49 @@ package body byte_enable_feature is
             if (data(8 * i + 7 downto 8 * i) /= 
 	            YOLO_VAL_RSTVAL(8 * i + 7 downto 8 * i))
             then
+                -- LCOV_EXCL_START
 	            o.outcome := false;
                 report "8 bit read error (valid byte), Index :" &
-                    Integer'image(i) severity error; 
+                    Integer'image(i) severity error;
+                -- LCOV_EXCL_STOP
             end if;
 
             -- Checking if other bytes are 0
             case i is
             when 0 =>
                 if (data(31 downto 8) /= x"000000") then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit read error (Empty byte 0)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when 1 =>
                 if (data(31 downto 16) /= x"0000" or
                     data(7 downto 0) /= x"00")
                 then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit read error (Empty byte 1)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when 2 =>
                 if (data(31 downto 24) /= x"00" or
                     data(15 downto 0) /= x"0000")
                 then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit read error (Empty byte 2)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when 3 =>
                 if (data(23 downto 0) /= x"000000") then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit read error (Empty byte 3)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when others =>
-                report "Invalid byte index" severity error;
+                report "Invalid byte index" severity error; -- LCOV_EXCL_LINE
             end case;
         end loop;
 
@@ -195,39 +211,49 @@ package body byte_enable_feature is
             
             -- Checking if one written byte was written OK!
             if (data(8 * i + 7 downto 8 * i) /= x"0A") then
+                -- LCOV_EXCL_START
                 o.outcome := false;
                 report "8 bit write error (valid byte), Index :" &
-                    Integer'image(i) severity error; 
+                    Integer'image(i) severity error;
+                -- LCOV_EXCL_STOP
             end if;
 
             -- Checking if other bytes are 0
             case i is
             when 0 =>
                 if (data(31 downto 8) /= x"000000") then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit write error (Empty byte 0)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when 1 =>
                 if (data(31 downto 16) /= x"0000" or
                     data(7 downto 0) /= x"00")
                 then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit write error (Empty byte 1)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when 2 =>
                 if (data(31 downto 24) /= x"00" or
                     data(15 downto 0) /= x"0000")
                 then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit write error (Empty byte 2)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when 3 =>
                 if (data(23 downto 0) /= x"000000") then
+                    -- LCOV_EXCL_START
                     o.outcome := false;
                     report "8 bit write error (Empty byte 3)" severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
             when others =>
-                report "Invalid byte index" severity error;
+                report "Invalid byte index" severity error; -- LCOV_EXCL_LINE
             end case;
         end loop;
 

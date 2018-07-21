@@ -126,14 +126,20 @@ package body traf_meas_feature is
         -- Check That TX counters were increased accordingly
         ------------------------------------------------------------------------
         if (ctr_1_1.tx_frames + rand_value /= ctr_2_1.tx_frames) then
+			-- LCOV_EXCL_START
             o.outcome := false;
+			report "TX Frames counter not incremented!" severity error;
+			-- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------
         -- Check That RX counters were increased accordingly
         ------------------------------------------------------------------------
         if (ctr_1_2.rx_frames + rand_value /= ctr_2_2.rx_frames) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+			report "RX Frames counter not incremented!" severity error;
+			-- LCOV_EXCL_STOP
         end if;
     end procedure;
 

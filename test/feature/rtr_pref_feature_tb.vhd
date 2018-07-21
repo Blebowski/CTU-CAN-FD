@@ -138,7 +138,11 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
         if (not frame_sent) then
+			-- LCOV_EXCL_START
             o.outcome := false;
+			report "Frame was not inserted for transmission properly!"
+				severity error;
+			-- LCOV_EXCL_STOP
         end if;
         CAN_wait_frame_sent(ID_2, mem_bus(2));
 
@@ -147,7 +151,11 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         if (rx_frame.dlc /= x"0") then
+			-- LCOV_EXCL_START
             o.outcome := false;
+			report "DLC of Received frame is not zero as expected"
+				severity error;
+			-- LCOV_EXCL_STOP
         end if;
 
 
@@ -173,7 +181,11 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
         if (not frame_sent) then
+			-- LCOV_EXCL_START
             o.outcome := false;
+			report "Frame was not inserted for transmission properly!"
+				severity error;
+			-- LCOV_EXCL_STOP
         end if;
         CAN_wait_frame_sent(ID_2, mem_bus(2));
 
@@ -182,7 +194,10 @@ package body rtr_pref_feature is
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
         if (rx_frame.dlc /= tx_frame.dlc) then
+			-- LCOV_EXCL_START
             o.outcome := false;
+			report "TX DLC is not equal to RX DLC" severity error;
+			-- LCOV_EXCL_STOP
         end if;
 
   end procedure;

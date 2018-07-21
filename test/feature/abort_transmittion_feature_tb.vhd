@@ -175,7 +175,10 @@ package body abort_transmittion_feature is
 
             get_controller_status(status, ID_1, mem_bus(1));
             if (status.transmitter) then
+                -- LCOV_EXCL_START
                 o.outcome := false;
+                report "Unit did not abort the transmission!" severity error;
+                -- LCOV_EXCL_STOP
             end if;
 
             --------------------------------------------------------------------
@@ -207,7 +210,10 @@ package body abort_transmittion_feature is
             --------------------------------------------------------------------
             get_controller_status(status, ID_1, mem_bus(1));
             if (not status.bus_status) then
+                -- LCOV_EXCL_START
+                report "Unit is not Idle!" severity error;
                 o.outcome := false;
+                -- LCOV_EXCL_STOP
             end if;
 
         end if;
