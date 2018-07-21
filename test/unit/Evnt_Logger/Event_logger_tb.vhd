@@ -210,10 +210,11 @@ architecture Event_logger_unit_test of CAN_test is
         wait until rising_edge(clk_sys);
         wait for 1 ns;
 
+        outcome := true;
         if (log_state /= running) then
+            -- LCOV_EXCL_START
             outcome := false;
-        else
-            outcome := true;
+            -- LCOV_EXCL_STOP
         end if;
     end procedure;
 
@@ -256,9 +257,11 @@ architecture Event_logger_unit_test of CAN_test is
             end loop;
 
             if (found = false) then
+                -- LCOV_EXCL_START
                 log("Event not found! Index: " & Integer'Image(i),
                         error_l, log_level);
                 outcome := false;
+                -- LCOV_EXCL_STOP
             end if;
 
             drv_up <= '1';
@@ -522,8 +525,10 @@ begin
             wait_till_trigger(clk_sys, log_state_out, trig_inputs, drv_trig,
                                 log_level, outcome);
             if (not outcome) then
+                -- LCOV_EXCL_START
                 log("Logger did not trigger as expected!",
                         error_l, log_level);
+                -- LCOV_EXCL_STOp
                 process_error(error_ctr, error_beh, exit_imm);
             end if;
 
@@ -534,8 +539,10 @@ begin
                             log_level, outcome);
 
             if (outcome = false) then
+                -- LCOV_EXCL_START
                 log("Recorded event not matching expected value",
                     error_l, log_level);
+                -- LCOV_EXCL_STOP
                 process_error(error_ctr, error_beh, exit_imm);
             end if;
 

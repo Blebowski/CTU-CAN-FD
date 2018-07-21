@@ -323,9 +323,11 @@ begin
                 wait for 20 ns;
 
                 if ((data_tx /= data_rx) and bit_Error = '0') then
+                    -- LCOV_EXCL_START
                     process_error(error_ctr, error_beh, exit_imm);
                     log("TX and RX Data mismatch and no bit error fired!",
                       error_l, log_level);
+                    -- LCOV_EXCL_STOP
                 end if;
             end loop;
 
@@ -346,9 +348,11 @@ begin
                 wait for 20 ns;
 
                 if ((data_tx /= data_rx) and bit_Error = '0') then
+                    -- LCOV_EXCL_START
                     process_error(error_ctr, error_beh, exit_imm);
                     log("TX and RX Data are mismatching and no bit error fired!",
                       error_l, log_level);
+                    -- LCOV_EXCL_STOP
                 end if;
             end loop;
 
@@ -410,9 +414,11 @@ begin
                      data_rx) and
                      bit_Error='0')
                 then
+                    -- LCOV_EXCL_START
                     process_error(error_ctr, error_beh, exit_imm);
                     log("TX and RX Data mismatch, and no bit error fired!",
                        error_l, log_level);
+                    -- LCOV_EXCL_STOP
                 end if;
             end loop;
 

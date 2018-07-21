@@ -348,8 +348,10 @@ begin
              (norm_err_model /= to_integer(unsigned(err_counter_norm_out))) or
              (fd_err_model /= to_integer(unsigned(err_counter_fd_out))))
         then
+            -- LCOV_EXCL_START
             log("Error counters not as expected", error_l, log_level);
             err_ctr_1 <= err_ctr_1 + 1;
+            -- LCOV_EXCL_STOP
         end if;
 
     end process;
@@ -378,8 +380,10 @@ begin
         wait until rising_edge(clk_sys);
 
         if (fc_model /= error_state_out) then
+            -- LCOV_EXCL_START
             log("Fault confinement state differs!", error_l, log_level);
             err_ctr_2 <= err_ctr_2 + 1;
+            -- LCOV_EXCL_STOP
         end if;
 
     end process;

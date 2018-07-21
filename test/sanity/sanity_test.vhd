@@ -361,8 +361,10 @@ architecture behavioral of sanity_test is
                         end loop;
 
                         if (detected = false) then
+                            -- LCOV_EXCL_START
                             outcome:= false;
                             node_error := true;
+                            -- LCOV_EXCL_STOP
                         end if;
                     end loop;
                 end if;
@@ -371,6 +373,7 @@ architecture behavioral of sanity_test is
             -- Print contents of test memories for each node if something
             -- went wrong!
             if (node_error) then
+                -- LCOV_EXCL_START
                 tx_r_ptr := 0;
                 log("TX Memory Node " & integer'image(i) & ":",
                     error_l, log_level);
@@ -388,6 +391,7 @@ architecture behavioral of sanity_test is
                     read_frame_from_test_mem(RX_frame, tmp_mem, rx_r_ptr);
                     CAN_print_frame(RX_frame, error_l);
                 end loop;
+                -- LCOV_EXCL_STOP
             end if;
 
         end loop;
@@ -934,10 +938,12 @@ begin
                 if (erp_detected(1) or erp_detected(2) or
                     erp_detected(3) or erp_detected(4))
                 then
+                    -- LCOV_EXCL_START
                     step_done:= true;
                     report "Some unit turned error passive -> " &
                            "Most probably traffic consitency check will fail!"
                     severity error;
+                    -- LCOV_EXCL_STOP
                 end if;
                 wait for 100 ns;
             end loop;
@@ -954,8 +960,10 @@ begin
             check_memories(tx_mems, rx_mems, outcome);
 
             if (outcome = false) then
+                -- LCOV_EXCL_START
                 log("Traffic consitency check error!", error_l, log_level);
                 process_error(error_ctr, error_beh, exit_imm);
+                -- LCOV_EXCL_STOP
             end if;
 
             wait for 1000 ns;

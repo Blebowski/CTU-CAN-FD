@@ -169,7 +169,9 @@ architecture tb of tb_sanity is
                    (l(2), l(4), 0.0,  l(6)),
                    (l(3), l(6), l(6), 0.0));
         else
+            -- LCOV_EXCL_START
             assert false report "Invalid bus topology!" severity failure;
+            -- LCOV_EXCL_STOP
         end if;
         return bm;
     end len_to_matrix;
