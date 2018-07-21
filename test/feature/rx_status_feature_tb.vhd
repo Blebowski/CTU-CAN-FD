@@ -202,7 +202,7 @@ package body rx_status_feature is
             then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "RX Buffer free memory + Number of stored words does "
+                report "RX Buffer free memory + Number of stored words does " &
                     "not equal to RX Buffer size!" severity error;
                 -- LCOV_EXCL_STOP
             end if;
