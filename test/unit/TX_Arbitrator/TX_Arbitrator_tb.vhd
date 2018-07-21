@@ -535,8 +535,10 @@ begin
     begin
 
         if (mod_frame_valid_out    /= tran_frame_valid_out and now /= 0 fs) then
+            -- LCOV_EXCL_START
             log("DUT and Model Frame valid not matching!", error_l, log_level);
             cmp_err_ctr          <= cmp_err_ctr + 1;
+            -- LCOV_EXCL_STOP
         end if;
 
         if (((mod_dlc_out            /= tran_dlc_out) or
@@ -544,21 +546,27 @@ begin
              (mod_ident_type_out     /= tran_ident_type_out) or
              (mod_frame_type_out     /= tran_frame_type_out)) and now /= 0 fs)
         then
+            -- LCOV_EXCL_START
             log("DUT and Model metadata not matching!", error_l, log_level);
             cmp_err_ctr          <= cmp_err_ctr + 1;
+            -- LCOV_EXCL_STOP
         end if;
 
         if (txt_hw_cmd_buf_index   /= mod_buf_index and now /= 0 fs)
         then
+            -- LCOV_EXCL_START
             log("DUT and Model buffer index not matching!", error_l, log_level);
             cmp_err_ctr          <= cmp_err_ctr + 1;
+            -- LCOV_EXCL_STOP
         end if;
 
         if (last_locked_index   /= mod_buf_index and
             txtb_changed = '0' and now /= 0 fs)
         then
+            -- LCOV_EXCL_START
             log("Buffer change not detected!", error_l, log_level);
             cmp_err_ctr          <= cmp_err_ctr + 1;
+            -- LCOV_EXCL_STOP
         end if;
 
         wait until falling_edge(clk_sys);

@@ -256,7 +256,9 @@ architecture bit_stuffing_unit_test of CAN_test is
         if (to_integer(unsigned(set.stuff_length_fixed))     < 3 or
             to_integer(unsigned(set.stuff_length_non_fixed)) < 3)
         then
+            -- LCOV_EXCL_START
             report "Invalid bit stuffing settings!" severity failure;
+            -- LCOV_EXCL_STOP
         end if;
 
         --------------------------------------
@@ -470,6 +472,7 @@ architecture bit_stuffing_unit_test of CAN_test is
         wait for 0 ns;
 
         if (log_lvl = info_l) then
+            -- LCOV_EXCL_START
             log("TX Data NON fixed: ", info_l, log_lvl);
             write(msg1, set.tx_data_seq(set.bc_non_fixed - 1 downto 0));
             writeline(output, msg1);
@@ -478,9 +481,11 @@ architecture bit_stuffing_unit_test of CAN_test is
             write(msg2, set.tx_data_seq(set.bc_non_fixed + set.bc_fixed - 1
                                        downto set.bc_non_fixed));
             writeline(output, msg2);
+            -- LCOV_EXCL_STOP
         end if;
 
         if (log_lvl = info_l) then
+            -- LCOV_EXCL_START
             log("Stuffed data NON fixed: ", info_l, log_lvl);
             write(msg3, set.stuffed_data_seq(
                         set.stuff_counter_non_fixed + set.bc_non_fixed - 1
@@ -493,6 +498,7 @@ architecture bit_stuffing_unit_test of CAN_test is
                         set.stuff_counter_fixed + set.bc_fixed - 1 downto
                         set.stuff_counter_non_fixed + set.bc_non_fixed));
             writeline(output, msg4);
+            -- LCOV_EXCL_STOP
         end if;
 
         log("Non-fixed length: " & integer'image(set.bc_non_fixed),
@@ -530,8 +536,10 @@ architecture bit_stuffing_unit_test of CAN_test is
             if (rx_trig_ack = '1') then
                 wait for 1 ns;
                 if (rx_data /= tx_data) then
+                    -- LCOV_EXCL_START
                      log("TX, RX data mismatch", error_l, log_level);
                      process_error(err_ctr, error_beh, exit_imm);
+                    -- LCOV_EXCL_STOP
                 end if;
                 nbs_ptr := nbs_ptr + 1;
                 nbs_index <= nbs_ptr;
@@ -561,13 +569,17 @@ architecture bit_stuffing_unit_test of CAN_test is
             if (bs_trig = '1') then
                 wait for 1 ns;
                 if (stuffed_data /= set.stuffed_data_seq(wbs_ptr)) then
+                    -- LCOV_EXCL_START
                     log("Stuffed data mismatch", error_l, log_level);
                     process_error(err_ctr, error_beh, exit_imm);
+                    -- LCOV_EXCL_STOP
                 end if;
 
                 if (set.stuffed_bits_mark(wbs_ptr) /= data_halt) then
+                    -- LCOV_EXCL_START
                     log("Stuff bit not inserted!", error_l, log_level);
                     process_error(err_ctr, error_beh, exit_imm);
+                    -- LCOV_EXCL_STOP
                 end if;
                 wbs_ptr := wbs_ptr + 1;
                 wbs_index <= wbs_ptr;
@@ -731,8 +743,10 @@ begin
             -- Now stuff error should be fired by bit destuffing, since
             -- bit value was forced to be the same as previous bits!
             if (stuff_error = '0') then
+                -- LCOV_EXCL_START
                 log("Stuff error not fired!", error_l, log_level);
                 process_error(stuf_e_err_ctr, error_beh, exit_imm_1);
+                -- LCOV_EXCL_STOP
             end if;
             wait until rising_edge(clk_sys);
             err_data <= '0';

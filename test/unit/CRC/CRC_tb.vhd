@@ -232,22 +232,24 @@ architecture CRC_unit_test of CAN_test is
         variable  c21_mism    :out    boolean
     )is
     begin
-        if (crc_15_dut = crc_15_mod) then
-            c15_mism := false;
-        else
+		c15_mism := false;
+
+        if (crc_15_dut /= crc_15_mod) then
+			-- LCOV_EXCL_START
             c15_mism := true;
+			-- LCOV_EXCL_STOP
         end if;
 
-        if (crc_17_dut = crc_17_mod) then
-            c17_mism := false;
-        else
+        if (crc_17_dut /= crc_17_mod) then
+			-- LCOV_EXCL_START
             c17_mism := true;
+			-- LCOV_EXCL_STOP
         end if;
 
-        if (crc_21_dut = crc_21_mod) then
-            c21_mism := false;
-        else
+        if (crc_21_dut /= crc_21_mod) then
+			-- LCOV_EXCL_START
             c21_mism := true;
+			-- LCOV_EXCL_STOP
         end if;
   end procedure;
 
@@ -347,18 +349,24 @@ begin
                             crc_21_mod, c15_mism, c17_mism, c21_mism);
 
             if (c15_mism) then
+				-- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
                 log("Mismatch in CRC15", error_l, log_level);
+				-- LCOV_EXCL_STOP
             end if;
 
             if (c17_mism) then
+				-- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
                 log("Mismatch in CRC17", error_l, log_level);
+				-- LCOV_EXCL_STOP
             end if;
 
             if (c21_mism) then
+				-- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
                 log("Mismatch in CRC21", error_l, log_level);
+				-- LCOV_EXCL_STOP
             end if;
 
             loop_ctr <= loop_ctr + 1;

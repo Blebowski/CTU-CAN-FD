@@ -453,8 +453,11 @@ begin
                               );
             report "... out of exec function";
 
-            if o.outcome = false then
+            if (o.outcome = false) then
+                -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
+                report "Feature test failed!" severity error;
+                -- LCOV_EXCL_STOP
             end if;
 
             wait for 200 ns;

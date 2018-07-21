@@ -568,7 +568,9 @@ architecture Protocol_Control_unit_test of CAN_test is
             when 6 =>   tmp  := "101";
             when 7 =>   tmp  := "100";
             when others =>
+                -- LCOV_EXCL_START
                 report "Invalid stuff counter value" severity failure;
+                -- LCOV_EXCL_STOP
         end case;
 
         parity := tmp(0) xor tmp(1) xor tmp(2);
@@ -677,7 +679,9 @@ architecture Protocol_Control_unit_test of CAN_test is
             end if;
             ptr             := ptr + 5;
         when others =>
+            -- LCOV_EXCL_START
             report "Invalid CAN FD Frame settings" severity error;
+            -- LCOV_EXCL_STOP
         end case;
 
         -- DLC field
@@ -1109,8 +1113,10 @@ begin
 
             -- Break if there is more data than expected!
             if (rxb_mem_ptr > 19) then
+                -- LCOV_EXCL_START
                 log("Data size exceeds 64 bytes", error_l, log_level);
                 exit;
+                -- LCOV_EXCL_STOP
             end if;
 
             -- Store data word
@@ -1223,6 +1229,7 @@ begin
 
             -- Process possible error in TX/RX Frames or sequences mismatch
             if (out_seq = false or out_frm = false) then
+                -- LCOV_EXCL_START
                 log("Generated CAN frame:", error_l, log_level);
                 CAN_print_frame(tx_frame, info_l);
 
@@ -1238,6 +1245,7 @@ begin
                 writeline(output, msg2);
 
                 process_error(error_ctr, error_beh, exit_imm);
+                -- LCOV_EXCL_STOP
                 wait;
             end if;
 

@@ -764,9 +764,11 @@ begin
                 end if;
 
                 if (check_ctr /= exp_dur) then
+                    -- LCOV_EXCL_START
                     log("SYNC+PROP+PH1 " & tmp_text &
                         " did not last expected time!", error_l, log_level);
                     process_error(main_err_ctr, error_beh, exit_imm);
+                    -- LCOV_EXCL_STOP
                 end if;
 
                 -- Check distance between two consecutive "SYNC" triggers
@@ -793,9 +795,11 @@ begin
                 end if;
 
                 if (check_ctr /= exp_dur) then
+                    -- LCOV_EXCL_START
                     log("SYNC+PROP+PH1+PH2 " & tmp_text &
                         " did not last expected time!", error_l, log_level);
                     process_error(main_err_ctr, error_beh, exit_imm);
+                    -- LCOV_EXCL_STOP
                 end if;
 
             end loop;
@@ -832,11 +836,13 @@ begin
                 end if;
 
                 if (abs(integer(check_ctr) - resync_bit_time_length) > brp) then
+                    -- LCOV_EXCL_START
                     log("Resync bit length wrong! Expected length: " &
                             integer'image(resync_bit_time_length) &
                         " Real length: " & integer'image(check_ctr),
                         error_l, log_level);
                     process_error(main_err_ctr, error_beh, exit_imm);
+                    -- LCOV_EXCL_STOP
                 end if;
 
             end loop;
@@ -892,10 +898,12 @@ begin
 
             -- Check duration, count with two cycle delay.
             if (exp_dur_BRS /= nom_ctr + data_ctr + 2) then
+                -- LCOV_EXCL_START
                 log("BRS bit length not as expected, " &
                     "Expected: " & integer'image(exp_dur_BRS) &
                     "Real: " & integer'image(nom_ctr + data_ctr + 2),
                      error_l, log_level);
+                -- LCOV_EXCL_STOP
                 process_error(main_err_ctr, error_beh, exit_imm);
             end if;
 
@@ -919,11 +927,13 @@ begin
 
             -- Check the duration
             if (exp_dur_CRC_del /= nom_ctr + data_ctr + 2) then
+                -- LCOV_EXCL_START
                 log("CRC delimiter bit length not as expected, " &
                     "Expected: " & integer'image(exp_dur_CRC_del) &
                     "Real: " & integer'image(nom_ctr + data_ctr + 2),
                      error_l, log_level);
                 process_error(main_err_ctr, error_beh, exit_imm);
+                -- LCOV_EXCL_STOP
             end if;
 
             wait until rising_edge(clk_sys);

@@ -320,7 +320,9 @@ architecture rx_buf_unit_test of CAN_test is
 
         -- Check that overrun was cleared
         if (rx_data_overrun = '1') then
+            -- LCOV_EXCL_START
             log("Overrun not cleared!", error_l, log_level);
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------
@@ -473,8 +475,10 @@ architecture rx_buf_unit_test of CAN_test is
             -- Check that word is exactly matching the word in in_mem at the
             -- same position
             if (buff_out /= in_mem(out_pointer)) then
-                log("Buffer FUCKED UP, inex: " & integer'image(out_pointer),
+                -- LCOV_EXCL_START
+                log("Buffer FUCKED UP, index: " & integer'image(out_pointer),
                     error_l, log_level);
+                -- LCOV_EXCL_STOP
             end if;
 
             out_pointer           <= out_pointer + 1;
@@ -700,8 +704,10 @@ begin
         compare_data(in_mem, out_mem, cons_res);
 
         if (cons_res = false) then
+            -- LCOV_EXCL_START
             process_error(cons_errs, error_beh, exit_imm_d_3);
             log("Data consistency check failed !", error_l, log_level);
+            -- LCOV_EXCL_STOP
         end if;
 
         -- Now we can tell to the other circuits that one iteration is over

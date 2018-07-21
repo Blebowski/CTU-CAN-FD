@@ -125,15 +125,20 @@ package body data_length_code_feature is
         if (CAN_frame_2.rwcnt /= 5 or 
             CAN_frame_2.dlc /= CAN_frame.dlc)
         then
+            -- LCOV_EXCL_START
             o.outcome := false;
             CAN_print_frame(CAN_frame_2, info_l);
             report "Invalid DLC received!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         for i in 8 to 63 loop
             if (CAN_frame_2.data(i) /= "00000000") then
+                -- LCOV_EXCL_START
+                o.outcome := false;
                 report "Byte index " & integer'image(i) & " not zero!"
                     severity error;
+                -- LCOV_EXCL_STOP
             end if;
         end loop;
 

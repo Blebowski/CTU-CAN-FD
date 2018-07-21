@@ -152,8 +152,10 @@ package body tx_arb_time_tran_feature is
         -- cycles per bit time!
         ------------------------------------------------------------------------
         if (aux1 - aux2 > 150) then
-            report "FUCK";
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "Frame not sent at time when expected!" severity error;
+            -- LCOV_EXCL_STOP
         else
             report "OK";
         end if;
@@ -195,7 +197,10 @@ package body tx_arb_time_tran_feature is
         -- cycles per bit time!
         ------------------------------------------------------------------------
         if (aux1 - aux2 > 150) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "Frame not sent at time when expected!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 

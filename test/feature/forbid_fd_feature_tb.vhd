@@ -140,7 +140,10 @@ package body forbid_fd_feature is
 
         -- Counter should be increased
         if ((err_counters_1.rx_counter + 1 + 8) /= err_counters_2.rx_counter) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "RX Error counter not incremented as expected!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------
@@ -161,7 +164,10 @@ package body forbid_fd_feature is
         -- detected the error!
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 8) /= err_counters_2.rx_counter) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "RX Error counter not incremented as expected!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------
@@ -188,7 +194,10 @@ package body forbid_fd_feature is
         -- zeroes when counter cannnot already be lowered...
         ------------------------------------------------------------------------
         if ((err_counters_1.rx_counter + 7) /= err_counters_2.rx_counter) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "RX Error counter not decremented as expected!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------

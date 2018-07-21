@@ -168,7 +168,10 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_1, mem_bus(1));
         if (not int_stat.receive_int) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "RX Interrupt not present!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
         clear_int_status(int_stat, ID_1, mem_bus(1));
 
@@ -210,14 +213,19 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_1, mem_bus(1));
         if (not int_stat.bus_error_int) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "Bus error Interrput not present (Node 1)" severity error;
+            -- LCOV_EXCL_STOP
         end if;
         clear_int_status(int_stat, ID_1, mem_bus(1));
 
         read_int_status(int_stat, ID_2, mem_bus(2));
         if (not int_stat.bus_error_int) then
-            report "FUCK" severity error;
+            -- LCOV_EXCL_START
+            report "Bus error Interrupt no present (Node 2)" severity error;
             o.outcome := false;
+            -- LCOV_EXCL_STOP
         end if;
         CAN_wait_frame_sent(ID_1, mem_bus(1));
         clear_int_status(int_stat, ID_2, mem_bus(2));
@@ -263,7 +271,11 @@ package body interrupt_feature is
             -- fired and clear it!
             if (i = (buf_info.rx_buff_size / 4)) then
                 if (iout(2).irq = '0') then
+                    -- LCOV_EXCL_START
+                    report "RX Buffer Full interrupt is not active!"
+                        severity error;
                     o.outcome := false;
+                    -- LCOV_EXCL_STOP
                 else
                     read_int_status(int_stat, ID_2, mem_bus(2));
                     clear_int_status(int_stat, ID_2, mem_bus(2));
@@ -278,10 +290,17 @@ package body interrupt_feature is
         read_int_status(int_stat, ID_2, mem_bus(2));
 
         if (not int_stat.rx_buffer_full_int) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "RX Buffer Full Interrupt not present!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
+
         if (not int_stat.data_overrun_int) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "Data overrun Interrupt not present!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
         clear_int_status(int_stat, ID_2, mem_bus(2));
         wait for 30000 ns;
@@ -315,7 +334,10 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_2, mem_bus(2));
         if (not int_stat.bit_rate_shift_int) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "Bit Rate shift interrupt not present" severity error;
+            -- LCOV_EXCL_STOP
         end if;
         CAN_wait_frame_sent(ID_2,mem_bus(2));
         clear_int_status(int_stat, ID_2, mem_bus(2));
@@ -348,7 +370,10 @@ package body interrupt_feature is
 
         read_int_status(int_stat, ID_1, mem_bus(1));
         if (not int_stat.arb_lost_int) then
+            -- LCOV_EXCL_START
             o.outcome := false;
+            report "Arbitration Lost Interrupt not present!" severity error;
+            -- LCOV_EXCL_STOP
         end if;
         clear_int_status(int_stat, ID_1, mem_bus(1));
 

@@ -138,14 +138,18 @@ package body retr_limit_feature is
             get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
             if (i /= retr_th) then
                 if (buf_state /= buf_ready) then
-                    report "Buffer not ready";
+                    -- LCOV_EXCL_START
+                    report "TXT Buffer not ready" severity error;
                     o.outcome := false;
                     exit;
+                    -- LCOV_EXCL_STOP
                 end if;
             else
                 if (buf_state /= buf_failed) then
-                    report "Buffer not failed";
+                    -- LCOV_EXCL_START
+                    report "TXT Buffer not failed" severity error;
                     o.outcome := false;
+                    -- LCOV_EXCL_STOP
                 end if;
             end if;
         end loop;
@@ -156,9 +160,12 @@ package body retr_limit_feature is
         ------------------------------------------------------------------------
         read_error_counters(err_counters, ID_1, mem_bus(1));
         if (err_counters.tx_counter /= 8 * (retr_th + 1)) then
+            -- LCOV_EXCL_START
             report "Counters exp: " & Integer'Image(err_counters.tx_counter) &
-                   " coutners real: " & Integer'image(8 * (retr_th + 1));
+                   " coutners real: " & Integer'image(8 * (retr_th + 1))
+                    severity error;
             o.outcome := false;
+            -- LCOV_EXCL_STOP
         end if;
 
         ------------------------------------------------------------------------

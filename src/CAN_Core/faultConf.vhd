@@ -425,10 +425,13 @@ begin
         -- pragma translate_off
         if (rising_edge(clk_sys) and now /= 0 fs) then
             if (joined_ctr /= "000" and joined_ctr /= "001" and
-                joined_ctr /= "010" and joined_ctr /= "100") then
+                joined_ctr /= "010" and joined_ctr /= "100")
+            then
+                -- LCOV_EXCL_START
                 report "Error counters commands from Protocol Control to " &
                        "Fault confinemnet corrupt one hot decoding" severity
                         error;
+                -- LCOV_EXCL_STOP
             end if;
         end if;
         -- pragma translate_on

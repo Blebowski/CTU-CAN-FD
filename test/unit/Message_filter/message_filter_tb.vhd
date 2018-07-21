@@ -238,26 +238,33 @@ architecture mess_filt_unit_test of CAN_test is
                 return true;
 
             elsif (filt_res = '0') then -- Is not detected
-                  log("Valid frame not detected", error_l, log_level);
-                  return false;
-
+                -- LCOV_EXCL_START
+                log("Valid frame not detected", error_l, log_level);
+                return false;
+                -- LCOV_EXCL_STOP
             else
-                  log("Filter res undefined", error_l, log_level);
-                  return false;
+                -- LCOV_EXCL_START
+                log("Filter res undefined", error_l, log_level);
+                return false;
+                -- LCOV_EXCL_STOP
             end if;
 
         else
 
             if (filt_res = '1') then   --Is detected
+                -- LCOV_EXCL_START
                 log("Invalid frame but frame detected", error_l, log_level);
                 return false;
+                -- LCOV_EXCL_STOP
 
             elsif (filt_res = '0') then -- Is not detected
                 return true;
 
             else
+                -- LCOV_EXCL_START
                 log("Filter res undefined", error_l, log_level);
                 return false;
+                -- LCOV_EXCL_STOP
             end if;
 
         end if;

@@ -119,7 +119,11 @@ package body tran_delay_feature is
         -- Note, that 2 DFFs sync. chain must be taken into account
         ------------------------------------------------------------------------
         if (delay /= 22) then
+			-- LCOV_EXCL_START
             o.outcome := false;
+			report "Transceiver delay not measured as expected: " &
+				integer'image(delay) severity error;
+			-- LCOV_EXCL_STOP
         end if;
 
   end procedure;

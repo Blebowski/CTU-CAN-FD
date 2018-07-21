@@ -467,29 +467,40 @@ begin
 
         -- Checking the expected and real outputs
         if (int_ena         /= int_ena_exp) then
+            -- LCOV_EXCL_START
             outcome         := false;
             log("Interrupt enable mismatch", error_l, log_level);
+            -- LCOV_EXCL_STOP
         end if;
 
         if (int_mask        /= int_mask_exp) then
+            -- LCOV_EXCL_START
             outcome         := false;
             log("Interrupt mask mismatch", error_l, log_level);
+            -- LCOV_EXCL_STOP
         end if;
 
         if (int_vector      /= int_status_exp) then
+            -- LCOV_EXCL_START
             outcome         := false;
             log("Interrupt vector mismatch", error_l, log_level);
+            -- LCOV_EXCL_STOP
         end if;
 
         if ((exp_output = true  and int_out = '0') or
-            (exp_output = false and int_out = '1')) then
+            (exp_output = false and int_out = '1'))
+        then
+            -- LCOV_EXCL_START
             outcome         := false;
             log("Interrupt output mismatch", error_l, log_level);
+            -- LCOV_EXCL_STOP
         end if;
 
         -- Checking the outputs
         if (outcome = false) then
+            -- LCOV_EXCL_START
             process_error(error_ctr_2, error_beh, exit_imm);
+            -- LCOV_EXCL_STOP
         end if;
 
     end process;

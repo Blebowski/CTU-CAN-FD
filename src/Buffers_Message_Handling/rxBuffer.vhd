@@ -1049,20 +1049,26 @@ begin
         -- pragma translate_off
         if (rising_edge(clk_sys) and now /= 0 fs) then
             if (store_metadata = '1' and rx_fsm /= rxb_idle) then
+            	-- LCOV_EXCL_START
                 report "RX Buffer: Store metadata command did NOT come during " &
-                       "'rx_buf_idle'!"severity error; 
+                       "'rx_buf_idle'!"severity error;
+            	-- LCOV_EXCL_STOP
             end if;
 
             if ((rec_message_valid = '1' or store_data = '1') and
                  rx_fsm /= rxb_store_data)
             then
+            	-- LCOV_EXCL_START
                 report "RX Buffer: Store data or finish storing did NOT come " &
-                        "during 'rec_data'" severity error;             
+                        "during 'rec_data'" severity error; 
+            	-- LCOV_EXCL_STOP            
             end if;
 
             if (sof_pulse = '1' and rx_fsm /= rxb_idle) then
+                -- LCOV_EXCL_START
                 report "RX Buffer: SOF pulse should come during 'rx_fsm_idle'"
                 severity error;
+            	-- LCOV_EXCL_STOP
             end if;
 
             cmd_join := store_metadata & store_data & rec_message_valid &
@@ -1070,8 +1076,10 @@ begin
             if (cmd_join /= "0000" and cmd_join /= "0001" and cmd_join /= "0010"
                 and cmd_join /= "0100" and cmd_join /= "1000")
             then
+                -- LCOV_EXCL_START
                 report "RX Buffer: One-hot coding on RX Buffer commands " &
                         "corrupted!" severity error;
+                -- LCOV_EXCL_STOP
             end if;
         end if;
         -- pragma translate_on
