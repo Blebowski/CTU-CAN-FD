@@ -173,10 +173,6 @@ begin
         enable_prev <= enable;
         dst_bit_ctr <= dst_bit_ctr;
 
-        if ((length = "000" or length = "001") and (enable = '1')) then
-            report "0 and 1 bit stuffing length is invalid" severity warning;
-        end if;
-
         if (enable = '1') then
 
             -- When transition starts prev_val needs to be deleted! Otherwise 
@@ -278,11 +274,27 @@ begin
     end if;
     end process;
 
-  -- Register propagation on output
-  data_out    <= data_in;
-  destuffed   <= destuffed_reg;
-  stuff_Error <= error_reg;
-  dst_ctr     <= dst_bit_ctr;
+
+    ----------------------------------------------------------------------------
+    -- Assertions on input settings
+    ----------------------------------------------------------------------------
+    input_length_assert_proc : process(clk_sys)
+    begin
+        if (rising_edge(clk_sys)) then
+            if ((length = "000" or length = "001") and (enable = '1')) then
+                -- LCOV_EXCL_START
+                report "0 and 1 bit stuffing length is invalid!" severity warning;
+                -- LCOV_EXCL_STOP
+            end if;
+        end if;
+    end process;
+
+
+    -- Register propagation on output
+    data_out    <= data_in;
+    destuffed   <= destuffed_reg;
+    stuff_Error <= error_reg;
+    dst_ctr     <= dst_bit_ctr;
 
 end architecture;
 
