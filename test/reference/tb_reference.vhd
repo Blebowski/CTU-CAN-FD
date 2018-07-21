@@ -144,11 +144,13 @@ architecture CAN_reference_test of CAN_test is
     begin
         readline(input, entry);
 
-	    -- Read CAN Identifier
-		read(entry, flag);
+        -- Read CAN Identifier
+        read(entry, flag);
         read_dummy_chars(entry, 1);
         if (flag /= "CAN") then
+            -- LCOV_EXCL_START
             report "Invalid input config format" severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         -- Frame type
@@ -159,8 +161,10 @@ architecture CAN_reference_test of CAN_test is
         elsif (flag = "FD ") then
             frame.frame_format := FD_CAN;
         else
+            -- LCOV_EXCL_START
             report "Invalid CAN Frame format in Reference test input" severity
                 error;
+            -- LCOV_EXCL_STOP
         end if;
 
         -- Identifier type
@@ -171,8 +175,10 @@ architecture CAN_reference_test of CAN_test is
         elsif (id_type = "EXTENDED") then
             frame.ident_type := EXTENDED;
         else
+            -- LCOV_EXCL_START
             report "Invalid CAN Identifier type in Reference test input" 
                 severity error;
+            -- LCOV_EXCL_STOP
         end if;
 
         -- RTR Flag
@@ -358,9 +364,11 @@ begin
         -- Input files contain 1K frames. It does not have sense to have longer
         -- test!
         if (iterations > 1000) then
+            -- LCOV_EXCL_START
             real_iterations := 1000;
             log("Number of refference test iterations truncated to 1000!",
                 warning_l, log_level);
+            -- LCOV_EXCL_STOP
         else
             real_iterations := iterations;
         end if;
@@ -383,9 +391,11 @@ begin
         -- can quickly move to failing frames!
         ------------------------------------------------------------------------
         if (ITER_PRESET > 0) then
+            -- LCOV_EXCL_START
             for i in 0 to ITER_PRESET loop
                 read_bit_sequence(config_file, TX_frame, bit_sequence, rand_ctr);
             end loop;
+            -- LCOV_EXCL_STOP
         end if;
 
         while (loop_ctr < real_iterations or exit_imm)
@@ -409,7 +419,9 @@ begin
             -- CTU CAN FD
             CAN_compare_frames(TX_frame, RX_frame, false, result);
  
+            -- Print error if frames are not matching!
             if (not result) then
+                -- LCOV_EXCL_START
                 log("Iteration nr: " & integer'image(loop_ctr), info_l, 
                     log_level);
                 log("TX Frame:", info_l, log_level);
@@ -418,6 +430,7 @@ begin
                 CAN_print_frame(RX_frame, log_level);
 				log("TX, RX frames mismatch!", error_l, log_level);
                 process_error(error_ctr, error_beh, exit_imm);
+                -- LCOV_EXCL_STOP
             end if;
 
             loop_ctr <= loop_ctr + 1;
