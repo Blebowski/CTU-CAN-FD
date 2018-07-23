@@ -8421,7 +8421,10 @@ in core_top.vhd
 \end_layout
 
 \begin_layout Description
-Entity canCRC
+Entity 
+\family roman
+\shape italic
+canCRC
 \end_layout
 
 \begin_layout Standard
@@ -8529,7 +8532,10 @@ in core_top.vhd
 \end_layout
 
 \begin_layout Description
-Entity busSync
+Entity 
+\family roman
+\shape italic
+busSync
 \end_layout
 
 \begin_layout Standard
@@ -8637,72 +8643,128 @@ in core_top.vhd
 \end_layout
 
 \begin_layout Description
-Entity prescaler_v3
+Entity 
+\family roman
+\shape italic
+prescaler_v3
 \end_layout
 
 \begin_layout Standard
-Prescaler implements the functionality of bus timing.
- It counts Time quanta and Bit time clock.
- It contains state machine for phase of bit time (Synchronisation, Propagation,
- Phase 1, Phase 2, Reset).
- It generates synchronization signals (and appropriate delayed signals)
- and sample signals (and appropriate delayed signals).
- Synchronization signals (
-\begin_inset Quotes eld
+Prescaler implements functionality of CAN Bus timing and its block diagram
+ is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:prescaler-block-diagram-1"
+plural "false"
+caps "false"
+noprefix "false"
+
 \end_inset
 
-sync_nbt
-\begin_inset Quotes erd
-\end_inset
-
+.
+ Elementary time interval on CAN Bus is Time Quanta.
+ Firstly, appropriate Time Quanta duration (
+\family roman
+\shape italic
+tq_m
+\family default
+\shape default
+) is multiplexed by Sample Control (
+\family roman
+\shape italic
+sp_control
+\family default
+\shape default
+) from Nominal Bit-rate Time Quanta (
+\family roman
+\shape italic
+tq_nbt
+\family default
+\shape default
+) and Data Bit-rate Time Quanta (
+\family roman
+\shape italic
+tq_dbt
+\family default
+\shape default
+).
+ Time quantum is measured via Time Quantum Counter (
+\family roman
+\shape italic
+tq_counter
+\family default
+\shape default
+) and start of new Time Quanta is signalled via 
+\family roman
+\shape italic
+tq_edge
+\family default
+\shape default
+ signal.
+ Additional clock signal output with frequency matching Bit-rate is provided
+ on output (
+\family roman
+\shape italic
+clk_tq_nbt
+\family default
+\shape default
 , 
-\begin_inset Quotes eld
+\family roman
+\shape italic
+clk_tq_dbt
+\family default
+\shape default
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/doc/pics/Visio_generated/Prescaler_Block_Diagram.pdf
+	lyxscale 20
+	scale 70
+
 \end_inset
 
-sync_dbt
-\begin_inset Quotes erd
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Prescaler block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:prescaler-block-diagram-1"
+
 \end_inset
 
-) are used to transmit data (SYNC part of bit).
- Sample signals (
-\begin_inset Quotes eld
+
+\end_layout
+
 \end_inset
 
-sample_nbt
-\begin_inset Quotes erd
+
+\end_layout
+
 \end_inset
 
-, 
-\begin_inset Quotes eld
-\end_inset
 
-sample_dbt
-\begin_inset Quotes erd
-\end_inset
+\end_layout
 
-) are used to sample the bus (between PH1 and PH2).
- Furthermore this module covers the functionality of Hard synchronization
- and Resynchronization (
-\begin_inset Quotes eld
-\end_inset
-
-sync_control
-\begin_inset Quotes erd
-\end_inset
-
- signal).
- Based on 
-\begin_inset Quotes eld
-\end_inset
-
-sample_control
-\begin_inset Quotes erd
-\end_inset
-
- signal Nominal bit time or Data bit time is used\SpecialChar endofsentence
- Bit time FSM state transition
- diagram is Shown in Figure TODO.
- Block diagram of whole Prescaler module is shown in Figure 
+\begin_layout Standard
+Bit time behaviour is controlled by Bit Time FSM whose state transition
+ diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Bit-Time-FSM"
@@ -8712,6 +8774,285 @@ noprefix "false"
 
 \end_inset
 
+.
+ Each segment of can Bit is handled by a separate state (
+\family roman
+\shape italic
+sync
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+prop
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+ph1
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+ph2
+\family default
+\shape default
+).
+ Additional state, which is a substitute for 
+\family roman
+\shape italic
+sync
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+ph1
+\family default
+\shape default
+ and 
+\family roman
+\shape italic
+ph2
+\family default
+\shape default
+ in case of Hard Synchronisation is 
+\family roman
+\shape italic
+h_sync
+\family default
+\shape default
+.
+ Duration of each state is controlled by Bit Time Counter (
+\family roman
+\shape italic
+bt_counter
+\family default
+\shape default
+) which is directly set inside Bit Time FSM.
+ Bit Time Counter is compared with Real duration of Phase 1 and Phase 2
+ registers (
+\family roman
+\shape italic
+ph1_real
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+ph2_real
+\family default
+\shape default
+).
+ These registers are driven by resynchronisation process.
+ Upon start of Bit (in 
+\family roman
+\shape italic
+sync
+\family default
+\shape default
+), both registers are set to its nominal values as configured from SW.
+ If synchronisation edge is signalled (
+\family roman
+\shape italic
+sync_edge
+\family default
+\shape default
+) and Synchronisation type (
+\family roman
+\shape italic
+sync_control
+\family default
+\shape default
+) is set to RESYNC, 
+\family roman
+\shape italic
+ph1_real
+\family default
+\shape default
+ / 
+\family roman
+\shape italic
+ph2_real
+\family default
+\shape default
+ are lengthened / shortened accordingly.
+ If synchronistaion edge is active during 
+\family roman
+\shape italic
+prop
+\family default
+\shape default
+ or 
+\family roman
+\shape italic
+ph1
+\family default
+\shape default
+, positive resynchronisation is signalled (
+\family roman
+\shape italic
+pos_resync_cond
+\family default
+\shape default
+).
+ If synchronisation edge arrives during 
+\family roman
+\shape italic
+ph2
+\family default
+\shape default
+, negatie resynchronisation is signalled (
+\family roman
+\shape italic
+neg_resync_cond
+\family default
+\shape default
+).
+\end_layout
+
+\begin_layout Standard
+Special bits from bit timing point of view are BRS and CRC Delimiter.
+ During these bits, Bit-rate is shifted in sample point.
+ As explained in (TODO and TODO) information processing time is 4 clock
+ cycles due to architecture of Triggerring signals, and it is not possible
+ to determine if bit rate was shifted sooner than 4 clock cycles after sampling
+ the actual bus value! If Nominal Bit-rate was used during these 4 clock
+ cycles, overall length of Ph2 segment would not be correct.
+ To avoid this problem, 
+\family roman
+\shape italic
+ph2
+\family default
+\shape default
+ is always measured with two counters.
+ Bit Time Counter (
+\family roman
+\shape italic
+bt_counter
+\family default
+\shape default
+) is used for bits where bit rate shift did not occur and its validity in
+ 
+\family roman
+\shape italic
+ph2
+\family default
+\shape default
+ -> 
+\family roman
+\shape italic
+sync
+\family default
+\shape default
+ transition is selected by 
+\family roman
+\shape italic
+use_default_ctr
+\family default
+\shape default
+ signal.
+ If Bit-rate shift ocurred, Special Bit Counter (
+\family roman
+\shape italic
+bt_counter_sw
+\family default
+\shape default
+) is used.
+ This counter is preset to value of PH2 * BRP (
+\family roman
+\shape italic
+ph2_extra
+\family default
+\shape default
+), thus counting in clock cycles instead of Time Quanta.
+ To detect change of Bit-rate, Sample Control signal is stored upon transtion
+ to 
+\family roman
+\shape italic
+ph2
+\family default
+\shape default
+ in 
+\family roman
+\shape italic
+sp_control_stored
+\family default
+\shape default
+.
+ Upon mismatch between actual Bit-rate type (
+\family roman
+\shape italic
+sp_control
+\family default
+\shape default
+) and stored Bit-rate (
+\family roman
+\shape italic
+sp_control_stored
+\family default
+\shape default
+), usage of extra counter is selected (
+\family roman
+\shape italic
+use_spec_counter
+\family default
+\shape default
+).
+ Since during Bit-rate shift resynchronisation also needs to be performed
+ (extra counter is used, 
+\family roman
+\shape italic
+ph2_real
+\family default
+\shape default
+ is not used and extra counter is counting till 0), 
+\family roman
+\shape italic
+brs_resync
+\family default
+\shape default
+ signal is used.
+ If resynchronisation edge occurs during ph2, 
+\family roman
+\shape italic
+brs_resync
+\family default
+\shape default
+ is set.
+ Upon nearest Time Quanta actual bit is terminated as if PH2 was shortened.
+\end_layout
+
+\begin_layout Standard
+As explained in TODO and TODO, Information processing time of CTU CAN FD
+ is 4 clock cycles.
+ It is not possible to decrease duration of ph2 to less than 4 clock cycles.
+ There is no guarantee that resynchronisation edge (
+\family roman
+\shape italic
+sync_edge
+\family default
+\shape default
+), will no occur in less than 4 clock cycles after sample point.
+ To make sure that ph2 will no be shortened to less than 4 clock cycles,
+ additional counter is used (
+\family roman
+\shape italic
+ipt_counter
+\family default
+\shape default
+).
+ This counter is set to 3 upon each transition to ph2.
+ Counter is decremented each clock cycle, and ph2 is not allowed to exit
+ until it reaches zero.
+ This fact is signalled by 
+\family roman
+\shape italic
+ipt_ok
+\family default
+\shape default
 .
 \end_layout
 
@@ -9022,7 +9363,10 @@ in CAN_top_level.vhd
 \end_layout
 
 \begin_layout Description
-Entity rxBuffer
+Entity 
+\family roman
+\shape italic
+rxBuffer
 \end_layout
 
 \begin_layout Standard
@@ -9684,7 +10028,10 @@ in CAN_top_level.vhd
 \end_layout
 
 \begin_layout Description
-Entity txtBuffer
+Entity 
+\family roman
+\shape italic
+txtBuffer
 \end_layout
 
 \begin_layout Standard
@@ -11219,6 +11566,70 @@ name "fig:Max_bitrate-1"
 
 \begin_layout Section
 2.6 Node restart after Bus-off
+\end_layout
+
+\begin_layout Standard
+CAN FD standard defines that CAN Node shall wait for 128 ocurrences of 11
+ consecutive bits after transfer to Bus off, before going to Error Active
+ again.
+ Since SW can manipulate Error counters of CTU CAN FD, it is possible to
+ force Fault Confinement state to become Error Active without satisfying
+ this condition.
+ Two ways of restarting error counters must be distinguished:
+\end_layout
+
+\begin_layout Standard
+1.
+ Reset error counters via TODO register.
+ This approach is 
+\series bold
+not
+\series default
+ conformant to CAN standard.
+\end_layout
+
+\begin_layout Standard
+2.
+ Give Reset Error Counters command via TODO register.
+ SW using this approach is conformant to CAN standard.
+\end_layout
+
+\begin_layout Section
+2.6 Special features summary
+\end_layout
+
+\begin_layout Standard
+CTU CAN FD contains following features which are not required by CAN FD
+ standard:
+\end_layout
+
+\begin_layout Enumerate
+Manipulation of TX, RX Error counters and thus affect Fault Confinement
+ state.
+\end_layout
+
+\begin_layout Enumerate
+Time triggered transmission from TX Buffer.
+\end_layout
+
+\begin_layout Enumerate
+Reception of RX Frame Timestamp in SOF or EOF.
+\end_layout
+
+\begin_layout Enumerate
+Chance to immediately abort transmission
+\end_layout
+
+\begin_layout Enumerate
+Logging events on CAN Bus via Event Logger.
+\end_layout
+
+\begin_layout Enumerate
+Transmission of special RTR frame with non-zero DLC (reffer to TODO).
+\end_layout
+
+\begin_layout Enumerate
+Extra error counters to distinguish between errors in Nominal and Data Bit-Rate.
 \end_layout
 
 \begin_layout Standard
