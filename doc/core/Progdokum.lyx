@@ -585,7 +585,7 @@ stuff bit
 Note that block diagrams within the documentation does not contain exact
  names of signals or FSM States.
  Most of the pictures are ilustrational and exact name of VHDL signal is
- explained in the text.
+ appended in the text.
 \end_layout
 
 \begin_layout Chapter
@@ -2344,7 +2344,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Timing_diagrams/PDFs/Avalon_write.pdf
 	lyxscale 20
-	scale 68
+	scale 70
 
 \end_inset
 
@@ -2388,7 +2388,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Timing_diagrams/PDFs/Avalon_read.pdf
 	lyxscale 20
-	scale 68
+	scale 70
 
 \end_inset
 
@@ -2429,7 +2429,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Timing_diagrams/PDFs/Avalon_write_burst.pdf
 	lyxscale 20
-	scale 68
+	scale 70
 
 \end_inset
 
@@ -2473,7 +2473,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Timing_diagrams/PDFs/Avalon_read_burst.pdf
 	lyxscale 20
-	scale 76
+	scale 80
 
 \end_inset
 
@@ -3445,7 +3445,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Timing_diagrams/PDFs/APB_write.pdf
 	lyxscale 20
-	scale 68
+	scale 70
 
 \end_inset
 
@@ -3489,7 +3489,7 @@ status open
 \begin_inset Graphics
 	filename ../pics/Timing_diagrams/PDFs/APB_read.pdf
 	lyxscale 20
-	scale 68
+	scale 70
 
 \end_inset
 
@@ -5031,7 +5031,7 @@ status open
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="7cm">
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5040,7 +5040,7 @@ Name
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5049,7 +5049,7 @@ Width
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5058,7 +5058,7 @@ Direction
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5067,7 +5067,7 @@ Type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7692,13 +7692,6 @@ interframe
 .
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
 \begin_layout Subsubsection
 2.5.1.2 Operation control
 \end_layout
@@ -8516,7 +8509,7 @@ crc21
 \end_layout
 
 \begin_layout Subsection
-2.5.2 CAN bus sampling
+2.5.2 Bus Sampling
 \end_layout
 
 \begin_layout Description
@@ -8528,7 +8521,7 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in CAN_top_level.vhd
 \end_layout
 
 \begin_layout Description
@@ -8539,84 +8532,397 @@ busSync
 \end_layout
 
 \begin_layout Standard
-\noindent
-CAN bus sampling circuit samples the CAN bus in the sample point.
- Optional (recommended) synchronization chain with two flip-flops is used
- to avoid metastability since 
-\begin_inset Quotes eld
-\end_inset
-
-can_rx
-\begin_inset Quotes erd
-\end_inset
-
- signal is input from CAN physical layer transceiver (asynchronous signal
- from outside of FPGA/ASIC).
- The bus is sampled with sample signal from Prescaler (
-\begin_inset Quotes eld
-\end_inset
-
-sample_nbt
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-sample_dbt
-\begin_inset Quotes erd
-\end_inset
-
+Bus Sampling module samples value of CAN Bus (
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+) in Sample point of Bit Time.
+ CAN Bus is optionally synchronized via two flip-flop Synchronisation chain.
+ Usage of this synchronisation chain is configurable via 
+\family roman
+\shape italic
+use_sync
+\family default
+\shape default
+ generic.
+ It is recommended to use this synchronisation chain, unless synthesizer
+ inserts synchronisation chain automatically! Synchronised data (
+\family roman
+\shape italic
+sync_data
+\family default
+\shape default
+) can be optionally evaluated via Tripple Sampling circuit.
+ Tripple sampling contains 3 bits long shift register (
+\family roman
+\shape italic
+trs_reg
+\family default
+\shape default
 ).
- Type of sampling is set by 
-\begin_inset Quotes eld
-\end_inset
-
+ Majority of 3 decoder (
+\family roman
+\shape italic
+trs_majority
+\family default
+\shape default
+) is used to pick final sampled value.
+ Usage of Tripple Sampling is configurable from User Registers by 
+\family roman
+\shape italic
+drv_sam
+\family default
+\shape default
+ signal.
+ Data are sampled in Sample Point via Sample Trigger (RX) (reffer to TODO).
+ Sample Trigger is multiplexed between Nominal (
+\family roman
+\shape italic
+sample_nbt
+\family default
+\shape default
+), Data (
+\family roman
+\shape italic
+sample_dbt
+\family default
+\shape default
+) and Secondary (
+\family roman
+\shape italic
+sample_sec
+\family default
+\shape default
+) Triggers by Sample Control (
+\family roman
+\shape italic
 sp_control
-\begin_inset Quotes erd
+\family default
+\shape default
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Bus_sampling_block_diagram.pdf
+	lyxscale 20
+	scale 70
+
 \end_inset
 
- input.
- 
-\begin_inset Quotes eld
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bus sampling block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:bus-sampling-block-diagram-1-1"
+
 \end_inset
 
-Sync_edge
-\begin_inset Quotes erd
+
+\end_layout
+
 \end_inset
 
- output signals that valid (recessive to dominant) edge has appeared on
- 
-\begin_inset Quotes eld
+
+\end_layout
+
 \end_inset
 
-can_rx
-\begin_inset Quotes erd
-\end_inset
 
- input.
- Furthermore, transceiver delay measurement, and secondary sampling point
- generation are implemented in this module via two shift registers and counter.
- Transceiver delay measurement is started by 
-\begin_inset Quotes eld
-\end_inset
+\end_layout
 
+\begin_layout Standard
+To signal presence of valid Synchronisation Edge, Edge Detection Process
+ (
+\family roman
+\shape italic
+edge_proc
+\family default
+\shape default
+) is used.
+ Edge Detection Process is comparing bus value sampled in previous Sample
+ Point (
+\family roman
+\shape italic
+prev_sample
+\family default
+\shape default
+) with actual value on CAN Bus (
+\family roman
+\shape italic
+sync_Data
+\family default
+\shape default
+).
+ Upon detection of Recessive to Dominant transition Synchronisation Edge
+ is detected (
+\family roman
+\shape italic
+edge_rx_valid
+\family default
+\shape default
+).
+ Transceiver Delay Measurement is started upon command from Protocol Control
+ (
+\family roman
+\shape italic
+trv_delay_calib
+\family default
+\shape default
+) and 
+\family roman
+\shape italic
+trv_running
+\family default
+\shape default
+ is set.
+ When nearest edge on TX Data occurs (
+\family roman
+\shape italic
+edge_tx_valid
+\family default
+\shape default
+), Transceiver Delay Counter (
+\family roman
+\shape italic
 trv_delay
-\begin_inset Quotes erd
+\family default
+\shape default
+) is erased.
+ Each clock cycle Transceiver Delay Counter is incremented by 1.
+ Measurement is stoped when an edge (the same edge that erased the counter
+ on TX Data) ocurrs on RX Data (
+\family roman
+\shape italic
+edge_rx_valid
+\family default
+\shape default
+).
+ After such a measurement, 
+\family roman
+\shape italic
+trv_delay
+\family default
+\shape default
+ contains number of clock cycles it took to propagate Recessive to Dominant
+ Edge from TX pin to RX pin.
+ This measurement is started in sample point of EDL bit of CAN FD Frame,
+ thus edge type (Recessive to Dominant) is guaranteed.
+\end_layout
+
+\begin_layout Standard
+CAN FD transceiver needs to detect Bit Errors when RX Data are not matching
+ TX Data.
+ In Nominal Bit time, this does not cause any problems.
+ Simply Sampled RX pin is compared with value of TX Data.
+ In Data Bit-Rate this is not possible, since value of RX pin in Sample
+ point might not yet be the same due to Transceiver Delay from TX to RX
+ pin! To implement Bit Error detection in Data Bit-Rate, TX Data are delayed
+ via Shift Register (
+\family roman
+\shape italic
+ssp_shift
+\family default
+\shape default
+) and delayed version of TX Data is compared with RX Data.
+ Note that after 
+\family roman
+\shape italic
+trv_delay
+\family default
+\shape default
+, TX Data value will propagate to RX Data and thus it is possible to address
+ data in Delayed TX Data Shift Register via 
+\family roman
+\shape italic
+trv_delay
+\family default
+\shape default
+ signal.
+ To sample the delayed version of TX Data properly, another shift register
+ (
+\family roman
+\shape italic
+sample_sec
+\family default
+\shape default
+) for Data Bit-Rate Sample Triggers is used.
+ Sample Triggers are feeded to this Shift Register and delayed version creates
+ Secondary Sample Trigger (
+\family roman
+\shape italic
+sample_sec
+\family default
+\shape default
+) upon which Bit Error (
+\family roman
+\shape italic
+bit_Error_reg
+\family default
+\shape default
+) is evaluated.
+\end_layout
+
+\begin_layout Subsection
+2.5.8 Interrupt manager
+\end_layout
+
+\begin_layout Description
+File intManager.vhd
+\end_layout
+
+\begin_layout Description
+Used
+\begin_inset space ~
 \end_inset
 
- calib signal.
- First shift register is dedicated to storing transmitted data to compare
- it with delayed received data (bit error detection for the transmitter
- in Data bit time).
- The second shift register stores sample points generated by Prescaler thus
- providing secondary sampling point.
- Additionally, this circuit implements tripple sampling by 3 registers long
- shift register.
- A majority of 3 decoder is used with tripple sampling.
- Tripple sampling is optional and can be configured via Driving bus.
- Diagram of this module is shown in Figure TODO.
+in CAN_top_level.vhd
+\end_layout
+
+\begin_layout Description
+Entity 
+\family roman
+\shape italic
+intManager
+\end_layout
+
+\begin_layout Standard
+Interrupt manager provides interrupt via 
+\family roman
+\shape italic
+int
+\family default
+\shape default
+ / 
+\family roman
+\shape italic
+irq
+\family default
+\shape default
+ output of CTU CAN FD IP Core.
+ Interrupts are configurable from memory registers via Driving Bus.
+ Interrupts manager captures interrupt on events (
+\family roman
+\shape italic
+int_input_active
+\family default
+\shape default
+) in CAN Core into DQ Flip-Flop 
+\family roman
+\shape italic
+int_vect_reg
+\family default
+\shape default
+.
+ Events are captured only if particular interrupt is un-masked (
+\family roman
+\shape italic
+int_mask_reg(i) = '0'
+\family default
+\shape default
+).
+ Interrupt manager generates 
+\family roman
+\shape italic
+int
+\family default
+\shape default
+ / 
+\family roman
+\shape italic
+irq
+\family default
+\shape default
+ output by logic OR function between all elements of interrupt vector.
+ To allow generation of Inerrupt by active bit in 
+\family roman
+\shape italic
+int_vect_reg
+\family default
+\shape default
+, interrupt must be enabled (
+\family roman
+\shape italic
+int_ena_reg
+\family default
+\shape default
+).
+ Interrupt output is deactivated (logic 0) as soon as the Interrupt Status
+ is cleared.
+ Structure of Interrupt registers is selected to achieve accesibility from
+ multiple threads / processes under OS, without necessity of using locking
+ mechanisms such as mutexes or semaphores.
+ Interrupt structure is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:INT-manager-block-1-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Interrupt_Block_diagram.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Interrupt Manager block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:INT-manager-block-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8639,7 +8945,7 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in CAN_top_level.vhd
 \end_layout
 
 \begin_layout Description
@@ -10356,6 +10662,45 @@ name "fig:TXT_Buffer-FSM"
 
 \end_layout
 
+\begin_layout Subsection
+2.5.9 Memory registers
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:2.5.9-Memory-registers"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Description
+File canfd_registers.vhd
+\end_layout
+
+\begin_layout Description
+Used
+\begin_inset space ~
+\end_inset
+
+in CAN_top_level.vhd
+\end_layout
+
+\begin_layout Description
+Entity 
+\family roman
+\shape italic
+canfd_registers
+\end_layout
+
+\begin_layout Standard
+Memory Registers provide the interface between SoC Memory Bus (Avalon or
+ APB) and all control and Status signals of CTU CAN FD IP function.
+ Address decoder for access to TXT Buffers is implemented in this module.
+ Driving bus assignments are implemented in this module.
+ Register structure is in described in Chapter 3 TODOREF.
+ Frame Format in TXT Buffers and RX Buffer is described in Chapter 4 TODOREF.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
@@ -10803,204 +11148,6 @@ name "fig:TX_Arbitrator-FSM-1"
 \end_layout
 
 \begin_layout Subsection
-2.5.8 Interrupt manager
-\end_layout
-
-\begin_layout Description
-File intManager.vhd
-\end_layout
-
-\begin_layout Description
-Used
-\begin_inset space ~
-\end_inset
-
-in CAN_top_level.vhd
-\end_layout
-
-\begin_layout Description
-Entity 
-\family roman
-\shape italic
-intManager
-\end_layout
-
-\begin_layout Standard
-Interrupt manager provides interrupt via 
-\family roman
-\shape italic
-int
-\family default
-\shape default
- / 
-\family roman
-\shape italic
-irq
-\family default
-\shape default
- output of CTU CAN FD IP Core.
- Interrupts are configurable from memory registers via Driving Bus.
- Interrupts manager captures interrupt on events (
-\family roman
-\shape italic
-int_input_active
-\family default
-\shape default
-) in CAN Core into DQ Flip-Flop 
-\family roman
-\shape italic
-int_vect_reg
-\family default
-\shape default
-.
- Events are captured only if particular interrupt is un-masked (
-\family roman
-\shape italic
-int_mask_reg(i) = '0'
-\family default
-\shape default
-).
- Interrupt manager generates 
-\family roman
-\shape italic
-int
-\family default
-\shape default
- / 
-\family roman
-\shape italic
-irq
-\family default
-\shape default
- output by logic OR function between all elements of interrupt vector.
- To allow generation of Inerrupt by active bit in 
-\family roman
-\shape italic
-int_vect_reg
-\family default
-\shape default
-, interrupt must be enabled (
-\family roman
-\shape italic
-int_ena_reg
-\family default
-\shape default
-).
- Interrupt output is deactivated (logic 0) as soon as the Interrupt Status
- is cleared.
- Structure of Interrupt registers is selected to achieve accesibility from
- multiple threads / processes under OS, without necessity of using locking
- mechanisms such as mutexes or semaphores.
- Interrupt structure is shown in Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:INT-manager-block-1-1"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Visio_generated/Interrupt_Block_diagram.pdf
-	lyxscale 20
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Interrupt Manager block diagram
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:INT-manager-block-1-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-2.5.9 Memory registers
-\begin_inset CommandInset label
-LatexCommand label
-name "subsec:2.5.9-Memory-registers"
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Description
-File canfd_registers.vhd
-\end_layout
-
-\begin_layout Description
-Used
-\begin_inset space ~
-\end_inset
-
-in CAN_top_level.vhd
-\end_layout
-
-\begin_layout Description
-Entity 
-\family roman
-\shape italic
-canfd_registers
-\end_layout
-
-\begin_layout Standard
-Memory Registers provide the interface between SoC Memory Bus (Avalon or
- APB) and all control and Status signals of CTU CAN FD IP function.
- Address decoder for access to TXT Buffers is implemented in this module.
- Driving bus assignments are implemented in this module.
- Register structure is in described in Chapter 3 TODOREF.
- Frame Format in TXT Buffers and RX Buffer is described in Chapter 4 TODOREF.
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
 2.5.10 Event logger (optional) 
 \begin_inset CommandInset label
 LatexCommand label
@@ -11121,6 +11268,50 @@ reference "fig:Event_logger"
 \end_inset
 
 .
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Event_Logger_Block_diagram.pdf
+	lyxscale 20
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Event Logger block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:TX-arbitrator-block-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11560,8 +11751,251 @@ name "fig:Max_bitrate-1"
 2.6 Error detection architecture
 \end_layout
 
-\begin_layout Section
-2.6 TXT Buffer hazard resolution
+\begin_layout Standard
+This section describes how each type of Error on CAN Bus is handled in CTU
+ CAN FD:
+\end_layout
+
+\begin_layout Subsection
+Bit Error
+\end_layout
+
+\begin_layout Standard
+Bit Error detection in CTU CAN FD is detected in several ways according
+ to part of Frame where it might occur:
+\end_layout
+
+\begin_layout Itemize
+In SOF field (
+\family roman
+\shape italic
+PC_State = sof
+\family default
+\shape default
+), Bit Error is detected explicitly in Protocol Control.
+ Upon Sampling Recessive bit Protocol Control is updated to 
+\family roman
+\shape italic
+error
+\family default
+\shape default
+, thus causing transmission of Error Frame.
+\end_layout
+
+\begin_layout Itemize
+In Arbitration, Bit Error is considered only when Dominant is sent and Recessive
+ is Received.
+ This case is handled directly in 
+\family roman
+\shape italic
+arbitration
+\family default
+\shape default
+ state and Protocol Control is updated to 
+\family roman
+\shape italic
+error
+\family default
+\shape default
+.
+\end_layout
+
+\begin_layout Itemize
+In Control, Data, CRC fields bit Error is detected by Bus Sampling module
+ on 
+\family roman
+\shape italic
+bit_Error
+\family default
+\shape default
+ output.
+ This module continously compares Data sent with TX Trigger and Sampled
+ with RX Trigger.
+ Bit Error output is validated by Fault Confinement module, which checks
+ actual value of Protocol Control FSM and sets 
+\family roman
+\shape italic
+bit_Error_valid
+\family default
+\shape default
+ output.
+ If 
+\family roman
+\shape italic
+bit_Error_valid
+\family default
+\shape default
+ is detected in any state of Protocol Control, it is updated to 
+\family roman
+\shape italic
+error
+\family default
+\shape default
+.
+\end_layout
+
+\begin_layout Itemize
+In CRC Delimiter and Acknowledge Delimiter, Bit Error is detected by Protocol
+ Control itself by explicitly checking sampled RX value to be Recessive.
+ In case of Dominant Bit, Protocol Control is updated to 
+\family roman
+\shape italic
+error
+\family default
+\shape default
+.
+\end_layout
+
+\begin_layout Itemize
+In EOF, detection of any Dominant Bit is evaluated as presence of Error
+ Flag and Protocol Control is updated to 
+\family roman
+\shape italic
+error
+\family default
+\shape default
+.
+\end_layout
+
+\begin_layout Itemize
+During Error and Overload Frames of Protocol Control, Bit Errors are handled
+ in 
+\family roman
+\shape italic
+error
+\family default
+\shape default
+ and 
+\family roman
+\shape italic
+overload
+\family default
+\shape default
+ states explicitly.
+ Upon detection of Recessive Bit during Active Error Flag, Error Counters
+ are increased accordingly.
+ Upon detection of 14 consecutive Dominant Bits during Error Flag superposition,
+ Error counters are incremented accordingly.
+\end_layout
+
+\begin_layout Subsection
+Stuff Error
+\end_layout
+
+\begin_layout Standard
+Stuff Error is detected for Normal Bit Stuffing as well as Fixed Bit Stuffing
+ by Bit Destuffing module and signalled via 
+\family roman
+\shape italic
+stuff_Error
+\family default
+\shape default
+ output.
+ Stuff Error is enabled in SOF, Arbitration, Control, Data and CRC fields
+ of CAN FD Frame.
+ Note that CAN FD Standard proposes that an error in Fixed bit Stuffing
+ method shall be interpreted as Form Error instead of Stuff Error.
+ CTU CAN FD detects this error as Stuff Error due to shared 
+\family roman
+\shape italic
+stuff_Error
+\family default
+\shape default
+ output.
+\end_layout
+
+\begin_layout Subsection
+Form Error
+\end_layout
+
+\begin_layout Standard
+Form Error is detected by Protocol Control FSM and marked in 
+\family roman
+\shape italic
+form_Error_r
+\family default
+\shape default
+ in following cases:
+\end_layout
+
+\begin_layout Itemize
+if r0 bit is received as Recessive.
+\end_layout
+
+\begin_layout Itemize
+if r1 bit is received as Recessive in CAN 2.0 Frames with Extended Identifier.
+ For other frame, types r1 is part of Arbitration Field and detection of
+ its Illegal value is covered by Bit Error detection.
+\end_layout
+
+\begin_layout Itemize
+If support for CAN FD is disabled via TODOREG and EDL bit is detected Recessive!
+\end_layout
+
+\begin_layout Itemize
+If CRC Delimiter is received as Recessive or ACK Delimiter is received as
+ Recessive.
+\end_layout
+
+\begin_layout Subsection
+ACK Error
+\end_layout
+
+\begin_layout Standard
+ACK Error is detected when Recessive value is Detected in ACK Slot.
+ This Error is detected by Protocol Control FSM.
+\end_layout
+
+\begin_layout Subsection
+CRC Error
+\end_layout
+
+\begin_layout Standard
+CRC Error is detected by Protocol Control FSM and it occurs upon mismatch
+ between received CRC (
+\family roman
+\shape italic
+rec_crc_r
+\family default
+\shape default
+) and calculated CRC (
+\family roman
+\shape italic
+crc15
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc17
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc21
+\family default
+\shape default
+).
+ Mismatch is combinationally evaluated in 
+\family roman
+\shape italic
+crc_and_parity_valid
+\family default
+\shape default
+ and it is compared in the first clock cycle of 
+\family roman
+\shape italic
+delim_ack state
+\family default
+\shape default
+ of Protocol Control and stored in 
+\family roman
+\shape italic
+crc_check
+\family default
+\shape default
+.
 \end_layout
 
 \begin_layout Section
@@ -11590,7 +12024,20 @@ not
 
 \begin_layout Standard
 2.
- Give Reset Error Counters command via TODO register.
+ Give Reset Error Counters command via 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[COMMAND]{COMMAND[ERCRST]}
+\end_layout
+
+\end_inset
+
+ register.
  SW using this approach is conformant to CAN standard.
 \end_layout
 
@@ -11630,6 +12077,250 @@ Transmission of special RTR frame with non-zero DLC (reffer to TODO).
 
 \begin_layout Enumerate
 Extra error counters to distinguish between errors in Nominal and Data Bit-Rate.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+2.6 TX Datapath hazard protection
+\end_layout
+
+\begin_layout Standard
+Architecture of TXT Buffer and TX Arbitrator might invoke suspicion of control
+ hazard susceptibility.
+ This section explains why control hazards will never occur on TXT Buffers
+ and TX Arbitrator.
+ Architecture of Logic signals is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:TX-DataPath-Logic"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+TXT Buffer FSM is manipulated via SW commands and HW Commands simultaneously.
+ HW Commands have higher priority (see source code of TXT Buffer).
+ HW Commands for locking TXT Buffer (
+\family roman
+\shape italic
+txt_hw_cmd.lock
+\family default
+\shape default
+), will occur only when 
+\family roman
+\shape italic
+tran_frame_valid_in
+\family default
+\shape default
+ is signalled by TX Arbitrator to Protocol Control (TODOREF).
+ Valid TX Frame is signalled by TX Arbitrator if at least one TXT Buffer
+ is in Ready state (
+\family roman
+\shape italic
+txt_ready
+\family default
+\shape default
+), and Frame Transmitt Timestamp has elapsed.
+ If a frame is valid for transmission (
+\family roman
+\shape italic
+tran_frame_valid
+\family default
+\shape default
+) and Set Abort (
+\family roman
+\shape italic
+txt_sw_cmd.set_abt
+\family default
+\shape default
+) SW command is active in the same clock cycle as HW Command for locking
+ the TXT Buffer, hazard would not occur due to direct combinational path
+ between Set Abort SW Command and 
+\family roman
+\shape italic
+tran_frame_valid
+\family default
+\shape default
+.
+ Thus, if TXT Buffer is ready, and Set Abort SW Command is activated, 
+\family roman
+\shape italic
+tran_frame_valid
+\family default
+\shape default
+ is deactivated combinationally and Lock command will never be Activated
+ by Protocol Control.
+\end_layout
+
+\begin_layout Standard
+Hazard would occur if red combinational path in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:TX-DataPath-Logic"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ was missing.
+ Consider Following sequence of actions:
+\end_layout
+
+\begin_layout Enumerate
+Set Abort SW Command is activated by SW in clock cycle N.
+\end_layout
+
+\begin_layout Enumerate
+Due to missing red combinational path in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:TX-DataPath-Logic"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\family roman
+\shape italic
+tran_frame_valid_in
+\family default
+\shape default
+ is still active in this clock cycle.
+\end_layout
+
+\begin_layout Enumerate
+Upon Rising edge in clock cycle N + 1, TXT Buffer Lock Command is set by
+ Protocol Control (
+\family roman
+\shape italic
+tran_frame_valid_in
+\family default
+\shape default
+ was active).
+ Since Set Abort Command was active in clock cycle N, and no HW Command
+ was active in this clock cycle, TXT Buffer is moved to Aborted State (
+\family roman
+\shape italic
+txt_aborted
+\family default
+\shape default
+, in this state RAM of TXT Buffer is accessible from SW).
+ TX Arbitrator FSM recognized TXT Buffer Lock command and moved to 
+\family roman
+\shape italic
+arb_locked
+\family default
+\shape default
+ state.
+\end_layout
+
+\begin_layout Enumerate
+Now Protocol Control has Locked TX Arbitrator and starts Transmission from
+ TXT Buffer.
+ However TXT Buffer is in Aborted state, and user can directly manipulate
+ its content at the same time as Protocol Control is transmitting from the
+ Buffer.
+ TXT Buffer is in Aborted State, but Transmission is in progress from the
+ Buffer, since 
+\family roman
+\shape italic
+tran_frame_valid
+\family default
+\shape default
+ was deactivated with one clock cycle delay due to missing red combinational
+ path in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:TX-DataPath-Logic"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Hazard_prevention_logic.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Datapath Logic
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:TX-DataPath-Logic"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The above mentioned steps clearly demostrate necesity to have combinational
+ path between Set Abort SW command, Valid TXT Frame and TXT Buffer Lock
+ Command on the output of Protocol Control.
+ If pipelines were inserted (e.g on output of Priority Decoder), full handshake
+ mechanism would need to be created to avoid control hazards.
+ Note that other commands such as Set Ready (txt_sw_cmd.set_rdy) or Set Empty
+ (txt_sw_cmd.set_ety) will never cause hazards, since TXT Buffer is never
+ marked as ready when one of these commands occurs.
+ Thus Protocol Control will never issue Lock Command on TXT Buffer which
+ is not in Ready state.
+\end_layout
+
+\begin_layout Standard
+Logic architecture described in this section contains fairly long combinational
+ paths from TXT Buffer Priorities registers and SW Command registers in
+ Memory Registers Module through TX Arbitrator FSM Logic up to TXT Buffer
+ Lock Command.
+ It is no surprise that during synthesis these paths are the most critical
+ paths which limit maximal frequency of operation.
+ Optimizations of this architecture are not planned at the moment, since
+ CTU CAN FD reaches over 100 MHz maximal frequency even with this architecture.
 \end_layout
 
 \begin_layout Standard
