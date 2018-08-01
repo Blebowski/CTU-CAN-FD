@@ -871,13 +871,13 @@ thispagestyle{fancy}
 \begin_layout Standard
 This document describes CTU CAN FD IP Core originally developed at Department
  of Measurement at Faculty of Electrical Engineering at Czech Technical
- University for purpose of testing CAN Bus.
- The core supports ISO as well as NON-ISO variants of CAN FD protocol.
- The core contains own test framework and extensive set of RTL tests.
+ University for the purpose of testing CAN Bus.
+ The core supports ISO as well as NON-ISO variants of the CAN FD protocol.
+ The core contains its own test framework and an extensive set of RTL tests.
  Low-level C driver with OS/CPU independent driver and Socket CAN Linux
  driver are available.
  Project contains several scripts for design automation and CAN testing
- purposes such as IP - XACT register map generator or KvaAlt (Kvaser / Altera)
+ purposes such as IP-XACT register map generator or KvaAlt (Kvaser / Altera)
  Logger.
 \end_layout
 
@@ -886,7 +886,8 @@ Functionality requirements
 \end_layout
 
 \begin_layout Standard
-The implementation of CTU CAN FD was driven by following design requirements:
+The implementation of CTU CAN FD was driven by the following design requirements:
+ts:
 \end_layout
 
 \begin_layout Enumerate
@@ -899,7 +900,7 @@ literal "true"
 \end_inset
 
  and implement CAN FD ISO protocol.
- ISO or Non-ISO protocol can be switched by a configuration bit in a register
+ ISO or Non-ISO protocol can be switched by a configuration bit in a register.
 \end_layout
 
 \begin_layout Enumerate
@@ -929,7 +930,7 @@ After a frame is inserted with specified transmission time, provide information
 \end_layout
 
 \begin_layout Enumerate
-Be able, to trigger event recording (point 4) by a specific event on CAN
+Be able to trigger event recording (point 4) by a specific event on CAN
 \end_layout
 
 \begin_layout Enumerate
@@ -1083,8 +1084,8 @@ Design automation
 To simplify development of CTU CAN FD IP core, achieve scalability and maintaina
 bility of the design, part of CTU CAN FD Core is auto-generated.
  Register map is implemented in Kactus 2 in IP-XACT format.
- The design in IP–XACT format is considered to be an unified specification
- of user–interface.
+ The design in IP-XACT format is considered to be an unified specification
+ of user-interface.
  Following design resources are generated from IP-XACT specification:
 \end_layout
 
@@ -1267,14 +1268,14 @@ std_logic_unsigned
 \begin_layout Standard
 Each module has a unique function and number of dependencies between modules
  is minimal, which allows modularity and flexibility.
- CAN FD IP core is a memory mapped periphery and it can be embedded to custom
+ CAN FD IP core is a memory mapped peripheral and it can be embedded into custom
  SoC on FPGA or ASIC.
  The code itself is vendor independent, requiring 
 \series bold
 no vendor specific libraries
 \series default
  or other IP cores.
- CTU CAN FD has single Slave memory interface.
+ CTU CAN FD has a single Slave memory interface.
 \end_layout
 
 \begin_layout Section
@@ -4587,9 +4588,9 @@ asynchronous reset
 at least two clock cycles
 \series default
  must elapse before the core is accessed.
- If this condition is corrupted, Avalon write access will have no effect
- and Avalon read will return zero values.
- On APB access will insert wait state via 
+ If this condition is not met, Avalon write access will have no effect and
+ Avalon read will return zero values.
+ On APB, access will insert wait state via 
 \family roman
 \shape italic
 s_apb_pready
