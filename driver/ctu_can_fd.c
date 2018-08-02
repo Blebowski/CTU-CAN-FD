@@ -369,11 +369,14 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 	struct can_frame *cf;
 	struct sk_buff *skb;
 	struct can_berr_counter berr;
-	netdev_info(ndev, "ctucan_err_interrupt: ISR = 0x%08x", isr.u32);
+
+	ctu_can_fd_read_err_ctrs(&priv->p, &berr);
+
+	netdev_info(ndev, "ctucan_err_interrupt: ISR = 0x%08x, rxerr %d, txerr %d",
+			isr.u32, berr.rxerr, berr.txerr);
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	ctu_can_fd_read_err_ctrs(&priv->p, &berr);
 	/*
 	 * EWI: error warning
 	 * DOI: RX overrun
@@ -403,10 +406,14 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 				cf->data[6] = berr.txerr;
 				cf->data[7] = berr.rxerr;
 			}
+		} else if (state == CAN_STATE_ERROR_WARNING) {
+			netdev_warn(ndev, "    error_warning, but ISR[EPI] was set! (HW bug?)");
+			goto err_warning;
 		} else {
 			netdev_warn(ndev, "    unhandled error state!");
 		}
 	} else if (isr.s.ei) {
+err_warning:
 		/* error warning */
 		priv->can.state = CAN_STATE_ERROR_WARNING;
 		priv->can.can_stats.error_warning++;
