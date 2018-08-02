@@ -1,31 +1,31 @@
 /*******************************************************************************
- * 
+ *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
- * 
- * Project advisors and co-authors: 
+ *
+ * Project advisors and co-authors:
  * 	Jiri Novak <jnovak@fel.cvut.cz>
  * 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
  * 	Martin Jerabek <jerabma7@fel.cvut.cz>
- * 
+ *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
  * Czech Technical University        (http://www.cvut.cz/)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
 *******************************************************************************/
 
 #ifndef __CTU_CAN_FD_HW__
@@ -63,7 +63,7 @@
 #define CTU_CAN_FD_TXT_BUFFER_3 2
 #define CTU_CAN_FD_TXT_BUFFER_4 3
 
-/* 
+/*
  * Status macros -> pass "ctu_can_get_status" result
  */
 
@@ -92,7 +92,7 @@
 #define CTU_CAN_FD_RX_BUF_NEMPTY(stat) (!!(stat).s.rbs)
 
 
-/* 
+/*
  * Interrupt macros -> pass "ctu_can_fd_int_sts" result
  */
 
@@ -152,7 +152,7 @@ u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
 
 /*
  * Checks whether the core is mapped correctly at it's base address.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *
@@ -164,7 +164,7 @@ bool ctu_can_fd_check_access(struct ctucanfd_priv *priv);
 
 /*
  * Returns version of CTU CAN FD IP Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *
@@ -177,7 +177,7 @@ u32 ctu_can_fd_get_version(struct ctucanfd_priv *priv);
 /*
  * Enables/disables the operation of CTU CAN FD Core. If disabled, the Core will
  * never start transmitting on the CAN bus, nor receiving.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	enable	Enable/disable the core.
@@ -202,11 +202,11 @@ void ctu_can_fd_reset(struct ctucanfd_priv *priv);
  * disabled, the Core will attempt to retransmit inifinitely. If retransmit
  * limit is reached, the Core will finish and according TXT buffer will end up
  * in TX Error state.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	enable	Enable/disable the retransmit limitation
- *      limit	Number to which limit the retransmission (1-CTU_CAN_FD_RETR_MAX) 
+ *      limit	Number to which limit the retransmission (1-CTU_CAN_FD_RETR_MAX)
  * Returns:
  *	True if set correctly. False if "limit" is too high.
  */
@@ -232,10 +232,10 @@ bool ctu_can_fd_set_ret_limit(struct ctucanfd_priv *priv, bool enable, u8 limit)
  *				   valid.
  *	CAN_CTRLMODE_FD_NON_ISO  - When set, the Core transmits the frames
  *				   according to NON-ISO FD standard.
- * 
+ *
  * Arguments:
  *	priv	Private info
- *	mode	CAN mode to be set to on the Core. 
+ *	mode	CAN mode to be set to on the Core.
  */
 void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv, const struct can_ctrlmode *mode);
 
@@ -243,7 +243,7 @@ void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv, const struct can_ctrlmo
 /*
  * Gives command to CTU CAN FD Core to erase and reset the RX FIFO. This
  * action is finished immediately and does not need waiting.
- * 
+ *
  * Arguments:
  *	priv	Private info
  */
@@ -251,9 +251,9 @@ void ctu_can_fd_rel_rx_buf(struct ctucanfd_priv *priv);
 
 
 /*
- * Gives command to CTU CAN FD Core to clear the Data overrun flag on 
+ * Gives command to CTU CAN FD Core to clear the Data overrun flag on
  * the RX FIFO Buffer.
- * 
+ *
  * Arguments:
  *	priv	Private info
  */
@@ -263,7 +263,7 @@ void ctu_can_fd_clr_overrun_flag(struct ctucanfd_priv *priv);
 /*
  * Gives command to CTU CAN FD Core to abort the transmission immediately.
  * This action will most likely result in transmission of Error frame.
- * 
+ *
  * Arguments:
  *	priv	Private info
  */
@@ -272,10 +272,10 @@ void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv);
 
 /*
  * Returns mode/status vector of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
- 
+
  * Returns:
  *	Mode/status structure with multiple mode flags.
  */
@@ -290,10 +290,10 @@ static inline union ctu_can_fd_mode_command_status_settings ctu_can_get_status(s
 
 /*
  * Reads the interrupt status vector from CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
- 
+
  * Returns:
  *	Interrupt status vector.
  */
@@ -307,7 +307,7 @@ static inline union ctu_can_fd_int_stat ctu_can_fd_int_sts(struct ctucanfd_priv 
 
 /*
  * Clears the interrupts from CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	mask	Mask of interrupts which should be cleared.
@@ -320,7 +320,7 @@ static inline void ctu_can_fd_int_clr(struct ctucanfd_priv *priv, union ctu_can_
 
 /*
  * Enable/Disable interrupts of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	mask	Mask of interrupts which should be enabled/disabled.
@@ -332,7 +332,7 @@ void ctu_can_fd_int_ena(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat ma
 
 /*
  * Mask/Unmask interrupts of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	mask	Mask of interrupts which should be enabled/disabled.
@@ -346,7 +346,7 @@ void ctu_can_fd_int_mask(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat m
  * Set the modes of CTU CAN FD IP Core. All flags from "ctu_can_fd_set_mode_reg"
  * are configured, plus CAN_CTRLMODE_ONE_SHOT, CAN_CTRLMODE_BERR_REPORTING,
  * which are configured via "retransmit limit" and enabling error interrupts.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	mode	Mode of the controller from Socket CAN.
@@ -379,7 +379,7 @@ void ctu_can_fd_set_data_bittiming(struct ctucanfd_priv *priv, const struct can_
  * and error passive states. If any of RX/TX counters reach this value
  * according state is changed. By default these counters are set as in
  * CAN Standard (96, 128).
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	ewl	Error warning limit
@@ -390,7 +390,7 @@ void ctu_can_fd_set_err_limits(struct ctucanfd_priv *priv, u8 ewl, u8 erp);
 
 /*
  * Set default error limits to the CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  */
@@ -402,7 +402,7 @@ static inline void ctu_can_fd_set_def_err_limits(struct ctucanfd_priv *priv)
 
 /*
  * Read TX/RX error counters of CTU CAN FD IP Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	ctr	Pointer to error counter structure to fill
@@ -413,7 +413,7 @@ void ctu_can_fd_read_err_ctrs(struct ctucanfd_priv *priv, struct can_berr_counte
 /*
  * Read special error counter which returns number of Errors which were
  * detected during Nominal Bit-rate.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -430,7 +430,7 @@ static inline u16 ctu_can_fd_read_nom_errs(struct ctucanfd_priv *priv)
 
 /*
  * Give command to CTU CAN FD Core to erase the nominal error counter.
- * 
+ *
  * Arguments:
  *	priv	Private info
  */
@@ -462,7 +462,7 @@ static inline u16 ctu_can_fd_read_fd_errs(struct ctucanfd_priv *priv)
 
 /*
  * Give command to CTU CAN FD Core to erase the Data error counter.
- * 
+ *
  * Arguments:
  *	priv	Private info
  */
@@ -476,9 +476,9 @@ static inline void ctu_can_fd_erase_fd_errs(struct ctucanfd_priv *priv)
 
 
 /*
- * Read fault confinement state of CTU CAN FD Core 
+ * Read fault confinement state of CTU CAN FD Core
  * (determined by TX/RX Counters).
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -489,7 +489,7 @@ enum can_state ctu_can_fd_read_error_state(struct ctucanfd_priv *priv);
 
 /*
  * Set value to TX/RX error counters of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -500,7 +500,7 @@ void ctu_can_fd_set_err_ctrs(struct ctucanfd_priv *priv, const struct can_berr_c
 
 /*
  * Check Mask filters support of given filter.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * 	fnum	Filter number.
@@ -512,7 +512,7 @@ bool ctu_can_fd_get_mask_filter_support(struct ctucanfd_priv *priv, u8 fnum);
 
 /*
  * Check Range filter support of given filter.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -523,7 +523,7 @@ bool ctu_can_fd_get_range_filter_support(struct ctucanfd_priv *priv);
 
 /*
  * Configure mask filter of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	fnum	Filter number.
@@ -539,7 +539,7 @@ bool ctu_can_fd_set_mask_filter(struct ctucanfd_priv *priv, u8 fnum, bool enable
  * Configure range filter of CTU CAN FD Core. An identifier of RX Frame
  * will pass the Range filter if its decimal value is between lower and
  * upper threshold of range filter.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	low_th	Lower threshold of identifiers which should be accepted
@@ -551,7 +551,7 @@ void ctu_can_fd_set_range_filter(struct ctucanfd_priv *priv, canid_t low_th,
 
 /*
  * Get size of the RX FIFO Buffer of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -567,7 +567,7 @@ static inline u16 ctu_can_fd_get_rx_fifo_size(struct ctucanfd_priv *priv)
 
 /*
  * Get number of free words in RX FIFO Buffer of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -583,7 +583,7 @@ static inline u16 ctu_can_fd_get_rx_fifo_mem_free(struct ctucanfd_priv *priv)
 
 /*
  * Check if RX FIFO Buffer is empty.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -599,7 +599,7 @@ static inline bool ctu_can_fd_is_rx_fifo_empty(struct ctucanfd_priv *priv)
 
 /*
  * Check if RX FIFO Buffer is full.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -615,7 +615,7 @@ static inline bool ctu_can_fd_is_rx_fifo_full(struct ctucanfd_priv *priv)
 
 /*
  * Get number of CAN Frames stored in RX Buffer of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -631,7 +631,7 @@ static inline u16 ctu_can_fd_get_rx_frame_count(struct ctucanfd_priv *priv)
 
 /*
  * Set timestamp option on RX Frame.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	val	Timestamp option settings.
@@ -640,8 +640,8 @@ void ctu_can_fd_set_rx_tsop(struct ctucanfd_priv *priv, enum ctu_can_fd_rx_setti
 
 
 /*
- * Reads CAN Frame from RX FIFO Buffer and stores it to a buffer. 
- * 
+ * Reads CAN Frame from RX FIFO Buffer and stores it to a buffer.
+ *
  * Arguments:
  *	priv	Private info
  *	data	Pointer to buffer where the CAN Frame should be stored.
@@ -655,7 +655,7 @@ void ctu_can_fd_read_rx_frame_ffw(struct ctucanfd_priv *priv, struct canfd_frame
 
 /*
  * Returns status of TXT Buffer.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	buf	TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
@@ -667,7 +667,7 @@ enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(struct ctucanfd_priv *pr
 
 /*
  * Checks if TXT Buffer is accessible and can be written to.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	buf	TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
@@ -679,10 +679,10 @@ bool ctu_can_fd_is_txt_buf_accessible(struct ctucanfd_priv *priv, u8 buf);
 
 /*
  * Give command to TXT Buffer of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
- *	cmd	Command line buffer. 
+ *	cmd	Command line buffer.
  *	buf	TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
  * Returns:
  *	Status of the TXT Buffer.
@@ -692,7 +692,7 @@ bool ctu_can_fd_txt_buf_give_command(struct ctucanfd_priv *priv, u8 cmd, u8 buf)
 
 /*
  * Give "set_empty" command to TXT Buffer.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	buf	TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
@@ -707,7 +707,7 @@ static inline void ctu_can_fd_txt_set_empty(struct ctucanfd_priv *priv, u8 buf)
 
 /*
  * Give "set_ready" command to TXT Buffer.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	buf	TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
@@ -722,7 +722,7 @@ static inline void ctu_can_fd_txt_set_rdy(struct ctucanfd_priv *priv, u8 buf)
 
 /*
  * Give "set_abort" command to TXT Buffer.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	buf	TXT Buffer index (1 to CTU_CAN_FD_TXT_BUFFER_COUNT)
@@ -737,7 +737,7 @@ static inline void ctu_can_fd_txt_set_abort(struct ctucanfd_priv *priv, u8 buf)
 
 /*
  * Set priority of TXT Buffers in CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	prio	Pointer to array with CTU_CAN_FD_TXT_BUFFER_COUNT number
@@ -748,7 +748,7 @@ void ctu_can_fd_set_txt_priority(struct ctucanfd_priv *priv, const u8 *prio);
 
 /*
  * Insert CAN FD frame to TXT Buffer of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  *	data	Pointer to CAN Frame buffer.
@@ -765,7 +765,7 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_fram
  * Read transceiver delay as measured by CTU CAN FD Core. Note that
  * transceiver delay can be measured only after at least one CAN FD Frame with
  * BRS bit was sent since the last re-start of the Core!
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -781,7 +781,7 @@ static inline u16 ctu_can_fd_get_tran_delay(struct ctucanfd_priv *priv)
 
 /*
  * Read number of transmitted CAN/CAN FD Frames by CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -797,7 +797,7 @@ static inline u32 ctu_can_fd_get_tx_frame_ctr(struct ctucanfd_priv *priv)
 
 /*
  * Read number of received CAN/CAN FD Frames by CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
@@ -813,7 +813,7 @@ static inline u32 ctu_can_fd_get_rx_frame_ctr(struct ctucanfd_priv *priv)
 
 /*
  * Returns debug information of CTU CAN FD Core.
- * 
+ *
  * Arguments:
  *	priv	Private info
  * Returns:
