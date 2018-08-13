@@ -865,8 +865,11 @@ static int ctucan_probe(struct platform_device *pdev)
 	priv->can.bittiming_const = &ctu_can_fd_bit_timing_max;
 	priv->can.data_bittiming_const = &ctu_can_fd_bit_timing_data_max;
 	priv->can.do_set_mode = ctucan_do_set_mode;
-	//priv->can.do_set_bittiming = ctucan_set_bittiming;
-	//priv->can.do_set_data_bittiming = ctucan_set_data_bittiming;
+
+	/* Needed for timing adjustment to be performed as soon as possible */
+	priv->can.do_set_bittiming = ctucan_set_bittiming;
+	priv->can.do_set_data_bittiming = ctucan_set_data_bittiming;
+
 	priv->can.do_get_berr_counter = ctucan_get_berr_counter;
 	//priv->can.do_get_state = ctucan_get_state;
 	priv->can.ctrlmode_supported = CAN_CTRLMODE_LOOPBACK
