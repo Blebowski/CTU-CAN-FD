@@ -356,22 +356,26 @@ void ctu_can_fd_set_mode(struct ctucanfd_priv *priv, const struct can_ctrlmode *
 
 /*
  * Set Nominal bit timing of CTU CAN FD Core.
- * 
+ * NOTE: phase_seg1 and prop_seg may be modified if phase_seg1 > 63
+ *       This is because in Linux, the constraints are only on phase_seg1+prop_seg.
+ *
  * Arguments:
  *	priv	Private info
  *	nbt	Nominal bit timing settings of CAN Controller.
  */
-void ctu_can_fd_set_nom_bittiming(struct ctucanfd_priv *priv, const struct can_bittiming *nbt);
+void ctu_can_fd_set_nom_bittiming(struct ctucanfd_priv *priv, struct can_bittiming *nbt);
 
 
 /*
  * Set Data bit timing of CTU CAN FD Core.
- * 
+ * NOTE: phase_seg1 and prop_seg may be modified if phase_seg1 > 63
+ *       This is because in Linux, the constraints are only on phase_seg1+prop_seg.
+ *
  * Arguments:
  *	priv	Private info
  *	nbt	Data bit timing settings of CAN Controller.
  */
-void ctu_can_fd_set_data_bittiming(struct ctucanfd_priv *priv, const struct can_bittiming *dbt);
+void ctu_can_fd_set_data_bittiming(struct ctucanfd_priv *priv, struct can_bittiming *dbt);
 
 
 /*

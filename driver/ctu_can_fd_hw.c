@@ -353,26 +353,26 @@ const struct can_bittiming_const ctu_can_fd_bit_timing_data_max = {
 };
 
 void ctu_can_fd_set_nom_bittiming(struct ctucanfd_priv *priv,
-				  const struct can_bittiming *nbt)
+				  struct can_bittiming *nbt)
 {
 	union ctu_can_fd_btr btr;
 
-    /*
-     * The timing calculation functions have only constraints on tseg1,
-     * which is prop_seg + phase1_seg combined. tseg1 is then split in half
-     * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP is 7 bits
-     * wide but PH1 only 6, so we must re-distribute the values here.
-     * TODO: get the fixed values to the kernel, so that they are displayed
-     *       accurately
-     */
-    u32 prop_seg = nbt->prop_seg;
-    u32 phase_seg1 = nbt->phase_seg1;
-    if (phase_seg1 > 63) {
-        prop_seg += phase_seg1 - 63;
-        phase_seg1 = 63;
-    }
+	/*
+	 * The timing calculation functions have only constraints on tseg1,
+	 * which is prop_seg + phase1_seg combined. tseg1 is then split in half
+	 * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP is 7 bits
+	 * wide but PH1 only 6, so we must re-distribute the values here.
+	 */
+	u32 prop_seg = nbt->prop_seg;
+	u32 phase_seg1 = nbt->phase_seg1;
+	if (phase_seg1 > 63) {
+		prop_seg += phase_seg1 - 63;
+		phase_seg1 = 63;
+		nbt->prop_seg = prop_seg;
+		nbt->phase_seg1 = phase_seg1;
+	}
 
-    btr.u32 = 0;
+	btr.u32 = 0;
 	btr.s.prop = prop_seg;
 	btr.s.ph1 = phase_seg1;
 	btr.s.ph2 = nbt->phase_seg2;
@@ -383,24 +383,24 @@ void ctu_can_fd_set_nom_bittiming(struct ctucanfd_priv *priv,
 }
 
 void ctu_can_fd_set_data_bittiming(struct ctucanfd_priv *priv,
-				   const struct can_bittiming *dbt)
+				   struct can_bittiming *dbt)
 {
 	union ctu_can_fd_btr_fd btr_fd;
 
-    /*
-     * The timing calculation functions have only constraints on tseg1,
-     * which is prop_seg + phase1_seg combined. tseg1 is then split in half
-     * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP_FD is 6 bits
-     * wide but PH1_FD only 5, so we must re-distribute the values here.
-     * TODO: get the fixed values to the kernel, so that they are displayed
-     *       accurately
-     */
-    u32 prop_seg = dbt->prop_seg;
-    u32 phase_seg1 = dbt->phase_seg1;
-    if (phase_seg1 > 31) {
-        prop_seg += phase_seg1 - 31;
-        phase_seg1 = 31;
-    }
+	/*
+	 * The timing calculation functions have only constraints on tseg1,
+	 * which is prop_seg + phase1_seg combined. tseg1 is then split in half
+	 * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP_FD is 6 bits
+	 * wide but PH1_FD only 5, so we must re-distribute the values here.
+	 */
+	u32 prop_seg = dbt->prop_seg;
+	u32 phase_seg1 = dbt->phase_seg1;
+	if (phase_seg1 > 31) {
+		prop_seg += phase_seg1 - 31;
+		phase_seg1 = 31;
+		dbt->prop_seg = prop_seg;
+		dbt->phase_seg1 = phase_seg1;
+	}
 
 	btr_fd.u32 = 0;
 	btr_fd.s.prop_fd = prop_seg;
