@@ -641,7 +641,6 @@ literal "true"
 
  and implement CAN FD ISO protocol.
  ISO or Non-ISO protocol can be switched by a configuration bit in a register
- map of IP Core.
 \end_layout
 
 \begin_layout Enumerate
@@ -672,7 +671,6 @@ After a frame is inserted with specified transmission time, provide information
 
 \begin_layout Enumerate
 Be able, to trigger event recording (point 4) by a specific event on CAN
- bus.
 \end_layout
 
 \begin_layout Enumerate
@@ -893,7 +891,7 @@ doc/core/registerMap.lyx
 \end_layout
 
 \begin_layout Standard
-To generate these design materials CTU CAN FD IP Core contains own IP-XACT
+To generate these design materials CTU CAN FD IP Core contains its own IP-XACT
  generator framework (located under 
 \begin_inset Quotes eld
 \end_inset
@@ -1502,7 +1500,7 @@ ID
  Address bits 23:20 must have constant value 0x3.
  This requirement is given by a custom system for which this core was originally
  developed.
- Description of this system is behind the scope of this document.
+ Description of this system is beyond the scope of this document.
 \end_layout
 
 \begin_layout Standard
@@ -2894,7 +2892,7 @@ Clock
 \begin_inset Text
 
 \begin_layout Plain Layout
-APB clock.
+APB clock
 \end_layout
 
 \end_inset
@@ -3012,7 +3010,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Input data
+Write data
 \end_layout
 
 \end_inset
@@ -3071,7 +3069,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Output data
+Read data
 \end_layout
 
 \end_inset
@@ -3189,7 +3187,8 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Access enable
+Enable.
+ Indicates second cycle of APB transfer
 \end_layout
 
 \end_inset
@@ -3248,7 +3247,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol type (signal is unused)
+Protection type (signal is unused)
 \end_layout
 
 \end_inset
@@ -3307,7 +3306,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Read data ready
+Slave ready
 \end_layout
 
 \end_inset
@@ -3366,7 +3365,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Chip select signal
+Chip select signal, active high
 \end_layout
 
 \end_inset
@@ -3543,7 +3542,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Write signal
+Direction
 \end_layout
 
 \end_inset
@@ -3994,7 +3993,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Output clock with period of time quanta.
+Output clock with period of time quantum.
 \end_layout
 
 \end_inset
