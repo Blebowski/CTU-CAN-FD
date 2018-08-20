@@ -4749,6 +4749,13 @@ name "fig:IP-function-block"
 
 \begin_layout Section
 2.3 Pipeline architecture
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:2.3-Pipeline-architecture"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4783,7 +4790,17 @@ Bit Destuffing
 \end_layout
 
 \begin_layout Enumerate
-Process Bit Destuffed data by Protocol Control FSM (TODOREF).
+Process Bit Destuffed data by Protocol Control FSM (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2.5.1.1-Protocol-Control"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Standard
@@ -4819,7 +4836,17 @@ To achieve such data processing two Triggering Signal Types are generated:
 \shape smallcaps
 Information Processing Time
 \shape default
-, reffer to TODOREF for explanation.
+, reffer to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab: IPT_reqs"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for explanation.
 \end_layout
 
 \begin_layout Standard
@@ -5135,6 +5162,13 @@ name "fig:CAN-Core-block"
 
 \begin_layout Subsubsection
 2.5.1.1 Protocol Control
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:2.5.1.1-Protocol-Control"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -5343,7 +5377,7 @@ Direction
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -5712,7 +5746,17 @@ in
 
 \begin_layout Plain Layout
 Operational state of CAN Node.
- See TODO.
+ See 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2.5.1.2-Operation-control"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -5762,8 +5806,7 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit time control.
- TODO
+Bit Time control.
 \end_layout
 
 \end_inset
@@ -5913,7 +5956,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-In '1' bit stuffing is enabled, otherwise disabled.
+In '1' Bit Stuffing is enabled, otherwise disabled.
 \end_layout
 
 \end_inset
@@ -5963,7 +6006,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-In '1' bit destuffing is enabled, otherwise disabled.
+In '1' Bit De-stuffing is enabled, otherwise disabled.
 \end_layout
 
 \end_inset
@@ -6013,7 +6056,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-In '1' fixed bit stuffing is used, otherwise normal bit stuffing is used.
+In '1' fixed Bit Stuffing is used, otherwise normal Bit Stuffing is used.
 \end_layout
 
 \end_inset
@@ -6063,7 +6106,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-In '1' fixed bit destuffing is used, otherwise normal bit destuffing is
+In '1' fixed Bit De-stuffing is used, otherwise normal Bit De-stuffing is
  used.
 \end_layout
 
@@ -6114,7 +6157,11 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of consecutive equal bits which cause insertion of stuff bit.
+Number of consecutive equal bits which cause insertion of 
+\shape smallcaps
+Stuff Bit
+\shape default
+.
 \end_layout
 
 \end_inset
@@ -6164,7 +6211,11 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Number of consecutive equal bits which cause insertion of destuff bit.
+Number of consecutive equal bits which cause insertion of 
+\shape smallcaps
+De-stuff Bit
+\shape default
+.
 \end_layout
 
 \end_inset
@@ -6314,7 +6365,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-Signals that error counter should be incremented by 8.
+Signals that Error counter should be incremented by 8.
 \end_layout
 
 \end_inset
@@ -6364,7 +6415,7 @@ std_logic
 \begin_inset Text
 
 \begin_layout Plain Layout
-Signals that error counter should be decremented by 1.
+Signals that Error counter should be decremented by 1.
 \end_layout
 
 \end_inset
@@ -6564,7 +6615,9 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Counter for transmission of Identifier
+Counter for transmission of 
+\shape smallcaps
+Identifier
 \end_layout
 
 \end_inset
@@ -6614,7 +6667,11 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Counter for transmission of Data field.
+Counter for transmission of 
+\shape smallcaps
+Data
+\shape default
+ field.
 \end_layout
 
 \end_inset
@@ -7140,14 +7197,18 @@ In first cycle of
 control
 \family default
 \shape default
- for Transmitted, shift register for transmission is loaded (
+, shift register (
 \family roman
 \shape italic
 ctrl_tran_reg
 \family default
 \shape default
-).
- Length of field is controlled with 
+) for transmission is loaded if unit is 
+\shape smallcaps
+Transmitter
+\shape default
+.
+ Length of field is controlled by 
 \family roman
 \shape italic
 control_pointer
@@ -7160,47 +7221,116 @@ control_pointer
 sp_control_r
 \family default
 \shape default
-) in BRS bit.
+) in 
+\shape smallcaps
+Bit Rate Shift
+\shape default
+ bit.
  Data sampling (
 \family roman
 \shape italic
 DATA_SAMPLE
 \family default
 \shape default
-) is used for Receiver, and Secondary sampling (
+) is used for 
+\shape smallcaps
+Receiver
+\shape default
+, and Secondary sampling (
 \family roman
 \shape italic
 SECONDARY_SAMPLE
 \family default
 \shape default
-) is used Transmitter.
- Such a difference is necessary, since Transmitter must be able to receive
- its own bit with delayed sample point for Bit error detection (reffer to
- TODOREF).
- Receiver of CAN FD Frame sets hard synchronisation in EDL bit (
+) is used 
+\shape smallcaps
+Transmitter
+\shape default
+.
+ Both of these represent 
+\shape smallcaps
+Data Bit Rate
+\shape default
+ from CAN FD Stanard.
+ Such a difference is necessary, since 
+\shape smallcaps
+Transmitter
+\shape default
+ must be able to receive its own bit with delayed sample point for 
+\shape smallcaps
+Bit Error
+\shape default
+ detection (reffer to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2.6-Error-detection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ 
+\shape smallcaps
+Receiver
+\shape default
+ of CAN FD Frame sets hard synchronisation in 
+\shape smallcaps
+Extended Data Length
+\shape default
+ bit (
 \family roman
 \shape italic
 sync_control_r <= HARD_SYNC
 \family default
 \shape default
 ).
- Note that after BRS bit of CAN FD Transmitter, no synchronisation is performed
- (
+ Note that after 
+\shape smallcaps
+Bit Rate Shift
+\shape default
+ bit of CAN FD 
+\shape smallcaps
+Transmitter
+\shape default
+, no synchronisation is performed (
 \family roman
 \shape italic
 sync_control_r <= NO_SYNC
 \family default
 \shape default
 ).
- Furthermore, in case of CAN FD Frames, transceiver delay calibration is
- started (
+ Furthermore, in case of CAN FD Frames, 
+\shape smallcaps
+Transceiver Delay Calibration
+\shape default
+ is started (
 \family roman
 \shape italic
 trv_delay_calib_r
 \family default
 \shape default
-, ssp_reset) in EDL bit (reffer to BusSync module TODOREF).
- Upon end of control field (
+, ssp_reset) in 
+\shape smallcaps
+Extended Data Length
+\shape default
+ bit (reffer to Bus Sampling module 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2.5.2-Bus-Sampling"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Upon end of 
+\shape smallcaps
+Control
+\shape default
+ field (
 \family roman
 \shape italic
 control_pointer = 0
@@ -7209,7 +7339,7 @@ control_pointer = 0
 ), Protocol Control state is changed to 
 \family roman
 \shape italic
-Data
+data
 \family default
 \shape default
  or 
@@ -7218,8 +7348,23 @@ Data
 CRC
 \family default
 \shape default
-, based on Transmitted / Received Data Length (tran_dlc, rec_dlc), RTR Flag
- (
+, based on Transmitted / Received Data Length (
+\family roman
+\shape italic
+tran_dlc
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+rec_dlc
+\family default
+\shape default
+), 
+\shape smallcaps
+Remote Transmission Request
+\shape default
+ Flag (
 \family roman
 \shape italic
 tran_is_rtr
@@ -7231,15 +7376,46 @@ tran_is_rtr
 rec_is_rtr)
 \family default
 \shape default
- and RTR preffered behaviour (
+ and 
+\shape smallcaps
+RTR
+\shape default
+ preffered behaviour (
 \family roman
 \shape italic
 drv_rtr_pref
 \family default
 \shape default
-, see register TODOREF).
- Upon the end of control field, receiver signals to RX Buffer (see TODO),
- that first 4 words of CAN Frame (see TODO) can be stored (
+, see register 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[MODE]{MODE}
+\end_layout
+
+\end_inset
+
+).
+ Upon the end of 
+\shape smallcaps
+Control
+\shape default
+ field, receiver signals to RX Buffer, that first 4 words of CAN Frame (see
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2.3.10-RX-buffer-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) can be stored (
 \family roman
 \shape italic
 store_metadata
@@ -7300,7 +7476,11 @@ store_data_word_r
 rec_word_bind = 3
 \family default
 \shape default
-) or end of Data field (
+) or end of 
+\shape smallcaps
+Data
+\shape default
+ field (
 \family roman
 \shape italic
 data_pointer = 0
@@ -7319,7 +7499,11 @@ store_data_r
 \family default
 \shape default
 ).
- Upon the end of Data field, Protocol Control is changed to 
+ Upon the end of 
+\shape smallcaps
+Data
+\shape default
+ field, Protocol Control is changed to 
 \family roman
 \shape italic
 crc
@@ -7339,14 +7523,25 @@ In
 crc
 \family default
 \shape default
- proper CRC is selected (
+ proper 
+\shape smallcaps
+CRC Sequence
+\shape default
+ is selected (
 \family roman
 \shape italic
 crc_src
 \family default
 \shape default
-), and Fixed Bit Stuffing and Fixed Bit De-Stuffing is configured for CAN
- FD Frames.
+), and 
+\shape smallcaps
+Fixed Bit Stuffing
+\shape default
+ and 
+\shape smallcaps
+Fixed Bit De-Stuffing
+\shape default
+ is configured for CAN FD Frames.
  CRC length is controlled with counter 
 \family roman
 \shape italic
@@ -7366,7 +7561,7 @@ delim_ack
  crc_state
 \family default
 \shape default
- which is shown in Figure 
+, which is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:CRC_FSM-1"
@@ -7420,13 +7615,27 @@ drv_fd_type
 stuff_count
 \family default
 \shape default
- state Transmitter transmitts number of stuffed bits (
+ state 
+\shape smallcaps
+Transmitter
+\shape default
+ transmitts number of stuffed bits (
 \family roman
 \shape italic
 stuff_count_grey
 \family default
 \shape default
-) which is calculated by Bit Stuffing circuit (TODOREF).
+) which is calculated by Bit Stuffing circuit (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2.5.1.6-CRC"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  Additionally stuff parity is transmitted (
 \family roman
 \shape italic
@@ -7454,8 +7663,11 @@ crc_enable_r <= '0'
 \family default
 \shape default
 ) between ISO and NON-ISO CAN FD Frames.
- In NON-ISO CAN FD Frames, CRC calculation is disabled in first clock cycle
- of 
+ In NON-ISO CAN FD Frames, 
+\shape smallcaps
+CRC
+\shape default
+ calculation is disabled in first clock cycle of 
 \family roman
 \shape italic
 crc
@@ -7481,8 +7693,33 @@ crc_state
 real_crc
 \family default
 \shape default
- Transmitter sends calculated CRC (crc15, crc17, crc21) and both nodes receive
- CRC sequence to shifit register (
+ 
+\shape smallcaps
+Transmitter
+\shape default
+ sends calculated CRC (
+\family roman
+\shape italic
+crc15
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc17
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc21
+\family default
+\shape default
+) and both nodes receive 
+\shape smallcaps
+CRC Sequence
+\shape default
+ to shift register (
 \family roman
 \shape italic
 rec_crc_r
@@ -7559,23 +7796,50 @@ In
 delim_ack
 \family default
 \shape default
- state CRC Delimiter, ACK Field and ACK Delimiter bits are handled.
- Length of this field is controlled with 
+ state 
+\shape smallcaps
+CRC Delimiter
+\shape default
+, 
+\shape smallcaps
+ACK Field
+\shape default
+ and 
+\shape smallcaps
+ACK Delimiter
+\shape default
+ bits are handled.
+ Length of this field is controlled by 
 \family roman
 \shape italic
 control_pointer
 \family default
 \shape default
  counter.
- In CRC Delimiter of CAN FD Frame, bit rate is switched back to Nominal
- Bit Rate (
+ In 
+\shape smallcaps
+CRC Delimiter
+\shape default
+ of CAN FD Frame, bit rate is switched back to 
+\shape smallcaps
+Nominal Bit Rate
+\shape default
+ (
 \family roman
 \shape italic
 sp_control_r <= NOMINAL_SAMPLE
 \family default
 \shape default
 ).
- Bit Stuffing and Bit Destuffing circuits are disabled (
+ 
+\shape smallcaps
+Bit Stuffing
+\shape default
+ and 
+\shape smallcaps
+Bit De-stuffing
+\shape default
+ is disabled (
 \family roman
 \shape italic
 stuff_enable
@@ -7587,30 +7851,80 @@ stuff_enable
 destuff_enable
 \family default
 \shape default
-) in CRC Delimiter to allow possible stuff bit insertion in last bit of
- CRC field.
- Receiver will transmitt Dominant bit in ACK field (
+) in 
+\shape smallcaps
+CRC Delimiter
+\shape default
+ to allow insertion of 
+\shape smallcaps
+Stuff Bit
+\shape default
+ in last bit of 
+\shape smallcaps
+CRC
+\shape default
+ field.
+ 
+\shape smallcaps
+Receiver
+\shape default
+ will transmitt 
+\shape smallcaps
+Dominant
+\shape default
+ bit in 
+\shape smallcaps
+ACK
+\shape default
+ field (
 \family roman
 \shape italic
 control_pointer = 1
 \family default
 \shape default
-), if received CRC is matching calculated CRC (
+), if received 
+\shape smallcaps
+CRC
+\shape default
+ is matching calculated 
+\shape smallcaps
+CRC
+\shape default
+ (
 \family roman
 \shape italic
 crc_check
 \family default
 \shape default
 ).
- Note that Transmitter allows reception of up to two bits in position of
- CRC Delimiter (
+ Note that 
+\shape smallcaps
+Transmitter
+\shape default
+ allows reception of up to two bits in position of 
+\shape smallcaps
+CRC Delimiter
+\shape default
+ (
 \family roman
 \shape italic
 sec_ack
 \family default
 \shape default
-) to compensate for possible Bit Timing mismatch due to Bit Rate shift.
- Reception of Dominant Bit in ACK field is marked in 
+) to compensate for possible 
+\shape smallcaps
+Bit Timing
+\shape default
+ mismatch due to Bit Rate Shift.
+ Reception of 
+\shape smallcaps
+Dominant
+\shape default
+ Bit in 
+\shape smallcaps
+ACK
+\shape default
+ field is marked in 
 \family roman
 \shape italic
 ack_recieved
@@ -7649,7 +7963,11 @@ eof
 \end_layout
 
 \begin_layout Standard
-End of Frame field is transmitted in 
+
+\shape smallcaps
+End of Frame
+\shape default
+ field is transmitted in 
 \family roman
 \shape italic
 eof 
@@ -7663,16 +7981,26 @@ control_pointer
 \family default
 \shape default
 .
- When Dominant bit is received in last bit of eof, Protocol Control is updated
- to 
+ When 
+\shape smallcaps
+Dominant
+\shape default
+ bit is received in last bit of eof, Protocol Control is updated to 
 \family roman
 \shape italic
 overload
 \family default
 \shape default
 .
- Reception of other Dominant bit signals Error flag and Protocol Control
- is updated to 
+ Reception of other 
+\shape smallcaps
+Dominant
+\shape default
+ bit signals 
+\shape smallcaps
+Error Flag
+\shape default
+ and Protocol Control is updated to 
 \family roman
 \shape italic
 error
@@ -7691,7 +8019,7 @@ eof
 control_pointer = 1
 \family default
 \shape default
-) frame reception is considered as valid and 
+), frame reception is considered as valid and 
 \family roman
 \shape italic
 rec_valid_r
@@ -7731,8 +8059,11 @@ txt_hw_cmd.unlock, txt_hw_cmd.valid
 control_pointer
 \family default
 \shape default
- elapses with only Recessive bits detected, Protocol Control is updated
- to 
+ elapses with only 
+\shape smallcaps
+Recessive
+\shape default
+ bits detected, Protocol Control is updated to 
 \family roman
 \shape italic
 interframe
@@ -7821,7 +8152,11 @@ noprefix "false"
 \end_inset
 
 .
- Reception of Dominant bit during first two bits of 
+ Reception of 
+\shape smallcaps
+Dominant
+\shape default
+ bit during first two bits of 
 \family roman
 \shape italic
 intermission 
@@ -7833,15 +8168,25 @@ intermission
 control_pointer_non_zero
 \family default
 \shape default
-) is interpreted as Overload Condition and Protocol Control is updated to
- 
+) is interpreted as 
+\shape smallcaps
+Overload Condition
+\shape default
+ and Protocol Control is updated to 
 \family roman
 \shape italic
 overload
 \family default
 \shape default
 .
- Reception of Dominant bit in last bit is interpreted as next Start of Frame
+ Reception of 
+\shape smallcaps
+Dominant
+\shape default
+ bit in last bit is interpreted as next 
+\shape smallcaps
+Start of Frame
+\shape default
  and Protocol Control is updated to 
 \family roman
 \shape italic
@@ -7849,7 +8194,11 @@ sof
 \family default
 \shape default
 .
- If node is Error passive (
+ If node is 
+\shape smallcaps
+Error Passive
+\shape default
+ (
 \family roman
 \shape italic
 error_state = error_passive
@@ -7880,8 +8229,15 @@ suspend
 suspend
 \family default
 \shape default
- state only Recessive bits are sent to the bus, and sampling Dominant bit
- moves Protocol Control to 
+ state only 
+\shape smallcaps
+Recessive
+\shape default
+ bits are sent on the bus, and sampling 
+\shape smallcaps
+Dominant
+\shape default
+ bit moves Protocol Control to 
 \family roman
 \shape italic
 sof
@@ -7901,7 +8257,15 @@ interm_idle
 \family default
 \shape default
 .
- which can be ended either by presence of Recessive to Dominant edge (
+ which can be ended either by presence of 
+\shape smallcaps
+Recessive
+\shape default
+ to 
+\shape smallcaps
+Dominant
+\shape default
+ edge (
 \family roman
 \shape italic
 hard_sync_edge
@@ -7928,7 +8292,11 @@ error
 \end_layout
 
 \begin_layout Standard
-Transmission of Error Frame is handled via state 
+Transmission of 
+\shape smallcaps
+Error Frame
+\shape default
+ is handled via state 
 \family roman
 \shape italic
 error
@@ -7941,7 +8309,17 @@ error
 error
 \family default
 \shape default
- state are further explained in TODOREF.
+ state are further explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2.6-Error-detection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  This state contains sub-FSM 
 \family roman
 \shape italic
@@ -7972,15 +8350,38 @@ err_flg_sup
 err_flg_sup
 \family default
 \shape default
-, 6 Dominant (Active Error Flag) or Recessive (Passive Error Flag) bits
- are sent and state is exited upon reception of Recessive bit to 
+, 6 
+\shape smallcaps
+Dominant
+\shape default
+ (
+\shape smallcaps
+Active Error Flag
+\shape default
+) or 
+\shape smallcaps
+Recessive
+\shape default
+ (
+\shape smallcaps
+Passive Error Flag
+\shape default
+) bits are sent and state is exited upon reception of 
+\shape smallcaps
+Recessive
+\shape default
+ bit to 
 \family roman
 \shape italic
 err_delim
 \family default
 \shape default
 .
- If there are 14 consecutive Dominant bits received (
+ If there are 14 consecutive 
+\shape smallcaps
+Dominant
+\shape default
+ bits received (
 \family roman
 \shape italic
 tran_pointer = 0
@@ -8005,7 +8406,11 @@ inc_eight = '1'
 err_delim
 \family default
 \shape default
- 6 recessive bits are counted, and Protocol Control State is moved to 
+ 6 
+\shape smallcaps
+Recessive
+\shape default
+ bits are counted, and Protocol Control State is moved to 
 \family roman
 \shape italic
 interframe
@@ -8107,8 +8512,11 @@ overload
 \end_layout
 
 \begin_layout Standard
-Upon detection of Overload Condition, Protocol Control state is updated
- to 
+Upon detection of 
+\shape smallcaps
+Overload Condition
+\shape default
+, Protocol Control state is updated to 
 \family roman
 \shape italic
 overload
@@ -8145,23 +8553,34 @@ noprefix "false"
 ovr_flg_sup
 \family default
 \shape default
-, which represent Overload Delimiter.
- Duration of state is cotrolled via 
+, which represent 
+\shape smallcaps
+Overload Flag Superposition
+\shape default
+.
+ Duration of state is cotrolled by 
 \family roman
 \shape italic
 control_pointer
 \family default
 \shape default
 .
- Upon detection of 14 consecutive Dominant bits, Protocol Control is updated
- to 
+ Upon detection of 14 consecutive 
+\shape smallcaps
+Dominant
+\shape default
+ bits, Protocol Control is updated to 
 \family roman
 \shape italic
 error
 \family default
 \shape default
 .
- Upon reception of Recessive bit, 
+ Upon reception of 
+\shape smallcaps
+Recessive
+\shape default
+ bit, 
 \family roman
 \shape italic
 ovr_frame_state 
@@ -8174,7 +8593,15 @@ ovr_delim
 \family default
 \shape default
 .
- Overload Delimiter consists of 8 Recessive bits.
+ 
+\shape smallcaps
+Overload Delimiter
+\shape default
+ consists of 8 
+\shape smallcaps
+Recessive
+\shape default
+ bits.
  Upon expiration of 
 \family roman
 \shape italic
@@ -8192,6 +8619,13 @@ interframe
 
 \begin_layout Subsubsection
 2.5.1.2 Operation control
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:2.5.1.2-Operation-control"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -8215,13 +8649,9 @@ operationControl
 
 \begin_layout Standard
 Operation Control is module handling 
-\begin_inset Quotes eld
-\end_inset
-
-Operation mode
-\begin_inset Quotes erd
-\end_inset
-
+\shape smallcaps
+Operation Mode
+\shape default
  as defined in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -8231,8 +8661,19 @@ literal "true"
 \end_inset
 
 .
- It means unit integration after start, transmission mode (Transmitter),
- reception mode (Receiver) and Bus Idle.
+ It means unit integration after start, transmission mode (
+\shape smallcaps
+Transmitter
+\shape default
+), reception mode (
+\shape smallcaps
+Receiver
+\shape default
+) and 
+\shape smallcaps
+Bus Idle
+\shape default
+.
  Other modes defined in 
 \begin_inset CommandInset citation
 LatexCommand cite
@@ -8241,8 +8682,15 @@ literal "true"
 
 \end_inset
 
- (Bus monitoring mode, Self - Test mode) are implemented via dedicated signals
- of Driving Bus (
+ (
+\shape smallcaps
+Bus Monitoring Mode
+\shape default
+, 
+\shape smallcaps
+Self - Test Mode
+\shape default
+) are implemented via dedicated signals of Driving Bus (
 \family roman
 \shape italic
 drv_bus_mon_ena
@@ -8255,7 +8703,11 @@ drv_self_test_ena
 \family default
 \shape default
  signals).
- State machine of Operation Control (
+ State machine of 
+\shape smallcaps
+Operation Control
+\shape default
+ (
 \family roman
 \shape italic
 OP_State
@@ -8269,7 +8721,19 @@ reference "fig:OP_control"
 \end_inset
 
 .
- This FSM can be forced to transceiver or receiver state by signals 
+ This FSM can be forced to 
+\family roman
+\shape italic
+transceiver
+\family default
+\shape default
+ or 
+\family roman
+\shape italic
+receiver
+\family default
+\shape default
+ state by signals 
 \family roman
 \shape italic
 set_transceiver
@@ -8295,14 +8759,22 @@ integrating
 drv_ena
 \family default
 \shape default
-), number of consecutive Recessive bits is counted in 
+), number of consecutive 
+\shape smallcaps
+Recessive
+\shape default
+ bits is counted in 
 \family roman
 \shape italic
 integ_counter
 \family default
 \shape default
 .
- If 11 consecutive bits are reached, Operation Control moves to 
+ If 11 consecutive 
+\shape smallcaps
+Recessive
+\shape default
+ bits are reached, Operation Control moves to 
 \family roman
 \shape italic
 idle
@@ -8383,7 +8855,7 @@ name "fig:OP_control"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.3 Fault confinement
+2.5.1.3 Fault Confinement
 \end_layout
 
 \begin_layout Description
@@ -8406,13 +8878,21 @@ faultConf
 \end_layout
 
 \begin_layout Standard
-Fault confinement module implements Fault Confinement state (
+Fault Confinement module implements 
+\shape smallcaps
+Fault Confinement
+\shape default
+ state (
 \family roman
 \shape italic
 error_state
 \family default
 \shape default
-), TX / RX error counters (
+), 
+\shape smallcaps
+TX / RX Error Counters
+\shape default
+ (
 \family roman
 \shape italic
 tx_counter
@@ -8424,7 +8904,15 @@ tx_counter
 rx_counter
 \family default
 \shape default
-), Bit error and Stuff error validation.
+), 
+\shape smallcaps
+Bit Error
+\shape default
+ and 
+\shape smallcaps
+Stuff Error
+\shape default
+ validation.
  Block diagram of this module is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -8436,7 +8924,11 @@ noprefix "false"
 \end_inset
 
 .
- Error counters for Fault confinement (
+ Error counters for 
+\shape smallcaps
+Fault Confinement
+\shape default
+ (
 \family roman
 \shape italic
 rx_counter
@@ -8475,7 +8967,7 @@ literal "true"
 \end_inset
 
  (Fault Confinement Chapter) are managed by Protocol Control FSM.
- These error counters are implemented to be read / write (via Driving Bus,
+ These error counters are implemented to be read / write via Driving Bus,
  signals 
 \family roman
 \shape italic
@@ -8488,8 +8980,12 @@ drv_ctr_sel
 drv_ctr_val
 \family default
 \shape default
-) from Memory Registers (see TODOREF), so that Fault Confinement state can
- be manipulated from SW.
+ from Memory Registers.
+ With this architecture 
+\shape smallcaps
+Fault Confinement
+\shape default
+ state can be manipulated from SW.
  This provides an extended testing functionality of CTU CAN FD controller.
  Furthermore, two additional counters (
 \family roman
@@ -8503,24 +8999,50 @@ err_counter_norm
 err_counter_fd
 \family default
 \shape default
-), are implemented to distinguish between errors which appeared in Nominal
- Bit rate and Data Bit rate.
- These additional counters are incremented by 1 for each transmitted Error
- frame.
+), are implemented to distinguish between errors which appeared in 
+\shape smallcaps
+Nominal Bit Rate
+\shape default
+ and 
+\shape smallcaps
+Data Bit Rate
+\shape default
+.
+ These additional counters are incremented by 1 for each transmitted 
+\shape smallcaps
+Error Frame
+\shape default
+.
  
 \end_layout
 
 \begin_layout Standard
 To remain compliant with CAN FD standard, counters for 128 ocurrencess of
- 11 consecutive bits is implemented in this module (
+ 11 consecutive 
+\shape smallcaps
+Recessive
+\shape default
+ bits is implemented in this module (
 \family roman
 \shape italic
 cons_rec_ctr, cons_128_11_rec_ctr
 \family default
 \shape default
 ).
- When command to reset error counters is given by write to MODE[ERCRST],
- 
+ When command to reset error counters is given by write to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[MODE]{MODE}
+\end_layout
+
+\end_inset
+
+, 
 \family roman
 \shape italic
 drv_clr_err_ctrs
@@ -8552,8 +9074,11 @@ cons_128_11_rec_ctr
 reset_err_counters
 \family default
 \shape default
- is set, Error counters are set to 0 and both Fault confinement state is
- set to 
+ is set, both Error counters are set to 0 and 
+\shape smallcaps
+Fault Confinement
+\shape default
+ state is set to 
 \family roman
 \shape italic
 error_active
@@ -8614,7 +9139,7 @@ name "fig:Fault-block-diagram"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.4 Bit stuffing
+2.5.1.4 Bit Stuffing
 \end_layout
 
 \begin_layout Description
@@ -8637,8 +9162,11 @@ bitStuffing
 \end_layout
 
 \begin_layout Standard
-Bit stuffing module implements functionality stuff bit insertion into a
- serial data stream.
+Bit Stuffing module implements functionality 
+\shape smallcaps
+Stuff Bit
+\shape default
+ insertion into serial data stream.
  Number of equal consecutive bits is configurable via 
 \family roman
 \shape italic
@@ -8646,26 +9174,52 @@ length
 \family default
 \shape default
  input.
- Fixed Bit Stuffing method for CRC field of CAN FD frames can be set by
  
+\shape smallcaps
+Fixed Bit Stuffing
+\shape default
+ method for CRC field of CAN FD frames can be set by 
 \family roman
 \shape italic
 fixed_stuff
 \family default
 \shape default
  input.
- Since CAN FD Protocol requires Fixed Stuff Bit to be inserted in first
- bit of CRC field, Bit Stuffing circuit automatically inserts Stuff Bit
+ Since CAN FD Protocol requires 
+\shape smallcaps
+Fixed Stuff Bit
+\shape default
+ to be inserted in the first bit of 
+\shape smallcaps
+CRC
+\shape default
+ field, Bit Stuffing circuit automatically inserts 
+\shape smallcaps
+Stuff Bit
+\shape default
  after change on 
 \family roman
 \shape italic
 fixed_stuff
 \family default
 \shape default
- input (0->1).
- Circuit operates with Bit Stuffing Trigger (see TODOREF), which is one
- clock cycle delayed from Transmitt Trigger.
- Insertion of Stuff-bit is signalled via 
+ input (0->1 transition).
+ Circuit operates with Bit Stuffing Trigger (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Pipeline-Architecture"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), which is one clock cycle delayed from Transmitt Trigger.
+ Insertion of 
+\shape smallcaps
+Stuff Bit
+\shape default
+ is signalled via 
 \family roman
 \shape italic
 data_halt
@@ -8754,7 +9308,7 @@ name "fig:Bit-stuffing-logic"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.5 Bit destuffing
+2.5.1.5 Bit De-stuffing
 \end_layout
 
 \begin_layout Description
@@ -8779,34 +9333,61 @@ bitDestuffing
 \begin_layout Standard
 Bit de-stuffing module implements the functionality of Bit de-stuffing from
  serial data stream.
- The number of equal configurable via 
+ The number of equal consecutive bits is configurable via 
 \family roman
 \shape italic
 length
 \family default
 \shape default
  input.
- Fixed Bit Destuffing method for CRC field of CAN FD frames is configurable
- via 
+ Fixed 
+\shape smallcaps
+Bit De-Stuffing
+\shape default
+ method for 
+\shape smallcaps
+CRC
+\shape default
+ field of CAN FD frames is configurable via 
 \family roman
 \shape italic
 fixed_stuff
 \family default
 \shape default
  input.
- Since CAN FD Protocol requires Fixed Stuff Bit to be discarded in the first
- bit of CRC field, Bit Destuffing circuit automatically discards first bit
- after the change on 
+ Since CAN FD Protocol requires 
+\shape smallcaps
+Fixed
+\shape default
+ 
+\shape smallcaps
+Stuff Bit
+\shape default
+ to be discarded in the first bit of CRC field, Bit Destuffing circuit automatic
+ally discards first bit after the change on 
 \family roman
 \shape italic
 fixed_stuff
 \family default
 \shape default
  input (0->1).
- Circuit processes input data with Bit Stuffing Trigger (see TODOREF) one
- clock cycle delayed from Sample trigger.
- Stuff bit discarded is signaled to Protocol Control to stop the data reception
- via 
+ Circuit processes input data with Bit Stuffing Trigger (see Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Pipeline-Architecture"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+), which is one clock cycle delayed from Sample Trigger.
+ 
+\shape smallcaps
+Stuff Bit
+\shape default
+ discarded is signaled to Protocol Control to stop the data reception via
+ 
 \family roman
 \shape italic
 destuffed
@@ -8821,8 +9402,12 @@ dst_bit_ctr
 \family default
 \shape default
 ).
- Stuff Error is detected when N-th bit is not inverse preceding bit where
- N value of 
+ 
+\shape smallcaps
+Stuff Error
+\shape default
+ is detected when N-th bit is not inverse preceding bit where N value of
+ 
 \family roman
 \shape italic
 length
@@ -8830,7 +9415,11 @@ length
 \shape default
  input.
  When circuit is disabled, it by-passes data from input to output without
- Bit Destuffing.
+ 
+\shape smallcaps
+Bit De-Stuffing
+\shape default
+.
  Decision diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -8897,6 +9486,13 @@ name "fig:Bit-Destuffing-logic"
 
 \begin_layout Subsubsection
 2.5.1.6 CRC
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:2.5.1.6-CRC"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -9008,6 +9604,13 @@ crc21
 
 \begin_layout Subsection
 2.5.2 Bus Sampling
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:2.5.2-Bus-Sampling"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -9036,8 +9639,22 @@ Bus Sampling module samples value of CAN Bus (
 CAN_RX
 \family default
 \shape default
-) in Sample point of Bit Time.
- CAN Bus is optionally synchronized via two flip-flop Synchronisation chain.
+) in 
+\shape smallcaps
+Sample Point
+\shape default
+ of 
+\shape smallcaps
+Bit Time
+\shape default
+.
+ RX signal from CAN Bus (
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+) is optionally synchronized via two flip-flop Synchronisation chain.
  Usage of this synchronisation chain is configurable via 
 \family roman
 \shape italic
@@ -9053,7 +9670,11 @@ sync_data
 \family default
 \shape default
 ) can be optionally evaluated via Tripple Sampling circuit.
- Tripple sampling contains 3 bits long shift register (
+ 
+\shape smallcaps
+Tripple Sampling
+\shape default
+ contains 3 bits long shift register (
 \family roman
 \shape italic
 trs_reg
@@ -9074,7 +9695,18 @@ drv_sam
 \family default
 \shape default
  signal.
- Data are sampled in Sample Point via Sample Trigger (RX) (reffer to TODO).
+ Data are sampled in Sample Point via Sample Trigger (RX) (reffer to Figure
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Pipeline-Architecture"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  Sample Trigger is multiplexed between Nominal (
 \family roman
 \shape italic
@@ -9147,8 +9779,11 @@ name "fig:bus-sampling-block-diagram-1-1"
 \end_layout
 
 \begin_layout Standard
-To signal presence of valid Synchronisation Edge, Edge Detection Process
- (
+To signal presence of valid 
+\shape smallcaps
+Synchronisation Edge
+\shape default
+, Edge Detection Process (
 \family roman
 \shape italic
 edge_proc
@@ -9162,14 +9797,25 @@ edge_proc
 prev_sample
 \family default
 \shape default
-) with actual value on CAN Bus (
+) with actual sampled value on CAN Bus (
 \family roman
 \shape italic
 sync_Data
 \family default
 \shape default
 ).
- Upon detection of Recessive to Dominant transition Synchronisation Edge
+ Upon detection of 
+\shape smallcaps
+Recessive
+\shape default
+ to 
+\shape smallcaps
+Dominant
+\shape default
+ transition 
+\shape smallcaps
+Synchronisation Edge
+\shape default
  is detected (
 \family roman
 \shape italic
@@ -9205,8 +9851,8 @@ trv_delay
 \shape default
 ) is erased.
  Each clock cycle Transceiver Delay Counter is incremented by 1.
- Measurement is stoped when an edge (the same edge that erased the counter
- on TX Data) ocurrs on RX Data (
+ Measurement is stoped when an edge (the edge of the same bit that erased
+ Transceiver Delay Counter on TX Data) ocurrs on RX Data (
 \family roman
 \shape italic
 edge_rx_valid
@@ -9219,34 +9865,100 @@ edge_rx_valid
 trv_delay
 \family default
 \shape default
- contains number of clock cycles it took to propagate Recessive to Dominant
+ contains number of clock cycles it took to propagate 
+\shape smallcaps
+Recessive
+\shape default
+ to 
+\shape smallcaps
+Dominant
+\shape default
  Edge from TX pin to RX pin.
- This measurement is started in sample point of EDL bit of CAN FD Frame,
- thus edge type (Recessive to Dominant) is guaranteed.
+ This measurement is started in 
+\shape smallcaps
+Sample Point
+\shape default
+ of 
+\shape smallcaps
+Extended Data Length
+\shape default
+ bit of CAN FD Frame, thus correct edge type (
+\shape smallcaps
+Recessive
+\shape default
+ to 
+\shape smallcaps
+Dominant
+\shape default
+) is guaranteed.
 \end_layout
 
 \begin_layout Standard
-CAN FD transceiver needs to detect Bit Errors when RX Data are not matching
- TX Data.
- In Nominal Bit time, this does not cause any problems.
- Simply Sampled RX pin is compared with value of TX Data.
- In Data Bit-Rate this is not possible, since value of RX pin in Sample
- point might not yet be the same due to Transceiver Delay from TX to RX
- pin! To implement Bit Error detection in Data Bit-Rate, TX Data are delayed
- via Shift Register (
+CAN FD transceiver needs to detect 
+\shape smallcaps
+Bit Errors
+\shape default
+ when RX Data are not matching TX Data.
+ In 
+\shape smallcaps
+Nominal Bit Time
+\shape default
+, this does not cause any problems.
+ Simply sampled RX pin (
+\family roman
+\shape italic
+CAN_rx
+\family default
+\shape default
+) is compared with value of TX Data (
+\family roman
+\shape italic
+data_tx
+\family default
+\shape default
+).
+ In 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ this is not possible, since value of RX pin in 
+\shape smallcaps
+Sample Point
+\shape default
+ might not yet be the same due to 
+\shape smallcaps
+Transceiver Delay
+\shape default
+ from TX to RX pin! To implement 
+\shape smallcaps
+Bit Error
+\shape default
+ detection in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+, TX Data are delayed via shift register (
 \family roman
 \shape italic
 ssp_shift
 \family default
 \shape default
 ) and delayed version of TX Data is compared with RX Data.
- Note that after 
+ Note that after time corresponding to 
+\shape smallcaps
+Transceiver Delay 
+\shape default
+(during 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ measured in 
 \family roman
 \shape italic
 trv_delay
 \family default
 \shape default
-, TX Data value will propagate to RX Data and thus it is possible to address
+), TX Data value will propagate to RX Data and thus it is possible to address
  data in Delayed TX Data Shift Register via 
 \family roman
 \shape italic
@@ -9261,15 +9973,23 @@ trv_delay
 sample_sec
 \family default
 \shape default
-) for Data Bit-Rate Sample Triggers is used.
- Sample Triggers are feeded to this Shift Register and delayed version creates
+) for 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ Sample Triggers is used.
+ Sample Triggers are feeded to this shift register and delayed version creates
  Secondary Sample Trigger (
 \family roman
 \shape italic
 sample_sec
 \family default
 \shape default
-) upon which Bit Error (
+) upon which 
+\shape smallcaps
+Bit Error
+\shape default
+ (
 \family roman
 \shape italic
 bit_Error_reg
@@ -9279,7 +9999,7 @@ bit_Error_reg
 \end_layout
 
 \begin_layout Subsection
-2.5.8 Interrupt manager
+2.5.8 Interrupt Manager
 \end_layout
 
 \begin_layout Description
@@ -9302,7 +10022,7 @@ intManager
 \end_layout
 
 \begin_layout Standard
-Interrupt manager provides interrupt via 
+Interrupt Manager provides interrupt via 
 \family roman
 \shape italic
 int
@@ -9432,6 +10152,16 @@ name "fig:INT-manager-block-1-1"
 
 \begin_layout Subsection
 2.5.3 Prescaler
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2.5.1.2-Operation-control"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Description
@@ -9454,8 +10184,11 @@ prescaler_v3
 \end_layout
 
 \begin_layout Standard
-Prescaler implements functionality of CAN Bus timing and its block diagram
- is shown in Figure 
+Prescaler implements functionality of CAN 
+\shape smallcaps
+Bus Timing
+\shape default
+ and its block diagram is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:prescaler-block-diagram-1"
@@ -9466,8 +10199,16 @@ noprefix "false"
 \end_inset
 
 .
- Elementary time interval on CAN Bus is Time Quanta.
- Firstly, appropriate Time Quanta duration (
+ Elementary time interval on CAN Bus is 
+\shape smallcaps
+Time Quant
+\shape default
+um.
+ Firstly, proper 
+\shape smallcaps
+Time Quantum
+\shape default
+ duration (
 \family roman
 \shape italic
 tq_m
@@ -9479,34 +10220,57 @@ tq_m
 sp_control
 \family default
 \shape default
-) from Nominal Bit-rate Time Quanta (
+) from 
+\shape smallcaps
+Nominal Bit-rate
+\shape default
+ 
+\shape smallcaps
+Time Quantum
+\shape default
+ (
 \family roman
 \shape italic
 tq_nbt
 \family default
 \shape default
-) and Data Bit-rate Time Quanta (
+) and 
+\shape smallcaps
+Data Bit-Rate Time Quantum
+\shape default
+ (
 \family roman
 \shape italic
 tq_dbt
 \family default
 \shape default
 ).
- Time quantum is measured via Time Quantum Counter (
+ 
+\shape smallcaps
+Time Quantum
+\shape default
+ is measured via Time Quantum Counter (
 \family roman
 \shape italic
 tq_counter
 \family default
 \shape default
-) and start of new Time Quanta is signalled via 
+) and start of new 
+\shape smallcaps
+Time Quantum
+\shape default
+ is signalled via 
 \family roman
 \shape italic
 tq_edge
 \family default
 \shape default
  signal.
- Additional clock signal output with frequency matching Bit-rate is provided
- on output (
+ Additional clock signal outputs with frequency matching 
+\shape smallcaps
+Bit-Rate
+\shape default
+ are provided in 
 \family roman
 \shape italic
 clk_tq_nbt
@@ -9518,7 +10282,7 @@ clk_tq_nbt
 clk_tq_dbt
 \family default
 \shape default
-).
+.
  
 \end_layout
 
@@ -9567,8 +10331,12 @@ name "fig:prescaler-block-diagram-1"
 \end_layout
 
 \begin_layout Standard
-Bit time behaviour is controlled by Bit Time FSM whose state transition
- diagram is shown in Figure 
+
+\shape smallcaps
+Bit Time
+\shape default
+ behaviour is controlled by Bit Time FSM whose state transition diagram
+ is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Bit-Time-FSM"
@@ -9579,7 +10347,11 @@ noprefix "false"
 \end_inset
 
 .
- Each segment of can Bit is handled by a separate state (
+ Each segment of 
+\shape smallcaps
+Bit Time
+\shape default
+ is handled by a separate state (
 \family roman
 \shape italic
 sync
@@ -9622,7 +10394,11 @@ ph1
 ph2
 \family default
 \shape default
- in case of Hard Synchronisation is 
+ in case of 
+\shape smallcaps
+Hard Synchronisation
+\shape default
+ is 
 \family roman
 \shape italic
 h_sync
@@ -9636,7 +10412,14 @@ bt_counter
 \family default
 \shape default
 ) which is directly set inside Bit Time FSM.
- Bit Time Counter is compared with Real duration of Phase 1 and Phase 2
+ Bit Time Counter is compared with real duration of 
+\shape smallcaps
+Phase 1
+\shape default
+ and 
+\shape smallcaps
+Phase 2
+\shape default
  registers (
 \family roman
 \shape italic
@@ -9658,19 +10441,29 @@ sync
 \family default
 \shape default
 ), both registers are set to its nominal values as configured from SW.
- If synchronisation edge is signalled (
+ If 
+\shape smallcaps
+Synchronisation Edge
+\shape default
+ is signalled (
 \family roman
 \shape italic
 sync_edge
 \family default
 \shape default
-) and Synchronisation type (
+) and Synchronisation Type (
 \family roman
 \shape italic
 sync_control
 \family default
 \shape default
-) is set to RESYNC, 
+) is set to 
+\family roman
+\shape italic
+RESYNC
+\family default
+\shape default
+, 
 \family roman
 \shape italic
 ph1_real
@@ -9683,7 +10476,11 @@ ph2_real
 \family default
 \shape default
  are lengthened / shortened accordingly.
- If synchronistaion edge is active during 
+ If 
+\shape smallcaps
+Synchronisation Edge
+\shape default
+ is active during 
 \family roman
 \shape italic
 prop
@@ -9695,20 +10492,32 @@ prop
 ph1
 \family default
 \shape default
-, positive resynchronisation is signalled (
+, 
+\shape smallcaps
+Positive Resynchronisation
+\shape default
+ is signalled (
 \family roman
 \shape italic
 pos_resync_cond
 \family default
 \shape default
 ).
- If synchronisation edge arrives during 
+ If 
+\shape smallcaps
+Synchronisation Edge
+\shape default
+ arrives during 
 \family roman
 \shape italic
 ph2
 \family default
 \shape default
-, negatie resynchronisation is signalled (
+, 
+\shape smallcaps
+Negative Resynchronisation
+\shape default
+ is signalled (
 \family roman
 \shape italic
 neg_resync_cond
@@ -9718,13 +10527,57 @@ neg_resync_cond
 \end_layout
 
 \begin_layout Standard
-Special bits from bit timing point of view are BRS and CRC Delimiter.
- During these bits, Bit-rate is shifted in sample point.
- As explained in (TODO and TODO) information processing time is 4 clock
- cycles due to architecture of Triggerring signals, and it is not possible
- to determine if bit rate was shifted sooner than 4 clock cycles after sampling
- the actual bus value! If Nominal Bit-rate was used during these 4 clock
- cycles, overall length of Ph2 segment would not be correct.
+Special bits from 
+\shape smallcaps
+Bit Timing
+\shape default
+ point of view are 
+\shape smallcaps
+Bit Rate Shift
+\shape default
+ and 
+\shape smallcaps
+CRC Delimiter
+\shape default
+.
+ During these bits, 
+\shape smallcaps
+Bit-Rate
+\shape default
+ is shifted in 
+\shape smallcaps
+Sample Point
+\shape default
+.
+ As explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2.6-Information-processing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ 
+\shape smallcaps
+Information Processing Time
+\shape default
+ is 4 clock cycles due to architecture of Triggerring Signals, and it is
+ not possible to determine if 
+\shape smallcaps
+Bit-Rate
+\shape default
+ was shifted sooner than 4 clock cycles after sampling the actual bus value!
+ If 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+ was used during these 4 clock cycles, overall length of 
+\shape smallcaps
+Phase 2
+\shape default
+ segment would not be correct.
  To avoid this problem, 
 \family roman
 \shape italic
@@ -9738,8 +10591,11 @@ ph2
 bt_counter
 \family default
 \shape default
-) is used for bits where bit rate shift did not occur and its validity in
- 
+) is used for bits where 
+\shape smallcaps
+Bit-Rate
+\shape default
+ shift did not occur, and its validity in 
 \family roman
 \shape italic
 ph2
@@ -9758,22 +10614,41 @@ use_default_ctr
 \family default
 \shape default
  signal.
- If Bit-rate shift ocurred, Special Bit Counter (
+ If 
+\shape smallcaps
+Bit-Rate
+\shape default
+ shift ocurred, Special Bit Counter (
 \family roman
 \shape italic
 bt_counter_sw
 \family default
 \shape default
 ) is used.
- This counter is preset to value of PH2 * BRP (
+ This counter is preset to value of 
+\shape smallcaps
+Phase 2
+\shape default
+ * 
+\shape smallcaps
+Baud Rate Prescaler
+\shape default
+ (
 \family roman
 \shape italic
 ph2_extra
 \family default
 \shape default
-), thus counting in clock cycles instead of Time Quanta.
- To detect change of Bit-rate, Sample Control signal is stored upon transtion
- to 
+), thus counting in clock cycles instead of 
+\shape smallcaps
+Time Quant
+\shape default
+um.
+ To detect change of 
+\shape smallcaps
+Bit-Rate
+\shape default
+, Sample Control signal is stored upon transtion to 
 \family roman
 \shape italic
 ph2
@@ -9786,13 +10661,21 @@ sp_control_stored
 \family default
 \shape default
 .
- Upon mismatch between actual Bit-rate type (
+ Upon mismatch between actual 
+\shape smallcaps
+Bit-Rate
+\shape default
+ type (
 \family roman
 \shape italic
 sp_control
 \family default
 \shape default
-) and stored Bit-rate (
+) and stored 
+\shape smallcaps
+Bit-Rate
+\shape default
+ (
 \family roman
 \shape italic
 sp_control_stored
@@ -9805,8 +10688,15 @@ use_spec_counter
 \family default
 \shape default
 ).
- Since during Bit-rate shift resynchronisation also needs to be performed
- (extra counter is used, 
+ During 
+\shape smallcaps
+Bit-Rate
+\shape default
+ shift 
+\shape smallcaps
+Resynchronisation
+\shape default
+ also needs to be performed (extra counter is used, 
 \family roman
 \shape italic
 ph2_real
@@ -9819,38 +10709,90 @@ brs_resync
 \family default
 \shape default
  signal is used.
- If resynchronisation edge occurs during ph2, 
+ If 
+\shape smallcaps
+Resynchronisation
+\shape default
+ edge occurs during 
+\shape smallcaps
+Phase 2
+\shape default
+, 
 \family roman
 \shape italic
 brs_resync
 \family default
 \shape default
  is set.
- Upon nearest Time Quanta actual bit is terminated as if PH2 was shortened.
+ Upon nearest 
+\shape smallcaps
+Time Quantum
+\shape default
+ actual bit is terminated as if 
+\shape smallcaps
+Phase 2
+\shape default
+ was shortened.
 \end_layout
 
 \begin_layout Standard
-As explained in TODO and TODO, Information processing time of CTU CAN FD
- is 4 clock cycles.
- It is not possible to decrease duration of ph2 to less than 4 clock cycles.
- There is no guarantee that resynchronisation edge (
+As explained in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2.6-Information-processing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\shape smallcaps
+Information Processing Time
+\shape default
+ of CTU CAN FD is 4 clock cycles.
+ It is not possible to decrease duration of 
+\shape smallcaps
+Phase 2
+\shape default
+ to less than 4 clock cycles.
+ There is no guarantee that 
+\shape smallcaps
+Resynchronisation
+\shape default
+ edge (
 \family roman
 \shape italic
 sync_edge
 \family default
 \shape default
-), will no occur in less than 4 clock cycles after sample point.
- To make sure that ph2 will no be shortened to less than 4 clock cycles,
- additional counter is used (
+), will not occur in less than 4 clock cycles after 
+\shape smallcaps
+Sample Point
+\shape default
+.
+ To make sure that 
+\shape smallcaps
+Phase 2
+\shape default
+ will not be shortened to less than 4 clock cycles, additional counter is
+ used (
 \family roman
 \shape italic
 ipt_counter
 \family default
 \shape default
 ).
- This counter is set to 3 upon each transition to ph2.
- Counter is decremented each clock cycle, and ph2 is not allowed to exit
- until it reaches zero.
+ This counter is set to 3 upon each transition to 
+\shape smallcaps
+Phase 2
+\shape default
+.
+ Counter is decremented each clock cycle, and 
+\shape smallcaps
+Phase 2
+\shape default
+ is not allowed to exit until zero is reached.
  This fact is signalled by 
 \family roman
 \shape italic
@@ -9912,7 +10854,7 @@ name "fig:Bit-Time-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.5.4 Message filtering
+2.5.4 Message Filter
 \end_layout
 
 \begin_layout Description
@@ -9935,7 +10877,7 @@ messageFilter
 \end_layout
 
 \begin_layout Standard
-Message filter validates received frame on output of CAN Core.
+Message Filter validates received frame on output of CAN Core.
  Block diagram of Message Filter circuit is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -9947,9 +10889,9 @@ noprefix "false"
 \end_inset
 
 .
- If frame identifier matches one of three (A,B,C) Mask Filters or one Range
- Filter and has a valid Frame Type and Identifier Type (CAN 2.0 / CAN FD,
- BASE / EXTENDED), then 
+ If frame identifier matches one of three (A, B, C) Mask Filters or one
+ Range Filter, and it has valid Frame Type and Identifier Type (CAN 2.0 /
+ CAN FD, BASE / EXTENDED), then 
 \family roman
 \shape italic
 out_ident_valid
@@ -10031,7 +10973,7 @@ drv_filter_C_ctrl
 \family default
 \shape default
 ).
- Range Filter converts Received Identifier to decimal value (
+ Range Filter converts received Identifier to decimal value (
 \family roman
 \shape italic
 rec_ident_dec
@@ -10083,14 +11025,19 @@ false
 \family default
 \shape default
 ), then the outcome of filter is as if the filter is not passing.
- If no filter is synthesized (all generics set to false), the output of
- Message Filter is set to 
+ If no filter is synthesized (all generics set to 
+\family roman
+\shape italic
+false
+\family default
+\shape default
+), the output of Message Filter is set to 
 \family roman
 \shape italic
 true
 \family default
 \shape default
-, accepting every Received Frame.
+, accepting every received frame.
 \end_layout
 
 \begin_layout Standard
@@ -10186,16 +11133,16 @@ noprefix "false"
 \end_inset
 
 .
- Basic unit of buffer is 32 bit wide word.
- Size of the buffer is configurable (generic 
+ Basic unit of buffer is 32 bit word.
+ Size of RX Buffer is configurable (generic 
 \family roman
 \shape italic
 buff_size
 \family default
 \shape default
 ) before synthesis.
- However because of addressing logic, only powers of 2 are allowed as buffer
- size! Receive Buffer FIFO is implemented as 
+ However because of addressing logic, only powers of 2 are allowed! Receive
+ Buffer FIFO is implemented as 
 \family roman
 \shape italic
 array
@@ -10225,10 +11172,31 @@ reference "fig:RX_Buffer-memory-layout"
 \end_inset
 
 .
- RX Buffer supports Timestamp capturing in SOF Bit or upon sucessfull reception
- of CAN Frame (end of EOF Field).
- This option can be configured by RX_SETTINGS[RTSOP] bit from SW and corresponds
- to 
+ RX Buffer supports Timestamp capturing in 
+\shape smallcaps
+Start Of Frame
+\shape default
+ Bit or upon sucessfull reception of CAN Frame (end of 
+\shape smallcaps
+End Of Frame
+\shape default
+ field).
+ This option can be configured by 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[RX_SETTINGS]{RX
+\backslash
+textunderscore SETTINGS[RTSOP]}
+\end_layout
+
+\end_inset
+
+ bit from SW and corresponds to 
 \family roman
 \shape italic
 drv_rtsopt
@@ -10328,7 +11296,7 @@ name "fig:RX_Buffer-memory-layout"
 \begin_layout Standard
 CAN frame is stored continously in RAM memory of RX Buffer during frame
  reception.
- This storing is controlled by Protocol Control via signals 
+ Process of storing is controlled by Protocol Control via signals 
 \family roman
 \shape italic
 store_metadata
@@ -10366,7 +11334,7 @@ sof_pulse
 \family default
 \shape default
  is present.
- Storing is realized via RX Buffer FSM (
+ Storing is implemented in RX Buffer FSM (
 \family roman
 \shape italic
 rx_fsm
@@ -10392,8 +11360,11 @@ Upon start of CAN Frame
 sof_pulse
 \family default
 \shape default
- signal is given by Protocol Control and Timestamp of SOF Bit is stored
- in 
+ signal is given by Protocol Control and Timestamp of 
+\shape smallcaps
+Start Of Frame
+\shape default
+ Bit is stored in 
 \family roman
 \shape italic
 timestamp_capture
@@ -10406,8 +11377,15 @@ timestamp_capture
 control
 \family default
 \shape default
- state of Protocol Control, it is already clear whether unit is Transmitter
- or Receiver, all metadata are received (
+ state of Protocol Control, it is already clear whether unit is 
+\shape smallcaps
+Transmitter
+\shape default
+ or 
+\shape smallcaps
+Receiver
+\shape default
+, all metadata are received (
 \family roman
 \shape italic
 rec_frame_type_in
@@ -10431,7 +11409,39 @@ rec_ident_type_in
 rec_ident_in
 \family default
 \shape default
-) thus FRAME_FORMAT_W and IDENTIFIER_W can be stored.
+) thus 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[FRAME_FORM_W]{FRAME
+\backslash
+textunderscore FORM
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[IDENTIFIER_W]{IDENTIFIER
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ can be stored.
  Protocol Control sets 
 \family roman
 \shape italic
@@ -10475,7 +11485,14 @@ rxb_store_data
 \family default
 \shape default
  state.
- During each of the frames one word is stored in RX Buffer FIFO.
+ During each of these states one word is stored in RX Buffer FIFO.
+ In 
+\family roman
+\shape italic
+rxb_store_data
+\family default
+\shape default
+ RX Buffer FSM is waiting for next commands from Protocol Control.
  Reception of each 4 bytes of CAN data is signalled by Protocol Control
  via 
 \family roman
@@ -10496,14 +11513,14 @@ store_data_word
 rec_message_valid
 \family default
 \shape default
- is activated by Protocol Control and storing of RX frame either finishes
+ is activated by Protocol Control and storing of RX Frame either finishes
  (
 \family roman
 \shape italic
 rxb_idle
 \family default
 \shape default
-) or goes through two extra state (
+) or goes through two extra states (
 \family roman
 \shape italic
 rxb_store_end_ts_low
@@ -10515,9 +11532,17 @@ rxb_store_end_ts_low
 rxb_store_end_ts_high
 \family default
 \shape default
-) which are used to store captured Timestamp from EOF.
+) which are used to store captured Timestamp from 
+\shape smallcaps
+End Of Frame
+\shape default
+.
  If any error ocurred during reception (e.g.
- CRC mismatch or another Error Frame), storing is aborted via 
+ CRC mismatch or another 
+\shape smallcaps
+Error Frame
+\shape default
+), storing is aborted via 
 \family roman
 \shape italic
 rec_abort
@@ -10556,15 +11581,16 @@ committed
 \begin_inset Quotes erd
 \end_inset
 
- pointer which is available to SW, second pointer is used during storing.
+ pointer which is available to SW, second pointer is used during process
+ of storing.
  Single read pointer (
 \family roman
 \shape italic
 read_pointer
 \family default
 \shape default
-) is used to access the RAM from second port and read the CAN Frame.
- During storing process amount of free memory is checked and 
+) is used to access the RAM from second port, and read CAN Frame.
+ During storing process, amount of free memory is checked and 
 \family roman
 \shape italic
 overrun_condition
@@ -10576,16 +11602,20 @@ overrun_condition
 write_raw_intent
 \family default
 \shape default
-).
- Overrun condition signals that RX Buffer is full and next word can't be
- stored.
- Such a condition is captured in Internal overrun flag (
+) and there is not enough space in RX Buffer RAM.
+ Overrun Condition signals that RX Buffer is full, and next word can not
+ be stored.
+ Such a condition is captured in Internal Overrun Flag (
 \family roman
 \shape italic
 data_overrun_int)
 \family default
 \shape default
- register and whole frame is discarded upon the end of frame storing.
+ register and whole frame is discarded upon the 
+\shape smallcaps
+End Of Frame
+\shape default
+.
  Additional flag 
 \family roman
 \shape italic
@@ -10601,7 +11631,7 @@ data_overrun_r
 rec_frame_valid_r = '1'
 \family default
 \shape default
-) an RX Buffer FSM is transiting from either 
+), RX Buffer FSM is transiting from either 
 \family roman
 \shape italic
 rxb_store_data 
@@ -10619,17 +11649,17 @@ to
 rxb_idle
 \family default
 \shape default
-, Internal overrun flag is checked.
- If no Data Overrun ocurred during storing, frame is validated and signal
- 
+, Internal Overrun Flag is checked.
+ If no Data Overrun ocurred during process of storing, frame is validated
+ and signal 
 \family roman
 \shape italic
 commit_rx_frame
 \family default
 \shape default
  is set.
- This action is considered as validation of stored frame and frame can be
- now read from SW side of RX Buffer FIFO.
+ This action is considered as validation of stored frame, and frame can
+ be now read from SW side of RX Buffer FIFO.
  Upon this action 
 \family roman
 \shape italic
@@ -10684,7 +11714,7 @@ read_pointer
 drv_read_start
 \family default
 \shape default
- is activated and 
+ is activated, and 
 \family roman
 \shape italic
 read_pointer
@@ -10706,15 +11736,49 @@ rx_empty
 \family default
 \shape default
  signal.
- Upon read of FRAME_FORMAT_W, additional counter (
+ Upon read of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[FRAME_FORM_W]{FRAME
+\backslash
+textunderscore FORM
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+, additional counter (
 \family roman
 \shape italic
 read_frame_counter
 \family default
 \shape default
-) is set to value in RWCNT fields of FRAME_FORMAT_W.
+) is set to value in RWCNT fields of 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[FRAME_FORM_W]{FRAME
+\backslash
+textunderscore FORM
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+.
  Upon each next read, this counter is decremented.
- When zero is reached, whole frame was read and 
+ When zero is reached, whole frame was read, and 
 \family roman
 \shape italic
 message_count
@@ -10747,7 +11811,7 @@ message_count
 \family default
 \shape default
  are taken into account to avoid hazards.
- Note that reading if the buffer is empty, or the frame is not yet completely
+ Note that SW read if RX buffer is empty, or frame is not yet completely
  stored, has no effect and all zeroes are returned (
 \family roman
 \shape italic
@@ -10839,7 +11903,7 @@ txtBuffer
 \end_layout
 
 \begin_layout Standard
-TXT Buffer is a module which contains one CAN frame to be transmitted.
+TXT Buffer is a module which contains one CAN Frame to be transmitted.
  Block diagram of TXT Buffer is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -10861,9 +11925,9 @@ TXT Buffer 1,2,3,4
 \begin_inset Quotes erd
 \end_inset
 
- memory regions (see TODOREF).
- Each buffer contains a state machine which controls operation of the buffer,
- and availability of data within it.
+ memory regions.
+ Each TXT Buffer contains a state machine which controls operation of the
+ buffer, and availability of data within it.
  The state machine is controlled by SW (via SW commands) and by CAN Core
  (via HW commands) and it is described in Figure 
 \begin_inset CommandInset ref
@@ -10920,13 +11984,13 @@ name "fig:TXT-buffer-block-1"
 \end_layout
 
 \begin_layout Standard
-Memory in the buffer is write only from SW (signal 
+Memory in TXT Buffer (signal 
 \family roman
 \shape italic
 txt_buffer_mem
 \family default
 \shape default
-), and it is is write-only from SW.
+) is write only from SW, with only support of 32 bit writes.
  SW is acessing the memory via 
 \family roman
 \shape italic
@@ -10945,15 +12009,27 @@ tran_addr
 tran_cs
 \family default
 \shape default
- signals which are driven in Memory Registers module (see TODOREF).
- Note that memory is accessible by SW only if the buffer is unlocked (
+ signals which are driven in Memory Registers module (see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:2.5.9-Memory-registers"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
+ Note that TXT Buffer memory can be written into by SW only when TXT Buffer
+ is accessbile (
 \family roman
 \shape italic
 txtb_user_accessible
 \family default
 \shape default
  signal).
- Buffer is unlocked if TXT Buffer FSM is in one of states: 
+ Buffer is accessible when TXT Buffer FSM is in one of following states:
+ 
 \family roman
 \shape italic
 txt_empty
@@ -10978,7 +12054,9 @@ txt_ok
 \family default
 \shape default
 .
- HW (Protocol Control) is acessing the memory via 
+ In other states of TXT Buffer FSM, writes to TXT Buffer Memory have no
+ effect.
+ HW (Protocol Control module) is acessing the memory via 
 \family roman
 \shape italic
 txt_addr
@@ -10991,13 +12069,30 @@ txt_word
 \family default
 \shape default
  signal.
- In these states Protocol Control is not accessing the Buffer (there is
- no transmission in progress).
+ In states where TXT Buffer RAM is accessible from SW, it is not accessed
+ by Protocol Control.
+ If TXT Buffer is accessed by Protocol Control (Frame transmission is in
+ progress), TXT Buffer is not accessibe from SW.
 \end_layout
 
 \begin_layout Standard
-SW commands on TXT Buffer can be issued via TX_COMMAND register.
- Issuing other command than supported in current state of TXT Buffer FSM
+SW commands on TXT Buffer can be issued via 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TX_COMMAND]{TX
+\backslash
+textunderscore COMMAND}
+\end_layout
+
+\end_inset
+
+ register.
+ Issuing invalid command (not supported in actual state of TXT Buffer FSM)
  has no effect.
  Once user sets the buffer to 
 \family roman
@@ -11011,14 +12106,14 @@ txt_ready
 txt_sw_cmd.set_rdy
 \family default
 \shape default
- CAN Core (Protocol Control) will lock the buffer as soon as CAN Bus is
- Idle (
+, CAN Core (Protocol Control) will lock (
 \family roman
 \shape italic
 txt_hw_cmd.lock
 \family default
 \shape default
-) and transit to 
+) the buffer (make it unacessible to SW) as soon as CAN Bus is Idle, and
+ transit to 
 \family roman
 \shape italic
 txt_tx_prog
@@ -11031,7 +12126,7 @@ txt_tx_prog
 txt_tx_prog
 \family default
 \shape default
- Protocol Control is driving 
+, Protocol Control is driving 
 \family roman
 \shape italic
 txt_addr
@@ -11054,10 +12149,10 @@ txt_tx_ok
  If Arbitration is lost during transmission, 
 \family roman
 \shape italic
-txt_hw_cmd.err
+txt_hw_cmd.arbl
 \family default
 \shape default
- is signalled and buffer is moved back to 
+ is signalled, and TXT Buffer is moved back to 
 \family roman
 \shape italic
 txt_ready
@@ -11078,7 +12173,7 @@ txt_error
 \family default
 \shape default
 .
- SW command can also issue Abort command (
+ SW can also issue Abort Command (
 \family roman
 \shape italic
 txt_sw_cmd.set_abt
@@ -11094,7 +12189,7 @@ txt_aborted
 .
  Since there are multiple instances of TXT Buffer in each CTU CAN FD, HW
  and SW commands must be filtered for each of them.
- Buffer is uniquely distinguished by 
+ TXT Buffer is uniquely distinguished by 
 \family roman
 \shape italic
 ID
@@ -11191,12 +12286,12 @@ canfd_registers
 \end_layout
 
 \begin_layout Standard
-Memory Registers provide the interface between SoC Memory Bus (Avalon or
+Memory Registers provide an interface between SoC Memory Bus (Avalon or
  APB) and all control and Status signals of CTU CAN FD IP function.
  Address decoder for access to TXT Buffers is implemented in this module.
  Driving bus assignments are implemented in this module.
- Register structure is in described in Chapter 3 TODOREF.
- Frame Format in TXT Buffers and RX Buffer is described in Chapter 4 TODOREF.
+ Register structure is in described in Chapter 3 (TODOREF).
+ Frame Format in TXT Buffers and RX Buffer is described in Chapter 4 (TODOREF).
 \end_layout
 
 \begin_layout Standard
@@ -11234,19 +12329,52 @@ TX Arbitrator module has three main purposes:
 \end_layout
 
 \begin_layout Itemize
-Select highest priority TXT Buffer whose TXT Buffer FM is in 
+Select highest priority TXT Buffer whose TXT Buffer FSM is in 
 \family roman
 \shape italic
 txt_ready
 \family default
 \shape default
- and can be locked for transmission.
+ and can be chosen for transmission.
 \end_layout
 
 \begin_layout Itemize
-Compare the Timestamp from TIMESTAMP_L_W and TIMESTAMP_U_W with the external
- timestamp and signal to CAN Core, whether timestamp of highest priority
- buffer is higher than value of 
+Compare Timestamp from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_L_W]{TIMESTAMP
+\backslash
+textunderscore L
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_U_W]{TIMESTAMP
+\backslash
+textunderscore U
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ with external Timestamp and signal to CAN Core, whether Timestamp of highest
+ priority TXT Buffer is higher than value of 
 \family roman
 \shape italic
 timestamp
@@ -11256,8 +12384,57 @@ timestamp
 \end_layout
 
 \begin_layout Itemize
-Load metadata from FRAME_FORMAT_W and IDENTIFIER_W from highest priority
- frame, once the CAN Frame Timestamp from TIMESTAMP_L_W and TIMESTAMP_U_W
+Load metadata from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[FRAME_FORM_W]{FRAME
+\backslash
+textunderscore FORM
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ from highest priority frame, once CAN Frame Timestamp from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_L_W]{TIMESTAMP
+\backslash
+textunderscore L
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_U_W]{TIMESTAMP
+\backslash
+textunderscore U
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
  is higher than value of
 \family roman
 \shape italic
@@ -11265,15 +12442,15 @@ Load metadata from FRAME_FORMAT_W and IDENTIFIER_W from highest priority
 \family default
 \shape default
  input.
- This comparison allows propagation of CAN Frame to CAN Core only when timestamp
- input becomes higher that CAN Frame Timestamp.
+ This comparison allows propagation of CAN Frame to CAN Core only when Timestamp
+ input becomes higher than CAN Frame Timestamp.
  In other words, CAN Frame can be transmitted only when 
 \family roman
 \shape italic
 timestamp
 \family default
 \shape default
- reaches value of CAN Frame timestamp, which creates function of 
+ reaches value of CAN Frame Timestamp, which creates function of 
 \begin_inset Quotes eld
 \end_inset
 
@@ -11309,8 +12486,10 @@ noprefix "false"
 
 .
  FSM resolves Timestamp comparisons and Metadata loads on outputs.
- Highest priority TXT Buffer is selected by Priority Decoder which is organized
- as tree and it is described in Figure TODO.
+ Highest priority TXT Buffer is selected by Priority Decoder.
+ Priority Decoder is implemented in a separate sub-module and it is set
+ of priority comparators organized as tree.
+ Priority Decoder is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -11326,7 +12505,24 @@ tx_arb_fsm
 arb_sel_low_ts
 \family default
 \shape default
- state which selects TIMESTAMP_L_W word from TXT Buffer memory.
+ state which selects 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_L_W]{TIMESTAMP
+\backslash
+textunderscore L
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ word from TXT Buffer memory.
  TX Arbitrator is held in this state as long as there is no valid frame
  selected by Priority Decoder (
 \family roman
@@ -11341,7 +12537,7 @@ select_buf_avail
 \family default
 \shape default
 ).
- In this state lower part of CAN Frame timestamp is stored in 
+ In this state lower part of CAN Frame Timestamp is stored in 
 \family roman
 \shape italic
 ts_low_internal
@@ -11366,9 +12562,26 @@ TX Arbitrator FSM is moved to
 arb_sel_upp_ts
 \family default
 \shape default
- in which TIMESTAMP_L_W is adressed from TXT Buffer RAM.
+ in which 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_U_W]{TIMESTAMP
+\backslash
+textunderscore U
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ is adressed from TXT Buffer RAM.
  In this state Upper part of CAN Frame Timestamp is on the output of TXT
- Buffer RAM and Lower part of CAN Frame timestamp is stored in 
+ Buffer RAM and Lower part of CAN Frame Timestamp is stored in 
 \family roman
 \shape italic
 ts_low_internal
@@ -11407,8 +12620,25 @@ timestamp
 arb_sel_ffw
 \family default
 \shape default
-, FRAME_FORMAT_W is adressed and CAN Frame metadata are stored on the outputs
- of TX Arbitrator (
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[FRAME_FORM_W]{FRAME
+\backslash
+textunderscore FORM
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ is adressed and CAN Frame metadata are stored on outputs of TX Arbitrator
+ (
 \family roman
 \shape italic
 tran_dlc
@@ -11440,10 +12670,31 @@ tran_frame_valid_com
 \family default
 \shape default
 ) for CAN Core.
- Note that validity of output frame is logic AND between tran_frame_valid_com
- and combinationally selected value by Priority Decoder.
+ Note that validity of output frame is logic AND between 
+\family roman
+\shape italic
+tran_frame_valid_com
+\family default
+\shape default
+ and combinational signal 
+\family roman
+\shape italic
+select_buf_avail
+\family default
+\shape default
+ from Priority Decoder.
  This fact is important due to hazard protection and it is further explained
- in TODOREF.
+ in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2.6-TX-Datapath-hazard-protection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Upon change of Index of selected TXT Buffer, TX Arbitrator FSM is restarted
  (
 \family roman
@@ -11466,15 +12717,15 @@ txt_hw_cmd.lock
 arb_locked
 \family default
 \shape default
- and no frame selection is stopped until 
+ and frame selection is stopped until 
 \family roman
 \shape italic
 txt_hw_cmd.unlock
 \family default
 \shape default
  is signalled.
- Index of actually selected buffer for transmission is always stored in
- 
+ Index of actually selected TXT Buffer for transmission is always stored
+ in 
 \family roman
 \shape italic
 int_txtb_index
@@ -11529,15 +12780,16 @@ name "fig:TX-arbitrator-block-1"
 
 \begin_layout Standard
 Each state of TX Arbitrator which is addressing word in TXT Buffer memory
- contains wait state (
+ contains Wait State (
 \family roman
 \shape italic
 fsm_wait_state
 \family default
 \shape default
-) due to which each state waits one additional clock cycle before processing
+).
+ Due to this Wait State FSM waits one additional clock cycle before processing
  data from TXT Buffer.
- This wait state is necessary since output of TXT Buffer RAM is clocked
+ This Wait State is necessary since output of TXT Buffer RAM is clocked,
  and it takes one clock cycle to provide the data after 
 \family roman
 \shape italic
@@ -11545,21 +12797,76 @@ txtb_ptr
 \family default
 \shape default
  was set.
- Selection process goes through 3 States of TX Arbitrator with single clock
- cycle wait state in each of the states.
- This creates delay of 6 clock cycle between TXT Buffer is set to 
+ Selection process transits through 3 States of TX Arbitrator with one clock
+ cycle Wait State and one clock cycle for data processing in each of the
+ states.
+ This creates delay of 6 clock cycles between TXT Buffer is set to 
 \family roman
 \shape italic
-txt_ready
+txt_ready,
 \family default
 \shape default
  and TX Frame is selected for transmission.
  Note that with 100 MHz clock, this creates delay of 60 ns which is far
- below maximum Nominal Bit Time length (1000 ns), and thus it does not impose
- any restrictions on time sensitive CAN applications as TTCAN.
- Since TX Arbitrator (during reading TIMESTAMP_U_W, TIMESTAMP_L_W and FRAME_FORM
-AT_W) and Protocol Control (during frame transmission) need data from TXT
- Buffer memory, final pointer to memory is multiplexed between 
+ below maximum 
+\shape smallcaps
+Nominal Bit Time
+\shape default
+ length (1000 ns), and thus it does not impose any restrictions on time
+ sensitive CAN applications as TTCAN.
+ Since TX Arbitrator (during reading 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_L_W]{TIMESTAMP
+\backslash
+textunderscore L
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_U_W]{TIMESTAMP
+\backslash
+textunderscore U
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[FRAME_FORM_W]{FRAME
+\backslash
+textunderscore FORM
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+) and Protocol Control (during frame transmission) both need data from TXT
+ Buffer Memory, pointer to TXT Buffer Memory is multiplexed between 
 \family roman
 \shape italic
 txtb_pointer_meta
@@ -11572,14 +12879,14 @@ txtb_core_pointer
 \family default
 \shape default
 .
- When frame is not yet selected, buffer is addressed with 
+ When frame is not yet selected, TXT Buffer Memory is addressed with 
 \family roman
 \shape italic
 txtb_pointer_meta
 \family default
 \shape default
- .
- Once frame is selected and TX Arbitrator FSM is 
+.
+ Once frame is selected and TX Arbitrator FSM is in 
 \family roman
 \shape italic
 arb_locked
@@ -11646,7 +12953,7 @@ name "fig:TX_Arbitrator-FSM-1"
 \end_layout
 
 \begin_layout Subsection
-2.5.10 Event logger (optional) 
+2.5.10 Event Logger (optional) 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:2.3.10-Event-logger"
@@ -11676,89 +12983,105 @@ CAN_logger
 \end_layout
 
 \begin_layout Standard
-Event logger is module capturing events on the CAN bus with its timestamps.
+Event Logger is a module capturing events on CAN Bus and Timestamp of these
+ events.
  FIFO memory is implemented with configurable size (generic 
-\begin_inset Quotes eld
+\family roman
+\shape italic
+memory_size
+\family default
+\shape default
+).
+ Event Logger implements state machine with 
+\family roman
+\shape italic
+config
+\family default
+\shape default
+ state which is dedicated to reading out previously logged data, configuring
+ triggering and capturing event types.
+ When command is given (via Driving bus, see register 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[LOG_COMMAND]{LOG
+\backslash
+textunderscore COMMAND}
+\end_layout
+
 \end_inset
 
-memory_size
-\begin_inset Quotes erd
+) state machine is moved to 
+\family roman
+\shape italic
+ready
+\family default
+\shape default
+ state where it is waiting for triggering condition to move to 
+\family roman
+\shape italic
+running
+\family default
+\shape default
+ state.
+ In 
+\family roman
+\shape italic
+running
+\family default
+\shape default
+ state, events are being captured along with Timestamp and additional informatio
+n (see register 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[LOG_CAPT_EVENT_1]{LOG
+\backslash
+textunderscore CAPT
+\backslash
+textunderscore EVENT
+\backslash
+textunderscore 1}
+\end_layout
+
 \end_inset
 
 ).
- Event logger implements the state machine with 
-\begin_inset Quotes eld
-\end_inset
-
-CONFIG
-\begin_inset Quotes erd
-\end_inset
-
- state which is dedicated to reading out previously logged data, configuring
- triggering and capturing event types.
- When command is given (via Driving bus, see register LOG_COMMAND description)
- state machine is moved to 
-\begin_inset Quotes eld
-\end_inset
-
-READY
-\begin_inset Quotes erd
-\end_inset
-
- state where it is waiting for triggering condition to move to 
-\begin_inset Quotes eld
-\end_inset
-
-RUNNING
-\begin_inset Quotes erd
-\end_inset
-
- state.
- In 
-\begin_inset Quotes eld
-\end_inset
-
-RUNNING
-\begin_inset Quotes erd
-\end_inset
-
- state, events are being captured along with its time stamp and additional
- information (see register EVENT_TYPE description).
- When the memory is full circuit automatically moves to 
-\begin_inset Quotes eld
-\end_inset
-
-CONFIG
-\begin_inset Quotes erd
-\end_inset
-
+ When memory is full, circuit automatically moves to 
+\family roman
+\shape italic
+config
+\family default
+\shape default
  state and sets 
-\begin_inset Quotes eld
-\end_inset
-
+\family roman
+\shape italic
 logger_finished
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
  output.
  From 
-\begin_inset Quotes eld
-\end_inset
-
-READY
-\begin_inset Quotes erd
-\end_inset
-
+\family roman
+\shape italic
+ready
+\family default
+\shape default
  and 
-\begin_inset Quotes eld
-\end_inset
-
-RUNNING
-\begin_inset Quotes erd
-\end_inset
-
- state, circuit operation can be aborted via driving bus.
- The event logger diagram is shown in Figure 
+\family roman
+\shape italic
+running
+\family default
+\shape default
+ state, circuit operation can be aborted via Driving Bus.
+ Block diagram of Event Logger is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Event_logger"
@@ -11813,7 +13136,7 @@ name "fig:TX-arbitrator-block-1-1"
 \end_layout
 
 \begin_layout Standard
-Event logger implements so called 
+Event Logger implements so called 
 \begin_inset Quotes eld
 \end_inset
 
@@ -11822,50 +13145,103 @@ Event harvesting
 \end_inset
 
  mechanism.
- Since there are many events sources in the Status bus, several events can
- occur at once! Any events that occur are stored in an internal register
- in the first clock cycle.
+ Since there are many events sources in Status Bus, several events can occur
+ at once! Any events that occur are stored in an internal register upon
+ edge detection on this event.
  In next up to N clock cycles (N is the amount of simultaneous events) events
- are written to the logger memory.
+ are written to RAM memory of Event Logger.
  If any other event occurs (of the same type) during these N cycles it is
  not logged.
- Due to the nature of the system, it is very improbable that repeated event
- will happend in e.g.
- 4 clock cycles.
- 
+ Note that events on CAN Bus does not occur with such a high frequency,
+ thus this restriction does not impose any restrictions on Event Logger
+ usage.
 \end_layout
 
 \begin_layout Standard
-This circuit provides additional testing capability beyond the CAN FD specificat
-ion.
- Events can be read out from memory from EVENT_INFO_1 and EVENT_INFO_2 register.
- The event at the position of 
-\begin_inset Quotes eld
+This circuit provides additional testing capability beyond CAN FD specification.
+ Events can be read out from memory from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[LOG_CAPT_EVENT_1]{LOG
+\backslash
+textunderscore CAPT
+\backslash
+textunderscore EVENT
+\backslash
+textunderscore 1}
+\end_layout
+
 \end_inset
 
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[LOG_CAPT_EVENT_2]{LOG
+\backslash
+textunderscore CAPT
+\backslash
+textunderscore EVENT
+\backslash
+textunderscore 2}
+\end_layout
+
+\end_inset
+
+ register.
+ The event at position of 
+\family roman
+\shape italic
 read_pointer
-\begin_inset Quotes erd
+\family default
+\shape default
+ is read out.
+ 
+\family roman
+\shape italic
+read_pointer
+\family default
+\shape default
+ position can be manipulated via 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[LOG_COMMAND]{LOG
+\backslash
+textunderscore COMMAND}
+\end_layout
+
 \end_inset
 
- is read out.
- Read_pointer position can be manipulated via LOG_CMD register.
+ register.
  
 \end_layout
 
 \begin_layout Standard
-FIFO Memory is implemented in the same way as RX Buffer memory.
+FIFO Memory is implemented equally as RX Buffer and TXT Buffer memories.
  It is un-initialized during reset which allows ALTERA Synthesis tools to
  infer native RAM memory.
  Additional vector 
-\begin_inset Quotes eld
-\end_inset
-
+\family roman
+\shape italic
 memory_valid
-\begin_inset Quotes erd
-\end_inset
-
- is stored which contains information about the state of the memory row,
- so it is possible to achieve erase-on-reset behaviour from user perspective.
+\family default
+\shape default
+ is stored which contains information about state of memory row, so it is
+ possible to achieve erase-on-reset behaviour from user perspective.
 \end_layout
 
 \begin_layout Standard
@@ -11920,21 +13296,49 @@ name "fig:Event_logger"
 \end_layout
 
 \begin_layout Section
-2.6 Information processing time
+2.6 Information Processing Time
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:2.6-Information-processing"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-CAN standard defines information processing time (IPT) which can be different
- for every implementation of CAN controller.
+CAN standard defines 
+\shape smallcaps
+Information Processing Time
+\shape default
+ (IPT) which can be different for every implementation of CAN controller.
  IPT determines how many clock cycles CAN controller needs after sampling
- bus value, before determining following bit value.
+ bus value in 
+\shape smallcaps
+Sample Point
+\shape default
+, before determining following bit value.
  Implementation of CTU CAN FD IP core is based on Triggers as explained
- in TODOREF.
- For sampling, three triggering signals are used.
+ in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:2.3-Pipeline-architecture"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ For sampling, three Triggering signals are used.
  These signals are mutually delayed by one clock cycle (Sample Trigger,
  Bit Destuffing Trigger, Receive Trigger).
- Thus minimal duration of PH2 is 4 clock cycles (one more cycle is needed
- to update internal registers of Fault Confinement and Protocol Control).
+ Thus minimal duration of 
+\shape smallcaps
+Phase 2
+\shape default
+ is 4 clock cycles (one more cycle is needed to update internal registers
+ of Fault Confinement and Protocol Control).
  Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -11942,8 +13346,12 @@ reference "tab: IPT_reqs"
 
 \end_inset
 
- shows minimal Bit Time settings in relation to Prescaler settings.
- Triggering Signals (TX and RX) in this corner case are shown in Figure
+ shows minimal 
+\shape smallcaps
+Bit Time
+\shape default
+ settings in relation to Prescaler settings.
+ Triggering signals (TX and RX) in this corner case are shown in Figure
  
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -11976,7 +13384,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-Prescaler value
+Prescaler
 \end_layout
 
 \end_inset
@@ -11986,7 +13394,13 @@ Prescaler value
 
 \begin_layout Plain Layout
 Min.
- Prop+Ph1
+ 
+\shape smallcaps
+Prop
+\shape default
+ + 
+\shape smallcaps
+Ph1
 \end_layout
 
 \end_inset
@@ -11995,7 +13409,10 @@ Min.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Min Ph2
+Min.
+ 
+\shape smallcaps
+Ph2
 \end_layout
 
 \end_inset
@@ -12099,7 +13516,11 @@ Min Ph2
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Information processing time requirements
+
+\shape smallcaps
+Information Processing Time
+\shape default
+ requirements
 \begin_inset CommandInset label
 LatexCommand label
 name "tab: IPT_reqs"
@@ -12171,9 +13592,17 @@ reference "tab: IPT_reqs"
 
 \end_inset
 
- theoretical maximum Bit Rate in Data phase of CAN Frame can be calculated.
+ theoretical maximum 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ of CAN Frame can be calculated.
  Assuming we have Prescaler set to 1, length of all bit segments together
- is 7 and clock is 100 MHz, CTU CAN FD IP Core reaches 14,7 Mbit/s Bit Rate.
+ is 7, and clock is 100 MHz, CTU CAN FD IP Core reaches 14,7 Mbit/s 
+\shape smallcaps
+Bit-Rate
+\shape default
+.
  Note that this situation is theoretical maximum, and since timing conditions
  are very tight, synchronization errors can appear.
  This configuration was tested (see 
@@ -12183,7 +13612,7 @@ reference "sec:4.7-Sanity-test"
 
 \end_inset
 
-- Sanity test) in simulation and one such a frame is shown in Figure 
+- Sanity test) in simulation, and one such a frame is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Max_bitrate-1"
@@ -12217,7 +13646,11 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Frame with Maximum Bit Rate
+Frame with maximum 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Max_bitrate-1"
@@ -12246,11 +13679,18 @@ name "fig:Max_bitrate-1"
 
 \begin_layout Section
 2.6 Error detection architecture
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:2.6-Error-detection"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
-This section describes how each type of Error on CAN Bus is handled in CTU
- CAN FD:
+This section describes how each type of error on CAN Bus is handled in CTU
+ CAN FD.
 \end_layout
 
 \begin_layout Subsection
@@ -12258,30 +13698,65 @@ Bit Error
 \end_layout
 
 \begin_layout Standard
-Bit Error detection in CTU CAN FD is detected in several ways according
- to part of Frame where it might occur:
+
+\shape smallcaps
+Bit Error
+\shape default
+ in CTU CAN FD is detected in several ways according to part of Frame where
+ it might occur:
 \end_layout
 
 \begin_layout Itemize
-In SOF field (
+In 
+\shape smallcaps
+Start Of Frame
+\shape default
+ bit (
 \family roman
 \shape italic
 PC_State = sof
 \family default
 \shape default
-), Bit Error is detected explicitly in Protocol Control.
- Upon Sampling Recessive bit Protocol Control is updated to 
+), 
+\shape smallcaps
+Bit Error
+\shape default
+ is detected explicitly in Protocol Control.
+ Upon Sampling 
+\shape smallcaps
+Recessive
+\shape default
+ bit Protocol Control is updated to 
 \family roman
 \shape italic
 error
 \family default
 \shape default
-, thus causing transmission of Error Frame.
+, thus causing transmission of 
+\shape smallcaps
+Error Frame
+\shape default
+.
 \end_layout
 
 \begin_layout Itemize
-In Arbitration, Bit Error is considered only when Dominant is sent and Recessive
- is Received.
+In 
+\shape smallcaps
+Arbitration
+\shape default
+, 
+\shape smallcaps
+Bit Error
+\shape default
+ is considered only when 
+\shape smallcaps
+Dominant
+\shape default
+ is sent and 
+\shape smallcaps
+Recessive
+\shape default
+ is received.
  This case is handled directly in 
 \family roman
 \shape italic
@@ -12298,8 +13773,23 @@ error
 \end_layout
 
 \begin_layout Itemize
-In Control, Data, CRC fields bit Error is detected by Bus Sampling module
- on 
+In 
+\shape smallcaps
+Control
+\shape default
+, 
+\shape smallcaps
+Data
+\shape default
+ and 
+\shape smallcaps
+CRC
+\shape default
+ fields 
+\shape smallcaps
+Bit Error
+\shape default
+ is detected by Bus Sampling module on 
 \family roman
 \shape italic
 bit_Error
@@ -12332,9 +13822,29 @@ error
 \end_layout
 
 \begin_layout Itemize
-In CRC Delimiter and Acknowledge Delimiter, Bit Error is detected by Protocol
- Control itself by explicitly checking sampled RX value to be Recessive.
- In case of Dominant Bit, Protocol Control is updated to 
+In 
+\shape smallcaps
+CRC Delimiter
+\shape default
+ and 
+\shape smallcaps
+Acknowledge Delimiter
+\shape default
+, 
+\shape smallcaps
+Bit Error
+\shape default
+ is detected by Protocol Control itself by explicitly checking sampled RX
+ value to be 
+\shape smallcaps
+Recessive
+\shape default
+.
+ In case of 
+\shape smallcaps
+Dominant
+\shape default
+ Bit, Protocol Control is updated to 
 \family roman
 \shape italic
 error
@@ -12344,8 +13854,19 @@ error
 \end_layout
 
 \begin_layout Itemize
-In EOF, detection of any Dominant Bit is evaluated as presence of Error
- Flag and Protocol Control is updated to 
+In 
+\shape smallcaps
+End of Frame
+\shape default
+, detection of any 
+\shape smallcaps
+Dominant
+\shape default
+ Bit is evaluated as a presence of 
+\shape smallcaps
+Active Error Flag
+\shape default
+ and Protocol Control is updated to 
 \family roman
 \shape italic
 error
@@ -12355,8 +13876,19 @@ error
 \end_layout
 
 \begin_layout Itemize
-During Error and Overload Frames of Protocol Control, Bit Errors are handled
- in 
+During 
+\shape smallcaps
+Error Frame
+\shape default
+ and 
+\shape smallcaps
+Overload Frame
+\shape default
+, 
+\shape smallcaps
+Bit Errors
+\shape default
+ are handled in 
 \family roman
 \shape italic
 error
@@ -12369,10 +13901,24 @@ overload
 \family default
 \shape default
  states explicitly.
- Upon detection of Recessive Bit during Active Error Flag, Error Counters
- are increased accordingly.
- Upon detection of 14 consecutive Dominant Bits during Error Flag superposition,
- Error counters are incremented accordingly.
+ Upon detection of 
+\shape smallcaps
+Recessive
+\shape default
+ Bit during 
+\shape smallcaps
+Active Error Flag
+\shape default
+, Error Counters are increased accordingly.
+ Upon detection of 14 consecutive 
+\shape smallcaps
+Dominant
+\shape default
+ Bits during 
+\shape smallcaps
+Error Flag Superposition
+\shape default
+, Error counters are incremented accordingly.
 \end_layout
 
 \begin_layout Subsection
@@ -12380,19 +13926,64 @@ Stuff Error
 \end_layout
 
 \begin_layout Standard
-Stuff Error is detected for Normal Bit Stuffing as well as Fixed Bit Stuffing
- by Bit Destuffing module and signalled via 
+
+\shape smallcaps
+Stuff Error
+\shape default
+ is detected for standard 
+\shape smallcaps
+Bit Stuffing
+\shape default
+ as well as 
+\shape smallcaps
+Fixed Bit Stuffing
+\shape default
+ by Bit De-stuffing module and signalled via 
 \family roman
 \shape italic
 stuff_Error
 \family default
 \shape default
  output.
- Stuff Error is enabled in SOF, Arbitration, Control, Data and CRC fields
- of CAN FD Frame.
- Note that CAN FD Standard proposes that an error in Fixed bit Stuffing
- method shall be interpreted as Form Error instead of Stuff Error.
- CTU CAN FD detects this error as Stuff Error due to shared 
+ 
+\shape smallcaps
+Stuff Error
+\shape default
+ is enabled in 
+\shape smallcaps
+Start of Frame
+\shape default
+, 
+\shape smallcaps
+Arbitration
+\shape default
+, 
+\shape smallcaps
+Control
+\shape default
+, Data and 
+\shape smallcaps
+CRC Sequence
+\shape default
+ fields of CAN Frame.
+ Note that CAN FD standard proposes that an error in 
+\shape smallcaps
+Fixed Bit Stuffing
+\shape default
+ method shall be interpreted as 
+\shape smallcaps
+Form Error
+\shape default
+ instead of 
+\shape smallcaps
+Stuff Error
+\shape default
+.
+ CTU CAN FD detects this error as 
+\shape smallcaps
+Stuff Error
+\shape default
+ due to shared 
 \family roman
 \shape italic
 stuff_Error
@@ -12406,7 +13997,11 @@ Form Error
 \end_layout
 
 \begin_layout Standard
-Form Error is detected by Protocol Control FSM and marked in 
+
+\shape smallcaps
+Form Error
+\shape default
+ is detected by Protocol Control FSM and it is marked in 
 \family roman
 \shape italic
 form_Error_r
@@ -12416,22 +14011,77 @@ form_Error_r
 \end_layout
 
 \begin_layout Itemize
-if r0 bit is received as Recessive.
+if r0 bit is received as 
+\shape smallcaps
+Recessive
+\shape default
+.
 \end_layout
 
 \begin_layout Itemize
-if r1 bit is received as Recessive in CAN 2.0 Frames with Extended Identifier.
- For other frame, types r1 is part of Arbitration Field and detection of
- its Illegal value is covered by Bit Error detection.
+if r1 bit is received as 
+\shape smallcaps
+Recessive
+\shape default
+ in CAN 2.0 Frames with 
+\shape smallcaps
+Extended
+\shape default
+ Identifier.
+ For other frame, types r1 is part of 
+\shape smallcaps
+Arbitration
+\shape default
+ Field and detection of illegal value is covered by 
+\shape smallcaps
+Bit Error
+\shape default
+ detection.
 \end_layout
 
 \begin_layout Itemize
-If support for CAN FD is disabled via TODOREG and EDL bit is detected Recessive!
+If support for CAN FD is disabled via 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[SETTINGS]{SETTINGS}
+\end_layout
+
+\end_inset
+
+ and 
+\shape smallcaps
+Extended Data Length
+\shape default
+ bit is detected 
+\shape smallcaps
+Recessive
+\shape default
+!
 \end_layout
 
 \begin_layout Itemize
-If CRC Delimiter is received as Recessive or ACK Delimiter is received as
- Recessive.
+If 
+\shape smallcaps
+CRC Delimiter
+\shape default
+ is received as 
+\shape smallcaps
+Dominant
+\shape default
+ or 
+\shape smallcaps
+ACK Delimiter
+\shape default
+ is received as 
+\shape smallcaps
+Dominant
+\shape default
+.
 \end_layout
 
 \begin_layout Subsection
@@ -12439,8 +14089,20 @@ ACK Error
 \end_layout
 
 \begin_layout Standard
-ACK Error is detected when Recessive value is Detected in ACK Slot.
- This Error is detected by Protocol Control FSM.
+
+\shape smallcaps
+ACK Error
+\shape default
+ is detected when 
+\shape smallcaps
+Recessive
+\shape default
+ value is detected in 
+\shape smallcaps
+ACK
+\shape default
+ bit.
+ This error is detected by Protocol Control FSM.
 \end_layout
 
 \begin_layout Subsection
@@ -12448,8 +14110,12 @@ CRC Error
 \end_layout
 
 \begin_layout Standard
-CRC Error is detected by Protocol Control FSM and it occurs upon mismatch
- between received CRC (
+
+\shape smallcaps
+CRC Error
+\shape default
+ is detected by Protocol Control FSM and it occurs upon mismatch between
+ received CRC (
 \family roman
 \shape italic
 rec_crc_r
@@ -12480,7 +14146,7 @@ crc21
 crc_and_parity_valid
 \family default
 \shape default
- and it is compared in the first clock cycle of 
+ and it is compared in first clock cycle of 
 \family roman
 \shape italic
 delim_ack state
@@ -12501,22 +14167,51 @@ crc_check
 
 \begin_layout Standard
 CAN FD standard defines that CAN Node shall wait for 128 ocurrences of 11
- consecutive bits after transfer to Bus off, before going to Error Active
+ consecutive 
+\shape smallcaps
+Recessive
+\shape default
+ bits after transfer to 
+\shape smallcaps
+Bus Off
+\shape default
+, before going to 
+\shape smallcaps
+Error Active
+\shape default
  again.
  Since SW can manipulate Error counters of CTU CAN FD, it is possible to
- force Fault Confinement state to become Error Active without satisfying
- this condition.
+ force Fault Confinement state to become 
+\shape smallcaps
+Error Active
+\shape default
+ without satisfying this condition.
  Two ways of restarting error counters must be distinguished:
 \end_layout
 
 \begin_layout Standard
 1.
- Reset error counters via TODO register.
+ Reset error counters via 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[CTR_PRES]{CTR
+\backslash
+textunderscore PRES}
+\end_layout
+
+\end_inset
+
+ register.
  This approach is 
 \series bold
 not
 \series default
- conformant to CAN standard.
+ ISO CAN FD compliant.
 \end_layout
 
 \begin_layout Standard
@@ -12535,7 +14230,7 @@ hyperref[COMMAND]{COMMAND[ERCRST]}
 \end_inset
 
  register.
- SW using this approach is conformant to CAN standard.
+ SW using this approach is ISO CAN FD compliant.
 \end_layout
 
 \begin_layout Section
@@ -12548,7 +14243,18 @@ CTU CAN FD contains following features which are not required by CAN FD
 \end_layout
 
 \begin_layout Enumerate
-Manipulation of TX, RX Error counters and thus affect Fault Confinement
+Manipulation of 
+\shape smallcaps
+TX Error Counter
+\shape default
+ and 
+\shape smallcaps
+RX Error Counter
+\shape default
+, thus directly affect 
+\shape smallcaps
+Fault Confinement
+\shape default
  state.
 \end_layout
 
@@ -12557,11 +14263,19 @@ Time triggered transmission from TX Buffer.
 \end_layout
 
 \begin_layout Enumerate
-Reception of RX Frame Timestamp in SOF or EOF.
+Reception of RX Frame Timestamp in 
+\shape smallcaps
+Start of Frame
+\shape default
+ or 
+\shape smallcaps
+End of Frame
+\shape default
+.
 \end_layout
 
 \begin_layout Enumerate
-Chance to immediately abort transmission
+Chance to immediately abort transmission.
 \end_layout
 
 \begin_layout Enumerate
@@ -12569,11 +14283,32 @@ Logging events on CAN Bus via Event Logger.
 \end_layout
 
 \begin_layout Enumerate
-Transmission of special RTR frame with non-zero DLC (reffer to TODO).
+Transmission of special RTR frame with non-zero DLC (reffer to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[MODE]{MODE[RTR_PREF]}
+\end_layout
+
+\end_inset
+
+).
 \end_layout
 
 \begin_layout Enumerate
-Extra error counters to distinguish between errors in Nominal and Data Bit-Rate.
+Extra error counters to distinguish between errors in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+ and 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+.
 \end_layout
 
 \begin_layout Standard
@@ -12585,6 +14320,13 @@ Extra error counters to distinguish between errors in Nominal and Data Bit-Rate.
 
 \begin_layout Section
 2.6 TX Datapath hazard protection
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:2.6-TX-Datapath-hazard-protection"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -12620,7 +14362,7 @@ txt_hw_cmd.lock
 tran_frame_valid_in
 \family default
 \shape default
- is signalled by TX Arbitrator to Protocol Control (TODOREF).
+ is signalled by TX Arbitrator to Protocol Control.
  Valid TX Frame is signalled by TX Arbitrator if at least one TXT Buffer
  is in Ready state (
 \family roman
@@ -12628,8 +14370,9 @@ tran_frame_valid_in
 txt_ready
 \family default
 \shape default
-), and Frame Transmitt Timestamp has elapsed.
- If a frame is valid for transmission (
+), Frame Transmitt Timestamp has elapsed and Metadata are loaded on output
+ of TX Arbitrator.
+ If frame is valid for transmission (
 \family roman
 \shape italic
 tran_frame_valid
@@ -12650,14 +14393,20 @@ tran_frame_valid
 \family default
 \shape default
 .
- Thus, if TXT Buffer is ready, and Set Abort SW Command is activated, 
+ Thus, if TXT Buffer is 
+\family roman
+\shape italic
+txtb_ready
+\family default
+\shape default
+, and Set Abort SW Command is activated, 
 \family roman
 \shape italic
 tran_frame_valid
 \family default
 \shape default
- is deactivated combinationally and Lock command will never be Activated
- by Protocol Control.
+ is deactivated combinationally and Lock command will not be activated by
+ Protocol Control.
 \end_layout
 
 \begin_layout Standard
@@ -12672,7 +14421,7 @@ noprefix "false"
 \end_inset
 
  was missing.
- Consider Following sequence of actions:
+ Consider following sequence of actions:
 \end_layout
 
 \begin_layout Enumerate
@@ -12700,7 +14449,7 @@ tran_frame_valid_in
 \end_layout
 
 \begin_layout Enumerate
-Upon Rising edge in clock cycle N + 1, TXT Buffer Lock Command is set by
+Upon rising edge in clock cycle N + 1, TXT Buffer Lock Command is set by
  Protocol Control (
 \family roman
 \shape italic
@@ -12709,7 +14458,7 @@ tran_frame_valid_in
 \shape default
  was active).
  Since Set Abort Command was active in clock cycle N, and no HW Command
- was active in this clock cycle, TXT Buffer is moved to Aborted State (
+ was active in this clock cycle, TXT Buffer moved to Aborted State (
 \family roman
 \shape italic
 txt_aborted
@@ -12723,14 +14472,21 @@ arb_locked
 \family default
 \shape default
  state.
+ Due to missing combination path, TX Arbitrator was not informed about TXT
+ Buffer which is about to be moved to 
+\family roman
+\shape italic
+txt_aborted
+\family default
+\shape default
+ state, thus it still signalled valid frame for Protocol Control..
 \end_layout
 
 \begin_layout Enumerate
-Now Protocol Control has Locked TX Arbitrator and starts Transmission from
+Now Protocol Control has Locked TX Arbitrator and starts transmission from
  TXT Buffer.
- However TXT Buffer is in Aborted state, and user can directly manipulate
- its content at the same time as Protocol Control is transmitting from the
- Buffer.
+ However TXT Buffer is in Aborted state, and its memory is accessible to
+ user at the same time as Protocol Control is transmitting from the Buffer.
  TXT Buffer is in Aborted State, but Transmission is in progress from the
  Buffer, since 
 \family roman
@@ -12797,27 +14553,47 @@ name "fig:TX-DataPath-Logic"
 \end_layout
 
 \begin_layout Standard
-The above mentioned steps clearly demostrate necesity to have combinational
- path between Set Abort SW command, Valid TXT Frame and TXT Buffer Lock
- Command on the output of Protocol Control.
+The above mentioned explanation shows that due to direct combinational path
+ between TXT Buffer SW Commands and signalling of valid frame on output
+ of TX Arbitrator, TX Datapath is 
+\series bold
+NOT susceptible to hazards!
+\series default
  If pipelines were inserted (e.g on output of Priority Decoder), full handshake
  mechanism would need to be created to avoid control hazards.
- Note that other commands such as Set Ready (txt_sw_cmd.set_rdy) or Set Empty
- (txt_sw_cmd.set_ety) will never cause hazards, since TXT Buffer is never
- marked as ready when one of these commands occurs.
+ Note that other commands such as Set Ready (
+\family roman
+\shape italic
+txt_sw_cmd.set_rdy
+\family default
+\shape default
+) or Set Empty (
+\family roman
+\shape italic
+txt_sw_cmd.set_ety
+\family default
+\shape default
+) will never cause hazards, since TXT Buffer is never marked as ready when
+ one of these commands occurs.
  Thus Protocol Control will never issue Lock Command on TXT Buffer which
- is not in Ready state.
+ is not in 
+\family roman
+\shape italic
+txtb_ready
+\family default
+\shape default
+ state.
 \end_layout
 
 \begin_layout Standard
 Logic architecture described in this section contains fairly long combinational
  paths from TXT Buffer Priorities registers and SW Command registers in
- Memory Registers Module through TX Arbitrator FSM Logic up to TXT Buffer
+ Memory Registers Module through TX Arbitrator FSM logic up to TXT Buffer
  Lock Command.
- It is no surprise that during synthesis these paths are the most critical
- paths which limit maximal frequency of operation.
+ It is no surprise that during synthesis these paths are most critical paths
+ which limit maximal frequency of operation.
  Optimizations of this architecture are not planned at the moment, since
- CTU CAN FD reaches over 100 MHz maximal frequency even with this architecture.
+ CTU CAN FD reaches over 100 MHz maximal frequency with this architecture.
 \end_layout
 
 \begin_layout Standard
