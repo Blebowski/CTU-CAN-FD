@@ -382,7 +382,7 @@ begin
             -- data with bit time which is longer than TLD, measure
             -- and then generate data with shorter bit time.
             -- Instead we use this simple workaround that for settling
-            -- time we generates only RECESSIVE to avoid any unwanted
+            -- time we generate only RECESSIVE to avoid any unwanted
             -- errors!
             --------------------------------------------------------------------
             generate_ones <= true;

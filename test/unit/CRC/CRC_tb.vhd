@@ -349,24 +349,24 @@ begin
                             crc_21_mod, c15_mism, c17_mism, c21_mism);
 
             if (c15_mism) then
-				-- LCOV_EXCL_START
+                -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
                 log("Mismatch in CRC15", error_l, log_level);
-				-- LCOV_EXCL_STOP
+                -- LCOV_EXCL_STOP
             end if;
 
             if (c17_mism) then
-				-- LCOV_EXCL_START
+                -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
                 log("Mismatch in CRC17", error_l, log_level);
-				-- LCOV_EXCL_STOP
+                -- LCOV_EXCL_STOP
             end if;
 
             if (c21_mism) then
-				-- LCOV_EXCL_START
+                -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
                 log("Mismatch in CRC21", error_l, log_level);
-				-- LCOV_EXCL_STOP
+                -- LCOV_EXCL_STOP
             end if;
 
             loop_ctr <= loop_ctr + 1;

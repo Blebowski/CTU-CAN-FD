@@ -37,8 +37,6 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Arbitration feature test implementation.
---
 --  Arbitration test generates random identifier, identifier type, frame_type,
 --  RTR frame into both CAN Nodes of feature_test environment. Then it inserts
 --  both frames to be transmitted immediately. Then it waits whether one of the

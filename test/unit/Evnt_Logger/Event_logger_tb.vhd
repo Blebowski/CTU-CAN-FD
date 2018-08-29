@@ -306,18 +306,18 @@ begin
     timestamp_gen_proc(clk_sys, timestamp);
 
 
-	----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     -- Connection of event logger settings to DUT
     ----------------------------------------------------------------------------
-	drv_bus(552 + trig_amount - 1 downto 552)   <= drv_trig;
-	drv_bus(580 + event_amount - 1 downto 580)  <= drv_capt;
+    drv_bus(552 + trig_amount - 1 downto 552)   <= drv_trig;
+    drv_bus(580 + event_amount - 1 downto 580)  <= drv_capt;
     drv_bus(DRV_LOG_CMD_STR_INDEX)              <= drv_start_logger;
 
 
-	----------------------------------------------------------------------------
-	-- Event sources connection to DUT. Emulation of "stat_bus", "sync_edge"
+    ----------------------------------------------------------------------------
+    -- Event sources connection to DUT. Emulation of "stat_bus", "sync_edge"
     -- and "data_overrun"
-	----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
     PC_State <= sof             when evnt_inputs(C_SOF_IND) = '1' else
                 arbitration     when evnt_inputs(C_ARBS_IND) = '1' else
                 control         when evnt_inputs(C_CTRS_IND) = '1' else
@@ -326,26 +326,26 @@ begin
                 overload        when evnt_inputs(C_OVL_IND) = '1' else
                 interframe;
 
-	stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW) <=
-			std_logic_vector(to_unsigned(protocol_type'pos(PC_State), 4));
+    stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW) <=
+		    std_logic_vector(to_unsigned(protocol_type'pos(PC_State), 4));
 
-	-- Event sources
-	stat_bus(STAT_ARB_LOST_INDEX) 			<= evnt_inputs(C_ARBL_IND);
-	stat_bus(STAT_REC_VALID_INDEX) 			<= evnt_inputs(C_REV_IND);
-	stat_bus(STAT_TRAN_VALID_INDEX) 		<= evnt_inputs(C_TRV_IND);
-	stat_bus(STAT_BR_SHIFTED) 				<= evnt_inputs(C_BRS_IND);
-	stat_bus(STAT_ACK_RECIEVED_OUT_INDEX) 	<= evnt_inputs(C_ACKR_IND);
-	stat_bus(STAT_ACK_ERROR_INDEX) 			<= evnt_inputs(C_ACKNR_IND);
-	stat_bus(STAT_EWL_REACHED_INDEX) 		<= evnt_inputs(C_EWLR_IND);
-	stat_bus(STAT_ERP_CHANGED_INDEX) 		<= evnt_inputs(C_ERC_IND);
-	stat_bus(STAT_SET_TRANSC_INDEX) 		<= evnt_inputs(C_TRS_IND);
-	stat_bus(STAT_SET_REC_INDEX) 			<= evnt_inputs(C_RES_IND);
-	sync_edge							    <= evnt_inputs(C_SYNE_IND);
-	stat_bus(STAT_DATA_HALT_INDEX) 			<= evnt_inputs(C_STUFF_IND);
-	stat_bus(STAT_DESTUFFED_INDEX) 			<= evnt_inputs(C_DESTUFF_IND);
-	data_overrun 							<= evnt_inputs(C_OVR_IND);
+    -- Event sources
+    stat_bus(STAT_ARB_LOST_INDEX)               <= evnt_inputs(C_ARBL_IND);
+    stat_bus(STAT_REC_VALID_INDEX)              <= evnt_inputs(C_REV_IND);
+    stat_bus(STAT_TRAN_VALID_INDEX) 		<= evnt_inputs(C_TRV_IND);
+    stat_bus(STAT_BR_SHIFTED) 	                <= evnt_inputs(C_BRS_IND);
+    stat_bus(STAT_ACK_RECIEVED_OUT_INDEX) 	<= evnt_inputs(C_ACKR_IND);
+    stat_bus(STAT_ACK_ERROR_INDEX)              <= evnt_inputs(C_ACKNR_IND);
+    stat_bus(STAT_EWL_REACHED_INDEX) 		<= evnt_inputs(C_EWLR_IND);
+    stat_bus(STAT_ERP_CHANGED_INDEX) 		<= evnt_inputs(C_ERC_IND);
+    stat_bus(STAT_SET_TRANSC_INDEX) 		<= evnt_inputs(C_TRS_IND);
+    stat_bus(STAT_SET_REC_INDEX) 	        <= evnt_inputs(C_RES_IND);
+    sync_edge                                   <= evnt_inputs(C_SYNE_IND);
+    stat_bus(STAT_DATA_HALT_INDEX)              <= evnt_inputs(C_STUFF_IND);
+    stat_bus(STAT_DESTUFFED_INDEX)              <= evnt_inputs(C_DESTUFF_IND);
+    data_overrun                                <= evnt_inputs(C_OVR_IND);
 
-    stat_bus(STAT_ERROR_VALID_INDEX)        <= evnt_inputs(C_ERR_IND);
+    stat_bus(STAT_ERROR_VALID_INDEX)            <= evnt_inputs(C_ERR_IND);
 
     -- Setting trig inputs in model
     trig_inputs(T_SOF_IND)               <= evnt_inputs(C_SOF_IND);
