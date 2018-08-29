@@ -694,7 +694,7 @@ literal "true"
 \end_layout
 
 \begin_layout Section
-1.1 Features
+1.2 Features
 \end_layout
 
 \begin_layout Itemize
@@ -732,7 +732,7 @@ SDC and XDC design constraints for synthesis to Altera and Xilinx FPGAs.
 \end_layout
 
 \begin_layout Section
-1.2 License
+1.3 License
 \end_layout
 
 \begin_layout Standard
@@ -783,7 +783,7 @@ This program is free software; you can redistribute it and/or * modify it
 \end_layout
 
 \begin_layout Section
-1.3 Development tools
+1.4 Development tools
 \end_layout
 
 \begin_layout Standard
@@ -821,7 +821,7 @@ TimingAnalyzer SW for Timing Diagrams.
 \end_layout
 
 \begin_layout Section
-1.4 Design automatization
+1.5 Design automatization
 \end_layout
 
 \begin_layout Standard
@@ -947,7 +947,7 @@ literal "false"
 \end_layout
 
 \begin_layout Section
-1.5 Source code access
+1.6 Source code access
 \end_layout
 
 \begin_layout Standard
@@ -956,6 +956,10 @@ CTU CAN FD IP Core source code is available in CTU FEE Gitlab repository
 \end_layout
 
 \begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
 \begin_inset CommandInset href
 LatexCommand href
 name "https://gitlab.fel.cvut.cz/illeondr/CAN_FD_IP_Core"
@@ -1045,10 +1049,25 @@ CTU CAN FD IP Core can be accessed over either of two buses, Avalon Bus
 \end_layout
 
 \begin_layout Standard
-Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab:CAN-generics]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:CAN-generics"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -1153,7 +1172,7 @@ Event logger is/is not synthesized.
 Refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
-reference "subsec:2.3.10-Event-logger"
+reference "subsec-Event-logger"
 
 \end_inset
 
@@ -1441,7 +1460,7 @@ Size of event logger memory in number of events.
 Refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
-reference "subsec:2.3.10-Event-logger"
+reference "subsec-Event-logger"
 
 \end_inset
 
@@ -1485,11 +1504,23 @@ name "tab:CAN-generics"
 \end_layout
 
 \begin_layout Subsection
-2.1.1 Avalon memory interface
+2.1.2 Avalon memory interface
 \end_layout
 
 \begin_layout Standard
-Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab:CAN-ports-Avalon]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:CAN-ports-Avalon"
@@ -1512,10 +1543,23 @@ src/CAN_top_level.vhd
 \end_inset
 
  must be used.
- Specific addressing must be used as is explained in Table 
+ Specific addressing must be used as is explained in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab:CAN-FD-Avalon-address]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "tab:CAN-FD-IP-1-2"
+reference "tab:CAN-FD-Avalon-address"
 
 \end_inset
 
@@ -1632,7 +1676,7 @@ Register Address Offset
 Avalon addressing
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-FD-IP-1-2"
+name "tab:CAN-FD-Avalon-address"
 
 \end_inset
 
@@ -1650,7 +1694,20 @@ name "tab:CAN-FD-IP-1-2"
 \end_layout
 
 \begin_layout Standard
-3 consecutive Avalon Write cycles are shown in Figure 
+3 consecutive Avalon Write cycles are shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Avalon-write-timing-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Avalon-write-timing-diagram"
@@ -1709,8 +1766,8 @@ hyperref[BTR]{BTR}
  register.
  See 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:2.5.9-Memory-registers"
+LatexCommand nameref
+reference "subsec-Memory-registers"
 plural "false"
 caps "false"
 noprefix "false"
@@ -1721,10 +1778,23 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-Similarly, 3 Avalon Read cycles are shown in Figure 
+Similarly, 3 Avalon Read cycles are shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Avalon-read-timing-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Avalon-read-timing-diagram-1"
+reference "fig:Avalon-read-timing-diagram"
 plural "false"
 caps "false"
 noprefix "false"
@@ -1783,7 +1853,7 @@ textunderscore REG}
 \end_layout
 
 \begin_layout Standard
-Write bursts and Read Bursts which demonstrate storing single CAN Frame
+Write bursts and Read bursts which demonstrate storing single CAN Frame
  with 8 data bytes to TXT Buffer and reading data from RX Buffer via 
 \begin_inset ERT
 status open
@@ -1799,20 +1869,46 @@ textunderscore DATA}
 
 \end_inset
 
- register are shown in Figure 
+ register are shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Avalon-write-burst-timing-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Avalon-write-burst-timing-diagram-1-1"
+reference "fig:Avalon-write-burst-timing-diagram"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
- and Figure 
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Avalon-read-burst-timing-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Avalon-read-burst-timing-diagram-1-1-1"
+reference "fig:Avalon-read-burst-timing-diagram"
 plural "false"
 caps "false"
 noprefix "false"
@@ -2607,7 +2703,7 @@ status open
 Avalon read timing diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Avalon-read-timing-diagram-1"
+name "fig:Avalon-read-timing-diagram"
 
 \end_inset
 
@@ -2648,7 +2744,7 @@ status open
 Avalon write burst timing diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Avalon-write-burst-timing-diagram-1-1"
+name "fig:Avalon-write-burst-timing-diagram"
 
 \end_inset
 
@@ -2692,7 +2788,7 @@ status open
 Avalon read burst timing diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Avalon-read-burst-timing-diagram-1-1-1"
+name "fig:Avalon-read-burst-timing-diagram"
 
 \end_inset
 
@@ -2710,11 +2806,23 @@ name "fig:Avalon-read-burst-timing-diagram-1-1-1"
 \end_layout
 
 \begin_layout Subsection
-2.1.1 APB memory interface
+2.1.3 APB memory interface
 \end_layout
 
 \begin_layout Standard
-Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab:CAN-ports-APB]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:CAN-ports-APB"
@@ -2745,10 +2853,23 @@ src/can_top_apb.vhd
 \end_layout
 
 \begin_layout Standard
-APB Write cycle is shown in Figure 
+APB Write cycle is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:APB-write-timing-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:APB-write-timing-diagram-1"
+reference "fig:APB-write-timing-diagram"
 plural "false"
 caps "false"
 noprefix "false"
@@ -2769,10 +2890,23 @@ hyperref[BTR]{BTR}
 \end_inset
 
  register.
- APB Read cycles are shown in Figure 
+ APB Read cycles are shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:APB-read-timing-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:APB-read-timing-diagram-1-1"
+reference "fig:APB-read-timing-diagram"
 plural "false"
 caps "false"
 noprefix "false"
@@ -3701,7 +3835,7 @@ status open
 APB write timing diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:APB-write-timing-diagram-1"
+name "fig:APB-write-timing-diagram"
 
 \end_inset
 
@@ -3745,7 +3879,7 @@ status open
 APB read timing diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:APB-read-timing-diagram-1-1"
+name "fig:APB-read-timing-diagram"
 
 \end_inset
 
@@ -3763,11 +3897,23 @@ name "fig:APB-read-timing-diagram-1-1"
 \end_layout
 
 \begin_layout Subsection
-2.1.1 Common signals
+2.1.4 Common signals
 \end_layout
 
 \begin_layout Standard
-Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab:CAN-ports-common]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:CAN-ports-common"
@@ -4197,7 +4343,15 @@ s_apb_pready
 \family default
 \shape default
  signal.
- Reffer to APB Specification (TODOREF) for more on APB wait States.
+ Reffer to APB Specification 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "key-23"
+literal "false"
+
+\end_inset
+
+ for more on APB wait states.
 \end_layout
 
 \begin_layout Standard
@@ -4234,7 +4388,7 @@ use_sync
 \end_layout
 
 \begin_layout Section
-2.4 Signal architecture
+2.3 Signal architecture
 \end_layout
 
 \begin_layout Standard
@@ -4272,7 +4426,7 @@ stat_bus
 \end_layout
 
 \begin_layout Subsection
-2.4.1 Driving Bus
+2.3.1 Driving Bus
 \end_layout
 
 \begin_layout Standard
@@ -4284,19 +4438,35 @@ Memory Registers
 \series default
  (
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:2.5.9-Memory-registers"
+LatexCommand nameref
+reference "subsec-Memory-registers"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
 ).
  Every parameter of CTU CAN FD IP Core which can be configured from SW is
- part of Driving bus.
- An exact definition of Driving bus separates memory registers from other
+ part of Driving Bus.
+ An exact definition of Driving Bus separates memory registers from other
  blocks.
  Thus it is possible to change the registers structure without modification
  of internal signaling.
- List of signals in Driving bus is in Appendix A (TODOREF).
+ List of signals in Driving Bus is in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[chap:Appendix-A--]{Appendix A}
+\end_layout
+
+\end_inset
+
+.
  Driving bus has following format:
 \end_layout
 
@@ -4308,15 +4478,28 @@ signal drv_bus : std_logic_vector(1023 downto 0)
 \end_layout
 
 \begin_layout Subsection
-2.4.2 Status Bus
+2.3.2 Status Bus
 \end_layout
 
 \begin_layout Standard
-Status bus is used to provide information about state registers of CAN Controlle
+Status Bus is used to provide information about state registers of CAN Controlle
 r Core.
  It's driven in CAN Controller Core.
  Status Bus is used by Memory Registers and Event Logger modules.
- List of signals in Status bus is in Appendix B (TODOREF).
+ List of signals in Status Bus is in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[chap:Appendix-B--]{Appendix B}
+\end_layout
+
+\end_inset
+
+.
  Status Bus has following format:
 \end_layout
 
@@ -4328,7 +4511,7 @@ signal stat_bus : std_logic_vector(511 downto 0)
 \end_layout
 
 \begin_layout Section
-2.1 Absolute maximum ratings
+2.4 Absolute maximum ratings
 \end_layout
 
 \begin_layout Standard
@@ -4542,7 +4725,7 @@ Clock Cycles
 \begin_inset Text
 
 \begin_layout Plain Layout
-Nominal bit-rate*
+Nominal bit-rate
 \end_layout
 
 \end_inset
@@ -4589,7 +4772,7 @@ Kb/s
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data bit-rate*
+Data bit-rate
 \end_layout
 
 \end_inset
@@ -4714,11 +4897,24 @@ name "tab: Absolute_maximum_rating"
 \end_layout
 
 \begin_layout Section
-2.3 Block diagram
+2.5 Block diagram
 \end_layout
 
 \begin_layout Standard
-The block diagram of CTU CAN FD is shown in Figure 
+The block diagram of CTU CAN FD is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:IP-function-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:IP-function-block"
@@ -4782,10 +4978,10 @@ name "fig:IP-function-block"
 \end_layout
 
 \begin_layout Section
-2.3 Pipeline architecture
+2.6 Pipeline architecture
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:2.3-Pipeline-architecture"
+name "sec-Pipeline-architecture"
 
 \end_inset
 
@@ -4794,7 +4990,20 @@ name "sec:2.3-Pipeline-architecture"
 
 \begin_layout Standard
 CTU CAN FD controller datapath is pipelined on both TX and RX data paths.
- Pipeline architecture is shown in Figure 
+ Pipeline architecture is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Pipeline-Architecture]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Pipeline-Architecture"
@@ -4826,8 +5035,8 @@ Bit Destuffing
 \begin_layout Enumerate
 Process Bit Destuffed data by Protocol Control FSM (see 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:2.5.1.1-Protocol-Control"
+LatexCommand nameref
+reference "subsec-Protocol-Control"
 plural "false"
 caps "false"
 noprefix "false"
@@ -4871,6 +5080,19 @@ To achieve such data processing two Triggering Signal Types are generated:
 Information Processing Time
 \shape default
 , reffer to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab: IPT_reqs]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab: IPT_reqs"
@@ -4935,11 +5157,11 @@ name "fig:Pipeline-Architecture"
 \end_layout
 
 \begin_layout Section
-2.5 Components description
+2.7 Components description
 \end_layout
 
 \begin_layout Subsection
-2.5.1 CAN Core
+2.7.1 CAN Core
 \end_layout
 
 \begin_layout Description
@@ -4993,7 +5215,20 @@ CRC
 Fault Confinement
 \shape default
  are implemented by sub-module instances.
- Block diagram is in Figure 
+ Block diagram is in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:CAN-Core-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:CAN-Core-block"
@@ -5195,10 +5430,10 @@ name "fig:CAN-Core-block"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.1 Protocol Control
+2.7.1.1 Protocol Control
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:2.5.1.1-Protocol-Control"
+name "subsec-Protocol-Control"
 
 \end_inset
 
@@ -5269,7 +5504,20 @@ Sync
 Bit Time
 \shape default
 ).
- Table 
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab: PC_most_important_signals]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab: PC_most_important_signals"
@@ -5310,7 +5558,20 @@ stuff_enable
 \family default
 \shape default
 ).
- Protocol control state transition diagram is displayed in Figure 
+ Protocol control state transition diagram is displayed in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:PC_control-1]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:PC_control-1"
@@ -5782,8 +6043,8 @@ in
 Operational state of CAN Node.
  See 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:2.5.1.2-Operation-control"
+LatexCommand nameref
+reference "subsec-Operation-control"
 plural "false"
 caps "false"
 noprefix "false"
@@ -6772,7 +7033,7 @@ Counter for transmission of other fields.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Most important Protocol control signals
+Most important Protocol Control signals
 \begin_inset CommandInset label
 LatexCommand label
 name "tab: PC_most_important_signals"
@@ -6799,7 +7060,7 @@ name "tab: PC_most_important_signals"
 
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 off
 \end_layout
 
@@ -6886,7 +7147,7 @@ arbitration
 .
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 arbitration
 \end_layout
 
@@ -6990,7 +7251,20 @@ arb_state
 \family default
 \shape default
 ) which is used to handle different types of CAN Identifiers.
- State transition diagram is shown in Figure 
+ State transition diagram is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Arbitration_FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Arbitration_FSM"
@@ -7220,7 +7494,7 @@ name "fig:Arbitration_FSM"
 
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 control
 \end_layout
 
@@ -7296,8 +7570,8 @@ Bit Error
 \shape default
  detection (reffer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:2.6-Error-detection"
+LatexCommand nameref
+reference "sec-Error-detection"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7349,10 +7623,10 @@ trv_delay_calib_r
 \shape smallcaps
 Extended Data Length
 \shape default
- bit (reffer to Bus Sampling module 
+ bit (reffer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:2.5.2-Bus-Sampling"
+LatexCommand nameref
+reference "subsec-Bus-Sampling"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7441,7 +7715,7 @@ Control
  field, receiver signals to RX Buffer, that first 4 words of CAN Frame (see
  
 \begin_inset CommandInset ref
-LatexCommand ref
+LatexCommand nameref
 reference "subsec:2.3.10-RX-buffer-1"
 plural "false"
 caps "false"
@@ -7458,7 +7732,7 @@ store_metadata
 ).
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 data
 \end_layout
 
@@ -7595,10 +7869,23 @@ delim_ack
  crc_state
 \family default
 \shape default
-, which is shown in Figure 
+, which is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:CRC_FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:CRC_FSM-1"
+reference "fig:CRC_FSM"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7661,8 +7948,8 @@ stuff_count_grey
 \shape default
 ) which is calculated by Bit Stuffing circuit (see 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:2.5.1.6-CRC"
+LatexCommand nameref
+reference "subsec-CRC"
 plural "false"
 caps "false"
 noprefix "false"
@@ -7802,7 +8089,7 @@ status open
 CRC State Machine
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:CRC_FSM-1"
+name "fig:CRC_FSM"
 
 \end_inset
 
@@ -8134,7 +8421,7 @@ status open
 Interframe State Machine
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Interframe-FSM-1"
+name "fig:Interframe-FSM"
 
 \end_inset
 
@@ -8151,7 +8438,7 @@ name "fig:Interframe-FSM-1"
 
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 interframe
 \end_layout
 
@@ -8175,10 +8462,23 @@ interm_state
 intermission
 \family default
 \shape default
- and it is shown in Figure 
+ and it is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Interframe-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Interframe-FSM-1"
+reference "fig:Interframe-FSM"
 plural "false"
 caps "false"
 noprefix "false"
@@ -8321,7 +8621,7 @@ sof
 .
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 error
 \end_layout
 
@@ -8345,8 +8645,8 @@ error
 \shape default
  state are further explained in 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:2.6-Error-detection"
+LatexCommand nameref
+reference "sec-Error-detection"
 plural "false"
 caps "false"
 noprefix "false"
@@ -8361,9 +8661,22 @@ err_frame_state
 \family default
 \shape default
  which is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Error-Frame-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Error-Frame-FSM-1"
+reference "fig:Error-Frame-FSM"
 plural "false"
 caps "false"
 noprefix "false"
@@ -8480,7 +8793,7 @@ status open
 Error Frame State Machine
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Error-Frame-FSM-1"
+name "fig:Error-Frame-FSM"
 
 \end_inset
 
@@ -8524,7 +8837,7 @@ status open
 Overload Frame State Machine
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Overload-Frame-FSM-1-1"
+name "fig:Overload-Frame-FSM"
 
 \end_inset
 
@@ -8541,7 +8854,7 @@ name "fig:Overload-Frame-FSM-1-1"
 
 \end_layout
 
-\begin_layout Paragraph*
+\begin_layout Paragraph
 overload
 \end_layout
 
@@ -8570,10 +8883,23 @@ error
 ovr_frame_state
 \family default
 \shape default
- which is displayed in Figure 
+ which is displayed in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Overload-Frame-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Overload-Frame-FSM-1-1"
+reference "fig:Overload-Frame-FSM"
 plural "false"
 caps "false"
 noprefix "false"
@@ -8645,17 +8971,21 @@ control_pointer
 , Protocol Control is moved to 
 \family roman
 \shape italic
-interframe
-\family default
-\shape default
-.
+interframe.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.2 Operation control
+2.7.1.2 Operation Control
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:2.5.1.2-Operation-control"
+name "subsec-Operation-control"
 
 \end_inset
 
@@ -8747,7 +9077,20 @@ Operation Control
 OP_State
 \family default
 \shape default
-) is described in Figure 
+) is described in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:OP_control]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:OP_control"
@@ -8879,9 +9222,6 @@ name "fig:OP_control"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
 
@@ -8889,7 +9229,7 @@ name "fig:OP_control"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.3 Fault Confinement
+2.7.1.3 Fault Confinement
 \end_layout
 
 \begin_layout Description
@@ -8947,7 +9287,20 @@ Bit Error
 Stuff Error
 \shape default
  validation.
- Block diagram of this module is shown in Figure 
+ Block diagram of this module is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Fault-block-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Fault-block-diagram"
@@ -9173,7 +9526,7 @@ name "fig:Fault-block-diagram"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.4 Bit Stuffing
+2.7.1.4 Bit Stuffing
 \end_layout
 
 \begin_layout Description
@@ -9239,6 +9592,19 @@ fixed_stuff
 \shape default
  input (0->1 transition).
  Circuit operates with Bit Stuffing Trigger (see 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Pipeline-Architecture]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Pipeline-Architecture"
@@ -9276,7 +9642,20 @@ stuff_ctr
 \shape default
 signal.
  Module is implemented as single process.
- Decision diagram is shown in Figure 
+ Decision diagram is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Bit-stuffing-logic]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Bit-stuffing-logic"
@@ -9342,7 +9721,7 @@ name "fig:Bit-stuffing-logic"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.5 Bit De-stuffing
+2.7.1.5 Bit De-stuffing
 \end_layout
 
 \begin_layout Description
@@ -9405,7 +9784,20 @@ fixed_stuff
 \family default
 \shape default
  input (0->1).
- Circuit processes input data with Bit Stuffing Trigger (see Figure 
+ Circuit processes input data with Bit Stuffing Trigger (see 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Pipeline-Architecture]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Pipeline-Architecture"
@@ -9454,7 +9846,20 @@ length
 Bit De-Stuffing
 \shape default
 .
- Decision diagram is shown in Figure 
+ Decision diagram is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Bit-Destuffing-logic]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Bit-Destuffing-logic"
@@ -9519,10 +9924,10 @@ name "fig:Bit-Destuffing-logic"
 \end_layout
 
 \begin_layout Subsubsection
-2.5.1.6 CRC
+2.7.1.6 CRC
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:2.5.1.6-CRC"
+name "subsec-CRC"
 
 \end_inset
 
@@ -9558,89 +9963,108 @@ literal "true"
 \end_inset
 
 .
- Circuit operation is started with rising edge on enable input (the circuit
- is still synchronous to 
-\begin_inset Quotes eld
-\end_inset
-
-clk_sys
-\begin_inset Quotes erd
-\end_inset
-
-.
- Rising edge on 
-\begin_inset Quotes eld
-\end_inset
-
+ Circuit operation is started upon detection of 0 to 1 transition on 
+\family roman
+\shape italic
 enable
-\begin_inset Quotes erd
-\end_inset
-
- input means detection of 0 to 1 transition).
- Input data are processed with 
-\begin_inset Quotes eld
-\end_inset
-
-trig
-\begin_inset Quotes erd
-\end_inset
-
- input signal.
- After finishing the calculation, CRC value remains valid until next rising
- edge on 
-\begin_inset Quotes eld
-\end_inset
-
-enable
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
  input.
- The result value is propagated to outputs (
-\begin_inset Quotes eld
-\end_inset
-
-crc15
-\begin_inset Quotes erd
-\end_inset
-
-,
-\begin_inset Quotes erd
-\end_inset
-
-crc17
-\begin_inset Quotes erd
-\end_inset
-
-,
-\begin_inset Quotes erd
-\end_inset
-
-crc21
-\begin_inset Quotes erd
-\end_inset
-
- signals) of the circuit.
- All three CRC values are calculated at the same time.
- CRC calculation is implemented via shift register in order to avoid long
- combination paths.
- Since ISO FD and Non-ISO are different in the highest bit of shift register
- initialization, circuit is configurable via Driving bus.
- Architecture of CRC module is shown in FIgure TODO.
+ Input data are processed with 
+\family roman
+\shape italic
+trig
+\family default
+\shape default
+ input signal.
+ After finishing the calculation, CRC value remains valid until next 0 to
+ 1 transition on 
+\family roman
+\shape italic
+enable
+\family default
+\shape default
+ input.
+ CRC value is calculated in shift registers 
+\family roman
+\shape italic
+crc15_reg
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc17_reg
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc21_reg
+\family default
+\shape default
+.
+ Shift register is shifter every step.
+ Furthermore XOR operation is executed if next input bit (
+\family roman
+\shape italic
+data_in
+\family default
+\shape default
+) is different than highest bit of CRC polynomial.
+ Note that shift register implementation is chosen over combinational implementa
+tion to avoid long combinational paths.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage pagebreak
-\end_inset
-
-
+Result CRC values are propagated to outputs 
+\family roman
+\shape italic
+crc15
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc17
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+crc21
+\family default
+\shape default
+ of the circuit.
+ All three CRC values are calculated at the same time.
+ Since CRC calculation in ISO FD and Non-ISO are different, highest bit
+ of 
+\family roman
+\shape italic
+crc17_reg
+\family default
+\shape default
+ and 
+\family roman
+\shape italic
+crc21_reg
+\family default
+\shape default
+ shift registers are different upon restart of calculation.
+ Contents of these registers is determined by 
+\family roman
+\shape italic
+drv_fd_type
+\family default
+\shape default
+ signal which is derived from Driving Bus.
 \end_layout
 
 \begin_layout Subsection
-2.5.2 Bus Sampling
+2.7.2 Bus Sampling
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:2.5.2-Bus-Sampling"
+name "subsec-Bus-Sampling"
 
 \end_inset
 
@@ -9729,8 +10153,20 @@ drv_sam
 \family default
 \shape default
  signal.
- Data are sampled in Sample Point via Sample Trigger (RX) (reffer to Figure
- 
+ Data are sampled in Sample Point via Sample Trigger (RX) (reffer to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Pipeline-Architecture]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Pipeline-Architecture"
@@ -9770,7 +10206,7 @@ sp_control
 
 \begin_layout Standard
 \begin_inset Float figure
-placement H
+placement h
 wide false
 sideways false
 status open
@@ -9795,7 +10231,7 @@ status open
 Bus sampling block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:bus-sampling-block-diagram-1-1"
+name "fig:bus-sampling-block-diagram"
 
 \end_inset
 
@@ -10032,8 +10468,15 @@ bit_Error_reg
 ) is evaluated.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
-2.5.8 Interrupt Manager
+2.7.3 Interrupt Manager
 \end_layout
 
 \begin_layout Description
@@ -10121,10 +10564,23 @@ int_ena_reg
  Structure of Interrupt registers is selected to achieve accesibility from
  multiple threads / processes under OS, without necessity of using locking
  mechanisms such as mutexes or semaphores.
- Interrupt structure is shown in Figure 
+ Interrupt structure is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:INT-manager-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:INT-manager-block-1-1"
+reference "fig:INT-manager-block"
 plural "false"
 caps "false"
 noprefix "false"
@@ -10160,7 +10616,7 @@ status open
 Interrupt Manager block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:INT-manager-block-1-1"
+name "fig:INT-manager-block"
 
 \end_inset
 
@@ -10185,10 +10641,10 @@ name "fig:INT-manager-block-1-1"
 \end_layout
 
 \begin_layout Subsection
-2.5.3 Prescaler
+2.7.4 Prescaler
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:2.5.1.2-Operation-control"
+reference "subsec-Operation-control"
 plural "false"
 caps "false"
 noprefix "false"
@@ -10222,10 +10678,23 @@ Prescaler implements functionality of CAN
 \shape smallcaps
 Bus Timing
 \shape default
- and its block diagram is shown in Figure 
+ and its block diagram is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:prescaler-block-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:prescaler-block-diagram-1"
+reference "fig:prescaler-block-diagram"
 plural "false"
 caps "false"
 noprefix "false"
@@ -10347,7 +10816,7 @@ status open
 Prescaler block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:prescaler-block-diagram-1"
+name "fig:prescaler-block-diagram"
 
 \end_inset
 
@@ -10370,7 +10839,20 @@ name "fig:prescaler-block-diagram-1"
 Bit Time
 \shape default
  behaviour is controlled by Bit Time FSM whose state transition diagram
- is shown in Figure 
+ is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Bit-Time-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Bit-Time-FSM"
@@ -10585,8 +11067,8 @@ Sample Point
 .
  As explained in 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:2.6-Information-processing"
+LatexCommand nameref
+reference "sec-Information-processing"
 plural "false"
 caps "false"
 noprefix "false"
@@ -10772,8 +11254,8 @@ Phase 2
 \begin_layout Standard
 As explained in 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:2.6-Information-processing"
+LatexCommand nameref
+reference "sec-Information-processing"
 plural "false"
 caps "false"
 noprefix "false"
@@ -10888,7 +11370,7 @@ name "fig:Bit-Time-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.5.4 Message Filter
+2.7.5 Message Filter
 \end_layout
 
 \begin_layout Description
@@ -10912,7 +11394,20 @@ messageFilter
 
 \begin_layout Standard
 Message Filter validates received frame on output of CAN Core.
- Block diagram of Message Filter circuit is shown in Figure 
+ Block diagram of Message Filter circuit is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Message-filter-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Message-filter-block"
@@ -11125,7 +11620,7 @@ name "fig:Message-filter-block"
 \end_layout
 
 \begin_layout Subsection
-2.5.5 RX Buffer 
+2.7.6 RX Buffer 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:2.3.10-RX-buffer-1"
@@ -11156,7 +11651,20 @@ rxBuffer
 
 \begin_layout Standard
 RX Buffer implements FIFO RAM memory for storing received CAN frames.
- Block diagram of RX Buffer is shown in FIgure 
+ Block diagram of RX Buffer is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:RX-buffer-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:RX-buffer-block"
@@ -11198,7 +11706,20 @@ memory
  Memory is initialized for simulation only, so that synthesis tools can
  infer Dual Port RAM memory.
  One frame in RX Buffer contains from 5 to 20 words.
- An example of CAN Frames stored in RX Buffer FIFO is shown in Figure 
+ An example of CAN Frames stored in RX Buffer FIFO is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:RX_Buffer-memory-layout]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:RX_Buffer-memory-layout"
@@ -11374,7 +11895,20 @@ sof_pulse
 rx_fsm
 \family default
 \shape default
-) which is shown in Figure 
+) which is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:RX-buffer-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:RX-buffer-FSM"
@@ -11907,10 +12441,10 @@ name "fig:RX-buffer-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.5.6 Transmit buffer - Time (TXT) 
+2.7.7 Transmit buffer - Time (TXT) 
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:2.3.10-TXT-buffer-1-1"
+name "subsec-TXT-buffer"
 
 \end_inset
 
@@ -11938,10 +12472,23 @@ txtBuffer
 
 \begin_layout Standard
 TXT Buffer is a module which contains one CAN Frame to be transmitted.
- Block diagram of TXT Buffer is shown in Figure 
+ Block diagram of TXT Buffer is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TXT-buffer-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:TXT-buffer-block-1"
+reference "fig:TXT-buffer-block"
 plural "false"
 caps "false"
 noprefix "false"
@@ -11963,7 +12510,20 @@ TXT Buffer 1,2,3,4
  Each TXT Buffer contains a state machine which controls operation of the
  buffer, and availability of data within it.
  The state machine is controlled by SW (via SW commands) and by CAN Core
- (via HW commands) and it is described in Figure 
+ (via HW commands) and it is described in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TXT_Buffer-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:TXT_Buffer-FSM"
@@ -12000,7 +12560,7 @@ status open
 TXT Buffer block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:TXT-buffer-block-1"
+name "fig:TXT-buffer-block"
 
 \end_inset
 
@@ -12045,8 +12605,8 @@ tran_cs
 \shape default
  signals which are driven in Memory Registers module (see 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:2.5.9-Memory-registers"
+LatexCommand nameref
+reference "subsec-Memory-registers"
 plural "false"
 caps "false"
 noprefix "false"
@@ -12290,10 +12850,10 @@ name "fig:TXT_Buffer-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.5.9 Memory registers
+2.7.8 Memory registers
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:2.5.9-Memory-registers"
+name "subsec-Memory-registers"
 
 \end_inset
 
@@ -12366,7 +12926,7 @@ hyperref[4.
 \end_layout
 
 \begin_layout Subsection
-2.5.7 TX Arbitrator
+2.7.9 TX Arbitrator
 \end_layout
 
 \begin_layout Description
@@ -12527,10 +13087,23 @@ send at certain time
 \end_layout
 
 \begin_layout Standard
-TX Arbitrator block diagram is shown in Figure 
+TX Arbitrator block diagram is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TX-arbitrator-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:TX-arbitrator-block-1"
+reference "fig:TX-arbitrator-block"
 plural "false"
 caps "false"
 noprefix "false"
@@ -12538,10 +13111,23 @@ noprefix "false"
 \end_inset
 
 .
- It contains FSM whose state transition diagram is shown in Figure 
+ It contains FSM whose state transition diagram is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TX_Arbitrator-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:TX_Arbitrator-FSM-1"
+reference "fig:TX_Arbitrator-FSM"
 plural "false"
 caps "false"
 noprefix "false"
@@ -12553,7 +13139,8 @@ noprefix "false"
  Highest priority TXT Buffer is selected by Priority Decoder.
  Priority Decoder is implemented in a separate sub-module and it is set
  of priority comparators organized as tree.
- Priority Decoder is shown in Figure TODO.
+ Priority decoder can handle up to 8 TXT Buffers, thus it logically has
+ 3 levels of priority comparisons.
 \end_layout
 
 \begin_layout Standard
@@ -12750,8 +13337,8 @@ select_buf_avail
  This fact is important due to hazard protection and it is further explained
  in 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:2.6-TX-Datapath-hazard-protection"
+LatexCommand nameref
+reference "sec-TX-Datapath-hazard-protection"
 plural "false"
 caps "false"
 noprefix "false"
@@ -12825,7 +13412,7 @@ status open
 TX Arbitrator block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:TX-arbitrator-block-1"
+name "fig:TX-arbitrator-block"
 
 \end_inset
 
@@ -12992,7 +13579,7 @@ status open
 TX Arbitrator state machine
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:TX_Arbitrator-FSM-1"
+name "fig:TX_Arbitrator-FSM"
 
 \end_inset
 
@@ -13017,10 +13604,10 @@ name "fig:TX_Arbitrator-FSM-1"
 \end_layout
 
 \begin_layout Subsection
-2.5.10 Event Logger (optional) 
+2.7.10 Event Logger (optional) 
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:2.3.10-Event-logger"
+name "subsec-Event-logger"
 
 \end_inset
 
@@ -13064,6 +13651,30 @@ config
 \shape default
  state which is dedicated to reading out previously logged data, configuring
  triggering and capturing event types.
+ Block diagram of this state machine is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Event-logger-FSM]{Figure }
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Event-logger-FSM"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  When command is given (via Driving bus, see register 
 \begin_inset ERT
 status open
@@ -13145,10 +13756,26 @@ running
 \family default
 \shape default
  state, circuit operation can be aborted via Driving Bus.
- Block diagram of Event Logger is shown in Figure 
+ Block diagram of Event Logger is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Event-logger-block]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Event_logger"
+reference "fig:Event-logger-block"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -13182,7 +13809,7 @@ status open
 Event Logger block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:TX-arbitrator-block-1-1"
+name "fig:Event-logger-block"
 
 \end_inset
 
@@ -13335,7 +13962,7 @@ status open
 Event logger state machine
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Event_logger"
+name "fig:Event-logger-FSM"
 
 \end_inset
 
@@ -13360,10 +13987,10 @@ name "fig:Event_logger"
 \end_layout
 
 \begin_layout Section
-2.6 Information Processing Time
+2.8 Information Processing Time
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:2.6-Information-processing"
+name "sec-Information-processing"
 
 \end_inset
 
@@ -13385,8 +14012,8 @@ Sample Point
  Implementation of CTU CAN FD IP core is based on Triggers as explained
  in 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:2.3-Pipeline-architecture"
+LatexCommand nameref
+reference "sec-Pipeline-architecture"
 plural "false"
 caps "false"
 noprefix "false"
@@ -13403,7 +14030,20 @@ Phase 2
 \shape default
  is 4 clock cycles (one more cycle is needed to update internal registers
  of Fault Confinement and Protocol Control).
- Table 
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab: IPT_reqs]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab: IPT_reqs"
@@ -13415,8 +14055,20 @@ reference "tab: IPT_reqs"
 Bit Time
 \shape default
  settings in relation to Prescaler settings.
- Triggering signals (TX and RX) in this corner case are shown in Figure
- 
+ Triggering signals (TX and RX) in this corner case are shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Minimal_bit_time]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Minimal_bit_time"
@@ -13649,7 +14301,20 @@ name "fig:Minimal_bit_time"
 \end_layout
 
 \begin_layout Standard
-From Table 
+From 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab: IPT_reqs]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab: IPT_reqs"
@@ -13671,15 +14336,31 @@ Bit-Rate
  are very tight, synchronization errors can appear.
  This configuration was tested (see 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:4.7-Sanity-test"
+LatexCommand nameref
+reference "sec-Sanity-test"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
-- Sanity test) in simulation, and one such a frame is shown in Figure 
+) in simulation, and one such a frame is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Max_bitrate]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Max_bitrate-1"
+reference "fig:Max_bitrate"
 
 \end_inset
 
@@ -13717,7 +14398,7 @@ Data Bit-Rate
 
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Max_bitrate-1"
+name "fig:Max_bitrate"
 
 \end_inset
 
@@ -13742,10 +14423,10 @@ name "fig:Max_bitrate-1"
 \end_layout
 
 \begin_layout Section
-2.6 Error detection architecture
+2.9 Error detection architecture
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:2.6-Error-detection"
+name "sec-Error-detection"
 
 \end_inset
 
@@ -13758,7 +14439,7 @@ This section describes how each type of error on CAN Bus is handled in CTU
 \end_layout
 
 \begin_layout Subsection
-Bit Error
+2.9.1 Bit Error
 \end_layout
 
 \begin_layout Standard
@@ -13986,7 +14667,7 @@ Error Flag Superposition
 \end_layout
 
 \begin_layout Subsection
-Stuff Error
+2.9.2 Stuff Error
 \end_layout
 
 \begin_layout Standard
@@ -14057,7 +14738,7 @@ stuff_Error
 \end_layout
 
 \begin_layout Subsection
-Form Error
+2.9.3 Form Error
 \end_layout
 
 \begin_layout Standard
@@ -14149,7 +14830,7 @@ Dominant
 \end_layout
 
 \begin_layout Subsection
-ACK Error
+2.9.4 ACK Error
 \end_layout
 
 \begin_layout Standard
@@ -14170,7 +14851,7 @@ ACK
 \end_layout
 
 \begin_layout Subsection
-CRC Error
+2.9.5 CRC Error
 \end_layout
 
 \begin_layout Standard
@@ -14226,7 +14907,7 @@ crc_check
 \end_layout
 
 \begin_layout Section
-2.6 Node restart after Bus-off
+2.10 Node restart after Bus-off
 \end_layout
 
 \begin_layout Standard
@@ -14298,7 +14979,7 @@ hyperref[COMMAND]{COMMAND[ERCRST]}
 \end_layout
 
 \begin_layout Section
-2.6 Special features summary
+2.11 Special features summary
 \end_layout
 
 \begin_layout Standard
@@ -14385,10 +15066,10 @@ Data Bit-Rate
 \end_layout
 
 \begin_layout Section
-2.6 TX Datapath hazard protection
+2.12 TX Datapath hazard protection
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:2.6-TX-Datapath-hazard-protection"
+name "sec-TX-Datapath-hazard-protection"
 
 \end_inset
 
@@ -14400,7 +15081,20 @@ Architecture of TXT Buffer and TX Arbitrator might invoke suspicion of control
  hazard susceptibility.
  This section explains why control hazards will never occur on TXT Buffers
  and TX Arbitrator.
- Architecture of Logic signals is shown in Figure 
+ Architecture of Logic signals is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TX-DataPath-Logic]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:TX-DataPath-Logic"
@@ -14476,7 +15170,20 @@ tran_frame_valid
 \end_layout
 
 \begin_layout Standard
-Hazard would occur if red combinational path in Figure 
+Hazard would occur if red combinational path in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TX-DataPath-Logic]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:TX-DataPath-Logic"
@@ -14495,7 +15202,20 @@ Set Abort SW Command is activated by SW in clock cycle N.
 \end_layout
 
 \begin_layout Enumerate
-Due to missing red combinational path in Figure 
+Due to missing red combinational path in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TX-DataPath-Logic]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:TX-DataPath-Logic"
@@ -14561,7 +15281,20 @@ tran_frame_valid
 \family default
 \shape default
  was deactivated with one clock cycle delay due to missing red combinational
- path in Figure 
+ path in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:TX-DataPath-Logic]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:TX-DataPath-Logic"
@@ -14625,8 +15358,9 @@ The above mentioned explanation shows that due to direct combinational path
 \series bold
 NOT susceptible to hazards!
 \series default
- If pipelines were inserted (e.g on output of Priority Decoder), full handshake
- mechanism would need to be created to avoid control hazards.
+ If pipelines were inserted (e.g.
+ on output of Priority Decoder), full handshake mechanism would need to
+ be created to avoid control hazards.
  Note that other commands such as Set Ready (
 \family roman
 \shape italic
@@ -14807,11 +15541,11 @@ Note that when running simulations with graphic output from remote pc over
 \end_layout
 
 \begin_layout Section
-4.1 VHDL Test libraries
+5.1 VHDL Test libraries
 \end_layout
 
 \begin_layout Subsection
-4.1.1 CANTestlib.vhd
+5.1.1 CANTestlib.vhd
 \end_layout
 
 \begin_layout Standard
@@ -14824,7 +15558,7 @@ CANtestLib.vhd provides set of types and procedures which aim to ease the
 \end_layout
 
 \begin_layout Subsection
-4.1.2 randomLib.vhd
+5.1.2 randomLib.vhd
 \end_layout
 
 \begin_layout Standard
@@ -14870,7 +15604,7 @@ rand_ctr
 \end_layout
 
 \begin_layout Section
-4.2 Test entities
+5.2 Test entities
 \end_layout
 
 \begin_layout Standard
@@ -15470,7 +16204,7 @@ Error counter of the test
 \end_layout
 
 \begin_layout Section
-4.3 Python test framework
+5.3 Python test framework
 \end_layout
 
 \begin_layout Standard
@@ -15478,10 +16212,10 @@ TODO
 \end_layout
 
 \begin_layout Section
-4.3 Common test configuration
+5.4 Common test configuration
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:4.3-common-Test-configuration"
+name "sec-common-Test-configuration"
 
 \end_inset
 
@@ -15536,7 +16270,7 @@ wave TCL file which displays most important signals of DUT in Wave window
 \end_layout
 
 \begin_layout Section
-4.3 Code coverage
+5.5 Code coverage
 \end_layout
 
 \begin_layout Standard
@@ -15568,7 +16302,20 @@ genhtml code_coverage.info --output-directory code_html
 
 \end_deeper
 \begin_layout Standard
-An example result of code coverage result is shown in Figure 
+An example result of code coverage result is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Code-coverage-example]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Code-coverage-example"
@@ -15626,7 +16373,7 @@ name "fig:Code-coverage-example"
 \end_layout
 
 \begin_layout Section
-4.4 Simulator settings
+5.6 Simulator settings
 \end_layout
 
 \begin_layout Standard
@@ -15656,7 +16403,7 @@ ns
 \end_layout
 
 \begin_layout Section
-4.5 Unit tests
+5.7 Unit tests
 \end_layout
 
 \begin_layout Standard
@@ -15666,7 +16413,20 @@ Unit tests verify functionality of each circuit on its own, and compare
  model or verification function).
  It is important that the circuit implementation and the behavioral model
  of circuit are very well separated, and share as little source code as
- possible! Basic architecture of each unit test is in Figure 
+ possible! Basic architecture of each unit test is in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Unit_diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Unit_diagram"
@@ -15766,7 +16526,7 @@ VHDL file
 \end_layout
 
 \begin_layout Subsection
-4.5.2 How to add new unit test?
+5.7.1 How to add new unit test?
 \end_layout
 
 \begin_layout Standard
@@ -15821,7 +16581,7 @@ unit/tests
 \end_layout
 
 \begin_layout Subsection
-4.5.3 Existing unit tests
+5.7.2 Existing unit tests
 \end_layout
 
 \begin_layout Subsubsection
@@ -16835,7 +17595,7 @@ test_proc
 \end_layout
 
 \begin_layout Section
-4.6 Reference test
+5.8 Reference test
 \end_layout
 
 \begin_layout Standard
@@ -16858,7 +17618,30 @@ tools
 \end_layout
 
 \begin_layout Standard
-The architecture of Reference test is shown in Figure TODO.
+The architecture of Reference test is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:reference-test-block-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:reference-test-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  First 
 \shape smallcaps
 Bit-Rate
@@ -16902,7 +17685,7 @@ read_bit_sequence
 \family default
 \shape default
  function.
- Then, Bit Generator (
+ Then Bit Generator (
 \family roman
 \shape italic
 bit_gen_comp
@@ -16928,8 +17711,52 @@ TX_frame
 ).
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/sanity_env.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Reference test block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:reference-test-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
-4.6 Feature tests
+5.9 Feature tests
 \end_layout
 
 \begin_layout Standard
@@ -16949,10 +17776,23 @@ test/feature/tb_feature.vhd
  Each feature test is then implemented as VHDL procedure in separate test
  file (eg.
  test/feature/arbitration_feature_tb.vhd).
- The architecture of this test is shown in Figure 
+ The architecture of this test is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:Feature-test-env]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:Feature_env"
+reference "fig:Feature-test-env"
 
 \end_inset
 
@@ -17042,7 +17882,7 @@ status open
 Feature test environment
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Feature_env"
+name "fig:Feature-test-env"
 
 \end_inset
 
@@ -17081,7 +17921,7 @@ test_name
 \end_layout
 
 \begin_layout Subsection
-4.6.2 How to add new feature test?
+5.9.1 How to add new feature test?
 \end_layout
 
 \begin_layout Standard
@@ -17151,7 +17991,7 @@ feature/tests
 \end_layout
 
 \begin_layout Subsection
-4.6.3 Existing feature tests
+5.9.2 Existing feature tests
 \end_layout
 
 \begin_layout Standard
@@ -17234,13 +18074,14 @@ tx_arb_time_tran_feature_tb.vhd
 Each feature test is described within header of test implementation.
  Each test is described as sequence of steps, which are executed during
  feature test procedure.
+ Reffer to source code of each test for further description of each test.
 \end_layout
 
 \begin_layout Section
-4.7 Sanity test
+5.10 Sanity test
 \begin_inset CommandInset label
 LatexCommand label
-name "sec:4.7-Sanity-test"
+name "sec-Sanity-test"
 
 \end_inset
 
@@ -17258,10 +18099,23 @@ node_1_comp
 \shape default
 ) connected on CAN Bus.
  It can be easily extended to more than 4 nodes.
- Block diagram of sanity test is shown in Figure 
+ Block diagram of sanity test is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:sanity-block-diagram]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:sanity_diagram-1-1-1-1-1"
+reference "fig:sanity-block-diagram"
 
 \end_inset
 
@@ -17320,7 +18174,7 @@ status open
 Sanity test block diagram
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:sanity_diagram-1-1-1-1-1"
+name "fig:sanity-block-diagram"
 
 \end_inset
 
@@ -17338,10 +18192,10 @@ name "fig:sanity_diagram-1-1-1-1-1"
 \end_layout
 
 \begin_layout Subsection
-4.7.1 Transciever delay
+5.10.1 Transciever delay
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:4.7.1-Transciever-delay"
+name "subsec-Transciever-delay"
 
 \end_inset
 
@@ -17399,8 +18253,11 @@ Transceiver Delay
 \shape default
  refer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:4.7.6-Sanity-test"
+LatexCommand nameref
+reference "subsec-Sanity-test"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -17408,10 +18265,10 @@ reference "subsec:4.7.6-Sanity-test"
 \end_layout
 
 \begin_layout Subsection
-4.7.2 Real bus topology
+5.10.2 Bus topology
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:4.7.2-Real-bus"
+name "subsec-Real-bus-topology"
 
 \end_inset
 
@@ -17538,10 +18395,23 @@ Bus
 \end_layout
 
 \begin_layout Standard
-Bus topology is shown in Figure 
+Bus topology is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:bus_topology]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:bus_topology-1"
+reference "fig:bus_topology"
 
 \end_inset
 
@@ -17594,7 +18464,7 @@ status open
 Bus topology
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:bus_topology-1"
+name "fig:bus_topology"
 
 \end_inset
 
@@ -17616,10 +18486,23 @@ Star
 \end_layout
 
 \begin_layout Standard
-Star topology is shown in Figure 
+Star topology is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:star_topology]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:star_topology-1-1"
+reference "fig:star_topology"
 
 \end_inset
 
@@ -17672,7 +18555,7 @@ status open
 Star topology
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:star_topology-1-1"
+name "fig:star_topology"
 
 \end_inset
 
@@ -17694,10 +18577,23 @@ Tree
 \end_layout
 
 \begin_layout Standard
-Tree topology is shown in Figure 
+Tree topology is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:tree_topology]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:tree_topology-1-1-1"
+reference "fig:tree_topology"
 
 \end_inset
 
@@ -17750,7 +18646,7 @@ status open
 Tree topology
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:tree_topology-1-1-1"
+name "fig:tree_topology"
 
 \end_inset
 
@@ -17772,10 +18668,23 @@ Ring
 \end_layout
 
 \begin_layout Standard
-Ring topology is shown in Figure 
+Ring topology is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:ring_topology]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:ring_topology-1-1-1-1"
+reference "fig:ring_topology"
 
 \end_inset
 
@@ -17828,7 +18737,7 @@ status open
 Ring topology
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:ring_topology-1-1-1-1"
+name "fig:ring_topology"
 
 \end_inset
 
@@ -17873,10 +18782,10 @@ l_{3} & l_{5} & l_{6} & 0
 \end_layout
 
 \begin_layout Subsection
-4.7.3 Oscillator tolerance
+5.10.3 Oscillator tolerance
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:4.7.3-Oscillator-tollerance"
+name "subsec-Oscillator-tollerance"
 
 \end_inset
 
@@ -17932,8 +18841,11 @@ clk_sys
  some time.
  In order to find out how to configure oscillator tolerance refer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:4.7.6-Sanity-test"
+LatexCommand nameref
+reference "subsec-Sanity-test"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -17941,10 +18853,10 @@ reference "subsec:4.7.6-Sanity-test"
 \end_layout
 
 \begin_layout Subsection
-4.7.4 Noise generation
+5.10.4 Noise generation
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:4.7.4-Noise-generation"
+name "subsec-Noise-generation"
 
 \end_inset
 
@@ -18015,8 +18927,11 @@ ng_var Variance of Noise gap (in nanoseconds)
 Each configuration parameter corresponds to VHDL signal.
  To find out how to configure these parameters refer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:4.7.6-Sanity-test"
+LatexCommand nameref
+reference "subsec-Sanity-test"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -18024,10 +18939,10 @@ reference "subsec:4.7.6-Sanity-test"
 \end_layout
 
 \begin_layout Subsection
-4.7.5 Traffic emulation and data consitency evaluation
+5.10.5 Traffic emulation and data consitency evaluation
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:4.7.5-Traffic-emulation"
+name "subsec-Traffic-emulation"
 
 \end_inset
 
@@ -18116,10 +19031,10 @@ Compare TX Memories and RX Memories contents for data consistency.
 \end_layout
 
 \begin_layout Subsection
-4.7.6 Sanity test configuration
+5.10.6 Sanity test configuration
 \begin_inset CommandInset label
 LatexCommand label
-name "subsec:4.7.6-Sanity-test"
+name "subsec-Sanity-test"
 
 \end_inset
 
@@ -18130,8 +19045,8 @@ name "subsec:4.7.6-Sanity-test"
 Sanity test can be configured by default YAML config attributes which are
  common for whole CANTest framework and described in 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "sec:4.3-common-Test-configuration"
+LatexCommand nameref
+reference "sec-common-Test-configuration"
 plural "false"
 caps "false"
 noprefix "false"
@@ -18180,8 +19095,11 @@ ring
 .
  For more information about topologies refer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:4.7.2-Real-bus"
+LatexCommand nameref
+reference "subsec-Real-bus-topology"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -18201,8 +19119,11 @@ bus_len_v Length of the bus segments
  These parameters have a different meaning for each topology.
  Please refer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:4.7.2-Real-bus"
+LatexCommand nameref
+reference "subsec-Real-bus-topology"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -18216,8 +19137,11 @@ trv_del_v Transciever delays of each node in multiples of 10 ns (e.g.
  transciever delay = 220 ns , then td(n)=22).
  Refer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:4.7.1-Transciever-delay"
+LatexCommand nameref
+reference "subsec-Transciever-delay"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -18226,10 +19150,13 @@ reference "subsec:4.7.1-Transciever-delay"
 
 \begin_layout Description
 osc_tol_v Oscillator errors (maximal tollerance) of each node in ppm.
- Refer to
+ Refer to 
 \begin_inset CommandInset ref
-LatexCommand ref
-reference "subsec:4.7.3-Oscillator-tollerance"
+LatexCommand nameref
+reference "subsec-Oscillator-tollerance"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
@@ -18538,10 +19465,23 @@ desc Description of this configuration.
 
 \begin_layout Standard
 Sample screen shot which describes sanity test configuration in YAML file
- is shown in Figure 
+ is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:sanity_config_example]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "fig:sanity_config_example-1-1-1-1-1"
+reference "fig:sanity_config_example"
 
 \end_inset
 
@@ -18575,7 +19515,7 @@ status open
 Sanity test example configuration
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:sanity_config_example-1-1-1-1-1"
+name "fig:sanity_config_example"
 
 \end_inset
 
@@ -18613,7 +19553,20 @@ literal "true"
  buffers and event logger).
  Synthesis was performed several times and various results were obtained.
  Settings for balanced Synthesis and Fitting were used.
- Table 
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[tab:Design-size-in]{Table }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "tab:Design-size-in"
@@ -20063,7 +21016,20 @@ Faster bit rates were not verified in real hardware since used transceivers
  1 Mbit/s but works fine for 2 Mbit/s).
  Basic identifier, Extended identifiers, Bit-rate shit, no Bit-rate shift
  were verified as part of this test.
- The test setup is shown in Figure 
+ The test setup is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:test_setup]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:test_setup"
@@ -20071,7 +21037,20 @@ reference "fig:test_setup"
 \end_inset
 
 .
- An example of frame sampled by logic analyzer is shown in Figure 
+ An example of frame sampled by logic analyzer is shown in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[fig:frame_example]{Figure }
+\end_layout
+
+\end_inset
+
+
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:frame_example"
@@ -20188,47 +21167,68 @@ TODO by Martin Jerabek.
 \end_layout
 
 \begin_layout Standard
-CAN FD IP Core has many features which are not required by CAN FD specification.
+CTU CAN FD has many features which are not required by CAN FD specification.
  However there is still room for improvement.
  Following list names few of the possible improvements:
 \end_layout
 
 \begin_layout Itemize
-Implement automatic baud rate detection, either as part of CAN Core or separate
- module.
- Once the unit would be turned on, it would measure bus timing (e.g.
- over several frames) and provide the results, or even set the bus timing
- registers.
+Extend Python register generator with generation of VHDL register module.
+ This module would be instantiated in Memory Registers and connected to
+ Driving Bus and Status Bus.
 \end_layout
 
 \begin_layout Itemize
-Implement additional state machine which would decide about usage of Data
- bit rate based on relative error rate of two bit rates.
+Automate design of Driving Bus and Status Bus.
+ These would be described in IP-XACT and signal list would be generated
+ automatically (including documentation).
+ Another aproach would be to remove Driving Bus and Status Bus completely
+ and use generated structure throughout the design.
 \end_layout
 
 \begin_layout Itemize
-Optimize the 
-\begin_inset Quotes eld
-\end_inset
-
-tranBuffer
-\begin_inset Quotes erd
-\end_inset
-
- and TXT_Buffer to be synthesized into RAM elements, not to LUTs.
+Generate automated description of tests from headers of testbench source
+ code.
 \end_layout
 
 \begin_layout Itemize
-Add hard synchronisation and resynchronisation part into Prescaler unit
- test
+Extend reference test to also transmision of CAN frame by CTU CAN FD.
+ Bit sequence would be also compared with reference sequence (with small
+ error allowed).
 \end_layout
 
 \begin_layout Itemize
-Implement event logger feature test
+Implement second memory interface on CTU CAN FD.
+ This interface would be a master interface and could perform DMA operations
+ to/from main memory on transmission/reception.
+ Implement additional registers for configuration of DMA engine.
+ Add DMA support to Linux driver.
 \end_layout
 
 \begin_layout Itemize
-Implement error detection feature test
+Implement automatic 
+\shape smallcaps
+Bit-Rate
+\shape default
+ detection, either as part of CTU CAN FD or separate module.
+ Once the unit would be turned on, it would measure 
+\shape smallcaps
+Bit-Rate
+\shape default
+ (e.g.
+ over several frames) and provide the results, or even set bus timing registers.
+\end_layout
+
+\begin_layout Itemize
+Implement additional state machine which would decide about usage of 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ based on relative error rate of two 
+\shape smallcaps
+Bit-Rates
+\shape default
+.
 \end_layout
 
 \begin_layout Chapter
@@ -28821,6 +29821,17 @@ literal "true"
 \end_inset
 
 CAN 2.0 Protocol standard, Robert Bosch GmbH, Rev 3.0
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset CommandInset bibitem
+LatexCommand bibitem
+key "key-23"
+literal "false"
+
+\end_inset
+
+AMBA Specification (Rev 2.0), ARM Limited 1999.
 \end_layout
 
 \begin_layout Bibliography
