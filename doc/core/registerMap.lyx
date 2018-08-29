@@ -98,6 +98,13 @@ customHeadersFooters
 \begin_body
 \begin_layout Chapter
 3. CAN FD Core memory map
+\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+label{3. CAN FD Core memory map
+}\end_layout
+\end_inset
 \end_layout
 \begin_layout Standard
 CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The memory map consists of following memory regions:

@@ -438,7 +438,7 @@ Added test framework describtion.
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.1
+2.1.1
 \end_layout
 
 \end_inset
@@ -468,6 +468,7 @@ Ondrej Ille
 Updated register map description, external references to generated maps.
  Updated block diagrams.
  Updated test framework description.
+ Updated Synthesis table.
 \end_layout
 
 \end_inset
@@ -532,7 +533,7 @@ Format
 \end_layout
 
 \begin_layout Standard
-Throughout this manual following notations are kept:
+Throughout this datasheet following notations are kept:
 \end_layout
 
 \begin_layout Itemize
@@ -540,7 +541,7 @@ Commnon text is written with this font.
 \end_layout
 
 \begin_layout Itemize
-Registers are always described with capital letters e.g.
+Memory registers are always described with capital letters e.g.
  REGISTER or REGISTER [BIT_FIELD] to represent register or bit field within
  a register.
 \end_layout
@@ -578,7 +579,10 @@ stuff bit
 \shape default
  or
 \shape smallcaps
- error frame.
+ error frame
+\shape default
+, which is the same font as is used for these terms in original CAN FD 1.0
+ standard.
 \end_layout
 
 \begin_layout Itemize
@@ -871,7 +875,37 @@ driver/ctu_can_fd_frame.h
 
 \begin_layout Itemize
 Lyx documentation.
- Chapters 3 and 4 are generated (
+ Chapters: 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[3.
+ CAN FD Core memory map]{3.
+ CAN FD Core memory map}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[4.
+ CAN FD frame format]{4.
+ CAN FD frame format}
+\end_layout
+
+\end_inset
+
+ are generated (
 \begin_inset Quotes eld
 \end_inset
 
@@ -12290,8 +12324,38 @@ Memory Registers provide an interface between SoC Memory Bus (Avalon or
  APB) and all control and Status signals of CTU CAN FD IP function.
  Address decoder for access to TXT Buffers is implemented in this module.
  Driving bus assignments are implemented in this module.
- Register structure is in described in Chapter 3 (TODOREF).
- Frame Format in TXT Buffers and RX Buffer is described in Chapter 4 (TODOREF).
+ Register structure is in described in Chapter: 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[3.
+ CAN FD Core memory map]{3.
+ CAN FD Core memory map}
+\end_layout
+
+\end_inset
+
+.
+ Frame Format in TXT Buffers and RX Buffer is described in Chapter: 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[4.
+ CAN FD frame format]{4.
+ CAN FD frame format}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -14291,7 +14355,9 @@ status open
 
 
 \backslash
-hyperref[MODE]{MODE[RTR_PREF]}
+hyperref[MODE]{MODE[RTR
+\backslash
+textunderscore PREF]}
 \end_layout
 
 \end_inset
@@ -14629,8 +14695,8 @@ d in VHDL, TCL and Python.
 \series bold
  exact result
 \series default
- whether the test passed or failed! Vunit library is used as wrapper and
- GHDL and Modelsim Altera 6.5b are used as target simulators.
+ whether the test passed or failed! Vunit library is used as wrapper, GHDL
+ and Modelsim Altera 6.5b are used as target simulators.
  Tests are executed automatically after every merge request to master branch
  of CTU FEE GITLab repository.
  Furthermore, automated test run is available every night.
@@ -14646,21 +14712,25 @@ testbench
 \series bold
 run.py <config_name> 
 \series default
-where <config_name> corresponds to YAML config with tests that should be
- executed.
+where <config_name> corresponds to YAML config file with tests that should
+ be executed.
  Description of each test and its configuration is shown in following sub-chapte
 rs.
  At the moment there are two configs available:
 \end_layout
 
 \begin_layout Description
-tests_fast.yml Fast test run which is executed in GitLab CI on every merge
- request.
+\begin_inset space \qquad{}
+\end_inset
+
+tests_fast.yml Fast test run which is executed on every merge request.
 \end_layout
 
 \begin_layout Description
-tests_nightly.yml Longer test run which is executed every 24 hours in GitLab
- CI.
+\begin_inset space \qquad{}
+\end_inset
+
+tests_nightly.yml Longer test run which is executed once every 24 hours.
 \end_layout
 
 \begin_layout Standard
@@ -14671,22 +14741,33 @@ CANTest framework implements
 :
 \end_layout
 
-\begin_layout Itemize
-Unit tests test each circuit towards its expected functionality.
+\begin_layout Description
+\begin_inset space \qquad{}
+\end_inset
+
+Unit Test each circuit towards its expected functionality.
 \end_layout
 
-\begin_layout Itemize
-Feature tests test the functionality of controller as whole in specific
- situations.
+\begin_layout Description
+\begin_inset space \qquad{}
+\end_inset
+
+Feature Test functionality of CTU CAN FD as whole in specific situations.
 \end_layout
 
-\begin_layout Itemize
-Sanity test implements various bus topologies and simulates bus traffic
+\begin_layout Description
+\begin_inset space \qquad{}
+\end_inset
+
+Sanity Test implements various bus topologies and simulates bus traffic
  with more controllers.
 \end_layout
 
-\begin_layout Itemize
-Reference test verifies communication with existing CAN FD implementations.
+\begin_layout Description
+\begin_inset space \qquad{}
+\end_inset
+
+Reference Test verifies communication with existing CAN FD implementations.
 \end_layout
 
 \begin_layout Standard
@@ -14695,6 +14776,8 @@ By default, tests are executed via GHDL simulator.
 \end_layout
 
 \begin_layout Quotation
+
+\series bold
 run.py test tests_fast.yml
 \end_layout
 
@@ -14704,7 +14787,23 @@ To use Modelsim as simulator (for manual debug with graphic wave output),
 \end_layout
 
 \begin_layout Quotation
+
+\series bold
 VUNIT_SIMULATOR=modelsim ./run.py test tests_fast.yml -- -g
+\end_layout
+
+\begin_layout Standard
+Note that when running simulations with graphic output from remote pc over
+ SSH connection 
+\begin_inset Quotes eld
+\end_inset
+
+-Y
+\begin_inset Quotes erd
+\end_inset
+
+ argument must be used.
+ 
 \end_layout
 
 \begin_layout Section
@@ -14743,12 +14842,19 @@ Uniform distribution
  of values from the interval (0,1).
  Functions from the library provide values from generated array in a form
  of std_logic or std_logic vector.
- Additional function (rand_gaus) provides random numbers with a Gaussian
- distribution.
+ Additional function (
+\family roman
+\shape italic
+rand_gaus
+\family default
+\shape default
+) provides random numbers with a Gaussian distribution.
  To obtain random element (vector, bit, etc.) signal 
-\series bold
+\family roman
+\shape italic
 rand_ctr
-\series default
+\family default
+\shape default
  needs to be provided.
  This signal represents an index of the returned element (from generated
  array) and is automatically increased when the procedure ends.
@@ -14769,9 +14875,11 @@ rand_ctr
 
 \begin_layout Standard
 In order to unify all tests of CANTest, 
-\series bold
-CAN_feature_test
-\series default
+\family roman
+\shape italic
+CAN_test
+\family default
+\shape default
  entity is implemented, and it is described in following table:
 \begin_inset Separator latexpar
 \end_inset
@@ -14783,15 +14891,14 @@ CAN_feature_test
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="14" columns="5">
+<lyxtabular version="3" rows="13" columns="4">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0pt">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
-<column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top" width="0pt">
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -14802,69 +14909,11 @@ Source file
 
 \end_inset
 </cell>
-<cell multicolumn="1" alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multicolumn="1" alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-CANtestlib.vhd
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Instanced in
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="1" alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-every test
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+CANtestLib.vhd
 \end_layout
 
 \end_inset
@@ -14889,7 +14938,7 @@ every test
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -14900,20 +14949,14 @@ Entity name
 
 \end_inset
 </cell>
-<cell multicolumn="1" alignment="right" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell multicolumn="1" alignment="right" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 CAN_test
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
 \end_layout
 
 \end_inset
@@ -14945,15 +14988,6 @@ CAN_test
 
 \series bold
 Description
-\end_layout
-
-\end_inset
-</cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
 \end_layout
 
 \end_inset
@@ -15062,15 +15096,6 @@ Basic test entity.
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
 </row>
 <row>
 <cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
@@ -15111,18 +15136,9 @@ Ports
 
 \end_inset
 </cell>
-<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15131,16 +15147,7 @@ Name
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Width
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15149,7 +15156,7 @@ Direction
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15158,7 +15165,7 @@ Type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15169,25 +15176,19 @@ Description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 run
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15196,7 +15197,7 @@ in
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15205,7 +15206,7 @@ boolean
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15216,25 +15217,19 @@ Starting signal for the test
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 iterations
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15243,7 +15238,7 @@ in
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15252,7 +15247,7 @@ natural
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15263,25 +15258,19 @@ Number of iterations to be executed in one test run
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 log_level
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15290,7 +15279,7 @@ in
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15299,7 +15288,7 @@ log_lvl_type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15310,25 +15299,19 @@ Logging severity which should be reported.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 error_beh
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15337,7 +15320,7 @@ in
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15346,7 +15329,7 @@ err_beh_type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15357,25 +15340,19 @@ Specifies how does the test behave when error occurs
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 error_tol
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15384,7 +15361,7 @@ in
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15393,7 +15370,7 @@ natural
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15404,25 +15381,19 @@ Maximal amount of errors which does not cause test to fail
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 status
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15431,7 +15402,7 @@ out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15440,7 +15411,7 @@ test_status_type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15451,25 +15422,19 @@ Actual status of the test.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\shape italic
 errors
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
--
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15478,7 +15443,7 @@ out
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15487,7 +15452,7 @@ natural
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -15510,6 +15475,154 @@ Error counter of the test
 
 \begin_layout Standard
 TODO
+\end_layout
+
+\begin_layout Section
+4.3 Common test configuration
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:4.3-common-Test-configuration"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+YAML configuration file for test run configuration has several common attributes
+ for each test in CANTest framework.
+ Note that YAML is tree-like structure, and if config is not specified in
+ a node, configuration from upper level of tree-like structure is taken.
+ CANTest has following default YAML parameters available:
+\end_layout
+
+\begin_layout Description
+log_level Logging severity which should be used during the test.
+\end_layout
+
+\begin_layout Description
+error_tolerance Number of errors that can be tolerated in the test.
+ If number of errors exceeds this number, test outcome is evaluated as failed.
+ Note that in default configuration of test framework, simulation is stopped
+ immediately after report with error severity, thus making this configuration
+ parameter redundant.
+\end_layout
+
+\begin_layout Description
+iterations Number of iterations that should be executed on single test.
+ This value corresponds to 
+\family roman
+\shape italic
+iterations
+\family default
+\shape default
+ input of 
+\family roman
+\shape italic
+CAN_test
+\family default
+\shape default
+ entity.
+\end_layout
+
+\begin_layout Description
+timeout Timeout on length of test run, before VUnit will abort the simulation.
+\end_layout
+
+\begin_layout Description
+wave TCL file which displays most important signals of DUT in Wave window
+ of Modelsim simulator.
+ This parameter is used for manual debugging and bring-up of tests.
+\end_layout
+
+\begin_layout Section
+4.3 Code coverage
+\end_layout
+
+\begin_layout Standard
+GNU lcov engine is used to evaluate code coverage of CTU CAN FD source codes
+ and test benches during automated runs in Gitlab of CTU FEE.
+ Reffer to 
+\begin_inset Quotes eld
+\end_inset
+
+test/Makefile
+\begin_inset Quotes erd
+\end_inset
+
+ file with following target:
+\end_layout
+
+\begin_layout Quote
+coverage: 
+\end_layout
+
+\begin_deeper
+\begin_layout Quote
+lcov --capture --directory build --output-file code_coverage.info
+\end_layout
+
+\begin_layout Quote
+genhtml code_coverage.info --output-directory code_html 
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+An example result of code coverage result is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Code-coverage-example"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/doc/pics/Code_coverage_example.pdf
+	lyxscale 20
+	scale 45
+	rotateAngle 270
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Code coverage example
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Code-coverage-example"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -15548,23 +15661,23 @@ ns
 
 \begin_layout Standard
 Unit tests verify functionality of each circuit on its own, and compare
- it with expected beahviour.
- Expected behaviour is implemented in behavioral manner (as circuit model
- or verification function).
- It is important that circuit implementation and behavioral model of the
- circuit are very well separated and share as little source code as possible!
- Basic architecture of each unit test is in Figure 
+ it with expected functionality.
+ Expected functionality is implemented in behavioral manner (as a circuit
+ model or verification function).
+ It is important that the circuit implementation and the behavioral model
+ of circuit are very well separated, and share as little source code as
+ possible! Basic architecture of each unit test is in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Unit_diagram"
 
 \end_inset
 
- and can be summed up to following points:
+ and can be summed up in following points:
 \end_layout
 
 \begin_layout Enumerate
-Generate constrained random inputs to DUT (Device under test).
+Generate constrained random inputs to DUT (Device Under Test).
 \end_layout
 
 \begin_layout Enumerate
@@ -15572,11 +15685,12 @@ Observe circuit function.
 \end_layout
 
 \begin_layout Enumerate
-Compare outputs of the circuit and outputs of the model, or evaluation function.
+Compare outputs of the circuit and outputs of the model or evaluation function.
 \end_layout
 
 \begin_layout Enumerate
-If a mismatch occurs increase error counter and report error log.
+If a mismatch between model and DUT occurs, increase error counter and report
+ error log.
 \end_layout
 
 \begin_layout Enumerate
@@ -15646,13 +15760,13 @@ VHDL file
  which implements test architecture.
  TCL file with waveform configurations is optional, and it is mostly used
  for manual debugging of a test or circuit.
- Each unit test requires a separate run of simulator since each unit test
+ Each unit test requires a separate run of simulator, since each unit test
  implements different DUT, thus simulated architecture is distinct in each
  unit test.
 \end_layout
 
 \begin_layout Subsection
-4.5.2 How to add a new unit test?
+4.5.2 How to add new unit test?
 \end_layout
 
 \begin_layout Standard
@@ -15673,6 +15787,20 @@ CAN_test
 \end_inset
 
 .
+ Note that test 
+\series bold
+must have 
+\begin_inset Quotes eld
+\end_inset
+
+_tb
+\begin_inset Quotes erd
+\end_inset
+
+ suffix
+\series default
+ in the name of VHDL file.
+ It recommended to copy existing test and modify it to cover new functionality.
 \end_layout
 
 \begin_layout Enumerate
@@ -15681,7 +15809,15 @@ Copy existing TCL script from some unit test and modify the waveforms to
 \end_layout
 
 \begin_layout Enumerate
-Add test to one of config files and execute test run.
+Add test to one of configuration files under 
+\begin_inset Quotes eld
+\end_inset
+
+unit/tests
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
@@ -15689,54 +15825,277 @@ Add test to one of config files and execute test run.
 \end_layout
 
 \begin_layout Subsubsection
-Bit_Stuffing
+Bit Stuffing and Bit De-Stuffing
 \end_layout
 
 \begin_layout Standard
-This unit test includes the unit test of Bit stuffing and bit de-stuffing
+This unit test includes the unit test of Bit Stuffing and Bit De-stuffing
  circuit as well.
- Both circuits are connected in a chain.
- As first, random bit is generated then stuffed, then de-stuffed and received.
- Testbench generates random setting on the input of both circuits.
- Note that both circuits always have the same settings.
- Stuff error detection is verified by forcing the value of stuffed bits
- to be constant for more bit times than length of the stuff rule.
- De-stuffed data and data before stuffing are compared and when a mismatch
- occurs error is detected.
+ Both circuits are connected in a chain, ater 
+\shape smallcaps
+Bit Stuffing
+\shape default
+ serial data stream is fed to 
+\shape smallcaps
+Bit De-stuffing
+\shape default
+.
+ In each step of unit test, random settings of both modules (length of 
+\shape smallcaps
+Bit Stuffing
+\shape default
+ Rule) and randomized bit sequence are generated (procedure
+\family roman
+\shape italic
+ generate_bs_settings
+\family default
+\shape default
+).
+ To emulate insertion of extra Stuff Bit in the first bit of CAN FD CRC,
+ some of bit sequences assume that at certain bit, Bit Stuffing method will
+ change to Fixed Bit Stuffing.
+ The presence / absence of change to Fixed Bit Stuffing is generated in
+ 
+\family roman
+\shape italic
+set.change_to_fixed
+\family default
+\shape default
+ variable.
+ Length of standard Bit Stuffing is in 
+\family roman
+\shape italic
+set.bc_non_fixed
+\family default
+\shape default
+.
+ Length of Fixed Bit Stuffing is in 
+\family roman
+\shape italic
+set.bc_fixed
+\family default
+\shape default
+.
+ Note that generated bit sequence has higher probabilty (85 %) of equal
+ value between two consecutive bits.
+ This precaution makes sure that fair amount of Stuff Bits will be inserted
+ and discarded during the test.
+ A special assertion command is present to verify proper recursive behaviour
+ of Bit Stuffing.
+\end_layout
+
+\begin_layout Standard
+SW model is realized via 
+\family roman
+\shape italic
+calc_sw_bit_stuf_sequence
+\family default
+\shape default
+ procedure which calculates expected bit sequence after bit stuffing in
+ 
+\family roman
+\shape italic
+set.stuffed_data_seq
+\family default
+\shape default
+ from generated bit sequence 
+\family roman
+\shape italic
+set.tx_data_seq
+\family default
+\shape default
+.
+ Output of Bit Stuffing DUT is compared with expected output from model
+ after each bit is fed to Bit Stuffing DUT.
+ Furthermore upon insertion of 
+\shape smallcaps
+Stuff Bit
+\shape default
+, random bit-flip is added into bit stream (
+\family roman
+\shape italic
+err_data
+\family default
+\shape default
+) before Bit De-stuffing and verification of 
+\shape smallcaps
+Stuff Error
+\shape default
+ detection is performed (
+\family roman
+\shape italic
+gen_st_error
+\family default
+\shape default
+ process).
 \end_layout
 
 \begin_layout Subsubsection
-Bus_Sampling
+Bus Sampling
 \end_layout
 
 \begin_layout Standard
 Testbench generates random data sequences to be transmitted (as if coming
- from CAN Core) and appropriate triggering signals (with random bit time
+ from CAN Core) by 
+\family roman
+\shape italic
+data_gen
+\family default
+\shape default
+ process and appropriate Triggering Signals (with random 
+\shape smallcaps
+Bit-Rate
+\shape default
  settings).
- Transmitted data on DUT output are inserted into the shift register that
- is realizing transceiver delay (also randomized).
- Random errors are inserted into the shift register.The test has 3 parts.
- In the first part, nominal sampling is used and sampled data are compared
- with transmitted data.
- Also, bit error output is observed.
- If transmitted and sampled data are mismatching and bit_error output is
- an inactive error is detected.
- In the second part data sampling is used, but test sequence remains the
- same as in first part.
- In third part, secondary sampling is used and additional shift register
- is implemented in the test which stores the transmitted data.
- In the beginning of the third part transceiver delay is measured by command
- (as commin from protocol control in EDL bit).
- Then received data and delayed transmitted data are compared.
- Transmitted data are delayed by the length of measured transceiver delay.
- If a mismatch occurs and bit_error output is not set by DUT error is detected.
- Note that in the beginning of the third part no bit errors are generated
- during the time when transceiver delay is being measured.
- Also, only RECESSIVE bits are generated for a short period at the beginning
- of the third part.
- This is to simulate the condition that during EDL bit nominal bit time
- is still used and transceiver delay is shorter than a nominal bit time.
+ Transmitted data on DUT output are inserted into a shift register that
+ is realizing 
+\shape smallcaps
+Transceiver Delay
+\shape default
+ (
+\family roman
+\shape italic
+tran_del_proc
+\family default
+\shape default
+ process).
+ Random errors are also inserted to this shift register (
+\family roman
+\shape italic
+rand_ctr_noise_gen
+\family default
+\shape default
+).
+ Note that insertion of errors is forbidden for measurement of 
+\shape smallcaps
+Transceiver Delay
+\shape default
+ to avoid malfunction of measurement.
+ This point is potentially week spot of CAN FD Protocol! The test has 3
+ parts.
+ 
+\end_layout
+
+\begin_layout Standard
+In the first part, Nominal Sampling is used and sampled data (
+\family roman
+\shape italic
+data_rx
+\family default
+\shape default
+) are compared with transmitted data (
+\family roman
+\shape italic
+data_tx
+\family default
+\shape default
+).
+ 
+\family roman
+\shape italic
+bit_Error
+\family default
+\shape default
+ output is also observed.
+ If there is a mismatch between transmitted and sampled data and 
+\family roman
+\shape italic
+bit_error
+\family default
+\shape default
+ output is inactive, error in test is detected.
+\end_layout
+
+\begin_layout Standard
+In the second part Data Sampling is used, but test sequence remains the
+ same as in the first part.
+\end_layout
+
+\begin_layout Standard
+In third part, Secondary Sampling is used and additional shift register
+ is implemented in the test which stores the transmitted data (
+\family roman
+\shape italic
+tran_del_sr
+\family default
+\shape default
+).
+ In the beginning of the third part, 
+\shape smallcaps
+Transceiver Delay
+\shape default
+ is measured by 
+\family roman
+\shape italic
+trv_delay_calib
+\family default
+\shape default
+ command (as comming from Protocol Control in Extended Data Length bit).
+ Then, received data and delayed transmitted data are compared.
+ Transmitted data are delayed by length of measured 
+\shape smallcaps
+Transceiver Delay
+\shape default
+.
+ If a mismatch occurs, and 
+\family roman
+\shape italic
+bit_error
+\family default
+\shape default
+ output is not set by DUT, error is detected.
+ Note that in the beginning of third part, no 
+\shape smallcaps
+Bit Errors
+\shape default
+ are generated during the time when 
+\shape smallcaps
+Transceiver Delay
+\shape default
+ is being measured.
+ Also, only 
+\shape smallcaps
+Recessive
+\shape default
+ bits are generated for a short period at the beginning of third part.
+ This is to simulate condition that during 
+\shape smallcaps
+Extended Data Length
+\shape default
+ bit 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+ is still used, and 
+\shape smallcaps
+Transceiver Delay
+\shape default
+ is shorter than a 
+\shape smallcaps
+Nominal Bit Time
+\shape default
+.
  Refer to source code of the test for more detailed explanation.
+\end_layout
+
+\begin_layout Standard
+This test thus verifies proper measurement of 
+\shape smallcaps
+Transceiver Delay
+\shape default
+, proper sampling of CAN Bus and 
+\shape smallcaps
+Bit Error
+\shape default
+ detection during 
+\shape smallcaps
+Secondary Sampling
+\shape default
+ 
+\shape smallcaps
+Point
+\shape default
+.
 \end_layout
 
 \begin_layout Subsubsection
@@ -15744,90 +16103,223 @@ CRC
 \end_layout
 
 \begin_layout Standard
-CRC unit test generates random bit sequence 10 to 620 bits long.
- It also generates random drv_fd_type setting.
+CRC unit test generates random bit sequence 10 to 620 bits long (
+\family roman
+\shape italic
+gen_bit_sequence
+\family default
+\shape default
+).
+ It also generates random 
+\family roman
+\shape italic
+drv_fd_type
+\family default
+\shape default
+ setting.
  According to ISO FD standard, there is different starting value in CRC
  shift register in ISO CAN protocol as in non-ISO CAN protocol.
  Signal 
-\begin_inset Quotes eld
-\end_inset
-
+\family roman
+\shape italic
 drv_fd_type
-\begin_inset Quotes erd
-\end_inset
-
- switches between these two options.
+\family default
+\shape default
+ distinguishes between these two options.
  Then CRC is calculated in software by 
-\begin_inset Quotes eld
-\end_inset
-
+\family roman
+\shape italic
 calc_crc
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
  procedure.
  Afterwards, bit sequence is applied to DUT input.
- Triggering signals are generated by testbench and serial data are processed
- by CRC circuit.
- At the end software calculated CRC and DUT output are compared.
+ Triggering signals are generated by 
+\family roman
+\shape italic
+sample_gen
+\family default
+\shape default
+ process, and serial data are processed by CRC circuit.
+ At the end, software calculated CRC and DUT output are compared.
  If these two are not equal, an error is detected.
 \end_layout
 
 \begin_layout Subsubsection
-Evnt_Logger
+Event Logger
 \end_layout
 
 \begin_layout Standard
-Testbench generates random event inputs on Status bus in 
-\begin_inset Quotes eld
-\end_inset
-
+Testbench generates random event inputs on Status Bus by 
+\family roman
+\shape italic
 ev_gen
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
  process.
- Main test process then generates random setting of event logger (random
- event type of recording) and starts logging the events (starts DUT as an
- user would do).
- After recording has finished it reads all events and checks whether only
- desired event types were recorded.
- If any other event is recorded error is detected.
+ An edge on each of generated events is evaluated by 
+\family roman
+\shape italic
+ev_edge_proc
+\family default
+\shape default
+ process.
+ To emulate behaviour of Event Logger, SW model in 
+\family roman
+\shape italic
+ev_logger_model_proc
+\family default
+\shape default
+ process is implemented.
+ The process waits until Event Logger FSM is in state 
+\family roman
+\shape italic
+running
+\family default
+\shape default
+, and then fills 
+\family roman
+\shape italic
+log_mod_mem
+\family default
+\shape default
+ memory upon ocurrence of event edge.
+ Note that for loop which evaluates each event, is selected to count top
+ to bottom, to achieve the same priority as Event Harvesting mechanism of
+ DUT.
+ The main test process 
+\family roman
+\shape italic
+test_proc
+\family default
+\shape default
+, generates random trigger settings by 
+\family roman
+\shape italic
+generate_trigger_setting
+\family default
+\shape default
+ and random logging settings by 
+\family roman
+\shape italic
+generate_capture_setting
+\family default
+\shape default
+.
+ Upon the end of Event Logging (Event Logger FSM is in 
+\family roman
+\shape italic
+config
+\family default
+\shape default
+), contents of test memory is compared with Events read out from DUT by
  
+\family roman
+\shape italic
+check_events
+\family default
+\shape default
+ procedure.
 \end_layout
 
 \begin_layout Subsubsection
-Int_Manager
+Interrupt Manager
 \end_layout
 
 \begin_layout Standard
-This testbench is generating random interrupt sources at any time.
- Periodically it generates random DUT settings on Driving bus.
- After settings are set, testbench waits for constrained random time.
- During this time int_counter process is counting how many interrupts are
- fired by DUT.
- int_emul process implements interrupt generation in a behavioral way and
- counts the expected interrupts in another counter.
- After testbench waits it evaluates whether two counters (acutal interrupts
- and expected interrupts) are equal and whether interrupt vector on output
- of DUT is equal to expected interrupt vector.
- If any of these two pairs are not equal, error is detected.
+Testbench generates random interrupt sources at any time by 
+\family roman
+\shape italic
+src_gen
+\family default
+\shape default
+ procedure.
+ In each step random Interrupt settings are generated by 
+\family roman
+\shape italic
+generate_commands
+\family default
+\shape default
+ procedure.
+ 
+\family roman
+\shape italic
+int_emu_proc
+\family default
+\shape default
+ process calculates expected values on 
+\family roman
+\shape italic
+int_out
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+int_vector
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+int_mask
+\family default
+\shape default
+ and 
+\family roman
+\shape italic
+int_ena
+\family default
+\shape default
+ outputs.
+ These outputs are compared with DUT output, and error is reported upon
+ mismatch between DUT and expected output.
 \end_layout
 
 \begin_layout Subsubsection
-Message_filter
+Message Filter
 \end_layout
 
 \begin_layout Standard
-Random input frame type and identifier are generated on the input of DUT.
+Random input frame type and identifier are generated on input of DUT by
+ 
+\family roman
+\shape italic
+generate_input
+\family default
+\shape default
+ procedure.
  These inputs emulate received frame from CAN Core.
- Also, random filter settings are generated on a Driving bus.
+ Random filter settings are generated on Driving Bus by 
+\family roman
+\shape italic
+generate_setting
+\family default
+\shape default
+ procedure.
  Testbench waits for one clock cycle since there is one Flip-Flop on the
- output of message filter circuit.
- Then validate function is called which compares DUT output and expected
- output.
- Validate function implements the behavioral functionality of Message filters.
- If false is returned then an error is detected.
+ output of Message Filter circuit.
+ Then 
+\family roman
+\shape italic
+validate
+\family default
+\shape default
+ function is called, which compares DUT output and expected output.
+ 
+\family roman
+\shape italic
+validate
+\family default
+\shape default
+ function represents software model of Message Filter.
+ If 
+\family roman
+\shape italic
+false
+\family default
+\shape default
+ is returned then an error is detected and reported.
 \end_layout
 
 \begin_layout Subsubsection
@@ -15835,142 +16327,605 @@ Prescaler
 \end_layout
 
 \begin_layout Standard
-Prescaler testbench generates random bit time setting on the input of DUT.
- Afterwards, synchronization and sampling signals are observed on the output
- of DUT.
- It is verified that triggering signals are always interleaving (sync,sample,syn
-c...).
- Minimal information processing time (4 clock cycles) is also verified by
+Prescaler testbench consists of 3 parts: Tetsting without 
+\shape smallcaps
+Resynchronisation
+\shape default
+, Testing with 
+\shape smallcaps
+Resynchronisation
+\shape default
+ and Testing of 
+\shape smallcaps
+Bit-Rate Shift
+\shape default
+.
+ All there parts share the same 
+\shape smallcaps
+Bit-Rate
+\shape default
+ settings which are generated in the first part of the each test step by
  
-\begin_inset Quotes eld
-\end_inset
+\family roman
+\shape italic
+gen_bit_time_setting
+\family default
+\shape default
+ procedure.
+\end_layout
 
-ipt_proc_check
-\begin_inset Quotes erd
-\end_inset
+\begin_layout Standard
+In the first part, 
+\shape smallcaps
+Resynchronisation
+\shape default
+ is forbidden.
+ Testbench measures number of clock cycles between two consecutive Transmitt
+ Triggers (which represent the moment of bit transmission, thus measuring
+ length of bit) in 
+\family roman
+\shape italic
+check_ctr
+\family default
+\shape default
+ counter.
+ Value of this counter is compared with expected value in 
+\family roman
+\shape italic
+exp_dur
+\family default
+\shape default
+.
+ Note that value of 
+\family roman
+\shape italic
+check_ctr
+\family default
+\shape default
+ counter is calculated in clock cycles and not 
+\shape smallcaps
+Time Quanta
+\shape default
+! Upon mismatch between expected and real length of bit, error is reported.
+\end_layout
 
+\begin_layout Standard
+In the second part, 
+\shape smallcaps
+Resynchronisation
+\shape default
+ is allowed, and 
+\shape smallcaps
+Resynchronisation Edges
+\shape default
+ are generated by 
+\family roman
+\shape italic
+sync_gen_proc
+\family default
+\shape default
  process.
- Length between generated triggers is observed and compared to a reference
- value.
- If any mismatch occurs error is detected.
- This unit test implements signal generation without synchronization.
-\end_layout
-
-\begin_layout Subsubsection
-Protocol_Control
+ Number of clock cycles between two consecutive Transmitt Triggers is again
+ counted, and compared with expected duration of bit with 
+\shape smallcaps
+Resynchronisation
+\shape default
+ taken into account.
+ Note that since 
+\shape smallcaps
+Resynchronisation
+\shape default
+ operates on 
+\shape smallcaps
+Time Quantum,
+\shape default
+ not clock cycles thus mismatch between expected and real length of bit
+ up to value of 
+\shape smallcaps
+Baud Rate Prescaler
+\shape default
+ is tolerated.
 \end_layout
 
 \begin_layout Standard
-Protocol control unit test is so far the most complex unit test in CANTest.
- Its architecture is shown in a header of testbench itself.
- Random frame is generated on a input of DUT.
- From this frame expected bit sequence is calculated by 
-\begin_inset Quotes eld
-\end_inset
+In the third part, length of 
+\shape smallcaps
+Bit Rate Shift
+\shape default
+ bit and 
+\shape smallcaps
+CRC Delimiter
+\shape default
+ bit is calculated, measured and evaluated.
+ In 
+\shape smallcaps
+Bit Rate Shift
+\shape default
+ bit, 
+\shape smallcaps
+Bit-Rate
+\shape default
+ is switched in
+\shape smallcaps
+ Sample Point
+\shape default
+ from 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+ to 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ and in 
+\shape smallcaps
+CRC Delimiter
+\shape default
+ bit vice-versa.
+ Note that that delay of 2 clock cycles from Sample Trigger is emulated
+ on change of 
+\shape smallcaps
+Bit-Rate
+\shape default
+ (
+\family roman
+\shape italic
+sample_control
+\family default
+\shape default
+).
+ This part of test verifies proper behaviour during change of 
+\shape smallcaps
+Bit-Rate
+\shape default
+.
+\end_layout
 
+\begin_layout Subsubsection
+Protocol Control
+\end_layout
+
+\begin_layout Standard
+Architecture of testbench is shown in a header of testbench itself.
+ Random frame is generated on a input of DUT by 
+\family roman
+\shape italic
+CAN_generate_frame
+\family default
+\shape default
+.
+ From this frame, expected bit sequence is calculated by 
+\family roman
+\shape italic
 gen_sw_CAN
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
  procedure.
- This procedure de-facto creates software implementation of CAN FD protocol.
- After generated frame is applied on the input of DUT,a frame is transmitted
- by DUT1.
- CAN bus level is monitored and bit sequence is recorded.
- Another DUT (DUT2) receives the frame and sends the acknowledge.
- After the transmission expected and recorded bit sequence are compared.
+ After generated frame is applied on the input of DUT, a frame is transmitted
+ by DUT1 (
+\family roman
+\shape italic
+tran_frame_valid_in_1
+\family default
+\shape default
+).
+ CAN bus level is monitored and transmitted bit sequence is recorded (
+\family roman
+\shape italic
+record_bit_seq
+\family default
+\shape default
+).
+ Another DUT (DUT2) receives the frame and sends the 
+\shape smallcaps
+Acknowledge
+\shape default
+.
+ After the transmission, expected and recorded bit sequence are compared.
  If there is any mismatch error is detected.
- Also, recieved frame on the output of DUT2 is compared with an original
- generated frame and mismatch also indicates an error.
- Note that transmitted bit sequence does not include stuff bits since stuff
- bits are inserted outside of Protocol control! Fixed value of CRC is transmitte
-d by DUT1 as well as Stuff count field in ISO FD frames.
+ Also, recieved frame (
+\family roman
+\shape italic
+read_frame_from_test_mem
+\family default
+\shape default
+) on the output of DUT2 is compared with original generated frame and mismatch
+ also indicates an error.
+ Note that transmitted bit sequence does not include 
+\shape smallcaps
+Stuff Bits
+\shape default
+, since 
+\shape smallcaps
+Stuff Bits
+\shape default
+ are inserted outside of Protocol Control!
 \end_layout
 
 \begin_layout Subsubsection
-RX_Buffer
+RX Buffer
 \end_layout
 
 \begin_layout Standard
-RX Buffer unit test simulates incoming frames from CAN Core.
- Stimuli generator (stim_gen process) generates random CAN frames on the
- input of RX Buffer as if coming from CAN Core.
- Any frame that is stored into the RX Buffer is also stored to testbench
- memory in_mem.
- It is observed whether the frame was not discarded by the RX buffer due
- to lack of free memory in RX Buffer.
- Another process data_reader reads the data on the output of the frame as
- an user would do by memory access.
- Frames which are read on output are stored into testbench memory out_mem.
- When both memories (in_mem and out_mem) are filled its content is compared
- and error is detected at any mismatch.
- Furthermore, testbench keeps it own statistics of the buffer size and free
- memory based on stored frame size.
- If a frame is stored but buffer should not have enough space or frame is
- discarded but buffer should have enough space, an error is also detected.
- Additionally if Buffer is empty for too long then an error is detected.
- The testbench is designed that buffer is at constant usage and buffer should
- never be empty for too long.
-\end_layout
-
-\begin_layout Subsubsection
-TX_Arbitrator
-\end_layout
-
-\begin_layout Standard
-
-\color black
-TX_Arbitrator testbench independently generates inputs to the TX Arbitrator
- in input_gen process.
- Since the whole circuit is only combinational it provides immediate (in
- RTL) result.
- Main test process loop compares the DUT result with expected output via
- 
-\begin_inset Quotes eld
-\end_inset
-
-check_output
-\begin_inset Quotes erd
-\end_inset
-
+RX Buffer unit test simulates received frame as if stored by CAN Core via
+ RX Buffer commands.
+ A random frame is generated and RX Buffer storing protocol is emulated
+ by procedure 
+\family roman
+\shape italic
+insert_frame_to_RX_Buffer
+\family default
+\shape default
+.
+ Upon sucesfull storing of frame (
+\family roman
+\shape italic
+rx_data_overrun
+\family default
+\shape default
+ was not activated by DUT), CAN frame is also stored to Input test memory
+ (
+\family roman
+\shape italic
+in_mem
+\family default
+\shape default
+) by 
+\family roman
+\shape italic
+insert_frame_test_mem
+\family default
+\shape default
  procedure.
- 
-\begin_inset Quotes eld
-\end_inset
-
-Check_output
-\begin_inset Quotes erd
-\end_inset
-
- procedure implements a behavioural version of TX arbitrator circuit.
- If any difference between DUT output and expected output occurs, an error
- is detected.
+ Another process 
+\family roman
+\shape italic
+data_reader
+\family default
+\shape default
+ emulates SW, reading frames from RX Buffer, and storing them to Output
+ test memory (
+\family roman
+\shape italic
+out_mem
+\family default
+\shape default
+).
+ When both memories are filled (
+\family roman
+\shape italic
+in_mem_full
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+out_mem_full
+\family default
+\shape default
+), data consistency checker process compares content of Input test memory
+ and Output test memory.
+ Upon mismatch, error is reported.
+ Note that between two successive frame reads, testbench waits for random
+ number of clock cycles by 
+\family roman
+\shape italic
+wait_rand_cycles
+\family default
+\shape default
+.
+ This is to guarantee that RX Buffer data overrun will occur in some of
+ the situations, and thus verifies proper operation of Data Overrun detection
+ logic.
 \end_layout
 
 \begin_layout Subsubsection
-
-\color black
-TX_Buffer
+TX Arbitrator
 \end_layout
 
 \begin_layout Standard
 
 \color black
-TXT buffer unit test instantiates two DUTs with IDs 1 and 2 as in CAN FD
- IP.
- The difference is that one TXT buffer is set to support FD frames, the
- other is set not to support FD frames (up to 512 bits of data).
- Testbench generates inputs of DUTs in data_gen_proc process.
- Once any buffer is empty random input is applied to DUTs and stored to
- the buffer which is empty.
- Testbench also stores the frame into two auxiliarly signals small_mem and
- big_mem (one for each frame).
- After data are stored testbench waits for short random time.
- Main test process periodically reads out the contents of DUTs as long as
- any of DUTs is signalling that it is not empty.
- When data are read out, output of DUT is compared with either small_mem
- or big_mem memory.
- When any mismatch occurs error is detected.
+TX Arbitrator unit test models behaviour of TXT Buffers by 
+\family roman
+\shape italic
+buf_em_proc
+\family default
+\shape default
+ process.
+ This process randomly moves TXT Buffer between FSM states which are ready
+ for transmission, and FSM states which are not ready for transmission (
+\family roman
+\shape italic
+txt_buf_ready
+\family default
+\shape default
+ signal).
+ Buffers are filled (as if from SW) by 
+\family roman
+\shape italic
+buf_acc_proc
+\family default
+\shape default
+ process with random data.
+ Content of Buffer model is stored in 
+\family roman
+\shape italic
+shadow_mem
+\family default
+\shape default
+ signal.
+ Function of Priority Decoder is modeled by 
+\family roman
+\shape italic
+prio_dec_model_proc
+\family default
+\shape default
+ process which selects highest priority TXT Buffer in ready state.
+ Selection of 
+\color inherit
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_L_W]{TIMESTAMP
+\backslash
+textunderscore L
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+, 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[TIMESTAMP_U_W]{TIMESTAMP
+\backslash
+textunderscore U
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ and 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[FRAME_FORM_W]{FRAME
+\backslash
+textunderscore FORM
+\backslash
+textunderscore W}
+\end_layout
+
+\end_inset
+
+ words from TXT Buffer is modeled by 
+\family roman
+\shape italic
+tx_time_proc
+\family default
+\shape default
+ process.
+ Delay counter (
+\family roman
+\shape italic
+del_counter
+\family default
+\shape default
+) emulates delay of 6 cycles (3 selection states of TXT Buffer FSM * 2 cycles
+ for each state), on the output of TX Arbitrator.
+ To model commands from CAN Core on TXT Buffers and TX Arbitrator, 
+\family roman
+\shape italic
+cmd_mod_proc
+\family default
+\shape default
+ process is implemented.
+ Lock and Unlock commands of 
+\family roman
+\shape italic
+txt_hw_cmd
+\family default
+\shape default
+ signal are randomly asserted upon presence of valid frame on output of
+ DUT (
+\family roman
+\shape italic
+tran_frame_valid_out
+\family default
+\shape default
+).
+ Processes which emulates TXT Buffers and CAN Core commands are connected
+ to DUT, as well as processes modeling behaviour of TX Arbitrator.
+ Upon mismatch between outputs of DUT and SW models, error is detected by
+ 
+\family roman
+\shape italic
+cmp_proc
+\family default
+\shape default
+ process.
+ Whole test is managed by 
+\family roman
+\shape italic
+test_proc
+\family default
+\shape default
+ process which generates random TXT Buffer priorities for each test step
+ by 
+\family roman
+\shape italic
+set_priorities
+\family default
+\shape default
+ function.
+\end_layout
+
+\begin_layout Subsubsection
+
+\color black
+TXT Buffer
+\end_layout
+
+\begin_layout Standard
+
+\color black
+TXT Buffer unit test generates random data as if written by SW in 
+\family roman
+\shape italic
+data_gen_proc
+\family default
+\shape default
+ process.
+ In each state where TXT Buffer is accessible, random CAN frame is stored
+ to DUT and also to test memory (
+\family roman
+\shape italic
+shadow_mem
+\family default
+\shape default
+) which represents SW model of TXT Buffer.
+ Access to TXT Buffer from CAN Core is emulated by 
+\family roman
+\shape italic
+data_read_proc
+\family default
+\shape default
+ process.
+ If there is a mismatch between contents of data read from TXT Buffer and
+ shadow memory, 
+\family roman
+\shape italic
+data_coh_err_ctr
+\family default
+\shape default
+ signal is set.
+ SW and HW commands on TXT Buffer are modeled by commands_proc process which
+ evaluates proper function of TXT Buffer FSM, reports error and asserts
+ 
+\family roman
+\shape italic
+state_coh_error_ctr
+\family default
+\shape default
+ upon upon mismatch.
+ Whole unit test is controlled by 
+\family roman
+\shape italic
+test_proc
+\family default
+\shape default
+ process.
+\end_layout
+
+\begin_layout Section
+4.6 Reference test
+\end_layout
+
+\begin_layout Standard
+Reference test verifies operation of CTU CAN FD with reference controller.
+ To achieve this, several sets of random CAN Frames were generated, transmitted
+ by reference CAN FD controller, and recorded by logic analyzer.
+ Each data set thus contains CAN Frame and according bit sequence which
+ was transmitted by reference controller.
+ Generation of CAN Frames, transmission by reference controller, control
+ of logic analyzer and recording of data sets was executed by auxiliarly
+ utility Kvaalt Logger implemented in C (located in 
+\begin_inset Quotes eld
+\end_inset
+
+tools
+\begin_inset Quotes erd
+\end_inset
+
+ directory).
+\end_layout
+
+\begin_layout Standard
+The architecture of Reference test is shown in Figure TODO.
+ First 
+\shape smallcaps
+Bit-Rate
+\shape default
+ is configured by 
+\family roman
+\shape italic
+CAN_configure_timing
+\family default
+\shape default
+ procedure.
+ At the moment, only one configuration is used (500 Kb/s in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+, 2 Mb/s in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ and 80 % 
+\shape smallcaps
+Sample Point
+\shape default
+).
+ Then, bit sequence (
+\family roman
+\shape italic
+bit_sequence)
+\family default
+\shape default
+ and CAN frame (
+\family roman
+\shape italic
+TX_frame
+\family default
+\shape default
+) are read from data set by 
+\family roman
+\shape italic
+read_bit_sequence
+\family default
+\shape default
+ function.
+ Then, Bit Generator (
+\family roman
+\shape italic
+bit_gen_comp
+\family default
+\shape default
+) is started.
+ Bit Generator generates this sequence on CAN Bus which is connected to
+ CTU CAN FD.
+ Upon the end of generation (
+\family roman
+\shape italic
+bit_gen_done = true
+\family default
+\shape default
+), CTU CAN FD should have CAN FD frame received in RX Buffer.
+ Frame is read from CTU CAN FD and compared with generated frame which was
+ inserted to reference controller (
+\family roman
+\shape italic
+TX_frame
+\family default
+\shape default
+).
 \end_layout
 
 \begin_layout Section
@@ -15978,11 +16933,23 @@ TXT buffer unit test instantiates two DUTs with IDs 1 and 2 as in CAN FD
 \end_layout
 
 \begin_layout Standard
-Feature tests always test a functionality of CAN controller which is created
- by cooperation of more circuits and thus can not be tested in a unit test.
+Feature tests examines functionality of CTU CAN FD which is created by cooperati
+on of more circuits, and thus can not be tested in a unit test.
  An architecture of feature tests is different than in unit tests.
- First of all feature tests have only one test environment, located in feature/f
-eature_env.vhd.The architecture of this test is shown in Figure 
+ First of all, feature tests have only one test environment, located in
+ 
+\begin_inset Quotes eld
+\end_inset
+
+test/feature/tb_feature.vhd
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Each feature test is then implemented as VHDL procedure in separate test
+ file (eg.
+ test/feature/arbitration_feature_tb.vhd).
+ The architecture of this test is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Feature_env"
@@ -15990,24 +16957,62 @@ reference "fig:Feature_env"
 \end_inset
 
 .
- Two separate CAN controllers are instantiated and connected to the bus.
- Fixed transceiver delay is emulated (20 clock cycles).
+ Two separate CTU CAN FD controllers (
+\family roman
+\shape italic
+CAN_inst
+\family default
+\shape default
+) are instantiated, and connected to CAN Bus in 
+\family roman
+\shape italic
+CAN_feature_test
+\family default
+\shape default
+ entity.
+ Fixed transceiver delay is emulated (20 clock cycles) between 
+\family roman
+\shape italic
+CAN_TX
+\family default
+\shape default
+ and 
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+ pins of CTU CAN FD via 
+\family roman
+\shape italic
+tr_proc
+\family default
+\shape default
+ process.
  Feature tests contain two separate clock sources with 0 ppm and 100 ppm
- oscillator tolerance.
- Each clock source is connected to one CAN controller.
- Test interface to this environment is via two Avalon buses, one for each
- CAN controller.
- Note that feature tests implement only one architecture of CAN_test (more
- exactly CAN_feature test with some additional signals) and one architecture
- of CAN_test_wrapper.
- Due to this architecture, it is not necessary to restart the simulator
- at the start of the new test.
- All feature tests share two DUTs (two CAN controllers).
+ oscillator tolerance (
+\family roman
+\shape italic
+p(i).clk_sys
+\family default
+\shape default
+).
+ This setting is to make sure that resynchronisation between two CTU CAN
+ FD nodes works properly.
+ Each clock source is connected to one CTU CAN FD controller.
+ Test interface to this environment is via two Avalon buses (
+\family roman
+\shape italic
+mem_bus(i)
+\family default
+\shape default
+) , one for each CTU CAN FD controller.
  Both nodes in feature test environment are configured with default values
  of Bit time registers.
  It is recommended not to modify this configuration.
- Several existing feature tests rely on default configuration for their
- proper function.
+ Several existing feature tests rely on default configuration to function
+ properly (e.g.
+ waiting times).
 \end_layout
 
 \begin_layout Standard
@@ -16059,211 +17064,20 @@ Each feature test is implemented in a standalone package.
  This package contains procedure with assignments to memory buses and observatio
 ns of bus values or internal signals.
  Each procedure is called from 
-\series bold
+\family roman
+\shape italic
 exec_feature_test
-\series default
+\family default
+\shape default
  procedure in main test loop.
- Correct feature test procedure is selected based on the value in signal
- 
-\begin_inset Quotes eld
-\end_inset
-
+ Correct feature test procedure is selected based on the value in 
+\family roman
+\shape italic
 test_name
-\begin_inset Quotes erd
-\end_inset
-
+\family default
+\shape default
 .
- This signal is set in the beginning of each feature test execution.
- 
-\end_layout
-
-\begin_layout Subsection
-4.6.1 How to run feature tests?
-\end_layout
-
-\begin_layout Standard
-Since it is possible to execute several feature tests in the row without
- exiting simulation it is possible to cascade feature tests.
- Configuration file
-\series bold
- feature_config.tcl
-\series default
- contains feature tests which will be run during each run.
- This file defines TCL list 
-\series bold
-
-\begin_inset Quotes eld
-\end_inset
-
-FEATURE_FIFO
-\series default
-
-\begin_inset Quotes erd
-\end_inset
-
-.
- Each entry of the list is another list.
- Entries of sub-lists have following meaning:
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-list <test_name> <iterations>
-\end_layout
-
-\begin_layout Standard
-
-\color black
-Where 
-\series bold
-<test_name>
-\series default
- is the name of the feature test which will be executed as part of feature
- test run.
- Name of the feature test must be corresponding to the name of VHDL file
- where feature test package is implemented without 
-\begin_inset Quotes eld
-\end_inset
-
-_feature_tb.vhd
-\begin_inset Quotes erd
-\end_inset
-
- suffix.
- Name of the feature test is also used in test implementation.
- Name of the test right-padded to 20 characters is used as unique identification
- string for the test in 
-\begin_inset Quotes eld
-\end_inset
-
-exec_feature_test function.
- List of all available tests (possible <test_name> values) is in following
- subsections.
- 
-\series bold
-<iterations>
-\series default
- is parameter stating how many times should this feature test be executed.
- 
-\color inherit
-Example of such a configuration file is in Figure 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:feature_config_example-1-1-1-1-1-1"
-
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-Following command prints the content of configuration file to the command
- line
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-\color black
-test
-\begin_inset space \space{}
-\end_inset
-
-feature
-\begin_inset space \space{}
-\end_inset
-
-print_config
-\end_layout
-
-\begin_layout Standard
-Simulator with feature test environment can be started either manually or
- by command:
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-\color black
-test
-\begin_inset space \space{}
-\end_inset
-
-feature
-\begin_inset space \space{}
-\end_inset
-
-start
-\end_layout
-
-\begin_layout Standard
-After simulator is started test only needs to get signal to run via the
- following command:
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-\color black
-test
-\begin_inset space \space{}
-\end_inset
-
-feature
-\begin_inset space \space{}
-\end_inset
-
-run
-\end_layout
-
-\begin_layout Standard
-Always the most actual value of the config will be executed.
- After modification of configuration file it might be necessary to restart
- CANTest framework (type exit in CANTest and re-run Run_test_framework.tcl).
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-placement H
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\noindent
-\align center
-\begin_inset Graphics
-	filename ../pics/Feature_config.png
-	lyxscale 20
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Feature test example configuration
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:feature_config_example-1-1-1-1-1-1"
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+ This signal is set in beginning of each feature test execution.
 \end_layout
 
 \begin_layout Subsection
@@ -16275,384 +17089,151 @@ Following steps must be taken when new feature test is added:
 \end_layout
 
 \begin_layout Enumerate
-Create a new VHDL package (based on existing feature test) in feature directory.
+Copy existing feature test to new test file (e.g.
+ arbitration_feature_tb.vhd)
 \end_layout
 
 \begin_layout Enumerate
 Rename the package to have a unique name.
  Rename the procedure in the package accordingly.
+ Note that test 
+\series bold
+must have 
+\begin_inset Quotes eld
+\end_inset
+
+_tb
+\begin_inset Quotes erd
+\end_inset
+
+ suffix
+\series default
+ in the name of VHDL file.
 \end_layout
 
 \begin_layout Enumerate
-Implement the feature test procedure by executing behavioral accesses into
- the Controller 1 and Controller 2 of feature test environment.
+Implement feature test procedure by executing memory accesses to CTU CAN
+ FD nodes in feature test environment.
  The variable 
-\begin_inset Quotes eld
-\end_inset
-
+\family roman
+\shape italic
 outcome
-\begin_inset Quotes erd
-\end_inset
-
- must be set to true if the test passed and to false if the test failed.
+\family default
+\shape default
+ must be set to 
+\family roman
+\shape italic
+true
+\family default
+\shape default
+ if the test passed, and to 
+\family roman
+\shape italic
+false
+\family default
+\shape default
+ if the test failed.
  One execution of the procedure corresponds to one iteration of the test.
+ If error is detected, it is good to report an error, since default behaviour
+ of actual test framework, is to finish execution upon log with error severity.
 \end_layout
 
 \begin_layout Enumerate
-Include the package in feature_env.vhd.
- 
-\end_layout
-
-\begin_layout Enumerate
-Add new 
+Add test name to YAML configuration file under 
 \begin_inset Quotes eld
 \end_inset
 
-elsif
+feature/tests
 \begin_inset Quotes erd
 \end_inset
 
- branch into procedure exec_feature_test.
- The new branch will execute your function.
- Do not forget to change the string to be compared with test_name signal.
- This string must be 20 characters right padded unique name.
- It is the same name as is used in 
-\series bold
-feature_config.tcl
-\series default
- configuration file.
- The implementation of CANtest framework uses 
-\series bold
-force
-\series default
- TCL command to set the test_name signal when execution of next feature
- test starts.
- From now on new feature test can be executed as any other feature test.
+ configuration.
 \end_layout
 
 \begin_layout Subsection
 4.6.3 Existing feature tests
 \end_layout
 
-\begin_layout Subsubsection
-abort_transmittion
+\begin_layout Standard
+At the moment, following feature test are implemented for CTU CAN FD:
+\end_layout
+
+\begin_layout Itemize
+abort_transmittion_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+arbitration_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+retr_limit_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+byte_enable_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+rtr_pref_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+data_length_code_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+rx_status_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+fault_confinement_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+spec_mode_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+feature_env_setup.tcl
+\end_layout
+
+\begin_layout Itemize
+forbid_fd_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+timestamp_options_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+interrupt_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+traf_meas_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+invalid_configs_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+tran_delay_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+overload_feature_tb.vhd
+\end_layout
+
+\begin_layout Itemize
+tx_arb_time_tran_feature_tb.vhd
 \end_layout
 
 \begin_layout Standard
-Abort transmission tests the option to abort frame transmission by a write
- to user registers.
- A frame is generated and inserted for transmission.
- Abort command is generated and Protocol control state machine is checked.
- It should immediately move to Interframe state.
- If no then an error is detected.
- 
-\end_layout
-
-\begin_layout Subsubsection
-arbitration
-\end_layout
-
-\begin_layout Standard
-Arbitration test tests the arbitration between two nodes in feature test
- environment.
- Two random frames with random identifiers are generated.
- Both are inserted into two nodes simultaneously (nearly simultaneously).
- Then the expected winner of arbitration process is calculated.
- Afterwards, frame transmission is observed and real loser of arbitration
- is determined.
- Real loser and expected loser are compared and any mismatch causes an error
- in the test.
- In order to test also special situations, several constraints were added
- to frame generation.
- Arbitration of BASE vs EXTENDED frames with the same BASE identifier, arbitrati
-on of RTR vs non-RTR frames with the same identifier and collision during
- transmission of two identical identifiers are also tested in this test.
-\end_layout
-
-\begin_layout Subsubsection
-fault_confinement
-\end_layout
-
-\begin_layout Standard
-Fault confinement test generates random treshold of Error passive state.
- Then it sets the Error counters to random values and checks whether Fault
- confinement state has expected value.
- If not then an error is detected.
-\end_layout
-
-\begin_layout Subsubsection
-interrupt
-\end_layout
-
-\begin_layout Standard
-Interrupt generation on different events on CAN bus is generated.
- Firstly, transmit frame and receive frame interrupts are tested.
- One Node is always transmitter, other one is always a receiver.
- A frame is generated and transmitted.
- Test waits for interrupt and then reads interrupt vector from both nodes
- and checks whether expected bits are in logic 1.
- If not then an error is detected.
- Secondly, two conflicting frames (with the same identifier) are sent on
- CAN bus and an error interrupt is observed.
- If an interrupt is not generated or marked in interrupt vector then an
- error is detected.
- As third part, interrupt on filling RX Buffer and Data overrun is tested.
- RX buffer is cleared and its size is read.
- Then CAN frames are generated by other node and sent on the bus.
- Frames are not read from RX_Buffer.
- The number of words in RX_Buffer is calculated in test and test checks
- whether an interrupt is generated once the buffer is full.
- It also checks if interrupt is generated on the first received frame after
- buffer was filled.
- This frame is discarded since there is no space in RX_Buffer.
- Generation of bit-rate shift interrupt is tested in part 4.
- CAN FD frame is sent on the bus and two bit-rate shifts are observed during
- one frame.
- If interrupt vector does not have expected value error is detected.
- In the next part, two frames are generated on the bus.
- These two frames arbitrate.
- The test is aware of expected winner and checks on interrupt output and
- interrupt vector of the losing node.
- An error is detected as in previous parts of the test.
- In the last part of the test interrupt generation when reaching error warning
- limit or changing to error passive state is tested.
-\end_layout
-
-\begin_layout Subsubsection
-invalid_configs
-\end_layout
-
-\begin_layout Standard
-This test intends to test the behaviour of the controller when an invalid
- frame is inserted for transmission.
- Two situations are covered in this test: 1.
- CAN Frame (not FD frame) with BRS bit set to '1'.
- 2.
- CAN FD Frame with RTR flag set to '1'.
- FD Frames have no RTR frames according to 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "key-1"
-literal "true"
-
-\end_inset
-
-.
- In both cases, bits (BRS,RTR) should be ignored and standard frames should
- be transmitted (CAN Frame without any bit rate shifting, CAN FD frame without
- any RTR flag).
- After the transmission it is verified that proper frames were received
- in the other node.
- If any of invalid bits were recieved active (BRS='1' or RTR='1') error
- is detected.
-\end_layout
-
-\begin_layout Subsubsection
-overload
-\end_layout
-
-\begin_layout Standard
-Overload test intends to test transmission of two consecutive overload frames.
- Since CAN FD implementation is fast enough, it never transmits overload
- frame due to condition 1 from 
-\begin_inset CommandInset citation
-LatexCommand cite
-key "key-1"
-literal "true"
-
-\end_inset
-
- (Overload frame description).
- In this test transmission of overload flag due to condition 2 is verified.
- Random frame is generated and inserted for transmission.
- Afterwards, bus value is forced to be DOMINANT in first two bits of intermissio
-n.
- Debug register is used to read out if Protocol control is in Overload state.
- If overload frame is not transmitted error in the test is detected.
-\end_layout
-
-\begin_layout Subsubsection
-retr_limit
-\end_layout
-
-\begin_layout Standard
-Retransmitt limit test intends to test the feature of limiting the number
- of frame retransmittions after detection of any error condition.
- Test generates random frame to be transmitted and inserts it into node
- 1.
- The other node has 
-\begin_inset Quotes eld
-\end_inset
-
-acknowledge forbidden
-\begin_inset Quotes erd
-\end_inset
-
- bit set in Control register.
- Random number retransmitt limit is generated and set in node 1.
- Transmitt error counter in node 1 is erased and frame transmittion is observed.
- Test waits for expected amount of retransmittions and afterwards checks
- the Transmitt error counter.
- If it does not have expected value error in the test is detected.
-\end_layout
-
-\begin_layout Subsubsection
-rtr_pref
-\end_layout
-
-\begin_layout Standard
-RTR Preffered behaviour test intends to test the special feature of CAN
- FD IP Core which can be set by RTRP bit in MODE register.
- CAN FD Specification does not clearly define what value of DLC should be
- sent within RTR frame.
- Since there is no data field present in RTR frame logically DLC should
- be 
-\begin_inset Quotes eld
-\end_inset
-
-0000
-\begin_inset Quotes erd
-\end_inset
-
-.
- However, it is not required by the protocol.
- CAN FD IP Core enables sending either inserted DLC or 
-\begin_inset Quotes eld
-\end_inset
-
-0000
-\begin_inset Quotes erd
-\end_inset
-
- to be transmitted.
- Test first sets the behaviour of the Node to send zeroes only.
- Then it generates RTR frame with non-zero DLC, sends it and verifies that
- 
-\begin_inset Quotes eld
-\end_inset
-
-0000
-\begin_inset Quotes erd
-\end_inset
-
- was transmitted.The second part of the test sets the behaviour to send the
- actual DLC.
- Then RTR frame is generated and transmitted.
- Received DLC in the other node is checked towards the transmitted one.
- If any mismatch occurs error is detected.
-\end_layout
-
-\begin_layout Subsubsection
-rx_status
-\end_layout
-
-\begin_layout Standard
-RX Buffer status test aims to test proper functionality of RX Buffer from
- the user perspective.
- First RX Buffer size is read from the node and RX buffer is cleared.
- Then free memory and message count status is checked.
- If any unexpected value is present then error in the test is detected.
- Random frames are sent on the bus and received by Node 1.
- After each frame is sent a free memory in the buffer and message count
- are verified again.
- During the frame generation test sums the expected number of words in the
- buffer.
- Once the buffer should be full, after the transmission of next frame data
- overrun flag is checked and cleared.
- If at any point free memory in the buffer or data overrun flag is not matching
- error in the test is detected.
-\end_layout
-
-\begin_layout Subsubsection
-soft_reset
-\end_layout
-
-\begin_layout Standard
-Soft reset test writes logic 1 into the reset bit of MODE register.
- Afterwards, it reads back each readable register and compares the value
- with expected value from this document.
- If any mismatch occurs an error in the test is detected.
-\end_layout
-
-\begin_layout Subsubsection
-spec_mode
-\end_layout
-
-\begin_layout Standard
-Special modes test tests Self test mode (STM) , Listen only mode (LOM),
- Acceptance filter mode (AFM) and Acknowledge forbidden mode (ACF).
- In the first part, node 1 is set to STM and node 2 is set to STM and ACF.
- A frame is transmitted on the bus by node 1.
- It is verified that no acknowledge is sent by the node 2.
- It is also verified that frame was succesfully sent although no acknowledge
- was transmitted.
- This is achieved by comparing the transmit error counter before and after
- transmittion.
- In the second part node 1 is in STM and node 2 is in LOM.
- With this setting, the node 2 reroutes the dominant bits internally and
- node 1 does not expect the acknowledge.
- No acknowledge is observed on the bus but acknowledge is observed in the
- protocol control RX_data signal.
- If acknowledge or error frame would appear on the bus error in the test
- is detected.
- The third part of the test tests AFM mode.
- It is verified that frame is first stored in the received buffer with AFM
- turned off.
- Then the same frame is transmitted with AFM mode turned on, not matching
- the filters.
- It is verified that frame is not stored in the RX buffer.
-\end_layout
-
-\begin_layout Subsubsection
-traf_measure
-\end_layout
-
-\begin_layout Standard
-Traffic measurement first reads traffic counters from both nodes.
- Then it sends 1 to 5 frames on the bus and verifies that traffic counters
- were increased accordingly in both frames.
- If counters are not matching its previous value plus the amount of transmitted
- frames error in the test is detected.
-\end_layout
-
-\begin_layout Subsubsection
-tran_delay
-\end_layout
-
-\begin_layout Standard
-Transceiver delay test generates CAN FD frame with bit-rate shift.
- Then it sends the frame on the bus.
- After the transmission frame verifies the content of TRV_DELAY register.
- This register contains a value of transceiver delay measured during the
- EDL bit.
- In feature test environment transciever delay value is constant (200 ns).
- Considering the two synchronization chain flip-flops (10 ns clock) expected
- value is 22.
- If the content of TRV_DELAY is not matching the expected value, an error
- is detected.
-\end_layout
-
-\begin_layout Subsubsection
-tx_arb_time_tran
-\end_layout
-
-\begin_layout Standard
-TX arbitration and time transmission test tests the functionality of sending
- the frame in certain time.
- It also tests the selection between frames in both Transmit buffers.
- In the first part of the test timestamp is measured and a single frame
- is transmitted in random time from the acutal value of the timestamp.
- It is verified that a transmittion starts within first bit time from the
- expected value of the timestamp.
- In the second part, two frames are inserted to TXT Buffer 1 and TXT Buffer
- 2.
- One of the frames has a higher time of transmission than the other one.
- Test waits until both frames are sent and verifies that the one with lower
- time of transmission was transmitted first.
- In the thrid part two frames with equal transmission time are inserted
- into both buffers.
- Frames differ only in the identifier.
- It is verified that frame with a decimally lower identifier is transmitted.
+Each feature test is described within header of test implementation.
+ Each test is described as sequence of steps, which are executed during
+ feature test procedure.
 \end_layout
 
 \begin_layout Section
@@ -16667,9 +17248,16 @@ name "sec:4.7-Sanity-test"
 \end_layout
 
 \begin_layout Standard
-Sanity test simulates the behaviour of CAN FD IP Core in the real environment.
- Sanity test consists of 4 controllers (it can be easily extended) connected
- on CAN Bus.
+Sanity test simulates behaviour of CTU CAN FD in environment which is close
+ to real operation.
+ Sanity test consists of 4 CTU CAN FD nodes (
+\family roman
+\shape italic
+node_1_comp
+\family default
+\shape default
+) connected on CAN Bus.
+ It can be easily extended to more than 4 nodes.
  Block diagram of sanity test is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -16682,7 +17270,11 @@ reference "fig:sanity_diagram-1-1-1-1-1"
 \end_layout
 
 \begin_layout Itemize
-Transceiver delay modeling
+
+\shape smallcaps
+Transceiver Delay
+\shape default
+ modeling
 \end_layout
 
 \begin_layout Itemize
@@ -16757,17 +17349,55 @@ name "subsec:4.7.1-Transciever-delay"
 \end_layout
 
 \begin_layout Standard
-TX and RX ports of each CAN FD IP Core are connected to shift registers
- (signal 
-\series bold
-transceiver
-\series default
-).
- Shift registers simulate delay from TX port to RX port.
- This feature is especially important in fast Data bit-rates where bit time
- is shorter than transceiver delay.
- Note that half of the delay is realized in each shift register.
- In order to find out how to configure transceiver delays refer to 
+
+\family roman
+\shape italic
+CAN_TX
+\family default
+\shape default
+ and 
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+ ports of each CTU CAN FD are connected to Signal Delayer components (
+\family roman
+\shape italic
+trv_del_gen_tx_delayer
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+trv_del_gen_rx_delayer
+\family default
+\shape default
+) which delay input signal by certain amount of time (
+\family roman
+\shape italic
+delay
+\family default
+\shape default
+ input).
+ This feature is especially important in fast 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+ where 
+\shape smallcaps
+Bit Time
+\shape default
+ is shorter than 
+\shape smallcaps
+Transceiver Delay
+\shape default
+.
+ In order to find out how to configure 
+\shape smallcaps
+Transceiver Delay
+\shape default
+ refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:4.7.6-Sanity-test"
@@ -16789,21 +17419,33 @@ name "subsec:4.7.2-Real-bus"
 \end_layout
 
 \begin_layout Standard
-Topology of CAN Bus is implemented via shift registers, 
-\series bold
-bus_delay_sr
-\series default
-.
- Output of each transciever is connected to input of one shift register.
- Each shift register has capacity of 5000 entries and is shifted each 500
- ps.
+To implement real delays on CAN Bus, Signal Delayer components are used
+ in a matrix (
+\family roman
+\shape italic
+i_txdelay
+\family default
+\shape default
+ components), which emulates delay from 
+\family roman
+\shape italic
+CAN_TX
+\family default
+\shape default
+ pin of each CTU CAN FD to 
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+ pin of each CTU CAN FD.
  Assuming 1 ns equals approximately 20 cm of electric signal transport delay,
  bus lengths have resolution 10 cm.
  Delayed signal from each transciever is connected via AND gate to each
  reciever.
  Length of the delay is given by 
 \series bold
-Bus matrix
+Bus Matrix
 \series default
 :
 \begin_inset Separator latexpar
@@ -16831,7 +17473,13 @@ Where
 \begin_inset Formula $d_{ab}$
 \end_inset
 
- is the delay from the transceiver 
+ is the delay from the 
+\family roman
+\shape italic
+CAN_TX
+\family default
+\shape default
+ pin 
 \begin_inset Quotes eld
 \end_inset
 
@@ -16839,7 +17487,13 @@ a
 \begin_inset Quotes erd
 \end_inset
 
- to the receiver 
+ to 
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+ pin 
 \begin_inset Quotes eld
 \end_inset
 
@@ -16848,21 +17502,35 @@ b
 \end_inset
 
 .
- Each row of the matrix represents delay from one node to rest of the bus.
- In general case Bus matrix is n*n Matrix where N is the amount of CAN FD
- Controllers on the bus.
- Note that diagonal of the bus is equal to zero.
- It is assumed it takes infinitely short time from transceivers TX pin to
- its RX pin.
- The transciever delay is already modeled before the node is connected to
- the bus.
- Bus matrix is symetrical along its main diagonal.
- Delay from Node A to Node B is equal as Delay from Node B to Node A.
+ Each row of matrix represents delay from one node to other nodes.
+ In general case, Bus Matrix (
+\family roman
+\shape italic
+bus_matrix
+\family default
+\shape default
+) is n*n matrix where 
+\begin_inset Quotes eld
+\end_inset
+
+n
+\begin_inset Quotes erd
+\end_inset
+
+ is the amount of CTU CAN FD Controllers on the bus.
+ Note that diagonal of Bus Matrix is equal to zero.
+ 
+\shape smallcaps
+Transciever Delay
+\shape default
+ is already modeled before the node is connected to the bus.
+ Bus Matrix is symetrical along its main diagonal.
+ Delay from Node A to Node B is equal to delay from Node B to Node A.
  Bus Matrix can describe every configuration of the Bus with N controllers.
- Bus topology in sanity tests does not simulate any analog effects, its
- purpose is to simulate only bus delay cause by bus cable.
- In order to simplify the Bus matrix calculation most common topologies
- are implemented in the sanity test.
+ Bus topology in sanity test does not simulate any analog effects, its purpose
+ is to simulate delay caused by finite speed of electrical signal propagation.
+ In order to simplify the Bus Matrix calculation, most common topologies
+ are implemented in sanity test.
 \end_layout
 
 \begin_layout Subsubsection
@@ -16878,7 +17546,7 @@ reference "fig:bus_topology-1"
 \end_inset
 
 .
- Bus matrix for Bus topology is:
+ Bus Matrix for Bus topology is:
 \begin_inset Separator latexpar
 \end_inset
 
@@ -16956,7 +17624,7 @@ reference "fig:star_topology-1-1"
 \end_inset
 
 .
- Bus matrix for Star topology is :
+ Bus Matrix for Star topology is :
 \begin_inset Separator latexpar
 \end_inset
 
@@ -17034,7 +17702,7 @@ reference "fig:tree_topology-1-1-1"
 \end_inset
 
 .
- Bus matrix for Tree topology is :
+ Bus Matrix for Tree topology is :
 \begin_inset Separator latexpar
 \end_inset
 
@@ -17182,8 +17850,8 @@ Custom
 \end_layout
 
 \begin_layout Standard
-In custom topolgy user/tester can set arbitrary values to Bus matrix.
- Bus matrix in custom topology is:
+In custom topolgy user/tester can set arbitrary values to Bus Matrix.
+ Bus Matrix in custom topology is:
 \begin_inset Separator latexpar
 \end_inset
 
@@ -17216,16 +17884,16 @@ name "subsec:4.7.3-Oscillator-tollerance"
 \end_layout
 
 \begin_layout Standard
-Each controller in the sanity test environment has separate clock source
- with 100 Mhz frequency.
- Since oscillators in real devices are never absolutely exact, oscillator
- tolerance needs to be simulated.
+Each controller in sanity test environment has separate clock source with
+ 100 MHz frequency.
+ Since oscillators in real devices are not ideal, oscillator tolerance needs
+ to be simulated.
  Each controllers clock has its own tolerance in ppm.
  Each tolerance is maximal possible tolerance, that means the clock is generated
  with this error.
  This approach covers the worst possible case that can happen.
- In order to properly simulate oscillator tolerance time resolution of Modelsim
- needs to be set to 
+ In order to properly simulate oscillator tolerance time resolution, default
+ time unit of simulator must be set to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -17250,16 +17918,19 @@ ns
 \begin_inset Quotes erd
 \end_inset
 
- error in each clock cycle is lower than shortest time unit and will be
- rounded to zero and clk_sys of all controllers will have frequency exactly
- 100 Mhz.
- During the simulation, it is possible to check whether oscillator tolerance
- is used properly.
- If two nodes have different oscillator tollerance then according input
- timestamp signals should gain different values after simulation runs for
+, error in each clock cycle is lower than shortest time unit, and will be
+ rounded to zero and 
+\family roman
+\shape italic
+clk_sys
+\family default
+\shape default
+ of all controllers will have frequency exactly 100 MHz! During the simulation,
+ it is possible to check whether oscillator tolerance is used properly.
+ If two nodes have different oscillator tollerance, then according input
+ timestamp signals should reach different values after simulation runs for
  some time.
- In order to find out exactly how to configure oscillator tolerance refer
- to 
+ In order to find out how to configure oscillator tolerance refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:4.7.6-Sanity-test"
@@ -17281,49 +17952,68 @@ name "subsec:4.7.4-Noise-generation"
 \end_layout
 
 \begin_layout Standard
-In order to simulate glitches on the bus random binary nosie is generated
- on RX pins of each transceiver.
- When noise glitch is generated there is 50 % probability it will be received
- on the RX pin.
- Once the glitch is received (signal 
-\begin_inset Quotes eld
-\end_inset
-
-noise_force
-\begin_inset Quotes erd
-\end_inset
-
-) unit receives only the generated value of noise, thus it is possible to
- receive recessive bit when a dominant bit is on the bus.
- Glitches are not received at all nodes uniquely in order to distinguish
+In order to simulate glitches on the bus, random binary noise is generated
+ on 
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+ pins of each CTU CAN FD.
+ When noise glitch is generated, there is 50 % probability it will be received
+ on 
+\family roman
+\shape italic
+CAN_RX
+\family default
+\shape default
+ pin of each CTU CAN FD instance.
+ Glitches are not received by all nodes uniquely in order to distinguish
  between global (all nodes receive glitch) and local (only some nodes receive
  glitch) errors.
- Noise generator has two parameters : Noise width and Noise gap.
+ Once a glitch is received (signal 
+\family roman
+\shape italic
+noise_force
+\family default
+\shape default
+), unit receives only generated value of noise, thus it is possible to receive
+ 
+\shape smallcaps
+Recessive
+\shape default
+ value when 
+\shape smallcaps
+Dominant
+\shape default
+ value is on the bus.
+ Noise generator has two parameters: Noise width and Noise gap.
  Noise width is the length of generated glitch.
  Noise gap is time between two generated glitches.
- Both of these parameters have Gaussian distribution and it is possible
- to configure them over following parameters:
+ Noise width follows Gaussian distribution and Noise gap follows Exponential
+ distribution.
+ Noise generation can be configured by following parameters:
 \end_layout
 
 \begin_layout Description
-nw_mean Mean value of noise width (in nanoseconds)
+nw_mean Mean value of Noise width (in nanoseconds)
 \end_layout
 
 \begin_layout Description
-nw_var Variance of noise width (in nanoseconds)
+nw_var Variance of Noise width (in nanoseconds)
 \end_layout
 
 \begin_layout Description
-ng_mean Mean value of noise gap (in nanoseconds)
+ng_mean Mean value of Noise gap (in nanoseconds)
 \end_layout
 
 \begin_layout Description
-ng_var Variance of noise gap (in nanoseconds)
+ng_var Variance of Noise gap (in nanoseconds)
 \end_layout
 
 \begin_layout Standard
 Each configuration parameter corresponds to VHDL signal.
- To find out exactly how to configure these parameters refer to 
+ To find out how to configure these parameters refer to 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec:4.7.6-Sanity-test"
@@ -17346,19 +18036,65 @@ name "subsec:4.7.5-Traffic-emulation"
 
 \begin_layout Standard
 Sanity test generates random CAN frames and inserts these frames to be transmitt
-ed on the CAN bus.
- Each frame that is inserted into Node, is also inserted into according
- Transceive memory (tx_mems signal).
- The content of transceive memories monitors what was sent on the bus.
- Sanity test reads received frames from CAN Nodes and stores them into Recieve
- memories (rx_mems signal).
- After TX_memories are filled traffic generation is finished.
- In order for sanity test to pass the data consistency must be kept.
- That means that each frame which was transmitted by any node must be received
- by all other nodes! Contents of Transceive and Recieve memories is compared
- and data consistency is evaluated.
- One iteration of sanity test (with given configuration) can be summed up
- into following steps:
+ed on the CAN bus by 
+\family roman
+\shape italic
+node_access_proc
+\family default
+\shape default
+ process.
+ Each frame that is inserted to node (
+\family roman
+\shape italic
+CAN_send_frame
+\family default
+\shape default
+), is also inserted to according TX memory (
+\family roman
+\shape italic
+store_frame_to_test_mem
+\family default
+\shape default
+ procedure, 
+\family roman
+\shape italic
+tx_mems
+\family default
+\shape default
+ signal).
+ The content of TX memories monitors which frames were sent on the bus.
+ Sanity test reads received frames from CAN Nodes (
+\family roman
+\shape italic
+CAN_read_frame
+\family default
+\shape default
+) and stores them into RX memories (
+\family roman
+\shape italic
+store_frame_to_test_mem
+\family default
+\shape default
+ procedure, 
+\family roman
+\shape italic
+rx_mems
+\family default
+\shape default
+ signal).
+ After TX memories are filled, traffic generation is finished.
+ In order for sanity test to pass, the data consistency must be kept.
+ Each frame which was transmitted by any node must be received by all other
+ nodes! Contents of TX and RX memories are compared and data consistency
+ is evaluated (
+\family roman
+\shape italic
+check_memories
+\family default
+\shape default
+).
+ One iteration of Sanity test (with given configuration) can be summed up
+ in following steps:
 \end_layout
 
 \begin_layout Enumerate
@@ -17366,13 +18102,16 @@ Generate frames and insert them to CAN Nodes.
 \end_layout
 
 \begin_layout Enumerate
-Wait until all frames are received or unit turned error passive (indicates
- heavily disturbed bus).
+Wait until all frames are received or unit turned 
+\shape smallcaps
+Error Passive 
+\shape default
+(indicates heavily disturbed bus).
 \end_layout
 
 \begin_layout Enumerate
 Compare TX Memories and RX Memories contents for data consistency.
- If any frame was not properly received or dropped error is detected and
+ If any frame was not properly received or dropped, error is detected and
  test fails.
 \end_layout
 
@@ -17388,72 +18127,20 @@ name "subsec:4.7.6-Sanity-test"
 \end_layout
 
 \begin_layout Standard
-Sanity test has its own configuration file which contains bus configurations
- for sanity test execution.
- This file is located in 
-\series bold
-sanity/sanity_config.tcl
-\series default
-.
- Each configuration can be iterated different amount of times.
- Each iteration consists of sequence from 
+Sanity test can be configured by default YAML config attributes which are
+ common for whole CANTest framework and described in 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec:4.7.5-Traffic-emulation"
+reference "sec:4.3-common-Test-configuration"
+plural "false"
+caps "false"
+noprefix "false"
 
 \end_inset
 
- .
- Sanity configuration file is a TCL file.
- it defines list SANITY_CFG.
- Each element of the list represents one configuration and it is another
- list.
- Entries of the sublist have following meaning:
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-list
-\series default
- 
-\begin_inset Separator latexpar
-\end_inset
-
-
-\end_layout
-
-\begin_deeper
-\begin_layout LyX-Code
-<topology> <l1> ...
- <l6> 
-\end_layout
-
-\begin_layout LyX-Code
-<td1> ...
- <td4> 
-\end_layout
-
-\begin_layout LyX-Code
-<e1> ...
- <e4> 
-\end_layout
-
-\begin_layout LyX-Code
-<nw_mean> <nw_var> <ng_mean> <ng_var> 
-\end_layout
-
-\begin_layout LyX-Code
-<brp> <brp_fd> <prop> <ph1> <ph2> <sjw> <prop_fd> <ph1_fd> <ph2_fd> <sjw_fd>
-\end_layout
-
-\begin_layout LyX-Code
-<desc> <iterations>
-\end_layout
-
-\end_deeper
-\begin_layout Standard
-Each element of the sublist have following meaning:
+.
+ Apart from these attributes, there are special attributes which are used
+ for configuration of sanity test:
 \end_layout
 
 \begin_layout Description
@@ -17502,15 +18189,15 @@ reference "subsec:4.7.2-Real-bus"
 \end_layout
 
 \begin_layout Description
-l1
-\begin_inset space ~
+bus_len_v Length of the bus segments 
+\begin_inset Formula $l_{1}$
 \end_inset
 
-...
-\begin_inset space ~
+ to 
+\begin_inset Formula $l_{6}$
 \end_inset
 
-l6 Length of the bus segments.
+.
  These parameters have a different meaning for each topology.
  Please refer to 
 \begin_inset CommandInset ref
@@ -17521,19 +18208,11 @@ reference "subsec:4.7.2-Real-bus"
 
  to find out the exact meaning of these parameters.
  Please note that if a parameter is not used in Bus Matrix then it can have
- an arbitrary value.
+ arbitrary value.
 \end_layout
 
 \begin_layout Description
-td1
-\begin_inset space ~
-\end_inset
-
-...
-\begin_inset space ~
-\end_inset
-
-td4 Transciever delays of each node in multiples of 10 ns (e.g.
+trv_del_v Transciever delays of each node in multiples of 10 ns (e.g.
  transciever delay = 220 ns , then td(n)=22).
  Refer to 
 \begin_inset CommandInset ref
@@ -17546,15 +18225,7 @@ reference "subsec:4.7.1-Transciever-delay"
 \end_layout
 
 \begin_layout Description
-e1
-\begin_inset space ~
-\end_inset
-
-...
-\begin_inset space ~
-\end_inset
-
-e4 Oscillator errors (maximal tollerance) of each node in ppm.
+osc_tol_v Oscillator errors (maximal tollerance) of each node in ppm.
  Refer to
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -17566,71 +18237,308 @@ reference "subsec:4.7.3-Oscillator-tollerance"
 \end_layout
 
 \begin_layout Description
-<nw_mean> Mean value of noise width (ns)
+nw_mean Mean value of noise width (ns).
 \end_layout
 
 \begin_layout Description
-<nw_var> Variance of noise width (ns)
+nw_var Variance of noise width (ns).
 \end_layout
 
 \begin_layout Description
-<ng_mean> Mean value of gap between two noise glitches (ns)
+ng_mean Mean value of gap between two noise glitches (ns).
 \end_layout
 
 \begin_layout Description
-<ng_var> Variance of between two noise glitches (ns)
+ng_var Variance of between two noise glitches (ns).
 \end_layout
 
 \begin_layout Description
-<brp> Baud rate prescaler in nominal bit time
+brp 
+\shape smallcaps
+Baud Rate Prescaler
+\shape default
+ in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR]{BTR[BRP]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<brp_fd> Baud rate prescaler in data bit time
+brp_fd 
+\shape smallcaps
+Baud Rate Prescaler
+\shape default
+ in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR_FD]{BTR
+\backslash
+textunderscore FD[BRP
+\backslash
+textunderscore FD]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<prop> Length of PROP segment in nominal bit time
+prop Length of 
+\shape smallcaps
+Propagation
+\shape default
+ segment in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR]{BTR[PROP]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<ph1> Length of PH1 segment in nominal bit time
+ph1 Length of 
+\shape smallcaps
+Phase 1
+\shape default
+ segment in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR]{BTR[PH1]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<ph2> Length of PH2 segment in nominal bit time
+ph2 Length of 
+\shape smallcaps
+Phase 2
+\shape default
+ segment in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR]{BTR[PH2]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<sjw> Length of Synchronization jump width in nominal bit time
+sjw Length of 
+\shape smallcaps
+Synchronization Jump Width
+\shape default
+ in 
+\shape smallcaps
+Nominal Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR]{BTR[SJW]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<prop_fd> Length of PROP segment in data bit time
+prop_fd Length of 
+\shape smallcaps
+Propagation
+\shape default
+ segment in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR_FD]{BTR
+\backslash
+textunderscore FD[PROP
+\backslash
+textunderscore FD]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<ph1_fd> Length of PH1 segment in data bit time
+ph1_fd Length of 
+\shape smallcaps
+Phase 1
+\shape default
+ segment in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR_FD]{BTR
+\backslash
+textunderscore FD[PH1
+\backslash
+textunderscore FD]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<ph2_fd> Length of PH2 segment in data bit time
+ph2_fd Length of 
+\shape smallcaps
+Phase 2
+\shape default
+ segment in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR_FD]{BTR
+\backslash
+textunderscore FD[PH2
+\backslash
+textunderscore FD]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<sjw_fd> Length of Synchronization jump width in data bit time
+sjw_fd Length of 
+\shape smallcaps
+Synchronization Jump Width
+\shape default
+ in 
+\shape smallcaps
+Data Bit-Rate
+\shape default
+.
+ Corresponds to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hyperref[BTR_FD]{BTR
+\backslash
+textunderscore FD[SJW
+\backslash
+textunderscore FD]}
+\end_layout
+
+\end_inset
+
+ register.
 \end_layout
 
 \begin_layout Description
-<desc> Describtion of this configuration
-\end_layout
-
-\begin_layout Description
-<iterations> Number of iterations this configuration should be repeated
+desc Description of this configuration.
 \end_layout
 
 \begin_layout Standard
-Example of one configuration (one sub-list) is shown in figure 
+Sample screen shot which describes sanity test configuration in YAML file
+ is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:sanity_config_example-1-1-1-1-1"
@@ -17651,8 +18559,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Sanity_cfg.png
+	filename ../pics/Sanity_cfg.pdf
 	lyxscale 20
+	scale 70
 
 \end_inset
 
@@ -17681,61 +18590,6 @@ name "fig:sanity_config_example-1-1-1-1-1"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Subsection
-4.7.7 How to run sanity test?
-\end_layout
-
-\begin_layout Standard
-Sanity test can be run from CANTest framework.
- Once the TCL configuration file contains valid configurations sanity simulation
- can be opened (most important waveforms are also added) via the following
- command:
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-test sanity start
-\end_layout
-
-\begin_layout Standard
-Since sanity test can run several hours or days simulation waveform file
- in Modelsim project directory can reach extreme sizes (from 10s up to 100s
- of GBs).
- In order to avoid this situation sanity test can be started in 
-\begin_inset Quotes eld
-\end_inset
-
-silent
-\begin_inset Quotes erd
-\end_inset
-
- mode.
- In silent mode only the most important waveforms are added.
- Sanity test can be started in silent mode via the following command:
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-test sanity start silent
-\end_layout
-
-\begin_layout Standard
-Afterwards,test execution is started with command:
-\end_layout
-
-\begin_layout LyX-Code
-
-\series bold
-test sanity run
-\end_layout
-
-\begin_layout Standard
-After sanity test runs with all configurations it prints out the results
- of each configuration run to the command line.
 \end_layout
 
 \begin_layout Chapter
@@ -17860,7 +18714,7 @@ Memory bits
 \begin_inset Text
 
 \begin_layout Plain Layout
-Maximal frequency [Mhz]
+Maximal frequency [MHz]
 \end_layout
 
 \end_inset
