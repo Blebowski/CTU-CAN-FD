@@ -44,7 +44,8 @@
 --      2. Wait until transmission is started, plus some random time.
 --      3. Read protocol control state, and if unit is still in the frame,
 --         send "abort" command via COMMAND register.
---      4. Wait 5 clock cycles and check if unit stopped being transmitter!
+--      4. Wait 5 clock cycles and check if unit stopped being transmitter,
+--         if not report an error.
 --      5. Wait until the other unit transmitts error frame which is caused
 --         by sudden disapearing of transmitter during frame.
 --      6. Clear error counters.
