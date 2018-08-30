@@ -51,44 +51,34 @@ set results [list]
  set PARAM_NAMES [ list "dummy" \
                                  "use_logger" \
 							     "rx_buffer_size" \
-							     "use_FD_size" \
 							     "use_sync" \
 							     "ID" \
 							     "sup_filtA" \
 							     "sup_filtB" \
 							     "sup_filtC" \
 							     "sup_range" \
-							     "tx_time_sup" \
 							     "logger_size"
 					     ]
 							     
 ## List of synthesis configurations
  set CFG_LIST [ list          [ list "Minimal configuration" \
-							        false 16 false true 1 false\
+							        false 32 true 1\
 						            false false false false 8
 							  ] \
-							  [ list "Minimal FD configuration" \
-							        false 32 true true 1 false\
-						            false false false false 8
-							  ] \
-							  [ list "Small FD configuration" \
-							        false 32 true true 1 true\
-						            false false false true 8
-							  ] \
-							  [ list "Medium FD configuration" \
-							        false 32 true true 1 true\
+							  [ list "Medium configuration" \
+							        false 256 true 1\
 						            false false true true 8
 							  ] \
-							  [ list "Full FD configuration" \
-							        false 32 true true 1 true\
+							  [ list "Full configuration" \
+							        false 4096 true 1\
 						            true true true true 8
 							  ] \
-							  [ list "Full FD configuration + Small logger" \
-							        true 32 true true 1 true\
+							  [ list "Full configuration + Small logger" \
+							        true 4096 true 1\
 						            true true true true 8
 							  ] \
-							  [ list "Full FD configuration + Big logger" \
-							        true 32 true true 1 true\
+							  [ list "Full configuration + Big logger" \
+							        true 4096 true 1\
 						            true true true true 64
 							  ] 
 			]
@@ -105,7 +95,14 @@ foreach config $CFG_LIST {
    execute_flow -compile
    
    # Load report and get the results
-	load_report
+   load_report
+
+	# Load timing Analysis of 85 ° Slow
+	set panel_name {TimeQuest Timing Analyzer||Slow 1100mV 85C Model||Slow 1100mV 85C Model Fmax Summary}
+	set panel_id    [get_report_panel_id $panel_name]
+	set max_freq [get_report_panel_data -row 1 -col 0 -id $panel_id]
+
+	# Load FPGA resource usage
 	set aluts [get_fitter_resource_usage -alut -used]
 	set aregs  [get_fitter_resource_usage -reg -used]
 	set alms  [get_fitter_resource_usage -alm -used]
@@ -114,8 +111,13 @@ foreach config $CFG_LIST {
 	lappend results [list $act_cfg [list "LUTs" $aluts] \
 									[list "REGs" $aregs] \
 									[list "ALMs" $alms] \
+									[list "Max. Freq" $max_freq] \
 									[list "Mbits" $mbits]
 					]
+
+	foreach cfg_res $results {
+		puts $cfg_res
+	}
 	unload_report
 }  
 
