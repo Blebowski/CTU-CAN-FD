@@ -426,7 +426,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Added test framework describtion.
+Added test framework description.
  Updated document to cover latest description of CAN Core.
 \end_layout
 
@@ -533,11 +533,11 @@ Format
 \end_layout
 
 \begin_layout Standard
-Throughout this datasheet following notations are kept:
+Throughout this data sheet following notations are kept:
 \end_layout
 
 \begin_layout Itemize
-Commnon text is written with this font.
+Common text is written with this font.
 \end_layout
 
 \begin_layout Itemize
@@ -547,7 +547,7 @@ Memory registers are always described with capital letters e.g.
 \end_layout
 
 \begin_layout Itemize
-VHDL signal names, Entities, Architectures, Generics and FSM States are
+VHDL signal names, Entities, Architectures, Generics and FSM states are
  written with Italic and Roman styled letters e.g.
  
 \family roman
@@ -588,8 +588,8 @@ stuff bit
 \begin_layout Itemize
 Note that block diagrams within the documentation does not contain exact
  names of signals or FSM States.
- Most of the pictures are ilustrational and exact name of VHDL signal is
- appended in the text.
+ Most pictures are illustrative and exact name of VHDL signal is appended
+ in text.
 \end_layout
 
 \begin_layout Chapter
@@ -698,7 +698,7 @@ literal "true"
 \end_layout
 
 \begin_layout Itemize
-Vendor independent, fully synthesizable VHDL RTL code.
+Vendor independent, VHDL RTL code for synthesis.
 \end_layout
 
 \begin_layout Itemize
@@ -791,7 +791,7 @@ To develop this IP Core following tools are used:
 \end_layout
 
 \begin_layout Itemize
-ModelSim ALTERA Starter Edition 6.5b and GHDL for RTL simulatons
+Modelsim ALTERA Starter Edition 6.5b and GHDL for RTL simulations.
 \end_layout
 
 \begin_layout Itemize
@@ -821,7 +821,7 @@ TimingAnalyzer SW for Timing Diagrams.
 \end_layout
 
 \begin_layout Section
-1.5 Design automatization
+1.5 Design automation
 \end_layout
 
 \begin_layout Standard
@@ -951,7 +951,7 @@ literal "false"
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD IP Core source code is available in CTU FEE Gitlab repository
+CTU CAN FD IP Core source code is available in CTU FEE GitLab repository
  at:
 \end_layout
 
@@ -993,10 +993,10 @@ thispagestyle{fancy}
 \end_layout
 
 \begin_layout Standard
-The CTU CAN FD IP Core is compliant with VHDL 2008, but it is synthesizable
+The CTU CAN FD IP Core is compliant with VHDL 2008, but it can be synthesized
  also with VHDL 2002.
- Following VHDL packages from IEEE library are used in synthesizable part
- of CTU CAN FD IP core:
+ Following VHDL packages from IEEE library are used in RTL sources of CTU
+ CAN FD IP core:
 \end_layout
 
 \begin_layout Itemize
@@ -1269,7 +1269,7 @@ true
 \begin_inset Text
 
 \begin_layout Plain Layout
-Use/Don't use synchronisation chain for sampling of CAN bus.
+Use/Don't use synchronization chain for sampling of CAN bus.
  Can be set to 
 \begin_inset Quotes eld
 \end_inset
@@ -1573,7 +1573,7 @@ ID
  is part of Avalon address, thus it is possible to configure address on
  Avalon Bus before synthesis.
  With this architecture, it is possible to create up to 16 instances on
- a single paralell memory bus.
+ a single parallel memory bus.
  More cores can be instantiated when using Interconnect components.
  Address bits 23:20 must have constant value 0x3.
  This requirement is given by a custom system for which this core was originally
@@ -4232,7 +4232,7 @@ yes
 \begin_inset Text
 
 \begin_layout Plain Layout
-Timestamp for frame transmition
+Timestamp for frame transmission
 \end_layout
 
 \end_inset
@@ -4328,7 +4328,7 @@ arstn
 \series bold
 asynchronous reset
 \series default
- (active low) and it is internally synchronised by two flip-flop synchroniser.
+ (active low) and it is internally synchronized by two flip-flop synchronizer.
  After reset is released, 
 \series bold
 at least two clock cycles
@@ -4343,7 +4343,7 @@ s_apb_pready
 \family default
 \shape default
  signal.
- Reffer to APB Specification 
+ Refer to APB Specification 
 \begin_inset CommandInset citation
 LatexCommand cite
 key "key-23"
@@ -4611,7 +4611,7 @@ Clock frequency
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+105.98
 \end_layout
 
 \end_inset
@@ -4989,7 +4989,7 @@ name "sec-Pipeline-architecture"
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD controller datapath is pipelined on both TX and RX data paths.
+CTU CAN FD controller data-path is pipelined on both TX and RX data paths.
  Pipeline architecture is shown in 
 \begin_inset ERT
 status open
@@ -5013,11 +5013,11 @@ noprefix "false"
 
 \end_inset
 
- and it describes pipeline levels on RX and TX datapaths.
+ and it describes pipeline levels on RX and TX data-paths.
 \end_layout
 
 \begin_layout Standard
-RX datapath contains 3 stages of pipeline:
+RX data-path contains 3 stages of pipeline:
 \end_layout
 
 \begin_layout Enumerate
@@ -5047,11 +5047,11 @@ noprefix "false"
 \end_layout
 
 \begin_layout Standard
-TX datapath contains 2 stages of pipeline:
+TX data-path contains 2 stages of pipeline:
 \end_layout
 
 \begin_layout Enumerate
-Transmitt bit by Protocol Control.
+Transmit bit by Protocol Control.
 \end_layout
 
 \begin_layout Enumerate
@@ -5079,7 +5079,7 @@ To achieve such data processing two Triggering Signal Types are generated:
 \shape smallcaps
 Information Processing Time
 \shape default
-, reffer to 
+, refer to 
 \begin_inset ERT
 status open
 
@@ -5129,7 +5129,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Datapath Pipeline
+Data-path pipeline
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Pipeline-Architecture"
@@ -5289,7 +5289,7 @@ tran_trig
 rec_trig
 \family default
 \shape default
-) are created here from Triggerring signals (
+) are created here from Triggering signals (
 \family roman
 \shape italic
 sync_nbt
@@ -5368,7 +5368,7 @@ rx_counter
 \family default
 \shape default
 ) are implemented in this module.
- Internal loopback multiplexor (
+ Internal loop-back multiplexer (
 \family roman
 \shape italic
 int_loopback_ena
@@ -5545,7 +5545,7 @@ _r
 \begin_inset Quotes erd
 \end_inset
 
- suffix is ommitted (e.g register 
+ suffix is omitted (e.g register 
 \family roman
 \shape italic
 stuff_enable_r
@@ -6151,7 +6151,7 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Synchronisation control.
+Synchronization control.
 \end_layout
 
 \end_inset
@@ -7192,7 +7192,7 @@ Recessive
 \shape smallcaps
 Dominant
 \shape default
- is received, arbitration loss is signalled to Operation Control FSM via
+ is received, arbitration loss is signaled to Operation Control FSM via
  
 \family roman
 \shape italic
@@ -7436,7 +7436,7 @@ one_bit
 .
  One bit covers 1 bit following Identifier 
 \shape smallcaps
-Extesion
+Extension
 \shape default
 .
  This bit corresponds to 
@@ -7559,7 +7559,7 @@ Transmitter
 \shape smallcaps
 Data Bit Rate
 \shape default
- from CAN FD Stanard.
+ from CAN FD Standard.
  Such a difference is necessary, since 
 \shape smallcaps
 Transmitter
@@ -7568,7 +7568,7 @@ Transmitter
 \shape smallcaps
 Bit Error
 \shape default
- detection (reffer to 
+ detection (refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
 reference "sec-Error-detection"
@@ -7583,7 +7583,7 @@ noprefix "false"
 \shape smallcaps
 Receiver
 \shape default
- of CAN FD Frame sets hard synchronisation in 
+ of CAN FD Frame sets hard synchronization in 
 \shape smallcaps
 Extended Data Length
 \shape default
@@ -7602,7 +7602,7 @@ Bit Rate Shift
 \shape smallcaps
 Transmitter
 \shape default
-, no synchronisation is performed (
+, no synchronization is performed (
 \family roman
 \shape italic
 sync_control_r <= NO_SYNC
@@ -7623,7 +7623,7 @@ trv_delay_calib_r
 \shape smallcaps
 Extended Data Length
 \shape default
- bit (reffer to 
+ bit (refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
 reference "subsec-Bus-Sampling"
@@ -7688,7 +7688,7 @@ rec_is_rtr)
 \shape smallcaps
 RTR
 \shape default
- preffered behaviour (
+ preferred behavior (
 \family roman
 \shape italic
 drv_rtr_pref
@@ -7743,8 +7743,8 @@ In
 data
 \family default
 \shape default
- state, transmitter transmitts data from locked TXT Buffer, and updates
- pointer to TXT Buffer memory (
+ state, transmitter transmits data from locked TXT Buffer, and updates pointer
+ to TXT Buffer memory (
 \family roman
 \shape italic
 txt_buf_ptr_r
@@ -7847,7 +7847,7 @@ Fixed Bit Stuffing
 \shape default
  and 
 \shape smallcaps
-Fixed Bit De-Stuffing
+Fixed Bit Destuffing
 \shape default
  is configured for CAN FD Frames.
  CRC length is controlled with counter 
@@ -7940,7 +7940,7 @@ stuff_count
 \shape smallcaps
 Transmitter
 \shape default
- transmitts number of stuffed bits (
+ transmits number of stuffed bits (
 \family roman
 \shape italic
 stuff_count_grey
@@ -8189,7 +8189,7 @@ CRC
 \shape smallcaps
 Receiver
 \shape default
- will transmitt 
+ will transmit 
 \shape smallcaps
 Dominant
 \shape default
@@ -8366,7 +8366,7 @@ tran_valid_r
 \family default
 \shape default
 is set.
- TXT Buffer is unlocked and frame transmission is signalled to TXT Buffer
+ TXT Buffer is unlocked and frame transmission is signaled to TXT Buffer
  (
 \family roman
 \shape italic
@@ -8918,7 +8918,7 @@ ovr_flg_sup
 Overload Flag Superposition
 \shape default
 .
- Duration of state is cotrolled by 
+ Duration of state is controlled by 
 \family roman
 \shape italic
 control_pointer
@@ -9404,7 +9404,7 @@ Error Frame
 \end_layout
 
 \begin_layout Standard
-To remain compliant with CAN FD standard, counters for 128 ocurrencess of
+To remain compliant with CAN FD standard, counters for 128 occurrences of
  11 consecutive 
 \shape smallcaps
 Recessive
@@ -9614,12 +9614,12 @@ noprefix "false"
 
 \end_inset
 
-), which is one clock cycle delayed from Transmitt Trigger.
+), which is one clock cycle delayed from Transmit Trigger.
  Insertion of 
 \shape smallcaps
 Stuff Bit
 \shape default
- is signalled via 
+ is signaled via 
 \family roman
 \shape italic
 data_halt
@@ -9744,8 +9744,11 @@ bitDestuffing
 \end_layout
 
 \begin_layout Standard
-Bit de-stuffing module implements the functionality of Bit de-stuffing from
- serial data stream.
+Bit Destuffing module implements the functionality of 
+\shape smallcaps
+Bit Destuffing
+\shape default
+ from serial data stream.
  The number of equal consecutive bits is configurable via 
 \family roman
 \shape italic
@@ -9755,7 +9758,7 @@ length
  input.
  Fixed 
 \shape smallcaps
-Bit De-Stuffing
+Bit Destuffing
 \shape default
  method for 
 \shape smallcaps
@@ -9820,8 +9823,11 @@ destuffed
 \family default
 \shape default
  signal.
- Circuit also provides number of destuffed bits modulo 8 to to Implement
- ISO FD functionality (
+ Circuit also provides number of 
+\shape smallcaps
+Destuffed Bits
+\shape default
+ modulo 8 to to Implement ISO FD functionality (
 \family roman
 \shape italic
 dst_bit_ctr
@@ -9843,7 +9849,7 @@ length
  When circuit is disabled, it by-passes data from input to output without
  
 \shape smallcaps
-Bit De-Stuffing
+Bit Destuffing
 \shape default
 .
  Decision diagram is shown in 
@@ -10004,7 +10010,7 @@ crc21_reg
 \family default
 \shape default
 .
- Shift register is shifter every step.
+ Shift register is shifted every step.
  Furthermore XOR operation is executed if next input bit (
 \family roman
 \shape italic
@@ -10112,25 +10118,25 @@ Bit Time
 CAN_RX
 \family default
 \shape default
-) is optionally synchronized via two flip-flop Synchronisation chain.
- Usage of this synchronisation chain is configurable via 
+) is optionally synchronized via two flip-flop Synchronization chain.
+ Usage of this synchronization chain is configurable via 
 \family roman
 \shape italic
 use_sync
 \family default
 \shape default
  generic.
- It is recommended to use this synchronisation chain, unless synthesizer
- inserts synchronisation chain automatically! Synchronised data (
+ It is recommended to use this synchronization chain, unless synthesizer
+ inserts synchronization chain automatically! Synchronized data (
 \family roman
 \shape italic
 sync_data
 \family default
 \shape default
-) can be optionally evaluated via Tripple Sampling circuit.
+) can be optionally evaluated via Triple Sampling circuit.
  
 \shape smallcaps
-Tripple Sampling
+Triple Sampling
 \shape default
  contains 3 bits long shift register (
 \family roman
@@ -10146,14 +10152,14 @@ trs_majority
 \family default
 \shape default
 ) is used to pick final sampled value.
- Usage of Tripple Sampling is configurable from User Registers by 
+ Usage of Triple Sampling is configurable from User Registers by 
 \family roman
 \shape italic
 drv_sam
 \family default
 \shape default
  signal.
- Data are sampled in Sample Point via Sample Trigger (RX) (reffer to 
+ Data are sampled in Sample Point via Sample Trigger (RX) (refer to 
 \begin_inset ERT
 status open
 
@@ -10251,7 +10257,7 @@ name "fig:bus-sampling-block-diagram"
 \begin_layout Standard
 To signal presence of valid 
 \shape smallcaps
-Synchronisation Edge
+Synchronization Edge
 \shape default
 , Edge Detection Process (
 \family roman
@@ -10284,7 +10290,7 @@ Dominant
 \shape default
  transition 
 \shape smallcaps
-Synchronisation Edge
+Synchronization Edge
 \shape default
  is detected (
 \family roman
@@ -10321,8 +10327,8 @@ trv_delay
 \shape default
 ) is erased.
  Each clock cycle Transceiver Delay Counter is incremented by 1.
- Measurement is stoped when an edge (the edge of the same bit that erased
- Transceiver Delay Counter on TX Data) ocurrs on RX Data (
+ Measurement is stopped when an edge (the edge of the same bit that erased
+ Transceiver Delay Counter on TX Data) occurs on RX Data (
 \family roman
 \shape italic
 edge_rx_valid
@@ -10448,7 +10454,7 @@ sample_sec
 Data Bit-Rate
 \shape default
  Sample Triggers is used.
- Sample Triggers are feeded to this shift register and delayed version creates
+ Sample Triggers are fed to this shift register and delayed version creates
  Secondary Sample Trigger (
 \family roman
 \shape italic
@@ -10546,7 +10552,7 @@ irq
 \family default
 \shape default
  output by logic OR function between all elements of interrupt vector.
- To allow generation of Inerrupt by active bit in 
+ To allow generation of interrupt by active bit in 
 \family roman
 \shape italic
 int_vect_reg
@@ -10561,7 +10567,7 @@ int_ena_reg
 ).
  Interrupt output is deactivated (logic 0) as soon as the Interrupt Status
  is cleared.
- Structure of Interrupt registers is selected to achieve accesibility from
+ Structure of Interrupt registers is selected to achieve accessibility from
  multiple threads / processes under OS, without necessity of using locking
  mechanisms such as mutexes or semaphores.
  Interrupt structure is shown in 
@@ -10762,7 +10768,7 @@ tq_counter
 \shape smallcaps
 Time Quantum
 \shape default
- is signalled via 
+ is signaled via 
 \family roman
 \shape italic
 tq_edge
@@ -10838,8 +10844,8 @@ name "fig:prescaler-block-diagram"
 \shape smallcaps
 Bit Time
 \shape default
- behaviour is controlled by Bit Time FSM whose state transition diagram
- is shown in 
+ behavior is controlled by Bit Time FSM whose state transition diagram is
+ shown in 
 \begin_inset ERT
 status open
 
@@ -10912,7 +10918,7 @@ ph2
 \shape default
  in case of 
 \shape smallcaps
-Hard Synchronisation
+Hard Synchronization
 \shape default
  is 
 \family roman
@@ -10949,7 +10955,7 @@ ph2_real
 \family default
 \shape default
 ).
- These registers are driven by resynchronisation process.
+ These registers are driven by resynchronization process.
  Upon start of Bit (in 
 \family roman
 \shape italic
@@ -10959,15 +10965,15 @@ sync
 ), both registers are set to its nominal values as configured from SW.
  If 
 \shape smallcaps
-Synchronisation Edge
+Synchronization Edge
 \shape default
- is signalled (
+ is signaled (
 \family roman
 \shape italic
 sync_edge
 \family default
 \shape default
-) and Synchronisation Type (
+) and Synchronization Type (
 \family roman
 \shape italic
 sync_control
@@ -10994,7 +11000,7 @@ ph2_real
  are lengthened / shortened accordingly.
  If 
 \shape smallcaps
-Synchronisation Edge
+Synchronization Edge
 \shape default
  is active during 
 \family roman
@@ -11010,9 +11016,9 @@ ph1
 \shape default
 , 
 \shape smallcaps
-Positive Resynchronisation
+Positive Resynchronization
 \shape default
- is signalled (
+ is signaled (
 \family roman
 \shape italic
 pos_resync_cond
@@ -11021,7 +11027,7 @@ pos_resync_cond
 ).
  If 
 \shape smallcaps
-Synchronisation Edge
+Synchronization Edge
 \shape default
  arrives during 
 \family roman
@@ -11031,9 +11037,9 @@ ph2
 \shape default
 , 
 \shape smallcaps
-Negative Resynchronisation
+Negative Resynchronization
 \shape default
- is signalled (
+ is signaled (
 \family roman
 \shape italic
 neg_resync_cond
@@ -11079,7 +11085,7 @@ noprefix "false"
 \shape smallcaps
 Information Processing Time
 \shape default
- is 4 clock cycles due to architecture of Triggerring Signals, and it is
+ is 4 clock cycles due to architecture of Triggering Signals, and it is
  not possible to determine if 
 \shape smallcaps
 Bit-Rate
@@ -11134,7 +11140,7 @@ use_default_ctr
 \shape smallcaps
 Bit-Rate
 \shape default
- shift ocurred, Special Bit Counter (
+ shift occurred, Special Bit Counter (
 \family roman
 \shape italic
 bt_counter_sw
@@ -11164,7 +11170,7 @@ um.
 \shape smallcaps
 Bit-Rate
 \shape default
-, Sample Control signal is stored upon transtion to 
+, Sample Control signal is stored upon transition to 
 \family roman
 \shape italic
 ph2
@@ -11210,7 +11216,7 @@ Bit-Rate
 \shape default
  shift 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  also needs to be performed (extra counter is used, 
 \family roman
@@ -11227,7 +11233,7 @@ brs_resync
  signal is used.
  If 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  edge occurs during 
 \shape smallcaps
@@ -11274,7 +11280,7 @@ Phase 2
  to less than 4 clock cycles.
  There is no guarantee that 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  edge (
 \family roman
@@ -11309,7 +11315,7 @@ Phase 2
 Phase 2
 \shape default
  is not allowed to exit until zero is reached.
- This fact is signalled by 
+ This fact is signaled by 
 \family roman
 \shape italic
 ipt_ok
@@ -11731,7 +11737,7 @@ reference "fig:RX_Buffer-memory-layout"
 \shape smallcaps
 Start Of Frame
 \shape default
- Bit or upon sucessfull reception of CAN Frame (end of 
+ Bit or upon successful reception of CAN Frame (end of 
 \shape smallcaps
 End Of Frame
 \shape default
@@ -11849,7 +11855,7 @@ name "fig:RX_Buffer-memory-layout"
 \end_layout
 
 \begin_layout Standard
-CAN frame is stored continously in RAM memory of RX Buffer during frame
+CAN frame is stored continuously in RAM memory of RX Buffer during frame
  reception.
  Process of storing is controlled by Protocol Control via signals 
 \family roman
@@ -12061,8 +12067,8 @@ rxb_store_data
 \family default
 \shape default
  RX Buffer FSM is waiting for next commands from Protocol Control.
- Reception of each 4 bytes of CAN data is signalled by Protocol Control
- via 
+ Reception of each 4 bytes of CAN data is signaled by Protocol Control via
+ 
 \family roman
 \shape italic
 store_data
@@ -12075,7 +12081,7 @@ store_data_word
 \family default
 \shape default
 .
- When frame reception is finsihed, 
+ When frame reception is finished, 
 \family roman
 \shape italic
 rec_message_valid
@@ -12105,7 +12111,7 @@ rxb_store_end_ts_high
 End Of Frame
 \shape default
 .
- If any error ocurred during reception (e.g.
+ If any error occurred during reception (e.g.
  CRC mismatch or another 
 \shape smallcaps
 Error Frame
@@ -12193,7 +12199,7 @@ data_overrun_r
  is set.
  This flag can be read from SW to find out about lost frame due to Data
  Overrun.
- When successfull frame reception is signalled (
+ When successful frame reception is signaled (
 \family roman
 \shape italic
 rec_frame_valid_r = '1'
@@ -12218,7 +12224,7 @@ rxb_idle
 \family default
 \shape default
 , Internal Overrun Flag is checked.
- If no Data Overrun ocurred during process of storing, frame is validated
+ If no Data Overrun occurred during process of storing, frame is validated
  and signal 
 \family roman
 \shape italic
@@ -12291,7 +12297,7 @@ read_pointer
  is automatically incremented by 1.
  Frame can be read out from RX Buffer only when RX Buffer contains at least
  one committed frame (what an unexpected information).
- This is signalled in 
+ This is signaled in 
 \family roman
 \shape italic
 message_count
@@ -12585,7 +12591,7 @@ txt_buffer_mem
 \family default
 \shape default
 ) is write only from SW, with only support of 32 bit writes.
- SW is acessing the memory via 
+ SW is accessing the memory via 
 \family roman
 \shape italic
 tran_data
@@ -12615,7 +12621,7 @@ noprefix "false"
 
 ).
  Note that TXT Buffer memory can be written into by SW only when TXT Buffer
- is accessbile (
+ is accessible (
 \family roman
 \shape italic
 txtb_user_accessible
@@ -12650,7 +12656,7 @@ txt_ok
 .
  In other states of TXT Buffer FSM, writes to TXT Buffer Memory have no
  effect.
- HW (Protocol Control module) is acessing the memory via 
+ HW (Protocol Control module) is accessing the memory via 
 \family roman
 \shape italic
 txt_addr
@@ -12666,7 +12672,7 @@ txt_word
  In states where TXT Buffer RAM is accessible from SW, it is not accessed
  by Protocol Control.
  If TXT Buffer is accessed by Protocol Control (Frame transmission is in
- progress), TXT Buffer is not accessibe from SW.
+ progress), TXT Buffer is not accessible from SW.
 \end_layout
 
 \begin_layout Standard
@@ -12706,7 +12712,7 @@ txt_sw_cmd.set_rdy
 txt_hw_cmd.lock
 \family default
 \shape default
-) the buffer (make it unacessible to SW) as soon as CAN Bus is Idle, and
+) the buffer (make it inaccessible to SW) as soon as CAN Bus is Idle, and
  transit to 
 \family roman
 \shape italic
@@ -12727,7 +12733,7 @@ txt_addr
 \family default
 \shape default
  signal and reading CAN Frame Identifier and Data for transmission.
- Upon sucessull transmission of CAN Frame 
+ Upon successful transmission of CAN Frame 
 \family roman
 \shape italic
 txt_hw_cmd.valid
@@ -12746,14 +12752,14 @@ txt_tx_ok
 txt_hw_cmd.arbl
 \family default
 \shape default
- is signalled, and TXT Buffer is moved back to 
+ is signaled, and TXT Buffer is moved back to 
 \family roman
 \shape italic
 txt_ready
 \family default
 \shape default
 .
- If CTU CAN FD reached limit of CAN Frame retransmissions (either due to
+ If CTU CAN FD reached limit of CAN Frame re-transmissions (either due to
  multiple Error Frames or Arbitration loses), 
 \family roman
 \shape italic
@@ -13230,7 +13236,7 @@ textunderscore W}
 
 \end_inset
 
- is adressed from TXT Buffer RAM.
+ is addressed from TXT Buffer RAM.
  In this state Upper part of CAN Frame Timestamp is on the output of TXT
  Buffer RAM and Lower part of CAN Frame Timestamp is stored in 
 \family roman
@@ -13239,7 +13245,7 @@ ts_low_internal
 \family default
 \shape default
 .
- Timestamp comparison is exeuted (
+ Timestamp comparison is executed (
 \family roman
 \shape italic
 timestamp_valid
@@ -13288,7 +13294,7 @@ textunderscore W}
 
 \end_inset
 
- is adressed and CAN Frame metadata are stored on outputs of TX Arbitrator
+ is addressed and CAN Frame metadata are stored on outputs of TX Arbitrator
  (
 \family roman
 \shape italic
@@ -13374,7 +13380,7 @@ arb_locked
 txt_hw_cmd.unlock
 \family default
 \shape default
- is signalled.
+ is signaled.
  Index of actually selected TXT Buffer for transmission is always stored
  in 
 \family roman
@@ -13932,7 +13938,7 @@ memory_valid
 \family default
 \shape default
  is stored which contains information about state of memory row, so it is
- possible to achieve erase-on-reset behaviour from user perspective.
+ possible to achieve erase-on-reset behavior from user perspective.
 \end_layout
 
 \begin_layout Standard
@@ -14541,7 +14547,7 @@ bit_Error
 \family default
 \shape default
  output.
- This module continously compares Data sent with TX Trigger and Sampled
+ This module continuously compares Data sent with TX Trigger and Sampled
  with RX Trigger.
  Bit Error output is validated by Fault Confinement module, which checks
  actual value of Protocol Control FSM and sets 
@@ -14683,7 +14689,7 @@ Bit Stuffing
 \shape smallcaps
 Fixed Bit Stuffing
 \shape default
- by Bit De-stuffing module and signalled via 
+ by Bit De-stuffing module and signaled via 
 \family roman
 \shape italic
 stuff_Error
@@ -14911,8 +14917,8 @@ crc_check
 \end_layout
 
 \begin_layout Standard
-CAN FD standard defines that CAN Node shall wait for 128 ocurrences of 11
- consecutive 
+CAN FD standard defines that CAN Node shall wait for 128 occurrences of
+ 11 consecutive 
 \shape smallcaps
 Recessive
 \shape default
@@ -15028,7 +15034,7 @@ Logging events on CAN Bus via Event Logger.
 \end_layout
 
 \begin_layout Enumerate
-Transmission of special RTR frame with non-zero DLC (reffer to 
+Transmission of special RTR frame with non-zero DLC (refer to 
 \begin_inset ERT
 status open
 
@@ -15066,7 +15072,7 @@ Data Bit-Rate
 \end_layout
 
 \begin_layout Section
-2.12 TX Datapath hazard protection
+2.12 TX Data-path hazard protection
 \begin_inset CommandInset label
 LatexCommand label
 name "sec-TX-Datapath-hazard-protection"
@@ -15122,15 +15128,15 @@ txt_hw_cmd.lock
 tran_frame_valid_in
 \family default
 \shape default
- is signalled by TX Arbitrator to Protocol Control.
- Valid TX Frame is signalled by TX Arbitrator if at least one TXT Buffer
+ is signaled by TX Arbitrator to Protocol Control.
+ Valid TX Frame is signaled by TX Arbitrator if at least one TXT Buffer
  is in Ready state (
 \family roman
 \shape italic
 txt_ready
 \family default
 \shape default
-), Frame Transmitt Timestamp has elapsed and Metadata are loaded on output
+), Frame Transmit Timestamp has elapsed and Metadata are loaded on output
  of TX Arbitrator.
  If frame is valid for transmission (
 \family roman
@@ -15265,7 +15271,7 @@ arb_locked
 txt_aborted
 \family default
 \shape default
- state, thus it still signalled valid frame for Protocol Control..
+ state, thus it still signaled valid frame for Protocol Control..
 \end_layout
 
 \begin_layout Enumerate
@@ -15331,7 +15337,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Datapath Logic
+TX Data-path Logic
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:TX-DataPath-Logic"
@@ -15353,8 +15359,8 @@ name "fig:TX-DataPath-Logic"
 
 \begin_layout Standard
 The above mentioned explanation shows that due to direct combinational path
- between TXT Buffer SW Commands and signalling of valid frame on output
- of TX Arbitrator, TX Datapath is 
+ between TXT Buffer SW Commands and signaling of valid frame on output of
+ TX Arbitrator, TX Data-path is 
 \series bold
 NOT susceptible to hazards!
 \series default
@@ -15429,10 +15435,10 @@ d in VHDL, TCL and Python.
 \series bold
  exact result
 \series default
- whether the test passed or failed! Vunit library is used as wrapper, GHDL
+ whether the test passed or failed! VUnit library is used as wrapper, GHDL
  and Modelsim Altera 6.5b are used as target simulators.
  Tests are executed automatically after every merge request to master branch
- of CTU FEE GITLab repository.
+ of CTU FEE GitLab repository.
  Furthermore, automated test run is available every night.
 \end_layout
 
@@ -15450,7 +15456,7 @@ where <config_name> corresponds to YAML config file with tests that should
  be executed.
  Description of each test and its configuration is shown in following sub-chapte
 rs.
- At the moment there are two configs available:
+ At the moment there are two configurations available:
 \end_layout
 
 \begin_layout Description
@@ -15527,7 +15533,7 @@ VUNIT_SIMULATOR=modelsim ./run.py test tests_fast.yml -- -g
 \end_layout
 
 \begin_layout Standard
-Note that when running simulations with graphic output from remote pc over
+Note that when running simulations with graphic output from remote PC over
  SSH connection 
 \begin_inset Quotes eld
 \end_inset
@@ -15567,8 +15573,7 @@ Random lib contains custom functions for generation of random numbers.
 \series bold
 randomlib.vhd
 \series default
- contains pre genreated array and set of procedures for returning random
- elements.
+ contains generated array and set of procedures for returning random elements.
  This array of numbers was generated by Matlab and has 
 \series bold
 Uniform distribution
@@ -16275,8 +16280,8 @@ wave TCL file which displays most important signals of DUT in Wave window
 
 \begin_layout Standard
 GNU lcov engine is used to evaluate code coverage of CTU CAN FD source codes
- and test benches during automated runs in Gitlab of CTU FEE.
- Reffer to 
+ and test benches during automated runs in GitLab of CTU FEE.
+ Refer to 
 \begin_inset Quotes eld
 \end_inset
 
@@ -16502,7 +16507,7 @@ name "fig:Unit_diagram"
 \end_layout
 
 \begin_layout Standard
-Each unit test has its own TCL script which adds the most important waveforms
+Each unit test has its own TCL script which adds the most important wave-forms
  to Wave window of Modelsim simulator.
  This Wave file is used for manual debugging of circuit or a test.
 \end_layout
@@ -16564,7 +16569,7 @@ _tb
 \end_layout
 
 \begin_layout Enumerate
-Copy existing TCL script from some unit test and modify the waveforms to
+Copy existing TCL script from some unit test and modify the wave-forms to
  be observed.
 \end_layout
 
@@ -16585,13 +16590,13 @@ unit/tests
 \end_layout
 
 \begin_layout Subsubsection
-Bit Stuffing and Bit De-Stuffing
+Bit Stuffing and Bit Destuffing
 \end_layout
 
 \begin_layout Standard
 This unit test includes the unit test of Bit Stuffing and Bit De-stuffing
  circuit as well.
- Both circuits are connected in a chain, ater 
+ Both circuits are connected in a chain, after 
 \shape smallcaps
 Bit Stuffing
 \shape default
@@ -16636,11 +16641,11 @@ set.bc_fixed
 \family default
 \shape default
 .
- Note that generated bit sequence has higher probabilty (85 %) of equal
+ Note that generated bit sequence has higher probability (85 %) of equal
  value between two consecutive bits.
  This precaution makes sure that fair amount of Stuff Bits will be inserted
  and discarded during the test.
- A special assertion command is present to verify proper recursive behaviour
+ A special assertion command is present to verify proper recursive behavior
  of Bit Stuffing.
 \end_layout
 
@@ -16790,7 +16795,7 @@ Transceiver Delay
 trv_delay_calib
 \family default
 \shape default
- command (as comming from Protocol Control in Extended Data Length bit).
+ command (as coming from Protocol Control in Extended Data Length bit).
  Then, received data and delayed transmitted data are compared.
  Transmitted data are delayed by length of measured 
 \shape smallcaps
@@ -16924,7 +16929,7 @@ ev_edge_proc
 \family default
 \shape default
  process.
- To emulate behaviour of Event Logger, SW model in 
+ To emulate behavior of Event Logger, SW model in 
 \family roman
 \shape italic
 ev_logger_model_proc
@@ -16943,7 +16948,7 @@ running
 log_mod_mem
 \family default
 \shape default
- memory upon ocurrence of event edge.
+ memory upon occurrence of event edge.
  Note that for loop which evaluates each event, is selected to count top
  to bottom, to achieve the same priority as Event Harvesting mechanism of
  DUT.
@@ -17087,13 +17092,13 @@ Prescaler
 \end_layout
 
 \begin_layout Standard
-Prescaler testbench consists of 3 parts: Tetsting without 
+Prescaler testbench consists of 3 parts: Testing without 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
 , Testing with 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  and Testing of 
 \shape smallcaps
@@ -17117,10 +17122,10 @@ gen_bit_time_setting
 \begin_layout Standard
 In the first part, 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  is forbidden.
- Testbench measures number of clock cycles between two consecutive Transmitt
+ Testbench measures number of clock cycles between two consecutive Transmit
  Triggers (which represent the moment of bit transmission, thus measuring
  length of bit) in 
 \family roman
@@ -17152,11 +17157,11 @@ Time Quanta
 \begin_layout Standard
 In the second part, 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  is allowed, and 
 \shape smallcaps
-Resynchronisation Edges
+Resynchronization Edges
 \shape default
  are generated by 
 \family roman
@@ -17165,15 +17170,15 @@ sync_gen_proc
 \family default
 \shape default
  process.
- Number of clock cycles between two consecutive Transmitt Triggers is again
+ Number of clock cycles between two consecutive Transmit Triggers is again
  counted, and compared with expected duration of bit with 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  taken into account.
  Note that since 
 \shape smallcaps
-Resynchronisation
+Resynchronization
 \shape default
  operates on 
 \shape smallcaps
@@ -17234,7 +17239,7 @@ sample_control
 \family default
 \shape default
 ).
- This part of test verifies proper behaviour during change of 
+ This part of test verifies proper behavior during change of 
 \shape smallcaps
 Bit-Rate
 \shape default
@@ -17317,7 +17322,7 @@ insert_frame_to_RX_Buffer
 \family default
 \shape default
 .
- Upon sucesfull storing of frame (
+ Upon successful storing of frame (
 \family roman
 \shape italic
 rx_data_overrun
@@ -17386,7 +17391,7 @@ TX Arbitrator
 \begin_layout Standard
 
 \color black
-TX Arbitrator unit test models behaviour of TXT Buffers by 
+TX Arbitrator unit test models behavior of TXT Buffers by 
 \family roman
 \shape italic
 buf_em_proc
@@ -17512,7 +17517,7 @@ tran_frame_valid_out
 \shape default
 ).
  Processes which emulates TXT Buffers and CAN Core commands are connected
- to DUT, as well as processes modeling behaviour of TX Arbitrator.
+ to DUT, as well as processes modeling behavior of TX Arbitrator.
  Upon mismatch between outputs of DUT and SW models, error is detected by
  
 \family roman
@@ -17605,7 +17610,7 @@ Reference test verifies operation of CTU CAN FD with reference controller.
  Each data set thus contains CAN Frame and according bit sequence which
  was transmitted by reference controller.
  Generation of CAN Frames, transmission by reference controller, control
- of logic analyzer and recording of data sets was executed by auxiliarly
+ of logic analyzer and recording of data sets was executed by auxiliary
  utility Kvaalt Logger implemented in C (located in 
 \begin_inset Quotes eld
 \end_inset
@@ -17774,7 +17779,7 @@ test/feature/tb_feature.vhd
 
 .
  Each feature test is then implemented as VHDL procedure in separate test
- file (eg.
+ file (e.g.
  test/feature/arbitration_feature_tb.vhd).
  The architecture of this test is shown in 
 \begin_inset ERT
@@ -17837,8 +17842,11 @@ p(i).clk_sys
 \family default
 \shape default
 ).
- This setting is to make sure that resynchronisation between two CTU CAN
- FD nodes works properly.
+ This setting is to make sure that 
+\shape smallcaps
+Resynchronization
+\shape default
+ between two CTU CAN FD nodes works properly.
  Each clock source is connected to one CTU CAN FD controller.
  Test interface to this environment is via two Avalon buses (
 \family roman
@@ -17974,7 +17982,7 @@ false
 \shape default
  if the test failed.
  One execution of the procedure corresponds to one iteration of the test.
- If error is detected, it is good to report an error, since default behaviour
+ If error is detected, it is good to report an error, since default behavior
  of actual test framework, is to finish execution upon log with error severity.
 \end_layout
 
@@ -18078,7 +18086,7 @@ bus_start_feature_tb.vhd
 Each feature test is described within header of test implementation.
  Each test is described as sequence of steps, which are executed during
  feature test procedure.
- Reffer to source code of each test for further description of each test.
+ Refer to source code of each test for further description of each test.
 \end_layout
 
 \begin_layout Section
@@ -18093,7 +18101,7 @@ name "sec-Sanity-test"
 \end_layout
 
 \begin_layout Standard
-Sanity test simulates behaviour of CTU CAN FD in environment which is close
+Sanity test simulates behavior of CTU CAN FD in environment which is close
  to real operation.
  Sanity test consists of 4 CTU CAN FD nodes (
 \family roman
@@ -18148,7 +18156,7 @@ Noise generation
 \end_layout
 
 \begin_layout Itemize
-Traffic emulation and data consitency evaluation
+Traffic emulation and data consistency evaluation
 \end_layout
 
 \begin_layout Standard
@@ -18303,7 +18311,7 @@ CAN_RX
  Assuming 1 ns equals approximately 20 cm of electric signal transport delay,
  bus lengths have resolution 10 cm.
  Delayed signal from each transciever is connected via AND gate to each
- reciever.
+ receiver.
  Length of the delay is given by 
 \series bold
 Bus Matrix
@@ -18385,7 +18393,7 @@ n
 Transciever Delay
 \shape default
  is already modeled before the node is connected to the bus.
- Bus Matrix is symetrical along its main diagonal.
+ Bus Matrix is symmetrical along its main diagonal.
  Delay from Node A to Node B is equal to delay from Node B to Node A.
  Bus Matrix can describe every configuration of the Bus with N controllers.
  Bus topology in sanity test does not simulate any analog effects, its purpose
@@ -18840,7 +18848,7 @@ clk_sys
 \shape default
  of all controllers will have frequency exactly 100 MHz! During the simulation,
  it is possible to check whether oscillator tolerance is used properly.
- If two nodes have different oscillator tollerance, then according input
+ If two nodes have different oscillator tolerance, then according input
  timestamp signals should reach different values after simulation runs for
  some time.
  In order to find out how to configure oscillator tolerance refer to 
@@ -18943,7 +18951,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsection
-5.10.5 Traffic emulation and data consitency evaluation
+5.10.5 Traffic emulation and data consistency evaluation
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Traffic-emulation"
@@ -19153,7 +19161,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Description
-osc_tol_v Oscillator errors (maximal tollerance) of each node in ppm.
+osc_tol_v Oscillator errors (maximal tolerance) of each node in ppm.
  Refer to 
 \begin_inset CommandInset ref
 LatexCommand nameref
@@ -19543,7 +19551,7 @@ name "fig:sanity_config_example"
 
 \begin_layout Standard
 CTU CAN FD Synthesis was evaluated towards Cyclone V FPGA Family (Intel)
- and Zynq familly (Xilinx).
+ and Zynq family (Xilinx).
  CTU CAN FD was not synthesized for ASIC production at the moment.
  Design size and performance depends on configuration constants.
  
@@ -20838,7 +20846,7 @@ Extend Python register generator with generation of VHDL register module.
 Automate design of Driving Bus and Status Bus.
  These would be described in IP-XACT and signal list would be generated
  automatically (including documentation).
- Another aproach would be to remove Driving Bus and Status Bus completely
+ Another approach would be to remove Driving Bus and Status Bus completely
  and use generated structure throughout the design.
 \end_layout
 
@@ -20848,7 +20856,7 @@ Generate automated description of tests from headers of testbench source
 \end_layout
 
 \begin_layout Itemize
-Extend reference test to also transmision of CAN frame by CTU CAN FD.
+Extend reference test to also transmission of CAN frame by CTU CAN FD.
  Bit sequence would be also compared with reference sequence (with small
  error allowed).
 \end_layout
@@ -20862,7 +20870,7 @@ Implement second memory interface on CTU CAN FD.
 \end_layout
 
 \begin_layout Itemize
-Perform standardisation of CTU CAN FD according to ISO 16845-1 2016 standard.
+Perform standardization of CTU CAN FD according to ISO 16845-1 2016 standard.
 \end_layout
 
 \begin_layout Itemize
