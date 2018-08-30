@@ -288,7 +288,8 @@ entity CAN_top_level is
     signal txt_hw_cmd           : txt_hw_cmd_type;
 
     -- TXT Buffer HW CMD Interrupt activated on TXT Buffer
-    signal txt_hw_cmd_int       : std_logic_vector(TXT_BUFFER_COUNT - 1);
+    signal txt_hw_cmd_int       : std_logic_vector(TXT_BUFFER_COUNT - 1
+                                                    downto 0);
 
     -- Hardware command index set by TX Arbitrator based on the current
     -- internal state
