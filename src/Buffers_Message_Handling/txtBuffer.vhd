@@ -68,6 +68,9 @@
 --                    progress" states.
 --     06.4.2018  Changed output from side of CAN Core to synchronous. Async.
 --                output did not allow inferrence of RAM in Altera FPGA.
+--     30.8.2018  Added "txt_hw_cmd_int" output for Interrupt Manager. TXTB HW
+--                command Interrupt generated upon move to Done, Failed or
+--                Aborted states.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -105,6 +108,11 @@ entity txtBuffer is
         -- Status signals
         ------------------------------------------------------------------------
         signal txtb_state             :out  txt_fsm_type;
+
+        ------------------------------------------------------------------------
+        -- Interrupt Manager
+        ------------------------------------------------------------------------
+        signal txt_hw_cmd_int         :out  std_logic;
 
         ------------------------------------------------------------------------
         -- CAN Core and TX Arbiter Interface
@@ -171,6 +179,13 @@ begin
     sw_cbs <= '1' when txt_sw_buf_cmd_index(ID) = '1' 
                   else
               '0';
+
+    -- TXT Buffer HW Command generates interrupt upon transition to
+    -- Failed, Done and Aborted states!
+    txt_hw_cmd_int <= hw_cbs and (txt_hw_cmd.failed = '1' or
+                                  txt_hw_cmd.valid = '1' or
+                                  (txt_hw_cmd.unlock = '1' and
+                                   buf_fsm = txt_ab_prog);
     
     -- Connect internal buffer state to output
     txtb_state <= buf_fsm;
@@ -259,7 +274,7 @@ begin
 
             --------------------------------------------------------------------
             -- Transmission from buffer is in progress
-            --------------------------------------------------------------------          
+            --------------------------------------------------------------------
             when txt_tx_prog =>
               
                 -- Unlock the buffer

@@ -92,6 +92,8 @@ architecture tx_buf_unit_test of CAN_test is
     -- Commands from the CAN Core for manipulation of the CAN
     signal txt_hw_cmd             :     txt_hw_cmd_type :=
                                           ('0', '0', '0', '0', '0', '0');
+
+    signal txt_hw_cmd_int         :     std_logic;
     signal txt_hw_cmd_buf_index   :     natural range 0 to 3;
 
     -- Buffer output and pointer to the RAM memory
@@ -225,6 +227,7 @@ begin
         txt_sw_buf_cmd_index    => txt_sw_buf_cmd_index,
         txtb_state              => txtb_state,
         txt_hw_cmd              => txt_hw_cmd,
+        txt_hw_cmd_int          => txt_hw_cmd_int,
         txt_hw_cmd_buf_index    => txt_hw_cmd_buf_index,
         bus_off_start           => bus_off_start,
         txt_word                => txt_word,

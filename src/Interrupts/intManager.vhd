@@ -59,11 +59,16 @@
 --                be level based instead of edge based with fixed duration. This
 --                is more fitting for SocketCAN implementation.
 --    12.3.2018   Implemented RX Buffer not empty and TX Buffer HW command INT.
+--    30.8.2018   Moved HW command detection logic to TXT Buffer from here.
+--                Thus TXT Buffer can properly filter commands, to avoid
+--                overflow of interrupts! Replaced "txt_hw_cmd" with 
+--                "txt_hw_cmd_int" signal.
 --------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
+use ieee.std_logic_misc.all;
 USE WORK.CANconstants.ALL;
 use work.CAN_FD_register_map.all;
 
@@ -114,8 +119,9 @@ entity intManager is
         -- Recieve buffer is empty
         signal rx_empty               :in   std_logic;
 
-        -- HW commands on TXT Buffer
-        signal txt_hw_cmd             :in   txt_hw_cmd_type;
+        -- HW command on TXT Buffers interrupt
+        signal txt_hw_cmd_int         :in   std_logic_vector(TXT_BUFFER_COUNT - 1
+                                                             downto 0);
 
         -- Event logger
         signal loger_finished         :in   std_logic;  --Event logging finsihed
@@ -210,10 +216,7 @@ begin
     int_input_active(RFI_IND)       <= rx_full;
     int_input_active(BSI_IND)       <= br_shifted;
     int_input_active(RBNEI_IND)     <= not rx_empty;
-    int_input_active(TXBHCI_IND)    <= '1' when (txt_hw_cmd.lock = '1' or
-                                                 txt_hw_cmd.unlock = '1')
-                                           else
-                                       '0';
+    int_input_active(TXBHCI_IND)    <= or_reduce(txt_hw_cmd_int);
 
     int_proc : process(res_n, clk_sys)
     begin
