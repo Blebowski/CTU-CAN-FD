@@ -217,8 +217,8 @@ begin
         ---------------------------------
         -- Clock & timestamp generation
         ---------------------------------
-        clk_gen_proc: clock_gen_proc(period => f100_Mhz, duty => 50, epsilon_ppm => 0,
-                       out_clk => p(i).clk_sys);
+        clk_gen_proc: clock_gen_proc(period => f100_Mhz, duty => 50,
+                       epsilon_ppm => (i - 1) * 100, out_clk => p(i).clk_sys);
         tsgen_proc: timestamp_gen_proc(p(i).clk_sys, p(i).timestamp);
     end generate;
 
