@@ -58,6 +58,7 @@ use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
+use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
 use work.ID_transfer.all;
@@ -366,7 +367,7 @@ begin
     int_input(RFI_IND)            <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
-    int_input(TXBHCI_IND)         <=  or(txt_hw_cmd_int);
+    int_input(TXBHCI_IND)         <=  or_reduce(txt_hw_cmd_int);
 
 
     ----------------------------------------------------------------------------
