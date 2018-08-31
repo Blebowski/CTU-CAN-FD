@@ -54,7 +54,6 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-use ieee.std_logic_misc.all;
 use work.CANconstants.all;
 use work.CANcomponents.ALL;
 USE work.CANtestLib.All;
@@ -367,7 +366,7 @@ begin
     int_input(RFI_IND)            <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
-    int_input(TXBHCI_IND)         <=  or_reduce(txt_hw_cmd_int);
+    int_input(TXBHCI_IND)         <=  or(txt_hw_cmd_int);
 
 
     ----------------------------------------------------------------------------

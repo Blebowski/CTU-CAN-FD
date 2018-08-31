@@ -68,7 +68,6 @@
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-use ieee.std_logic_misc.all;
 USE WORK.CANconstants.ALL;
 use work.CAN_FD_register_map.all;
 
@@ -216,7 +215,7 @@ begin
     int_input_active(RFI_IND)       <= rx_full;
     int_input_active(BSI_IND)       <= br_shifted;
     int_input_active(RBNEI_IND)     <= not rx_empty;
-    int_input_active(TXBHCI_IND)    <= or_reduce(txt_hw_cmd_int);
+    int_input_active(TXBHCI_IND)    <= or(txt_hw_cmd_int);
 
     int_proc : process(res_n, clk_sys)
     begin
