@@ -38,9 +38,14 @@
 --------------------------------------------------------------------------------
 -- Purpose:
 --    Adaptor from APB4 to internal bus.
+--    NOTE: This is not strictly APB conformant as the read data stays only
+--          for the next cycle; after that they are zeroed.
 --------------------------------------------------------------------------------
 -- Revision History:
 --    May 2018   First Implementation - Martin Jerabek
+--    31.08.2018 Ensure that reg_rden_o is always asserted for only one cycle.
+--               This is important for reads with side effects, such as
+--               reading from FIFO.
 --------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
@@ -78,7 +83,21 @@ end entity;
 
 architecture rtl of apb_ifc is
     signal rst_countdown_reg : natural range 0 to 3;
+    signal next_apb_pready   : std_logic;
+    signal ready_for_read    : std_logic;
+
+    function to_std_logic(a : boolean) return std_logic is
+    begin
+        if a then
+            return '1';
+        else
+            return '0';
+        end if;
+    end function to_std_logic;
 begin
+    -- psl default clock is rising_edge (aclk);
+    -- psl assert_onecycle_rden: assert always reg_rden_o = '1' -> next reg_rden_o = '0';
+
     reg_data_in_o <= s_apb_pwdata;
     s_apb_prdata  <= reg_data_out_i;
 
@@ -88,23 +107,30 @@ begin
     reg_addr_o(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) <=
         std_logic_vector(to_unsigned(ID, 4));
 
-    -- forward only aligned addresses 
+    -- forward only aligned addresses
     -- (the bridge/CPU will then pick the bytes itself)
     reg_addr_o(ID_ADRESS_LOWER - 1 downto 2) <=
         s_apb_paddr(ID_ADRESS_LOWER - 1 downto 2);
-    
+
     reg_addr_o(1 downto 0) <= (others => '0');
 
     -- path can be shortened by registering
-    reg_be_o   <= s_apb_pstrb when s_apb_pwrite = '1' 
+    reg_be_o   <= s_apb_pstrb when s_apb_pwrite = '1'
                               else
                   (others => '1');
 
-    reg_rden_o <= s_apb_psel and not s_apb_pwrite;
+
+    -- Read must be issued one cycle before finishing the transaction
+    -- and must be active only for 1 cycle so that when reading from a FIFO
+    -- the pointer is only incremented once.
+    -- rst_countdown_reg = 0 -> not s_apb_penable
+    -- otherwise rst_countdown_reg = 1 (s_apb_penable will stay in '1', so double trigger won't happen)
+    ready_for_read <= (not s_apb_penable and next_apb_pready) or to_std_logic(rst_countdown_reg = 1);
+    reg_rden_o <= s_apb_psel and not s_apb_pwrite and ready_for_read;
 
     -- path can be shortened by registering it
     -- ignore s_apb_pprot
-    reg_wren_o <= s_apb_psel and s_apb_pwrite and s_apb_penable; 
+    reg_wren_o <= s_apb_psel and s_apb_pwrite and s_apb_penable;
 
     p_rready : process(arstn, aclk)
     begin
@@ -117,6 +143,7 @@ begin
         end if;
     end process;
 
-    s_apb_pready <= '1' when rst_countdown_reg = 0 else '0';
+    next_apb_pready <= '1' when rst_countdown_reg = 0 else '0';
+    s_apb_pready <= next_apb_pready;
     s_apb_pslverr <= '0';
 end architecture rtl;
