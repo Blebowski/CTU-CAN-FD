@@ -993,8 +993,7 @@ thispagestyle{fancy}
 \end_layout
 
 \begin_layout Standard
-The CTU CAN FD IP Core is compliant with VHDL 2008, but it can be synthesized
- also with VHDL 2002.
+The CTU CAN FD IP Core is compliant with VHDL 2008.
  Following VHDL packages from IEEE library are used in RTL sources of CTU
  CAN FD IP core:
 \end_layout
