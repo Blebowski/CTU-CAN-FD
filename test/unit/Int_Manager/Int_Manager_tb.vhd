@@ -196,7 +196,7 @@ architecture int_man_unit_test of CAN_test is
 
         -- TXT HW Command
         signal txt_hw_cmd_int         :inout   std_logic_vector(TXT_BUFFER_COUNT - 1
-                                                                downto 0);
+                                                                downto 0)
     )is
         variable tmp                  :        std_logic;
     begin

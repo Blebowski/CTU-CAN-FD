@@ -185,7 +185,10 @@ begin
     txt_hw_cmd_int <= hw_cbs and (txt_hw_cmd.failed = '1' or
                                   txt_hw_cmd.valid = '1' or
                                   (txt_hw_cmd.unlock = '1' and
-                                   buf_fsm = txt_ab_prog));
+                                   buf_fsm = txt_ab_prog) or
+                                  (txt_sw_cmd.set_abt = '1' and
+                                   sw_cbs = '1' and
+                                   buf_fsm = txt_ready));
     
     -- Connect internal buffer state to output
     txtb_state <= buf_fsm;
