@@ -1,6 +1,6 @@
-SRCS := ctu_can_fd_hw.c  ctu_can_fd_linux_defs.c  ctu_can_fd_userspace.cpp
+SRCS := ctu_can_fd_hw.c  ctu_can_fd_linux_defs.c  userspace_utils.cpp
 OBJS := $(addsuffix .o,$(SRCS))
-DEPS := $(addsuffix .d,$(SRCS))
+DEPS := $(wildcard *.d)
 
 P := arm-linux-gnueabihf-
 
@@ -12,13 +12,15 @@ CFLAGS := $(XFLAGS) -Werror=implicit-function-declaration
 CXXFLAGS := $(XFLAGS)
 #LDFLAGS := -fuse-ld=gold
 
-all: test
+all: test regtest
 ifeq ($(shell hostname),hathi)
-	cp ./test /srv/nfs4/debian-armhf-devel/
+	cp ./test ./regtest /srv/nfs4/debian-armhf-devel/
 endif
 
-test: $(OBJS)
-	$(CXX) $(XFLAGS) -o $@ $(OBJS) $(LDFLAGS)
+test: $(OBJS) ctu_can_fd_userspace.cpp.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+regtest: $(OBJS) regtest.cpp.o
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 %.c.o: %.c
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 %.cpp.o: %.cpp
@@ -26,6 +28,6 @@ test: $(OBJS)
 
 .PHONY: all clean
 clean:
-	-rm test $(OBJS) $(DEPS)
+	-rm test *.o $(DEPS)
 
 -include $(DEPS)

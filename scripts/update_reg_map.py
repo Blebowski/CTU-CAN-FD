@@ -60,7 +60,9 @@ if __name__ == '__main__':
 	print("**  Generating CAN FD register map")
 	print(80 * "*")
 
-	pythonAlias = "python3.5"
+	pythonVersion = sys.version.split('.')
+	pythonAlias = "python" + pythonVersion[0] + "." + pythonVersion[1]
+	print("\n Python version is: %s \n" % pythonAlias)
 
 	if (str_arg_to_bool(args.updVHDL)):
 		print("Generating CAN FD memory registers VHDL package...\n")

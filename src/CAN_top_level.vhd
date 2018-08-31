@@ -287,6 +287,10 @@ entity CAN_top_level is
     -- Hardware commands to TXT Buffer from Protocol control
     signal txt_hw_cmd           : txt_hw_cmd_type;
 
+    -- TXT Buffer HW CMD Interrupt activated on TXT Buffer
+    signal txt_hw_cmd_int       : std_logic_vector(TXT_BUFFER_COUNT - 1
+                                                    downto 0);
+
     -- Hardware command index set by TX Arbitrator based on the current
     -- internal state
     signal txt_hw_cmd_index     : natural range 0 to TXT_BUFFER_COUNT - 1;
@@ -597,6 +601,7 @@ begin
             txt_sw_buf_cmd_index  => txt_buf_cmd_index,
             txtb_state            => txtb_fsms(i),
             txt_hw_cmd            => txt_hw_cmd,
+            txt_hw_cmd_int        => txt_hw_cmd_int(i),
             txt_hw_cmd_buf_index  => txt_hw_cmd_buf_index,
             bus_off_start         => bus_off_start,
             txt_word              => txt_word(i),
@@ -683,7 +688,7 @@ begin
         rec_message_valid     => rec_message_valid,
         rx_full               => rx_full,
         rx_empty              => rx_empty,
-        txt_hw_cmd            => txt_hw_cmd,
+        txt_hw_cmd_int        => txt_hw_cmd_int,
         loger_finished        => loger_finished,
         drv_bus               => drv_bus,
         int_out               => int,

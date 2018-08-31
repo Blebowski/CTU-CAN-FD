@@ -687,7 +687,7 @@
 					<ipxact:field>
 						<ipxact:name>TXBHCI</ipxact:name>
 						<ipxact:displayName>TXBHCI</ipxact:displayName>
-						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core, this interrupt will be acivated.</ipxact:description>
+						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>

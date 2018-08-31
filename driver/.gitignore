@@ -1,6 +1,7 @@
 *.o
 *.d
 /test
+/regtest
 *.das
 .*.cmd
 .tmp_versions

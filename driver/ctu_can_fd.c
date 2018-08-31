@@ -369,11 +369,14 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 	struct can_frame *cf;
 	struct sk_buff *skb;
 	struct can_berr_counter berr;
-	netdev_info(ndev, "ctucan_err_interrupt");
+
+	ctu_can_fd_read_err_ctrs(&priv->p, &berr);
+
+	netdev_info(ndev, "ctucan_err_interrupt: ISR = 0x%08x, rxerr %d, txerr %d",
+			isr.u32, berr.rxerr, berr.txerr);
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	ctu_can_fd_read_err_ctrs(&priv->p, &berr);
 	/*
 	 * EWI: error warning
 	 * DOI: RX overrun
@@ -384,14 +387,17 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 	if (isr.s.epi) {
 		/* error passive or bus off */
 		enum can_state state = ctu_can_fd_read_error_state(&priv->p);
+		netdev_info(ndev, "  epi: state = %u", state);
 		priv->can.state = state;
 		if (state == CAN_STATE_BUS_OFF) {
 			priv->can.can_stats.bus_off++;
+			netdev_info(ndev, "    bus_off");
 			can_bus_off(ndev);
 			if (skb)
 				cf->can_id |= CAN_ERR_BUSOFF;
 		} else if (state == CAN_STATE_ERROR_PASSIVE) {
 			priv->can.can_stats.error_passive++;
+			netdev_info(ndev, "    error_passive");
 			if (skb) {
 				cf->can_id |= CAN_ERR_CRTL;
 				cf->data[1] = (berr.rxerr > 127) ?
@@ -400,11 +406,18 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 				cf->data[6] = berr.txerr;
 				cf->data[7] = berr.rxerr;
 			}
+		} else if (state == CAN_STATE_ERROR_WARNING) {
+			netdev_warn(ndev, "    error_warning, but ISR[EPI] was set! (HW bug?)");
+			goto err_warning;
+		} else {
+			netdev_warn(ndev, "    unhandled error state!");
 		}
 	} else if (isr.s.ei) {
+err_warning:
 		/* error warning */
 		priv->can.state = CAN_STATE_ERROR_WARNING;
 		priv->can.can_stats.error_warning++;
+		netdev_info(ndev, "  error_warning");
 		if (skb) {
 			cf->can_id |= CAN_ERR_CRTL;
 			cf->data[1] |= (berr.txerr > berr.rxerr) ?
@@ -417,6 +430,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 
 	/* Check for Arbitration Lost interrupt */
 	if (isr.s.ali) {
+		netdev_info(ndev, "  arbitration lost");
 		priv->can.can_stats.arbitration_lost++;
 		if (skb) {
 			cf->can_id |= CAN_ERR_LOSTARB;
@@ -426,6 +440,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 
 	/* Check for RX FIFO Overflow interrupt */
 	if (isr.s.doi) {
+		netdev_info(ndev, "  doi (rx fifo overflow)");
 		stats->rx_over_errors++;
 		stats->rx_errors++;
 		if (skb) {
@@ -436,6 +451,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 
 	/* Check for Bus Error interrupt */
 	if (isr.s.bei) {
+		netdev_info(ndev, "  bus error");
 		priv->can.can_stats.bus_error++;
 		stats->tx_errors++; // TODO: really?
 		if (skb) {

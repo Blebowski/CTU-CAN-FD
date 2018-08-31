@@ -1,71 +1,6 @@
-extern "C" {
-#include "ctu_can_fd_linux_defs.h"
-#include "ctu_can_fd_hw.h"
-}
+#include "userspace_utils.h"
 
-#undef abs
-#include <sys/mman.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <string.h>
-#include <inttypes.h>
-#include <err.h>
-
-//#include "clara.hpp"
 #include <iostream>
-
-#define CANFD_ADDR_BASE    0x43C30000
-#define CANFD_ADDR_RANGE   0x10000
-
-static const char *memdev = "/dev/mem";
-static int mem_fd = -1;
-
-static void mem_open()
-{
-    mem_fd = open(memdev, O_RDWR|O_SYNC);
-    if (mem_fd < 0) {
-        err(1, "open memory device");
-    }
-}
-
-void *mem_map(unsigned long mem_start, unsigned long mem_length)
-{
-    unsigned long pagesize, mem_window_size;
-    void *mm, *mem;
-
-    //pagesize = getpagesize();
-    pagesize = sysconf(_SC_PAGESIZE);
-
-    mem_window_size = ((mem_start & (pagesize-1)) + mem_length + pagesize-1) & ~(pagesize-1);
-
-    mm = mmap(NULL, mem_window_size, PROT_WRITE|PROT_READ,
-              MAP_SHARED, mem_fd, mem_start & ~(pagesize-1));
-    mem = (char*)mm + (mem_start & (pagesize-1));
-
-    if (mm == MAP_FAILED) {
-        err(1, "mmap");
-        return NULL;
-    }
-
-    fprintf(stderr, "mmap 0x%lx -> %p\n",mem_start,mem);
-    return mem;
-}
-
-unsigned ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
-    return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~3)) >> (8 * (reg & 3));
-}
-unsigned ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
-    return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~1)) >> (8 * (reg & 1));
-}
-/*
-void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint8_t val) {
-    iowrite8(val, (uint8_t*)priv->mem_base + reg);
-}
-void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint16_t val) {
-    iowrite16(val, (uint8_t*)priv->mem_base + reg);
-}*/
 
 
 int main(int argc, char *argv[])
@@ -94,28 +29,7 @@ int main(int argc, char *argv[])
                 return 0;
         }
     }
-/*
-    using namespace clara;
-    auto cli = //Opt(addr_base, "addr_base")
-               //    ["-A"]["--addr_base"]("CAN FD registers base address")
-               Opt(ifc, "ifc") ["-i"]("CAN FD interface number")
-             | Opt(do_transmit)
-                   ["-t"]("Do transmit")
-             | Help(do_showhelp)
-             ;
-             std::cout << "IFC:" << ifc << std::endl;
 
-    auto result = cli.parse(Args(argc, argv));
-
-    if (!result) {
-        std::cerr << "Error in command line: " << result.errorMessage() << std::endl;
-        exit(1);
-    }
-    if (do_showhelp) {
-        std::cout << cli;
-        return 0;
-    }
-*/
     static const uint32_t addrs[] = {0x43C30000, 0x43C70000};
     if (ifc >= 2) {
         std::cerr << "Err: ifc number must be 0 or 1.\n";
@@ -123,17 +37,8 @@ int main(int argc, char *argv[])
     }
     addr_base = addrs[ifc];
 
-    mem_open();
-
-
-
-    volatile void * const base = mem_map(addr_base, CANFD_ADDR_RANGE);
-    struct ctucanfd_priv _p, *priv = &_p;
+    struct ctucanfd_priv *priv = ctucanfd_init(addr_base);
     int res;
-
-    priv->mem_base = base;
-    priv->read_reg = ctu_can_fd_read32;
-    priv->write_reg = ctu_can_fd_write32;
 
     union ctu_can_fd_device_id_version reg;
     reg.u32 = priv->read_reg(priv, CTU_CAN_FD_DEVICE_ID);

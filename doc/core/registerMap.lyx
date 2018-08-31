@@ -5285,7 +5285,7 @@ BSI Bit-rate shifted interrupt
 RBNEI Receive buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.
 \end_layout
 \begin_layout Description
-TXBHCI TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core, this interrupt will be acivated.
+TXBHCI TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

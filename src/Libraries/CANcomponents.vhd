@@ -228,7 +228,7 @@ package CANcomponents is
             signal tran_addr              :in   std_logic_vector(4 downto 0);
             signal tran_cs                :in   std_logic;
             signal txt_sw_cmd             :in   txt_sw_cmd_type;
-
+            signal txt_hw_cmd_int         :out  std_logic;
             signal txt_sw_buf_cmd_index   :in   std_logic_vector(
                                                     buf_count - 1 downto 0);
 
@@ -337,7 +337,8 @@ package CANcomponents is
             signal rec_message_valid      :in   std_logic;
             signal rx_full                :in   std_logic;
             signal rx_empty               :in   std_logic;
-            signal txt_hw_cmd             :in   txt_hw_cmd_type;
+            signal txt_hw_cmd_int         :in   std_logic_vector(TXT_BUFFER_COUNT - 1
+                                                                 downto 0);
             signal loger_finished         :in   std_logic;
             signal drv_bus                :in   std_logic_vector(1023 downto 0);
             signal int_out                :out  std_logic;

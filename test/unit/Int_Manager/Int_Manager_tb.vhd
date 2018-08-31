@@ -106,7 +106,8 @@ architecture int_man_unit_test of CAN_test is
     signal rx_empty               :   std_logic := '1';
 
     -- HW command on TX Buffer
-    signal txt_hw_cmd             :   txt_hw_cmd_type;
+    signal txt_hw_cmd_int         :   std_logic_vector(TXT_BUFFER_COUNT - 1
+                                                        downto 0);
 
     ----------------------------------------------
     -- Status signals
@@ -194,8 +195,10 @@ architecture int_man_unit_test of CAN_test is
         signal rx_empty               :inout   std_logic;
 
         -- TXT HW Command
-        signal txt_hw_cmd             :inout   txt_hw_cmd_type
+        signal txt_hw_cmd_int         :inout   std_logic_vector(TXT_BUFFER_COUNT - 1
+                                                                downto 0)
     )is
+        variable tmp                  :        std_logic;
     begin
         if (error_valid = '1') then
             rand_logic_s(rand_ctr, error_valid, 0.85);
@@ -263,17 +266,14 @@ architecture int_man_unit_test of CAN_test is
             rand_logic_s(rand_ctr, rx_empty, 0.05);
         end if;
 
-        if (txt_hw_cmd.lock = '1') then
-            rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.95);
-        else
-            rand_logic_s(rand_ctr, txt_hw_cmd.lock, 0.05);
-        end if;
-
-        if (txt_hw_cmd.lock = '1') then
-            rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.95);
-        else
-            rand_logic_s(rand_ctr, txt_hw_cmd.unlock, 0.05);
-        end if;
+        for i in 0 to TXT_BUFFER_COUNT - 1 loop
+            if (txt_hw_cmd_int(i) = '1') then
+                rand_logic_v(rand_ctr, tmp, 0.95);
+            else
+                rand_logic_v(rand_ctr, tmp, 0.05);
+            end if;
+            txt_hw_cmd_int(i) <= tmp;
+        end loop;
 
     end procedure;
 
@@ -342,7 +342,7 @@ begin
         tx_finished           =>   tx_finished ,
         br_shifted            =>   br_shifted,
         rx_empty              =>   rx_empty,
-        txt_hw_cmd            =>   txt_hw_cmd,
+        txt_hw_cmd_int        =>   txt_hw_cmd_int,
         rx_message_disc       =>   rx_message_disc ,
         rec_message_valid     =>   rec_message_valid ,
         rx_full               =>   rx_full,
@@ -366,7 +366,7 @@ begin
     int_input(RFI_IND)            <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
-    int_input(TXBHCI_IND)         <=  txt_hw_cmd.lock or txt_hw_cmd.unlock;
+    int_input(TXBHCI_IND)         <=  or(txt_hw_cmd_int);
 
 
     ----------------------------------------------------------------------------
@@ -391,7 +391,7 @@ begin
             generate_sources(rand_ctr_1, error_valid, error_passive_changed ,
                            error_warning_limit , arbitration_lost, tx_finished,
                            br_shifted, rx_message_disc , rec_message_valid ,
-                           rx_full , loger_finished, rx_empty, txt_hw_cmd );
+                           rx_full , loger_finished, rx_empty, txt_hw_cmd_int);
         end loop;
     end process;
 
