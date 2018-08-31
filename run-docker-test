@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#
+# Run docker with vunit and ghdl with current directory mounted in /build.
+# It is ready to run tests via, for example, `make test_fast coverage`
+#
+
+if [ -d /build ]; then
+    export PATH=/opt/ghdl/bin:$PATH
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PYTHONUNBUFFERED=1
+    cd /build/test
+    exec bash
+else
+	docker run -ti -v $PWD:/build mjerabek/ghdl:upstream-gcc /build/run-docker-test
+fi
+
