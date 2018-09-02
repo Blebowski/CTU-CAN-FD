@@ -45,6 +45,10 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    June 2015  Created file
+--    30.8.2018  Pulled Operational State to integrating as long as CAN Node
+--               is disabled. This makes sure that after Node was turned off,
+--               it needs to integrate for 11 recessive bits again, before
+--               turning Transceiver or Receiver!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -121,7 +125,10 @@ begin
             integ_counter                 <= integ_counter;
             unknown_OP_state              <= '0';
 
-            if (set_transciever = '1') then
+
+            if (drv_ena /= ENABLED) then
+                OP_State_r                <= integrating;
+            elsif (set_transciever = '1') then
                 OP_State_r                <= transciever;
             elsif (set_reciever = '1') then
                 OP_State_r                <= reciever;

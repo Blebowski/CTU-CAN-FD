@@ -94,6 +94,15 @@ package body overload_feature is
         o.outcome := true;
 
         ------------------------------------------------------------------------
+        -- Wait until unit comes out of integration. This is to make sure
+        -- that first frame will be transmitted and not that transition to
+        -- "interframe" will be from "off", directly after integration! This
+        -- transition goes directly to "interm_idle" and bit is correctly
+        -- interpreted as SOF and not Overload flag!
+        ------------------------------------------------------------------------
+        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 2500, 3000);
+
+        ------------------------------------------------------------------------
         -- Generate CAN Frame and start transmission
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);

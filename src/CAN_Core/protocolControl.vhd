@@ -234,6 +234,9 @@
 --                is inserted by Bit Stuffing and discarded by Bit Destuffing
 --                automatically upon detection of 0 -> 1 transition on
 --                "fixed_stuff" / "fixed_destuff" signals.
+--   2.9.2018     1. Change from "off" to "idle" directly to "interm_idle", to
+--                   avoid interpretation of SOF as Overload flag direclty
+--                   after integration!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -2734,16 +2737,14 @@ begin
                         data_tx_r           <= RECESSIVE;
                     end if;
 
-                    if (OP_State /= integrating) then
-                        sync_control_r      <= HARD_SYNC;
-                    end if;
-
-                    if (hard_sync_edge = '1' and (OP_State /= integrating)) then
+                    sync_control_r      <= HARD_SYNC;
+                    
+                    if (hard_sync_edge = '1') then
                         PC_State            <= sof;
                         crc_enable_r        <= '1';
                         FSM_preset          <= '1';
 
-                    elsif (rec_trig = '1' and (OP_State /= integrating)) then 
+                    elsif (rec_trig = '1') then 
                       
                         -- If any frame is available here for transmission 
                         -- we lock it already here. If we moved to SOF and
@@ -3178,9 +3179,14 @@ begin
     ----------------------------------------------------------------------------
     when off =>     
         if (drv_ena = ENABLED) then
-            if (not (error_state = bus_off)) then
-                FSM_Preset          <= '1';
-                PC_State            <= interframe;  
+            if (error_state /= bus_off and OP_State /= integrating) then
+
+                -- Note that here we don't want to execute FSM_Preset! We want
+                -- to go directly to "interm_idle", thus we don't think of
+                -- SOF bit as of Overload flag!
+                FSM_Preset          <= '0';
+                PC_State            <= interframe;
+                interm_state        <= interm_idle;
             end if;
         end if;
 

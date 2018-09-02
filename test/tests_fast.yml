@@ -62,6 +62,7 @@ feature:
         byte_enable:
         rtr_pref:
         data_length_code:
+        bus_start:
 reference:
     default:
         <<: *default
