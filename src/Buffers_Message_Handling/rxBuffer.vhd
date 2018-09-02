@@ -148,6 +148,9 @@
 --   10.7.2018    Changed decoding of RWCNT field. Added exception for CAN 
 --                frames with DLC higher than 8, to store only 8 bytes (2 data
 --                words).
+--   31.8.2018    Changed reading of RAM to be synchronous to achieve BRAM
+--                inferrence on Xilinx! Added register "read_mem_word" to which
+--                RAM word is read.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -413,6 +416,8 @@ entity rxBuffer is
     -- frame to the memory.
     signal write_extra_ts           :       boolean;
 
+    -- RX Buffer RAM read memory word
+    signal read_mem_word            :       std_logic_vector(31 downto 0);
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -540,8 +545,8 @@ begin
     -- When buffer is empty the word on address of read pointer is not valid,
     -- provide zeroes instead
     ----------------------------------------------------------------------------
-    rx_read_buff          <= memory(read_pointer) when (rx_empty_int = '0')
-                                                  else
+    rx_read_buff          <= read_mem_word when (rx_empty_int = '0')
+                                           else
                              (OTHERS => '0');
 
 
@@ -673,8 +678,8 @@ begin
                 ----------------------------------------------------------------
                 if (read_frame_counter = 0) then
                     read_frame_counter    <=
-                        to_integer(unsigned(memory(read_pointer)
-                                                  (RWCNT_H downto RWCNT_L)));
+                        to_integer(unsigned(read_mem_word(RWCNT_H downto
+                                                            RWCNT_L)));
 
                 else
                     read_frame_counter <= read_frame_counter - 1;
@@ -997,6 +1002,8 @@ begin
             memory            <= (OTHERS => (OTHERS => '0'));
             -- pragma translate_on
 
+            read_mem_word     <= (OTHERS => '0');
+
         elsif (rising_edge(clk_sys)) then
             
             -- Write to memory either by regular pointer or by "extra timestamp"
@@ -1004,6 +1011,9 @@ begin
             if (write_raw_OK or write_extra_ts) then
                 memory(memory_write_pointer) <= memory_write_data;    
             end if;
+
+            -- Reading memory word
+            read_mem_word <= memory(read_pointer);
 
         end if;
     end process;
