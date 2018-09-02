@@ -237,6 +237,7 @@
 --   2.9.2018     1. Change from "off" to "idle" directly to "interm_idle", to
 --                   avoid interpretation of SOF as Overload flag direclty
 --                   after integration!
+--                2. Added explicit Form Error detection in "delim_ack"!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -2374,6 +2375,13 @@ begin
                             
                             control_pointer     <= control_pointer - 1;
 
+                            -- Form Error detection
+                            if (data_rx = DOMINANT) then
+                                form_Error_r    <= '1';
+                                PC_State        <= error;
+                                FSM_Preset      <= '1';
+                            end if;
+
                         --------------------------------------------------------
                         -- ACK field -> When dominant is received, ACK is valid.
                         --------------------------------------------------------
@@ -2406,13 +2414,16 @@ begin
 
                         --------------------------------------------------------
                         -- ACK Delimiter. If ACK was received -> OK, Error
-                        -- frame otherwise.
+                        -- frame otherwise. If sampled
                         --------------------------------------------------------
                         when 0 =>
-                            if (ack_recieved = '1') then
+                            if (ack_recieved = '1' and data_rx = RECESSIVE) then
                                 PC_State            <= eof;
                             else
                                 PC_State            <= error;
+                                if (data_rx = DOMINANT) then
+                                    form_Error_r    <= '1';
+                                end if;
                             end if;
                             FSM_Preset              <= '1';
 
@@ -2515,11 +2526,20 @@ begin
                         -- ACK delimiter
                         --------------------------------------------------------
                         when 0 => 
-                            if (ack_recieved = '1' and crc_check = '1') then
+                            if (ack_recieved = '1' and crc_check = '1' and
+                                data_rx = RECESSIVE) then
                                 PC_State            <= eof;
                             else
                                 PC_State            <= error;
-                                ack_Error_r         <= '1';
+
+                                if (ack_recieved = '0') then
+                                    ack_Error_r         <= '1';
+                                end if;
+
+                                if (data_rx = DOMINANT) then
+                                    form_Error_r        <= '1';
+                                end if;
+                                
                                 inc_one_r           <= '1';
                             end if; 
                             FSM_preset              <= '1';
