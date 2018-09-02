@@ -57,6 +57,7 @@
 --         smitted by Node 1, since it has 4 frames available! Thus it is
 --         guaranteed that there will be minimal necessary gap for integration
 --         which must be enough for Node 2!
+--      7. Wait until Node 1 transmitts its second frame!
 --      
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -121,12 +122,10 @@ package body bus_start_feature is
         CAN_frame.identifier := 514;
 
         ------------------------------------------------------------------------
-        -- Insert frame to all 4 TXT Buffers of Node 1
+        -- Insert frame to 2 TXT Buffers of Node 1
         ------------------------------------------------------------------------
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
         CAN_send_frame(CAN_frame, 2, ID_1, mem_bus(1), frame_sent);
-        CAN_send_frame(CAN_frame, 3, ID_1, mem_bus(1), frame_sent);
-        CAN_send_frame(CAN_frame, 4, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
         -- Turn on Node 1, Wait until it starts transmitting
@@ -224,6 +223,14 @@ package body bus_start_feature is
                     integer'image(CAN_frame.identifier) severity error;
             -- LCOV_EXCL_STOP
         end if;
+
+        ------------------------------------------------------------------------
+        -- Now wait until Node 1 transmitts frame which lost the arbitration
+        -- so that we leave test environmnet withou pending frames in TXT
+        -- Buffers.
+        ------------------------------------------------------------------------
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        report "Last frame was sent!";
 
   end procedure;
 
