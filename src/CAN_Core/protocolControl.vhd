@@ -3178,9 +3178,10 @@ begin
     ----------------------------------------------------------------------------
     when off =>     
         if (drv_ena = ENABLED) then
-            if (not (error_state = bus_off)) then
+            if (error_state /= bus_off and OP_State /= integrating) then
                 FSM_Preset          <= '1';
-                PC_State            <= interframe;  
+                PC_State            <= interframe;
+                interm_state        <= interm_idle;
             end if;
         end if;
 
