@@ -3046,11 +3046,11 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
-        variable bus_timing     :       bit_time_config_type;
+        signal bus_timing       :       bit_time_config_type;
         variable wait_time      :       integer := 0;
     begin
         -- Read config of the node
-        CAN_read_timing(bus_timing, ID_1, mem_bus(1));
+        CAN_read_timing(bus_timing, ID, mem_bus);
 
         -- Calculate number of clock cycles to wait
         if (nominal) then
