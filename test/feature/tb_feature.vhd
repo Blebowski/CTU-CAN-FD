@@ -273,6 +273,7 @@ begin
             wait until iteration_done = true;
 
             loop_ctr <= loop_ctr + 1;
+            wait for 0 ns;
         end loop;
 
         status <= passed;
