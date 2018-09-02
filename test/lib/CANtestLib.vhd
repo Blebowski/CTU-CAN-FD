@@ -1202,6 +1202,24 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Reads bit timing parameters and waits for length of several bit times.
+    --
+    -- Arguments:
+    --  bits            Number of Bit times to wait for
+    --  nominal         "true" if Nominal Bit time should be used, "false" if
+    --                  Data Bit Time should be used.
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_n_bits(
+        constant bits           : in    natural;
+        constant nominal        : in    boolean;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Calculate length of CAN Frame in bits (stuff bits not included).
     --
     -- Arguments:
@@ -3008,19 +3026,57 @@ package body CANtestLib is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-
-     -- Wait until unit starts to transmitt or recieve
-     CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
+        -- Wait until unit starts to transmitt or recieve
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     end loop;
-
-     -- Wait until error frame is not being transmitted
-     CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     while (r_data(ET_IND) = '0') loop
+        while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     end loop;
+        end loop;
 
+        -- Wait until error frame is not being transmitted
+        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        while (r_data(ET_IND) = '0') loop
+        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        end loop;
+    end procedure;
+
+
+    procedure CAN_wait_n_bits(
+        constant bits           : in    natural;
+        constant nominal        : in    boolean;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable bus_timing     :       bit_time_config_type;
+        variable wait_time      :       integer := 0;
+    begin
+        -- Read config of the node
+        CAN_read_timing(bus_timing, ID_1, mem_bus(1));
+
+        -- Calculate number of clock cycles to wait
+        if (nominal) then
+            wait_time := bus_timing.tq_nbt *
+                            (bus_timing.prop_nbt + bus_timing.ph1_nbt +
+                             bus_timing.ph2_nbt + 1);
+        else
+            wait_time := bus_timing.tq_dbt *
+                            (bus_timing.prop_dbt + bus_timing.ph1_dbt +
+                             bus_timing.ph2_dbt + 1);
+        end if;
+        
+        -- Check Minimal Bit time
+        if (wait_time < 7) then
+            report "Calculated Bit Time shorter than minimal!" severity error;
+        end if;
+
+        -- Count number of bits to wait
+        -- Reading config took some time too, correct "wait_time" by 4 cycles
+        wait_time := wait_time * bits;
+        wait_time := wait_time - 4;
+
+        -- Wait for calculated amount of clock cycles!
+        for i in 0 to wait_time - 1 loop
+            wait until rising_edge(mem_bus.clk_sys);
+        end loop;
     end procedure;
 
 
