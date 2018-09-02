@@ -114,11 +114,11 @@ package body bus_start_feature is
         CAN_turn_controller(false, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
-        -- Generate frame, hardcode ID to 10, Identifier type to 10
+        -- Generate frame, hardcode ID to 514, Identifier type to BASE
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.ident_type := BASE;
-        CAN_frame.identifier := 10;
+        CAN_frame.identifier := 514;
 
         ------------------------------------------------------------------------
         -- Insert frame to all 4 TXT Buffers of Node 1
@@ -141,12 +141,12 @@ package body bus_start_feature is
         end loop;
 
         ------------------------------------------------------------------------
-        -- Modify frame to have ID 9, and insert it to Node 2 for transmission.
+        -- Modify frame to have ID 513, and insert it to Node 2 for transmission.
         -- Enable Node 2, so that it may start integration.
         ------------------------------------------------------------------------
         report "Turning ON Node 2.";
         wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 10, 11);
-        CAN_frame.identifier := 9;
+        CAN_frame.identifier := 513;
         CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
         CAN_turn_controller(true, ID_2, mem_bus(2));
 
@@ -187,9 +187,22 @@ package body bus_start_feature is
 
         ------------------------------------------------------------------------
         -- Read status of RX Buffer in Node 1! It should have sent ACK and
-        -- Received frame from Node 2 with ID = 9!
+        -- Received frame from Node 2 with ID = 513!
         -- If not, Node 2 did not manage to get out of Integration during
         -- minimal necessary time, and test fails!
+        --
+        -- Note that IDs were selected so that there would be RECESSIVE bit
+        -- in second bit of ID! This is to avoid error frame in case when
+        -- Node 2 locks after SOF bit (according to standard it can skip SOF,
+        -- if it detects DOMINANT during Interrmission), and thus does not
+        -- send Stuff bit as Node 1. Due to this, CAN FD standard does not
+        -- increment error counters upon stuff error in Arbitration!
+        -- After Error Frame, both nodes have frame available and both start
+        -- transmission of SOF, so this error will not cause deadlock!
+        -- 
+        -- CTU CAN FD tries to be smarter, not skip SOF, but move Protocol
+        -- Control to SOF upon hard sync edge though! This thing is verified
+        -- in special feature test!
         ------------------------------------------------------------------------
         get_rx_buf_state(rx_state, ID_1, mem_bus(1));
         report "Read RX Buffer state";
@@ -204,10 +217,10 @@ package body bus_start_feature is
 
         CAN_frame.identifier := 0;
         CAN_read_frame(CAN_frame, ID_1, mem_bus(1));
-        if (CAN_frame.identifier /= 9) then
+        if (CAN_frame.identifier /= 513) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Wrong Identifier received by Node 1. Expected: 9 , Real: " &
+            report "Wrong Identifier received by Node 1. Expected: 513 , Real: " &
                     integer'image(CAN_frame.identifier) severity error;
             -- LCOV_EXCL_STOP
         end if;
