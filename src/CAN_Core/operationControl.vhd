@@ -126,7 +126,7 @@ begin
             unknown_OP_state              <= '0';
 
 
-            if (drv_end /= ENABLED) then
+            if (drv_ena /= ENABLED) then
                 OP_State_r                <= integrating;
             elsif (set_transciever = '1') then
                 OP_State_r                <= transciever;
