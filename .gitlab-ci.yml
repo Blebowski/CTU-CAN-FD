@@ -27,6 +27,14 @@ build_driver:
         - cd driver
         - "make -j`nproc`"
 
+build_linux_driver:
+    stage: build
+    only: *only
+    image: hathi.duckdns.org/user/ctucanfd_drvtest
+    script:
+        - cd driver/linux
+        - "make -j`nproc` KDIR=/linux/build"
+
 test_ip_fast:
     stage: test
     only: *only
