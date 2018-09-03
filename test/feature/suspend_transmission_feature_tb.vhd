@@ -199,7 +199,7 @@ package body suspend_transmission_feature is
             while (protocol_type'VAL(to_integer(unsigned(
                     iout(1).stat_bus(STAT_PC_STATE_HIGH downto
                                         STAT_PC_STATE_LOW))))
-                    = sof)
+                    /= sof)
             loop
                 wait until rising_edge(mem_bus(1).clk_sys);
             end loop;
