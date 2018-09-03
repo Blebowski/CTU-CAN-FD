@@ -78,8 +78,8 @@ use work.pkg_feature_exec_dispath.all;
 
 use work.CAN_FD_register_map.all;
 
-package bus_start_feature is
-    procedure bus_start_feature_exec(
+package suspend_transmission is
+    procedure suspend_transmission(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -90,8 +90,8 @@ package bus_start_feature is
 end package;
 
 
-package body bus_start_feature is
-    procedure bus_start_feature_exec(
+package body suspend_transmission is
+    procedure suspend_transmission(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
