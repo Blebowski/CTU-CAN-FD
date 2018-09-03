@@ -92,6 +92,7 @@ feature:
         rtr_pref:
         data_length_code:
         bus_start:
+        suspend_transmission:
 sanity:
     default:
         <<: *default

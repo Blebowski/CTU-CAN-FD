@@ -945,6 +945,22 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
+    ----------------------------------------------------------------------------
+    -- Read Bus timing configuration from CTU CAN FD Core.
+    -- (duration of bit phases, synchronisation jump width, baud-rate prescaler)
+    --
+    -- Arguments:
+    --  bus_timing      Bus timing structure that will be filled by timing
+    --                  configuration.
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_read_timing_v(
+        variable bus_timing     : out   bit_time_config_type;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
 
     ----------------------------------------------------------------------------
     -- Print Bus timing configuration of CTU CAN FD Core.
@@ -1196,6 +1212,24 @@ package CANtestLib is
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure CAN_wait_error_transmitted(
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Reads bit timing parameters and waits for length of several bit times.
+    --
+    -- Arguments:
+    --  bits            Number of Bit times to wait for
+    --  nominal         "true" if Nominal Bit time should be used, "false" if
+    --                  Data Bit Time should be used.
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_n_bits(
+        constant bits           : in    natural;
+        constant nominal        : in    boolean;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -2367,6 +2401,38 @@ package body CANtestLib is
     end procedure;
 
 
+    procedure CAN_read_timing_v(
+        variable bus_timing     : out   bit_time_config_type;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+
+        -- Bit timing register - Nominal
+        CAN_read(data, BTR_ADR, ID, mem_bus);
+        bus_timing.tq_nbt    := to_integer(unsigned(data(BRP_H downto BRP_L)));
+        bus_timing.prop_nbt  := to_integer(unsigned(data(PROP_H downto PROP_L)));
+        bus_timing.ph1_nbt   := to_integer(unsigned(data(PH1_H downto PH1_L)));
+        bus_timing.ph2_nbt   := to_integer(unsigned(data(PH2_H downto PH2_L)));
+        bus_timing.sjw_nbt   := to_integer(unsigned(data(SJW_H downto SJW_L)));
+
+        -- Bit timing register - Data
+        CAN_read(data, BTR_FD_ADR, ID, mem_bus);
+        bus_timing.tq_dbt    := to_integer(unsigned(data(BRP_FD_H downto
+                                                         BRP_FD_L)));
+        bus_timing.prop_dbt  := to_integer(unsigned(data(PROP_FD_H downto
+                                                         PROP_FD_L)));
+        bus_timing.ph1_dbt   := to_integer(unsigned(data(PH1_FD_H downto
+                                                         PH1_FD_L)));
+        bus_timing.ph2_dbt   := to_integer(unsigned(data(PH2_FD_H downto
+                                                         PH2_FD_L)));
+        bus_timing.sjw_dbt   := to_integer(unsigned(data(SJW_FD_H downto
+                                                         SJW_FD_L)));
+    end procedure;
+
+
+
     procedure CAN_print_timing(
         constant   bus_timing       : in    bit_time_config_type
     )is
@@ -3008,19 +3074,57 @@ package body CANtestLib is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-
-     -- Wait until unit starts to transmitt or recieve
-     CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
+        -- Wait until unit starts to transmitt or recieve
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     end loop;
-
-     -- Wait until error frame is not being transmitted
-     CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     while (r_data(ET_IND) = '0') loop
+        while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-     end loop;
+        end loop;
 
+        -- Wait until error frame is not being transmitted
+        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        while (r_data(ET_IND) = '0') loop
+        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        end loop;
+    end procedure;
+
+
+    procedure CAN_wait_n_bits(
+        constant bits           : in    natural;
+        constant nominal        : in    boolean;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable bus_timing     :       bit_time_config_type;
+        variable wait_time      :       integer := 0;
+    begin
+        -- Read config of the node
+        CAN_read_timing_v(bus_timing, ID, mem_bus);
+
+        -- Calculate number of clock cycles to wait
+        if (nominal) then
+            wait_time := bus_timing.tq_nbt *
+                            (bus_timing.prop_nbt + bus_timing.ph1_nbt +
+                             bus_timing.ph2_nbt + 1);
+        else
+            wait_time := bus_timing.tq_dbt *
+                            (bus_timing.prop_dbt + bus_timing.ph1_dbt +
+                             bus_timing.ph2_dbt + 1);
+        end if;
+        
+        -- Check Minimal Bit time
+        if (wait_time < 7) then
+            report "Calculated Bit Time shorter than minimal!" severity error;
+        end if;
+
+        -- Count number of bits to wait
+        -- Reading config took some time too, correct "wait_time" by 4 cycles
+        wait_time := wait_time * bits;
+        wait_time := wait_time - 4;
+
+        -- Wait for calculated amount of clock cycles!
+        for i in 0 to wait_time - 1 loop
+            wait until rising_edge(mem_bus.clk_sys);
+        end loop;
     end procedure;
 
 

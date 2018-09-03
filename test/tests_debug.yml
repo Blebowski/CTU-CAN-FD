@@ -1,0 +1,13 @@
+_default: &default
+    log_level: info
+    error_tolerance: 0
+    # seed: 0 # optional; use to reconstruct results from randomized runs
+    # randomize: false
+feature:
+    default:
+        <<: *default
+        iterations: 1
+        timeout: 100 ms
+        wave: feature/feature_env_setup.tcl
+    tests:
+        suspend_transmission:
