@@ -46,14 +46,15 @@
 --      2. Read out error state of both nodes. Check that Node 1 is error 
 --         passive, and Node 2 is error active.
 --      Loop (Forever):
---          3. Insert frame to two TXT Buffers of Node 1. Insert frame to Node 2.
---          4. Wait until Node 1 starts transmission.
---          5. Insert frame to Node 2.
---          6. Wait until frame is transmitted by Node 1 (end of EOF).
---          7. Wait for 3 Bit times, to compensate for Intermission field!
---          8. Wait for N Bit times (suspend field).
---          9. Give command to Node 2 to start Transmission.
---         10. Check that Node 1 did become receiver, not transmitter although
+--          3. Set Error counter to 150 to force erro passive again!
+--          4. Insert frame to two TXT Buffers of Node 1. Insert frame to Node 2.
+--          5. Wait until Node 1 starts transmission.
+--          6. Insert frame to Node 2.
+--          7. Wait until frame is transmitted by Node 1 (end of EOF).
+--          8. Wait for 3 Bit times, to compensate for Intermission field!
+--          9. Wait for N Bit times (suspend field).
+--         10. Give command to Node 2 to start Transmission.
+--         11. Check that Node 1 did become receiver, not transmitter although
 --             it has frame for transmission available. It can become transmi-
 --             tter only if we waited more than 7 bits! Break out of loop in
 --             this case and check that N=8!
@@ -154,6 +155,12 @@ package body suspend_transmission_feature is
 
         while (true) loop
 
+            --------------------------------------------------------------------
+            -- Reset Error counters to 150 again. 
+            --------------------------------------------------------------------
+            error_ctrs.rx_counter := 150;
+            set_error_counters(error_ctrs, ID_1, mem_bus(1));        
+        
             --------------------------------------------------------------------
             -- Send two frames from Node 1. First will start transmission.
             -- Then Add the same frame to Node 2. 
