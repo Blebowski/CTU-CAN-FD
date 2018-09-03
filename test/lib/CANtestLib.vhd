@@ -945,6 +945,22 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
+    ----------------------------------------------------------------------------
+    -- Read Bus timing configuration from CTU CAN FD Core.
+    -- (duration of bit phases, synchronisation jump width, baud-rate prescaler)
+    --
+    -- Arguments:
+    --  bus_timing      Bus timing structure that will be filled by timing
+    --                  configuration.
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_read_timing_v(
+        variable bus_timing     : out   bit_time_config_type;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
 
     ----------------------------------------------------------------------------
     -- Print Bus timing configuration of CTU CAN FD Core.
@@ -2385,6 +2401,38 @@ package body CANtestLib is
     end procedure;
 
 
+    procedure CAN_read_timing_v(
+        variable bus_timing     : out   bit_time_config_type;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :       std_logic_vector(31 downto 0);
+    begin
+
+        -- Bit timing register - Nominal
+        CAN_read(data, BTR_ADR, ID, mem_bus);
+        bus_timing.tq_nbt    := to_integer(unsigned(data(BRP_H downto BRP_L)));
+        bus_timing.prop_nbt  := to_integer(unsigned(data(PROP_H downto PROP_L)));
+        bus_timing.ph1_nbt   := to_integer(unsigned(data(PH1_H downto PH1_L)));
+        bus_timing.ph2_nbt   := to_integer(unsigned(data(PH2_H downto PH2_L)));
+        bus_timing.sjw_nbt   := to_integer(unsigned(data(SJW_H downto SJW_L)));
+
+        -- Bit timing register - Data
+        CAN_read(data, BTR_FD_ADR, ID, mem_bus);
+        bus_timing.tq_dbt    := to_integer(unsigned(data(BRP_FD_H downto
+                                                         BRP_FD_L)));
+        bus_timing.prop_dbt  := to_integer(unsigned(data(PROP_FD_H downto
+                                                         PROP_FD_L)));
+        bus_timing.ph1_dbt   := to_integer(unsigned(data(PH1_FD_H downto
+                                                         PH1_FD_L)));
+        bus_timing.ph2_dbt   := to_integer(unsigned(data(PH2_FD_H downto
+                                                         PH2_FD_L)));
+        bus_timing.sjw_dbt   := to_integer(unsigned(data(SJW_FD_H downto
+                                                         SJW_FD_L)));
+    end procedure;
+
+
+
     procedure CAN_print_timing(
         constant   bus_timing       : in    bit_time_config_type
     )is
@@ -3046,11 +3094,11 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
-        signal bus_timing       :       bit_time_config_type;
+        variable bus_timing     :       bit_time_config_type;
         variable wait_time      :       integer := 0;
     begin
         -- Read config of the node
-        CAN_read_timing(bus_timing, ID, mem_bus);
+        CAN_read_timing_v(bus_timing, ID, mem_bus);
 
         -- Calculate number of clock cycles to wait
         if (nominal) then
