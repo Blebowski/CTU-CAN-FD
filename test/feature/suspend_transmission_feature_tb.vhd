@@ -51,13 +51,14 @@
 --          5. Wait until Node 1 starts transmission.
 --          6. Insert frame to Node 2.
 --          7. Wait until frame is transmitted by Node 1 (end of EOF).
---          8. Wait for 3 Bit times, to compensate for Intermission field!
+--          8. Wait for 2 Bit times, to compensate for Intermission field! see
+--              further explanation!
 --          9. Wait for N Bit times (suspend field).
 --         10. Give command to Node 2 to start Transmission.
 --         11. Check that Node 1 did become receiver, not transmitter although
 --             it has frame for transmission available. It can become transmi-
---             tter only if we waited more than 7 bits! Break out of loop in
---             this case and check that N=8!
+--             tter only if we waited more than 7 bits (length of Suspend)!
+--             Break out of loop in this case and check that N=8!
 --
 --  Just found out that Gedit supports insertion of emojis. Lets see how
 --   this is gonna work... 🙄🤔😳🤤
@@ -194,9 +195,18 @@ package body suspend_transmission_feature is
             report "End of EOF field";
             wait for 20 ns;
 
-            -- Wait for N + 3 Bit times. 3 is length of intermission,
-            -- remaining N bits are prolongging Suspend field!
-            CAN_wait_n_bits(n + 3, true, ID_1, mem_bus(1));
+            --------------------------------------------------------------------
+            -- Wait for N + 2 Bit times. 3 is length of intermission. Thus if
+            -- we wait 2 bit times, we insert the frame in the last bit of
+            -- Intermission and Node 2 will start transmission right after
+            -- the end of Intermission.
+            -- If we wait for 3 bit times, we mark the frame as valid during
+            -- first bit of Idle, and start frame one bit after the end of
+            -- intermission.
+            -- Thisway when N equals to number of bits we waited after the 
+            -- end of intermission.
+            --------------------------------------------------------------------
+            CAN_wait_n_bits(n + 2, true, ID_1, mem_bus(1));
             report "Waited " & integer'image(n) & " bits";
 
             -- Give command to the frame in Node 2 for transmission!
