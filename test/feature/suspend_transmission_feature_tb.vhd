@@ -109,7 +109,7 @@ package body bus_start_feature is
         variable rx_state           :       SW_RX_Buffer_info;
         variable error_ctrs         :       SW_error_counters :=
                                             (0, 0, 0, 0);
-        variable fault_state        :       SW_fault_state := error_active;
+        variable fault_state        :       SW_fault_state := fc_error_active;
         variable n                  :       integer := 0;
         variable status             :       SW_status;
     begin
@@ -122,7 +122,7 @@ package body bus_start_feature is
         set_error_counters(error_ctrs, ID_1, mem_bus(1));        
         wait for 30 ns;
         get_fault_state(fault_state, ID_1, mem_bus(1));
-        if (fault_state /= error_passive) then
+        if (fault_state /= fc_error_passive) then
             -- LCOV_EXCL_START
             o.outcome := false;
             report "Node 1 not Error passive as expected!"
@@ -137,7 +137,7 @@ package body bus_start_feature is
         set_error_counters(error_ctrs, ID_2, mem_bus(2));        
         wait for 30 ns;
         get_fault_state(fault_state, ID_2, mem_bus(2));
-        if (fault_state /= error_active) then
+        if (fault_state /= fc_error_active) then
             -- LCOV_EXCL_START
             o.outcome := false;
             report "Node 2 not Error Active as expected!"
