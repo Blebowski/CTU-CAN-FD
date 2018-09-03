@@ -190,7 +190,7 @@ package body bus_start_feature is
             -- Wait for N + 3 Bit times. 3 is length of intermission,
             -- remaining N bits are prolongging Suspend field!
             CAN_wait_n_bits(n + 3, true, ID_1, mem_bus(1));
-            report "Waited " & integer'image(n) " bits";
+            report "Waited " & integer'image(n) & " bits";
 
             -- Give command to the frame in Node 2 for transmission!
             send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
@@ -222,7 +222,8 @@ package body bus_start_feature is
                 if (n < 8) then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "Suspend transmission shorter than 8 bits!" severity error;
+                    report "Suspend transmission shorter than 8 bits!"
+                        severity error;
                     -- LCOV_EXCL_STOP
                 else
                     report "Suspend transmission equal to 8 bits!";
@@ -231,7 +232,7 @@ package body bus_start_feature is
             else
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "Unit in SOF, but not Transceiver nor Receiver!";
+                report "Unit in SOF, but not Transceiver nor Receiver!"
                     severity error;
                 -- LCOV_EXCL_STOP
             end if;
