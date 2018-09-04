@@ -500,6 +500,7 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 					 "no frames in the FIFO!");
 			break;
 		}
+		/* TODO: maybe process DOI too? */
 
 		ctucan_rx(ndev);
 		ctu_can_fd_int_clr(&priv->p, iec);
@@ -512,6 +513,7 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 
 	if (work_done < quota) {
 		napi_complete(napi);
+		iec.s.doi = 1; /* Also re-enable DOI */
 		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
 	}
 
@@ -616,6 +618,10 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		netdev_info(ndev, "RXBNEI");
 		icr.u32 = 0;
 		icr.s.rbnei = 1;
+		ctu_can_fd_int_clr(&priv->p, icr);
+
+		/* Disable RXBNEI and DOI */
+		icr.s.doi = 1;
 		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_CLR, icr.u32);
 		napi_schedule(&priv->napi);
 	}
@@ -646,8 +652,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 
 	/* Error interrupts */
 	if (isr.s.ei || isr.s.doi || isr.s.epi || isr.s.ali) {
-		netdev_info(ndev, "some ERR interrupt");
 		icr.u32 = isr.u32 & CTUCANFD_INT_ERROR;
+		netdev_info(ndev, "some ERR interrupt: clearing 0x%08x", icr.u32);
 		ctu_can_fd_int_clr(&priv->p, icr);
 		ctucan_err_interrupt(ndev, isr);
 	}
