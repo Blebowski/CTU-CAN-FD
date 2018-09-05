@@ -572,7 +572,7 @@ begin
         then
             mism_ctr <= mism_ctr + 1;
         else
-            mism_ctr <= '0';
+            mism_ctr <= 0;
         end if;
 
         wait for 0 ns;
