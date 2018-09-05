@@ -540,8 +540,7 @@ begin
     ----------------------------------------------------------------------------
     -- Compare DUT outputs with model outputs
     ----------------------------------------------------------------------------
-    frame_valid_mism <= true when (mod_frame_valid_out /= tran_frame_valid_out and
-                                   now /= 0 fs)
+    frame_valid_mism <= true when (mod_frame_valid_out /= tran_frame_valid_out)
                              else
                         false;
 
@@ -549,17 +548,16 @@ begin
                              ((mod_dlc_out            /= tran_dlc_out) or
                               (mod_is_rtr             /= tran_is_rtr) or
                               (mod_ident_type_out     /= tran_ident_type_out) or
-                              (mod_frame_type_out     /= tran_frame_type_out)) and
-                              (now /= 0 fs)
+                              (mod_frame_type_out     /= tran_frame_type_out))
                           else
                      false;
 
-    hw_cmd_buf_index_mism <= true when (txt_hw_cmd_buf_index /= mod_buf_index and now /= 0 fs)
+    hw_cmd_buf_index_mism <= true when (txt_hw_cmd_buf_index /= mod_buf_index)
                              else
                         false;
 
     sel_buf_mism <= true when (last_locked_index   /= mod_buf_index and
-                               txtb_changed = '0' and now /= 0 fs)
+                               txtb_changed = '0')
                          else
                     false;
 
@@ -569,7 +567,7 @@ begin
     ----------------------------------------------------------------------------
     cons_check_proc : process
     begin
-        if (frame_valid_mism or metadata_valid_mism or sel_buf_mism or
+        if (frame_valid_mism or metadata_mism or sel_buf_mism or
             hw_cmd_buf_index_mism)
         then
             mism_ctr <= mism_ctr + 1;
