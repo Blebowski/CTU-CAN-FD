@@ -241,7 +241,7 @@ begin
         -- Additional delay to be sure that we catch HW command lock as real
         -- TX Arbitrator does by combinational path!
         ------------------------------------------------------------------------
-        wait for 1 ns;
+        --wait for 1 ns;
 
         -- Choose random TXT Buffer
         rand_real_v(rand_ctr_1, buf_index);
