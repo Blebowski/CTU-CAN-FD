@@ -546,15 +546,15 @@ begin
                         false;
 
     metadata_mism <= true when 
-                             (mod_dlc_out            /= tran_dlc_out) or
-                             (mod_is_rtr             /= tran_is_rtr) or
-                             (mod_ident_type_out     /= tran_ident_type_out) or
-                             (mod_frame_type_out     /= tran_frame_type_out)) and
-                              now /= 0 fs)
+                             ((mod_dlc_out            /= tran_dlc_out) or
+                              (mod_is_rtr             /= tran_is_rtr) or
+                              (mod_ident_type_out     /= tran_ident_type_out) or
+                              (mod_frame_type_out     /= tran_frame_type_out)) and
+                              (now /= 0 fs)
                           else
                      false;
 
-    hw_cmd_buf_index_mism <= true when (txt_hw_cmd_buf_index   /= mod_buf_index and now /= 0 fs)
+    hw_cmd_buf_index_mism <= true when (txt_hw_cmd_buf_index /= mod_buf_index and now /= 0 fs)
                              else
                         false;
 
