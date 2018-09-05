@@ -43,6 +43,8 @@
 --    30.5.2016   Created file
 --    23.4.2018   Updated test to cover TX Arbitrator with continous timestamp
 --                load.
+--    5.9.2018    Relaxed timing conditions. Allowed one clock cycle mismatch
+--                between DUT and model. 
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -139,6 +141,13 @@ architecture tx_arb_unit_test of CAN_test is
 
     -- Delay propagation of metadata to the output!
     signal del_counter            :  natural;
+
+    -- Signals indicating mismatch between Model and DUT
+    signal frame_valid_mism       :  boolean;
+    signal metadata_mism          :  boolean;
+    signal hw_cmd_buf_index_mism  :  boolean;
+    signal sel_buf_mism           :  boolean;
+    signal mism_ctr               :  boolean;
 
     ----------------------------------------------------------------------------
     -- Compare function for two 64 bit std logic vectors
@@ -531,38 +540,46 @@ begin
     ----------------------------------------------------------------------------
     -- Compare DUT outputs with model outputs
     ----------------------------------------------------------------------------
-    cmp_proc : process
+    frame_valid_mism <= true when (mod_frame_valid_out /= tran_frame_valid_out and
+                                   now /= 0 fs)
+                             else
+                        false;
+
+    metadata_mism <= true when 
+                             (mod_dlc_out            /= tran_dlc_out) or
+                             (mod_is_rtr             /= tran_is_rtr) or
+                             (mod_ident_type_out     /= tran_ident_type_out) or
+                             (mod_frame_type_out     /= tran_frame_type_out)) and
+                              now /= 0 fs)
+                          else
+                     false;
+
+    hw_cmd_buf_index_mism <= true when (txt_hw_cmd_buf_index   /= mod_buf_index and now /= 0 fs)
+                             else
+                        false;
+
+    sel_buf_mism <= true when (last_locked_index   /= mod_buf_index and
+                               txtb_changed = '0' and now /= 0 fs)
+                         else
+                    false;
+
+
+    ----------------------------------------------------------------------------
+    -- Allow only one clock cycle mismatch!
+    ----------------------------------------------------------------------------
+    cons_check_proc : process
     begin
-
-        if (mod_frame_valid_out    /= tran_frame_valid_out and now /= 0 fs) then
-            -- LCOV_EXCL_START
-            log("DUT and Model Frame valid not matching!", error_l, log_level);
-            cmp_err_ctr          <= cmp_err_ctr + 1;
-            -- LCOV_EXCL_STOP
+        if (frame_valid_mism or metadata_valid_mism or sel_buf_mism or
+            hw_cmd_buf_index_mism)
+        then
+            mism_ctr <= mism_ctr + 1;
+        else
+            mism_ctr <= '0';
         end if;
 
-        if (((mod_dlc_out            /= tran_dlc_out) or
-             (mod_is_rtr             /= tran_is_rtr) or
-             (mod_ident_type_out     /= tran_ident_type_out) or
-             (mod_frame_type_out     /= tran_frame_type_out)) and now /= 0 fs)
-        then
-            -- LCOV_EXCL_START
-            log("DUT and Model metadata not matching!", error_l, log_level);
-            cmp_err_ctr          <= cmp_err_ctr + 1;
-            -- LCOV_EXCL_STOP
-        end if;
+        wait for 0 ns;
 
-        if (txt_hw_cmd_buf_index   /= mod_buf_index and now /= 0 fs)
-        then
-            -- LCOV_EXCL_START
-            log("DUT and Model buffer index not matching!", error_l, log_level);
-            cmp_err_ctr          <= cmp_err_ctr + 1;
-            -- LCOV_EXCL_STOP
-        end if;
-
-        if (last_locked_index   /= mod_buf_index and
-            txtb_changed = '0' and now /= 0 fs)
-        then
+        if (mism_ctr = 2) then
             -- LCOV_EXCL_START
             log("Buffer change not detected!", error_l, log_level);
             cmp_err_ctr          <= cmp_err_ctr + 1;
