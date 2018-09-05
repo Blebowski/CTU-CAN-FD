@@ -147,7 +147,7 @@ architecture tx_arb_unit_test of CAN_test is
     signal metadata_mism          :  boolean;
     signal hw_cmd_buf_index_mism  :  boolean;
     signal sel_buf_mism           :  boolean;
-    signal mism_ctr               :  boolean;
+    signal mism_ctr               :  natural := 0;
 
     ----------------------------------------------------------------------------
     -- Compare function for two 64 bit std logic vectors
