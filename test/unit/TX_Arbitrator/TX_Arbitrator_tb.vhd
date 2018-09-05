@@ -579,7 +579,7 @@ begin
 
         if (mism_ctr = 2) then
             -- LCOV_EXCL_START
-            log("Buffer change not detected!", error_l, log_level);
+            log("Mismatch for more than 2 clock cycles!", error_l, log_level);
             cmp_err_ctr          <= cmp_err_ctr + 1;
             -- LCOV_EXCL_STOP
         end if;
