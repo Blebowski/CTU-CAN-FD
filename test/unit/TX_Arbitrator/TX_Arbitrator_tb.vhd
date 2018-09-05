@@ -237,12 +237,6 @@ begin
             apply_rand_seed(seed, 3, rand_ctr_1);
         end if;
 
-        ------------------------------------------------------------------------
-        -- Additional delay to be sure that we catch HW command lock as real
-        -- TX Arbitrator does by combinational path!
-        ------------------------------------------------------------------------
-        --wait for 1 ns;
-
         -- Choose random TXT Buffer
         rand_real_v(rand_ctr_1, buf_index);
         buf_index := buf_index * 3.0;
