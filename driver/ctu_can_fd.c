@@ -440,6 +440,8 @@ err_warning:
 
 	/* Check for RX FIFO Overflow interrupt */
 	if (isr.s.doi) {
+		union ctu_can_fd_int_stat icr;
+
 		netdev_info(ndev, "  doi (rx fifo overflow)");
 		stats->rx_over_errors++;
 		stats->rx_errors++;
@@ -447,6 +449,17 @@ err_warning:
 			cf->can_id |= CAN_ERR_CRTL;
 			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
 		}
+
+		/* Clear Data Overrun */
+		ctu_can_fd_clr_overrun_flag(&priv->p);
+		// TODO: this still sometimes fails without the print (maybe)
+		// -> test it
+		netdev_info(ndev, "  DOS=%d after COMMAND[CDR]", ctu_can_get_status(&priv->p).s.dos);
+
+		/* And clear the DOI flag again */
+		icr.u32 = 0;
+		icr.s.doi = 1;
+		ctu_can_fd_int_clr(&priv->p, icr);
 	}
 
 	/* Check for Bus Error interrupt */
