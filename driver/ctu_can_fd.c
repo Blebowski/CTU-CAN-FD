@@ -561,6 +561,10 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct net_device_stats *stats = &ndev->stats;
+	bool first = true;
+	union ctu_can_fd_int_stat icr;
+	bool some_buffers_processed;
+
 	netdev_dbg(ndev, "ctucan_tx_interrupt");
 
 	/*
@@ -572,38 +576,57 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 	*/
 
 
-	while ((int)(priv->txb_head - priv->txb_tail) > 0) {
-		u32 txb_idx = priv->txb_tail & priv->txb_mask;
-		u32 status = ctu_can_fd_get_tx_status(&priv->p, txb_idx);
+	icr.u32 = 0;
+	icr.s.txbhci = 1;
+	do {
+		some_buffers_processed = false;
+		while ((int)(priv->txb_head - priv->txb_tail) > 0) {
+			u32 txb_idx = priv->txb_tail & priv->txb_mask;
+			u32 status = ctu_can_fd_get_tx_status(&priv->p, txb_idx);
 
-		netdev_dbg(ndev, "TXI: TXB#%u: status 0x%x", txb_idx, status);
-		switch (status) {
-		case TXT_TOK:
-			netdev_dbg(ndev, "TXT_OK");
-			can_get_echo_skb(ndev, txb_idx);
-			stats->tx_packets++;
-		break;
-		case TXT_ERR:
-			netdev_warn(ndev, "TXB in Error state");
-			can_free_echo_skb(ndev, txb_idx);
-			// TODO: send some error frame - but what should it contain?
-		break;
-		case TXT_ABT:
-			netdev_warn(ndev, "TXB in Aborted state");
-			can_free_echo_skb(ndev, txb_idx);
-			// TODO: send some error frame - but what should it contain?
-		break;
-		default:
-			netdev_err(ndev, "BUG: TXB#%u not in a finished state (0x%x)!", txb_idx, status);
-			// what to do???
-			return;
+			netdev_dbg(ndev, "TXI: TXB#%u: status 0x%x", txb_idx, status);
+			switch (status) {
+			case TXT_TOK:
+				netdev_dbg(ndev, "TXT_OK");
+				can_get_echo_skb(ndev, txb_idx);
+				stats->tx_packets++;
+			break;
+			case TXT_ERR:
+				netdev_warn(ndev, "TXB in Error state");
+				can_free_echo_skb(ndev, txb_idx);
+				// TODO: send some error frame - but what should it contain?
+			break;
+			case TXT_ABT:
+				netdev_warn(ndev, "TXB in Aborted state");
+				can_free_echo_skb(ndev, txb_idx);
+				// TODO: send some error frame - but what should it contain?
+			break;
+			default:
+				/* Bug only if the first buffer is not finished,
+				 * otherwise it is pretty much expected
+				 */
+				if (first) {
+					netdev_err(ndev, "BUG: TXB#%u not in a finished state (0x%x)!", txb_idx, status);
+					/* do not clear nor wake */
+					return;
+				}
+				/* some_buffers_processed is still false */
+				goto clear;
+			}
+			priv->txb_tail++;
+			first = false;
+			some_buffers_processed = true;
+
+			/* Adjust priorities *before* marking the buffer as empty. */
+			ctucan_rotate_txb_prio(ndev);
+			ctu_can_fd_txt_set_empty(&priv->p, txb_idx);
 		}
-		priv->txb_tail++;
-
-		/* Adjust priorities *before* marking the buffer as empty. */
-		ctucan_rotate_txb_prio(ndev);
-		ctu_can_fd_txt_set_empty(&priv->p, txb_idx);
-	}
+clear:
+		/* Clear the interrupt again as not to receive it again for
+		 * a buffer we already handled (possibly causing the bug log)
+		 */
+		ctu_can_fd_int_clr(&priv->p, icr);
+	} while (some_buffers_processed);
 	can_led_event(ndev, CAN_LED_EVENT_TX);
 	netif_wake_queue(ndev);
 }
