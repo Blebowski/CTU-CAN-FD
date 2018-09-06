@@ -452,9 +452,15 @@ err_warning:
 
 		/* Clear Data Overrun */
 		ctu_can_fd_clr_overrun_flag(&priv->p);
-		// TODO: this still sometimes fails without the print (maybe)
-		// -> test it
-		netdev_info(ndev, "  DOS=%d after COMMAND[CDR]", ctu_can_get_status(&priv->p).s.dos);
+		/* TODO: this still sometimes fails without the dummy read
+		 * Theoretically it is possible for the 2 bus accesses (flg
+		 * clear, irq clear) to become tightly adjacent and the
+		 * pipelining effects will cause that the IRQ clear request
+		 * is ignored.
+		 * The dummy read would prevent this.
+		 * We still have to write a feature test for this.
+		 */
+		//netdev_info(ndev, "  DOS=%d after COMMAND[CDR]", ctu_can_get_status(&priv->p).s.dos);
 
 		/* And clear the DOI flag again */
 		icr.u32 = 0;
