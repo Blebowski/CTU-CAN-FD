@@ -14,7 +14,7 @@ d = Path(abspath(__file__)).parent
 
 def setup_logging() -> None:
     with Path(d / 'logging.yaml').open('rt', encoding='utf-8') as f:
-        cfg = yaml.load(f)
+        cfg = yaml.safe_load(f)
     logging.setLogRecordFactory(MyLogRecord)
     logging.config.dictConfig(cfg)
     global log
@@ -101,7 +101,7 @@ def test(obj, config, vunit_args):
     config_file = base / config
     out_basename = os.path.splitext(config)[0]
     with config_file.open('rt', encoding='utf-8') as f:
-        config = yaml.load(f)
+        config = yaml.safe_load(f)
     build.mkdir(exist_ok=True)
     os.chdir(str(build))
 

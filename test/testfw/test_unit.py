@@ -25,7 +25,8 @@ class UnitTests(TestsBase):
                 pprint([x.name for x in unit_tests])
                 raise RuntimeError('Testbench {}_unit_test does not exist'
                                    + ' (but specified in config).'.format(name))
-            assert len(tb) == 1
+            elif len(tb) != 1:
+                raise RuntimeError('Multiple tests matching "{}"'.format(name))
             tb = tb[0]
             tb.set_generic('timeout', cfg['timeout'])
             tb.set_generic('iterations', cfg['iterations'])
