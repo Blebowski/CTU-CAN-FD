@@ -238,6 +238,9 @@
 --                   avoid interpretation of SOF as Overload flag direclty
 --                   after integration!
 --                2. Added explicit Form Error detection in "delim_ack"!
+--   7.9.2018     Fixed duration of overload flag superposition and error flag
+--                superposition. After accepting 14 DOMINANT Bits (not 13
+--                as before), error counter is incremented again!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -2813,7 +2816,7 @@ begin
             --------------------------------------------------------------------
             -- Pointer for recieving the superposition of error flags
             --------------------------------------------------------------------
-            tran_pointer        <= 12;
+            tran_pointer        <= 13;
             err_frame_state     <= err_flg_sup;
             destuff_enable_r    <= '0';
 
@@ -2949,7 +2952,7 @@ begin
                                     -- recessive and detected
 
                                 ------------------------------------------------
-                                -- We accepted 13-th consecutive DOMINANT bit ->
+                                -- We accepted 14-th consecutive DOMINANT bit ->
                                 -- Error again??
                                 ------------------------------------------------
                                 elsif (data_rx = DOMINANT and tran_pointer = 0)
@@ -2974,7 +2977,7 @@ begin
                                 -- transmitting its error flag there will be
                                 -- recessive bit, not dominant!
                                 ------------------------------------------------
-                                if ((tran_pointer = 5) and (OP_State = reciever))
+                                if ((tran_pointer = 6) and (OP_State = reciever))
                                 then
                                     -- First bit detected Dominant after active 
                                     -- error flag was sent!
@@ -3075,7 +3078,7 @@ begin
             control_pointer     <= 6;
 
             -- Pointer for recieving the superposition of ovverload flags
-            tran_pointer        <= 12;
+            tran_pointer        <= 13;
 
             ovr_frame_state     <= ovr_flg_sup;
             stuff_enable_r      <= '0';
@@ -3148,7 +3151,7 @@ begin
                             end if;
 
                         --------------------------------------------------------
-                        -- We accepted 13-th consecutive DOMINANT bit in 
+                        -- We accepted 14-th consecutive DOMINANT bit in 
                         -- superposition --> Error!
                         --------------------------------------------------------
                         elsif (data_rx = DOMINANT and tran_pointer = 0) then
