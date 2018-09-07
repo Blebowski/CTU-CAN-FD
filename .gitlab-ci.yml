@@ -70,6 +70,8 @@ test_ip_fast:
             - test/code_html
             - test/tests_fast.xml
             - test/xunit.xsl
+        reports:
+            junit: [test/tests_fast.xml]
 
 test_ip_nightly:
     stage: test
@@ -84,6 +86,8 @@ test_ip_nightly:
         paths:
             - test/tests_nightly.xml
             - test/xunit.xsl
+        reports:
+            junit: [test/tests_nightly.xml]
 
 pages:
     stage: deploy
