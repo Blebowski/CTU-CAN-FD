@@ -111,6 +111,11 @@ package body tx_arb_time_tran_feature is
         o.outcome := true;
 
         ------------------------------------------------------------------------
+        -- Wait until unit for sure comes out of integration.
+        ------------------------------------------------------------------------
+        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 1600, 1601);
+
+        ------------------------------------------------------------------------
         -- Part 1
         ------------------------------------------------------------------------
         ------------------------------------------------------------------------
@@ -147,11 +152,13 @@ package body tx_arb_time_tran_feature is
         aux2 := to_integer(unsigned(CAN_frame.timestamp(31 downto 0)));
 
         ------------------------------------------------------------------------
-        -- We tolerate up to 150 clock cycles between actual timestamp and
-        -- transmitt time. This fits to the default setting of up to 130 clock
-        -- cycles per bit time!
+        -- We tolerate up to 190 clock cycles between actual timestamp and
+        -- transmitt time. Default time settings have 140 clock cycles per Bit
+        -- Time. There is up to 40 clock cycles of storing CAN frame. 6 clock
+        -- cycles are delay of TX Arbitrator! This gives possible delay
+        -- of 186 clock cycles. Let's take 190 to have some reserve!
         ------------------------------------------------------------------------
-        if (aux1 - aux2 > 150) then
+        if (aux1 - aux2 > 190) then
             -- LCOV_EXCL_START
             o.outcome := false;
             report "Frame not sent at time when expected!" severity error;
