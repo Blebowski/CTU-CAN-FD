@@ -94,7 +94,8 @@ add wave -group "RX Buffer (1)" \
 	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
 
 add wave -group "TXT Buffers (1)" \
-	-label "FSM States" $TCOMP/$INST1/txtb_fsms
+	-label "FSM States" $TCOMP/$INST1/txtb_fsms \
+    -label "HW Commands" $TCOMP/$INST1/txt_hw_cmd
 
 add wave -group "Interrupt manager (1)" \
 	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
