@@ -218,8 +218,13 @@ package body txtb_state_feature is
             end if;
 
             --------------------------------------------------------------------
+            -- Forbid ACK on Node 2 (not to end up in TXT OK)!
             -- Wait till transmission end, check that TXT Buffer is in "Aborted"
             --------------------------------------------------------------------
+            get_core_mode(mode, ID_2, mem_bus(2));
+            mode.acknowledge_forbidden := true;
+            set_core_mode(mode, ID_2, mem_bus(2));
+            
             CAN_wait_bus_idle(ID_1, mem_bus(1));
             get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
             if (txt_state /= buf_aborted) then
@@ -229,6 +234,13 @@ package body txtb_state_feature is
                        "'Aborted' as expected!" severity error;
                 -- LCOV_EXCL_STOP
             end if;
+
+            --------------------------------------------------------------------
+            -- Allow ACK Again for Node 2.
+            --------------------------------------------------------------------
+            mode.acknowledge_forbidden := false;
+            set_core_mode(mode, ID_2, mem_bus(2));
+            
 
 
             --------------------------------------------------------------------
@@ -320,6 +332,13 @@ package body txtb_state_feature is
                        " is not 'TX Failed' as expected!" severity error;
                 -- LCOV_EXCL_STOP
             end if;
+
+            --------------------------------------------------------------------
+            -- Allow ACK Again for Node 2.
+            --------------------------------------------------------------------
+            mode.acknowledge_forbidden := false;
+            set_core_mode(mode, ID_2, mem_bus(2));
+
         end loop;
 
   end procedure;
