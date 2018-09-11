@@ -167,7 +167,11 @@ add wave -group "CAN Core (1)" \
 	-label "Rx parity" $TCOMP/$INST1/$CORE/PC_State_comp/rx_parity \
 	-label "Rx count grey" $TCOMP/$INST1/$CORE/PC_State_comp/rx_count_grey \
 	-label "Rx CRC" -hexadecimal $TCOMP/$INST1/$CORE/PC_State_comp/rec_crc_r \
+	-label "Retransmit limit ena" $TCOMP/$INST1/$CORE/PC_State_comp/drv_retr_lim_ena \
+	-label "Retransmit count" $TCOMP/$INST1/$CORE/PC_State_comp/retr_count \
+	-label "Retransmit limit" $TCOMP/$INST1/$CORE/PC_State_comp/drv_retr_th \
 	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
+    
 
 add wave -group "Bus sampling (1)" \
 	-label "Measure transceiver delay" $TCOMP/$INST1/trv_delay_calib \
