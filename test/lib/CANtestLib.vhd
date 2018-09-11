@@ -1236,6 +1236,24 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Waits until transmission or reception is started by a Node.
+    --
+    -- Arguments:
+    --  bits            Number of Bit times to wait for
+    --  exit_trans      Exit when unit turns transceiver.         
+    --  exit_rec        Exit when unit turns receiver.
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_tx_rx_start(
+        constant exit_trans     : in    boolean;
+        constant exit_rec       : in    boolean;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Calculate length of CAN Frame in bits (stuff bits not included).
     --
     -- Arguments:
@@ -3125,6 +3143,28 @@ package body CANtestLib is
         for i in 0 to wait_time - 1 loop
             wait until rising_edge(mem_bus.clk_sys);
         end loop;
+    end procedure;
+
+
+    procedure CAN_wait_tx_rx_start(
+        constant exit_trans     : in    boolean;
+        constant exit_rec       : in    boolean;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable r_data         :       std_logic_vector(31 downto 0);
+    begin
+        -- Wait until unit starts to transmitt or recieve
+        while (true) loop
+            CAN_read(r_data, MODE_ADR, ID, mem_bus);
+            if (exit_trans and r_data(TS_IND) = '1') then
+                exit;
+            end if;
+            if (exit_rec and r_data(RS_IND) = '1') then
+                exit;
+            end if;
+        end loop;
+
     end procedure;
 
 

@@ -93,6 +93,10 @@ add wave -group "RX Buffer (1)" \
 	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
 	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
 
+add wave -group "TXT Buffers (1)" \
+	-label "FSM States" $TCOMP/$INST1/txtb_fsms \
+    -label "HW Commands" $TCOMP/$INST1/txt_hw_cmd
+
 add wave -group "Interrupt manager (1)" \
 	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
 	-label "Interrupt enable" $TCOMP/$INST1/int_ena \
@@ -163,7 +167,11 @@ add wave -group "CAN Core (1)" \
 	-label "Rx parity" $TCOMP/$INST1/$CORE/PC_State_comp/rx_parity \
 	-label "Rx count grey" $TCOMP/$INST1/$CORE/PC_State_comp/rx_count_grey \
 	-label "Rx CRC" -hexadecimal $TCOMP/$INST1/$CORE/PC_State_comp/rec_crc_r \
+	-label "Retransmit limit ena" $TCOMP/$INST1/$CORE/PC_State_comp/drv_retr_lim_ena \
+	-label "Retransmit count" $TCOMP/$INST1/$CORE/PC_State_comp/retr_count \
+	-label "Retransmit limit" $TCOMP/$INST1/$CORE/PC_State_comp/drv_retr_th \
 	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
+    
 
 add wave -group "Bus sampling (1)" \
 	-label "Measure transceiver delay" $TCOMP/$INST1/trv_delay_calib \
@@ -196,6 +204,9 @@ add wave -group "RX Buffer (2)" \
 	-label "Read pointer" -unsigned $TCOMP/$INST1/rx_read_pointer_pos \
 	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
 	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
+
+add wave -group "TXT Buffers (2)" \
+	-label "FSM States" $TCOMP/$INST1/txtb_fsms
 
 add wave -group "Interrupt manager (2)" \
 	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
