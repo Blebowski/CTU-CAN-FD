@@ -317,10 +317,10 @@ package body txtb_state_feature is
 
             --------------------------------------------------------------------
             -- Send frame from Node 1. Wait till the frame is retransmitted
-            -- 5 times!
+            -- 6 (retransmitted 5 times) times!
             --------------------------------------------------------------------
             CAN_send_frame(CAN_frame, i, ID_1, mem_bus(1), frame_sent);
-            for i in 0 to 4 loop
+            for i in 0 to 5 loop
                 CAN_wait_tx_rx_start(true, false, ID_1, mem_bus(1));
                 CAN_wait_bus_idle(ID_1, mem_bus(1));
             end loop;
