@@ -134,11 +134,14 @@ package body txtb_state_feature is
         -- Generate CAN Frame to be used during the whole test.
         -- Use RTR frame to make the test shorter.
         -- Wait till the end of unit integration!
+        -- Disable Retransmitt limit Enable, so that TXT Buffers can end up
+        -- also in "TX Aborted" state!
         ------------------------------------------------------------------------
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.rtr := RTR_FRAME;
         CAN_frame.frame_format := NORMAL_CAN;
         wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 1600, 1601);
+        CAN_enable_retr_limit(false, 0, ID_1, mem_bus(1));
 
         for i in 1 to TXT_BUFFER_COUNT loop
 
