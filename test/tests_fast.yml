@@ -64,6 +64,8 @@ feature:
         data_length_code:
         bus_start:
         suspend_transmission:
+        data_overrun_clear:
+            iterations: 1
 reference:
     default:
         <<: *default
