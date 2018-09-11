@@ -93,6 +93,9 @@ add wave -group "RX Buffer (1)" \
 	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
 	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
 
+add wave -group "TXT Buffers (1)" \
+	-label "FSM States" $TCOMP/$INST1/txtb_fsms
+
 add wave -group "Interrupt manager (1)" \
 	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
 	-label "Interrupt enable" $TCOMP/$INST1/int_ena \
@@ -196,6 +199,9 @@ add wave -group "RX Buffer (2)" \
 	-label "Read pointer" -unsigned $TCOMP/$INST1/rx_read_pointer_pos \
 	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
 	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
+
+add wave -group "TXT Buffers (2)" \
+	-label "FSM States" $TCOMP/$INST1/txtb_fsms
 
 add wave -group "Interrupt manager (2)" \
 	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
