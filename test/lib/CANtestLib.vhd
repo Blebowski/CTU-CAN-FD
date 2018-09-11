@@ -3157,10 +3157,10 @@ package body CANtestLib is
         -- Wait until unit starts to transmitt or recieve
         while (true) loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
-            if (exit_trans and r_data(RS_IND) = '1') then
+            if (exit_trans and r_data(TS_IND) = '1') then
                 exit;
             end if;
-            if (exit_rec and r_data(TS_IND) = '1') then
+            if (exit_rec and r_data(RS_IND) = '1') then
                 exit;
             end if;
         end loop;
