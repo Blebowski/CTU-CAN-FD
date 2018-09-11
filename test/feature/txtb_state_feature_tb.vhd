@@ -261,7 +261,7 @@ package body txtb_state_feature is
             -- Insert CAN Frame to Node 1, TXT Buffer i + 1.
             -- Send "set_ready" command.
             --------------------------------------------------------------------
-            nxt_buffer := ((i + 1) mod TXT_BUFFER_COUNT) + 1;
+            nxt_buffer := (i mod TXT_BUFFER_COUNT) + 1;
             CAN_insert_TX_frame(CAN_frame, nxt_buffer, ID_1, mem_bus(1));
             send_TXT_buf_cmd(buf_set_ready, nxt_buffer, ID_1, mem_bus(1));
 
@@ -283,6 +283,7 @@ package body txtb_state_feature is
             -- TXT Buffer ends up in "Aborted" state. 
             --------------------------------------------------------------------
             send_TXT_buf_cmd(buf_set_abort, nxt_buffer, ID_1, mem_bus(1));
+            get_tx_buf_state(nxt_buffer, txt_state, ID_1, mem_bus(1));
             if (txt_state /= buf_aborted) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
