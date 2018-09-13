@@ -45,6 +45,8 @@
 #include <linux/can/error.h>
 #include <linux/can/led.h>
 #include <linux/pm_runtime.h>
+#include <linux/ktime.h>
+#include <linux/net_tstamp.h>
 
 #include "ctu_can_fd_hw.h"
 #include "ctu_can_fd_regs.h"
@@ -347,6 +349,13 @@ static int ctucan_rx(struct net_device *ndev)
 	}
 
 	ctu_can_fd_read_rx_frame_ffw(&priv->p, cf, &ts, ffw);
+    // TEST
+    {
+        struct skb_shared_hwtstamps *hwts;
+        hwts = skb_hwtstamps(skb);
+        memset(hwts, 0, sizeof(*hwts));
+        hwts->hwtstamp = (ktime_t) ts;
+    }
 
 	stats->rx_bytes += cf->len;
 	stats->rx_packets++;
@@ -843,6 +852,61 @@ static int ctucan_get_berr_counter(const struct net_device *ndev,
 	return 0;
 }
 
+static int ctucan_hwtstamp_set(struct net_device *dev, struct ifreq *ifr)
+{
+	//struct xcan_priv *priv = netdev_priv(dev);
+	struct hwtstamp_config cfg;
+
+	if (copy_from_user(&cfg, ifr->ifr_data, sizeof(cfg)))
+		return -EFAULT;
+
+	/* reserved for future extensions */
+	if (cfg.flags)
+		return -EINVAL;
+
+	if (cfg.tx_type != HWTSTAMP_TX_OFF)
+		return -ERANGE;
+
+	switch (cfg.rx_filter) {
+	case HWTSTAMP_FILTER_NONE:
+		//priv->rx_enable = 0;
+		break;
+	case HWTSTAMP_FILTER_ALL:
+	case HWTSTAMP_FILTER_PTP_V1_L4_EVENT:
+	case HWTSTAMP_FILTER_PTP_V1_L4_SYNC:
+	case HWTSTAMP_FILTER_PTP_V1_L4_DELAY_REQ:
+	case HWTSTAMP_FILTER_PTP_V2_L4_EVENT:
+	case HWTSTAMP_FILTER_PTP_V2_L4_SYNC:
+	case HWTSTAMP_FILTER_PTP_V2_L4_DELAY_REQ:
+	case HWTSTAMP_FILTER_PTP_V2_L2_EVENT:
+	case HWTSTAMP_FILTER_PTP_V2_L2_SYNC:
+	case HWTSTAMP_FILTER_PTP_V2_L2_DELAY_REQ:
+	case HWTSTAMP_FILTER_PTP_V2_EVENT:
+	case HWTSTAMP_FILTER_PTP_V2_SYNC:
+	case HWTSTAMP_FILTER_PTP_V2_DELAY_REQ:
+		//priv->rx_enable = 1;
+		cfg.rx_filter = HWTSTAMP_FILTER_ALL;
+		break;
+	default:
+		return -ERANGE;
+	}
+
+	return copy_to_user(ifr->ifr_data, &cfg, sizeof(cfg)) ? -EFAULT : 0;
+}
+
+static int ctucan_hwtstamp_get(struct net_device *dev, struct ifreq *ifr)
+{
+	//struct xcan_priv *priv = netdev_priv(dev);
+	struct hwtstamp_config cfg;
+
+	cfg.flags = 0;
+	cfg.tx_type = HWTSTAMP_TX_OFF;
+	cfg.rx_filter = //(xcan->rx_enable ?
+			 HWTSTAMP_FILTER_ALL;// : HWTSTAMP_FILTER_NONE);
+
+	return copy_to_user(ifr->ifr_data, &cfg, sizeof(cfg)) ? -EFAULT : 0;
+}
+
 static int ctucan_ioctl(struct net_device *ndev, struct ifreq *ifr, int cmd)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
@@ -850,6 +914,10 @@ static int ctucan_ioctl(struct net_device *ndev, struct ifreq *ifr, int cmd)
 
 	switch(cmd)
 	{
+	case SIOCSHWTSTAMP:
+		return ctucan_hwtstamp_set(ndev, ifr);
+	case SIOCGHWTSTAMP:
+		return ctucan_hwtstamp_get(ndev, ifr);
 	case CTUCAN_IOCDBG_MASKRX: {
 		union ctu_can_fd_int_stat value, mask;
 		bool mask_rx = ifr->ifr_flags & 1;
