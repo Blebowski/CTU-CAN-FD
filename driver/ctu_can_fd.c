@@ -52,6 +52,8 @@
 #define DRIVER_NAME	"ctucanfd"
 
 
+#define CTUCAN_IOCDBG_MASKRX   (SIOCDEVPRIVATE)
+
 /*
  * TX buffer rotation:
  * - when a buffer transitions to empty state, rotate order and priorities
@@ -841,11 +843,35 @@ static int ctucan_get_berr_counter(const struct net_device *ndev,
 	return 0;
 }
 
+static int ctucan_ioctl(struct net_device *ndev, struct ifreq *ifr, int cmd)
+{
+	struct ctucan_priv *priv = netdev_priv(ndev);
+	netdev_dbg(ndev, "ctucan_ioctl");
+
+	switch(cmd)
+	{
+	case CTUCAN_IOCDBG_MASKRX: {
+		union ctu_can_fd_int_stat value, mask;
+		bool mask_rx = ifr->ifr_flags & 1;
+		mask.u32 = 0xFFFFFFFF;
+		value.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_INT_MASK_SET);
+		value.s.rbnei = mask_rx;
+		netdev_info(ndev, "DBG: setting mask_rx to %d", mask_rx);
+		ctu_can_fd_int_mask(&priv->p, mask, value);
+		return 0;
+	} break;
+	default:
+		return -EOPNOTSUPP;
+	}
+}
+
+
 static const struct net_device_ops ctucan_netdev_ops = {
 	.ndo_open	= ctucan_open,
 	.ndo_stop	= ctucan_close,
 	.ndo_start_xmit	= ctucan_start_xmit,
 	.ndo_change_mtu	= can_change_mtu,
+	.ndo_do_ioctl	= ctucan_ioctl,
 };
 
 static __maybe_unused int ctucan_suspend(struct device *dev)
