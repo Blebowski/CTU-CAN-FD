@@ -354,6 +354,7 @@ static int ctucan_rx(struct net_device *ndev)
         struct skb_shared_hwtstamps *hwts;
         hwts = skb_hwtstamps(skb);
         memset(hwts, 0, sizeof(*hwts));
+        netdev_dbg(ndev, "RX: timestamp = %llu", ts);
         hwts->hwtstamp = (ktime_t) ts;
     }
 
