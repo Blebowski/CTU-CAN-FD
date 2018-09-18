@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#IMG=mjerabek/lyx:buster
+IMG=hathi.duckdns.org/user/lyx:buster
+
+docker run --rm -v $PWD:/build $IMG make -C /build/doc/core
