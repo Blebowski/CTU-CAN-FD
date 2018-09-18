@@ -10805,7 +10805,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/doc/pics/Visio_generated/Prescaler_Block_Diagram.pdf
+	filename ../pics/Visio_generated/Prescaler_Block_Diagram.pdf
 	lyxscale 20
 	scale 70
 
@@ -16342,7 +16342,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/CAN_FD_IP_Core/doc/pics/Code_coverage_example.pdf
+	filename ../pics/Code_coverage_example.pdf
 	lyxscale 20
 	scale 45
 	rotateAngle 270
