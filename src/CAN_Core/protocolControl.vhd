@@ -2183,7 +2183,7 @@ begin
             --  2. For CAN FD frames less than 16 bytes (dlc=0xA), it is 17
             --  3. For longer CAN FD frames it is 21.
             --------------------------------------------------------------------
-            if ((OP_State  = transciever and tran_frame_type = NORMAL_CAN) or
+            if ((OP_State = transciever and tran_frame_type = NORMAL_CAN) or
                 (OP_State = reciever    and rec_frame_type_r = NORMAL_CAN))
             then
                 data_pointer  <=  14; --CRC 15

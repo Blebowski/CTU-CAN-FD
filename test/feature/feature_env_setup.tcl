@@ -123,6 +123,13 @@ add wave -group "Frame to recieve (1)" \
 	-label "BRS" $TCOMP/$INST1/rec_brs \
 	-label "ESI" $TCOMP/$INST1/rec_esi
 
+add wave -group "Message filters" \
+	-label "Filter A mask" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_mask \
+	-label "Filter A value" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_bits \
+	-label "Filter A control" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_ctrl \
+	-label "Filter A valid" $TCOMP/$INST1/mes_filt_comp/int_filter_A_valid \
+	-label "Filter out valid" $TCOMP/$INST1/mes_filt_comp/out_ident_valid
+
 add wave -group "Prescaler (1)" \
 	-label "Time quantum (Nominal)" $TCOMP/$INST1/clk_tq_nbt \
 	-label "Time quantum (Data)" $TCOMP/$INST1/clk_tq_dbt \
