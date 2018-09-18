@@ -27,6 +27,19 @@ build_driver:
         - cd driver
         - "make -j`nproc`"
 
+build_doc:
+    stage: build
+    only:
+        - master
+        - tags
+        - web # debug only!
+    image: hathi.duckdns.org/user/lyx:buster
+    script:
+        - make -C doc/core
+    artifacts:
+        paths:
+            - doc/core/Progdokum.pdf
+
 build_linux_driver:
     stage: build
     only: *only
@@ -77,6 +90,7 @@ pages:
         - cp test/xunit.xsl public/
         - cp test/tests_*.xml public/
         - mv test/code_html public/coverage || true
+        - cp doc/core/Progdokum.pdf public/ || true
     only:
         - master
     artifacts:
