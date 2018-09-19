@@ -29,12 +29,12 @@ build_driver:
 
 build_doc:
     stage: build
-    tags: [virt]  # requires new lyx -> debian -> kernel & seccomp on host
+    tags: [virt]  # runner in virtual, without docker, with new lyx
     only:
         - master
         - tags
         - web # debug only!
-    image: hathi.duckdns.org/user/lyx:buster
+    #image: hathi.duckdns.org/user/lyx:buster
     script:
         - make -C doc/core
     artifacts:
