@@ -36,6 +36,9 @@ build_doc:
         - web # debug only!
     #image: hathi.duckdns.org/user/lyx:buster
     script:
+        - export LC_ALL=en_US.UTF-8
+        - export LANG=en_US.UTF-8
+        - export TMPDIR=/var/tmp # not enouhg room in tmpfs
         - make -C doc/core
     artifacts:
         paths:
