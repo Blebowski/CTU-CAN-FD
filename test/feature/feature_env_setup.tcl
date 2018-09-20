@@ -91,7 +91,11 @@ add wave -group "RX Buffer (1)" \
 	-label "Free words" -unsigned $TCOMP/$INST1/rx_mem_free \
 	-label "Read pointer" -unsigned $TCOMP/$INST1/rx_read_pointer_pos \
 	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
-	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
+	-label "Store metadata" -unsigned $TCOMP/$INST1/rx_store_metadata \
+	-label "RX Abort" -unsigned $TCOMP/$INST1/rx_abort \
+	-label "RX Store data" -unsigned $TCOMP/$INST1/rx_store_data_valid \
+	-label "RX Store valid" -unsigned $TCOMP/$INST1/rec_message_store \
+    -label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
 
 add wave -group "TXT Buffers (1)" \
 	-label "FSM States" $TCOMP/$INST1/txtb_fsms \
@@ -128,7 +132,13 @@ add wave -group "Message filters" \
 	-label "Filter A value" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_bits \
 	-label "Filter A control" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_ctrl \
 	-label "Filter A valid" $TCOMP/$INST1/mes_filt_comp/int_filter_A_valid \
+	-label "Filter Range valid" $TCOMP/$INST1/mes_filt_comp/int_filter_ran_valid \
+	-label "Filter Range HI Threshold" $TCOMP/$INST1/mes_filt_comp/drv_filter_ran_hi_th \
+	-label "Filter Range LO Threshold" $TCOMP/$INST1/mes_filt_comp/drv_filter_ran_lo_th \
+	-label "Filter Range control" $TCOMP/$INST1/mes_filt_comp/drv_filter_ran_ctrl \
 	-label "Filter out valid" $TCOMP/$INST1/mes_filt_comp/out_ident_valid
+
+
 
 add wave -group "Prescaler (1)" \
 	-label "Time quantum (Nominal)" $TCOMP/$INST1/clk_tq_nbt \

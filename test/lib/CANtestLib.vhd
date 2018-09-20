@@ -2720,7 +2720,7 @@ package body CANtestLib is
     begin
 
         -- Check High threshold aint lower than Low threshold
-        if (config.ID_th_low < config.ID_th_high) then
+        if (config.ID_th_low > config.ID_th_high) then
             report "High threshold of Range filter Lower than Low threshold!"
                 severity warning;
         end if;

@@ -134,6 +134,8 @@ package body message_filter_feature is
         variable tmp_log            :       std_logic := '0';
         variable should_pass        :       boolean := false;
         variable mask_filter        :       SW_CAN_mask_filter_type;
+        variable l_th               :       natural := 0;
+        variable h_th               :       natural := 0;
     begin
         o.outcome := true;
         CAN_generate_frame(rand_ctr, CAN_frame);
@@ -315,15 +317,159 @@ package body message_filter_feature is
 
                 -- Check!
                 if ((rx_state.rx_empty = true) and (should_pass = true)) then
+                    -- LCOV_EXCL_START
                     report "Frame should have passed but did NOT!" severity
                         error;
+                    -- LCOV_EXCL_STOP
                 end if;
                 if ((rx_state.rx_empty = false) and (should_pass = false)) then
+                    -- LCOV_EXCL_START
                     report "Frame should NOT have passed but did!" severity
                         error;
                 end if;
             end loop;
         end loop;
+
+        ------------------------------------------------------------------------
+        -- Part 3 (Range filters)
+        ------------------------------------------------------------------------
+        ------------------------------------------------------------------------
+        -- Disable mask fitlters
+        ------------------------------------------------------------------------        
+        mask_filt_config.acc_CAN_2_0 := false;
+        mask_filt_config.acc_CAN_FD := false;
+        mask_filt_config.ID_mask := 0;
+        mask_filt_config.ID_value := 0;
+        CAN_set_mask_filter(filter_A, mask_filt_config, ID_1, mem_bus(1));
+        CAN_set_mask_filter(filter_B, mask_filt_config, ID_1, mem_bus(1));
+        CAN_set_mask_filter(filter_C, mask_filt_config, ID_1, mem_bus(1));
+
+        ------------------------------------------------------------------------
+        -- Generate random thresholds for identifier!
+        ------------------------------------------------------------------------
+        if (CAN_frame.ident_type = BASE) then
+            rand_int_v(rand_ctr, (2 ** 6), l_th);
+            rand_int_v(rand_ctr, (2 ** 11) - 1, h_th);
+        else
+            rand_int_v(rand_ctr, (2 ** 14), l_th);
+            rand_int_v(rand_ctr, (2 ** 28) - 1, h_th);
+        end if;
+
+        -- Make sure upper threshold is not lower then low threshold!
+        -- Avoid 0, max ident. so that we can test all cases!
+        l_th := l_th + 1;
+        if (l_th >= h_th) then
+            h_th := l_th + 5;
+        end if;
+        h_th := h_th - 1;
+
+        ------------------------------------------------------------------------
+        -- Configure Range filter
+        ------------------------------------------------------------------------
+        range_filt_config.acc_CAN_2_0 := true;
+        range_filt_config.acc_CAN_FD := true;
+        range_filt_config.ID_th_high := h_th;
+        range_filt_config.ID_th_low := l_th;
+        CAN_set_range_filter(range_filt_config, ID_1, mem_bus(1));
+        CAN_generate_frame(rand_ctr, CAN_frame);
+        CAN_frame.ident_type := BASE;
+        CAN_frame.rtr := RTR_FRAME;
+
+        report "ID value: " &
+                 integer'image(CAN_frame.identifier);
+        report "Low threshold: " &
+                 integer'image(l_th);
+        report "High threshold: " &
+                 integer'image(h_th);
+
+        ------------------------------------------------------------------------
+        -- Send frame with ID lower than low threshold! Check that frame
+        -- was not received!
+        ------------------------------------------------------------------------
+        CAN_frame.identifier := l_th - 1;        
+        command.release_rec_buffer := true;
+        give_controller_command(command, ID_1, mem_bus(1));
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
+        if (not rx_state.rx_empty) then
+            -- LCOV_EXCL_START
+            report "Frame with lower than Low threshold passed, but should NOT!"
+                severity error;
+            -- LCOV_EXCL_STOP
+        end if;
+
+
+        ------------------------------------------------------------------------
+        -- Send frame with ID equal to low threshold! Check that frame
+        -- was received!
+        ------------------------------------------------------------------------
+        CAN_frame.identifier := l_th;        
+        command.release_rec_buffer := true;
+        give_controller_command(command, ID_1, mem_bus(1));
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
+        if (rx_state.rx_empty) then
+            -- LCOV_EXCL_START
+            report "Frame ID equal to Low threshold did not pass, but should!"
+                severity error;
+            -- LCOV_EXCL_STOP
+        end if;
+
+
+        ------------------------------------------------------------------------
+        -- Send frame with ID between Low Threshold and High Threshold!
+        ------------------------------------------------------------------------
+        CAN_frame.identifier := ((h_th - l_th) / 2) + l_th;
+        command.release_rec_buffer := true;
+        give_controller_command(command, ID_1, mem_bus(1));
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
+        if (rx_state.rx_empty) then
+            -- LCOV_EXCL_START
+            report "Frame with ID between Lower and Upper Threshold did not pass!"
+                severity error;
+            -- LCOV_EXCL_STOP
+        end if;
+
+
+        ------------------------------------------------------------------------
+        -- Send frame with ID equal to high threshold! Check that frame
+        -- was received!
+        ------------------------------------------------------------------------
+        CAN_frame.identifier := h_th;        
+        command.release_rec_buffer := true;
+        give_controller_command(command, ID_1, mem_bus(1));
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
+        if (rx_state.rx_empty) then
+            -- LCOV_EXCL_START
+            report "Frame ID equal to High threshold did not pass, but should!"
+                severity error;
+            -- LCOV_EXCL_STOP
+        end if;
+
+
+        ------------------------------------------------------------------------
+        -- Send frame with ID higher than high threshold! Check that frame
+        -- was received!
+        ------------------------------------------------------------------------
+        CAN_frame.identifier := h_th + 1;        
+        command.release_rec_buffer := true;
+        give_controller_command(command, ID_1, mem_bus(1));
+        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+        CAN_wait_frame_sent(ID_1, mem_bus(1));
+        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
+        if (not rx_state.rx_empty) then
+            -- LCOV_EXCL_START
+            report "Frame ID higher than High threshold did pass, but should NOT!"
+                severity error;
+            -- LCOV_EXCL_STOP
+        end if;
+
 
   end procedure;
 
