@@ -1405,7 +1405,7 @@ begin
                         when FILTER_CONTROL_ADR =>
                             data_out_int(3 downto 0)       <=  filter_A_ctrl;
                             data_out_int(7 downto 4)       <=  filter_B_ctrl;
-                            data_out_int(11 downto 8)      <=  filter_B_ctrl;
+                            data_out_int(11 downto 8)      <=  filter_C_ctrl;
                             data_out_int(15 downto 12)     <=  filter_ran_ctrl;
 
                             if (sup_filtA) then
