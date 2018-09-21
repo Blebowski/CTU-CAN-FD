@@ -383,93 +383,59 @@ package body message_filter_feature is
                  integer'image(h_th);
 
         ------------------------------------------------------------------------
-        -- Send frame with ID lower than low threshold! Check that frame
-        -- was not received!
+        -- Execute test of range fitlers. Following scenarios are tested:
+        --  1. CAN ID Lower than Low TH -> FAIL.
+        --  2. CAN ID Equal to Low TH -> PASS
+        --  3. CAN ID between Low and High TH -> PASS 
+        --  4. CAN ID equal to High TH -> PASS
+        --  5. CAN ID higher than High TH -> FAIL
         ------------------------------------------------------------------------
-        CAN_frame.identifier := l_th - 1;        
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        if (not rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            report "Frame with lower than Low threshold passed, but should NOT!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        for i in 1 to 5 loop
+            
+            case i is
+                when 1 => CAN_frame.identifier := l_th - 1;
+                when 2 => CAN_frame.identifier := l_th;
+                when 3 => CAN_frame.identifier := ((h_th - l_th) / 2) + l_th;
+                when 4 => CAN_frame.identifier := h_th;
+                when 5 => CAN_frame.identifier := h_th + 1;
+            end case;
 
+            if ((i = 2) or (i = 3) or (i = 4)) then
+                should_pass := true;
+            else
+                should_pass := false;
+            end if;
 
-        ------------------------------------------------------------------------
-        -- Send frame with ID equal to low threshold! Check that frame
-        -- was received!
-        ------------------------------------------------------------------------
-        CAN_frame.identifier := l_th;        
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        if (rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            report "Frame ID equal to Low threshold did not pass, but should!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+            command.release_rec_buffer := true;
+            give_controller_command(command, ID_1, mem_bus(1));
+            CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
+            CAN_wait_frame_sent(ID_1, mem_bus(1));
+            get_rx_buf_state(rx_state, ID_1, mem_bus(1));
 
-
-        ------------------------------------------------------------------------
-        -- Send frame with ID between Low Threshold and High Threshold!
-        ------------------------------------------------------------------------
-        CAN_frame.identifier := ((h_th - l_th) / 2) + l_th;
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        if (rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            report "Frame with ID between Lower and Upper Threshold did not pass!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
-
-
-        ------------------------------------------------------------------------
-        -- Send frame with ID equal to high threshold! Check that frame
-        -- was received!
-        ------------------------------------------------------------------------
-        CAN_frame.identifier := h_th;        
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        if (rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            report "Frame ID equal to High threshold did not pass, but should!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
-
-
-        ------------------------------------------------------------------------
-        -- Send frame with ID higher than high threshold! Check that frame
-        -- was received!
-        ------------------------------------------------------------------------
-        CAN_frame.identifier := h_th + 1;        
-        command.release_rec_buffer := true;
-        give_controller_command(command, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-        get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        if (not rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            report "Frame ID higher than High threshold did pass, but should NOT!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
-
+            if ((rx_state.rx_empty and should_pass) or
+                ((not rx_state.rx_empty) and (not should_pass)))
+            then
+                -- LCOV_EXCL_START
+                case i is
+                    when 1 =>
+                        report "Frame with ID lower than Low threshold passed," &
+                               "but should NOT!" severity error;
+                    when 2 =>
+                        report "Frame with ID equal to Low threshold didnt pass," &
+                               "but should!" severity error;
+                    when 3 =>                        
+                        report "Frame with ID betwen Low and High threshold did" &
+                               "not pass, but should!" severity error;
+                    when 4 =>                        
+                        report "Frame with ID equal to Hig threshold did not," &
+                               "pass, but should!" severity error;
+                    when 5 =>
+                        report "Frame with ID higher than High threshold did," &
+                               "pass, but should NOT!" severity error;
+                end case;
+                -- LCOV_EXCL_STOP
+            end if;
+        end loop;
 
   end procedure;
 
