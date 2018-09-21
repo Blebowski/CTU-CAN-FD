@@ -66,6 +66,7 @@
 --                2. Added Byte enable support to memory access functions.
 --      7.6.2018  Added "CAN_insert_TX_frame" procedure.
 --     18.6.2018  Added optimized clock_gen_proc, timestamp_gen_proc procedures.
+--     15.9.2018  Added support for message filter manipulation!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -444,6 +445,32 @@ package CANtestLib is
         rwcnt                   :   natural;
     end record;
 
+
+    type SW_CAN_mask_filter_type is (
+        filter_A,
+        filter_B,
+        filter_C  
+    );
+
+
+    type SW_CAN_mask_filter_config is record
+        ID_value                :   natural;
+        ID_mask                 :   natural;
+        ident_type              :   std_logic;
+        acc_CAN_2_0             :   boolean;
+        acc_CAN_FD              :   boolean;
+    end record;
+
+
+    type SW_CAN_range_filter_config is record
+        ID_th_low               :   natural;
+        ID_th_high              :   natural;
+        ident_type              :   std_logic;        
+        acc_CAN_2_0             :   boolean;
+        acc_CAN_FD              :   boolean;
+    end record;
+
+
     ----------------------------------------------------------------------------
     -- Transceiver delay type
     ----------------------------------------------------------------------------
@@ -603,6 +630,7 @@ package CANtestLib is
         constant epsilon_ppm    : in    natural
     ) return generate_clock_precomputed_t;
 
+
     ----------------------------------------------------------------------------
     -- Reports message when severity level is lower or equal than severity
     -- of message.
@@ -694,6 +722,7 @@ package CANtestLib is
         constant seed            : in   natural;
         constant offset          : in   natural
     ) return natural;
+
 
     ----------------------------------------------------------------------------
     -- Decode data length code from value as defined in CAN FD Standard to
@@ -1015,6 +1044,38 @@ package CANtestLib is
     procedure CAN_enable_retr_limit(
         constant enable         : in    boolean;
         constant limit          : in    natural range 0 to 15;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Configures mask filter of CTU CAN FD Core.
+    --
+    -- Arguments:
+    --  filter          Identifier of Mask filter which should be configured.
+    --  config          Configuration structure of CTU CAN FD mask filter.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_set_mask_filter(
+        constant filter         : in    SW_CAN_mask_filter_type;
+        constant config         : in    SW_CAN_mask_filter_config;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Configures mask filter of CTU CAN FD Core.
+    --
+    -- Arguments:
+    --  config          Configuration structure of CTU CAN FD mask filter.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_set_range_filter(
+        constant config         : in    SW_CAN_range_filter_config;
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -2550,6 +2611,138 @@ package body CANtestLib is
         end if;
         data(RTR_TH_H downto RTR_TH_L) := std_logic_vector(to_unsigned(limit, 4));
         CAN_write(data, MODE_ADR, ID, mem_bus);
+    end procedure;
+
+    
+    procedure config_filter_frame_types(
+        constant ident_type     : in    std_logic;
+        constant acc_CAN_2_0    : in    boolean;
+        constant acc_CAN_FD     : in    boolean;
+        variable cfg            : inout std_logic_vector(3 downto 0)
+    ) is
+    begin
+        cfg := (OTHERS => '0');
+        if (ident_type = BASE) then
+            if (acc_CAN_2_0) then
+                cfg(0) := '1';
+            else
+                cfg(0) := '0';
+            end if;
+            if (acc_CAN_FD) then
+                cfg(2) := '1';
+            else
+                cfg(2) := '0';
+            end if;
+        elsif (ident_type = EXTENDED) then
+            if (acc_CAN_2_0) then
+                cfg(1) := '1';
+            else
+                cfg(1) := '0';
+            end if;
+            if (acc_CAN_FD) then
+                cfg(3) := '1';
+            else
+                cfg(3) := '0';
+            end if;
+        else
+            report "Unsupported CAN frame type"
+                severity error;
+        end if;
+    end procedure;
+
+
+    procedure CAN_set_mask_filter(
+        constant filter         : in    SW_CAN_mask_filter_type;
+        constant config         : in    SW_CAN_mask_filter_config;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable mask_offset    :       std_logic_vector(11 downto 0);
+        variable value_offset   :       std_logic_vector(11 downto 0);
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        variable ident_vect     :       std_logic_vector(28 downto 0) :=
+                                            (OTHERS => '0');
+        variable ctrl_offset    :       natural range 0 to 11 := 0;
+        variable tmp            :       std_logic_vector(3 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+
+        if (filter = filter_A) then
+            mask_offset  := FILTER_A_MASK_ADR;
+            value_offset := FILTER_A_VAL_ADR;
+            ctrl_offset  := FANB_IND;
+        elsif (filter = filter_B) then
+            mask_offset := FILTER_B_MASK_ADR;
+            value_offset := FILTER_B_VAL_ADR;
+            ctrl_offset  := FBNB_IND;
+        elsif (filter = filter_C) then
+            mask_offset := FILTER_C_MASK_ADR;
+            value_offset := FILTER_C_VAL_ADR;
+            ctrl_offset  := FCNB_IND;
+        else
+            report "Unsupported mask filter!" severity error;
+        end if;
+
+        -- Configure filter mask
+        id_sw_to_hw(config.ID_mask, config.ident_type, ident_vect);
+        data := "000" & ident_vect;
+        CAN_write(data, mask_offset, ID, mem_bus);
+
+        -- Configure filter value
+        id_sw_to_hw(config.ID_value, config.ident_type, ident_vect);
+        data := "000" & ident_vect;
+        CAN_write(data, value_offset, ID, mem_bus);
+
+        -- Configure Accepted frame types
+        CAN_read(data, FILTER_CONTROL_ADR, ID, mem_bus);
+        config_filter_frame_types(config.ident_type, config.acc_CAN_2_0,
+                                  config.acc_CAN_FD, tmp);
+        data(ctrl_offset + 3 downto ctrl_offset) := tmp;
+        CAN_write(data, FILTER_CONTROL_ADR, ID, mem_bus);
+
+    end procedure;
+
+
+    procedure CAN_set_range_filter(
+        constant config         : in    SW_CAN_range_filter_config;
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        variable ident_lth_vect :       std_logic_vector(28 downto 0) :=
+                                            (OTHERS => '0');
+        variable ident_hth_vect :       std_logic_vector(28 downto 0) :=
+                                            (OTHERS => '0');
+        variable tmp            :       std_logic_vector(3 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+
+        -- Check High threshold aint lower than Low threshold
+        if (config.ID_th_low > config.ID_th_high) then
+            report "High threshold of Range filter Lower than Low threshold!"
+                severity warning;
+        end if;
+        id_sw_to_hw(config.ID_th_high, config.ident_type, ident_hth_vect);
+
+        -- Low threshold
+        id_sw_to_hw(config.ID_th_low, config.ident_type, ident_lth_vect);
+        data := "000" & ident_lth_vect;
+        CAN_write(data, FILTER_RAN_LOW_ADR, ID, mem_bus);
+
+        -- High threshold
+        id_sw_to_hw(config.ID_th_high, config.ident_type, ident_hth_vect);
+        data := "000" & ident_hth_vect;
+        CAN_write(data, FILTER_RAN_HIGH_ADR, ID, mem_bus);
+
+        -- Configure accepted Frame types
+        CAN_read(data, FILTER_CONTROL_ADR, ID, mem_bus);
+        config_filter_frame_types(config.ident_type, config.acc_CAN_2_0,
+                                  config.acc_CAN_FD, tmp);
+        data(FRFE_IND downto FRNB_IND) := tmp;
+        CAN_write(data, FILTER_CONTROL_ADR, ID, mem_bus);
+
     end procedure;
 
 
