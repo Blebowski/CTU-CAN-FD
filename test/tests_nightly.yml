@@ -96,7 +96,9 @@ feature:
         data_overrun_clear:
             iterations: 1
         txtb_state:
-            iterations: 1 
+            iterations: 1
+        message_filter:
+            iterations: 1
 sanity:
     default:
         <<: *default
