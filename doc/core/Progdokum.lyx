@@ -83,7 +83,7 @@ customHeadersFooters
 \rightmargin 2cm
 \bottommargin 3cm
 \headheight 2cm
-\secnumdepth -2
+\secnumdepth 2
 \tocdepth 5
 \paragraph_separation skip
 \defskip smallskip
@@ -102,6 +102,225 @@ customHeadersFooters
 \end_header
 
 \begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% number the pages at the beginning in roman
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+frontmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+% Number chapters as 
+\begin_inset Quotes eld
+\end_inset
+
+1.
+ xxx
+\begin_inset Quotes erd
+\end_inset
+
+ instead of 
+\begin_inset Quotes eld
+\end_inset
+
+Chapter 1
+\backslash
+nxxx
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatletter
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+@makechapterhead#1{%
+\end_layout
+
+\begin_layout Plain Layout
+
+  
+\backslash
+vspace*{50
+\backslash
+p@}%
+\end_layout
+
+\begin_layout Plain Layout
+
+  {
+\backslash
+parindent 
+\backslash
+z@ 
+\backslash
+raggedright 
+\backslash
+normalfont
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+ifnum 
+\backslash
+c@secnumdepth >
+\backslash
+m@ne
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+if@mainmatter
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+huge
+\backslash
+bfseries 
+\backslash
+@chapapp
+\backslash
+space 
+\backslash
+thechapter
+\end_layout
+
+\begin_layout Plain Layout
+
+        
+\backslash
+Huge
+\backslash
+bfseries 
+\backslash
+@chapapp{} 
+\backslash
+thechapter.
+\backslash
+space%
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+        %
+\backslash
+vskip 20
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+      
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+fi
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+interlinepenalty
+\backslash
+@M
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+Huge 
+\backslash
+bfseries #1
+\backslash
+par
+\backslash
+nobreak
+\end_layout
+
+\begin_layout Plain Layout
+
+    
+\backslash
+vskip 40
+\backslash
+p@
+\end_layout
+
+\begin_layout Plain Layout
+
+  }}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+def
+\backslash
+chaptername{}
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+makeatother
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \begin_layout Title
 
@@ -528,8 +747,45 @@ LatexCommand tableofcontents
 
 \end_layout
 
-\begin_layout Chapter
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+% classis page numbering
+\end_layout
+
+\begin_layout Plain Layout
+
+
+\backslash
+mainmatter
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Chapter*
 Format
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+addcontentsline{toc}{chapter}{Format}
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -593,8 +849,7 @@ Note that block diagrams within the documentation does not contain exact
 \end_layout
 
 \begin_layout Chapter
-1.
- Introduction
+Introduction
 \end_layout
 
 \begin_layout Standard
@@ -627,7 +882,7 @@ This document describes CTU CAN FD IP Core originally developed at Department
 \end_layout
 
 \begin_layout Section
-1.1 Functionality requirements
+Functionality requirements
 \end_layout
 
 \begin_layout Standard
@@ -694,7 +949,7 @@ literal "true"
 \end_layout
 
 \begin_layout Section
-1.2 Features
+Features
 \end_layout
 
 \begin_layout Itemize
@@ -732,7 +987,7 @@ SDC and XDC design constraints for synthesis to Altera and Xilinx FPGAs.
 \end_layout
 
 \begin_layout Section
-1.3 License
+License
 \end_layout
 
 \begin_layout Standard
@@ -783,7 +1038,7 @@ This program is free software; you can redistribute it and/or * modify it
 \end_layout
 
 \begin_layout Section
-1.4 Development tools
+Development tools
 \end_layout
 
 \begin_layout Standard
@@ -821,7 +1076,7 @@ TimingAnalyzer SW for Timing Diagrams.
 \end_layout
 
 \begin_layout Section
-1.5 Design automation
+Design automation
 \end_layout
 
 \begin_layout Standard
@@ -947,7 +1202,7 @@ literal "false"
 \end_layout
 
 \begin_layout Section
-1.6 Source code access
+Source code access
 \end_layout
 
 \begin_layout Standard
@@ -972,8 +1227,7 @@ literal "false"
 \end_layout
 
 \begin_layout Chapter
-2.
- System architecture
+System architecture
 \end_layout
 
 \begin_layout Standard
@@ -1024,7 +1278,7 @@ no vendor specific libraries
 \end_layout
 
 \begin_layout Section
-2.1 Configuration and IO signals 
+Configuration and IO signals 
 \end_layout
 
 \begin_layout Standard
@@ -1044,7 +1298,7 @@ CTU CAN FD IP Core can be accessed over either of two buses, Avalon Bus
 \end_layout
 
 \begin_layout Subsection
-2.1.1 Generic parameters
+Generic parameters
 \end_layout
 
 \begin_layout Standard
@@ -1503,7 +1757,7 @@ name "tab:CAN-generics"
 \end_layout
 
 \begin_layout Subsection
-2.1.2 Avalon memory interface
+Avalon memory interface
 \end_layout
 
 \begin_layout Standard
@@ -2805,7 +3059,7 @@ name "fig:Avalon-read-burst-timing-diagram"
 \end_layout
 
 \begin_layout Subsection
-2.1.3 APB memory interface
+APB memory interface
 \end_layout
 
 \begin_layout Standard
@@ -3896,7 +4150,7 @@ name "fig:APB-read-timing-diagram"
 \end_layout
 
 \begin_layout Subsection
-2.1.4 Common signals
+Common signals
 \end_layout
 
 \begin_layout Standard
@@ -4271,7 +4525,7 @@ name "tab:CAN-ports-common"
 \end_layout
 
 \begin_layout Section
-2.2 Clock domains, external signals synchronization and reset
+Clock domains, external signals synchronization and reset
 \end_layout
 
 \begin_layout Standard
@@ -4387,7 +4641,7 @@ use_sync
 \end_layout
 
 \begin_layout Section
-2.3 Signal architecture
+Signal architecture
 \end_layout
 
 \begin_layout Standard
@@ -4425,7 +4679,7 @@ stat_bus
 \end_layout
 
 \begin_layout Subsection
-2.3.1 Driving Bus
+Driving Bus
 \end_layout
 
 \begin_layout Standard
@@ -4477,7 +4731,7 @@ signal drv_bus : std_logic_vector(1023 downto 0)
 \end_layout
 
 \begin_layout Subsection
-2.3.2 Status Bus
+Status Bus
 \end_layout
 
 \begin_layout Standard
@@ -4510,7 +4764,7 @@ signal stat_bus : std_logic_vector(511 downto 0)
 \end_layout
 
 \begin_layout Section
-2.4 Absolute maximum ratings
+Absolute maximum ratings
 \end_layout
 
 \begin_layout Standard
@@ -4896,7 +5150,7 @@ name "tab: Absolute_maximum_rating"
 \end_layout
 
 \begin_layout Section
-2.5 Block diagram
+Block diagram
 \end_layout
 
 \begin_layout Standard
@@ -4977,7 +5231,7 @@ name "fig:IP-function-block"
 \end_layout
 
 \begin_layout Section
-2.6 Pipeline architecture
+Pipeline architecture
 \begin_inset CommandInset label
 LatexCommand label
 name "sec-Pipeline-architecture"
@@ -5156,11 +5410,11 @@ name "fig:Pipeline-Architecture"
 \end_layout
 
 \begin_layout Section
-2.7 Components description
+Components description
 \end_layout
 
 \begin_layout Subsection
-2.7.1 CAN Core
+CAN Core
 \end_layout
 
 \begin_layout Description
@@ -10066,7 +10320,7 @@ drv_fd_type
 \end_layout
 
 \begin_layout Subsection
-2.7.2 Bus Sampling
+Bus Sampling
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Bus-Sampling"
@@ -10481,7 +10735,7 @@ bit_Error_reg
 \end_layout
 
 \begin_layout Subsection
-2.7.3 Interrupt Manager
+Interrupt Manager
 \end_layout
 
 \begin_layout Description
@@ -10646,7 +10900,7 @@ name "fig:INT-manager-block"
 \end_layout
 
 \begin_layout Subsection
-2.7.4 Prescaler
+Prescaler
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "subsec-Operation-control"
@@ -11375,7 +11629,7 @@ name "fig:Bit-Time-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.7.5 Message Filter
+Message Filter
 \end_layout
 
 \begin_layout Description
@@ -11625,7 +11879,7 @@ name "fig:Message-filter-block"
 \end_layout
 
 \begin_layout Subsection
-2.7.6 RX Buffer 
+RX Buffer 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec:2.3.10-RX-buffer-1"
@@ -12446,7 +12700,7 @@ name "fig:RX-buffer-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.7.7 Transmit buffer - Time (TXT) 
+Transmit buffer - Time (TXT) 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-TXT-buffer"
@@ -12855,7 +13109,7 @@ name "fig:TXT_Buffer-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.7.8 Memory registers
+Memory registers
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Memory-registers"
@@ -12931,7 +13185,7 @@ hyperref[4.
 \end_layout
 
 \begin_layout Subsection
-2.7.9 TX Arbitrator
+TX Arbitrator
 \end_layout
 
 \begin_layout Description
@@ -13609,7 +13863,7 @@ name "fig:TX_Arbitrator-FSM"
 \end_layout
 
 \begin_layout Subsection
-2.7.10 Event Logger (optional) 
+Event Logger (optional) 
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Event-logger"
@@ -13992,7 +14246,7 @@ name "fig:Event-logger-FSM"
 \end_layout
 
 \begin_layout Section
-2.8 Information Processing Time
+Information Processing Time
 \begin_inset CommandInset label
 LatexCommand label
 name "sec-Information-processing"
@@ -14428,7 +14682,7 @@ name "fig:Max_bitrate"
 \end_layout
 
 \begin_layout Section
-2.9 Error detection architecture
+Error detection architecture
 \begin_inset CommandInset label
 LatexCommand label
 name "sec-Error-detection"
@@ -14444,7 +14698,7 @@ This section describes how each type of error on CAN Bus is handled in CTU
 \end_layout
 
 \begin_layout Subsection
-2.9.1 Bit Error
+Bit Error
 \end_layout
 
 \begin_layout Standard
@@ -14672,7 +14926,7 @@ Error Flag Superposition
 \end_layout
 
 \begin_layout Subsection
-2.9.2 Stuff Error
+Stuff Error
 \end_layout
 
 \begin_layout Standard
@@ -14743,7 +14997,7 @@ stuff_Error
 \end_layout
 
 \begin_layout Subsection
-2.9.3 Form Error
+Form Error
 \end_layout
 
 \begin_layout Standard
@@ -14835,7 +15089,7 @@ Dominant
 \end_layout
 
 \begin_layout Subsection
-2.9.4 ACK Error
+ACK Error
 \end_layout
 
 \begin_layout Standard
@@ -14856,7 +15110,7 @@ ACK
 \end_layout
 
 \begin_layout Subsection
-2.9.5 CRC Error
+CRC Error
 \end_layout
 
 \begin_layout Standard
@@ -14912,7 +15166,7 @@ crc_check
 \end_layout
 
 \begin_layout Section
-2.10 Node restart after Bus-off
+Node restart after Bus-off
 \end_layout
 
 \begin_layout Standard
@@ -14984,7 +15238,7 @@ hyperref[COMMAND]{COMMAND[ERCRST]}
 \end_layout
 
 \begin_layout Section
-2.11 Special features summary
+Special features summary
 \end_layout
 
 \begin_layout Standard
@@ -15071,7 +15325,7 @@ Data Bit-Rate
 \end_layout
 
 \begin_layout Section
-2.12 TX Data-path hazard protection
+TX Data-path hazard protection
 \begin_inset CommandInset label
 LatexCommand label
 name "sec-TX-Datapath-hazard-protection"
@@ -15422,8 +15676,7 @@ filename "CANFrameFormat.lyx"
 \end_layout
 
 \begin_layout Chapter
-5.
- Testbench
+Testbench
 \end_layout
 
 \begin_layout Standard
@@ -15546,11 +15799,11 @@ Note that when running simulations with graphic output from remote PC over
 \end_layout
 
 \begin_layout Section
-5.1 VHDL Test libraries
+VHDL Test libraries
 \end_layout
 
 \begin_layout Subsection
-5.1.1 CANTestlib.vhd
+CANTestlib.vhd
 \end_layout
 
 \begin_layout Standard
@@ -15563,7 +15816,7 @@ CANtestLib.vhd provides set of types and procedures which aim to ease the
 \end_layout
 
 \begin_layout Subsection
-5.1.2 randomLib.vhd
+randomLib.vhd
 \end_layout
 
 \begin_layout Standard
@@ -15608,7 +15861,7 @@ rand_ctr
 \end_layout
 
 \begin_layout Section
-5.2 Test entities
+Test entities
 \end_layout
 
 \begin_layout Standard
@@ -16208,7 +16461,7 @@ Error counter of the test
 \end_layout
 
 \begin_layout Section
-5.3 Python test framework
+Python test framework
 \end_layout
 
 \begin_layout Standard
@@ -16216,7 +16469,7 @@ TODO
 \end_layout
 
 \begin_layout Section
-5.4 Common test configuration
+Common test configuration
 \begin_inset CommandInset label
 LatexCommand label
 name "sec-common-Test-configuration"
@@ -16274,7 +16527,7 @@ wave TCL file which displays most important signals of DUT in Wave window
 \end_layout
 
 \begin_layout Section
-5.5 Code coverage
+Code coverage
 \end_layout
 
 \begin_layout Standard
@@ -16377,7 +16630,7 @@ name "fig:Code-coverage-example"
 \end_layout
 
 \begin_layout Section
-5.6 Simulator settings
+Simulator settings
 \end_layout
 
 \begin_layout Standard
@@ -16407,7 +16660,7 @@ ns
 \end_layout
 
 \begin_layout Section
-5.7 Unit tests
+Unit tests
 \end_layout
 
 \begin_layout Standard
@@ -16530,7 +16783,7 @@ VHDL file
 \end_layout
 
 \begin_layout Subsection
-5.7.1 How to add new unit test?
+How to add new unit test?
 \end_layout
 
 \begin_layout Standard
@@ -16585,7 +16838,7 @@ unit/tests
 \end_layout
 
 \begin_layout Subsection
-5.7.2 Existing unit tests
+Existing unit tests
 \end_layout
 
 \begin_layout Subsubsection
@@ -17599,7 +17852,7 @@ test_proc
 \end_layout
 
 \begin_layout Section
-5.8 Reference test
+Reference test
 \end_layout
 
 \begin_layout Standard
@@ -17760,7 +18013,7 @@ name "fig:reference-test-block-diagram"
 \end_layout
 
 \begin_layout Section
-5.9 Feature tests
+Feature tests
 \end_layout
 
 \begin_layout Standard
@@ -17928,7 +18181,7 @@ test_name
 \end_layout
 
 \begin_layout Subsection
-5.9.1 How to add new feature test?
+How to add new feature test?
 \end_layout
 
 \begin_layout Standard
@@ -17998,7 +18251,7 @@ feature/tests
 \end_layout
 
 \begin_layout Subsection
-5.9.2 Existing feature tests
+Existing feature tests
 \end_layout
 
 \begin_layout Standard
@@ -18089,7 +18342,7 @@ Each feature test is described within header of test implementation.
 \end_layout
 
 \begin_layout Section
-5.10 Sanity test
+Sanity test
 \begin_inset CommandInset label
 LatexCommand label
 name "sec-Sanity-test"
@@ -18203,7 +18456,7 @@ name "fig:sanity-block-diagram"
 \end_layout
 
 \begin_layout Subsection
-5.10.1 Transciever delay
+Transciever delay
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Transciever-delay"
@@ -18276,7 +18529,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsection
-5.10.2 Bus topology
+Bus topology
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Real-bus-topology"
@@ -18793,7 +19046,7 @@ l_{3} & l_{5} & l_{6} & 0
 \end_layout
 
 \begin_layout Subsection
-5.10.3 Oscillator tolerance
+Oscillator tolerance
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Oscillator-tollerance"
@@ -18864,7 +19117,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsection
-5.10.4 Noise generation
+Noise generation
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Noise-generation"
@@ -18950,7 +19203,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Subsection
-5.10.5 Traffic emulation and data consistency evaluation
+Traffic emulation and data consistency evaluation
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Traffic-emulation"
@@ -19042,7 +19295,7 @@ Compare TX Memories and RX Memories contents for data consistency.
 \end_layout
 
 \begin_layout Subsection
-5.10.6 Sanity test configuration
+Sanity test configuration
 \begin_inset CommandInset label
 LatexCommand label
 name "subsec-Sanity-test"
@@ -19544,8 +19797,7 @@ name "fig:sanity_config_example"
 \end_layout
 
 \begin_layout Chapter
-6.
- Synthesis
+Synthesis
 \end_layout
 
 \begin_layout Standard
@@ -20592,8 +20844,7 @@ name "tab:synthesis-xilinx"
 \end_layout
 
 \begin_layout Chapter
-7.
- FPGA Verification
+FPGA Verification
 \end_layout
 
 \begin_layout Standard
@@ -20816,8 +21067,7 @@ name "fig:test_setup"
 \end_layout
 
 \begin_layout Chapter
-7.
- Linux driver
+Linux driver
 \end_layout
 
 \begin_layout Standard
@@ -20825,8 +21075,7 @@ TODO by Martin Jerabek.
 \end_layout
 
 \begin_layout Chapter
-8.
- Known issues and future work
+Known issues and future work
 \end_layout
 
 \begin_layout Standard
@@ -20899,7 +21148,8 @@ Bit-Rates
 \end_layout
 
 \begin_layout Chapter
-Appendix A - Driving bus signals
+\start_of_appendix
+Driving bus signals
 \begin_inset CommandInset label
 LatexCommand label
 name "chap:Appendix-A--"
@@ -26839,7 +27089,7 @@ Command to move read pointer down
 \end_layout
 
 \begin_layout Chapter
-Appendix B - Status bus signals
+Status bus signals
 \begin_inset CommandInset label
 LatexCommand label
 name "chap:Appendix-B--"
