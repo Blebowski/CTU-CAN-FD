@@ -21071,7 +21071,13 @@ Linux driver
 \end_layout
 
 \begin_layout Standard
-TODO by Martin Jerabek.
+\begin_inset CommandInset include
+LatexCommand include
+filename "linux-driver.tex"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Chapter
