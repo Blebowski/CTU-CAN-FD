@@ -275,7 +275,13 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-Datasheet v 2.1, TODO 2018
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
