@@ -75,6 +75,12 @@ set_parameter -name sup_filtC true
 set_parameter -name sup_range true
 set_parameter -name tx_time_sup true
 set_parameter -name logger_size 64
+set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
+set_global_assignment -name STATE_MACHINE_PROCESSING "ONE-HOT"
+set_global_assignment -name REMOVE_REDUNDANT_LOGIC_CELLS ON
+set_global_assignment -name AUTO_RESOURCE_SHARING ON
+set_global_assignment -name VHDL_FILE ../../src/Libraries/reduce_lib.vhd
+set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/inf_RAM_wrapper.vhd
 set_global_assignment -name VHDL_FILE ../../src/endian_swap.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/priorityDecoder.vhd
 set_global_assignment -name VHDL_FILE ../../src/Libraries/CANconstants.vhd
@@ -104,8 +110,4 @@ set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/message
 set_global_assignment -name VHDL_FILE ../../src/ID_transfer.vhd
 set_global_assignment -name VHDL_FILE ../../src/CAN_top_level.vhd
 set_global_assignment -name TCL_SCRIPT_FILE ../../scripts/resource_benchmark.tcl
-set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
-set_global_assignment -name STATE_MACHINE_PROCESSING "ONE-HOT"
-set_global_assignment -name REMOVE_REDUNDANT_LOGIC_CELLS ON
-set_global_assignment -name AUTO_RESOURCE_SHARING ON
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

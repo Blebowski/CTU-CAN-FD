@@ -49,6 +49,7 @@
 --                                 replaced with rec_dram_word and
 --                 rec_dram_addr as part of resource optimization.
 --    30.11.2017   Updated "txt_buffer" for direct access to buffer
+--    29.9.2018    Added "inf_RAM_wrapper".
 --------------------------------------------------------------------------------
 
 library ieee;
@@ -209,6 +210,34 @@ package CANcomponents is
             signal timestamp            :in     std_logic_vector(63 downto 0);
             signal rx_read_buff         :out    std_logic_vector(31 downto 0);
             signal drv_bus              :in     std_logic_vector(1023 downto 0)
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Inferred RAM wrapper
+    ----------------------------------------------------------------------------    
+    component inf_RAM_wrapper is
+        generic(
+            constant word_width           :     natural := 32;
+            constant depth                :     natural := 32;
+            constant address_width        :     natural := 8;
+            constant reset_polarity       :     std_logic := '1';
+            constant simulation_reset     :     boolean := true;
+            constant sync_read            :     boolean := true
+        );
+        port(
+            signal clk_sys                :in   std_logic;
+            signal res_n                  :in   std_logic;
+            signal addr_A                 :in   std_logic_vector(address_width -1
+                                                downto 0);
+            signal write                  :in   std_logic;
+            signal data_in                :in   std_logic_vector(word_width - 1
+                                                downto 0);
+            signal addr_B                 :in   std_logic_vector(address_width - 1
+                                                downto 0);
+            signal data_out               :out  std_logic_vector(word_width - 1
+                                                downto 0)
         );
     end component;
 
