@@ -2490,7 +2490,7 @@ package body CANtestLib is
         act_address := w_address;
 
         -- Iterate through the addresses
-        for i in 0 to (w_data'length / 4) - 1 loop
+        for i in 0 to (w_data'length / 32) - 1 loop
 
             -- Increment address
             act_address := std_logic_vector(to_unsigned(
@@ -2544,13 +2544,13 @@ package body CANtestLib is
         act_address := r_address;
 
         -- Iterate through the addresses
-        for i in 0 to (r_data'length / 4) - 1 loop
+        for i in 0 to (r_data'length / 32) - 1 loop
             -- Increment address
             act_address := std_logic_vector(to_unsigned(
                             to_integer(unsigned(act_address)) + increment, 24));
             mem_bus.address   <= act_address(23 downto 2) & "00";
 
-            wait until rising_edge(mem_bus.clk_sys);
+            wait until falling_edge(mem_bus.clk_sys);
 
             -- Fill proper return data!
             r_data(32 * (i + 1) - 1 downto 32 * i) := mem_bus.data_out;
