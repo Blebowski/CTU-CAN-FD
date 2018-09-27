@@ -3407,7 +3407,7 @@ package body CANtestLib is
                                             (OTHERS => '0');
         variable ts_high_word   :       std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
-        constant burst_access   :       boolean := false;
+        constant burst_access   :       boolean := true;
     begin
 
         -- If Burst access is executed read first 4 words all at once!
