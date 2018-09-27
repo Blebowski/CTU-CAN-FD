@@ -159,6 +159,7 @@ use IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.CAN_FD_frame_format.all;
 use work.CAN_FD_register_map.all;
+use work.CANcomponents.all;
 
 entity rxBuffer is
     generic(
@@ -316,6 +317,9 @@ entity rxBuffer is
     -- Read Pointer (access from SW)
     signal read_pointer             :       natural range 0 to buff_size - 1;
 
+    -- Read pointer incremented by 1 (combinationally)
+    signal read_pointer_inc_1       :       natural range 0 to buff_size - 1;
+
     -- Write pointer (committed, available to SW, after frame was stored)
     signal write_pointer            :       natural range 0 to buff_size - 1;
 
@@ -439,6 +443,26 @@ entity rxBuffer is
     -- beginning or end of frame. 
     signal timestamp_capture        :       std_logic_vector(63 downto 0);
 
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- RAM wrapper signals
+    ----------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    
+    -- Write control signal    
+    signal RAM_write                :       std_logic;
+
+    -- Data output from port B     
+    signal RAM_data_out             :       std_logic_vector(31 downto 0);
+
+    -- Write address (connected to write pointer)
+    signal RAM_write_address        :       std_logic_vector(11 downto 0);
+
+    -- Read address (connected to read pointer)
+    signal RAM_read_address         :       std_logic_vector(11 downto 0);
+
+
+
 end entity;
 
 
@@ -545,8 +569,8 @@ begin
     -- When buffer is empty the word on address of read pointer is not valid,
     -- provide zeroes instead
     ----------------------------------------------------------------------------
-    rx_read_buff          <= read_mem_word when (rx_empty_int = '0')
-                                           else
+    rx_read_buff          <= RAM_data_out when (rx_empty_int = '0')
+                                          else
                              (OTHERS => '0');
 
 
@@ -678,7 +702,7 @@ begin
                 ----------------------------------------------------------------
                 if (read_frame_counter = 0) then
                     read_frame_counter    <=
-                        to_integer(unsigned(read_mem_word(RWCNT_H downto
+                        to_integer(unsigned(RAM_data_out(RWCNT_H downto
                                                             RWCNT_L)));
 
                 else
@@ -867,7 +891,7 @@ begin
             -- Moving to next word by reading (if there is sth to read).
             --------------------------------------------------------------------
             if (read_increment) then
-                read_pointer        <= (read_pointer + 1) mod buff_size;
+                read_pointer        <= read_pointer_inc_1;
             end if;
 
             --------------------------------------------------------------------
@@ -951,6 +975,17 @@ begin
 
 
     ----------------------------------------------------------------------------
+    -- Calculation of Incremented Read Pointer combinationally. This is used
+    -- for two things:
+    --  1. Actual Increment of Read pointer during read of RX_DATA.
+    --  2. Adressing RX Buffer RAM read side by incremented value to avoid one
+    --     clock cycle delay on "read_pointer" and thus allow bursts on read
+    --     from RX_DATA register!
+    ----------------------------------------------------------------------------
+    read_pointer_inc_1 <= (read_pointer + 1) mod buff_size;
+
+
+    ----------------------------------------------------------------------------
     -- Calculation of data overrun flag. If FSM would like to write to the
     -- memory, and there is not enough free space, data overrun flag will be
     -- set, and no further writes will be executed.
@@ -992,32 +1027,47 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Memory access process
+    -- RAM Memory of RX Buffer
     ----------------------------------------------------------------------------
-    mem_acc_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            -- Memory is initialized to zeroes in simulation!
-            -- pragma translate_off    
-            memory            <= (OTHERS => (OTHERS => '0'));
-            -- pragma translate_on
+    rx_buf_RAM : inf_RAM_wrapper 
+    generic map (
+        word_width           => 32,
+        depth                => buff_size,
+        address_width        => RAM_write_address'length,
+        reset_polarity       => ACT_RESET,
+        simulation_reset     => true,
+        sync_read            => true
+    )
+    port map(
+        clk_sys              => clk_sys,
+        res_n                => res_n,
+        addr_A               => RAM_write_address,
+        write                => RAM_write, 
+        data_in              => memory_write_data,
+        addr_B               => RAM_read_address,
+        data_out             => RAM_data_out
+    );
 
-            read_mem_word     <= (OTHERS => '0');
+    -- Memory written either on regular write or Extra timestamp write
+    RAM_write           <= '1' when (write_raw_OK or write_extra_ts) else
+                           '0';
 
-        elsif (rising_edge(clk_sys)) then
-            
-            -- Write to memory either by regular pointer or by "extra timestamp"
-            -- pointer.
-            if (write_raw_OK or write_extra_ts) then
-                memory(memory_write_pointer) <= memory_write_data;    
-            end if;
+    -- Write address is given by write pointer
+    RAM_write_address   <= std_logic_vector(to_unsigned(
+                            memory_write_pointer, RAM_write_address'length));
 
-            -- Reading memory word
-            read_mem_word <= memory(read_pointer);
 
-        end if;
-    end process;
-
+    ----------------------------------------------------------------------------
+    -- RAM read address is given by read pointers. If no transaction for read
+    -- of RX DATA is in progress, read pointer is given by its real value.
+    -- During transaction, Incremented Read pointer is chosen to avoid one clock
+    -- cycle delay caused by increment on read pointer!
+    ----------------------------------------------------------------------------
+   RAM_read_address <= std_logic_vector(to_unsigned(
+                        read_pointer_inc_1, RAM_read_address'length))
+                       when (read_increment) else
+                       std_logic_vector(to_unsigned(
+                        read_pointer, RAM_read_address'length));
 
 
     ----------------------------------------------------------------------------
@@ -1041,7 +1091,7 @@ begin
             (buff_size = 2048) or
             (buff_size = 4096))
     report "Unsupported RX Buffer size! RX Buffer must be power of 2!"
-    severity failure;
+        severity failure;
 
 
     ----------------------------------------------------------------------------
