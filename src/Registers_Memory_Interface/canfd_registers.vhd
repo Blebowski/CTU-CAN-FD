@@ -111,6 +111,10 @@
 --    21.02.2018  Removed "txt_frame_swap" since it is not needed with new,
 --                priority based implementation of TX Buffers.
 --      2.6.2018  Removed "tx_time_suport".
+--     29.7.2018  Removed "RX_buff_read_first" to have only single clock 
+--                Avalon cycles available. Thus now there is no register
+--                remaining which would require gap cycle between two cycles!
+--                Burst reads are now supported! 
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -352,7 +356,6 @@ entity canfd_registers is
     signal PC_state_reg_vect      :     std_logic_vector(6 downto 0);
 
     -- Reading from RX buffer, detection of first cycle to move the pointer
-    signal RX_buff_read_first     :     boolean;
     signal aux_data               :     std_logic_Vector(31 downto 0);
 
     -- Receive Timestamp options
@@ -742,7 +745,6 @@ begin
             clr_err_ctrs
             );
 
-            RX_buff_read_first    <= false;
             aux_data              <=  (OTHERS => '0');
       
         elsif rising_edge(clk_sys) then
@@ -784,7 +786,6 @@ begin
                 mode_reg           ,rtsopt                 ,clr_err_ctrs
                 );
 
-                RX_buff_read_first    <= false;
                 aux_data              <= (OTHERS => '0');
             else
 
@@ -852,7 +853,6 @@ begin
                 data_out_int              <=  (OTHERS=>'0');
                 log_cmd                   <=  (OTHERS =>'0');
 
-                RX_buff_read_first        <= false;
                 aux_data                  <=  (OTHERS=>'0');
                 sbe_reg                   <= sbe;
 
@@ -1473,16 +1473,9 @@ begin
                         -- RX_DATA register
                         --------------------------------------------------------
                         when RX_DATA_ADR =>
-                            if (RX_buff_read_first = false) then
-                                data_out_int(RX_DATA_H downto RX_DATA_L) <=
+                            data_out_int(RX_DATA_H downto RX_DATA_L) <=
                                     rx_read_buff;
-                            else
-                                data_out_int(RX_DATA_H downto RX_DATA_L) <=
-                                    aux_data;
-                            end if;
-
-                            RX_buff_read_first              <=  true;
-
+                            
                         --------------------------------------------------------
                         -- Transciever delay adress
                         --------------------------------------------------------
@@ -1733,8 +1726,7 @@ begin
                                 COMP_TYPE_ADRESS_LOWER) = compType and
                          adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
                             std_logic_vector(to_unsigned(ID, 4)) and
-                         adress(11 downto 0) = RX_DATA_ADR and
-                         RX_buff_read_first = false)
+                         adress(11 downto 0) = RX_DATA_ADR)
                         else
                       '0';
   
