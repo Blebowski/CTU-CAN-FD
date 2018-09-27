@@ -67,6 +67,8 @@
 --      7.6.2018  Added "CAN_insert_TX_frame" procedure.
 --     18.6.2018  Added optimized clock_gen_proc, timestamp_gen_proc procedures.
 --     15.9.2018  Added support for message filter manipulation!
+--     27.9.2018  Added burst support for avalon access. Added option to read
+--                frame from RX Buffer via burst partially!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -887,8 +889,49 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Execute write access on Avalon memory bus via Avalon burst. 
+    -- Does not support unaligned accesses. Size of the burst is given by
+    -- length of "w_data".
+    --
+    -- Arguments:
+    --  w_data          Data to write (Little endian)
+    --  w_address       Address where to start write burst.
+    --  stat_burst      True for "stationary" burst where address should not
+    --                  be incremented during the burst!
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure aval_write_burst(
+        constant  w_data        : in    std_logic_vector;
+        constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  stat_burst    : in    boolean := false;
+        signal    mem_bus       : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Execute read access on Avalon memory bus via Avalon burst. 
+    -- Does not support unaligned accesses. Size of the burst is given by
+    -- length of "r_data".
+    --
+    -- Arguments:
+    --  r_data          Data to be read(Little endian)
+    --  w_address       Address where to start write burst.
+    --  stat_burst      True for "stationary" burst where address should not
+    --                  be incremented during the burst!
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure aval_read_burst(
+        variable  r_data        : out   std_logic_vector;
+        constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  stat_burst    : in    boolean := false;
+        signal    mem_bus       : inout Avalon_mem_type
+    );
+
+
+    ----------------------------------------------------------------------------
     -- Execute write access to CTU CAN FD Core over Avalon Bus. If size is not
-    -- specified, 32 bit access is executed.
+    -- specified, 32 bit access is executed. If input data size is other than
+    -- 32 bits, burst access is executed.
     --
     -- Address bits meaning is following:
     --  [19:16]     Component type (always CAN_COMPONENT_TYPE)
@@ -901,19 +944,23 @@ package CANtestLib is
     --  w_offset        Register or buffer offset (bits 11:0).
     --  ID              Index of CTU CAN FD Core instance (bits 15:12)
     --  mem_bus         Avalon memory bus to execute the access on.
+    --  stat_burst      If Burst access is executed, address should not be
+    --                  incremented during the burst.
     ----------------------------------------------------------------------------
     procedure CAN_write(
-        constant  w_data        : in    std_logic_vector(31 downto 0);
+        constant  w_data        : in    std_logic_vector;
         constant  w_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
         signal    mem_bus       : inout Avalon_mem_type;
-        constant  w_size        : in    aval_access_size := BIT_32
+        constant  w_size        : in    aval_access_size := BIT_32;
+        constant  stat_burst    : in    boolean := false
     );
 
 
     ----------------------------------------------------------------------------
     -- Execute read access from CTU CAN FD Core over Avalon Bus. If size is not
-    -- specified, 32 bit access is executed.
+    -- specified, 32 bit access is executed. If input data size is other than
+    -- 32 bits, burst access is executed.
     --
     -- Address bits meaning is following:
     --  [19:16]     Component type (always CAN_COMPONENT_TYPE)
@@ -926,13 +973,16 @@ package CANtestLib is
     --  r_offset        Register or buffer offset (bits 11:0).
     --  ID              Index of CTU CAN FD Core instance (bits 15:12)
     --  mem_bus         Avalon memory bus to execute the access on.
+    --  stat_burst      If Burst access is executed, address should not be
+    --                  incremented during the burst.
     ----------------------------------------------------------------------------
     procedure CAN_read(
-        variable  r_data        : out   std_logic_vector(31 downto 0);
+        variable  r_data        : out   std_logic_vector;
         constant  r_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
         signal    mem_bus       : inout Avalon_mem_type;
-        constant  r_size        : in    aval_access_size := BIT_32
+        constant  r_size        : in    aval_access_size := BIT_32;
+        constant  stat_burst    : in    boolean := false
     );
 
 
@@ -2253,7 +2303,7 @@ package body CANtestLib is
 
 
     function aval_is_aligned(
-        constant  address       : in    std_logic_vector(23 downto 0);
+        constant  address       : in    std_logic_vector;
         constant  size          : in    aval_access_size
     )return boolean is
     begin
@@ -2380,35 +2430,180 @@ package body CANtestLib is
     end procedure;
 
 
+    function aval_is_invalid_burst_size(
+        constant data_length    :       natural
+    ) return boolean
+    is
+    begin
+        if ((data_length mod 4) = 0) then
+            return false;
+            report "Invalid Avalon Burst size: "
+                    & integer'image(data_length) &
+                   " Burst size should be 32 bit aligned!"
+                    severity warning;
+        end if;
+
+        if ((data_length / 4) > 64) then
+            report "Invalid Avalon Burst size: "
+                    & integer'image(data_length) &
+                   " Burst size should not be larger than 64 words! " &
+                   " (Vector of 64 * 32 = 2048 bits)"
+                    severity warning;
+            return false;
+        end if;
+
+        return true;
+    end function;
+
+
+    procedure aval_write_burst(
+        constant  w_data        : in    std_logic_vector;
+        constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  stat_burst    : in    boolean := false;
+        signal    mem_bus       : inout Avalon_mem_type
+    ) is
+        variable  act_address   :       std_logic_vector(23 downto 0) :=
+                                            (OTHERS => '0');
+        variable  increment     :       natural := 0;
+        variable  msg           :       line;
+    begin
+        if (not aval_is_aligned(w_address, BIT_32)) then
+            write(msg, string'("Unaligned Avalon Write Burst, Adress:"));
+            hwrite(msg, w_address);
+            writeline(output, msg);
+            return;
+        end if;
+        
+        if (aval_is_invalid_burst_size(w_data'length)) then
+            return;
+        end if;
+
+        wait until falling_edge(mem_bus.clk_sys);
+        mem_bus.scs       <= '1';
+        mem_bus.swr       <= '1';
+        mem_bus.sbe       <= (OTHERS => '1');
+
+        -- For "stationary" bursts increment is 0!
+        if (not stat_burst) then
+            increment := 4;
+        end if;
+        act_address := w_address;
+
+        -- Iterate through the addresses
+        for i in 0 to (w_data'length / 4) - 1 loop
+
+            -- Increment address
+            act_address := std_logic_vector(to_unsigned(
+                            to_integer(unsigned(act_address)) + increment, 24));
+            mem_bus.address   <= act_address(23 downto 2) & "00";
+
+            -- Choose proper data
+            mem_bus.data_in   <= w_data(32 * (i + 1) - 1 downto 32 * i);
+
+            wait until rising_edge(mem_bus.clk_sys);
+        end loop;
+
+        mem_bus.scs       <= '0';
+        mem_bus.swr       <= '0';
+        mem_bus.sbe       <= (OTHERS => '0');
+        wait until falling_edge(mem_bus.clk_sys);
+    end procedure;
+
+
+    procedure aval_read_burst(
+        variable  r_data        : out   std_logic_vector;
+        constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  stat_burst    : in    boolean := false;
+        signal    mem_bus       : inout Avalon_mem_type
+    )is
+        variable  act_address   :       std_logic_vector(23 downto 0) :=
+                                            (OTHERS => '0');
+        variable  increment     :       natural := 0;
+        variable  msg           :       line;
+    begin
+        if (not aval_is_aligned(r_address, BIT_32)) then
+            write(msg, string'("Unaligned Avalon Read Burst, Adress:"));
+            hwrite(msg, r_address);
+            writeline(output, msg);
+            return;
+        end if;
+        
+        if (aval_is_invalid_burst_size(r_data'length)) then
+            return;
+        end if;
+
+        wait until falling_edge(mem_bus.clk_sys);
+        mem_bus.scs       <= '1';
+        mem_bus.srd       <= '1';
+        mem_bus.sbe       <= (OTHERS => '1');
+
+        -- For "stationary" bursts increment is 0!
+        if (not stat_burst) then
+            increment := 4;
+        end if;
+        act_address := r_address;
+
+        -- Iterate through the addresses
+        for i in 0 to (r_data'length / 4) - 1 loop
+            -- Increment address
+            act_address := std_logic_vector(to_unsigned(
+                            to_integer(unsigned(act_address)) + increment, 24));
+            mem_bus.address   <= act_address(23 downto 2) & "00";
+
+            wait until rising_edge(mem_bus.clk_sys);
+
+            -- Fill proper return data!
+            r_data(32 * (i + 1) - 1 downto 32 * i) := mem_bus.data_out;
+        end loop;
+
+        mem_bus.scs       <= '0';
+        mem_bus.srd       <= '0';
+        mem_bus.sbe       <= (OTHERS => '0');
+        wait until falling_edge(mem_bus.clk_sys);
+    end procedure;
+
+
     procedure CAN_write(
-        constant  w_data        : in    std_logic_vector(31 downto 0);
+        constant  w_data        : in    std_logic_vector;
         constant  w_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
         signal    mem_bus       : inout Avalon_mem_type;
-        constant  w_size        : in    aval_access_size := BIT_32
+        constant  w_size        : in    aval_access_size := BIT_32;
+        constant  stat_burst    : in    boolean := false
     )is
-        variable int_address   :   std_logic_vector(23 downto 0);
+        variable int_address    :       std_logic_vector(23 downto 0);
     begin
         int_address       := CAN_COMPONENT_TYPE &
                              std_logic_vector(to_unsigned(ID, 4)) &
                              "0000" & w_offset;
-        aval_write(w_data, int_address, w_size, mem_bus);
+
+        -- Single access for single word -> burst otherwise!
+        if (w_data'length = 32) then
+            aval_write(w_data, int_address, w_size, mem_bus);
+        else
+            aval_write_burst(w_data, int_address, stat_burst, mem_bus);
+        end if;
     end procedure;
 
 
     procedure CAN_read(
-        variable  r_data        : out   std_logic_vector(31 downto 0);
+        variable  r_data        : out   std_logic_vector;
         constant  r_offset      : in    std_logic_vector(11 downto 0);
         constant  ID            : in    natural range 0 to 15;
         signal    mem_bus       : inout Avalon_mem_type;
-        constant  r_size        : in    aval_access_size := BIT_32
+        constant  r_size        : in    aval_access_size := BIT_32;
+        constant  stat_burst    : in    boolean := false
     )is
         variable int_address   :   std_logic_vector(23 downto 0);
     begin
         int_address       := CAN_COMPONENT_TYPE &
                              std_logic_vector(to_unsigned(ID, 4)) &
                              "0000" & r_offset;
-        aval_read(r_data, int_address, r_size, mem_bus);
+        if (r_data'length = 32) then
+            aval_read(r_data, int_address, r_size, mem_bus);
+        else
+            aval_read_burst(r_data, int_address, stat_burst, mem_bus);
+        end if;
     end procedure;
 
 
@@ -3202,28 +3397,51 @@ package body CANtestLib is
                                         (OTHERS => '0');
         variable aux_vect       :       std_logic_vector(28 downto 0) :=
                                         (OTHERS => '0');
+        variable burst_data     :       std_logic_vector(127 downto 0) :=
+                                            (OTHERS => '0');
+        variable frm_fmt_word   :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        variable ident_word     :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        variable ts_low_word    :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        variable ts_high_word   :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        constant burst_access   :       boolean := false;
     begin
-        -- Read Frame format word
-        CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
-        frame.dlc           := r_data(DLC_H downto DLC_L);
-        frame.rtr           := r_data(RTR_IND);
-        frame.ident_type    := r_data(ID_TYPE_IND);
-        frame.frame_format  := r_data(FR_TYPE_IND);
-        frame.brs           := r_data(BRS_IND);
+
+        -- If Burst access is executed read first 4 words all at once!
+        if (burst_access) then
+            CAN_read(burst_data, RX_DATA_ADR, ID, mem_bus, BIT_32, true);
+            frm_fmt_word := burst_data(31 downto 0);
+            ident_word   := burst_data(63 downto 32);
+            ts_low_word  := burst_data(95 downto 64);
+            ts_high_word := burst_data(127 downto 96);
+        else
+            CAN_read(frm_fmt_word, RX_DATA_ADR, ID, mem_bus);
+            CAN_read(ident_word, RX_DATA_ADR, ID, mem_bus);
+            CAN_read(ts_low_word, RX_DATA_ADR, ID, mem_bus);
+            CAN_read(ts_high_word, RX_DATA_ADR, ID, mem_bus);
+        end if;
+
+        -- Parse frame format word
+        frame.dlc           := frm_fmt_word(DLC_H downto DLC_L);
+        frame.rtr           := frm_fmt_word(RTR_IND);
+        frame.ident_type    := frm_fmt_word(ID_TYPE_IND);
+        frame.frame_format  := frm_fmt_word(FR_TYPE_IND);
+        frame.brs           := frm_fmt_word(BRS_IND);
         frame.rwcnt         := to_integer(unsigned(
-                               r_data(RWCNT_H downto RWCNT_L)));
+                               frm_fmt_word(RWCNT_H downto RWCNT_L)));
         decode_dlc(frame.dlc, frame.data_length);
 
-        --Read identifier
-        CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
-        aux_vect := r_data(28 downto 0);
+        -- Parse ID
+        aux_vect := ident_word(28 downto 0);
         id_hw_to_sw(aux_vect, frame.ident_type, frame.identifier);
 
-        -- Read timestamp
-        CAN_read(r_data, RX_DATA_ADR, ID, mem_bus);
-        frame.timestamp(31 downto 0)  := r_data;
-        CAN_read(r_data,RX_DATA_ADR,ID,mem_bus);
-        frame.timestamp(63 downto 32) := r_data;
+        -- Timestamp
+        frame.timestamp(31 downto 0)  := ts_low_word;
+        frame.timestamp(63 downto 32) := ts_high_word;
+
 
         -- Now read data frames
         if ((frame.rtr = NO_RTR_FRAME or frame.frame_format = FD_CAN)
