@@ -3650,7 +3650,7 @@ package body CANtestLib is
         end if;
 
         -- Set index of Buffer on which the command should be executed.
-        data(buf_n + TXI1_IND - 1) := '1';
+        data(buf_n + TXB1_IND - 1) := '1';
 
         -- Give the command
         CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
@@ -3713,16 +3713,16 @@ package body CANtestLib is
         retVal.rx_full          := false;
         retVal.rx_empty         := false;
 
-        if (data(RX_FULL_IND) = '1') then
+        if (data(RXF_IND) = '1') then
             retVal.rx_full      := true;
         end if;
 
-        if (data(RX_EMPTY_IND) = '1') then
+        if (data(RXE_IND) = '1') then
             retVal.rx_empty     := true;
         end if;
 
         retVal.rx_frame_count   := to_integer(unsigned(
-                                    data(RX_FRC_H downto RX_FRC_L)));
+                                    data(RXFRC_H downto RXFRC_L)));
     end procedure;
 
 
@@ -4031,15 +4031,15 @@ package body CANtestLib is
         tmp := (OTHERS => '0');
 
         if (interrupts.receive_int) then
-            tmp(RI_IND)         :=  '1';
+            tmp(RXI_IND)         :=  '1';
         end if;
 
         if (interrupts.transmitt_int) then
-            tmp(TI_IND)         :=  '1';
+            tmp(TXI_IND)         :=  '1';
         end if;
 
         if (interrupts.error_warning_int) then
-            tmp(EI_IND)         :=  '1';
+            tmp(EWLI_IND)         :=  '1';
         end if;
 
         if (interrupts.data_overrun_int) then
@@ -4071,7 +4071,7 @@ package body CANtestLib is
         end if;
 
         if (interrupts.rx_buffer_not_empty_int) then
-            tmp(RBNEI_IND)      :=  '1';
+            tmp(RBNEWLI_IND)      :=  '1';
         end if;
 
         if (interrupts.tx_buffer_hw_cmd) then
@@ -4090,15 +4090,15 @@ package body CANtestLib is
         tmp := (false, false, false, false, false, false,
                 false, false, false, false, false, false);
 
-        if (int_reg(RI_IND) = '1') then
+        if (int_reg(RXI_IND) = '1') then
             tmp.receive_int              :=  true;
         end if;
 
-        if (int_reg(TI_IND) = '1') then
+        if (int_reg(TXI_IND) = '1') then
             tmp.transmitt_int            :=  true;
         end if;
 
-        if (int_reg(EI_IND) = '1') then
+        if (int_reg(EWLI_IND) = '1') then
             tmp.error_warning_int        :=  true;
         end if;
 
@@ -4252,7 +4252,7 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
     begin
-        data(EWL_LIMIT_H downto EWL_LIMIT_L) :=
+        data(EW_LIMIT_H downto EW_LIMIT_L) :=
             std_logic_vector(to_unsigned(fault_th.ewl, 8));
 
         data(ERP_LIMIT_H downto ERP_LIMIT_L) :=
@@ -4273,7 +4273,7 @@ package body CANtestLib is
     begin
         CAN_read(data, EWL_ADR, ID, mem_bus, BIT_16);
         fault_th.ewl := to_integer(unsigned(
-                          data(EWL_LIMIT_H downto EWL_LIMIT_L)));
+                          data(EW_LIMIT_H downto EW_LIMIT_L)));
 
         CAN_read(data, ERP_ADR, ID, mem_bus, BIT_16);
         fault_th.erp := to_integer(unsigned(
