@@ -5,7 +5,7 @@
 ##   Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
 ##   
 ##   Script for updating license in the header source codes of CAN FD IP Core.
-##   Supports following file extensions: ".vhd" , ".tcl" , ".h" , ".c"
+##   Supports following file extensions: ".vhd" , ".tcl" , ".h" , ".c", ".cpp"
 ##    
 ##   Arguments:
 ##		lic_path 	- File with license which should be placed to header of the
@@ -28,6 +28,8 @@ import sys
 import shutil
 import re
 import io
+
+from io import StringIO
 
 ################################################################################
 ## Global variables
@@ -81,13 +83,15 @@ def write_license(lic_text, comment_char, file):
 	
 	file.write("\n")
 	
-	# Write rest of the lines
+	# Write rest of the lines	
 	buf = io.StringIO(lic_text)
+	i = 0
 	while True:
-	
+		i = i + 1
+
 		# Read the line from text of the license
 		lic_line = buf.readline()
-		if (lic_line == "<licend1234>"):
+		if (not(str.find("<licend1234>", lic_line) == -1)):
 			break
 		
 		# Write Begining of the line
@@ -159,10 +163,10 @@ def process_file(filename):
 	if (file_ext_match == False):
 		return
 		
-	print("Processing file: "+filename)
+	print("Processing file: " + filename)
 	
 	## Check the comment sign based on file type
-	if (ext_type == ".c"):
+	if ((ext_type == ".c") or (ext_type == ".cpp")):
 		comment_sign = "*"
 	elif (ext_type == ".h"): 
 		comment_sign = "*"
@@ -178,10 +182,10 @@ def process_file(filename):
 	temp_file = open ("temp.txt","wt")
 	
 	## Write the new license to the temp file
-	write_license(lic_text,comment_sign, temp_file)
+	write_license(lic_text, comment_sign, temp_file)
 	
 	## Write rest of the file after license update
-	write_source(file,temp_file, comment_sign)
+	write_source(file, temp_file, comment_sign)
 	temp_file.close()
 	file.close()
 	
