@@ -230,7 +230,7 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 	
 	def write_mem_map_title(self):
 		self.lyxGen.write_layout_text("Chapter", "{}\n".format(
-											self.fieldMap.displayName))
+											self.fieldMap.displayName), label="label")
 		
 		self.lyxGen.write_layout_text("Standard", "{}\n".format(self.fieldMap
 										.description))

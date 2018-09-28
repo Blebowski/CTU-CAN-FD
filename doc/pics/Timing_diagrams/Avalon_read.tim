@@ -1,0 +1,250 @@
+Timing Analyzer Settings 
+     Version:           0.990
+     Time_Scale:        1.0E-9
+     Time_Per_Division: 10
+     Number_Divisions:  160
+     Start_Time:        0
+     End_Time:          80
+Part_Constraint
+     Name:               thold
+     Min_Constraint:     4.0
+     Max_Constraint:     4.0
+     Description:        Example hold constraint
+Part_Constraint_End
+Part_Constraint
+     Name:               tsetup
+     Min_Constraint:     10.0
+     Max_Constraint:     10.0
+     Description:        Example setup constraint
+Part_Constraint_End
+Jitter_Margin
+     Name:               p1jitter
+     Plus_Margin:        1.0
+     Minus_Margin:       1.0
+     Description:        Example part jitter
+Jitter_Margin_End
+Jitter_Margin
+     Name:               p2jitter
+     Plus_Margin:        0.5
+     Minus_Margin:       0.5
+     Description:        Example part jitter
+Jitter_Margin_End
+Digital_Clock
+     Position:          1
+     Name:              CLK_SYS
+     Frequency:         1.0E8
+     Duty_Cycle:        50
+     Start_Delay:       0.0
+     Start_State:       H
+     Rise_Time:         0.5
+     Fall_Time:         0.5
+     IO_Type:           Output
+Digital_Clock_End
+Digital_Signal
+     Position:          2
+     Name:              SCS
+     Start_State:       L
+     Rise_Time:         1.0
+     Fall_Time:         1.0
+     IO_Type:           Output
+     Sync_Clock:        CLK_SYS
+          Edge
+              Min:             10.01
+              Max:             10.01
+              State:            H
+          Edge_End
+          Edge
+              Min:             20.01
+              Max:             20.01
+              State:            L
+          Edge_End
+          Edge
+              Min:             30.001
+              Max:             30.001
+              State:            H
+          Edge_End
+          Edge
+              Min:             40.001
+              Max:             40.001
+              State:            L
+          Edge_End
+          Edge
+              Min:             50.001
+              Max:             50.001
+              State:            H
+          Edge_End
+          Edge
+              Min:             60.001
+              Max:             60.001
+              State:            L
+          Edge_End
+Digital_Signal_End
+Digital_Signal
+     Position:          3
+     Name:              SRD
+     Start_State:       0
+     Rise_Time:         1.0
+     Fall_Time:         1.0
+     IO_Type:           Output
+     Sync_Clock:        CLK_SYS
+          Edge
+              Min:             10.01
+              Max:             10.01
+              State:            H
+          Edge_End
+          Edge
+              Min:             20.01
+              Max:             20.01
+              State:            L
+          Edge_End
+          Edge
+              Min:             30.001
+              Max:             30.001
+              State:            H
+          Edge_End
+          Edge
+              Min:             40.001
+              Max:             40.001
+              State:            L
+          Edge_End
+          Edge
+              Min:             50.001
+              Max:             50.001
+              State:            H
+          Edge_End
+          Edge
+              Min:             60.001
+              Max:             60.001
+              State:            L
+          Edge_End
+Digital_Signal_End
+Digital_Bus
+     Position:          4
+     Name:              ADD[23:0]
+     Start_State:       X
+     State_Format:      Hex
+     Rise_Time:         1.0
+     Fall_Time:         1.0
+     IO_Type:           Output
+     Sync_Clock:        CLK_SYS
+          Edge
+              Min:             10.001
+              Max:             10.001
+              State:            300004
+          Edge_End
+          Edge
+              Min:             20.001
+              Max:             20.001
+              State:            X
+          Edge_End
+          Edge
+              Min:             30.001
+              Max:             30.001
+              State:            300000
+          Edge_End
+          Edge
+              Min:             40.001
+              Max:             40.001
+              State:            X
+          Edge_End
+          Edge
+              Min:             50.001
+              Max:             50.001
+              State:            300088
+          Edge_End
+          Edge
+              Min:             60.001
+              Max:             60.001
+              State:            X
+          Edge_End
+          Edge
+              Min:             80.001
+              Max:             80.001
+              State:            000000
+          Edge_End
+Digital_Bus_End
+Digital_Bus
+     Position:          5
+     Name:              SBE[3:0]
+     Start_State:       X
+     State_Format:      Hex
+     Rise_Time:         1.0
+     Fall_Time:         1.0
+     IO_Type:           Output
+     Sync_Clock:        CLK_SYS
+          Edge
+              Min:             10.001
+              Max:             10.01
+              State:            4
+          Edge_End
+          Edge
+              Min:             20.001
+              Max:             20.01
+              State:            X
+          Edge_End
+          Edge
+              Min:             30.001
+              Max:             30.001
+              State:            3
+          Edge_End
+          Edge
+              Min:             40.001
+              Max:             40.001
+              State:            X
+          Edge_End
+          Edge
+              Min:             50.001
+              Max:             50.001
+              State:            F
+          Edge_End
+          Edge
+              Min:             60.001
+              Max:             60.001
+              State:            X
+          Edge_End
+          Edge
+              Min:             80.001
+              Max:             80.001
+              State:            0
+          Edge_End
+Digital_Bus_End
+Digital_Bus
+     Position:          6
+     Name:              DATA_IN[31:0]
+     Start_State:       00000000
+     State_Format:      Hex
+     Rise_Time:         1.0
+     Fall_Time:         1.0
+     IO_Type:           Output
+     Sync_Clock:        CLK_SYS
+          Edge
+              Min:             20.001
+              Max:             20.001
+              State:            00800000
+          Edge_End
+          Edge
+              Min:             30.001
+              Max:             30.001
+              State:            00000000
+          Edge_End
+          Edge
+              Min:             40.001
+              Max:             40.001
+              State:            0000CAFD
+          Edge_End
+          Edge
+              Min:             50.001
+              Max:             50.001
+              State:            00000000
+          Edge_End
+          Edge
+              Min:             60.001
+              Max:             60.001
+              State:            DEADBEEF
+          Edge_End
+          Edge
+              Min:             70.001
+              Max:             70.001
+              State:            00000000
+          Edge_End
+Digital_Bus_End

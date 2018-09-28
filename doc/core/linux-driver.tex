@@ -1,0 +1,193 @@
+%\chapter{Linux driver}
+
+The Linux SocketCAN driver can be build as \verb|ctucanfd.ko|.
+Device configuration is specified via device tree entry with the following
+structure:
+
+\begin{verbatim}
+CTU_CAN_FD_0: CTU_CAN_FD@43c30000 {
+    compatible = "ctu,canfd-2";
+
+    /* platform-dependent registers address */
+    reg = <0x43c30000 0x10000>;
+
+    /* platform-dependent interrupt configuration */
+    interrupt-parent = <&intc>;
+    interrupts = <0 30 4>;
+
+    /* CAN clock source */
+    clocks = <&clkc 15>;
+};
+\end{verbatim}
+
+\section{Supported features}
+
+\begin{itemize}
+\item Switch between CAN FD or plain CAN 2.0
+\item Non-iso FD
+\item
+\end{itemize}
+
+\section{Unsupported features}
+
+\begin{itemize}
+\item HW frame filters
+\item Self-test mode
+\item Timestamp recording for RX and TX frames
+\item Time-based transmission
+\end{itemize}
+
+There is no infrastructure for HW frame filters in Linux kernel, because SW filters
+are more flexible and claimed to be sufficient performance-wise \ref{linux:socketcan}.
+Thus no support for HW filtering is planned for the Linux driver.
+
+Self-test mode, as implemented by the core (at the moment of writing), does not
+meet the requirements for self-test mode in Linux. That may, however, change in
+further releases.
+
+Support for hardware-assisted frame timestamping is planned for future releases.
+Kernel API for time-based transmission should be merged in v4.19 and the driver
+might add support for this in later releases.
+
+\section{Device probe}
+
+\section{Parameter configuration}
+
+- bitrate, dbitrate
+    - automatic computation
+        * The timing calculation functions have only constraints on tseg1,
+        * which is prop\_seg + phase1\_seg combined. tseg1 is then split in half
+        * and stored into prog\_seg and phase\_seg1. In CTU CAN FD, PROP is 7 bits
+        * wide but PH1 only 6, so we must re-distribute the values here.
+- mode:
+    - oneshot (retransmit limit)
+    - berr reporting -> BEI
+    - loopback (not supported)
+    - listen only
+    - triple sampling
+    - FD mode
+    - presume ACK
+    - FD non-iso
+
+
+\section{Frame RX}
+
+ISR -> schedule NAPI queue ...> \verb|ctucan_rx_poll| -> loop(\verb|ctucan_rx|) -> \verb|napi_complete()|
+
+When NAPI polling is scheduled, the \verb|ctucan_rx_poll| routine continually
+processes RX frames (via \verb|ctucan_rx|) until either there is no frame
+in hardware RX FIFO (in which case the NAPI queue is marked as complete) or a
+maximum quota is reached.
+
+Before the NAPI polling is scheduled, RXBNEI (and DOI) interrupts have to be
+disabled (but not masked). They are re-enabled when all frames are read after
+the NAPI queue is marked as complete.
+
+\section{Frame TX}
+
+The core has several TX buffers with adjustable priority. For the purposes of
+SocketCAN, they are used in FIFO fashion by rotating the priorities on each
+completed TX frame. ID of next empty buffer is kept in \verb|txb_head|,
+ID of the first full buffer (awaiting completion) in \verb|txb_tail| (modulo the
+number of buffers).
+
+TXB\char`#0 has the highest priority, each subsequent buffer has priority one lower.
+
+\begin{verbatim}
+---- Figure
+a)
+TXB#   0 | 1 | 2 | 3
+Seq    A | B | C |
+Prio   7 | 6 | 5 | 4
+       ^           ^
+       | TAIL      | HEAD
+->
+
+b)
+TXB#   0 | 1 | 2 | 3
+Seq      | B | C |
+Prio   4 | 7 | 6 | 5
+           ^       ^
+           | TAIL  | HEAD
+
+->
+
+c)
+TXB#   0 | 1 | 2 | 3 | 0'
+Seq    E | B | C | D |
+Prio   4 | 7 | 6 | 5 |
+           ^           ^
+           | TAIL      | HEAD
+\end{verbatim}
+
+a) 3 frames are queued
+b) frame A was successfully sent and the priorities were rotated
+c) 2 new frames (D, E) were enqueued. Notice that the priorities did not have to be adjusted.
+   \verb|txb_head| now containes the value 5 which indicates TXB\char`#0, but
+   allows us to detect that all buffers are full.
+X: TXB priority rotation example. Empty Seq means the buffer is empty.
+   Higher priority number means higher priority. Here the core has 4 TX buffers.
+---- /Figure
+
+The network subsystems submits TX frames via \verb|ctucan_start_xmit|.
+There should be at least one TXB in empty state, otherwise an error is reported
+and handled gracefully (the TX queue is stopped). Because the buffers are managed in FIFO fashion,
+it is assumed that the buffer with ID \verb|txb_head| is empty and the frame is inserted there.
+If all TX buffers are now full, the TX queue is stopped.
+
+The driver gets to know about TX buffer state change via TXBHCI. In
+this interrupt handler (\verb|ctucan_tx_interrupt|), it is again assumed that
+the buffers come into a final (completed) state in FIFO order. This assumption
+holds even if the transmission is aborted or retransmit limit is set.
+If the next buffer is in final state, we process it. Otherwise we must:
+\begin{enumerate}
+\item Clear the TXBHCI interrupt -- because it was probably set again for the
+      next buffers we were processing
+\item Check the next buffer \textbf{again} -- because the TXBHCI might have been
+      set just before we cleared it, but after we have checked the buffer the
+      first time). If it is in final state, we repeat the whole process.
+\end{enumerate}
+
+We also know the upper bound of the number of TX buffers to handle: the number
+of frames currently queued in the controller (\verb|txb_head| $-$ \verb|txb_tail|).
+No more buffers than this are tested (saves bus access for the final buffer).
+
+
+\endinput
+- architecture based on SocketCAN
+    - module
+    - device probe
+        - device tree
+            - ...
+    - netdev
+        - ...
+
+- TXB priority rotation
+- overrun handling
+- TXHCI handling
+
+Section: init
+Section: settings (bitrate, mode, ...)
++ Section: RX
++ Section: TX
+Section: errors
+
+
+Netdev ops:
+	.ndo_open	= ctucan_open,
+	.ndo_stop	= ctucan_close,
++	.ndo_start_xmit	= ctucan_start_xmit,
+	.ndo_change_mtu	= can_change_mtu,
+
+PM ops:
+    ctucan_suspend
+    ctucan_resume
+
+Platform driver:
+	.probe	= ctucan_probe,
+	.remove	= ctucan_remove,
+	{ .compatible = "ctu,canfd-2.0", },
+	{ .compatible = "ctu,ctucanfd", },
+
+TODO:
+- compatible field: version???

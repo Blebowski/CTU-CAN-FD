@@ -79,6 +79,8 @@ set_global_assignment -name OPTIMIZATION_MODE "HIGH PERFORMANCE EFFORT"
 set_global_assignment -name STATE_MACHINE_PROCESSING "ONE-HOT"
 set_global_assignment -name REMOVE_REDUNDANT_LOGIC_CELLS ON
 set_global_assignment -name AUTO_RESOURCE_SHARING ON
+set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
+set_global_assignment -name VHDL_SHOW_LMF_MAPPING_MESSAGES OFF
 set_global_assignment -name VHDL_FILE ../../src/Libraries/reduce_lib.vhd
 set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/inf_RAM_wrapper.vhd
 set_global_assignment -name VHDL_FILE ../../src/endian_swap.vhd
