@@ -534,9 +534,10 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 		can_led_event(ndev, CAN_LED_EVENT_RX);
 
 	if (work_done < quota) {
-		napi_complete(napi);
-		iec.s.doi = 1; /* Also re-enable DOI */
-		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
+		if (napi_complete_done(napi, work_done)) {
+			iec.s.doi = 1; /* Also re-enable DOI */
+			priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
+		}
 	}
 
 	return work_done;
