@@ -119,6 +119,7 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 		return -EPERM;
 	}
 
+	/* Note that bt may be modified here */
 	ctu_can_fd_set_nom_bittiming(&priv->p, bt);
 
 	return 0;
@@ -147,6 +148,7 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 		return -EPERM;
 	}
 
+	/* Note that dbt may be modified here */
 	ctu_can_fd_set_data_bittiming(&priv->p, dbt);
 
 	return 0;

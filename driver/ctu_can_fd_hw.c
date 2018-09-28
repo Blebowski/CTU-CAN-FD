@@ -260,6 +260,8 @@ void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv, const struct can_ctrlmo
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
 }
 
+/* TODO: use atomic 16bit accesses instead of read-modify-write */
+
 void ctu_can_fd_rel_rx_buf(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_mode_command_status_settings reg;
