@@ -10,6 +10,8 @@
 \pagestyle{fancy}
 \usepackage{colortbl}
 \definecolor{gray}{RGB}{230,230, 230}
+\usepackage{subcaption}
+\usepackage{cprotect}
 \end_preamble
 \use_default_options true
 \begin_modules
@@ -21073,7 +21075,8 @@ Linux driver
 
 \begin_layout Standard
 \begin_inset CommandInset include
-LatexCommand include
+LatexCommand input
+preview true
 filename "linux-driver.tex"
 
 \end_inset

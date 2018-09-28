@@ -20,58 +20,55 @@ CTU_CAN_FD_0: CTU_CAN_FD@43c30000 {
 };
 \end{verbatim}
 
-\section{Supported features}
+General information about SocketCAN may be found in Linux kernel documentation
+\cite{doc:socketcan}. % TODO: ref
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Initialization}
+
+The core is reset on probe (after the module is loaded or the device appears in
+the device tree) and on device bring-up. Most of the initialization is done on
+device bring-up (\verb|ctucan_open|), probe mainly collects device info,
+initializes internal structures and checks that the device is compatible (via
+DEVICE\_ID and VERSION registers).
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Mode configuration}
+
+Following modes defined in Linux kernel are supported and may be selectively
+turned on and off:
 \begin{itemize}
-\item Switch between CAN FD or plain CAN 2.0
-\item Non-iso FD
-\item
+\item Oneshot (via retransmit limit)
+\item Bus error reporting
+\item Listen only
+\item Triple sampling
+\item FD mode
+\item Presume ACK
+\item FD non-iso
+\item \textit{loopback is not supported} (see \ref{sec:linux:unsupported-features})
 \end{itemize}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Unsupported features}
+\section{Bitrate configuration}
 
-\begin{itemize}
-\item HW frame filters
-\item Self-test mode
-\item Timestamp recording for RX and TX frames
-\item Time-based transmission
-\end{itemize}
+Nominal and data bitrate setting is performed in \verb|ctucan_set_bittiming|
+and \verb|ctucan_set_data_bittiming|, respectively. Although the bitrate setting
+is also performed on device bring-up (\verb|ctucan_chip_start|), it is necessary
+to perform it early, because the timing values calculated in the kernel might
+require adjusting. This way the adjustments are observable immediately instead
+of until after chip start.
 
-There is no infrastructure for HW frame filters in Linux kernel, because SW filters
-are more flexible and claimed to be sufficient performance-wise \ref{linux:socketcan}.
-Thus no support for HW filtering is planned for the Linux driver.
-
-Self-test mode, as implemented by the core (at the moment of writing), does not
-meet the requirements for self-test mode in Linux. That may, however, change in
-further releases.
-
-Support for hardware-assisted frame timestamping is planned for future releases.
-Kernel API for time-based transmission should be merged in v4.19 and the driver
-might add support for this in later releases.
-
-\section{Device probe}
-
-\section{Parameter configuration}
-
-- bitrate, dbitrate
-    - automatic computation
-        * The timing calculation functions have only constraints on tseg1,
-        * which is prop\_seg + phase1\_seg combined. tseg1 is then split in half
-        * and stored into prog\_seg and phase\_seg1. In CTU CAN FD, PROP is 7 bits
-        * wide but PH1 only 6, so we must re-distribute the values here.
-- mode:
-    - oneshot (retransmit limit)
-    - berr reporting -> BEI
-    - loopback (not supported)
-    - listen only
-    - triple sampling
-    - FD mode
-    - presume ACK
-    - FD non-iso
-
+The kernel timing calculation functions have only constraints on \textit{tseg1},
+which is \textit{prop\_seg} + \textit{phase1\_seg} combined. \textit{tseg1} is
+then split in half and stored into \textit{prog\_seg} and \textit{phase\_seg1}.
+In CTU CAN FD, \textit{PROP} is 7 bits wide but \textit{PH1} only 6, so the
+values must be re-distributed.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Frame RX}
 
+% TODO: diagram
 ISR -> schedule NAPI queue ...> \verb|ctucan_rx_poll| -> loop(\verb|ctucan_rx|) -> \verb|napi_complete()|
 
 When NAPI polling is scheduled, the \verb|ctucan_rx_poll| routine continually
@@ -82,8 +79,11 @@ maximum quota is reached.
 Before the NAPI polling is scheduled, RXBNEI (and DOI) interrupts have to be
 disabled (but not masked). They are re-enabled when all frames are read after
 the NAPI queue is marked as complete.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Frame TX}
+
+% TODO: diagram
 
 The core has several TX buffers with adjustable priority. For the purposes of
 SocketCAN, they are used in FIFO fashion by rotating the priorities on each
@@ -91,46 +91,51 @@ completed TX frame. ID of next empty buffer is kept in \verb|txb_head|,
 ID of the first full buffer (awaiting completion) in \verb|txb_tail| (modulo the
 number of buffers).
 
-TXB\char`#0 has the highest priority, each subsequent buffer has priority one lower.
+TXB\#0 has the highest priority, each subsequent buffer has priority one lower.
 
-\begin{verbatim}
----- Figure
-a)
-TXB#   0 | 1 | 2 | 3
-Seq    A | B | C |
-Prio   7 | 6 | 5 | 4
-       ^           ^
-       | TAIL      | HEAD
-->
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{0.32\textwidth}
+    \begin{tabular}{lc|c|c|c}
+    TXB\# & 0 & 1 & 2 & 3 \\\hline
+    Seq   & A & B & C &   \\
+    Prio  & 7 & 6 & 5 & 4 \\\hline
+          &   & T &   & H \\
+    \end{tabular}
+    \caption{3 frames are queued.}
+    \end{subfigure}
+    ~%
+    \noindent
+    \begin{subfigure}[t]{0.32\textwidth}
+    \begin{tabular}{lc|c|c|c}
+    TXB\# & 0 & 1 & 2 & 3 \\\hline
+    Seq   &   & B & C &   \\
+    Prio  & 4 & 7 & 6 & 5 \\\hline
+          &   & T &   & H \\
+    \end{tabular}
+    \caption{Frame A was successfully sent and the priorities were rotated.}
+    \end{subfigure}
+    ~%
+    \noindent
+    \begin{subfigure}[t]{0.32\textwidth}
+    \begin{tabular}{lc|c|c|c|c}
+    TXB\# & 0 & 1 & 2 & 3 & 0' \\\hline
+    Seq   & E & B & C & D &    \\
+    Prio  & 4 & 7 & 6 & 5 &    \\\hline
+          &   & T &   &   & H  \\
+    \end{tabular}
+    \cprotect\caption{2 new frames (D, E) were enqueued. Notice that the
+        priorities did not have to be adjusted. \verb|txb_head| now contains the
+        value 5 which indicates TXB\#0, but allows us to detect that all buffers
+        are full.}
+    \end{subfigure}
+    \cprotect\caption{TXB priority rotation example. Empty Seq means the buffer
+        is empty. Higher priority number means higher priority. H and T mark
+        \verb|txb_head| and \verb|txb_tail|, respectively.}
+\end{figure}
 
-b)
-TXB#   0 | 1 | 2 | 3
-Seq      | B | C |
-Prio   4 | 7 | 6 | 5
-           ^       ^
-           | TAIL  | HEAD
-
-->
-
-c)
-TXB#   0 | 1 | 2 | 3 | 0'
-Seq    E | B | C | D |
-Prio   4 | 7 | 6 | 5 |
-           ^           ^
-           | TAIL      | HEAD
-\end{verbatim}
-
-a) 3 frames are queued
-b) frame A was successfully sent and the priorities were rotated
-c) 2 new frames (D, E) were enqueued. Notice that the priorities did not have to be adjusted.
-   \verb|txb_head| now containes the value 5 which indicates TXB\char`#0, but
-   allows us to detect that all buffers are full.
-X: TXB priority rotation example. Empty Seq means the buffer is empty.
-   Higher priority number means higher priority. Here the core has 4 TX buffers.
----- /Figure
-
-The network subsystems submits TX frames via \verb|ctucan_start_xmit|.
-There should be at least one TXB in empty state, otherwise an error is reported
+The network subsystem submits TX frames via \verb|ctucan_start_xmit|.
+There should be at least one TXB in state TX\_ETY, otherwise an error is reported
 and handled gracefully (the TX queue is stopped). Because the buffers are managed in FIFO fashion,
 it is assumed that the buffer with ID \verb|txb_head| is empty and the frame is inserted there.
 If all TX buffers are now full, the TX queue is stopped.
@@ -139,18 +144,71 @@ The driver gets to know about TX buffer state change via TXBHCI. In
 this interrupt handler (\verb|ctucan_tx_interrupt|), it is again assumed that
 the buffers come into a final (completed) state in FIFO order. This assumption
 holds even if the transmission is aborted or retransmit limit is set.
-If the next buffer is in final state, we process it. Otherwise we must:
+If the next buffer is in a final state, we process it. Otherwise, we must:
 \begin{enumerate}
 \item Clear the TXBHCI interrupt -- because it was probably set again for the
       next buffers we were processing
 \item Check the next buffer \textbf{again} -- because the TXBHCI might have been
       set just before we cleared it, but after we have checked the buffer the
-      first time). If it is in final state, we repeat the whole process.
+      first time). If it is in a final state, we repeat the whole process.
 \end{enumerate}
 
 We also know the upper bound of the number of TX buffers to handle: the number
 of frames currently queued in the controller (\verb|txb_head| $-$ \verb|txb_tail|).
 No more buffers than this are tested (saves bus access for the final buffer).
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Unsupported features}
+\label{sec:linux:unsupported-features}
+
+\begin{itemize}
+\item HW frame filters
+\item Self-test mode (a.k.a. internal loopback)
+\item Timestamp recording for RX and TX frames
+\item Time-based transmission
+\item Setting of error counters from userspace
+\end{itemize}
+
+There is no infrastructure for HW frame filters in Linux kernel, because SW filters
+are more flexible and claimed to be sufficient performance-wise \cite{linux:socketcan}.
+Thus no support for HW filtering is planned for the Linux driver.
+
+Self-test mode, as implemented by the core (at the moment of writing), does not
+meet the requirements for self-test mode in Linux. That may, however, change in
+further releases.
+
+Support for hardware-assisted frame timestamping is planned for future releases.
+Kernel API for time-based transmission should be merged in v4.19 and the driver
+might add support for this in later releases.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Error handling}
+
+\subsection{TX Frame drop}
+
+In oneshot mode, when a TX frame is dropped (TXB ends up in TX\_ERR mode), the
+\verb|tx_dropped| statistics counter is incremented. The same happens for
+TX\_ABT mode, although buffer abort is never issued from the driver and hence
+this should never happen.
+
+\subsection{Bus errors}
+
+\textsc{Error Passive}, \textsc{Error Warning} and \textsc{Bus Off} situations
+are reported to userspace via appropriate generated error frames (see
+\cite{linux:socketcan}).
+
+Bus errors (situations leading to transmission of an error frame) and
+Arbitration Lost events are received via BEI and ALI (if enabled via BERR mode
+flag) and also reported to userspace via generated error frames.
+
+\subsection{RX overrun}
+
+Reporting RX FIFO overrun is likewise handled via generated error frame. However,
+special care is needed when dealing with DOI. DOI must be disabled together
+with RXBNE when NAPI polling is scheduled. Furthermore, when clearing the overrun flag,
+both Data Overrun Flag and interrupt status must be cleared, in this order.
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \endinput
@@ -162,15 +220,15 @@ No more buffers than this are tested (saves bus access for the final buffer).
     - netdev
         - ...
 
-- TXB priority rotation
-- overrun handling
-- TXHCI handling
++ TXB priority rotation
++ TXHCI handling
++ RX overrun handling
 
-Section: init
-Section: settings (bitrate, mode, ...)
++ Section: init
++ Section: settings (bitrate, mode, ...)
 + Section: RX
 + Section: TX
-Section: errors
++ Section: errors
 
 
 Netdev ops:
@@ -191,3 +249,5 @@ Platform driver:
 
 TODO:
 - compatible field: version???
+
+Documentation/ABI/testing/sysfs-class-net-statistics
