@@ -5,7 +5,7 @@
  * 
  * Authors:
  *     Ondrej Ille <ondrej.ille@gmail.com>
- *     Martin Jerabek <jerabma7@fel.cvut.cz>
+ *     Martin Jerabek <martin.jerabek01@gmail.com>
  * 
  * Project advisors: 
  * 	Jiri Novak <jnovak@fel.cvut.cz>
