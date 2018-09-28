@@ -458,7 +458,7 @@ architecture rtl of canfd_registers is
         -- Command registers
         clear_overrun           <=  CDO_RSTVAL;
         release_recieve         <=  RRB_RSTVAL;
-        abort_transmittion      <=  AT_RSTVAL;
+        abort_transmittion      <=  ABT_RSTVAL;
         
         erctr_pres_value        <=  (OTHERS=>'0');
         erctr_pres_mask         <=  (OTHERS=>'0');
@@ -917,7 +917,7 @@ begin
                             -- Command register
                             write_be_s(clear_overrun, CDO_IND, data_in, sbe);
                             write_be_s(release_recieve, RRB_IND, data_in, sbe);
-                            write_be_s(abort_transmittion, AT_IND, data_in, sbe);
+                            write_be_s(abort_transmittion, ABT_IND, data_in, sbe);
                             write_be_s(clr_err_ctrs, ERCRST_IND, data_in, sbe);
 
                             --Status register is read only!

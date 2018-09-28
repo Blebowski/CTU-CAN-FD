@@ -3914,7 +3914,7 @@ package body CANtestLib is
         data := (OTHERS => '0');
 
         if (command.abort_transmission) then
-            data(AT_IND)        := '1';
+            data(ABT_IND)        := '1';
         end if;
 
         if (command.release_rec_buffer) then
