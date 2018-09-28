@@ -3321,8 +3321,8 @@ package body CANtestLib is
         w_data                      := (OTHERS => '0');
         w_data(DLC_H downto DLC_L)  := frame.dlc;
         w_data(RTR_IND)             := frame.rtr;
-        w_data(ID_TYPE_IND)         := frame.ident_type;
-        w_data(FR_TYPE_IND)         := frame.frame_format;
+        w_data(IDE_IND)             := frame.ident_type;
+        w_data(FDF_IND)             := frame.frame_format;
         w_data(TBF_IND)             := '1';
         w_data(BRS_IND)             := frame.brs;
         w_data(ESI_RESVD_IND)       := '0'; -- ESI is receive only
@@ -3431,8 +3431,8 @@ package body CANtestLib is
         -- Parse frame format word
         frame.dlc           := frm_fmt_word(DLC_H downto DLC_L);
         frame.rtr           := frm_fmt_word(RTR_IND);
-        frame.ident_type    := frm_fmt_word(ID_TYPE_IND);
-        frame.frame_format  := frm_fmt_word(FR_TYPE_IND);
+        frame.ident_type    := frm_fmt_word(IDE_IND);
+        frame.frame_format  := frm_fmt_word(FDF_IND);
         frame.brs           := frm_fmt_word(BRS_IND);
         frame.rwcnt         := to_integer(unsigned(
                                frm_fmt_word(RWCNT_H downto RWCNT_L)));

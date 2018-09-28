@@ -634,8 +634,8 @@ begin
     frame_form_w(DLC_H downto DLC_L)      <= rec_dlc_in;
     frame_form_w(4)                       <= '0';
     frame_form_w(RTR_IND)                 <= rec_is_rtr;
-    frame_form_w(ID_TYPE_IND)             <= rec_ident_type_in;
-    frame_form_w(FR_TYPE_IND)             <= rec_frame_type_in;
+    frame_form_w(IDE_IND)                 <= rec_ident_type_in;
+    frame_form_w(FDF_IND)                 <= rec_frame_type_in;
     frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RESVD_IND)           <= rec_esi;
