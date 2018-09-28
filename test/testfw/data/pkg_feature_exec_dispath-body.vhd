@@ -39,6 +39,8 @@
 -- 
 --------------------------------------------------------------------------------
 
+Library ieee;
+library vunit_lib;
 library work;
 context vunit_lib.vunit_context;
 USE IEEE.std_logic_1164.all;

@@ -39,7 +39,8 @@
 -- 
 --------------------------------------------------------------------------------
 
-
+-- Configurations
+{% for test in tests %}
 configuration tbconf_{{test}} of vunittb_wrapper is
 for tb
     for i_test : CAN_test use entity work.CAN_test({{test}}); end for;
