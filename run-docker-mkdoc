@@ -2,5 +2,7 @@
 
 #IMG=mjerabek/lyx:buster
 IMG=hathi.duckdns.org/user/lyx:buster
+d=$(realpath $(dirname "$0")/../..)
 
-docker run --rm -v $PWD:/build $IMG make -C /build/doc/core
+docker run --rm -v $d:/build -w /build/modules/CTU_CAN_FD/doc/core $IMG make
+#docker run -ti --rm -v $d:/build -w /build/modules/CTU_CAN_FD/doc/core $IMG

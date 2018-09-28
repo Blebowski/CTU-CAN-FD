@@ -1,2 +1,7 @@
 /Progdokum.pdf
 /version.tex
+*.aux
+*.log
+*.out
+*.toc
+/pics
