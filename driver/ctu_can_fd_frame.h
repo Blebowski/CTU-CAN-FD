@@ -57,21 +57,21 @@ union ctu_can_fd_frame_form_w {
 		uint32_t dlc                     : 4;
 		uint32_t reserved_4              : 1;
 		uint32_t rtr                     : 1;
-		uint32_t id_type                 : 1;
-		uint32_t fr_type                 : 1;
+		uint32_t ide                     : 1;
+		uint32_t fdf                     : 1;
 		uint32_t tbf                     : 1;
 		uint32_t brs                     : 1;
-		uint32_t esi_resvd               : 1;
+		uint32_t esi_rsv                 : 1;
 		uint32_t rwcnt                   : 5;
 		uint32_t reserved_31_16         : 16;
 #else
 		uint32_t reserved_31_16         : 16;
 		uint32_t rwcnt                   : 5;
-		uint32_t esi_resvd               : 1;
+		uint32_t esi_rsv                 : 1;
 		uint32_t brs                     : 1;
 		uint32_t tbf                     : 1;
-		uint32_t fr_type                 : 1;
-		uint32_t id_type                 : 1;
+		uint32_t fdf                     : 1;
+		uint32_t ide                     : 1;
 		uint32_t rtr                     : 1;
 		uint32_t reserved_4              : 1;
 		uint32_t dlc                     : 4;
@@ -84,12 +84,12 @@ enum ctu_can_fd_frame_form_w_rtr {
 	RTR_FRAME          = 0x1,
 };
 
-enum ctu_can_fd_frame_form_w_id_type {
+enum ctu_can_fd_frame_form_w_ide {
 	BASE           = 0x0,
 	EXTENDED       = 0x1,
 };
 
-enum ctu_can_fd_frame_form_w_fr_type {
+enum ctu_can_fd_frame_form_w_fdf {
 	NORMAL_CAN       = 0x0,
 	FD_CAN           = 0x1,
 };
@@ -104,7 +104,7 @@ enum ctu_can_fd_frame_form_w_brs {
 	BR_SHIFT          = 0x1,
 };
 
-enum ctu_can_fd_frame_form_w_esi_resvd {
+enum ctu_can_fd_frame_form_w_esi_rsv {
 	ESI_ERR_ACTIVE       = 0x0,
 	ESI_ERR_PASIVE       = 0x1,
 };

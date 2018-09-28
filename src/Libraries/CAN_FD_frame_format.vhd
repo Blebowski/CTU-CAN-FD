@@ -73,11 +73,11 @@ package CAN_FD_frame_format is
   constant DLC_L                  : natural := 0;
   constant DLC_H                  : natural := 3;
   constant RTR_IND                : natural := 5;
-  constant ID_TYPE_IND            : natural := 6;
-  constant FR_TYPE_IND            : natural := 7;
+  constant IDE_IND                : natural := 6;
+  constant FDF_IND                : natural := 7;
   constant TBF_IND                : natural := 8;
   constant BRS_IND                : natural := 9;
-  constant ESI_RESVD_IND         : natural := 10;
+  constant ESI_RSV_IND           : natural := 10;
   constant RWCNT_L               : natural := 11;
   constant RWCNT_H               : natural := 15;
 
@@ -85,11 +85,11 @@ package CAN_FD_frame_format is
   constant NO_RTR_FRAME       : std_logic := '0';
   constant RTR_FRAME          : std_logic := '1';
 
-  -- "ID_TYPE" field enumerated values
+  -- "IDE" field enumerated values
   constant BASE               : std_logic := '0';
   constant EXTENDED           : std_logic := '1';
 
-  -- "FR_TYPE" field enumerated values
+  -- "FDF" field enumerated values
   constant NORMAL_CAN         : std_logic := '0';
   constant FD_CAN             : std_logic := '1';
 
@@ -101,7 +101,7 @@ package CAN_FD_frame_format is
   constant BR_NO_SHIFT        : std_logic := '0';
   constant BR_SHIFT           : std_logic := '1';
 
-  -- "ESI_RESVD" field enumerated values
+  -- "ESI_RSV" field enumerated values
   constant ESI_ERR_ACTIVE     : std_logic := '0';
   constant ESI_ERR_PASIVE     : std_logic := '1';
 
