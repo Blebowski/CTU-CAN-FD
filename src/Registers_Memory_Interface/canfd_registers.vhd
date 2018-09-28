@@ -1768,7 +1768,7 @@ begin
     --      it directly!
   
     -- Status register
-    status_reg(BS_IND mod 8) <= '1' when 
+    status_reg(IDLE_IND mod 8) <= '1' when 
                                     error_state_type'VAL(to_integer(unsigned(
                                     stat_bus(STAT_ERROR_STATE_HIGH downto
                                              STAT_ERROR_STATE_LOW)))) = bus_off
@@ -1786,7 +1786,7 @@ begin
                                     else
                                 '0';
 
-    status_reg(ES_IND mod 8) <= '1' when 
+    status_reg(EWL_IND mod 8) <= '1' when 
                                     (ewl < stat_bus(STAT_TX_COUNTER_HIGH downto
                                                     STAT_TX_COUNTER_LOW) or
                                     (ewl < stat_bus(STAT_RX_COUNTER_HIGH downto
@@ -1794,19 +1794,19 @@ begin
                                     else
                                 '0';
                                 
-    status_reg(TS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
+    status_reg(TXS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
                                          stat_bus(STAT_OP_STATE_HIGH downto
                                                   STAT_OP_STATE_LOW)))) = transciever
                                     else
                                 '0';
 
-    status_reg(RS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
+    status_reg(RXS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
                                          stat_bus(STAT_OP_STATE_HIGH downto
                                                   STAT_OP_STATE_LOW)))) = reciever
                                     else
                                 '0';
   
-    status_reg(TBS_IND mod 8) <= '1' when (txtb_fsms(0) = txt_empty or
+    status_reg(TXNF_IND mod 8) <= '1' when (txtb_fsms(0) = txt_empty or
                                            txtb_fsms(1) = txt_empty or
                                            txtb_fsms(2) = txt_empty or
                                            txtb_fsms(3) = txt_empty)
@@ -1815,9 +1815,9 @@ begin
   
     -- When at least one message is availiable in the buffer
     status_reg(RXNE_IND mod 8) <= not rx_empty;
-    status_reg(DOS_IND mod 8) <= rx_data_overrun;
+    status_reg(DOR_IND mod 8) <= rx_data_overrun;
 
-    status_reg(ET_IND mod 8)  <= '1' when (PC_state = error)
+    status_reg(EFT_IND mod 8)  <= '1' when (PC_state = error)
                                      else
                                  '0';
    

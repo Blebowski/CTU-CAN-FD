@@ -3472,13 +3472,13 @@ package body CANtestLib is
 
         -- Wait until unit starts to transmitt or reciesve
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
+        while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until bus is idle now
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(BS_IND) = '0') loop
+        while (r_data(IDLE_IND) = '0') loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
 
@@ -3494,7 +3494,7 @@ package body CANtestLib is
     begin
         -- Wait until bus is idle
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(BS_IND) = '0') loop
+        while (r_data(IDLE_IND) = '0') loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
     end procedure;
@@ -3509,13 +3509,13 @@ package body CANtestLib is
     begin
         -- Wait until unit starts to transmitt or recieve
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
+        while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until error frame is not being transmitted
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(ET_IND) = '0') loop
+        while (r_data(EFT_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
     end procedure;
@@ -3572,10 +3572,10 @@ package body CANtestLib is
         -- Wait until unit starts to transmitt or recieve
         while (true) loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
-            if (exit_trans and r_data(TS_IND) = '1') then
+            if (exit_trans and r_data(TXS_IND) = '1') then
                 exit;
             end if;
-            if (exit_rec and r_data(RS_IND) = '1') then
+            if (exit_rec and r_data(RXS_IND) = '1') then
                 exit;
             end if;
         end loop;
@@ -3951,31 +3951,31 @@ package body CANtestLib is
             status.receive_buffer       := true;
         end if;
 
-        if (data(DOS_IND) = '1') then
+        if (data(DOR_IND) = '1') then
             status.data_overrun         := true;
         end if;
 
-        if (data(TBS_IND) = '1') then
+        if (data(TXNF_IND) = '1') then
             status.tx_buffer_empty      := true;
         end if;
 
-        if (data(ET_IND) = '1') then
+        if (data(EFT_IND) = '1') then
             status.error_transmission   := true;
         end if;
 
-        if (data(RS_IND) = '1') then
+        if (data(RXS_IND) = '1') then
             status.receiver             := true;
         end if;
 
-        if (data(TS_IND) = '1') then
+        if (data(TXS_IND) = '1') then
             status.transmitter          := true;
         end if;
 
-        if (data(ES_IND) = '1') then
+        if (data(EWL_IND) = '1') then
             status.error_warning        := true;
         end if;
 
-        if (data(BS_IND) = '1') then
+        if (data(IDLE_IND) = '1') then
             status.bus_status           := true;
         end if;
     end procedure;
