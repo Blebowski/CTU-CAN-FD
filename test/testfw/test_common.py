@@ -86,8 +86,8 @@ def add_flags(ui, lib, build):
         rt.scan_tests_from_file(str(build / "../reference/vunit_reference_wrapper.vhd"))
 
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
-    lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage"])
-    ui.set_sim_option("ghdl.elab_flags", ["-Wl,-lgcov", "-Wl,--coverage", "-Wl,-no-pie"])
+    lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
+    ui.set_sim_option("ghdl.elab_flags", ["-Wl,-lgcov", "-Wl,--coverage", "-Wl,-no-pie", "-fpsl"])
     ui.set_sim_option("ghdl.sim_flags", ["--ieee-asserts=disable-at-0"])
     modelsim_init_files = get_common_modelsim_init_files()
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
