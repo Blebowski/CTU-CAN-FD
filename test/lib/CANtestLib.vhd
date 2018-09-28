@@ -3947,7 +3947,7 @@ package body CANtestLib is
         status.error_warning            := false;
         status.bus_status               := false;
 
-        if (data(RBS_IND) = '1') then
+        if (data(RXNE_IND) = '1') then
             status.receive_buffer       := true;
         end if;
 

@@ -1814,7 +1814,7 @@ begin
                                  '0';
   
     -- When at least one message is availiable in the buffer
-    status_reg(RBS_IND mod 8) <= not rx_empty;
+    status_reg(RXNE_IND mod 8) <= not rx_empty;
     status_reg(DOS_IND mod 8) <= rx_data_overrun;
 
     status_reg(ET_IND mod 8)  <= '1' when (PC_state = error)
