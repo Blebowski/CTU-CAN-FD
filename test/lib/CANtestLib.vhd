@@ -3325,7 +3325,7 @@ package body CANtestLib is
         w_data(FDF_IND)             := frame.frame_format;
         w_data(TBF_IND)             := '1';
         w_data(BRS_IND)             := frame.brs;
-        w_data(ESI_RESVD_IND)       := '0'; -- ESI is receive only
+        w_data(ESI_RSV_IND)         := '0'; -- ESI is receive only
         CAN_write(w_data, buf_offset, ID, mem_bus);
 
         -- Identifier

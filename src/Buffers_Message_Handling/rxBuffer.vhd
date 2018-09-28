@@ -638,7 +638,7 @@ begin
     frame_form_w(FDF_IND)                 <= rec_frame_type_in;
     frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
     frame_form_w(BRS_IND)                 <= rec_brs;
-    frame_form_w(ESI_RESVD_IND)           <= rec_esi;
+    frame_form_w(ESI_RSV_IND)           <= rec_esi;
 
     ----------------------------------------------------------------------------
     -- RWCNT (Read word count is calculated like so:
