@@ -74,25 +74,25 @@
 #define CTU_CAN_FD_IS_TRANSMITTER(stat) (!!(stat).ts)
 
 // True if Core is receiver of current frame
-#define CTU_CAN_FD_IS_RECEIVER(stat) (!!(stat).s.rs)
+#define CTU_CAN_FD_IS_RECEIVER(stat) (!!(stat).s.rxs)
 
 // True if Core is idle (integrating or interfame space)
-#define CTU_CAN_FD_IS_IDLE(stat) (!!(stat).s.bs)
+#define CTU_CAN_FD_IS_IDLE(stat) (!!(stat).s.idle)
 
 // True if Core is transmitting error frame
-#define CTU_CAN_FD_ERR_FRAME(stat) (!!(stat).s.et)
+#define CTU_CAN_FD_ERR_FRAME(stat) (!!(stat).s.eft)
 
 // True if Error warning limit was reached
 #define CTU_CAN_FD_EWL(stat) (!!(stat).s.ewl)
 
 // True if at least one TXT Buffer is empty
-#define CTU_CAN_FD_TXTNF(stat) (!!(stat).s.tbs)
+#define CTU_CAN_FD_TXTNF(stat) (!!(stat).s.txnf)
 
 // True if data overrun flag of RX Buffer occurred
-#define CTU_CAN_FD_DATA_OVERRUN(stat) (!!(stat).s.dos)
+#define CTU_CAN_FD_DATA_OVERRUN(stat) (!!(stat).s.dor)
 
 // True if RX Buffer is not empty
-#define CTU_CAN_FD_RX_BUF_NEMPTY(stat) (!!(stat).s.rbs)
+#define CTU_CAN_FD_RX_BUF_NEMPTY(stat) (!!(stat).s.rxne)
 
 
 /*
@@ -100,13 +100,13 @@
  */
 
 // Frame reveived interrupt
-#define CTU_CAN_FD_RX_INT(int_stat) (!!(int_stat).s.ri)
+#define CTU_CAN_FD_RX_INT(int_stat) (!!(int_stat).s.rxi)
 
 // Frame transceived interrupt
-#define CTU_CAN_FD_TX_INT(int_stat) (!!(int_stat).s.ti)
+#define CTU_CAN_FD_TX_INT(int_stat) (!!(int_stat).s.txi)
 
 // Error warning limit reached interrupt
-#define CTU_CAN_FD_EWL_INT(int_stat) (!!(int_stat).s.ei)
+#define CTU_CAN_FD_EWL_INT(int_stat) (!!(int_stat).s.ewli)
 
 // RX Buffer data overrun interrupt
 #define CTU_CAN_FD_OVERRUN_INT(int_stat) (!!(int_stat).s.doi)
@@ -121,7 +121,7 @@
 #define CTU_CAN_FD_LOGGER_FIN_INT(int_stat) (!!(int_stat).s.lfi)
 
 // RX Buffer full interrupt
-#define CTU_CAN_FD_RX_FULL_INT(int_stat) (!!(int_stat).s.rfi)
+#define CTU_CAN_FD_RX_FULL_INT(int_stat) (!!(int_stat).s.rxfi)
 
 // Bit-rate shifted interrupt
 #define CTU_CAN_FD_BIT_RATE_SHIFT_INT(int_stat) (!!(int_stat).s.bsi)
@@ -133,7 +133,7 @@
 #define CTU_CAN_FD_TXT_BUF_HWCMD_INT(int_stat) (!!(int_stat).s.txbhci)
 
 static inline bool CTU_CAN_FD_INT_ERROR(union ctu_can_fd_int_stat i) {
-	return i.s.ei || i.s.doi || i.s.epi || i.s.ali;
+	return i.s.ewli || i.s.doi || i.s.epi || i.s.ali;
 }
 
 struct ctucanfd_priv;
@@ -600,7 +600,7 @@ static inline bool ctu_can_fd_is_rx_fifo_empty(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_status_rx_settings reg;
 	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_STATUS);
-	return reg.s.rx_empty;
+	return reg.s.rxe;
 }
 
 
@@ -616,7 +616,7 @@ static inline bool ctu_can_fd_is_rx_fifo_full(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_status_rx_settings reg;
 	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_STATUS);
-	return reg.s.rx_full;
+	return reg.s.rxf;
 }
 
 
@@ -632,7 +632,7 @@ static inline u16 ctu_can_fd_get_rx_frame_count(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_status_rx_settings reg;
 	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_STATUS);
-	return reg.s.rx_frc;
+	return reg.s.rxfrc;
 }
 
 
