@@ -3790,7 +3790,7 @@ package body CANtestLib is
         end if;
 
         if (mode.rtr_pref) then
-            data(RTR_PREF_IND)  := '1';
+            data(RTRP_IND)  := '1';
         end if;
 
         if (mode.tripple_sampling) then
@@ -3860,7 +3860,7 @@ package body CANtestLib is
             mode.flexible_data_rate     := true;
         end if;
 
-        if (data(RTR_PREF_IND) = '1') then
+        if (data(RTRP_IND) = '1') then
             mode.rtr_pref               := true;
         end if;
 

@@ -478,7 +478,7 @@ architecture rtl of canfd_registers is
         mode_reg(STM_IND)       <=  STM_RSTVAL;   -- Self test mode
         mode_reg(AFM_IND)       <=  AFM_RSTVAL;   -- Acceptance filters mode
         mode_reg(FDE_IND)       <=  FDE_RSTVAL;   -- Flexible datarate enable
-        mode_reg(RTR_PREF_IND)  <=  RTR_PREF_RSTVAL;   -- RTR Preffered behaviour
+        mode_reg(RTRP_IND)      <=  RTRP_RSTVAL;   -- RTR Preffered behaviour
             
         -- Retransmitt limit enable
         retr_lim_ena            <=  RTRLE_RSTVAL;
@@ -900,7 +900,7 @@ begin
                         -- MODE, COMMAND and SETTINGS registers
                         --------------------------------------------------------
                         when MODE_ADR =>
-                            -- RTR_PREF,FDE,AFM,STM,LOM Bits
+                            -- RTRP,FDE,AFM,STM,LOM Bits
                             write_be_vect(mode_reg, 1, 5, data_in, 1, 5, sbe);
 
                             -- Tripple sampling
@@ -1947,7 +1947,7 @@ begin
     drv_bus(DRV_ABORT_TRAN_INDEX)                     <=  abort_transmittion;
 
     drv_bus(DRV_CAN_FD_ENA_INDEX)                     <=  mode_reg(FDE_IND);
-    drv_bus(DRV_RTR_PREF_INDEX)                       <=  mode_reg(RTR_PREF_IND);
+    drv_bus(DRV_RTR_PREF_INDEX)                       <=  mode_reg(RTRP_IND);
 
     -- Bus monitoring = listen only mode
     drv_bus(DRV_BUS_MON_ENA_INDEX)                    <=  mode_reg(LOM_IND);
