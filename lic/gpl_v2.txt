@@ -1,11 +1,14 @@
 
 CTU CAN FD IP Core
-Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
+Copyright (C) 2015-2018
 
-Project advisors and co-authors: 
+Authors:
+    Ondrej Ille <ondrej.ille@gmail.com>
+    Martin Jerabek <jerabma7@fel.cvut.cz>
+
+Project advisors: 
 	Jiri Novak <jnovak@fel.cvut.cz>
 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
-	Martin Jerabek <jerabma7@fel.cvut.cz>
 
 Department of Measurement         (http://meas.fel.cvut.cz/)
 Faculty of Electrical Engineering (http://www.fel.cvut.cz)
@@ -25,4 +28,3 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-<licend1234>
