@@ -5,7 +5,7 @@
 ##   Copyright (C) 2017 Ondrej Ille <ondrej.ille@gmail.com>
 ##   
 ##   Script for updating license in the header source codes of CAN FD IP Core.
-##   Supports following file extensions: ".vhd" , ".tcl" , ".h" , ".c"
+##   Supports following file extensions: ".vhd" , ".tcl" , ".h" , ".c", ".cpp"
 ##    
 ##   Arguments:
 ##		lic_path 	- File with license which should be placed to header of the
@@ -166,7 +166,7 @@ def process_file(filename):
 	print("Processing file: " + filename)
 	
 	## Check the comment sign based on file type
-	if (ext_type == ".c"):
+	if ((ext_type == ".c") or (ext_type == ".cpp")):
 		comment_sign = "*"
 	elif (ext_type == ".h"): 
 		comment_sign = "*"
