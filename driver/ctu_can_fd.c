@@ -694,8 +694,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	#define CTUCANFD_INT_RBNEI   BIT(10)
 	#define CTUCANFD_INT_TXBHCI  BIT(11)
 	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | \
-		                    CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
-				    CTUCANFD_INT_BEI)
+	                            CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
+	                            CTUCANFD_INT_BEI)
 
 	/* TX Buffer HW Command Interrupt */
 	if (isr.s.txbhci) {
