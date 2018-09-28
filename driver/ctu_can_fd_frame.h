@@ -1,12 +1,15 @@
 /*******************************************************************************
  * 
  * CTU CAN FD IP Core
- * Copyright (C) 2015-2018 Ondrej Ille <ondrej.ille@gmail.com>
+ * Copyright (C) 2015-2018
  * 
- * Project advisors and co-authors: 
+ * Authors:
+ *     Ondrej Ille <ondrej.ille@gmail.com>
+ *     Martin Jerabek <jerabma7@fel.cvut.cz>
+ * 
+ * Project advisors: 
  * 	Jiri Novak <jnovak@fel.cvut.cz>
  * 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
- * 	Martin Jerabek <jerabma7@fel.cvut.cz>
  * 
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
