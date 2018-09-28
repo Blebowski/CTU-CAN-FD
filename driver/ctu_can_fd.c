@@ -595,14 +595,24 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 				stats->tx_packets++;
 			break;
 			case TXT_ERR:
+				/* This indicated that retransmit limit has been
+				 * reached. Obviously we should not echo the
+				 * frame, but also not indicate any kind of error.
+				 * If desired, it was already reported (possible
+				 * multiple times) on each arbitration lost.
+				 */
 				netdev_warn(ndev, "TXB in Error state");
 				can_free_echo_skb(ndev, txb_idx);
-				// TODO: send some error frame - but what should it contain?
+				stats->tx_dropped++;
 			break;
 			case TXT_ABT:
+				/* Same as for TXT_ERR, only with different
+				 * cause. We *could* re-queue the frame, but
+				 * multiqueue/abort is not supported yet anyway.
+				 */
 				netdev_warn(ndev, "TXB in Aborted state");
 				can_free_echo_skb(ndev, txb_idx);
-				// TODO: send some error frame - but what should it contain?
+				stats->tx_dropped++;
 			break;
 			default:
 				/* Bug only if the first buffer is not finished,
