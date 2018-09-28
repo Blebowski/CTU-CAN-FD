@@ -4063,7 +4063,7 @@ package body CANtestLib is
         end if;
 
         if (interrupts.rx_buffer_full_int) then
-            tmp(RFI_IND)        :=  '1';
+            tmp(RXFI_IND)        :=  '1';
         end if;
 
         if (interrupts.bit_rate_shift_int) then
@@ -4071,7 +4071,7 @@ package body CANtestLib is
         end if;
 
         if (interrupts.rx_buffer_not_empty_int) then
-            tmp(RBNEWLI_IND)      :=  '1';
+            tmp(RBNEI_IND)       :=  '1';
         end if;
 
         if (interrupts.tx_buffer_hw_cmd) then
@@ -4122,7 +4122,7 @@ package body CANtestLib is
             tmp.logger_finished_int      :=  true;
         end if;
 
-        if (int_reg(RFI_IND) = '1') then
+        if (int_reg(RXFI_IND) = '1') then
             tmp.rx_buffer_full_int       :=  true;
         end if;
 
