@@ -514,8 +514,8 @@ begin
                 if (fsm_wait_state) then
                     fsm_wait_state           <= false;
                 else
-                    tran_frame_type_com      <= txtb_selected_input(FR_TYPE_IND);
-                    tran_ident_type_com      <= txtb_selected_input(ID_TYPE_IND);
+                    tran_frame_type_com      <= txtb_selected_input(FDF_IND);
+                    tran_ident_type_com      <= txtb_selected_input(IDE_IND);
                     tran_dlc_com             <= txtb_selected_input(DLC_H downto 
                                                                     DLC_L);
                     tran_is_rtr_com          <= txtb_selected_input(RTR_IND);

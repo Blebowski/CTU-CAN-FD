@@ -213,11 +213,11 @@ begin
     int_input_active(ALI_IND)       <= arbitration_lost;
     int_input_active(EPI_IND)       <= error_passive_changed;
     int_input_active(DOI_IND)       <= rx_message_disc;
-    int_input_active(EI_IND)        <= error_warning_limit;
-    int_input_active(TI_IND)        <= tx_finished;
-    int_input_active(RI_IND)        <= rec_message_valid;
+    int_input_active(EWLI_IND)      <= error_warning_limit;
+    int_input_active(TXI_IND)       <= tx_finished;
+    int_input_active(RXI_IND)       <= rec_message_valid;
     int_input_active(LFI_IND)       <= loger_finished;
-    int_input_active(RFI_IND)       <= rx_full;
+    int_input_active(RXFI_IND)      <= rx_full;
     int_input_active(BSI_IND)       <= br_shifted;
     int_input_active(RBNEI_IND)     <= not rx_empty;
     int_input_active(TXBHCI_IND)    <= or_reduce(txt_hw_cmd_int);

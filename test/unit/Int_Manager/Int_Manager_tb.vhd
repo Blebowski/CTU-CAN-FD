@@ -364,11 +364,11 @@ begin
     int_input(ALI_IND)            <=  arbitration_lost;
     int_input(EPI_IND)            <=  error_passive_changed;
     int_input(DOI_IND)            <=  rx_message_disc;
-    int_input(EI_IND)             <=  error_warning_limit;
-    int_input(TI_IND)             <=  tx_finished;
-    int_input(RI_IND)             <=  rec_message_valid;
+    int_input(EWLI_IND)           <=  error_warning_limit;
+    int_input(TXI_IND)            <=  tx_finished;
+    int_input(RXI_IND)            <=  rec_message_valid;
     int_input(LFI_IND)            <=  loger_finished;
-    int_input(RFI_IND)            <=  rx_full;
+    int_input(RXFI_IND)           <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
     int_input(TXBHCI_IND)         <=  or_reduce(txt_hw_cmd_int);

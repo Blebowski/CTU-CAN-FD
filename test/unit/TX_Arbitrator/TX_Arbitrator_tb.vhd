@@ -447,9 +447,9 @@ begin
                 mod_is_rtr           <= shadow_mem(high_prio_buf_index)(0)
                                                    (RTR_IND);
                 mod_ident_type_out   <= shadow_mem(high_prio_buf_index)(0)
-                                                   (ID_TYPE_IND);
+                                                   (IDE_IND);
                 mod_frame_type_out   <= shadow_mem(high_prio_buf_index)(0)
-                                                   (FR_TYPE_IND);
+                                                   (FDF_IND);
                 mod_brs_out          <= shadow_mem(high_prio_buf_index)(0)
                                                    (BRS_IND);
                 mod_frame_com        <= '1';

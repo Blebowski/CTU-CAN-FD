@@ -166,8 +166,8 @@ package CAN_FD_register_map is
   ------------------------------------------------------------------------------
   -- DEVICE_ID register
   --
-  -- Register contains the identifer of CAN FD IP function. It can be used to de
-  -- termine if CAN IP function is mapped correctly on its base address.
+  -- Register contains the identifer of CTU CAN FD IP Core. It can be used to de
+  -- termine if CTU CAN FD IP Core is mapped correctly on its base address.
   ------------------------------------------------------------------------------
   constant DEVICE_ID_L            : natural := 0;
   constant DEVICE_ID_H           : natural := 15;
@@ -200,7 +200,7 @@ package CAN_FD_register_map is
   constant STM_IND                : natural := 2;
   constant AFM_IND                : natural := 3;
   constant FDE_IND                : natural := 4;
-  constant RTR_PREF_IND           : natural := 5;
+  constant RTRP_IND               : natural := 5;
   constant TSM_IND                : natural := 6;
   constant ACF_IND                : natural := 7;
 
@@ -212,7 +212,7 @@ package CAN_FD_register_map is
   constant TSM_DISABLE        : std_logic := '0';
   constant TSM_ENABLE         : std_logic := '1';
 
-  -- "RTR_PREF" field enumerated values
+  -- "RTRP" field enumerated values
   constant RTR_EXTRA          : std_logic := '0';
   constant RTR_STANDARD       : std_logic := '1';
 
@@ -236,7 +236,7 @@ package CAN_FD_register_map is
   constant RST_RSTVAL         : std_logic := '0';
   constant FDE_RSTVAL         : std_logic := '1';
   constant TSM_RSTVAL         : std_logic := '0';
-  constant RTR_PREF_RSTVAL    : std_logic := '1';
+  constant RTRP_RSTVAL        : std_logic := '1';
   constant ACF_RSTVAL         : std_logic := '0';
   constant LOM_RSTVAL         : std_logic := '0';
   constant STM_RSTVAL         : std_logic := '0';
@@ -248,13 +248,13 @@ package CAN_FD_register_map is
   -- Writing logic 1 into each bit gives different command to the IP Core. After
   --  writing logic 1, logic 0 does not have to be written.
   ------------------------------------------------------------------------------
-  constant AT_IND                 : natural := 9;
+  constant ABT_IND                : natural := 9;
   constant RRB_IND               : natural := 10;
   constant CDO_IND               : natural := 11;
   constant ERCRST_IND            : natural := 12;
 
   -- COMMAND register reset values
-  constant AT_RSTVAL          : std_logic := '0';
+  constant ABT_RSTVAL         : std_logic := '0';
   constant RRB_RSTVAL         : std_logic := '0';
   constant CDO_RSTVAL         : std_logic := '0';
   constant ERCRST_RSTVAL      : std_logic := '0';
@@ -263,26 +263,26 @@ package CAN_FD_register_map is
   -- STATUS register
   --
   -- Register signals various states of CTU CAN FD IP Core. Logic 1 signals acti
-  -- ve state/flag.
+  -- ve status/flag.
   ------------------------------------------------------------------------------
-  constant RBS_IND               : natural := 16;
-  constant DOS_IND               : natural := 17;
-  constant TBS_IND               : natural := 18;
-  constant ET_IND                : natural := 19;
-  constant RS_IND                : natural := 20;
-  constant TS_IND                : natural := 21;
-  constant ES_IND                : natural := 22;
-  constant BS_IND                : natural := 23;
+  constant RXNE_IND              : natural := 16;
+  constant DOR_IND               : natural := 17;
+  constant TXNF_IND              : natural := 18;
+  constant EFT_IND               : natural := 19;
+  constant RXS_IND               : natural := 20;
+  constant TXS_IND               : natural := 21;
+  constant EWL_IND               : natural := 22;
+  constant IDLE_IND              : natural := 23;
 
   -- STATUS register reset values
-  constant RBS_RSTVAL         : std_logic := '0';
-  constant TBS_RSTVAL         : std_logic := '0';
-  constant DOS_RSTVAL         : std_logic := '0';
-  constant ET_RSTVAL          : std_logic := '0';
-  constant RS_RSTVAL          : std_logic := '0';
-  constant TS_RSTVAL          : std_logic := '0';
-  constant ES_RSTVAL          : std_logic := '0';
-  constant BS_RSTVAL          : std_logic := '1';
+  constant RXNE_RSTVAL        : std_logic := '0';
+  constant TXNF_RSTVAL        : std_logic := '0';
+  constant DOR_RSTVAL         : std_logic := '0';
+  constant EFT_RSTVAL         : std_logic := '0';
+  constant RXS_RSTVAL         : std_logic := '0';
+  constant TXS_RSTVAL         : std_logic := '0';
+  constant EWL_RSTVAL         : std_logic := '0';
+  constant IDLE_RSTVAL        : std_logic := '1';
 
   ------------------------------------------------------------------------------
   -- SETTINGS register
@@ -291,17 +291,17 @@ package CAN_FD_register_map is
   -- oopback and retransmission options.
   ------------------------------------------------------------------------------
   constant RTRLE_IND             : natural := 24;
-  constant RTR_TH_L              : natural := 25;
-  constant RTR_TH_H              : natural := 28;
-  constant INT_LOOP_IND          : natural := 29;
+  constant RTRTH_L               : natural := 25;
+  constant RTRTH_H               : natural := 28;
+  constant ILBP_IND              : natural := 29;
   constant ENA_IND               : natural := 30;
-  constant FD_TYPE_IND           : natural := 31;
+  constant NISOFD_IND            : natural := 31;
 
   -- "RTRLE" field enumerated values
   constant RTRLE_DISABLED     : std_logic := '0';
   constant RTRLE_ENABLED      : std_logic := '1';
 
-  -- "INT_LOOP" field enumerated values
+  -- "ILBP" field enumerated values
   constant INT_LOOP_DISABLED  : std_logic := '0';
   constant INT_LOOP_ENABLED   : std_logic := '1';
 
@@ -309,16 +309,16 @@ package CAN_FD_register_map is
   constant DISABLED           : std_logic := '0';
   constant ENABLED            : std_logic := '1';
 
-  -- "FD_TYPE" field enumerated values
+  -- "NISOFD" field enumerated values
   constant ISO_FD             : std_logic := '0';
   constant NON_ISO_FD         : std_logic := '1';
 
   -- SETTINGS register reset values
   constant RTRLE_RSTVAL       : std_logic := '0';
-  constant RTR_TH_RSTVAL : std_logic_vector(3 downto 0) := x"0";
-  constant INT_LOOP_RSTVAL    : std_logic := '0';
+  constant RTRTH_RSTVAL : std_logic_vector(3 downto 0) := x"0";
+  constant ILBP_RSTVAL        : std_logic := '0';
   constant ENA_RSTVAL         : std_logic := '0';
-  constant FD_TYPE_RSTVAL     : std_logic := '0';
+  constant NISOFD_RSTVAL      : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- INT_STAT register
@@ -327,29 +327,29 @@ package CAN_FD_register_map is
   --  (interrupt vector). Writing logic 1 to any bit clears according bit of cap
   -- tured interrupt. Writing logic 0 has no effect.
   ------------------------------------------------------------------------------
-  constant RI_IND                 : natural := 0;
-  constant TI_IND                 : natural := 1;
-  constant EI_IND                 : natural := 2;
+  constant RXI_IND                : natural := 0;
+  constant TXI_IND                : natural := 1;
+  constant EWLI_IND               : natural := 2;
   constant DOI_IND                : natural := 3;
   constant EPI_IND                : natural := 4;
   constant ALI_IND                : natural := 5;
   constant BEI_IND                : natural := 6;
   constant LFI_IND                : natural := 7;
-  constant RFI_IND                : natural := 8;
+  constant RXFI_IND               : natural := 8;
   constant BSI_IND                : natural := 9;
   constant RBNEI_IND             : natural := 10;
   constant TXBHCI_IND            : natural := 11;
 
   -- INT_STAT register reset values
-  constant RI_RSTVAL          : std_logic := '0';
-  constant TI_RSTVAL          : std_logic := '0';
-  constant EI_RSTVAL          : std_logic := '0';
+  constant RXI_RSTVAL         : std_logic := '0';
+  constant TXI_RSTVAL         : std_logic := '0';
+  constant EWLI_RSTVAL        : std_logic := '0';
   constant DOI_RSTVAL         : std_logic := '0';
   constant EPI_RSTVAL         : std_logic := '0';
   constant ALI_RSTVAL         : std_logic := '0';
   constant BEI_RSTVAL         : std_logic := '0';
   constant LFI_RSTVAL         : std_logic := '0';
-  constant RFI_RSTVAL         : std_logic := '0';
+  constant RXFI_RSTVAL        : std_logic := '0';
   constant BSI_RSTVAL         : std_logic := '0';
   constant RBNEI_RSTVAL       : std_logic := '0';
   constant TXBHCI_RSTVAL      : std_logic := '0';
@@ -462,11 +462,11 @@ package CAN_FD_register_map is
   --
   -- Error warning limit register.
   ------------------------------------------------------------------------------
-  constant EWL_LIMIT_L            : natural := 0;
-  constant EWL_LIMIT_H            : natural := 7;
+  constant EW_LIMIT_L             : natural := 0;
+  constant EW_LIMIT_H             : natural := 7;
 
   -- EWL register reset values
-  constant EWL_LIMIT_RSTVAL : std_logic_vector(7 downto 0) := x"60";
+  constant EW_LIMIT_RSTVAL : std_logic_vector(7 downto 0) := x"60";
 
   ------------------------------------------------------------------------------
   -- ERP register
@@ -779,15 +779,15 @@ package CAN_FD_register_map is
   --
   -- Information register one about FIFO Receive buffer.
   ------------------------------------------------------------------------------
-  constant RX_EMPTY_IND           : natural := 0;
-  constant RX_FULL_IND            : natural := 1;
-  constant RX_FRC_L               : natural := 4;
-  constant RX_FRC_H              : natural := 14;
+  constant RXE_IND                : natural := 0;
+  constant RXF_IND                : natural := 1;
+  constant RXFRC_L                : natural := 4;
+  constant RXFRC_H               : natural := 14;
 
   -- RX_STATUS register reset values
-  constant RX_EMPTY_RSTVAL    : std_logic := '1';
-  constant RX_FULL_RSTVAL     : std_logic := '1';
-  constant RX_FRC_RSTVAL : std_logic_vector(10 downto 0) := (OTHERS => '0');
+  constant RXE_RSTVAL         : std_logic := '1';
+  constant RXF_RSTVAL         : std_logic := '1';
+  constant RXFRC_RSTVAL : std_logic_vector(10 downto 0) := (OTHERS => '0');
 
   ------------------------------------------------------------------------------
   -- RX_SETTINGS register
@@ -857,19 +857,19 @@ package CAN_FD_register_map is
   constant TXCE_IND               : natural := 0;
   constant TXCR_IND               : natural := 1;
   constant TXCA_IND               : natural := 2;
-  constant TXI1_IND               : natural := 8;
-  constant TXI2_IND               : natural := 9;
-  constant TXI3_IND              : natural := 10;
-  constant TXI4_IND              : natural := 11;
+  constant TXB1_IND               : natural := 8;
+  constant TXB2_IND               : natural := 9;
+  constant TXB3_IND              : natural := 10;
+  constant TXB4_IND              : natural := 11;
 
   -- TX_COMMAND register reset values
   constant TXCE_RSTVAL        : std_logic := '0';
   constant TXCR_RSTVAL        : std_logic := '0';
   constant TXCA_RSTVAL        : std_logic := '0';
-  constant TXI1_RSTVAL        : std_logic := '0';
-  constant TXI2_RSTVAL        : std_logic := '0';
-  constant TXI3_RSTVAL        : std_logic := '0';
-  constant TXI4_RSTVAL        : std_logic := '0';
+  constant TXB1_RSTVAL        : std_logic := '0';
+  constant TXB2_RSTVAL        : std_logic := '0';
+  constant TXB3_RSTVAL        : std_logic := '0';
+  constant TXB4_RSTVAL        : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- TX_PRIORITY register

@@ -192,7 +192,7 @@ static int ctucan_chip_start(struct net_device *ndev)
 	int_ena.s.rbnei = 1;
 	int_ena.s.txbhci = 1;
 
-	int_ena.s.ei = 1;
+	int_ena.s.ewli = 1;
 	int_ena.s.epi = 1;
 	int_ena.s.doi = 1;
 
@@ -332,7 +332,7 @@ static int ctucan_rx(struct net_device *ndev)
 
 
 	ffw.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
-	if (ffw.s.fr_type == FD_CAN)
+	if (ffw.s.fdf == FD_CAN)
 		skb = alloc_canfd_skb(ndev, &cf);
 	else
 		skb = alloc_can_skb(ndev, (struct can_frame **) &cf);
@@ -415,7 +415,7 @@ static void ctucan_err_interrupt(struct net_device *ndev, union ctu_can_fd_int_s
 		} else {
 			netdev_warn(ndev, "    unhandled error state!");
 		}
-	} else if (isr.s.ei) {
+	} else if (isr.s.ewli) {
 err_warning:
 		/* error warning */
 		priv->can.state = CAN_STATE_ERROR_WARNING;
@@ -463,7 +463,7 @@ err_warning:
 		 * The dummy read would prevent this.
 		 * We still have to write a feature test for this.
 		 */
-		//netdev_info(ndev, "  DOS=%d after COMMAND[CDR]", ctu_can_get_status(&priv->p).s.dos);
+		//netdev_info(ndev, "  DOS=%d after COMMAND[CDR]", ctu_can_get_status(&priv->p).s.dor);
 
 		/* And clear the DOI flag again */
 		icr.u32 = 0;
@@ -696,7 +696,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	}
 
 	/* Error interrupts */
-	if (isr.s.ei || isr.s.doi || isr.s.epi || isr.s.ali) {
+	if (isr.s.ewli || isr.s.doi || isr.s.epi || isr.s.ali) {
 		icr.u32 = isr.u32 & CTUCANFD_INT_ERROR;
 		netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x", icr.u32);
 		ctu_can_fd_int_clr(&priv->p, icr);

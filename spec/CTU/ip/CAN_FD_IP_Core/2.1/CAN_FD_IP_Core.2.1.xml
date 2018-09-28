@@ -21,7 +21,7 @@
 				<ipxact:register>
 					<ipxact:name>DEVICE_ID</ipxact:name>
 					<ipxact:displayName>DEVICE ID</ipxact:displayName>
-					<ipxact:description>Register contains the identifer of CAN FD IP function. It can be used to determine if CAN IP function is mapped correctly on its base address.</ipxact:description>
+					<ipxact:description>Register contains the identifer of CTU CAN FD IP Core. It can be used to determine if CTU CAN FD IP Core is mapped correctly on its base address.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -123,8 +123,8 @@
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RTR_PREF</ipxact:name>
-						<ipxact:displayName>RTRP</ipxact:displayName>
+						<ipxact:name>RTRP</ipxact:name>
+						<ipxact:displayName>RTR_PREFFERED</ipxact:displayName>
 						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when sending RTR Frames.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
@@ -263,8 +263,8 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>writeOnce</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>AT</ipxact:name>
-						<ipxact:displayName>AT</ipxact:displayName>
+						<ipxact:name>ABT</ipxact:name>
+						<ipxact:displayName>ABT</ipxact:displayName>
 						<ipxact:description>Abort transmission of CAN frame. CTU CAN FD IP Core will immediately move to the Interframe state. If the Core is a receiver, this command has no effect. Aborting transmission can be used to release the bus immediately. If another unit is receiving frame whose transmission is aborted, it will start transmitting Error frame due to Stuff Error. TXT Buffer will move to TX Error state.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
@@ -314,16 +314,16 @@
 				<ipxact:register>
 					<ipxact:name>STATUS</ipxact:name>
 					<ipxact:displayName>STATUS</ipxact:displayName>
-					<ipxact:description>Register signals various states of CTU CAN FD IP Core. Logic 1 signals active state/flag.</ipxact:description>
+					<ipxact:description>Register signals various states of CTU CAN FD IP Core. Logic 1 signals active status/flag.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h6</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RBS</ipxact:name>
-						<ipxact:displayName>RBS</ipxact:displayName>
-						<ipxact:description>Receive buffer is not empty.</ipxact:description>
+						<ipxact:name>RXNE</ipxact:name>
+						<ipxact:displayName>RXNE</ipxact:displayName>
+						<ipxact:description>Receive buffer is not empty. At least one frame is stored in RX Buffer.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -333,9 +333,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TBS</ipxact:name>
-						<ipxact:displayName>TBS</ipxact:displayName>
-						<ipxact:description>TXT buffer status. Active if at least one of the TXT Buffers is in &quot;Empty&quot; state.</ipxact:description>
+						<ipxact:name>TXNF</ipxact:name>
+						<ipxact:displayName>TXNF</ipxact:displayName>
+						<ipxact:description>TXT buffers status. Active if at least one of the TXT Buffers is in &quot;Empty&quot; state.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -345,9 +345,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>DOS</ipxact:name>
-						<ipxact:displayName>DOS</ipxact:displayName>
-						<ipxact:description>Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer. This bit can be cleaned by CDO command.</ipxact:description>
+						<ipxact:name>DOR</ipxact:name>
+						<ipxact:displayName>DOR</ipxact:displayName>
+						<ipxact:description>Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer. This bit can be cleaned by CDO[RRB] command.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -357,8 +357,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>ET</ipxact:name>
-						<ipxact:displayName>ET</ipxact:displayName>
+						<ipxact:name>EFT</ipxact:name>
+						<ipxact:displayName>EFT</ipxact:displayName>
 						<ipxact:description>Error frame is beeing transmitted at the moment.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
@@ -369,8 +369,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RS</ipxact:name>
-						<ipxact:displayName>RS</ipxact:displayName>
+						<ipxact:name>RXS</ipxact:name>
+						<ipxact:displayName>RXS</ipxact:displayName>
 						<ipxact:description>CTU CAN FD IP Core is a receiver of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
@@ -381,8 +381,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TS</ipxact:name>
-						<ipxact:displayName>TS</ipxact:displayName>
+						<ipxact:name>TXS</ipxact:name>
+						<ipxact:displayName>TXS</ipxact:displayName>
 						<ipxact:description>CTU CAN FD IP Core is a transmitter of CAN Frame.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
@@ -393,8 +393,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>ES</ipxact:name>
-						<ipxact:displayName>ES</ipxact:displayName>
+						<ipxact:name>EWL</ipxact:name>
+						<ipxact:displayName>EWL</ipxact:displayName>
 						<ipxact:description>Error status. Error warning limit was reached at any of error counters.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
@@ -405,8 +405,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>BS</ipxact:name>
-						<ipxact:displayName>BS</ipxact:displayName>
+						<ipxact:name>IDLE</ipxact:name>
+						<ipxact:displayName>IDLE</ipxact:displayName>
 						<ipxact:description>Bus status. Bus is &quot;idle&quot;, the controller is &quot; integrating&quot; or &quot;bus off&quot;. Therefore this bit is active when there is no activity on the bus.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
@@ -453,8 +453,8 @@
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RTR_TH</ipxact:name>
-						<ipxact:displayName>RTR_TH</ipxact:displayName>
+						<ipxact:name>RTRTH</ipxact:name>
+						<ipxact:displayName>RTRTH</ipxact:displayName>
 						<ipxact:description>The maximal amount of retransmission attempts.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
@@ -465,8 +465,8 @@
 						<ipxact:bitWidth>4</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>INT_LOOP</ipxact:name>
-						<ipxact:displayName>INT_LOOP</ipxact:displayName>
+						<ipxact:name>ILBP</ipxact:name>
+						<ipxact:displayName>ILBP</ipxact:displayName>
 						<ipxact:description>Internal loop-back option (recommended  only for testing). If internal loopback options is enabled the Core automatically receive any dominant bit it transmitts.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
@@ -517,9 +517,9 @@
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FD_TYPE</ipxact:name>
-						<ipxact:displayName>FD_TYPE</ipxact:displayName>
-						<ipxact:description>Selection between two possible CAN FD frame formats.</ipxact:description>
+						<ipxact:name>NISOFD</ipxact:name>
+						<ipxact:displayName>NISOFD</ipxact:displayName>
+						<ipxact:description>Selection between two possible CAN FD specifications.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -531,13 +531,13 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>ISO_FD</ipxact:name>
 								<ipxact:displayName>ISO_FD</ipxact:displayName>
-								<ipxact:description>The CAN Controller conforms to ISO FD specification.</ipxact:description>
+								<ipxact:description>The CAN Controller conforms to ISO CAN FD specification.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>NON_ISO_FD</ipxact:name>
 								<ipxact:displayName>NON_ISO_FD</ipxact:displayName>
-								<ipxact:description>The CAN Controller conforms to NON ISO FD specification.</ipxact:description>
+								<ipxact:description>The CAN Controller conforms to NON ISO CAN FD specification.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
@@ -553,9 +553,9 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RI</ipxact:name>
-						<ipxact:displayName>RI</ipxact:displayName>
-						<ipxact:description>Frame Received interrupt</ipxact:description>
+						<ipxact:name>RXI</ipxact:name>
+						<ipxact:displayName>RXI</ipxact:displayName>
+						<ipxact:description>Frame Received interrupt.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -565,9 +565,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TI</ipxact:name>
-						<ipxact:displayName>TI</ipxact:displayName>
-						<ipxact:description>Frame transceived interrupt</ipxact:description>
+						<ipxact:name>TXI</ipxact:name>
+						<ipxact:displayName>TXI</ipxact:displayName>
+						<ipxact:description>Frame Transmitted sucesfully interrupt.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -577,9 +577,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>EI</ipxact:name>
-						<ipxact:displayName>EI</ipxact:displayName>
-						<ipxact:description>Error warning limit reached interrupt</ipxact:description>
+						<ipxact:name>EWLI</ipxact:name>
+						<ipxact:displayName>EWLI</ipxact:displayName>
+						<ipxact:description>Error warning limit reached interrupt.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -591,7 +591,7 @@
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
 						<ipxact:displayName>DOI</ipxact:displayName>
-						<ipxact:description>Data overrun on RX Buffer Interrupt</ipxact:description>
+						<ipxact:description>Data overrun on RX Buffer Interrupt.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -603,7 +603,7 @@
 					<ipxact:field>
 						<ipxact:name>EPI</ipxact:name>
 						<ipxact:displayName>EPI</ipxact:displayName>
-						<ipxact:description>Node became error passive or bus off interrupt</ipxact:description>
+						<ipxact:description>Node became error passive or bus off interrupt.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -615,7 +615,7 @@
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
 						<ipxact:displayName>ALI</ipxact:displayName>
-						<ipxact:description>Arbitration lost interrupt</ipxact:description>
+						<ipxact:description>Arbitration lost Interrupt.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -627,7 +627,7 @@
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
 						<ipxact:displayName>BEI</ipxact:displayName>
-						<ipxact:description>Bus Error interrupt</ipxact:description>
+						<ipxact:description>Bus Error interrupt.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -639,7 +639,7 @@
 					<ipxact:field>
 						<ipxact:name>LFI</ipxact:name>
 						<ipxact:displayName>LFI</ipxact:displayName>
-						<ipxact:description>Event logging finished interrupt</ipxact:description>
+						<ipxact:description>Event logging finished interrupt.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -649,9 +649,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RFI</ipxact:name>
-						<ipxact:displayName>RFI</ipxact:displayName>
-						<ipxact:description>Receive buffer full interrupt</ipxact:description>
+						<ipxact:name>RXFI</ipxact:name>
+						<ipxact:displayName>RXFI</ipxact:displayName>
+						<ipxact:description>Receive Buffer full interrupt.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -663,7 +663,7 @@
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
 						<ipxact:displayName>BSI</ipxact:displayName>
-						<ipxact:description>Bit-rate shifted interrupt</ipxact:description>
+						<ipxact:description>Bit-rate shifted interrupt.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -675,7 +675,7 @@
 					<ipxact:field>
 						<ipxact:name>RBNEI</ipxact:name>
 						<ipxact:displayName>RBNEI</ipxact:displayName>
-						<ipxact:description>Receive buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.</ipxact:description>
+						<ipxact:description>Receive Buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1057,8 +1057,8 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>EWL_LIMIT</ipxact:name>
-						<ipxact:displayName>EWL_LIMIT</ipxact:displayName>
+						<ipxact:name>EW_LIMIT</ipxact:name>
+						<ipxact:displayName>EW_LIMIT</ipxact:displayName>
 						<ipxact:description>Error warning limit.  If an error warning limit is reached interrupt can be called. Error warning limit indicates heavily disturbed bus. Note that according to CAN specification this value is fixed at 96 and should not be configurable! The configuration of this value is one of the extra features of this IP Core.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1301,8 +1301,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TXI1</ipxact:name>
-						<ipxact:displayName>TXI1</ipxact:displayName>
+						<ipxact:name>TXB1</ipxact:name>
+						<ipxact:displayName>TXB1</ipxact:displayName>
 						<ipxact:description>Command is applied on TXT Buffer 1.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1313,8 +1313,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TXI2</ipxact:name>
-						<ipxact:displayName>TXI2</ipxact:displayName>
+						<ipxact:name>TXB2</ipxact:name>
+						<ipxact:displayName>TXB2</ipxact:displayName>
 						<ipxact:description>Command is applied on TXT Buffer 2.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1325,8 +1325,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TXI3</ipxact:name>
-						<ipxact:displayName>TXI3</ipxact:displayName>
+						<ipxact:name>TXB3</ipxact:name>
+						<ipxact:displayName>TXB3</ipxact:displayName>
 						<ipxact:description>Command is applied on TXT Buffer 3.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1337,8 +1337,8 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TXI4</ipxact:name>
-						<ipxact:displayName>TXI4</ipxact:displayName>
+						<ipxact:name>TXB4</ipxact:name>
+						<ipxact:displayName>TXB4</ipxact:displayName>
 						<ipxact:description>Command is applied on TXT Buffer 4.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
@@ -1859,9 +1859,9 @@
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
-						<ipxact:name>RX_EMPTY</ipxact:name>
-						<ipxact:displayName>RX_EMPTY</ipxact:displayName>
-						<ipxact:description>Receive buffer is empty.</ipxact:description>
+						<ipxact:name>RXE</ipxact:name>
+						<ipxact:displayName>RXE</ipxact:displayName>
+						<ipxact:description>Receive Buffer is empty. There is no CAN Frame stored in it.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1871,9 +1871,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RX_FULL</ipxact:name>
-						<ipxact:displayName>RX_FULL</ipxact:displayName>
-						<ipxact:description>Receive buffer is full.</ipxact:description>
+						<ipxact:name>RXF</ipxact:name>
+						<ipxact:displayName>RXF</ipxact:displayName>
+						<ipxact:description>Receive Buffer is full.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1883,9 +1883,9 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RX_FRC</ipxact:name>
-						<ipxact:displayName>RX_FRC</ipxact:displayName>
-						<ipxact:description>Receive buffer frame count value.</ipxact:description>
+						<ipxact:name>RXFRC</ipxact:name>
+						<ipxact:displayName>RXFRC</ipxact:displayName>
+						<ipxact:description>Receive Buffer frame count. Number of CAN Frames stored in the RX Buffer.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -3567,9 +3567,9 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>ID_TYPE</ipxact:name>
-						<ipxact:displayName>ID_TYPE</ipxact:displayName>
-						<ipxact:description>Identifier type. Distinguishes between Base and Extended Identifiers.</ipxact:description>
+						<ipxact:name>IDE</ipxact:name>
+						<ipxact:displayName>IDE</ipxact:displayName>
+						<ipxact:description>Extended Identifier type. Distinguishes between Base and Extended Identifiers.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
@@ -3588,8 +3588,8 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>FR_TYPE</ipxact:name>
-						<ipxact:displayName>FR_TYPE</ipxact:displayName>
+						<ipxact:name>FDF</ipxact:name>
+						<ipxact:displayName>FDF</ipxact:displayName>
 						<ipxact:description>Frame type. Distinguishes between CAN and CAN FD Frames.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
@@ -3651,8 +3651,8 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>ESI_RESVD</ipxact:name>
-						<ipxact:displayName>ESI_RESVD</ipxact:displayName>
+						<ipxact:name>ESI_RSV</ipxact:name>
+						<ipxact:displayName>ESI_RSV</ipxact:displayName>
 						<ipxact:description>Error state indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:bitWidth>1</ipxact:bitWidth>

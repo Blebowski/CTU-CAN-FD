@@ -458,7 +458,7 @@ architecture rtl of canfd_registers is
         -- Command registers
         clear_overrun           <=  CDO_RSTVAL;
         release_recieve         <=  RRB_RSTVAL;
-        abort_transmittion      <=  AT_RSTVAL;
+        abort_transmittion      <=  ABT_RSTVAL;
         
         erctr_pres_value        <=  (OTHERS=>'0');
         erctr_pres_mask         <=  (OTHERS=>'0');
@@ -470,7 +470,7 @@ architecture rtl of canfd_registers is
        
         -- Enable register
         CAN_enable              <=  ENA_RSTVAL;
-        FD_type                 <=  FD_TYPE_RSTVAL;
+        FD_type                 <=  NISOFD_RSTVAL;
         
         -- Mode register
         mode_reg(RST_IND)       <=  RST_RSTVAL;
@@ -478,11 +478,11 @@ architecture rtl of canfd_registers is
         mode_reg(STM_IND)       <=  STM_RSTVAL;   -- Self test mode
         mode_reg(AFM_IND)       <=  AFM_RSTVAL;   -- Acceptance filters mode
         mode_reg(FDE_IND)       <=  FDE_RSTVAL;   -- Flexible datarate enable
-        mode_reg(RTR_PREF_IND)  <=  RTR_PREF_RSTVAL;   -- RTR Preffered behaviour
+        mode_reg(RTRP_IND)      <=  RTRP_RSTVAL;   -- RTR Preffered behaviour
             
         -- Retransmitt limit enable
         retr_lim_ena            <=  RTRLE_RSTVAL;
-        retr_lim_th             <=  RTR_TH_RSTVAL; -- Retr. limit treshold zeroes
+        retr_lim_th             <=  RTRTH_RSTVAL; -- Retr. limit treshold zeroes
         
         sjw_norm                <=  SJW_RSTVAL;
         brp_norm                <=  BRP_RSTVAL;
@@ -497,7 +497,7 @@ architecture rtl of canfd_registers is
         prop_fd                 <=  PROP_FD_RSTVAL;
         
         sam_norm                <=  TSM_RSTVAL;
-        ewl                     <=  EWL_LIMIT_RSTVAL;
+        ewl                     <=  EW_LIMIT_RSTVAL;
         erp                     <=  ERP_LIMIT_RSTVAL;
         
         -- Message filters
@@ -536,10 +536,10 @@ architecture rtl of canfd_registers is
         txt_buf_set_ready           <= TXCR_RSTVAL;
         txt_buf_set_abort           <= TXCA_RSTVAL;
 
-        txt_buf_cmd_index(0)        <= TXI1_RSTVAL;
-        txt_buf_cmd_index(1)        <= TXI2_RSTVAL;
-        txt_buf_cmd_index(2)        <= TXI3_RSTVAL;
-        txt_buf_cmd_index(3)        <= TXI4_RSTVAL;
+        txt_buf_cmd_index(0)        <= TXB1_RSTVAL;
+        txt_buf_cmd_index(1)        <= TXB2_RSTVAL;
+        txt_buf_cmd_index(2)        <= TXB3_RSTVAL;
+        txt_buf_cmd_index(3)        <= TXB4_RSTVAL;
 
         txt_buf_prior(0)            <= TXT1P_RSTVAL;
         txt_buf_prior(1)            <= TXT2P_RSTVAL;
@@ -900,7 +900,7 @@ begin
                         -- MODE, COMMAND and SETTINGS registers
                         --------------------------------------------------------
                         when MODE_ADR =>
-                            -- RTR_PREF,FDE,AFM,STM,LOM Bits
+                            -- RTRP,FDE,AFM,STM,LOM Bits
                             write_be_vect(mode_reg, 1, 5, data_in, 1, 5, sbe);
 
                             -- Tripple sampling
@@ -917,19 +917,19 @@ begin
                             -- Command register
                             write_be_s(clear_overrun, CDO_IND, data_in, sbe);
                             write_be_s(release_recieve, RRB_IND, data_in, sbe);
-                            write_be_s(abort_transmittion, AT_IND, data_in, sbe);
+                            write_be_s(abort_transmittion, ABT_IND, data_in, sbe);
                             write_be_s(clr_err_ctrs, ERCRST_IND, data_in, sbe);
 
                             --Status register is read only!
 
                             --Settings register
                             write_be_s(retr_lim_ena, RTRLE_IND, data_in, sbe);
-                            write_be_vect(retr_lim_th, 0, 3, data_in, RTR_TH_L,
-                                          RTR_TH_H, sbe);
-                            write_be_s(intLoopbackEna, INT_LOOP_IND, data_in,
+                            write_be_vect(retr_lim_th, 0, 3, data_in, RTRTH_L,
+                                          RTRTH_H, sbe);
+                            write_be_s(intLoopbackEna, ILBP_IND, data_in,
                                         sbe);
                             write_be_s(CAN_enable, ENA_IND, data_in, sbe);
-                            write_be_s(FD_type, FD_TYPE_IND, data_in, sbe);
+                            write_be_s(FD_type, NISOFD_IND, data_in, sbe);
 
                         --------------------------------------------------------
                         -- INT_STATUS register
@@ -1005,8 +1005,8 @@ begin
                         --------------------------------------------------------
                         when EWL_ADR =>
                             -- Error warning limit
-                            write_be_vect(ewl, 0, 7, data_in, EWL_LIMIT_L,
-                                          EWL_LIMIT_H, sbe);
+                            write_be_vect(ewl, 0, 7, data_in, EW_LIMIT_L,
+                                          EW_LIMIT_H, sbe);
 
                             -- Error passive treshold
                             write_be_vect(erp, 0, 7, data_in, ERP_LIMIT_L,
@@ -1116,8 +1116,8 @@ begin
 
                             -- Vector index for which buffer the command is active
                             write_be_vect(txt_buf_cmd_index, 0,
-                                          TXT_BUFFER_COUNT - 1, data_in, TXI1_IND,
-                                          TXI1_IND + txt_buf_cmd_index'length - 1,
+                                          TXT_BUFFER_COUNT - 1, data_in, TXB1_IND,
+                                          TXB1_IND + txt_buf_cmd_index'length - 1,
                                           sbe);
 
                         --------------------------------------------------------
@@ -1216,16 +1216,16 @@ begin
                             data_out_int(RTRLE_IND)                <=
                                 retr_lim_ena;
 
-                            data_out_int(RTR_TH_H downto RTR_TH_L) <=
+                            data_out_int(RTRTH_H downto RTRTH_L) <=
                                 retr_lim_th;
 
-                            data_out_int(INT_LOOP_IND)             <=
+                            data_out_int(ILBP_IND)             <=
                                 intLoopbackEna;
 
                             data_out_int(ENA_IND)                  <=
                                 CAN_enable;
 
-                            data_out_int(FD_TYPE_IND)              <=
+                            data_out_int(NISOFD_IND)              <=
                                 FD_type;
 
                         --------------------------------------------------------
@@ -1282,7 +1282,7 @@ begin
                         --------------------------------------------------------
                         when EWL_ADR =>
                             -- Error warning limit
-                            data_out_int(EWL_LIMIT_H downto EWL_LIMIT_L) <= ewl;
+                            data_out_int(EW_LIMIT_H downto EW_LIMIT_L) <= ewl;
 
                             -- Error passive treshold
                             data_out_int(ERP_LIMIT_H downto ERP_LIMIT_L) <= erp;
@@ -1465,10 +1465,10 @@ begin
                         --------------------------------------------------------
                         when RX_STATUS_ADR =>
                             data_out_int                     <= (OTHERS => '0');
-                            data_out_int(RX_EMPTY_IND)       <=  rx_empty;
-                            data_out_int(RX_FULL_IND)        <=  rx_full;
+                            data_out_int(RXE_IND)            <=  rx_empty;
+                            data_out_int(RXF_IND)            <=  rx_full;
 
-                            data_out_int(RX_FRC_H downto RX_FRC_L) 
+                            data_out_int(RXFRC_H downto RXFRC_L) 
                                 <= rx_message_count;
 
                             data_out_int(RTSOP_IND) <= rtsopt;
@@ -1768,7 +1768,7 @@ begin
     --      it directly!
   
     -- Status register
-    status_reg(BS_IND mod 8) <= '1' when 
+    status_reg(IDLE_IND mod 8) <= '1' when 
                                     error_state_type'VAL(to_integer(unsigned(
                                     stat_bus(STAT_ERROR_STATE_HIGH downto
                                              STAT_ERROR_STATE_LOW)))) = bus_off
@@ -1786,7 +1786,7 @@ begin
                                     else
                                 '0';
 
-    status_reg(ES_IND mod 8) <= '1' when 
+    status_reg(EWL_IND mod 8) <= '1' when 
                                     (ewl < stat_bus(STAT_TX_COUNTER_HIGH downto
                                                     STAT_TX_COUNTER_LOW) or
                                     (ewl < stat_bus(STAT_RX_COUNTER_HIGH downto
@@ -1794,19 +1794,19 @@ begin
                                     else
                                 '0';
                                 
-    status_reg(TS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
+    status_reg(TXS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
                                          stat_bus(STAT_OP_STATE_HIGH downto
                                                   STAT_OP_STATE_LOW)))) = transciever
                                     else
                                 '0';
 
-    status_reg(RS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
+    status_reg(RXS_IND mod 8) <= '1' when oper_mode_type'VAL(to_integer(unsigned(
                                          stat_bus(STAT_OP_STATE_HIGH downto
                                                   STAT_OP_STATE_LOW)))) = reciever
                                     else
                                 '0';
   
-    status_reg(TBS_IND mod 8) <= '1' when (txtb_fsms(0) = txt_empty or
+    status_reg(TXNF_IND mod 8) <= '1' when (txtb_fsms(0) = txt_empty or
                                            txtb_fsms(1) = txt_empty or
                                            txtb_fsms(2) = txt_empty or
                                            txtb_fsms(3) = txt_empty)
@@ -1814,10 +1814,10 @@ begin
                                  '0';
   
     -- When at least one message is availiable in the buffer
-    status_reg(RBS_IND mod 8) <= not rx_empty;
-    status_reg(DOS_IND mod 8) <= rx_data_overrun;
+    status_reg(RXNE_IND mod 8) <= not rx_empty;
+    status_reg(DOR_IND mod 8) <= rx_data_overrun;
 
-    status_reg(ET_IND mod 8)  <= '1' when (PC_state = error)
+    status_reg(EFT_IND mod 8)  <= '1' when (PC_state = error)
                                      else
                                  '0';
    
@@ -1947,7 +1947,7 @@ begin
     drv_bus(DRV_ABORT_TRAN_INDEX)                     <=  abort_transmittion;
 
     drv_bus(DRV_CAN_FD_ENA_INDEX)                     <=  mode_reg(FDE_IND);
-    drv_bus(DRV_RTR_PREF_INDEX)                       <=  mode_reg(RTR_PREF_IND);
+    drv_bus(DRV_RTR_PREF_INDEX)                       <=  mode_reg(RTRP_IND);
 
     -- Bus monitoring = listen only mode
     drv_bus(DRV_BUS_MON_ENA_INDEX)                    <=  mode_reg(LOM_IND);

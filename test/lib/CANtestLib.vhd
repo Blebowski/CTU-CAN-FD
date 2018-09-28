@@ -2808,7 +2808,7 @@ package body CANtestLib is
         else
             data(RTRLE_IND) := '0';
         end if;
-        data(RTR_TH_H downto RTR_TH_L) := std_logic_vector(to_unsigned(limit, 4));
+        data(RTRTH_H downto RTRTH_L) := std_logic_vector(to_unsigned(limit, 4));
         CAN_write(data, MODE_ADR, ID, mem_bus);
     end procedure;
 
@@ -3321,11 +3321,11 @@ package body CANtestLib is
         w_data                      := (OTHERS => '0');
         w_data(DLC_H downto DLC_L)  := frame.dlc;
         w_data(RTR_IND)             := frame.rtr;
-        w_data(ID_TYPE_IND)         := frame.ident_type;
-        w_data(FR_TYPE_IND)         := frame.frame_format;
+        w_data(IDE_IND)             := frame.ident_type;
+        w_data(FDF_IND)             := frame.frame_format;
         w_data(TBF_IND)             := '1';
         w_data(BRS_IND)             := frame.brs;
-        w_data(ESI_RESVD_IND)       := '0'; -- ESI is receive only
+        w_data(ESI_RSV_IND)         := '0'; -- ESI is receive only
         CAN_write(w_data, buf_offset, ID, mem_bus);
 
         -- Identifier
@@ -3431,8 +3431,8 @@ package body CANtestLib is
         -- Parse frame format word
         frame.dlc           := frm_fmt_word(DLC_H downto DLC_L);
         frame.rtr           := frm_fmt_word(RTR_IND);
-        frame.ident_type    := frm_fmt_word(ID_TYPE_IND);
-        frame.frame_format  := frm_fmt_word(FR_TYPE_IND);
+        frame.ident_type    := frm_fmt_word(IDE_IND);
+        frame.frame_format  := frm_fmt_word(FDF_IND);
         frame.brs           := frm_fmt_word(BRS_IND);
         frame.rwcnt         := to_integer(unsigned(
                                frm_fmt_word(RWCNT_H downto RWCNT_L)));
@@ -3472,13 +3472,13 @@ package body CANtestLib is
 
         -- Wait until unit starts to transmitt or reciesve
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
+        while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until bus is idle now
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(BS_IND) = '0') loop
+        while (r_data(IDLE_IND) = '0') loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
 
@@ -3494,7 +3494,7 @@ package body CANtestLib is
     begin
         -- Wait until bus is idle
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(BS_IND) = '0') loop
+        while (r_data(IDLE_IND) = '0') loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
     end procedure;
@@ -3509,13 +3509,13 @@ package body CANtestLib is
     begin
         -- Wait until unit starts to transmitt or recieve
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(RS_IND) = '0' and r_data(TS_IND) = '0') loop
+        while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until error frame is not being transmitted
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
-        while (r_data(ET_IND) = '0') loop
+        while (r_data(EFT_IND) = '0') loop
         CAN_read(r_data, MODE_ADR, ID, mem_bus);
         end loop;
     end procedure;
@@ -3572,10 +3572,10 @@ package body CANtestLib is
         -- Wait until unit starts to transmitt or recieve
         while (true) loop
             CAN_read(r_data, MODE_ADR, ID, mem_bus);
-            if (exit_trans and r_data(TS_IND) = '1') then
+            if (exit_trans and r_data(TXS_IND) = '1') then
                 exit;
             end if;
-            if (exit_rec and r_data(RS_IND) = '1') then
+            if (exit_rec and r_data(RXS_IND) = '1') then
                 exit;
             end if;
         end loop;
@@ -3650,7 +3650,7 @@ package body CANtestLib is
         end if;
 
         -- Set index of Buffer on which the command should be executed.
-        data(buf_n + TXI1_IND - 1) := '1';
+        data(buf_n + TXB1_IND - 1) := '1';
 
         -- Give the command
         CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
@@ -3713,16 +3713,16 @@ package body CANtestLib is
         retVal.rx_full          := false;
         retVal.rx_empty         := false;
 
-        if (data(RX_FULL_IND) = '1') then
+        if (data(RXF_IND) = '1') then
             retVal.rx_full      := true;
         end if;
 
-        if (data(RX_EMPTY_IND) = '1') then
+        if (data(RXE_IND) = '1') then
             retVal.rx_empty     := true;
         end if;
 
         retVal.rx_frame_count   := to_integer(unsigned(
-                                    data(RX_FRC_H downto RX_FRC_L)));
+                                    data(RXFRC_H downto RXFRC_L)));
     end procedure;
 
 
@@ -3790,7 +3790,7 @@ package body CANtestLib is
         end if;
 
         if (mode.rtr_pref) then
-            data(RTR_PREF_IND)  := '1';
+            data(RTRP_IND)  := '1';
         end if;
 
         if (mode.tripple_sampling) then
@@ -3807,15 +3807,15 @@ package body CANtestLib is
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
 
         if (mode.iso_fd_support) then
-            data(FD_TYPE_IND)   := '0';
+            data(NISOFD_IND)   := '0';
         else
-            data(FD_TYPE_IND)   := '1';
+            data(NISOFD_IND)   := '1';
         end if;
 
         if (mode.internal_loopback) then
-            data(INT_LOOP_IND)   := '1';
+            data(ILBP_IND)   := '1';
         else
-            data(INT_LOOP_IND)   := '0';
+            data(ILBP_IND)   := '0';
         end if;
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
@@ -3860,7 +3860,7 @@ package body CANtestLib is
             mode.flexible_data_rate     := true;
         end if;
 
-        if (data(RTR_PREF_IND) = '1') then
+        if (data(RTRP_IND) = '1') then
             mode.rtr_pref               := true;
         end if;
 
@@ -3874,13 +3874,13 @@ package body CANtestLib is
 
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
 
-        if (data(FD_TYPE_IND) = '0') then
+        if (data(NISOFD_IND) = '0') then
             mode.iso_fd_support         := true;
         else
             mode.iso_fd_support         := false;
         end if;
 
-        if (data(INT_LOOP_IND) = '1') then
+        if (data(ILBP_IND) = '1') then
             mode.internal_loopback      := true;
         else
             mode.internal_loopback      := false;
@@ -3914,7 +3914,7 @@ package body CANtestLib is
         data := (OTHERS => '0');
 
         if (command.abort_transmission) then
-            data(AT_IND)        := '1';
+            data(ABT_IND)        := '1';
         end if;
 
         if (command.release_rec_buffer) then
@@ -3947,35 +3947,35 @@ package body CANtestLib is
         status.error_warning            := false;
         status.bus_status               := false;
 
-        if (data(RBS_IND) = '1') then
+        if (data(RXNE_IND) = '1') then
             status.receive_buffer       := true;
         end if;
 
-        if (data(DOS_IND) = '1') then
+        if (data(DOR_IND) = '1') then
             status.data_overrun         := true;
         end if;
 
-        if (data(TBS_IND) = '1') then
+        if (data(TXNF_IND) = '1') then
             status.tx_buffer_empty      := true;
         end if;
 
-        if (data(ET_IND) = '1') then
+        if (data(EFT_IND) = '1') then
             status.error_transmission   := true;
         end if;
 
-        if (data(RS_IND) = '1') then
+        if (data(RXS_IND) = '1') then
             status.receiver             := true;
         end if;
 
-        if (data(TS_IND) = '1') then
+        if (data(TXS_IND) = '1') then
             status.transmitter          := true;
         end if;
 
-        if (data(ES_IND) = '1') then
+        if (data(EWL_IND) = '1') then
             status.error_warning        := true;
         end if;
 
-        if (data(BS_IND) = '1') then
+        if (data(IDLE_IND) = '1') then
             status.bus_status           := true;
         end if;
     end procedure;
@@ -3997,8 +3997,8 @@ package body CANtestLib is
             data(ENA_IND)       := '0';
         end if;
 
-        data(RTR_TH_H downto RTR_TH_L) :=
-            std_logic_vector(to_unsigned(limit, RTR_TH_H - RTR_TH_L + 1));
+        data(RTRTH_H downto RTRTH_L) :=
+            std_logic_vector(to_unsigned(limit, RTRTH_H - RTRTH_L + 1));
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
     end procedure;
@@ -4031,15 +4031,15 @@ package body CANtestLib is
         tmp := (OTHERS => '0');
 
         if (interrupts.receive_int) then
-            tmp(RI_IND)         :=  '1';
+            tmp(RXI_IND)         :=  '1';
         end if;
 
         if (interrupts.transmitt_int) then
-            tmp(TI_IND)         :=  '1';
+            tmp(TXI_IND)         :=  '1';
         end if;
 
         if (interrupts.error_warning_int) then
-            tmp(EI_IND)         :=  '1';
+            tmp(EWLI_IND)         :=  '1';
         end if;
 
         if (interrupts.data_overrun_int) then
@@ -4063,7 +4063,7 @@ package body CANtestLib is
         end if;
 
         if (interrupts.rx_buffer_full_int) then
-            tmp(RFI_IND)        :=  '1';
+            tmp(RXFI_IND)        :=  '1';
         end if;
 
         if (interrupts.bit_rate_shift_int) then
@@ -4071,7 +4071,7 @@ package body CANtestLib is
         end if;
 
         if (interrupts.rx_buffer_not_empty_int) then
-            tmp(RBNEI_IND)      :=  '1';
+            tmp(RBNEI_IND)       :=  '1';
         end if;
 
         if (interrupts.tx_buffer_hw_cmd) then
@@ -4090,15 +4090,15 @@ package body CANtestLib is
         tmp := (false, false, false, false, false, false,
                 false, false, false, false, false, false);
 
-        if (int_reg(RI_IND) = '1') then
+        if (int_reg(RXI_IND) = '1') then
             tmp.receive_int              :=  true;
         end if;
 
-        if (int_reg(TI_IND) = '1') then
+        if (int_reg(TXI_IND) = '1') then
             tmp.transmitt_int            :=  true;
         end if;
 
-        if (int_reg(EI_IND) = '1') then
+        if (int_reg(EWLI_IND) = '1') then
             tmp.error_warning_int        :=  true;
         end if;
 
@@ -4122,7 +4122,7 @@ package body CANtestLib is
             tmp.logger_finished_int      :=  true;
         end if;
 
-        if (int_reg(RFI_IND) = '1') then
+        if (int_reg(RXFI_IND) = '1') then
             tmp.rx_buffer_full_int       :=  true;
         end if;
 
@@ -4252,7 +4252,7 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
     begin
-        data(EWL_LIMIT_H downto EWL_LIMIT_L) :=
+        data(EW_LIMIT_H downto EW_LIMIT_L) :=
             std_logic_vector(to_unsigned(fault_th.ewl, 8));
 
         data(ERP_LIMIT_H downto ERP_LIMIT_L) :=
@@ -4273,7 +4273,7 @@ package body CANtestLib is
     begin
         CAN_read(data, EWL_ADR, ID, mem_bus, BIT_16);
         fault_th.ewl := to_integer(unsigned(
-                          data(EWL_LIMIT_H downto EWL_LIMIT_L)));
+                          data(EW_LIMIT_H downto EW_LIMIT_L)));
 
         CAN_read(data, ERP_ADR, ID, mem_bus, BIT_16);
         fault_th.erp := to_integer(unsigned(

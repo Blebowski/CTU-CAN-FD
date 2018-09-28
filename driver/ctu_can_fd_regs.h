@@ -138,54 +138,54 @@ union ctu_can_fd_mode_command_status_settings {
 		uint32_t stm                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t fde                     : 1;
-		uint32_t rtr_pref                : 1;
+		uint32_t rtrp                    : 1;
 		uint32_t tsm                     : 1;
 		uint32_t acf                     : 1;
 		uint32_t reserved_8              : 1;
   /* COMMAND */
-		uint32_t at                      : 1;
+		uint32_t abt                     : 1;
 		uint32_t rrb                     : 1;
 		uint32_t cdo                     : 1;
 		uint32_t ercrst                  : 1;
 		uint32_t reserved_15_13          : 3;
   /* STATUS */
-		uint32_t rbs                     : 1;
-		uint32_t dos                     : 1;
-		uint32_t tbs                     : 1;
-		uint32_t et                      : 1;
-		uint32_t rs                      : 1;
-		uint32_t ts                      : 1;
-		uint32_t es                      : 1;
-		uint32_t bs                      : 1;
+		uint32_t rxne                    : 1;
+		uint32_t dor                     : 1;
+		uint32_t txnf                    : 1;
+		uint32_t eft                     : 1;
+		uint32_t rxs                     : 1;
+		uint32_t txs                     : 1;
+		uint32_t ewl                     : 1;
+		uint32_t idle                    : 1;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
-		uint32_t rtr_th                  : 4;
-		uint32_t int_loop                : 1;
+		uint32_t rtrth                   : 4;
+		uint32_t ilbp                    : 1;
 		uint32_t ena                     : 1;
-		uint32_t fd_type                 : 1;
+		uint32_t nisofd                  : 1;
 #else
-		uint32_t fd_type                 : 1;
+		uint32_t nisofd                  : 1;
 		uint32_t ena                     : 1;
-		uint32_t int_loop                : 1;
-		uint32_t rtr_th                  : 4;
+		uint32_t ilbp                    : 1;
+		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t bs                      : 1;
-		uint32_t es                      : 1;
-		uint32_t ts                      : 1;
-		uint32_t rs                      : 1;
-		uint32_t et                      : 1;
-		uint32_t tbs                     : 1;
-		uint32_t dos                     : 1;
-		uint32_t rbs                     : 1;
+		uint32_t idle                    : 1;
+		uint32_t ewl                     : 1;
+		uint32_t txs                     : 1;
+		uint32_t rxs                     : 1;
+		uint32_t eft                     : 1;
+		uint32_t txnf                    : 1;
+		uint32_t dor                     : 1;
+		uint32_t rxne                    : 1;
 		uint32_t reserved_15_13          : 3;
 		uint32_t ercrst                  : 1;
 		uint32_t cdo                     : 1;
 		uint32_t rrb                     : 1;
-		uint32_t at                      : 1;
+		uint32_t abt                     : 1;
 		uint32_t reserved_8              : 1;
 		uint32_t acf                     : 1;
 		uint32_t tsm                     : 1;
-		uint32_t rtr_pref                : 1;
+		uint32_t rtrp                    : 1;
 		uint32_t fde                     : 1;
 		uint32_t afm                     : 1;
 		uint32_t stm                     : 1;
@@ -215,7 +215,7 @@ enum ctu_can_fd_mode_fde {
 	FDE_ENABLE        = 0x1,
 };
 
-enum ctu_can_fd_mode_rtr_pref {
+enum ctu_can_fd_mode_rtrp {
 	RTR_EXTRA          = 0x0,
 	RTR_STANDARD       = 0x1,
 };
@@ -235,7 +235,7 @@ enum ctu_can_fd_settings_rtrle {
 	RTRLE_ENABLED        = 0x1,
 };
 
-enum ctu_can_fd_settings_int_loop {
+enum ctu_can_fd_settings_ilbp {
 	INT_LOOP_DISABLED       = 0x0,
 	INT_LOOP_ENABLED        = 0x1,
 };
@@ -245,7 +245,7 @@ enum ctu_can_fd_settings_ena {
 	ENABLED        = 0x1,
 };
 
-enum ctu_can_fd_settings_fd_type {
+enum ctu_can_fd_settings_nisofd {
 	ISO_FD           = 0x0,
 	NON_ISO_FD       = 0x1,
 };
@@ -255,15 +255,15 @@ union ctu_can_fd_int_stat {
 	struct ctu_can_fd_int_stat_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* INT_STAT */
-		uint32_t ri                      : 1;
-		uint32_t ti                      : 1;
-		uint32_t ei                      : 1;
+		uint32_t rxi                     : 1;
+		uint32_t txi                     : 1;
+		uint32_t ewli                    : 1;
 		uint32_t doi                     : 1;
 		uint32_t epi                     : 1;
 		uint32_t ali                     : 1;
 		uint32_t bei                     : 1;
 		uint32_t lfi                     : 1;
-		uint32_t rfi                     : 1;
+		uint32_t rxfi                    : 1;
 		uint32_t bsi                     : 1;
 		uint32_t rbnei                   : 1;
 		uint32_t txbhci                  : 1;
@@ -273,15 +273,15 @@ union ctu_can_fd_int_stat {
 		uint32_t txbhci                  : 1;
 		uint32_t rbnei                   : 1;
 		uint32_t bsi                     : 1;
-		uint32_t rfi                     : 1;
+		uint32_t rxfi                    : 1;
 		uint32_t lfi                     : 1;
 		uint32_t bei                     : 1;
 		uint32_t ali                     : 1;
 		uint32_t epi                     : 1;
 		uint32_t doi                     : 1;
-		uint32_t ei                      : 1;
-		uint32_t ti                      : 1;
-		uint32_t ri                      : 1;
+		uint32_t ewli                    : 1;
+		uint32_t txi                     : 1;
+		uint32_t rxi                     : 1;
 #endif
 	} s;
 };
@@ -393,7 +393,7 @@ union ctu_can_fd_ewl_erp_fault_state {
 	struct ctu_can_fd_ewl_erp_fault_state_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* EWL */
-		uint32_t ewl_limit               : 8;
+		uint32_t ew_limit                : 8;
   /* ERP */
 		uint32_t erp_limit               : 8;
   /* FAULT_STATE */
@@ -407,7 +407,7 @@ union ctu_can_fd_ewl_erp_fault_state {
 		uint32_t erp                     : 1;
 		uint32_t era                     : 1;
 		uint32_t erp_limit               : 8;
-		uint32_t ewl_limit               : 8;
+		uint32_t ew_limit                : 8;
 #endif
 	} s;
 };
@@ -670,10 +670,10 @@ union ctu_can_fd_rx_status_rx_settings {
 	struct ctu_can_fd_rx_status_rx_settings_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* RX_STATUS */
-		uint32_t rx_empty                : 1;
-		uint32_t rx_full                 : 1;
+		uint32_t rxe                     : 1;
+		uint32_t rxf                     : 1;
 		uint32_t reserved_3_2            : 2;
-		uint32_t rx_frc                 : 11;
+		uint32_t rxfrc                  : 11;
 		uint32_t reserved_15             : 1;
   /* RX_SETTINGS */
 		uint32_t rtsop                   : 1;
@@ -682,10 +682,10 @@ union ctu_can_fd_rx_status_rx_settings {
 		uint32_t reserved_31_17         : 15;
 		uint32_t rtsop                   : 1;
 		uint32_t reserved_15             : 1;
-		uint32_t rx_frc                 : 11;
+		uint32_t rxfrc                  : 11;
 		uint32_t reserved_3_2            : 2;
-		uint32_t rx_full                 : 1;
-		uint32_t rx_empty                : 1;
+		uint32_t rxf                     : 1;
+		uint32_t rxe                     : 1;
 #endif
 	} s;
 };
@@ -742,17 +742,17 @@ union ctu_can_fd_tx_command {
 		uint32_t txcr                    : 1;
 		uint32_t txca                    : 1;
 		uint32_t reserved_7_3            : 5;
-		uint32_t txi1                    : 1;
-		uint32_t txi2                    : 1;
-		uint32_t txi3                    : 1;
-		uint32_t txi4                    : 1;
+		uint32_t txb1                    : 1;
+		uint32_t txb2                    : 1;
+		uint32_t txb3                    : 1;
+		uint32_t txb4                    : 1;
 		uint32_t reserved_31_12         : 20;
 #else
 		uint32_t reserved_31_12         : 20;
-		uint32_t txi4                    : 1;
-		uint32_t txi3                    : 1;
-		uint32_t txi2                    : 1;
-		uint32_t txi1                    : 1;
+		uint32_t txb4                    : 1;
+		uint32_t txb3                    : 1;
+		uint32_t txb2                    : 1;
+		uint32_t txb1                    : 1;
 		uint32_t reserved_7_3            : 5;
 		uint32_t txca                    : 1;
 		uint32_t txcr                    : 1;
