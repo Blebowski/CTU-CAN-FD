@@ -2808,7 +2808,7 @@ package body CANtestLib is
         else
             data(RTRLE_IND) := '0';
         end if;
-        data(RTR_TH_H downto RTR_TH_L) := std_logic_vector(to_unsigned(limit, 4));
+        data(RTRTH_H downto RTRTH_L) := std_logic_vector(to_unsigned(limit, 4));
         CAN_write(data, MODE_ADR, ID, mem_bus);
     end procedure;
 
@@ -3807,15 +3807,15 @@ package body CANtestLib is
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
 
         if (mode.iso_fd_support) then
-            data(FD_TYPE_IND)   := '0';
+            data(NISOFD_IND)   := '0';
         else
-            data(FD_TYPE_IND)   := '1';
+            data(NISOFD_IND)   := '1';
         end if;
 
         if (mode.internal_loopback) then
-            data(INT_LOOP_IND)   := '1';
+            data(ILBP_IND)   := '1';
         else
-            data(INT_LOOP_IND)   := '0';
+            data(ILBP_IND)   := '0';
         end if;
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
@@ -3874,13 +3874,13 @@ package body CANtestLib is
 
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
 
-        if (data(FD_TYPE_IND) = '0') then
+        if (data(NISOFD_IND) = '0') then
             mode.iso_fd_support         := true;
         else
             mode.iso_fd_support         := false;
         end if;
 
-        if (data(INT_LOOP_IND) = '1') then
+        if (data(ILBP_IND) = '1') then
             mode.internal_loopback      := true;
         else
             mode.internal_loopback      := false;
@@ -3997,8 +3997,8 @@ package body CANtestLib is
             data(ENA_IND)       := '0';
         end if;
 
-        data(RTR_TH_H downto RTR_TH_L) :=
-            std_logic_vector(to_unsigned(limit, RTR_TH_H - RTR_TH_L + 1));
+        data(RTRTH_H downto RTRTH_L) :=
+            std_logic_vector(to_unsigned(limit, RTRTH_H - RTRTH_L + 1));
 
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
     end procedure;

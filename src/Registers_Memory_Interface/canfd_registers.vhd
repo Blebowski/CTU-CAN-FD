@@ -470,7 +470,7 @@ architecture rtl of canfd_registers is
        
         -- Enable register
         CAN_enable              <=  ENA_RSTVAL;
-        FD_type                 <=  FD_TYPE_RSTVAL;
+        FD_type                 <=  NISOFD_RSTVAL;
         
         -- Mode register
         mode_reg(RST_IND)       <=  RST_RSTVAL;
@@ -482,7 +482,7 @@ architecture rtl of canfd_registers is
             
         -- Retransmitt limit enable
         retr_lim_ena            <=  RTRLE_RSTVAL;
-        retr_lim_th             <=  RTR_TH_RSTVAL; -- Retr. limit treshold zeroes
+        retr_lim_th             <=  RTRTH_RSTVAL; -- Retr. limit treshold zeroes
         
         sjw_norm                <=  SJW_RSTVAL;
         brp_norm                <=  BRP_RSTVAL;
@@ -924,12 +924,12 @@ begin
 
                             --Settings register
                             write_be_s(retr_lim_ena, RTRLE_IND, data_in, sbe);
-                            write_be_vect(retr_lim_th, 0, 3, data_in, RTR_TH_L,
-                                          RTR_TH_H, sbe);
-                            write_be_s(intLoopbackEna, INT_LOOP_IND, data_in,
+                            write_be_vect(retr_lim_th, 0, 3, data_in, RTRTH_L,
+                                          RTRTH_H, sbe);
+                            write_be_s(intLoopbackEna, ILBP_IND, data_in,
                                         sbe);
                             write_be_s(CAN_enable, ENA_IND, data_in, sbe);
-                            write_be_s(FD_type, FD_TYPE_IND, data_in, sbe);
+                            write_be_s(FD_type, NISOFD_IND, data_in, sbe);
 
                         --------------------------------------------------------
                         -- INT_STATUS register
@@ -1216,16 +1216,16 @@ begin
                             data_out_int(RTRLE_IND)                <=
                                 retr_lim_ena;
 
-                            data_out_int(RTR_TH_H downto RTR_TH_L) <=
+                            data_out_int(RTRTH_H downto RTRTH_L) <=
                                 retr_lim_th;
 
-                            data_out_int(INT_LOOP_IND)             <=
+                            data_out_int(ILBP_IND)             <=
                                 intLoopbackEna;
 
                             data_out_int(ENA_IND)                  <=
                                 CAN_enable;
 
-                            data_out_int(FD_TYPE_IND)              <=
+                            data_out_int(NISOFD_IND)              <=
                                 FD_type;
 
                         --------------------------------------------------------
