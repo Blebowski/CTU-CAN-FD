@@ -659,7 +659,7 @@ Added test framework description.
 \begin_inset Text
 
 \begin_layout Plain Layout
-2.1.1
+2.0.1
 \end_layout
 
 \end_inset
@@ -700,7 +700,7 @@ Updated register map description, external references to generated maps.
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2.1
 \end_layout
 
 \end_inset
@@ -709,7 +709,7 @@ Updated register map description, external references to generated maps.
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Martin Jerabek
 \end_layout
 
 \end_inset
@@ -718,7 +718,7 @@ Updated register map description, external references to generated maps.
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+10-2018
 \end_layout
 
 \end_inset
@@ -727,7 +727,7 @@ Updated register map description, external references to generated maps.
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Added Linux driver description
 \end_layout
 
 \end_inset
@@ -888,8 +888,8 @@ Functionality requirements
 \end_layout
 
 \begin_layout Standard
-The implementation of CTU CAN FD was driven by the following design requirements:
-ts:
+The implementation of CTU CAN FD was driven by the following design requirements
+:ts:
 \end_layout
 
 \begin_layout Enumerate
@@ -1270,8 +1270,8 @@ std_logic_unsigned
 \begin_layout Standard
 Each module has a unique function and number of dependencies between modules
  is minimal, which allows modularity and flexibility.
- CAN FD IP core is a memory mapped peripheral and it can be embedded into custom
- SoC on FPGA or ASIC.
+ CAN FD IP core is a memory mapped peripheral and it can be embedded into
+ custom SoC on FPGA or ASIC.
  The code itself is vendor independent, requiring 
 \series bold
 no vendor specific libraries
@@ -11783,6 +11783,7 @@ drv_filter_ran_hi_th
 \family default
 \shape default
 ).
+ Values equal to lower or upper threshold are also accepted by range filter.
  The output is valid if identifier matches at least one filter (logic OR).
  Message Filters are configurable before synthesis via 
 \family roman
@@ -16464,14 +16465,6 @@ Error counter of the test
 \end_layout
 
 \begin_layout Section
-Python test framework
-\end_layout
-
-\begin_layout Standard
-TODO
-\end_layout
-
-\begin_layout Section
 Common test configuration
 \begin_inset CommandInset label
 LatexCommand label
@@ -19981,7 +19974,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2601
+2 540
 \end_layout
 
 \end_inset
@@ -19990,7 +19983,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-1928
+1 803
 \end_layout
 
 \end_inset
@@ -19999,7 +19992,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-3744
+3 584
 \end_layout
 
 \end_inset
@@ -20008,7 +20001,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-1831
+1 730
 \end_layout
 
 \end_inset
@@ -20017,7 +20010,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-97.74
+95.86
 \end_layout
 
 \end_inset
@@ -20055,7 +20048,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2813
+2 818
 \end_layout
 
 \end_inset
@@ -20064,7 +20057,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2109
+1 974
 \end_layout
 
 \end_inset
@@ -20073,7 +20066,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-12032
+10 752
 \end_layout
 
 \end_inset
@@ -20082,7 +20075,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-1990
+1 984
 \end_layout
 
 \end_inset
@@ -20091,7 +20084,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-102.29
+101.57
 \end_layout
 
 \end_inset
@@ -20129,7 +20122,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-3022
+3 008
 \end_layout
 
 \end_inset
@@ -20138,7 +20131,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2316
+2 164
 \end_layout
 
 \end_inset
@@ -20147,7 +20140,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-154112
+133 632
 \end_layout
 
 \end_inset
@@ -20156,7 +20149,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2176
+2 126
 \end_layout
 
 \end_inset
@@ -20165,7 +20158,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-105.98
+103.73
 \end_layout
 
 \end_inset
@@ -20203,7 +20196,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-3301
+3 226
 \end_layout
 
 \end_inset
@@ -20212,7 +20205,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2514
+2 373
 \end_layout
 
 \end_inset
@@ -20221,7 +20214,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-154616
+134 136
 \end_layout
 
 \end_inset
@@ -20230,7 +20223,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2382
+2 265
 \end_layout
 
 \end_inset
@@ -20239,7 +20232,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-101.88
+99.0
 \end_layout
 
 \end_inset
@@ -20277,7 +20270,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-3448
+3 357
 \end_layout
 
 \end_inset
@@ -20286,7 +20279,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2585
+2 444
 \end_layout
 
 \end_inset
@@ -20295,7 +20288,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-158144
+137 664
 \end_layout
 
 \end_inset
@@ -20304,7 +20297,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-2471
+2 362
 \end_layout
 
 \end_inset
@@ -20313,7 +20306,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-98.29
+100.24
 \end_layout
 
 \end_inset
@@ -20361,14 +20354,12 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="8">
+<lyxtabular version="3" rows="6" columns="6">
 <features tabularvalignment="top">
 <column alignment="center" valignment="middle" width="1.8cm">
 <column alignment="center" valignment="middle" width="1.3cm">
 <column alignment="center" valignment="middle" width="2cm">
 <column alignment="center" valignment="middle" width="2.6cm">
-<column alignment="center" valignment="middle" width="1.5cm">
-<column alignment="center" valignment="middle" width="1.5cm">
 <column alignment="center" valignment="middle" width="1.5cm">
 <column alignment="center" valignment="middle" width="1.5cm">
 <row>
@@ -20403,7 +20394,7 @@ Supported filters [value, range]
 \begin_inset Text
 
 \begin_layout Plain Layout
-LC Combinationals 
+Look-up-Tables
 \end_layout
 
 \end_inset
@@ -20412,25 +20403,7 @@ LC Combinationals
 \begin_inset Text
 
 \begin_layout Plain Layout
-LC Registers
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Memory bits
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-ALMs
+Flip-Flops
 \end_layout
 
 \end_inset
@@ -20439,7 +20412,7 @@ ALMs
 \begin_inset Text
 
 \begin_layout Plain Layout
-Maximal frequency [MHz]
+BRAMs
 \end_layout
 
 \end_inset
@@ -20477,7 +20450,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2 500
 \end_layout
 
 \end_inset
@@ -20486,25 +20459,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+1 569
 \end_layout
 
 \end_inset
@@ -20513,7 +20468,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2.5
 \end_layout
 
 \end_inset
@@ -20551,7 +20506,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2 661
 \end_layout
 
 \end_inset
@@ -20560,25 +20515,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+1 714
 \end_layout
 
 \end_inset
@@ -20587,7 +20524,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2.5
 \end_layout
 
 \end_inset
@@ -20625,7 +20562,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+2 819
 \end_layout
 
 \end_inset
@@ -20634,25 +20571,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+1 867
 \end_layout
 
 \end_inset
@@ -20661,7 +20580,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+6
 \end_layout
 
 \end_inset
@@ -20699,7 +20618,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+3 030
 \end_layout
 
 \end_inset
@@ -20708,25 +20627,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+1 942
 \end_layout
 
 \end_inset
@@ -20735,7 +20636,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+6
 \end_layout
 
 \end_inset
@@ -20773,7 +20674,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+3 177
 \end_layout
 
 \end_inset
@@ -20782,25 +20683,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
+2 004
 \end_layout
 
 \end_inset
@@ -20809,7 +20692,7 @@ Maximal frequency [MHz]
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+6
 \end_layout
 
 \end_inset
