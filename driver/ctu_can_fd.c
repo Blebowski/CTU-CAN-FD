@@ -1052,7 +1052,7 @@ static int ctucan_remove(struct platform_device *pdev)
 
 /* Match table for OF platform binding */
 static const struct of_device_id ctucan_of_match[] = {
-	{ .compatible = "ctu,canfd-1.0", },
+	{ .compatible = "ctu,canfd-2", },
 	{ .compatible = "ctu,ctucanfd", },
 	{ /* end of list */ },
 };
