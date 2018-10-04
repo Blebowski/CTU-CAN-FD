@@ -6,3 +6,4 @@
 *.orig
 *~
 .fuse_hidden*
+.mypy_cache

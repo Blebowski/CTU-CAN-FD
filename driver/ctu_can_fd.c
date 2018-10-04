@@ -1,34 +1,34 @@
 /*******************************************************************************
- * 
+ *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018
- * 
+ *
  * Authors:
  *     Ondrej Ille <ondrej.ille@gmail.com>
  *     Martin Jerabek <martin.jerabek01@gmail.com>
- * 
- * Project advisors: 
+ *
+ * Project advisors:
  * 	Jiri Novak <jnovak@fel.cvut.cz>
  * 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
- * 
+ *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
  * Czech Technical University        (http://www.cvut.cz/)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
+ *
 *******************************************************************************/
 
 #include <linux/clk.h>
@@ -119,6 +119,7 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 		return -EPERM;
 	}
 
+	/* Note that bt may be modified here */
 	ctu_can_fd_set_nom_bittiming(&priv->p, bt);
 
 	return 0;
@@ -147,6 +148,7 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 		return -EPERM;
 	}
 
+	/* Note that dbt may be modified here */
 	ctu_can_fd_set_data_bittiming(&priv->p, dbt);
 
 	return 0;
@@ -534,9 +536,10 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 		can_led_event(ndev, CAN_LED_EVENT_RX);
 
 	if (work_done < quota) {
-		napi_complete(napi);
-		iec.s.doi = 1; /* Also re-enable DOI */
-		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
+		if (napi_complete_done(napi, work_done)) {
+			iec.s.doi = 1; /* Also re-enable DOI */
+			priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
+		}
 	}
 
 	return work_done;
@@ -595,14 +598,24 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 				stats->tx_packets++;
 			break;
 			case TXT_ERR:
+				/* This indicated that retransmit limit has been
+				 * reached. Obviously we should not echo the
+				 * frame, but also not indicate any kind of error.
+				 * If desired, it was already reported (possible
+				 * multiple times) on each arbitration lost.
+				 */
 				netdev_warn(ndev, "TXB in Error state");
 				can_free_echo_skb(ndev, txb_idx);
-				// TODO: send some error frame - but what should it contain?
+				stats->tx_dropped++;
 			break;
 			case TXT_ABT:
+				/* Same as for TXT_ERR, only with different
+				 * cause. We *could* re-queue the frame, but
+				 * multiqueue/abort is not supported yet anyway.
+				 */
 				netdev_warn(ndev, "TXB in Aborted state");
 				can_free_echo_skb(ndev, txb_idx);
-				// TODO: send some error frame - but what should it contain?
+				stats->tx_dropped++;
 			break;
 			default:
 				/* Bug only if the first buffer is not finished,
@@ -683,8 +696,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	#define CTUCANFD_INT_RBNEI   BIT(10)
 	#define CTUCANFD_INT_TXBHCI  BIT(11)
 	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | \
-		                    CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
-				    CTUCANFD_INT_BEI)
+	                            CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
+	                            CTUCANFD_INT_BEI)
 
 	/* TX Buffer HW Command Interrupt */
 	if (isr.s.txbhci) {
