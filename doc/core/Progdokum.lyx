@@ -889,7 +889,7 @@ Functionality requirements
 
 \begin_layout Standard
 The implementation of CTU CAN FD was driven by the following design requirements
-:ts:
+:
 \end_layout
 
 \begin_layout Enumerate
