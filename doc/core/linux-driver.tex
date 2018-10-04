@@ -69,7 +69,7 @@ values must be re-distributed.
 \section{Frame RX}
 
 % TODO: diagram
-ISR -> schedule NAPI queue ...> \verb|ctucan_rx_poll| -> loop(\verb|ctucan_rx|) -> \verb|napi_complete()|
+%ISR -> schedule NAPI queue ...> \verb|ctucan_rx_poll| -> loop(\verb|ctucan_rx|) -> \verb|napi_complete()|
 
 When NAPI polling is scheduled, the \verb|ctucan_rx_poll| routine continually
 processes RX frames (via \verb|ctucan_rx|) until either there is no frame
@@ -209,45 +209,3 @@ with RXBNE when NAPI polling is scheduled. Furthermore, when clearing the overru
 both Data Overrun Flag and interrupt status must be cleared, in this order.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\endinput
-- architecture based on SocketCAN
-    - module
-    - device probe
-        - device tree
-            - ...
-    - netdev
-        - ...
-
-+ TXB priority rotation
-+ TXHCI handling
-+ RX overrun handling
-
-+ Section: init
-+ Section: settings (bitrate, mode, ...)
-+ Section: RX
-+ Section: TX
-+ Section: errors
-
-
-Netdev ops:
-	.ndo_open	= ctucan_open,
-	.ndo_stop	= ctucan_close,
-+	.ndo_start_xmit	= ctucan_start_xmit,
-	.ndo_change_mtu	= can_change_mtu,
-
-PM ops:
-    ctucan_suspend
-    ctucan_resume
-
-Platform driver:
-	.probe	= ctucan_probe,
-	.remove	= ctucan_remove,
-	{ .compatible = "ctu,canfd-2.0", },
-	{ .compatible = "ctu,ctucanfd", },
-
-TODO:
-- compatible field: version???
-
-Documentation/ABI/testing/sysfs-class-net-statistics
