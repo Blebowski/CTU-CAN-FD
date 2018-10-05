@@ -197,7 +197,7 @@ package body suspend_transmission_feature is
                 wait until rising_edge(mem_bus(1).clk_sys);
             end loop;
             report "End of EOF field";
-            wait for 20 ns;
+            wait for 40 ns;
 
             --------------------------------------------------------------------
             -- Wait for N + 2 Bit times. 3 is length of intermission. Thus if
@@ -225,7 +225,7 @@ package body suspend_transmission_feature is
                 wait until rising_edge(mem_bus(1).clk_sys);
             end loop;
             report "Frame started";
-            wait for 20 ns;
+            wait for 40 ns;
 
             -- Check Operational State of Node 1!
             get_controller_status(status, ID_1, mem_bus(1));
