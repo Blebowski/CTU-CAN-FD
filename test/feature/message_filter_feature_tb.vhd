@@ -210,6 +210,8 @@ package body message_filter_feature is
                 when 2 => mask_filter := filter_B;
                 when 3 => mask_filter := filter_C;
             end case;
+            CAN_frame.ident_type := BASE;
+            CAN_frame.identifier := CAN_frame.identifier mod 2048;
 
             --------------------------------------------------------------------
             -- First reset value of each filter so that each next iteraion does
@@ -243,6 +245,7 @@ package body message_filter_feature is
             for j in 1 to 9 loop
                 mask_filt_config.acc_CAN_2_0 := false;
                 mask_filt_config.acc_CAN_FD := false;
+                mask_filt_config.ident_type := CAN_frame.ident_type;
 
                 report "Starting scenario: " & integer'image(i) & "." &
                         integer'image(j); 
@@ -284,19 +287,24 @@ package body message_filter_feature is
                 tmp_log_vect(tmp_int) := tmp_log;
                 mask_filt_config.ID_value := 
                         to_integer(unsigned(tmp_log_vect));
-                tmp_log_vect := std_logic_vector(
-                                    to_unsigned(CAN_frame.identifier, 29));
                 report "Filter value: " &
                         integer'image(mask_filt_config.ID_value);
 
                 -- Set equal for scenarios wher Bit mask is match, set
                 -- opposite where it is not equal!
+                id_sw_to_hw(CAN_frame.identifier, CAN_frame.ident_type,
+                            tmp_log_vect);
+                if (CAN_frame.ident_type = BASE) then
+                    tmp_int := tmp_int + 18;
+                end if;
+
                 if ((j = 1) or (j = 4) or (j = 7) or (j = 8)) then
                     tmp_log_vect(tmp_int) := tmp_log;
                 else
                     tmp_log_vect(tmp_int) := not tmp_log;
                 end if;
-                CAN_frame.identifier := to_integer(unsigned(tmp_log_vect));
+                id_hw_to_sw(tmp_log_vect, CAN_frame.ident_type,
+                            CAN_frame.identifier);
                 report "CAN ID: " &
                         integer'image(CAN_frame.identifier);
 
@@ -378,7 +386,7 @@ package body message_filter_feature is
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.ident_type := BASE;
         CAN_frame.rtr := RTR_FRAME;
-
+ 
         report "ID value: " &
                  integer'image(CAN_frame.identifier);
         report "Low threshold: " &
