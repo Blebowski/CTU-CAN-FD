@@ -81,6 +81,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
+use work.CANcomponents.all;
 
 entity txtBuffer is
     generic(
@@ -165,6 +166,20 @@ architecture rtl of txtBuffer is
     signal hw_cbs                 : std_logic;
     signal sw_cbs                 : std_logic;
 
+
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- RAM wrapper signals
+    ----------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    
+    -- Write control signal    
+    signal RAM_write                :       std_logic;
+
+    -- Read address (connected to read pointer)
+    signal RAM_read_address         :       std_logic_vector(4 downto 0);
+
+
 begin
     
     -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
@@ -205,31 +220,39 @@ begin
                                         (buf_fsm = txt_ab_prog))
                                   else
                             true;
-    
+
+    -- TXT Buffer RAM write signal
+    RAM_write <= '1' when (tran_cs = '1' and txtb_user_accessible = true)
+                     else
+                 '0';
+
+    -- TXT Buffer read address (connected to read pointer)
+    RAM_read_address   <= std_logic_vector(to_unsigned(
+                             txt_addr, RAM_read_address'length)); 
+
+
     ----------------------------------------------------------------------------
-    -- Buffer access process from SW
+    -- RAM Memory of TXT Buffer
     ----------------------------------------------------------------------------
-    tx_buf_access_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
+    txt_buf_RAM : inf_RAM_wrapper 
+    generic map (
+        word_width           => 32,
+        depth                => 20,
+        address_width        => RAM_read_address'length,
+        reset_polarity       => ACT_RESET,
+        simulation_reset     => true,
+        sync_read            => true
+    )
+    port map(
+        clk_sys              => clk_sys,
+        res_n                => res_n,
+        addr_A               => tran_addr,
+        write                => RAM_write, 
+        data_in              => tran_data,
+        addr_B               => RAM_read_address,
+        data_out             => txt_word
+    );
 
-            -- pragma translate_off
-            txt_buffer_mem <= (OTHERS => (OTHERS => '0'));
-            txt_word       <= (OTHERS => '0');      
-            -- pragma translate_on
-           
-        elsif (rising_edge(clk_sys)) then
-
-            --Store the data into the Buffer during the access
-            if (tran_cs = '1' and txtb_user_accessible) then
-                txt_buffer_mem(to_integer(unsigned(tran_addr))) <= tran_data;
-            end if;
-
-            -- Output data are given by the address from Core
-            txt_word            <= txt_buffer_mem(txt_addr);
-
-        end if;
-    end process;
     
     
     ----------------------------------------------------------------------------
