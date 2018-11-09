@@ -75,6 +75,7 @@
 --     30.8.2018  Added "txt_hw_cmd_int" output for Interrupt Manager. TXTB HW
 --                command Interrupt generated upon move to Done, Failed or
 --                Aborted states.
+--    10.11.2018  Separated TXT Buffer FSM to a standalone sub-module.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -112,7 +113,7 @@ entity txtBuffer is
         ------------------------------------------------------------------------   
         -- Status signals
         ------------------------------------------------------------------------
-        signal txtb_state             :out  txt_fsm_type;
+        signal txtb_state             :out  std_logic_vector(3 downto 0);
 
         ------------------------------------------------------------------------
         -- Interrupt Manager
@@ -152,14 +153,8 @@ architecture rtl of txtBuffer is
     --Signal aliases
     ----------------------------------------------------------------------------
 
-    -- Time transcieve buffer - Data memory
-    signal txt_buffer_mem         : frame_memory;
-
-    -- FSM state of the buffer
-    signal buf_fsm                : txt_fsm_type;
-
     -- TXT Buffer memory protection
-    signal txtb_user_accessible   : boolean;
+    signal txtb_user_accessible   : std_logic;
 
     -- Internal buffer selects for commands. Commands are shared across the
     -- buffers so we need unique identifier
@@ -174,22 +169,14 @@ architecture rtl of txtBuffer is
     ---------------------------------------------------------------------------
     
     -- Write control signal    
-    signal RAM_write                :       std_logic;
+    signal RAM_write              : std_logic;
 
     -- Read address (connected to read pointer)
-    signal RAM_read_address         :       std_logic_vector(4 downto 0);
+    signal RAM_read_address       : std_logic_vector(4 downto 0);
 
 
 begin
-    
-    -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
-    -- Abort signal must not be active. If not considered,
-    -- race conditions between HW and SW commands could occur.
-    txt_buf_ready       <= '1' when ((buf_fsm = txt_ready) and
-                                     (txt_sw_cmd.set_abt = '0'))
-                               else
-                           '0';
-    
+        
     -- Command buffer select signals
     hw_cbs <= '1' when txt_hw_cmd_buf_index = ID
                   else
@@ -198,31 +185,9 @@ begin
     sw_cbs <= '1' when txt_sw_buf_cmd_index(ID) = '1' 
                   else
               '0';
-
-    -- TXT Buffer HW Command generates interrupt upon transition to
-    -- Failed, Done and Aborted states!
-    txt_hw_cmd_int <= '1' when (hw_cbs = '1') and ((txt_hw_cmd.failed = '1') or
-                                                   (txt_hw_cmd.valid = '1') or
-                                                   ((txt_hw_cmd.unlock = '1') and
-                                                    (buf_fsm = txt_ab_prog)) or
-                                                   ((txt_sw_cmd.set_abt = '1') and
-                                                    (sw_cbs = '1') and
-                                                    (buf_fsm = txt_ready)))
-                          else
-                       '0';
     
-    -- Connect internal buffer state to output
-    txtb_state <= buf_fsm;
-    
-    -- Memory protection of TXT Buffer
-    txtb_user_accessible <= false when ((buf_fsm = txt_ready)   or
-                                        (buf_fsm = txt_tx_prog) or
-                                        (buf_fsm = txt_ab_prog))
-                                  else
-                            true;
-
     -- TXT Buffer RAM write signal
-    RAM_write <= '1' when (tran_cs = '1' and txtb_user_accessible = true)
+    RAM_write <= '1' when (tran_cs = '1' and txtb_user_accessible = '1')
                      else
                  '0';
 
@@ -254,199 +219,28 @@ begin
     );
 
     
-    
     ----------------------------------------------------------------------------
-    -- Buffer FSM process
+    -- TXT Buffer FSM
     ----------------------------------------------------------------------------
-    tx_buf_fsm_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            buf_fsm         <= txt_empty;
+    txtBuffer_fsm_comp : txtBuffer_fsm
+    generic map(
+        ID                     => ID
+    )
+    port map(
+        clk_sys                => clk_sys,
+        res_n                  => res_n,
 
-        elsif (rising_edge(clk_sys)) then
-        
-            buf_fsm           <= buf_fsm;
+        txt_sw_cmd             => txt_sw_cmd,
+        sw_cbs                 => sw_cbs,
 
-            case buf_fsm is
+        txt_hw_cmd             => txt_hw_cmd,
+        hw_cbs                 => hw_cbs,
+        bus_off_start          => bus_off_start,
 
-            --------------------------------------------------------------------
-            -- Buffer is empty
-            --------------------------------------------------------------------
-            when txt_empty =>
-
-                -- "Set_ready"
-                if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_ready;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Buffer is ready for transmission
-            --------------------------------------------------------------------
-            when txt_ready =>
-              
-                -- Locking for transmission
-                if (txt_hw_cmd.lock = '1' and hw_cbs = '1') then
-
-                    -- Simultaneous "lock" and abort -> transmit, but
-                    -- with abort pending
-                    if (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') then
-                        buf_fsm     <= txt_ab_prog;
-                    else
-                        buf_fsm     <= txt_tx_prog;
-                    end if;
-
-                -- Abort the ready buffer
-                elsif (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_aborted;
-                else
-                    buf_fsm       <= buf_fsm;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Transmission from buffer is in progress
-            --------------------------------------------------------------------
-            when txt_tx_prog =>
-              
-                -- Unlock the buffer
-                if (txt_hw_cmd.unlock = '1' and hw_cbs = '1') then
-
-                    -- Retransmitt reached, transmitt OK, or try again...
-                    if (txt_hw_cmd.failed         = '1') then
-                        buf_fsm     <= txt_error;
-                    elsif (txt_hw_cmd.valid       = '1') then
-                        buf_fsm     <= txt_ok;
-                    elsif (txt_hw_cmd.err         = '1' or 
-                           txt_hw_cmd.arbl        = '1') then
-                        buf_fsm     <= txt_ready;
-                    else
-                        buf_fsm     <= buf_fsm;
-                    end if;
-
-                -- Request abort during transmission
-                elsif (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') then 
-                    buf_fsm         <= txt_ab_prog;
-                else
-                    buf_fsm         <= buf_fsm;  
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Transmission is in progress -> abort at nearest error!
-            --------------------------------------------------------------------
-            when txt_ab_prog =>
-              
-                -- Unlock the buffer
-                if (txt_hw_cmd.unlock = '1' and hw_cbs = '1') then
-
-                    -- Retransmitt reached, transmitt OK, or try again... 
-                    if (txt_hw_cmd.failed         = '1') then
-                        buf_fsm     <= txt_error;
-                    elsif (txt_hw_cmd.valid       = '1') then
-                        buf_fsm     <= txt_ok;
-                    elsif (txt_hw_cmd.err         = '1' or 
-                           txt_hw_cmd.arbl        = '1') then
-                        buf_fsm     <= txt_aborted;
-                    else
-                        buf_fsm     <= buf_fsm;
-                    end if;
-
-                else
-                    buf_fsm       <= buf_fsm;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Transmission from buffer failed. Retransmitt limit was reached.
-            --------------------------------------------------------------------
-            when txt_error =>
-
-                -- "Set_ready"
-                if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_ready;
-                end if;
-
-                -- "Set_empty"
-                if (txt_sw_cmd.set_ety = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_empty;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Transmission was aborted by user command
-            --------------------------------------------------------------------
-            when txt_aborted =>
-              
-                -- "Set_ready"
-                if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_ready;
-                end if;
-
-                -- "Set_empty"
-                if (txt_sw_cmd.set_ety = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_empty;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Transmission was succesfull
-            --------------------------------------------------------------------
-            when txt_ok =>
-              
-                -- "Set_ready"
-                if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_ready;
-                end if;
-
-                -- "Set_empty"
-                if (txt_sw_cmd.set_ety = '1' and sw_cbs = '1') then
-                    buf_fsm       <= txt_empty;
-                end if;
-              
-            end case;
-
-            --------------------------------------------------------------------
-            -- If Core goes to bus-off, TXT Buffer goes to failed, regardless of
-            -- any other SW or HW commands
-            --------------------------------------------------------------------
-            if (bus_off_start = '1') then
-                buf_fsm       <= txt_error;
-            end if;
-
-        end if;
-    end process;
-
-
-    ----------------------------------------------------------------------------
-    -- Monitoring invalid command combinations!
-    ----------------------------------------------------------------------------
-    lock_check_proc : process(clk_sys)
-    begin
-        if (rising_edge(clk_sys)) then
-            if (txt_hw_cmd.lock       = '1'       and
-                buf_fsm              /= txt_ready and
-                txt_hw_cmd_buf_index  = ID) 
-            then
-                report "Buffer not READY and LOCK occurred on TXT Buffer: " &
-                        integer'image(ID) severity error;
-            end if;
-        end if;
-    end process;
-
-
-    unlock_check_proc : process(clk_sys)
-    begin
-        if (rising_edge(clk_sys)) then
-            if (txt_hw_cmd.unlock     = '1'         and
-                buf_fsm              /= txt_tx_prog and
-                buf_fsm              /= txt_ab_prog and
-                txt_hw_cmd_buf_index  = ID)
-            then
-                report "Buffer not 'TX_prog' or 'AB_prog' and UNLOCK" &
-                       " occurred on Buffer: " & integer'image(ID) severity error;
-            end if;
-        end if;
-    end process;
+        txtb_user_accessible   => txtb_user_accessible,
+        txtb_hw_cmd_int        => txt_hw_cmd_int,
+        txtb_state             => txtb_state,
+        txt_buf_ready          => txt_buf_ready
+    );
 
 end architecture;

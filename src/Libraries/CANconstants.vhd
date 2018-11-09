@@ -287,8 +287,8 @@ package CANconstants is
     type txtb_output_type is array (0 to TXT_BUFFER_COUNT - 1) of
         std_logic_vector(31 downto 0);
 
-    type txt_fsms_type is array (0 to TXT_BUFFER_COUNT - 1) of
-        txt_fsm_type;
+    type txtb_state_type is array (0 to TXT_BUFFER_COUNT - 1) of
+        std_logic_vector(3 downto 0);
 
     type txt_sw_cmd_type is record
         set_rdy   : std_logic;

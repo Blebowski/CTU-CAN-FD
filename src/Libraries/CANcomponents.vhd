@@ -153,7 +153,7 @@ package CANcomponents is
             signal txtb_cs              : out std_logic_vector(
                                                 buf_count - 1 downto 0);
 
-            signal txtb_fsms            : in  txt_fsms_type;
+            signal txtb_state           : in  txtb_state_type;
             signal txt_sw_cmd           : out txt_sw_cmd_type;
 
             signal txt_buf_cmd_index    : out std_logic_vector(
@@ -265,7 +265,7 @@ package CANcomponents is
             signal txt_sw_buf_cmd_index   :in   std_logic_vector(
                                                     buf_count - 1 downto 0);
 
-            signal txtb_state             :out  txt_fsm_type;
+            signal txtb_state             :out  std_logic_vector(3 downto 0);
             signal txt_hw_cmd             :in   txt_hw_cmd_type;
             signal bus_off_start          :in   std_logic;
             signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
@@ -275,6 +275,28 @@ package CANcomponents is
         );
     end component;
 
+
+    ----------------------------------------------------------------------------
+    -- TXT Buffer FSM 
+    ----------------------------------------------------------------------------
+    component txtBuffer_fsm is
+    generic(
+        constant ID                   :     natural
+    );
+    port(
+        signal clk_sys                :in   std_logic;
+        signal res_n                  :in   std_logic;
+        signal txt_sw_cmd             :in   txt_sw_cmd_type;
+        signal sw_cbs                 :in   std_logic;
+        signal txt_hw_cmd             :in   txt_hw_cmd_type;  
+        signal hw_cbs                 :in   std_logic;
+        signal bus_off_start          :in   std_logic;
+        signal txtb_user_accessible   :out  std_logic;
+        signal txtb_hw_cmd_int        :out  std_logic;
+        signal txtb_state             :out  std_logic_vector(3 downto 0);
+        signal txt_buf_ready          :out  std_logic
+    );
+    end component;
 
     ----------------------------------------------------------------------------
     -- TXT Arbitrator module

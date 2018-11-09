@@ -229,7 +229,7 @@ entity CAN_top_level is
     signal tran_cs              : std_logic_vector(TXT_BUFFER_COUNT - 1 downto 0);
 
     -- Finite state machine types for TXT Buffer
-    signal txtb_fsms            : txt_fsms_type;
+    signal txtb_state           : txtb_state_type;
 
     -- Software commands + buffer indices that should be activated
     signal txt_sw_cmd           :  txt_sw_cmd_type;
@@ -535,7 +535,7 @@ begin
         tran_data            => tran_data,
         tran_addr            => tran_addr,
         txtb_cs              => tran_cs,
-        txtb_fsms            => txtb_fsms,
+        txtb_state           => txtb_state,
         txt_sw_cmd           => txt_sw_cmd,
         txt_buf_cmd_index    => txt_buf_cmd_index,
         txt_buf_prior_out    => txt_buf_prior,
@@ -603,7 +603,7 @@ begin
             tran_cs               => tran_cs(i),
             txt_sw_cmd            => txt_sw_cmd,
             txt_sw_buf_cmd_index  => txt_buf_cmd_index,
-            txtb_state            => txtb_fsms(i),
+            txtb_state            => txtb_state(i),
             txt_hw_cmd            => txt_hw_cmd,
             txt_hw_cmd_int        => txt_hw_cmd_int(i),
             txt_hw_cmd_buf_index  => txt_hw_cmd_buf_index,

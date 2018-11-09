@@ -214,7 +214,7 @@ entity canfd_registers is
         signal txtb_cs              :out  std_logic_vector(buf_count - 1 downto 0);
 
         -- Buffer status signals
-        signal txtb_fsms            :in   txt_fsms_type;
+        signal txtb_state           :in   txtb_state_type;
 
         -- Buffer commands + command index
         signal txt_sw_cmd           :out  txt_sw_cmd_type;
@@ -1495,95 +1495,11 @@ begin
                         when TX_STATUS_ADR =>
                             data_out_int(31 downto 3)      <=  (OTHERS => '0');
 
-                            ----------------------------------------------------
-                            -- We encode state here, later this will be moved to
-                            -- higher level module. So far we unrool it and do 
-                            -- it for every Buffer state separately so that we  
-                            -- dont have problems with dependencies between 
-                            -- indices! (e.g  if we used loop and used offset 
-                            -- from first buffer state)
-                            ----------------------------------------------------
-                            case txtb_fsms(0) is
-                            when txt_empty =>
-                                data_out_int(TX1S_H downto TX1S_L) <= TXT_ETY;
-                            when txt_ready =>
-                                data_out_int(TX1S_H downto TX1S_L) <= TXT_RDY;
-                            when txt_tx_prog =>
-                                data_out_int(TX1S_H downto TX1S_L) <= TXT_TRAN;
-                            when txt_ab_prog =>
-                                data_out_int(TX1S_H downto TX1S_L) <= TXT_ABTP;
-                            when txt_ok =>
-                                data_out_int(TX1S_H downto TX1S_L) <= TXT_TOK;
-                            when txt_error =>
-                                data_out_int(TX1S_H downto TX1S_L) <= TXT_ERR;
-                            when txt_aborted =>
-                                data_out_int(TX1S_H downto TX1S_L) <= TXT_ABT;
-                            when others =>
-                                data_out_int(TX1S_H downto TX1S_L) <=
-                                    (OTHERS => '0');
-                            end case;
-
-                            case txtb_fsms(1) is
-                            when txt_empty =>
-                                data_out_int(TX2S_H downto TX2S_L) <= TXT_ETY;
-                            when txt_ready =>
-                                data_out_int(TX2S_H downto TX2S_L) <= TXT_RDY;
-                            when txt_tx_prog =>
-                                data_out_int(TX2S_H downto TX2S_L) <= TXT_TRAN;
-                            when txt_ab_prog =>
-                                data_out_int(TX2S_H downto TX2S_L) <= TXT_ABTP;
-                            when txt_ok =>
-                                data_out_int(TX2S_H downto TX2S_L) <= TXT_TOK;
-                            when txt_error =>
-                                data_out_int(TX2S_H downto TX2S_L) <= TXT_ERR;
-                            when txt_aborted =>
-                                data_out_int(TX2S_H downto TX2S_L) <= TXT_ABT;
-                            when others =>
-                                data_out_int(TX2S_H downto TX2S_L) <=
-                                    (OTHERS => '0');
-                            end case;
-
-                            case txtb_fsms(2) is
-                            when txt_empty =>
-                                data_out_int(TX3S_H downto TX3S_L) <= TXT_ETY;
-                            when txt_ready =>
-                                data_out_int(TX3S_H downto TX3S_L) <= TXT_RDY;
-                            when txt_tx_prog =>
-                                data_out_int(TX3S_H downto TX3S_L) <= TXT_TRAN;
-                            when txt_ab_prog =>
-                                data_out_int(TX3S_H downto TX3S_L) <= TXT_ABTP;
-                            when txt_ok =>
-                                data_out_int(TX3S_H downto TX3S_L) <= TXT_TOK;
-                            when txt_error =>
-                                data_out_int(TX3S_H downto TX3S_L) <= TXT_ERR;
-                            when txt_aborted =>
-                                data_out_int(TX3S_H downto TX3S_L) <= TXT_ABT;
-                            when others =>
-                                data_out_int(TX3S_H downto TX3S_L) <=
-                                    (OTHERS => '0');
-                            end case;
-
-                            case txtb_fsms(3) is
-                            when txt_empty =>
-                                data_out_int(TX4S_H downto TX4S_L) <= TXT_ETY;
-                            when txt_ready =>
-                                data_out_int(TX4S_H downto TX4S_L) <= TXT_RDY;
-                            when txt_tx_prog =>
-                                data_out_int(TX4S_H downto TX4S_L) <= TXT_TRAN;
-                            when txt_ab_prog =>
-                                data_out_int(TX4S_H downto TX4S_L) <= TXT_ABTP;
-                            when txt_ok =>
-                                data_out_int(TX4S_H downto TX4S_L) <= TXT_TOK;
-                            when txt_error =>
-                                data_out_int(TX4S_H downto TX4S_L) <= TXT_ERR;
-                            when txt_aborted =>
-                                data_out_int(TX4S_H downto TX4S_L) <= TXT_ABT;
-                            when others =>
-                                data_out_int(TX4S_H downto TX4S_L) <=
-                                    (OTHERS => '0');
-                            end case;
-
-
+                            data_out_int(TX1S_H downto TX1S_L) <= txtb_state(0);
+                            data_out_int(TX2S_H downto TX2S_L) <= txtb_state(1);
+                            data_out_int(TX3S_H downto TX3S_L) <= txtb_state(2);
+                            data_out_int(TX4S_H downto TX4S_L) <= txtb_state(3);
+                            
                         --------------------------------------------------------
                         -- TX_COMMAND (TX_SETTINGS and TX_COMMAND)
                         --------------------------------------------------------
@@ -1806,10 +1722,10 @@ begin
                                     else
                                 '0';
   
-    status_reg(TXNF_IND mod 8) <= '1' when (txtb_fsms(0) = txt_empty or
-                                           txtb_fsms(1) = txt_empty or
-                                           txtb_fsms(2) = txt_empty or
-                                           txtb_fsms(3) = txt_empty)
+    status_reg(TXNF_IND mod 8) <= '1' when (txtb_state(0) = TXT_ETY or
+                                            txtb_state(1) = TXT_ETY or
+                                            txtb_state(2) = TXT_ETY or
+                                            txtb_state(3) = TXT_ETY)
                                      else
                                  '0';
   
