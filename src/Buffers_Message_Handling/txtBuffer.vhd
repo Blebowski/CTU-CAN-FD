@@ -43,10 +43,8 @@
 -- Purpose:
 --  Transmit message buffer. Buffer is accessed via "tran_data" and "tran_addr"
 --  signals from user registers. Buffer contains simple FSM for manipulation
---  from HW (HW Commands) as well as SW (SW Commands). Buffer is split into
---  "data" part which is implemented to be inferred in dual port RAM block,
---  and "metadata" part which is available in paralell on the output. "data"
---  part is addressed by second port from Protocol control.
+--  from HW (HW Commands) as well as SW (SW Commands). Buffer contains 20*32
+--  bit RAM which is inferred by synthesis.
 --------------------------------------------------------------------------------
 -- Revision History:
 --
