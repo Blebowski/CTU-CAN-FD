@@ -302,33 +302,31 @@ package CANcomponents is
     -- TXT Arbitrator module
     ----------------------------------------------------------------------------
     component txArbitrator is
-        generic(
-            buf_count   : natural range 1 to 8
-        );
-        port(
-            signal clk_sys                :in  std_logic;
-            signal res_n                  :in  std_logic;
-            signal txt_buf_in             :in txtb_output_type;
+    generic(
+        constant buf_count            :    natural range 1 to 8
+    );
+    port(
+        signal clk_sys                :in  std_logic;
+        signal res_n                  :in  std_logic;
+        signal txt_buf_in             :in txtb_output_type;
 
-            signal txt_buf_ready          :in std_logic_vector(
-                                                buf_count - 1 downto 0);
-
-            signal txtb_ptr               :out natural range 0 to 19;
-            signal tran_data_word_out     :out std_logic_vector(31 downto 0);
-            signal tran_dlc_out           :out std_logic_vector(3 downto 0);
-            signal tran_is_rtr            :out std_logic;
-            signal tran_ident_type_out    :out std_logic;
-            signal tran_frame_type_out    :out std_logic;
-            signal tran_brs_out           :out std_logic;
-            signal tran_frame_valid_out   :out std_logic;
-            signal txt_hw_cmd             :in txt_hw_cmd_type;
-            signal txtb_changed           :out std_logic;
-            signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
-            signal txtb_core_pointer      :in natural range 0 to 19;
-            signal drv_bus                :in std_logic_vector(1023 downto 0);
-            signal txt_buf_prio           :in txtb_priorities_type;
-            signal timestamp              :in std_logic_vector(63 downto 0)
-        );
+        signal txt_buf_ready          :in std_logic_vector(buf_count - 1 downto 0);
+        signal txtb_ptr               :out natural range 0 to 19;
+        signal tran_data_word_out     :out std_logic_vector(31 downto 0);
+        signal tran_dlc_out           :out std_logic_vector(3 downto 0);
+        signal tran_is_rtr            :out std_logic;
+        signal tran_ident_type_out    :out std_logic;
+        signal tran_frame_type_out    :out std_logic;
+        signal tran_brs_out           :out std_logic;
+        signal tran_frame_valid_out   :out std_logic;
+        signal txt_hw_cmd             :in txt_hw_cmd_type;
+        signal txtb_changed           :out std_logic;
+        signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
+        signal txtb_core_pointer      :in natural range 0 to 19;
+        signal drv_bus                :in std_logic_vector(1023 downto 0);
+        signal txt_buf_prio           :in txtb_priorities_type;
+        signal timestamp              :in std_logic_vector(63 downto 0)
+    );
     end component;
 
 
@@ -336,16 +334,42 @@ package CANcomponents is
     -- Priority decoder for TXT Buffer selection
     ----------------------------------------------------------------------------
     component priorityDecoder is
-        generic(
-            buf_count :  natural range 1 to 8
-        );
-        port(
-            signal prio               : in  txtb_priorities_type;
-            signal prio_valid         : in  std_logic_vector(
-                                                buf_count - 1 downto 0);
-            signal output_valid       : out  boolean;
-            signal output_index       : out  natural range 0 to buf_count - 1
-        );
+    generic(
+        constant buf_count          :   natural range 1 to 8
+    );
+    port(
+        signal prio                 : in  txtb_priorities_type;
+        signal prio_valid           : in  std_logic_vector(
+                                            buf_count - 1 downto 0);
+        signal output_valid         : out  std_logic;
+        signal output_index         : out  natural range 0 to buf_count - 1
+    );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- TX Arbitrator FSM
+    ----------------------------------------------------------------------------    
+    component txArbitrator_fsm is
+    port( 
+        signal clk_sys                :in  std_logic;
+        signal res_n                  :in  std_logic;
+
+        signal select_buf_avail       :in  std_logic;
+        signal select_index_changed   :in  std_logic;
+        signal timestamp_valid        :in  std_logic;
+        signal txt_hw_cmd             :in txt_hw_cmd_type;  
+
+        signal load_ts_lw_addr        :out std_logic;
+        signal load_ts_uw_addr        :out std_logic;
+        signal load_ffmt_w_addr       :out std_logic;
+        signal store_ts_l_w           :out std_logic;
+        signal store_md_w             :out std_logic;
+        signal tx_arb_locked          :out std_logic;
+        signal store_last_txtb_index  :out std_logic;
+        signal frame_valid_com_set    :out std_logic;
+        signal frame_valid_com_clear  :out std_logic 
+    );
     end component;
 
 

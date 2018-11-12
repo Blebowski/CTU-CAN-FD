@@ -49,6 +49,7 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    12.02 2018   Created file
+--    12.11.2018   Changed output output_valid to std_logic from boolean.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -77,7 +78,7 @@ entity priorityDecoder is
 
         -- Whether selected buffer is valid 
         -- (at least one of the buffers must be non-empty and allowed)
-        signal output_valid     : out  boolean;
+        signal output_valid     : out  std_logic;
 
         -- Index of highest priority buffer which is non-empty and allowed
         -- for transmission
@@ -260,7 +261,7 @@ begin
     l3_valid  <= '0' when l2_valid(1 downto 0) = "00" 
                    else
                 '1';
-    output_valid <= true when l3_valid = '1' else false;
+    output_valid <= '1' when l3_valid = '1' else '0';
 
     -- Priority comparator of level 3
     l3_winner  <= LOWER_TREE when l2_valid(1 downto 0) = "01" else
