@@ -397,6 +397,42 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
+    -- Generic Bit Filter
+    ----------------------------------------------------------------------------
+    component bitFilter is
+    generic(
+        constant width              :   natural;
+        constant is_present         :   boolean
+    );
+    port(
+        signal filter_mask          : in  std_logic_vector(width - 1 downto 0);
+        signal filter_value         : in  std_logic_vector(width - 1 downto 0);
+        signal filter_input         : in  std_logic_vector(width - 1 downto 0);
+        signal enable               : in  std_logic;
+        signal valid                : out std_logic
+    );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Range filter
+    ----------------------------------------------------------------------------
+    component rangeFilter is
+    generic(
+        constant width              :   natural;
+        constant is_present         :   boolean        
+    );
+    port(
+        signal filter_upp_th        : in    std_logic_vector(width - 1 downto 0);
+        signal filter_low_th        : in    std_logic_vector(width - 1 downto 0);
+        signal filter_input         : in    std_logic_vector(width - 1 downto 0);
+        signal enable               : in    std_logic;
+        signal valid                : out   std_logic
+    );
+    end component;
+
+
+    ----------------------------------------------------------------------------
     -- Interrupt manager module
     ----------------------------------------------------------------------------
     component intManager is

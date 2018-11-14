@@ -65,6 +65,8 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.ID_transfer.all;
+use work.CANcomponents.ALL;
+use work.CAN_FD_frame_format.all;
 
 entity messageFilter is
     generic(
@@ -172,12 +174,18 @@ entity messageFilter is
     -- Concat of types of data on input
     signal int_data_ctrl            :       std_logic_vector(1 downto 0);
 
-    -- Actual decimal value of recieved
-    signal rec_ident_dec            :       natural;
-
     -- Decimal values of identifiers
     signal id_1_dec                 :       natural;
     signal id_2_dec                 :       natural;
+
+    -- Enable signal for filters
+    signal filter_A_enable          :       std_logic;
+    signal filter_B_enable          :       std_logic;
+    signal filter_C_enable          :       std_logic;
+    signal filter_range_enable      :       std_logic; 
+
+    -- At least one filter output is valid
+    signal min_one_filt_valid       :       std_logic;
 
     ----------------------------------------------------------------------------
     -- REGISTERS
@@ -190,7 +198,10 @@ end entity;
   
 architecture rtl of messageFilter is
 begin
+
+    ---------------------------------------------------------------------------
     -- Driving signal aliases
+    ---------------------------------------------------------------------------
     drv_filter_A_mask           <= drv_bus(DRV_FILTER_A_MASK_HIGH downto
                                            DRV_FILTER_A_MASK_LOW);
     drv_filter_A_ctrl           <= drv_bus(DRV_FILTER_A_CTRL_HIGH downto
@@ -217,6 +228,11 @@ begin
                                            DRV_FILTER_RAN_HI_TH_LOW);
     drv_filters_ena             <= drv_bus(DRV_FILTERS_ENA_INDEX);
     
+
+    ---------------------------------------------------------------------------
+    -- Decoding Filter enables based on accepted frame types by each filter
+    ---------------------------------------------------------------------------
+
     -- Input frame type internal signal
     int_data_ctrl               <= frame_type & ident_type;
     
@@ -227,117 +243,107 @@ begin
         "0100" when "10", --CAN FD Basic
         "1000" when "11", --CAN Fd Extended
         "0000" when others;
+
+    -- Filter is enabled when at least one Frame type/Identifier type is matching
+    -- the configured value
+    filter_A_enable <= '1' when ((drv_filter_A_ctrl and int_data_type) /= x"0")
+                           else
+                       '0';
+    filter_B_enable <= '1' when ((drv_filter_B_ctrl and int_data_type) /= x"0")
+                           else
+                       '0';
+    filter_C_enable <= '1' when ((drv_filter_C_ctrl and int_data_type) /= x"0")
+                           else
+                       '0';
+    filter_range_enable <= '1' when ((drv_filter_ran_ctrl and int_data_type) /= x"0")
+                           else
+                           '0';
+
+    ---------------------------------------------------------------------------
+    -- Filter instances
+    ---------------------------------------------------------------------------
+    filt_A_comp : bitFilter
+    generic map(
+        width           => 29,
+        is_present      => sup_filtA
+    )
+    port map(
+        filter_mask     => drv_filter_A_mask,
+        filter_value    => drv_filter_A_bits,
+        filter_input    => rec_ident_in,
+        enable          => filter_A_enable,
+        valid           => int_filter_A_valid
+    );
+
+    filt_B_comp : bitFilter
+    generic map(
+        width           => 29,
+        is_present      => sup_filtB
+    )
+    port map(
+        filter_mask     => drv_filter_B_mask,
+        filter_value    => drv_filter_B_bits,
+        filter_input    => rec_ident_in,
+        enable          => filter_B_enable,
+        valid           => int_filter_B_valid
+    );
+
+    filt_C_comp : bitFilter
+    generic map(
+        width           => 29,
+        is_present      => sup_filtC
+    )
+    port map(
+        filter_mask     => drv_filter_C_mask,
+        filter_value    => drv_filter_C_bits,
+        filter_input    => rec_ident_in,
+        enable          => filter_C_enable,
+        valid           => int_filter_C_valid
+    );
    
-    -- Filter A input frame type filtering 
-    gen_filtA_pos : if (sup_filtA = true) generate
-        int_filter_A_valid <= '1' when (( --Identifier matches the bits and mask
-                                       (rec_ident_in AND drv_filter_A_mask)
-                                       =
-                                       (drv_filter_A_bits AND drv_filter_A_mask)
-                                      ) 
-                                      AND
-                                      ( --Frame type Matches defined frame type
-                                       not((drv_filter_A_ctrl AND int_data_type)
-                                       = "0000")
-                                      )
-                                    )
-                               else '0';
-    end generate;
-            
-    gen_filtA_neg : if (sup_filtA = false) generate
-        int_filter_A_valid <= '0';
-    end generate;       
-                          
-  
-    -- Filter B input frame type filtering 
-    gen_filtB_pos : if (sup_filtB = true) generate
-        int_filter_B_valid <= '1' when (( --Identifier matches the bits and mask
-                                       (rec_ident_in AND drv_filter_B_mask)
-                                       =
-                                       (drv_filter_B_bits AND drv_filter_B_mask)
-                                      )
-                                      AND 
-                                      ( --Frame type Matches defined frame type
-                                       not((drv_filter_B_ctrl AND int_data_type)
-                                       = "0000")
-                                      )
-                                    )
-                               else '0';
-    end generate;
-   
-    gen_filtB_neg : if (sup_filtB = false) generate
-        int_filter_B_valid <= '0';
-    end generate; 
-   
-  
-    --Filter C input frame type filtering 
-    gen_filtC_pos : if (sup_filtC = true) generate
-        int_filter_C_valid <= '1' when (( --Identifier matches the bits and mask
-                                        (rec_ident_in AND drv_filter_C_mask)
-                                        =
-                                        (drv_filter_C_bits AND drv_filter_C_mask)
-                                        ) 
-                                        AND 
-                                        ( --Frame type Matches defined frame type
-                                          not((drv_filter_C_ctrl AND int_data_type)
-                                          = "0000")
-                                        )
-                                      )
-                              else '0';
-    end generate;
-  
-    gen_filtC_neg : if (sup_filtC = false) generate
-        int_filter_C_valid <= '0';
-    end generate;
-                           
-    --Range filter for identifiers
-    gen_filtRan_pos : if (sup_range = true) generate
-        ID_reg_to_decimal(rec_ident_in, rec_ident_dec);
-        int_filter_ran_valid  <= '1' when (--Identifier matches the range set
-                                           (rec_ident_dec
-                                            <=
-                                          to_integer(unsigned(drv_filter_ran_hi_th)))
-                                           AND
-                                           (rec_ident_dec
-                                           >=
-                                           to_integer(unsigned(drv_filter_ran_lo_th)))
-                                          )
-                                          AND 
-                                          ( --Frame type Matches defined frame type
-                                           not((drv_filter_ran_ctrl AND int_data_type)
-                                           = "0000")
-                                          )
-                                else '0';
-    end generate;
-  
-    gen_filtRan_neg : if (sup_range = false) generate
-        int_filter_ran_valid <= '0';
-    end generate;
-  
+                 
+    filt_range_comp : rangeFilter
+    generic map(
+        width           => 29,
+        is_present      => sup_range
+    )
+    port map(
+        filter_upp_th   => drv_filter_ran_hi_th,
+        filter_low_th   => drv_filter_ran_lo_th,
+        filter_input    => rec_ident_in,
+        enable          => filter_range_enable,
+        valid           => int_filter_ran_valid
+    );
+
  
+    ---------------------------------------------------------------------------
     -- If no filter is supported then output should be determined just by
     -- input, regardless of 'drv_filters_ena'! If Core is not synthesized, 
     -- turning filters on should not affect the acceptance! Everyhting should
     -- be affected!
+    ---------------------------------------------------------------------------
     filt_sup_gen_false : if (sup_filtA = false and sup_filtB = false and
                              sup_filtC = false and sup_range = false) generate
         valid_reg           <= rec_ident_valid;
     end generate;
 
+
     filt_sup_gen_true : if (sup_filtA = true or sup_filtB = true or
                             sup_filtC = true or sup_range = true) generate
+
+        min_one_filt_valid <= int_filter_A_valid   OR
+                              int_filter_B_valid   OR
+                              int_filter_C_valid   OR
+                              int_filter_ran_valid;
+
         -- If received message is valid and at least one of the filters is  
         -- matching the message passed the filter.
-        valid_reg             <=  rec_ident_valid        AND
-                                  (
-                                    int_filter_A_valid   OR
-                                    int_filter_B_valid   OR
-                                    int_filter_C_valid   OR
-                                    int_filter_ran_valid
-                                  ) when drv_filters_ena = '1'
+        valid_reg             <=  (rec_ident_valid AND min_one_filt_valid)
+                                  when (drv_filters_ena = '1')
                                   else rec_ident_valid;
     end generate;
-  
+
+
     ----------------------------------------------------------------------------
     -- To avoid long combinational paths, valid filter output is pipelined. 
     -- This is OK since received frame is valid on input for many clock cycles!
@@ -350,5 +356,6 @@ begin
             out_ident_valid   <= valid_reg;
         end if;
     end process valid_reg_proc;
+
   
 end architecture;
