@@ -630,7 +630,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
-    -- CRC module
+    -- CAN CRC module
     ----------------------------------------------------------------------------
     component canCRC is
         generic(
@@ -649,6 +649,27 @@ package CANcomponents is
             signal crc17        : out std_logic_vector(16 downto 0);
             signal crc21        : out std_logic_vector(20 downto 0)
         );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- Generic CRC calculation module
+    ----------------------------------------------------------------------------
+    component CRC_calc is
+    generic(
+        constant crc_width      :     natural;
+        constant reset_polarity :       std_logic := '0';
+        constant polynomial     :     std_logic_vector
+    );
+    port(
+        signal res_n            :in   std_logic;
+        signal clk_sys          :in   std_logic;
+        signal data_in          :in   std_logic;
+        signal trig             :in   std_logic;
+        signal enable           :in   std_logic; 
+        signal init_vect        :in   std_logic_vector(crc_width - 1 downto 0);
+        signal crc              :out  std_logic_vector(crc_width - 1 downto 0)
+    );    
     end component;
 
 

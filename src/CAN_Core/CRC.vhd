@@ -48,7 +48,7 @@
 --  enable signal appears. The output CRC is valid then. CRC stays valid until
 --  following 0 to 1 enable transition. This also erases CRC registers.
 --
---  Refer to CAN 2.0 or CAN FD Specification for CRC calculation algorythm                                                   -- 
+--  Refer to CAN 2.0 or CAN FD Specification for CRC calculation algorithm
 --------------------------------------------------------------------------------
 -- Revision History:
 --    June 2015   Created file
@@ -60,6 +60,7 @@
 --                and crc21 polynomial.
 --   13.7.2018    Replaced "crc15_nxt", "crc17_nxt", "crc21_nxt" by
 --                signals instead of variable inside process.
+--  15.11.2018    Replaced hard-coded CRC calculation with generic CRC entity.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -67,6 +68,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.CAN_FD_register_map.all;
+use work.CANcomponents.all;
 
 
 entity canCRC is
@@ -109,179 +111,93 @@ entity canCRC is
         signal crc15      :out  std_logic_vector(14 downto 0);
         signal crc17      :out  std_logic_vector(16 downto 0);
         signal crc21      :out  std_logic_vector(20 downto 0)
-    );    
-  
-    ----------------------------------------------------------------------------
-    -- Internal registers
-    ----------------------------------------------------------------------------
-    signal crc15_reg    :     std_logic_vector(14 downto 0);
-    signal crc17_reg    :     std_logic_vector(16 downto 0);
-    signal crc21_reg    :     std_logic_vector(20 downto 0);
-
-    -- Holds previous value of enable input. Detects 0 to 1 transition
-    signal start_reg    :     std_logic;
-
-    -- ISO CAN FD or NON ISO CAN FD Value
-    signal drv_fd_type  :     std_logic;
-
-    -- Combinational signals for next value of CRC
-    signal crc15_nxt    :     std_logic;
-    signal crc17_nxt    :     std_logic;
-    signal crc21_nxt    :     std_logic; 
+    );
   
 end entity;
 
 
 architecture rtl of canCRC is
+
+    -- ISO CAN FD or NON ISO CAN FD Value
+    signal drv_fd_type      :     std_logic;
+
+    -- Initialization vectors
+    signal init_vect_15     :     std_logic_vector(14 downto 0);
+    signal init_vect_17     :     std_logic_vector(16 downto 0);
+    signal init_vect_21     :     std_logic_vector(20 downto 0); 
+
 begin
-    crc15               <= crc15_reg;
-    crc17               <= crc17_reg;
-    crc21               <= crc21_reg;
-    drv_fd_type         <= drv_bus(DRV_FD_TYPE_INDEX); 
 
-    ----------------------------------------------------------------------------
-    -- Calculation of next CRC bit
-    ----------------------------------------------------------------------------
-    crc15_nxt           <= data_in xor crc15_reg(14);
-    crc17_nxt           <= data_in xor crc17_reg(16);
-    crc21_nxt           <= data_in xor crc21_reg(20);
-  
-    ----------------------------------------------------------------------------
-    -- Registering previous value of enable input to detec 0 to 1 transition
-    ----------------------------------------------------------------------------
-    start_reg_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = '0') then
-            start_reg       <= '0';
-        elsif rising_edge(clk_sys) then
-            start_reg       <= enable;
-        end if;
-    end process start_reg_proc;
-  
-    ----------------------------------------------------------------------------
-    -- Calculation of CRC15 value 
-    ----------------------------------------------------------------------------
-    crc15_cycle : process(res_n, clk_sys)
-    begin 
-        if (res_n = ACT_RESET) then
-            crc15_reg         <= (OTHERS => '0');
-        elsif rising_edge(clk_sys) then 
+    -- ISO vs NON-ISO FD for selection of initialization vectors of 17 and 21.
+    drv_fd_type         <= drv_bus(DRV_FD_TYPE_INDEX);
 
-            -- Erase the CRC value at the begining of calculation
-            if (start_reg = '0' and enable = '1') then
-                crc15_reg       <= (OTHERS => '0');
-            else
+    -- For CRC 15 Init vector is constant zeroes
+    init_vect_15        <= (OTHERS => '0');
 
-                -- Calculate the next value when triggered
-                if (enable = '1' and trig = '1') then
+    -- For CRC 17 and 21, Init vector depends on ISO/NON-ISO type
+    init_vect_17(16)    <= '1' when (drv_fd_type = ISO_FD)
+                               else
+                            '0';
+    init_vect_17(15 downto 0) <= (OTHERS => '0');
 
-                    ------------------------------------------------------------
-                    -- CRC calculation
-                    ------------------------------------------------------------
-
-                    -- Shift and xor with polynomial
-                    if (crc15_nxt = '1') then
-                        crc15_reg <= (crc15_reg(13 downto 0) & '0') xor 
-                                      crc15_pol(14 downto 0);
-
-                    -- Only shift bits
-                    else 
-                        crc15_reg <= crc15_reg(13 downto 0) & '0';
-                    end if;
-
-                else
-                    crc15_reg     <= crc15_reg;
-                end if;
-
-            end if;
-        end if;
-    end process crc15_cycle;
+    init_vect_21(20)    <= '1' when (drv_fd_type = ISO_FD)
+                               else
+                            '0';
+    init_vect_21(19 downto 0) <= (OTHERS => '0');
 
 
     ----------------------------------------------------------------------------
-    -- Calculation of CRC17 value 
+    -- CRC instances
     ----------------------------------------------------------------------------
-    crc17_cycle : process(res_n, clk_sys)
-    begin 
-        if (res_n = '0') then
-            crc17_reg         <= (OTHERS => '0');
-            crc17_reg(16)     <= '1';
-        elsif rising_edge(clk_sys) then 
+    crc_15_comp : CRC_calc
+    generic map(
+        crc_width       => 15,
+        reset_polarity  => ACT_RESET,
+        polynomial      => crc15_pol
+    )
+    port map(
+        res_n           => res_n,
+        clk_sys         => clk_sys,
 
-            -- Erase the CRC value at the begining of calculation
-            if (start_reg = '0' and enable = '1') then
-                crc17_reg       <= (OTHERS => '0');
+        data_in         => data_in,
+        trig            => trig,
+        enable          => enable,
+        init_vect       => init_vect_15,
+        crc             => crc15
+    );
 
-                if (drv_fd_type = ISO_FD) then
-                    crc17_reg(16)   <= '1';
-                end if;
+    crc_17_comp : CRC_calc
+    generic map(
+        crc_width       => 17,
+        reset_polarity  => ACT_RESET,
+        polynomial      => crc17_pol
+    )
+    port map(
+        res_n           => res_n,
+        clk_sys         => clk_sys,
 
-            else
-      
-                -- Calculate the next value only when triggered
-                if (enable = '1'and trig = '1') then
+        data_in         => data_in,
+        trig            => trig,
+        enable          => enable,
+        init_vect       => init_vect_17,
+        crc             => crc17
+    );
 
-                    ------------------------------------------------------------
-                    -- CRC calculation
-                    ------------------------------------------------------------
-                    
-                    -- Shift and xor
-                    if (crc17_nxt = '1') then
-                        crc17_reg <= (crc17_reg(15 downto 0) & '0') xor
-                                      crc17_pol(16 downto 0);
-                    -- Only shift bits
-                    else
-                        crc17_reg <= crc17_reg(15 downto 0) & '0';
-                    end if;
-                else
-                    crc17_reg     <= crc17_reg;
-                end if;
-      
-            end if;
-        end if;
-    end process crc17_cycle; 
+    crc_21_comp : CRC_calc
+    generic map(
+        crc_width       => 21,
+        reset_polarity  => ACT_RESET,
+        polynomial      => crc21_pol
+    )
+    port map(
+        res_n           => res_n,
+        clk_sys         => clk_sys,
 
-
-    ----------------------------------------------------------------------------
-    -- Calculation of CRC21 value 
-    ----------------------------------------------------------------------------
-    crc21_cycle : process(res_n, clk_sys)
-    begin 
-        if (res_n = '0') then
-            crc21_reg         <= (OTHERS => '0');
-            crc21_reg(20)     <= '1';
-        elsif rising_edge(clk_sys) then
-
-            -- Erase the CRC value at the begining of calculation
-            if (start_reg = '0' and enable = '1') then 
-                crc21_reg         <= (OTHERS => '0');
-             
-                if (drv_fd_type = ISO_FD) then
-                    crc21_reg(20)     <= '1';
-                end if;
-
-            else
-     
-                -- Calculate the next value only when triggered
-                if (enable = '1'and trig = '1') then
-
-                    ------------------------------------------------------------
-                    -- CRC calculation
-                    ------------------------------------------------------------
-
-                    -- Shift and xor
-                    if (crc21_nxt = '1') then
-                        crc21_reg   <= (crc21_reg(19 downto 0) & '0') xor 
-                                        crc21_pol(20 downto 0);
-                    -- Only shift bits
-                    else 
-                        crc21_reg   <= crc21_reg(19 downto 0) & '0';
-                    end if;
-                else
-                    crc21_reg    <= crc21_reg;
-                end if;    
-            end if;
-        end if;
-    end process crc21_cycle;   
-      
+        data_in         => data_in,
+        trig            => trig,
+        enable          => enable,
+        init_vect       => init_vect_21,
+        crc             => crc21
+    );
+       
 end architecture;
