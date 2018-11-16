@@ -492,10 +492,13 @@ begin
     -- synthesis translate_on
 
     rst_sync_comp : rst_sync
+    generic map(
+        reset_polarity  => ACT_RESET
+    )
     port map(
         clk             => clk_sys,
-        arst_n          => res_n,
-        rst_n           => res_n_sync
+        arst            => res_n,
+        rst             => res_n_sync
     );
 
     reg_comp : canfd_registers

@@ -41,24 +41,29 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Asynchronous reset synchroniser.
+--  Two Flip-flop asynchronous signal synchroniser. Synthesizes as two DFFs.
+--  Simulation behaviour is like so:
+--   1. If t_setup and t_hold are not corrupted, two clock cycle delay is
+--      introduced.
+--   2. If t_setup or t_hold are corrupted, 
 --------------------------------------------------------------------------------
 -- Revision History:
---    27.11.2017   Created file
---    16.11.2018   Added generic reset polarity
+--    16.11.2018   Created file
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 
-entity rst_sync is
+entity sig_sync is
     generic (
-        constant reset_polarity     :       std_logic
-    );    
+        constant t_setup            :       time := 0 ps;
+        constant t_hold             :       time := 0 ps;
+        constant timing_check       :       boolean := true;
+    );
     port (
         signal clk                  : in    std_logic;
-        signal arst                 : in    std_logic;
-        signal rst                  : out   std_logic
+        signal async                : in    std_logic;
+        signal sync                 : out   std_logic
     );
 end rst_sync;
 
@@ -69,16 +74,19 @@ architecture rtl of rst_sync is
 
 begin
 
-    -- Reset synchroniser process
-    rst_sync_proc : process (clk, arst_n)
+    -- Signal synchroniser process.
+    rst_sync_proc : process (clk)
     begin
-        if (arst = reset_polarity) then
-            rff     <= reset_polarity;
-            rst     <= reset_polarity;
-        elsif (rising_edge(clk)) then
-            rff     <= not (reset_polarity);
-            rst     <= rff;
+        if (rising_edge(clk)) then
+            rff     <= async;
+            sync    <= rff;
         end if;
+    end process;
+
+    -- Check for timing violations on second DFF
+    timing_check_proc : proces
+    begin
+        
     end process;
 
 end rtl;
