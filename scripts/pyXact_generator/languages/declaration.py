@@ -38,10 +38,39 @@ class LanDeclaration(metaclass=ABCMeta):
 	
 	# Number of tabs before the declaration
 	gap = 0
+
+	# Ports of VHDL entity (Dictionary of Declarations)
+	ports = {}
+
+	# Generics of VHDL entity (Dictionary of Declarations)
+	generics = {}
+
+	# Alignment of generated declaration to the Right
+	alignRight = True
+
+	# Alignment of generated declaration to the Right
+	alignLeft = False
+
+	# Indent between name and type specifiers
+	doIndent = False
 	
+	# Wrap declaration if it is longer than 80 characters
+	wrap = True
+
 	# Comment before the declaration
-	comment = None
-	
+	comment =   None
+
+	# Direction of the declaration
+	direction = None
+
+	# Flag if component is an instance (used for distinguishing between entity and
+	# component
+	isInstance = False
+
+	# Upper and lower boundary of std_logic_vector
+	upBound = None
+	lowBound = None
+
 	# Internal type to distinguish between various formats of declaration
 	# (e.g. enum element declaration has different format than structure
 	#  element declaration)
@@ -54,7 +83,9 @@ class LanDeclaration(metaclass=ABCMeta):
 		self.value = value
 		self.alignLen = alignLen
 		self.gap = gap
-		
+		self.ports = {}
+		self.generics = {}
+
 		if (comment != None):
 			self.comment = comment
 		if (type != None):
