@@ -47,11 +47,9 @@ def parse_args():
 				description='Create Lyx document from an IP-XACT file')
 	parser.add_argument('--xactSpec', dest='xactSpec', help="""Path to a IP-XACT
 							specification file with register maps""")
-	parser.add_argument('--fieldMap', dest='fieldMap', help=""" Name of the
+	parser.add_argument('--memMap', dest='memMap', help=""" Name of the
 							IP-XACT Memory map which should be used for
 							bit field constants and enums generation""")
-	parser.add_argument('--memMap', dest='memMap', help=""" Name of the 
-									IP-XACT Memory map""")
 	parser.add_argument('--wordWidth', dest='wordWidth', type=int, 
 							help=""" Size of the
 							access bus word. Register bit field offsets are
@@ -94,7 +92,7 @@ if __name__ == '__main__':
 			
 			# Write the documentation
 			lyxGen.write_mem_map_both()
-			
+
 			lyxGen.lyxGen.commit_append_lines_all()
 			
 			lyxGen.commit_to_file()

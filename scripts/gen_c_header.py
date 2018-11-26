@@ -16,10 +16,8 @@
 ##		licPath 	- File with license which should be placed to header of the
 ##                    all source code files.
 ##		xactSpec    - Path to a IP-XACT specification file with register maps
-##		adrMap      - Name of the IP-XACT Memory map which should be used for
-##					  address constants generation.
-##      fieldMap    - Name of the IP-XACT Memory map which should be used for
-##					  bit field constants and unions generation.
+##		memMap      - Name of the IP-XACT Memory map from which header package
+##                    should be generated.
 ##      wordWidth   - Size of the access bus word. Register bit field offsets 
 ##					  are concatenated into word width size instead of simple
 ##					  offset from beginning of register. (E.g. 32 bit  ->  
@@ -55,12 +53,9 @@ def parse_args():
 							all source code files""")
 	parser.add_argument('--xactSpec', dest='xactSpec', help="""Path to a IP-XACT
 							specification file with register maps""")
-	parser.add_argument('--fieldMap', dest='fieldMap', help=""" Name of the
+	parser.add_argument('--memMap', dest='memMap', help=""" Name of the
 							IP-XACT Memory map which should be used for
-							bit field constants and enums generation""")
-	parser.add_argument('--addrMap', dest='addrMap', help=""" Name of the 
-								IP-XACT Memory map which should be used for
-								address constants generation.""")
+							header package generation""")
 	parser.add_argument('--wordWidth', dest='wordWidth', type=int, 
 							help=""" Size of the
 							access bus word. Register bit field offsets are
@@ -88,8 +83,7 @@ if __name__ == '__main__':
 		
 		with open_output(args.outFile) as of:
 			
-			headerGen = HeaderAddrGenerator(component, args.addrMap, args.fieldMap,
-										args.wordWidth)
+			headerGen = HeaderAddrGenerator(component, args.memMap, args.wordWidth)
 			headerGen.set_of(of)
 			
 			if (args.licPath != ""):

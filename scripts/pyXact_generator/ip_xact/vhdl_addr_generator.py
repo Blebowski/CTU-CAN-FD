@@ -9,6 +9,7 @@
 ## 
 ##	Revision history:
 ##		25.01.2018	First implementation
+##      25.11.2018  Merged Address and field Maps into single map
 ##
 ################################################################################
 
@@ -22,22 +23,22 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 
 	vhdlGen = None
 
-	def __init__(self, pyXactComp, addrMap, fieldMap, busWidth):
-		super().__init__(pyXactComp, addrMap, fieldMap, busWidth)
+	def __init__(self, pyXactComp, memMap, wrdWidth):
+		super().__init__(pyXactComp, memMap, wrdWidth)
 		self.vhdlGen = VhdlGenerator()
-	
-	
+
+
 	def commit_to_file(self):
 		""" 
 		Commit the generator output into the output file.
 		"""
 		for line in self.vhdlGen.out :
 			self.of.write(line)
-	
-	
+
+
 	def write_reg_enums(self, field):
 		""" 
-		Write register enums values as VHDL constants (std_logic) into the
+		Write IP-XACT register object enums as VHDL constants (std_logic) to the
 		generator output.
 		Arguments:
 			field		Register field object (parsed from pyXact) whose 
@@ -51,15 +52,18 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 								field.name), 2, small=True)
 		for es in field.enumeratedValues:
 			for e in sorted(es.enumeratedValue, key=lambda x: x.value):
-				decl = LanDeclaration(e.name, e.value, "std_logic",
-							field.bitWidth, "constant", 50)
+				decl = LanDeclaration(e.name, e.value)
+				decl.type = "std_logic"
+				decl.bitWidth = field.bitWidth
+				decl.specifier = "constant"
+				decl.alignLen = 50
 				self.vhdlGen.write_decl(decl)
-	
+
 		
 	def write_res_vals(self, field):
 		""" 
-		Write restart values of register field as VHDL constants (std_logic)
-		into the generator output.
+		Write restart values of IP-XACT register field as VHDL constants 
+        (std_logic) to the generator output.
 		Arguments:
 			field		Register field object (parsed from pyXact) whose 
 						restart values to write.
@@ -77,10 +81,10 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 
 	def write_reg_field(self, field, reg):
 		""" 
-		Write register field indices as VHDL constants. Use the "busWidth"
-		property to concatenate the register indices into word aligned sizes.
+		Write IP-XACG register field indices as VHDL constants. Use "wrdWidthBit"
+		property to concatenate register indices into word aligned sizes.
 		E.g. register with 0x1 offset will start at index 8, 0x2 at index 16 etc...
-		Write into the generator output.
+		Write to the generator output.
 		Arguments:
 			field		Register field object (parsed from pyXact) whose 
 						field indices to write.
@@ -89,24 +93,29 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 		"""
 		bitIndexL = field.bitOffset
 		bitIndexH = field.bitOffset + field.bitWidth-1
-	
-		bitIndexL = bitIndexL + ((reg.addressOffset*8) % self.busWidth)
-		bitIndexH = bitIndexH + ((reg.addressOffset*8) % self.busWidth)
-		
+
+		bitIndexL = bitIndexL + ((reg.addressOffset*8) % self.wrdWidthBit)
+		bitIndexH = bitIndexH + ((reg.addressOffset*8) % self.wrdWidthBit)
+
+        # Distinguish between single bit and multiple bit fields		
 		if (bitIndexH == bitIndexL):
-			iter = [["_IND", bitIndexL]]
+			iterator = [["_IND", bitIndexL]]
 		else:
-			iter = [["_L", bitIndexL], ["_H", bitIndexH]]
-			
-		for item in iter:
+			iterator = [["_L", bitIndexL], ["_H", bitIndexH]]
+
+		for item in iterator:
 			decl = LanDeclaration(field.name+item[0], item[1], "natural",
 									field.bitWidth, "constant", 50)
 			self.vhdlGen.write_decl(decl)
-			
+
 	
-	def __write_reg(self, reg, writeFields, writeEnums, writeReset):
+	def write_reg(self, reg, writeFields, writeEnums, writeReset):
 		""" 
-		Write the register as set of VHDL constants into the generator output.
+		Write IP-XACT register as set of VHDL constants to the generator output.
+        Following constants are written:
+            - Register field indices
+            - Enums for each field of a register
+            - Reset values for each field of a register
 		Arguments:
 			reg			Register field object (parsed from pyXact) to write
 			writeFields	IF bit field indices should be written.
@@ -134,23 +143,23 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 									reg.name.upper()), 2, small=True)
 			for field in reg.field:
 				self.write_res_vals(field)
+
 		self.vhdlGen.wr_nl()
 
 	
 	def write_regs(self, regs):
 		""" 
-		Write the multiple registers as sets of VHDL constants.
+		Write multiple registers as sets of VHDL constants.
 		Arguments:
 			regs	List of register objects as parsed by pyxact framework.
 		"""
 		for reg in sorted(regs, key=lambda a: a.addressOffset):
-			self.__write_reg(reg, True, True, True)
+			self.write_reg(reg, True, True, True)
 
 
 	def write_addrbl_head(self, addressBlock):
 		""" 
-		Write the address block from IP-XACT memory map as VHDL constant
-		to generator output.
+		Write IP-XACT address block as VHDL constant to generator output.
 		Arguments:
 			addressBlock	Address block to write (parsed from pyXact framework)
 		"""
@@ -164,15 +173,15 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 		bitWidth = 4 # TODO: So far not bound to IP-XACT
 		decl = LanDeclaration(addressBlock.name+"_BLOCK", 
 					addressBlock.baseAddress/addressBlock.range,
-					"std_logic", bitWidth, "constant", 80)	
+					"std_logic", bitWidth, "constant", 80)
 		self.vhdlGen.write_decl(decl)
 		self.vhdlGen.wr_nl()
-		
+
 
 	def write_addrbl_regs(self, addressBlock):
 		""" 
-		Write the address block registers from IP-XACT address block to the
-		generator output.
+		Write IP-XACT Address block register addresses as VHDL constants to
+        generator output.
 		Arguments:
 			addressBlock	Address block to write as parsed by pyXact.
 		"""
@@ -185,11 +194,10 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 
 	def write_mem_map_addr(self):
 		""" 
-		Write address map specified at instance creation time and stored in
-		"addrMap".
+		Write addresses and address block head for IP-XACT memory map to
+        generator output.
 		"""
-		#Each Address block reflects to VHDL memory region
-		for block in self.addrMap.addressBlock:
+		for block in self.memMap.addressBlock:
 			self.write_addrbl_head(block)
 			self.write_addrbl_regs(block)
 			self.vhdlGen.wr_nl()
@@ -197,21 +205,12 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 
 	def write_mem_map_fields(self):
 		""" 
-		Write field map specified at instance creation time and stored in
-		"addrMap".
+		Write fields, enums and reset values of IP-XACT memory map to generator
+        output.
 		"""
-		for block in self.fieldMap.addressBlock:
+		for block in self.memMap.addressBlock:
 			self.write_regs(block.register)
 
-
-	def write_mem_map_both(self):
-		""" 
-		Write address and field map specified at instance creation time and
-		stored in "addrMap".
-		"""
-		self.write_mem_map_fields()
-		self.write_mem_map_addr()
-		
 		
 	def create_addrMap_package(self, name):
 		""" 
@@ -222,39 +221,22 @@ class VhdlAddrGenerator(IpXactAddrGenerator):
 		"""
 		self.vhdlGen.wr_nl()
 		self.vhdlGen.write_comm_line(gap=0)
-		if (self.addrMap != None):
-			print ("Writing addresses of '%s' register map" % self.addrMap.name)
-			self.vhdlGen.write_comment("Addresses map for: {}".format(
-											self.addrMap.name), 0, small=True)
-		if (self.fieldMap != None):
-			print ("Writing bit fields of '%s' register map" % self.fieldMap.name)
-			self.vhdlGen.write_comment("Field map for: {}".format(self.fieldMap.name),
-											0, small=True)
-		self.vhdlGen.write_comment("This file is autogenerated, DO NOT EDIT!",
-										0, small=True)
-								
+		if (self.memMap != None):
+			print ("Writing addresses of '%s' register map" % self.memMap.name)
+			self.vhdlGen.write_comment("Memory map for: {}".format(
+											self.memMap.name), 0, small=True)
+		self.vhdlGen.write_gen_note()
+
 		self.vhdlGen.write_comm_line(gap=0)
 		self.vhdlGen.wr_nl()
 		
-		self.vhdlGen.create_includes(["std_logic_1164.all"])
+		self.vhdlGen.create_includes("ieee", ["std_logic_1164.all"])
 		self.vhdlGen.wr_nl()
 		self.vhdlGen.create_package(name)
 		self.vhdlGen.wr_nl()
-		if (self.addrMap):
+
+		if (self.memMap):
 			self.write_mem_map_addr()
-		if (self.fieldMap):
 			self.write_mem_map_fields()
 			
 		self.vhdlGen.commit_append_line(1)
-				
-
-	def write_reg(self, reg, writeFields, writeRstVal, writeEnums): 
-		""" 
-		Public version of internal function. TODO: remove the internal one
-		and use the public one.
-		"""
-		self.__write_reg(self, reg, writeFields, writeEnums, writeRstVal)
-
-	
-	
-	
