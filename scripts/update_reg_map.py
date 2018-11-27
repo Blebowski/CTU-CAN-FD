@@ -15,6 +15,8 @@
 ##						(../driver)
 ##		updDocs		- Whether Lyx doocumentation should be generated.
 ##						(../doc/core)
+##      updRegMap   - Whether register map VHDL RTL should be generated. 
+##                      (../src/Registers_Memory_Interface)
 ##
 ##	Revision history:
 ##		06.02.2018	Implemented the script
@@ -29,29 +31,96 @@ import os
 import inspect
 import math
 
+import pyXact_generator
+
 from pyXact_generator.gen_lib import *
 
-from gen_c_header import *
-from gen_lyx_docu import *
-import gen_vhdl_package
+from pyXact_generator.HeaderAddrGeneratorWrapper import HeaderAddrGeneratorWrapper
+from pyXact_generator.LyxAddrGeneratorWrapper import LyxAddrGeneratorWrapper
+from pyXact_generator.VhdlAddrGeneratorWrapper import VhdlAddrGeneratorWrapper
+from pyXact_generator.gen_reg_map import *
+
+MIT_LICENSE_PATH = "../LICENSE"
+GPL2_LICENSE_PATH = "../lic/gpl_v2.txt"
 
 def parse_args():
 	parser = argparse.ArgumentParser(
 				description="""Script for complete update of register map. 
 								This script generates C header, 
 								VHDL packages and Lyx documentation.""")
+
 	parser.add_argument('--xactSpec', dest='xactSpec', help="""Path to a IP-XACT
 							specification file with register maps""")
-	parser.add_argument('--updVHDL', dest='updVHDL', help=""" Whether VHDL 
+
+	parser.add_argument('--updVHDLPackage', dest='updVHDLPackage', help=""" Whether VHDL 
 										constant definitions should be generated
 										(../src/Libraries)""")
-	parser.add_argument('--updHeader', dest='updHeader', help=""" Whether C
+
+	parser.add_argument('--updHeaderFile', dest='updHeaderFile', help=""" Whether C
 										header file should be generated
 										(../driver)""")
-	parser.add_argument('--updDocs', dest='updDocs', help="""Whether Lyx 
+
+	parser.add_argument('--updLyxDocs', dest='updLyxDocs', help="""Whether Lyx 
 										doocumentation should be generated.
-										(../doc/core)""")											
+										(../doc/core)""")
+
+	parser.add_argument('--updRTLRegMap', dest='updRTLRegMap', help="""Whether VHDL 
+										RTL register map should be generated.
+										(../src/Registers_Memory_Interface)""")
 	return parser.parse_args();
+
+
+
+def ctu_can_update_vhdl_package(specPath, licensePath, memMap, 
+								wordWidthBit, outPath, packName):
+	"""
+	Update VHDL packages of CTU CAN FD register maps.
+	"""
+	addrGeneratorWrapper = VhdlAddrGeneratorWrapper()
+
+	addrGeneratorWrapper.xactSpec = specPath
+	addrGeneratorWrapper.licPath = licensePath
+	addrGeneratorWrapper.memMap = memMap
+	addrGeneratorWrapper.wordWidth = wordWidthBit
+	addrGeneratorWrapper.outFile = outPath
+	addrGeneratorWrapper.packName = packName
+
+	addrGeneratorWrapper.do_update()
+
+
+def ctu_can_update_header(specPath, licensePath, memMap, 
+								wordWidthBit, outPath, headName):
+	"""
+	Update VHDL packages of CTU CAN FD register maps.
+	"""
+	headerGeneratorWrapper = HeaderAddrGeneratorWrapper()
+
+	headerGeneratorWrapper.xactSpec = specPath
+	headerGeneratorWrapper.licPath = licensePath
+	headerGeneratorWrapper.memMap = memMap
+	headerGeneratorWrapper.wordWidth = wordWidthBit
+	headerGeneratorWrapper.outFile = outPath
+	headerGeneratorWrapper.headName = headName
+
+	headerGeneratorWrapper.do_update()
+
+
+def ctu_can_update_lyx_docu(specPath, memMap, wordWidthBit, outPath, genRegions, genFiDesc, lyxTemplate):
+	"""
+	Update VHDL packages of CTU CAN FD register maps.
+	"""
+	lyxDocuGeneratorWrapper = LyxAddrGeneratorWrapper()
+
+	lyxDocuGeneratorWrapper.xactSpec = specPath
+	lyxDocuGeneratorWrapper.memMap = memMap
+	lyxDocuGeneratorWrapper.wordWidth = wordWidthBit
+	lyxDocuGeneratorWrapper.outFile = outPath
+	lyxDocuGeneratorWrapper.genRegions = genRegions
+	lyxDocuGeneratorWrapper.genFiDesc = genFiDesc
+	lyxDocuGeneratorWrapper.lyxTemplate = lyxTemplate
+
+	lyxDocuGeneratorWrapper.do_update()
+
 
 
 if __name__ == '__main__':
@@ -61,25 +130,81 @@ if __name__ == '__main__':
 	print(80 * "*")
 
 	pythonVersion = sys.version.split('.')
-	pythonAlias = "python" + pythonVersion[0] + "." + pythonVersion[1]
-	print("\n Python version is: %s \n" % pythonAlias)
+	pythonCmd = "python" + pythonVersion[0] + "." + pythonVersion[1]
+	print("\n Python version is: %s \n" % pythonCmd)
 
-	if (str_arg_to_bool(args.updVHDL)):
-		print("Generating CAN FD memory registers VHDL package...\n")
-		os.system("""{} gen_vhdl_package.py --licPath ../LICENSE --xactSpec {} --fieldMap Regs --addrMap Regs --wordWidth 32 --outFile ../src/Libraries/CAN_FD_register_map.vhd --packName CAN_FD_register_map""".format(pythonAlias, args.xactSpec))
-		os.system("""{} gen_vhdl_package.py --licPath ../LICENSE --xactSpec {} --fieldMap Frame_format --addrMap Frame_format --wordWidth 32 --outFile ../src/Libraries/CAN_FD_frame_format.vhd --packName CAN_FD_frame_format""".format(pythonAlias, args.xactSpec))
+
+	###########################################################################
+	# Generate VHDL Packages
+	###########################################################################
+	if (str_arg_to_bool(args.updVHDLPackage)):
+
+		print("Generating CAN FD memory registers VHDL packages...\n")
+
+		ctu_can_update_vhdl_package(specPath=args.xactSpec,
+									licensePath=MIT_LICENSE_PATH,
+									memMap="CAN_Registers",
+									wordWidthBit=32,
+									outPath="../src/Libraries/CAN_FD_register_map.vhd",
+									packName="CAN_FD_register_map")
+
+		ctu_can_update_vhdl_package(specPath=args.xactSpec,
+									licensePath=MIT_LICENSE_PATH,
+									memMap="CAN_Frame_format",
+									wordWidthBit=32,
+									outPath="../src/Libraries/CAN_FD_frame_format.vhd",
+									packName="CAN_FD_frame_format")
+
 		print("\nDone\n")
-	
-	if (str_arg_to_bool(args.updHeader)):
+
+
+	###########################################################################
+	# Generate C Header File
+	###########################################################################	
+	if (str_arg_to_bool(args.updHeaderFile)):
+
 		print("Generating CAN FD memory registers Header file...\n")
-		os.system("""{} gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Regs --fieldMap Regs --wordWidth 32 --outFile ../driver/ctu_can_fd_regs.h --headName regs""".format(pythonAlias, args.xactSpec))
-		os.system("""{} gen_c_header.py --licPath ../lic/gpl_v2.txt --xactSpec {} --addrMap Frame_format --fieldMap Frame_format --wordWidth 32 --outFile ../driver/ctu_can_fd_frame.h --headName frame""".format(pythonAlias, args.xactSpec))
+
+		ctu_can_update_header(specPath=args.xactSpec,
+									licensePath=GPL2_LICENSE_PATH,
+									memMap="CAN_Registers",
+									wordWidthBit=32,
+									outPath="../driver/ctu_can_fd_regs.h",
+									headName="CAN_FD_register_map")
+
+		ctu_can_update_header(specPath=args.xactSpec,
+									licensePath=GPL2_LICENSE_PATH,
+									memMap="CAN_Frame_format",
+									wordWidthBit=32,
+									outPath="../driver/ctu_can_fd_frame.h",
+									headName="CAN_FD_frame_format")
+
 		print("\nDone\n")
-	
-	if (str_arg_to_bool(args.updDocs)):
+
+
+	###########################################################################
+	# Generate Lyx documentation files
+	###########################################################################	
+	if (str_arg_to_bool(args.updLyxDocs)):
+
 		print("Generating CAN FD memory registers Documentation...\n")
-		os.system("""{} gen_lyx_docu.py --xactSpec {} --memMap Regs --wordWidth 32 --lyxTemplate ../doc/core/template.lyx --outFile ../doc/core/registerMap.lyx --chaptName "Register map" --genRegions True --genFiDesc True""".format(pythonAlias, args.xactSpec))
-		os.system("""{} gen_lyx_docu.py --xactSpec {} --memMap Frame_format --wordWidth 32 --lyxTemplate ../doc/core/template.lyx --outFile ../doc/core/CANFrameFormat.lyx --chaptName "CAN Frame format" --genRegions False --genFiDesc True""".format(pythonAlias, args.xactSpec))
+
+		ctu_can_update_lyx_docu(specPath=args.xactSpec,
+								memMap="CAN_Registers",
+								wordWidthBit=32,
+								outPath="../doc/core/registerMap.lyx",
+								genRegions=True,
+								genFiDesc=True,
+								lyxTemplate="../doc/core/template.lyx")
+
+		ctu_can_update_lyx_docu(specPath=args.xactSpec,
+								memMap="CAN_Frame_format",
+								wordWidthBit=32,
+								outPath="../doc/core/CANFrameFormat.lyx",
+								genRegions=False,
+								genFiDesc=True,
+								lyxTemplate="../doc/core/template.lyx")
+
 		print("\nDone\n")
 	
 	print( 80 * "*")
