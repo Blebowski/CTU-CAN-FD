@@ -36,8 +36,8 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 
 		self.lyxGen = LyxGenerator()
 
-		self.genFieldDesc = str_arg_to_bool(genFiDesc)
-		self.genRegions = str_arg_to_bool(genRegions)
+		self.genFieldDesc = str_arg_to_bool(str(genFiDesc))
+		self.genRegions = str_arg_to_bool(str(genRegions))
 	
 	
 	def commit_to_file(self):
@@ -400,5 +400,4 @@ class LyxAddrGenerator(IpXactAddrGenerator):
 			if (line == "\\begin_body\n"):
 				break
 		self.lyxGen.append_line("\end_document\n")
-		self.lyxGen.append_line("\end_body\n"):
-		
+		self.lyxGen.append_line("\end_body\n")
