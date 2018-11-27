@@ -1,3 +1,3 @@
 [submodule "scripts/pyXact_generator/ipyxact_parser"]
 	path = scripts/pyXact_generator/ipyxact_parser
-	url = https://github.com/oille/ipyxact.git
+	url = https://github.com/Blebowski/ipyxact.git

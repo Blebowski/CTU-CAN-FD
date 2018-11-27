@@ -1,0 +1,2 @@
+# Ignore Python generated classes
+__pycache__*
