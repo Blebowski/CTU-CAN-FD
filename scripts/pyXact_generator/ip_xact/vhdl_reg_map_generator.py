@@ -36,6 +36,7 @@ class VhdlRegMapGenerator(IpXactAddrGenerator):
 	template_sources["data_mux_template_path"] = "templates/data_mux.vhd"
 	template_sources["mem_bus_template_path"] = "templates/memory_bus.vhd"
 	template_sources["access_signaller_template_path"] = "templates/access_signaler.vhd"
+	template_sources["cmn_reg_map_pkg"] = "templates/cmn_reg_map_pkg.vhd"
 
 
 	of_pkg = None

@@ -45,6 +45,7 @@
 --      Address decoder
 --      Data multiplexor
 --      Memory register 
+--      Access signaller
 --
 --------------------------------------------------------------------------------
 -- Revision history:
@@ -55,7 +56,7 @@ Library ieee;
 use ieee.std_logic_1164.all;
 USE ieee.numeric_std.ALL;
 
-package cmm_register_map_pkg is
+package cmm_reg_map_pkg is
 
 
 --------------------------------------------------------------------------------
@@ -123,5 +124,31 @@ component memory_reg is
         signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
     );
 end component memory_reg;
+
+
+--------------------------------------------------------------------------------
+-- Access signaller
+--------------------------------------------------------------------------------
+component access_signaller is
+    generic(
+        constant reset_polarity       :     std_logic := '0';
+        constant data_width           :     natural := 32;
+        constant read_signalling      :     boolean := false;
+        constant write_signalling     :     boolean := false;
+        constant read_signalling_reg  :     boolean := false;
+        constant write_signalling_reg :     boolean := false
+    );
+    port(
+        signal clk_sys                :in   std_logic;
+        signal res_n                  :in   std_logic;
+        signal cs                     :in   std_logic;
+        signal read                   :in   std_logic;
+        signal write                  :in   std_logic;
+        signal be                     :in   std_logic_vector(data_width / 8 - 1 downto 0);
+        signal write_signal           :out  std_logic;
+        signal read_signal            :out  std_logic
+    );
+
+end component access_signaller;
 
 end package;
