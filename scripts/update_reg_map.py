@@ -128,6 +128,7 @@ def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, registe
 	"""
 	vhdlRTLGeneratorWrapper = VhdlRegMapGeneratorWrapper()
 
+	vhdlRTLGeneratorWrapper.licPath = licensePath
 	vhdlRTLGeneratorWrapper.xactSpec = specPath
 	vhdlRTLGeneratorWrapper.memMap = memMap
 	vhdlRTLGeneratorWrapper.wordWidth = wordWidthBit
@@ -225,7 +226,7 @@ if __name__ == '__main__':
 	###########################################################################
 	# Generate VHDL RTL codes
 	###########################################################################	
-	if (str_arg_to_bool(args.updRegMap)):
+	if (str_arg_to_bool(args.updRTLRegMap)):
 
 		print("Generating CAN FD memory registers Documentation...\n")
 
@@ -234,7 +235,7 @@ if __name__ == '__main__':
 								memMap="CAN_Registers",
 								wordWidthBit=32,
 								registeredRead=True,
-								outDir="../src/Registers_Memory_Interface")
+								outDir="../../src/Registers_Memory_Interface")
 
 		# Frame format map not implemented as RTL, virtual map for frame format
 		# visualisaion only
