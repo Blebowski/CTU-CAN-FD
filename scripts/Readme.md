@@ -10,4 +10,5 @@ Arguments have following meaning:
     updVHDLPackage  If VHDL register map package with constants definition should be generated (y/n)
     updHeaderFile   If C Header file for register map should be generated (y/n)
     updLyxDocs      If Lyx documentation should be generated (y/n)
+    updRTLRegMap    If VHDL RTL codes of register map should be implemented.
 

@@ -38,7 +38,7 @@ from pyXact_generator.gen_lib import *
 from pyXact_generator.HeaderAddrGeneratorWrapper import HeaderAddrGeneratorWrapper
 from pyXact_generator.LyxAddrGeneratorWrapper import LyxAddrGeneratorWrapper
 from pyXact_generator.VhdlAddrGeneratorWrapper import VhdlAddrGeneratorWrapper
-from pyXact_generator.gen_reg_map import *
+from pyXact_generator.VhdlRegMapGeneratorWrapper import VhdlRegMapGeneratorWrapper
 
 MIT_LICENSE_PATH = "../LICENSE"
 GPL2_LICENSE_PATH = "../lic/gpl_v2.txt"
@@ -91,7 +91,7 @@ def ctu_can_update_vhdl_package(specPath, licensePath, memMap,
 def ctu_can_update_header(specPath, licensePath, memMap, 
 								wordWidthBit, outPath, headName):
 	"""
-	Update VHDL packages of CTU CAN FD register maps.
+	Update header files of CTU CAN FD register maps.
 	"""
 	headerGeneratorWrapper = HeaderAddrGeneratorWrapper()
 
@@ -107,7 +107,7 @@ def ctu_can_update_header(specPath, licensePath, memMap,
 
 def ctu_can_update_lyx_docu(specPath, memMap, wordWidthBit, outPath, genRegions, genFiDesc, lyxTemplate):
 	"""
-	Update VHDL packages of CTU CAN FD register maps.
+	Update Lyx documenation of CTU CAN FD register maps.
 	"""
 	lyxDocuGeneratorWrapper = LyxAddrGeneratorWrapper()
 
@@ -121,6 +121,20 @@ def ctu_can_update_lyx_docu(specPath, memMap, wordWidthBit, outPath, genRegions,
 
 	lyxDocuGeneratorWrapper.do_update()
 
+
+def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, registeredRead, outDir):
+	"""
+	Update RTL codes of CTU CAN FD register map.
+	"""
+	vhdlRTLGeneratorWrapper = VhdlRegMapGeneratorWrapper()
+
+	vhdlRTLGeneratorWrapper.xactSpec = specPath
+	vhdlRTLGeneratorWrapper.memMap = memMap
+	vhdlRTLGeneratorWrapper.wordWidth = wordWidthBit
+	vhdlRTLGeneratorWrapper.registeredRead = registeredRead
+	vhdlRTLGeneratorWrapper.outDir = outDir
+
+	vhdlRTLGeneratorWrapper.do_update()
 
 
 if __name__ == '__main__':
@@ -204,6 +218,26 @@ if __name__ == '__main__':
 								genRegions=False,
 								genFiDesc=True,
 								lyxTemplate="../doc/core/template.lyx")
+
+		print("\nDone\n")
+
+
+	###########################################################################
+	# Generate VHDL RTL codes
+	###########################################################################	
+	if (str_arg_to_bool(args.updRegMap)):
+
+		print("Generating CAN FD memory registers Documentation...\n")
+
+		ctu_can_update_vhdl_rtl(specPath=args.xactSpec,
+								licensePath=MIT_LICENSE_PATH,
+								memMap="CAN_Registers",
+								wordWidthBit=32,
+								registeredRead=True,
+								outDir="../src/Registers_Memory_Interface")
+
+		# Frame format map not implemented as RTL, virtual map for frame format
+		# visualisaion only
 
 		print("\nDone\n")
 	
