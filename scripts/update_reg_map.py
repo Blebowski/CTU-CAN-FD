@@ -122,7 +122,7 @@ def ctu_can_update_lyx_docu(specPath, memMap, wordWidthBit, outPath, genRegions,
 	lyxDocuGeneratorWrapper.do_update()
 
 
-def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, registeredRead, outDir):
+def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, outDir):
 	"""
 	Update RTL codes of CTU CAN FD register map.
 	"""
@@ -132,7 +132,6 @@ def ctu_can_update_vhdl_rtl(specPath, licensePath, memMap, wordWidthBit, registe
 	vhdlRTLGeneratorWrapper.xactSpec = specPath
 	vhdlRTLGeneratorWrapper.memMap = memMap
 	vhdlRTLGeneratorWrapper.wordWidth = wordWidthBit
-	vhdlRTLGeneratorWrapper.registeredRead = registeredRead
 	vhdlRTLGeneratorWrapper.outDir = outDir
 
 	vhdlRTLGeneratorWrapper.do_update()
@@ -234,7 +233,6 @@ if __name__ == '__main__':
 								licensePath=MIT_LICENSE_PATH,
 								memMap="CAN_Registers",
 								wordWidthBit=32,
-								registeredRead=True,
 								outDir="../../src/Registers_Memory_Interface/generated")
 
 		# Frame format map not implemented as RTL, virtual map for frame format
