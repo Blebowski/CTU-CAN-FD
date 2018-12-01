@@ -84,10 +84,10 @@ entity access_signaller is
         signal read_signal            :out  std_logic
     );
 
-end entity address_decoder;
+end entity access_signaller;
 
 
-architecture rtl of address_decoder is
+architecture rtl of access_signaller is
 
     -- Byte enable zeros
     constant BE_ZEROES : std_logic_vector(data_width / 8 - 1 downto 0) := (OTHERS => '0');
