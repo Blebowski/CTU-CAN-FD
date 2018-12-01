@@ -66,7 +66,7 @@ def parse_args():
 
 	parser.add_argument('--updRTLRegMap', dest='updRTLRegMap', help="""Whether VHDL 
 										RTL register map should be generated.
-										(../src/Registers_Memory_Interface)""")
+										(../src/Registers_Memory_Interface/generated)""")
 	return parser.parse_args();
 
 
@@ -235,7 +235,7 @@ if __name__ == '__main__':
 								memMap="CAN_Registers",
 								wordWidthBit=32,
 								registeredRead=True,
-								outDir="../../src/Registers_Memory_Interface")
+								outDir="../../src/Registers_Memory_Interface/generated")
 
 		# Frame format map not implemented as RTL, virtual map for frame format
 		# visualisaion only
