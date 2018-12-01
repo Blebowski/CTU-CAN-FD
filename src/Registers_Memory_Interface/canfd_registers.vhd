@@ -275,7 +275,7 @@ architecture rtl of canfd_registers is
 
     -- Padding for interrupt read data
     constant INT_PAD_H_IND          : natural :=
-        Control_registers_in.int_vect'length - INT_COUNT;
+        Control_registers_in.int_stat'length - INT_COUNT;
 
     constant INT_PADDING            : std_logic_vector(INT_PAD_H_IND -1 downto 0) :=
         (OTHERS => '0');
@@ -333,8 +333,7 @@ architecture rtl of canfd_registers is
         constant reg            : in  std_logic_vector
     ) return natural is
     begin
-        index_mod := index mod reg'length;
-        return index_mod;
+        return index mod reg'length;
     end function;
 
 begin
@@ -353,15 +352,15 @@ begin
     ---------------------------------------------------------------------------
     -- TXT Buffer RAMs chip select signals.
     ---------------------------------------------------------------------------
-    txtb_cs_gen : for i in 0 to TXT_BUFF_COUNT - 1 generate
-        type tx_buff_addr_type is array (0 to TXT_BUFF_COUNT - 1) of
+    txtb_cs_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
+        type tx_buff_addr_type is array (0 to TXT_BUFFER_COUNT - 1) of
             std_logic_vector(3 downto 0);
         signal buf_addr : tx_buff_addr_type := (TX_BUFFER_1_BLOCK,
                                                 TX_BUFFER_2_BLOCK,
                                                 TX_BUFFER_3_BLOCK,
                                                 TX_BUFFER_4_BLOCK);
     begin
-        txtb_cs(i)       <= '1' when ((adress(11 downto 8) = buf_addr) and
+        txtb_cs(i)       <= '1' when ((adress(11 downto 8) = buf_addr(i)) and
                                    scs='1' and swr='1')
                             else
                             '0';
@@ -401,7 +400,7 @@ begin
     ----------------------------------------------------------------------------
     data_out <= control_registers_rdata when (control_registers_cs_reg = '1')
                                         else
-                event_logger_rdata when (event_logger_cs_reg = '1')
+                event_logger_rdata when (evnt_logger_cs_reg = '1')
                                    else
                 (OTHERS => '0');
 
@@ -414,10 +413,10 @@ begin
         ADDRESS_WIDTH         => 24,
         REGISTERED_READ       => true,
         RESET_POLARITY        => ACT_RESET,
-        SUP_FILT_A            => sup_filt_A,
+        SUP_FILT_A            => sup_filtA,
         SUP_RANGE             => sup_range,
-        SUP_FILT_C            => sup_filt_C,
-        SUP_FILT_B            => sup_filt_B
+        SUP_FILT_C            => sup_filtC,
+        SUP_FILT_B            => sup_filtB
     )
     port map(
         clk_sys               => clk_sys,
@@ -471,9 +470,9 @@ begin
 
         event_logger_rdata <= (OTHERS => '0');
 
-        control_registers_out.log_trig_config <= (OTHERS => '0');
-        control_registers_out.log_capt_config <= (OTHERS => '0');
-        control_registers_out.log_command     <= (OTHERS => '0');
+        event_logger_out.log_trig_config <= (OTHERS => '0');
+        event_logger_out.log_capt_config <= (OTHERS => '0');
+        event_logger_out.log_command     <= (OTHERS => '0');
 
     end generate log_not_pres_gen;
 
@@ -761,7 +760,7 @@ begin
     ---------------------------------------------------------------------------
     -- FILTER_A_VAL
     ---------------------------------------------------------------------------
-    drv_bus(DRV_FILTER_A_VAL_HIGH downto DRV_FILTER_A_VAL_LOW) <= align_wrd_to_reg(
+    drv_bus(DRV_FILTER_A_BITS_HIGH downto DRV_FILTER_A_BITS_LOW) <= align_wrd_to_reg(
             control_registers_out.filter_a_val, BIT_VAL_A_VAL_H, BIT_VAL_A_VAL_L);
 
 
@@ -775,7 +774,7 @@ begin
     ---------------------------------------------------------------------------
     -- FILTER_B_VAL
     ---------------------------------------------------------------------------
-    drv_bus(DRV_FILTER_B_VAL_HIGH downto DRV_FILTER_B_VAL_LOW) <= align_wrd_to_reg(
+    drv_bus(DRV_FILTER_B_BITS_HIGH downto DRV_FILTER_B_BITS_LOW) <= align_wrd_to_reg(
             control_registers_out.filter_b_val, BIT_VAL_B_VAL_H, BIT_VAL_B_VAL_L);
 
 
@@ -789,7 +788,7 @@ begin
     ---------------------------------------------------------------------------
     -- FILTER_C_VAL
     ---------------------------------------------------------------------------
-    drv_bus(DRV_FILTER_C_VAL_HIGH downto DRV_FILTER_C_VAL_LOW) <= align_wrd_to_reg(
+    drv_bus(DRV_FILTER_C_BITS_HIGH downto DRV_FILTER_C_BITS_LOW) <= align_wrd_to_reg(
             control_registers_out.filter_c_val, BIT_VAL_C_VAL_H, BIT_VAL_C_VAL_L);
 
 
@@ -825,7 +824,7 @@ begin
 
     -- Filter Range Control
     drv_bus(DRV_FILTER_RAN_CTRL_HIGH downto DRV_FILTER_RAN_CTRL_LOW) <= align_wrd_to_reg(
-            control_registers_out.filter_ran_ctrl, FRFE_IND, FRNB_IND);
+            control_registers_out.filter_control, FRFE_IND, FRNB_IND);
 
 
     --------------------------------------------------------------------------
@@ -1022,10 +1021,10 @@ begin
     end generate not_sup_filt_A_gen;
 
     -- SFB - Support Filter B -> yes
-    sup_filt_A_gen : if (sup_filtA) generate
+    sup_filt_B_gen : if (sup_filtB) generate
         Control_registers_in.filter_status(
             align_reg_to_wrd(SFB_IND, Control_registers_in.filter_status)) <= '1';
-    end generate sup_filt_A_gen;
+    end generate sup_filt_B_gen;
 
     -- SFB - Support filter B -> no
     not_sup_filt_B_gen : if (not sup_filtB) generate
@@ -1144,25 +1143,25 @@ begin
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX1S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX1S_L, Control_registers_in.tx_status)) <=
-        txtb_state(0);
+        txtb_fsms(0);
  
     -- TX2S - TXT Buffer 2 status field
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX2S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX2S_L, Control_registers_in.tx_status)) <=
-        txtb_state(1);
+        txtb_fsms(1);
 
     -- TX3S - TXT Buffer 3 status field
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX3S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX3S_L, Control_registers_in.tx_status)) <=
-        txtb_state(2);
+        txtb_fsms(2);
 
     -- TX4S - TXT Buffer 4 status field
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX4S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX4S_L, Control_registers_in.tx_status)) <=
-        txtb_state(3);
+        txtb_fsms(3);
 
 
     ---------------------------------------------------------------------------
@@ -1240,7 +1239,7 @@ begin
     Control_registers_in.debug_register(
         align_reg_to_wrd(DESTUFF_COUNT_H, Control_registers_in.debug_register) downto
         align_reg_to_wrd(DESTUFF_COUNT_L, Control_registers_in.debug_register)) <=
-        stat_bus(STAT_DS_CTR_HIGH downto STAT_DS_CTR_LOW);
+        stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW);
 
     -- PC_ARB field - Protocol control FSM - arbitration field
     Control_registers_in.debug_register(
@@ -1601,13 +1600,9 @@ begin
     -- TXT Buffer and TX Buffer (Obsolete)
     drv_bus(DRV_ERASE_TXT1_INDEX)                     <=  '0';
     drv_bus(DRV_ERASE_TXT2_INDEX)                     <=  '0';
-  
-    -- Bus traffic counters
-    -- TODO: These will be deleted!!!    
-    drv_bus(DRV_SET_CTR_VAL_HIGH downto DRV_SET_CTR_VAL_LOW)  <=  (OTHERS => '0');
-    
+   
     -- Obsolete - TODO: Clean-up
     drv_bus(DRV_TRIG_CONFIG_DATA_HIGH downto
-          DRV_TRIG_CONFIG_DATA_LOW) <= (OTHERS => '0');
+            DRV_TRIG_CONFIG_DATA_LOW) <= (OTHERS => '0');
 
 end architecture;
