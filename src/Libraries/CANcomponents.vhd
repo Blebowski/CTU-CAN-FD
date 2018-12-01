@@ -189,7 +189,7 @@ package CANcomponents is
             constant ADDRESS_WIDTH       : natural := 8;
             constant REGISTERED_READ     : boolean := true;
             constant CLEAR_READ_DATA     : boolean := true;
-            constant RESET_POLARITY      : std_logic := "0";
+            constant RESET_POLARITY      : std_logic := '0';
             constant SUP_FILT_A          : boolean := true;
             constant SUP_RANGE           : boolean := true;
             constant SUP_FILT_C          : boolean := true;
@@ -220,7 +220,7 @@ package CANcomponents is
             constant ADDRESS_WIDTH       : natural := 8;
             constant REGISTERED_READ     : boolean := true;
             constant CLEAR_READ_DATA     : boolean := true;
-            constant RESET_POLARITY      : std_logic := "0"
+            constant RESET_POLARITY      : std_logic := '0'
         );
         port (
             signal clk_sys               :in std_logic;
