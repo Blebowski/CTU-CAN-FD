@@ -125,7 +125,7 @@ begin
         report "Invalid length of address vector: " &
                 integer'image(addr_vect'length) &
                " Length should be: " &
-                integer'image(addr_width * address_entries)
+                integer'image(address_width * address_entries)
         severity failure;
     
 end architecture;
