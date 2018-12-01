@@ -131,10 +131,10 @@ end entity data_mux;
 architecture rtl of data_mux is
 
     -- Data output from data mux (before masking)
-    signal sel_data                    :    std_logic_vector(data_width - 1 downto 0);
+    signal sel_data                    :    std_logic_vector(data_out_width - 1 downto 0);
 
     -- Data output from data mux (after masking)
-    signal masked_data                :    std_logic_vector(data_width - 1 downto 0);
+    signal masked_data                :    std_logic_vector(data_out_width - 1 downto 0);
 
     -- Internal data select converted to natural to avoid ugly code in
     -- selection
@@ -168,15 +168,15 @@ begin
     ---------------------------------------------------------------------------
     -- Data mux -> Row given by index, column given by generic
     ---------------------------------------------------------------------------
-    data_mux_gen : for i in 0 to data_width - 1 generate
-        sel_data(i) <= data_in(index_sat * data_width + i);
+    data_mux_gen : for i in 0 to data_out_width - 1 generate
+        sel_data(i) <= data_in(index_sat * data_out_width + i);
     end generate data_mux_gen;
 
 
     ---------------------------------------------------------------------------
     -- Data masking
     ---------------------------------------------------------------------------
-    data_mask_gen : for i in 0 to data_width - 1 generate
+    data_mask_gen : for i in 0 to data_out_width - 1 generate
         masked_data(i) <= sel_data(i) and data_mask_n(i);
     end generate data_mask_gen;
 
