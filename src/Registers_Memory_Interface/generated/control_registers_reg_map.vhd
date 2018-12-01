@@ -126,7 +126,7 @@ begin
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
-        w_be                            => be(0) ,-- in
+        w_be                            => be(0 downto 0) ,-- in
         reg_value                       => control_registers_out_i.mode -- out
     );
 
@@ -148,7 +148,7 @@ begin
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
-        w_be                            => be(1) ,-- in
+        w_be                            => be(1 downto 1) ,-- in
         reg_value                       => control_registers_out_i.command -- out
     );
 
@@ -170,7 +170,7 @@ begin
         data_in                         => w_data(31 downto 24) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
-        w_be                            => be(3) ,-- in
+        w_be                            => be(3 downto 3) ,-- in
         reg_value                       => control_registers_out_i.settings -- out
     );
 
@@ -346,7 +346,7 @@ begin
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(9) ,-- in
-        w_be                            => be(0) ,-- in
+        w_be                            => be(0 downto 0) ,-- in
         reg_value                       => control_registers_out_i.ewl -- out
     );
 
@@ -368,7 +368,7 @@ begin
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(9) ,-- in
-        w_be                            => be(1) ,-- in
+        w_be                            => be(1 downto 1) ,-- in
         reg_value                       => control_registers_out_i.erp -- out
     );
 
@@ -666,7 +666,7 @@ begin
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(24) ,-- in
-        w_be                            => be(2) ,-- in
+        w_be                            => be(2 downto 2) ,-- in
         reg_value                       => control_registers_out_i.rx_settings -- out
     );
 

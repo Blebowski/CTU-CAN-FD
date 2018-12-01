@@ -166,7 +166,7 @@ begin
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(3) ,-- in
-        w_be                            => be(0) ,-- in
+        w_be                            => be(0 downto 0) ,-- in
         reg_value                       => event_logger_out_i.log_command -- out
     );
 
