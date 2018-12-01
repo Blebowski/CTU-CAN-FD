@@ -1605,9 +1605,7 @@ begin
     -- Bus traffic counters
     -- TODO: These will be deleted!!!    
     drv_bus(DRV_SET_CTR_VAL_HIGH downto DRV_SET_CTR_VAL_LOW)  <=  (OTHERS => '0');
-    drv_bus(DRV_SET_RX_CTR_INDEX)                     <=  '0';
-    drv_bus(DRV_SET_TX_CTR_INDEX)                     <=  '0';
-
+    
     -- Obsolete - TODO: Clean-up
     drv_bus(DRV_TRIG_CONFIG_DATA_HIGH downto
           DRV_TRIG_CONFIG_DATA_LOW) <= (OTHERS => '0');
