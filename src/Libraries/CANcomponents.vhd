@@ -179,6 +179,63 @@ package CANcomponents is
         );
     end component;
 
+    ----------------------------------------------------------------------------
+    -- Control registers sub-module
+    ----------------------------------------------------------------------------
+    component control_registers_reg_map is
+        generic (
+            constant DATA_WIDTH          : natural := 32;
+            constant ADDRESS_WIDTH       : natural := 8;
+            constant REGISTERED_READ     : boolean := true;
+            constant CLEAR_READ_DATA     : boolean := true;
+            constant RESET_POLARITY      : std_logic := "0";
+            constant SUP_FILT_A          : boolean := true;
+            constant SUP_RANGE           : boolean := true;
+            constant SUP_FILT_C          : boolean := true;
+            constant SUP_FILT_B          : boolean := true
+        );
+        port (
+            signal clk_sys               :in std_logic;
+            signal res_n                 :in std_logic;
+            signal address               :in std_logic_vector(address_width - 1 downto 0);
+            signal w_data                :in std_logic_vector(data_width - 1 downto 0);
+            signal r_data                :out std_logic_vector(data_width - 1 downto 0);
+            signal cs                    :in std_logic;
+            signal read                  :in std_logic;
+            signal write                 :in std_logic;
+            signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+            signal control_registers_out :out Control_registers_out_t;
+            signal control_registers_in  :in Control_registers_in_t
+        );
+    end component control_registers_reg_map;
+
+
+    ----------------------------------------------------------------------------
+    -- Event logger registers sub-module
+    ----------------------------------------------------------------------------
+    component event_logger_reg_map is
+        generic (
+            constant DATA_WIDTH          : natural := 32;
+            constant ADDRESS_WIDTH       : natural := 8;
+            constant REGISTERED_READ     : boolean := true;
+            constant CLEAR_READ_DATA     : boolean := true;
+            constant RESET_POLARITY      : std_logic := "0"
+        );
+        port (
+            signal clk_sys               :in std_logic;
+            signal res_n                 :in std_logic;
+            signal address               :in std_logic_vector(address_width - 1 downto 0);
+            signal w_data                :in std_logic_vector(data_width - 1 downto 0);
+            signal r_data                :out std_logic_vector(data_width - 1 downto 0);
+            signal cs                    :in std_logic;
+            signal read                  :in std_logic;
+            signal write                 :in std_logic;
+            signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+            signal event_logger_out      :out Event_Logger_out_t;
+            signal event_logger_in       :in Event_Logger_in_t
+        );
+    end component event_logger_reg_map;
+
 
     ----------------------------------------------------------------------------
     -- RX Buffer module
