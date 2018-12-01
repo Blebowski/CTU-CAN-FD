@@ -41,7 +41,7 @@ Library ieee;
 use ieee.std_logic_1164.all;
 USE ieee.numeric_std.ALL;
 
-package cmm_reg_map_pkg is
+package cmn_reg_map_pkg is
 
 
 --------------------------------------------------------------------------------
