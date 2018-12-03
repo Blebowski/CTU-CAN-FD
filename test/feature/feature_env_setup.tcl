@@ -82,6 +82,15 @@ add wave -label "Transceiver delay" $TCOMP/$SIG1.tr_del
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
 
+add wave -group "Memory reg debug" \
+	-label "Control registers cs" $TCOMP/$INST1/reg_comp/control_registers_cs \
+	-label "Control registers cs register" $TCOMP/$INST1/reg_comp/control_registers_cs_reg \
+	-label "Control registers rdata" $TCOMP/$INST1/reg_comp/control_registers_rdata \
+	-label "Control rgisters Reg sel" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/reg_sel \
+	-label "Controlt registers read data mask" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/read_data_mask_n \
+	-label "Control registers out" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_out_i \
+	-label "Control registers in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_in
+
 add wave -group "RX Buffer (1)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
 	-label "Buffer size" -unsigned $TCOMP/$INST1/rx_buf_size \
