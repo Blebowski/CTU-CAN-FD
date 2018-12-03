@@ -417,6 +417,7 @@ begin
         DATA_WIDTH            => 32,
         ADDRESS_WIDTH         => 24,
         REGISTERED_READ       => true,
+        CLEAR_READ_DATA       => true,
         RESET_POLARITY        => ACT_RESET,
         SUP_FILT_A            => sup_filtA,
         SUP_RANGE             => sup_range,
@@ -449,6 +450,7 @@ begin
         generic map(
             DATA_WIDTH            => 32,
             ADDRESS_WIDTH         => 24,
+            CLEAR_READ_DATA       => true,
             REGISTERED_READ       => true,
             RESET_POLARITY        => ACT_RESET
         )

@@ -85,7 +85,7 @@ end entity memory_reg;
 architecture rtl of memory_reg is
 
     -- Register implementation itself!
-    signal reg_value            :   std_logic_vector(data_width - 1 downto 0);
+    signal reg_value_r          :   std_logic_vector(data_width - 1 downto 0);
 
     -- Write selector. Indicates that given bit should be written!
     signal wr_select            :   std_logic_vector(data_width / 8 - 1 downto 0);
@@ -114,18 +114,18 @@ begin
             reg_access_proc : process(clk_sys, res_n)
             begin
                 if (res_n = reset_polarity) then
-                    reg_value(i)  <= reset_value(i);
+                    reg_value_r(i)  <= reset_value(i);
 
                 elsif (rising_edge(clk_sys)) then
 
                     -- Write to the register
                     if (wr_select(i / 8) = '1') then
-                        reg_value(i)  <= data_in(i);
+                        reg_value_r(i)  <= data_in(i);
 
                     -- Clear the register if autoclear is set and register is
                     -- set
-                    elsif (auto_clear(i) = '1' and reg_value(i) = '1') then
-                        reg_value(i)  <= reset_value(i);
+                    elsif (auto_clear(i) = '1' and reg_value_r(i) = '1') then
+                        reg_value_r(i)  <= reset_value(i);
                     end if;
 
                 end if;
@@ -138,11 +138,15 @@ begin
         -- Registers which are not present are stuck at reset value
         -----------------------------------------------------------------------
         reg_not_present_gen : if (data_mask(i) = '0') generate
-            reg_value(i)    <=  reset_value(i);
+            reg_value_r(i)    <=  reset_value(i);
         end generate reg_not_present_gen;
 
     end generate bit_gen;
 
+    ----------------------------------------------------------------------------
+    -- Register to output propagation
+    ----------------------------------------------------------------------------
+    reg_value <= reg_value_r;
 
     ----------------------------------------------------------------------------
     -- Monitoring register sizes!
