@@ -104,7 +104,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        address                         => address(8 downto 2) ,-- in
+        address                         => address(7 downto 2) ,-- in
         addr_dec                        => reg_sel -- out
     );
 
@@ -757,14 +757,14 @@ begin
     generic map(
         data_out_width                  => 32 ,
         data_in_width                   => 1344 ,
-        sel_width                       => 8 ,
+        sel_width                       => 6 ,
         registered_out                  => REGISTERED_READ ,
         reset_polarity                  => RESET_POLARITY 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_selector                   => address(8 downto 2) ,-- in
+        data_selector                   => address(7 downto 2) ,-- in
         data_in                         => read_data_mux_in ,-- in
         data_mask_n                     => read_data_mask_n ,-- out
         enable                          => read_mux_ena ,-- in
