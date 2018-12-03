@@ -296,6 +296,11 @@ architecture rtl of canfd_registers is
     signal error_state            :     error_state_type;
     signal OP_State               :     oper_mode_type;
 
+    -- TODO: This will be removed upon merge with branch "Design decoupling"
+    type t_aux_txtb_state_vector is array (0 to TXT_BUFFER_COUNT - 1) of
+        std_logic_vector(3 downto 0);
+    signal txtb_state             : t_aux_txtb_state_vector;
+
 
     ---------------------------------------------------------------------------
     -- 
@@ -513,10 +518,14 @@ begin
                                    '0';
 
     status_comb(EWL_IND mod 8) <= '1' when 
-                                    (ewl < stat_bus(STAT_TX_COUNTER_HIGH downto
-                                                    STAT_TX_COUNTER_LOW) or
-                                    (ewl < stat_bus(STAT_RX_COUNTER_HIGH downto
-                                                   STAT_RX_COUNTER_LOW)))
+                                    (control_registers_out.ewl 
+                                      < 
+                                     stat_bus(STAT_TX_COUNTER_HIGH downto
+                                              STAT_TX_COUNTER_LOW) or
+                                    (control_registers_out.ewl 
+                                      < 
+                                     stat_bus(STAT_RX_COUNTER_HIGH downto
+                                              STAT_RX_COUNTER_LOW)))
                                     else
                                   '0';
                                 
@@ -841,8 +850,7 @@ begin
     ---------------------------------------------------------------------------
 
     -- Not writable, only read is signalled!
-    drv_bus(DRV_READ_START_INDEX) <= align_wrd_to_reg(
-        control_registers_out.rx_data_read, RTSOP_IND);
+    drv_bus(DRV_READ_START_INDEX) <= control_registers_out.rx_data_read;
 
 
     --------------------------------------------------------------------------
@@ -979,29 +987,37 @@ begin
     ---------------------------------------------------------------------------
     -- RXC Register - Receive error counter
     ---------------------------------------------------------------------------
-    Control_registers_in.rxc <= stat_bus(STAT_RX_COUNTER_HIGH downto
-                                         STAT_RX_COUNTER_LOW);
+    Control_registers_in.rxc(
+        align_reg_to_wrd(RXC_VAL_H, Control_registers_in.rxc) downto
+        align_reg_to_wrd(RXC_VAL_L, Control_registers_in.rxc)) <=
+        "0000000" & stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
 
 
     ---------------------------------------------------------------------------
     -- TXC Register - Transmitt error counter
     ---------------------------------------------------------------------------
-    Control_registers_in.txc <= stat_bus(STAT_TX_COUNTER_HIGH downto
-                                         STAT_TX_COUNTER_LOW);
+    Control_registers_in.txc(
+        align_reg_to_wrd(TXC_VAL_H, Control_registers_in.txc) downto
+        align_reg_to_wrd(TXC_VAL_L, Control_registers_in.txc)) <= 
+        "0000000" & stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
 
 
     ---------------------------------------------------------------------------
     -- ERR_NORM - Error counter Nominal Bit-Rate
     ---------------------------------------------------------------------------
-    Control_registers_in.err_norm <= stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto
-                                              STAT_ERROR_COUNTER_NORM_LOW);
+    Control_registers_in.err_norm(
+        align_reg_to_wrd(ERR_NORM_VAL_H, Control_registers_in.err_norm) downto
+        align_reg_to_wrd(ERR_NORM_VAL_L, Control_registers_in.err_norm)) <= 
+        stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto STAT_ERROR_COUNTER_NORM_LOW);
 
 
     ---------------------------------------------------------------------------
     -- ERR_FD - Error counter Nominal Data-Rate
     ---------------------------------------------------------------------------
-    Control_registers_in.err_fd <= stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto
-                                            STAT_ERROR_COUNTER_FD_LOW);
+    Control_registers_in.err_fd(
+        align_reg_to_wrd(ERR_FD_VAL_H, Control_registers_in.err_fd) downto
+        align_reg_to_wrd(ERR_FD_VAL_L, Control_registers_in.err_fd)) <= 
+        stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto STAT_ERROR_COUNTER_FD_LOW);
 
 
     ---------------------------------------------------------------------------
@@ -1143,25 +1159,40 @@ begin
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX1S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX1S_L, Control_registers_in.tx_status)) <=
-        txtb_fsms(0);
+        txtb_state(0);
  
     -- TX2S - TXT Buffer 2 status field
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX2S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX2S_L, Control_registers_in.tx_status)) <=
-        txtb_fsms(1);
+        txtb_state(1);
 
     -- TX3S - TXT Buffer 3 status field
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX3S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX3S_L, Control_registers_in.tx_status)) <=
-        txtb_fsms(2);
+        txtb_state(2);
 
     -- TX4S - TXT Buffer 4 status field
     Control_registers_in.tx_status(
         align_reg_to_wrd(TX4S_H, Control_registers_in.tx_status) downto
         align_reg_to_wrd(TX4S_L, Control_registers_in.tx_status)) <=
-        txtb_fsms(3);
+        txtb_state(3);
+
+    -- Auxiliarly state decoders, this will be removed upon merge with
+    -- design decomposition branch
+        -- Encoding Buffer FSM to output values read from TXT Buffer status register.
+    buf_dec_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
+        with txtb_fsms(i) select txtb_state(i) <= 
+            TXT_RDY   when txt_ready,
+            TXT_TRAN  when txt_tx_prog,
+            TXT_ABTP  when txt_ab_prog,
+            TXT_TOK   when txt_ok,
+            TXT_ERR   when txt_error,
+            TXT_ABT   when txt_aborted,
+            TXT_ETY   when txt_empty;
+    end generate;
+
 
 
     ---------------------------------------------------------------------------
