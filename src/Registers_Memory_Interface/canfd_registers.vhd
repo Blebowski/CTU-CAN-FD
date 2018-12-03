@@ -280,6 +280,9 @@ architecture rtl of canfd_registers is
     constant INT_PADDING            : std_logic_vector(INT_PAD_H_IND -1 downto 0) :=
         (OTHERS => '0');
 
+    -- Main chip select signal
+    signal can_core_cs                : std_logic;
+
     -- Chip select signals for each memory sub-block
     signal control_registers_cs       : std_logic;
     signal evnt_logger_cs             : std_logic;  
@@ -371,10 +374,20 @@ begin
                             '0';
     end generate txtb_cs_gen;
 
+    can_core_cs <= '1' when (scs = ACT_CSC) and
+                            (adress(COMP_TYPE_ADRESS_HIGHER downto
+                                    COMP_TYPE_ADRESS_LOWER) = compType) and
+                            (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
+                             std_logic_vector(to_unsigned(ID, 4)))
+                       else
+                   '0';
+
+
     ----------------------------------------------------------------------------
     -- Control registers chip select signals
     ----------------------------------------------------------------------------
     control_registers_cs <= '1' when (adress(11 downto 8) = CONTROL_REGISTERS_BLOCK)
+                                      and (can_core_cs = '1')
                                 else
                             '0';
 
@@ -382,6 +395,7 @@ begin
     -- Event logger chip select signals
     ----------------------------------------------------------------------------
     evnt_logger_cs <= '1' when (adress(11 downto 8) = EVENT_LOGGER_BLOCK)
+                                and (can_core_cs = '1')
                                 else
                       '0';
 
