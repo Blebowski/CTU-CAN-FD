@@ -28,8 +28,7 @@
 -- Purpose:
 --   Definition of a single memory register. Supports optional auto-clear
 --   of register in the next cycle. Supports implementation of only some
---   bits within a register. Supports indication of write to the register via
---   pulse on "reg_written" for one clock cycle!
+--   bits within a register.
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.10.2018   Created file
@@ -83,7 +82,7 @@ entity memory_reg is
 end entity memory_reg;
 
 
-architecture rtl of txtBuffer is
+architecture rtl of memory_reg is
 
     -- Register implementation itself!
     signal reg_value            :   std_logic_vector(data_width - 1 downto 0);
@@ -98,7 +97,7 @@ begin
     -- for each byte!
     ----------------------------------------------------------------------------    
     wr_sel_gen : for i in 0 to (data_width / 8 - 1) generate
-        wr_select(i) <= write and cs and wr_be(i);
+        wr_select(i) <= write and cs and w_be(i);
     end generate wr_sel_gen;
 
 
@@ -143,9 +142,6 @@ begin
         end generate reg_not_present_gen;
 
     end generate bit_gen;
-
-    -- Propagate to the output
-    reg_written <= reg_written_r;
 
 
     ----------------------------------------------------------------------------
