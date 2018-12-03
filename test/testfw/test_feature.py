@@ -28,7 +28,6 @@ class FeatureTests(TestsBase):
     def configure(self) -> None:
         tb = self.lib.get_test_benches('*tb_feature')[0]
         default = self.config['default']
-        self.add_modelsim_gui_file(tb, default, 'feature')
 
         # generate & set per-test modelsim tcl file
         tcl = self.build / 'modelsim_init_feature.tcl'
@@ -59,6 +58,7 @@ class FeatureTests(TestsBase):
                 'seed'         : get_seed(cfg)
             }
             tb.add_config(name, generics=generics)
+        self.add_modelsim_gui_file(tb, default, 'feature', init_files)
 
     def _create_wrapper(self, ofile: Path) -> None:
         template = self.jinja_env.get_template('pkg_feature_exec_dispath-body.vhd')

@@ -43,7 +43,7 @@ class UnitTests(TestsBase):
             init_files = get_common_modelsim_init_files()
             init_files += [str(tcl)]
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
-            self.add_modelsim_gui_file(tb, cfg, name)
+            self.add_modelsim_gui_file(tb, cfg, name, tcl_init_files=init_files)
         self._check_for_unconfigured()
 
     def _check_for_unconfigured(self):
