@@ -34,7 +34,6 @@ class FeatureTests(TestsBase):
     def configure(self) -> bool:
         tb = self.lib.get_test_benches('*tb_feature')[0]
         default = self.config['default']
-        self.add_modelsim_gui_file(tb, default, 'feature')
 
         # generate & set per-test modelsim tcl file
         tcl = self.build / 'modelsim_init_feature.tcl'
@@ -70,7 +69,7 @@ class FeatureTests(TestsBase):
                 tb.add_config(name, generics=generics, sim_options=psl_opts)
             else:
                 tb.add_config(name, generics=generics)	
-
+        self.add_modelsim_gui_file(tb, default, 'feature', init_files)
         return self._check_for_unconfigured()
 
     def _check_for_unconfigured(self) -> bool:

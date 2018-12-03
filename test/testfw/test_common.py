@@ -7,6 +7,7 @@ from pathlib import Path
 from jinja2 import Environment, PackageLoader
 from pprint import pprint
 import random
+from .gtkwave import tcl2gtkw
 from typing import List
 
 __all__ = ['add_sources', 'add_common_sources', 'get_common_modelsim_init_files',
@@ -41,7 +42,9 @@ class TestsBase:
 
         raise NotImplementedError()
 
-    def add_modelsim_gui_file(self, tb, cfg, name) -> None:
+    def add_modelsim_gui_file(self, tb, cfg, name, tcl_init_files: List[str] = None) -> None:
+        if tcl_init_files is None:
+            tcl_init_files = tb.get_sim_option("modelsim.init_files.after_load")
         if 'wave' in cfg:
             tcl = self.base / cfg['wave']
             if not tcl.exists():
@@ -60,7 +63,20 @@ class TestsBase:
                     run_simulation
                     get_test_results
                     '''.format(name)), file=f)
+
         tb.set_sim_option("modelsim.init_file.gui", str(tcl))
+        if 'gtkw' in cfg:
+            gtkw = self.base / cfg['gtkw']
+            if not gtkw.exists():
+                log.warn('GTKW wave file {} not found'.format(cfg['gtkw']))
+        else:
+            gtkw = tcl.with_suffix('.gtkw')
+            tclfname = tcl.relative_to(self.base)
+            log.info('Converting wave file {} to gtkw ...'.format(tclfname))
+            tcl2gtkw(str(tcl), tcl_init_files, str(gtkw))
+
+        if gtkw:
+            tb.set_sim_option("ghdl.gtkw_file", str(gtkw))
 
 def add_sources(lib, patterns) -> None:
     for pattern in patterns:

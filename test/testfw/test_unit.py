@@ -50,7 +50,7 @@ class UnitTests(TestsBase):
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
             if (cfg['psl_coverage']):
                 self.add_psl_cov_file(tb, name)
-            self.add_modelsim_gui_file(tb, cfg, name)
+            self.add_modelsim_gui_file(tb, cfg, name, tcl_init_files=init_files)
         return self._check_for_unconfigured()
 
     def _check_for_unconfigured(self) -> bool:
