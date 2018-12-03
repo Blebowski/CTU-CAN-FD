@@ -112,7 +112,7 @@ entity data_mux is
         -- data_mask(i) = '1' -> i-th bit is propagated to the output
         -- data_mask(i) = '0' -> i-th bit is not propagated to the output.
         ------------------------------------------------------------------------
-        signal data_mask_n            :out  std_logic_vector(data_out_width - 1 downto 0);
+        signal data_mask_n            :in  std_logic_vector(data_out_width - 1 downto 0);
         
         ------------------------------------------------------------------------
         -- Enables data propagation to the output.

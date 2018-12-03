@@ -198,7 +198,7 @@ begin
         res_n                           => res_n ,-- in
         data_selector                   => address(7 downto 2) ,-- in
         data_in                         => read_data_mux_in ,-- in
-        data_mask_n                     => read_data_mask_n ,-- out
+        data_mask_n                     => read_data_mask_n ,-- in
         enable                          => read_mux_ena ,-- in
         data_out                        => r_data -- out
     );

@@ -80,7 +80,7 @@ component data_mux is
         signal res_n                  :in   std_logic;
         signal data_selector          :in   std_logic_vector(sel_width - 1 downto 0);
         signal data_in                :in   std_logic_vector(data_in_width - 1 downto 0);
-        signal data_mask_n            :out  std_logic_vector(data_out_width - 1 downto 0);        
+        signal data_mask_n            :in   std_logic_vector(data_out_width - 1 downto 0);        
         signal enable                 :in   std_logic;
         signal data_out               :out  std_logic_vector(data_out_width - 1 downto 0)
     );
