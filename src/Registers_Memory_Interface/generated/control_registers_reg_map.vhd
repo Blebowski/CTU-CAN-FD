@@ -756,7 +756,7 @@ begin
     data_mux_control_registers_comp : data_mux
     generic map(
         data_out_width                  => 32 ,
-        data_in_width                   => 1344 ,
+        data_in_width                   => 1088 ,
         sel_width                       => 6 ,
         registered_out                  => REGISTERED_READ ,
         reset_polarity                  => RESET_POLARITY 

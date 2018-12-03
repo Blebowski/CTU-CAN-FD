@@ -188,7 +188,7 @@ begin
     data_mux_event_logger_comp : data_mux
     generic map(
         data_out_width                  => 32 ,
-        data_in_width                   => 416 ,
+        data_in_width                   => 160 ,
         sel_width                       => 6 ,
         registered_out                  => REGISTERED_READ ,
         reset_polarity                  => RESET_POLARITY 
