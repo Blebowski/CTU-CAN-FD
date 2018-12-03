@@ -880,11 +880,11 @@ begin
     ----------------------------------------------------------------------------
     -- Read data mask - Byte enables
     ----------------------------------------------------------------------------
-    read_data_mask_n  <= not (
+    read_data_mask_n  <= 
       be(3) & be(3) & be(3) & be(3) & be(3) & be(3) & be(3) & be(3) &
       be(2) & be(2) & be(2) & be(2) & be(2) & be(2) & be(2) & be(2) &
       be(1) & be(1) & be(1) & be(1) & be(1) & be(1) & be(1) & be(1) &
-      be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0));
+      be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0) & be(0);
 
     Control_registers_out <= Control_registers_out_i;
 
