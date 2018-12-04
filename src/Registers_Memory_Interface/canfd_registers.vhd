@@ -338,10 +338,10 @@ architecture rtl of canfd_registers is
     ---------------------------------------------------------------------------    
     function align_reg_to_wrd(
         constant index          : in  natural;
-        constant reg            : in  std_logic_vector
+        constant length         : in  natural
     ) return natural is
     begin
-        return index mod reg'length;
+        return index mod length;
     end function;
 
 begin
@@ -935,18 +935,22 @@ begin
     ---------------------------------------------------------------------------
     -- VERSION register
     ---------------------------------------------------------------------------
+    version_reg_block : block
+        constant length : natural := Control_registers_in.version'length;
+    begin
+        -- Version minor
+        Control_registers_in.version(
+            align_reg_to_wrd(VER_MINOR_H, length) downto
+            align_reg_to_wrd(VER_MINOR_L, length)) <=
+            VERSION_MINOR;
 
-    -- Version minor
-    Control_registers_in.version(
-        align_reg_to_wrd(VER_MINOR_H, Control_registers_in.version) downto
-        align_reg_to_wrd(VER_MINOR_L, Control_registers_in.version)) <=
-        VERSION_MINOR;
+        -- Version major
+        Control_registers_in.version(
+            align_reg_to_wrd(VER_MAJOR_H, length) downto
+            align_reg_to_wrd(VER_MAJOR_L, length)) <=
+            VERSION_MAJOR;
+    end block version_reg_block;
 
-    -- Version major
-    Control_registers_in.version(
-        align_reg_to_wrd(VER_MAJOR_H, Control_registers_in.version) downto
-        align_reg_to_wrd(VER_MAJOR_L, Control_registers_in.version)) <=
-        VERSION_MAJOR;
 
     ---------------------------------------------------------------------------
     -- STATUS register
@@ -969,196 +973,231 @@ begin
     ---------------------------------------------------------------------------
     -- INT_MASK_SET register - reading interrupt mask
     ---------------------------------------------------------------------------
-    Control_registers_in.int_ena_set <= INT_PADDING & int_mask;
+    Control_registers_in.int_mask_set <= INT_PADDING & int_mask;
 
 
     ---------------------------------------------------------------------------
     -- FAULT_STATE register - 
     ---------------------------------------------------------------------------
+    fault_state_reg_block : block
+        constant length : natural := Control_registers_in.fault_state'length;
+    begin
+        -- ERA field - Error active
+        Control_registers_in.fault_state(align_reg_to_wrd(ERA_IND, length)) <=
+            '1' when (error_state = error_active) else
+            '0';
 
-    -- ERA field - Error active
-    Control_registers_in.fault_state(
-        align_reg_to_wrd(ERA_IND, Control_registers_in.fault_state)) <=
-        '1' when (error_state = error_active) else
-        '0';
+        -- ERP field - Error passive
+        Control_registers_in.fault_state(align_reg_to_wrd(ERP_IND, length)) <=
+            '1' when (error_state = error_passive) else
+            '0';
 
-    -- ERP field - Error passive
-    Control_registers_in.fault_state(
-        align_reg_to_wrd(ERP_IND, Control_registers_in.fault_state)) <=
-        '1' when (error_state = error_passive) else
-        '0';
+        -- BOF field - Bus off
+        Control_registers_in.fault_state(align_reg_to_wrd(BOF_IND, length)) <=
+            '1' when (error_state = bus_off) else
+            '0';
 
-    -- BOF field - Bus off
-    Control_registers_in.fault_state(
-        align_reg_to_wrd(BOF_IND, Control_registers_in.fault_state)) <=
-        '1' when (error_state = bus_off) else
-        '0';
-
-    -- Pad rest by zeroes
-    Control_registers_in.fault_state(
-        Control_registers_in.fault_state'length - 1 downto 3) <=
-        (OTHERS => '0');
+        -- Pad rest by zeroes
+        Control_registers_in.fault_state(
+            Control_registers_in.fault_state'length - 1 downto 3) <=
+            (OTHERS => '0');
+    end block fault_state_reg_block;
 
 
     ---------------------------------------------------------------------------
     -- RXC Register - Receive error counter
     ---------------------------------------------------------------------------
-    Control_registers_in.rxc(
-        align_reg_to_wrd(RXC_VAL_H, Control_registers_in.rxc) downto
-        align_reg_to_wrd(RXC_VAL_L, Control_registers_in.rxc)) <=
-        "0000000" & stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
+    rxc_reg_block : block
+        constant length : natural := Control_registers_in.rxc'length;
+    begin
+        Control_registers_in.rxc(
+            align_reg_to_wrd(RXC_VAL_H, length) downto
+            align_reg_to_wrd(RXC_VAL_L, length)) <=
+            "0000000" & stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW);
+    end block rxc_reg_block;
 
 
     ---------------------------------------------------------------------------
     -- TXC Register - Transmitt error counter
     ---------------------------------------------------------------------------
-    Control_registers_in.txc(
-        align_reg_to_wrd(TXC_VAL_H, Control_registers_in.txc) downto
-        align_reg_to_wrd(TXC_VAL_L, Control_registers_in.txc)) <= 
-        "0000000" & stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
-
+    txc_reg_block : block
+        constant length : natural := Control_registers_in.txc'length;
+    begin
+        Control_registers_in.txc(
+            align_reg_to_wrd(TXC_VAL_H, length) downto
+            align_reg_to_wrd(TXC_VAL_L, length)) <= 
+            "0000000" & stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW);
+    end block txc_reg_block;
 
     ---------------------------------------------------------------------------
     -- ERR_NORM - Error counter Nominal Bit-Rate
     ---------------------------------------------------------------------------
-    Control_registers_in.err_norm(
-        align_reg_to_wrd(ERR_NORM_VAL_H, Control_registers_in.err_norm) downto
-        align_reg_to_wrd(ERR_NORM_VAL_L, Control_registers_in.err_norm)) <= 
-        stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto STAT_ERROR_COUNTER_NORM_LOW);
+    err_norm_block : block
+        constant length : natural := Control_registers_in.err_norm'length;
+    begin
+        Control_registers_in.err_norm(
+            align_reg_to_wrd(ERR_NORM_VAL_H, length) downto
+            align_reg_to_wrd(ERR_NORM_VAL_L, length)) <= 
+            stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto STAT_ERROR_COUNTER_NORM_LOW);
+    end block err_norm_block;
 
 
     ---------------------------------------------------------------------------
     -- ERR_FD - Error counter Nominal Data-Rate
     ---------------------------------------------------------------------------
-    Control_registers_in.err_fd(
-        align_reg_to_wrd(ERR_FD_VAL_H, Control_registers_in.err_fd) downto
-        align_reg_to_wrd(ERR_FD_VAL_L, Control_registers_in.err_fd)) <= 
-        stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto STAT_ERROR_COUNTER_FD_LOW);
+    err_fd_block : block
+        constant length : natural := Control_registers_in.err_fd'length;
+    begin
+        Control_registers_in.err_fd(
+            align_reg_to_wrd(ERR_FD_VAL_H, length) downto
+            align_reg_to_wrd(ERR_FD_VAL_L, length)) <= 
+            stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto STAT_ERROR_COUNTER_FD_LOW);
+    end block err_fd_block;
 
 
     ---------------------------------------------------------------------------
     -- FILTER_STATUS
     ---------------------------------------------------------------------------
+    filter_status_block : block
+        constant length : natural := Control_registers_in.filter_status'length;
+    begin
+    
+        -- SFA - Support Filter A -> yes
+        sup_filt_A_gen : if (sup_filtA) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFA_IND, length)) <= '1';
+        end generate sup_filt_A_gen;
 
-    -- SFA - Support Filter A -> yes
-    sup_filt_A_gen : if (sup_filtA) generate
+        -- SFA - Support filter A -> no
+        not_sup_filt_A_gen : if (not sup_filtA) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFA_IND, length)) <= '0';
+        end generate not_sup_filt_A_gen;
+
+        -- SFB - Support Filter B -> yes
+        sup_filt_B_gen : if (sup_filtB) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFB_IND, length)) <= '1';
+        end generate sup_filt_B_gen;
+
+        -- SFB - Support filter B -> no
+        not_sup_filt_B_gen : if (not sup_filtB) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFB_IND, length)) <= '0';
+        end generate not_sup_filt_B_gen;
+
+        -- SFC - Support Filter C -> yes
+        sup_filt_C_gen : if (sup_filtC) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFC_IND, length)) <= '1';
+        end generate sup_filt_C_gen;
+
+        -- SFC - Support filter C -> no
+        not_sup_filt_C_gen : if (not sup_filtC) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFC_IND, length)) <= '0';
+        end generate not_sup_filt_C_gen;
+
+        -- SFR - Support Filter Range -> yes
+        sup_filt_range_gen : if (sup_range) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFR_IND, length)) <= '1';
+        end generate sup_filt_range_gen;
+
+        -- SFR - Support filter Range -> no
+        not_sup_filt_range_gen : if (not sup_range) generate
+            Control_registers_in.filter_status(
+                align_reg_to_wrd(SFR_IND, length)) <= '0';
+        end generate not_sup_filt_range_gen;
+
+        -- Pad rest by zeroes
         Control_registers_in.filter_status(
-            align_reg_to_wrd(SFA_IND, Control_registers_in.filter_status)) <= '1';
-    end generate sup_filt_A_gen;
+            Control_registers_in.filter_status'length - 1 downto 4) <=
+            (OTHERS => '0');
 
-    -- SFA - Support filter A -> no
-    not_sup_filt_A_gen : if (not sup_filtA) generate
-        Control_registers_in.filter_status(
-            align_reg_to_wrd(SFA_IND, Control_registers_in.filter_status)) <= '0';
-    end generate not_sup_filt_A_gen;
-
-    -- SFB - Support Filter B -> yes
-    sup_filt_B_gen : if (sup_filtB) generate
-        Control_registers_in.filter_status(
-            align_reg_to_wrd(SFB_IND, Control_registers_in.filter_status)) <= '1';
-    end generate sup_filt_B_gen;
-
-    -- SFB - Support filter B -> no
-    not_sup_filt_B_gen : if (not sup_filtB) generate
-        Control_registers_in.filter_status(
-            align_reg_to_wrd(SFB_IND, Control_registers_in.filter_status)) <= '0';
-    end generate not_sup_filt_B_gen;
-
-    -- SFC - Support Filter C -> yes
-    sup_filt_C_gen : if (sup_filtC) generate
-        Control_registers_in.filter_status(
-            align_reg_to_wrd(SFC_IND, Control_registers_in.filter_status)) <= '1';
-    end generate sup_filt_C_gen;
-
-    -- SFC - Support filter C -> no
-    not_sup_filt_C_gen : if (not sup_filtC) generate
-        Control_registers_in.filter_status(
-            align_reg_to_wrd(SFC_IND, Control_registers_in.filter_status)) <= '0';
-    end generate not_sup_filt_C_gen;
-
-    -- SFR - Support Filter Range -> yes
-    sup_filt_range_gen : if (sup_range) generate
-        Control_registers_in.filter_status(
-            align_reg_to_wrd(SFR_IND, Control_registers_in.filter_status)) <= '1';
-    end generate sup_filt_range_gen;
-
-    -- SFR - Support filter Range -> no
-    not_sup_filt_range_gen : if (not sup_range) generate
-        Control_registers_in.filter_status(
-            align_reg_to_wrd(SFR_IND, Control_registers_in.filter_status)) <= '0';
-    end generate not_sup_filt_range_gen;
-
-    -- Pad rest by zeroes
-    Control_registers_in.filter_status(
-        Control_registers_in.filter_status'length - 1 downto 4) <=
-        (OTHERS => '0');
+    end block filter_status_block;
 
 
     ---------------------------------------------------------------------------
     -- RX_MEM_INFO register
     ---------------------------------------------------------------------------
+    rx_mem_info_block : block
+        constant length : natural := Control_registers_in.rx_mem_info'length;
+    begin
 
-    -- RX_BUFF_SIZE field
-    Control_registers_in.rx_mem_info(
-        align_reg_to_wrd(RX_BUFF_SIZE_H, Control_registers_in.rx_mem_info) downto
-        align_reg_to_wrd(RX_BUFF_SIZE_L, Control_registers_in.rx_mem_info)) <=
-        rx_buf_size;
+        -- RX_BUFF_SIZE field
+        Control_registers_in.rx_mem_info(
+            align_reg_to_wrd(RX_BUFF_SIZE_H, length) downto
+            align_reg_to_wrd(RX_BUFF_SIZE_L, length)) <=
+            rx_buf_size;
 
-    -- RX_MEM_FREE field
-    Control_registers_in.rx_mem_info(
-        align_reg_to_wrd(RX_MEM_FREE_H, Control_registers_in.rx_mem_info) downto
-        align_reg_to_wrd(RX_MEM_FREE_L, Control_registers_in.rx_mem_info)) <=
-        rx_mem_free;
+        -- RX_MEM_FREE field
+        Control_registers_in.rx_mem_info(
+            align_reg_to_wrd(RX_MEM_FREE_H, length) downto
+            align_reg_to_wrd(RX_MEM_FREE_L, length)) <=
+            rx_mem_free;
 
-    -- Padd rest by zeroes
-    Control_registers_in.rx_mem_info(31 downto 29) <= (OTHERS => '0');
-    Control_registers_in.rx_mem_info(15 downto 13) <= (OTHERS => '0');
+        -- Padd rest by zeroes
+        Control_registers_in.rx_mem_info(31 downto 29) <= (OTHERS => '0');
+        Control_registers_in.rx_mem_info(15 downto 13) <= (OTHERS => '0');
+
+    end block rx_mem_info_block;
 
 
     ---------------------------------------------------------------------------
     -- RX_POINTERS register
     ---------------------------------------------------------------------------
+    rx_pointers_block : block
+        constant length : natural := Control_registers_in.rx_pointers'length;
+    begin
 
-    -- RX_WPP field - RX Write Pointer position
-    Control_registers_in.rx_pointers(
-        align_reg_to_wrd(RX_WPP_H, Control_registers_in.rx_mem_info) downto
-        align_reg_to_wrd(RX_WPP_L, Control_registers_in.rx_mem_info)) <=
-        rx_write_pointer_pos;
+        -- RX_WPP field - RX Write Pointer position
+        Control_registers_in.rx_pointers(
+            align_reg_to_wrd(RX_WPP_H, length) downto
+            align_reg_to_wrd(RX_WPP_L, length)) <=
+            rx_write_pointer_pos;
 
-    -- RX_RPP field - RX Read Pointer position
-    Control_registers_in.rx_pointers(
-        align_reg_to_wrd(RX_RPP_H, Control_registers_in.rx_mem_info) downto
-        align_reg_to_wrd(RX_RPP_L, Control_registers_in.rx_mem_info)) <=
-        rx_read_pointer_pos;
+        -- RX_RPP field - RX Read Pointer position
+        Control_registers_in.rx_pointers(
+            align_reg_to_wrd(RX_RPP_H, length) downto
+            align_reg_to_wrd(RX_RPP_L, length)) <=
+            rx_read_pointer_pos;
 
-    -- Padd rest by zeroes
-    Control_registers_in.rx_mem_info(31 downto 28) <= (OTHERS => '0');
-    Control_registers_in.rx_mem_info(15 downto 12) <= (OTHERS => '0');
+        -- Padd rest by zeroes
+        Control_registers_in.rx_pointers(31 downto 28) <= (OTHERS => '0');
+        Control_registers_in.rx_pointers(15 downto 12) <= (OTHERS => '0');
+
+    end block rx_pointers_block;
 
 
     ---------------------------------------------------------------------------
     -- RX_STATUS register
     ---------------------------------------------------------------------------
-   
-    -- RXE field - RX Buffer Empty field
-    Control_registers_in.rx_status(
-        align_reg_to_wrd(RXE_IND, Control_registers_in.rx_status)) <=
-        rx_empty;
+    rx_status_block : block
+        constant length : natural := Control_registers_in.rx_status'length;
+    begin
 
-    -- RXF field - RX Buffer Full field
-    Control_registers_in.rx_status(
-        align_reg_to_wrd(RXF_IND, Control_registers_in.rx_status)) <=
-        rx_full;
+        -- RXE field - RX Buffer Empty field
+        Control_registers_in.rx_status(
+            align_reg_to_wrd(RXE_IND, length)) <=
+            rx_empty;
 
-    -- RXFRC field - RX Buffer Frame count
-    Control_registers_in.rx_pointers(
-        align_reg_to_wrd(RXFRC_H, Control_registers_in.rx_mem_info) downto
-        align_reg_to_wrd(RXFRC_L, Control_registers_in.rx_mem_info)) <=
-        rx_message_count;
+        -- RXF field - RX Buffer Full field
+        Control_registers_in.rx_status(
+            align_reg_to_wrd(RXF_IND, length)) <=
+            rx_full;
 
-    -- Padd rest by zeroes
-    Control_registers_in.rx_mem_info(15) <= '0';
-    Control_registers_in.rx_mem_info(3 downto 2) <= (OTHERS => '0');
+        -- RXFRC field - RX Buffer Frame count
+        Control_registers_in.rx_status(
+            align_reg_to_wrd(RXFRC_H, length) downto
+            align_reg_to_wrd(RXFRC_L, length)) <=
+            rx_message_count;
+
+        -- Padd rest by zeroes
+        Control_registers_in.rx_status(15) <= '0';
+        Control_registers_in.rx_status(3 downto 2) <= (OTHERS => '0');
+
+    end block rx_status_block;
 
 
     ---------------------------------------------------------------------------
@@ -1170,34 +1209,41 @@ begin
     ---------------------------------------------------------------------------
     -- TX_STATUS register
     ---------------------------------------------------------------------------
+    tx_status_block : block
+        constant length : natural := Control_registers_in.tx_status'length;
+    begin
+
+        -- TX1S - TXT Buffer 1 status field
+        Control_registers_in.tx_status(
+            align_reg_to_wrd(TX1S_H, length) downto
+            align_reg_to_wrd(TX1S_L, length)) <=
+            txtb_state(0);
+     
+        -- TX2S - TXT Buffer 2 status field
+        Control_registers_in.tx_status(
+            align_reg_to_wrd(TX2S_H, length) downto
+            align_reg_to_wrd(TX2S_L, length)) <=
+            txtb_state(1);
+
+        -- TX3S - TXT Buffer 3 status field
+        Control_registers_in.tx_status(
+            align_reg_to_wrd(TX3S_H, length) downto
+            align_reg_to_wrd(TX3S_L, length)) <=
+            txtb_state(2);
+
+        -- TX4S - TXT Buffer 4 status field
+        Control_registers_in.tx_status(
+            align_reg_to_wrd(TX4S_H, length) downto
+            align_reg_to_wrd(TX4S_L, length)) <=
+            txtb_state(3);
+
+    end block tx_status_block;
     
-    -- TX1S - TXT Buffer 1 status field
-    Control_registers_in.tx_status(
-        align_reg_to_wrd(TX1S_H, Control_registers_in.tx_status) downto
-        align_reg_to_wrd(TX1S_L, Control_registers_in.tx_status)) <=
-        txtb_state(0);
- 
-    -- TX2S - TXT Buffer 2 status field
-    Control_registers_in.tx_status(
-        align_reg_to_wrd(TX2S_H, Control_registers_in.tx_status) downto
-        align_reg_to_wrd(TX2S_L, Control_registers_in.tx_status)) <=
-        txtb_state(1);
-
-    -- TX3S - TXT Buffer 3 status field
-    Control_registers_in.tx_status(
-        align_reg_to_wrd(TX3S_H, Control_registers_in.tx_status) downto
-        align_reg_to_wrd(TX3S_L, Control_registers_in.tx_status)) <=
-        txtb_state(2);
-
-    -- TX4S - TXT Buffer 4 status field
-    Control_registers_in.tx_status(
-        align_reg_to_wrd(TX4S_H, Control_registers_in.tx_status) downto
-        align_reg_to_wrd(TX4S_L, Control_registers_in.tx_status)) <=
-        txtb_state(3);
-
+    ---------------------------------------------------------------------------
     -- Auxiliarly state decoders, this will be removed upon merge with
     -- design decomposition branch
-        -- Encoding Buffer FSM to output values read from TXT Buffer status register.
+    -- Encoding Buffer FSM to output values read from TXT Buffer status register.
+    ---------------------------------------------------------------------------
     buf_dec_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
         with txtb_fsms(i) select txtb_state(i) <= 
             TXT_RDY   when txt_ready,
@@ -1210,130 +1256,168 @@ begin
     end generate;
 
 
-
     ---------------------------------------------------------------------------
     -- ERR_CAPT register
     ---------------------------------------------------------------------------
-    
-    -- ERR_POS - Error position field
-    Control_registers_in.err_capt(
-        align_reg_to_wrd(ERR_POS_H, Control_registers_in.err_capt) downto
-        align_reg_to_wrd(ERR_POS_L, Control_registers_in.err_capt)) <=
-        stat_bus(STAT_ERC_ERR_POS_HIGH downto STAT_ERC_ERR_POS_LOW);
+    err_capt_block : block
+        constant length : natural := Control_registers_in.err_capt'length;
+    begin
 
-    -- ERR_TYPE - Error type field
-    Control_registers_in.err_capt(
-        align_reg_to_wrd(ERR_TYPE_H, Control_registers_in.err_capt) downto
-        align_reg_to_wrd(ERR_TYPE_L, Control_registers_in.err_capt)) <=
-        stat_bus(STAT_ERC_ERR_TYPE_HIGH downto STAT_ERC_ERR_TYPE_LOW);
+        -- ERR_POS - Error position field
+        Control_registers_in.err_capt(
+            align_reg_to_wrd(ERR_POS_H, length) downto
+            align_reg_to_wrd(ERR_POS_L, length)) <=
+            stat_bus(STAT_ERC_ERR_POS_HIGH downto STAT_ERC_ERR_POS_LOW);
+
+        -- ERR_TYPE - Error type field
+        Control_registers_in.err_capt(
+            align_reg_to_wrd(ERR_TYPE_H, length) downto
+            align_reg_to_wrd(ERR_TYPE_L, length)) <=
+            stat_bus(STAT_ERC_ERR_TYPE_HIGH downto STAT_ERC_ERR_TYPE_LOW);
+
+    end block err_capt_block;
 
 
     ---------------------------------------------------------------------------
     -- ALC register
     ---------------------------------------------------------------------------
+    alc_block : block
+        constant length : natural := Control_registers_in.alc'length;
+    begin
     
-    -- ALC_ID_FIELD - Arbitration lost capture ID field
-    Control_registers_in.alc(
-        align_reg_to_wrd(ALC_ID_FIELD_H, Control_registers_in.alc) downto
-        align_reg_to_wrd(ALC_ID_FIELD_L, Control_registers_in.alc)) <=
-        stat_bus(STAT_ALC_ID_FIELD_HIGH downto STAT_ALC_ID_FIELD_LOW);
+        -- ALC_ID_FIELD - Arbitration lost capture ID field
+        Control_registers_in.alc(
+            align_reg_to_wrd(ALC_ID_FIELD_H, length) downto
+            align_reg_to_wrd(ALC_ID_FIELD_L, length)) <=
+            stat_bus(STAT_ALC_ID_FIELD_HIGH downto STAT_ALC_ID_FIELD_LOW);
 
-    -- ALC_ID_BIT - Arbitration lost capture bit position
-    Control_registers_in.alc(
-        align_reg_to_wrd(ALC_BIT_H, Control_registers_in.alc) downto
-        align_reg_to_wrd(ALC_BIT_L, Control_registers_in.alc)) <=
-        stat_bus(STAT_ALC_BIT_HIGH downto STAT_ALC_BIT_LOW);
+        -- ALC_ID_BIT - Arbitration lost capture bit position
+        Control_registers_in.alc(
+            align_reg_to_wrd(ALC_BIT_H, length) downto
+            align_reg_to_wrd(ALC_BIT_L, length)) <=
+            stat_bus(STAT_ALC_BIT_HIGH downto STAT_ALC_BIT_LOW);
+
+    end block alc_block;
 
 
     ---------------------------------------------------------------------------
     -- TRV_DELAY register
     ---------------------------------------------------------------------------
-    Control_registers_in.trv_delay(
-        align_reg_to_wrd(TRV_DELAY_VALUE_H, Control_registers_in.trv_delay) downto
-        align_reg_to_wrd(TRV_DELAY_VALUE_L, Control_registers_in.trv_delay)) <=
-        trv_delay_out;
+    trv_delay_block : block
+        constant length : natural := Control_registers_in.trv_delay'length;
+    begin
+    
+        Control_registers_in.trv_delay(
+            align_reg_to_wrd(TRV_DELAY_VALUE_H, length) downto
+            align_reg_to_wrd(TRV_DELAY_VALUE_L, length)) <=
+            trv_delay_out;
  
+    end block trv_delay_block;
+
 
     ---------------------------------------------------------------------------
     -- RX_COUNTER register
     ---------------------------------------------------------------------------
-    Control_registers_in.rx_counter(
-        align_reg_to_wrd(RX_COUNTER_VAL_H, Control_registers_in.rx_counter) downto
-        align_reg_to_wrd(RX_COUNTER_VAL_L, Control_registers_in.rx_counter)) <=
-        stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW);
+    rx_counter_block : block
+        constant length : natural := Control_registers_in.rx_counter'length;
+    begin
+
+        Control_registers_in.rx_counter(
+            align_reg_to_wrd(RX_COUNTER_VAL_H, length) downto
+            align_reg_to_wrd(RX_COUNTER_VAL_L, length)) <=
+            stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW);
+
+    end block rx_counter_block;
 
 
     ---------------------------------------------------------------------------
     -- TX_COUNTER register
     ---------------------------------------------------------------------------
-    Control_registers_in.tx_counter(
-        align_reg_to_wrd(TX_COUNTER_VAL_H, Control_registers_in.tx_counter) downto
-        align_reg_to_wrd(TX_COUNTER_VAL_L, Control_registers_in.tx_counter)) <=
-        stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW);
+    tx_counter_block : block
+        constant length : natural := Control_registers_in.tx_counter'length;
+    begin
+
+        Control_registers_in.tx_counter(
+            align_reg_to_wrd(TX_COUNTER_VAL_H, length) downto
+            align_reg_to_wrd(TX_COUNTER_VAL_L, length)) <=
+            stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW);
+
+    end block tx_counter_block;
 
 
     ---------------------------------------------------------------------------
     -- DEBUG register
     ---------------------------------------------------------------------------
+    debug_register_block : block
+        constant length : natural := Control_registers_in.debug_register'length;
+    begin
 
-    -- STUFF_COUNT - Counter of stuffed bits modulo 8    
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(STUFF_COUNT_H, Control_registers_in.debug_register) downto
-        align_reg_to_wrd(STUFF_COUNT_L, Control_registers_in.debug_register)) <=
-        stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW);
+        -- STUFF_COUNT - Counter of stuffed bits modulo 8    
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(STUFF_COUNT_H, length) downto
+            align_reg_to_wrd(STUFF_COUNT_L, length)) <=
+            stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW);
 
-    -- DESTUFF_COUNT - Counter of de-stuffed bits modulo 8
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(DESTUFF_COUNT_H, Control_registers_in.debug_register) downto
-        align_reg_to_wrd(DESTUFF_COUNT_L, Control_registers_in.debug_register)) <=
-        stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW);
+        -- DESTUFF_COUNT - Counter of de-stuffed bits modulo 8
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(DESTUFF_COUNT_H, length) downto
+            align_reg_to_wrd(DESTUFF_COUNT_L, length)) <=
+            stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW);
 
-    -- PC_ARB field - Protocol control FSM - arbitration field
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(PC_ARB_IND, Control_registers_in.debug_register)) <=
-        '1' when PC_State = arbitration else '0';
+        -- PC_ARB field - Protocol control FSM - arbitration field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_ARB_IND, length)) <=
+            '1' when PC_State = arbitration else '0';
 
-    -- PC_CON field - Protocol control FSM - control field
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(PC_CON_IND, Control_registers_in.debug_register)) <=
-        '1' when PC_State = control else '0';
+        -- PC_CON field - Protocol control FSM - control field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_CON_IND, length)) <=
+            '1' when PC_State = control else '0';
 
-    -- PC_DAT field - Protocol control FSM - data field
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(PC_DAT_IND, Control_registers_in.debug_register)) <=
-        '1' when PC_State = data else '0';
+        -- PC_DAT field - Protocol control FSM - data field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_DAT_IND, length)) <=
+            '1' when PC_State = data else '0';
 
-    -- PC_CRC field - Protocol control FSM - CRC field
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(PC_CRC_IND, Control_registers_in.debug_register)) <=
-        '1' when PC_State = crc else '0';
+        -- PC_CRC field - Protocol control FSM - CRC field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_CRC_IND, length)) <=
+            '1' when PC_State = crc else '0';
 
-    -- PC_EOF field - Protocol control FSM - EOF field
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(PC_EOF_IND, Control_registers_in.debug_register)) <=
-        '1' when PC_State = eof else '0';
+        -- PC_EOF field - Protocol control FSM - EOF field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_EOF_IND, length)) <=
+            '1' when PC_State = eof else '0';
 
-    -- PC_OVR field - Protocol control FSM - Overload frame field
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(PC_OVR_IND, Control_registers_in.debug_register)) <=
-        '1' when PC_State = overload else '0';
+        -- PC_OVR field - Protocol control FSM - Overload frame field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_OVR_IND, length)) <=
+            '1' when PC_State = overload else '0';
 
-    -- PC_INT field - Protocol control FSM - Interframe frame field
-    Control_registers_in.debug_register(
-        align_reg_to_wrd(PC_OVR_IND, Control_registers_in.debug_register)) <=
-        '1' when PC_State = interframe else '0';
+        -- PC_INT field - Protocol control FSM - Interframe frame field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_INT_IND, length)) <=
+            '1' when PC_State = interframe else '0';
 
-    -- Pad rest by zeroes
-    Control_registers_in.rx_mem_info(31 downto 13) <= (OTHERS => '0');
+        -- Pad rest by zeroes
+        Control_registers_in.debug_register(31 downto 13) <= (OTHERS => '0');
+
+    end block debug_register_block;
 
 
     ---------------------------------------------------------------------------
     -- YOLO register
     ---------------------------------------------------------------------------
-    Control_registers_in.yolo_reg(
-        align_reg_to_wrd(YOLO_VAL_H, Control_registers_in.yolo_reg) downto
-        align_reg_to_wrd(YOLO_VAL_L, Control_registers_in.yolo_reg)) <=
-        YOLO_VAL_RSTVAL;
+    yolo_register_block : block
+        constant length : natural := Control_registers_in.yolo_reg'length;
+    begin
+
+        Control_registers_in.yolo_reg(
+            align_reg_to_wrd(YOLO_VAL_H, length) downto
+            align_reg_to_wrd(YOLO_VAL_L, length)) <=
+            YOLO_VAL_RSTVAL;
+
+    end block yolo_register_block;
 
 
     ---------------------------------------------------------------------------
@@ -1538,65 +1622,72 @@ begin
     ---------------------------------------------------------------------------
     -- LOG_STATUS register
     ---------------------------------------------------------------------------
+    log_status_block : block
+        constant length : natural := Event_Logger_in.log_status'length;
+    begin
 
-    -- LOG_CFG - Logger in config state
-    Event_Logger_in.log_status(
-        align_reg_to_wrd(LOG_CFG_IND, Event_Logger_in.log_status)) <=
-        '1' when (log_state_out = config)
-            else
-        '0';
+        -- LOG_CFG - Logger in config state
+        Event_Logger_in.log_status(align_reg_to_wrd(LOG_CFG_IND, length)) <=
+            '1' when (log_state_out = config)
+                else
+            '0';
 
-    -- LOG_CFG - Logger in ready state
-    Event_Logger_in.log_status(
-        align_reg_to_wrd(LOG_RDY_IND, Event_Logger_in.log_status)) <=
-        '1' when (log_state_out = ready)
-            else
-        '0';
+        -- LOG_CFG - Logger in ready state
+        Event_Logger_in.log_status(align_reg_to_wrd(LOG_RDY_IND, length)) <=
+            '1' when (log_state_out = ready)
+                else
+            '0';
 
-    -- LOG_RUN - Logger in running state
-    Event_Logger_in.log_status(
-        align_reg_to_wrd(LOG_RUN_IND, Event_Logger_in.log_status)) <=
-        '1' when (log_state_out = running)
-            else
-        '0';
+        -- LOG_RUN - Logger in running state
+        Event_Logger_in.log_status(align_reg_to_wrd(LOG_RUN_IND, length)) <=
+            '1' when (log_state_out = running)
+                else
+            '0';
 
-    -- LOG_EXIST - Whether Event logger is supported
-    log_exist_gen : if (use_logger) generate
+        -- LOG_EXIST - Whether Event logger is supported
+        log_exist_gen : if (use_logger) generate
+            Event_Logger_in.log_status(
+                align_reg_to_wrd(LOG_EXIST_IND, length)) <= '1';
+        end generate log_exist_gen;
+
+        log_not_exist_gen : if (not use_logger) generate
+            Event_Logger_in.log_status(
+                align_reg_to_wrd(LOG_EXIST_IND, length)) <= '0';
+        end generate log_not_exist_gen;
+
+        -- LOG_SIZE - Size of event logger memory
         Event_Logger_in.log_status(
-            align_reg_to_wrd(LOG_EXIST_IND, Event_Logger_in.log_status)) <= '1';
-    end generate log_exist_gen;
+            align_reg_to_wrd(LOG_SIZE_H, length) downto
+            align_reg_to_wrd(LOG_SIZE_L, length)) <=
+            log_size;
 
-    log_not_exist_gen : if (not use_logger) generate
-        Event_Logger_in.log_status(
-            align_reg_to_wrd(LOG_EXIST_IND, Event_Logger_in.log_status)) <= '0';
-    end generate log_not_exist_gen;
+        -- Pad unused by zeroes
+        Event_Logger_in.log_status(15 downto 8) <= (OTHERS => '0');
+        Event_Logger_in.log_status(6 downto 3) <= (OTHERS => '0');
 
-    -- LOG_SIZE - Size of event logger memory
-    Event_Logger_in.log_status(
-        align_reg_to_wrd(LOG_SIZE_H, Event_Logger_in.log_status) downto
-        align_reg_to_wrd(LOG_SIZE_L, Event_Logger_in.log_status)) <=
-        log_size;
-
-    -- Pad unused by zeroes
-    Event_Logger_in.log_status(15 downto 8) <= (OTHERS => '0');
-    Event_Logger_in.log_status(6 downto 3) <= (OTHERS => '0');
+    end block log_status_block;
 
 
     ---------------------------------------------------------------------------
     -- LOG_POINTERS
     ---------------------------------------------------------------------------
+    log_pointers_block : block
+        constant length : natural := Event_Logger_in.log_pointers'length;
+    begin
 
-    -- LOG_RPP - Read pointer position
-    Event_Logger_in.log_pointers(
-        align_reg_to_wrd(LOG_RPP_H, Event_Logger_in.log_pointers) downto
-        align_reg_to_wrd(LOG_RPP_L, Event_Logger_in.log_pointers)) <=
-        log_read_pointer;
+        -- LOG_RPP - Read pointer position
+        Event_Logger_in.log_pointers(
+            align_reg_to_wrd(LOG_RPP_H, length) downto
+            align_reg_to_wrd(LOG_RPP_L, length)) <=
+            log_read_pointer;
 
-    -- LOG_WPP - Write pointer position
-    Event_Logger_in.log_pointers(
-        align_reg_to_wrd(LOG_WPP_H, Event_Logger_in.log_pointers) downto
-        align_reg_to_wrd(LOG_WPP_L, Event_Logger_in.log_pointers)) <=
-        log_write_pointer;
+        -- LOG_WPP - Write pointer position
+        Event_Logger_in.log_pointers(
+            align_reg_to_wrd(LOG_WPP_H, length) downto
+            align_reg_to_wrd(LOG_WPP_L, length)) <=
+            log_write_pointer;
+
+    end block log_pointers_block;
 
 
     ---------------------------------------------------------------------------
