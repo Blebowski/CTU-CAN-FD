@@ -94,9 +94,15 @@ add wave -group "Memory reg debug" \
 	-label "Data mux Index sat" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/index_sat \
 	-label "Selected data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/sel_data \
 	-label "Masked data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/masked_data \
-	-label "Data out enable" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/enable \
-    -label "Data out" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/data_out
+	-label "Data out enable" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/enable
 
+add wave -group "CTR_PRES_DEBUG" \
+    -label "Data in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/data_in \
+    -label "Write" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/write \
+    -label "cs" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/cs \
+    -label "w_be" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/w_be \
+    -label "Reg. value" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/reg_value \
+    -label "write select" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/wr_select
 
 add wave -group "RX Buffer (1)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
