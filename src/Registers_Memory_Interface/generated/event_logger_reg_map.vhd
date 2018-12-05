@@ -79,7 +79,7 @@ architecture rtl of event_logger_reg_map is
   signal reg_sel  : std_logic_vector(5 downto 0);
   constant ADDR_VECT
                  : std_logic_vector(35 downto 0) := "000101000100000011000010000001000000";
-  signal read_data_mux_in : std_logic_vector(159 downto 0);
+  signal read_data_mux_in : std_logic_vector(191 downto 0);
   signal read_data_mask_n : std_logic_vector(31 downto 0);
   signal event_logger_out_i : Event_Logger_out_t;
   signal read_mux_ena                : std_logic;
@@ -188,7 +188,7 @@ begin
     data_mux_event_logger_comp : data_mux
     generic map(
         data_out_width                  => 32 ,
-        data_in_width                   => 160 ,
+        data_in_width                   => 192 ,
         sel_width                       => 6 ,
         registered_out                  => REGISTERED_READ ,
         reset_polarity                  => RESET_POLARITY 
@@ -207,8 +207,11 @@ begin
   -- Read data driver
   ------------------------------------------------------------------------------
   read_data_mux_in  <= 
+    -- Adress:20
+    event_logger_in.log_capt_event_2 &
+
     -- Adress:16
-    event_logger_in.log_capt_event_1;
+    event_logger_in.log_capt_event_1 &
 
     -- Adress:12
     "00000000" & "00000000" & "00000000" & "00000000" &
@@ -220,7 +223,7 @@ begin
     event_logger_out_i.log_capt_config &
 
     -- Adress:0
-    event_logger_out_i.log_trig_config &
+    event_logger_out_i.log_trig_config;
 
     ----------------------------------------------------------------------------
     -- Read data mask - Byte enables

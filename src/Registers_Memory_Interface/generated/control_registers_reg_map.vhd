@@ -83,7 +83,7 @@ architecture rtl of control_registers_reg_map is
   signal reg_sel : std_logic_vector(34 downto 0);
   constant ADDR_VECT
                  : std_logic_vector(209 downto 0) := "100010100001100000011111011110011101011100011011011010011001011000010111010110010101010100010011010010010001010000001111001110001101001100001011001010001001001000000111000110000101000100000011000010000001000000";
-  signal read_data_mux_in : std_logic_vector(1087 downto 0);
+  signal read_data_mux_in : std_logic_vector(1119 downto 0);
   signal read_data_mask_n : std_logic_vector(31 downto 0);
   signal control_registers_out_i : Control_registers_out_t;
   signal read_mux_ena                : std_logic;
@@ -756,7 +756,7 @@ begin
     data_mux_control_registers_comp : data_mux
     generic map(
         data_out_width                  => 32 ,
-        data_in_width                   => 1088 ,
+        data_in_width                   => 1120 ,
         sel_width                       => 6 ,
         registered_out                  => REGISTERED_READ ,
         reset_polarity                  => RESET_POLARITY 
@@ -775,8 +775,11 @@ begin
   -- Read data driver
   ------------------------------------------------------------------------------
   read_data_mux_in  <= 
+    -- Adress:136
+    control_registers_in.yolo_reg &
+
     -- Adress:132
-    control_registers_in.debug_register;
+    control_registers_in.debug_register &
 
     -- Adress:128
     control_registers_in.tx_counter &
@@ -875,7 +878,7 @@ begin
     control_registers_out_i.settings & control_registers_in.status & "00000000" & control_registers_out_i.mode &
 
     -- Adress:0
-    control_registers_in.version & control_registers_in.device_id &
+    control_registers_in.version & control_registers_in.device_id;
 
     ----------------------------------------------------------------------------
     -- Read data mask - Byte enables
