@@ -46,17 +46,17 @@ entity memory_reg is
 
         -- Data mask. Each logic 1 indicates present bit, logic 0 indicates
         -- reserved bit in register bits. Reserved bit always returns 0.
-        constant data_mask            :     std_logic_vector;
+        constant data_mask            :     std_logic_vector(data_width - 1 downto 0);
 
         -- Reset polarity
         constant reset_polarity       :     std_logic := '0';
 
         -- Reset value of register
-        constant reset_value          :     std_logic_vector;
+        constant reset_value          :     std_logic_vector(data_width - 1 downto 0);
 
         -- If given bit of the register should be cleared automatically one
         -- clock cycle after writing.
-        constant auto_clear           :     std_logic_vector
+        constant auto_clear           :     std_logic_vector(data_width - 1 downto 0)
     );
     port(
         ------------------------------------------------------------------------
