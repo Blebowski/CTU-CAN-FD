@@ -653,7 +653,7 @@ begin
         control_registers_out.settings, ENA_IND);
     
     -- NISOFD - Non - ISO FD Flag
-    drv_bus(DRV_ENA_INDEX) <= align_wrd_to_reg(
+    drv_bus(DRV_FD_TYPE_INDEX) <= align_wrd_to_reg(
         control_registers_out.settings, NISOFD_IND);
 
     -- INT_LOOPBACK - Acknowledge forbidden mode
@@ -772,7 +772,7 @@ begin
     
     -- Counter preset mask
     drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW) <= align_wrd_to_reg(
-            control_registers_out.ctr_pres, EFD_IND, PTX_IND); 
+            control_registers_out.ctr_pres, EFD_IND, PTX_IND);
 
 
     ---------------------------------------------------------------------------
@@ -1609,7 +1609,7 @@ begin
         Event_Logger_out.log_command, LOG_UP_IND);
 
     -- LOG_DOWN - Logger Read Pointer Down
-    drv_bus(DRV_LOG_CMD_UP_INDEX) <= align_wrd_to_reg(
+    drv_bus(DRV_LOG_CMD_DOWN_INDEX) <= align_wrd_to_reg(
         Event_Logger_out.log_command, LOG_UP_IND);
 
 
