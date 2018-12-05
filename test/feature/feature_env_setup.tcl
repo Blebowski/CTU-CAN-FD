@@ -89,7 +89,14 @@ add wave -group "Memory reg debug" \
 	-label "Control rgisters Reg sel" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/reg_sel \
 	-label "Controlt registers read data mask" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/read_data_mask_n \
 	-label "Control registers out" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_out_i \
-	-label "Control registers in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_in
+	-label "Control registers in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_in \
+	-label "Data mux Index" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/index \
+	-label "Data mux Index sat" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/index_sat \
+	-label "Selected data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/sel_data \
+	-label "Masked data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/masked_data \
+	-label "Data out enable" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/enable \
+    -label "Data out" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/data_out
+
 
 add wave -group "RX Buffer (1)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
