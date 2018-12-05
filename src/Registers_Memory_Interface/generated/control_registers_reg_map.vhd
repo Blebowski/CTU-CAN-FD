@@ -159,7 +159,7 @@ begin
     settings_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        data_mask                       => "11101111" ,
+        data_mask                       => "11111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000" ,
         auto_clear                      => "00000000" 
@@ -203,7 +203,7 @@ begin
     int_ena_set_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000011111111111" ,
+        data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000011111111111" 
@@ -225,7 +225,7 @@ begin
     int_ena_clr_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000011111111111" ,
+        data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000011111111111" 
@@ -247,7 +247,7 @@ begin
     int_mask_set_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000011111111111" ,
+        data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000011111111111" 
@@ -269,7 +269,7 @@ begin
     int_mask_clr_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000011111111111" ,
+        data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
         auto_clear                      => "0000011111111111" 
@@ -291,7 +291,7 @@ begin
     btr_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "01111011111110111110111110111111" ,
+        data_mask                       => "11111111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00010000010100001010000110000101" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -313,7 +313,7 @@ begin
     btr_fd_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "01111011111110011110011110011111" ,
+        data_mask                       => "11111111111110111110111110111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00010000001000000110000110000011" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -335,7 +335,7 @@ begin
     ewl_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        data_mask                       => "01111111" ,
+        data_mask                       => "11111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "01100000" ,
         auto_clear                      => "00000000" 
@@ -357,7 +357,7 @@ begin
     erp_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        data_mask                       => "01111111" ,
+        data_mask                       => "11111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "10000000" ,
         auto_clear                      => "00000000" 
@@ -379,7 +379,7 @@ begin
     ctr_pres_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00000000000000000001111011111111" ,
+        data_mask                       => "00000000000000000001111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000001111011111111" 
@@ -402,7 +402,7 @@ begin
     filter_a_mask_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -431,7 +431,7 @@ begin
     filter_a_val_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -460,7 +460,7 @@ begin
     filter_b_mask_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -489,7 +489,7 @@ begin
     filter_b_val_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -518,7 +518,7 @@ begin
     filter_c_mask_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -547,7 +547,7 @@ begin
     filter_c_val_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -576,7 +576,7 @@ begin
     filter_ran_low_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -605,7 +605,7 @@ begin
     filter_ran_high_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00001111111111111111111111111111" ,
+        data_mask                       => "00011111111111111111111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
         auto_clear                      => "00000000000000000000000000000000" 
@@ -723,7 +723,7 @@ begin
     tx_priority_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0011001100110011" ,
+        data_mask                       => "0111011101110111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000001" ,
         auto_clear                      => "0000000000000000" 
