@@ -90,6 +90,9 @@ architecture rtl of memory_reg is
     -- Write selector. Indicates that given bit should be written!
     signal wr_select            :   std_logic_vector(data_width / 8 - 1 downto 0);
 
+    -- Expanded write register select with the same width as register
+    signal wr_select_expanded   :   std_logic_vector(data_width - 1 downto 0);
+
 begin
 
     ----------------------------------------------------------------------------
@@ -98,8 +101,12 @@ begin
     ----------------------------------------------------------------------------    
     wr_sel_gen : for i in 0 to (data_width / 8 - 1) generate
         wr_select(i) <= write and cs and w_be(i);
-    end generate wr_sel_gen;
 
+        -- Expand the signal for each index
+        wr_sel_exp_gen : for j in 0 to 7 generate
+            wr_select_expanded(i * 8 + j) <= wr_select(i);
+        end generate;
+    end generate wr_sel_gen;
 
     ----------------------------------------------------------------------------
     -- Register instance
@@ -119,7 +126,7 @@ begin
                 elsif (rising_edge(clk_sys)) then
 
                     -- Write to the register
-                    if (wr_select(i / 8) = '1') then
+                    if (wr_select_expanded(i) = '1') then
                         reg_value_r(i)  <= data_in(i);
 
                     -- Clear the register if autoclear is set and register is
