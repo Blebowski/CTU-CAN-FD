@@ -98,6 +98,8 @@ add wave -group "Memory reg debug" \
 
 add wave -group "CTR_PRES_DEBUG" \
     -label "Data in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/data_in \
+    -label "Data mask" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/data_mask \
+    -label "Auto clear" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/auto_clear \
     -label "Write" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/write \
     -label "cs" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/cs \
     -label "w_be" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/w_be \
