@@ -775,107 +775,107 @@ begin
   -- Read data driver
   ------------------------------------------------------------------------------
   read_data_mux_in  <= 
-    -- Adress:0
-    control_registers_in.version & control_registers_in.device_id &
+    -- Adress:132
+    control_registers_in.debug_register;
 
-    -- Adress:4
-    control_registers_out_i.settings & control_registers_in.status & "00000000" & control_registers_out_i.mode &
+    -- Adress:128
+    control_registers_in.tx_counter &
 
-    -- Adress:8
-    "00000000" & "00000000" & control_registers_in.int_stat &
+    -- Adress:124
+    control_registers_in.rx_counter &
 
-    -- Adress:12
-    "00000000" & "00000000" & control_registers_in.int_ena_set &
+    -- Adress:120
+    "00000000" & "00000000" & control_registers_in.trv_delay &
 
-    -- Adress:16
+    -- Adress:116
+    "00000000" & "00000000" & control_registers_in.alc & control_registers_in.err_capt &
+
+    -- Adress:112
+    "00000000" & "00000000" & control_registers_out_i.tx_priority &
+
+    -- Adress:108
+    "00000000" & "00000000" & "00000000" & "00000000" &
+
+    -- Adress:104
+    "00000000" & "00000000" & control_registers_in.tx_status &
+
+    -- Adress:100
+    control_registers_in.rx_data &
+
+    -- Adress:96
+    "00000000" & control_registers_out_i.rx_settings & control_registers_in.rx_status &
+
+    -- Adress:92
+    control_registers_in.rx_pointers &
+
+    -- Adress:88
+    control_registers_in.rx_mem_info &
+
+    -- Adress:84
+    control_registers_in.filter_status & control_registers_out_i.filter_control &
+
+    -- Adress:80
+    control_registers_out_i.filter_ran_high &
+
+    -- Adress:76
+    control_registers_out_i.filter_ran_low &
+
+    -- Adress:72
+    control_registers_out_i.filter_c_val &
+
+    -- Adress:68
+    control_registers_out_i.filter_c_mask &
+
+    -- Adress:64
+    control_registers_out_i.filter_b_val &
+
+    -- Adress:60
+    control_registers_out_i.filter_b_mask &
+
+    -- Adress:56
+    control_registers_out_i.filter_a_val &
+
+    -- Adress:52
+    control_registers_out_i.filter_a_mask &
+
+    -- Adress:48
+    "00000000" & "00000000" & "00000000" & "00000000" &
+
+    -- Adress:44
+    control_registers_in.err_fd & control_registers_in.err_norm &
+
+    -- Adress:40
+    control_registers_in.txc & control_registers_in.rxc &
+
+    -- Adress:36
+    control_registers_in.fault_state & control_registers_out_i.erp & control_registers_out_i.ewl &
+
+    -- Adress:32
+    control_registers_out_i.btr_fd &
+
+    -- Adress:28
+    control_registers_out_i.btr &
+
+    -- Adress:24
     "00000000" & "00000000" & "00000000" & "00000000" &
 
     -- Adress:20
     "00000000" & "00000000" & control_registers_in.int_mask_set &
 
-    -- Adress:24
+    -- Adress:16
     "00000000" & "00000000" & "00000000" & "00000000" &
 
-    -- Adress:28
-    control_registers_out_i.btr &
+    -- Adress:12
+    "00000000" & "00000000" & control_registers_in.int_ena_set &
 
-    -- Adress:32
-    control_registers_out_i.btr_fd &
+    -- Adress:8
+    "00000000" & "00000000" & control_registers_in.int_stat &
 
-    -- Adress:36
-    control_registers_in.fault_state & control_registers_out_i.erp & control_registers_out_i.ewl &
+    -- Adress:4
+    control_registers_out_i.settings & control_registers_in.status & "00000000" & control_registers_out_i.mode &
 
-    -- Adress:40
-    control_registers_in.txc & control_registers_in.rxc &
-
-    -- Adress:44
-    control_registers_in.err_fd & control_registers_in.err_norm &
-
-    -- Adress:48
-    "00000000" & "00000000" & "00000000" & "00000000" &
-
-    -- Adress:52
-    control_registers_out_i.filter_a_mask &
-
-    -- Adress:56
-    control_registers_out_i.filter_a_val &
-
-    -- Adress:60
-    control_registers_out_i.filter_b_mask &
-
-    -- Adress:64
-    control_registers_out_i.filter_b_val &
-
-    -- Adress:68
-    control_registers_out_i.filter_c_mask &
-
-    -- Adress:72
-    control_registers_out_i.filter_c_val &
-
-    -- Adress:76
-    control_registers_out_i.filter_ran_low &
-
-    -- Adress:80
-    control_registers_out_i.filter_ran_high &
-
-    -- Adress:84
-    control_registers_in.filter_status & control_registers_out_i.filter_control &
-
-    -- Adress:88
-    control_registers_in.rx_mem_info &
-
-    -- Adress:92
-    control_registers_in.rx_pointers &
-
-    -- Adress:96
-    "00000000" & control_registers_out_i.rx_settings & control_registers_in.rx_status &
-
-    -- Adress:100
-    control_registers_in.rx_data &
-
-    -- Adress:104
-    "00000000" & "00000000" & control_registers_in.tx_status &
-
-    -- Adress:108
-    "00000000" & "00000000" & "00000000" & "00000000" &
-
-    -- Adress:112
-    "00000000" & "00000000" & control_registers_out_i.tx_priority &
-
-    -- Adress:116
-    "00000000" & "00000000" & control_registers_in.alc & control_registers_in.err_capt &
-
-    -- Adress:120
-    "00000000" & "00000000" & control_registers_in.trv_delay &
-
-    -- Adress:124
-    control_registers_in.rx_counter &
-
-    -- Adress:128
-    control_registers_in.tx_counter &
-
-    -- Adress:132
-    control_registers_in.debug_register;
+    -- Adress:0
+    control_registers_in.version & control_registers_in.device_id &
 
     ----------------------------------------------------------------------------
     -- Read data mask - Byte enables

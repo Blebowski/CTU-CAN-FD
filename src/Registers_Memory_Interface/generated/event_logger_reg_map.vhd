@@ -207,20 +207,20 @@ begin
   -- Read data driver
   ------------------------------------------------------------------------------
   read_data_mux_in  <= 
-    -- Adress:0
-    event_logger_out_i.log_trig_config &
-
-    -- Adress:4
-    event_logger_out_i.log_capt_config &
-
-    -- Adress:8
-    event_logger_in.log_pointers & event_logger_in.log_status &
+    -- Adress:16
+    event_logger_in.log_capt_event_1;
 
     -- Adress:12
     "00000000" & "00000000" & "00000000" & "00000000" &
 
-    -- Adress:16
-    event_logger_in.log_capt_event_1;
+    -- Adress:8
+    event_logger_in.log_pointers & event_logger_in.log_status &
+
+    -- Adress:4
+    event_logger_out_i.log_capt_config &
+
+    -- Adress:0
+    event_logger_out_i.log_trig_config &
 
     ----------------------------------------------------------------------------
     -- Read data mask - Byte enables
