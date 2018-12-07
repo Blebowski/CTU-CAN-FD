@@ -823,14 +823,14 @@ begin
     -- FILTER_RAN_LOW
     ---------------------------------------------------------------------------
     drv_bus(DRV_FILTER_RAN_LO_TH_HIGH downto DRV_FILTER_RAN_LO_TH_LOW) <= align_wrd_to_reg(
-            control_registers_out.filter_ran_high, BIT_RAN_LOW_VAL_H, BIT_RAN_LOW_VAL_L);
+            control_registers_out.filter_ran_low, BIT_RAN_LOW_VAL_H, BIT_RAN_LOW_VAL_L);
 
 
     ---------------------------------------------------------------------------
     -- FILTER_RAN_HIGH
     ---------------------------------------------------------------------------
     drv_bus(DRV_FILTER_RAN_HI_TH_HIGH downto DRV_FILTER_RAN_HI_TH_LOW) <= align_wrd_to_reg(
-            control_registers_out.filter_ran_low, BIT_RAN_HIGH_VAL_H, BIT_RAN_HIGH_VAL_L);
+            control_registers_out.filter_ran_high, BIT_RAN_HIGH_VAL_H, BIT_RAN_HIGH_VAL_L);
 
 
     --------------------------------------------------------------------------
