@@ -502,7 +502,9 @@ begin
     -- Reset propagation to output
     -- Note: this works only for reset active in logic zero
     ----------------------------------------------------------------------------
-    res_out               <=  res_n and control_registers_out.mode(RST_IND);
+    res_out  <=  ACT_RESET when (res_n = ACT_RESET) else
+                 ACT_RESET when (control_registers_out.mode(RST_IND) = '1') else
+                 (not ACT_RESET);
 
 
     ----------------------------------------------------------------------------
