@@ -106,7 +106,8 @@ add wave -group "CTR_PRES_DEBUG" \
     -label "Reg. value" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/reg_value \
     -label "write select" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/wr_select \
     -label "drv_ctr_sel" $TCOMP/$INST1/$CORE/faultConf_comp/drv_ctr_sel \
-    -label "drv_ctr_val" $TCOMP/$INST1/$CORE/faultConf_comp/drv_ctr_val
+    -label "rx counter" $TCOMP/$INST1/$CORE/faultConf_comp/rx_counter \
+    -label "tx counter" $TCOMP/$INST1/$CORE/faultConf_comp/tx_counter
 
 
 add wave -group "RX Buffer (1)" \
