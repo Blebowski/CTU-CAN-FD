@@ -109,6 +109,11 @@ add wave -group "CTR_PRES_DEBUG" \
     -label "rx counter" $TCOMP/$INST1/$CORE/faultConf_comp/rx_counter \
     -label "tx counter" $TCOMP/$INST1/$CORE/faultConf_comp/tx_counter
 
+add wave -group "Read data signaller!" \
+    -label "Register select" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/cs \
+    -label "Read signal" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/read_signal \
+    -label "Byte enables" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/be
+
 
 add wave -group "RX Buffer (1)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
