@@ -101,6 +101,7 @@ begin
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
         address                         => address(7 downto 2) ,-- in
+        enable                          => cs ,-- in
         addr_dec                        => reg_sel -- out
     );
 
@@ -174,7 +175,7 @@ begin
     -- Read data multiplexor enable 
     ----------------------------------------------------------------------------
     read_data_keep_gen : if (CLEAR_READ_DATA = false) generate
-        read_mux_ena <= read;
+        read_mux_ena <= read and cs;
     end generate read_data_keep_gen;
 
     read_data_clear_gen : if (CLEAR_READ_DATA = true) generate

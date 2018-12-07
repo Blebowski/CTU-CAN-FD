@@ -30,6 +30,8 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    14.10.2018   Created file
+--    07.12.2018   Added enable signal. Active only when enable is in logic 1,
+--                 otherwise disabled.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -68,6 +70,11 @@ entity address_decoder is
         signal address                :in   std_logic_vector(address_width - 1 downto 0);
 
         ------------------------------------------------------------------------
+        -- Enable input
+        ------------------------------------------------------------------------
+        signal enable                 :in   std_logic;
+
+        ------------------------------------------------------------------------
         -- Output, one-hot coded. In logic 1 for each valid address
         ------------------------------------------------------------------------
         signal addr_dec               :out  std_logic_vector(address_entries - 1 downto 0)
@@ -82,6 +89,10 @@ architecture rtl of address_decoder is
     signal addr_dec_i                 :   std_logic_vector(
                                                 address_entries - 1 downto 0);
     
+    -- Address after masking by enable input
+    signal addr_dec_enabled_i          :   std_logic_vector(
+                                                address_entries - 1 downto 0);
+
 begin
 
     ---------------------------------------------------------------------------
@@ -98,6 +109,13 @@ begin
 
 
     ---------------------------------------------------------------------------
+    -- Address decoder enabled / disabled - masking
+    ---------------------------------------------------------------------------
+    addr_dec_enabled_i <= addr_dec_i when (enable = '1') else
+                          (OTHERS => '0');
+
+
+    ---------------------------------------------------------------------------
     -- Registering / Not-registering output
     ---------------------------------------------------------------------------
     addr_dec_reg_true_gen : if (registered_out) generate
@@ -107,14 +125,14 @@ begin
                 addr_dec <= (OTHERS => '0');
 
             elsif (rising_edge(clk_sys)) then
-                addr_dec <= addr_dec_i;
+                addr_dec <= addr_dec_enabled_i;
 
             end if;
         end process;
     end generate addr_dec_reg_true_gen;
 
     addr_dec_reg_false_gen : if (not registered_out) generate
-        addr_dec <= addr_dec_i;
+        addr_dec <= addr_dec_enabled_i;
     end generate addr_dec_reg_false_gen;
 
 

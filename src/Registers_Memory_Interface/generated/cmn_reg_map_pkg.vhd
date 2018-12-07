@@ -59,6 +59,7 @@ component address_decoder is
         signal clk_sys                :in   std_logic;
         signal res_n                  :in   std_logic;
         signal address                :in   std_logic_vector(address_width - 1 downto 0);
+        signal enable                 :in   std_logic;
         signal addr_dec               :out  std_logic_vector(address_entries - 1 downto 0)
     );
 end component address_decoder;
