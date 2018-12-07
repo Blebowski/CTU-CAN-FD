@@ -114,8 +114,8 @@ begin
                         else
                     '0';
 
-    access_in(0) <= read;
-    access_in(1) <= write;
+    access_in(0) <= read and cs;
+    access_in(1) <= write and cs;
 
     ---------------------------------------------------------------------------
     -- Write / Read signalling
