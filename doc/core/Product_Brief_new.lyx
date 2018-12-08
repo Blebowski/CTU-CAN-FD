@@ -4,16 +4,17 @@
 \begin_header
 \save_transient_properties true
 \origin unavailable
-\textclass achemso
+\textclass book
 \begin_preamble
 \usepackage{fancyhdr}
-\renewcommand{\headrulewidth}{0pt}
+\pagestyle{fancy}
+\usepackage{colortbl}
+\definecolor{gray}{RGB}{230,230, 230}
+\usepackage{subcaption}
+\usepackage{cprotect}
 \end_preamble
 \use_default_options true
 \begin_modules
-theorems-ams
-eqs-within-sections
-figs-within-sections
 customHeadersFooters
 \end_modules
 \maintain_unincluded_children false
@@ -23,26 +24,38 @@ customHeadersFooters
 \fontencoding global
 \font_roman "default" "default"
 \font_sans "default" "default"
-\font_typewriter "default" "default"
+\font_typewriter "lmtt" "default"
 \font_math "auto" "auto"
-\font_default_family default
+\font_default_family sfdefault
 \use_non_tex_fonts false
 \font_sc false
 \font_osf false
 \font_sf_scale 100 100
 \font_tt_scale 100 100
 \use_microtype false
-\use_dash_ligatures true
+\use_dash_ligatures false
 \graphics default
 \default_output_format default
 \output_sync 0
 \bibtex_command default
 \index_command default
 \paperfontsize default
-\spacing single
-\use_hyperref false
+\spacing other 1.1
+\use_hyperref true
+\pdf_author "Ille Ondrej"
+\pdf_subject "CAN FD IP function"
+\pdf_keywords "CAN, Flexible data rate,"
+\pdf_bookmarks true
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -67,17 +80,22 @@ customHeadersFooters
 \shortcut idx
 \color #008000
 \end_index
-\secnumdepth 3
-\tocdepth 3
-\paragraph_separation indent
-\paragraph_indentation default
+\leftmargin 2cm
+\topmargin 3cm
+\rightmargin 2cm
+\bottommargin 3cm
+\headheight 2cm
+\secnumdepth 2
+\tocdepth 5
+\paragraph_separation skip
+\defskip smallskip
 \is_math_indent 0
 \math_numbering_side default
 \quotes_style english
 \dynamic_quotes 0
 \papercolumns 1
 \papersides 1
-\paperpagestyle default
+\paperpagestyle headings
 \tracking_changes false
 \output_changes false
 \html_math_output 0
@@ -87,19 +105,15 @@ customHeadersFooters
 
 \begin_body
 
-\begin_layout Title
+\begin_layout Chapter*
 \noindent
-CAN FD DATA-RATE IP CORE
+CAN FLEXIBLE DATA-RATE IP CORE
 \begin_inset Newline newline
 \end_inset
 
 
 \size large
-PRODUCT BRIEF
-\end_layout
-
-\begin_layout Email
-martin.jerabek01@gmail.com, ondrej.ille@gmail.com
+PRODUCT BRIEF v2.1
 \end_layout
 
 \begin_layout Standard
@@ -119,13 +133,14 @@ thispagestyle{fancy}
 
 \end_layout
 
+\begin_layout Left Header
+\noindent
+
+\end_layout
+
 \begin_layout Right Header
 \noindent
 Martin Jerabek, Ondrej Ille
-\begin_inset Newline newline
-\end_inset
-
-October 2018
 \end_layout
 
 \begin_layout Section*
@@ -139,11 +154,48 @@ CAN Flexible Data-Rate IP Core connects functionality of CAN 2.0, CAN FD
  1.0 and ISO CAN FD specification in a light - weight IP Core.
  It is a soft-core IP Core written in VHDL, with no vendor specific libraries
  needed.
- The main target of usage are FPGA applications, and the core RTL is available
- under MIT License in Gitlab repository of CTU FEE.
+ The main target of usage are FPGA applications, and the core RTL is freely
+ available under MIT License in 
+\color blue
+
+\begin_inset CommandInset href
+LatexCommand href
+name "Gitlab repository of CTU FEE"
+target "https://gitlab.fel.cvut.cz/illeondr/CAN_FD_IP_Core"
+literal "false"
+
+\end_inset
+
+
+\color inherit
+.
  It is optimized for inference of native hardware blocks such as SRAM memories
  and DSP blocks.
  Generic settings achieve high level of flexibility before synthesis.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing single
+The IP Core is accessed as a slave memory mapped peripheria via Avalon bus
+ or APB.
+ Easy manipulation with the core is achieved by using hardware buffers for
+ CAN frames.
+ One FIFO RX buffer is available, and 4 TX buffers are available.
+ Timestamps can be captured for various events on the CAN bus and transmission
+ of CAN frames can be triggered by external timestamp.
+ Three Bit filters and one Range filter is available for HW filtration of
+ received CAN frames.
+ The Core was synthesized in low-end Xilinx and Altera FPGAs with maximal
+ operating frequencies above 100 MHz.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing single
+CTU CAN FD also contains a Linux SocketCAN driver.
+ The design contains its own testing framework which is based on Vunit test
+ framework and simulated via GHDL or Modelsim.
+ At the moment the development team of CTU CAN FD is working on ISO conformance
+ testing to guarantee proper operation in commercial applications.
 \end_layout
 
 \begin_layout Standard
@@ -177,30 +229,6 @@ status open
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-\paragraph_spacing single
-The IP Core is accessed as a slave memory mapped peripheria via Avalon bus
- or APB.
- Easy manipulation with the core is achieved by using hardware buffers for
- CAN frames.
- One FIFO RX buffer is available, and 4 TX buffers are available.
- Timestamps can be captured for various events on the CAN bus and transmission
- of CAN frames can be triggered by external timestamp.
- Three Bit filters and one Range filter is available for HW filtration of
- received CAN frames.
- The Core was synthesized in Xilinx and Altera FPGAs with approximate maximal
- operating frequency of 100 MHz.
-\end_layout
-
-\begin_layout Standard
-\paragraph_spacing single
-CTU CAN FD also contains a Linux SocketCAN driver.
- The design contains its own testing framework which is based on Vunit test
- framework and simulated via GHDL or Modelsim.
- At the moment the development team of CTU CAN FD is working on ISO conformance
- testing to guarantee proper operation in commercial applications.
 \end_layout
 
 \begin_layout Section*

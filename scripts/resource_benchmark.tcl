@@ -38,31 +38,22 @@
 ##		Script for evaluation of CTU CAN FD IP Core size in Xilinx and Intel
 ##		FPGAs. Supports Quartus Prime (Intel) and Vivado (Xilinx).
 ##
-##		Common manual:
-##			1. Set global variable TOOL_NAME (see in script) to "Quartus" or
-##			   "Vivado" based on which tool you want to use!
-##			2. Follow manual for dedicated tool below 
-##
 ##		Manual for Quartus:
-##			1. Open "synthesis/Quartus/Benchmark_project.qpf"
-##			2. Turn on TCL Command line: View->Utility Windows->TCL Console
-##			3. Open available TCL scripts: Tools->TCL Scripts
-##			4. Run available "Resource_Benchmark.tcl" script
-##			5. Observe outputs in TCL console.
+##			1. Set Environment variable $TOOL_NAME = "Quartus"
+##			2. Open "synthesis/Quartus/Benchmark_project.qpf"
+##			3. Turn on TCL Command line: View->Utility Windows->TCL Console
+##			4. Open available TCL scripts: Tools->TCL Scripts
+##			5. Run available "Resource_Benchmark.tcl" script
+##			6. Observe outputs in TCL console.
 ##
 ##		Manual for Vivado:
-##			1.
+##			1. Set Environment variable $TOOL_NAME = "Vivado"
+##          2. Wait till the end and check results in runs.
 ##
-
 ## 		Quartus TCL script for automation of core resource requirements.
 ##      Execute the script in Quartus project: Benchmark_project located
 ##      in synthesis/Quartus.
 ################################################################################
-
-## Tool in which script will be used.
-## Options: "Quartus", "Vivado"
-set TOOL_NAME "Vivado"
-
 
 
 proc intel_benchmark {} {
@@ -93,12 +84,12 @@ proc intel_benchmark {} {
 
 	   # Load timing Analysis of 85 ° Slow
 	   set panel_name {TimeQuest Timing Analyzer||Slow 1100mV 85C Model||Slow 1100mV 85C Model Fmax Summary}
-	   set panel_id    [get_report_panel_id $panel_name]
+	   set panel_id [get_report_panel_id $panel_name]
 	   set max_freq [get_report_panel_data -row 1 -col 0 -id $panel_id]
 
 	   # Load FPGA resource usage
 	   set aluts [get_fitter_resource_usage -alut -used]
-	   set aregs  [get_fitter_resource_usage -reg -used]
+	   set aregs [get_fitter_resource_usage -reg -used]
 	   set alms  [get_fitter_resource_usage -alm -used]
 	   set mbits [get_fitter_resource_usage -mem_bit -used]
 
@@ -110,6 +101,10 @@ proc intel_benchmark {} {
 										[list "Mbits" $mbits]
 						]
 
+        foreach cfg_res $results {
+		    puts $cfg_res
+	    }
+
 		# VERY IMPORTANT! Report must be unloaded! Otherwise next Load
 		# of report (after next synthesis) will crash Quartus (16.1)!!
 		unload_report
@@ -119,6 +114,10 @@ proc intel_benchmark {} {
 
 proc xilinx_benchmark {} {
 
+    global CFG_LIST
+    global PARAM_NAMES
+    global results
+
 	puts "Running Vivado Benchmark!"
 
 	#List through CTU CAN FD configurations
@@ -126,21 +125,26 @@ proc xilinx_benchmark {} {
 	   set act_cfg [lindex $config 0]
 	   puts "Configuration name: ${act_cfg}"
 	
-		set run_name "benchmark"
+	    set run_name "Benchmark:${act_cfg}"
 
-		#Create new run
-		create_run -flow {Vivado Synthesis 2013} $run_name
-		reset_run $run_name
+		# Delete old run if existing, create new run!
+        delete_runs -quiet $run_name
+        create_run -flow {Vivado Synthesis 2013} $run_name
+		current_run [get_runs $run_name]
 
 		# Set configuration to top level entity
+        set parm_dict {}
 	    foreach par_name $PARAM_NAMES par_val $config {
-			set_property generic {$par_name=$par_val} [current_fileset]
-	    }
-
+            puts "${par_name} : ${par_val}"
+            dict append parm_dict $par_name=$par_val
+		}
+    	set_property generic $parm_dict [current_fileset]
+	    
 		# Launch run
+        reset_run $run_name
 		launch_run $run_name
 		wait_on_run $run_name
-
+    }
 }
 
 
@@ -179,23 +183,23 @@ set PARAM_NAMES [ list "dummy" \
 						 ]
 								 
 ## List of synthesis configurations
-set CFG_LIST [ list          [ list "Minimal configuration" \
+set CFG_LIST [ list          [ list "Minimal_configuration" \
 									false 32 true 1\
 								    false false false false 8
 							  ] \
-							  [ list "Medium configuration" \
+							  [ list "Medium_configuration" \
 									false 256 true 1\
 								    false false true true 8
 							  ] \
-							  [ list "Full configuration" \
+							  [ list "Full_configuration" \
 									false 4096 true 1\
 								    true true true true 8
 							  ] \
-							  [ list "Full configuration + Small logger" \
+							  [ list "Full_configuration_Small_logger" \
 									true 4096 true 1\
 								    true true true true 8
 							  ] \
-							  [ list "Full configuration + Big logger" \
+							  [ list "Full_configuration_Big_logger" \
 									true 4096 true 1\
 								    true true true true 64
 							  ] 
@@ -208,11 +212,6 @@ set CFG_LIST [ list          [ list "Minimal configuration" \
 
 puts "Starting CTU CAN FD FPGA Benchmark. Selected tool:"
 puts $TOOL_NAME
-
-#if ($TOOL_NAME /= "Vivado" and $TOOL_NAME /= "Quartus"){
-#	puts "Invalid Tool selected -> Exiting!"
-#	exit
-#}
 
 if {$TOOL_NAME == "Quartus"} {
 	intel_benchmark
