@@ -135,83 +135,6 @@ thispagestyle{fancy}
 
 \begin_layout Left Header
 \noindent
-\begin_inset Tabular
-<lyxtabular version="3" rows="3" columns="2">
-<features tabularvalignment="middle">
-<column alignment="center" valignment="top" width="0pt">
-<column alignment="left" valignment="top" width="0pt">
-<row>
-<cell multirow="3" alignment="left" valignment="middle" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename ../pics/LEV.bmp
-	scale 14
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\series bold
-Czech Technical University in Prague
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell multirow="4" alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Faculty of Electrical Engineering 
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell multirow="4" alignment="center" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="left" valignment="top" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-</lyxtabular>
-
-\end_inset
-
 
 \end_layout
 
@@ -232,7 +155,20 @@ CAN Flexible Data-Rate IP Core connects functionality of CAN 2.0, CAN FD
  It is a soft-core IP Core written in VHDL, with no vendor specific libraries
  needed.
  The main target of usage are FPGA applications, and the core RTL is freely
- available under MIT License in Gitlab repository of CTU FEE.
+ available under MIT License in 
+\color blue
+
+\begin_inset CommandInset href
+LatexCommand href
+name "Gitlab repository of CTU FEE"
+target "https://gitlab.fel.cvut.cz/illeondr/CAN_FD_IP_Core"
+literal "false"
+
+\end_inset
+
+
+\color inherit
+.
  It is optimized for inference of native hardware blocks such as SRAM memories
  and DSP blocks.
  Generic settings achieve high level of flexibility before synthesis.
@@ -249,8 +185,8 @@ The IP Core is accessed as a slave memory mapped peripheria via Avalon bus
  of CAN frames can be triggered by external timestamp.
  Three Bit filters and one Range filter is available for HW filtration of
  received CAN frames.
- The Core was synthesized in Xilinx and Altera FPGAs with approximate maximal
- operating frequency of 100 MHz.
+ The Core was synthesized in low-end Xilinx and Altera FPGAs with maximal
+ operating frequencies above 100 MHz.
 \end_layout
 
 \begin_layout Standard
