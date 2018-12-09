@@ -118,7 +118,11 @@
 --     29.7.2018  Removed "RX_buff_read_first" to have only single clock 
 --                Avalon cycles available. Thus now there is no register
 --                remaining which would require gap cycle between two cycles!
---                Burst reads are now supported! 
+--                Burst reads are now supported!
+--     9.12.2018  Replaced register implementation by Register map generated
+--                by Register Map Generator. Two instances (Control Registers
+--                and Event Logger Registers) are present. Connected register
+--                modules to Driving and Status Bus. Added VERSION generics.
 --------------------------------------------------------------------------------
 
 Library ieee;
