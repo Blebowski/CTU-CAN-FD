@@ -6,7 +6,7 @@
 	<ipxact:version>2.1</ipxact:version>
 	<ipxact:memoryMaps>
 		<ipxact:memoryMap>
-			<ipxact:name>Regs</ipxact:name>
+			<ipxact:name>CAN_Registers</ipxact:name>
 			<ipxact:displayName>CAN FD Core memory map</ipxact:displayName>
 			<ipxact:description>CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for 8, 16 or 32 bit access. Unaligned access is not supported. Byte or half word access is executed via byte enable signal. The memory is organized as Big endian. Write to read only memory location will have no effect. Read from write only memory location will return zeroes. The memory map consists of following memory regions:</ipxact:description>
 			<ipxact:addressBlock>
@@ -261,7 +261,7 @@
 					<ipxact:addressOffset>'h5</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>writeOnce</ipxact:access>
+					<ipxact:access>write-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>ABT</ipxact:name>
 						<ipxact:displayName>ABT</ipxact:displayName>
@@ -273,6 +273,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RRB</ipxact:name>
@@ -285,6 +286,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>CDO</ipxact:name>
@@ -297,6 +299,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ERCRST</ipxact:name>
@@ -309,6 +312,31 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>RXFCRST</ipxact:name>
+						<ipxact:description>Clear RX frames counter.</ipxact:description>
+						<ipxact:bitOffset>5</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TXFCRST</ipxact:name>
+						<ipxact:description>Clear TX frames counter.</ipxact:description>
+						<ipxact:bitOffset>6</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -551,7 +579,7 @@
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
+					<ipxact:access>read-writeOnce</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RXI</ipxact:name>
 						<ipxact:displayName>RXI</ipxact:displayName>
@@ -563,6 +591,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXI</ipxact:name>
@@ -575,6 +604,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EWLI</ipxact:name>
@@ -587,6 +617,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
@@ -599,6 +630,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>EPI</ipxact:name>
@@ -611,6 +643,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
@@ -623,6 +656,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
@@ -635,6 +669,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LFI</ipxact:name>
@@ -647,6 +682,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RXFI</ipxact:name>
@@ -659,6 +695,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
@@ -671,6 +708,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RBNEI</ipxact:name>
@@ -683,6 +721,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXBHCI</ipxact:name>
@@ -695,6 +734,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -753,6 +793,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>12</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -775,6 +816,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>12</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -785,7 +827,7 @@
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
+					<ipxact:access>read-writeOnce</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>INT_MASK_SET</ipxact:name>
 						<ipxact:displayName>INT_MASK_SET</ipxact:displayName>
@@ -797,6 +839,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>12</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -807,7 +850,7 @@
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
+					<ipxact:access>read-writeOnce</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>INT_ENA_SET</ipxact:name>
 						<ipxact:displayName>INT_ENA_SET</ipxact:displayName>
@@ -819,6 +862,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>12</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -1141,6 +1185,7 @@
 					<ipxact:name>FILTER_A_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_A_VAL</ipxact:displayName>
 					<ipxact:description>Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received identifier format. BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtX=false&quot;;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h38</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1275,6 +1320,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXCR</ipxact:name>
@@ -1287,6 +1333,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXCA</ipxact:name>
@@ -1299,6 +1346,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB1</ipxact:name>
@@ -1311,6 +1359,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB2</ipxact:name>
@@ -1323,6 +1372,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB3</ipxact:name>
@@ -1335,6 +1385,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>TXB4</ipxact:name>
@@ -1347,6 +1398,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -1487,7 +1539,7 @@
 					<ipxact:addressOffset>'h80</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
+					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>TX_COUNTER_VAL</ipxact:name>
 						<ipxact:description>Counter for transcieved frames to enable bus traffic measurement.</ipxact:description>
@@ -1508,7 +1560,7 @@
 					<ipxact:addressOffset>'h7C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
-					<ipxact:access>read-write</ipxact:access>
+					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>RX_COUNTER_VAL</ipxact:name>
 						<ipxact:description>Counter for received frames to enable bus traffic measurement</ipxact:description>
@@ -1773,6 +1825,7 @@
 				<ipxact:register>
 					<ipxact:name>RX_DATA</ipxact:name>
 					<ipxact:displayName>RX_DATA</ipxact:displayName>
+					<ipxact:description>Read data word from RX Buffer.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h64</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1789,6 +1842,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:readAction>modify</ipxact:readAction>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -2101,6 +2155,7 @@
 					<ipxact:name>FILTER_RAN_HIGH</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_HIGH</ipxact:displayName>
 					<ipxact:description>High Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_range=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h50</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2123,6 +2178,7 @@
 					<ipxact:name>FILTER_RAN_LOW</ipxact:name>
 					<ipxact:displayName>FILTER_RAN_LOW</ipxact:displayName>
 					<ipxact:description>Low Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_range=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2145,6 +2201,7 @@
 					<ipxact:name>FILTER_C_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_C_VAL</ipxact:displayName>
 					<ipxact:description>Bit value for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtC=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h48</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2167,6 +2224,7 @@
 					<ipxact:name>FILTER_C_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_C_MASK</ipxact:displayName>
 					<ipxact:description>Bit mask for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtC=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h44</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2189,6 +2247,7 @@
 					<ipxact:name>FILTER_B_VAL</ipxact:name>
 					<ipxact:displayName>FILTER_B_VAL</ipxact:displayName>
 					<ipxact:description>Bit value for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtB=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_ee0c8305_bed6_412e_8743_8e3657e8b866</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h40</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2211,6 +2270,7 @@
 					<ipxact:name>FILTER_B_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_B_MASK</ipxact:displayName>
 					<ipxact:description>Bit mask for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtB=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_ee0c8305_bed6_412e_8743_8e3657e8b866</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h3C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2233,6 +2293,7 @@
 					<ipxact:name>FILTER_A_MASK</ipxact:name>
 					<ipxact:displayName>FILTER_A_MASK</ipxact:displayName>
 					<ipxact:description>Bit mask for acceptance filter A. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting &quot;sup_filtA=false&quot;. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.</ipxact:description>
+					<ipxact:isPresent>uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e</ipxact:isPresent>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h34</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -2271,6 +2332,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>9</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PTX</ipxact:name>
@@ -2615,6 +2677,7 @@
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h0</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
+					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>T_SOF</ipxact:name>
 						<ipxact:description>Trigger on Start of frame field appears</ipxact:description>
@@ -2821,6 +2884,7 @@
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h4</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
+					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>C_SOF</ipxact:name>
 						<ipxact:description>Capture when Start of frame field appears.</ipxact:description>
@@ -3060,6 +3124,7 @@
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h8</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
+					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>LOG_CFG</ipxact:name>
 						<ipxact:description>Event logger is in Config state</ipxact:description>
@@ -3113,6 +3178,7 @@
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hA</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
+					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>LOG_WPP</ipxact:name>
 						<ipxact:description>Write pointer from Event Logging FSM.</ipxact:description>
@@ -3143,6 +3209,7 @@
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'hC</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
+					<ipxact:access>write-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>LOG_STR</ipxact:name>
 						<ipxact:description>Start event logging. Move from Config State to Ready state. Has no effect in Ready state or Running state.</ipxact:description>
@@ -3153,6 +3220,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LOG_ABT</ipxact:name>
@@ -3164,6 +3232,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LOG_UP</ipxact:name>
@@ -3175,6 +3244,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>LOG_DOWN</ipxact:name>
@@ -3186,6 +3256,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -3195,6 +3266,7 @@
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h14</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
+					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>EVNT_TYPE</ipxact:name>
 						<ipxact:displayName>EVNT_TYPE</ipxact:displayName>
@@ -3506,6 +3578,7 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h10</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
+					<ipxact:access>read-only</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>EVENT_TS_48_16</ipxact:name>
 						<ipxact:description>Bits 48 to 16 of timestamp at the time when the event occured.</ipxact:description>
@@ -3522,7 +3595,7 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 			<ipxact:addressUnitBits>8</ipxact:addressUnitBits>
 		</ipxact:memoryMap>
 		<ipxact:memoryMap>
-			<ipxact:name>Frame_format</ipxact:name>
+			<ipxact:name>CAN_Frame_format</ipxact:name>
 			<ipxact:displayName>CAN FD frame format</ipxact:displayName>
 			<ipxact:description>CAN Frame format describtion in as it is stored in TXT Buffers and RX Buffer.</ipxact:description>
 			<ipxact:addressBlock>
@@ -3825,6 +3898,28 @@ and synchronisation edge appeared during resynchronisation.</ipxact:description>
 		</ipxact:memoryMap>
 	</ipxact:memoryMaps>
 	<ipxact:description>CAN FD IP Core from Ondrej Ille written at Czech Technical University, department of Measurement.</ipxact:description>
+	<ipxact:parameters>
+		<ipxact:parameter parameterId="uuid_09846e1a_b03a_4f0b_99b5_c1981400ea9e" usageCount="2">
+			<ipxact:name>sup_filt_A</ipxact:name>
+			<ipxact:displayName>sup_filt_A</ipxact:displayName>
+			<ipxact:value>1</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_41f98f04_041f_4ab6_b60d_c6226cd54eb6" usageCount="2">
+			<ipxact:name>sup_range</ipxact:name>
+			<ipxact:displayName>sup_range</ipxact:displayName>
+			<ipxact:value>1</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_d4ccabd1_3f50_49b0_ae1e_45cf5fdb460e" usageCount="2">
+			<ipxact:name>sup_filt_C</ipxact:name>
+			<ipxact:displayName>sup_filt_C</ipxact:displayName>
+			<ipxact:value>1</ipxact:value>
+		</ipxact:parameter>
+		<ipxact:parameter parameterId="uuid_ee0c8305_bed6_412e_8743_8e3657e8b866" usageCount="2">
+			<ipxact:name>sup_filt_B</ipxact:name>
+			<ipxact:displayName>sup_filt_B</ipxact:displayName>
+			<ipxact:value>1</ipxact:value>
+		</ipxact:parameter>
+	</ipxact:parameters>
 	<ipxact:vendorExtensions>
 		<kactus2:author>Ondrej Ille</kactus2:author>
 		<kactus2:version>3,5,0,0</kactus2:version>

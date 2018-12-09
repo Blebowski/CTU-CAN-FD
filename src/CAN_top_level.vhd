@@ -80,6 +80,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
 use work.CANcomponents.ALL;
+use work.CAN_FD_register_map.all;
 
 entity CAN_top_level is
     generic(
@@ -508,7 +509,10 @@ begin
         sup_range       => sup_range,
         sup_be          => true,
         buf_count       => TXT_BUFFER_COUNT,
-        ID              => ID
+        ID              => ID,
+        DEVICE_ID       => CTU_CAN_FD_ID,
+        VERSION_MINOR   => x"01",
+        VERSION_MAJOR   => x"02"
     )
     port map(
         clk_sys              => clk_sys,

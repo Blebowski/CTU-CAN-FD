@@ -1,3 +1,3 @@
-[submodule "scripts/pyXact_generator/ipyxact_parser"]
-	path = scripts/pyXact_generator/ipyxact_parser
-	url = https://github.com/oille/ipyxact.git
+[submodule "pyXact_generator"]
+	path = scripts/pyXact_generator
+	url = https://github.com/Blebowski/Reg_Map_Gen

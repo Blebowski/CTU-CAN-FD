@@ -140,17 +140,17 @@ struct ctucanfd_priv;
 #ifndef ctucanfd_priv
 struct ctucanfd_priv {
 	void __iomem *mem_base;
-	u32 (*read_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
-	void (*write_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, u32 val);
+	u32 (*read_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg);
+	void (*write_reg)(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg, u32 val);
 };
 #endif
 
-void ctu_can_fd_write32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+void ctu_can_fd_write32(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
 			u32 val);
-void ctu_can_fd_write32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+void ctu_can_fd_write32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
 			   u32 val);
-u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
-u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg);
+u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg);
+u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg);
 
 
 /*

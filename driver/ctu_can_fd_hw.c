@@ -41,36 +41,36 @@
 //#include "ctu_can_fd_regs.h"
 #include "ctu_can_fd_hw.h"
 
-void ctu_can_fd_write32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+void ctu_can_fd_write32(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
 			u32 val)
 {
 	iowrite32(val, (char *)priv->mem_base + reg);
 }
 
-void ctu_can_fd_write32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+void ctu_can_fd_write32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
 			u32 val)
 {
 	iowrite32(val, (char *)priv->mem_base + reg);
 }
 
-u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
+u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
 {
 	return ioread32((const char *)priv->mem_base + reg);
 }
 
-u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
+u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
 {
 	return ioread32be((const char *)priv->mem_base + reg);
 }
 
 /*
-void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
 					  u16 val)
 {
 	iowrite16(val, (char *)priv->mem_base + reg);
 }
 
-void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
+void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
 					 u8 val)
 {
 	iowrite8(val, (char *)priv->mem_base + reg);
@@ -78,19 +78,19 @@ void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg,
 */
 
 /*
-u16 ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
+u16 ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
 {
 	return ioread16((const char *)priv->mem_base + reg);
 }
 
-u8 ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg)
+u8 ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
 {
 	return ioread8((const char *)priv->mem_base + reg);
 }
 */
 
 static void ctu_can_fd_write_txt_buf(struct ctucanfd_priv *priv,
-				  enum ctu_can_fd_regs buf_base,
+				  enum ctu_can_fd_can_registers buf_base,
 				  u32 offset, u32 val)
 {
 	priv->write_reg(priv, buf_base + offset, val);
@@ -288,8 +288,8 @@ void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv)
 
 // TODO: rather than set(value, mask) interface, provide native set(val), clr(val)
 //       interface to potentially avoid unnecessary write
-static void ctu_can_fd_int_conf(struct ctucanfd_priv *priv, enum ctu_can_fd_regs sreg,
-				enum ctu_can_fd_regs creg,
+static void ctu_can_fd_int_conf(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers sreg,
+				enum ctu_can_fd_can_registers creg,
 				union ctu_can_fd_int_stat mask,
 				union ctu_can_fd_int_stat val)
 {
@@ -509,7 +509,7 @@ bool ctu_can_fd_set_mask_filter(struct ctucanfd_priv *priv, u8 fnum, bool enable
 				const struct can_filter *filter)
 {
 	union ctu_can_fd_filter_control_filter_status creg;
-	enum ctu_can_fd_regs maddr,vaddr;
+	enum ctu_can_fd_can_registers maddr,vaddr;
 	union ctu_can_fd_identifier_w hwid_mask;
 	union ctu_can_fd_identifier_w hwid_val;
 	uint8_t val = 0;
@@ -719,7 +719,7 @@ void ctu_can_fd_set_txt_priority(struct ctucanfd_priv *priv, const u8 *prio)
 	priv->write_reg(priv, CTU_CAN_FD_TX_PRIORITY, reg.u32);
 }
 
-static const enum ctu_can_fd_regs tx_buf_bases[CTU_CAN_FD_TXT_BUFFER_COUNT] = {
+static const enum ctu_can_fd_can_registers tx_buf_bases[CTU_CAN_FD_TXT_BUFFER_COUNT] = {
 	CTU_CAN_FD_TXTB1_DATA_1, CTU_CAN_FD_TXTB2_DATA_1,
 	CTU_CAN_FD_TXTB3_DATA_1, CTU_CAN_FD_TXTB4_DATA_1
 };
@@ -727,7 +727,7 @@ static const enum ctu_can_fd_regs tx_buf_bases[CTU_CAN_FD_TXT_BUFFER_COUNT] = {
 bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_frame *cf, u64 ts,
 				u8 buf, bool isfdf)
 {
-	enum ctu_can_fd_regs buf_base;
+	enum ctu_can_fd_can_registers buf_base;
 	union ctu_can_fd_frame_form_w ffw;
 	union ctu_can_fd_identifier_w idw;
 	u8 dlc;

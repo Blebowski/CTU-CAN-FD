@@ -73,17 +73,17 @@ static void *mem_map(unsigned long mem_start, unsigned long mem_length)
     return mem;
 }
 
-unsigned ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
-    return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~3)) >> (8 * (reg & 3));
+unsigned ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg) {
+    return priv->read_reg(priv, (enum ctu_can_fd_can_registers)(reg & ~3)) >> (8 * (reg & 3));
 }
-unsigned ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg) {
-    return priv->read_reg(priv, (enum ctu_can_fd_regs)(reg & ~1)) >> (8 * (reg & 1));
+unsigned ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg) {
+    return priv->read_reg(priv, (enum ctu_can_fd_can_registers)(reg & ~1)) >> (8 * (reg & 1));
 }
 /*
-void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint8_t val) {
+void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg, uint8_t val) {
     iowrite8(val, (uint8_t*)priv->mem_base + reg);
 }
-void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_regs reg, uint16_t val) {
+void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg, uint16_t val) {
     iowrite16(val, (uint8_t*)priv->mem_base + reg);
 }*/
 

@@ -284,9 +284,8 @@ entity core_top is
     ----------------------------------------------------------------------------
     -- Driving bus aliases
     ----------------------------------------------------------------------------
-    signal drv_set_ctr_val         :     std_logic_vector(31 downto 0);
-    signal drv_set_rx_ctr          :     std_logic;
-    signal drv_set_tx_ctr          :     std_logic;
+    signal drv_clr_rx_ctr          :     std_logic;
+    signal drv_clr_tx_ctr          :     std_logic;
     signal drv_int_loopback_ena    :     std_logic;
    
    
@@ -904,10 +903,8 @@ begin
     ----------------------------------------------------------------------------
     -- Driving bus aliases
     ----------------------------------------------------------------------------
-    drv_set_ctr_val       <=  drv_bus(DRV_SET_CTR_VAL_HIGH downto 
-                                      DRV_SET_CTR_VAL_LOW);
-    drv_set_rx_ctr        <=  drv_bus(DRV_SET_RX_CTR_INDEX);
-    drv_set_tx_ctr        <=  drv_bus(DRV_SET_TX_CTR_INDEX);
+    drv_clr_rx_ctr        <=  drv_bus(DRV_CLR_RX_CTR_INDEX);
+    drv_clr_tx_ctr        <=  drv_bus(DRV_CLR_TX_CTR_INDEX);
     drv_int_loopback_ena  <=  drv_bus(DRV_INT_LOOBACK_ENA_INDEX);
 
 
@@ -1124,20 +1121,17 @@ begin
             tx_counter           <= (OTHERS => '0');
             rx_counter           <= (OTHERS => '0');
         elsif rising_edge(clk_sys) then
-            tx_counter           <= tx_counter;
-            rx_counter           <= rx_counter;
 
-            if (drv_set_rx_ctr = '1') then
-                rx_counter        <=  drv_set_ctr_val;
+            if (drv_clr_rx_ctr = '1') then
+                rx_counter        <= (OTHERS => '0');
             elsif (rec_valid = '1') then
                 rx_counter        <=  std_logic_vector(to_unsigned(
                                         to_integer(unsigned(rx_counter)) + 1,
                                         rx_counter'length));
-
             end if;
 
-            if (drv_set_tx_ctr = '1') then
-                tx_counter        <=  drv_set_ctr_val;
+            if (drv_clr_tx_ctr = '1') then
+                tx_counter        <=  (OTHERS => '0');
             elsif (tran_valid = '1') then
                 tx_counter        <=  std_logic_vector(to_unsigned(
                                         to_integer(unsigned(tx_counter)) + 1,
@@ -1159,7 +1153,7 @@ begin
 
     stat_bus(STAT_BR_SHIFTED)                             <= br_shifted_int;
 
-    stat_bus(STAT_ERC_HIGH downto STAT_ERC_LOW)           <= err_capt;
+    stat_bus(STAT_ERC_ERR_TYPE_HIGH downto STAT_ERC_ERR_POS_LOW) <= err_capt;
 
     stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW)      
         <=  std_logic_vector(to_unsigned(oper_mode_type'pos(OP_State),2));
@@ -1268,7 +1262,7 @@ begin
 
     stat_bus(STAT_TRAN_TRIG)                                   <=  tran_trig;
     stat_bus(STAT_REC_TRIG)                                    <=  rec_trig;
-    stat_bus(STAT_ALC_HIGH downto STAT_ALC_LOW)                <=  alc;
+    stat_bus(STAT_ALC_ID_FIELD_HIGH downto STAT_ALC_BIT_LOW)   <=  alc;
 
     stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW)          <=  rx_counter;
     stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW)          <=  tx_counter;

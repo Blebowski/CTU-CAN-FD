@@ -82,6 +82,39 @@ add wave -label "Transceiver delay" $TCOMP/$SIG1.tr_del
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
 
+add wave -group "Memory reg debug" \
+	-label "Control registers cs" $TCOMP/$INST1/reg_comp/control_registers_cs \
+	-label "Control registers cs register" $TCOMP/$INST1/reg_comp/control_registers_cs_reg \
+	-label "Control registers rdata" $TCOMP/$INST1/reg_comp/control_registers_rdata \
+	-label "Control rgisters Reg sel" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/reg_sel \
+	-label "Controlt registers read data mask" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/read_data_mask_n \
+	-label "Control registers out" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_out_i \
+	-label "Control registers in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_in \
+	-label "Data mux Index" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/index \
+	-label "Data mux Index sat" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/index_sat \
+	-label "Selected data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/sel_data \
+	-label "Masked data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/masked_data \
+	-label "Data out enable" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/enable
+
+add wave -group "CTR_PRES_DEBUG" \
+    -label "Data in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/data_in \
+    -label "Data mask" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/data_mask \
+    -label "Auto clear" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/auto_clear \
+    -label "Write" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/write \
+    -label "cs" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/cs \
+    -label "w_be" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/w_be \
+    -label "Reg. value" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/reg_value \
+    -label "write select" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/wr_select \
+    -label "drv_ctr_sel" $TCOMP/$INST1/$CORE/faultConf_comp/drv_ctr_sel \
+    -label "rx counter" $TCOMP/$INST1/$CORE/faultConf_comp/rx_counter \
+    -label "tx counter" $TCOMP/$INST1/$CORE/faultConf_comp/tx_counter
+
+add wave -group "Read data signaller!" \
+    -label "Register select" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/cs \
+    -label "Read signal" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/read_signal \
+    -label "Byte enables" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/be
+
+
 add wave -group "RX Buffer (1)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
 	-label "Buffer size" -unsigned $TCOMP/$INST1/rx_buf_size \

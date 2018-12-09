@@ -510,6 +510,16 @@
         <spirit:displayName>Sup Range</spirit:displayName>
         <spirit:value spirit:format="bool" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.sup_range">true</spirit:value>
       </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="boolean">
+        <spirit:name>tx_time_sup</spirit:name>
+        <spirit:displayName>Tx Time Sup</spirit:displayName>
+        <spirit:value spirit:format="bool" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.tx_time_sup">true</spirit:value>
+      </spirit:modelParameter>
+      <spirit:modelParameter spirit:dataType="boolean">
+        <spirit:name>sup_be</spirit:name>
+        <spirit:displayName>Sup Be</spirit:displayName>
+        <spirit:value spirit:format="bool" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.sup_be">true</spirit:value>
+      </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>logger_size</spirit:name>
         <spirit:displayName>Logger Size</spirit:displayName>
@@ -817,6 +827,16 @@
       <spirit:name>sup_range</spirit:name>
       <spirit:displayName>Sup Range</spirit:displayName>
       <spirit:value spirit:format="bool" spirit:resolve="user" spirit:id="PARAM_VALUE.sup_range">true</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>tx_time_sup</spirit:name>
+      <spirit:displayName>Tx Time Sup</spirit:displayName>
+      <spirit:value spirit:format="bool" spirit:resolve="user" spirit:id="PARAM_VALUE.tx_time_sup">true</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+      <spirit:name>sup_be</spirit:name>
+      <spirit:displayName>Sup Be</spirit:displayName>
+      <spirit:value spirit:format="bool" spirit:resolve="user" spirit:id="PARAM_VALUE.sup_be">true</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>logger_size</spirit:name>
