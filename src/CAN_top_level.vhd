@@ -80,6 +80,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
 use work.CANcomponents.ALL;
+use work.cmn_lib.all;
 
 entity CAN_top_level is
     generic(

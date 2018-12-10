@@ -53,11 +53,11 @@ use ieee.std_logic_1164.all;
 entity majority_decoder_3 is
     port (
         signal input                : in    std_logic_vector(2 downto 0);
-        signal output               : in    std_logic
+        signal output               : out   std_logic
     );
 end majority_decoder_3;
 
-architecture rtl of majority_decoder is
+architecture rtl of majority_decoder_3 is
 begin
 
     with input select output <=
@@ -68,6 +68,7 @@ begin
         '0' when "100",
         '1' when "101",
         '1' when "110",
-        '1' when "111";
+        '1' when "111",
+        'X' when others;
 
 end rtl;

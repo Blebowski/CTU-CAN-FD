@@ -856,19 +856,6 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
-    -- Asynchronous resset synchroniser
-    ----------------------------------------------------------------------------
-    component rst_sync is
-    generic (
-        constant reset_polarity     :       std_logic
-    );    
-    port (
-        signal clk                  : in    std_logic;
-        signal arst                 : in    std_logic;
-        signal rst                  : out   std_logic
-    );
-
-    ----------------------------------------------------------------------------
     -- APB Interface
     ----------------------------------------------------------------------------
     component apb_ifc is

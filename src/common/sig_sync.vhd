@@ -61,7 +61,7 @@ entity sig_sync is
     );
 end sig_sync;
 
-architecture rtl of rst_sync is
+architecture rtl of sig_sync is
 
     -- Synchroniser registers
     signal rff                      :       std_logic;
