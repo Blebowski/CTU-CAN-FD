@@ -41,52 +41,33 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Two Flip-flop asynchronous signal synchroniser. Synthesizes as two DFFs.
---  Simulation behaviour is like so:
---   1. If t_setup and t_hold are not corrupted, two clock cycle delay is
---      introduced.
---   2. If t_setup or t_hold are corrupted, 
+--  General purpose majority decoder with 3 inputs.
 --------------------------------------------------------------------------------
 -- Revision History:
---    16.11.2018   Created file
+--    23.11.2018   Created file
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 
-entity sig_sync is
-    generic (
-        constant t_setup            :       time := 0 ps;
-        constant t_hold             :       time := 0 ps;
-        constant timing_check       :       boolean := true;
-    );
+entity majority_decoder_3 is
     port (
-        signal clk                  : in    std_logic;
-        signal async                : in    std_logic;
-        signal sync                 : out   std_logic
+        signal input                : in    std_logic_vector(2 downto 0);
+        signal output               : in    std_logic
     );
-end rst_sync;
+end majority_decoder_3;
 
-architecture rtl of rst_sync is
-
-    -- Synchroniser registers
-    signal rff                      :       std_logic;
-
+architecture rtl of majority_decoder is
 begin
 
-    -- Signal synchroniser process.
-    rst_sync_proc : process (clk)
-    begin
-        if (rising_edge(clk)) then
-            rff     <= async;
-            sync    <= rff;
-        end if;
-    end process;
-
-    -- Check for timing violations on second DFF
-    timing_check_proc : proces
-    begin
-        
-    end process;
+    with input select output <=
+        '0' when "000",
+        '0' when "001",
+        '0' when "010",
+        '1' when "011",
+        '0' when "100",
+        '1' when "101",
+        '1' when "110",
+        '1' when "111";
 
 end rtl;
