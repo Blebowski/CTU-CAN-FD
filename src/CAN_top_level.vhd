@@ -81,6 +81,7 @@ USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
 use work.CANcomponents.ALL;
 use work.CAN_FD_register_map.all;
+use work.cmn_lib.all;
 
 entity CAN_top_level is
     generic(

@@ -303,11 +303,6 @@ architecture rtl of canfd_registers is
     signal error_state            :     error_state_type;
     signal OP_State               :     oper_mode_type;
 
-    -- TODO: This will be removed upon merge with branch "Design decoupling"
-    type t_aux_txtb_state_vector is array (0 to TXT_BUFFER_COUNT - 1) of
-        std_logic_vector(3 downto 0);
-    signal txtb_state             : t_aux_txtb_state_vector;
-
 
     ---------------------------------------------------------------------------
     -- 
@@ -557,10 +552,10 @@ begin
     status_comb(RXS_IND mod 8) <= '1' when (OP_State = reciever) else
                                   '0';
   
-    status_comb(TXNF_IND mod 8) <= '1' when (txtb_fsms(0) = txt_empty or
-                                             txtb_fsms(1) = txt_empty or
-                                             txtb_fsms(2) = txt_empty or
-                                             txtb_fsms(3) = txt_empty)
+    status_comb(TXNF_IND mod 8) <= '1' when (txtb_state(0) = TXT_ETY or
+                                             txtb_state(1) = TXT_ETY or
+                                             txtb_state(2) = TXT_ETY or
+                                             txtb_state(3) = TXT_ETY)
                                        else
                                    '0';
   
@@ -1244,22 +1239,6 @@ begin
             txtb_state(3);
 
     end block tx_status_block;
-    
-    ---------------------------------------------------------------------------
-    -- Auxiliarly state decoders, this will be removed upon merge with
-    -- design decomposition branch
-    -- Encoding Buffer FSM to output values read from TXT Buffer status register.
-    ---------------------------------------------------------------------------
-    buf_dec_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
-        with txtb_fsms(i) select txtb_state(i) <= 
-            TXT_RDY   when txt_ready,
-            TXT_TRAN  when txt_tx_prog,
-            TXT_ABTP  when txt_ab_prog,
-            TXT_TOK   when txt_ok,
-            TXT_ERR   when txt_error,
-            TXT_ABT   when txt_aborted,
-            TXT_ETY   when txt_empty;
-    end generate;
 
 
     ---------------------------------------------------------------------------
