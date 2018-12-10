@@ -3895,7 +3895,7 @@ label{COMMAND
 \end_inset
 \end_layout
 \begin_layout Description
-Type: writeOnce
+Type: write-only
 \end_layout
 \begin_layout Description
 Address: 0x5
@@ -4012,19 +4012,19 @@ Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+TXFCRST\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+RXFCRST\end_layout
 
 \end_inset
 </cell>
@@ -4090,7 +4090,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -4098,7 +4098,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -4160,6 +4160,12 @@ CDO Clear data overrun flag. This command will clear data overrun flag on RX Buf
 \end_layout
 \begin_layout Description
 ERCRST Error counter reset. Issuing this command will erase TX, RX error counters after 128 conecutive ocurrences of 11 recessive bits. This command can be used as protocol compliant transition from Bus-off to Error Active. Upon completion, TX RX Error counters are erased and fault confinement state is set to Error Active.
+\end_layout
+\begin_layout Description
+RXFCRST Clear RX frames counter.
+\end_layout
+\begin_layout Description
+TXFCRST Clear TX frames counter.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -4761,7 +4767,7 @@ label{INT_STAT
 \end_inset
 \end_layout
 \begin_layout Description
-Type: read-write
+Type: read-writeOnce
 \end_layout
 \begin_layout Description
 Address: 0x8
@@ -5309,7 +5315,7 @@ label{INT_ENA_SET
 \end_inset
 \end_layout
 \begin_layout Description
-Type: read-write
+Type: read-writeOnce
 \end_layout
 \begin_layout Description
 Address: 0xC
@@ -6339,7 +6345,7 @@ label{INT_MASK_SET
 \end_inset
 \end_layout
 \begin_layout Description
-Type: read-write
+Type: read-writeOnce
 \end_layout
 \begin_layout Description
 Address: 0x14
@@ -25437,7 +25443,7 @@ Address: 0x64
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-
+Read data word from RX Buffer.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -29102,7 +29108,7 @@ label{RX_COUNTER
 \end_inset
 \end_layout
 \begin_layout Description
-Type: read-write
+Type: read-only
 \end_layout
 \begin_layout Description
 Address: 0x7C
@@ -30103,7 +30109,7 @@ label{TX_COUNTER
 \end_inset
 \end_layout
 \begin_layout Description
-Type: read-write
+Type: read-only
 \end_layout
 \begin_layout Description
 Address: 0x80
@@ -35018,7 +35024,7 @@ label{LOG_TRIG_CONFIG
 \end_inset
 \end_layout
 \begin_layout Description
-Type: 
+Type: read-write
 \end_layout
 \begin_layout Description
 Address: 0x500
@@ -36070,7 +36076,7 @@ label{LOG_CAPT_CONFIG
 \end_inset
 \end_layout
 \begin_layout Description
-Type: 
+Type: read-write
 \end_layout
 \begin_layout Description
 Address: 0x504
@@ -37131,7 +37137,7 @@ label{LOG_STATUS
 \end_inset
 \end_layout
 \begin_layout Description
-Type: 
+Type: read-only
 \end_layout
 \begin_layout Description
 Address: 0x508
@@ -37658,7 +37664,7 @@ label{LOG_POINTERS
 \end_inset
 \end_layout
 \begin_layout Description
-Type: 
+Type: read-only
 \end_layout
 \begin_layout Description
 Address: 0x50A
@@ -38176,7 +38182,7 @@ label{LOG_COMMAND
 \end_inset
 \end_layout
 \begin_layout Description
-Type: 
+Type: write-only
 \end_layout
 \begin_layout Description
 Address: 0x50C
@@ -38457,7 +38463,7 @@ label{LOG_CAPT_EVENT_1
 \end_inset
 \end_layout
 \begin_layout Description
-Type: 
+Type: read-only
 \end_layout
 \begin_layout Description
 Address: 0x510
@@ -39458,7 +39464,7 @@ label{LOG_CAPT_EVENT_2
 \end_inset
 \end_layout
 \begin_layout Description
-Type: 
+Type: read-only
 \end_layout
 \begin_layout Description
 Address: 0x514

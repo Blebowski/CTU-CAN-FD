@@ -448,6 +448,9 @@ package CANconstants is
 
     constant DRV_ERR_CTR_CLR  : natural := 429;
 
+    constant DRV_RXFCRST_INDEX : natural := 430;
+    constant DRV_TXFCRST_INDEX : natural := 431;
+
     -- Operation control FSM
     constant DRV_CAN_FD_ENA_INDEX    : natural := 460;
     constant DRV_RTR_PREF_INDEX      : natural := 461;
@@ -461,11 +464,8 @@ package CANconstants is
 
     constant DRV_ABORT_TRAN_INDEX : natural := 472;
 
-    constant DRV_SET_RX_CTR_INDEX : natural := 473;
-    constant DRV_SET_TX_CTR_INDEX : natural := 474;
-
-    constant DRV_SET_CTR_VAL_HIGH : natural := 506;
-    constant DRV_SET_CTR_VAL_LOW  : natural := 475;
+    constant DRV_CLR_RX_CTR_INDEX : natural := 473;
+    constant DRV_CLR_TX_CTR_INDEX : natural := 474;
 
     constant DRV_ACK_FORB_INDEX        : natural := 507;
     constant DRV_INT_LOOBACK_ENA_INDEX : natural := 508;
@@ -623,8 +623,11 @@ package CANconstants is
 
     constant STAT_BR_SHIFTED              : natural := 80;
 
-    constant STAT_ERC_LOW         : natural := 100;
-    constant STAT_ERC_HIGH        : natural := 107;
+    constant STAT_ERC_ERR_POS_LOW         : natural := 100;
+    constant STAT_ERC_ERR_POS_HIGH        : natural := 104;
+
+    constant STAT_ERC_ERR_TYPE_LOW        : natural := 105;
+    constant STAT_ERC_ERR_TYPE_HIGH       : natural := 107;
 
     constant STAT_ERROR_STATE_HIGH : natural := 109;
     constant STAT_ERROR_STATE_LOW  : natural := 108;
@@ -659,8 +662,11 @@ package CANconstants is
     constant STAT_REC_TRIG             : natural := 182;
 
     -- Arbitration lost capture
-    constant STAT_ALC_HIGH : natural := 296;
-    constant STAT_ALC_LOW  : natural := 289;
+    constant STAT_ALC_ID_FIELD_HIGH  : natural := 296;
+    constant STAT_ALC_ID_FIELD_LOW   : natural := 294;
+
+    constant STAT_ALC_BIT_HIGH  : natural := 293;
+    constant STAT_ALC_BIT_LOW  : natural := 289;
 
     -- Bus traffic registers
     constant STAT_RX_CTR_HIGH : natural := 219;
