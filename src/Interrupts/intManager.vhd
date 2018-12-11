@@ -67,6 +67,9 @@
 --                Thus TXT Buffer can properly filter commands, to avoid
 --                overflow of interrupts! Replaced "txt_hw_cmd" with 
 --                "txt_hw_cmd_int" signal.
+--   11.12.2018   Separated interrupt logic to dedicated sub-module. Added
+--                option to have configurable set/clear of interrupt by
+--                generic option...
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -75,6 +78,7 @@ USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
 use work.CAN_FD_register_map.all;
 use work.reduce_lib.all;
+use work.CANcomponents.all;
 
 entity intManager is
     generic(
@@ -152,40 +156,29 @@ entity intManager is
     ----------------------------------------------------------------------------
     -- Driving bus aliases 
     ----------------------------------------------------------------------------
-    signal drv_int_vect_clr         :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal drv_int_vect_clr       :     std_logic_vector(int_count - 1 downto 0);
 
-    signal drv_int_ena_set          :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal drv_int_ena_set        :     std_logic_vector(int_count - 1 downto 0);
 
-    signal drv_int_ena_clr          :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal drv_int_ena_clr        :     std_logic_vector(int_count - 1 downto 0);
 
-    signal drv_int_mask_set         :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal drv_int_mask_set       :     std_logic_vector(int_count - 1 downto 0);
 
-    signal drv_int_mask_clr         :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal drv_int_mask_clr       :     std_logic_vector(int_count - 1 downto 0);
 
     ----------------------------------------------------------------------------
     -- Internal registers and signals
     ----------------------------------------------------------------------------
 
-    signal int_ena_reg              :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal int_ena_i              :     std_logic_vector(int_count - 1 downto 0);
 
-    signal int_mask_reg             :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal int_mask_i             :     std_logic_vector(int_count - 1 downto 0);
 
-    signal int_vect_reg             :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal int_vect_i             :     std_logic_vector(int_count - 1 downto 0);
 
-    signal int_input_active         :     std_logic_vector(
-                                                int_count - 1 downto 0);
+    signal int_input_active       :     std_logic_vector(int_count - 1 downto 0);
 
-    -- Registered value of interrupt
-    constant zero_mask              :     std_logic_vector(
-                                                int_count - 1 downto 0)
+    constant zero_mask            :     std_logic_vector(int_count - 1 downto 0)
                                                 := (OTHERS => '0');
   
 end entity;
@@ -199,16 +192,26 @@ begin
     drv_int_ena_clr   <= drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW);
     drv_int_mask_set  <= drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW);
     drv_int_mask_clr  <= drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW);
-             
-    -- Register to output propagation
-    int_vector                          <= int_vect_reg;
-    int_mask                            <= int_mask_reg;
-    int_ena                             <= int_ena_reg;  
 
-    int_out  <= '0' when (int_vect_reg and int_ena_reg) = zero_mask else
+
+    ---------------------------------------------------------------------------      
+    -- Register to output propagation
+    ---------------------------------------------------------------------------
+    int_vector                          <= int_vect_i;
+    int_mask                            <= int_mask_i;
+    int_ena                             <= int_ena_i;
+
+
+    ---------------------------------------------------------------------------      
+    -- Driving Interrupt output when there is at least one active interrupt
+    -- enabled.
+    ---------------------------------------------------------------------------
+    int_out  <= '0' when (int_vect_i and int_ena_i) = zero_mask else
                 '1';
 
+    ---------------------------------------------------------------------------
     -- Interrupt register masking and enabling
+    ---------------------------------------------------------------------------
     int_input_active(BEI_IND)       <= error_valid;
     int_input_active(ALI_IND)       <= arbitration_lost;
     int_input_active(EPI_IND)       <= error_passive_changed;
@@ -222,46 +225,34 @@ begin
     int_input_active(RBNEI_IND)     <= not rx_empty;
     int_input_active(TXBHCI_IND)    <= or_reduce(txt_hw_cmd_int);
 
-    int_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            int_ena_reg   <= (OTHERS => '0');
-            int_mask_reg  <= (OTHERS => '0');
-            int_vect_reg  <= (OTHERS => '0');
-        elsif rising_edge(clk_sys) then
-          
-            for i in 0 to int_count - 1 loop
 
-                -- Interrupt enable
-                if (drv_int_ena_set(i) = '1') then
-                    int_ena_reg(i) <= '1';
-                elsif (drv_int_ena_clr(i) = '1') then
-                    int_ena_reg(i) <= '0';
-                else
-                    int_ena_reg(i) <= int_ena_reg(i);
-                end if;
+    ---------------------------------------------------------------------------
+    -- Interrupt module instances
+    ---------------------------------------------------------------------------
+    int_module_gen : for i in 0 to int_count - 1 generate
+        
+        int_module_comp : int_module
+        generic map(        
+            reset_polarity         => ACT_RESET,
+            clear_priority         => false
+        )
+        port map(
+            clk_sys                => clk_sys,
+            res_n                  => res_n,
 
-                -- Interrupt mask
-                if (drv_int_mask_set(i) = '1') then
-                    int_mask_reg(i) <= '1';
-                elsif (drv_int_mask_clr(i) = '1') then
-                    int_mask_reg(i) <= '0';
-                else
-                    int_mask_reg(i) <= int_mask_reg(i);
-                end if;
+            int_status_set         => int_input_active(i),
+            int_status_clear       => drv_int_vect_clr(i),
 
-                -- Interrupt status (vector)
-                if (int_input_active(i) = '1' and int_mask_reg(i) = '0') then
-                    int_vect_reg(i) <= '1';
-                elsif (drv_int_vect_clr(i) = '1') then
-                    int_vect_reg(i) <= '0';
-                else
-                    int_vect_reg(i) <= int_vect_reg(i); 
-                end if;
+            int_mask_set           => drv_int_mask_set(i),
+            int_mask_clear         => drv_int_mask_clr(i),
 
-            end loop;
+            int_ena_set            => drv_int_ena_set(i),
+            int_ena_clear          => drv_int_ena_clr(i),
 
-        end if;
-    end process;
+            int_status             => int_vect_i(i),
+            int_mask               => int_mask_i(i),
+            int_ena                => int_ena_i(i)
+        );  
+    end generate int_module_gen;
 
 end architecture;

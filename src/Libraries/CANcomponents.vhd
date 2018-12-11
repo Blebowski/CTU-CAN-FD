@@ -532,6 +532,34 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
+    -- Single Interrupt module
+    ----------------------------------------------------------------------------
+    component int_module is
+        generic(        
+            constant reset_polarity        :    std_logic := '0';
+            constant clear_priority        :    boolean := true
+        );
+        port(
+            signal clk_sys                :in   std_logic; --System Clock
+            signal res_n                  :in   std_logic; --Async Reset
+
+            signal int_status_set         :in   std_logic;
+            signal int_status_clear       :in   std_logic;
+
+            signal int_mask_set           :in   std_logic;
+            signal int_mask_clear         :in   std_logic;
+
+            signal int_ena_set            :in   std_logic;
+            signal int_ena_clear          :in   std_logic;
+
+            signal int_status             :out  std_logic;
+            signal int_mask               :out  std_logic;
+            signal int_ena                :out  std_logic
+        );  
+    end component;
+
+
+    ----------------------------------------------------------------------------
     -- CAN Core module
     ----------------------------------------------------------------------------
     component core_top is
