@@ -476,7 +476,7 @@ architecture rtl of CAN_top_level is
     -- Defining explicit architectures for used entites
     ----------------------------------------------------------------------------
     for reg_comp       : canfd_registers use entity work.canfd_registers(rtl);
-    for rx_buf_comp    : rxBuffer use entity work.rxBuffer(rtl);
+    for rx_buf_comp    : rx_buffer use entity work.rx_buffer(rtl);
     for tx_arb_comp    : txArbitrator use entity work.txArbitrator(rtl);
     for mes_filt_comp  : messageFilter use entity work.messageFilter(rtl);
     for int_man_comp   : intManager use entity work.intManager(rtl);
@@ -559,7 +559,7 @@ begin
     );
 
 
-    rx_buf_comp : rxBuffer
+    rx_buf_comp : rx_buffer
     generic map(
         buff_size            => rx_buffer_size
     )

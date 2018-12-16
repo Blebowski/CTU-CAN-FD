@@ -155,6 +155,8 @@
 --   31.8.2018    Changed reading of RAM to be synchronous to achieve BRAM
 --                inferrence on Xilinx! Added register "read_mem_word" to which
 --                RAM word is read.
+--  15.12.2018    1. Moved RX Buffer FSM to separate entity.
+--                2. Moved handling of memory pointers to separate entity
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -165,7 +167,7 @@ use work.CAN_FD_frame_format.all;
 use work.CAN_FD_register_map.all;
 use work.CANcomponents.all;
 
-entity rxBuffer is
+entity rx_buffer is
     generic(
 
         -- Only 2^k are allowed as buff_size. Memory adressing is in modular 
@@ -282,6 +284,10 @@ entity rxBuffer is
         -- Driving bus from registers
         signal drv_bus              :in     std_logic_vector(1023 downto 0)
     );
+end entity;
+
+
+architecture rtl of rx_buffer is
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -304,19 +310,9 @@ entity rxBuffer is
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
-    -- FIFO  Memory - Declaration and access
+    -- FIFO  Memory - Pointers
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
-
-    -- Memory Word data width
-    constant data_width             :       natural := 32;
-
-    -- Memory type
-    type rx_memory_type is array(0 to buff_size - 1) of 
-                    std_logic_vector(data_width - 1 downto 0); 
-
-    -- Memory declaration inferred in SRAM
-    signal memory                   :       rx_memory_type;
 
     -- Read Pointer (access from SW)
     signal read_pointer             :       natural range 0 to buff_size - 1;
@@ -343,6 +339,8 @@ entity rxBuffer is
     -- Data that will be written to the RX Buffer memory!
     signal memory_write_data        :       std_logic_vector(31 downto 0);
 
+    -- Number of free memory words available to SW after frame was committed.
+    signal rx_mem_free_int          :       natural range 0 to buff_size;
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -365,13 +363,6 @@ entity rxBuffer is
 
      -- RX Buffer is empty (no frame is stored in it)
     signal rx_empty_int             :       std_logic;
-
-    -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_int          :       natural range 0 to buff_size;
-
-    -- Number of free memory words calculated during frame storing, before
-    -- commit.
-    signal rx_mem_free_raw          :       natural range 0 to buff_size;
 
     -- Indicator of at least one free word in RX FIFO!
     signal is_free_word             :       boolean;
@@ -410,22 +401,42 @@ entity rxBuffer is
 
     -- Indicates that read occurred, and that it is valid (there is something
     -- to read), thus read pointer can be incremented.
-    signal read_increment           :       boolean;
-
-    -- Indicates that FSM is in a state which would like to perform write of a
-    -- word to RX Buffer memory!
-    signal write_raw_intent         :       boolean;
+    signal read_increment           :       std_logic;
 
     -- Indicates that "write_raw_intent" is OK (no overrun) and data can be
     -- truly written to the memory and raw pointer can be updated!
-    signal write_raw_OK             :       boolean;
+    signal write_raw_OK             :       std_logic;
+
+
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- RX Buffer FSM outputs
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+
+    -- Indicates that FSM is in a state which would like to perform write of a
+    -- word to RX Buffer memory!
+    signal write_raw_intent         :       std_logic;
 
     -- Indicates that FSM is in one of states for writing timestmap from end of
     -- frame to the memory.
-    signal write_extra_ts           :       boolean;
+    signal write_extra_ts           :       std_logic;
 
-    -- RX Buffer RAM read memory word
-    signal read_mem_word            :       std_logic_vector(31 downto 0);
+    -- Storing of extra timestamp is at the end.
+    signal store_extra_ts_end       :       std_logic;
+
+    -- Data write selector
+    signal data_selector            :       std_logic_vector(6 downto 0);
+
+    -- Signals that write pointer should be stored to extra write pointer
+    signal store_extra_wr_ptr       :       std_logic;
+
+    -- Increment extra write pointer
+    signal inc_extra_wr_ptr         :       std_logic;
+
+    -- Restart overrun flag upon start of new frame
+    signal reset_overrun_flag       :       std_logic;
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -440,12 +451,10 @@ entity rxBuffer is
     -- Combinational decoded frame format word from metadata.
     signal frame_form_w             :       std_logic_vector(31 downto 0);
 
-    -- FSM for storing the frame during the reception.
-    signal rx_fsm                   :       rx_buf_fsm_type;
-
     -- Internal timestamp captured for storing. Captured either in the
     -- beginning or end of frame. 
     signal timestamp_capture        :       std_logic_vector(63 downto 0);
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -465,12 +474,6 @@ entity rxBuffer is
     -- Read address (connected to read pointer)
     signal RAM_read_address         :       std_logic_vector(11 downto 0);
 
-
-
-end entity;
-
-
-architecture rtl of rxBuffer is
 begin
 
     ----------------------------------------------------------------------------
@@ -480,7 +483,7 @@ begin
     drv_read_start        <= drv_bus(DRV_READ_START_INDEX);
     drv_clr_ovr           <= drv_bus(DRV_CLR_OVR_INDEX);
     drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);
-    
+
 
     ----------------------------------------------------------------------------
     -- Propagating status registers on output
@@ -503,44 +506,98 @@ begin
     rx_empty              <= rx_empty_int;
 
 
+    ----------------------------------------------------------------------------
+    -- RX Buffer FSM component
+    ----------------------------------------------------------------------------
+    rx_buffer_fsm_comp : rx_buffer_fsm
+    port map(
+        clk_sys             => clk_sys,
+        res_n               => res_n,
+        store_metadata      => store_metadata,
+        store_data          => store_data,
+        rec_message_valid   => rec_message_valid,
+        rec_abort           => rec_abort,
+        sof_pulse           => sof_pulse,
+        drv_bus             => drv_bus,
+        write_raw_intent    => write_raw_intent,
+        write_extra_ts      => write_extra_ts,
+        store_extra_ts_end  => store_extra_ts_end,
+        data_selector       => data_selector,
+        store_extra_wr_ptr  => store_extra_wr_ptr,
+        inc_extra_wr_ptr    => inc_extra_wr_ptr,
+        reset_overrun_flag  => reset_overrun_flag
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- RX Buffer Memory pointers
+    ----------------------------------------------------------------------------
+    rx_buffer_pointers_comp : rx_buffer_pointers
+    generic map(
+        buff_size               => buff_size
+    )
+    port map(
+        clk_sys                 => clk_sys,
+        res_n                   => res_n,
+        rec_abort               => rec_abort,
+        commit_rx_frame         => commit_rx_frame,
+        write_raw_OK            => write_raw_OK,
+        commit_overrun_abort    => commit_overrun_abort,
+        store_extra_wr_ptr      => store_extra_wr_ptr,
+        inc_extra_wr_ptr        => inc_extra_wr_ptr,
+        read_increment          => read_increment,
+        drv_bus                 => drv_bus,
+        read_pointer            => read_pointer,
+        read_pointer_inc_1      => read_pointer_inc_1,
+        write_pointer           => write_pointer,
+        write_pointer_raw       => write_pointer_raw,
+        write_pointer_extra_ts  => write_pointer_extra_ts,
+        rx_mem_free_int         => rx_mem_free_int
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Final write pointer is multiplexed between "write_pointer_raw" for
+    -- regular writes and "write_pointer_extra_ts" for writes of timestamp
+    -- in the end of frame!
+    ----------------------------------------------------------------------------
+    memory_write_pointer   <= write_pointer_extra_ts when (write_extra_ts = '1')
+                                                     else
+                              write_pointer_raw;
+
+
+    ----------------------------------------------------------------------------
+    -- Memory data which are written depend on state of the FSM
+    ----------------------------------------------------------------------------
+    with data_selector select memory_write_data <=
+        frame_form_w                     when "0000001",
+        "000" & rec_ident_in             when "0000010",
+        timestamp_capture(31 downto 0)   when "0000100",
+        timestamp_capture(31 downto 0)   when "0001000",
+        timestamp_capture(63 downto 32)  when "0010000",
+        timestamp_capture(63 downto 32)  when "0100000",
+        store_data_word                  when "1000000",
+        (OTHERS => '0')                  when others;
+
 
     ----------------------------------------------------------------------------
     -- Signalling that read which came is valid (there is sth to read)
     ----------------------------------------------------------------------------
-    read_increment        <= true when (drv_read_start = '1' and
+    read_increment        <= '1' when (drv_read_start = '1' and
                                         rx_empty_int = '0')
                                   else
-                             false;
+                             '0';
 
-
-    ----------------------------------------------------------------------------
-    -- Signalling that FSM is writing the data to the memory
-    ----------------------------------------------------------------------------
-    write_raw_intent      <= true 
-                             when 
-                              ((rx_fsm = rxb_store_frame_format) or
-                               (rx_fsm = rxb_store_identifier) or
-                               (rx_fsm = rxb_store_beg_ts_low) or
-                               (rx_fsm = rxb_store_beg_ts_high) or
-                               ((rx_fsm = rxb_store_data) and store_data = '1'))
-                             else
-                             false;
-
-    write_extra_ts        <= true when ((rx_fsm = rxb_store_end_ts_low) or
-                                        (rx_fsm = rxb_store_end_ts_high)) and
-                                        (data_overrun_int = '0')
-                                  else
-                             false;
 
     ----------------------------------------------------------------------------
     -- Signalling that FSM may progress with the write (there is enough space
     -- in the buffer, nor any previous data were lost due to overrun)
     ----------------------------------------------------------------------------
-    write_raw_OK         <= true when (write_raw_intent and
+    write_raw_OK         <= '1' when (write_raw_intent = '1' and
                                        overrun_condition = false and
                                        data_overrun_int = '0')
-                                 else
-                            false;
+                                else
+                            '0';
 
     ----------------------------------------------------------------------------
     -- Store of new word can be executed only if there is space in the buffer.
@@ -551,8 +608,8 @@ begin
     -- pointers are equal, then memory must be full!
     ----------------------------------------------------------------------------
     is_free_word          <= false when (read_pointer = write_pointer_raw and
-                                        message_count > 0)
-                                  else
+                                         message_count > 0)
+                                   else
                              true;
 
     ----------------------------------------------------------------------------
@@ -563,7 +620,7 @@ begin
     --      for overrun!
     --  2. There is no free word in the memory remaining!
     ----------------------------------------------------------------------------
-    overrun_condition    <= true when (write_raw_intent and 
+    overrun_condition    <= true when (write_raw_intent = '1' and 
                                        (is_free_word = false))
                                  else
                             false;
@@ -576,33 +633,6 @@ begin
     rx_read_buff          <= RAM_data_out when (rx_empty_int = '0')
                                           else
                              (OTHERS => '0');
-
-
-    ----------------------------------------------------------------------------
-    -- Final write pointer is multiplexed between "write_pointer_raw" for
-    -- regular writes and "write_pointer_extra_ts" for writes of timestamp
-    -- in the end of frame!
-    ----------------------------------------------------------------------------
-    memory_write_pointer   <= write_pointer_extra_ts when 
-                                    ((rx_fsm = rxb_store_end_ts_low) or
-                                     (rx_fsm = rxb_store_end_ts_high))
-                                                    else
-                             write_pointer_raw;
-
-
-    ----------------------------------------------------------------------------
-    -- Memory data which are written depend on state of the FSM
-    ----------------------------------------------------------------------------
-    with rx_fsm select memory_write_data <=
-        frame_form_w                     when rxb_store_frame_format,
-        "000" & rec_ident_in             when rxb_store_identifier,
-        timestamp_capture(31 downto 0)   when rxb_store_beg_ts_low,
-        timestamp_capture(31 downto 0)   when rxb_store_end_ts_low,
-        timestamp_capture(63 downto 32)  when rxb_store_beg_ts_high,
-        timestamp_capture(63 downto 32)  when rxb_store_end_ts_high,
-        store_data_word                  when rxb_store_data,
-        (OTHERS => '0')                  when others;
-
 
 
     ----------------------------------------------------------------------------
@@ -638,7 +668,8 @@ begin
     frame_form_w(FDF_IND)                 <= rec_frame_type_in;
     frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
     frame_form_w(BRS_IND)                 <= rec_brs;
-    frame_form_w(ESI_RSV_IND)           <= rec_esi;
+    frame_form_w(ESI_RSV_IND)             <= rec_esi;
+
 
     ----------------------------------------------------------------------------
     -- RWCNT (Read word count is calculated like so:
@@ -675,29 +706,24 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Reading counter (read_frame_counter) which is loaded by RWCNT 
-    -- during read of frame format word. Then each next read decreases
-    -- the counter. When read counter reaches zero, message count is
-    -- decreased. If "commit_rx_frame" comes from RX FSM, "message_count"
-    -- is incremented. If both occur at the same time, "message_count"
-    -- does not change.
+    -- Reading counter (read_frame_counter) which is loaded by RWCNT during read
+    -- of frame format word. Then each next read decreases the counter. When 
+    -- read counter reaches zero, message count is decreased. If "commit_rx_frame" 
+    -- comes, "message_count" is incremented. If both occur at the same time
+    -- , "message_count" does not change.
     ----------------------------------------------------------------------------
     read_frame_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
         if (res_n = ACT_RESET or drv_erase_rx = '1') then
-            message_count                <= 0;
             read_frame_counter           <= 0;
 
         elsif (rising_edge(clk_sys)) then
-
-            message_count                <= message_count;
-            read_frame_counter           <= read_frame_counter;
 
             --------------------------------------------------------------------
             -- Reading frame by user when there is active read and there is
             -- something to read
             --------------------------------------------------------------------
-            if (read_increment) then
+            if (read_increment = '1') then
 
                 ----------------------------------------------------------------
                 -- During the read of FRAME_FORMAT word store the length
@@ -708,152 +734,58 @@ begin
                     read_frame_counter    <=
                         to_integer(unsigned(RAM_data_out(RWCNT_H downto
                                                             RWCNT_L)));
-
                 else
                     read_frame_counter <= read_frame_counter - 1;
                 end if;
-            end if;
-
-            --------------------------------------------------------------------
-            -- Manipulation of "message_count". When last word is read from
-            -- frame (read_frame_counter = 1 and read_increment), "message_count"
-            -- is decreased, when new frame is committed, message count
-            -- is increased. If both at the same time, no change since one frame
-            -- is added, next is removed!
-            --------------------------------------------------------------------
-            if (read_increment and (read_frame_counter = 1)) then
-                if (commit_rx_frame = '0') then
-                    message_count           <= message_count - 1;
-                end if;
-
-            elsif (commit_rx_frame = '1') then
-                message_count               <= message_count + 1;
             end if;
 
         end if;    
     end process;
 
 
-    ----------------------------------------------------------------------------
-    -- FSM for controlling storing of the frame to RX Buffer FIFO.
-    ----------------------------------------------------------------------------
-    rx_buf_fsm : process(clk_sys, res_n, drv_erase_rx)
-    begin     
-        if (res_n = ACT_RESET) or (drv_erase_rx = '1') then
-            rx_fsm              <= rxb_idle;
-          
-        elsif rising_edge(clk_sys) then
-  
-            case rx_fsm is
+    ---------------------------------------------------------------------------
+    -- Manipulation of "message_count". When last word is read from frame
+    -- (read_frame_counter = 1 and read_increment), "message_count" is
+    -- decreased, when new frame is committed, message count is increased.
+    -- If both at the same time, no change since one frame is added, next is 
+    -- removed!
+    ---------------------------------------------------------------------------
+    message_count_ctr_proc : process(res_n, clk_sys, drv_erase_rx)
+    begin
+        if (res_n = ACT_RESET or drv_erase_rx = '1') then
+            message_count <= 0;
 
-            --------------------------------------------------------------------
-            -- Idle, waiting for "store_metada" to start storing first 4 words.
-            --------------------------------------------------------------------
-            when rxb_idle =>
-                if (store_metadata = '1') then
-                    rx_fsm      <= rxb_store_frame_format;
+        elsif (rising_edge(clk_sys)) then
+
+            -- Read of last word, but no new commit
+            if ((read_increment = '1') and (read_frame_counter = 1)) then
+                if (commit_rx_frame = '0') then
+                    message_count           <= message_count - 1;
                 end if;
 
+            -- Commit of new frame
+            elsif (commit_rx_frame = '1') then
+                message_count               <= message_count + 1;
+            end if;
 
-            --------------------------------------------------------------------
-            -- Storing FRAME_FORM_W. Proceed execpt if error ocurrs.
-            --------------------------------------------------------------------
-            when rxb_store_frame_format =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else
-                    rx_fsm      <= rxb_store_identifier;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Storing IDENTIFIER_W.
-            -- Move to storing timestamp words. Note that if SW configured
-            -- timestamp from end of the frame, we dont have it yet! We store
-            -- invalid timestamp and later (if the frame is received OK), we
-            -- repeat the writes with timestamp captured at the end of frame!
-            --------------------------------------------------------------------
-            when rxb_store_identifier =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else
-                    rx_fsm      <= rxb_store_beg_ts_low;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Store TIMESTAMP_L_W from beginning of frame.
-            --------------------------------------------------------------------
-            when rxb_store_beg_ts_low =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else
-                    rx_fsm      <= rxb_store_beg_ts_high;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Store first TIMESTAMP_U_W from beginning of frame.
-            --------------------------------------------------------------------
-            when rxb_store_beg_ts_high =>
-                if (rec_abort = '1') then
-                    rx_fsm      <= rxb_idle;
-                else                
-                    rx_fsm      <= rxb_store_data;
-                end if;
-
-            --------------------------------------------------------------------
-            -- Store DATA_W. If error ocurrs, abort the storing. If storing is
-            -- finished, go to idle or again timestamp storing depending on the
-            -- timestamp option configuration. Note that now timestamp storing
-            -- is realized via different states!
-             --------------------------------------------------------------------
-            when rxb_store_data =>
-                if (rec_abort = '1') then 
-                    rx_fsm          <= rxb_idle;
-                elsif (rec_message_valid = '1') then
-                    if (drv_rtsopt = RTS_END) then
-                        rx_fsm      <= rxb_store_end_ts_low;
-                    else
-                        rx_fsm      <= rxb_idle; 
-                    end if;
-                end if;
-
-
-            --------------------------------------------------------------------
-            -- Store TIMESTAMP_L_W from end of frame.
-            --------------------------------------------------------------------
-            when rxb_store_end_ts_low =>
-                rx_fsm      <= rxb_store_end_ts_high;
-
-
-            --------------------------------------------------------------------
-            -- Store first TIMESTAMP_U_W from end of frame.
-            --------------------------------------------------------------------
-            when rxb_store_end_ts_high =>
-                rx_fsm      <= rxb_idle;
-
-            when others =>
-                report "Invalid RX Buffer state" severity error;
-            end case;
         end if;
     end process;
-
+    
 
     ----------------------------------------------------------------------------
     -- Commit RX Frame when last word was written and overrun did not occur!
     -- This can be either from "rxb_store_data" state or "rxb_store_end_ts_high"
     ----------------------------------------------------------------------------
-    commit_proc : process(res_n, clk_sys)
+    commit_proc : process(res_n, clk_sys, drv_erase_rx)
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = ACT_RESET or drv_erase_rx = '1') then
             commit_rx_frame       <= '0';
             commit_overrun_abort  <= '0';
 
         elsif (rising_edge(clk_sys)) then
 
             if (((rec_message_valid = '1' and drv_rtsopt = RTS_BEG) or
-                 (rx_fsm = rxb_store_end_ts_high)))
+                 (store_extra_ts_end = '1')))
             then
                 if (data_overrun_int = '0') then
                     commit_rx_frame         <= '1';
@@ -867,126 +799,6 @@ begin
 
         end if;
     end process;
-
-
-    ----------------------------------------------------------------------------
-    -- Process for pointer manipulation. Takes care of:
-    --   1. Incrementing "read_pointer" during read.
-    --   2. Incrementing "write_pointer_raw" during write.
-    --   3. Committing "write_pointer_raw" to "write_pointer" and vice versa.
-    --   4. Setting "write_pointer_extra_ts" for write of timestamp from end
-    --      of frame.
-    --   5. Update of "mem_free".
-    ----------------------------------------------------------------------------
-    pointer_proc : process(clk_sys, res_n, drv_erase_rx)
-    begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
-            read_pointer            <= 0;
-            write_pointer           <= 0;
-            write_pointer_raw       <= 0;
-            write_pointer_extra_ts  <= 0;
-
-            rx_mem_free_int         <= buff_size;
-            rx_mem_free_raw         <= buff_size;
-
-        elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Moving to next word by reading (if there is sth to read).
-            --------------------------------------------------------------------
-            if (read_increment) then
-                read_pointer        <= read_pointer_inc_1;
-            end if;
-
-            --------------------------------------------------------------------
-            -- Loading "write_pointer_raw" to  "write_pointer" when frame is
-            -- committed.
-            --------------------------------------------------------------------
-            if (commit_rx_frame = '1') then
-                write_pointer       <= write_pointer_raw;
-            end if;
-
-            --------------------------------------------------------------------
-            -- Updating "write_pointer_raw":
-            --      1. Increment when word is written to memory.
-            --      2. Reset when "rec_abort" is active (Error frame) or 
-            --         frame finished and overrun occurred meanwhile. Reset to
-            --         value of last commited write pointer.
-            --------------------------------------------------------------------
-            if (write_raw_OK) then
-                write_pointer_raw   <= (write_pointer_raw + 1) mod buff_size;
-                        
-            elsif (rec_abort = '1' or commit_overrun_abort = '1') then
-                write_pointer_raw   <= write_pointer;
-
-            else
-                write_pointer_raw   <= write_pointer_raw;
-            end if;
-
-            --------------------------------------------------------------------
-            -- Setting extra write pointer for write of timestamp from end of
-            -- frame...
-            -- First timestamp word is offset by 3 from committed write pointer.
-            -- Second one is offset by 4.
-            --------------------------------------------------------------------
-            if (rx_fsm = rxb_store_data) then
-                write_pointer_extra_ts    <= (write_pointer + 2) mod buff_size;
-
-            elsif (rx_fsm = rxb_store_end_ts_low) then
-                write_pointer_extra_ts    <= (write_pointer_extra_ts + 1) mod
-                                              buff_size;
-
-            else
-                write_pointer_extra_ts    <= write_pointer_extra_ts;
-            end if;
-
-
-            --------------------------------------------------------------------
-            -- Calculate free memory internally (raw)
-            --------------------------------------------------------------------
-            if (read_increment) then
-                if (rec_abort = '1' or commit_overrun_abort = '1') then
-                    rx_mem_free_raw <= rx_mem_free_int + 1;
-                elsif (not write_raw_OK) then
-                    rx_mem_free_raw <= rx_mem_free_raw + 1;
-                end if;
-            else
-                if (rec_abort = '1' or commit_overrun_abort = '1') then
-                    rx_mem_free_raw <= rx_mem_free_int;
-                elsif (write_raw_OK) then
-                    rx_mem_free_raw <= rx_mem_free_raw - 1;
-                end if;
-            end if;
-
-            --------------------------------------------------------------------
-            -- Calculate free memory for user:
-            --      1. Increment when user reads the frame.
-            --      2. Load RAW value when comitt occurs
-            --------------------------------------------------------------------
-            if (read_increment) then
-                if (commit_rx_frame = '1') then        
-                    rx_mem_free_int     <= rx_mem_free_raw + 1;
-                else
-                    rx_mem_free_int     <= rx_mem_free_int + 1;
-                end if;
-    
-            elsif (commit_rx_frame = '1') then
-                rx_mem_free_int         <= rx_mem_free_raw;
-            end if;
-
-        end if;
-    end process;
-
-
-    ----------------------------------------------------------------------------
-    -- Calculation of Incremented Read Pointer combinationally. This is used
-    -- for two things:
-    --  1. Actual Increment of Read pointer during read of RX_DATA.
-    --  2. Adressing RX Buffer RAM read side by incremented value to avoid one
-    --     clock cycle delay on "read_pointer" and thus allow bursts on read
-    --     from RX_DATA register!
-    ----------------------------------------------------------------------------
-    read_pointer_inc_1 <= (read_pointer + 1) mod buff_size;
 
 
     ----------------------------------------------------------------------------
@@ -1005,7 +817,7 @@ begin
             --------------------------------------------------------------------
             -- Internal Data overrun flag -> cleared by new frame!
             --------------------------------------------------------------------
-            if (rx_fsm = rxb_idle) then
+            if (reset_overrun_flag = '1') then
                 data_overrun_int    <= '0';
 
             elsif (overrun_condition) then
@@ -1053,7 +865,8 @@ begin
     );
 
     -- Memory written either on regular write or Extra timestamp write
-    RAM_write           <= '1' when (write_raw_OK or write_extra_ts) else
+    RAM_write           <= '1' when (write_raw_OK = '1' or write_extra_ts = '1')
+                               else
                            '0';
 
     -- Write address is given by write pointer
@@ -1069,7 +882,7 @@ begin
     ----------------------------------------------------------------------------
    RAM_read_address <= std_logic_vector(to_unsigned(
                         read_pointer_inc_1, RAM_read_address'length))
-                       when (read_increment) else
+                       when (read_increment = '1') else
                        std_logic_vector(to_unsigned(
                         read_pointer, RAM_read_address'length));
 
@@ -1096,58 +909,6 @@ begin
             (buff_size = 4096))
     report "Unsupported RX Buffer size! RX Buffer must be power of 2!"
         severity failure;
-
-
-    ----------------------------------------------------------------------------
-    -- Verification of commands applied on RX Buffer. Following must be always
-    -- kept, otherwise CAN Core would corrupt storing protocol:
-    --  1. "store_metadata" comes during "rx_fsm_idle".
-    --  2. "rec_message_valid" and "rec_data" may come ONLY during "store_data"!
-    --  3. "sof_pulse" should come only during "rx_fsm_idle".
-    --  4. "store_metadata", "store_data", "rec_message_valid", "rec_abort"
-    --      should be mutually exclusive!
-    ----------------------------------------------------------------------------
-    cmd_assert_proc : process(clk_sys)
-        variable cmd_join  : std_logic_vector(3 downto 0);
-    begin
-        -- pragma translate_off
-        if (rising_edge(clk_sys) and now /= 0 fs) then
-            if (store_metadata = '1' and rx_fsm /= rxb_idle) then
-            	-- LCOV_EXCL_START
-                report "RX Buffer: Store metadata command did NOT come during " &
-                       "'rx_buf_idle'!"severity error;
-            	-- LCOV_EXCL_STOP
-            end if;
-
-            if ((rec_message_valid = '1' or store_data = '1') and
-                 rx_fsm /= rxb_store_data)
-            then
-            	-- LCOV_EXCL_START
-                report "RX Buffer: Store data or finish storing did NOT come " &
-                        "during 'rec_data'" severity error; 
-            	-- LCOV_EXCL_STOP            
-            end if;
-
-            if (sof_pulse = '1' and rx_fsm /= rxb_idle) then
-                -- LCOV_EXCL_START
-                report "RX Buffer: SOF pulse should come during 'rx_fsm_idle'"
-                severity error;
-            	-- LCOV_EXCL_STOP
-            end if;
-
-            cmd_join := store_metadata & store_data & rec_message_valid &
-                        rec_abort; 
-            if (cmd_join /= "0000" and cmd_join /= "0001" and cmd_join /= "0010"
-                and cmd_join /= "0100" and cmd_join /= "1000")
-            then
-                -- LCOV_EXCL_START
-                report "RX Buffer: One-hot coding on RX Buffer commands " &
-                        "corrupted!" severity error;
-                -- LCOV_EXCL_STOP
-            end if;
-        end if;
-        -- pragma translate_on
-    end process;
 
 
     ----------------------------------------------------------------------------
@@ -1199,28 +960,5 @@ begin
         end if;
         -- pragma translate_on
     end process;
-
-
-    ----------------------------------------------------------------------------
-    -- Checking consistency of "mem_free" calculation.
-    -- If buffer is idle (no storing is in progress), and message_count is 0,
-    -- then the buffer should be completely empty, thus, mem_free should be
-    -- equal to size of buffer.
-    ----------------------------------------------------------------------------
-    --mem_free_calc_process : process(clk_sys)
-    --begin
-        -- pragma translate_off
-    --    if (rising_edge(clk_sys) and now /= 0 fs) then
-
---            if (rx_fsm = rxb_idle and message_count = 0 and rx_mem_free_int /=
---                buff_size and commit_rx_frame = '0')
---            then
---                report "Buffer should be empty, but 'rx_mem_free_raw' is " &
---                       "not equal to 'buff_size'" severity error;
---            end if;
---            
---        end if;
-        -- pragma translate_on
---    end process;
 
 end architecture;

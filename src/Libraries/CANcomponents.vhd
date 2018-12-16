@@ -244,7 +244,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- RX Buffer module
     ----------------------------------------------------------------------------
-    component rxBuffer is
+    component rx_buffer is
         generic(
             buff_size                   :       natural range 32 to 4096 := 32
         );
@@ -276,6 +276,58 @@ package CANcomponents is
             signal rx_read_buff         :out    std_logic_vector(31 downto 0);
             signal drv_bus              :in     std_logic_vector(1023 downto 0)
         );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- RX Buffer FSM
+    ----------------------------------------------------------------------------    
+    component rx_buffer_fsm is
+        port(
+            signal clk_sys              :in     std_logic; --System clock
+            signal res_n                :in     std_logic; --Async. reset
+            signal store_metadata       :in     std_logic;
+            signal store_data           :in     std_logic;
+            signal rec_message_valid    :in     std_logic;
+            signal rec_abort            :in     std_logic;
+            signal sof_pulse            :in     std_logic;
+            signal drv_bus              :in     std_logic_vector(1023 downto 0);
+            signal write_raw_intent     :out    std_logic;
+            signal write_extra_ts       :out    std_logic;
+            signal store_extra_ts_end   :out    std_logic;
+            signal data_selector        :out    std_logic_vector(6 downto 0);
+            signal store_extra_wr_ptr   :out    std_logic;
+            signal inc_extra_wr_ptr     :out    std_logic;
+            signal reset_overrun_flag   :out    std_logic
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
+    -- RX Buffer Pointers
+    ----------------------------------------------------------------------------    
+    component rx_buffer_pointers is
+    generic(
+        buff_size                     :       natural range 32 to 4096 := 32
+    );
+    port(
+        signal clk_sys                :in     std_logic; --System clock
+        signal res_n                  :in     std_logic; --Async. reset
+        signal rec_abort              :in     std_logic;
+        signal commit_rx_frame        :in     std_logic;
+        signal write_raw_OK           :in     std_logic;
+        signal commit_overrun_abort   :in     std_logic;
+        signal store_extra_wr_ptr     :in     std_logic;
+        signal inc_extra_wr_ptr       :in     std_logic;
+        signal read_increment         :in     std_logic;
+        signal drv_bus                :in     std_logic_vector(1023 downto 0);
+        signal read_pointer           :out    natural range 0 to buff_size - 1;
+        signal read_pointer_inc_1     :out    natural range 0 to buff_size - 1;
+        signal write_pointer          :out    natural range 0 to buff_size - 1;
+        signal write_pointer_raw      :out    natural range 0 to buff_size - 1;
+        signal write_pointer_extra_ts :out    natural range 0 to buff_size - 1;
+        signal rx_mem_free_int        :out    natural range 0 to buff_size
+    );
     end component;
 
 

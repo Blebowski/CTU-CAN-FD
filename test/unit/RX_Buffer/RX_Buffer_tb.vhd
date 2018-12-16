@@ -512,14 +512,14 @@ architecture rx_buf_unit_test of CAN_test is
         end loop;
     end procedure;
 
-  for rx_Buffer_comp : rxBuffer use entity work.rxBuffer(rtl);
+  for rx_Buffer_comp : rx_buffer use entity work.rx_buffer(rtl);
 
 begin
 
     ----------------------------------------------------------------------------
     -- Buffer component
     ----------------------------------------------------------------------------
-    rx_Buffer_comp : rxBuffer
+    rx_Buffer_comp : rx_buffer
     generic map(
         buff_size                => buff_size
     )
