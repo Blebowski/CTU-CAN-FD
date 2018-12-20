@@ -156,7 +156,7 @@ architecture bus_sync_unit_test of CAN_test is
 
 begin
 
-    bus_Sync_comp : busSync
+    bus_sampling_comp : bus_sampling
     GENERIC map(
         use_Sync              =>  true
     )

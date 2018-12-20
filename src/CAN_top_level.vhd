@@ -156,8 +156,9 @@ entity CAN_top_level is
         -------------------------------------------
         signal timestamp : in std_logic_vector(63 downto 0)
     );
+end entity CAN_top_level;
 
-
+architecture rtl of CAN_top_level is
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -468,23 +469,19 @@ entity CAN_top_level is
     -- Transceiver delay output
     signal trv_delay_out : std_logic_vector(15 downto 0);
 
-end entity CAN_top_level;
-
-architecture rtl of CAN_top_level is
 
     ----------------------------------------------------------------------------
     -- Defining explicit architectures for used entites
     ----------------------------------------------------------------------------
-    for reg_comp       : canfd_registers use entity work.canfd_registers(rtl);
-    for rx_buf_comp    : rx_buffer use entity work.rx_buffer(rtl);
-    for tx_arb_comp    : txArbitrator use entity work.txArbitrator(rtl);
-    for mes_filt_comp  : messageFilter use entity work.messageFilter(rtl);
-    for int_man_comp   : intManager use entity work.intManager(rtl);
-    for core_top_comp  : core_top use entity work.core_top(rtl);
-    for prescaler_comp : prescaler_v3 use entity work.prescaler_v3(rtl);
-    for bus_sync_comp  : busSync use entity work.busSync(rtl);
-    for rst_sync_comp  : rst_sync use entity work.rst_sync(rtl);
-    --for log_comp : CAN_logger use entity work.CAN_logger(rtl);
+    for memory_registers_comp   : memory_registers use entity work.memory_registers(rtl);
+    for rx_buffer_comp          : rx_buffer use entity work.rx_buffer(rtl);
+    for tx_arbitrator_comp      : tx_arbitrator use entity work.tx_arbitrator(rtl);
+    for frame_filters_comp      : frame_filters use entity work.frame_filters(rtl);
+    for int_manager_comp        : int_manager use entity work.int_manager(rtl);
+    for can_core_comp           : can_core use entity work.can_core(rtl);
+    for prescaler_comp          : prescaler use entity work.prescaler(rtl);
+    for bus_sampling_comp       : bus_sampling use entity work.bus_sampling(rtl);
+    for rst_sync_comp           : rst_sync use entity work.rst_sync(rtl);
 
 begin
 
@@ -503,7 +500,7 @@ begin
         rst             => res_n_sync
     );
 
-    reg_comp : canfd_registers
+    memory_registers_comp : memory_registers
     generic map(
         compType        => CAN_COMPONENT_TYPE,
         use_logger      => use_logger,
@@ -559,7 +556,7 @@ begin
     );
 
 
-    rx_buf_comp : rx_buffer
+    rx_buffer_comp : rx_buffer
     generic map(
         buff_size            => rx_buffer_size
     )
@@ -596,9 +593,8 @@ begin
 
 
 
-
     txt_buf_comp_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
-        txtBuffer_comp : txtBuffer
+        txt_buffer_comp : txt_buffer
         generic map(
             buf_count             => TXT_BUFFER_COUNT,
             ID                    => i
@@ -623,7 +619,7 @@ begin
     end generate;
 
 
-    tx_arb_comp : txArbitrator
+    tx_arbitrator_comp : tx_arbitrator
     generic map(
         buf_count               => TXT_BUFFER_COUNT
     )
@@ -649,7 +645,7 @@ begin
         timestamp              => timestamp
     );
 
-    mes_filt_comp : messageFilter
+    frame_filters_comp : frame_filters
     generic map(
         sup_filtA       => sup_filtA,
         sup_filtB       => sup_filtB,
@@ -683,7 +679,7 @@ begin
     rx_store_data_valid     <= rx_store_data and out_ident_valid;
     rec_message_store       <= rec_message_valid and out_ident_valid;
 
-    int_man_comp : intManager
+    int_manager_comp : int_manager
     generic map(
         int_count             => INT_COUNT
     )
@@ -709,7 +705,7 @@ begin
         int_mask              => int_mask
     );
 
-    core_top_comp : core_top
+    can_core_comp : can_core
     port map(
         clk_sys               => clk_sys,
         res_n                 => res_n_int,
@@ -769,7 +765,7 @@ begin
         sof_pulse             => sof_pulse
     );
 
-    prescaler_comp : prescaler_v3
+    prescaler_comp : prescaler
     port map(
         clk_sys              => clk_sys,
         res_n                => res_n_int,
@@ -795,7 +791,7 @@ begin
         sync_control         => sync_control
     );
 
-    bus_sync_comp : busSync
+    bus_sampling_comp : bus_sampling
     generic map (
         use_Sync             => use_sync
     )
@@ -826,8 +822,8 @@ begin
     );
 
 
-    LOG_GEN : if (use_logger) generate
-        log_comp : CAN_logger
+    event_logger_gen_true : if (use_logger) generate
+        event_logger_comp : event_logger
         generic map(
             memory_size         => logger_size
         )
@@ -849,16 +845,16 @@ begin
             bt_FSM              => bt_FSM_out,
             data_overrun        => rx_data_overrun
         );
-    end generate LOG_GEN;
+    end generate event_logger_gen_true;
 
-    LOG_GEN2 : if (use_logger = false) generate
+    event_logger_gen_false : if (not use_logger) generate
         loger_finished    <= '0';
         loger_act_data    <= (others => '0');
         log_write_pointer <= (others => '0');
         log_read_pointer  <= (others => '0');
         log_size          <= (others => '0');
 		log_state_out     <= config;
-    end generate LOG_GEN2;
+    end generate event_logger_gen_false;
 
     --Bit time clock output propagation
     time_quanta_clk <= clk_tq_nbt when sp_control = NOMINAL_SAMPLE else

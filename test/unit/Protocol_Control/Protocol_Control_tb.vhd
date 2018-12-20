@@ -806,7 +806,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
 begin
 
-    protocolControl_1_Comp : protocolControl
+    protocol_control_1_comp : protocol_control
     port map(
         clk_sys               => clk_sys,
         res_n                 => res_n,
@@ -880,7 +880,7 @@ begin
       );
 
 
-    protocolControl_2_Comp : protocolControl
+    protocol_control_2_comp : protocol_control
     port map(
         clk_sys               => clk_sys,
         res_n                 => res_n,

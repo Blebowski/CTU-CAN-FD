@@ -114,7 +114,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Registers
     ----------------------------------------------------------------------------
-    component canfd_registers is
+    component memory_registers is
         generic(
             constant compType      : std_logic_vector(3 downto 0) := CAN_COMPONENT_TYPE;
             constant use_logger    : boolean                      := true;
@@ -362,7 +362,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- TXT Buffer module
     ----------------------------------------------------------------------------
-    component txtBuffer is
+    component txt_buffer is
         generic(
             constant buf_count            :     natural range 1 to 8;
             constant ID                   :     natural := 1
@@ -392,7 +392,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- TXT Buffer FSM 
     ----------------------------------------------------------------------------
-    component txtBuffer_fsm is
+    component txt_buffer_fsm is
     generic(
         constant ID                   :     natural
     );
@@ -414,7 +414,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- TXT Arbitrator module
     ----------------------------------------------------------------------------
-    component txArbitrator is
+    component tx_arbitrator is
     generic(
         constant buf_count            :    natural range 1 to 8
     );
@@ -446,7 +446,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Priority decoder for TXT Buffer selection
     ----------------------------------------------------------------------------
-    component priorityDecoder is
+    component priority_decoder is
     generic(
         constant buf_count          :   natural range 1 to 8
     );
@@ -463,7 +463,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- TX Arbitrator FSM
     ----------------------------------------------------------------------------    
-    component txArbitrator_fsm is
+    component tx_arbitrator_fsm is
     port( 
         signal clk_sys                :in  std_logic;
         signal res_n                  :in  std_logic;
@@ -487,9 +487,9 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
-    -- Message filter module
+    -- Frame filters module
     ----------------------------------------------------------------------------
-    component messageFilter is
+    component frame_filters is
         generic(
             constant sup_filtA : boolean := true;
             constant sup_filtB : boolean := true;
@@ -512,7 +512,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Generic Bit Filter
     ----------------------------------------------------------------------------
-    component bitFilter is
+    component bit_filter is
     generic(
         constant width              :   natural;
         constant is_present         :   boolean
@@ -530,7 +530,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Range filter
     ----------------------------------------------------------------------------
-    component rangeFilter is
+    component range_filter is
     generic(
         constant width              :   natural;
         constant is_present         :   boolean        
@@ -548,7 +548,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Interrupt manager module
     ----------------------------------------------------------------------------
-    component intManager is
+    component int_manager is
         generic(
             constant int_count          :     natural range 0 to 32 := 11
         );
@@ -614,7 +614,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- CAN Core module
     ----------------------------------------------------------------------------
-    component core_top is
+    component can_core is
         port(
             signal clk_sys               : in  std_logic;
             signal res_n                 : in  std_logic;
@@ -679,7 +679,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Prescaler module
     ----------------------------------------------------------------------------
-    component prescaler_v3 is
+    component prescaler is
         port(
             signal clk_sys              : in  std_logic;
             signal res_n                : in  std_logic;
@@ -708,9 +708,9 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
-    -- Bus synchroniser module
+    -- Bus Sampling module
     ----------------------------------------------------------------------------
-    component busSync is
+    component bus_sampling is
         generic (
             use_Sync : boolean
         );
@@ -739,9 +739,9 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
-    -- CAN Logger module
+    -- Event Logger module
     ----------------------------------------------------------------------------
-    component CAN_logger is
+    component event_logger is
         generic(
             constant memory_size        :   natural := 16
         );
@@ -773,7 +773,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- CAN CRC module
     ----------------------------------------------------------------------------
-    component canCRC is
+    component can_crc is
         generic(
             constant crc15_pol : std_logic_vector(15 downto 0) := x"C599";
             constant crc17_pol : std_logic_vector(19 downto 0) := x"3685B";
@@ -796,7 +796,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Generic CRC calculation module
     ----------------------------------------------------------------------------
-    component CRC_calc is
+    component crc_calc is
     generic(
         constant crc_width      :     natural;
         constant reset_polarity :       std_logic := '0';
@@ -817,7 +817,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Bit Stuffing
     ----------------------------------------------------------------------------
-    component bitStuffing_v2 is
+    component bit_stuffing is
         port(
             signal clk_sys     : in  std_logic;
             signal res_n       : in  std_logic;
@@ -836,7 +836,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Bit Destuffing
     ----------------------------------------------------------------------------
-    component bitDestuffing is
+    component bit_destuffing is
         port(
             signal clk_sys            : in  std_logic;
             signal res_n              : in  std_logic;
@@ -855,9 +855,9 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
-    -- Operation control FSM
+    -- Operation control module
     ----------------------------------------------------------------------------
-    component operationControl is
+    component operation_control is
         port(
             signal clk_sys            : in  std_logic;
             signal res_n              : in  std_logic;
@@ -878,9 +878,9 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
-    -- Protocol Control FSM
+    -- Protocol Control module
     ----------------------------------------------------------------------------
-    component protocolControl is
+    component protocol_control is
         port(
             signal clk_sys               : in  std_logic;
             signal res_n                 : in  std_logic;
@@ -958,7 +958,7 @@ package CANcomponents is
     ----------------------------------------------------------------------------
     -- Fault confinement
     ----------------------------------------------------------------------------
-    component faultConf is
+    component fault_confinement is
         port(
             signal clk_sys               : in  std_logic;
             signal res_n                 : in  std_logic;

@@ -280,7 +280,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    CAN_logger_comp : CAN_logger
+    event_logger_comp : event_logger
     generic map(
         memory_size                =>  16 --Only 2^k possible!
     )

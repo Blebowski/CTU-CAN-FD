@@ -519,7 +519,7 @@ begin
     ----------------------------------------------------------------------------
     -- Buffer component
     ----------------------------------------------------------------------------
-    rx_Buffer_comp : rx_buffer
+    rx_buffer_comp : rx_buffer
     generic map(
         buff_size                => buff_size
     )

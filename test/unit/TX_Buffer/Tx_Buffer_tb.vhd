@@ -217,7 +217,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT - Create only one buffer instance
     ----------------------------------------------------------------------------
-    txt_Buf_comp : txtBuffer
+    txt_buffer_comp : txt_buffer
     generic map(
         buf_count               => 4,
         ID                      => 0

@@ -193,7 +193,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    txArbitrator_comp : txArbitrator
+    tx_arbitrator_comp : tx_arbitrator
     generic map(
         buf_count              => TXT_BUFFER_COUNT
     )

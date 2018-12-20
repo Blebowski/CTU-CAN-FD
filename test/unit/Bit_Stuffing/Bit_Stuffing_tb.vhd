@@ -632,7 +632,7 @@ architecture bit_stuffing_unit_test of CAN_test is
 
 begin
 
-    bitStufComp : bitStuffing_v2
+    bit_stuffing_comp : bit_stuffing
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
@@ -647,7 +647,7 @@ begin
     );
 
 
-    bitDestComp : bitDestuffing
+    bit_destuffing_comp : bit_destuffing
     PORT map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,

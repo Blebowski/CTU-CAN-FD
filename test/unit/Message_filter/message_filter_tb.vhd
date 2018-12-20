@@ -278,9 +278,9 @@ architecture mess_filt_unit_test of CAN_test is
 begin
 
     ----------------------------------------------------------------------------
-    -- Instance of the message filter
+    -- Instance of frame filters
     ----------------------------------------------------------------------------
-    messageFilter_comp : messageFilter
+    frame_filters_comp : frame_filters
     PORT map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,

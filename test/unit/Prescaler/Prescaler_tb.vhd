@@ -418,7 +418,7 @@ begin
     ----------------------------------------------------------------------------
     -- Instance of Prescaler
     ----------------------------------------------------------------------------
-    prescaler_comp : prescaler_v3
+    prescaler_comp : prescaler
     PORT map(
         clk_sys              =>  clk_sys,
         res_n                =>  res_n,

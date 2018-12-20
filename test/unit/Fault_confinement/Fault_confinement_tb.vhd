@@ -178,7 +178,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    faultConf_comp : faultConf
+    fault_confinement_comp : fault_confinement
     port map(
         clk_sys                => clk_sys,
         res_n                  => res_n,
