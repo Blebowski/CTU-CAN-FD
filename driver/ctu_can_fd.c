@@ -913,13 +913,14 @@ static const struct dev_pm_ops ctucan_dev_pm_ops = {
  * @irq:	Interrupt number
  * @ntxbufs:	Number of implemented Tx buffers
  * @can_clk_rate: Clock rate, if 0 then clock are taken from device node
+ * @pm_enable_call: Whether pm_runtime_enable should be called
  * @set_drvdata_fnc: Function to set network driver data for physical device
  *
  * Return: 0 on success and failure value on error
  */
 static int ctucan_probe_common(struct device *dev, void __iomem *addr,
               int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
-	      void (*set_drvdata_fnc)(struct device *dev,
+	      int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
 	                              struct net_device *ndev))
 {
 	struct ctucan_priv *priv;
@@ -976,7 +977,8 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	priv->p.write_reg = ctu_can_fd_write32;
 	priv->p.read_reg = ctu_can_fd_read32;
 
-	pm_runtime_enable(dev);
+	if (pm_enable_call)
+		pm_runtime_enable(dev);
 	ret = pm_runtime_get_sync(dev);
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
@@ -991,7 +993,7 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 		if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) &
 		              0xFFFF) != CTU_CAN_FD_ID) {
 			netdev_err(ndev, "CTU_CAN_FD signature not found\n");
-			goto err_pmdisable;
+			goto err_disableclks;
 		}
 	}
 
@@ -1022,13 +1024,16 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 err_disableclks:
 	pm_runtime_put(priv->dev);
 err_pmdisable:
-	pm_runtime_disable(dev);
+	if (pm_enable_call)
+		pm_runtime_disable(dev);
 err_free:
 	free_candev(ndev);
 	return ret;
 }
 
-static void ctucan_set_drvdata_platform(struct device *dev,
+#ifdef CONFIG_OF
+
+static void ctucan_platform_set_drvdata(struct device *dev,
                                        struct net_device *ndev)
 {
   struct platform_device *pdev = container_of(dev, struct platform_device, dev);
@@ -1036,7 +1041,7 @@ static void ctucan_set_drvdata_platform(struct device *dev,
 }
 
 /**
- * ctucan_probe - Platform registration call
+ * ctucan_platform_probe - Platform registration call
  * @pdev:	Handle to the platform device structure
  *
  * This function does all the memory allocation and registration for the CAN
@@ -1076,14 +1081,14 @@ static int ctucan_platform_probe(struct platform_device *pdev)
 	ntxbufs = 4;
 
         ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 0,
-	      ctucan_set_drvdata_platform);
+	                          1, ctucan_platform_set_drvdata);
 
 err:
 	return ret;
 }
 
 /**
- * ctucan_remove - Unregister the device after releasing the resources
+ * ctucan_platform_remove - Unregister the device after releasing the resources
  * @pdev:	Handle to the platform device structure
  *
  * This function frees all the resources allocated to the device.
@@ -1123,6 +1128,147 @@ static struct platform_driver ctucanfd_driver = {
 };
 
 module_platform_driver(ctucanfd_driver);
+
+#endif /*CONFIG_OF*/
+
+#ifdef CONFIG_PCI
+
+#include <linux/pci.h>
+
+static void ctucan_pci_set_drvdata(struct device *dev,
+                                       struct net_device *ndev)
+{
+  struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
+  pci_set_drvdata(pdev, ndev);
+}
+
+/**
+ * ctucan_pci_probe - PCI registration call
+ * @pdev:	Handle to the pci device structure
+ *
+ * This function does all the memory allocation and registration for the CAN
+ * device.
+ *
+ * Return: 0 on success and failure value on error
+ */
+static int ctucan_pci_probe(struct pci_dev *pdev,
+			    const struct pci_device_id *ent)
+{
+	struct device	*dev = &pdev->dev;
+	void __iomem *addr;
+	int ret;
+	unsigned int ntxbufs;
+	int irq;
+
+	ret = pci_enable_device(pdev);
+	if (ret) {
+		dev_err(dev, "pci_enable_device FAILED\n");
+		goto err;
+	}
+
+	ret = pci_request_regions(pdev, KBUILD_MODNAME);
+	if (ret) {
+		dev_err(dev, "pci_request_regions FAILED\n");
+		goto err_disable_device;
+	}
+
+	ret = pci_enable_msi(pdev);
+	if (!ret) {
+		dev_info(dev, "MSI enabled\n");
+		pci_set_master(pdev);
+	}
+
+	dev_info(dev, "ctucan BAR0 0x%08llx 0x%08llx\n",
+	        (long long)pci_resource_start(pdev, 0),
+		(long long)pci_resource_len(pdev,0));
+
+	dev_info(dev, "ctucan BAR1 0x%08llx 0x%08llx\n",
+	        (long long)pci_resource_start(pdev, 1),
+		(long long)pci_resource_len(pdev,1));
+
+	addr = pci_iomap(pdev, 1, pci_resource_len(pdev, 1));
+	if (!addr) {
+		dev_err(dev, "PCI BAR 1 cannot be mapped\n");
+		ret = -ENOMEM;
+		goto err_release_regions;
+	}
+
+	irq = pdev->irq;
+
+	ntxbufs = 4;
+
+        ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
+	      0, ctucan_pci_set_drvdata);
+	if (ret >= 0)
+		return ret;
+
+	ret = -ENODEV;
+
+	pci_iounmap(pdev, addr);
+err_release_regions:
+	pci_disable_msi(pdev);
+	pci_clear_master(pdev);
+	pci_release_regions(pdev);
+err_disable_device:
+	pci_disable_device(pdev);
+err:
+	return ret;
+}
+
+/**
+ * ctucan_pci_remove - Unregister the device after releasing the resources
+ * @pdev:	Handle to the pci device structure
+ *
+ * This function frees all the resources allocated to the device.
+ * Return: 0 always
+ */
+static void ctucan_pci_remove(struct pci_dev *pdev)
+{
+	struct net_device *ndev = pci_get_drvdata(pdev);
+	struct ctucan_priv *priv = NULL;
+	netdev_dbg(ndev, "ctucan_remove");
+
+	if (ndev == NULL) {
+		dev_err(&pdev->dev, "ctucan  ndev is NULL\n");
+	} else {
+		priv = netdev_priv(ndev);
+		unregister_candev(ndev);
+	}
+	if (priv == NULL) {
+		dev_err(&pdev->dev, "ctucan priv is NULL\n");
+	} else {
+		netif_napi_del(&priv->napi);
+	}
+	if (ndev != NULL)
+		free_candev(ndev);
+
+	if (priv != NULL)
+		pci_iounmap(pdev, priv->p.mem_base);
+	pci_disable_msi(pdev);
+	pci_clear_master(pdev);
+	pci_release_regions(pdev);
+	pci_disable_device(pdev);
+}
+
+#define CTU_CAN_FD_DEVICE_ID 0xCAFD
+
+static SIMPLE_DEV_PM_OPS(ctucan_pci_pm_ops, ctucan_suspend, ctucan_resume);
+
+static const struct pci_device_id ctucan_pci_tbl[] = {
+	{PCI_VDEVICE(ALTERA, CTU_CAN_FD_DEVICE_ID)},
+	{},
+};
+static struct pci_driver ctucan_pci_driver = {
+	.name = KBUILD_MODNAME,
+	.id_table = ctucan_pci_tbl,
+	.probe = ctucan_pci_probe,
+	.remove = ctucan_pci_remove,
+	.driver.pm = &ctucan_pci_pm_ops,
+};
+
+module_pci_driver(ctucan_pci_driver);
+
+#endif /*CONFIG_PCI*/
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Martin Jerabek");
