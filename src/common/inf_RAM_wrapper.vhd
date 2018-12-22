@@ -151,8 +151,13 @@ begin
         ram_read_process : process(res_n, clk_sys)
         begin
             if (res_n = reset_polarity) then
-                data_out <= (OTHERS => '0');
-               
+
+                -- pragma translate_off
+                if (simulation_reset) then                            
+                    data_out <= (OTHERS => '0');
+                end if;
+                -- pragma translate_on
+
             elsif (rising_edge(clk_sys)) then
                 data_out <= int_read_data;
                 
