@@ -83,9 +83,9 @@ package cmn_lib is
 
 
     ----------------------------------------------------------------------------
-    -- Shift register
+    -- Shift register with preload
     ----------------------------------------------------------------------------
-    component shift_reg is
+    component shift_reg_preload is
         generic (
             constant reset_polarity     :       std_logic;
             constant reset_value        :       std_logic_vector;
@@ -102,6 +102,27 @@ package cmn_lib is
             signal reg_stat             : out   std_logic_vector(width - 1 downto 0);
             signal output               : out   std_logic
         );
+    end component shift_reg_preload;
+
+
+    ----------------------------------------------------------------------------
+    -- Shift register
+    ----------------------------------------------------------------------------
+    component shift_reg is
+        generic (
+            constant reset_polarity     :       std_logic;
+            constant reset_value        :       std_logic_vector;
+            constant width              :       natural;
+            constant shift_down         :       boolean
+        );
+        port (
+            signal clk                  : in    std_logic;
+            signal res_n                : in    std_logic;
+            signal input                : in    std_logic;
+            signal enable               : in    std_logic;
+            signal reg_stat             : out   std_logic_vector(width - 1 downto 0);
+            signal output               : out   std_logic
+        );
     end component shift_reg;
 
 
@@ -114,6 +135,26 @@ package cmn_lib is
             signal output               : out   std_logic
         );
     end component majority_decoder_3;
+
+
+    ----------------------------------------------------------------------------
+    -- Simple DFF with configurable width with asynchronous reset.
+    ----------------------------------------------------------------------------
+    component dff_arst is
+    generic (
+        constant reset_polarity     :       std_logic;
+        constant rst_val            :       std_logic
+    );    
+    port (
+        signal arst                 : in    std_logic;
+        signal clk                  : in    std_logic;
+
+        signal input                : in    std_logic;
+        signal load                 : in    std_logic;
+        signal output               : out   std_logic
+    );
+    end component dff_arst;
+
 
 
 end package cmn_lib;

@@ -50,7 +50,7 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
-entity shift_reg is
+entity shift_reg_preload is
     generic (
         constant reset_polarity     :       std_logic;
         constant reset_value        :       std_logic_vector;
@@ -72,6 +72,12 @@ entity shift_reg is
         -- Input to a shift register        
         signal input                : in    std_logic;
 
+        -- Preload signal
+        signal preload              : in    std_logic;
+
+        -- Value to be preloaded to the shift register
+        signal preload_val          : in    std_logic_vector(width - 1 downto 0);
+
         -- Enable for shift register. When enabled, shifted each clock, when
         -- disabled, register keeps its state.
         signal enable               : in    std_logic;
@@ -82,9 +88,9 @@ entity shift_reg is
         -- Register output
         signal output               : out   std_logic
     );
-end shift_reg;
+end shift_reg_preload;
 
-architecture rtl of shift_reg is
+architecture rtl of shift_reg_preload is
 
     -- Internal shift register DFFs
     signal shift_regs               :       std_logic_vector(width - 1 downto 0);
@@ -116,7 +122,9 @@ begin
             shift_regs <= reset_value;
 
         elsif (rising_edge(clk)) then
-            if (enable = '1') then
+            if (preload = '1') then
+                shift_regs <= preload_val;
+            elsif (enable = '1') then
                 shift_regs <= next_shift_reg_val;
             end if;
         end if;

@@ -57,6 +57,8 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    11.12.2018   Created file
+--    20.12.2018   Re-worked Interrupt mask and Interrupt enable for better
+--                 synthesis.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -104,8 +106,13 @@ end entity;
 
 architecture rtl of int_module is
 
+    -- Internal values 
     signal int_mask_i               : std_logic;
     signal int_ena_i                : std_logic;
+
+    -- Interrupt mask handling signals
+    signal int_mask_load            : std_logic;
+    signal int_mask_next            : std_logic;
 
 begin
 
@@ -162,6 +169,7 @@ begin
     ------------------------------------------------------------------------
     -- Interrupt mask
     ------------------------------------------------------------------------
+
     int_mask_proc : process(res_n, clk_sys)
     begin
         if (res_n = reset_polarity) then
@@ -169,17 +177,18 @@ begin
 
         elsif rising_edge(clk_sys) then
           
-            -- Setting Interrupt Mask
-            if (int_mask_set = '1') then
-                int_mask_i <= '1';
-
-            -- Clearing Interrupt Mask
-            elsif (int_mask_clear = '1') then
-                int_mask_i <= '0';
-
+            -- Setting / Clearing Interrupt Mask
+            if (int_mask_load = '1') then
+                int_mask_i <= int_mask_next;
             end if;
+
         end if;
     end process;
+
+    int_mask_load        <= int_mask_set or int_mask_clear;
+    int_mask_next        <= '1' when (int_mask_set = '1')
+                                else
+                            '0';
 
 
     ------------------------------------------------------------------------

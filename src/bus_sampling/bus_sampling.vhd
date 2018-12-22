@@ -287,6 +287,11 @@ architecture rtl of bus_sampling is
     signal trv_meas_running          :     std_logic;    
     signal trv_meas_to_restart       :     std_logic;
 
+    -- Reset for shift registers. This is used instead of shift register with
+    -- preload to lower the resource usage! Resetting and preloading to the
+    -- same value can be merged into just resetting by OR of sources
+    signal shift_regs_res_n          :     std_logic;
+
 begin
     
     ---------------------------------------------------------------------------
@@ -473,6 +478,15 @@ begin
 
 
     ----------------------------------------------------------------------------
+    -- Reset for shift registers for secondary sampling point
+    ----------------------------------------------------------------------------
+    shift_regs_res_n <= ACT_RESET when (res_n = ACT_RESET) or
+                                       (ssp_reset = '1')
+                                  else
+                        not ACT_RESET;
+
+
+    ----------------------------------------------------------------------------
     -- Shift register for secondary sampling point. Normal sample point trigger
     -- is shifted into shift register to generate delayed sampling point.
     ----------------------------------------------------------------------------
@@ -485,11 +499,11 @@ begin
     )
     port map(
         clk                => clk_sys,
-        res_n              => res_n,
+        res_n              => shift_regs_res_n,
 
         input              => sample_dbt,
-        preload            => ssp_reset,
-        preload_val        => SSP_SHIFT_RST_VAL,
+        --preload            => ssp_reset,
+        --preload_val        => SSP_SHIFT_RST_VAL,
         enable             => '1',
 
         reg_stat           => sample_sec_shift,
@@ -509,12 +523,12 @@ begin
     )
     port map(
         clk                => clk_sys,
-        res_n              => res_n,
+        res_n              => shift_regs_res_n,
 
 
         input              => data_tx,
-        preload            => ssp_reset,
-        preload_val        => TX_DATA_SHIFT_RST_VAL,
+        --preload            => ssp_reset,
+        --preload_val        => TX_DATA_SHIFT_RST_VAL,
         enable             => '1',
 
         reg_stat           => tx_data_shift,
@@ -575,7 +589,7 @@ begin
     -- desired then majority out of whole shift register is selected as sampled
     -- value!
     ----------------------------------------------------------------------------
-    trs_shift_reg_comp : shift_reg
+    trs_shift_reg_comp : shift_reg_preload
     generic map(
         reset_polarity     => ACT_RESET,
         reset_value        => "000",
