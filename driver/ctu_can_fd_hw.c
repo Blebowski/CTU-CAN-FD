@@ -55,12 +55,12 @@ void ctu_can_fd_write32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_regis
 
 u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
 {
-	return ioread32((const char *)priv->mem_base + reg);
+	return ioread32((char *)priv->mem_base + reg);
 }
 
 u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
 {
-	return ioread32be((const char *)priv->mem_base + reg);
+	return ioread32be((char *)priv->mem_base + reg);
 }
 
 /*
