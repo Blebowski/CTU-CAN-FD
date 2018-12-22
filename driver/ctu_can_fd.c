@@ -903,37 +903,28 @@ static const struct dev_pm_ops ctucan_dev_pm_ops = {
 
 
 /**
- * ctucan_probe - Platform registration call
- * @pdev:	Handle to the platform device structure
+ * ctucan_probe_common - Device type independent registration call
  *
  * This function does all the memory allocation and registration for the CAN
  * device.
  *
+ * @dev:	Handle to the generic device structure
+ * @addr:	Base address of CTU CAN FD core address
+ * @irq:	Interrupt number
+ * @ntxbufs:	Number of implemented Tx buffers
+ * @can_clk_rate: Clock rate, if 0 then clock are taken from device node
+ * @set_drvdata_fnc: Function to set network driver data for physical device
+ *
  * Return: 0 on success and failure value on error
  */
-static int ctucan_probe(struct platform_device *pdev)
+static int ctucan_probe_common(struct device *dev, void __iomem *addr,
+              int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
+	      void (*set_drvdata_fnc)(struct device *dev,
+	                              struct net_device *ndev))
 {
-	struct resource *res; /* IO mem resources */
-	struct net_device *ndev;
 	struct ctucan_priv *priv;
-	void __iomem *addr;
+	struct net_device *ndev;
 	int ret;
-	unsigned int ntxbufs;
-
-	/* Get the virtual base address for the device */
-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-	addr = devm_ioremap_resource(&pdev->dev, res);
-	if (IS_ERR(addr)) {
-		ret = PTR_ERR(addr);
-		goto err;
-	}
-
-	/*
-	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth", &tx_max);
-	if (ret < 0)
-		goto err;
-	*/
-	ntxbufs = 4;
 
 	/* Create a CAN device instance */
 	ndev = alloc_candev(sizeof(struct ctucan_priv), ntxbufs);
@@ -942,7 +933,7 @@ static int ctucan_probe(struct platform_device *pdev)
 
 	priv = netdev_priv(ndev);
 	priv->txb_mask = ntxbufs-1;
-	priv->dev = &pdev->dev;
+	priv->dev = dev;
 	priv->can.bittiming_const = &ctu_can_fd_bit_timing_max;
 	priv->can.data_bittiming_const = &ctu_can_fd_bit_timing_data_max;
 	priv->can.do_set_mode = ctucan_do_set_mode;
@@ -963,54 +954,64 @@ static int ctucan_probe(struct platform_device *pdev)
 	priv->p.mem_base = addr;
 
 	/* Get IRQ for the device */
-	ndev->irq = platform_get_irq(pdev, 0);
+	ndev->irq = irq;
 	ndev->flags |= IFF_ECHO;	/* We support local echo */
 
-	platform_set_drvdata(pdev, ndev);
-	SET_NETDEV_DEV(ndev, &pdev->dev);
+	if (set_drvdata_fnc != NULL)
+		set_drvdata_fnc(dev, ndev);
+	SET_NETDEV_DEV(ndev, dev);
 	ndev->netdev_ops = &ctucan_netdev_ops;
 
 	/* Getting the CAN can_clk info */
-	priv->can_clk = devm_clk_get(&pdev->dev, NULL);
-	if (IS_ERR(priv->can_clk)) {
-		dev_err(&pdev->dev, "Device clock not found.\n");
-		ret = PTR_ERR(priv->can_clk);
-		goto err_free;
+	if (can_clk_rate == 0) {
+		priv->can_clk = devm_clk_get(dev, NULL);
+		if (IS_ERR(priv->can_clk)) {
+			dev_err(dev, "Device clock not found.\n");
+			ret = PTR_ERR(priv->can_clk);
+			goto err_free;
+		}
+		can_clk_rate = clk_get_rate(priv->can_clk);
 	}
 
 	priv->p.write_reg = ctu_can_fd_write32;
 	priv->p.read_reg = ctu_can_fd_read32;
 
-	pm_runtime_enable(&pdev->dev);
-	ret = pm_runtime_get_sync(&pdev->dev);
+	pm_runtime_enable(dev);
+	ret = pm_runtime_get_sync(dev);
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
 			__func__, ret);
 		goto err_pmdisable;
 	}
 
-	if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) & 0xFFFF) != CTU_CAN_FD_ID) {
+	if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) &
+	                    0xFFFF) != CTU_CAN_FD_ID) {
 		priv->p.write_reg = ctu_can_fd_write32_be;
 		priv->p.read_reg = ctu_can_fd_read32_be;
+		if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) &
+		              0xFFFF) != CTU_CAN_FD_ID) {
+			netdev_err(ndev, "CTU_CAN_FD signature not found\n");
+			goto err_pmdisable;
+		}
 	}
 
 	ret = ctucan_reset(ndev);
 	if (ret < 0)
 		goto err_pmdisable;
 
-	priv->can.clock.freq = clk_get_rate(priv->can_clk);
+	priv->can.clock.freq = can_clk_rate;
 
 	netif_napi_add(ndev, &priv->napi, ctucan_rx_poll, NAPI_POLL_WEIGHT);
 
 	ret = register_candev(ndev);
 	if (ret) {
-		dev_err(&pdev->dev, "fail to register failed (err=%d)\n", ret);
+		dev_err(dev, "fail to register failed (err=%d)\n", ret);
 		goto err_disableclks;
 	}
 
 	devm_can_led_init(ndev);
 
-	pm_runtime_put(&pdev->dev);
+	pm_runtime_put(dev);
 
 	netdev_dbg(ndev, "mem_base=0x%p irq=%d clock=%d, txb mask:%d\n",
 			priv->p.mem_base, ndev->irq, priv->can.clock.freq,
@@ -1021,9 +1022,62 @@ static int ctucan_probe(struct platform_device *pdev)
 err_disableclks:
 	pm_runtime_put(priv->dev);
 err_pmdisable:
-	pm_runtime_disable(&pdev->dev);
+	pm_runtime_disable(dev);
 err_free:
 	free_candev(ndev);
+	return ret;
+}
+
+static void ctucan_set_drvdata_platform(struct device *dev,
+                                       struct net_device *ndev)
+{
+  struct platform_device *pdev = container_of(dev, struct platform_device, dev);
+  platform_set_drvdata(pdev, ndev);
+}
+
+/**
+ * ctucan_probe - Platform registration call
+ * @pdev:	Handle to the platform device structure
+ *
+ * This function does all the memory allocation and registration for the CAN
+ * device.
+ *
+ * Return: 0 on success and failure value on error
+ */
+static int ctucan_platform_probe(struct platform_device *pdev)
+{
+	struct resource *res; /* IO mem resources */
+	struct device	*dev = &pdev->dev;
+	void __iomem *addr;
+	int ret;
+	unsigned int ntxbufs;
+	int irq;
+
+	/* Get the virtual base address for the device */
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	addr = devm_ioremap_resource(dev, res);
+	if (IS_ERR(addr)) {
+		dev_err(dev, "Cannot remap address.\n");
+		ret = PTR_ERR(addr);
+		goto err;
+	}
+	irq = platform_get_irq(pdev, 0);
+	if (irq < 0) {
+		dev_err(dev, "Cannot find interrupt.\n");
+		ret = irq;
+		goto err;
+	}
+
+	/*
+	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth", &tx_max);
+	if (ret < 0)
+		goto err;
+	*/
+	ntxbufs = 4;
+
+        ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 0,
+	      ctucan_set_drvdata_platform);
+
 err:
 	return ret;
 }
@@ -1035,7 +1089,7 @@ err:
  * This function frees all the resources allocated to the device.
  * Return: 0 always
  */
-static int ctucan_remove(struct platform_device *pdev)
+static int ctucan_platform_remove(struct platform_device *pdev)
 {
 	struct net_device *ndev = platform_get_drvdata(pdev);
 	struct ctucan_priv *priv = netdev_priv(ndev);
@@ -1059,8 +1113,8 @@ static const struct of_device_id ctucan_of_match[] = {
 MODULE_DEVICE_TABLE(of, ctucan_of_match);
 
 static struct platform_driver ctucanfd_driver = {
-	.probe	= ctucan_probe,
-	.remove	= ctucan_remove,
+	.probe	= ctucan_platform_probe,
+	.remove	= ctucan_platform_remove,
 	.driver	= {
 		.name = DRIVER_NAME,
 		.pm = &ctucan_dev_pm_ops,
