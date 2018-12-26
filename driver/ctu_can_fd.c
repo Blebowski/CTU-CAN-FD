@@ -1135,6 +1135,8 @@ module_platform_driver(ctucanfd_driver);
 
 #include <linux/pci.h>
 
+#define CYCLONE_IV_CRA_A2P_IE 0x0050
+
 static void ctucan_pci_set_drvdata(struct device *dev,
                                        struct net_device *ndev)
 {
@@ -1156,6 +1158,7 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 {
 	struct device	*dev = &pdev->dev;
 	void __iomem *addr;
+	void __iomem *cra_addr;
 	int ret;
 	unsigned int ntxbufs;
 	int irq;
@@ -1199,10 +1202,27 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 
         ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
 	      0, ctucan_pci_set_drvdata);
-	if (ret >= 0)
-		return ret;
+	while (ret >= 0) {
+		u32 cra_a2p_ie;
+		/* enable interrupt in 
+		 * Avalon-MM to PCI Express Interrupt Enable Register
+		 */
+		cra_addr = pci_iomap(pdev, 0, pci_resource_len(pdev, 0));
+		if (!cra_addr) {
+			dev_err(dev, "PCI BAR 0 cannot be mapped\n");
+			break;
+		}
 
-	ret = -ENODEV;
+		cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+		dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
+		cra_a2p_ie |= 1;
+		iowrite32(cra_a2p_ie, (char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+		cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+		dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
+
+		pci_iounmap(pdev, cra_addr);
+		return ret;
+	}
 
 	pci_iounmap(pdev, addr);
 err_release_regions:
@@ -1228,6 +1248,21 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 	struct ctucan_priv *priv = NULL;
 	netdev_dbg(ndev, "ctucan_remove");
 
+	while (1) {
+		void __iomem *cra_addr;
+		u32 cra_a2p_ie;
+		/* disable interrupt in 
+		 * Avalon-MM to PCI Express Interrupt Enable Register
+		 */
+		cra_addr = pci_iomap(pdev, 0, pci_resource_len(pdev, 0));
+		if (!cra_addr)
+			break;
+		cra_a2p_ie = 0;
+		iowrite32(cra_a2p_ie, (char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+
+		pci_iounmap(pdev, cra_addr);
+		break;
+	}
 	if (ndev == NULL) {
 		dev_err(&pdev->dev, "ctucan  ndev is NULL\n");
 	} else {
