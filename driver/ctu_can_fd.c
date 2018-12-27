@@ -54,6 +54,7 @@
 
 #define DRIVER_NAME	"ctucanfd"
 
+#undef CTUCAN_WITH_MSI
 
 /*
  * TX buffer rotation:
@@ -768,7 +769,7 @@ static int ctucan_open(struct net_device *ndev)
 		goto err;
 	*/
 
-	ret = request_irq(ndev->irq, ctucan_interrupt, /*priv->irq_flags*/0,
+	ret = request_irq(ndev->irq, ctucan_interrupt, priv->irq_flags,
 			ndev->name, ndev);
 	if (ret < 0) {
 		netdev_err(ndev, "irq allocation for CAN failed\n");
@@ -1036,8 +1037,8 @@ err_free:
 static void ctucan_platform_set_drvdata(struct device *dev,
                                        struct net_device *ndev)
 {
-  struct platform_device *pdev = container_of(dev, struct platform_device, dev);
-  platform_set_drvdata(pdev, ndev);
+	struct platform_device *pdev = container_of(dev, struct platform_device, dev);
+	platform_set_drvdata(pdev, ndev);
 }
 
 /**
@@ -1140,8 +1141,10 @@ module_platform_driver(ctucanfd_driver);
 static void ctucan_pci_set_drvdata(struct device *dev,
                                        struct net_device *ndev)
 {
-  struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
-  pci_set_drvdata(pdev, ndev);
+	struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
+	struct ctucan_priv *priv = netdev_priv(ndev);
+	pci_set_drvdata(pdev, ndev);
+	priv->irq_flags = IRQF_SHARED;
 }
 
 /**
@@ -1175,11 +1178,13 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 		goto err_disable_device;
 	}
 
+#ifdef CTUCAN_WITH_MSI
 	ret = pci_enable_msi(pdev);
 	if (!ret) {
 		dev_info(dev, "MSI enabled\n");
 		pci_set_master(pdev);
 	}
+#endif
 
 	dev_info(dev, "ctucan BAR0 0x%08llx 0x%08llx\n",
 	        (long long)pci_resource_start(pdev, 0),
@@ -1226,8 +1231,10 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 
 	pci_iounmap(pdev, addr);
 err_release_regions:
+#ifdef CTUCAN_WITH_MSI
 	pci_disable_msi(pdev);
 	pci_clear_master(pdev);
+#endif
 	pci_release_regions(pdev);
 err_disable_device:
 	pci_disable_device(pdev);
@@ -1279,8 +1286,10 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 
 	if (priv != NULL)
 		pci_iounmap(pdev, priv->p.mem_base);
+#ifdef CTUCAN_WITH_MSI
 	pci_disable_msi(pdev);
 	pci_clear_master(pdev);
+#endif
 	pci_release_regions(pdev);
 	pci_disable_device(pdev);
 }
