@@ -62,7 +62,7 @@ use IEEE.numeric_std.all;
 use WORK.CANconstants.all;
 use work.can_registers_pkg.all;
 
-package CANcomponents is
+package can_components is
 
     ------------------------------------------------------------------------------
     ------------------------------------------------------------------------------

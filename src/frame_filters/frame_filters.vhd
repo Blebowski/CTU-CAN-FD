@@ -65,7 +65,7 @@ use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.ID_transfer.all;
-use work.CANcomponents.ALL;
+use work.can_components.ALL;
 use work.CAN_FD_frame_format.all;
 
 entity frame_filters is

@@ -57,7 +57,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.ID_transfer.all;
-use work.CANComponents.all;
+use work.can_components.all;
 use work.CAN_FD_frame_format.all;
 
 entity tx_arbitrator_fsm is

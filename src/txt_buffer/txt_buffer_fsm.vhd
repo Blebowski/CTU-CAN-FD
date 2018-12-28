@@ -52,7 +52,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
-use work.CANcomponents.all;
+use work.can_components.all;
 use work.CAN_FD_register_map.all;
 
 entity txt_buffer_fsm is

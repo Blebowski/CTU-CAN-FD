@@ -66,7 +66,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
 use work.CANconstants.all;
-use work.CANcomponents.ALL;
+use work.can_components.ALL;
 USE work.CANtestLib.All;
 USE work.randomLib.All;
 use work.ID_transfer.all;

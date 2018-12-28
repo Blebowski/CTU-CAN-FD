@@ -78,7 +78,7 @@ USE IEEE.numeric_std.ALL;
 USE WORK.CANconstants.ALL;
 use work.CAN_FD_register_map.all;
 use work.reduce_lib.all;
-use work.CANcomponents.all;
+use work.can_components.all;
 
 entity int_manager is
     generic(

@@ -53,7 +53,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-use work.CANcomponents.ALL;
+use work.can_components.ALL;
 USE WORK.CANconstants.ALL;
 
 entity busSync_tb_edge is

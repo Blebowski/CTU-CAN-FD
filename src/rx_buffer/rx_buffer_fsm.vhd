@@ -54,7 +54,7 @@ use IEEE.numeric_std.ALL;
 use work.CANconstants.all;
 use work.CAN_FD_frame_format.all;
 use work.CAN_FD_register_map.all;
-use work.CANcomponents.all;
+use work.can_components.all;
 
 entity rx_buffer_fsm is
     port(

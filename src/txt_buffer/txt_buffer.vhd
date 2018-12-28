@@ -80,7 +80,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
-use work.CANcomponents.all;
+use work.can_components.all;
 
 entity txt_buffer is
     generic(

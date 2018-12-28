@@ -90,7 +90,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CANconstants.all;
-use work.CANcomponents.ALL;
+use work.can_components.ALL;
 use work.CAN_FD_frame_format.ALL;
 use work.CAN_FD_frame_format.all;
 
@@ -854,7 +854,7 @@ begin
                         else
                    "00";
 
- 
+
     ----------------------------------------------------------------------------
     -- Multiplexing of stuff counter and destuff counter
     ----------------------------------------------------------------------------

@@ -49,7 +49,7 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use work.CANcomponents.ALL;
+use work.can_components.ALL;
 
 entity CTU_CAN_FD_v1_0 is
     generic(
