@@ -75,7 +75,7 @@
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-USE WORK.CANconstants.ALL;
+USE WORK.can_constants.ALL;
 use work.CAN_FD_register_map.all;
 use work.reduce_lib.all;
 use work.can_components.all;

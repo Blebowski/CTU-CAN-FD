@@ -53,7 +53,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use work.CANtestLib.all;
-use work.CANconstants.all;
+use work.can_constants.all;
 
 entity bit_generator is
     generic (

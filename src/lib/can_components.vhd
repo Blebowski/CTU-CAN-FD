@@ -59,7 +59,7 @@
 library ieee;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
-use WORK.CANconstants.all;
+use WORK.can_constants.all;
 use work.can_registers_pkg.all;
 
 package can_components is

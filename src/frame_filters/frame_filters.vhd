@@ -63,7 +63,7 @@
 Library ieee;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.ALL;
-use work.CANconstants.all;
+use work.can_constants.all;
 use work.ID_transfer.all;
 use work.can_components.ALL;
 use work.CAN_FD_frame_format.all;

@@ -48,7 +48,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-use work.CANconstants.all;
+use work.can_constants.all;
 
 entity registers_tb is
 end entity;

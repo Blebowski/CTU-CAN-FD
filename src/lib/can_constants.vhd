@@ -54,18 +54,19 @@
 --    20.1.2018   Removed CAN Frame constants FRAME_BASIC and FRAME_EXTENDED
 --                Properly only signals from CAN_FD_frame_format package
 --                BASE and EXTENDED should be used!
+--    28.12.2018  Separated "can_types", "drv_stat_pkg".
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 
-package CANconstants is
+package can_constants is
 
     -- IP Core version related constants
     constant CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"01";
     constant CTU_CAN_FD_VERSION_MAJOR : std_logic_vector(7 downto 0) := x"02";
 
-    --Active value of asynchronous reset 
+    -- Active value of asynchronous reset 
     constant ACT_RESET : std_logic := '0';
 
     --Definition of basic logic levels for CAN bus
@@ -121,20 +122,7 @@ package CANconstants is
     -- Common definitions should not be generic at the moment
     constant TXT_BUFFER_COUNT     : natural := 4;
 
-    constant INT_COUNT            : natural := 12;
-  
-    ---------------------------------------------------------------------------- 
-    -- DLC Types
-    ----------------------------------------------------------------------------
-    type dlc_type is array (0 to 15) of std_logic_vector(3 downto 0);
-    type length_type is array (0 to 15) of natural;
-    constant dlc_codes : dlc_type := ("0000", "0001", "0010", "0011",
-                                      "0100", "0101", "0110", "0111",
-                                      "1000", "1001", "1010", "1011",
-                                      "1100", "1101", "1110","1111");
-    constant dlc_length : length_type := (0, 1, 2, 3, 4, 5, 6, 7, 8,
-                                          12, 16, 20, 24, 32, 48, 64);
-                                        
+    constant INT_COUNT            : natural := 12;                                    
 
     constant ZERO      : std_logic := '0';
     constant NO_ACTION : std_logic := '0';
@@ -163,147 +151,6 @@ package CANconstants is
     constant CRC17_POL : std_logic_vector(19 downto 0) := x"3685B";
     constant CRC21_POL : std_logic_vector(23 downto 0) := x"302899";
 
-    ----------------------------------------------------------------------------
-    -- State Machine types
-    ----------------------------------------------------------------------------
-
-    -- Error state of node
-    type error_state_type is (
-        error_active,
-        error_passive,
-        bus_off
-    );
-
-    -- Operation mode of the Node
-    type oper_mode_type is (
-        integrating,
-        idle,
-        transciever,
-        reciever
-    );
-
-    -- Protocol control
-    type protocol_type is (
-        sof,
-        arbitration,
-        control,
-        data,
-        crc,
-        delim_ack,
-        eof,
-        interframe,
-        overload,
-        error,
-        off
-    );
-
-    -- Note: two bits are two bits between Base and Extended identifier
-    -- Note: one bit is the last remaining bit after the identifier extension
-    type arb_type is (
-        base_id,
-        two_bits,
-        ext_id,
-        one_bit
-    );
-
-    -- Within ISO CAN FD new field stuff count is needed!
-    type crc_type is(
-        stuff_count,
-        real_crc
-    );
-
-    -- Intermission field sub-State
-    type interm_spc_type is (
-        intermission,
-        suspend,
-        interm_idle
-    );
-
-    -- Error frame subtype
-    type err_frame_type is (
-        err_flg_sup,
-        err_delim
-    );
-
-    -- Overload frame subtype
-    type ovr_frame_type is (
-        ovr_flg_sup,
-        ovr_delim
-    );
-
-    type bit_time_type is (
-        sync,
-        prop,
-        ph1,
-        ph2,
-        h_sync,
-        reset
-    );
-
-    -- Logger state machine type 
-    type logger_state_type is (
-        config,
-        ready,
-        running
-    );
-
-    -- RX Buffer loader type
-    type rx_buf_fsm_type is (
-        rxb_idle,
-        rxb_store_frame_format,
-        rxb_store_identifier,
-        rxb_store_beg_ts_low,
-        rxb_store_beg_ts_high,
-        rxb_store_end_ts_low,
-        rxb_store_end_ts_high,
-        rxb_store_data
-    );
-
-    -- TX arbitrator state type
-    type tx_arb_state_type is (
-        arb_sel_low_ts,
-        arb_sel_upp_ts,
-        arb_sel_ffw,
-        arb_locked
-    );
-  
-    -- TXT buffer state type
-    type txt_fsm_type is (
-        txt_empty,
-        txt_ready,
-        txt_tx_prog,
-        txt_ab_prog,
-        txt_ok,
-        txt_error,
-        txt_aborted
-    );
-  
-    ----------------------------------------------------------------------------
-    -- TXT Buffer types
-    ----------------------------------------------------------------------------
-    type txtb_priorities_type is array (0 to TXT_BUFFER_COUNT - 1) of
-        std_logic_vector(2 downto 0);
-
-    type txtb_output_type is array (0 to TXT_BUFFER_COUNT - 1) of
-        std_logic_vector(31 downto 0);
-
-    type txtb_state_type is array (0 to TXT_BUFFER_COUNT - 1) of
-        std_logic_vector(3 downto 0);
-
-    type txt_sw_cmd_type is record
-        set_rdy   : std_logic;
-        set_ety   : std_logic;
-        set_abt   : std_logic;
-    end record;
-  
-    type txt_hw_cmd_type is record
-        lock      : std_logic;
-        unlock    : std_logic;
-        valid     : std_logic;
-        err       : std_logic;
-        arbl      : std_logic;
-        failed    : std_logic;
-    end record;
 
     ----------------------------------------------------------------------------
     -- Driving bus signal ranges

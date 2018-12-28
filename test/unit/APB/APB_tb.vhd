@@ -52,7 +52,7 @@ library ieee;
 library work;
 use ieee.std_logic_1164.all;
 USE work.CANtestLib.All;
-USE work.CANconstants.All;
+USE work.can_constants.All;
 use work.CAN_FD_register_map.all;
 
 architecture apb_unit_test of CAN_test is

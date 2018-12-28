@@ -58,7 +58,7 @@
 Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
-use work.CANconstants.all;
+use work.can_constants.all;
 use work.CAN_FD_register_map.all;
 
 entity operation_control is
