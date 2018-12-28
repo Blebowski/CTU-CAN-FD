@@ -83,6 +83,7 @@
 --              Control which sets "int_loop_back_ena" to perform internal
 --              loopback upon transmission of DOMINANT bit which should not
 --              get to the bus!
+--  24.12.2018  Separated traffic counters to stand-alone component.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -1116,31 +1117,17 @@ begin
     ----------------------------------------------------------------------------
     -- Bus traffic measurement
     ----------------------------------------------------------------------------
-    bus_tra_proc : process(clk_sys, res_n)
-    begin
-        if (res_n = ACT_RESET) then
-            tx_counter           <= (OTHERS => '0');
-            rx_counter           <= (OTHERS => '0');
-        elsif rising_edge(clk_sys) then
-
-            if (drv_clr_rx_ctr = '1') then
-                rx_counter        <= (OTHERS => '0');
-            elsif (rec_valid = '1') then
-                rx_counter        <=  std_logic_vector(to_unsigned(
-                                        to_integer(unsigned(rx_counter)) + 1,
-                                        rx_counter'length));
-            end if;
-
-            if (drv_clr_tx_ctr = '1') then
-                tx_counter        <=  (OTHERS => '0');
-            elsif (tran_valid = '1') then
-                tx_counter        <=  std_logic_vector(to_unsigned(
-                                        to_integer(unsigned(tx_counter)) + 1,
-                                        tx_counter'length));
-            end if;
-
-        end if;
-    end process;
+    bus_traffic_counters_comp : bus_traffic_counters
+    port map(
+        clk_sys         => clk_sys,
+        res_n           => res_n,
+        clear_rx_ctr    => drv_clr_rx_ctr,
+        clear_tx_ctr    => drv_clr_tx_ctr,
+        inc_tx_ctr      => tran_valid,
+        inc_rx_ctr      => rec_valid,
+        tx_ctr          => tx_counter,
+        rx_ctr          => rx_counter
+    );
 
 
     ----------------------------------------------------------------------------

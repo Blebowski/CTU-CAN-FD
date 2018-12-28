@@ -677,6 +677,22 @@ package CANcomponents is
 
 
     ----------------------------------------------------------------------------
+    -- Bus traffic counters
+    ----------------------------------------------------------------------------
+    component bus_traffic_counters is
+    port(
+        signal clk_sys                :in   std_logic;
+        signal res_n                  :in   std_logic;
+        signal clear_rx_ctr           :in   std_logic;
+        signal clear_tx_ctr           :in   std_logic;
+        signal inc_tx_ctr             :in   std_logic;
+        signal inc_rx_ctr             :in   std_logic;
+        signal tx_ctr                 :out  std_logic_vector(31 downto 0);
+        signal rx_ctr                 :out  std_logic_vector(31 downto 0)
+    );
+    end component;
+
+    ----------------------------------------------------------------------------
     -- Prescaler module
     ----------------------------------------------------------------------------
     component prescaler is
