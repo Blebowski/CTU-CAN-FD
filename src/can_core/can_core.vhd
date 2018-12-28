@@ -482,28 +482,9 @@ architecture rtl of can_core is
     -- CRC Interfaces  
     -- Transition from 0 to 1 erases the CRC and operation holds as long 
     -- as enable=1
-    signal crc_enable              :     std_logic; 
-   
-    -- CRC calculated with bit Stuffing from RX Data
-    signal crc15_wbs_rx            :     std_logic_vector(14 downto 0); --CRC 15
-    signal crc17_wbs_rx            :     std_logic_vector(16 downto 0); --CRC 17
-    signal crc21_wbs_rx            :     std_logic_vector(20 downto 0); --CRC 21
+    signal crc_enable              :     std_logic;
 
-    -- CRC calculated without bit Stuffing from RX Data
-    signal crc15_nbs_rx            :     std_logic_vector(14 downto 0); --CRC 15
-    signal crc17_nbs_rx            :     std_logic_vector(16 downto 0); --CRC 17
-    signal crc21_nbs_rx            :     std_logic_vector(20 downto 0); --CRC 21
-
-    -- CRC calculated with bit Stuffing from TX Data
-    signal crc15_wbs_tx            :     std_logic_vector(14 downto 0); --CRC 15
-    signal crc17_wbs_tx            :     std_logic_vector(16 downto 0); --CRC 17
-    signal crc21_wbs_tx            :     std_logic_vector(20 downto 0); --CRC 21
-
-    -- CRC calculated without bit Stuffing from TX Data
-    signal crc15_nbs_tx            :     std_logic_vector(14 downto 0); --CRC 15
-    signal crc17_nbs_tx            :     std_logic_vector(16 downto 0); --CRC 17
-    signal crc21_nbs_tx            :     std_logic_vector(20 downto 0); --CRC 21
-   
+    signal crc_mux_sel             :     std_logic_vector(1 downto 0);   
    
     -- Final CRC chosen based on the type of transcieved/recieved frame
     signal crc15                   :     std_logic_vector(14 downto 0); --CRC 15
@@ -540,17 +521,8 @@ architecture rtl of can_core is
     for fault_confinement_comp  : fault_confinement
             use entity work.fault_confinement(rtl);
 
-    for crc_wbs_rx_comp  : can_crc
-            use entity work.can_crc(rtl);
-
-    for crc_nbs_rx_comp  : can_crc
-            use entity work.can_crc(rtl);
-
-    for crc_wbs_tx_comp  : can_crc
-            use entity work.can_crc(rtl);
-
-    for crc_nbs_tx_comp  : can_crc
-            use entity work.can_crc(rtl);
+    for crc_wrapper_comp  : crc_wrapper
+            use entity work.crc_wrapper(rtl);
 
     for bit_stuffing_comp   : bit_stuffing
             use entity work.bit_stuffing(rtl);
@@ -758,95 +730,40 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- CRC with bit stuffing from RX Data
+    -- CRC wrapper component. Contains 4 CRC circuits and CRC mux.
     ----------------------------------------------------------------------------
-    crc_wbs_rx_comp : can_crc 
-        generic map(
-            crc15_pol              =>  CRC15_POL,
-            crc17_pol              =>  CRC17_POL,
-            crc21_pol              =>  CRC21_POL
-        )
-        port map(
-            data_in                =>  data_crc_wbs,
-            clk_sys                =>  clk_sys,
-            trig                   =>  crc_wbs_trig,
-            res_n                  =>  res_n,
-            enable                 =>  crc_enable,
-            drv_bus                =>  drv_bus,
-            crc15                  =>  crc15_wbs_rx,
-            crc17                  =>  crc17_wbs_rx,
-            crc21                  =>  crc21_wbs_rx
-        ); 
+    crc_wrapper_comp : crc_wrapper
+    generic map(
+        crc15_pol => CRC15_POL,
+        crc17_pol => CRC17_POL,
+        crc21_pol => CRC21_POL
+    )
+    port map(
+        res_n           => res_n,
+        clk_sys         => clk_sys,
 
+        -- Data inputs
+        data_tx_nbs     => data_tx_before_stuff,
+        data_tx_wbs     => data_tx_int,
+        data_rx_wbs     => data_crc_wbs,
+        data_rx_nbs     => data_crc_nbs,
 
-    ----------------------------------------------------------------------------
-    -- CRC no bit stuffing from RX Data
-    ----------------------------------------------------------------------------
-    crc_nbs_rx_comp : can_crc 
-        generic map(
-            crc15_pol              =>  CRC15_POL,
-            crc17_pol              =>  CRC17_POL,
-            crc21_pol              =>  CRC21_POL
-        )
-        port map(
-            data_in                =>  data_crc_nbs,
-            clk_sys                =>  clk_sys,
-            trig                   =>  crc_nbs_trig,
-            res_n                  =>  res_n,
-            enable                 =>  crc_enable,
-            drv_bus                =>  drv_bus,
-            crc15                  =>  crc15_nbs_rx,
-            crc17                  =>  crc17_nbs_rx,
-            crc21                  =>  crc21_nbs_rx
-        );
+        -- Trigger signals
+        trig_tx_nbs     => tran_trig_del_1,
+        trig_tx_wbs     => crc_tx_wbs_trig,
+        trig_rx_wbs     => crc_wbs_trig,
+        trig_rx_nbs     => crc_nbs_trig,
 
+        -- Control signals
+        enable          => crc_enable,
+        drv_bus         => drv_bus,
+        use_rx_crc      => crc_mux_sel(0),
+        use_wbs_crc     => crc_mux_sel(1),
 
-    ----------------------------------------------------------------------------
-    -- CRC with bit stuffing from TX Data
-    ----------------------------------------------------------------------------
-    crc_wbs_tx_comp : can_crc 
-        generic map(
-            crc15_pol              =>  CRC15_POL,
-            crc17_pol              =>  CRC17_POL,
-            crc21_pol              =>  CRC21_POL
-        )
-        port map(
-            data_in                =>  data_tx_int,
-            clk_sys                =>  clk_sys,
-            trig                   =>  crc_tx_wbs_trig,
-            res_n                  =>  res_n,
-            enable                 =>  crc_enable,
-            drv_bus                =>  drv_bus,
-            crc15                  =>  crc15_wbs_tx,
-            crc17                  =>  crc17_wbs_tx,
-            crc21                  =>  crc21_wbs_tx
-        );
-
-
-    ----------------------------------------------------------------------------
-    -- CRC no bit stuffing from TX Data
-    ----------------------------------------------------------------------------
-    crc_nbs_tx_comp : can_crc 
-        generic map(
-         crc15_pol              =>  CRC15_POL,
-         crc17_pol              =>  CRC17_POL,
-         crc21_pol              =>  CRC21_POL
-        )
-        port map(
-         data_in                =>  data_tx_before_stuff,
-         clk_sys                =>  clk_sys,
-         
-         -- TX no bit stuffing crc is calculated with the same
-         -- trigger as bit stuffing
-         trig                   =>  tran_trig_del_1,  
-         
-         res_n                  =>  res_n,
-         enable                 =>  crc_enable,
-         drv_bus                =>  drv_bus,
-         crc15                  =>  crc15_nbs_tx,
-         crc17                  =>  crc17_nbs_tx,
-         crc21                  =>  crc21_nbs_tx
-        ); 
+        crc15           => crc15,
+        crc17           => crc17,
+        crc21           => crc21
+    );
 
 
     ----------------------------------------------------------------------------
@@ -921,58 +838,22 @@ begin
     ssp_reset              <=  ssp_reset_int;
     trv_delay_calib        <=  trv_delay_calib_int;
 
+    
+    ---------------------------------------------------------------------------
+    -- CRC Multiplexor selector:
+    --  bit 0 : 1 - use rx CRC, 0 - use tx CRC
+    --  bit 1 : 1 - use wbs crc, 0 - use nbs CRC
+    ---------------------------------------------------------------------------
+    crc_mux_sel <= "10" when (OP_State = transciever and tran_frame_type = FD_CAN)
+                        else
+                   "00" when (OP_State = transciever and tran_frame_type = NORMAL_CAN)
+                        else
+                   "11" when (OP_State = reciever and rec_frame_type  = FD_CAN)
+                        else
+                   "01" when (OP_State = reciever and rec_frame_type  = NORMAL_CAN)
+                        else
+                   "00";
 
-    ----------------------------------------------------------------------------
-    -- CRC Multiplexors.
-    -- 
-    -- CRC data sources like so:
-    --  1. Transceiver, CAN FD Frame  -> TX Data after bit stuffing.
-    --  2. Transceiver, CAN 2.0 Frame -> TX Data before bit stuffing.
-    --  3. Receiver,    CAN FD Frame  -> RX Data before bit destuffing.
-    --  4. Receiver,    CAN 2.0 Frame -> RX Data after bit destuffing.
-    ----------------------------------------------------------------------------
-    crc15   <=  crc15_wbs_tx when (OP_State = transciever and 
-                                   tran_frame_type = FD_CAN) else
-
-                crc15_nbs_tx when (OP_State = transciever and 
-                                   tran_frame_type = NORMAL_CAN) else
-
-                crc15_wbs_rx when (OP_State = reciever and
-                                   rec_frame_type  = FD_CAN) else
-
-                crc15_nbs_rx when (OP_State = reciever and
-                                   rec_frame_type  = NORMAL_CAN) else
-
-                "000000000000000";
-              
-    crc17   <=  crc17_wbs_tx when (OP_State  = transciever and 
-                                   tran_frame_type = FD_CAN) else
-
-                crc17_nbs_tx when (OP_State  = transciever and 
-                                   tran_frame_type = NORMAL_CAN) else
-
-                crc17_wbs_rx when (OP_State  = reciever and
-                                   rec_frame_type  = FD_CAN) else
-
-                crc17_nbs_rx when (OP_State  = reciever and
-                                   rec_frame_type  = NORMAL_CAN) else
-
-                "00000000000000000";
-        
-    crc21   <=  crc21_wbs_tx when (OP_State = transciever and 
-                                   tran_frame_type = FD_CAN) else
-
-                crc21_nbs_tx when (OP_State = transciever and
-                                   tran_frame_type = NORMAL_CAN) else
-
-                crc21_wbs_rx when (OP_State = reciever and 
-                                   rec_frame_type  = FD_CAN) else
-
-                crc21_nbs_rx when (OP_State = reciever and 
-                                   rec_frame_type  = NORMAL_CAN) else
-
-                "000000000000000000000";
- 
  
     ----------------------------------------------------------------------------
     -- Multiplexing of stuff counter and destuff counter

@@ -787,6 +787,37 @@ package CANcomponents is
     ----------------------------------------------------------------------------
 
     ----------------------------------------------------------------------------
+    -- CRC wrapper
+    ----------------------------------------------------------------------------
+    component crc_wrapper is
+        generic(
+            constant crc15_pol :     std_logic_vector(15 downto 0) := x"C599";
+            constant crc17_pol :     std_logic_vector(19 downto 0) := x"3685B";
+            constant crc21_pol :     std_logic_vector(23 downto 0) := x"302899"  
+        );
+        port(
+            signal res_n            :in   std_logic;
+            signal clk_sys          :in   std_logic;
+            signal data_tx_nbs      :in   std_logic;
+            signal data_tx_wbs      :in   std_logic;
+            signal data_rx_wbs      :in   std_logic;
+            signal data_rx_nbs      :in   std_logic;
+            signal trig_tx_nbs      :in   std_logic;
+            signal trig_tx_wbs      :in   std_logic;
+            signal trig_rx_wbs      :in   std_logic;
+            signal trig_rx_nbs      :in   std_logic;
+            signal enable           :in   std_logic;
+            signal drv_bus          :in   std_logic_vector(1023 downto 0);
+            signal use_rx_crc       :in   std_logic;
+            signal use_wbs_crc      :in   std_logic;
+            signal crc15            :out  std_logic_vector(14 downto 0);
+            signal crc17            :out  std_logic_vector(16 downto 0);
+            signal crc21            :out  std_logic_vector(20 downto 0)
+        );
+    end component;
+
+
+    ----------------------------------------------------------------------------
     -- CAN CRC module
     ----------------------------------------------------------------------------
     component can_crc is
