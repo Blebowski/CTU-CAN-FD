@@ -72,12 +72,15 @@
 --               ffing in the start of FD CRC. Fixed bit-destuff should win!
 --    23.5.2018  Bug-fix of stuff error detection. Stuff error on special
 --               stuff-bit in first bit of CRC also must be detected.
+--   28.12.2018  Re-worked bit-destuffing to hae the logic separated to several
+--               processes.
 --------------------------------------------------------------------------------
 
 library ieee;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 use WORK.CANconstants.all;
+use work.cmn_lib.all;
 
 entity bit_destuffing is
     port(
@@ -104,7 +107,7 @@ entity bit_destuffing is
         ------------------------------------------------------------------------
 
         -- Stuff error detected when stuff rule is 
-        signal stuff_Error : out std_logic;
+        signal stuff_Error  : out std_logic;
 
         ------------------------------------------------------------------------
         --CAN Core interface
@@ -135,148 +138,339 @@ end entity;
 
 architecture rtl of bit_destuffing is
 
-    ----------------------------------------------------------------------------
-    --Internal signals and registers
-    ----------------------------------------------------------------------------
+    -- Stuff bit should be discarded
+    signal discard_stuff_bit       : std_logic;
 
-    --Number of equal consecutive bits
-    signal same_bits     : natural range 0 to 15;
+    -- Change from non-fixed to fixed bit stuffing occured
+    signal non_fix_to_fix_chng     : std_logic;
 
-    signal prev_val      : std_logic;     -- Previous value of the bit
-    signal destuffed_reg : std_logic;     -- Registered value of destuffed
-    signal error_reg     : std_logic;     -- Registred value of destuffed
-    signal enable_prev   : std_logic;     -- Previous value of enable
-    signal fixed_prev    : std_logic;     -- Previous value of fixed stuff
+    -- Number of equal consecutive bits on input is equal to length of stuff
+    -- rule
+    signal stuff_lvl_reached       : std_logic;
 
+    -- Stuff rule is violated -> Stuff error.
+    signal stuff_rule_violate      : std_logic;
+
+    -- Previous value of enable - register
+    signal enable_prev             : std_logic;
+
+    ---------------------------------------------------------------------------
+    -- Previous value of fixed stuff - register 
+    ---------------------------------------------------------------------------
+    signal fixed_prev              : std_logic;
+    signal fixed_prev_nxt          : std_logic;
+
+    ---------------------------------------------------------------------------
+    -- Counter with number of equal consecutive bits on input
+    ---------------------------------------------------------------------------
+    signal same_bits               : natural range 0 to 7;
+    signal same_bits_add           : natural range 0 to 7;
+    signal same_bits_nxt           : natural range 0 to 7;
+    signal same_bits_erase         : std_logic;
+
+    ---------------------------------------------------------------------------
+    -- Register with flag that bit was destuffed from serial stream
+    ---------------------------------------------------------------------------
+    signal destuffed_reg           : std_logic;
+    signal destuffed_reg_nxt       : std_logic;
+
+    ---------------------------------------------------------------------------
+    -- Register with error flag signalling stuff error
+    ---------------------------------------------------------------------------
+    signal error_reg               : std_logic;
+    signal error_reg_nxt           : std_logic;
+
+    ---------------------------------------------------------------------------
     -- ISO CAN FD destuff bit counter
-    signal dst_bit_ctr : natural range 0 to 7;
-    -- Note: Number of stuffed, destuffed bits is transmitted modulo 8. Thus 
-    --       only 3 bits counter is enough!!
+    -- Counter of destuffed bits by non-fixed bit stuffing.
+    ---------------------------------------------------------------------------
+    signal dst_bit_ctr             : natural range 0 to 7;
+    signal dst_bit_ctr_nxt         : natural range 0 to 7;
+    signal dst_bit_ctr_add         : natural range 0 to 7;
+
+    ---------------------------------------------------------------------------
+    -- Value of previous processed bit.
+    ---------------------------------------------------------------------------
+    signal prev_val                : std_logic;
+    signal prev_val_nxt            : std_logic;
 
 begin
 
-    ----------------------------------------------------------------------------
-    -- Destuffing process
     ---------------------------------------------------------------------------
-    destuf_proc : process(res_n, clk_sys)
+    -- Registering previous value of enable input to detect 0->1 transition.
+    ---------------------------------------------------------------------------
+    dff_ena_reg : dff_arst
+    generic map(
+        reset_polarity     => ACT_RESET,
+        rst_val            => '0'
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+
+        input              => enable,
+        load               => '1',
+        output             => enable_prev
+    );
+
+    ---------------------------------------------------------------------------
+    -- Detection of change on fixed stuff settings upon mismatch between
+    -- actual and registered value of fixed stuff settings from previous bit.
+    ---------------------------------------------------------------------------
+    non_fix_to_fix_chng    <= '1' when (fixed_stuff = '1' and fixed_prev = '0')
+                                  else
+                              '0';
+
+    ---------------------------------------------------------------------------
+    -- Number of stuff bits is reached when:
+    --  1. Normal bit stuffing, number of same bits is equal to stuff rule
+    --     length. Stuff bit is already included in counting next consecutive
+    --     bits of equal value (recursive behaviour of bit-stuffing).
+    --  2. Fixed bit stuffing, number of same bits is equal to one more than
+    --     rule length, since stuff bit is not included then!
+    ---------------------------------------------------------------------------
+    stuff_lvl_reached <= '1' when (same_bits = unsigned(length) and fixed_stuff = '0') or
+                                  (same_bits = unsigned(length) + 1 and fixed_stuff = '1')
+                             else
+                         '0';
+
+    ---------------------------------------------------------------------------
+    -- Stuff bit should be discarded:
+    --  1. Upon change of non-fixed to fixed bit stuffing
+    --  2. Number of equal consecutive bits has reached length of stuff rule.
+    ---------------------------------------------------------------------------
+    discard_stuff_bit <= '1' when (non_fix_to_fix_chng = '1' or 
+                                   stuff_lvl_reached = '1')
+                             else
+                         '0';
+
+
+    ---------------------------------------------------------------------------
+    -- Calculation of next value in fixed stuff register:
+    --  1. Re-started upon 0->1 transition on "enable"
+    --  2. Store "fixed_stuff" configuration when data are processed
+    ---------------------------------------------------------------------------    
+    fixed_prev_nxt <= '0'         when (enable_prev = '0') else
+                      fixed_stuff when (trig_spl_1 = '1') else
+                      fixed_prev;
+
+
+    ---------------------------------------------------------------------------
+    -- Stuff rules is violated under following conditions:
+    --  1. Actually processed bit should be discarded.
+    --  2. Previously processed bit is equal to actual bit on input
+    --     (N+1 bit is not different)
+    --  3. Stuff error detection is enabled.
+    ---------------------------------------------------------------------------
+    stuff_rule_violate <= '1' when (discard_stuff_bit = '1' and
+                                    prev_val = data_in and
+                                    stuff_Error_enable = '1')
+                              else
+                          '0';
+
+
+    ---------------------------------------------------------------------------
+    -- Registering previous value of fixed bit stuffing to detect first
+    -- fixed stuff bit and insert stuff bit in the beginning of CRC for CAN FD
+    -- automatically!
+    ---------------------------------------------------------------------------
+    dff_fixed_stuff_reg : dff_arst
+    generic map(
+        reset_polarity     => ACT_RESET,
+        rst_val            => '0'
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+
+        input              => fixed_prev_nxt,
+        load               => enable,
+        output             => fixed_prev
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Combinationally incremented valued of counter with number of destuffed
+    -- bits.
+    ---------------------------------------------------------------------------
+    dst_bit_ctr_add <= (dst_bit_ctr + 1) mod 8;
+
+
+    ----------------------------------------------------------------------------
+    -- Counter with de-stuffed bits, next value:
+    --  1. Erase upon edge on enable
+    --  2. Increment when non-fixed stuff bit is inserted
+    --  3. Keep otherwise
+    ---------------------------------------------------------------------------
+    dst_bit_ctr_nxt <= 0                when (enable_prev = '0') else
+                       dst_bit_ctr_add  when (trig_spl_1 = '1' and 
+                                              stuff_lvl_reached = '1' and
+                                              fixed_stuff = '0') else
+                       dst_bit_ctr;
+
+
+    ---------------------------------------------------------------------------
+    -- Counter with number of de-stuffed bits - register assignment
+    ---------------------------------------------------------------------------
+    dst_bit_ctr_proc : process(clk_sys, res_n)
     begin
-    if (res_n = ACT_RESET) then
-        same_bits       <= 1;
-        prev_val        <= RECESSIVE;
-        fixed_prev      <= '0';
-        destuffed_reg   <= '0';
-        error_reg       <= '0';
+        if (res_n = ACT_RESET) then
+            dst_bit_ctr         <= 0;
 
-        -- Bit stuff counter for ISO FD
-        dst_bit_ctr     <= 0;
-        enable_prev     <= '0';
-
-    elsif (rising_edge(clk_sys)) then
-
-        -- Edge detection on enable and fixed stuff
-        enable_prev <= enable;
-        dst_bit_ctr <= dst_bit_ctr;
-
-        if (enable = '1') then
-
-            -- When transition starts prev_val needs to be deleted! Otherwise 
-            -- stuff error might occur when first bits of identifier are zero
-            if (enable_prev = '0') then
-                prev_val    <= RECESSIVE;
-                dst_bit_ctr <= 0;
-                fixed_prev  <= '0';
-                same_bits   <= 1;
-
-            -- Destuffing is processed with triggering signal
-            elsif (trig_spl_1 = '1') then
-                prev_val      <= data_in;      --Data is always propagated
-                fixed_prev    <= fixed_stuff;
-
-                --When stuffing method is changed in the beginning of the
-                --CRC field the stuffing counter needs to be erased!
-                if (fixed_stuff = '1' and fixed_prev = '0') then
-                    prev_val        <= RECESSIVE;
-                    same_bits       <= 1;
-                    destuffed_reg   <= '1';
-
-                    -- Stuff Rule violation 
-                    if (prev_val = data_in and stuff_Error_enable = '1') then
-                        error_reg   <= '1';
-                    else
-                        error_reg   <= '0';
-                    end if; 
-
-                --If number of bits was reached then
-                elsif (same_bits = unsigned(length) and fixed_stuff = '0') or
-                      (same_bits = unsigned(length) + 1 and fixed_stuff = '1')
-                
-                -- Fixed stuff must be plus one since also the stuffed bit is 
-                -- counted! In normal bit stuffing when bit is stuffed same_bits
-                -- is erased and counted from first bit after stuffed bit!                
-                then
-
-                    destuffed_reg   <= '1';
-                    same_bits       <= 1;
-
-                    -- Stuff bit occured increase the stuffing counter!
-                    -- but only in the case of the original stuffing method
-                    if (fixed_stuff = '0') then
-                        dst_bit_ctr <= (dst_bit_ctr + 1) mod 8;
-                    else
-                        dst_bit_ctr <= dst_bit_ctr;
-                    end if;
-
-                    -- Stuff Rule violation 
-                    if (prev_val = data_in and stuff_Error_enable = '1') then
-                        error_reg   <= '1';
-                    else
-                        error_reg   <= '0';
-                    end if;
-
-                -- If number of bits not reached then
-                -- only increase number of same bits
-                else
-
-                    if (data_in = prev_val) or (fixed_stuff = '1') then
-                        same_bits   <= (same_bits + 1) mod 8;
-                    else
-                        same_bits   <= 1;
-                    end if;
-
-                    -- Trigger not occured keep the value of stuff counter
-                    dst_bit_ctr     <= dst_bit_ctr;
-
-                    destuffed_reg   <= '0';
-                    error_reg       <= '0';
-
-                end if;
-
-            --Trigger not occured keep the previous values  
-            else
-                same_bits     <= same_bits;
-                prev_val      <= prev_val;
-                destuffed_reg <= destuffed_reg;
-                error_reg     <= '0';
-                dst_bit_ctr   <= dst_bit_ctr;
+        elsif (rising_edge(clk_sys)) then
+            if (enable = '1') then
+                dst_bit_ctr     <= dst_bit_ctr_nxt;
             end if;
-
-        else
-            same_bits     <= 1;
-            destuffed_reg <= '0';
-            error_reg     <= '0';
-            dst_bit_ctr   <= dst_bit_ctr;
-
-            -- Sample the data with trigger even if destuffing
-            -- is disabled
-            if (trig_spl_1 = '1') then
-                prev_val <= data_in;
-            else
-                prev_val <= prev_val;
-            end if;
-
         end if;
-    end if;
     end process;
+
+
+    ----------------------------------------------------------------------------
+    -- Counter of equal consecutive bits should be erased:
+    --  1. Circuit disabled, or just enabled (edge on enable)
+    --  2. Stuff bit is just discarded.
+    --  3. Bit is processed by non-fixed bit stuffing, but it differs from
+    --     previous processed bit.
+    ---------------------------------------------------------------------------
+    same_bits_erase <= '1' when (enable = '0' or enable_prev = '0') else
+                       '1' when (trig_spl_1 = '1' and discard_stuff_bit = '1') else
+                       '1' when (trig_spl_1 = '1' and 
+                                 data_in /= prev_val and 
+                                 fixed_stuff = '0') else
+                       '0';
+
+    ----------------------------------------------------------------------------
+    -- Combinationally incremented value of counter of equal consecutive
+    -- bits by 1.
+    ---------------------------------------------------------------------------    
+    same_bits_add   <= (same_bits + 1) mod 8;
+
+
+    ----------------------------------------------------------------------------
+    -- Next value for counter of equal consecutive bits:
+    --  1. Erase counter when signalled.
+    --  2. Increment upon processing of bit.
+    --  3. Keep its value otherwise.
+    ---------------------------------------------------------------------------
+    same_bits_nxt   <= 1             when (same_bits_erase = '1') else
+                       same_bits_add when (trig_spl_1 = '1') else
+                       same_bits;
+
+
+    ----------------------------------------------------------------------------
+    -- Counter of equal consecutive bits - register assignment.
+    ---------------------------------------------------------------------------
+    same_bits_ctr_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = ACT_RESET) then
+            same_bits <= 1;
+
+        elsif (rising_edge(clk_sys)) then
+            same_bits <= same_bits_nxt;
+        end if;
+    end process;
+
+
+    ----------------------------------------------------------------------------
+    -- Destuffed flag - next value:
+    --  1. Erase when circuit is disabled.
+    --  2. Set when bit is processed and destuffed.
+    --  3. Erase when bit is processed but should not be discarded.
+    --  4. Keep value otherwise.
+    ---------------------------------------------------------------------------
+    destuffed_reg_nxt   <= '0' when (enable = '0') else
+                           '1' when (trig_spl_1 = '1' and
+                                     discard_stuff_bit = '1') else
+                           '0' when (trig_spl_1 = '1') else
+                           destuffed_reg;
+
+
+    ---------------------------------------------------------------------------
+    -- Destuffed flag - register assignment
+    ---------------------------------------------------------------------------
+    dff_destuffed_flag_reg : dff_arst
+    generic map(
+        reset_polarity     => ACT_RESET,
+        rst_val            => '0'
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+
+        input              => destuffed_reg_nxt,
+        load               => '1',
+        output             => destuffed_reg
+    );
+
+
+    ---------------------------------------------------------------------------
+    -- Error register next value:
+    --  1. Set when bit should be processed and stuff rule is violated.
+    --  2. Cleared otherwise
+    ---------------------------------------------------------------------------
+    error_reg_nxt <= '1' when (trig_spl_1 = '1' and stuff_rule_violate = '1') else
+                     '0';
+
+
+    ---------------------------------------------------------------------------
+    -- Error register - register assignment
+    ---------------------------------------------------------------------------
+    dff_error_reg : dff_arst
+    generic map(
+        reset_polarity     => ACT_RESET,
+        rst_val            => '0'
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+
+        input              => error_reg_nxt,
+        load               => '1',
+        output             => error_reg
+    );
+
+
+    ----------------------------------------------------------------------------
+    -- Previously processed value - next value:
+    --  1. Set to RECESSIVE upon edge on enable
+    --  2. Set to RECESSIVE when non-fixed bit stuffing changes to fixed
+    --     bit stuffing. TODO: IS THIS OK???
+    ---------------------------------------------------------------------------
+    prev_val_nxt <= RECESSIVE when (enable = '1' and enable_prev = '0') else
+                    RECESSIVE when (trig_spl_1 = '1' and non_fix_to_fix_chng = '1') else
+                    data_in   when (trig_spl_1 = '1') else
+                    prev_val;
+
+
+    ---------------------------------------------------------------------------
+    -- Previously processed value - register assignment
+    ---------------------------------------------------------------------------
+    dff_prev_val_reg : dff_arst
+    generic map(
+        reset_polarity     => ACT_RESET,
+        rst_val            => RECESSIVE
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+
+        input              => prev_val_nxt,
+        load               => '1',
+        output             => prev_val
+    );
+
+
+    ---------------------------------------------------------------------------
+    -- Propagation to output
+    ---------------------------------------------------------------------------
+
+    -- Data output is fed directly from input, only destuffed bits are marked
+    -- via "destuffed".
+    data_out    <= data_in;
+
+    destuffed   <= destuffed_reg;
+    stuff_Error <= error_reg;
+    dst_ctr     <= dst_bit_ctr;
 
 
     ----------------------------------------------------------------------------
@@ -292,13 +486,6 @@ begin
             end if;
         end if;
     end process;
-
-
-    -- Register propagation on output
-    data_out    <= data_in;
-    destuffed   <= destuffed_reg;
-    stuff_Error <= error_reg;
-    dst_ctr     <= dst_bit_ctr;
 
 end architecture;
 
