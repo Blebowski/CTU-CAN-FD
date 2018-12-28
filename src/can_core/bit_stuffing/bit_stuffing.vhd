@@ -383,7 +383,7 @@ begin
     ---------------------------------------------------------------------------
     -- Stuff bit should be inserted:
     --  1. Upon change of non-fixed to fixed bit stuffing
-    --  2. Stuff counter has reached length of stuff rule.
+    --  2. Number of equal consecutive bits has reached length of stuff rule.
     ---------------------------------------------------------------------------
     insert_stuff_bit <= '1' when (non_fix_to_fix_chng = '1' or 
                                   stuff_lvl_reached = '1')
