@@ -77,7 +77,12 @@ struct ctucan_priv {
 	struct napi_struct napi;
 	struct device *dev;
 	struct clk *can_clk;
+
+	int irq_flags;
+	long unsigned int drv_flags;
 };
+
+#define CTUCAN_FLAG_RX_SCHED	1
 
 static int ctucan_reset(struct net_device *ndev)
 {
@@ -109,12 +114,9 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct can_bittiming *bt = &priv->can.bittiming;
-	union ctu_can_fd_mode_command_status_settings mode;
 	netdev_dbg(ndev, "ctucan_set_bittiming");
 
-	mode.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_MODE);
-
-	if (mode.s.ena) {
+	if (ctu_can_fd_is_enabled(&priv->p)) {
 		netdev_alert(ndev,
 				 "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
@@ -138,12 +140,9 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct can_bittiming *dbt = &priv->can.data_bittiming;
-	union ctu_can_fd_mode_command_status_settings mode;
 	netdev_dbg(ndev, "ctucan_set_data_bittiming");
 
-	mode.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_MODE);
-
-	if (mode.s.ena) {
+	if (ctu_can_fd_is_enabled(&priv->p)) {
 		netdev_alert(ndev,
 				 "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
@@ -217,8 +216,10 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
 
-	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
+	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+
 	ctu_can_fd_int_mask(&priv->p, int_msk, int_enamask_mask);
+	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
 
 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
 
@@ -331,10 +332,9 @@ static int ctucan_rx(struct net_device *ndev)
 	struct sk_buff *skb;
 	u64 ts;
 	union ctu_can_fd_frame_form_w ffw;
-	//netdev_dbg(ndev, "ctucan_rx");
 
+	ffw = ctu_can_fd_read_rx_ffw(&priv->p);
 
-	ffw.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
 	if (ffw.s.fdf == FD_CAN)
 		skb = alloc_canfd_skb(ndev, &cf);
 	else
@@ -344,7 +344,7 @@ static int ctucan_rx(struct net_device *ndev)
 		int i;
 		/* Remove the rest of the frame from the controller */
 		for (i = 0; i < ffw.s.rwcnt; i++)
-			priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
+			ctu_can_fd_read_rx_word(&priv->p);
 
 		stats->rx_dropped++;
 		return 0;
@@ -539,7 +539,8 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	if (work_done < quota) {
 		if (napi_complete_done(napi, work_done)) {
 			iec.s.doi = 1; /* Also re-enable DOI */
-			priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
+			clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			ctu_can_fd_int_ena_set(&priv->p, iec);
 		}
 	}
 
@@ -664,60 +665,66 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	struct net_device *ndev = (struct net_device *)dev_id;
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	union ctu_can_fd_int_stat isr, icr;
+	int irq_loops = 0;
+
 	netdev_dbg(ndev, "ctucan_interrupt");
 
-	/* Get the interrupt status */
-	isr = ctu_can_fd_int_sts(&priv->p);
+	do {
+		/* Get the interrupt status */
+		isr = ctu_can_fd_int_sts(&priv->p);
 
-	if (!isr.u32)
-		return IRQ_NONE;
+		if (test_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags))
+			isr.s.rbnei = 0;
 
-	/* Receive Buffer Not Empty Interrupt */
-	if (isr.s.rbnei) {
-		netdev_dbg(ndev, "RXBNEI");
-		icr.u32 = 0;
-		icr.s.rbnei = 1;
-		ctu_can_fd_int_clr(&priv->p, icr);
+		if (!isr.u32)
+			return irq_loops? IRQ_HANDLED: IRQ_NONE;
 
-		/* Disable RXBNEI and DOI */
-		icr.s.doi = 1;
-		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_CLR, icr.u32);
-		napi_schedule(&priv->napi);
+		/* Receive Buffer Not Empty Interrupt */
+		if (isr.s.rbnei) {
+			netdev_dbg(ndev, "RXBNEI");
+			icr.u32 = 0;
+			icr.s.rbnei = 1;
+			ctu_can_fd_int_clr(&priv->p, icr);
+
+			/* Disable RXBNEI and DOI */
+			icr.s.doi = 1;
+			ctu_can_fd_int_ena_clr(&priv->p, icr);
+			set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			napi_schedule(&priv->napi);
+		}
+
+		/* TX Buffer HW Command Interrupt */
+		if (isr.s.txbhci) {
+			netdev_dbg(ndev, "TXBHCI");
+			icr.u32 = 0;
+			icr.s.txbhci = 1;
+			ctu_can_fd_int_clr(&priv->p, icr);
+			ctucan_tx_interrupt(ndev);
+		}
+
+		/* Error interrupts */
+		if (isr.s.ewli || isr.s.doi || isr.s.epi || isr.s.ali) {
+			union ctu_can_fd_int_stat ierrmask = { .s =
+			        { .ewli = 1, .doi = 1, .epi = 1,
+			          .ali = 1, .bei = 1 }};
+			icr.u32 = isr.u32 & ierrmask.u32;
+
+			netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x", icr.u32);
+			ctu_can_fd_int_clr(&priv->p, icr);
+			ctucan_err_interrupt(ndev, isr);
+		}
+		/* Ignore RI, TI, LFI, RFI, BSI */
+	} while (irq_loops++ < 10000);
+
+	netdev_err(ndev, "ctucan_interrupt: stuck interrupt, stopping\n");
+
+	{
+		union ctu_can_fd_int_stat imask, ival;
+		imask.u32 = 0xffffffff;
+		ival.u32 = 0;
+		ctu_can_fd_int_ena(&priv->p, imask, ival);
+		ctu_can_fd_int_mask(&priv->p, imask, ival);
 	}
-	#define CTUCANFD_INT_RI      BIT(0)
-	#define CTUCANFD_INT_TI      BIT(1)
-	#define CTUCANFD_INT_EI      BIT(2)
-	#define CTUCANFD_INT_DOI     BIT(3)
-	#define CTUCANFD_INT_EPI     BIT(4)
-	#define CTUCANFD_INT_ALI     BIT(5)
-	#define CTUCANFD_INT_BEI     BIT(6)
-	#define CTUCANFD_INT_LFI     BIT(7)
-	#define CTUCANFD_INT_RFI     BIT(8)
-	#define CTUCANFD_INT_BSI     BIT(9)
-	#define CTUCANFD_INT_RBNEI   BIT(10)
-	#define CTUCANFD_INT_TXBHCI  BIT(11)
-	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | \
-	                            CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
-	                            CTUCANFD_INT_BEI)
-
-	/* TX Buffer HW Command Interrupt */
-	if (isr.s.txbhci) {
-		netdev_dbg(ndev, "TXBHCI");
-		icr.u32 = 0;
-		icr.s.txbhci = 1;
-		ctu_can_fd_int_clr(&priv->p, icr);
-		ctucan_tx_interrupt(ndev);
-	}
-
-	/* Error interrupts */
-	if (isr.s.ewli || isr.s.doi || isr.s.epi || isr.s.ali) {
-		icr.u32 = isr.u32 & CTUCANFD_INT_ERROR;
-		netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x", icr.u32);
-		ctu_can_fd_int_clr(&priv->p, icr);
-		ctucan_err_interrupt(ndev, isr);
-	}
-
-	/* Ignore RI, TI, LFI, RFI, BSI */
 
 	return IRQ_HANDLED;
 }
@@ -740,6 +747,7 @@ static void ctucan_chip_stop(struct net_device *ndev)
 	/* Disable interrupts and disable can */
 	ctu_can_fd_int_ena(&priv->p, ena, mask);
 	ctu_can_fd_enable(&priv->p, false);
+	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 	priv->can.state = CAN_STATE_STOPPED;
 }
 
