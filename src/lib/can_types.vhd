@@ -50,6 +50,8 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 
+use work.can_constants.all;
+
 package can_types is
 
     ----------------------------------------------------------------------------

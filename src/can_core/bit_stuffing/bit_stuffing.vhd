@@ -74,11 +74,7 @@
 --               processes.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE WORK.can_constants.ALL;
-use work.cmn_lib.all;
+context work.ctu_can_synth_context;
 
 entity bit_stuffing is 
     port(

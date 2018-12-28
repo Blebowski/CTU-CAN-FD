@@ -41,79 +41,28 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---    VUnit wrapper for sanity test.
+--  Definition of context for synthesizable codes of CTU CAN FD.
 --------------------------------------------------------------------------------
 -- Revision History:
---    February 2018   First Implementation - Martin Jerabek
+--   28.12.2018   Created file
 --------------------------------------------------------------------------------
 
-library vunit_lib;
-context vunit_lib.vunit_context;
-
-context work.ctu_can_synth_context;
-context work.ctu_can_test_context;
-
-entity tb_reference_wrapper is
-    generic (
-        runner_cfg          : string  := runner_cfg_default; 
-        iterations          : natural := 50;
-        log_level           : log_lvl_type := info_l;
-
-        -- Test behaviour when error occurs: Quit, or Go on
-        error_beh           : err_beh_type := quit;
-
-        -- Error tolerance, error counter should not exceed this value
-        -- in order for the test to pass
-        error_tol           : natural := 0;
-
-        -- Timeout in simulation time. 0 means no limit
-        timeout             : string := "0 ms";
-
-        seed                : natural := 0;
-        data_path           : string
-    );
-end entity;
-
-architecture tb of tb_reference_wrapper is
-    signal t_errors   : natural := 0;
-    signal t_status   : test_status_type;
-    signal t_run      : boolean;
-
-    for i_test        : CAN_test use entity work.CAN_test(CAN_reference_test); 
-
-begin
-    i_test : CAN_test
-        generic map (
-            seed => seed,
-	    data_path => data_path
-        )
-        port map (
-            iterations => iterations,
-            log_level  => log_level,
-            error_beh  => error_beh,
-            error_tol  => error_tol,
-            errors     => t_errors,
-            status     => t_status,
-            run        => t_run
-        );
-    main:process
-    begin
-        test_runner_setup(runner, runner_cfg);
-        while test_suite loop
-            if run("all") then
-                t_run <= true;
-                wait until t_status = passed or t_status = failed;
-                report "Done";
-                report to_string(t_errors);
-                wait for 100 ns;
-                t_run <= false;
-            end if;
-        end loop;
-        test_runner_cleanup(runner, t_errors > error_tol);
-    end process;
-
-    watchdog: if time'value(timeout) > 0 ns generate
-        test_runner_watchdog(runner, time'value(timeout));
-    end generate;
-
-end architecture;
+context ctu_can_synth_context is
+    Library ieee;
+    USE IEEE.std_logic_1164.all;
+    USE IEEE.numeric_std.ALL;
+    USE ieee.math_real.ALL;
+    
+    Library lib;
+    use lib.ID_transfer.all;
+    use lib.can_constants.all;
+    use lib.can_components.all;
+    use lib.can_types.all;
+    use lib.cmn_lib.all;
+    use lib.drv_stat_pkg.all;
+    use lib.endian_swap.all;
+    use lib.reduce_lib.all;
+    
+    use lib.CAN_FD_register_map.all;
+    use lib.CAN_FD_frame_format.all;
+end context;

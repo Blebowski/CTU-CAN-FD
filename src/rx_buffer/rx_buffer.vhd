@@ -159,13 +159,7 @@
 --                2. Moved handling of memory pointers to separate entity
 --------------------------------------------------------------------------------
 
-Library ieee;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.ALL;
-use work.can_constants.all;
-use work.CAN_FD_frame_format.all;
-use work.CAN_FD_register_map.all;
-use work.can_components.all;
+context work.ctu_can_synth_context;
 
 entity rx_buffer is
     generic(

@@ -62,19 +62,8 @@
 --               2. Added TXT frame counter
 --------------------------------------------------------------------------------
 
-
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-
-use work.can_constants.all;
-use work.can_components.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
-use work.CAN_FD_register_map.all;
-use work.CAN_FD_frame_format.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 entity sanity_test is
   generic (

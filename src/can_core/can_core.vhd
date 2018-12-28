@@ -86,13 +86,7 @@
 --  24.12.2018  Separated traffic counters to stand-alone component.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use work.can_constants.all;
-use work.can_components.ALL;
-use work.CAN_FD_frame_format.ALL;
-use work.CAN_FD_frame_format.all;
+context work.ctu_can_synth_context;
 
 entity can_core is
     port(

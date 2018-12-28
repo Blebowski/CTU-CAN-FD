@@ -75,13 +75,7 @@
 --                buffer FSM, HW commands and SW commands.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE WORK.can_constants.ALL;
-use work.can_components.ALL;
-use work.CAN_FD_register_map.all;
-use work.cmn_lib.all;
+context work.ctu_can_synth_context;
 
 entity CAN_top_level is
     generic(

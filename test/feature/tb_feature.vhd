@@ -49,18 +49,11 @@
 --    June 2018   Major rewrite for support of new unified testing framework.
 --------------------------------------------------------------------------------
 
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.can_constants.all;
-use work.can_components.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-USE work.pkg_feature_exec_dispath.All;
+use lib.pkg_feature_exec_dispath.all;
 
-use work.ID_transfer.all;
 --------------------------------------------------------------------------------
 -- Test enity for feature tests. Additional signals representing two memory
 -- buses are present to connect two DUTs of feature tests!

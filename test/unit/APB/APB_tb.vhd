@@ -48,12 +48,8 @@
 --      May 2018   Converted from AXI to APB, using CAN_test intrface
 --------------------------------------------------------------------------------
 
-library ieee;
-library work;
-use ieee.std_logic_1164.all;
-USE work.CANtestLib.All;
-USE work.can_constants.All;
-use work.CAN_FD_register_map.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture apb_unit_test of CAN_test is
     component CTU_CAN_FD_v1_0 is

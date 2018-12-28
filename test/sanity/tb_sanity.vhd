@@ -47,8 +47,9 @@
 --    February 2018   First Implementation - Martin Jerabek
 --------------------------------------------------------------------------------
 
-library work;
-USE work.CANtestLib.All;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
+
 package mypkg is
     type bus_length_type is array(1 to 6) of real;
     subtype natural_vector is anat_t;
@@ -57,10 +58,8 @@ end package;
 library vunit_lib;
 context vunit_lib.vunit_context;
 
-library ieee;
-library work;
-use ieee.std_logic_1164.all;
-USE work.CANtestLib.All;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 use work.mypkg.all;
 
 entity tb_sanity is

@@ -76,11 +76,7 @@
 --               processes.
 --------------------------------------------------------------------------------
 
-library ieee;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-use WORK.can_constants.all;
-use work.cmn_lib.all;
+context work.ctu_can_synth_context;
 
 entity bit_destuffing is
     port(

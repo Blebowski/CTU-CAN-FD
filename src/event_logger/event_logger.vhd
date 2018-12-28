@@ -83,10 +83,7 @@
 --                "additional" details fields.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE WORK.can_constants.ALL;
+context work.ctu_can_synth_context;
 
 entity event_logger is 
     generic(

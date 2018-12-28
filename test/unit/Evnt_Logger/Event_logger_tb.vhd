@@ -49,15 +49,8 @@
 --    4.6.2018	 Finished testbench. Took just 2 years to do it!
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.can_constants.all;
-use work.can_components.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.CAN_FD_register_map.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture Event_logger_unit_test of CAN_test is
 

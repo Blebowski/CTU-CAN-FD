@@ -52,11 +52,7 @@
 --    12.11.2018   Changed output output_valid to std_logic from boolean.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use work.can_constants.all;
-use work.ID_transfer.all;
+context work.ctu_can_synth_context;
 
 entity priority_decoder is
     generic(

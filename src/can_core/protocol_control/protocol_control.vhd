@@ -247,14 +247,7 @@
 --                as before), error counter is incremented again!
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use work.can_constants.all;
-use work.CAN_FD_frame_format.all;
-use work.CAN_FD_register_map.all;
-
-use work.endian_swap.all;
+context work.ctu_can_synth_context;
 
 entity protocol_control is
   port(

@@ -48,9 +48,7 @@
 --------------------------------------------------------------------------------
 
 Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use work.CAN_FD_frame_format.all;
+use ieee.std_logic_1164.all;
 
 package endian_swap is
 

@@ -47,9 +47,7 @@
 --    May 2018   First Implementation
 --------------------------------------------------------------------------------
 
-library ieee;
-use ieee.std_logic_1164.all;
-use work.can_components.ALL;
+context work.ctu_can_synth_context;
 
 entity CTU_CAN_FD_v1_0 is
     generic(

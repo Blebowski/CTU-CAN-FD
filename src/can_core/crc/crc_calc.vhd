@@ -53,11 +53,7 @@
 --   15.11.2018   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use work.can_constants.all;
-use work.CAN_FD_register_map.all;
+context work.ctu_can_synth_context;
 
 entity crc_calc is
     generic(

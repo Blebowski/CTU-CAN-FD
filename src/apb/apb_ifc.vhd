@@ -51,10 +51,8 @@
 --               This is important for reads with side effects, such as
 --               reading from FIFO.
 --------------------------------------------------------------------------------
-library ieee;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
-use work.can_constants.all;
+
+context work.ctu_can_synth_context;
 
 entity apb_ifc is
     generic (

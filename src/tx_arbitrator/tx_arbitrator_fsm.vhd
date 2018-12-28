@@ -52,13 +52,7 @@
 --    10.11.2018   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-use work.can_constants.all;
-use work.ID_transfer.all;
-use work.can_components.all;
-use work.CAN_FD_frame_format.all;
+context work.ctu_can_synth_context;
 
 entity tx_arbitrator_fsm is
   port( 

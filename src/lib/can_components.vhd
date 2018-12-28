@@ -56,10 +56,10 @@
 --    29.9.2018    Added "inf_RAM_wrapper".
 --------------------------------------------------------------------------------
 
-library ieee;
-use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all;
-use WORK.can_constants.all;
+Library ieee;
+use ieee.std_logic_1164.all;
+use work.can_types.all;
+use work.can_constants.all;
 use work.can_registers_pkg.all;
 
 package can_components is
