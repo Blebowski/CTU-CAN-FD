@@ -69,7 +69,7 @@ package can_components is
     ---- CAN FD Core top level entity
     ------------------------------------------------------------------------------
     ------------------------------------------------------------------------------
-    component CAN_top_level is
+    component can_top_level is
         generic(
             constant use_logger     : boolean               := true;
             constant rx_buffer_size : natural range 32 to 4096 := 128;
@@ -334,7 +334,7 @@ package can_components is
     ----------------------------------------------------------------------------
     -- Inferred RAM wrapper
     ----------------------------------------------------------------------------    
-    component inf_RAM_wrapper is
+    component inf_ram_wrapper is
         generic(
             constant word_width           :     natural := 32;
             constant depth                :     natural := 32;

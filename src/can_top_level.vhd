@@ -77,7 +77,7 @@
 
 context work.ctu_can_synth_context;
 
-entity CAN_top_level is
+entity can_top_level is
     generic(
         -- Whenever event logger should be synthetised
         constant use_logger     : boolean                := true;

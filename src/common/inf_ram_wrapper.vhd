@@ -54,7 +54,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 
-entity inf_RAM_wrapper is
+entity inf_ram_wrapper is
     generic(
 
         -- Width of memory word (in bits)
