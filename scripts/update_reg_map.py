@@ -160,14 +160,14 @@ if __name__ == '__main__':
 									memMap="CAN_Registers",
 									wordWidthBit=32,
 									outPath="../src/Libraries/CAN_FD_register_map.vhd",
-									packName="CAN_FD_register_map")
+									packName="can_fd_register_map")
 
 		ctu_can_update_vhdl_package(specPath=args.xactSpec,
 									licensePath=MIT_LICENSE_PATH,
 									memMap="CAN_Frame_format",
 									wordWidthBit=32,
 									outPath="../src/Libraries/CAN_FD_frame_format.vhd",
-									packName="CAN_FD_frame_format")
+									packName="can_fd_frame_format")
 
 		print("\nDone\n")
 
