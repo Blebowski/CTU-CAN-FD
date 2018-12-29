@@ -56,7 +56,7 @@ USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 use work.CAN_FD_frame_format.all;
 
-package ID_transfer is
+package id_transfer is
 
     -- Register value to decimal value
     procedure ID_reg_to_decimal(
@@ -70,9 +70,9 @@ package ID_transfer is
         signal ID_reg   : out   std_logic_vector(28 downto 0)
     );
 
-end package ID_transfer;
+end package id_transfer;
 
-package body ID_transfer is
+package body id_transfer is
 
 
     procedure ID_reg_to_decimal(
@@ -103,4 +103,4 @@ package body ID_transfer is
               <= vector(17 downto 0);
     end procedure ID_decimal_to_reg;
 
-end ID_transfer;
+end id_transfer;

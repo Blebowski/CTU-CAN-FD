@@ -54,7 +54,7 @@ context ctu_can_synth_context is
     USE ieee.math_real.ALL;
     
     Library lib;
-    use lib.ID_transfer.all;
+    use lib.id_transfer.all;
     use lib.can_constants.all;
     use lib.can_components.all;
     use lib.can_types.all;
