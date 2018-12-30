@@ -309,32 +309,32 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
 
     -- Read Pointer (access from SW)
-    signal read_pointer             :       natural range 0 to buff_size - 1;
+    signal read_pointer             :       integer range 0 to buff_size - 1;
 
     -- Read pointer incremented by 1 (combinationally)
-    signal read_pointer_inc_1       :       natural range 0 to buff_size - 1;
+    signal read_pointer_inc_1       :       integer range 0 to buff_size - 1;
 
     -- Write pointer (committed, available to SW, after frame was stored)
-    signal write_pointer            :       natural range 0 to buff_size - 1;
+    signal write_pointer            :       integer range 0 to buff_size - 1;
 
     -- Write pointer RAW. Changing during frame, as frame is continously stored
     -- to the buffer. When frame is sucesfully received, it is updated to
     -- write pointer!
-    signal write_pointer_raw        :       natural range 0 to buff_size - 1;
+    signal write_pointer_raw        :       integer range 0 to buff_size - 1;
 
     -- Extra write pointer which is used for storing timestamp at the end of
     -- data frame!
-    signal write_pointer_extra_ts   :       natural range 0 to buff_size - 1;
+    signal write_pointer_extra_ts   :       integer range 0 to buff_size - 1;
 
     -- Final pointer to memory. "write_pointer_raw" and 
     -- "write_pointer_extra_ts" are multiplexed based on RX FSM! 
-    signal memory_write_pointer     :       natural range 0 to buff_size - 1;
+    signal memory_write_pointer     :       integer range 0 to buff_size - 1;
 
     -- Data that will be written to the RX Buffer memory!
     signal memory_write_data        :       std_logic_vector(31 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_int          :       natural range -1 to buff_size + 1;
+    signal rx_mem_free_int          :       integer range -1 to buff_size + 1;
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------

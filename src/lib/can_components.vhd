@@ -321,12 +321,12 @@ package can_components is
         signal inc_extra_wr_ptr       :in     std_logic;
         signal read_increment         :in     std_logic;
         signal drv_bus                :in     std_logic_vector(1023 downto 0);
-        signal read_pointer           :out    natural range 0 to buff_size - 1;
-        signal read_pointer_inc_1     :out    natural range 0 to buff_size - 1;
-        signal write_pointer          :out    natural range 0 to buff_size - 1;
-        signal write_pointer_raw      :out    natural range 0 to buff_size - 1;
-        signal write_pointer_extra_ts :out    natural range 0 to buff_size - 1;
-        signal rx_mem_free_int        :out    natural range -1 to buff_size + 1
+        signal read_pointer           :out    integer range 0 to buff_size - 1;
+        signal read_pointer_inc_1     :out    integer range 0 to buff_size - 1;
+        signal write_pointer          :out    integer range 0 to buff_size - 1;
+        signal write_pointer_raw      :out    integer range 0 to buff_size - 1;
+        signal write_pointer_extra_ts :out    integer range 0 to buff_size - 1;
+        signal rx_mem_free_int        :out    integer range -1 to buff_size + 1
     );
     end component;
 

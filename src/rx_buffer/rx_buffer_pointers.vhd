@@ -113,28 +113,28 @@ entity rx_buffer_pointers is
         -- Pointer outputs
         ------------------------------------
         -- Read Pointer (access from SW)
-        signal read_pointer         :out     natural range 0 to buff_size - 1;
+        signal read_pointer         :out     integer range 0 to buff_size - 1;
 
         -- Read pointer incremented by 1 (combinationally)
-        signal read_pointer_inc_1   :out     natural range 0 to buff_size - 1;
+        signal read_pointer_inc_1   :out     integer range 0 to buff_size - 1;
 
         -- Write pointer (committed, available to SW, after frame was stored)
-        signal write_pointer        :out     natural range 0 to buff_size - 1;
+        signal write_pointer        :out     integer range 0 to buff_size - 1;
 
         -- Write pointer RAW. Changing during frame, as frame is continously stored
         -- to the buffer. When frame is sucesfully received, it is updated to
         -- write pointer!
-        signal write_pointer_raw    :out     natural range 0 to buff_size - 1;
+        signal write_pointer_raw    :out     integer range 0 to buff_size - 1;
 
         -- Extra write pointer which is used for storing timestamp at the end of
         -- data frame!
-        signal write_pointer_extra_ts :out   natural range 0 to buff_size - 1;
+        signal write_pointer_extra_ts :out   integer range 0 to buff_size - 1;
 
         ------------------------------------
         -- Mem. free outputs
         ------------------------------------
         -- Number of free memory words available for user
-        signal rx_mem_free_int      :out    natural range -1 to buff_size + 1
+        signal rx_mem_free_int      :out    integer range -1 to buff_size + 1
 
     );
 end entity;
@@ -152,19 +152,19 @@ architecture rtl of rx_buffer_pointers is
     signal drv_erase_rx             :       std_logic;
 
     -- Raw value of number of free memory words.
-    signal rx_mem_free_raw          :       natural range -1 to buff_size + 1;
+    signal rx_mem_free_raw          :       integer range -1 to buff_size + 1;
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally incremented by 1.
-    signal rx_mem_free_raw_inc_1    :       natural range -1 to buff_size + 1;
+    signal rx_mem_free_raw_inc_1    :       integer range -1 to buff_size + 1;
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally decremented by 1.
-    signal rx_mem_free_raw_dec_1    :       natural range -1 to buff_size + 1;
+    signal rx_mem_free_raw_dec_1    :       integer range -1 to buff_size + 1;
 
     -- Number of free memory words available to SW, combinationally icnremented
     -- by 1.
-    signal rx_mem_free_int_inc_1    :       natural range -1 to buff_size + 1;
+    signal rx_mem_free_int_inc_1    :       integer range -1 to buff_size + 1;
 
 begin
 
