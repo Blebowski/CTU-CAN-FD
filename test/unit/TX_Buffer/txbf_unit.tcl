@@ -66,7 +66,9 @@ add wave -label "Buffer ready" $TCOMP/txt_buf_ready
 add wave -label "Buffer output" -hexadecimal $TCOMP/txt_word
 add wave -label "Buffer adress from CAN Core" $TCOMP/txt_addr
 
-add wave -label "TX Buffer memory" $TCOMP/txt_Buf_comp/txt_buffer_mem
+add wave -label "TX Buffer memory" $TCOMP/txt_buffer_comp/txt_buf_RAM/ram_memory
+
+add wave -label "TX Buffer FSM" $TCOMP/txt_buffer_comp/txt_buffer_fsm_comp/buf_fsm
 
 add wave -noupdate -divider -height 20 "Internal testbench signals"
 add wave -label "Shadow memory" -hexadecimal $TCOMP/shadow_mem
