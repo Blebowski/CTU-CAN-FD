@@ -134,7 +134,7 @@ entity rx_buffer_pointers is
         -- Mem. free outputs
         ------------------------------------
         -- Number of free memory words available for user
-        signal rx_mem_free_int      :out    natural range 0 to buff_size
+        signal rx_mem_free_int      :out    natural range -1 to buff_size + 1
 
     );
 end entity;
@@ -152,19 +152,19 @@ architecture rtl of rx_buffer_pointers is
     signal drv_erase_rx             :       std_logic;
 
     -- Raw value of number of free memory words.
-    signal rx_mem_free_raw          :       natural range 0 to buff_size;
+    signal rx_mem_free_raw          :       natural range -1 to buff_size + 1;
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally incremented by 1.
-    signal rx_mem_free_raw_inc_1    :       natural range 0 to buff_size + 1;
+    signal rx_mem_free_raw_inc_1    :       natural range -1 to buff_size + 1;
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally decremented by 1.
-    signal rx_mem_free_raw_dec_1    :       natural range -1 to buff_size;
+    signal rx_mem_free_raw_dec_1    :       natural range -1 to buff_size + 1;
 
     -- Number of free memory words available to SW, combinationally icnremented
     -- by 1.
-    signal rx_mem_free_int_inc_1    :       natural range 0 to buff_size + 1;
+    signal rx_mem_free_int_inc_1    :       natural range -1 to buff_size + 1;
 
 begin
 
@@ -331,10 +331,12 @@ begin
     ----------------------------------------------------------------------------
     -- Calculating incremented value of free memory combinationally
     ----------------------------------------------------------------------------
-    rx_mem_free_int_inc_1   <= rx_mem_free_int + 1;
-    rx_mem_free_raw_inc_1   <= rx_mem_free_raw + 1;
-    rx_mem_free_raw_dec_1   <= rx_mem_free_raw - 1;
-
+    mem_free_arith_proc : process(rx_mem_free_int, rx_mem_free_raw)
+    begin
+        rx_mem_free_int_inc_1   <= rx_mem_free_int + 1;
+        rx_mem_free_raw_inc_1   <= rx_mem_free_raw + 1;
+        rx_mem_free_raw_dec_1   <= rx_mem_free_raw - 1;
+    end process;
 
     ----------------------------------------------------------------------------
     -- Calculation of Incremented Read Pointer combinationally. This is used
@@ -344,7 +346,9 @@ begin
     --     clock cycle delay on "read_pointer" and thus allow bursts on read
     --     from RX_DATA register!
     ----------------------------------------------------------------------------
-    read_pointer_inc_1 <= (read_pointer + 1) mod buff_size;
-
+    read_pointer_inc_proc : process(read_pointer)
+    begin
+        read_pointer_inc_1 <= (read_pointer + 1) mod buff_size;
+    end process;
 
 end architecture;

@@ -334,7 +334,7 @@ architecture rtl of rx_buffer is
     signal memory_write_data        :       std_logic_vector(31 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_int          :       natural range 0 to buff_size;
+    signal rx_mem_free_int          :       natural range -1 to buff_size + 1;
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
