@@ -55,12 +55,32 @@ add wave -expand -height 17 -label "Input frame" $TCOMP/frame_info
 add wave -expand -height 17 -label "Filter settings" $TCOMP/drv_settings
 
 #Circuit component			
-set CCOMP "messageFilter_comp"  
+set CCOMP "frame_filters_comp"  
 add wave -noupdate -divider -height 20 "Circuit state"
 add wave -label "Filter A valid" $TCOMP/$CCOMP/int_filter_a_valid
 add wave -label "Filter B valid" $TCOMP/$CCOMP/int_filter_b_valid
 add wave -label "Filter C valid" $TCOMP/$CCOMP/int_filter_c_valid
 add wave -label "Filter Range valid" $TCOMP/$CCOMP/int_filter_ran_valid
+
+add wave -noupdate -divider -height 20 "Bit Filter A"
+add wave -label "Filter A mask" $TCOMP/$CCOMP/drv_filter_A_mask
+add wave -label "Filter A bits" $TCOMP/$CCOMP/drv_filter_A_bits
+add wave -label "Filter A enable" $TCOMP/$CCOMP/filter_A_enable
+
+add wave -noupdate -divider -height 20 "Bit Filter B"
+add wave -label "Filter B mask" $TCOMP/$CCOMP/drv_filter_B_mask
+add wave -label "Filter B bits" $TCOMP/$CCOMP/drv_filter_B_bits
+add wave -label "Filter B enable" $TCOMP/$CCOMP/filter_B_enable
+
+add wave -noupdate -divider -height 20 "Bit Filter C"
+add wave -label "Filter C mask" $TCOMP/$CCOMP/drv_filter_C_mask
+add wave -label "Filter C bits" $TCOMP/$CCOMP/drv_filter_C_bits
+add wave -label "Filter C enable" $TCOMP/$CCOMP/filter_C_enable
+
+add wave -noupdate -divider -height 20 "Range Filter"
+add wave -label "Filter Range High threshold" $TCOMP/$CCOMP/drv_filter_ran_hi_th
+add wave -label "Filter Range Low threshold" $TCOMP/$CCOMP/drv_filter_ran_lo_th
+add wave -label "Filter Range enable" $TCOMP/$CCOMP/filter_range_enable
 
 add wave -noupdate -divider -height 20 "Circuit outputs"
 add wave -label "Output valid" $TCOMP/out_ident_valid
