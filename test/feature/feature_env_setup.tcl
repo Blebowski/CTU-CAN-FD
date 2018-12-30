@@ -39,15 +39,19 @@
 ################################################################################
 global TCOMP
 global INST1
+global INST2
 global SIG1
 global SIG2
 global CORE
+global PROTOCOL_CONTROL
 
 start_CAN_simulation "feature_env_test_wrapper"
 quietly set INST1 "g_inst(1)/can_inst"
+quietly set INST2 "g_inst(2)/can_inst"
 quietly set SIG1 "p(1)"
 quietly set SIG2 "p(2)"
-quietly set CORE  "core_top_comp"
+quietly set CORE  "can_core_comp"
+quietly set PROTOCOL_CONTROL  "protocol_control_comp"
 
 ################################################################################
 # Adding the waves
@@ -82,38 +86,6 @@ add wave -label "Transceiver delay" $TCOMP/$SIG1.tr_del
 add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
 
-add wave -group "Memory reg debug" \
-	-label "Control registers cs" $TCOMP/$INST1/reg_comp/control_registers_cs \
-	-label "Control registers cs register" $TCOMP/$INST1/reg_comp/control_registers_cs_reg \
-	-label "Control registers rdata" $TCOMP/$INST1/reg_comp/control_registers_rdata \
-	-label "Control rgisters Reg sel" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/reg_sel \
-	-label "Controlt registers read data mask" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/read_data_mask_n \
-	-label "Control registers out" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_out_i \
-	-label "Control registers in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/control_registers_in \
-	-label "Data mux Index" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/index \
-	-label "Data mux Index sat" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/index_sat \
-	-label "Selected data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/sel_data \
-	-label "Masked data" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/masked_data \
-	-label "Data out enable" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/data_mux_control_registers_comp/enable
-
-add wave -group "CTR_PRES_DEBUG" \
-    -label "Data in" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/data_in \
-    -label "Data mask" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/data_mask \
-    -label "Auto clear" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/auto_clear \
-    -label "Write" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/write \
-    -label "cs" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/cs \
-    -label "w_be" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/w_be \
-    -label "Reg. value" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/reg_value \
-    -label "write select" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/ctr_pres_reg_comp/wr_select \
-    -label "drv_ctr_sel" $TCOMP/$INST1/$CORE/faultConf_comp/drv_ctr_sel \
-    -label "rx counter" $TCOMP/$INST1/$CORE/faultConf_comp/rx_counter \
-    -label "tx counter" $TCOMP/$INST1/$CORE/faultConf_comp/tx_counter
-
-add wave -group "Read data signaller!" \
-    -label "Register select" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/cs \
-    -label "Read signal" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/read_signal \
-    -label "Byte enables" $TCOMP/$INST1/reg_comp/control_registers_reg_map_comp/rx_data_access_signaller_comp/be
-
 
 add wave -group "RX Buffer (1)" \
 	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
@@ -131,8 +103,9 @@ add wave -group "RX Buffer (1)" \
     -label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
 
 add wave -group "TXT Buffers (1)" \
-	-label "FSM States" $TCOMP/$INST1/txtb_fsms \
-    -label "HW Commands" $TCOMP/$INST1/txt_hw_cmd
+	-label "FSM States" $TCOMP/$INST1/txtb_state \
+    -label "HW Commands" $TCOMP/$INST1/txt_hw_cmd \
+    -label "HW Commands" $TCOMP/$INST1/txt_sw_cmd
 
 add wave -group "Interrupt manager (1)" \
 	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
@@ -161,16 +134,15 @@ add wave -group "Frame to recieve (1)" \
 	-label "ESI" $TCOMP/$INST1/rec_esi
 
 add wave -group "Message filters" \
-	-label "Filter A mask" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_mask \
-	-label "Filter A value" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_bits \
-	-label "Filter A control" $TCOMP/$INST1/mes_filt_comp/drv_filter_A_ctrl \
-	-label "Filter A valid" $TCOMP/$INST1/mes_filt_comp/int_filter_A_valid \
-	-label "Filter Range valid" $TCOMP/$INST1/mes_filt_comp/int_filter_ran_valid \
-	-label "Filter Range HI Threshold" $TCOMP/$INST1/mes_filt_comp/drv_filter_ran_hi_th \
-	-label "Filter Range LO Threshold" $TCOMP/$INST1/mes_filt_comp/drv_filter_ran_lo_th \
-	-label "Filter Range control" $TCOMP/$INST1/mes_filt_comp/drv_filter_ran_ctrl \
-	-label "Filter out valid" $TCOMP/$INST1/mes_filt_comp/out_ident_valid
-
+	-label "Filter A mask" $TCOMP/$INST1/frame_filters_comp/drv_filter_A_mask \
+	-label "Filter A value" $TCOMP/$INST1/frame_filters_comp/drv_filter_A_bits \
+	-label "Filter A control" $TCOMP/$INST1/frame_filters_comp/drv_filter_A_ctrl \
+	-label "Filter A valid" $TCOMP/$INST1/frame_filters_comp/int_filter_A_valid \
+	-label "Filter Range valid" $TCOMP/$INST1/frame_filters_comp/int_filter_ran_valid \
+	-label "Filter Range HI Threshold" $TCOMP/$INST1/frame_filters_comp/drv_filter_ran_hi_th \
+	-label "Filter Range LO Threshold" $TCOMP/$INST1/frame_filters_comp/drv_filter_ran_lo_th \
+	-label "Filter Range control" $TCOMP/$INST1/frame_filters_comp/drv_filter_ran_ctrl \
+	-label "Filter out valid" $TCOMP/$INST1/frame_filters_comp/out_ident_valid
 
 
 add wave -group "Prescaler (1)" \
@@ -211,25 +183,25 @@ add wave -group "CAN Core (1)" \
 	-label "DeStuffing enabled" $TCOMP/$INST1/$CORE/bds_enable \
 	-label "Fixed stuff" $TCOMP/$INST1/$CORE/fixed_stuff \
 	-label "Fixed de-stuff" $TCOMP/$INST1/$CORE/fixed_destuff \
-	-label "Stuff count grey coded" $TCOMP/$INST1/$CORE/PC_State_comp/stuff_count_grey \
-	-label "stuff_parity" $TCOMP/$INST1/$CORE/PC_State_comp/stuff_parity \
-	-label "CRC check" $TCOMP/$INST1/$CORE/PC_State_comp/crc_check \
-	-label "Rx parity" $TCOMP/$INST1/$CORE/PC_State_comp/rx_parity \
-	-label "Rx count grey" $TCOMP/$INST1/$CORE/PC_State_comp/rx_count_grey \
-	-label "Rx CRC" -hexadecimal $TCOMP/$INST1/$CORE/PC_State_comp/rec_crc_r \
-	-label "Retransmit limit ena" $TCOMP/$INST1/$CORE/PC_State_comp/drv_retr_lim_ena \
-	-label "Retransmit count" $TCOMP/$INST1/$CORE/PC_State_comp/retr_count \
-	-label "Retransmit limit" $TCOMP/$INST1/$CORE/PC_State_comp/drv_retr_th \
+	-label "Stuff count grey coded" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/stuff_count_grey \
+	-label "stuff_parity" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/stuff_parity \
+	-label "CRC check" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/crc_check \
+	-label "Rx parity" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/rx_parity \
+	-label "Rx count grey" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/rx_count_grey \
+	-label "Rx CRC" -hexadecimal $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/rec_crc_r \
+	-label "Retransmit limit ena" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/drv_retr_lim_ena \
+	-label "Retransmit count" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/retr_count \
+	-label "Retransmit limit" $TCOMP/$INST1/$CORE/$PROTOCOL_CONTROL/drv_retr_th \
 	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
     
 
 add wave -group "Bus sampling (1)" \
 	-label "Measure transceiver delay" $TCOMP/$INST1/trv_delay_calib \
-	-label "Transceiver delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
-	-label "Measurment running" $TCOMP/$INST1/bus_sync_comp/trv_running \
+	-label "Transceiver delay" $TCOMP/$INST1/bus_sampling_comp/trv_delay \
+	-label "Measurment running" $TCOMP/$INST1/bus_sampling_comp/trv_meas_running \
 	-label "Reset secondary sampling" $TCOMP/$INST1/ssp_reset \
 	-label "Bit error secondary sampling" $TCOMP/$INST1/bit_error_sec_sam \
-	-label "Tripple sampling registers" $TCOMP/$INST1/bus_sync_comp/trs_reg \
+	-label "Tripple sampling registers" $TCOMP/$INST1/bus_sampling_comp/CAN_rx_trs_majority \
 
 
 
@@ -245,89 +217,91 @@ add wave -label "Driving bus" $TCOMP/$INST1/drv_bus
 add wave -label "Status bus" $TCOMP/$INST1/stat_bus
 
 add wave -group "RX Buffer (2)" \
-	-label "RX_DATA" $TCOMP/$INST1/rx_read_buff \
-	-label "Buffer size" -unsigned $TCOMP/$INST1/rx_buf_size \
-	-label "Full" $TCOMP/$INST1/rx_full \
-	-label "Empty" $TCOMP/$INST1/rx_empty \
-	-label "Frames stored" -unsigned $TCOMP/$INST1/rx_message_count \
-	-label "Free words" -unsigned $TCOMP/$INST1/rx_mem_free \
-	-label "Read pointer" -unsigned $TCOMP/$INST1/rx_read_pointer_pos \
-	-label "Write pointer" -unsigned $TCOMP/$INST1/rx_write_pointer_pos \
-	-label "Data overrun" -unsigned $TCOMP/$INST1/rx_data_overrun
+	-label "RX_DATA" $TCOMP/$INST2/rx_read_buff \
+	-label "Buffer size" -unsigned $TCOMP/$INST2/rx_buf_size \
+	-label "Full" $TCOMP/$INST2/rx_full \
+	-label "Empty" $TCOMP/$INST2/rx_empty \
+	-label "Frames stored" -unsigned $TCOMP/$INST2/rx_message_count \
+	-label "Free words" -unsigned $TCOMP/$INST2/rx_mem_free \
+	-label "Read pointer" -unsigned $TCOMP/$INST2/rx_read_pointer_pos \
+	-label "Write pointer" -unsigned $TCOMP/$INST2/rx_write_pointer_pos \
+	-label "Data overrun" -unsigned $TCOMP/$INST2/rx_data_overrun
 
-add wave -group "TXT Buffers (2)" \
-	-label "FSM States" $TCOMP/$INST1/txtb_fsms
+add wave -group "TXT Buffers (1)" \
+    -label "FSM States" $TCOMP/$INST2/txtb_state \
+    -label "HW Commands" $TCOMP/$INST2/txt_hw_cmd \
+    -label "HW Commands" $TCOMP/$INST2/txt_sw_cmd
 
 add wave -group "Interrupt manager (2)" \
-	-label "Interrupt vector" $TCOMP/$INST1/int_vector \
-	-label "Interrupt enable" $TCOMP/$INST1/int_ena \
-	-label "Interrupt mask" $TCOMP/$INST1/int_mask
+	-label "Interrupt vector" $TCOMP/$INST2/int_vector \
+	-label "Interrupt enable" $TCOMP/$INST2/int_ena \
+	-label "Interrupt mask" $TCOMP/$INST2/int_mask
 
 add wave -group "Frame to transmit (2)" \
-	-label "Frame is valid" $TCOMP/$INST1/tran_frame_valid_out \
-	-label "data" -hexadecimal $TCOMP/$INST1/tran_data_out \
-	-label "DLC" $TCOMP/$INST1/tran_dlc_out \
-	-label "RTR" $TCOMP/$INST1/tran_is_rtr \
-	-label "Identifier type" $TCOMP/$INST1/tran_ident_type_out \
-	-label "Frame format" $TCOMP/$INST1/tran_frame_type_out \
-	-label "BRS" $TCOMP/$INST1/tran_brs_out
+	-label "Frame is valid" $TCOMP/$INST2/tran_frame_valid_out \
+	-label "data" -hexadecimal $TCOMP/$INST2/tran_data_out \
+	-label "DLC" $TCOMP/$INST2/tran_dlc_out \
+	-label "RTR" $TCOMP/$INST2/tran_is_rtr \
+	-label "Identifier type" $TCOMP/$INST2/tran_ident_type_out \
+	-label "Frame format" $TCOMP/$INST2/tran_frame_type_out \
+	-label "BRS" $TCOMP/$INST2/tran_brs_out
 
 add wave -group "Frame to recieve (2)" \
-	-label "Frame is valid" $TCOMP/$INST1/rec_message_valid \
-	-label "Data word" -hexadecimal $TCOMP/$INST1/rx_store_data_word \
-	-label "Store Data word" -hexadecimal $TCOMP/$INST1/rx_store_data \
-	-label "identifier" $TCOMP/$INST1/rec_ident_in \
-	-label "DLC" $TCOMP/$INST1/rec_dlc_in \
+	-label "Frame is valid" $TCOMP/$INST2/rec_message_valid \
+	-label "Data word" -hexadecimal $TCOMP/$INST2/rx_store_data_word \
+	-label "Store Data word" -hexadecimal $TCOMP/$INST2/rx_store_data \
+	-label "identifier" $TCOMP/$INST2/rec_ident_in \
+	-label "DLC" $TCOMP/$INST2/rec_dlc_in \
 	-label "RTR" $TCOMP/$INST1/rec_is_rtr \
-	-label "Identifier type" $TCOMP/$INST1/rec_ident_type_in \
+	-label "Identifier type" $TCOMP/$INST2/rec_ident_type_in \
 	-label "Frame format" $TCOMP/$INST1/rec_frame_type_in \
-	-label "BRS" $TCOMP/$INST1/rec_brs \
-	-label "ESI" $TCOMP/$INST1/rec_esi
+	-label "BRS" $TCOMP/$INST2/rec_brs \
+	-label "ESI" $TCOMP/$INST2/rec_esi
 
 add wave -group "Prescaler (2)" \
-	-label "Time quantum (Nominal)" $TCOMP/$INST1/clk_tq_nbt \
-	-label "Time quantum (Data)" $TCOMP/$INST1/clk_tq_dbt \
-	-label "Sync (Nominal)" $TCOMP/$INST1/sync_nbt \
-	-label "Sync (Data)" $TCOMP/$INST1/sync_dbt \
-	-label "Sample (Nominal)" $TCOMP/$INST1/sample_nbt \
-	-label "Sample (Data)" $TCOMP/$INST1/sample_dbt \
-	-label "Sample type" $TCOMP/$INST1/sp_control \
-	-label "Synchronization type" $TCOMP/$INST1/sync_control \
-	-label "Bit time state" $TCOMP/$INST1/bt_fsm_out \
-	-label "Hard synchronization" $TCOMP/$INST1/hard_sync_edge_valid
+	-label "Time quantum (Nominal)" $TCOMP/$INST2/clk_tq_nbt \
+	-label "Time quantum (Data)" $TCOMP/$INST2/clk_tq_dbt \
+	-label "Sync (Nominal)" $TCOMP/$INST2/sync_nbt \
+	-label "Sync (Data)" $TCOMP/$INST2/sync_dbt \
+	-label "Sample (Nominal)" $TCOMP/$INST2/sample_nbt \
+	-label "Sample (Data)" $TCOMP/$INST2/sample_dbt \
+	-label "Sample type" $TCOMP/$INST2/sp_control \
+	-label "Synchronization type" $TCOMP/$INST2/sync_control \
+	-label "Bit time state" $TCOMP/$INST2/bt_fsm_out \
+	-label "Hard synchronization" $TCOMP/$INST2/hard_sync_edge_valid
 
 add wave -group "CAN Core (2)" \
-	-label "Protocol state" $TCOMP/$INST1/$CORE/pc_state \
-	-label "Operational state" $TCOMP/$INST1/$CORE/op_state \
-	-label "Error state" $TCOMP/$INST1/$CORE/error_state \
-	-label "TX error counter" $TCOMP/$INST1/$CORE/tx_counter_out \
-	-label "RX error counter" $TCOMP/$INST1/$CORE/rx_counter_out \
-	-label "Bit error" $TCOMP/$INST1/$CORE/bit_error_valid \
-	-label "Stuff error" $TCOMP/$INST1/$CORE/stuff_error_valid \
-	-label "Ack error" $TCOMP/$INST1/$CORE/ack_error \
-	-label "CRC error" $TCOMP/$INST1/$CORE/crc_error \
-	-label "Form error" $TCOMP/$INST1/$CORE/form_error \
-	-label "Transmittion finished" $TCOMP/$INST1/$CORE/tran_valid \
-	-label "Reception finished" $TCOMP/$INST1/$CORE/rec_valid \
-	-label "CRC 15" -hexadecimal $TCOMP/$INST1/$CORE/crc15 \
-	-label "CRC 17" -hexadecimal $TCOMP/$INST1/$CORE/crc17 \
-	-label "CRC 21" -hexadecimal $TCOMP/$INST1/$CORE/crc21 \
-	-label "Transmitt trigger" $TCOMP/$INST1/$CORE/tran_trig \
-	-label "Recieve trigger" $TCOMP/$INST1/$CORE/rec_trig \
-	-label "Insert stuff bit" $TCOMP/$INST1/$CORE/data_halt \
-	-label "Bit is destuffed" $TCOMP/$INST1/$CORE/destuffed \
-	-label "Stuffing length" $TCOMP/$INST1/$CORE/bs_length \
-	-label "DeStuffing length" $TCOMP/$INST1/$CORE/bds_length \
-	-label "Stuffing enabled" $TCOMP/$INST1/$CORE/bs_enable \
-	-label "DeStuffing enabled" $TCOMP/$INST1/$CORE/bds_enable \
-	-label "Fixed stuff" $TCOMP/$INST1/$CORE/fixed_stuff \
-	-label "Fixed de-stuff" $TCOMP/$INST1/$CORE/fixed_destuff \
-	-label "Stuff counter" $TCOMP/$INST1/$CORE/st_ctr_resolved
+	-label "Protocol state" $TCOMP/$INST2/$CORE/pc_state \
+	-label "Operational state" $TCOMP/$INST2/$CORE/op_state \
+	-label "Error state" $TCOMP/$INST2/$CORE/error_state \
+	-label "TX error counter" $TCOMP/$INST2/$CORE/tx_counter_out \
+	-label "RX error counter" $TCOMP/$INST2/$CORE/rx_counter_out \
+	-label "Bit error" $TCOMP/$INST2/$CORE/bit_error_valid \
+	-label "Stuff error" $TCOMP/$INST2/$CORE/stuff_error_valid \
+	-label "Ack error" $TCOMP/$INST2/$CORE/ack_error \
+	-label "CRC error" $TCOMP/$INST2/$CORE/crc_error \
+	-label "Form error" $TCOMP/$INST2/$CORE/form_error \
+	-label "Transmittion finished" $TCOMP/$INST2/$CORE/tran_valid \
+	-label "Reception finished" $TCOMP/$INST2/$CORE/rec_valid \
+	-label "CRC 15" -hexadecimal $TCOMP/$INST2/$CORE/crc15 \
+	-label "CRC 17" -hexadecimal $TCOMP/$INST2/$CORE/crc17 \
+	-label "CRC 21" -hexadecimal $TCOMP/$INST2/$CORE/crc21 \
+	-label "Transmitt trigger" $TCOMP/$INST2/$CORE/tran_trig \
+	-label "Recieve trigger" $TCOMP/$INST2/$CORE/rec_trig \
+	-label "Insert stuff bit" $TCOMP/$INST2/$CORE/data_halt \
+	-label "Bit is destuffed" $TCOMP/$INST2/$CORE/destuffed \
+	-label "Stuffing length" $TCOMP/$INST2/$CORE/bs_length \
+	-label "DeStuffing length" $TCOMP/$INST2/$CORE/bds_length \
+	-label "Stuffing enabled" $TCOMP/$INST2/$CORE/bs_enable \
+	-label "DeStuffing enabled" $TCOMP/$INST2/$CORE/bds_enable \
+	-label "Fixed stuff" $TCOMP/$INST2/$CORE/fixed_stuff \
+	-label "Fixed de-stuff" $TCOMP/$INST2/$CORE/fixed_destuff \
+	-label "Stuff counter" $TCOMP/$INST2/$CORE/st_ctr_resolved
 
 add wave -group "Bus sampling (2)" \
-	-label "Measure transceiver delay" $TCOMP/$INST1/trv_delay_calib \
-	-label "Transceiver delay" $TCOMP/$INST1/bus_sync_comp/trv_delay \
-	-label "Measurment running" $TCOMP/$INST1/bus_sync_comp/trv_running \
-	-label "Reset secondary sampling" $TCOMP/$INST1/ssp_reset \
-	-label "Bit error secondary sampling" $TCOMP/$INST1/bit_error_sec_sam \
-	-label "Tripple sampling registers" $TCOMP/$INST1/bus_sync_comp/trs_reg \
+	-label "Measure transceiver delay" $TCOMP/$INST2/trv_delay_calib \
+	-label "Transceiver delay" $TCOMP/$INST2/bus_sampling_comp/trv_delay \
+	-label "Measurment running" $TCOMP/$INST2/bus_sampling_comp/trv_meas_running \
+	-label "Reset secondary sampling" $TCOMP/$INST2/ssp_reset \
+	-label "Bit error secondary sampling" $TCOMP/$INST2/bit_error_sec_sam \
+	-label "Tripple sampling registers" $TCOMP/$INST2/bus_sampling_comp/CAN_rx_trs_majority \
