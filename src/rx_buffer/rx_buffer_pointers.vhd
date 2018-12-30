@@ -134,7 +134,7 @@ entity rx_buffer_pointers is
         -- Mem. free outputs
         ------------------------------------
         -- Number of free memory words available for user
-        signal rx_mem_free_int      :out    integer range -1 to buff_size + 1
+        signal rx_mem_free_int      :out    integer range 0 to buff_size + 1
 
     );
 end entity;
@@ -152,11 +152,11 @@ architecture rtl of rx_buffer_pointers is
     signal drv_erase_rx             :       std_logic;
 
     -- Raw value of number of free memory words.
-    signal rx_mem_free_raw          :       integer range -1 to buff_size + 1;
+    signal rx_mem_free_raw          :       integer range 0 to buff_size + 1;
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally incremented by 1.
-    signal rx_mem_free_raw_inc_1    :       integer range -1 to buff_size + 1;
+    signal rx_mem_free_raw_inc_1    :       integer range 0 to buff_size + 2;
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally decremented by 1.
@@ -164,7 +164,7 @@ architecture rtl of rx_buffer_pointers is
 
     -- Number of free memory words available to SW, combinationally icnremented
     -- by 1.
-    signal rx_mem_free_int_inc_1    :       integer range -1 to buff_size + 1;
+    signal rx_mem_free_int_inc_1    :       integer range 0 to buff_size + 2;
 
 begin
 

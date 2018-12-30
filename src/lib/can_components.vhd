@@ -326,7 +326,7 @@ package can_components is
         signal write_pointer          :out    integer range 0 to buff_size - 1;
         signal write_pointer_raw      :out    integer range 0 to buff_size - 1;
         signal write_pointer_extra_ts :out    integer range 0 to buff_size - 1;
-        signal rx_mem_free_int        :out    integer range -1 to buff_size + 1
+        signal rx_mem_free_int        :out    integer range 0 to buff_size + 1
     );
     end component;
 
