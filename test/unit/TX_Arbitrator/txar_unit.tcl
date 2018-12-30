@@ -56,7 +56,7 @@ add wave -label "Buffer inputs" -unsigned $TCOMP/txt_buf_in
 add wave -label "Buffers ready" -unsigned $TCOMP/txt_buf_ready
 add wave -label "Buffers pointer" -unsigned $TCOMP/txtb_ptr
 add wave -label "Stored buffer index" -unsigned $TCOMP/txt_hw_cmd_buf_index
-add wave -label "Priorities" $TCOMP/txArbitrator_comp/txt_buf_prio
+add wave -label "Priorities" $TCOMP/tx_arbitrator_comp/txt_buf_prio
 
 add wave -noupdate -divider -height 20 "DUT CAN Core interface"
 add wave -label "Data output" -hexadecimal $TCOMP/tran_data_word_out
@@ -83,13 +83,14 @@ add wave -label "Combinational index valid" $TCOMP/high_prio_valid
 add wave -label "Delay counter" $TCOMP/del_counter
 
 add wave -noupdate -divider -height 20 "Internal DUT signals"
-add wave -label "Metadata pointer" $TCOMP/txArbitrator_comp/txtb_pointer_meta
-add wave -label "FSM" $TCOMP/txArbitrator_comp/tx_arb_fsm
-add wave -label "Last txt buffer index" $TCOMP/txArbitrator_comp/last_txtb_index
-add wave -label "Buffer available" $TCOMP/txArbitrator_comp/select_buf_avail
-add wave -label "Selected buf index" $TCOMP/txArbitrator_comp/select_buf_index
-add wave -label "Read timestamp" $TCOMP/txArbitrator_comp/txtb_timestamp
-add wave -label "Timestamp valid" $TCOMP/txArbitrator_comp/timestamp_valid
+add wave -label "Metadata pointer" $TCOMP/tx_arbitrator_comp/txtb_pointer_meta
+add wave -label "FSM" $TCOMP/tx_arbitrator_comp/tx_arbitrator_fsm_comp/tx_arb_fsm
+add wave -label "FSM wait state" $TCOMP/tx_arbitrator_comp/tx_arbitrator_fsm_comp/fsm_wait_state
+add wave -label "Last txt buffer index" $TCOMP/tx_arbitrator_comp/last_txtb_index
+add wave -label "Buffer available" $TCOMP/tx_arbitrator_comp/select_buf_avail
+add wave -label "Selected buf index" $TCOMP/tx_arbitrator_comp/select_buf_index
+add wave -label "Read timestamp" $TCOMP/tx_arbitrator_comp/txtb_timestamp
+add wave -label "Timestamp valid" $TCOMP/tx_arbitrator_comp/timestamp_valid
 
 									 
 ################################################################################
