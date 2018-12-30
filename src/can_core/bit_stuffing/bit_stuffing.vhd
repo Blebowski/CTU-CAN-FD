@@ -135,10 +135,6 @@ architecture rtl of bit_stuffing is
     signal same_bits_add        :     natural range 0 to 7;
     signal same_bits_nxt        :     natural range 0 to 7;
 
-
-    -- Value of previously transcieved bit
-    signal prev_bit             :     std_logic;
-
     -- Halt for CAN Core             
     signal halt_reg             :     std_logic;
     signal halt_reg_nxt         :     std_logic;

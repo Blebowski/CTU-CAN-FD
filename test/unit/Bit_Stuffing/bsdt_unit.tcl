@@ -88,10 +88,10 @@ add wave -label "WBS pointer" -unsigned $TCOMP/wbs_index
 
 
 add wave -noupdate -divider -height 20 "Internal DUT signals"								
-add wave $TCOMP/bitstufcomp/same_bits
-add wave $TCOMP/bitstufcomp/prev_bit
-add wave $TCOMP/bitdestcomp/same_bits
-add wave $TCOMP/bitdestcomp/prev_val
+add wave $TCOMP/bit_stuffing_comp/same_bits
+add wave $TCOMP/bit_stuffing_comp/data_out
+add wave $TCOMP/bit_destuffing_comp/same_bits
+add wave $TCOMP/bit_destuffing_comp/prev_val
 									 
 ################################################################################
 # Execute the simulation, gather results
