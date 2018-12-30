@@ -54,7 +54,7 @@
 
 #define DRIVER_NAME	"ctucanfd"
 
-#undef CTUCAN_WITH_MSI
+#define CTUCAN_WITH_MSI 1
 
 /*
  * TX buffer rotation:
