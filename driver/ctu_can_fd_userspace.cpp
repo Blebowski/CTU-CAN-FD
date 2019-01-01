@@ -297,9 +297,30 @@ int main(int argc, char *argv[])
            nom_timing.bitrate
     );
 
+    struct can_bittiming data_timing = {
+        .bitrate = bitrate * 10,
+    };
+    res = can_get_bittiming(&nd, &data_timing,
+                      &ctu_can_fd_bit_timing_data_max,
+                      NULL,
+                      0);
+    if (res)
+        err(res, "can_get_bittiming data");
+    printf("data sample_point .%03d, tq %d, prop %d, seg1 %d, seg2 %d, sjw %d, brp %d, bitrate %d\n",
+           data_timing.sample_point,
+           data_timing.tq,
+           data_timing.prop_seg,
+           data_timing.phase_seg1,
+           data_timing.phase_seg2,
+           data_timing.sjw,
+           data_timing.brp,
+           data_timing.bitrate
+    );
+
     //priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, 0xffff);
     //priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, 0xffff);
     ctu_can_fd_set_nom_bittiming(priv, &nom_timing);
+    ctu_can_fd_set_data_bittiming(priv, &data_timing);
     //ctu_can_fd_rel_rx_buf(priv);
     //ctu_can_fd_set_ret_limit(priv, true, 1);
     //ctu_can_fd_set_ret_limit(priv, false, 0);
