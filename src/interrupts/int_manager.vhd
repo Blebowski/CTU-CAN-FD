@@ -193,6 +193,26 @@ architecture rtl of int_manager is
 
     constant zero_mask            :     std_logic_vector(int_count - 1 downto 0)
                                                 := (OTHERS => '0');
+                                                
+    ----------------------------------------------------------------------------
+    -- Reset over set priority assignment
+    ----------------------------------------------------------------------------
+    type int_s_r_priority_type is array(0 to int_count - 1) of boolean;
+    
+    constant int_clear_priority     :     int_s_r_priority_type :=
+        (false,  -- RXI_IND
+         false,  -- TXI_IND
+         false,  -- EWLI_IND
+         true,   -- DOI_IND
+         false,  -- EPI_IND
+         false,  -- ALI_IND
+         false,  -- BEI_IND
+         false,  -- LFI_IND
+         false,  -- RXFI_IND
+         false,  -- BSI_IND
+         false,  -- RBNEI_IND
+         false   -- TXBHCI_IND
+        );
 
 begin
   
@@ -222,13 +242,13 @@ begin
     ---------------------------------------------------------------------------
     -- Interrupt register masking and enabling
     ---------------------------------------------------------------------------
-    int_input_active(BEI_IND)       <= error_valid;
-    int_input_active(ALI_IND)       <= arbitration_lost;
-    int_input_active(EPI_IND)       <= error_passive_changed;
-    int_input_active(DOI_IND)       <= rx_message_disc;
-    int_input_active(EWLI_IND)      <= error_warning_limit;
-    int_input_active(TXI_IND)       <= tx_finished;
     int_input_active(RXI_IND)       <= rec_message_valid;
+    int_input_active(TXI_IND)       <= tx_finished;
+    int_input_active(EWLI_IND)      <= error_warning_limit;
+    int_input_active(DOI_IND)       <= rx_message_disc;
+    int_input_active(EPI_IND)       <= error_passive_changed;
+    int_input_active(ALI_IND)       <= arbitration_lost;
+    int_input_active(BEI_IND)       <= error_valid;
     int_input_active(LFI_IND)       <= loger_finished;
     int_input_active(RXFI_IND)      <= rx_full;
     int_input_active(BSI_IND)       <= br_shifted;
@@ -244,7 +264,7 @@ begin
         int_module_comp : int_module
         generic map(        
             reset_polarity         => ACT_RESET,
-            clear_priority         => false
+            clear_priority         => int_clear_priority(i)
         )
         port map(
             clk_sys                => clk_sys,

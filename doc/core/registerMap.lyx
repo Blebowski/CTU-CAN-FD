@@ -5397,40 +5397,40 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-RXI Frame Received interrupt.
+RXI Frame Received interrupt. Interrupt set has priority over clear. 
 \end_layout
 \begin_layout Description
-TXI Frame Transmitted sucesfully interrupt.
+TXI Frame Transmitted sucesfully interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-EWLI Error warning limit reached interrupt.
+EWLI Error warning limit reached interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-DOI Data overrun on RX Buffer Interrupt.
+DOI Data overrun on RX Buffer Interrupt. Interrupt clear has priority over set.
 \end_layout
 \begin_layout Description
-EPI Node became error passive or bus off interrupt.
+EPI Node became error passive or bus off interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-ALI Arbitration lost Interrupt.
+ALI Arbitration lost Interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-BEI Bus Error interrupt.
+BEI Bus Error interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-LFI Event logging finished interrupt.
+LFI Event logging finished interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-RXFI Receive Buffer full interrupt.
+RXFI Receive Buffer full interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-BSI Bit-rate shifted interrupt.
+BSI Bit-rate shifted interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-RBNEI Receive Buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.
+RBNEI Receive Buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-TXBHCI TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated.
+TXBHCI TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
