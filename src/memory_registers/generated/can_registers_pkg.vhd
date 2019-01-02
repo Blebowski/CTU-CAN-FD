@@ -104,6 +104,8 @@ package can_registers_pkg is
      tx_counter                  : std_logic_vector(31 downto 0);
      debug_register              : std_logic_vector(31 downto 0);
      yolo_reg                    : std_logic_vector(31 downto 0);
+     timestamp_low               : std_logic_vector(31 downto 0);
+     timestamp_high              : std_logic_vector(31 downto 0);
   end record;
 
 

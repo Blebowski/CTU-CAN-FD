@@ -80,10 +80,10 @@ end entity control_registers_reg_map;
 
 
 architecture rtl of control_registers_reg_map is
-  signal reg_sel : std_logic_vector(34 downto 0);
+  signal reg_sel : std_logic_vector(36 downto 0);
   constant ADDR_VECT
-                 : std_logic_vector(209 downto 0) := "100010100001100000011111011110011101011100011011011010011001011000010111010110010101010100010011010010010001010000001111001110001101001100001011001010001001001000000111000110000101000100000011000010000001000000";
-  signal read_data_mux_in : std_logic_vector(1119 downto 0);
+                 : std_logic_vector(221 downto 0) := "100100100011100010100001100000011111011110011101011100011011011010011001011000010111010110010101010100010011010010010001010000001111001110001101001100001011001010001001001000000111000110000101000100000011000010000001000000";
+  signal read_data_mux_in : std_logic_vector(1183 downto 0);
   signal read_data_mask_n : std_logic_vector(31 downto 0);
   signal control_registers_out_i : Control_registers_out_t;
   signal read_mux_ena                : std_logic;
@@ -96,7 +96,7 @@ begin
     address_decoder_control_registers_comp : address_decoder
     generic map(
         address_width                   => 6 ,
-        address_entries                 => 35 ,
+        address_entries                 => 37 ,
         addr_vect                       => ADDR_VECT ,
         registered_out                  => false ,
         reset_polarity                  => RESET_POLARITY 
@@ -757,7 +757,7 @@ begin
     data_mux_control_registers_comp : data_mux
     generic map(
         data_out_width                  => 32 ,
-        data_in_width                   => 1120 ,
+        data_in_width                   => 1184 ,
         sel_width                       => 6 ,
         registered_out                  => REGISTERED_READ ,
         reset_polarity                  => RESET_POLARITY 
@@ -776,6 +776,12 @@ begin
   -- Read data driver
   ------------------------------------------------------------------------------
   read_data_mux_in  <= 
+    -- Adress:144
+    control_registers_in.timestamp_high &
+
+    -- Adress:140
+    control_registers_in.timestamp_low &
+
     -- Adress:136
     control_registers_in.yolo_reg &
 

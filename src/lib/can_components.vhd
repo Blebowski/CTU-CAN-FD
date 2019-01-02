@@ -140,6 +140,7 @@ package can_components is
             signal srd                  : in  std_logic;
             signal swr                  : in  std_logic;
             signal sbe                  : in  std_logic_vector(3 downto 0);
+            signal timestamp            : in  std_logic_vector(63 downto 0);
             signal drv_bus              : out std_logic_vector(1023 downto 0);
             signal stat_bus             : in  std_logic_vector(511 downto 0);
             signal rx_read_buff         : in  std_logic_vector(31 downto 0);

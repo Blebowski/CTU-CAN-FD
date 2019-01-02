@@ -195,6 +195,9 @@ entity memory_registers is
         signal swr                  :in   std_logic;
         signal sbe                  :in   std_logic_vector(3 downto 0);
           
+        -- Timestamp input
+        signal timestamp            :in   std_logic_vector(63 downto 0);
+        
         -- Driving and Status Bus
         signal drv_bus              :out  std_logic_vector(1023 downto 0)
                                             := (OTHERS => '0');
@@ -1415,6 +1418,28 @@ begin
             YOLO_VAL_RSTVAL;
 
     end block yolo_register_block;
+
+
+    ---------------------------------------------------------------------------
+    -- TIMESTAMP_LOW, TIMESTAMP_HIGH registers
+    ---------------------------------------------------------------------------
+    timestamp_registers_block : block
+        constant ts_low_l : natural := Control_registers_in.timestamp_low'length;
+        constant ts_high_l : natural := Control_registers_in.timestamp_high'length;
+    begin
+
+        Control_registers_in.timestamp_low(
+            align_reg_to_wrd(TIMESTAMP_LOW_H, ts_low_l) downto
+            align_reg_to_wrd(TIMESTAMP_LOW_L, ts_low_l)) <=
+            timestamp(31 downto 0);
+
+        Control_registers_in.timestamp_high(
+            align_reg_to_wrd(TIMESTAMP_HIGH_H, ts_high_l) downto
+            align_reg_to_wrd(TIMESTAMP_HIGH_L, ts_high_l)) <=
+            timestamp(63 downto 32);
+
+    end block timestamp_registers_block;
+    
 
 
     ---------------------------------------------------------------------------
