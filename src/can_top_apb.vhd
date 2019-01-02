@@ -47,7 +47,23 @@
 --    May 2018   First Implementation
 --------------------------------------------------------------------------------
 
-context work.ctu_can_synth_context;
+Library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.ALL;
+use ieee.math_real.ALL;
+
+Library work;
+use work.id_transfer.all;
+use work.can_constants.all;
+use work.can_components.all;
+use work.can_types.all;
+use work.cmn_lib.all;
+use work.drv_stat_pkg.all;
+use work.endian_swap.all;
+use work.reduce_lib.all;
+
+use work.CAN_FD_register_map.all;
+use work.CAN_FD_frame_format.all;
 
 entity CTU_CAN_FD_v1_0 is
     generic(

@@ -42,17 +42,21 @@
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Definition of context for synthesizable codes of CTU CAN FD.
+--
+--  Context definitions are used for tests only since free version of Quartus
+--  does not support context clause for synthesis.
 --------------------------------------------------------------------------------
 -- Revision History:
---   28.12.2018   Created file
+--   28.12.2018   Created file - Ondrej Ille
 --------------------------------------------------------------------------------
 
 context ctu_can_synth_context is
     Library ieee;
-    USE IEEE.std_logic_1164.all;
-    USE IEEE.numeric_std.ALL;
-    USE ieee.math_real.ALL;
+    use ieee.std_logic_1164.all;
+    use ieee.numeric_std.ALL;
+    use ieee.math_real.ALL;
     
+    -- Name of work library is by default set to "lib" in GHDL.
     Library lib;
     use lib.id_transfer.all;
     use lib.can_constants.all;

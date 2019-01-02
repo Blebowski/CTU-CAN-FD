@@ -41,10 +41,13 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---    Declaration of test contex.
+--   Declaration of test contex.
+--
+--  Context definitions are used for tests only since free version of Quartus
+--  does not support context clause for synthesis.
 --------------------------------------------------------------------------------
 -- Revision History:
---    February 2018   First Implementation - Martin Jerabek
+--    02.01.2019   Created File - Ondrej Ille
 --------------------------------------------------------------------------------
 
 context ctu_can_test_context is
