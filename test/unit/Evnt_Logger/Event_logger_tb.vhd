@@ -49,15 +49,8 @@
 --    4.6.2018	 Finished testbench. Took just 2 years to do it!
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.CAN_FD_register_map.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture Event_logger_unit_test of CAN_test is
 
@@ -280,7 +273,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    CAN_logger_comp : CAN_logger
+    event_logger_comp : event_logger
     generic map(
         memory_size                =>  16 --Only 2^k possible!
     )

@@ -53,16 +53,8 @@
 --               reimplementation.
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-
-use work.ID_transfer.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture presc_unit_test of CAN_test is
 
@@ -418,7 +410,7 @@ begin
     ----------------------------------------------------------------------------
     -- Instance of Prescaler
     ----------------------------------------------------------------------------
-    prescaler_comp : prescaler_v3
+    prescaler_comp : prescaler
     PORT map(
         clk_sys              =>  clk_sys,
         res_n                =>  res_n,

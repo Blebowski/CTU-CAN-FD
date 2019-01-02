@@ -78,19 +78,8 @@
 --                transits to fixed stuffing as during CAN FD Frame.
 --------------------------------------------------------------------------------
 
-
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.ID_transfer.all;
-
-use STD.textio.all;
-use IEEE.std_logic_textio.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture bit_stuffing_unit_test of CAN_test is
 
@@ -632,7 +621,7 @@ architecture bit_stuffing_unit_test of CAN_test is
 
 begin
 
-    bitStufComp : bitStuffing_v2
+    bit_stuffing_comp : bit_stuffing
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
@@ -647,7 +636,7 @@ begin
     );
 
 
-    bitDestComp : bitDestuffing
+    bit_destuffing_comp : bit_destuffing
     PORT map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,

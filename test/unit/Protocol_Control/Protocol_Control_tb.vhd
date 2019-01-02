@@ -120,19 +120,8 @@
 --    13.7.2018   Added Unknown operational state signals!
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.ID_transfer.all;
-use work.CAN_FD_frame_format.all;
-use work.CAN_FD_register_map.all;
-use STD.textio.all;
-use IEEE.std_logic_textio.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture Protocol_Control_unit_test of CAN_test is
 
@@ -806,7 +795,7 @@ architecture Protocol_Control_unit_test of CAN_test is
 
 begin
 
-    protocolControl_1_Comp : protocolControl
+    protocol_control_1_comp : protocol_control
     port map(
         clk_sys               => clk_sys,
         res_n                 => res_n,
@@ -880,7 +869,7 @@ begin
       );
 
 
-    protocolControl_2_Comp : protocolControl
+    protocol_control_2_comp : protocol_control
     port map(
         clk_sys               => clk_sys,
         res_n                 => res_n,

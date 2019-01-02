@@ -51,9 +51,9 @@ add_system_waves
 
 #Add circuit specific signals
 add wave -noupdate -divider -height 20 "CRC polynomials"
-add wave -hexadecimal $TCOMP/CRC_comp/crc15_pol
-add wave -hexadecimal $TCOMP/CRC_comp/crc17_pol
-add wave -hexadecimal $TCOMP/CRC_comp/crc21_pol
+add wave -hexadecimal $TCOMP/can_crc_comp/crc15_pol
+add wave -hexadecimal $TCOMP/can_crc_comp/crc17_pol
+add wave -hexadecimal $TCOMP/can_crc_comp/crc21_pol
 
 add wave -noupdate -divider -height 20 "DUT inputs (generated)"
 add wave $TCOMP/enable
@@ -76,10 +76,21 @@ add wave -label "CRC17 Mismatch" $TCOMP/test_proc/c17_mism
 add wave -label "CRC21 Mismatch" $TCOMP/test_proc/c21_mism 
 
 add wave -noupdate -divider -height 20 "Internal DUT signals"								
-add wave $TCOMP/CRC_comp/crc15_cycle/crc15_nxt
-add wave $TCOMP/CRC_comp/crc17_cycle/crc17_nxt
-add wave $TCOMP/CRC_comp/crc21_cycle/crc21_nxt
-									 
+add wave $TCOMP/can_crc_comp/crc_calc_15_comp/crc_nxt
+add wave $TCOMP/can_crc_comp/crc_calc_15_comp/crc_shift
+add wave $TCOMP/can_crc_comp/crc_calc_15_comp/crc_shift_n_xor
+add wave $TCOMP/can_crc_comp/crc_calc_15_comp/crc_nxt_val
+
+add wave $TCOMP/can_crc_comp/crc_calc_17_comp/crc_nxt
+add wave $TCOMP/can_crc_comp/crc_calc_17_comp/crc_shift
+add wave $TCOMP/can_crc_comp/crc_calc_17_comp/crc_shift_n_xor
+add wave $TCOMP/can_crc_comp/crc_calc_17_comp/crc_nxt_val
+
+add wave $TCOMP/can_crc_comp/crc_calc_21_comp/crc_nxt
+add wave $TCOMP/can_crc_comp/crc_calc_21_comp/crc_shift
+add wave $TCOMP/can_crc_comp/crc_calc_21_comp/crc_shift_n_xor
+add wave $TCOMP/can_crc_comp/crc_calc_21_comp/crc_nxt_val
+
 ################################################################################
 # Execute the simulation, gather results
 ################################################################################

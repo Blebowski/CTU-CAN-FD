@@ -533,7 +533,7 @@ Ille Ondrej, Martin Jeřábek
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="6" columns="4">
+<lyxtabular version="3" rows="7" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -734,11 +734,50 @@ Added Linux driver description
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.1.1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12-2018
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added Register map block diagram after re-implementation of registers via
+ Register map generator.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.1.2
 \end_layout
 
 \end_inset
@@ -765,8 +804,8 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Added Register map block diagram after re-implementation of registers via
- Register map generator.
+Added CRC Wrapper.
+ Extended CRC description.
 \end_layout
 
 \end_inset
@@ -4949,7 +4988,7 @@ PH2, PH2 FD
 \begin_inset Text
 
 \begin_layout Plain Layout
-4
+-
 \end_layout
 
 \end_inset
@@ -4996,7 +5035,7 @@ PH1 + PROP FD
 \begin_inset Text
 
 \begin_layout Plain Layout
-2
+-
 \end_layout
 
 \end_inset
@@ -5456,7 +5495,7 @@ CAN Core
 \end_layout
 
 \begin_layout Description
-File core_top.vhd
+File can_core.vhd
 \end_layout
 
 \begin_layout Description
@@ -5464,14 +5503,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-core_top
+can_core
 \end_layout
 
 \begin_layout Standard
@@ -5732,7 +5771,7 @@ name "subsec-Protocol-Control"
 \end_layout
 
 \begin_layout Description
-File protocolControl.vhd
+File protocol_control.vhd
 \end_layout
 
 \begin_layout Description
@@ -5740,14 +5779,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in can_core.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-protocolControl
+protocol_control
 \end_layout
 
 \begin_layout Standard
@@ -9284,7 +9323,7 @@ name "subsec-Operation-control"
 \end_layout
 
 \begin_layout Description
-File operationControl.vhd
+File operation_control.vhd
 \end_layout
 
 \begin_layout Description
@@ -9292,14 +9331,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in can_core.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-operationControl
+operation_control
 \end_layout
 
 \begin_layout Standard
@@ -9524,7 +9563,7 @@ name "fig:OP_control"
 \end_layout
 
 \begin_layout Description
-File faultConf.vhd
+File fault_confinement.vhd
 \end_layout
 
 \begin_layout Description
@@ -9532,14 +9571,11 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in can_core.vhd
 \end_layout
 
 \begin_layout Description
-Entity 
-\family roman
-\shape italic
-faultConf
+Entity fault_confinement
 \end_layout
 
 \begin_layout Standard
@@ -9821,7 +9857,7 @@ name "fig:Fault-block-diagram"
 \end_layout
 
 \begin_layout Description
-File bitStuffing_v2.vhd
+File bit_stuffing.vhd
 \end_layout
 
 \begin_layout Description
@@ -9829,14 +9865,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in can_core.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-bitStuffing
+bit_stuffing
 \end_layout
 
 \begin_layout Standard
@@ -10016,7 +10052,7 @@ name "fig:Bit-stuffing-logic"
 \end_layout
 
 \begin_layout Description
-File bitDestuffing.vhd
+File bit_destuffing.vhd
 \end_layout
 
 \begin_layout Description
@@ -10024,14 +10060,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in can_core.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-bitDestuffing
+bit_destuffing
 \end_layout
 
 \begin_layout Standard
@@ -10232,7 +10268,7 @@ name "subsec-CRC"
 \end_layout
 
 \begin_layout Description
-File CRC.vhd
+File crc_wrapper.vhd
 \end_layout
 
 \begin_layout Description
@@ -10240,14 +10276,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in core_top.vhd
+in can_core.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-canCRC
+crc_wrapper
 \end_layout
 
 \begin_layout Standard
@@ -10260,7 +10296,63 @@ literal "true"
 \end_inset
 
 .
- Circuit operation is started upon detection of 0 to 1 transition on 
+ Calculation is implemented in 
+\family roman
+\shape italic
+crc_calc
+\family default
+\shape default
+ module.
+ Single CRC module (
+\family roman
+\shape italic
+can_crc
+\family default
+\shape default
+ entity) calculates all three CRCs required for CAN protocol (with 15, 17
+ and 21 bits long polynomials).
+ CRC wrapper contains 4 instances of CRC modules, thus together there are
+ 12 CRC sequences calculated simultaneously.
+ CRC wrapper further-more contains two stage multiplexor (
+\family roman
+\shape italic
+crc_mux
+\family default
+\shape default
+) which multiplexes between 4 calculated CRC combinationally by 
+\family roman
+\shape italic
+use_rx_crc
+\family default
+\shape default
+, 
+\family roman
+\shape italic
+use_wbs_crc
+\family default
+\shape default
+ signals.
+ Architecture of CRC wrapper module is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:crc-block"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Operation of 
+\family roman
+\shape italic
+crc_calc
+\family default
+\shape default
+ is started upon detection of 0 to 1 transition on 
 \family roman
 \shape italic
 enable
@@ -10282,22 +10374,10 @@ enable
 \family default
 \shape default
  input.
- CRC value is calculated in shift registers 
+ CRC value is calculated in shift register 
 \family roman
 \shape italic
-crc15_reg
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-crc17_reg
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-crc21_reg
+crc_reg
 \family default
 \shape default
 .
@@ -10317,23 +10397,10 @@ tion to avoid long combinational paths.
 Result CRC values are propagated to outputs 
 \family roman
 \shape italic
-crc15
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-crc17
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-crc21
+crc
 \family default
 \shape default
  of the circuit.
- All three CRC values are calculated at the same time.
  Since CRC calculation in ISO FD and Non-ISO are different, highest bit
  of 
 \family roman
@@ -10357,6 +10424,57 @@ drv_fd_type
  signal which is derived from Driving Bus.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/crc_wrapper_diagram.pdf
+	lyxscale 20
+	scale 65
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CRC wrapper block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:crc-block"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Bus Sampling
 \begin_inset CommandInset label
@@ -10369,7 +10487,7 @@ name "subsec-Bus-Sampling"
 \end_layout
 
 \begin_layout Description
-File busSync.vhd
+File bus_sampling.vhd
 \end_layout
 
 \begin_layout Description
@@ -10377,14 +10495,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-busSync
+bus_sampling
 \end_layout
 
 \begin_layout Standard
@@ -10777,7 +10895,7 @@ Interrupt Manager
 \end_layout
 
 \begin_layout Description
-File intManager.vhd
+File interrupt_manager.vhd
 \end_layout
 
 \begin_layout Description
@@ -10785,14 +10903,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-intManager
+int_manager
 \end_layout
 
 \begin_layout Standard
@@ -10952,7 +11070,7 @@ noprefix "false"
 \end_layout
 
 \begin_layout Description
-File prescaler_v3.vhd
+File prescaler.vhd
 \end_layout
 
 \begin_layout Description
@@ -10960,14 +11078,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-prescaler_v3
+prescaler
 \end_layout
 
 \begin_layout Standard
@@ -11667,11 +11785,11 @@ name "fig:Bit-Time-FSM"
 \end_layout
 
 \begin_layout Subsection
-Message Filter
+Frame Filters
 \end_layout
 
 \begin_layout Description
-File messageFilter.vhd
+File frame_filters.vhd
 \end_layout
 
 \begin_layout Description
@@ -11679,14 +11797,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-messageFilter
+frame_filters
 \end_layout
 
 \begin_layout Standard
@@ -11929,7 +12047,7 @@ name "subsec:2.3.10-RX-buffer-1"
 \end_layout
 
 \begin_layout Description
-File rxBuffer.vhd
+File rx_buffer.vhd
 \end_layout
 
 \begin_layout Description
@@ -11937,14 +12055,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-rxBuffer
+rx_buffer
 \end_layout
 
 \begin_layout Standard
@@ -12750,7 +12868,7 @@ name "subsec-TXT-buffer"
 \end_layout
 
 \begin_layout Description
-File txtBuffer.vhd
+File txt_buffer.vhd
 \end_layout
 
 \begin_layout Description
@@ -12758,14 +12876,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-txtBuffer
+txt_buffer
 \end_layout
 
 \begin_layout Standard
@@ -13166,7 +13284,7 @@ name "subsec-Memory-registers"
 \end_layout
 
 \begin_layout Description
-File canfd_registers.vhd
+File memory_registers.vhd
 \end_layout
 
 \begin_layout Description
@@ -13174,14 +13292,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-canfd_registers
+memory_registers
 \end_layout
 
 \begin_layout Standard
@@ -13205,6 +13323,8 @@ https://github.com/Blebowski/Reg_Map_Gen
  Outputs of Register modules are connected to Driving Bus.
  Inputs to Register modules (corresponding to read-only registers) are driven
  from Status Bus.
+ Read-write registers are connected internally inside generated register
+ blocks.
  Block diagram is shown in 
 \begin_inset ERT
 status open
@@ -13307,7 +13427,7 @@ TX Arbitrator
 \end_layout
 
 \begin_layout Description
-File txArbitrator.vhd
+File tx_arbitrator.vhd
 \end_layout
 
 \begin_layout Description
@@ -13315,14 +13435,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-txArbitrator
+tx_arbitrator
 \end_layout
 
 \begin_layout Standard
@@ -13992,7 +14112,7 @@ name "subsec-Event-logger"
 \end_layout
 
 \begin_layout Description
-File logger.vhd
+File event_logger.vhd
 \end_layout
 
 \begin_layout Description
@@ -14000,14 +14120,14 @@ Used
 \begin_inset space ~
 \end_inset
 
-in CAN_top_level.vhd
+in can_top_level.vhd
 \end_layout
 
 \begin_layout Description
 Entity 
 \family roman
 \shape italic
-CAN_logger
+event_logger
 \end_layout
 
 \begin_layout Standard
@@ -21089,12 +21209,6 @@ Known issues and future work
 CTU CAN FD has many features which are not required by CAN FD specification.
  However there is still room for improvement.
  Following list names possible improvements:
-\end_layout
-
-\begin_layout Itemize
-Extend Python register generator with generation of VHDL register module.
- This module would be instantiated in Memory Registers and connected to
- Driving Bus and Status Bus.
 \end_layout
 
 \begin_layout Itemize

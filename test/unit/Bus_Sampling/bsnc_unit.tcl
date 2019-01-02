@@ -65,11 +65,11 @@ add wave -label "Transciever delay (measured)" -unsigned $TCOMP/trv_delay_out
 add wave -label "Bit error" $TCOMP/bit_error
 
 add wave -noupdate -divider -height 20 "DUT internal signals"
-add wave -label "Tripple sampling majority" $TCOMP/bus_sync_comp/trs_majority
-add wave -label "Valid R->D edge on RX" $TCOMP/bus_sync_comp/edge_rx_det
-add wave -label "Valid R->D edge on TX" $TCOMP/bus_sync_comp/edge_tx_det
-add wave -label "Delay measurment running" $TCOMP/bus_sync_comp/trv_running
-add wave $TCOMP/bus_sync_comp/trv_to_restart
+add wave -label "Tripple sampling majority" $TCOMP/bus_sampling_comp/CAN_rx_trs_majority
+add wave -label "Valid R->D edge on RX" $TCOMP/bus_sampling_comp/edge_rx_det
+add wave -label "Valid R->D edge on TX" $TCOMP/bus_sampling_comp/edge_tx_det
+add wave -label "Delay measurment running" $TCOMP/bus_sampling_comp/trv_meas_running
+add wave $TCOMP/bus_sampling_comp/trv_meas_to_restart
 
 add wave -noupdate -divider -height 20 "Internal testbench signals"								
 add wave -label "Transciever delay (real)" -unsigned $TCOMP/tran_del

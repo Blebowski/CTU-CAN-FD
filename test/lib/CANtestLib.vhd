@@ -82,7 +82,7 @@ use STD.textio.all;
 use IEEE.std_logic_textio.all;
 USE ieee.math_real.ALL;
 USE work.randomLib.All;
-use work.CANconstants.all;
+use work.can_constants.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;

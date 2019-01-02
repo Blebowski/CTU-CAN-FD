@@ -66,8 +66,8 @@ add wave -group "TX Frame metadata" $TCOMP/tran_dlc_1 \
 									$TCOMP/txt_data_word_1 \
 									$TCOMP/txt_buf_ptr_1 \
 
-add wave -label "TX Frame Identifier BASE" $TCOMP/protocolControl_1_Comp/tran_ident_base_sr
-add wave -label "TX Frame Identifier EXT" $TCOMP/protocolControl_1_Comp/tran_ident_ext_sr
+add wave -label "TX Frame Identifier BASE" $TCOMP/protocol_control_1_comp/tran_ident_base_sr
+add wave -label "TX Frame Identifier EXT" $TCOMP/protocol_control_1_comp/tran_ident_ext_sr
 
 
 

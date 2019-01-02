@@ -59,8 +59,8 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 USE ieee.math_real.ALL;
-USE WORK.CANconstants.ALL;
-use work.CANcomponents.ALL;
+USE WORK.can_constants.ALL;
+use work.can_components.ALL;
 
 
 entity busSync_tb_sample is

@@ -553,11 +553,11 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>Libraries/CANconstants.vhd</spirit:name>
+        <spirit:name>Libraries/can_constants.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>Libraries/CANcomponents.vhd</spirit:name>
+        <spirit:name>Libraries/can_components.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
@@ -673,11 +673,11 @@
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>Libraries/CANconstants.vhd</spirit:name>
+        <spirit:name>Libraries/can_constants.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
-        <spirit:name>Libraries/CANcomponents.vhd</spirit:name>
+        <spirit:name>Libraries/can_components.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
       </spirit:file>
       <spirit:file>

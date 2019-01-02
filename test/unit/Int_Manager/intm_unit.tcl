@@ -62,7 +62,7 @@ add wave -group "Interrupt sources" $TCOMP/error_valid \
 									 $TCOMP/rx_full \
 									 $TCOMP/loger_finished \
 									 $TCOMP/rx_empty \
-									 $TCOMP/txt_hw_cmd
+									 $TCOMP/txt_hw_cmd_int
 
 # Commands from user registers
 add wave -label "Interrupt clear" $TCOMP/drv_int_clear;

@@ -50,10 +50,8 @@
 library vunit_lib;
 context vunit_lib.vunit_context;
 
-library ieee;
-library work;
-use ieee.std_logic_1164.all;
-USE work.CANtestLib.All;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 entity tb_reference_wrapper is
     generic (

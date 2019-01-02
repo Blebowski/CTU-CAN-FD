@@ -48,15 +48,8 @@
 --    6.6.2016   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.ID_transfer.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture bus_sync_unit_test of CAN_test is
 
@@ -156,7 +149,7 @@ architecture bus_sync_unit_test of CAN_test is
 
 begin
 
-    bus_Sync_comp : busSync
+    bus_sampling_comp : bus_sampling
     GENERIC map(
         use_Sync              =>  true
     )

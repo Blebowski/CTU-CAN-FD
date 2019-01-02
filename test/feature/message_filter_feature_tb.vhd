@@ -87,17 +87,10 @@
 --    15.9.2018   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-USE work.CANtestLib.All;
-use work.CAN_FD_frame_format.all;
-USE work.randomLib.All;
-use work.pkg_feature_exec_dispath.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
-use work.CAN_FD_register_map.all;
+use lib.pkg_feature_exec_dispath.all;
 
 package message_filter_feature is
     procedure message_filter_feature_exec(

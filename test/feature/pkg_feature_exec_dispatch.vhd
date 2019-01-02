@@ -39,13 +39,13 @@
 -- 
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
+context work.ctu_can_synth_context;
+
+use work.CANtestLib.All;
+use work.randomLib.All;
+
+use STD.textio.all;
+use IEEE.std_logic_textio.all;
 
 package pkg_feature_exec_dispath is
     --Procedure for processing the feature tests!

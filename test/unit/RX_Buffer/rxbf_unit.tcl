@@ -86,20 +86,20 @@ add wave -label "Output word" -hexadecimal $TCOMP/rx_read_buff
 add wave -label "Data overrun" -hexadecimal $TCOMP/rx_data_overrun
 
 add wave -noupdate -divider -height 20 "RX Buffer internal signals"
-add wave -label "RX Buffer FSM" -hexadecimal $TCOMP/rx_Buffer_comp/rx_fsm
-add wave -label "Read frame counter" -hexadecimal $TCOMP/rx_Buffer_comp/read_frame_counter
-add wave -label "Increment Read" -hexadecimal $TCOMP/rx_Buffer_comp/read_increment
-add wave -label "Intent to write word" -hexadecimal $TCOMP/rx_Buffer_comp/write_raw_intent
-add wave -label "Word OK to write" -hexadecimal $TCOMP/rx_Buffer_comp/write_raw_OK
-add wave -label "Write extra timestamp" -hexadecimal $TCOMP/rx_Buffer_comp/write_extra_ts
-add wave -label "Is free word" -hexadecimal $TCOMP/rx_Buffer_comp/is_free_word
-add wave -label "Overrun condition" -hexadecimal $TCOMP/rx_Buffer_comp/overrun_condition
-add wave -label "Write pointer extra timestamp" -hexadecimal $TCOMP/rx_Buffer_comp/write_pointer_extra_ts
-add wave -label "Write pointer RAW" -hexadecimal $TCOMP/rx_Buffer_comp/write_pointer_raw
-add wave -label "Memory write pointer" -hexadecimal $TCOMP/rx_Buffer_comp/memory_write_pointer
-add wave -label "Captured timestamp" -hexadecimal $TCOMP/rx_Buffer_comp/timestamp_capture
-add wave -label "Commit RX Frame" -hexadecimal $TCOMP/rx_Buffer_comp/commit_rx_frame
-add wave -label "Data overrun internal" -hexadecimal $TCOMP/rx_Buffer_comp/data_overrun_int
+add wave -label "RX Buffer FSM" -hexadecimal $TCOMP/rx_buffer_comp/rx_buffer_fsm_comp/rx_fsm
+add wave -label "Read frame counter" -hexadecimal $TCOMP/rx_buffer_comp/read_frame_counter
+add wave -label "Increment Read" -hexadecimal $TCOMP/rx_buffer_comp/read_increment
+add wave -label "Intent to write word" -hexadecimal $TCOMP/rx_buffer_comp/write_raw_intent
+add wave -label "Word OK to write" -hexadecimal $TCOMP/rx_buffer_comp/write_raw_OK
+add wave -label "Write extra timestamp" -hexadecimal $TCOMP/rx_buffer_comp/write_extra_ts
+add wave -label "Is free word" -hexadecimal $TCOMP/rx_buffer_comp/is_free_word
+add wave -label "Overrun condition" -hexadecimal $TCOMP/rx_buffer_comp/overrun_condition
+add wave -label "Write pointer extra timestamp" -hexadecimal $TCOMP/rx_buffer_comp/write_pointer_extra_ts
+add wave -label "Write pointer RAW" -hexadecimal $TCOMP/rx_buffer_comp/write_pointer_raw
+add wave -label "Memory write pointer" -hexadecimal $TCOMP/rx_buffer_comp/memory_write_pointer
+add wave -label "Captured timestamp" -hexadecimal $TCOMP/rx_buffer_comp/timestamp_capture
+add wave -label "Commit RX Frame" -hexadecimal $TCOMP/rx_buffer_comp/commit_rx_frame
+add wave -label "Data overrun internal" -hexadecimal $TCOMP/rx_buffer_comp/data_overrun_int
 
 
 add wave -noupdate -divider -height 20 "Testbench internal signals"
@@ -112,7 +112,7 @@ add wave -label "Output mem pointer" -unsigned $TCOMP/out_pointer
 add wave -label "???InMem=OutMem???" $TCOMP/cons_check/cons_res
 
 add wave -noupdate -divider -height 20 "Internal DUT signals"
-add wave -label "RX Buffer content" $TCOMP/rx_Buffer_comp/memory
+add wave -label "RX Buffer content" $TCOMP/rx_buffer_comp/rx_buf_RAM/ram_memory
 
 
 								 

@@ -60,17 +60,8 @@
 -- Test implementation
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.CAN_FD_register_map.all;
-
-use work.ID_transfer.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture CRC_unit_test of CAN_test is
 
@@ -262,7 +253,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT
     ----------------------------------------------------------------------------
-    CRC_comp : canCRC
+    can_crc_comp : can_crc
     generic map(
         crc15_pol  =>  CRC15_POL,
         crc17_pol  =>  CRC17_POL,

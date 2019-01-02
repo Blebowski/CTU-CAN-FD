@@ -105,6 +105,7 @@ sanity:
         iterations: 10
         timeout: 2 sec
         gauss_iter: 40
+        wave: sanity/sanity_env_setup.tcl
     tests:
         "1Mb/10Mb 20 m Star":
             topology: star

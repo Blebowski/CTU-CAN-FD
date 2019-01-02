@@ -51,19 +51,8 @@
 --    20.6.2018   Created file
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.ID_transfer.all;
-
-use STD.textio.all;
-use IEEE.std_logic_textio.all;
-use work.CAN_FD_frame_format.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 
 architecture CAN_reference_test of CAN_test is

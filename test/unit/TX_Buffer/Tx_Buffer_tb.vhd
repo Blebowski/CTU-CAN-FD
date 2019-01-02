@@ -53,15 +53,8 @@
 -- Test implementation
 --------------------------------------------------------------------------------
 
-Library ieee;
-USE IEEE.std_logic_1164.all;
-USE IEEE.numeric_std.ALL;
-USE ieee.math_real.ALL;
-use work.CANconstants.all;
-use work.CANcomponents.ALL;
-USE work.CANtestLib.All;
-USE work.randomLib.All;
-use work.ID_transfer.all;
+context work.ctu_can_synth_context;
+context work.ctu_can_test_context;
 
 architecture tx_buf_unit_test of CAN_test is
 
@@ -87,7 +80,7 @@ architecture tx_buf_unit_test of CAN_test is
     ------------------
     --Status signals--
     ------------------
-    signal txtb_state             :     txt_fsm_type;
+    signal txtb_state             :     std_logic_vector(3 downto 0);
 
     ------------------------------------
     --CAN Core and TX Arbiter Interface-
@@ -98,7 +91,7 @@ architecture tx_buf_unit_test of CAN_test is
                                           ('0', '0', '0', '0', '0', '0');
 
     signal txt_hw_cmd_int         :     std_logic;
-    signal txt_hw_cmd_buf_index   :     natural range 0 to 3;
+    signal txt_hw_cmd_buf_index   :     natural range 0 to 3 := 0;
 
     -- Buffer output and pointer to the RAM memory
     signal txt_word               :     std_logic_vector(31 downto 0);
@@ -131,13 +124,13 @@ architecture tx_buf_unit_test of CAN_test is
     signal exit_imm_1             :     boolean;
     signal exit_imm_2             :     boolean;
 
-    signal txtb_exp_state         :     txt_fsm_type;
+    signal txtb_exp_state         :     std_logic_vector(3 downto 0);
 
     procedure calc_exp_state(
         signal sw_cmd             : in  txt_sw_cmd_type;
         signal hw_cmd             : in  txt_hw_cmd_type;
-        signal act_state          : in  txt_fsm_type;
-        signal exp_state          : out txt_fsm_type
+        signal act_state          : in  std_logic_vector(3 downto 0);
+        signal exp_state          : out std_logic_vector(3 downto 0)
     ) is
     begin
 
@@ -145,67 +138,67 @@ architecture tx_buf_unit_test of CAN_test is
         exp_state   <= act_state;
 
         case act_state is
-        when txt_empty =>
+        when TXT_ETY =>
             if (sw_cmd.set_rdy = '1') then
-                exp_state   <= txt_ready;
+                exp_state   <= TXT_RDY;
             end if;
 
-        when txt_ready =>
+        when TXT_RDY =>
             if (hw_cmd.lock = '1') then
                 if (sw_cmd.set_abt = '1') then
-                    exp_state   <= txt_ab_prog;
+                    exp_state   <= TXT_ABTP;
                 else
-                    exp_state   <= txt_tx_prog;
+                    exp_state   <= TXT_TRAN;
                 end if;
             elsif (sw_cmd.set_abt = '1') then
-                exp_state       <= txt_aborted;
+                exp_state       <= TXT_ABT;
             end if;
 
-        when txt_tx_prog =>
+        when TXT_TRAN =>
             if (sw_cmd.set_abt = '1') then
-                exp_state   <= txt_ab_prog;
+                exp_state   <= TXT_ABTP;
             end if;
 
             if (hw_cmd.unlock = '1') then
                 if (hw_cmd.valid = '1') then
-                    exp_state   <= txt_ok;
+                    exp_state   <= TXT_TOK;
                 elsif (hw_cmd.err = '1' or hw_cmd.arbl = '1') then
-                    exp_state   <= txt_ready;
+                    exp_state   <= TXT_RDY;
                 elsif (hw_cmd.failed = '1') then
-                    exp_state   <= txt_error;
+                    exp_state   <= TXT_ERR;
                 end if;
             end if;
 
-        when txt_ab_prog =>
+        when TXT_ABTP =>
             if (hw_cmd.unlock = '1') then
                 if (hw_cmd.valid = '1') then
-                    exp_state   <= txt_ok;
+                    exp_state   <= TXT_TOK;
                 elsif (hw_cmd.err = '1' or hw_cmd.arbl = '1') then
-                    exp_state   <= txt_aborted;
+                    exp_state   <= TXT_ABT;
                 elsif (hw_cmd.failed = '1') then
-                    exp_state   <= txt_error;
+                    exp_state   <= TXT_ERR;
                 end if;
             end if;
 
-        when txt_ok =>
+        when TXT_TOK =>
             if (sw_cmd.set_ety = '1') then
-                exp_state   <= txt_empty;
+                exp_state   <= TXT_ETY;
             elsif (sw_cmd.set_rdy = '1') then
-                exp_state   <= txt_ready;
+                exp_state   <= TXT_RDY;
             end if;
 
-        when txt_aborted =>
+        when TXT_ABT =>
             if (sw_cmd.set_ety = '1') then
-                exp_state   <= txt_empty;
+                exp_state   <= TXT_ETY;
             elsif (sw_cmd.set_rdy = '1') then
-                exp_state   <= txt_ready;
+                exp_state   <= TXT_RDY;
             end if;
 
-        when txt_error =>
+        when TXT_ERR =>
             if (sw_cmd.set_ety = '1') then
-                exp_state   <= txt_empty;
+                exp_state   <= TXT_ETY;
             elsif (sw_cmd.set_rdy = '1') then
-                exp_state   <= txt_ready;
+                exp_state   <= TXT_RDY;
             end if;
         when others =>
         end case;
@@ -216,7 +209,7 @@ begin
     ----------------------------------------------------------------------------
     -- DUT - Create only one buffer instance
     ----------------------------------------------------------------------------
-    txt_Buf_comp : txtBuffer
+    txt_buffer_comp : txt_buffer
     generic map(
         buf_count               => 4,
         ID                      => 0
@@ -251,7 +244,7 @@ begin
     -- Data generation - stored by user writes
     ----------------------------------------------------------------------------
     data_gen_proc : process
-        variable buf_fsm : txt_fsm_type;
+        variable buf_fsm : std_logic_vector(3 downto 0);
     begin
         tran_cs      <= '0';
         while res_n = ACT_RESET loop
@@ -277,9 +270,9 @@ begin
         -- Data should be stored only if the buffer is accessible by user,
         -- when it is not ready, neither transmission is in progress.
         -- Store it in the shadow buffer!
-        if (buf_fsm /= txt_ready and
-            buf_fsm /= txt_tx_prog and
-            buf_fsm /= txt_ab_prog)
+        if (buf_fsm /= TXT_RDY and
+            buf_fsm /= TXT_TRAN and
+            buf_fsm /= TXT_ABTP)
         then
             shadow_mem(to_integer(unsigned(tran_addr))) <= tran_data;
         end if;
@@ -341,11 +334,11 @@ begin
         rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.lock, 0.2);
         rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.unlock, 0.2);
 
-        if (txtb_state /= txt_ready) then
+        if (txtb_state /= TXT_RDY) then
             txt_hw_cmd.lock   <= '0';
         end if;
 
-        if (txtb_state /= txt_tx_prog and txtb_state /= txt_ab_prog) then
+        if (txtb_state /= TXT_TRAN and txtb_state /= TXT_ABTP) then
             txt_hw_cmd.unlock <= '0';
         end if;
         wait for 0 ns;
@@ -381,8 +374,8 @@ begin
             -- LCOV_EXCL_START
             process_error(state_coh_error_ctr, error_beh, exit_imm_2);
             log("State not updated as expected! Actual: " &
-	         txt_fsm_type'image(txtb_state) & " Expected: " &
-                 txt_fsm_type'image(txtb_exp_state),
+	              to_hstring(txtb_state) & " Expected: " &
+                  to_hstring(txtb_exp_state),
                   error_l, log_level);
             -- LCOV_EXCL_STOP
         end if;
