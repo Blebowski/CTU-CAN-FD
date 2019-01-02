@@ -1659,7 +1659,6 @@ begin
             log_size;
 
         -- Pad unused by zeroes
-        Event_Logger_in.log_status(15 downto 8) <= (OTHERS => '0');
         Event_Logger_in.log_status(6 downto 3) <= (OTHERS => '0');
 
     end block log_status_block;
