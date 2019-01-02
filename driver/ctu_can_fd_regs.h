@@ -84,6 +84,8 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_TX_COUNTER            = 0x80,
 	CTU_CAN_FD_DEBUG_REGISTER        = 0x84,
 	CTU_CAN_FD_YOLO_REG              = 0x88,
+	CTU_CAN_FD_TIMESTAMP_LOW         = 0x8c,
+	CTU_CAN_FD_TIMESTAMP_HIGH        = 0x90,
 	CTU_CAN_FD_TXTB1_DATA_1         = 0x100,
 	CTU_CAN_FD_TXTB1_DATA_2         = 0x104,
 	CTU_CAN_FD_TXTB1_DATA_20        = 0x14c,
@@ -906,6 +908,22 @@ union ctu_can_fd_yolo_reg {
 	struct ctu_can_fd_yolo_reg_s {
   /* YOLO_REG */
 		uint32_t yolo_val               : 32;
+	} s;
+};
+
+union ctu_can_fd_timestamp_low {
+	uint32_t u32;
+	struct ctu_can_fd_timestamp_low_s {
+  /* TIMESTAMP_LOW */
+		uint32_t timestamp_low          : 32;
+	} s;
+};
+
+union ctu_can_fd_timestamp_high {
+	uint32_t u32;
+	struct ctu_can_fd_timestamp_high_s {
+  /* TIMESTAMP_HIGH */
+		uint32_t timestamp_high         : 32;
 	} s;
 };
 

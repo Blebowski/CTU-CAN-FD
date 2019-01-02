@@ -1402,6 +1402,52 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TIMESTAMP_HIGH</ipxact:name>
+					<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
+					<ipxact:description>Register with mirrored values of timestamp input. Bits 63:32 of timestamp input are available from this register. No synchronisation, nor shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h90</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TIMESTAMP_HIGH</ipxact:name>
+						<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
+						<ipxact:description>Bits 63:32 of timestamp input.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>00</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:access>read-only</ipxact:access>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TIMESTAMP_LOW</ipxact:name>
+					<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
+					<ipxact:description>Register with mirrored values of timestamp input. Bits 31:0 of timestamp input are available from this register. No synchronisation, nor shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h8C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TIMESTAMP_LOW</ipxact:name>
+						<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
+						<ipxact:description>Bits 31:0 of timestamp input.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:access>read-only</ipxact:access>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>YOLO_REG</ipxact:name>
 					<ipxact:displayName>YOLO_REG</ipxact:displayName>
 					<ipxact:description>Register for fun :)</ipxact:description>

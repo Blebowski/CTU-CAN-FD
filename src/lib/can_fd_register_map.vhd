@@ -102,6 +102,8 @@ package can_fd_register_map is
   constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"080";
   constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"084";
   constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"088";
+  constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"08C";
+  constant TIMESTAMP_HIGH_ADR        : std_logic_vector(11 downto 0) := x"090";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -1025,6 +1027,37 @@ package can_fd_register_map is
 
   -- YOLO_REG register reset values
   constant YOLO_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"DEADBEEF";
+
+  ------------------------------------------------------------------------------
+  -- TIMESTAMP_LOW register
+  --
+  -- Register with mirrored values of timestamp input. Bits 31:0 of timestamp in
+  -- put are available from this register. No synchronisation, nor shadowing is 
+  -- implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of pr
+  -- oper read from both registers, since overflow of TIMESTAMP_LOW might occur 
+  -- between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.
+  ------------------------------------------------------------------------------
+  constant TIMESTAMP_LOW_L        : natural := 0;
+  constant TIMESTAMP_LOW_H       : natural := 31;
+
+  -- TIMESTAMP_LOW register reset values
+  constant TIMESTAMP_LOW_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
+
+  ------------------------------------------------------------------------------
+  -- TIMESTAMP_HIGH register
+  --
+  -- Register with mirrored values of timestamp input. Bits 63:32 of timestamp i
+  -- nput are available from this register. No synchronisation, nor shadowing is
+  --  implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of p
+  -- roper read from both registers, since overflow of TIMESTAMP_LOW might occur
+  --  between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.
+  ------------------------------------------------------------------------------
+  constant TIMESTAMP_HIGH_L       : natural := 0;
+  constant TIMESTAMP_HIGH_H      : natural := 31;
+
+  -- TIMESTAMP_HIGH register reset values
+  constant TIMESTAMP_HIGH_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- TXTB1_DATA_1 register

@@ -399,7 +399,7 @@ architecture rtl of CAN_top_level is
     signal br_shifted            : std_logic;
 
     --Event logging finsihed
-    signal loger_finished : std_logic;
+    signal loger_finished        : std_logic;
 
 
     ----------------------------------------------------------------------------
@@ -536,6 +536,7 @@ begin
         srd                  => srd,
         swr                  => swr,
         sbe                  => sbe,
+        timestamp            => timestamp,
         drv_bus              => drv_bus,
         stat_bus             => stat_bus,
         rx_read_buff         => rx_read_buff,
