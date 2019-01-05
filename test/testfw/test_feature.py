@@ -3,6 +3,7 @@ from pathlib import Path
 from .test_common import add_sources, TestsBase, dict_merge, \
                          get_common_modelsim_init_files, get_seed
 from textwrap import dedent
+import re
 
 log = logging.getLogger(__name__)
 
@@ -59,6 +60,18 @@ class FeatureTests(TestsBase):
                 'seed'         : get_seed(cfg)
             }
             tb.add_config(name, generics=generics)
+        self._check_for_unconfigured()
+
+    def _check_for_unconfigured(self):
+        config = self.config
+        # check for unconfigured unit tests
+        test_files = self.base.glob('feature/*_feature_tb.vhd')
+        all_tests = [re.match('(.*?)_feature_tb.vhd', f.name).group(1) for f in test_files]
+        configured = list(config['tests'].keys())
+        log.debug('Configured feature tests: {}'.format(', '.join(configured)))
+        unconfigured = [tb for tb in all_tests if tb not in configured]
+        if len(unconfigured):
+            log.warn("Feature tests with no configuration found (will not be run): {}".format(', '.join(unconfigured)))
 
     def _create_wrapper(self, ofile: Path) -> None:
         template = self.jinja_env.get_template('pkg_feature_exec_dispath-body.vhd')
