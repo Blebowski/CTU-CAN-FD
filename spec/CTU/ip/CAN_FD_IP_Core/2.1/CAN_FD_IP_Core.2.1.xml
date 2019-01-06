@@ -69,6 +69,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FDE</ipxact:name>

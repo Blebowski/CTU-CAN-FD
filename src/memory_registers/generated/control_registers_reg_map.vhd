@@ -119,7 +119,7 @@ begin
         data_mask                       => "11111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00110000" ,
-        auto_clear                      => "00000000" 
+        auto_clear                      => "00000001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
