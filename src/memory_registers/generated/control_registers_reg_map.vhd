@@ -740,6 +740,28 @@ begin
     );
 
     ----------------------------------------------------------------------------
+    -- SSP_CFG register
+    ----------------------------------------------------------------------------
+
+    ssp_cfg_reg_comp : memory_reg
+    generic map(
+        data_width                      => 16 ,
+        data_mask                       => "0000001101111111" ,
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000000000000000" 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(31 downto 16) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(30) ,-- in
+        w_be                            => be(3 downto 2) ,-- in
+        reg_value                       => control_registers_out_i.ssp_cfg -- out
+    );
+
+    ----------------------------------------------------------------------------
     -- Read data multiplexor enable 
     ----------------------------------------------------------------------------
     read_data_keep_gen : if (CLEAR_READ_DATA = false) generate
@@ -795,7 +817,7 @@ begin
     control_registers_in.rx_counter &
 
     -- Adress:120
-    "00000000" & "00000000" & control_registers_in.trv_delay &
+    control_registers_out_i.ssp_cfg & control_registers_in.trv_delay &
 
     -- Adress:116
     "00000000" & "00000000" & control_registers_in.alc & control_registers_in.err_capt &

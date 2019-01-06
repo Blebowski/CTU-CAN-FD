@@ -214,6 +214,7 @@ architecture rtl of bus_sampling is
                                                             downto 0) :=
                                                 (OTHERS => RECESSIVE);
 
+    constant SSP_DELAY_SAT_VAL       :     natural := SSP_SHIFT_LENGTH - 1; 
 
     -----------------------------------------------------------------------------
     -- Driving bus aliases
@@ -225,6 +226,12 @@ architecture rtl of bus_sampling is
     -- Enable of the whole driver
     signal drv_ena                   :     std_logic;
 
+    -- Secondary sampling point offset.
+    signal drv_ssp_offset            :     std_logic_vector(6 downto 0);
+
+    -- What value shall be used for ssp_delay (trv_delay, trv_delay+ssp_offset,
+    -- ssp_offset)
+    signal drv_ssp_delay_select      :     std_logic_vector(1 downto 0);
 
     -----------------------------------------------------------------------------
     -- Internal registers and signals
@@ -288,29 +295,33 @@ architecture rtl of bus_sampling is
 
     --Note: Bit Error is set up at sample point for whole bit 
     -- time until next sample point!!!!!
+    
+    -- SSP delay. Calculated from trv_delay either directly or by offseting
+    -- by ssp_offset.
+    signal ssp_delay                 :     std_logic_vector(7 downto 0);
+    
+    -- Measured transceived delay.
+    signal trv_delay                 :     std_logic_vector(6 downto 0);
 
-    --Transciever delay value (in clk_sys clock periods)
-    --Length of this vector corresponds to maximal measurable length of TRD!!!
-    --It is 256 clock cycles - assuming 100 Mhz clk sys, more than 2,5 us...
-    signal trv_delay                 :     std_logic_vector(6 downto 0); 
-
-    --Delay compensation measuring is running (between tx edge and rx edge)
-    signal trv_meas_running          :     std_logic;    
-    signal trv_meas_to_restart       :     std_logic;
-
+    ---------------------------------------------------------------------------
     -- Reset for shift registers. This is used instead of shift register with
     -- preload to lower the resource usage! Resetting and preloading to the
     -- same value can be merged into just resetting by OR of sources
+    ---------------------------------------------------------------------------
     signal shift_regs_res_n          :     std_logic;
 
 begin
     
     ---------------------------------------------------------------------------
-    -- Driving bus alias
+    -- Driving bus aliases
     ---------------------------------------------------------------------------
     drv_sam               <= drv_bus(DRV_SAM_INDEX);
     drv_ena               <= drv_bus(DRV_ENA_INDEX);
 
+    drv_ssp_offset        <= drv_bus(DRV_SSP_OFFSET_HIGH downto
+                                     DRV_SSP_OFFSET_LOW);
+    drv_ssp_delay_select  <= drv_bus(DRV_SSP_DELAY_SELECT_HIGH downto
+                                     DRV_SSP_DELAY_SELECT_LOW);
 
     ----------------------------------------------------------------------------
     -- Synchronisation chain for input signal
@@ -333,28 +344,42 @@ begin
     sync_chain_false : if (use_Sync = false) generate
         CAN_rx_i <= CAN_rx;
     end generate;
+    
+    
+    ---------------------------------------------------------------------------
+    -- Component for measurement of transceiver delay and calculation of
+    -- secondary sampling point.
+    ---------------------------------------------------------------------------
+    trv_delay_measurement_comp : trv_delay_measurement
+    generic map(
+        reset_polarity         => ACT_RESET,
+        trv_ctr_width          => 7,
+        use_ssp_saturation     => true,
+        ssp_saturation_lvl     => SSP_DELAY_SAT_VAL
+    )
+    port map(
+        clk_sys                => clk_sys,
+        res_n                  => res_n,
 
+        meas_start             => edge_tx_valid,
+        meas_stop              => edge_rx_valid,
+        meas_enable            => trv_delay_calib,
+        
+        ssp_offset             => drv_ssp_offset,                                
+        ssp_delay_select       => drv_ssp_delay_select,
+        trv_meas_progress      => open,
+        trv_delay_shadowed     => trv_delay,
+        ssp_delay_shadowed     => ssp_delay        
+    );
 
-    ----------------------------------------------------------------------------
-    -- Transceiver delay propagation to output.
-    -- Transceiver delay is propagated only once the measurement is finished!
-    -- If not, reading TRV_DELAY register during the measurement would return
-    -- immediate value in the counter which would not correspond to transceiver
-    -- delay measured during last FD frame!! 
-    ----------------------------------------------------------------------------
-    trv_delay_out_proc : process (clk_sys, res_n)
-    begin
-        if (res_n = ACT_RESET) then
-            trv_delay_out       <= (OTHERS => '0');
-        elsif (rising_edge(clk_sys)) then
-
-            -- Do not propagate during the measurement!
-            if (trv_meas_running = '0') then
-                trv_delay_out   <= "000000000" & trv_delay;
-            end if;
-
-        end if;
-    end process;
+    
+    ---------------------------------------------------------------------------
+    -- Propagate measured transceiver delay to output so that it can be
+    -- read from Memory registers.
+    ---------------------------------------------------------------------------
+    trv_delay_out(trv_delay_out'length - 1 downto trv_delay'length) <=
+        (OTHERS => '0');
+    trv_delay_out(trv_delay'length - 1 downto 0) <= trv_delay;
 
 
     ---------------------------------------------------------------------------
@@ -368,124 +393,24 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- Selection of RX Data sampled in Nominal Bit-rate between Normally
-    -- sampled and tripple sampled data.
+    -- Edge detector on TX, RX Data
     ---------------------------------------------------------------------------
-    data_rx_nbt <= CAN_rx_trs_majority when (drv_sam = TSM_ENABLE) else
-                   CAN_rx_i;
-
-
-    ----------------------------------------------------------------------------
-    -- RX Data Edge detection (for one clk_sys period)
-    -- Note: Sucessful samplng of previous bit is necessary 
-    --      (prev_Sample register)
-    ----------------------------------------------------------------------------
-    rx_edge_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            edge_rx_det         <= RECESSIVE;
-            edge_rx_valid       <= '0';
-            
-        elsif rising_edge(clk_sys) then
-
-            -- Rx data
-            edge_rx_det           <= CAN_rx_i;
-            
-            --Rx data edge appeared from recessive to dominant
-            if ((not edge_rx_det = CAN_rx_i) and 
-                (not prev_Sample = CAN_rx_i) and (prev_Sample = RECESSIVE))
-            then
-                edge_rx_valid     <= '1';
-            else
-                edge_rx_valid     <= '0';
-            end if;
-
-        end if;
-    end process rx_edge_proc;
-
-
-    ----------------------------------------------------------------------------
-    -- TX Data Edge detection (for one clk_sys period)
-    ----------------------------------------------------------------------------
-    tx_edge_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            edge_tx_det         <= RECESSIVE;
-            edge_tx_valid       <= '0';
-
-        elsif rising_edge(clk_sys) then
-
-            -- Tx data
-            edge_tx_det           <= data_tx;
-
-            --Tx data edge appeared from RECESSIVE to dominant
-            if ((not (edge_tx_det = data_tx)) and (edge_tx_det = RECESSIVE)) then 
-                edge_tx_valid     <= '1';
-            else
-                edge_tx_valid     <= '0';
-            end if;
-
-        end if;
-    end process tx_edge_proc;
-
-   
-    ----------------------------------------------------------------------------
-    -- Control for transceiver delay measurement.
-    ----------------------------------------------------------------------------
-    trv_delay_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = '0') then    
-            trv_meas_running       <= '0';
-            trv_meas_to_restart    <= '0';
-
-        elsif (rising_edge(clk_sys)) then
-           
-            -- Delay measurement enabled
-            if (trv_delay_calib = '1') then
-
-                -- Stop delay measurement upon receiving the edge on RX Data.
-                if (edge_rx_valid = '1') then
-                    trv_meas_running     <= '0';
-
-                -- Start measurement on edge on TX Data.
-                elsif (edge_tx_valid = '1' and trv_meas_to_restart = '0') then
-                    trv_meas_running     <= '1';
-                    trv_meas_to_restart  <= '1';
-                end if;
-
-            else
-                trv_meas_to_restart      <= '0';
-            end if;
-
-        end if;
-    end process trv_delay_proc;
-
-
-    ----------------------------------------------------------------------------
-    -- Transceiver delay measurement
-    ----------------------------------------------------------------------------
-    trv_delay_meas_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            trv_delay         <= (OTHERS => '0');
-            
-        elsif (rising_edge(clk_sys)) then
-
-            -- Delay measurement enabled
-            if (trv_delay_calib = '1') then
-                
-                -- Restart upon edge on TX Data
-                if (edge_tx_valid = '1') then
-                    trv_delay       <= (OTHERS => '0');
-
-                -- Increment each clock cycle
-                elsif (trv_meas_running = '1') then
-                    trv_delay       <= std_logic_vector(unsigned(trv_delay) + 1);
-                end if;
-
-            end if;
-        end if;
-    end process;
+    data_edge_detector_comp : data_edge_detector
+    generic map(
+        reset_polarity      => ACT_RESET,
+        tx_edge_pipeline    => true,
+        rx_edge_pipeline    => true
+    )
+    port map(
+        clk_sys             => clk_sys,
+        res_n               => res_n,
+        tx_data             => data_tx,
+        rx_data             => CAN_rx_i,
+        prev_rx_sample      => prev_sample,
+        
+        tx_edge             => edge_tx_valid,
+        rx_edge             => edge_rx_valid
+    );
 
 
     ----------------------------------------------------------------------------
@@ -494,7 +419,7 @@ begin
     shift_regs_res_n <= ACT_RESET when (res_n = ACT_RESET) or
                                        (ssp_reset = '1')
                                   else
-                        not ACT_RESET;
+                        (not ACT_RESET);
 
 
     ----------------------------------------------------------------------------
@@ -513,8 +438,6 @@ begin
         res_n              => shift_regs_res_n,
 
         input              => sample_dbt,
-        --preload            => ssp_reset,
-        --preload_val        => SSP_SHIFT_RST_VAL,
         enable             => '1',
 
         reg_stat           => sample_sec_shift,
@@ -536,10 +459,7 @@ begin
         clk                => clk_sys,
         res_n              => shift_regs_res_n,
 
-
         input              => data_tx,
-        --preload            => ssp_reset,
-        --preload_val        => TX_DATA_SHIFT_RST_VAL,
         enable             => '1',
 
         reg_stat           => tx_data_shift,
@@ -551,14 +471,14 @@ begin
     -- Secondary sampling point address decoder. Secondary sampling point
     -- is taken from SSP Shift register at position of transceiver delay.
     ----------------------------------------------------------------------------
-    sample_sec_comb <= sample_sec_shift(to_integer(unsigned(trv_delay)));
+    sample_sec_comb <= sample_sec_shift(to_integer(unsigned(ssp_delay)));
 
     ----------------------------------------------------------------------------
     -- Delayed TX data address decoder. At the time of secondary sampling point,
     -- TX data from TX Data shift register at position of transceiver delay are
     -- taken for bit error detection!
     ----------------------------------------------------------------------------
-    tx_data_delayed <= tx_data_shift(to_integer(unsigned(trv_delay)));
+    tx_data_delayed <= tx_data_shift(to_integer(unsigned(ssp_delay)));
 
 
     ----------------------------------------------------------------------------
@@ -619,6 +539,14 @@ begin
         reg_stat           => trs_reg,
         output             => open
     );
+
+
+    ---------------------------------------------------------------------------
+    -- Selection of RX Data sampled in Nominal Bit-rate between Normally
+    -- sampled and tripple sampled data.
+    ---------------------------------------------------------------------------
+    data_rx_nbt <= CAN_rx_trs_majority when (drv_sam = TSM_ENABLE) else
+                   CAN_rx_i;
 
 
     ----------------------------------------------------------------------------
