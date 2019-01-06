@@ -780,7 +780,7 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_fram
  */
 static inline u16 ctu_can_fd_get_tran_delay(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_trv_delay reg;
+	union ctu_can_fd_trv_delay_ssp_cfg reg;
 	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_TRV_DELAY);
 	return reg.s.trv_delay_value;
 }
