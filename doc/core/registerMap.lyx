@@ -4892,7 +4892,7 @@ ENA Enable bit for the whole CAN FD Controller. When disabled, IP Core acts as i
 		0b1  - ENABLED - The CAN Core is enabled.
 \end_layout
 \begin_layout Description
-NISOFD Selection between two possible CAN FD specifications.\begin_inset Newline newline\end_inset
+NISOFD Selection between two possible CAN FD specifications. This bit should be modified only when SETTINGS[ENA]=0.\begin_inset Newline newline\end_inset
 		0b0  - ISO_FD - The CAN Controller conforms to ISO CAN FD specification.\begin_inset Newline newline\end_inset
 		0b1  - NON_ISO_FD - The CAN Controller conforms to NON ISO CAN FD specification.
 \end_layout
@@ -7528,7 +7528,7 @@ Address: 0x1C
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit timing register for nominal bit-rate.
+Bit timing register for nominal bit-rate. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -8541,7 +8541,7 @@ Address: 0x20
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit timing register for data bit-rate.
+Bit timing register for data bit-rate. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -9554,7 +9554,7 @@ Address: 0x24
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Error warning limit register.
+Error warning limit register. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -9826,7 +9826,7 @@ Address: 0x25
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Error passive limit register.
+Error passive limit register. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -10619,7 +10619,7 @@ Address: 0x28
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Counter for received frames to enable bus traffic measurement.
+Counter for received frames.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -11134,7 +11134,7 @@ Address: 0x2A
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Counter for transcieved frames to enable bus traffic measurement.
+Counter for transcieved frames.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -29235,7 +29235,7 @@ Reset value\end_layout
 
 \end_layout
 \begin_layout Description
-TRV_DELAY_VALUE When sending CAN FD Frame with bit rate shift, transceiver delay is measured to apply secondary sampling point for bit error detection during transmission. After the measurement is done (after EDL bit) it can be read from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.
+TRV_DELAY_VALUE When sending CAN FD Frame with bit rate shift, transceiver delay is measured. After the measurement (after EDL bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -29261,7 +29261,7 @@ Address: 0x7A
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Configuration of Secondary sampling point which is used for Transmitter in Data Bit-Rate.
+Configuration of Secondary sampling point which is used for Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
