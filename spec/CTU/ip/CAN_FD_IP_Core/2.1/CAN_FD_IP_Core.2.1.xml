@@ -1489,7 +1489,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>SSP_SRC</ipxact:name>
-						<ipxact:description>Source of secondary sampling point delay. Measured in clock cycles, not Time quanta! Sampling point is delayed from regular sampling point by a value configured by this register.</ipxact:description>
+						<ipxact:description>Source of secondary sampling point delay. Measured in clock cycles, not Time quanta! Sampling point is delayed from regular sampling point by a value configured by this register. If configured value exceeds 130, it is saturated on 130. Thus maximal possible delay is 130 clk_sys clock cycles.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1501,7 +1501,7 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_MEASURED</ipxact:name>
 								<ipxact:displayName>TRV_SRC_MEASURED</ipxact:displayName>
-								<ipxact:description>Use measured value (also available in TRV_DELAY_REGISTER).</ipxact:description>
+								<ipxact:description>Use measured value (also available in TRV_DELAY).</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
@@ -1513,7 +1513,7 @@
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_MEAS_N_OFFSET</ipxact:name>
 								<ipxact:displayName>TRV_SRC_MEAS_N_OFFSET</ipxact:displayName>
-								<ipxact:description>Use measured value (available in TRV_DELAY) + SSP_OFFSET. If the result is higher than 128, delay of 128 will be used. </ipxact:description>
+								<ipxact:description>Use measured value (available in TRV_DELAY) + SSP_OFFSET.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
