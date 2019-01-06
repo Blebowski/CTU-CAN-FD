@@ -46,17 +46,17 @@ entity memory_reg is
 
         -- Data mask. Each logic 1 indicates present bit, logic 0 indicates
         -- reserved bit in register bits. Reserved bit always returns 0.
-        constant data_mask            :     std_logic_vector(data_width - 1 downto 0);
+        constant data_mask            :     std_logic_vector;
 
         -- Reset polarity
         constant reset_polarity       :     std_logic := '0';
 
         -- Reset value of register
-        constant reset_value          :     std_logic_vector(data_width - 1 downto 0);
+        constant reset_value          :     std_logic_vector;
 
         -- If given bit of the register should be cleared automatically one
         -- clock cycle after writing.
-        constant auto_clear           :     std_logic_vector(data_width - 1 downto 0)
+        constant auto_clear           :     std_logic_vector
     );
     port(
         ------------------------------------------------------------------------
@@ -83,6 +83,17 @@ end entity memory_reg;
 
 
 architecture rtl of memory_reg is
+
+    pure function bit_in_mask(mask_vec: std_logic_vector; bit_pos : natural)
+                                        return std_ulogic is
+    begin
+       if mask_vec'ascending then
+           return mask_vec(mask_vec'length - 1 - bit_pos);
+       else
+           return mask_vec(bit_pos);
+       end if;
+       --return mask_vec(bit_pos);
+    end function bit_in_mask;
 
     -- Register implementation itself!
     signal reg_value_r          :   std_logic_vector(data_width - 1 downto 0);
@@ -112,16 +123,16 @@ begin
     -- Register instance
     ----------------------------------------------------------------------------
     bit_gen : for i in 0 to data_width - 1 generate
-    
+
         ------------------------------------------------------------------------
         -- Register implementation itself
         ------------------------------------------------------------------------
-        reg_present_gen : if (data_mask(i) = '1') generate
+        reg_present_gen : if (bit_in_mask(data_mask, i) = '1') generate
 
             reg_access_proc : process(clk_sys, res_n)
             begin
                 if (res_n = reset_polarity) then
-                    reg_value_r(i)  <= reset_value(i);
+                    reg_value_r(i)  <= bit_in_mask(reset_value, i);
 
                 elsif (rising_edge(clk_sys)) then
 
@@ -131,8 +142,9 @@ begin
 
                     -- Clear the register if autoclear is set and register is
                     -- set
-                    elsif (auto_clear(i) = '1' and reg_value_r(i) = '1') then
-                        reg_value_r(i)  <= reset_value(i);
+                    elsif (bit_in_mask(auto_clear, i) = '1' and
+                           reg_value_r(i) = '1') then
+                        reg_value_r(i)  <= bit_in_mask(reset_value, i);
                     end if;
 
                 end if;
@@ -144,8 +156,8 @@ begin
         -----------------------------------------------------------------------
         -- Registers which are not present are stuck at reset value
         -----------------------------------------------------------------------
-        reg_not_present_gen : if (data_mask(i) = '0') generate
-            reg_value_r(i)    <=  reset_value(i);
+        reg_not_present_gen : if (bit_in_mask(data_mask, i) = '0') generate
+            reg_value_r(i)    <=  bit_in_mask(reset_value, i);
         end generate reg_not_present_gen;
 
     end generate bit_gen;
