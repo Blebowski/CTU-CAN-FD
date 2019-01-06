@@ -548,7 +548,7 @@
 					<ipxact:field>
 						<ipxact:name>NISOFD</ipxact:name>
 						<ipxact:displayName>NISOFD</ipxact:displayName>
-						<ipxact:description>Selection between two possible CAN FD specifications.</ipxact:description>
+						<ipxact:description>Selection between two possible CAN FD specifications. This bit should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -869,7 +869,7 @@
 				<ipxact:register>
 					<ipxact:name>BTR_FD</ipxact:name>
 					<ipxact:displayName>BTR_FD</ipxact:displayName>
-					<ipxact:description>Bit timing register for data bit-rate.</ipxact:description>
+					<ipxact:description>Bit timing register for data bit-rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -961,7 +961,7 @@
 				<ipxact:register>
 					<ipxact:name>BTR</ipxact:name>
 					<ipxact:displayName>BTR</ipxact:displayName>
-					<ipxact:description>Bit timing register for nominal bit-rate.</ipxact:description>
+					<ipxact:description>Bit timing register for nominal bit-rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1095,7 +1095,7 @@
 				<ipxact:register>
 					<ipxact:name>EWL</ipxact:name>
 					<ipxact:displayName>EWL</ipxact:displayName>
-					<ipxact:description>Error warning limit register.</ipxact:description>
+					<ipxact:description>Error warning limit register. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1117,7 +1117,7 @@
 				<ipxact:register>
 					<ipxact:name>ERP</ipxact:name>
 					<ipxact:displayName>ERP</ipxact:displayName>
-					<ipxact:description>Error passive limit register.</ipxact:description>
+					<ipxact:description>Error passive limit register. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h25</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1471,7 +1471,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>SSP_CFG</ipxact:name>
-					<ipxact:description>Configuration of Secondary sampling point which is used for Transmitter in Data Bit-Rate.</ipxact:description>
+					<ipxact:description>Configuration of Secondary sampling point which is used for Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h7A</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1910,7 +1910,7 @@
 					<ipxact:field>
 						<ipxact:name>TRV_DELAY_VALUE</ipxact:name>
 						<ipxact:displayName>TRV_DELAY_VALUE</ipxact:displayName>
-						<ipxact:description>When sending CAN FD Frame with bit rate shift, transceiver delay is measured to apply secondary sampling point for bit error detection during transmission. After the measurement is done (after EDL bit) it can be read from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.</ipxact:description>
+						<ipxact:description>When sending CAN FD Frame with bit rate shift, transceiver delay is measured. After the measurement (after EDL bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2530,7 +2530,7 @@
 				<ipxact:register>
 					<ipxact:name>TXC</ipxact:name>
 					<ipxact:displayName>TXC</ipxact:displayName>
-					<ipxact:description>Counter for transcieved frames to enable bus traffic measurement.</ipxact:description>
+					<ipxact:description>Counter for transcieved frames.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2A</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2551,7 +2551,7 @@
 				<ipxact:register>
 					<ipxact:name>RXC</ipxact:name>
 					<ipxact:displayName>RXC</ipxact:displayName>
-					<ipxact:description>Counter for received frames to enable bus traffic measurement.</ipxact:description>
+					<ipxact:description>Counter for received frames.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>

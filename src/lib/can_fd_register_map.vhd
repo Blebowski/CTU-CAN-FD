@@ -420,7 +420,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR register
   --
-  -- Bit timing register for nominal bit-rate.
+  -- Bit timing register for nominal bit-rate. This register should be modified 
+  -- only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_L                 : natural := 0;
   constant PROP_H                 : natural := 6;
@@ -443,7 +444,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR_FD register
   --
-  -- Bit timing register for data bit-rate.
+  -- Bit timing register for data bit-rate. This register should be modified onl
+  -- y when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_FD_L              : natural := 0;
   constant PROP_FD_H              : natural := 5;
@@ -466,7 +468,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- EWL register
   --
-  -- Error warning limit register.
+  -- Error warning limit register. This register should be modified only when SE
+  -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant EW_LIMIT_L             : natural := 0;
   constant EW_LIMIT_H             : natural := 7;
@@ -477,7 +480,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ERP register
   --
-  -- Error passive limit register.
+  -- Error passive limit register. This register should be modified only when SE
+  -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant ERP_LIMIT_L            : natural := 8;
   constant ERP_LIMIT_H           : natural := 15;
@@ -504,7 +508,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RXC register
   --
-  -- Counter for received frames to enable bus traffic measurement.
+  -- Counter for received frames.
   ------------------------------------------------------------------------------
   constant RXC_VAL_L              : natural := 0;
   constant RXC_VAL_H             : natural := 15;
@@ -515,7 +519,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TXC register
   --
-  -- Counter for transcieved frames to enable bus traffic measurement.
+  -- Counter for transcieved frames.
   ------------------------------------------------------------------------------
   constant TXC_VAL_L             : natural := 16;
   constant TXC_VAL_H             : natural := 31;
@@ -969,7 +973,7 @@ package can_fd_register_map is
   -- SSP_CFG register
   --
   -- Configuration of Secondary sampling point which is used for Transmitter in 
-  -- Data Bit-Rate.
+  -- Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant SSP_OFFSET_L          : natural := 16;
   constant SSP_OFFSET_H          : natural := 22;
