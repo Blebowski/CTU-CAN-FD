@@ -80,6 +80,7 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_ERR_CAPT              = 0x74,
 	CTU_CAN_FD_ALC                   = 0x75,
 	CTU_CAN_FD_TRV_DELAY             = 0x78,
+	CTU_CAN_FD_SSP_CFG               = 0x7a,
 	CTU_CAN_FD_RX_COUNTER            = 0x7c,
 	CTU_CAN_FD_TX_COUNTER            = 0x80,
 	CTU_CAN_FD_DEBUG_REGISTER        = 0x84,
@@ -843,18 +844,31 @@ enum ctu_can_fd_alc_alc_id_field {
 	ALC_RTR             = 0x4,
 };
 
-union ctu_can_fd_trv_delay {
+union ctu_can_fd_trv_delay_ssp_cfg {
 	uint32_t u32;
-	struct ctu_can_fd_trv_delay_s {
+	struct ctu_can_fd_trv_delay_ssp_cfg_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* TRV_DELAY */
 		uint32_t trv_delay_value        : 16;
-		uint32_t reserved_31_16         : 16;
+  /* SSP_CFG */
+		uint32_t ssp_offset              : 7;
+		uint32_t reserved_23             : 1;
+		uint32_t ssp_src                 : 2;
+		uint32_t reserved_31_26          : 6;
 #else
-		uint32_t reserved_31_16         : 16;
+		uint32_t reserved_31_26          : 6;
+		uint32_t ssp_src                 : 2;
+		uint32_t reserved_23             : 1;
+		uint32_t ssp_offset              : 7;
 		uint32_t trv_delay_value        : 16;
 #endif
 	} s;
+};
+
+enum ctu_can_fd_ssp_cfg_ssp_src {
+	SSP_SRC_MEASURED            = 0x0,
+	SSP_SRC_MEAS_N_OFFSET       = 0x1,
+	SSP_SRC_OFFSET              = 0x2,
 };
 
 union ctu_can_fd_rx_counter {

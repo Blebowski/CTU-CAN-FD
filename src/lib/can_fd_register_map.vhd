@@ -98,6 +98,7 @@ package can_fd_register_map is
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"074";
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"075";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"078";
+  constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"07A";
   constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"07C";
   constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"080";
   constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"084";
@@ -963,6 +964,26 @@ package can_fd_register_map is
 
   -- TRV_DELAY register reset values
   constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
+
+  ------------------------------------------------------------------------------
+  -- SSP_CFG register
+  --
+  -- Configuration of Secondary sampling point which is used for Transmitter in 
+  -- Data Bit-Rate.
+  ------------------------------------------------------------------------------
+  constant SSP_OFFSET_L          : natural := 16;
+  constant SSP_OFFSET_H          : natural := 22;
+  constant SSP_SRC_L             : natural := 24;
+  constant SSP_SRC_H             : natural := 25;
+
+  -- "SSP_SRC" field enumerated values
+  constant SSP_SRC_MEASURED : std_logic_vector(1 downto 0) := "00";
+  constant SSP_SRC_MEAS_N_OFFSET : std_logic_vector(1 downto 0) := "01";
+  constant SSP_SRC_OFFSET : std_logic_vector(1 downto 0) := "10";
+
+  -- SSP_CFG register reset values
+  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0000000";
+  constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
 
   ------------------------------------------------------------------------------
   -- RX_COUNTER register

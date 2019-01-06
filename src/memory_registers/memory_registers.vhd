@@ -123,6 +123,7 @@
 --                by Register Map Generator. Two instances (Control Registers
 --                and Event Logger Registers) are present. Connected register
 --                modules to Driving and Status Bus. Added VERSION generics.
+-- 02-05.01.2019  Added SSP_CONFIG, TIMESTAMP_H, TIMESTAMP_L registers.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -935,6 +936,18 @@ begin
     txt_buf_prior_out(3) <= align_wrd_to_reg(
         control_registers_out.tx_priority, TXT4P_H, TXT4P_L);
 
+    ---------------------------------------------------------------------------
+    -- SSP_CFG
+    ---------------------------------------------------------------------------
+    
+    -- SSP_OFFSET
+    drv_bus(DRV_SSP_OFFSET_HIGH downto DRV_SSP_OFFSET_LOW) <= align_wrd_to_reg(
+            control_registers_out.ssp_cfg, SSP_OFFSET_H, SSP_OFFSET_L);
+
+    -- SSP_SRC (SSP_DELAY_SELECT)
+    drv_bus(DRV_SSP_DELAY_SELECT_HIGH downto DRV_SSP_DELAY_SELECT_LOW) <= align_wrd_to_reg(
+            control_registers_out.ssp_cfg, SSP_SRC_H, SSP_SRC_L);
+
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
@@ -1734,8 +1747,7 @@ begin
     drv_bus(365 downto 363)                           <=  (OTHERS => '0');
     drv_bus(370 downto 368)                           <=  (OTHERS => '0');
     drv_bus(371)                                      <=  '0';
-    drv_bus(375 downto 373)                           <=  (OTHERS => '0');
-    drv_bus(399 downto 388)                           <=  (OTHERS => '0');
+    drv_bus(399 downto 382)                           <=  (OTHERS => '0');
     drv_bus(459 downto 445)                           <=  (OTHERS => '0');
     drv_bus(464 downto 462)                           <=  (OTHERS => '0');
     drv_bus(609 downto 601)                           <=  (OTHERS => '0');
@@ -1752,7 +1764,6 @@ begin
     drv_bus(767 downto 748)                          <=  (OTHERS => '0');
     drv_bus(735 downto 614)                          <=  (OTHERS => '0');
 
-    drv_bus(387 downto 376)                          <= (OTHERS => '0');
     drv_bus(367)                                     <= '0';
     drv_bus(357)                                     <= '0';
 

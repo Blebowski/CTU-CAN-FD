@@ -173,8 +173,14 @@ package drv_stat_pkg is
     constant DRV_INT_MASK_CLR_HIGH   : natural := 875;
     constant DRV_INT_MASK_CLR_LOW    : natural := 864;
 
+    -- Bus sampling indices
     constant DRV_SAM_INDEX : natural := 372;
-  
+
+    constant DRV_SSP_DELAY_SELECT_HIGH : natural := 374;
+    constant DRV_SSP_DELAY_SELECT_LOW : natural := 373;
+
+    constant DRV_SSP_OFFSET_HIGH : natural := 381;
+    constant DRV_SSP_OFFSET_LOW : natural := 375;
   
     ----------------------------------------------------------------------------
     -- CAN Core
@@ -271,6 +277,7 @@ package drv_stat_pkg is
     constant DRV_LOG_CMD_ABT_INDEX  : natural := 611;
     constant DRV_LOG_CMD_UP_INDEX   : natural := 612;
     constant DRV_LOG_CMD_DOWN_INDEX : natural := 613;
+
 
     ----------------------------------------------------------------------------
     -- RX, TX and TXT Buffer frame format signal indexes

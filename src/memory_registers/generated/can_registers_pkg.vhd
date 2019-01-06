@@ -76,6 +76,7 @@ package can_registers_pkg is
      rx_data_read                : std_logic;
      tx_command                  : std_logic_vector(15 downto 0);
      tx_priority                 : std_logic_vector(15 downto 0);
+     ssp_cfg                     : std_logic_vector(15 downto 0);
   end record;
 
 
