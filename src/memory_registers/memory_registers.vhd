@@ -318,6 +318,8 @@ architecture rtl of memory_registers is
     signal error_state            :     error_state_type;
     signal OP_State               :     oper_mode_type;
 
+    -- Internal value of output reset. This is combined res_n and MODE[RST]
+    signal res_out_i              :     std_logic;
 
     ---------------------------------------------------------------------------
     -- 
@@ -454,7 +456,7 @@ begin
     )
     port map(
         clk_sys               => clk_sys,
-        res_n                 => res_n,
+        res_n                 => res_out_i,
         address               => adress,
         w_data                => data_in,
         r_data                => control_registers_rdata,
@@ -484,7 +486,7 @@ begin
         )
         port map(
             clk_sys               => clk_sys,
-            res_n                 => res_n,
+            res_n                 => res_out_i,
             address               => adress,
             w_data                => data_in,
             r_data                => event_logger_rdata,
@@ -516,10 +518,10 @@ begin
     -- Reset propagation to output
     -- Note: this works only for reset active in logic zero
     ----------------------------------------------------------------------------
-    res_out  <=  ACT_RESET when (res_n = ACT_RESET) else
-                 ACT_RESET when (control_registers_out.mode(RST_IND) = '1') else
-                 (not ACT_RESET);
-
+    res_out_i <=  ACT_RESET when (res_n = ACT_RESET) else
+                  ACT_RESET when (control_registers_out.mode(RST_IND) = '1') else
+                  (not ACT_RESET);
+    res_out <= res_out_i;
 
     ----------------------------------------------------------------------------
     -- Extract Protocol control state from Status Bus
