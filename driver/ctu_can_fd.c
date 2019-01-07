@@ -36,6 +36,7 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
+#include <linux/list.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/netdevice.h>
@@ -80,6 +81,8 @@ struct ctucan_priv {
 
 	int irq_flags;
 	long unsigned int drv_flags;
+
+	struct list_head peers_on_pdev;
 };
 
 #define CTUCAN_FLAG_RX_SCHED	1
@@ -929,8 +932,8 @@ static const struct dev_pm_ops ctucan_dev_pm_ops = {
  */
 static int ctucan_probe_common(struct device *dev, void __iomem *addr,
               int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
-	      int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
-	                              struct net_device *ndev))
+              int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
+                                     struct net_device *ndev))
 {
 	struct ctucan_priv *priv;
 	struct net_device *ndev;
@@ -942,6 +945,7 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 		return -ENOMEM;
 
 	priv = netdev_priv(ndev);
+	INIT_LIST_HEAD(&priv->peers_on_pdev);
 	priv->txb_mask = ntxbufs-1;
 	priv->dev = dev;
 	priv->can.bittiming_const = &ctu_can_fd_bit_timing_max;
@@ -1036,6 +1040,7 @@ err_pmdisable:
 	if (pm_enable_call)
 		pm_runtime_disable(dev);
 err_free:
+	list_del_init(&priv->peers_on_pdev);
 	free_candev(ndev);
 	return ret;
 }
@@ -1092,6 +1097,8 @@ static int ctucan_platform_probe(struct platform_device *pdev)
         ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 0,
 	                          1, ctucan_platform_set_drvdata);
 
+	if (ret < 0)
+		platform_set_drvdata(pdev, NULL);
 err:
 	return ret;
 }
@@ -1146,12 +1153,25 @@ module_platform_driver(ctucanfd_driver);
 
 #define CYCLONE_IV_CRA_A2P_IE 0x0050
 
+struct ctucan_pci_board_data {
+	void __iomem *cra_base;
+	void __iomem *bar1_base;
+	struct list_head ndev_list_head;
+	int use_msi;
+};
+
+struct ctucan_pci_board_data *ctucan_pci_get_bdata(struct pci_dev *pdev)
+{
+	return (struct ctucan_pci_board_data *)pci_get_drvdata(pdev);
+}
+
 static void ctucan_pci_set_drvdata(struct device *dev,
                                        struct net_device *ndev)
 {
 	struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	pci_set_drvdata(pdev, ndev);
+	struct ctucan_pci_board_data *bdata = ctucan_pci_get_bdata(pdev);
+	list_add(&priv->peers_on_pdev, &bdata->ndev_list_head);
 	priv->irq_flags = IRQF_SHARED;
 }
 
@@ -1168,11 +1188,14 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 			    const struct pci_device_id *ent)
 {
 	struct device	*dev = &pdev->dev;
+	struct ctucan_pci_board_data *bdata;
 	void __iomem *addr;
 	void __iomem *cra_addr;
+	u32 cra_a2p_ie;
 	int ret;
 	unsigned int ntxbufs;
 	int irq;
+	int use_msi = 0;
 
 	ret = pci_enable_device(pdev);
 	if (ret) {
@@ -1191,6 +1214,7 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	if (!ret) {
 		dev_info(dev, "MSI enabled\n");
 		pci_set_master(pdev);
+		use_msi = 1;
 	}
 #endif
 
@@ -1209,34 +1233,55 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 		goto err_release_regions;
 	}
 
+	/* Cyclone IV PCI Express Control Registers Area */
+	cra_addr = pci_iomap(pdev, 0, pci_resource_len(pdev, 0));
+	if (!cra_addr) {
+		dev_err(dev, "PCI BAR 0 cannot be mapped\n");
+		ret = -EIO;
+		goto err_pci_iounmap_bar1;
+	}
+
 	irq = pdev->irq;
 
 	ntxbufs = 4;
 
-        ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
-	      0, ctucan_pci_set_drvdata);
-	while (ret >= 0) {
-		u32 cra_a2p_ie;
-		/* enable interrupt in 
-		 * Avalon-MM to PCI Express Interrupt Enable Register
-		 */
-		cra_addr = pci_iomap(pdev, 0, pci_resource_len(pdev, 0));
-		if (!cra_addr) {
-			dev_err(dev, "PCI BAR 0 cannot be mapped\n");
-			break;
-		}
-
-		cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
-		dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
-		cra_a2p_ie |= 1;
-		iowrite32(cra_a2p_ie, (char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
-		cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
-		dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
-
-		pci_iounmap(pdev, cra_addr);
-		return ret;
+	bdata = kzalloc(sizeof(*bdata), GFP_KERNEL);
+	if (!bdata) {
+		dev_err(dev, "Cannot allocate board private data\n");
+		ret = -ENOMEM;
+		goto err_pci_iounmap_bar0;
 	}
 
+	INIT_LIST_HEAD(&bdata->ndev_list_head);
+	bdata->cra_base = cra_addr;
+	bdata->bar1_base = addr;
+	bdata->use_msi = use_msi;
+
+	pci_set_drvdata(pdev, bdata);
+
+	ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
+	                          0, ctucan_pci_set_drvdata);
+	if (ret < 0)
+		goto err_free_board;
+
+	/* enable interrupt in
+	 * Avalon-MM to PCI Express Interrupt Enable Register
+	 */
+	cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
+	cra_a2p_ie |= 1;
+	iowrite32(cra_a2p_ie, (char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
+
+	return 0;
+
+err_free_board:
+	pci_set_drvdata(pdev, NULL);
+	kfree(bdata);
+err_pci_iounmap_bar0:
+	pci_iounmap(pdev, cra_addr);
+err_pci_iounmap_bar1:
 	pci_iounmap(pdev, addr);
 err_release_regions:
 #ifdef CTUCAN_WITH_MSI
@@ -1259,47 +1304,51 @@ err:
  */
 static void ctucan_pci_remove(struct pci_dev *pdev)
 {
-	struct net_device *ndev = pci_get_drvdata(pdev);
+	struct net_device *ndev;
 	struct ctucan_priv *priv = NULL;
-	netdev_dbg(ndev, "ctucan_remove");
+	struct ctucan_pci_board_data *bdata = ctucan_pci_get_bdata(pdev);
 
-	while (1) {
-		void __iomem *cra_addr;
-		u32 cra_a2p_ie;
-		/* disable interrupt in 
-		 * Avalon-MM to PCI Express Interrupt Enable Register
-		 */
-		cra_addr = pci_iomap(pdev, 0, pci_resource_len(pdev, 0));
-		if (!cra_addr)
-			break;
-		cra_a2p_ie = 0;
-		iowrite32(cra_a2p_ie, (char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	dev_dbg(&pdev->dev, "ctucan_remove");
 
-		pci_iounmap(pdev, cra_addr);
-		break;
+	if (!bdata) {
+		dev_err(&pdev->dev, "ctucan_pci_remove - no list of devices\n");
+		return;
 	}
-	if (ndev == NULL) {
-		dev_err(&pdev->dev, "ctucan  ndev is NULL\n");
-	} else {
-		priv = netdev_priv(ndev);
+
+	/* disable interrupt in
+	 * Avalon-MM to PCI Express Interrupt Enable Register
+	 */
+	if (bdata->cra_base)
+		iowrite32(0, (char *)bdata->cra_base + CYCLONE_IV_CRA_A2P_IE);
+
+
+	while ((priv = list_first_entry_or_null(&bdata->ndev_list_head,
+	                struct ctucan_priv, peers_on_pdev)) != NULL) {
+
+		ndev = priv->can.dev;
+
 		unregister_candev(ndev);
-	}
-	if (priv == NULL) {
-		dev_err(&pdev->dev, "ctucan priv is NULL\n");
-	} else {
-		netif_napi_del(&priv->napi);
-	}
-	if (ndev != NULL)
-		free_candev(ndev);
 
-	if (priv != NULL)
-		pci_iounmap(pdev, priv->p.mem_base);
+		netif_napi_del(&priv->napi);
+
+		list_del_init(&priv->peers_on_pdev);
+		free_candev(ndev);
+	}
+
+	pci_iounmap(pdev, bdata->bar1_base);
 #ifdef CTUCAN_WITH_MSI
-	pci_disable_msi(pdev);
-	pci_clear_master(pdev);
+	if (bdata->use_msi) {
+		pci_disable_msi(pdev);
+		pci_clear_master(pdev);
+	}
 #endif
 	pci_release_regions(pdev);
 	pci_disable_device(pdev);
+
+	pci_iounmap(pdev, bdata->cra_base);
+
+	pci_set_drvdata(pdev, NULL);
+	kfree(bdata);
 }
 
 #define CTU_CAN_FD_DEVICE_ID 0xCAFD
