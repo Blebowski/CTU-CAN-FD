@@ -208,6 +208,7 @@ void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable)
 void ctu_can_fd_reset(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_mode_command_status_settings mode;
+	mode.u32 = 0;
 	mode.s.rst = 1;
 	/* it does not matter that we overwrite the rest of the reg - we're resetting */
 	priv->write_reg(priv, CTU_CAN_FD_MODE, mode.u32);
