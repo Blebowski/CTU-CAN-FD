@@ -92,6 +92,9 @@ end entity;
 
 architecture rtl of bus_traffic_counters is
 
+    signal tx_ctr_int                :     std_logic_vector(31 downto 0);
+    signal rx_ctr_int                :     std_logic_vector(31 downto 0);
+
     -- Input selector
     signal sel                        :     std_logic;   
 
@@ -103,13 +106,16 @@ architecture rtl of bus_traffic_counters is
 
 begin
 
+    tx_ctr <= tx_ctr_int;
+    rx_ctr <= rx_ctr_int;
+
     -- Input selector
     sel <= '1' when (inc_tx_ctr = '1') else
            '0';
 
     -- Multiplexor between TX and RX value to increment
-    sel_value <= tx_ctr when (sel = '1') else
-                 rx_ctr;
+    sel_value <= tx_ctr_int when (sel = '1') else
+                 rx_ctr_int;
 
     -- Incremented value of either TX or RX counter
     inc_value <= std_logic_vector(to_unsigned(
@@ -121,11 +127,11 @@ begin
     tx_ctr_proc : process(clk_sys, res_n)
     begin
         if (res_n = ACT_RESET or clear_tx_ctr = '1') then
-            tx_ctr           <= (OTHERS => '0');
+            tx_ctr_int        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
             if (inc_tx_ctr = '1') then
-                tx_ctr <= inc_value;
+                tx_ctr_int <= inc_value;
             end if;
         end if;
     end process;
@@ -137,11 +143,11 @@ begin
     rx_ctr_proc : process(clk_sys, res_n)
     begin
         if (res_n = ACT_RESET or clear_rx_ctr = '1') then
-            rx_ctr           <= (OTHERS => '0');
+            rx_ctr_int        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
             if (inc_rx_ctr = '1') then
-                rx_ctr <= inc_value;
+                rx_ctr_int <= inc_value;
             end if;
         end if;
     end process;
