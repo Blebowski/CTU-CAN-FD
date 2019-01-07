@@ -53,6 +53,7 @@
 *.pin
 *.mif
 *.hex
+*.svf
 
 # ignore Quartus II generated folders
 db/
@@ -61,3 +62,7 @@ simulation/
 timing/
 testbench/
 *_sim/
+
+# additional files from make build
+*.dep
+ctu_can_fd_core_sources.sf
