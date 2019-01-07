@@ -184,7 +184,9 @@ int main(int argc, char *argv[])
     int loop_cycle = 0;
     int gap = 1000;
     int bitrate = 1000000;
+    int dbitrate = 0;
     bool do_periodic_transmit = false;
+    bool transmit_fdf = false;
     bool loopback_mode = false;
     //bool do_showhelp = false;
     static uintptr_t addrs[] = {0x43C30000, 0x43C70000};
@@ -192,7 +194,7 @@ int main(int argc, char *argv[])
     int c;
     char *e;
     const char *progname = argv[0];
-    while ((c = getopt(argc, argv, "i:a:g:b:ltThp")) != -1) {
+    while ((c = getopt(argc, argv, "i:a:g:b:B:fltThp")) != -1) {
         switch (c) {
             case 'i':
                 ifc = strtoul(optarg, &e, 0);
@@ -218,9 +220,16 @@ int main(int argc, char *argv[])
                     err(1, "-b expects a number");
             break;
 
+            case 'B':
+                dbitrate = strtoul(optarg, &e, 0);
+                if (*e != '\0')
+                    err(1, "-B expects a number");
+            break;
+
             case 'l': loopback_mode = true; break;
             case 't': do_transmit = true; break;
             case 'T': do_periodic_transmit = true; break;
+            case 'f': transmit_fdf = true; break;
             case 'p':
                 addrs[0] = pci_find_bar(0x1172, 0xcafd, 0, 1);
                 if (!addrs[0])
@@ -297,8 +306,11 @@ int main(int argc, char *argv[])
            nom_timing.bitrate
     );
 
+    if (!dbitrate)
+        dbitrate = 10 * bitrate;
+
     struct can_bittiming data_timing = {
-        .bitrate = bitrate * 10,
+        .bitrate = dbitrate,
     };
     res = can_get_bittiming(&nd, &data_timing,
                       &ctu_can_fd_bit_timing_data_max,
@@ -366,11 +378,11 @@ int main(int argc, char *argv[])
         printf(", status 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_STATUS));
         printf(", settings 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_SETTINGS));
         printf(", INT_STAT 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_INT_STAT));
-        printf(", CTU_CAN_FD_INT_ENA_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_ENA_SET));
-        printf(", CTU_CAN_FD_INT_MASK_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_MASK_SET));
-        printf(", CTU_CAN_FD_TX_STATUS 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_TX_STATUS));
+        printf(", INT_ENA_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_ENA_SET));
+        printf(", INT_MASK_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_MASK_SET));
+        printf(", TX_STATUS 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_TX_STATUS));
         //printf(", CTU_CAN_FD_ERR_CAPT 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_ERR_CAPT));
-
+        printf(", TRV_DELAY 0x%0hx", priv->read_reg(priv, CTU_CAN_FD_TRV_DELAY));
 
         printf("\n");
         /*
@@ -393,15 +405,23 @@ int main(int argc, char *argv[])
 
         if (do_periodic_transmit && (loop_cycle & 1)) {
 	    struct canfd_frame txf;
+	    memset(&txf, 0, sizeof(txf));
             txf.can_id = 0x1FF;
             txf.flags = 0;
-            //u8 d[] = {0xde, 0xad, 0xbe, 0xef};
-            //u8 d[] = {0xDE, 0xAD, 0xBE, 0xEF};
-            u8 d[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xEE};
-            memcpy(txf.data, d, sizeof(d));
-            txf.len = sizeof(d);
 
-            res = ctu_can_fd_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1, false);
+            if (transmit_fdf) {
+                txf.flags |= CANFD_BRS;
+                u8 dfd[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee};
+                txf.can_id = 0x123;
+                memcpy(txf.data, dfd, sizeof(dfd));
+                txf.len = sizeof(dfd);
+	    } else {
+                u8 d[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0xEE};
+                memcpy(txf.data, d, sizeof(d));
+                txf.len = sizeof(d);
+	    }
+
+            res = ctu_can_fd_insert_frame(priv, &txf, 0, CTU_CAN_FD_TXT_BUFFER_1, transmit_fdf);
             if (!res)
                 printf("TX failed\n");
             ctu_can_fd_txt_set_rdy(priv, CTU_CAN_FD_TXT_BUFFER_1);
