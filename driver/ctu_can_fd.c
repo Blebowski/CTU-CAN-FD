@@ -55,7 +55,13 @@
 
 #define DRIVER_NAME	"ctucanfd"
 
-#define CTUCAN_WITH_MSI 1
+static bool use_msi = 1;
+module_param(use_msi, bool, 0444);
+MODULE_PARM_DESC(use_msi, "PCIe implementation use MSI interrupts. Default: 1 (yes)");
+
+static bool pci_use_second = 1;
+module_param(pci_use_second, bool, 0444);
+MODULE_PARM_DESC(pci_use_second, "Use the second CAN core on PCIe card. Default: 1 (yes)");
 
 /*
  * TX buffer rotation:
@@ -1195,7 +1201,7 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	int ret;
 	unsigned int ntxbufs;
 	int irq;
-	int use_msi = 0;
+	int msi_ok = 0;
 
 	ret = pci_enable_device(pdev);
 	if (ret) {
@@ -1209,14 +1215,14 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 		goto err_disable_device;
 	}
 
-#ifdef CTUCAN_WITH_MSI
-	ret = pci_enable_msi(pdev);
-	if (!ret) {
-		dev_info(dev, "MSI enabled\n");
-		pci_set_master(pdev);
-		use_msi = 1;
+	if (use_msi) {
+		ret = pci_enable_msi(pdev);
+		if (!ret) {
+			dev_info(dev, "MSI enabled\n");
+			pci_set_master(pdev);
+			msi_ok = 1;
+		}
 	}
-#endif
 
 	dev_info(dev, "ctucan BAR0 0x%08llx 0x%08llx\n",
 	        (long long)pci_resource_start(pdev, 0),
@@ -1255,7 +1261,7 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	INIT_LIST_HEAD(&bdata->ndev_list_head);
 	bdata->cra_base = cra_addr;
 	bdata->bar1_base = addr;
-	bdata->use_msi = use_msi;
+	bdata->use_msi = msi_ok;
 
 	pci_set_drvdata(pdev, bdata);
 
@@ -1263,6 +1269,16 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	                          0, ctucan_pci_set_drvdata);
 	if (ret < 0)
 		goto err_free_board;
+
+	if (pci_use_second) {
+		addr += 0x4000;
+		ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
+	                          0, ctucan_pci_set_drvdata);
+		if (ret < 0) {
+			dev_info(dev, "second CTU CAN FD core initialization"
+			              " failed\n");
+		}
+	}
 
 	/* enable interrupt in
 	 * Avalon-MM to PCI Express Interrupt Enable Register
@@ -1284,10 +1300,10 @@ err_pci_iounmap_bar0:
 err_pci_iounmap_bar1:
 	pci_iounmap(pdev, addr);
 err_release_regions:
-#ifdef CTUCAN_WITH_MSI
-	pci_disable_msi(pdev);
-	pci_clear_master(pdev);
-#endif
+	if (msi_ok) {
+		pci_disable_msi(pdev);
+		pci_clear_master(pdev);
+	}
 	pci_release_regions(pdev);
 err_disable_device:
 	pci_disable_device(pdev);
@@ -1336,12 +1352,12 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 	}
 
 	pci_iounmap(pdev, bdata->bar1_base);
-#ifdef CTUCAN_WITH_MSI
+
 	if (bdata->use_msi) {
 		pci_disable_msi(pdev);
 		pci_clear_master(pdev);
 	}
-#endif
+
 	pci_release_regions(pdev);
 	pci_disable_device(pdev);
 
