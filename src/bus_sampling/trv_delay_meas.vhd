@@ -273,7 +273,7 @@ begin
         elsif (rising_edge(clk_sys)) then
             
             -- Increment the counter if the measurement is in progress
-            if (trv_meas_progress = '1') then
+            if (trv_meas_progress_i = '1') then
                 trv_delay_ctr_reg <= trv_delay_ctr_add;
             end if;
         end if;
