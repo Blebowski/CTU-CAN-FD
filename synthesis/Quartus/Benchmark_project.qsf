@@ -42,7 +42,7 @@ set_global_assignment -name DEVICE 5CEFA9F27C8
 set_global_assignment -name TOP_LEVEL_ENTITY CAN_Wrapper
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 16.1.0
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "17:41:32  DECEMBER 19, 2017"
-set_global_assignment -name LAST_QUARTUS_VERSION "16.1.0 Lite Edition"
+set_global_assignment -name LAST_QUARTUS_VERSION "17.0.1 Lite Edition"
 set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\registers_memory_interface"
 set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\interrupts"
 set_global_assignment -name SEARCH_PATH "e:\\skola\\cvut-fel\\can_fd_ip_core\\src\\event_logger"
@@ -81,35 +81,73 @@ set_global_assignment -name REMOVE_REDUNDANT_LOGIC_CELLS ON
 set_global_assignment -name AUTO_RESOURCE_SHARING ON
 set_global_assignment -name VHDL_INPUT_VERSION VHDL_2008
 set_global_assignment -name VHDL_SHOW_LMF_MAPPING_MESSAGES OFF
-set_global_assignment -name VHDL_FILE ../../src/Libraries/reduce_lib.vhd
-set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/inf_RAM_wrapper.vhd
-set_global_assignment -name VHDL_FILE ../../src/endian_swap.vhd
-set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/priorityDecoder.vhd
-set_global_assignment -name VHDL_FILE ../../src/Libraries/CANconstants.vhd
-set_global_assignment -name VHDL_FILE ../../src/Libraries/CANcomponents.vhd
-set_global_assignment -name VHDL_FILE ../../src/Libraries/CAN_FD_register_map.vhd
-set_global_assignment -name VHDL_FILE ../../src/Libraries/CAN_FD_frame_format.vhd
 set_global_assignment -name SDC_FILE Benchmark_project.sdc
 set_global_assignment -name SDC_FILE Benchmark_project.out.sdc
 set_global_assignment -name VHDL_FILE CAN_Wrapper.vhd
-set_global_assignment -name VHDL_FILE ../../src/rst_sync.vhd
-set_global_assignment -name VHDL_FILE ../../src/Registers_Memory_Interface/canfd_registers.vhd
-set_global_assignment -name VHDL_FILE ../../src/Interrupts/intManager.vhd
-set_global_assignment -name VHDL_FILE ../../src/Event_Logger/logger.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/protocolControl.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/operationControl.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/faultConf.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/CRC.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/core_top.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitStuffing_v2.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_Core/bitDeStuffing.vhd
-set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/prescaler_v3.vhd
-set_global_assignment -name VHDL_FILE ../../src/Bus_Timing_Synchronisation/busSync.vhd
-set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txtBuffer.vhd
-set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/txArbitrator.vhd
-set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/rxBuffer.vhd
-set_global_assignment -name VHDL_FILE ../../src/Buffers_Message_Handling/messageFilter.vhd
-set_global_assignment -name VHDL_FILE ../../src/ID_transfer.vhd
-set_global_assignment -name VHDL_FILE ../../src/CAN_top_level.vhd
+
+# -------------------------------------------------------------------------- #
+### CTU CAN FD core sources list - begin ###
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/memory_bus.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/address_decoder.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/data_mux.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/access_signaler.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/cmn_reg_map_pkg.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/event_logger_reg_map.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/can_registers_pkg.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/control_registers_reg_map.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/generated/memory_reg.vhd
+set_global_assignment -name VHDL_FILE ../../src/memory_registers/memory_registers.vhd
+set_global_assignment -name VHDL_FILE ../../src/apb/apb_ifc.vhd
+set_global_assignment -name VHDL_FILE ../../src/bus_sampling/bus_sampling.vhd
+set_global_assignment -name VHDL_FILE ../../src/bus_sampling/data_edge_detector.vhd
+set_global_assignment -name VHDL_FILE ../../src/bus_sampling/trv_delay_meas.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/bit_destuffing/bit_destuffing.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/bit_stuffing/bit_stuffing.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/bus_traffic_counters/bus_traffic_counters.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/can_core.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/crc/can_crc.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/crc/crc_calc.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/crc/crc_wrapper.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/fault_confinement/fault_confinement.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/operation_control/operation_control.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_core/protocol_control/protocol_control.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_top_apb.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/dff_arst.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/endian_swap.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/inf_ram_wrapper.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/majority_decoder_3.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/rst_sync.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/shift_reg.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/shift_reg_preload.vhd
+set_global_assignment -name VHDL_FILE ../../src/common/sig_sync.vhd
+set_global_assignment -name VHDL_FILE ../../src/event_logger/event_logger.vhd
+set_global_assignment -name VHDL_FILE ../../src/frame_filters/bit_filter.vhd
+set_global_assignment -name VHDL_FILE ../../src/frame_filters/frame_filters.vhd
+set_global_assignment -name VHDL_FILE ../../src/frame_filters/range_filter.vhd
+set_global_assignment -name VHDL_FILE ../../src/interrupts/int_module.vhd
+set_global_assignment -name VHDL_FILE ../../src/interrupts/int_manager.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/can_constants.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/can_fd_frame_format.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/can_types.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/cmn_lib.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/id_transfer.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/reduce_lib.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/can_components.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/can_fd_register_map.vhd
+set_global_assignment -name VHDL_FILE ../../src/lib/drv_stat_pkg.vhd
+set_global_assignment -name VHDL_FILE ../../src/prescaler/prescaler.vhd
+set_global_assignment -name VHDL_FILE ../../src/rx_buffer/rx_buffer.vhd
+set_global_assignment -name VHDL_FILE ../../src/rx_buffer/rx_buffer_fsm.vhd
+set_global_assignment -name VHDL_FILE ../../src/rx_buffer/rx_buffer_pointers.vhd
+set_global_assignment -name VHDL_FILE ../../src/tx_arbitrator/priority_decoder.vhd
+set_global_assignment -name VHDL_FILE ../../src/tx_arbitrator/tx_arbitrator.vhd
+set_global_assignment -name VHDL_FILE ../../src/tx_arbitrator/tx_arbitrator_fsm.vhd
+set_global_assignment -name VHDL_FILE ../../src/txt_buffer/txt_buffer.vhd
+set_global_assignment -name VHDL_FILE ../../src/txt_buffer/txt_buffer_fsm.vhd
+set_global_assignment -name VHDL_FILE ../../src/can_top_level.vhd
+### CTU CAN FD core sources list - end ###
+# -------------------------------------------------------------------------- #
+
+
 set_global_assignment -name TCL_SCRIPT_FILE ../../scripts/resource_benchmark.tcl
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
