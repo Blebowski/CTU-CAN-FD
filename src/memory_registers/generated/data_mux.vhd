@@ -64,6 +64,7 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --     3.11.2018   Created file
+--     8.01.2019   Added data saturation upon address overflow.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -133,7 +134,11 @@ architecture rtl of data_mux is
     -- Data output from data mux (before masking)
     signal sel_data                    :    std_logic_vector(data_out_width - 1 downto 0);
 
-    -- Data output from data mux (after masking)
+    -- Data after saturation. Saturated data return all zeroes when address overflow 
+    -- and read beyond last address of register block occurs.
+    signal saturated_data             :   std_logic_vector(data_out_width - 1 downto 0);
+
+    -- Data output from data mux (after masking and saturation)
     signal masked_data                :    std_logic_vector(data_out_width - 1 downto 0);
 
     -- Internal data select converted to natural to avoid ugly code in
@@ -146,6 +151,10 @@ architecture rtl of data_mux is
     -- Saturated value of internal index.
     signal index_sat                  :    natural range 0 to INDEX_MAX;
 
+    -- Signals that input address is has overflown the dimension of read array and
+    -- that zeroes should be returned
+    signal address_overflow           :   std_logic;
+    
 begin
 
     ---------------------------------------------------------------------------
@@ -154,13 +163,19 @@ begin
     index <= to_integer(unsigned(data_selector));
 
     ---------------------------------------------------------------------------
+    -- Signal overflow of address beyond the dimension of read data.
+    ---------------------------------------------------------------------------
+    address_overflow <= '0' when (index <= INDEX_MAX) else
+                        '1';
+    
+    ---------------------------------------------------------------------------
     -- Data selector saturation, we need to saturate data selector in case
     -- we don't have 2^N inputs. Address conversion of n bit vector to index
     -- of less than 2^N - 1 would result in overflow in simulator. Using 
     -- modulo is not effective, modulo by non 2^N number results in extra
     -- shitty logic...
     ---------------------------------------------------------------------------
-    index_sat <= index when (index <= INDEX_MAX)
+    index_sat <= index when (address_overflow = '0')
                        else
                  INDEX_MAX;
     
@@ -174,10 +189,20 @@ begin
 
 
     ---------------------------------------------------------------------------
+    -- Data saturation
+    ---------------------------------------------------------------------------
+    data_saturation_gen : for i in 0 to data_out_width - 1 generate
+        saturated_data(i) <= sel_data(i) when (address_overflow = '0')
+                                         else
+                             '0';
+    end generate data_saturation_gen;
+
+
+    ---------------------------------------------------------------------------
     -- Data masking
     ---------------------------------------------------------------------------
     data_mask_gen : for i in 0 to data_out_width - 1 generate
-        masked_data(i) <= sel_data(i) and data_mask_n(i);
+        masked_data(i) <= saturated_data(i) and data_mask_n(i);
     end generate data_mask_gen;
 
 
