@@ -3201,7 +3201,7 @@ noprefix "false"
 \end_inset
 
  lists signals of CTU CAN FD on APB memory interface.
- When using CTU CAN FD with Avalon Interface, 
+ When using CTU CAN FD with APB Interface, 
 \family roman
 \shape italic
 can_top_apb
