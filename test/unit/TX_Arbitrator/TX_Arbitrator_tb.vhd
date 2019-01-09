@@ -567,7 +567,7 @@ begin
 
         if (mism_ctr = 2) then
             -- LCOV_EXCL_START
-            log("Mismatch for more than 2 clock cycles!", error_l, log_level);
+            error("Mismatch for more than 2 clock cycles!");
             cmp_err_ctr          <= cmp_err_ctr + 1;
             -- LCOV_EXCL_STOP
         end if;
@@ -594,22 +594,21 @@ begin
     test_proc : process
         variable outcome : boolean;
     begin
-        log("Restarting TX Arbitrator test!", info_l, log_level);
+        info("Restarting TX Arbitrator test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr_2);
-        log("Restarted TX Arbitrator test", info_l, log_level);
+        info("Restarted TX Arbitrator test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting main loop", info_l, log_level);
+        info("Starting main loop");
 
         while (loop_ctr < iterations  or  exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             -- Configure TXT Buffer priorities!
             set_priorities(rand_ctr_2, txt_buf_prio);

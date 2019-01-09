@@ -81,6 +81,7 @@ package body byte_enable_feature is
         variable address			:		 std_logic_vector(11 downto 0) :=
                                                 (OTHERS => '0');
         variable ID                 :        natural := 1;
+        variable errmsg             :        line;
     begin
         o.outcome := true;
 
@@ -93,7 +94,7 @@ package body byte_enable_feature is
         if (data /= x"DEADBEEF") then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "32 bit read error" severity error;
+            error("32 bit read error");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -111,8 +112,8 @@ package body byte_enable_feature is
 	            YOLO_VAL_RSTVAL(16 * i + 15 downto 16 * i))
             then
                 -- LCOV_EXCL_START
-                report "16 bit read error (valid byte), Index :" &
-                    Integer'image(i) severity error; 
+                info("Read error - 16 bit access (valid byte), Index:");
+                error(integer'image(i));
 	            o.outcome := false;
                 -- LCOV_EXCL_STOP
             end if;
@@ -120,8 +121,8 @@ package body byte_enable_feature is
             -- Checking invalid 2 bytes are 0
             if (data(16 * (1 - i) + 15 downto 16 * (1 - i)) /= x"0000") then
                 -- LCOV_EXCL_START
-                report "16 bit read error (empty byte), Index :" &
-                    Integer'image(i) severity error; 
+                info("Read error -16 bit access (empty byte), Index :");
+                error(integer'image(i)); 
 	            o.outcome := false;
                 -- LCOV_EXCL_STOP
             end if;
@@ -142,8 +143,8 @@ package body byte_enable_feature is
             then
                 -- LCOV_EXCL_START
 	            o.outcome := false;
-                report "8 bit read error (valid byte), Index :" &
-                    Integer'image(i) severity error;
+                info("Read error - 8 bit access (valid byte), Index :");
+                error(Integer'image(i));
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -153,7 +154,7 @@ package body byte_enable_feature is
                 if (data(31 downto 8) /= x"000000") then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit read error (Empty byte 0)" severity error;
+                    error("Read error - 8 bit (Empty byte 0)");
                     -- LCOV_EXCL_STOP
                 end if;
             when 1 =>
@@ -162,7 +163,7 @@ package body byte_enable_feature is
                 then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit read error (Empty byte 1)" severity error;
+                    error("Read error - 8 bit (Empty byte 1)");
                     -- LCOV_EXCL_STOP
                 end if;
             when 2 =>
@@ -171,18 +172,18 @@ package body byte_enable_feature is
                 then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit read error (Empty byte 2)" severity error;
+                    error("Read error - 8 bit (Empty byte 2)");
                     -- LCOV_EXCL_STOP
                 end if;
             when 3 =>
                 if (data(23 downto 0) /= x"000000") then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit read error (Empty byte 3)" severity error;
+                    error("Read error - 8 bit (Empty byte 3)");
                     -- LCOV_EXCL_STOP
                 end if;
             when others =>
-                report "Invalid byte index" severity error; -- LCOV_EXCL_LINE
+                error("Invalid byte index"); -- LCOV_EXCL_LINE
             end case;
         end loop;
 
@@ -211,8 +212,8 @@ package body byte_enable_feature is
             if (data(8 * i + 7 downto 8 * i) /= x"0A") then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "8 bit write error (valid byte), Index :" &
-                    Integer'image(i) severity error;
+                info("Write error - 8 bit (valid byte), Index :");
+                error(Integer'image(i));
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -222,7 +223,7 @@ package body byte_enable_feature is
                 if (data(31 downto 8) /= x"000000") then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit write error (Empty byte 0)" severity error;
+                    error("Write error - 8 bit (Empty byte 0)");
                     -- LCOV_EXCL_STOP
                 end if;
             when 1 =>
@@ -231,7 +232,7 @@ package body byte_enable_feature is
                 then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit write error (Empty byte 1)" severity error;
+                    error("Write error - 8 bit (Empty byte 1)");
                     -- LCOV_EXCL_STOP
                 end if;
             when 2 =>
@@ -240,18 +241,18 @@ package body byte_enable_feature is
                 then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit write error (Empty byte 2)" severity error;
+                    error("Write error - 8 bit (Empty byte 2)");
                     -- LCOV_EXCL_STOP
                 end if;
             when 3 =>
                 if (data(23 downto 0) /= x"000000") then
                     -- LCOV_EXCL_START
                     o.outcome := false;
-                    report "8 bit write error (Empty byte 3)" severity error;
+                    error("Write error - 8 bit (Empty byte 3)");
                     -- LCOV_EXCL_STOP
                 end if;
             when others =>
-                report "Invalid byte index" severity error; -- LCOV_EXCL_LINE
+                error("Invalid byte index"); -- LCOV_EXCL_LINE
             end case;
         end loop;
 

@@ -503,7 +503,7 @@ begin
             store := clock_counter;
             wait until rising_edge(sync_nbt);
             if ((clock_counter - store) < inf_proc_time) then
-                log("Information processing time corrupted", error_l, log_level);
+                error("Information processing time corrupted");
                 process_error(ipt_err_ctr, error_beh, exit_imm_2);
             end if;
 
@@ -513,12 +513,12 @@ begin
             store := clock_counter;
             wait until rising_edge(sync_dbt);
             if ((clock_counter - store) < inf_proc_time) then
-                log("Information processing time corrupted", error_l, log_level);
+                error("Information processing time corrupted");
                 process_error(ipt_err_ctr, error_beh, exit_imm_2);
             end if;
 
         else
-            report "Only NOMINAL and DATA sampling is supported" severity error;
+            error("Only NOMINAL and DATA sampling is supported");
         end if;
     end process;
 
@@ -537,7 +537,7 @@ begin
 
             -- Here error occures due to two consecutive sync signals
             if (was_sync = true) then
-                log("Two consecutive sync signals!", error_l, log_level);
+                error("Two consecutive sync signals!");
                 process_error(coh_err_ctr, error_beh, exit_imm_3);
             end if;
             was_sync := true;
@@ -546,7 +546,7 @@ begin
 
             -- Here error occures due to two consecutive sample signals
             if (was_sync = false) then
-                log("Two consecutive sample signals!", error_l, log_level);
+                error("Two consecutive sample signals!");
                 process_error(coh_err_ctr, error_beh, exit_imm_3);
             end if;
             was_sync := false;
@@ -563,8 +563,7 @@ begin
 
         wait for 15 ns; -- One and half clock cycle
         if (sync_nbt_del_1 = '0' and sync_dbt_del_1 = '0') then
-           log("Sync sequnce not complete, delay 1 CLK signal missing!",
-                error_l, log_level);
+           error("Sync sequnce not complete, delay 1 CLK signal missing!");
            process_error(sync_seq_err_ctr, error_beh, exit_imm_4);
         end if;
     end process;
@@ -581,16 +580,14 @@ begin
 
         wait for 10 ns; -- One and half clock cycle
         if (sample_nbt_del_1 = '0' and sample_dbt_del_1 = '0') then
-           log("Sample sequnce not complete, delay 1 CLK signal missing!",
-                error_l, log_level);
+           error("Sample sequnce not complete, delay 1 CLK signal missing!");
            process_error(sample_seq_err_ctr, error_beh, exit_imm_5);
         end if;
 
         wait for 10 ns;
 
         if (sample_nbt_del_2 = '0' and sample_dbt_del_2 = '0') then
-           log("Sample sequnce not complete, delay 2 CLK signal missing!",
-                error_l, log_level);
+           error("Sample sequnce not complete, delay 2 CLK signal missing!");
            process_error(sample_seq_err_ctr, error_beh, exit_imm_5);
         end if;
     end process;
@@ -687,7 +684,7 @@ begin
         variable brp              : integer;
 
     begin
-        log("Restarting Prescaler unit test!", info_l, log_level);
+        info("Restarting Prescaler unit test!");
         wait for 5 ns;
 
         -- Generates random initial bit time settings to avoid having zero
@@ -696,17 +693,17 @@ begin
         gen_bit_time_setting(rand_ctr, setting);
 
         reset_test(res_n, status, run, main_err_ctr);
-        log("Restarted Prescaler unit test", info_l, log_level);
+        info("Restarted Prescaler unit test");
         print_test_info(iterations, log_level, error_beh,  error_tol);
 
 
         ------------------------------------------------------------------------
         -- Main test loop
         ------------------------------------------------------------------------
-        log("Starting Prescaler unit main loop", info_l, log_level);
+        info("Starting Prescaler unit main loop");
 
         while (loop_ctr < iterations or exit_imm) loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             -- Generates random bit time settings for new bits.
             wait until bt_FSM_out = ph2;
@@ -735,12 +732,11 @@ begin
             -- Check duration of default bit lenght without synchronisation
             --------------------------------------------------------------------
             sync_control  <= NO_SYNC;
-            log("Starting Check without synchronisation", info_l, log_level);
+            info("Starting Check without synchronisation");
             for i in 1 to 4 loop
 
                 -- Check distance between "SYNC" and "SAMPLE" trigger
-                log("Checking distance between SYNC and SAMPLE", info_l,
-                    log_level);
+                info("Checking distance between SYNC and SAMPLE");
                 wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
                 count_cycles_until(clk_sys, check_ctr, sample_nbt, sample_dbt);
 
@@ -761,15 +757,15 @@ begin
 
                 if (check_ctr /= exp_dur) then
                     -- LCOV_EXCL_START
-                    log("SYNC+PROP+PH1 " & tmp_text &
-                        " did not last expected time!", error_l, log_level);
+                    error("SYNC+PROP+PH1 " & tmp_text &
+                          " did not last expected time!");
                     process_error(main_err_ctr, error_beh, exit_imm);
                     -- LCOV_EXCL_STOP
                 end if;
 
                 -- Check distance between two consecutive "SYNC" triggers
                 -- (whole bit time)
-                log("Checking distance two consecutive SYNC", info_l, log_level);
+                info("Checking distance two consecutive SYNC");
                 wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
                 wait for 15 ns;
                 count_cycles_until(clk_sys, check_ctr, sync_nbt, sync_dbt);
@@ -792,8 +788,8 @@ begin
 
                 if (check_ctr /= exp_dur) then
                     -- LCOV_EXCL_START
-                    log("SYNC+PROP+PH1+PH2 " & tmp_text &
-                        " did not last expected time!", error_l, log_level);
+                    error("SYNC+PROP+PH1+PH2 " & tmp_text &
+                          " did not last expected time!");
                     process_error(main_err_ctr, error_beh, exit_imm);
                     -- LCOV_EXCL_STOP
                 end if;
@@ -808,7 +804,7 @@ begin
             wait until rising_edge(clk_sys);
             sync_control    <= RE_SYNC;
 
-            log("Starting Check with Resynchronisation", info_l, log_level);
+            info("Starting Check with Resynchronisation");
             for i in 0 to 4 loop
 
                 wait until rising_edge(clk_sys) and
@@ -833,10 +829,9 @@ begin
 
                 if (abs(integer(check_ctr) - resync_bit_time_length) > brp) then
                     -- LCOV_EXCL_START
-                    log("Resync bit length wrong! Expected length: " &
-                            integer'image(resync_bit_time_length) &
-                        " Real length: " & integer'image(check_ctr),
-                        error_l, log_level);
+                    error("Resync bit length wrong! Expected length: " &
+                           integer'image(resync_bit_time_length) &
+                          " Real length: " & integer'image(check_ctr));
                     process_error(main_err_ctr, error_beh, exit_imm);
                     -- LCOV_EXCL_STOP
                 end if;
@@ -873,7 +868,7 @@ begin
             --------------------------------------------------------------------
             -- Emulate a BRS bit
             --------------------------------------------------------------------
-            log("Checking duration of BRS bit", info_l, log_level);
+            info("Checking duration of BRS bit");
 
             -- Nominal Bit-rate part, count length between sync trigger and
             -- sample trigger!
@@ -895,10 +890,9 @@ begin
             -- Check duration, count with two cycle delay.
             if (exp_dur_BRS /= nom_ctr + data_ctr + 2) then
                 -- LCOV_EXCL_START
-                log("BRS bit length not as expected, " &
-                    "Expected: " & integer'image(exp_dur_BRS) &
-                    "Real: " & integer'image(nom_ctr + data_ctr + 2),
-                     error_l, log_level);
+                error("BRS bit length not as expected, " &
+                      "Expected: " & integer'image(exp_dur_BRS) &
+                      "Real: " & integer'image(nom_ctr + data_ctr + 2));
                 -- LCOV_EXCL_STOP
                 process_error(main_err_ctr, error_beh, exit_imm);
             end if;
@@ -907,7 +901,7 @@ begin
             -- Emulate CRC delimiter bit (as if switching back to Nominal
             -- data-rate)
             --------------------------------------------------------------------
-            log("Checking duration of CRC delimiter bit", info_l, log_level);
+            info("Checking duration of CRC delimiter bit");
             wait until bt_FSM_out = ph2;
             wait until falling_edge(clk_sys) and sync_dbt = '1';
             count_cycles_until(clk_sys, data_ctr, sample_dbt);
@@ -924,10 +918,9 @@ begin
             -- Check the duration
             if (exp_dur_CRC_del /= nom_ctr + data_ctr + 2) then
                 -- LCOV_EXCL_START
-                log("CRC delimiter bit length not as expected, " &
-                    "Expected: " & integer'image(exp_dur_CRC_del) &
-                    "Real: " & integer'image(nom_ctr + data_ctr + 2),
-                     error_l, log_level);
+                error("CRC delimiter bit length not as expected, " &
+                      "Expected: " & integer'image(exp_dur_CRC_del) &
+                      "Real: " & integer'image(nom_ctr + data_ctr + 2));
                 process_error(main_err_ctr, error_beh, exit_imm);
                 -- LCOV_EXCL_STOP
             end if;

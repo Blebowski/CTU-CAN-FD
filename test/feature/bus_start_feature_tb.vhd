@@ -127,7 +127,7 @@ package body bus_start_feature is
         ------------------------------------------------------------------------
         -- Turn on Node 1, Wait until it starts transmitting
         ------------------------------------------------------------------------
-        report "Turning ON Node 1.";
+        info("Turning ON Node 1.");
         CAN_turn_controller(true, ID_1, mem_bus(1));
         while (protocol_type'VAL(to_integer(unsigned(
                 iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
@@ -140,7 +140,7 @@ package body bus_start_feature is
         -- Modify frame to have ID 513, and insert it to Node 2 for transmission.
         -- Enable Node 2, so that it may start integration.
         ------------------------------------------------------------------------
-        report "Turning ON Node 2.";
+        info("Turning ON Node 2.");
         wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 10, 11);
         CAN_frame.identifier := 513;
         CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
@@ -159,9 +159,9 @@ package body bus_start_feature is
 
         -- Assuming default timing configuration -> 200 cycles per Bit
         -- Wait through CRC Delimiter + little bit
-        report "Started delim_ack";
+        info("Started delim_ack");
         wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 209, 210);
-        report "Forcing ACK";
+        info("Forcing ACK");
         so.bl_inject <= DOMINANT;
         so.bl_force  <= true;
         wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 200, 201);
@@ -172,14 +172,14 @@ package body bus_start_feature is
         -- Wait until bus is idle.
         ------------------------------------------------------------------------
         CAN_wait_bus_idle(ID_1, mem_bus(1));
-        report "Bus is idle";
+        info("Bus is idle");
 
         ------------------------------------------------------------------------
         -- Now wait until another frame is transmitted. This one should be
         -- arbitrated, and Node 2 should have won.
         ------------------------------------------------------------------------
         CAN_wait_frame_sent(ID_1, mem_bus(1));
-        report "Second frame was sent!";
+        info("Second frame was sent!");
 
         ------------------------------------------------------------------------
         -- Read status of RX Buffer in Node 1! It should have sent ACK and
@@ -201,13 +201,12 @@ package body bus_start_feature is
         -- in special feature test!
         ------------------------------------------------------------------------
         get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        report "Read RX Buffer state";
+        info("Read RX Buffer state");
 
         if (rx_state.rx_empty) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "RX Buffer is empty, but Frame should be received!"
-                severity error;
+            error("RX Buffer is empty, but Frame should be received!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -216,8 +215,8 @@ package body bus_start_feature is
         if (CAN_frame.identifier /= 513) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Wrong Identifier received by Node 1. Expected: 513 , Real: " &
-                    integer'image(CAN_frame.identifier) severity error;
+            error("Wrong Identifier received by Node 1. Expected: 513 , Real: " &
+                  integer'image(CAN_frame.identifier));
             -- LCOV_EXCL_STOP
         end if;
 
@@ -227,7 +226,7 @@ package body bus_start_feature is
         -- Buffers.
         ------------------------------------------------------------------------
         CAN_wait_bus_idle(ID_1, mem_bus(1));
-        report "Last frame was sent!";
+        info("Last frame was sent!");
 
   end procedure;
 

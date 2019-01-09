@@ -136,7 +136,7 @@ package body overload_feature is
                 overload)
             then
                 -- LCOV_EXCL_START
-                report "Overload Frame did not start" severity error;
+                error("Overload Frame did not start");
                 o.outcome:=false;
                 -- LCOV_EXCL_STOP
             end if;

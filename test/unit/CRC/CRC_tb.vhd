@@ -200,7 +200,7 @@ architecture CRC_unit_test of CAN_test is
 
         iterator := 0;
         while (iterator < act_length) loop
-            log("Putting bit nr " & integer'image(iterator), info_l, log_level);
+            log("Putting bit nr " & integer'image(iterator));
             data_in <= bit_seq(660 - iterator);
             wait until rising_edge(sample);
             iterator := iterator + 1;
@@ -312,55 +312,54 @@ begin
         variable c17_mism   : boolean:=false;
         variable c21_mism   : boolean:=false;
     begin
-        log("Restarting CRC test!", info_l, log_level);
+        info("Restarting CRC test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted CRC test", info_l, log_level);
+        info("Restarted CRC test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         while (loop_ctr < iterations or exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             --Generate random ISO, non ISO
             rand_logic_s(rand_ctr, drv_fd_type, 0.5);
 
             --Generate bit sequence
-            log("Generating random bit sequence", info_l,  log_level);
+            info("Generating random bit sequence");
             gen_bit_sequence(rand_ctr, 10, 620, bit_seq, gen_length);
 
-            log("Calculating software CRC", info_l, log_level);
+            info("Calculating software CRC");
             calc_crc(bit_seq, gen_length, CRC15_POL, CRC17_POL, CRC21_POL,
                    drv_fd_type, crc_15_mod, crc_17_mod, crc_21_mod);
 
-            log("Putting bit sequence to DUT", info_l, log_level);
+            info("Putting bit sequence to DUT");
             put_to_dut(tx_trig, rx_trig, enable, data_in, clk_sys, bit_seq,
                        gen_length);
 
-            log("Comparing SW CRC and DUT output", info_l, log_level);
+            info("Comparing SW CRC and DUT output");
             compare_results(crc15, crc17, crc21, crc_15_mod, crc_17_mod,
                             crc_21_mod, c15_mism, c17_mism, c21_mism);
 
             if (c15_mism) then
                 -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
-                log("Mismatch in CRC15", error_l, log_level);
+                error("Mismatch in CRC15");
                 -- LCOV_EXCL_STOP
             end if;
 
             if (c17_mism) then
                 -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
-                log("Mismatch in CRC17", error_l, log_level);
+                error("Mismatch in CRC17");
                 -- LCOV_EXCL_STOP
             end if;
 
             if (c21_mism) then
                 -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
-                log("Mismatch in CRC21", error_l, log_level);
+                error("Mismatch in CRC21");
                 -- LCOV_EXCL_STOP
             end if;
 

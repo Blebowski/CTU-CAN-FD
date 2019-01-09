@@ -193,7 +193,7 @@ begin
         s_apb_pprot    <= (others => 'X');
         s_apb_psel     <= '0';
 
-        log("Restarting APB test", info_l, log_level);
+        info("Restarting APB test");
         status         <= waiting;
         if not run then wait until run; end if;
         print_test_info(iterations, log_level, error_beh, error_tol);

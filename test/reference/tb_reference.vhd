@@ -142,7 +142,7 @@ architecture CAN_reference_test of CAN_test is
         read_dummy_chars(entry, 1);
         if (flag /= "CAN") then
             -- LCOV_EXCL_START
-            report "Invalid input config format" severity error;
+            error("-Invalid input config format");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -155,8 +155,7 @@ architecture CAN_reference_test of CAN_test is
             frame.frame_format := FD_CAN;
         else
             -- LCOV_EXCL_START
-            report "Invalid CAN Frame format in Reference test input" severity
-                error;
+            error("Invalid CAN Frame format in Reference test input");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -169,8 +168,7 @@ architecture CAN_reference_test of CAN_test is
             frame.ident_type := EXTENDED;
         else
             -- LCOV_EXCL_START
-            report "Invalid CAN Identifier type in Reference test input" 
-                severity error;
+            error("Invalid CAN Identifier type in Reference test input"); 
             -- LCOV_EXCL_STOP
         end if;
 
@@ -348,7 +346,7 @@ begin
         variable result           : boolean;
         variable real_iterations  : natural;
     begin
-        log("Restarting Reference test!", info_l, log_level);
+        log("Restarting Reference test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
@@ -359,23 +357,22 @@ begin
         if (iterations > 1000) then
             -- LCOV_EXCL_START
             real_iterations := 1000;
-            log("Number of refference test iterations truncated to 1000!",
-                warning_l, log_level);
+            warning("Number of refference test iterations truncated to 1000!");
             -- LCOV_EXCL_STOP
         else
             real_iterations := iterations;
         end if;
 
-        log("Restarted Reference test", info_l, log_level);
+        info("Restarted Reference test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
-		log("Configuring Bit rate, enabling controller", info_l, log_level);		
+		info("Configuring Bit rate, enabling controller");		
 		CAN_configure_timing(timing_config, 0, mem_bus);
 		CAN_turn_controller(true, 0, mem_bus);
         
         loop_ctr <= 1;
 
-        log("Opening test config file", info_l, log_level);
+        info("Opening test config file");
         file_open(config_file, data_path, read_mode);
 
         ------------------------------------------------------------------------
@@ -393,8 +390,7 @@ begin
 
         while (loop_ctr < real_iterations or exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             -- Read one frame and its bit sequence from input file
             read_bit_sequence(config_file, TX_frame, bit_sequence, rand_ctr);
@@ -415,13 +411,15 @@ begin
             -- Print error if frames are not matching!
             if (not result) then
                 -- LCOV_EXCL_START
-                log("Iteration nr: " & integer'image(loop_ctr), info_l, 
-                    log_level);
-                log("TX Frame:", info_l, log_level);
+                info("Iteration nr: " & integer'image(loop_ctr));
+                
+                log("TX Frame:");
                 CAN_print_frame(TX_frame, log_level);
-                log("RX Frame:", info_l, log_level);
+                
+                info("RX Frame:");
                 CAN_print_frame(RX_frame, log_level);
-				log("TX, RX frames mismatch!", error_l, log_level);
+				
+				error("TX, RX frames mismatch!");
                 process_error(error_ctr, error_beh, exit_imm);
                 -- LCOV_EXCL_STOP
             end if;

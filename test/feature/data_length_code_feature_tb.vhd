@@ -125,7 +125,7 @@ package body data_length_code_feature is
             -- LCOV_EXCL_START
             o.outcome := false;
             CAN_print_frame(CAN_frame_2, info_l);
-            report "Invalid DLC received!" severity error;
+            error("Invalid DLC received!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -133,8 +133,7 @@ package body data_length_code_feature is
             if (CAN_frame_2.data(i) /= "00000000") then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "Byte index " & integer'image(i) & " not zero!"
-                    severity error;
+                error("Byte index " & integer'image(i) & " not zero!");
                 -- LCOV_EXCL_STOP
             end if;
         end loop;

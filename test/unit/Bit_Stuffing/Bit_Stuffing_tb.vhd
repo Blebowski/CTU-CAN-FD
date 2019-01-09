@@ -466,11 +466,11 @@ architecture bit_stuffing_unit_test of CAN_test is
 
         if (log_lvl = info_l) then
             -- LCOV_EXCL_START
-            log("TX Data NON fixed: ", info_l, log_lvl);
+            info("TX Data NON fixed: ");
             write(msg1, set.tx_data_seq(set.bc_non_fixed - 1 downto 0));
             writeline(output, msg1);
 
-            log("TX Data fixed: ", info_l, log_lvl);
+            info("TX Data fixed: ");
             write(msg2, set.tx_data_seq(set.bc_non_fixed + set.bc_fixed - 1
                                        downto set.bc_non_fixed));
             writeline(output, msg2);
@@ -479,13 +479,13 @@ architecture bit_stuffing_unit_test of CAN_test is
 
         if (log_lvl = info_l) then
             -- LCOV_EXCL_START
-            log("Stuffed data NON fixed: ", info_l, log_lvl);
+            info("Stuffed data NON fixed: ");
             write(msg3, set.stuffed_data_seq(
                         set.stuff_counter_non_fixed + set.bc_non_fixed - 1
                         downto 0));
             writeline(output, msg3);
 
-            log("Stuffed data fixed: ", info_l, log_lvl);
+            info("Stuffed data fixed: ");
             write(msg4, set.stuffed_data_seq(
                         set.stuff_counter_non_fixed + set.bc_non_fixed +
                         set.stuff_counter_fixed + set.bc_fixed - 1 downto
@@ -494,12 +494,10 @@ architecture bit_stuffing_unit_test of CAN_test is
             -- LCOV_EXCL_STOP
         end if;
 
-        log("Non-fixed length: " & integer'image(set.bc_non_fixed),
-            info_l, log_lvl);
+        info("Non-fixed length: " & integer'image(set.bc_non_fixed));
         if (set.change_to_fixed) then
-            log("Change to fixed should occur!", info_l, log_lvl);
-            log("Fixed length: " & integer'image(set.bc_fixed),
-            info_l, log_lvl);
+            info("Change to fixed should occur!");
+            info("Fixed length: " & integer'image(set.bc_fixed));
         end if;
 
         -- Enable Bit stuffing and destuffing. Set no fixed stuffing.
@@ -530,7 +528,7 @@ architecture bit_stuffing_unit_test of CAN_test is
                 wait for 1 ns;
                 if (rx_data /= tx_data) then
                     -- LCOV_EXCL_START
-                     log("TX, RX data mismatch", error_l, log_level);
+                     error("TX, RX data mismatch");
                      process_error(err_ctr, error_beh, exit_imm);
                     -- LCOV_EXCL_STOP
                 end if;
@@ -541,20 +539,18 @@ architecture bit_stuffing_unit_test of CAN_test is
             -- Report if recursive bit stuffing occurred. This is just to
             -- verify that circuit works recursively well!
             -- (enough to detect one polarity to verify proper operation)
-            if (log_level = info_l) then
-                if (set.tx_data_seq(nbs_ptr) = '0' and
-                    set.tx_data_seq(nbs_ptr + 1) = '0' and
-                    set.tx_data_seq(nbs_ptr + 2) = '0' and
-                    set.tx_data_seq(nbs_ptr + 3) = '0' and
-                    set.tx_data_seq(nbs_ptr + 4) = '0' and
-                    set.tx_data_seq(nbs_ptr + 5) = '1' and
-                    set.tx_data_seq(nbs_ptr + 6) = '1' and
-                    set.tx_data_seq(nbs_ptr + 7) = '1' and
-                    set.tx_data_seq(nbs_ptr + 8) = '1' and
-                    bs_trig = '1')
-                then
-                    log("Recursive stuff ocurred!", info_l, log_level);
-                end if;
+            if (set.tx_data_seq(nbs_ptr) = '0' and
+                set.tx_data_seq(nbs_ptr + 1) = '0' and
+                set.tx_data_seq(nbs_ptr + 2) = '0' and
+                set.tx_data_seq(nbs_ptr + 3) = '0' and
+                set.tx_data_seq(nbs_ptr + 4) = '0' and
+                set.tx_data_seq(nbs_ptr + 5) = '1' and
+                set.tx_data_seq(nbs_ptr + 6) = '1' and
+                set.tx_data_seq(nbs_ptr + 7) = '1' and
+                set.tx_data_seq(nbs_ptr + 8) = '1' and
+                bs_trig = '1')
+            then
+                info("Recursive stuff ocurred!");
             end if;
 
             -- Checking Bit stuffed sequence and that bit was stuffed when
@@ -563,14 +559,14 @@ architecture bit_stuffing_unit_test of CAN_test is
                 wait for 1 ns;
                 if (stuffed_data /= set.stuffed_data_seq(wbs_ptr)) then
                     -- LCOV_EXCL_START
-                    log("Stuffed data mismatch", error_l, log_level);
+                    error("Stuffed data mismatch");
                     process_error(err_ctr, error_beh, exit_imm);
                     -- LCOV_EXCL_STOP
                 end if;
 
                 if (set.stuffed_bits_mark(wbs_ptr) /= data_halt) then
                     -- LCOV_EXCL_START
-                    log("Stuff bit not inserted!", error_l, log_level);
+                    error("Stuff bit not inserted!");
                     process_error(err_ctr, error_beh, exit_imm);
                     -- LCOV_EXCL_STOP
                 end if;
@@ -585,11 +581,11 @@ architecture bit_stuffing_unit_test of CAN_test is
 
                 -- Quit if fixed stuffing is not set for this step.
                 if (set.change_to_fixed = false) then
-                    log("End of data sequence.", info_l, log_lvl);
+                    info("End of data sequence.");
                     exit;
                 end if;
 
-                log("Change to fixed stuffing.", info_l, log_lvl);
+                info("Change to fixed stuffing.");
 
                 fixed_stuff  <= '1';
                 bs_length    <= set.stuff_length_fixed;
@@ -600,7 +596,7 @@ architecture bit_stuffing_unit_test of CAN_test is
             if (no_trigger and (nbs_ptr = set.bc_non_fixed + set.bc_fixed - 2)
                 and fixed_stuff = '1')
             then
-                log("End of data sequence.", info_l, log_lvl);
+                info("End of data sequence.");
                 exit;
             end if;
 
@@ -731,13 +727,13 @@ begin
             wait until rising_edge(clk_sys) and (bd_trig = '1');
             wait for 1 ns;
 
-            log("Stuff error inserted", info_l, log_level);
+            info("Stuff error inserted");
 
             -- Now stuff error should be fired by bit destuffing, since
             -- bit value was forced to be the same as previous bits!
             if (stuff_error = '0') then
                 -- LCOV_EXCL_START
-                log("Stuff error not fired!", error_l, log_level);
+                error("Stuff error not fired!");
                 process_error(stuf_e_err_ctr, error_beh, exit_imm_1);
                 -- LCOV_EXCL_STOP
             end if;
@@ -766,21 +762,21 @@ begin
     ----------------------------------------------------------------------------
     test_proc : process
     begin
-        log("Restarting Bit stuffing-destuffing test!", info_l, log_level);
+        info("Restarting Bit stuffing-destuffing test!");
         wait for 5 ns;
         reset_test(res_n, status, run, stat_err_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted Bit stuffing-destuffing test", info_l, log_level);
+        info("Restarted Bit stuffing-destuffing test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting Bit stuffing-destuffing main loop", info_l, log_level);
+        info("Starting Bit stuffing-destuffing main loop");
 
         while (loop_ctr < iterations  or  exit_imm or exit_imm_1)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             exec_bs_test_step(rand_ctr, set, tx_trig_ack, rx_trig_ack, bs_trig,
                               bd_trig, no_trigger, tx_data, rx_data,

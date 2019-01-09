@@ -119,8 +119,7 @@ package body rx_status_feature is
         if (not buf_info.rx_empty) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "RX Buffer is not empty after Release receive Buffer command"
-                severity error;
+            error("RX Buffer is not empty after Release receive Buffer command");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -129,8 +128,8 @@ package body rx_status_feature is
         ------------------------------------------------------------------------
         if (buf_info.rx_buff_size /= buf_info.rx_mem_free) then
             -- LCOV_EXCL_START
-            report "Number of free words in RX Buffer after Release Receive " &
-                "Buffer command is not equal to buffer size" severity error;
+            error("Number of free words in RX Buffer after Release Receive " &
+                  "Buffer command is not equal to buffer size");
             o.outcome := false;
             -- LCOV_EXCL_STOP
         end if;
@@ -144,8 +143,8 @@ package body rx_status_feature is
         then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "RX Buffer pointers are not 0 after Release Receieve Buffer" &
-                    " command" severity error;
+            error("RX Buffer pointers are not 0 after Release Receieve Buffer" &
+                  " command");
             -- LCOV_EXCL_START
         end if;
 
@@ -190,8 +189,7 @@ package body rx_status_feature is
             if (number_frms_sent /= buf_info.rx_frame_count and send_more) then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "Number of frames in RX Buffer not incremented"
-                    severity error;
+                error("Number of frames in RX Buffer not incremented");
                 -- LCOV_EXCL_STOP
             end if;
             if ((buf_info.rx_mem_free + in_RX_buf) /= buf_info.rx_buff_size
@@ -199,8 +197,8 @@ package body rx_status_feature is
             then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "RX Buffer free memory + Number of stored words does " &
-                    "not equal to RX Buffer size!" severity error;
+                error("RX Buffer free memory + Number of stored words does " &
+                      "not equal to RX Buffer size!");
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -214,7 +212,7 @@ package body rx_status_feature is
         if (not status.data_overrun) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Data overrun not ocurred as expected!" severity error;
+            error("Data overrun not ocurred as expected!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -232,7 +230,7 @@ package body rx_status_feature is
         if (status.data_overrun) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Data Overrun flag not active!" severity error;
+            error("Data Overrun flag not active!");
             -- LCOV_EXCL_STOP
         end if;
 

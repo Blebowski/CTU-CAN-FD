@@ -138,7 +138,7 @@ package body forbid_fd_feature is
         if ((err_counters_1.rx_counter + 1 + 8) /= err_counters_2.rx_counter) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "RX Error counter not incremented as expected!" severity error;
+            error("RX Error counter not incremented as expected!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -162,7 +162,7 @@ package body forbid_fd_feature is
         if ((err_counters_1.rx_counter + 8) /= err_counters_2.rx_counter) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "RX Error counter not incremented as expected!" severity error;
+            error("RX Error counter not incremented as expected!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -192,7 +192,7 @@ package body forbid_fd_feature is
         if ((err_counters_1.rx_counter + 7) /= err_counters_2.rx_counter) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "RX Error counter not decremented as expected!" severity error;
+            error("RX Error counter not decremented as expected!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -202,7 +202,7 @@ package body forbid_fd_feature is
         -- this we clear error counters
         ------------------------------------------------------------------------
         if (err_counters_2.rx_counter > 70) then
-            report "Resetting error counters";
+            info("Resetting error counters");
             err_counters_2.rx_counter := 0;
             err_counters_2.tx_counter := 0;
             set_error_counters(err_counters_2, ID_1, mem_bus(1));

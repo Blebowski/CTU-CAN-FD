@@ -142,12 +142,12 @@ package body txtb_state_feature is
 
         for i in 1 to TXT_BUFFER_COUNT loop
 
-            report "Starting TXT Buffer " & integer'image(i) & " test!";
+            info("Starting TXT Buffer " & integer'image(i) & " test!");
 
             --------------------------------------------------------------------
             -- Part 1 (set_empty)
             --------------------------------------------------------------------
-            report "Starting " & integer'image(i) & ".1";
+            info("Starting " & integer'image(i) & ".1");
 
             --------------------------------------------------------------------
             -- Insert frame to Node 1, Wait until it starts transmitting
@@ -162,8 +162,8 @@ package body txtb_state_feature is
             if (txt_state /= buf_tx_progress) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " & integer'image(i) & " is not " &
-                       "'TX in Progress' as expected!" severity error;
+                error("TXT Buffer " & integer'image(i) & " is not " &
+                      "'TX in Progress' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
             CAN_wait_bus_idle(ID_1, mem_bus(1));
@@ -175,8 +175,8 @@ package body txtb_state_feature is
             if (txt_state /= buf_done) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " & integer'image(i) & " is not " &
-                       "'TX Done' as expected!" severity error;
+                error("TXT Buffer " & integer'image(i) & " is not " &
+                      "'TX Done' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -188,8 +188,8 @@ package body txtb_state_feature is
             if (txt_state /= buf_empty) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " & integer'image(i) & " is not " &
-                       "'Empty' as expected!" severity error;
+                error("TXT Buffer " & integer'image(i) & " is not " &
+                      "'Empty' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -197,7 +197,7 @@ package body txtb_state_feature is
             --------------------------------------------------------------------
             -- Part 2 (set_abort)
             --------------------------------------------------------------------
-            report "Starting " & integer'image(i) & ".2";
+            info("Starting " & integer'image(i) & ".2");
             --------------------------------------------------------------------
             -- Insert CAN Frame and wait till transmission starts.
             --------------------------------------------------------------------
@@ -212,8 +212,8 @@ package body txtb_state_feature is
             if (txt_state /= buf_ab_progress) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " & integer'image(i) & " is not " &
-                       "'Abort in progress' as expected!" severity error;
+                error("TXT Buffer " & integer'image(i) & " is not " &
+                      "'Abort in progress' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -230,8 +230,8 @@ package body txtb_state_feature is
             if (txt_state /= buf_aborted) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " & integer'image(i) & " is not " &
-                       "'Aborted' as expected!" severity error;
+                error("TXT Buffer " & integer'image(i) & " is not " &
+                      "'Aborted' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -246,7 +246,7 @@ package body txtb_state_feature is
             --------------------------------------------------------------------
             -- Part 3 (set_ready)
             --------------------------------------------------------------------
-            report "Starting " & integer'image(i) & ".3";
+            info("Starting " & integer'image(i) & ".3");
             --------------------------------------------------------------------
             -- Send CAN Frame by Node 1, TXT Buffer i.
             -- Wait till transmission starts!
@@ -269,9 +269,9 @@ package body txtb_state_feature is
             if (txt_state /= buf_ready) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " &
-                        integer'image(nxt_buffer) &
-                       " is not 'TX Ready' as expected!" severity error;
+                error("TXT Buffer " &
+                      integer'image(nxt_buffer) &
+                      " is not 'TX Ready' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
 
@@ -284,9 +284,9 @@ package body txtb_state_feature is
             if (txt_state /= buf_aborted) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " &
-                       integer'image(nxt_buffer) &
-                       " is not 'Aborted' as expected!" severity error;
+                error("TXT Buffer " &
+                      integer'image(nxt_buffer) &
+                      " is not 'Aborted' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
             CAN_wait_bus_idle(ID_1, mem_bus(1));
@@ -296,7 +296,7 @@ package body txtb_state_feature is
             --------------------------------------------------------------------
             -- Part 4 (Error state)
             --------------------------------------------------------------------
-            report "Starting " & integer'image(i) & ".4";
+            info("Starting " & integer'image(i) & ".4");
             --------------------------------------------------------------------
             -- Set "ACF" - Acknowledge forbidden on Node 2.
             -- Set Retransmitt limit to 5 on Node 1.
@@ -329,8 +329,8 @@ package body txtb_state_feature is
             if (txt_state /= buf_failed) then
                  -- LCOV_EXCL_START
                 o.outcome := false;
-                report "TXT Buffer " & integer'image(i) &
-                       " is not 'TX Failed' as expected!" severity error;
+                error("TXT Buffer " & integer'image(i) &
+                      " is not 'TX Failed' as expected!");
                 -- LCOV_EXCL_STOP
             end if;
 

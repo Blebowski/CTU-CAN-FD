@@ -114,8 +114,7 @@ package body invalid_configs_feature is
         if (rx_frame.brs = BR_SHIFT or rx_frame.frame_format = FD_CAN) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Frame with BRS Bit or CAN FD Frame received!"
-                severity error;
+            error("Frame with BRS Bit or CAN FD Frame received!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -146,8 +145,7 @@ package body invalid_configs_feature is
         if (rx_frame.frame_format = NORMAL_CAN or rx_frame.rtr = RTR_FRAME) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "CAN 2.0 Frame or RTR Flag Frame received!"
-                severity error;
+            error("CAN 2.0 Frame or RTR Flag Frame received!");
             -- LCOV_EXCL_STOP
         end if;
 

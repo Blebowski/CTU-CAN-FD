@@ -476,21 +476,21 @@ begin
         if (int_ena         /= int_ena_exp) then
             -- LCOV_EXCL_START
             outcome         := false;
-            log("Interrupt enable mismatch", error_l, log_level);
+            error("Interrupt enable mismatch");
             -- LCOV_EXCL_STOP
         end if;
 
         if (int_mask        /= int_mask_exp) then
             -- LCOV_EXCL_START
             outcome         := false;
-            log("Interrupt mask mismatch", error_l, log_level);
+            error("Interrupt mask mismatch");
             -- LCOV_EXCL_STOP
         end if;
 
         if (int_vector      /= int_status_exp) then
             -- LCOV_EXCL_START
             outcome         := false;
-            log("Interrupt vector mismatch", error_l, log_level);
+            error("Interrupt vector mismatch");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -499,7 +499,7 @@ begin
         then
             -- LCOV_EXCL_START
             outcome         := false;
-            log("Interrupt output mismatch", error_l, log_level);
+            error("Interrupt output mismatch");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -524,22 +524,21 @@ begin
     test_proc : process
         variable outcome : boolean := false;
     begin
-        log("Restarting Interrupt test!", info_l, log_level);
+        info("Restarting Interrupt test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 1, rand_ctr);
-        log("Restarted Interrupttest", info_l, log_level);
+        info("Restarted Interrupt test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting Interrupt main loop", info_l, log_level);
+        info("Starting Interrupt main loop");
 
         while (loop_ctr < iterations  or  exit_imm)
         loop
-              log("Starting loop nr "&integer'image(loop_ctr), info_l,
-                    log_level);
+              info("Starting loop nr " & integer'image(loop_ctr));
 
               wait until falling_edge(clk_sys);
 

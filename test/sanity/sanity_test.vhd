@@ -368,16 +368,14 @@ architecture behavioral of sanity_test is
             if (node_error) then
                 -- LCOV_EXCL_START
                 tx_r_ptr := 0;
-                log("TX Memory Node " & integer'image(i) & ":",
-                    error_l, log_level);
+                error("TX Memory Node " & integer'image(i) & ":");
                 while (tx_mems(i)(tx_r_ptr)(8) = '1') loop
                     tmp_mem := tx_mems(i);
                     read_frame_from_test_mem(TX_frame, tmp_mem, tx_r_ptr);
                     CAN_print_frame(TX_frame, error_l);
                 end loop;
 
-                log("RX Memory Node " & integer'image(i) & ":",
-                    error_l, log_level);
+                error("RX Memory Node " & integer'image(i) & ":");
                 rx_r_ptr := 0;
                 while (rx_mems(i)(rx_r_ptr)(8) = '1') loop
                     tmp_mem := rx_mems(i);
@@ -825,28 +823,25 @@ begin
         ------------------------------------------------------------------------
         -- Print Test configuration
         ------------------------------------------------------------------------
-        log("Sanity test configuration:", info_l, log_level);
-        log("Clock jitters (ppm): "
-            & integer'image(epsilon_v(1)) & " " 
-            & integer'image(epsilon_v(2)) & " "
-            & integer'image(epsilon_v(3)) & " "
-            & integer'image(epsilon_v(4)) & " ",
-            info_l, log_level);
+        info("Sanity test configuration:");
+        info("Clock jitters (ppm): "
+             & integer'image(epsilon_v(1)) & " " 
+             & integer'image(epsilon_v(2)) & " "
+             & integer'image(epsilon_v(3)) & " "
+             & integer'image(epsilon_v(4)) & " ");
 
-        log("Transceiver delays (ns): "
-            & integer'image(trv_del_v(1)) & " " 
-            & integer'image(trv_del_v(2)) & " "
-            & integer'image(trv_del_v(3)) & " "
-            & integer'image(trv_del_v(4)) & " ",
-            info_l, log_level);
+        info("Transceiver delays (ns): "
+             & integer'image(trv_del_v(1)) & " " 
+             & integer'image(trv_del_v(2)) & " "
+             & integer'image(trv_del_v(3)) & " "
+             & integer'image(trv_del_v(4)) & " ");
         
-        log(" Noise width (mean): " & real'image(nw_mean) &
-            " Noise width (var): " & real'image(nw_var) &
-            " Noise gap (mean): " & real'image(ng_mean) &
-            " Noise gap (var): " & real'image(ng_var),
-            info_l, log_level);
+        info(" Noise width (mean): " & real'image(nw_mean) &
+             " Noise width (var): " & real'image(nw_var) &
+             " Noise gap (mean): " & real'image(ng_mean) &
+             " Noise gap (var): " & real'image(ng_var));
 
-        log ("Bus topology: " & topology, info_l, log_level);
+        info ("Bus topology: " & topology);
 
         CAN_print_timing(timing_config);
         CAN_print_bus_matrix(bus_matrix);
@@ -866,7 +861,7 @@ begin
         -- Deactivate the wait signal
         do_wait <= (OTHERS => false);
 
-        log("Applying Configuration...", info_l, log_level);
+        info("Applying Configuration...");
         for i in 1 to NODE_COUNT loop
             do_config(i) <= true;
         end loop;
@@ -876,14 +871,13 @@ begin
             do_config(i)      <= false;
             do_read_errors(i) <= true;
         end loop;
-        log("Configuration applied", info_l, log_level);
+        info("Configuration applied");
 
         ------------------------------------------------------------------------
         -- Main loop of the test
         ------------------------------------------------------------------------
         while (loop_ctr < iterations  or  exit_imm) loop
-            log("Starting loop nr " & integer'image(loop_ctr),
-                info_l, log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             -- Here is a special case when previous step failed.
             -- We need to reset and reconfigure node
@@ -933,9 +927,8 @@ begin
                 then
                     -- LCOV_EXCL_START
                     step_done:= true;
-                    report "Some unit turned error passive -> " &
-                           "Most probably traffic consitency check will fail!"
-                    severity error;
+                    error("Some unit turned error passive -> " &
+                          "Most probably traffic consitency check will fail!");
                     -- LCOV_EXCL_STOP
                 end if;
                 wait for 100 ns;
@@ -954,7 +947,7 @@ begin
 
             if (outcome = false) then
                 -- LCOV_EXCL_START
-                log("Traffic consitency check error!", error_l, log_level);
+                error("Traffic consitency check error!");
                 process_error(error_ctr, error_beh, exit_imm);
                 -- LCOV_EXCL_STOP
             end if;

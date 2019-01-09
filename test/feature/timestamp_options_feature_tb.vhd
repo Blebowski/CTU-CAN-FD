@@ -123,8 +123,8 @@ package body timestamp_options_feature is
         ------------------------------------------------------------------------  
         if (diff > 200) then
             -- LCOV_EXCL_START
-            report "Timestamp difference is too big from SOF! " & 
-                    integer'image(diff) severity error;
+            error("Timestamp difference is too big from SOF! " & 
+                    integer'image(diff));
             o.outcome := false;
             -- LCOV_EXCL_STOP
         end if;
@@ -162,8 +162,8 @@ package body timestamp_options_feature is
         ------------------------------------------------------------------------
         if (diff > 600) then
             -- LCOV_EXCL_START
-            report "Timestamp difference is too big from EOF!" &
-                    integer'image(diff) severity error;
+            error("Timestamp difference is too big from EOF!" &
+                   integer'image(diff));
             o.outcome := false;
             -- LCOV_EXCL_STOP
         end if;

@@ -159,10 +159,10 @@ package body tx_arb_time_tran_feature is
         if (aux1 - aux2 > 190) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Frame not sent at time when expected!" severity error;
+            error("Frame not sent at time when expected!");
             -- LCOV_EXCL_STOP
         else
-            report "OK";
+            info("OK");
         end if;
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
@@ -204,7 +204,7 @@ package body tx_arb_time_tran_feature is
         if (aux1 - aux2 > 150) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Frame not sent at time when expected!" severity error;
+            error("Frame not sent at time when expected!");
             -- LCOV_EXCL_STOP
         end if;
         CAN_wait_bus_idle(ID_1, mem_bus(1));

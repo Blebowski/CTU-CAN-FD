@@ -286,22 +286,21 @@ begin
         variable outcome   : boolean := false;
         variable rand_val  : real    := 0.0;
     begin
-        log("Restarting Bus sampling unit test!", info_l, log_level);
+        info("Restarting Bus sampling unit test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted Bus sampling unit test", info_l, log_level);
+        info("Restarted Bus sampling unit test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting Bus sampling main loop", info_l, log_level);
+        info("Starting Bus sampling main loop");
 
         while (loop_ctr < iterations  or  exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                    log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             --------------------------------------------------------------------
             -- NOMINAL sampling
@@ -322,8 +321,7 @@ begin
                 if ((data_tx /= data_rx) and bit_Error = '0') then
                     -- LCOV_EXCL_START
                     process_error(error_ctr, error_beh, exit_imm);
-                    log("TX and RX Data mismatch and no bit error fired!",
-                      error_l, log_level);
+                    error("TX and RX Data mismatch and no bit error fired!");
                     -- LCOV_EXCL_STOP
                 end if;
             end loop;
@@ -347,8 +345,7 @@ begin
                 if ((data_tx /= data_rx) and bit_Error = '0') then
                     -- LCOV_EXCL_START
                     process_error(error_ctr, error_beh, exit_imm);
-                    log("TX and RX Data are mismatching and no bit error fired!",
-                      error_l, log_level);
+                    error("TX and RX Data are mismatching and no bit error fired!");
                     -- LCOV_EXCL_STOP
                 end if;
             end loop;
@@ -413,8 +410,7 @@ begin
                 then
                     -- LCOV_EXCL_START
                     process_error(error_ctr, error_beh, exit_imm);
-                    log("TX and RX Data mismatch, and no bit error fired!",
-                       error_l, log_level);
+                    error("TX and RX Data mismatch, and no bit error fired!");
                     -- LCOV_EXCL_STOP
                 end if;
             end loop;

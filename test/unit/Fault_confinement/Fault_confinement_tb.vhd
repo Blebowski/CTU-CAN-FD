@@ -344,7 +344,7 @@ begin
              (fd_err_model /= to_integer(unsigned(err_counter_fd_out))))
         then
             -- LCOV_EXCL_START
-            log("Error counters not as expected", error_l, log_level);
+            error("Error counters not as expected");
             err_ctr_1 <= err_ctr_1 + 1;
             -- LCOV_EXCL_STOP
         end if;
@@ -376,7 +376,7 @@ begin
 
         if (fc_model /= error_state_out) then
             -- LCOV_EXCL_START
-            log("Fault confinement state differs!", error_l, log_level);
+            error("Fault confinement state differs!");
             err_ctr_2 <= err_ctr_2 + 1;
             -- LCOV_EXCL_STOP
         end if;
@@ -391,16 +391,15 @@ begin
     ----------------------------------------------------------------------------
     test_proc : process
     begin
-        log("Restarting Fault confinement test!", info_l, log_level);
+        info("Restarting Fault confinement test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
-        log("Restarted Fault confinement test", info_l, log_level);
+        info("Restarted Fault confinement test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         while (loop_ctr < iterations or exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             wait until rising_edge(clk_sys);
             wait until rising_edge(clk_sys);

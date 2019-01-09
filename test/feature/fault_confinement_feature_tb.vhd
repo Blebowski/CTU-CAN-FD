@@ -125,16 +125,14 @@ package body fault_confinement_feature is
         if (fault_th.ewl /= fault_th_2.ewl) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Error warning limit threshold was not set properly!"
-                severity error;
+            error("Error warning limit threshold was not set properly!");
             -- LCOV_EXCL_START
         end if;
 
         if (fault_th.erp /= fault_th_2.erp) then
             -- LCOV_EXCL_START
             o.outcome := false;
-            report "Error passive threshold was not set properly!"
-                severity error;
+            error("Error passive threshold was not set properly!");
             -- LCOV_EXCL_STOP
         end if;
 
@@ -149,8 +147,7 @@ package body fault_confinement_feature is
             if (fault_state /= fc_bus_off) then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "Unit not Bus off as expected!"
-                    severity error;
+                error("Unit not Bus off as expected!");
                 -- LCOV_EXCL_STOP
             end if;
         elsif (err_counters.tx_counter < fault_th.ewl and
@@ -159,16 +156,14 @@ package body fault_confinement_feature is
             if (fault_state /= fc_error_active) then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "Unit not Error Active as expected!"
-                    severity error;
+                error("Unit not Error Active as expected!");
                 -- LCOV_EXCL_STOP
             end if;
         else
           if (fault_state /= fc_error_passive) then
                 -- LCOV_EXCL_START
                 o.outcome := false;
-                report "Unit not Error Passive as expected!"
-                    severity error;
+                error("Unit not Error Passive as expected!");
                 -- LCOV_EXCL_STOP
             end if;
         end if;

@@ -119,10 +119,9 @@ architecture mess_filt_unit_test of CAN_test is
     end procedure;
 
 
-    function validate(
+    impure function validate(
         signal drv_settings   :in     mess_filter_drv_type;
         signal filt_res       :in     std_logic;
-        signal log_level      :in     log_lvl_type;
         signal frame_info     :in     mess_filter_input_type)
     return boolean is
         variable join         :       std_logic_vector(1 downto 0);
@@ -149,7 +148,7 @@ architecture mess_filt_unit_test of CAN_test is
           if (frame_info.rec_ident_valid = filt_res) then
               return true;
           else
-              log("Filters disabled but result positive", error_l, log_level);
+              error("Filters disabled but result positive");
               return false;
           end if;
         end if;
@@ -214,7 +213,7 @@ architecture mess_filt_unit_test of CAN_test is
           (ran_type = false)  and
           (filt_res = '1')
         )then
-            log("Invalid frame type was not filtered out", error_l, log_level);
+            error("Invalid frame type was not filtered out");
             return false;
         end if;
 
@@ -236,12 +235,12 @@ architecture mess_filt_unit_test of CAN_test is
 
             elsif (filt_res = '0') then -- Is not detected
                 -- LCOV_EXCL_START
-                log("Valid frame not detected", error_l, log_level);
+                error("Valid frame not detected");
                 return false;
                 -- LCOV_EXCL_STOP
             else
                 -- LCOV_EXCL_START
-                log("Filter res undefined", error_l, log_level);
+                error("Filter res undefined");
                 return false;
                 -- LCOV_EXCL_STOP
             end if;
@@ -250,7 +249,7 @@ architecture mess_filt_unit_test of CAN_test is
 
             if (filt_res = '1') then   --Is detected
                 -- LCOV_EXCL_START
-                log("Invalid frame but frame detected", error_l, log_level);
+                error("Invalid frame but frame detected");
                 return false;
                 -- LCOV_EXCL_STOP
 
@@ -259,7 +258,7 @@ architecture mess_filt_unit_test of CAN_test is
 
             else
                 -- LCOV_EXCL_START
-                log("Filter res undefined", error_l, log_level);
+                error("Filter res undefined");
                 return false;
                 -- LCOV_EXCL_STOP
             end if;
@@ -346,30 +345,28 @@ begin
     ----------------------------------------------------------------------------
     test_proc : process
     begin
-        log("Restarting Message filter test!", info_l, log_level);
+        info("Restarting Message filter test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted Message filter test", info_l, log_level);
+        info("Restarted Message filter test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting message filter main loop", info_l, log_level);
+        info("Starting message filter main loop");
 
         while (loop_ctr < iterations  or exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr),
-                info_l, log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             generate_input    (rand_ctr, frame_info);
             generate_setting  (rand_ctr, drv_settings);
 
             wait for 10 ns;
 
-            if (validate(drv_settings, out_ident_valid, log_level, frame_info)
-                = false)
+            if (validate(drv_settings, out_ident_valid, frame_info) = false)
             then
                 process_error(error_ctr, error_beh, exit_imm);
             end if;

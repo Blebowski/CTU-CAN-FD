@@ -115,7 +115,7 @@ package body retr_limit_feature is
         -- Set Node 1 retransmitt limit
         ------------------------------------------------------------------------
         rand_int_v(rand_ctr, 15, retr_th);
-        report "Retransmitt threshold: " & Integer'image(retr_th);
+        info("Retransmitt threshold: " & Integer'image(retr_th));
         CAN_enable_retr_limit(true, retr_th, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
@@ -136,7 +136,7 @@ package body retr_limit_feature is
             if (i /= retr_th) then
                 if (buf_state /= buf_ready) then
                     -- LCOV_EXCL_START
-                    report "TXT Buffer not ready" severity error;
+                    error("TXT Buffer not ready");
                     o.outcome := false;
                     exit;
                     -- LCOV_EXCL_STOP
@@ -144,7 +144,7 @@ package body retr_limit_feature is
             else
                 if (buf_state /= buf_failed) then
                     -- LCOV_EXCL_START
-                    report "TXT Buffer not failed" severity error;
+                    error("TXT Buffer not failed");
                     o.outcome := false;
                     -- LCOV_EXCL_STOP
                 end if;
@@ -158,9 +158,8 @@ package body retr_limit_feature is
         read_error_counters(err_counters, ID_1, mem_bus(1));
         if (err_counters.tx_counter /= 8 * (retr_th + 1)) then
             -- LCOV_EXCL_START
-            report "Counters exp: " & Integer'Image(err_counters.tx_counter) &
-                   " coutners real: " & Integer'image(8 * (retr_th + 1))
-                    severity error;
+            error("Counters exp: " & Integer'Image(err_counters.tx_counter) &
+                  " counters real: " & Integer'image(8 * (retr_th + 1)));
             o.outcome := false;
             -- LCOV_EXCL_STOP
         end if;

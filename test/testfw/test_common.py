@@ -67,8 +67,11 @@ def add_sources(lib, patterns):
                 lib.add_source_file(str(f))
 
 
-def add_common_sources(lib):
-    return add_sources(lib, ['../src/**/*.vhd', '*.vhd', 'lib/*.vhd'])
+def add_common_sources(lib, ui):
+    add_sources(lib, ['../src/**/*.vhd'])
+    ui.enable_check_preprocessing()
+    ui.enable_location_preprocessing() #(additional_subprograms=['log'])
+    add_sources(lib, ['*.vhd', 'lib/*.vhd'])
 
 
 def get_common_modelsim_init_files():

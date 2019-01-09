@@ -168,7 +168,7 @@ architecture Event_logger_unit_test of CAN_test is
         signal   log_level        :in    log_lvl_type
     ) is
     begin
-        log("Starting event logger", info_l, log_level);
+        info("Starting event logger");
 
         -- Give start command to event logger
         drv_start_logger <= '1';
@@ -191,11 +191,11 @@ architecture Event_logger_unit_test of CAN_test is
         constant trig_zero        :      std_logic_vector(trig_amount - 1 downto 0)
                                             := (OTHERS => '0');
     begin
-        log("Waiting for trigger", info_l, log_level);
+        info("Waiting for trigger");
 
         wait until (falling_edge(clk_sys) and (log_state_out = ready));
 
-        log("Trigger here!", info_l, log_level);
+        info("Trigger here!");
 
         while ((trig_inputs and drv_trig) = trig_zero) loop
             wait until rising_edge(clk_sys);
@@ -203,7 +203,7 @@ architecture Event_logger_unit_test of CAN_test is
 
         wait until rising_edge(clk_sys);
 
-        log("Trigger condition met!", info_l, log_level);
+        info("Trigger condition met!");
         wait until rising_edge(clk_sys);
         wait for 1 ns;
 
@@ -234,7 +234,7 @@ architecture Event_logger_unit_test of CAN_test is
         variable  time_diff          :       integer;
     begin
         outcome := true;
-        log("Starting event check", info_l, log_level);
+        info("Starting event check");
 
         -- Browse through each event in logger memory
         for i in 0 to 15 loop
@@ -255,8 +255,7 @@ architecture Event_logger_unit_test of CAN_test is
 
             if (found = false) then
                 -- LCOV_EXCL_START
-                log("Event not found! Index: " & Integer'Image(i),
-                        error_l, log_level);
+                error("Event not found! Index: " & Integer'Image(i));
                 outcome := false;
                 -- LCOV_EXCL_STOP
             end if;
@@ -504,17 +503,16 @@ begin
         variable ev_type    :  integer := 0;
         variable outcome    :  boolean := false;
     begin
-        log("Restarting Event logget unit test!", info_l, log_level);
+        info("Restarting Event logget unit test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted Event logget unit test", info_l, log_level);
+        info("Restarted Event logget unit test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         while (loop_ctr < iterations or exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             generate_capture_setting(rand_ctr, drv_capt);
             generate_trigger_setting(rand_ctr, drv_trig);
@@ -523,10 +521,9 @@ begin
                                 log_level, outcome);
             if (not outcome) then
                 -- LCOV_EXCL_START
-                log("Logger did not trigger as expected!",
-                        error_l, log_level);
-                -- LCOV_EXCL_STOp
+                error("Logger did not trigger as expected!");
                 process_error(error_ctr, error_beh, exit_imm);
+                -- LCOV_EXCL_STOP
             end if;
 
             -- Wait till logging finishes
@@ -537,10 +534,9 @@ begin
 
             if (outcome = false) then
                 -- LCOV_EXCL_START
-                log("Recorded event not matching expected value",
-                    error_l, log_level);
-                -- LCOV_EXCL_STOP
+                error("Recorded event not matching expected value");
                 process_error(error_ctr, error_beh, exit_imm);
+                -- LCOV_EXCL_STOP
             end if;
 
             loop_ctr <= loop_ctr + 1;
