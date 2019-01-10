@@ -9,8 +9,8 @@
  *     Martin Jerabek <martin.jerabek01@gmail.com>
  *
  * Project advisors:
- *	Jiri Novak <jnovak@fel.cvut.cz>
- *	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+ *     Jiri Novak <jnovak@fel.cvut.cz>
+ *     Pavel Pisa <pisa@cmp.felk.cvut.cz>
  *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
