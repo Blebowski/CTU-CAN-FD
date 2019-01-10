@@ -42,6 +42,12 @@ global sup_files
 global sub_folders
 global lic_text
 
+global USE_KERNEL_LICENSE_FLAG
+global KERNEL_LICENSE_FLAG
+
+USE_KERNEL_LICENSE_FLAG = True
+KERNEL_LICENSE_FLAG = "// SPDX-License-Identifier: GPL-2.0+"
+
 
 ################################################################################
 ## Help about the script will be printed to command line
@@ -75,6 +81,11 @@ def write_license(lic_text, comment_char, file):
 			
 	# Write the initial line (C)
 	elif (comment_char == "*"):
+
+		# Add kernel License Header
+		if (USE_KERNEL_LICENSE_FLAG):
+			file.write(KERNEL_LICENSE_FLAG + "\n");
+
 		file.write("/")
 		for i in range(0, line_length-1):
 			file.write(comment_char)
@@ -96,9 +107,11 @@ def write_license(lic_text, comment_char, file):
 		
 		# Write Begining of the line
 		if (comment_char == "-" or comment_char == "#"):
-			file.write(comment_char+comment_char+" ")
-		elif (comment_char=="*"):
-			file.write(" "+comment_char+" ")
+			file.write(comment_char + comment_char + " ")
+		elif (comment_char == "*"):
+			file.write(" " + comment_char)
+			if (len(lic_line.strip()) > 0):
+				file.write(" ")        
 	
 		# Write Rest of the line
 		file.write(lic_line)
@@ -108,8 +121,15 @@ def write_license(lic_text, comment_char, file):
 		for i in range(0, line_length):
 			file.write(comment_char)
 	elif (comment_char=="*"):
-		for i in range(0, line_length-1):
-			file.write(comment_char)
+
+		if (comment_char == "*"):
+			file.write(" ")
+			for i in range(0, line_length-2):
+				file.write(comment_char)
+		else:
+			for i in range(0, line_length-1):
+				file.write(comment_char)			
+
 		file.write("/")
 		
 	file.write("\n")

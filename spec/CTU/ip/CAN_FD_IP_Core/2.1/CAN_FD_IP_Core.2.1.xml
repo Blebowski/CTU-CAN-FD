@@ -1407,7 +1407,7 @@
 					<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
 					<ipxact:description>Register with mirrored values of timestamp input. Bits 63:32 of timestamp input are available from this register. No synchronisation, nor shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h90</ipxact:addressOffset>
+					<ipxact:addressOffset>'h94</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>
@@ -1430,7 +1430,7 @@
 					<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
 					<ipxact:description>Register with mirrored values of timestamp input. Bits 31:0 of timestamp input are available from this register. No synchronisation, nor shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
-					<ipxact:addressOffset>'h8C</ipxact:addressOffset>
+					<ipxact:addressOffset>'h90</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>read-only</ipxact:access>

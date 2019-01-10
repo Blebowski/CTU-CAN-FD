@@ -262,7 +262,7 @@ Control registers memory region.\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="5" rows="39" version="3">
+<lyxtabular columns="5" rows="40" version="3">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -2512,6 +2512,48 @@ hyperref[YOLO_REG]{YOLO\backslash textunderscore REG}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reserved\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+...\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
 \begin_inset ERT
 status open
 \begin_layout Plain Layout
@@ -2568,7 +2610,7 @@ hyperref[TIMESTAMP_LOW]{TIMESTAMP\backslash textunderscore LOW}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x8C\end_layout
+0x90\end_layout
 
 \end_inset
 </cell>
@@ -2634,7 +2676,7 @@ hyperref[TIMESTAMP_HIGH]{TIMESTAMP\backslash textunderscore HIGH}\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0x90\end_layout
+0x94\end_layout
 
 \end_inset
 </cell>
@@ -33804,7 +33846,7 @@ label{TIMESTAMP_LOW
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x8C
+Address: 0x90
 \end_layout
 \begin_layout Description
 Size: 4 bytes
@@ -34805,7 +34847,7 @@ label{TIMESTAMP_HIGH
 Type: read-only
 \end_layout
 \begin_layout Description
-Address: 0x90
+Address: 0x94
 \end_layout
 \begin_layout Description
 Size: 4 bytes
