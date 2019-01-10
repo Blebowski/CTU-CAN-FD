@@ -123,6 +123,7 @@
 --                by Register Map Generator. Two instances (Control Registers
 --                and Event Logger Registers) are present. Connected register
 --                modules to Driving and Status Bus. Added VERSION generics.
+-- 02-05.01.2019  Added SSP_CONFIG, TIMESTAMP_H, TIMESTAMP_L registers.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -195,6 +196,9 @@ entity memory_registers is
         signal swr                  :in   std_logic;
         signal sbe                  :in   std_logic_vector(3 downto 0);
           
+        -- Timestamp input
+        signal timestamp            :in   std_logic_vector(63 downto 0);
+        
         -- Driving and Status Bus
         signal drv_bus              :out  std_logic_vector(1023 downto 0)
                                             := (OTHERS => '0');
@@ -315,6 +319,8 @@ architecture rtl of memory_registers is
     signal error_state            :     error_state_type;
     signal OP_State               :     oper_mode_type;
 
+    -- Internal value of output reset. This is combined res_n and MODE[RST]
+    signal res_out_i              :     std_logic;
 
     ---------------------------------------------------------------------------
     -- 
@@ -451,7 +457,7 @@ begin
     )
     port map(
         clk_sys               => clk_sys,
-        res_n                 => res_n,
+        res_n                 => res_out_i,
         address               => adress,
         w_data                => data_in,
         r_data                => control_registers_rdata,
@@ -481,7 +487,7 @@ begin
         )
         port map(
             clk_sys               => clk_sys,
-            res_n                 => res_n,
+            res_n                 => res_out_i,
             address               => adress,
             w_data                => data_in,
             r_data                => event_logger_rdata,
@@ -513,10 +519,10 @@ begin
     -- Reset propagation to output
     -- Note: this works only for reset active in logic zero
     ----------------------------------------------------------------------------
-    res_out  <=  ACT_RESET when (res_n = ACT_RESET) else
-                 ACT_RESET when (control_registers_out.mode(RST_IND) = '1') else
-                 (not ACT_RESET);
-
+    res_out_i <=  ACT_RESET when (res_n = ACT_RESET) else
+                  ACT_RESET when (control_registers_out.mode(RST_IND) = '1') else
+                  (not ACT_RESET);
+    res_out <= res_out_i;
 
     ----------------------------------------------------------------------------
     -- Extract Protocol control state from Status Bus
@@ -931,6 +937,18 @@ begin
     -- TXT Buffer 4 priority
     txt_buf_prior_out(3) <= align_wrd_to_reg(
         control_registers_out.tx_priority, TXT4P_H, TXT4P_L);
+
+    ---------------------------------------------------------------------------
+    -- SSP_CFG
+    ---------------------------------------------------------------------------
+    
+    -- SSP_OFFSET
+    drv_bus(DRV_SSP_OFFSET_HIGH downto DRV_SSP_OFFSET_LOW) <= align_wrd_to_reg(
+            control_registers_out.ssp_cfg, SSP_OFFSET_H, SSP_OFFSET_L);
+
+    -- SSP_SRC (SSP_DELAY_SELECT)
+    drv_bus(DRV_SSP_DELAY_SELECT_HIGH downto DRV_SSP_DELAY_SELECT_LOW) <= align_wrd_to_reg(
+            control_registers_out.ssp_cfg, SSP_SRC_H, SSP_SRC_L);
 
 
     ---------------------------------------------------------------------------
@@ -1418,6 +1436,28 @@ begin
 
 
     ---------------------------------------------------------------------------
+    -- TIMESTAMP_LOW, TIMESTAMP_HIGH registers
+    ---------------------------------------------------------------------------
+    timestamp_registers_block : block
+        constant ts_low_l : natural := Control_registers_in.timestamp_low'length;
+        constant ts_high_l : natural := Control_registers_in.timestamp_high'length;
+    begin
+
+        Control_registers_in.timestamp_low(
+            align_reg_to_wrd(TIMESTAMP_LOW_H, ts_low_l) downto
+            align_reg_to_wrd(TIMESTAMP_LOW_L, ts_low_l)) <=
+            timestamp(31 downto 0);
+
+        Control_registers_in.timestamp_high(
+            align_reg_to_wrd(TIMESTAMP_HIGH_H, ts_high_l) downto
+            align_reg_to_wrd(TIMESTAMP_HIGH_L, ts_high_l)) <=
+            timestamp(63 downto 32);
+
+    end block timestamp_registers_block;
+    
+
+
+    ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Event Logger - Write registers to Driving Bus Connection
     ---------------------------------------------------------------------------
@@ -1709,8 +1749,7 @@ begin
     drv_bus(365 downto 363)                           <=  (OTHERS => '0');
     drv_bus(370 downto 368)                           <=  (OTHERS => '0');
     drv_bus(371)                                      <=  '0';
-    drv_bus(375 downto 373)                           <=  (OTHERS => '0');
-    drv_bus(399 downto 388)                           <=  (OTHERS => '0');
+    drv_bus(399 downto 382)                           <=  (OTHERS => '0');
     drv_bus(459 downto 445)                           <=  (OTHERS => '0');
     drv_bus(464 downto 462)                           <=  (OTHERS => '0');
     drv_bus(609 downto 601)                           <=  (OTHERS => '0');
@@ -1727,7 +1766,6 @@ begin
     drv_bus(767 downto 748)                          <=  (OTHERS => '0');
     drv_bus(735 downto 614)                          <=  (OTHERS => '0');
 
-    drv_bus(387 downto 376)                          <= (OTHERS => '0');
     drv_bus(367)                                     <= '0';
     drv_bus(357)                                     <= '0';
 

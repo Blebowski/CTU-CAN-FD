@@ -76,6 +76,7 @@ package can_registers_pkg is
      rx_data_read                : std_logic;
      tx_command                  : std_logic_vector(15 downto 0);
      tx_priority                 : std_logic_vector(15 downto 0);
+     ssp_cfg                     : std_logic_vector(15 downto 0);
   end record;
 
 
@@ -104,6 +105,8 @@ package can_registers_pkg is
      tx_counter                  : std_logic_vector(31 downto 0);
      debug_register              : std_logic_vector(31 downto 0);
      yolo_reg                    : std_logic_vector(31 downto 0);
+     timestamp_low               : std_logic_vector(31 downto 0);
+     timestamp_high              : std_logic_vector(31 downto 0);
   end record;
 
 

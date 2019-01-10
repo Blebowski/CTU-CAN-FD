@@ -69,6 +69,7 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>1</ipxact:bitWidth>
+						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>FDE</ipxact:name>
@@ -547,7 +548,7 @@
 					<ipxact:field>
 						<ipxact:name>NISOFD</ipxact:name>
 						<ipxact:displayName>NISOFD</ipxact:displayName>
-						<ipxact:description>Selection between two possible CAN FD specifications.</ipxact:description>
+						<ipxact:description>Selection between two possible CAN FD specifications. This bit should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -583,7 +584,7 @@
 					<ipxact:field>
 						<ipxact:name>RXI</ipxact:name>
 						<ipxact:displayName>RXI</ipxact:displayName>
-						<ipxact:description>Frame Received interrupt.</ipxact:description>
+						<ipxact:description>Frame Received interrupt. Interrupt set has priority over clear. </ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -596,7 +597,7 @@
 					<ipxact:field>
 						<ipxact:name>TXI</ipxact:name>
 						<ipxact:displayName>TXI</ipxact:displayName>
-						<ipxact:description>Frame Transmitted sucesfully interrupt.</ipxact:description>
+						<ipxact:description>Frame Transmitted sucesfully interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>1</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -609,7 +610,7 @@
 					<ipxact:field>
 						<ipxact:name>EWLI</ipxact:name>
 						<ipxact:displayName>EWLI</ipxact:displayName>
-						<ipxact:description>Error warning limit reached interrupt.</ipxact:description>
+						<ipxact:description>Error warning limit reached interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -622,7 +623,7 @@
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
 						<ipxact:displayName>DOI</ipxact:displayName>
-						<ipxact:description>Data overrun on RX Buffer Interrupt.</ipxact:description>
+						<ipxact:description>Data overrun on RX Buffer Interrupt. Interrupt clear has priority over set.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -635,7 +636,7 @@
 					<ipxact:field>
 						<ipxact:name>EPI</ipxact:name>
 						<ipxact:displayName>EPI</ipxact:displayName>
-						<ipxact:description>Node became error passive or bus off interrupt.</ipxact:description>
+						<ipxact:description>Node became error passive or bus off interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -648,7 +649,7 @@
 					<ipxact:field>
 						<ipxact:name>ALI</ipxact:name>
 						<ipxact:displayName>ALI</ipxact:displayName>
-						<ipxact:description>Arbitration lost Interrupt.</ipxact:description>
+						<ipxact:description>Arbitration lost Interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>5</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -661,7 +662,7 @@
 					<ipxact:field>
 						<ipxact:name>BEI</ipxact:name>
 						<ipxact:displayName>BEI</ipxact:displayName>
-						<ipxact:description>Bus Error interrupt.</ipxact:description>
+						<ipxact:description>Bus Error interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>6</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -674,7 +675,7 @@
 					<ipxact:field>
 						<ipxact:name>LFI</ipxact:name>
 						<ipxact:displayName>LFI</ipxact:displayName>
-						<ipxact:description>Event logging finished interrupt.</ipxact:description>
+						<ipxact:description>Event logging finished interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -687,7 +688,7 @@
 					<ipxact:field>
 						<ipxact:name>RXFI</ipxact:name>
 						<ipxact:displayName>RXFI</ipxact:displayName>
-						<ipxact:description>Receive Buffer full interrupt.</ipxact:description>
+						<ipxact:description>Receive Buffer full interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -700,7 +701,7 @@
 					<ipxact:field>
 						<ipxact:name>BSI</ipxact:name>
 						<ipxact:displayName>BSI</ipxact:displayName>
-						<ipxact:description>Bit-rate shifted interrupt.</ipxact:description>
+						<ipxact:description>Bit-rate shifted interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>9</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -713,7 +714,7 @@
 					<ipxact:field>
 						<ipxact:name>RBNEI</ipxact:name>
 						<ipxact:displayName>RBNEI</ipxact:displayName>
-						<ipxact:description>Receive Buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt.</ipxact:description>
+						<ipxact:description>Receive Buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -726,7 +727,7 @@
 					<ipxact:field>
 						<ipxact:name>TXBHCI</ipxact:name>
 						<ipxact:displayName>TXBHCI</ipxact:displayName>
-						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated.</ipxact:description>
+						<ipxact:description>TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>11</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -868,7 +869,7 @@
 				<ipxact:register>
 					<ipxact:name>BTR_FD</ipxact:name>
 					<ipxact:displayName>BTR_FD</ipxact:displayName>
-					<ipxact:description>Bit timing register for data bit-rate.</ipxact:description>
+					<ipxact:description>Bit timing register for data bit-rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h20</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -960,7 +961,7 @@
 				<ipxact:register>
 					<ipxact:name>BTR</ipxact:name>
 					<ipxact:displayName>BTR</ipxact:displayName>
-					<ipxact:description>Bit timing register for nominal bit-rate.</ipxact:description>
+					<ipxact:description>Bit timing register for nominal bit-rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h1C</ipxact:addressOffset>
 					<ipxact:size>32</ipxact:size>
@@ -1094,7 +1095,7 @@
 				<ipxact:register>
 					<ipxact:name>EWL</ipxact:name>
 					<ipxact:displayName>EWL</ipxact:displayName>
-					<ipxact:description>Error warning limit register.</ipxact:description>
+					<ipxact:description>Error warning limit register. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h24</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1116,7 +1117,7 @@
 				<ipxact:register>
 					<ipxact:name>ERP</ipxact:name>
 					<ipxact:displayName>ERP</ipxact:displayName>
-					<ipxact:description>Error passive limit register.</ipxact:description>
+					<ipxact:description>Error passive limit register. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h25</ipxact:addressOffset>
 					<ipxact:size>8</ipxact:size>
@@ -1402,6 +1403,52 @@
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
+					<ipxact:name>TIMESTAMP_HIGH</ipxact:name>
+					<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
+					<ipxact:description>Register with mirrored values of timestamp input. Bits 63:32 of timestamp input are available from this register. No synchronisation, nor shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h90</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TIMESTAMP_HIGH</ipxact:name>
+						<ipxact:displayName>TIMESTAMP_HIGH</ipxact:displayName>
+						<ipxact:description>Bits 63:32 of timestamp input.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>00</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:access>read-only</ipxact:access>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>TIMESTAMP_LOW</ipxact:name>
+					<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
+					<ipxact:description>Register with mirrored values of timestamp input. Bits 31:0 of timestamp input are available from this register. No synchronisation, nor shadowing is implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of proper read from both registers, since overflow of TIMESTAMP_LOW might occur between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h8C</ipxact:addressOffset>
+					<ipxact:size>32</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-only</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>TIMESTAMP_LOW</ipxact:name>
+						<ipxact:displayName>TIMESTAMP_LOW</ipxact:displayName>
+						<ipxact:description>Bits 31:0 of timestamp input.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>32</ipxact:bitWidth>
+						<ipxact:access>read-only</ipxact:access>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
 					<ipxact:name>YOLO_REG</ipxact:name>
 					<ipxact:displayName>YOLO_REG</ipxact:displayName>
 					<ipxact:description>Register for fun :)</ipxact:description>
@@ -1420,6 +1467,57 @@
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>32</ipxact:bitWidth>
+					</ipxact:field>
+				</ipxact:register>
+				<ipxact:register>
+					<ipxact:name>SSP_CFG</ipxact:name>
+					<ipxact:description>Configuration of Secondary sampling point which is used for Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+					<ipxact:dim>0</ipxact:dim>
+					<ipxact:addressOffset>'h7A</ipxact:addressOffset>
+					<ipxact:size>16</ipxact:size>
+					<ipxact:volatile>true</ipxact:volatile>
+					<ipxact:access>read-write</ipxact:access>
+					<ipxact:field>
+						<ipxact:name>SSP_OFFSET</ipxact:name>
+						<ipxact:description>Secondary sampling point offset.</ipxact:description>
+						<ipxact:bitOffset>0</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>7</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>SSP_SRC</ipxact:name>
+						<ipxact:description>Source of secondary sampling point delay. Measured in clock cycles, not Time quanta! Sampling point is delayed from regular sampling point by a value configured by this register. If configured value exceeds 130, it is saturated on 130. Thus maximal possible delay is 130 clk_sys clock cycles.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>2</ipxact:bitWidth>
+						<ipxact:enumeratedValues>
+							<ipxact:enumeratedValue>
+								<ipxact:name>SSP_SRC_MEASURED</ipxact:name>
+								<ipxact:displayName>TRV_SRC_MEASURED</ipxact:displayName>
+								<ipxact:description>Use measured value (also available in TRV_DELAY).</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>SSP_SRC_OFFSET</ipxact:name>
+								<ipxact:displayName>TRV_SRC_OFFSET</ipxact:displayName>
+								<ipxact:description>Use SSP_OFFSET value.</ipxact:description>
+								<ipxact:value>2</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>SSP_SRC_MEAS_N_OFFSET</ipxact:name>
+								<ipxact:displayName>TRV_SRC_MEAS_N_OFFSET</ipxact:displayName>
+								<ipxact:description>Use measured value (available in TRV_DELAY) + SSP_OFFSET.</ipxact:description>
+								<ipxact:value>1</ipxact:value>
+							</ipxact:enumeratedValue>
+						</ipxact:enumeratedValues>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -1812,7 +1910,7 @@
 					<ipxact:field>
 						<ipxact:name>TRV_DELAY_VALUE</ipxact:name>
 						<ipxact:displayName>TRV_DELAY_VALUE</ipxact:displayName>
-						<ipxact:description>When sending CAN FD Frame with bit rate shift, transceiver delay is measured to apply secondary sampling point for bit error detection during transmission. After the measurement is done (after EDL bit) it can be read from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.</ipxact:description>
+						<ipxact:description>When sending CAN FD Frame with bit rate shift, transceiver delay is measured. After the measurement (after EDL bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -2432,7 +2530,7 @@
 				<ipxact:register>
 					<ipxact:name>TXC</ipxact:name>
 					<ipxact:displayName>TXC</ipxact:displayName>
-					<ipxact:description>Counter for transcieved frames to enable bus traffic measurement.</ipxact:description>
+					<ipxact:description>Counter for transcieved frames.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h2A</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -2453,7 +2551,7 @@
 				<ipxact:register>
 					<ipxact:name>RXC</ipxact:name>
 					<ipxact:displayName>RXC</ipxact:displayName>
-					<ipxact:description>Counter for received frames to enable bus traffic measurement.</ipxact:description>
+					<ipxact:description>Counter for received frames.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h28</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>

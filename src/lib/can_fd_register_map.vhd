@@ -98,10 +98,13 @@ package can_fd_register_map is
   constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"074";
   constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"075";
   constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"078";
+  constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"07A";
   constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"07C";
   constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"080";
   constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"084";
   constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"088";
+  constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"08C";
+  constant TIMESTAMP_HIGH_ADR        : std_logic_vector(11 downto 0) := x"090";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -417,7 +420,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR register
   --
-  -- Bit timing register for nominal bit-rate.
+  -- Bit timing register for nominal bit-rate. This register should be modified 
+  -- only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_L                 : natural := 0;
   constant PROP_H                 : natural := 6;
@@ -440,7 +444,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR_FD register
   --
-  -- Bit timing register for data bit-rate.
+  -- Bit timing register for data bit-rate. This register should be modified onl
+  -- y when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_FD_L              : natural := 0;
   constant PROP_FD_H              : natural := 5;
@@ -463,7 +468,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- EWL register
   --
-  -- Error warning limit register.
+  -- Error warning limit register. This register should be modified only when SE
+  -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant EW_LIMIT_L             : natural := 0;
   constant EW_LIMIT_H             : natural := 7;
@@ -474,7 +480,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ERP register
   --
-  -- Error passive limit register.
+  -- Error passive limit register. This register should be modified only when SE
+  -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant ERP_LIMIT_L            : natural := 8;
   constant ERP_LIMIT_H           : natural := 15;
@@ -501,7 +508,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RXC register
   --
-  -- Counter for received frames to enable bus traffic measurement.
+  -- Counter for received frames.
   ------------------------------------------------------------------------------
   constant RXC_VAL_L              : natural := 0;
   constant RXC_VAL_H             : natural := 15;
@@ -512,7 +519,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TXC register
   --
-  -- Counter for transcieved frames to enable bus traffic measurement.
+  -- Counter for transcieved frames.
   ------------------------------------------------------------------------------
   constant TXC_VAL_L             : natural := 16;
   constant TXC_VAL_H             : natural := 31;
@@ -963,6 +970,26 @@ package can_fd_register_map is
   constant TRV_DELAY_VALUE_RSTVAL : std_logic_vector(15 downto 0) := x"0000";
 
   ------------------------------------------------------------------------------
+  -- SSP_CFG register
+  --
+  -- Configuration of Secondary sampling point which is used for Transmitter in 
+  -- Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
+  ------------------------------------------------------------------------------
+  constant SSP_OFFSET_L          : natural := 16;
+  constant SSP_OFFSET_H          : natural := 22;
+  constant SSP_SRC_L             : natural := 24;
+  constant SSP_SRC_H             : natural := 25;
+
+  -- "SSP_SRC" field enumerated values
+  constant SSP_SRC_MEASURED : std_logic_vector(1 downto 0) := "00";
+  constant SSP_SRC_MEAS_N_OFFSET : std_logic_vector(1 downto 0) := "01";
+  constant SSP_SRC_OFFSET : std_logic_vector(1 downto 0) := "10";
+
+  -- SSP_CFG register reset values
+  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0000000";
+  constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
+
+  ------------------------------------------------------------------------------
   -- RX_COUNTER register
   --
   -- Counter for received frames to enable bus traffic measurement
@@ -1025,6 +1052,37 @@ package can_fd_register_map is
 
   -- YOLO_REG register reset values
   constant YOLO_VAL_RSTVAL : std_logic_vector(31 downto 0) := x"DEADBEEF";
+
+  ------------------------------------------------------------------------------
+  -- TIMESTAMP_LOW register
+  --
+  -- Register with mirrored values of timestamp input. Bits 31:0 of timestamp in
+  -- put are available from this register. No synchronisation, nor shadowing is 
+  -- implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of pr
+  -- oper read from both registers, since overflow of TIMESTAMP_LOW might occur 
+  -- between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.
+  ------------------------------------------------------------------------------
+  constant TIMESTAMP_LOW_L        : natural := 0;
+  constant TIMESTAMP_LOW_H       : natural := 31;
+
+  -- TIMESTAMP_LOW register reset values
+  constant TIMESTAMP_LOW_RSTVAL : std_logic_vector(31 downto 0) := x"00000000";
+
+  ------------------------------------------------------------------------------
+  -- TIMESTAMP_HIGH register
+  --
+  -- Register with mirrored values of timestamp input. Bits 63:32 of timestamp i
+  -- nput are available from this register. No synchronisation, nor shadowing is
+  --  implemented on TIMESTAMP_LOW/HIGH registers and user has to take care of p
+  -- roper read from both registers, since overflow of TIMESTAMP_LOW might occur
+  --  between read of TIMESTAMP_LOW and TIMESTAMP_HIGH.
+  ------------------------------------------------------------------------------
+  constant TIMESTAMP_HIGH_L       : natural := 0;
+  constant TIMESTAMP_HIGH_H      : natural := 31;
+
+  -- TIMESTAMP_HIGH register reset values
+  constant TIMESTAMP_HIGH_RSTVAL
+                 : std_logic_vector(31 downto 0) := x"00000000";
 
   ------------------------------------------------------------------------------
   -- TXTB1_DATA_1 register

@@ -159,14 +159,14 @@ if __name__ == '__main__':
 									licensePath=MIT_LICENSE_PATH,
 									memMap="CAN_Registers",
 									wordWidthBit=32,
-									outPath="../src/Libraries/CAN_FD_register_map.vhd",
+									outPath="../src/lib/can_fd_register_map.vhd",
 									packName="can_fd_register_map")
 
 		ctu_can_update_vhdl_package(specPath=args.xactSpec,
 									licensePath=MIT_LICENSE_PATH,
 									memMap="CAN_Frame_format",
 									wordWidthBit=32,
-									outPath="../src/Libraries/CAN_FD_frame_format.vhd",
+									outPath="../src/lib/can_fd_frame_format.vhd",
 									packName="can_fd_frame_format")
 
 		print("\nDone\n")
@@ -233,7 +233,7 @@ if __name__ == '__main__':
 								licensePath=MIT_LICENSE_PATH,
 								memMap="CAN_Registers",
 								wordWidthBit=32,
-								outDir="../../src/Registers_Memory_Interface/generated")
+								outDir="../../src/memory_registers/generated")
 
 		# Frame format map not implemented as RTL, virtual map for frame format
 		# visualisaion only

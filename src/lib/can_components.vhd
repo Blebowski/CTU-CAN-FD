@@ -140,6 +140,7 @@ package can_components is
             signal srd                  : in  std_logic;
             signal swr                  : in  std_logic;
             signal sbe                  : in  std_logic_vector(3 downto 0);
+            signal timestamp            : in  std_logic_vector(63 downto 0);
             signal drv_bus              : out std_logic_vector(1023 downto 0);
             signal stat_bus             : in  std_logic_vector(511 downto 0);
             signal rx_read_buff         : in  std_logic_vector(31 downto 0);
@@ -753,6 +754,50 @@ package can_components is
         );
     end component;
 
+
+    ----------------------------------------------------------------------------
+    -- Data edge detector
+    ----------------------------------------------------------------------------
+    component data_edge_detector is
+        generic(
+            constant reset_polarity         :     std_logic;
+            constant tx_edge_pipeline       :     boolean := true;
+            constant rx_edge_pipeline       :     boolean := true
+        );
+        port(
+            signal clk_sys                  :in   std_logic;
+            signal res_n                    :in   std_logic;
+            signal tx_data                  :in   std_logic;
+            signal rx_data                  :in   std_logic;
+            signal prev_rx_sample           :in   std_logic;
+            signal tx_edge                  :out  std_logic;
+            signal rx_edge                  :out  std_logic
+            );
+    end component;
+
+    ----------------------------------------------------------------------------
+    -- Transceiver Delay measurement
+    ----------------------------------------------------------------------------
+    component trv_delay_measurement is
+        generic(
+            constant reset_polarity         :     std_logic;
+            constant trv_ctr_width          :     natural := 7;
+            constant use_ssp_saturation     :     boolean := true;
+            constant ssp_saturation_lvl     :     natural
+        );
+        port(
+            signal clk_sys                  :in   std_logic;
+            signal res_n                    :in   std_logic;
+            signal meas_start               :in   std_logic;
+            signal meas_stop                :in   std_logic;
+            signal meas_enable              :in   std_logic;
+            signal ssp_offset               :in   std_logic_vector(trv_ctr_width - 1 downto 0);
+            signal ssp_delay_select         :in   std_logic_vector(1 downto 0);
+            signal trv_meas_progress        :out  std_logic;
+            signal trv_delay_shadowed       :out  std_logic_vector(trv_ctr_width - 1 downto 0);
+            signal ssp_delay_shadowed       :out  std_logic_vector(trv_ctr_width downto 0)
+        );
+    end component;
 
     ----------------------------------------------------------------------------
     -- Event Logger module
