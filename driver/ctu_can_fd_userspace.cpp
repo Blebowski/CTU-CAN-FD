@@ -29,7 +29,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
-*******************************************************************************/
+ ******************************************************************************/
 
 #include "userspace_utils.h"
 
@@ -39,6 +39,7 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 /*
 /sys/devices/pci0000:00/0000:00:1c.4/0000:05:00.0
@@ -176,6 +177,21 @@ uintptr_t pci_find_bar(unsigned vid, unsigned pid, int inst, int barnr)
     return bar1_base;
 }
 
+static inline void
+timespec_sub (struct timespec *diff, const struct timespec *left,
+              const struct timespec *right)
+{
+  diff->tv_sec = left->tv_sec - right->tv_sec;
+  diff->tv_nsec = left->tv_nsec - right->tv_nsec;
+
+  if (diff->tv_nsec < 0)
+    {
+      --diff->tv_sec;
+      diff->tv_nsec += 1000000000;
+    }
+}
+
+
 int main(int argc, char *argv[])
 {
     uintptr_t addr_base = 0;
@@ -188,13 +204,14 @@ int main(int argc, char *argv[])
     bool do_periodic_transmit = false;
     bool transmit_fdf = false;
     bool loopback_mode = false;
+    bool test_read_speed = false;
     //bool do_showhelp = false;
     static uintptr_t addrs[] = {0x43C30000, 0x43C70000};
 
     int c;
     char *e;
     const char *progname = argv[0];
-    while ((c = getopt(argc, argv, "i:a:g:b:B:fltThp")) != -1) {
+    while ((c = getopt(argc, argv, "i:a:g:b:B:fltThpr")) != -1) {
         switch (c) {
             case 'i':
                 ifc = strtoul(optarg, &e, 0);
@@ -230,6 +247,7 @@ int main(int argc, char *argv[])
             case 't': do_transmit = true; break;
             case 'T': do_periodic_transmit = true; break;
             case 'f': transmit_fdf = true; break;
+            case 'r': test_read_speed  = true; break;
             case 'p':
                 addrs[0] = pci_find_bar(0x1172, 0xcafd, 0, 1);
                 if (!addrs[0])
@@ -269,6 +287,23 @@ int main(int argc, char *argv[])
     //struct can_ctrlmode ctrlmode = {CAN_CTRLMODE_FD, CAN_CTRLMODE_FD};
     //ctu_can_fd_set_mode(priv, &ctrlmode);
 
+    if (test_read_speed) {
+        struct timespec tic, tac, diff;
+	int i;
+	u32 dummy;
+	(void)dummy;
+        clock_gettime(CLOCK_MONOTONIC, &tic);
+	for (i = 0; i < 1000 * 1000; i++) {
+		dummy = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_DATA);
+	}
+        clock_gettime(CLOCK_MONOTONIC, &tac);
+
+	timespec_sub(&diff, &tac, &tic);
+	printf("%d reads takes %ld.%09ld s\n",
+	       i, (long)diff.tv_sec, diff.tv_nsec);
+
+        return 0;
+    }
 
 
     //printf("NOT RESETTING!\n");

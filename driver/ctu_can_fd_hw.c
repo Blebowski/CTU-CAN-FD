@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*******************************************************************************
  *
  * CTU CAN FD IP Core
@@ -8,8 +9,8 @@
  *     Martin Jerabek <martin.jerabek01@gmail.com>
  *
  * Project advisors:
- * 	Jiri Novak <jnovak@fel.cvut.cz>
- * 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+ *	Jiri Novak <jnovak@fel.cvut.cz>
+ *	Pavel Pisa <pisa@cmp.felk.cvut.cz>
  *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
@@ -27,9 +28,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301, USA.
  *
-*******************************************************************************/
+ ******************************************************************************/
 
 #ifndef __KERNEL__
 # include "ctu_can_fd_linux_defs.h"
@@ -41,53 +43,29 @@
 //#include "ctu_can_fd_regs.h"
 #include "ctu_can_fd_hw.h"
 
-void ctu_can_fd_write32(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
-			u32 val)
+void ctu_can_fd_write32(struct ctucanfd_priv *priv,
+			enum ctu_can_fd_can_registers reg, u32 val)
 {
 	iowrite32(val, (char *)priv->mem_base + reg);
 }
 
-void ctu_can_fd_write32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
-			u32 val)
+void ctu_can_fd_write32_be(struct ctucanfd_priv *priv,
+			   enum ctu_can_fd_can_registers reg, u32 val)
 {
 	iowrite32(val, (char *)priv->mem_base + reg);
 }
 
-u32 ctu_can_fd_read32(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
+u32 ctu_can_fd_read32(struct ctucanfd_priv *priv,
+		      enum ctu_can_fd_can_registers reg)
 {
 	return ioread32((char *)priv->mem_base + reg);
 }
 
-u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
+u32 ctu_can_fd_read32_be(struct ctucanfd_priv *priv,
+			 enum ctu_can_fd_can_registers reg)
 {
 	return ioread32be((char *)priv->mem_base + reg);
 }
-
-/*
-void ctu_can_fd_write16(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
-					  u16 val)
-{
-	iowrite16(val, (char *)priv->mem_base + reg);
-}
-
-void ctu_can_fd_write8(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg,
-					 u8 val)
-{
-	iowrite8(val, (char *)priv->mem_base + reg);
-}
-*/
-
-/*
-u16 ctu_can_fd_read16(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
-{
-	return ioread16((const char *)priv->mem_base + reg);
-}
-
-u8 ctu_can_fd_read8(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers reg)
-{
-	return ioread8((const char *)priv->mem_base + reg);
-}
-*/
 
 static void ctu_can_fd_write_txt_buf(struct ctucanfd_priv *priv,
 				  enum ctu_can_fd_can_registers buf_base,
@@ -101,14 +79,15 @@ static void ctu_can_fd_write_txt_buf(struct ctucanfd_priv *priv,
 static inline union ctu_can_fd_identifier_w ctu_can_fd_id_to_hwid(canid_t id)
 {
 	union ctu_can_fd_identifier_w hwid;
+
 	hwid.u32 = 0;
 
-	if (id & CAN_EFF_FLAG){
+	if (id & CAN_EFF_FLAG) {
 		hwid.s.identifier_base = (id & CAN_EFF_MASK) >> 18;
 
-		// getting lowest 18 bits, replace with sth nicer...
+		/* getting lowest 18 bits, replace with sth nicer... */
 		hwid.s.identifier_ext = (id & 0x3FFFF);
-	}else
+	} else
 		hwid.s.identifier_base = id & CAN_SFF_MASK;
 	return hwid;
 }
@@ -118,14 +97,14 @@ static inline void ctu_can_fd_hwid_to_id(union ctu_can_fd_identifier_w hwid,
 					 canid_t *id,
 					 enum ctu_can_fd_frame_form_w_ide type)
 {
-	// Preserve flags which we dont set
+	/* Preserve flags which we dont set */
 	*id &= ~(CAN_EFF_FLAG | CAN_EFF_MASK);
 
-	if (type == EXTENDED){
+	if (type == EXTENDED) {
 		*id |= CAN_EFF_FLAG;
 		*id |= hwid.s.identifier_base << 18;
 		*id |= hwid.s.identifier_ext;
-	}else
+	} else
 		*id = hwid.s.identifier_base;
 }
 
@@ -135,53 +114,13 @@ static bool ctu_can_fd_len_to_dlc(u8 len, u8 *dlc)
 {
 	*dlc = can_len2dlc(len);
 	return true;
-	/*
-	if (unlikely(len > 64)) {
-		*dlc = 0;
-		return false;
-	} else {
-		*dlc = can_len2dlc(len);
-		if (unlikely(*dlc == can_len2dlc(len-1))) {
-			*dlc = 0;
-			return false;
-		}
-	}*/
-
-	/*
-	if (len <= 8){
-		*dlc = len;
-		goto exit_ok;
-	}
-
-	switch (len){
-	case 12 : *dlc = 0x9;
-	break;
-	case 16 : *dlc = 0xA;
-	break;
-	case 20 : *dlc = 0xB;
-	break;
-	case 24 : *dlc = 0xC;
-	break;
-	case 32 : *dlc = 0xD;
-	break;
-	case 48 : *dlc = 0xE;
-	break;
-	case 64 : *dlc = 0xF;
-	break;
-	default : *dlc = 0x0;
-	}
-
-	if (*dlc == 0)
-		return false;
-exit_ok:
-	*/
-	return true;
 }
 
 
 bool ctu_can_fd_check_access(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_device_id_version reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_DEVICE_ID);
 
 	if (reg.s.device_id != CTU_CAN_FD_ID)
@@ -193,6 +132,7 @@ bool ctu_can_fd_check_access(struct ctucanfd_priv *priv)
 u32 ctu_can_fd_get_version(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_device_id_version reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_DEVICE_ID);
 	return reg.s.ver_major * 10 + reg.s.ver_minor;
 }
@@ -200,6 +140,7 @@ u32 ctu_can_fd_get_version(struct ctucanfd_priv *priv)
 void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable)
 {
 	union ctu_can_fd_mode_command_status_settings reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 	reg.s.ena = enable ? ENABLED : DISABLED;
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
@@ -208,9 +149,12 @@ void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable)
 void ctu_can_fd_reset(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_mode_command_status_settings mode;
+
 	mode.u32 = 0;
 	mode.s.rst = 1;
-	/* it does not matter that we overwrite the rest of the reg - we're resetting */
+	/* it does not matter that we overwrite the rest of the reg
+	 * - we're resetting
+	 */
 	priv->write_reg(priv, CTU_CAN_FD_MODE, mode.u32);
 }
 
@@ -228,10 +172,12 @@ bool ctu_can_fd_set_ret_limit(struct ctucanfd_priv *priv, bool enable, u8 limit)
 	return true;
 }
 
-void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv, const struct can_ctrlmode *mode)
+void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv,
+			     const struct can_ctrlmode *mode)
 {
 	u32 flags = mode->flags;
 	union ctu_can_fd_mode_command_status_settings reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 
 	if (mode->mask & CAN_CTRLMODE_LOOPBACK)
@@ -266,6 +212,7 @@ void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv, const struct can_ctrlmo
 void ctu_can_fd_rel_rx_buf(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_mode_command_status_settings reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 	reg.s.rrb = 1;
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
@@ -274,6 +221,7 @@ void ctu_can_fd_rel_rx_buf(struct ctucanfd_priv *priv)
 void ctu_can_fd_clr_overrun_flag(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_mode_command_status_settings reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 	reg.s.cdo = 1;
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
@@ -282,50 +230,55 @@ void ctu_can_fd_clr_overrun_flag(struct ctucanfd_priv *priv)
 void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_mode_command_status_settings reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 	reg.s.abt = 1;
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
 }
 
-// TODO: rather than set(value, mask) interface, provide native set(val), clr(val)
-//       interface to potentially avoid unnecessary write
-static void ctu_can_fd_int_conf(struct ctucanfd_priv *priv, enum ctu_can_fd_can_registers sreg,
+// TODO: rather than set(value, mask) interface, provide
+//       native set(val), clr(val) interface to potentially
+//       avoid unnecessary write
+static void ctu_can_fd_int_conf(struct ctucanfd_priv *priv,
+				enum ctu_can_fd_can_registers sreg,
 				enum ctu_can_fd_can_registers creg,
 				union ctu_can_fd_int_stat mask,
 				union ctu_can_fd_int_stat val)
 {
-	//union ctu_can_fd_int_stat reg;
-	//reg.u32 = priv->read_reg(priv, sreg);
-
 	priv->write_reg(priv, sreg, mask.u32 & val.u32);
 	priv->write_reg(priv, creg, mask.u32 & (~val.u32));
 }
 
-void ctu_can_fd_int_ena(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat mask,
+void ctu_can_fd_int_ena(struct ctucanfd_priv *priv,
+			union ctu_can_fd_int_stat mask,
 			union ctu_can_fd_int_stat val)
 {
-	ctu_can_fd_int_conf(priv, CTU_CAN_FD_INT_ENA_SET, CTU_CAN_FD_INT_ENA_CLR,
-				mask, val);
+	ctu_can_fd_int_conf(priv, CTU_CAN_FD_INT_ENA_SET,
+			    CTU_CAN_FD_INT_ENA_CLR, mask, val);
 }
 
-void ctu_can_fd_int_mask(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat mask,
+void ctu_can_fd_int_mask(struct ctucanfd_priv *priv,
+			 union ctu_can_fd_int_stat mask,
 			 union ctu_can_fd_int_stat val)
 {
-	ctu_can_fd_int_conf(priv, CTU_CAN_FD_INT_MASK_SET, CTU_CAN_FD_INT_MASK_CLR,
-				mask, val);
+	ctu_can_fd_int_conf(priv, CTU_CAN_FD_INT_MASK_SET,
+			    CTU_CAN_FD_INT_MASK_CLR, mask, val);
 }
 
-void ctu_can_fd_set_mode(struct ctucanfd_priv *priv, const struct can_ctrlmode *mode)
+void ctu_can_fd_set_mode(struct ctucanfd_priv *priv,
+			 const struct can_ctrlmode *mode)
 {
 	ctu_can_fd_set_mode_reg(priv, mode);
 
-	// One shot mode supported indirectly via Retransmitt limit
+	/* One shot mode supported indirectly via Retransmitt limit */
 	if (mode->mask & CAN_CTRLMODE_ONE_SHOT)
-		ctu_can_fd_set_ret_limit(priv, !!(mode->flags & CAN_CTRLMODE_ONE_SHOT), 0);
+		ctu_can_fd_set_ret_limit(priv, !!(mode->flags &
+					 CAN_CTRLMODE_ONE_SHOT), 0);
 
-	// Bus error reporting -> Allow Error interrupt
+	/* Bus error reporting -> Allow Error interrupt */
 	if (mode->mask & CAN_CTRLMODE_BERR_REPORTING) {
 		union ctu_can_fd_int_stat ena, mask;
+
 		ena.u32 = mask.u32 = 0;
 		ena.s.bei = !!(mode->flags & CAN_CTRLMODE_ONE_SHOT);
 		mask.s.bei = 1;
@@ -366,11 +319,12 @@ void ctu_can_fd_set_nom_bittiming(struct ctucanfd_priv *priv,
 	/*
 	 * The timing calculation functions have only constraints on tseg1,
 	 * which is prop_seg + phase1_seg combined. tseg1 is then split in half
-	 * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP is 7 bits
-	 * wide but PH1 only 6, so we must re-distribute the values here.
+	 * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP is
+	 * 7 bits wide but PH1 only 6, so we must re-distribute the values here.
 	 */
 	u32 prop_seg = nbt->prop_seg;
 	u32 phase_seg1 = nbt->phase_seg1;
+
 	if (phase_seg1 > 63) {
 		prop_seg += phase_seg1 - 63;
 		phase_seg1 = 63;
@@ -396,11 +350,13 @@ void ctu_can_fd_set_data_bittiming(struct ctucanfd_priv *priv,
 	/*
 	 * The timing calculation functions have only constraints on tseg1,
 	 * which is prop_seg + phase1_seg combined. tseg1 is then split in half
-	 * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP_FD is 6 bits
-	 * wide but PH1_FD only 5, so we must re-distribute the values here.
+	 * and stored into prog_seg and phase_seg1. In CTU CAN FD, PROP_FD is
+	 * 6 bits wide but PH1_FD only 5, so we must re-distribute the values
+	 * here.
 	 */
 	u32 prop_seg = dbt->prop_seg;
 	u32 phase_seg1 = dbt->phase_seg1;
+
 	if (phase_seg1 > 31) {
 		prop_seg += phase_seg1 - 31;
 		phase_seg1 = 31;
@@ -421,6 +377,7 @@ void ctu_can_fd_set_data_bittiming(struct ctucanfd_priv *priv,
 void ctu_can_fd_set_err_limits(struct ctucanfd_priv *priv, u8 ewl, u8 erp)
 {
 	union ctu_can_fd_ewl_erp_fault_state reg;
+
 	reg.u32 = 0;
 	reg.s.ew_limit = ewl;
 	reg.s.erp_limit = erp;
@@ -429,7 +386,8 @@ void ctu_can_fd_set_err_limits(struct ctucanfd_priv *priv, u8 ewl, u8 erp)
 	priv->write_reg(priv, CTU_CAN_FD_EWL, reg.u32);
 }
 
-void ctu_can_fd_read_err_ctrs(struct ctucanfd_priv *priv, struct can_berr_counter *ctr)
+void ctu_can_fd_read_err_ctrs(struct ctucanfd_priv *priv,
+			      struct can_berr_counter *ctr)
 {
 	union ctu_can_fd_rxc_txc reg;
 
@@ -446,12 +404,13 @@ enum can_state ctu_can_fd_read_error_state(struct ctucanfd_priv *priv)
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_EWL);
 	err.u32 = priv->read_reg(priv, CTU_CAN_FD_RXC);
 
-	if (reg.s.era){
-		if (reg.s.ew_limit > err.s.rxc_val && reg.s.ew_limit > err.s.txc_val)
+	if (reg.s.era) {
+		if (reg.s.ew_limit > err.s.rxc_val &&
+		    reg.s.ew_limit > err.s.txc_val)
 			return CAN_STATE_ERROR_ACTIVE;
 		else
 			return CAN_STATE_ERROR_WARNING;
-	}else if (reg.s.erp)
+	} else if (reg.s.erp)
 		return CAN_STATE_ERROR_PASSIVE;
 	else if (reg.s.bof)
 		return CAN_STATE_BUS_OFF;
@@ -459,9 +418,11 @@ enum can_state ctu_can_fd_read_error_state(struct ctucanfd_priv *priv)
 	return CAN_STATE_ERROR_PASSIVE;
 }
 
-void ctu_can_fd_set_err_ctrs(struct ctucanfd_priv *priv, const struct can_berr_counter *ctr)
+void ctu_can_fd_set_err_ctrs(struct ctucanfd_priv *priv,
+			     const struct can_berr_counter *ctr)
 {
 	union ctu_can_fd_ctr_pres reg;
+
 	reg.u32 = 0;
 
 	reg.s.ctpv = ctr->txerr;
@@ -478,17 +439,21 @@ void ctu_can_fd_set_err_ctrs(struct ctucanfd_priv *priv, const struct can_berr_c
 bool ctu_can_fd_get_mask_filter_support(struct ctucanfd_priv *priv, u8 fnum)
 {
 	union ctu_can_fd_filter_control_filter_status reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_FILTER_CONTROL);
 
-	switch (fnum){
-	case CTU_CAN_FD_FILTER_A :
-		if (reg.s.sfa) return true;
+	switch (fnum) {
+	case CTU_CAN_FD_FILTER_A:
+		if (reg.s.sfa)
+			return true;
 	break;
-	case CTU_CAN_FD_FILTER_B :
-		if (reg.s.sfb) return true;
+	case CTU_CAN_FD_FILTER_B:
+		if (reg.s.sfb)
+			return true;
 	break;
-	case CTU_CAN_FD_FILTER_C :
-		if (reg.s.sfc) return true;
+	case CTU_CAN_FD_FILTER_C:
+		if (reg.s.sfc)
+			return true;
 	break;
 	}
 
@@ -498,6 +463,7 @@ bool ctu_can_fd_get_mask_filter_support(struct ctucanfd_priv *priv, u8 fnum)
 bool ctu_can_fd_get_range_filter_support(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_filter_control_filter_status reg;
+
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_FILTER_CONTROL);
 
 	if (reg.s.sfr)
@@ -506,11 +472,11 @@ bool ctu_can_fd_get_range_filter_support(struct ctucanfd_priv *priv)
 	return false;
 }
 
-bool ctu_can_fd_set_mask_filter(struct ctucanfd_priv *priv, u8 fnum, bool enable,
-				const struct can_filter *filter)
+bool ctu_can_fd_set_mask_filter(struct ctucanfd_priv *priv, u8 fnum,
+				bool enable, const struct can_filter *filter)
 {
 	union ctu_can_fd_filter_control_filter_status creg;
-	enum ctu_can_fd_can_registers maddr,vaddr;
+	enum ctu_can_fd_can_registers maddr, vaddr;
 	union ctu_can_fd_identifier_w hwid_mask;
 	union ctu_can_fd_identifier_w hwid_val;
 	uint8_t val = 0;
@@ -522,11 +488,9 @@ bool ctu_can_fd_set_mask_filter(struct ctucanfd_priv *priv, u8 fnum, bool enable
 		val = 1;
 
 	creg.u32 = priv->read_reg(priv, CTU_CAN_FD_FILTER_CONTROL);
-	//maddr = 0;
-	//vaddr = 0;
 
-	switch (fnum){
-	case CTU_CAN_FD_FILTER_A :
+	switch (fnum) {
+	case CTU_CAN_FD_FILTER_A:
 		maddr = CTU_CAN_FD_FILTER_A_MASK;
 		vaddr = CTU_CAN_FD_FILTER_A_VAL;
 		creg.s.fanb = val;
@@ -534,7 +498,7 @@ bool ctu_can_fd_set_mask_filter(struct ctucanfd_priv *priv, u8 fnum, bool enable
 		creg.s.fafb = val;
 		creg.s.fafe = val;
 	break;
-	case CTU_CAN_FD_FILTER_B :
+	case CTU_CAN_FD_FILTER_B:
 		maddr = CTU_CAN_FD_FILTER_B_MASK;
 		vaddr = CTU_CAN_FD_FILTER_B_VAL;
 		creg.s.fbnb = val;
@@ -542,7 +506,7 @@ bool ctu_can_fd_set_mask_filter(struct ctucanfd_priv *priv, u8 fnum, bool enable
 		creg.s.fbfb = val;
 		creg.s.fbfe = val;
 	break;
-	case CTU_CAN_FD_FILTER_C :
+	case CTU_CAN_FD_FILTER_C:
 		maddr = CTU_CAN_FD_FILTER_C_MASK;
 		vaddr = CTU_CAN_FD_FILTER_C_VAL;
 		creg.s.fcnb = val;
@@ -584,15 +548,18 @@ void ctu_can_fd_set_range_filter(struct ctucanfd_priv *priv, canid_t low_th,
 	priv->write_reg(priv, CTU_CAN_FD_FILTER_RAN_HIGH, hwid_high.u32);
 }
 
-void ctu_can_fd_set_rx_tsop(struct ctucanfd_priv *priv, enum ctu_can_fd_rx_settings_rtsop val)
+void ctu_can_fd_set_rx_tsop(struct ctucanfd_priv *priv,
+			    enum ctu_can_fd_rx_settings_rtsop val)
 {
 	union ctu_can_fd_rx_status_rx_settings reg;
+
 	reg.u32 = 0;
 	reg.s.rtsop = val;
 	priv->write_reg(priv, CTU_CAN_FD_RX_STATUS, reg.u32);
 }
 
-void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, struct canfd_frame *cf, u64 *ts)
+void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv,
+			      struct canfd_frame *cf, u64 *ts)
 {
 	union ctu_can_fd_frame_form_w ffw;
 
@@ -600,16 +567,19 @@ void ctu_can_fd_read_rx_frame(struct ctucanfd_priv *priv, struct canfd_frame *cf
 	ctu_can_fd_read_rx_frame_ffw(priv, cf, ts, ffw);
 }
 
-void ctu_can_fd_read_rx_frame_ffw(struct ctucanfd_priv *priv, struct canfd_frame *cf, u64 *ts, union ctu_can_fd_frame_form_w ffw)
+void ctu_can_fd_read_rx_frame_ffw(struct ctucanfd_priv *priv,
+			struct canfd_frame *cf, u64 *ts,
+			union ctu_can_fd_frame_form_w ffw)
 {
 	union ctu_can_fd_identifier_w idw;
-	unsigned i;
+	unsigned int i;
+	enum ctu_can_fd_frame_form_w_ide ide;
 
 	idw.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
 	cf->can_id = 0;
 	cf->flags = 0;
 
-	// BRS, ESI, RTR Flags
+	/* BRS, ESI, RTR Flags */
 	if (ffw.s.fdf == FD_CAN) {
 		if (ffw.s.brs == BR_SHIFT)
 			cf->flags |= CANFD_BRS;
@@ -618,7 +588,7 @@ void ctu_can_fd_read_rx_frame_ffw(struct ctucanfd_priv *priv, struct canfd_frame
 	} else if (ffw.s.rtr == RTR_FRAME)
 		cf->can_id |= CAN_RTR_FLAG;
 
-	// DLC
+	/* DLC */
 	if (ffw.s.dlc <= 8) {
 		cf->len = ffw.s.dlc;
 	} else {
@@ -628,20 +598,22 @@ void ctu_can_fd_read_rx_frame_ffw(struct ctucanfd_priv *priv, struct canfd_frame
 			cf->len = 8;
 	}
 
-	ctu_can_fd_hwid_to_id(idw, &cf->can_id, (enum ctu_can_fd_frame_form_w_ide) ffw.s.ide);
+	ide = (enum ctu_can_fd_frame_form_w_ide) ffw.s.ide;
+	ctu_can_fd_hwid_to_id(idw, &cf->can_id, ide);
 
-	// Timestamp
+	/* Timestamp */
 	*ts = (u64)(priv->read_reg(priv, CTU_CAN_FD_RX_DATA));
 	*ts |= ((u64)priv->read_reg(priv, CTU_CAN_FD_RX_DATA) << 32);
 
-	// Data
+	/* Data */
 	for (i = 0; i < cf->len; i += 4) {
 		u32 data = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
 		*(u32 *)(cf->data + i) = data;
 	}
 }
 
-enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(struct ctucanfd_priv *priv, u8 buf)
+enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(struct ctucanfd_priv
+							*priv, u8 buf)
 {
 	union ctu_can_fd_tx_status reg;
 	uint32_t status;
@@ -649,15 +621,19 @@ enum ctu_can_fd_tx_status_tx1s ctu_can_fd_get_tx_status(struct ctucanfd_priv *pr
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_TX_STATUS);
 
 	switch (buf) {
-	case CTU_CAN_FD_TXT_BUFFER_1 : status = reg.s.tx1s;
-	break;
-	case CTU_CAN_FD_TXT_BUFFER_2 : status = reg.s.tx2s;
-	break;
-	case CTU_CAN_FD_TXT_BUFFER_3 : status = reg.s.tx3s;
-	break;
-	case CTU_CAN_FD_TXT_BUFFER_4 : status = reg.s.tx4s;
-	break;
-	default :
+	case CTU_CAN_FD_TXT_BUFFER_1:
+		status = reg.s.tx1s;
+		break;
+	case CTU_CAN_FD_TXT_BUFFER_2:
+		status = reg.s.tx2s;
+		break;
+	case CTU_CAN_FD_TXT_BUFFER_3:
+		status = reg.s.tx3s;
+		break;
+	case CTU_CAN_FD_TXT_BUFFER_4:
+		status = reg.s.tx4s;
+		break;
+	default:
 		status = ~0;
 	}
 	return (enum ctu_can_fd_tx_status_tx1s) status;
@@ -670,7 +646,7 @@ bool ctu_can_fd_is_txt_buf_accessible(struct ctucanfd_priv *priv, u8 buf)
 	buf_status = ctu_can_fd_get_tx_status(priv, buf);
 	if (buf_status == TXT_RDY || buf_status == TXT_TRAN
 		|| buf_status == TXT_ABTP)
- 		return false;
+		return false;
 
 	return true;
 }
@@ -678,17 +654,22 @@ bool ctu_can_fd_is_txt_buf_accessible(struct ctucanfd_priv *priv, u8 buf)
 bool ctu_can_fd_txt_buf_give_command(struct ctucanfd_priv *priv, u8 cmd, u8 buf)
 {
 	union ctu_can_fd_tx_command reg;
+
 	reg.u32 = 0;
 
-	switch (buf){
-	case CTU_CAN_FD_TXT_BUFFER_1: reg.s.txb1 = 1;
-	break;
-	case CTU_CAN_FD_TXT_BUFFER_2: reg.s.txb2 = 1;
-	break;
-	case CTU_CAN_FD_TXT_BUFFER_3: reg.s.txb3 = 1;
-	break;
-	case CTU_CAN_FD_TXT_BUFFER_4: reg.s.txb4 = 1;
-	break;
+	switch (buf) {
+	case CTU_CAN_FD_TXT_BUFFER_1:
+		reg.s.txb1 = 1;
+		break;
+	case CTU_CAN_FD_TXT_BUFFER_2:
+		reg.s.txb2 = 1;
+		break;
+	case CTU_CAN_FD_TXT_BUFFER_3:
+		reg.s.txb3 = 1;
+		break;
+	case CTU_CAN_FD_TXT_BUFFER_4:
+		reg.s.txb4 = 1;
+		break;
 	default:
 		return false;
 	}
@@ -711,6 +692,7 @@ bool ctu_can_fd_txt_buf_give_command(struct ctucanfd_priv *priv, u8 cmd, u8 buf)
 void ctu_can_fd_set_txt_priority(struct ctucanfd_priv *priv, const u8 *prio)
 {
 	union ctu_can_fd_tx_priority reg;
+
 	reg.u32 = 0;
 	reg.s.txt1p = prio[0];
 	reg.s.txt2p = prio[1];
@@ -720,19 +702,21 @@ void ctu_can_fd_set_txt_priority(struct ctucanfd_priv *priv, const u8 *prio)
 	priv->write_reg(priv, CTU_CAN_FD_TX_PRIORITY, reg.u32);
 }
 
-static const enum ctu_can_fd_can_registers tx_buf_bases[CTU_CAN_FD_TXT_BUFFER_COUNT] = {
-	CTU_CAN_FD_TXTB1_DATA_1, CTU_CAN_FD_TXTB2_DATA_1,
-	CTU_CAN_FD_TXTB3_DATA_1, CTU_CAN_FD_TXTB4_DATA_1
+static const enum ctu_can_fd_can_registers
+	tx_buf_bases[CTU_CAN_FD_TXT_BUFFER_COUNT] = {
+		CTU_CAN_FD_TXTB1_DATA_1, CTU_CAN_FD_TXTB2_DATA_1,
+		CTU_CAN_FD_TXTB3_DATA_1, CTU_CAN_FD_TXTB4_DATA_1
 };
 
-bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_frame *cf, u64 ts,
-				u8 buf, bool isfdf)
+bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv,
+			     const struct canfd_frame *cf, u64 ts, u8 buf,
+			     bool isfdf)
 {
 	enum ctu_can_fd_can_registers buf_base;
 	union ctu_can_fd_frame_form_w ffw;
 	union ctu_can_fd_identifier_w idw;
 	u8 dlc;
-	unsigned i;
+	unsigned int i;
 
 	ffw.u32 = 0;
 	idw.u32 = 0;
@@ -760,31 +744,30 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_fram
 		return false;
 	ffw.s.dlc = dlc;
 
-	// Larger data chunks and the ones where bit rate should be shifted
-	// are sent as CAN FD Frames. TODO: Think here, and discuss this with Martin.
-	// How does the Socket CAN distinguish beween normal and FD Frame (without BRS)
-	// Once BRS flag is present it is clear. Without it, we dont know whether
-	// 8 byte frame should be CAN FD Frame without bit rate shifted or CAN Frame
-	// So we send FD Frame only if BRS present or higher length than 8 ...
-	// MJ: via can_is_canfd_skb(skb) - it basically checks the skb size
 	if (isfdf) {
 		ffw.s.fdf = FD_CAN;
 		if (cf->flags & CANFD_BRS)
 			ffw.s.brs = BR_SHIFT;
 	}
 
-	ctu_can_fd_write_txt_buf(priv, buf_base, CTU_CAN_FD_FRAME_FORM_W, ffw.u32);
-	ctu_can_fd_write_txt_buf(priv, buf_base, CTU_CAN_FD_IDENTIFIER_W, idw.u32);
+	ctu_can_fd_write_txt_buf(priv, buf_base,
+				 CTU_CAN_FD_FRAME_FORM_W, ffw.u32);
 
-	ctu_can_fd_write_txt_buf(priv, buf_base, CTU_CAN_FD_TIMESTAMP_L_W, (u32)(ts));
-	ctu_can_fd_write_txt_buf(priv, buf_base, CTU_CAN_FD_TIMESTAMP_U_W, (u32)(ts >> 32));
+	ctu_can_fd_write_txt_buf(priv, buf_base,
+				 CTU_CAN_FD_IDENTIFIER_W, idw.u32);
+
+	ctu_can_fd_write_txt_buf(priv, buf_base,
+				 CTU_CAN_FD_TIMESTAMP_L_W, (u32)(ts));
+
+	ctu_can_fd_write_txt_buf(priv, buf_base,
+				 CTU_CAN_FD_TIMESTAMP_U_W, (u32)(ts >> 32));
 
 	if (!(cf->can_id & CAN_RTR_FLAG)) {
-		// be32_to_cpup?
 		for (i = 0; i < cf->len; i += 4) {
 			u32 data = *(u32 *)(cf->data + i);
-			ctu_can_fd_write_txt_buf(priv, buf_base, CTU_CAN_FD_DATA_1_4_W + i,
-								data);
+
+			ctu_can_fd_write_txt_buf(priv, buf_base,
+					CTU_CAN_FD_DATA_1_4_W + i, data);
 		}
 	}
 

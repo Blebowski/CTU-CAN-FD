@@ -1,39 +1,42 @@
+// SPDX-License-Identifier: GPL-2.0+
 /*******************************************************************************
- * 
+ *
  * CTU CAN FD IP Core
  * Copyright (C) 2015-2018
- * 
+ *
  * Authors:
  *     Ondrej Ille <ondrej.ille@gmail.com>
  *     Martin Jerabek <martin.jerabek01@gmail.com>
- * 
- * Project advisors: 
- * 	Jiri Novak <jnovak@fel.cvut.cz>
- * 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
- * 
+ *
+ * Project advisors:
+ *	Jiri Novak <jnovak@fel.cvut.cz>
+ *	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+ *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
  * Czech Technical University        (http://www.cvut.cz/)
- * 
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- * 
-*******************************************************************************/
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA  02110-1301, USA.
+ *
+ ******************************************************************************/
 
 /* Linux declarations used in the low-level driver. When using driver with
  * SocketCAN, this file is not necessary. When using the driver outside of
- * Linux, this file replaces common kernel headers. */
+ * Linux, this file replaces common kernel headers.
+ */
 
 #ifndef __CTU_CAN_FD_LINUX_DEFS__
 #define __CTU_CAN_FD_LINUX_DEFS__
@@ -82,7 +85,7 @@ enum {
 
 #define __WARN_printf printf
 #ifndef WARN
-#define WARN(condition, format...) ({						\
+#define WARN(condition, format...) ({				\
 int __ret_warn_on = !!(condition);				\
 if (unlikely(__ret_warn_on))					\
     __WARN_printf(format);					\
@@ -106,26 +109,62 @@ typedef __u32 __bitwise __wsum;
 */
 
 __attribute__((noinline))
-static inline void iowrite32(u32 value, void *addr) {*(volatile u32*)addr = value;}
-__attribute__((noinline))
-static inline void iowrite16(u16 value, void *addr) {*(volatile u16*)addr = value;}
-__attribute__((noinline))
-static inline void iowrite8(u8 value, void *addr) {*(volatile u8*)addr = value;}
+static inline void iowrite32(u32 value, void *addr)
+{
+	*(volatile u32*)addr = value;
+}
 
 __attribute__((noinline))
-static inline u32 ioread32(const void *addr) {return *(const volatile u32*)addr;}
-__attribute__((noinline))
-static inline u16 ioread16(const void *addr) {return *(const volatile u16*)addr;}
-__attribute__((noinline))
-static inline u8 ioread8(const void *addr) {return *(const volatile u8*)addr;}
-
-static inline u32 cpu_to_be32(u32 v) {return htonl(v);}
-static inline u32 be32_to_cpu(u32 v) {return ntohl(v);}
+static inline void iowrite16(u16 value, void *addr)
+{
+	*(volatile u16*)addr = value;
+}
 
 __attribute__((noinline))
-static inline void iowrite32be(u32 value, void *addr) {*(volatile u32*)addr = cpu_to_be32(value);}
+static inline void iowrite8(u8 value, void *addr)
+{
+	*(volatile u8*)addr = value;
+}
+
 __attribute__((noinline))
-static inline u32 ioread32be(const void *addr) {return be32_to_cpu(*(const volatile u32*)addr);}
+static inline u32 ioread32(const void *addr)
+{
+	return *(const volatile u32*)addr;
+}
+
+__attribute__((noinline))
+static inline u16 ioread16(const void *addr)
+{
+	return *(const volatile u16*)addr;
+}
+
+__attribute__((noinline))
+static inline u8 ioread8(const void *addr)
+{
+	return *(const volatile u8*)addr;
+}
+
+static inline u32 cpu_to_be32(u32 v)
+{
+	return htonl(v);
+}
+
+static inline u32 be32_to_cpu(u32 v)
+{
+	return ntohl(v);
+}
+
+__attribute__((noinline))
+static inline void iowrite32be(u32 value, void *addr)
+{
+	*(volatile u32*)addr = cpu_to_be32(value);
+}
+
+__attribute__((noinline))
+static inline u32 ioread32be(const void *addr)
+{
+	return be32_to_cpu(*(const volatile u32*)addr);
+}
 
 /* CAN DLC to real data length conversion helpers */
 u8 can_dlc2len(u8 can_dlc);
@@ -488,7 +527,7 @@ struct can_filter {
 struct can_priv {
     struct can_bittiming bittiming, data_bittiming;
     const struct can_bittiming_const *bittiming_const,
-        *data_bittiming_const;
+	*data_bittiming_const;
     //const u16 *termination_const;
     //unsigned int termination_const_cnt;
     //u16 termination;
@@ -506,9 +545,9 @@ struct net_device {
 #define netdev_priv(nd) (&((nd)->can))
 
 int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt,
-                      const struct can_bittiming_const *btc,
-                      const u32 *bitrate_const,
-                      const unsigned int bitrate_const_cnt);
+		      const struct can_bittiming_const *btc,
+		      const u32 *bitrate_const,
+		      const unsigned int bitrate_const_cnt);
 
 #define min(a, b) (a < b ? a : b)
 #define max(a, b) (a > b ? a : b)
@@ -528,7 +567,7 @@ int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt,
  * NOTE: macro parameter @n is evaluated multiple times,
  * beware of side effects!
  */
-# define do_div(n,base) ({					\
+# define do_div(n, base) ({					\
 	uint32_t __base = (base);				\
 	uint32_t __rem;						\
 	__rem = ((uint64_t)(n)) % __base;			\
@@ -550,7 +589,7 @@ int can_get_bittiming(struct net_device *dev, struct can_bittiming *bt,
 		__abs_choose_expr(x, char,				\
 		__builtin_choose_expr(					\
 			__builtin_types_compatible_p(typeof(x), char),	\
-			(char)({ signed char __x = (x); __x<0?-__x:__x; }), \
+			(char)({ signed char __x = (x); __x < 0 ?  -__x:__x; }), \
 			((void)0)))))))
 
 #define __abs_choose_expr(x, type, other) __builtin_choose_expr(	\
