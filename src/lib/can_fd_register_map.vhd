@@ -103,8 +103,8 @@ package can_fd_register_map is
   constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"080";
   constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"084";
   constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"088";
-  constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"08C";
-  constant TIMESTAMP_HIGH_ADR        : std_logic_vector(11 downto 0) := x"090";
+  constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"090";
+  constant TIMESTAMP_HIGH_ADR        : std_logic_vector(11 downto 0) := x"094";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
