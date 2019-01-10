@@ -1332,8 +1332,8 @@ CTU CAN FD IP Core source code is available in CTU FEE GitLab repository
 
 \begin_inset CommandInset href
 LatexCommand href
-name "https://gitlab.fel.cvut.cz/illeondr/CAN_FD_IP_Core"
-target "https://gitlab.fel.cvut.cz/illeondr/CAN_FD_IP_Core"
+name "https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core"
+target "https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core"
 literal "false"
 
 \end_inset
