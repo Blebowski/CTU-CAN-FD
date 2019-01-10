@@ -286,8 +286,25 @@ static inline union ctu_can_fd_mode_command_status_settings ctu_can_get_status(s
 {
 	// MODE and STATUS are within the same word
 	union ctu_can_fd_mode_command_status_settings res;
-	res.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_MODE);
+	res.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 	return res;
+}
+
+
+/*
+ * Test if core is enabled..
+ *
+ * Arguments:
+ *	priv	Private info
+
+ * Returns:
+ *	Return true if core is in enabled/active state..
+ */
+static inline bool ctu_can_fd_is_enabled(struct ctucanfd_priv *priv)
+{
+	union ctu_can_fd_mode_command_status_settings reg;
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+	return reg.s.ena == ENABLED;
 }
 
 
@@ -303,7 +320,7 @@ static inline union ctu_can_fd_mode_command_status_settings ctu_can_get_status(s
 static inline union ctu_can_fd_int_stat ctu_can_fd_int_sts(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_int_stat res;
-	res.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_INT_STAT);
+	res.u32 = priv->read_reg(priv, CTU_CAN_FD_INT_STAT);
 	return res;
 }
 
@@ -317,7 +334,33 @@ static inline union ctu_can_fd_int_stat ctu_can_fd_int_sts(struct ctucanfd_priv 
  */
 static inline void ctu_can_fd_int_clr(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat mask)
 {
-	ctu_can_fd_write32(priv, CTU_CAN_FD_INT_STAT, mask.u32);
+	priv->write_reg(priv, CTU_CAN_FD_INT_STAT, mask.u32);
+}
+
+
+/*
+ * Sets enable interrupt bits.
+ *
+ * Arguments:
+ *	priv	Private info
+ *	mask	Mask of interrupts which should be disabled.
+ */
+static inline void ctu_can_fd_int_ena_set(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat mask)
+{
+	priv->write_reg(priv, CTU_CAN_FD_INT_ENA_SET, mask.u32);
+}
+
+
+/*
+ * Clears enable interrupt bits.
+ *
+ * Arguments:
+ *	priv	Private info
+ *	mask	Mask of interrupts which should be disabled.
+ */
+static inline void ctu_can_fd_int_ena_clr(struct ctucanfd_priv *priv, union ctu_can_fd_int_stat mask)
+{
+	priv->write_reg(priv, CTU_CAN_FD_INT_ENA_CLR, mask.u32);
 }
 
 
@@ -429,7 +472,7 @@ void ctu_can_fd_read_err_ctrs(struct ctucanfd_priv *priv, struct can_berr_counte
 static inline u16 ctu_can_fd_read_nom_errs(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_err_norm_err_fd reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_ERR_NORM);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_ERR_NORM);
 	return reg.s.err_norm_val;
 }
 
@@ -446,7 +489,7 @@ static inline void ctu_can_fd_erase_nom_errs(struct ctucanfd_priv *priv)
 	union ctu_can_fd_ctr_pres reg;
 	reg.u32 = 0;
 	reg.s.enorm = 1;
-	ctu_can_fd_write32(priv, CTU_CAN_FD_CTR_PRES, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_CTR_PRES, reg.u32);
 }
 
 
@@ -462,7 +505,7 @@ static inline void ctu_can_fd_erase_nom_errs(struct ctucanfd_priv *priv)
 static inline u16 ctu_can_fd_read_fd_errs(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_err_norm_err_fd reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_ERR_NORM);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_ERR_NORM);
 	return reg.s.err_fd_val;
 }
 
@@ -478,7 +521,7 @@ static inline void ctu_can_fd_erase_fd_errs(struct ctucanfd_priv *priv)
 	union ctu_can_fd_ctr_pres reg;
 	reg.u32 = 0;
 	reg.s.efd = 1;
-	ctu_can_fd_write32(priv, CTU_CAN_FD_CTR_PRES, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_CTR_PRES, reg.u32);
 }
 
 
@@ -567,7 +610,7 @@ void ctu_can_fd_set_range_filter(struct ctucanfd_priv *priv, canid_t low_th,
 static inline u16 ctu_can_fd_get_rx_fifo_size(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_mem_info reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_MEM_INFO);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_MEM_INFO);
 	return reg.s.rx_buff_size;
 }
 
@@ -583,7 +626,7 @@ static inline u16 ctu_can_fd_get_rx_fifo_size(struct ctucanfd_priv *priv)
 static inline u16 ctu_can_fd_get_rx_fifo_mem_free(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_mem_info reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_MEM_INFO);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_MEM_INFO);
 	return reg.s.rx_mem_free;
 }
 
@@ -599,7 +642,7 @@ static inline u16 ctu_can_fd_get_rx_fifo_mem_free(struct ctucanfd_priv *priv)
 static inline bool ctu_can_fd_is_rx_fifo_empty(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_status_rx_settings reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_STATUS);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_STATUS);
 	return reg.s.rxe;
 }
 
@@ -615,7 +658,7 @@ static inline bool ctu_can_fd_is_rx_fifo_empty(struct ctucanfd_priv *priv)
 static inline bool ctu_can_fd_is_rx_fifo_full(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_status_rx_settings reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_STATUS);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_STATUS);
 	return reg.s.rxf;
 }
 
@@ -631,7 +674,7 @@ static inline bool ctu_can_fd_is_rx_fifo_full(struct ctucanfd_priv *priv)
 static inline u16 ctu_can_fd_get_rx_frame_count(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_status_rx_settings reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_STATUS);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_STATUS);
 	return reg.s.rxfrc;
 }
 
@@ -644,6 +687,37 @@ static inline u16 ctu_can_fd_get_rx_frame_count(struct ctucanfd_priv *priv)
  *	val	Timestamp option settings.
  */
 void ctu_can_fd_set_rx_tsop(struct ctucanfd_priv *priv, enum ctu_can_fd_rx_settings_rtsop val);
+
+
+/*
+ * Reads the first word of CAN Frame from RX FIFO Buffer.
+ *
+ * Arguments:
+ *	priv	Private info
+ *
+ * Returns:
+ *	The firts word of received frame
+ */
+static inline union ctu_can_fd_frame_form_w ctu_can_fd_read_rx_ffw(struct ctucanfd_priv *priv)
+{
+	union ctu_can_fd_frame_form_w ffw;
+	ffw.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
+	return ffw;
+}
+
+/*
+ * Reads one word of CAN Frame from RX FIFO Buffer.
+ *
+ * Arguments:
+ *	priv	Private info
+ *
+ * Returns:
+ *	One wword of received frame
+ */
+static inline u32 ctu_can_fd_read_rx_word(struct ctucanfd_priv *priv)
+{
+	return priv->read_reg(priv, CTU_CAN_FD_RX_DATA);
+}
 
 
 /*
@@ -781,7 +855,7 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv, const struct canfd_fram
 static inline u16 ctu_can_fd_get_tran_delay(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_trv_delay_ssp_cfg reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_TRV_DELAY);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_TRV_DELAY);
 	return reg.s.trv_delay_value;
 }
 
@@ -797,7 +871,7 @@ static inline u16 ctu_can_fd_get_tran_delay(struct ctucanfd_priv *priv)
 static inline u32 ctu_can_fd_get_tx_frame_ctr(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_tx_counter reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_TX_COUNTER);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_TX_COUNTER);
 	return reg.s.tx_counter_val;
 }
 
@@ -813,7 +887,7 @@ static inline u32 ctu_can_fd_get_tx_frame_ctr(struct ctucanfd_priv *priv)
 static inline u32 ctu_can_fd_get_rx_frame_ctr(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_rx_counter reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_COUNTER);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_RX_COUNTER);
 	return reg.s.rx_counter_val;
 }
 
@@ -829,7 +903,7 @@ static inline u32 ctu_can_fd_get_rx_frame_ctr(struct ctucanfd_priv *priv)
 static inline union ctu_can_fd_debug_register ctu_can_fd_read_debug_info(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_debug_register reg;
-	reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_DEBUG_REGISTER);
+	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_DEBUG_REGISTER);
 	return reg;
 }
 

@@ -36,6 +36,7 @@
 #include <linux/init.h>
 #include <linux/interrupt.h>
 #include <linux/io.h>
+#include <linux/list.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/netdevice.h>
@@ -54,6 +55,13 @@
 
 #define DRIVER_NAME	"ctucanfd"
 
+static bool use_msi = 1;
+module_param(use_msi, bool, 0444);
+MODULE_PARM_DESC(use_msi, "PCIe implementation use MSI interrupts. Default: 1 (yes)");
+
+static bool pci_use_second = 1;
+module_param(pci_use_second, bool, 0444);
+MODULE_PARM_DESC(pci_use_second, "Use the second CAN core on PCIe card. Default: 1 (yes)");
 
 /*
  * TX buffer rotation:
@@ -76,7 +84,14 @@ struct ctucan_priv {
 	struct napi_struct napi;
 	struct device *dev;
 	struct clk *can_clk;
+
+	int irq_flags;
+	long unsigned int drv_flags;
+
+	struct list_head peers_on_pdev;
 };
+
+#define CTUCAN_FLAG_RX_SCHED	1
 
 static int ctucan_reset(struct net_device *ndev)
 {
@@ -108,12 +123,9 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct can_bittiming *bt = &priv->can.bittiming;
-	union ctu_can_fd_mode_command_status_settings mode;
 	netdev_dbg(ndev, "ctucan_set_bittiming");
 
-	mode.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_MODE);
-
-	if (mode.s.ena) {
+	if (ctu_can_fd_is_enabled(&priv->p)) {
 		netdev_alert(ndev,
 				 "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
@@ -137,12 +149,9 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	struct can_bittiming *dbt = &priv->can.data_bittiming;
-	union ctu_can_fd_mode_command_status_settings mode;
 	netdev_dbg(ndev, "ctucan_set_data_bittiming");
 
-	mode.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_MODE);
-
-	if (mode.s.ena) {
+	if (ctu_can_fd_is_enabled(&priv->p)) {
 		netdev_alert(ndev,
 				 "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
@@ -216,8 +225,10 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
 
-	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
+	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+
 	ctu_can_fd_int_mask(&priv->p, int_msk, int_enamask_mask);
+	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
 
 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
 
@@ -330,10 +341,9 @@ static int ctucan_rx(struct net_device *ndev)
 	struct sk_buff *skb;
 	u64 ts;
 	union ctu_can_fd_frame_form_w ffw;
-	//netdev_dbg(ndev, "ctucan_rx");
 
+	ffw = ctu_can_fd_read_rx_ffw(&priv->p);
 
-	ffw.u32 = priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
 	if (ffw.s.fdf == FD_CAN)
 		skb = alloc_canfd_skb(ndev, &cf);
 	else
@@ -343,7 +353,7 @@ static int ctucan_rx(struct net_device *ndev)
 		int i;
 		/* Remove the rest of the frame from the controller */
 		for (i = 0; i < ffw.s.rwcnt; i++)
-			priv->p.read_reg(&priv->p, CTU_CAN_FD_RX_DATA);
+			ctu_can_fd_read_rx_word(&priv->p);
 
 		stats->rx_dropped++;
 		return 0;
@@ -538,7 +548,8 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	if (work_done < quota) {
 		if (napi_complete_done(napi, work_done)) {
 			iec.s.doi = 1; /* Also re-enable DOI */
-			priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_SET, iec.u32);
+			clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			ctu_can_fd_int_ena_set(&priv->p, iec);
 		}
 	}
 
@@ -663,60 +674,66 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 	struct net_device *ndev = (struct net_device *)dev_id;
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	union ctu_can_fd_int_stat isr, icr;
+	int irq_loops = 0;
+
 	netdev_dbg(ndev, "ctucan_interrupt");
 
-	/* Get the interrupt status */
-	isr = ctu_can_fd_int_sts(&priv->p);
+	do {
+		/* Get the interrupt status */
+		isr = ctu_can_fd_int_sts(&priv->p);
 
-	if (!isr.u32)
-		return IRQ_NONE;
+		if (test_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags))
+			isr.s.rbnei = 0;
 
-	/* Receive Buffer Not Empty Interrupt */
-	if (isr.s.rbnei) {
-		netdev_dbg(ndev, "RXBNEI");
-		icr.u32 = 0;
-		icr.s.rbnei = 1;
-		ctu_can_fd_int_clr(&priv->p, icr);
+		if (!isr.u32)
+			return irq_loops? IRQ_HANDLED: IRQ_NONE;
 
-		/* Disable RXBNEI and DOI */
-		icr.s.doi = 1;
-		priv->p.write_reg(&priv->p, CTU_CAN_FD_INT_ENA_CLR, icr.u32);
-		napi_schedule(&priv->napi);
+		/* Receive Buffer Not Empty Interrupt */
+		if (isr.s.rbnei) {
+			netdev_dbg(ndev, "RXBNEI");
+			icr.u32 = 0;
+			icr.s.rbnei = 1;
+			ctu_can_fd_int_clr(&priv->p, icr);
+
+			/* Disable RXBNEI and DOI */
+			icr.s.doi = 1;
+			ctu_can_fd_int_ena_clr(&priv->p, icr);
+			set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			napi_schedule(&priv->napi);
+		}
+
+		/* TX Buffer HW Command Interrupt */
+		if (isr.s.txbhci) {
+			netdev_dbg(ndev, "TXBHCI");
+			icr.u32 = 0;
+			icr.s.txbhci = 1;
+			ctu_can_fd_int_clr(&priv->p, icr);
+			ctucan_tx_interrupt(ndev);
+		}
+
+		/* Error interrupts */
+		if (isr.s.ewli || isr.s.doi || isr.s.epi || isr.s.ali) {
+			union ctu_can_fd_int_stat ierrmask = { .s =
+			        { .ewli = 1, .doi = 1, .epi = 1,
+			          .ali = 1, .bei = 1 }};
+			icr.u32 = isr.u32 & ierrmask.u32;
+
+			netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x", icr.u32);
+			ctu_can_fd_int_clr(&priv->p, icr);
+			ctucan_err_interrupt(ndev, isr);
+		}
+		/* Ignore RI, TI, LFI, RFI, BSI */
+	} while (irq_loops++ < 10000);
+
+	netdev_err(ndev, "ctucan_interrupt: stuck interrupt, stopping\n");
+
+	{
+		union ctu_can_fd_int_stat imask, ival;
+		imask.u32 = 0xffffffff;
+		ival.u32 = 0;
+		ctu_can_fd_int_ena(&priv->p, imask, ival);
+		ctu_can_fd_int_mask(&priv->p, imask, ival);
 	}
-	#define CTUCANFD_INT_RI      BIT(0)
-	#define CTUCANFD_INT_TI      BIT(1)
-	#define CTUCANFD_INT_EI      BIT(2)
-	#define CTUCANFD_INT_DOI     BIT(3)
-	#define CTUCANFD_INT_EPI     BIT(4)
-	#define CTUCANFD_INT_ALI     BIT(5)
-	#define CTUCANFD_INT_BEI     BIT(6)
-	#define CTUCANFD_INT_LFI     BIT(7)
-	#define CTUCANFD_INT_RFI     BIT(8)
-	#define CTUCANFD_INT_BSI     BIT(9)
-	#define CTUCANFD_INT_RBNEI   BIT(10)
-	#define CTUCANFD_INT_TXBHCI  BIT(11)
-	#define CTUCANFD_INT_ERROR (CTUCANFD_INT_EI | CTUCANFD_INT_DOI | \
-	                            CTUCANFD_INT_EPI | CTUCANFD_INT_ALI | \
-	                            CTUCANFD_INT_BEI)
-
-	/* TX Buffer HW Command Interrupt */
-	if (isr.s.txbhci) {
-		netdev_dbg(ndev, "TXBHCI");
-		icr.u32 = 0;
-		icr.s.txbhci = 1;
-		ctu_can_fd_int_clr(&priv->p, icr);
-		ctucan_tx_interrupt(ndev);
-	}
-
-	/* Error interrupts */
-	if (isr.s.ewli || isr.s.doi || isr.s.epi || isr.s.ali) {
-		icr.u32 = isr.u32 & CTUCANFD_INT_ERROR;
-		netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x", icr.u32);
-		ctu_can_fd_int_clr(&priv->p, icr);
-		ctucan_err_interrupt(ndev, isr);
-	}
-
-	/* Ignore RI, TI, LFI, RFI, BSI */
 
 	return IRQ_HANDLED;
 }
@@ -739,6 +756,7 @@ static void ctucan_chip_stop(struct net_device *ndev)
 	/* Disable interrupts and disable can */
 	ctu_can_fd_int_ena(&priv->p, ena, mask);
 	ctu_can_fd_enable(&priv->p, false);
+	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 	priv->can.state = CAN_STATE_STOPPED;
 }
 
@@ -768,7 +786,7 @@ static int ctucan_open(struct net_device *ndev)
 		goto err;
 	*/
 
-	ret = request_irq(ndev->irq, ctucan_interrupt, /*priv->irq_flags*/0,
+	ret = request_irq(ndev->irq, ctucan_interrupt, priv->irq_flags,
 			ndev->name, ndev);
 	if (ret < 0) {
 		netdev_err(ndev, "irq allocation for CAN failed\n");
@@ -903,37 +921,29 @@ static const struct dev_pm_ops ctucan_dev_pm_ops = {
 
 
 /**
- * ctucan_probe - Platform registration call
- * @pdev:	Handle to the platform device structure
+ * ctucan_probe_common - Device type independent registration call
  *
  * This function does all the memory allocation and registration for the CAN
  * device.
  *
+ * @dev:	Handle to the generic device structure
+ * @addr:	Base address of CTU CAN FD core address
+ * @irq:	Interrupt number
+ * @ntxbufs:	Number of implemented Tx buffers
+ * @can_clk_rate: Clock rate, if 0 then clock are taken from device node
+ * @pm_enable_call: Whether pm_runtime_enable should be called
+ * @set_drvdata_fnc: Function to set network driver data for physical device
+ *
  * Return: 0 on success and failure value on error
  */
-static int ctucan_probe(struct platform_device *pdev)
+static int ctucan_probe_common(struct device *dev, void __iomem *addr,
+              int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
+              int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
+                                     struct net_device *ndev))
 {
-	struct resource *res; /* IO mem resources */
-	struct net_device *ndev;
 	struct ctucan_priv *priv;
-	void __iomem *addr;
+	struct net_device *ndev;
 	int ret;
-	unsigned int ntxbufs;
-
-	/* Get the virtual base address for the device */
-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-	addr = devm_ioremap_resource(&pdev->dev, res);
-	if (IS_ERR(addr)) {
-		ret = PTR_ERR(addr);
-		goto err;
-	}
-
-	/*
-	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth", &tx_max);
-	if (ret < 0)
-		goto err;
-	*/
-	ntxbufs = 4;
 
 	/* Create a CAN device instance */
 	ndev = alloc_candev(sizeof(struct ctucan_priv), ntxbufs);
@@ -941,8 +951,9 @@ static int ctucan_probe(struct platform_device *pdev)
 		return -ENOMEM;
 
 	priv = netdev_priv(ndev);
+	INIT_LIST_HEAD(&priv->peers_on_pdev);
 	priv->txb_mask = ntxbufs-1;
-	priv->dev = &pdev->dev;
+	priv->dev = dev;
 	priv->can.bittiming_const = &ctu_can_fd_bit_timing_max;
 	priv->can.data_bittiming_const = &ctu_can_fd_bit_timing_data_max;
 	priv->can.do_set_mode = ctucan_do_set_mode;
@@ -963,54 +974,65 @@ static int ctucan_probe(struct platform_device *pdev)
 	priv->p.mem_base = addr;
 
 	/* Get IRQ for the device */
-	ndev->irq = platform_get_irq(pdev, 0);
+	ndev->irq = irq;
 	ndev->flags |= IFF_ECHO;	/* We support local echo */
 
-	platform_set_drvdata(pdev, ndev);
-	SET_NETDEV_DEV(ndev, &pdev->dev);
+	if (set_drvdata_fnc != NULL)
+		set_drvdata_fnc(dev, ndev);
+	SET_NETDEV_DEV(ndev, dev);
 	ndev->netdev_ops = &ctucan_netdev_ops;
 
 	/* Getting the CAN can_clk info */
-	priv->can_clk = devm_clk_get(&pdev->dev, NULL);
-	if (IS_ERR(priv->can_clk)) {
-		dev_err(&pdev->dev, "Device clock not found.\n");
-		ret = PTR_ERR(priv->can_clk);
-		goto err_free;
+	if (can_clk_rate == 0) {
+		priv->can_clk = devm_clk_get(dev, NULL);
+		if (IS_ERR(priv->can_clk)) {
+			dev_err(dev, "Device clock not found.\n");
+			ret = PTR_ERR(priv->can_clk);
+			goto err_free;
+		}
+		can_clk_rate = clk_get_rate(priv->can_clk);
 	}
 
 	priv->p.write_reg = ctu_can_fd_write32;
 	priv->p.read_reg = ctu_can_fd_read32;
 
-	pm_runtime_enable(&pdev->dev);
-	ret = pm_runtime_get_sync(&pdev->dev);
+	if (pm_enable_call)
+		pm_runtime_enable(dev);
+	ret = pm_runtime_get_sync(dev);
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
 			__func__, ret);
 		goto err_pmdisable;
 	}
 
-	if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) & 0xFFFF) != CTU_CAN_FD_ID) {
+	if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) &
+	                    0xFFFF) != CTU_CAN_FD_ID) {
 		priv->p.write_reg = ctu_can_fd_write32_be;
 		priv->p.read_reg = ctu_can_fd_read32_be;
+		if ((priv->p.read_reg(&priv->p, CTU_CAN_FD_DEVICE_ID) &
+		              0xFFFF) != CTU_CAN_FD_ID) {
+			netdev_err(ndev, "CTU_CAN_FD signature not found\n");
+			goto err_disableclks;
+		}
 	}
 
 	ret = ctucan_reset(ndev);
 	if (ret < 0)
 		goto err_pmdisable;
 
-	priv->can.clock.freq = clk_get_rate(priv->can_clk);
+	priv->can.clock.freq = can_clk_rate;
 
 	netif_napi_add(ndev, &priv->napi, ctucan_rx_poll, NAPI_POLL_WEIGHT);
 
 	ret = register_candev(ndev);
 	if (ret) {
-		dev_err(&pdev->dev, "fail to register failed (err=%d)\n", ret);
+		dev_err(dev, "fail to register failed (err=%d)\n", ret);
 		goto err_disableclks;
 	}
 
 	devm_can_led_init(ndev);
 
-	pm_runtime_put(&pdev->dev);
+	pm_runtime_put(dev);
 
 	netdev_dbg(ndev, "mem_base=0x%p irq=%d clock=%d, txb mask:%d\n",
 			priv->p.mem_base, ndev->irq, priv->can.clock.freq,
@@ -1021,21 +1043,80 @@ static int ctucan_probe(struct platform_device *pdev)
 err_disableclks:
 	pm_runtime_put(priv->dev);
 err_pmdisable:
-	pm_runtime_disable(&pdev->dev);
+	if (pm_enable_call)
+		pm_runtime_disable(dev);
 err_free:
+	list_del_init(&priv->peers_on_pdev);
 	free_candev(ndev);
+	return ret;
+}
+
+#ifdef CONFIG_OF
+
+static void ctucan_platform_set_drvdata(struct device *dev,
+                                       struct net_device *ndev)
+{
+	struct platform_device *pdev = container_of(dev, struct platform_device, dev);
+	platform_set_drvdata(pdev, ndev);
+}
+
+/**
+ * ctucan_platform_probe - Platform registration call
+ * @pdev:	Handle to the platform device structure
+ *
+ * This function does all the memory allocation and registration for the CAN
+ * device.
+ *
+ * Return: 0 on success and failure value on error
+ */
+static int ctucan_platform_probe(struct platform_device *pdev)
+{
+	struct resource *res; /* IO mem resources */
+	struct device	*dev = &pdev->dev;
+	void __iomem *addr;
+	int ret;
+	unsigned int ntxbufs;
+	int irq;
+
+	/* Get the virtual base address for the device */
+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	addr = devm_ioremap_resource(dev, res);
+	if (IS_ERR(addr)) {
+		dev_err(dev, "Cannot remap address.\n");
+		ret = PTR_ERR(addr);
+		goto err;
+	}
+	irq = platform_get_irq(pdev, 0);
+	if (irq < 0) {
+		dev_err(dev, "Cannot find interrupt.\n");
+		ret = irq;
+		goto err;
+	}
+
+	/*
+	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth", &tx_max);
+	if (ret < 0)
+		goto err;
+	*/
+	ntxbufs = 4;
+
+        ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 0,
+	                          1, ctucan_platform_set_drvdata);
+
+	if (ret < 0)
+		platform_set_drvdata(pdev, NULL);
 err:
 	return ret;
 }
 
 /**
- * ctucan_remove - Unregister the device after releasing the resources
+ * ctucan_platform_remove - Unregister the device after releasing the resources
  * @pdev:	Handle to the platform device structure
  *
  * This function frees all the resources allocated to the device.
  * Return: 0 always
  */
-static int ctucan_remove(struct platform_device *pdev)
+static int ctucan_platform_remove(struct platform_device *pdev)
 {
 	struct net_device *ndev = platform_get_drvdata(pdev);
 	struct ctucan_priv *priv = netdev_priv(ndev);
@@ -1059,8 +1140,8 @@ static const struct of_device_id ctucan_of_match[] = {
 MODULE_DEVICE_TABLE(of, ctucan_of_match);
 
 static struct platform_driver ctucanfd_driver = {
-	.probe	= ctucan_probe,
-	.remove	= ctucan_remove,
+	.probe	= ctucan_platform_probe,
+	.remove	= ctucan_platform_remove,
 	.driver	= {
 		.name = DRIVER_NAME,
 		.pm = &ctucan_dev_pm_ops,
@@ -1069,6 +1150,242 @@ static struct platform_driver ctucanfd_driver = {
 };
 
 module_platform_driver(ctucanfd_driver);
+
+#endif /*CONFIG_OF*/
+
+#ifdef CONFIG_PCI
+
+#include <linux/pci.h>
+
+#define CYCLONE_IV_CRA_A2P_IE 0x0050
+
+struct ctucan_pci_board_data {
+	void __iomem *cra_base;
+	void __iomem *bar1_base;
+	struct list_head ndev_list_head;
+	int use_msi;
+};
+
+struct ctucan_pci_board_data *ctucan_pci_get_bdata(struct pci_dev *pdev)
+{
+	return (struct ctucan_pci_board_data *)pci_get_drvdata(pdev);
+}
+
+static void ctucan_pci_set_drvdata(struct device *dev,
+                                       struct net_device *ndev)
+{
+	struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
+	struct ctucan_priv *priv = netdev_priv(ndev);
+	struct ctucan_pci_board_data *bdata = ctucan_pci_get_bdata(pdev);
+	list_add(&priv->peers_on_pdev, &bdata->ndev_list_head);
+	priv->irq_flags = IRQF_SHARED;
+}
+
+/**
+ * ctucan_pci_probe - PCI registration call
+ * @pdev:	Handle to the pci device structure
+ *
+ * This function does all the memory allocation and registration for the CAN
+ * device.
+ *
+ * Return: 0 on success and failure value on error
+ */
+static int ctucan_pci_probe(struct pci_dev *pdev,
+			    const struct pci_device_id *ent)
+{
+	struct device	*dev = &pdev->dev;
+	struct ctucan_pci_board_data *bdata;
+	void __iomem *addr;
+	void __iomem *cra_addr;
+	u32 cra_a2p_ie;
+	int ret;
+	unsigned int ntxbufs;
+	int irq;
+	int msi_ok = 0;
+
+	ret = pci_enable_device(pdev);
+	if (ret) {
+		dev_err(dev, "pci_enable_device FAILED\n");
+		goto err;
+	}
+
+	ret = pci_request_regions(pdev, KBUILD_MODNAME);
+	if (ret) {
+		dev_err(dev, "pci_request_regions FAILED\n");
+		goto err_disable_device;
+	}
+
+	if (use_msi) {
+		ret = pci_enable_msi(pdev);
+		if (!ret) {
+			dev_info(dev, "MSI enabled\n");
+			pci_set_master(pdev);
+			msi_ok = 1;
+		}
+	}
+
+	dev_info(dev, "ctucan BAR0 0x%08llx 0x%08llx\n",
+	        (long long)pci_resource_start(pdev, 0),
+		(long long)pci_resource_len(pdev,0));
+
+	dev_info(dev, "ctucan BAR1 0x%08llx 0x%08llx\n",
+	        (long long)pci_resource_start(pdev, 1),
+		(long long)pci_resource_len(pdev,1));
+
+	addr = pci_iomap(pdev, 1, pci_resource_len(pdev, 1));
+	if (!addr) {
+		dev_err(dev, "PCI BAR 1 cannot be mapped\n");
+		ret = -ENOMEM;
+		goto err_release_regions;
+	}
+
+	/* Cyclone IV PCI Express Control Registers Area */
+	cra_addr = pci_iomap(pdev, 0, pci_resource_len(pdev, 0));
+	if (!cra_addr) {
+		dev_err(dev, "PCI BAR 0 cannot be mapped\n");
+		ret = -EIO;
+		goto err_pci_iounmap_bar1;
+	}
+
+	irq = pdev->irq;
+
+	ntxbufs = 4;
+
+	bdata = kzalloc(sizeof(*bdata), GFP_KERNEL);
+	if (!bdata) {
+		dev_err(dev, "Cannot allocate board private data\n");
+		ret = -ENOMEM;
+		goto err_pci_iounmap_bar0;
+	}
+
+	INIT_LIST_HEAD(&bdata->ndev_list_head);
+	bdata->cra_base = cra_addr;
+	bdata->bar1_base = addr;
+	bdata->use_msi = msi_ok;
+
+	pci_set_drvdata(pdev, bdata);
+
+	ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
+	                          0, ctucan_pci_set_drvdata);
+	if (ret < 0)
+		goto err_free_board;
+
+	if (pci_use_second) {
+		addr += 0x4000;
+		ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
+	                          0, ctucan_pci_set_drvdata);
+		if (ret < 0) {
+			dev_info(dev, "second CTU CAN FD core initialization"
+			              " failed\n");
+		}
+	}
+
+	/* enable interrupt in
+	 * Avalon-MM to PCI Express Interrupt Enable Register
+	 */
+	cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
+	cra_a2p_ie |= 1;
+	iowrite32(cra_a2p_ie, (char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	cra_a2p_ie = ioread32((char *)cra_addr + CYCLONE_IV_CRA_A2P_IE);
+	dev_info(dev, "cra_a2p_ie 0x%08x\n", cra_a2p_ie);
+
+	return 0;
+
+err_free_board:
+	pci_set_drvdata(pdev, NULL);
+	kfree(bdata);
+err_pci_iounmap_bar0:
+	pci_iounmap(pdev, cra_addr);
+err_pci_iounmap_bar1:
+	pci_iounmap(pdev, addr);
+err_release_regions:
+	if (msi_ok) {
+		pci_disable_msi(pdev);
+		pci_clear_master(pdev);
+	}
+	pci_release_regions(pdev);
+err_disable_device:
+	pci_disable_device(pdev);
+err:
+	return ret;
+}
+
+/**
+ * ctucan_pci_remove - Unregister the device after releasing the resources
+ * @pdev:	Handle to the pci device structure
+ *
+ * This function frees all the resources allocated to the device.
+ * Return: 0 always
+ */
+static void ctucan_pci_remove(struct pci_dev *pdev)
+{
+	struct net_device *ndev;
+	struct ctucan_priv *priv = NULL;
+	struct ctucan_pci_board_data *bdata = ctucan_pci_get_bdata(pdev);
+
+	dev_dbg(&pdev->dev, "ctucan_remove");
+
+	if (!bdata) {
+		dev_err(&pdev->dev, "ctucan_pci_remove - no list of devices\n");
+		return;
+	}
+
+	/* disable interrupt in
+	 * Avalon-MM to PCI Express Interrupt Enable Register
+	 */
+	if (bdata->cra_base)
+		iowrite32(0, (char *)bdata->cra_base + CYCLONE_IV_CRA_A2P_IE);
+
+
+	while ((priv = list_first_entry_or_null(&bdata->ndev_list_head,
+	                struct ctucan_priv, peers_on_pdev)) != NULL) {
+
+		ndev = priv->can.dev;
+
+		unregister_candev(ndev);
+
+		netif_napi_del(&priv->napi);
+
+		list_del_init(&priv->peers_on_pdev);
+		free_candev(ndev);
+	}
+
+	pci_iounmap(pdev, bdata->bar1_base);
+
+	if (bdata->use_msi) {
+		pci_disable_msi(pdev);
+		pci_clear_master(pdev);
+	}
+
+	pci_release_regions(pdev);
+	pci_disable_device(pdev);
+
+	pci_iounmap(pdev, bdata->cra_base);
+
+	pci_set_drvdata(pdev, NULL);
+	kfree(bdata);
+}
+
+#define CTU_CAN_FD_DEVICE_ID 0xCAFD
+
+static SIMPLE_DEV_PM_OPS(ctucan_pci_pm_ops, ctucan_suspend, ctucan_resume);
+
+static const struct pci_device_id ctucan_pci_tbl[] = {
+	{PCI_VDEVICE(ALTERA, CTU_CAN_FD_DEVICE_ID)},
+	{},
+};
+static struct pci_driver ctucan_pci_driver = {
+	.name = KBUILD_MODNAME,
+	.id_table = ctucan_pci_tbl,
+	.probe = ctucan_pci_probe,
+	.remove = ctucan_pci_remove,
+	.driver.pm = &ctucan_pci_pm_ops,
+};
+
+module_pci_driver(ctucan_pci_driver);
+
+#endif /*CONFIG_PCI*/
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Martin Jerabek");

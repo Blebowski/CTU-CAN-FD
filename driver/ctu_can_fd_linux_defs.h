@@ -41,12 +41,14 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stddef.h>
-//#include <linux/types.h>
+#include <linux/types.h>
 #include <linux/socket.h>
 #include <arpa/inet.h>
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #define __iomem volatile
+
+#ifndef _ASM_GENERIC_INT_LL64_H
 
 typedef uint8_t   __u8;
 typedef uint16_t  __u16;
@@ -57,6 +59,8 @@ typedef int8_t   __s8;
 typedef int16_t  __s16;
 typedef int32_t  __s32;
 typedef int64_t  __s64;
+
+#endif
 
 typedef __u8  u8;
 typedef __u16 u16;
