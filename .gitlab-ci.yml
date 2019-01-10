@@ -14,6 +14,8 @@ build_ip_and_tests:
     script:
         - cd test
         - make elaborate
+        # Do not include the huge binaries in artifacts.
+        - rm -R build/vunit_out/test_output
     only: &only
         - master     # Run on all changes to master branch
         - tags       # Run on all tags
