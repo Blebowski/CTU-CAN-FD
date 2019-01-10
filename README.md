@@ -1,8 +1,8 @@
 # CAN FD IP Core
 
-[![pipeline status](https://gitlab.fel.cvut.cz/illeondr/CAN_FD_IP_Core/badges/master/pipeline.svg)](http://illeondr.pages.fel.cvut.cz/CAN_FD_IP_Core/tests_fast.xml)
-[![coverage report](https://gitlab.fel.cvut.cz/illeondr/CAN_FD_IP_Core/badges/master/coverage.svg)](http://illeondr.pages.fel.cvut.cz/CAN_FD_IP_Core/coverage/)
-[![documentation](https://img.shields.io/badge/documentation--blue.svg)]( http://illeondr.pages.fel.cvut.cz/CAN_FD_IP_Core/Progdokum.pdf)
+[![pipeline status](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/pipeline.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/tests_fast.xml)
+[![coverage report](https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core/badges/master/coverage.svg)](http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/coverage/)
+[![documentation](https://img.shields.io/badge/documentation--blue.svg)]( http://canbus.pages.fel.cvut.cz/ctucanfd_ip_core/Progdokum.pdf)
 
 CAN FD IP Core written in VHDL, originally developed at Czech Technical University -- Faculty of Electrical Engineering -- Department of Measurement.
 
