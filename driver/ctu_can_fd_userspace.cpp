@@ -302,6 +302,17 @@ int main(int argc, char *argv[])
 	printf("%d reads takes %ld.%09ld s\n",
 	       i, (long)diff.tv_sec, diff.tv_nsec);
 
+	dummy = 0;
+        clock_gettime(CLOCK_MONOTONIC, &tic);
+	for (i = 0; i < 1000 * 1000; i++) {
+		ctu_can_fd_write32(priv, CTU_CAN_FD_FILTER_C_VAL, dummy);
+	}
+        clock_gettime(CLOCK_MONOTONIC, &tac);
+
+	timespec_sub(&diff, &tac, &tic);
+	printf("%d writes takes %ld.%09ld s\n",
+	       i, (long)diff.tv_sec, diff.tv_nsec);
+
         return 0;
     }
 
