@@ -1439,11 +1439,6 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 	kfree(bdata);
 }
 
-#define CTU_CAN_FD_VENDOR_ID 0x1760
-#define CTU_CAN_FD_DEVICE_ID 0xff00
-
-#define CTU_CAN_FD_DEVICE_ID_TEST 0xCAFD
-
 static SIMPLE_DEV_PM_OPS(ctucan_pci_pm_ops, ctucan_suspend, ctucan_resume);
 
 static const struct pci_device_id ctucan_pci_tbl[] = {
