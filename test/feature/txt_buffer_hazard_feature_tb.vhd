@@ -41,25 +41,22 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Feature test for immediate abortion of CAN Transmission.
+--  This test will verify that TX Buffer datapath is hazard free.
 --
---  Test sequence:
---      1. Generate CAN Frame, and start transmission by Node 1.
---      2. Wait until transmission is started, plus some random time.
---      3. Read protocol control state, and if unit is still in the frame,
---         send "abort" command via COMMAND register.
---      4. Wait 5 clock cycles and check if unit stopped being transmitter,
---         if not report an error.
---      5. Wait until the other unit transmitts error frame which is caused
---         by sudden disapearing of transmitter during frame.
---      6. Clear error counters.
+--  Test sequence:  
+--      1. Insert frame to TXT Buffer
+--      2. Mark the buffer as ready.
+--      3. Immediately send set_abort command.
+--      4. Readout status of the buffer.
+--      5. If the buffer is "aborted", check that no transmission is in progress
+--         (e.g. via STATUS), throw an error if not.
+--      6. If the buffer is "abort in progress" check that transmission is 
+--         in progress and wait till its end. Throw an error if not.
+--      7. If buffer is in any other state, throw an error.  
 --
 --------------------------------------------------------------------------------
 -- Revision History:
---     22.6.2016  Created file
---    06.02.2018  Modified to work with the IP-XACT generated memory map
---     12.6.2018  Modified test to use HAL like functions from CAN Test lib
---                instead of raw register access functions.
+--      17.1.2019   Created file
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -67,9 +64,9 @@ context work.ctu_can_test_context;
 
 use lib.pkg_feature_exec_dispath.all;
 
-package abort_transmittion_feature is
+package txt_buffer_hazard_feature is
 
-    procedure abort_transmittion_feature_exec(
+    procedure txt_buffer_hazard_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
@@ -77,20 +74,19 @@ package abort_transmittion_feature is
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
     );
-
 end package;
 
 
-package body abort_transmittion_feature is
+package body txt_buffer_hazard_feature is
 
-    procedure abort_transmittion_feature_exec(
+    procedure txt_buffer_hazard_feature_exec(
         variable    o               : out    feature_outputs_t;
         signal      so              : out    feature_signal_outputs_t;
         signal      rand_ctr        : inout  natural range 0 to RAND_POOL_SIZE;
         signal      iout            : in     instance_outputs_arr_t;
         signal      mem_bus         : inout  mem_bus_arr_t;
         signal      bus_level       : in     std_logic
-    )is
+    ) is
         variable r_data             :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
         variable w_data             :       std_logic_vector(31 downto 0) :=
@@ -108,116 +104,76 @@ package body abort_transmittion_feature is
         variable err_counters       :       SW_error_counters;
         variable command            :       SW_command := (false, false, false);
         variable status             :       SW_status;
-	variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;	
-
+	    variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;	
   begin
         o.outcome := true;
 
+    -- Repeat test several times
+    for i in 1 to 50 loop
+        -- Generate CAN frame
+        CAN_generate_frame(rand_ctr, CAN_frame);
+
+        -- Insert the frame for transmittion
+        CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
+
+        -- Wait some random time before sending first command
+        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 0, 200);
+
+        -- Give "Set ready" command to the buffer
+        send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+
+        -- Give "Set abort" command to the buffer
+        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
+
+        -- Wait for some clock cycles before reading buffer and controller state
+        for i in 0 to 600 loop
+            wait until rising_edge(mem_bus(1).clk_sys);
+        end loop;
+
+        -- Read "TXT Buffer state"
+        get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
+
+        -- Read status of CTU CAN FD controller.
+        get_controller_status(status, ID_1, mem_bus(1));
 
 
+        -- Is controller transmitting?
+        if (status.transmitter) then
+            -- Is also TXT buffer in transmitting state? Or if set_abort command
+            -- comes just at the time when the core LOCKs the buffer, it goes to 
+            -- "Abort in Progress".
+            if (txt_buf_state = buf_tx_progress) or 
+                (txt_buf_state = buf_ab_progress) then
+                -- Everything is ok
+                info("Transmitting: Both TXT buffer and controller " & 
+                     "in consistence state." & " [" & to_string(i) & "]");
+         
+                -- Wait until bus is idle 
+                ------------------------------------------------------------------
+                CAN_wait_bus_idle(ID_1, mem_bus(1));
 
-
-
-	for i in 1 to 2 loop
-
-		------------------------------------------------------------------------
-		-- Generate CAN frame
-		------------------------------------------------------------------------
-		CAN_generate_frame(rand_ctr, CAN_frame);
-
-		------------------------------------------------------------------------
-		-- Insert the frame for transmittion
-		------------------------------------------------------------------------
-		CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
-
-
-  		-- Give "Set ready" command to the buffer
-       		 send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
-
-		------------------------------------------------------------------------
-		-- Wait until unit turns transmitter
-		------------------------------------------------------------------------
-		loop
-		    get_controller_status(status, ID_1, mem_bus(1));
-		    if (status.transmitter) then
-		        exit;
-		    end if;
-		end loop;
-
-		------------------------------------------------------------------------
-		-- Now wait random time up to 250 000 clock cycles!
-		-- But at least 200 clock cycles! We want to avoid situation that unit
-		-- aborts immediately after the frame was commited and SOF was not
-		-- yet sent!
-
-		-- TODO: rewrite with non random wait (more precisely defined time steps)
-		------------------------------------------------------------------------
-		--wait_rand_cycles(std_logic_vector(i*unsigned(rand_ctr)), mem_bus(1).clk_sys, 200, 250000);
-	
-		for k in 10 to (50*i) loop
-			wait until rising_edge(mem_bus(1).clk_sys);
-		end loop;
-
-
-		-- Give "Set abort" command to the buffer
-       		 send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
-
-		
-		-- Now wait for few clock cycles until Node aborts the transmittion
-		for i in 0 to 5 loop
-			wait until rising_edge(mem_bus(1).clk_sys);
-		end loop;
-
-
-		-- Read "TXT Buffer state"
-		get_tx_buf_state(1, txt_buf_state, ID_1, mem_bus(1));
-
-		
-
-
-
-		-- Read status of CTU CAN FD controller.
-		get_controller_status(status, ID_1, mem_bus(1));
-
-
-		-- Is controller transmitting?
-		if (status.transmitter) then
-			-- Is also TXT buffer in transmittin state?
-			if (txt_buf_state = buf_tx_progress) then
-				-- Everything is ok
-				report "Both TXT buffer and controller in tx progress state.";
-
-				-- Wait until bus is idle 
-				--------------------------------------------------------------------
-				CAN_wait_bus_idle(ID_1, mem_bus(1));
-
-				-- Check that unit is now idle since it is after transmittion already
-				get_controller_status(status, ID_1, mem_bus(1));
-				if (not status.bus_status) then
-					-- LCOV_EXCL_START
-					report "Unit is not Idle!" severity error;
-					o.outcome := false;
-					-- LCOV_EXCL_STOP
-				end if;
-			else
-				-- Inconsistency happened 
-				report "status: ";
-		 		report "Inconsistence: CAN controller transmitter=TRUE, TXT buffer=" & to_string(txt_buf_state) & " [" & to_string(i) & "]" severity error;
-				
-				o.outcome := false;
-			end if;
-		else 
-			-- Is also TXT buffer in aborted state?
-			if (txt_buf_state = buf_aborted) then
-				-- Everything is ok
-				report "Both TXT buffer and controller in aborted state.";		
-			else
-				-- Inconsistency happened
-		 		report "Inconsistence: CAN controller transmitter=FALSE, TXT buffer=" & to_string(txt_buf_state) & " [" & to_string(i) & "]" severity error;
-				o.outcome := false;
-			end if;
-		end if;
+                -- Is the unit now in idle since it is after transmittion already?
+                get_controller_status(status, ID_1, mem_bus(1));
+                check(status.bus_status, "Unit is not Idle!");
+            else
+                -- Inconsistency happened
+                check_failed("Inconsistence: CAN controller transmitter=TRUE, TXT " &
+                             "buffer=" & to_string(txt_buf_state) &
+                             " [" & to_string(i) & "]");
+            end if;
+        else 
+            -- Is also TXT buffer in aborted state?
+            if (txt_buf_state = buf_aborted) then
+                -- Everything is ok
+                info("Both TXT buffer and controller in aborted state" &
+                     " [" & to_string(i) & "]");		 
+            else
+                -- Inconsistency happened
+               check_failed("Inconsistence: CAN controller transmitter=FALSE, TXT " &
+                            "buffer=" & to_string(txt_buf_state) & 
+                            " [" & to_string(i) & "]");
+            end if;
+        end if;
 	end loop;
   end procedure;
-
 end package body;
