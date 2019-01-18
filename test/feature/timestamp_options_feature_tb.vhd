@@ -121,13 +121,8 @@ package body timestamp_options_feature is
         ------------------------------------------------------------------------
         -- Bit time in default config is 160 clock cycles. Give some reserve.
         ------------------------------------------------------------------------  
-        if (diff > 200) then
-            -- LCOV_EXCL_START
-            error("Timestamp difference is too big from SOF! " & 
+        check(diff <= 200, "Timestamp difference is too big from SOF! " & 
                     integer'image(diff));
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
 
         ------------------------------------------------------------------------
         -- Configure timestamp options to the end of CAN Frame.
@@ -160,13 +155,8 @@ package body timestamp_options_feature is
         -- intermission, when controller is in idle! Thus there are 3
         -- extra bits of difference in timestamp!
         ------------------------------------------------------------------------
-        if (diff > 600) then
-            -- LCOV_EXCL_START
-            error("Timestamp difference is too big from EOF!" &
+        check(diff <= 600, "Timestamp difference is too big from EOF!" &
                    integer'image(diff));
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
 
     end procedure;
 

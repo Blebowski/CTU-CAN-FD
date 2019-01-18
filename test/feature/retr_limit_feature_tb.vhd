@@ -134,20 +134,9 @@ package body retr_limit_feature is
             CAN_wait_frame_sent(ID_1, mem_bus(1));
             get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
             if (i /= retr_th) then
-                if (buf_state /= buf_ready) then
-                    -- LCOV_EXCL_START
-                    error("TXT Buffer not ready");
-                    o.outcome := false;
-                    exit;
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(buf_state = buf_ready, "TXT Buffer not ready");
             else
-                if (buf_state /= buf_failed) then
-                    -- LCOV_EXCL_START
-                    error("TXT Buffer not failed");
-                    o.outcome := false;
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(buf_state = buf_failed, "TXT Buffer not failed");
             end if;
         end loop;
 
@@ -156,13 +145,9 @@ package body retr_limit_feature is
         -- plus one original transmittion does not count as retransmittion.
         ------------------------------------------------------------------------
         read_error_counters(err_counters, ID_1, mem_bus(1));
-        if (err_counters.tx_counter /= 8 * (retr_th + 1)) then
-            -- LCOV_EXCL_START
-            error("Counters exp: " & Integer'Image(err_counters.tx_counter) &
-                  " counters real: " & Integer'image(8 * (retr_th + 1)));
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(err_counters.tx_counter = 8 * (retr_th + 1),
+            "Counters exp: " & Integer'Image(err_counters.tx_counter) &
+            " counters real: " & Integer'image(8 * (retr_th + 1)));
 
         ------------------------------------------------------------------------
         -- Set node  2 to allow acknowledge again

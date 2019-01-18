@@ -185,7 +185,6 @@ architecture Event_logger_unit_test of CAN_test is
         signal   log_state        :in    logger_state_type;
         signal   trig_inputs	  :in    std_logic_vector(trig_amount - 1 downto 0);
         signal   drv_trig         :in    std_logic_vector(trig_amount - 1 downto 0);
-        signal   log_level        :in    log_lvl_type;
         variable outcome          :inout boolean
     ) is
         constant trig_zero        :      std_logic_vector(trig_amount - 1 downto 0)
@@ -227,7 +226,6 @@ architecture Event_logger_unit_test of CAN_test is
         signal    clk_sys            : in    std_logic;
         signal    logger_act_dat     : in    std_logic_vector(63 downto 0);
         signal    log_mod_mem        : in    log_mod_mem_type;
-        signal    log_level          : in    log_lvl_type;
         variable  outcome            : out   boolean
     ) is
         variable  found              :       boolean;
@@ -253,12 +251,7 @@ architecture Event_logger_unit_test of CAN_test is
                 end if;
             end loop;
 
-            if (found = false) then
-                -- LCOV_EXCL_START
-                error("Event not found! Index: " & Integer'Image(i));
-                outcome := false;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(found, "Event not found! Index: " & Integer'Image(i));
 
             drv_up <= '1';
             wait until rising_edge(clk_sys);
@@ -517,28 +510,16 @@ begin
             generate_capture_setting(rand_ctr, drv_capt);
             generate_trigger_setting(rand_ctr, drv_trig);
             start_event_logger(drv_start_logger, log_level);
-            wait_till_trigger(clk_sys, log_state_out, trig_inputs, drv_trig,
-                                log_level, outcome);
-            if (not outcome) then
-                -- LCOV_EXCL_START
-                error("Logger did not trigger as expected!");
-                process_error(error_ctr, error_beh, exit_imm);
-                -- LCOV_EXCL_STOP
-            end if;
+            wait_till_trigger(clk_sys, log_state_out, trig_inputs, drv_trig
+                              , outcome);
+            check(outcome, "Logger did not trigger as expected!");
 
             -- Wait till logging finishes
             wait until log_state_out = config;
 
-            check_events(drv_up, clk_sys, loger_act_data, log_mod_mem,
-                            log_level, outcome);
-
-            if (outcome = false) then
-                -- LCOV_EXCL_START
-                error("Recorded event not matching expected value");
-                process_error(error_ctr, error_beh, exit_imm);
-                -- LCOV_EXCL_STOP
-            end if;
-
+            check_events(drv_up, clk_sys, loger_act_data, log_mod_mem
+                         , outcome);
+            check(outcome, "Recorded event not matching expected value");
             loop_ctr <= loop_ctr + 1;
         end loop;
 

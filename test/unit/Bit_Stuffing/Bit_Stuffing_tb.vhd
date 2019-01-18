@@ -526,12 +526,7 @@ architecture bit_stuffing_unit_test of CAN_test is
             -- Receiving
             if (rx_trig_ack = '1') then
                 wait for 1 ns;
-                if (rx_data /= tx_data) then
-                    -- LCOV_EXCL_START
-                     error("TX, RX data mismatch");
-                     process_error(err_ctr, error_beh, exit_imm);
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(rx_data = tx_data, "TX, RX data mismatch");
                 nbs_ptr := nbs_ptr + 1;
                 nbs_index <= nbs_ptr;
             end if;
@@ -557,19 +552,10 @@ architecture bit_stuffing_unit_test of CAN_test is
             -- supposed to!
             if (bs_trig = '1') then
                 wait for 1 ns;
-                if (stuffed_data /= set.stuffed_data_seq(wbs_ptr)) then
-                    -- LCOV_EXCL_START
-                    error("Stuffed data mismatch");
-                    process_error(err_ctr, error_beh, exit_imm);
-                    -- LCOV_EXCL_STOP
-                end if;
-
-                if (set.stuffed_bits_mark(wbs_ptr) /= data_halt) then
-                    -- LCOV_EXCL_START
-                    error("Stuff bit not inserted!");
-                    process_error(err_ctr, error_beh, exit_imm);
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(stuffed_data = set.stuffed_data_seq(wbs_ptr),
+                      "Stuffed data mismatch");
+                check(set.stuffed_bits_mark(wbs_ptr) = data_halt,
+                      "Stuff bit not inserted!");
                 wbs_ptr := wbs_ptr + 1;
                 wbs_index <= wbs_ptr;
             end if;
@@ -731,12 +717,7 @@ begin
 
             -- Now stuff error should be fired by bit destuffing, since
             -- bit value was forced to be the same as previous bits!
-            if (stuff_error = '0') then
-                -- LCOV_EXCL_START
-                error("Stuff error not fired!");
-                process_error(stuf_e_err_ctr, error_beh, exit_imm_1);
-                -- LCOV_EXCL_STOP
-            end if;
+            check(stuff_error = '1', "Stuff error not fired!");
             wait until rising_edge(clk_sys);
             err_data <= '0';
         end if;

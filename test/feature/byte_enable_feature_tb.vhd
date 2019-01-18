@@ -91,12 +91,7 @@ package body byte_enable_feature is
         address := YOLO_REG_ADR;
         CAN_read(data, address, ID, mem_bus(1), BIT_32);
 
-        if (data /= x"DEADBEEF") then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("32 bit read error");
-            -- LCOV_EXCL_STOP
-        end if;
+        check(data = x"DEADBEEF", "32 bit read error");
 
         ------------------------------------------------------------------------
         -- Now read per half word (16 BIT)
@@ -108,24 +103,13 @@ package body byte_enable_feature is
             CAN_read(data, address, ID, mem_bus(1), BIT_16);
 
             -- Checking if valid 2 bytes match register value
-            if (data(16 * i + 15 downto 16 * i) /= 
-	            YOLO_VAL_RSTVAL(16 * i + 15 downto 16 * i))
-            then
-                -- LCOV_EXCL_START
-                info("Read error - 16 bit access (valid byte), Index:");
-                error(integer'image(i));
-	            o.outcome := false;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(data(16 * i + 15 downto 16 * i) = 
+	              YOLO_VAL_RSTVAL(16 * i + 15 downto 16 * i),
+	              "Read error - 16 bit access (valid byte), Index:");
 
             -- Checking invalid 2 bytes are 0
-            if (data(16 * (1 - i) + 15 downto 16 * (1 - i)) /= x"0000") then
-                -- LCOV_EXCL_START
-                info("Read error -16 bit access (empty byte), Index :");
-                error(integer'image(i)); 
-	            o.outcome := false;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(data(16 * (1 - i) + 15 downto 16 * (1 - i)) = x"0000",
+                 "Read error -16 bit access (empty byte), Index :");
         end loop;
 
         ------------------------------------------------------------------------
@@ -138,50 +122,27 @@ package body byte_enable_feature is
             CAN_read(data, address, ID, mem_bus(1), BIT_8);
 
             -- Checking if valid 1 byte matches register value
-            if (data(8 * i + 7 downto 8 * i) /= 
-	            YOLO_VAL_RSTVAL(8 * i + 7 downto 8 * i))
-            then
-                -- LCOV_EXCL_START
-	            o.outcome := false;
-                info("Read error - 8 bit access (valid byte), Index :");
-                error(Integer'image(i));
-                -- LCOV_EXCL_STOP
-            end if;
+            check(data(8 * i + 7 downto 8 * i) = 
+	              YOLO_VAL_RSTVAL(8 * i + 7 downto 8 * i),
+	              "Read error - 8 bit access (valid byte), Index :");
 
             -- Checking if other bytes are 0
             case i is
             when 0 =>
-                if (data(31 downto 8) /= x"000000") then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Read error - 8 bit (Empty byte 0)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(31 downto 8) = x"000000",
+                      "Read error - 8 bit (Empty byte 0)");
             when 1 =>
-                if (data(31 downto 16) /= x"0000" or
-                    data(7 downto 0) /= x"00")
-                then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Read error - 8 bit (Empty byte 1)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(31 downto 16) = x"0000" and
+                      data(7 downto 0) = x"00",
+                      "Read error - 8 bit (Empty byte 1)");
             when 2 =>
-                if (data(31 downto 24) /= x"00" or
-                    data(15 downto 0) /= x"0000")
-                then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Read error - 8 bit (Empty byte 2)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(31 downto 24) = x"00" and
+                      data(15 downto 0) = x"0000",
+                      "Read error - 8 bit (Empty byte 2)");
             when 3 =>
-                if (data(23 downto 0) /= x"000000") then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Read error - 8 bit (Empty byte 3)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(23 downto 0) = x"000000",
+                "Read error - 8 bit (Empty byte 3)");
+                
             when others =>
                 error("Invalid byte index"); -- LCOV_EXCL_LINE
             end case;
@@ -209,48 +170,27 @@ package body byte_enable_feature is
             CAN_read(data, address, ID, mem_bus(1), BIT_8);
             
             -- Checking if one written byte was written OK!
-            if (data(8 * i + 7 downto 8 * i) /= x"0A") then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                info("Write error - 8 bit (valid byte), Index :");
-                error(Integer'image(i));
-                -- LCOV_EXCL_STOP
-            end if;
+            check(data(8 * i + 7 downto 8 * i) = x"0A",
+                  "Write error - 8 bit (valid byte), Index :");
 
             -- Checking if other bytes are 0
             case i is
             when 0 =>
-                if (data(31 downto 8) /= x"000000") then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Write error - 8 bit (Empty byte 0)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(31 downto 8) = x"000000",
+                     "Write error - 8 bit (Empty byte 0)");
             when 1 =>
-                if (data(31 downto 16) /= x"0000" or
-                    data(7 downto 0) /= x"00")
-                then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Write error - 8 bit (Empty byte 1)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(31 downto 16) = x"0000" and
+                      data(7 downto 0) = x"00",
+                      "Write error - 8 bit (Empty byte 1)");
             when 2 =>
-                if (data(31 downto 24) /= x"00" or
-                    data(15 downto 0) /= x"0000")
-                then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Write error - 8 bit (Empty byte 2)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(31 downto 24) = x"00" and
+                      data(15 downto 0) = x"0000",
+                      "Write error - 8 bit (Empty byte 2)");
+
             when 3 =>
-                if (data(23 downto 0) /= x"000000") then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    error("Write error - 8 bit (Empty byte 3)");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check(data(23 downto 0) = x"000000",
+                      "Write error - 8 bit (Empty byte 3)");
+                      
             when others =>
                 error("Invalid byte index"); -- LCOV_EXCL_LINE
             end case;

@@ -116,37 +116,24 @@ package body rx_status_feature is
         ------------------------------------------------------------------------
         -- Check that buffer is empty
         ------------------------------------------------------------------------
-        if (not buf_info.rx_empty) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("RX Buffer is not empty after Release receive Buffer command");
-            -- LCOV_EXCL_STOP
-        end if;
+        check(buf_info.rx_empty,
+              "RX Buffer is not empty after Release receive Buffer command");
 
         ------------------------------------------------------------------------
         -- Check that free memory is equal to buffer size
         ------------------------------------------------------------------------
-        if (buf_info.rx_buff_size /= buf_info.rx_mem_free) then
-            -- LCOV_EXCL_START
-            error("Number of free words in RX Buffer after Release Receive " &
-                  "Buffer command is not equal to buffer size");
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(buf_info.rx_buff_size = buf_info.rx_mem_free,
+             "Number of free words in RX Buffer after Release Receive " &
+             "Buffer command is not equal to buffer size");
 
         ------------------------------------------------------------------------
         -- Check that both pointers are 0 as well
         -- as message count
         ------------------------------------------------------------------------
-        if (buf_info.rx_frame_count /= 0 or buf_info.rx_write_pointer /= 0 or
-            buf_info.rx_read_pointer /= 0)
-        then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("RX Buffer pointers are not 0 after Release Receieve Buffer" &
-                  " command");
-            -- LCOV_EXCL_START
-        end if;
+        check(buf_info.rx_frame_count = 0 and
+              buf_info.rx_write_pointer = 0 and
+              buf_info.rx_read_pointer = 0,
+              "RX Buffer pointers are not 0 after Release Receieve Buffer command");
 
         ------------------------------------------------------------------------
         -- Generate the CAN frames and send them by Node 2
@@ -186,22 +173,13 @@ package body rx_status_feature is
             -- Check that message count was incremented and memfree is correct!
             --------------------------------------------------------------------
             get_rx_buf_state(buf_info, ID_1, mem_bus(1));
-            if (number_frms_sent /= buf_info.rx_frame_count and send_more) then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                error("Number of frames in RX Buffer not incremented");
-                -- LCOV_EXCL_STOP
-            end if;
-            if ((buf_info.rx_mem_free + in_RX_buf) /= buf_info.rx_buff_size
-                and send_more)
-            then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                error("RX Buffer free memory + Number of stored words does " &
-                      "not equal to RX Buffer size!");
-                -- LCOV_EXCL_STOP
-            end if;
-
+            check((number_frms_sent = buf_info.rx_frame_count) or (not send_more),
+                  "Number of frames in RX Buffer not incremented");
+                  
+            check((buf_info.rx_mem_free + in_RX_buf) = buf_info.rx_buff_size or
+                  (not send_more),
+                  "RX Buffer free memory + Number of stored words does " &
+                  "not equal to RX Buffer size!");
         end loop;
 
         ------------------------------------------------------------------------
@@ -209,12 +187,7 @@ package body rx_status_feature is
         -- needed... Overrun should be present
         ------------------------------------------------------------------------
         get_controller_status(status, ID_1, mem_bus(1));
-        if (not status.data_overrun) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("Data overrun not ocurred as expected!");
-            -- LCOV_EXCL_STOP
-        end if;
+        check(status.data_overrun, "Data overrun not ocurred as expected!");
 
         ------------------------------------------------------------------------
         -- Clear the data overrun flag
@@ -227,12 +200,7 @@ package body rx_status_feature is
         -- Check that overrun flag was cleared
         ------------------------------------------------------------------------
         get_controller_status(status, ID_1, mem_bus(1));
-        if (status.data_overrun) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("Data Overrun flag not active!");
-            -- LCOV_EXCL_STOP
-        end if;
+        check_false(status.data_overrun, "Data Overrun flag not cleared!");
 
     end procedure;
 

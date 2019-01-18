@@ -203,22 +203,14 @@ package body bus_start_feature is
         get_rx_buf_state(rx_state, ID_1, mem_bus(1));
         info("Read RX Buffer state");
 
-        if (rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("RX Buffer is empty, but Frame should be received!");
-            -- LCOV_EXCL_STOP
-        end if;
+        check_false(rx_state.rx_empty,
+               "RX Buffer is empty, but Frame should be received!");
 
         CAN_frame.identifier := 0;
         CAN_read_frame(CAN_frame, ID_1, mem_bus(1));
-        if (CAN_frame.identifier /= 513) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("Wrong Identifier received by Node 1. Expected: 513 , Real: " &
-                  integer'image(CAN_frame.identifier));
-            -- LCOV_EXCL_STOP
-        end if;
+        check(CAN_frame.identifier = 513,
+              "Wrong Identifier received by Node 1! Expected: 513 , Real: " &
+               integer'image(CAN_frame.identifier));
 
         ------------------------------------------------------------------------
         -- Now wait until Node 1 transmitts frame which lost the arbitration

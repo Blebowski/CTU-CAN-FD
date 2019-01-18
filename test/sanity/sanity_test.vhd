@@ -922,15 +922,10 @@ begin
                 end if;
 
                 -- If any of the nodes turned error passive
-                if (erp_detected(1) or erp_detected(2) or
-                    erp_detected(3) or erp_detected(4))
-                then
-                    -- LCOV_EXCL_START
-                    step_done:= true;
-                    error("Some unit turned error passive -> " &
-                          "Most probably traffic consitency check will fail!");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check_false(erp_detected(1) or erp_detected(2) or
+                            erp_detected(3) or erp_detected(4),
+                           "Some unit turned error passive -> " &
+                           "Most probably traffic consitency check will fail!");
                 wait for 100 ns;
             end loop;
 
@@ -944,13 +939,7 @@ begin
 
             -- Now evaluate the memories content...
             check_memories(tx_mems, rx_mems, outcome);
-
-            if (outcome = false) then
-                -- LCOV_EXCL_START
-                error("Traffic consitency check error!");
-                process_error(error_ctr, error_beh, exit_imm);
-                -- LCOV_EXCL_STOP
-            end if;
+            check(outcome, "Traffic consitency check error!");
 
             wait for 1000 ns;
             loop_ctr <= loop_ctr + 1;

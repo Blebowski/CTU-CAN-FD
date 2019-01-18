@@ -134,24 +134,14 @@ package body rtr_pref_feature is
         -- Insert the frame for transmittion and wait until it was sent
         ------------------------------------------------------------------------
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
-        if (not frame_sent) then
-			-- LCOV_EXCL_START
-            o.outcome := false;
-			error("Frame was not inserted for transmission properly!");
-			-- LCOV_EXCL_STOP
-        end if;
+        check(frame_sent, "Frame was not inserted for transmission properly!");
         CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Check that recieved DLC is zero
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
-        if (rx_frame.dlc /= x"0") then
-			-- LCOV_EXCL_START
-            o.outcome := false;
-			error("DLC of Received frame is not zero as expected");
-			-- LCOV_EXCL_STOP
-        end if;
+        check(rx_frame.dlc = x"0", "DLC of Received frame is not zero as expected");
 
 
         ------------------------------------------------------------------------
@@ -175,24 +165,14 @@ package body rtr_pref_feature is
         -- Insert the frame for transmittion and wait until recieved
         ------------------------------------------------------------------------
         CAN_send_frame(tx_frame, 1, ID_1, mem_bus(1), frame_sent);
-        if (not frame_sent) then
-			-- LCOV_EXCL_START
-            o.outcome := false;
-			error("Frame was not inserted for transmission properly!");
-			-- LCOV_EXCL_STOP
-        end if;
+        check(frame_sent, "Frame was not inserted for transmission properly!");
         CAN_wait_frame_sent(ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Check that recieved DLC is matching transmitted DLC
         ------------------------------------------------------------------------
         CAN_read_frame(rx_frame, ID_2, mem_bus(2));
-        if (rx_frame.dlc /= tx_frame.dlc) then
-			-- LCOV_EXCL_START
-            o.outcome := false;
-			error("TX DLC is not equal to RX DLC");
-			-- LCOV_EXCL_STOP
-        end if;
+        check(rx_frame.dlc = tx_frame.dlc, "TX DLC is not equal to RX DLC");
 
   end procedure;
 

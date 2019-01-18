@@ -156,14 +156,7 @@ package body tx_arb_time_tran_feature is
         -- cycles are delay of TX Arbitrator! This gives possible delay
         -- of 186 clock cycles. Let's take 190 to have some reserve!
         ------------------------------------------------------------------------
-        if (aux1 - aux2 > 190) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("Frame not sent at time when expected!");
-            -- LCOV_EXCL_STOP
-        else
-            info("OK");
-        end if;
+        check(aux1 - aux2 <= 190, "Frame not sent at time when expected!");
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
@@ -201,12 +194,7 @@ package body tx_arb_time_tran_feature is
         -- transmitt time. This fits to the default setting of up to 130 clock
         -- cycles per bit time!
         ------------------------------------------------------------------------
-        if (aux1 - aux2 > 150) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            error("Frame not sent at time when expected!");
-            -- LCOV_EXCL_STOP
-        end if;
+        check(aux1 - aux2 <= 150, "Frame not sent at time when expected!");
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
   end procedure;

@@ -313,11 +313,7 @@ architecture rx_buf_unit_test of CAN_test is
         wait for 1 ns;
 
         -- Check that overrun was cleared
-        if (rx_data_overrun = '1') then
-            -- LCOV_EXCL_START
-            error("Overrun not cleared!");
-            -- LCOV_EXCL_STOP
-        end if;
+        check(rx_data_overrun = '0', "Overrun not cleared!");
 
         ------------------------------------------------------------------------
         -- Initiate Frame by SOF pulse and store timestamp!
@@ -466,13 +462,12 @@ architecture rx_buf_unit_test of CAN_test is
             drv_read_start        <= '1';
             out_mem(out_pointer)  <= buff_out;
 
+            -------------------------------------------------------------------
             -- Check that word is exactly matching the word in in_mem at the
-            -- same position
-            if (buff_out /= in_mem(out_pointer)) then
-                -- LCOV_EXCL_START
-                error("Buffer FUCKED UP, index: " & integer'image(out_pointer));
-                -- LCOV_EXCL_STOP
-            end if;
+            -- same position!
+            -------------------------------------------------------------------
+            check(buff_out = in_mem(out_pointer),
+                  "Buffer FUCKED UP, index: " & integer'image(out_pointer));
 
             out_pointer           <= out_pointer + 1;
             wait until rising_edge(clk_sys);
@@ -696,12 +691,7 @@ begin
         cons_res := false;
         compare_data(in_mem, out_mem, cons_res);
 
-        if (cons_res = false) then
-            -- LCOV_EXCL_START
-            process_error(cons_errs, error_beh, exit_imm_d_3);
-            error("Data consistency check failed !");
-            -- LCOV_EXCL_STOP
-        end if;
+        check(cons_res, "Data consistency check failed !");
 
         -- Now we can tell to the other circuits that one iteration is over
         iteration_done <= true;

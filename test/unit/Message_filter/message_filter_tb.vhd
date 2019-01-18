@@ -140,15 +140,18 @@ architecture mess_filt_unit_test of CAN_test is
         variable frame_conc   :       std_logic_vector(28 downto 0);
         variable low_conc     :       std_logic_vector(28 downto 0);
         variable high_conc    :       std_logic_vector(28 downto 0);
+        variable inv_type     :       boolean;
     begin
 
         -- Filters disabled but result is positive -> error
         if (drv_settings.drv_filters_ena = '0') then
+            
+          check(frame_info.rec_ident_valid = filt_res,
+                "Filters disabled but result positive");
 
           if (frame_info.rec_ident_valid = filt_res) then
               return true;
           else
-              error("Filters disabled but result positive");
               return false;
           end if;
         end if;
@@ -207,60 +210,40 @@ architecture mess_filt_unit_test of CAN_test is
         --------------------------------------------
         -- Invalid frame type was not filtered out
         --------------------------------------------
-        if( (A_type = false)    and
-          (B_type = false)    and
-          (C_type = false)    and
-          (ran_type = false)  and
-          (filt_res = '1')
-        )then
-            error("Invalid frame type was not filtered out");
-            return false;
-        end if;
+        check((A_type = true)    or
+              (B_type = true)    or
+              (C_type = true)    or
+              (ran_type = true)  or
+              (filt_res = '0'),
+              "No filter should have valid frame type, but output is valid!");
 
         -------------------------------------------
         -- Valid or invalid frames on input
         -------------------------------------------
-        if( ((A_type and  A_vals) or
+        if(((A_type and  A_vals) or
            (B_type and B_vals) or
            (C_type and C_vals) or
            (ran_type and ran_vals))
           and
-           (drv_settings.drv_filters_ena='1')
+           (drv_settings.drv_filters_ena = '1')
           and
-           (frame_info.rec_ident_valid='1')
+           (frame_info.rec_ident_valid = '1')
         ) then
-
+        
+            check(filt_res = '1', "Valid frame did not pass filters!");
             if (filt_res = '1') then   --Is detected
                 return true;
-
-            elsif (filt_res = '0') then -- Is not detected
-                -- LCOV_EXCL_START
-                error("Valid frame not detected");
-                return false;
-                -- LCOV_EXCL_STOP
             else
-                -- LCOV_EXCL_START
-                error("Filter res undefined");
                 return false;
-                -- LCOV_EXCL_STOP
             end if;
 
         else
-
-            if (filt_res = '1') then   --Is detected
-                -- LCOV_EXCL_START
-                error("Invalid frame but frame detected");
-                return false;
-                -- LCOV_EXCL_STOP
-
-            elsif (filt_res = '0') then -- Is not detected
+            
+            check(filt_res = '0', "Invalid frame passed filters!");
+            if (filt_res = '0') then -- Is not detected
                 return true;
-
             else
-                -- LCOV_EXCL_START
-                error("Filter res undefined");
                 return false;
-                -- LCOV_EXCL_STOP
             end if;
 
         end if;

@@ -408,22 +408,14 @@ begin
             -- CTU CAN FD
             CAN_compare_frames(TX_frame, RX_frame, false, result);
  
-            -- Print error if frames are not matching!
-            if (not result) then
-                -- LCOV_EXCL_START
-                info("Iteration nr: " & integer'image(loop_ctr));
+            info("TX Frame:");
+            CAN_print_frame(TX_frame, log_level);
                 
-                log("TX Frame:");
-                CAN_print_frame(TX_frame, log_level);
-                
-                info("RX Frame:");
-                CAN_print_frame(RX_frame, log_level);
-				
-				error("TX, RX frames mismatch!");
-                process_error(error_ctr, error_beh, exit_imm);
-                -- LCOV_EXCL_STOP
-            end if;
-
+            info("RX Frame:");
+            CAN_print_frame(RX_frame, log_level);
+            
+            check(result, "TX, RX frames mismatch!");
+            
             loop_ctr <= loop_ctr + 1;
         end loop;
         file_close(config_file);
@@ -433,5 +425,3 @@ begin
 
 
 end architecture;
-
-

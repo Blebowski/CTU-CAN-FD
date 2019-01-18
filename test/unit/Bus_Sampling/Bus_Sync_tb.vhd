@@ -317,13 +317,9 @@ begin
             for i in 0 to 50 loop
                 wait until rising_edge(rx_trig);
                 wait for 20 ns;
-
-                if ((data_tx /= data_rx) and bit_Error = '0') then
-                    -- LCOV_EXCL_START
-                    process_error(error_ctr, error_beh, exit_imm);
-                    error("TX and RX Data mismatch and no bit error fired!");
-                    -- LCOV_EXCL_STOP
-                end if;
+                -- Check that when TX RX mismatch occurs, Bit Error is 1!
+                check_implication(data_tx /= data_rx, bit_Error = '1',
+                      "TX and RX Data mismatch and no bit error fired!");
             end loop;
 
             --------------------------------------------------------------------
@@ -341,13 +337,8 @@ begin
             for i in 0 to 50 loop
                 wait until rising_edge(rx_trig);
                 wait for 20 ns;
-
-                if ((data_tx /= data_rx) and bit_Error = '0') then
-                    -- LCOV_EXCL_START
-                    process_error(error_ctr, error_beh, exit_imm);
-                    error("TX and RX Data are mismatching and no bit error fired!");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check((data_tx = data_rx) or (bit_Error = '1'),
+                      "TX and RX Data are mismatching and no bit error fired!");
             end loop;
 
 
@@ -404,15 +395,9 @@ begin
 
                 -- Here we compare the TX data delayed by Transciever delay
                 -- measured amount!
-                if ((tran_data_sr(to_integer(unsigned(trv_delay_out))) /=
-                     data_rx) and
-                     bit_Error='0')
-                then
-                    -- LCOV_EXCL_START
-                    process_error(error_ctr, error_beh, exit_imm);
-                    error("TX and RX Data mismatch, and no bit error fired!");
-                    -- LCOV_EXCL_STOP
-                end if;
+                check((tran_data_sr(to_integer(unsigned(trv_delay_out))) = data_rx)
+                      or (bit_Error = '1'),
+                      "TX and RX Data mismatch, and no bit error fired!");
             end loop;
 
           loop_ctr <= loop_ctr + 1;

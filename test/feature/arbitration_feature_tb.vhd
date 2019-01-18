@@ -305,23 +305,21 @@ package body Arbitration_feature is
         end loop;
 
         ------------------------------------------------------------------------
+        -- Print Frame info
+        ------------------------------------------------------------------------
+        info("Frame 1:");
+        CAN_print_frame(frame_1, info_l);
+        info("Frame 2:");
+        CAN_print_frame(frame_2, info_l);
+
+        ------------------------------------------------------------------------
         -- Check whether expected winner is the unit which lost the arbitration
         ------------------------------------------------------------------------
-        if (unit_rec = 1 and exp_winner = 0) or
-           (unit_rec = 2 and exp_winner = 1)
-        then
-            -- LCOV_EXCL_START
-            info("Frame 1:");
-            CAN_print_frame(frame_1, info_l);
-            info("Frame 2:");
-            CAN_print_frame(frame_2, info_l);
-            
-            error("Wrong unit lost arbitration. Expected: " &
-                integer'image(exp_winner) & " Real: " & integer'image(unit_rec));
-
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
+        check_false((unit_rec = 1 and exp_winner = 0) or
+                    (unit_rec = 2 and exp_winner = 1),
+                    "Wrong unit lost arbitration. Expected: " &
+                    integer'image(exp_winner) & 
+                    " Real: " & integer'image(unit_rec));
 
         ------------------------------------------------------------------------
         -- Send abort transmission to both frames so that no unit will
@@ -342,20 +340,18 @@ package body Arbitration_feature is
         end if;
 
         ------------------------------------------------------------------------
+        -- Print Frame info
+        ------------------------------------------------------------------------
+        info("Frame 1:");
+        CAN_print_frame(frame_1, info_l);
+        info("Frame 2:");
+        CAN_print_frame(frame_2, info_l);
+
+        ------------------------------------------------------------------------
         -- If error frame is transmitted and collision not have appeared
         ------------------------------------------------------------------------
-        if (unit_rec = 3 and exp_winner /= 2) then
-            -- LCOV_EXCL_START
-            info("Frame 1:");
-            CAN_print_frame(frame_1, info_l);
-            info("Frame 2:");
-            CAN_print_frame(frame_2, info_l);
-
-            error("Collision should have appeared");
-
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
+        check_false(unit_rec = 3 and exp_winner /= 2,
+            "Collision should have appeared");
 
         wait for 100000 ns;
   end procedure;

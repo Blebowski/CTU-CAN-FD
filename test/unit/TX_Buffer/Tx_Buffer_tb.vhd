@@ -307,12 +307,7 @@ begin
 
         -- At any point the data should be matching the data in
         -- the shadow buffer
-        if (txt_word /= shadow_mem(txt_addr)) then
-            -- LCOV_EXCL_START
-            process_error(data_coh_err_ctr, error_beh, exit_imm_1);
-            error("Data coherency error!");
-            -- LCOV_EXCL_STOP
-        end if;
+        check(txt_word = shadow_mem(txt_addr), "Data coherency error!");
     end process;
 
 
@@ -370,14 +365,10 @@ begin
         wait until rising_edge(clk_sys);
         wait until falling_edge(clk_sys);
         -- Check whether the state ended up as expected
-        if (txtb_state /= txtb_exp_state) then
-            -- LCOV_EXCL_START
-            process_error(state_coh_error_ctr, error_beh, exit_imm_2);
-            error("State not updated as expected! Actual: " &
+        check(txtb_state = txtb_exp_state,
+              "State not updated as expected! Actual: " &
 	               to_hstring(txtb_state) & " Expected: " &
                    to_hstring(txtb_exp_state));
-            -- LCOV_EXCL_STOP
-        end if;
 
         -- Set all the commands to be inactive
         txt_hw_cmd.valid   <= '0';

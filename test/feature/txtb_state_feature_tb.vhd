@@ -159,39 +159,27 @@ package body txtb_state_feature is
             -- Check that TXT Buffer state is "TX in progress"
             --------------------------------------------------------------------
             get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_tx_progress) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " & integer'image(i) & " is not " &
-                      "'TX in Progress' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check(txt_state = buf_tx_progress,
+                  "TXT Buffer " & integer'image(i) & " is not " &
+                  "'TX in Progress' as expected!");
             CAN_wait_bus_idle(ID_1, mem_bus(1));
 
             --------------------------------------------------------------------
             -- Check that TXT Buffer state is "TX Done" after the transmission!
             --------------------------------------------------------------------
             get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_done) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " & integer'image(i) & " is not " &
-                      "'TX Done' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check(txt_state = buf_done,
+                  "TXT Buffer " & integer'image(i) & " is not " &
+                  "'TX Done' as expected!");
 
             --------------------------------------------------------------------
             -- Issue "set_empty" command and check that buffer is in "Empty"!
             --------------------------------------------------------------------
             send_TXT_buf_cmd(buf_set_empty, i, ID_1, mem_bus(1));
             get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_empty) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " & integer'image(i) & " is not " &
-                      "'Empty' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check(txt_state = buf_empty,
+                  "TXT Buffer " & integer'image(i) & " is not " &
+                  "'Empty' as expected!");
 
 
             --------------------------------------------------------------------
@@ -209,13 +197,9 @@ package body txtb_state_feature is
             --------------------------------------------------------------------
             send_TXT_buf_cmd(buf_set_abort, i, ID_1, mem_bus(1));
             get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_ab_progress) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " & integer'image(i) & " is not " &
-                      "'Abort in progress' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check(txt_state = buf_ab_progress,
+                  "TXT Buffer " & integer'image(i) & " is not " &
+                  "'Abort in progress' as expected!");
 
             --------------------------------------------------------------------
             -- Forbid ACK on Node 2 (not to end up in TXT OK)!
@@ -227,20 +211,15 @@ package body txtb_state_feature is
             
             CAN_wait_bus_idle(ID_1, mem_bus(1));
             get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_aborted) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " & integer'image(i) & " is not " &
+            check(txt_state = buf_aborted,
+                 "TXT Buffer " & integer'image(i) & " is not " &
                       "'Aborted' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
 
             --------------------------------------------------------------------
             -- Allow ACK Again for Node 2.
             --------------------------------------------------------------------
             mode.acknowledge_forbidden := false;
             set_core_mode(mode, ID_2, mem_bus(2));
-            
 
 
             --------------------------------------------------------------------
@@ -266,14 +245,9 @@ package body txtb_state_feature is
             -- Check that Buffer "n+1" is in "TX Ready"!
             --------------------------------------------------------------------
             get_tx_buf_state(nxt_buffer, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_ready) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " &
-                      integer'image(nxt_buffer) &
-                      " is not 'TX Ready' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check(txt_state = buf_ready,
+                  "TXT Buffer " & integer'image(nxt_buffer) &
+                  " is not 'TX Ready' as expected!");
 
             --------------------------------------------------------------------
             -- Send "set_abort" command on Buffer "n+1" and check that
@@ -281,16 +255,10 @@ package body txtb_state_feature is
             --------------------------------------------------------------------
             send_TXT_buf_cmd(buf_set_abort, nxt_buffer, ID_1, mem_bus(1));
             get_tx_buf_state(nxt_buffer, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_aborted) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " &
-                      integer'image(nxt_buffer) &
-                      " is not 'Aborted' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check(txt_state = buf_aborted,
+                  "TXT Buffer " & integer'image(nxt_buffer) &
+                  " is not 'Aborted' as expected!");
             CAN_wait_bus_idle(ID_1, mem_bus(1));
-
 
 
             --------------------------------------------------------------------
@@ -326,13 +294,9 @@ package body txtb_state_feature is
             -- Check that state of TXT Buffer is "TX Failed".
             --------------------------------------------------------------------
             get_tx_buf_state(i, txt_state, ID_1, mem_bus(1));
-            if (txt_state /= buf_failed) then
-                 -- LCOV_EXCL_START
-                o.outcome := false;
-                error("TXT Buffer " & integer'image(i) &
-                      " is not 'TX Failed' as expected!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check(txt_state = buf_failed,
+                  "TXT Buffer " & integer'image(i) &
+                  " is not 'TX Failed' as expected!");
 
             --------------------------------------------------------------------
             -- Allow ACK Again for Node 2.

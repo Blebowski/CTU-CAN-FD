@@ -1105,11 +1105,9 @@ begin
             end if;
 
             -- Break if there is more data than expected!
+            check(rxb_mem_ptr <= 19, "Data size exceeds 64 bytes");
             if (rxb_mem_ptr > 19) then
-                -- LCOV_EXCL_START
-                error("Data size exceeds 64 bytes");
                 exit;
-                -- LCOV_EXCL_STOP
             end if;
 
             -- Store data word
@@ -1219,30 +1217,25 @@ begin
             CAN_compare_frames(tx_frame, rx_frame, false, out_frm);
             compare_bit_seq(sw_seq, rec_seq, seq_length, out_seq);
 
-            -- Process possible error in TX/RX Frames or sequences mismatch
-            if (out_seq = false or out_frm = false) then
-                -- LCOV_EXCL_START
-                info("Generated CAN frame:");
-                CAN_print_frame(tx_frame, info_l);
+            -- Print the frames in the end
+            info("Generated CAN frame:");
+            CAN_print_frame(tx_frame, info_l);
 
-                info("Receied CAN frame:");
-                CAN_print_frame(rx_frame, info_l);
+            info("Receied CAN frame:");
+            CAN_print_frame(rx_frame, info_l);
 
-                info("Expected bit sequence:");
-                write(msg1, sw_seq(seq_length - 1 downto 0));
-                writeline(output, msg1);
+            info("Expected bit sequence:");
+            write(msg1, sw_seq(seq_length - 1 downto 0));
+            writeline(output, msg1);
 
-                info("Received bit sequence:");
-                write(msg2, rec_seq(seq_length - 1 downto 0));
-                writeline(output, msg2);
+            info("Received bit sequence:");
+            write(msg2, rec_seq(seq_length - 1 downto 0));
+            writeline(output, msg2);
 
-                error("MISMATCH");
-
-                process_error(error_ctr, error_beh, exit_imm);
-                -- LCOV_EXCL_STOP
-                wait;
-            end if;
-
+            -- Process possible error in TX/RX Frames or Bit sequences mismatch
+            check(out_seq, "Bit sequence is not matching!");
+            check(out_frm, "Received frame is not matching!");
+            
             loop_ctr <= loop_ctr + 1;
         end loop;
 

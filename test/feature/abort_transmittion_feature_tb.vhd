@@ -173,12 +173,7 @@ package body abort_transmittion_feature is
             end loop;
 
             get_controller_status(status, ID_1, mem_bus(1));
-            if (status.transmitter) then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                error("Unit did not abort the transmission!");
-                -- LCOV_EXCL_STOP
-            end if;
+            check_false(status.transmitter, "Unit did not abort the transmission!");
 
             --------------------------------------------------------------------
             -- Now wait until unit 2 starts transmitting error frame! Note that
@@ -208,12 +203,7 @@ package body abort_transmittion_feature is
             -- Check that unit is now idle since it is after transmittion already
             --------------------------------------------------------------------
             get_controller_status(status, ID_1, mem_bus(1));
-            if (not status.bus_status) then
-                -- LCOV_EXCL_START
-                error("Unit is not Idle!");
-                o.outcome := false;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(status.bus_status, "Unit is not Idle!");
 
         end if;
 

@@ -473,42 +473,18 @@ begin
         end if;
 
         -- Checking the expected and real outputs
-        if (int_ena         /= int_ena_exp) then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            error("Interrupt enable mismatch");
-            -- LCOV_EXCL_STOP
+        check(int_ena = int_ena_exp, "Interrupt enable mismatch");
+        check(int_mask = int_mask_exp, "Interrupt mask mismatch");
+        check(int_vector = int_status_exp, "Interrupt vector mismatch");
+        
+        if (int_out = '0') then
+            int_output := false;
+        elsif (int_out = '1') then
+            int_output := true;
+        else
+            error("Interrupt value undefined!");
         end if;
-
-        if (int_mask        /= int_mask_exp) then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            error("Interrupt mask mismatch");
-            -- LCOV_EXCL_STOP
-        end if;
-
-        if (int_vector      /= int_status_exp) then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            error("Interrupt vector mismatch");
-            -- LCOV_EXCL_STOP
-        end if;
-
-        if ((exp_output = true  and int_out = '0') or
-            (exp_output = false and int_out = '1'))
-        then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            error("Interrupt output mismatch");
-            -- LCOV_EXCL_STOP
-        end if;
-
-        -- Checking the outputs
-        if (outcome = false) then
-            -- LCOV_EXCL_START
-            process_error(error_ctr_2, error_beh, exit_imm);
-            -- LCOV_EXCL_STOP
-        end if;
+        check(exp_output = int_output, "Interrupt output mismatch");
 
     end process;
 

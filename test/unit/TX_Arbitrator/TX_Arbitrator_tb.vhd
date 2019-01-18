@@ -565,12 +565,8 @@ begin
 
         wait for 0 ns;
 
-        if (mism_ctr = 2) then
-            -- LCOV_EXCL_START
-            error("Mismatch for more than 2 clock cycles!");
-            cmp_err_ctr          <= cmp_err_ctr + 1;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(mism_ctr < 2,
+              "Mismatch between DUT and Model for more than 2 clock cycles!");
 
         wait until falling_edge(clk_sys);
     end process;

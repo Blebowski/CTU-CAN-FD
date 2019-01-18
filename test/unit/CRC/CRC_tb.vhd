@@ -342,26 +342,9 @@ begin
             compare_results(crc15, crc17, crc21, crc_15_mod, crc_17_mod,
                             crc_21_mod, c15_mism, c17_mism, c21_mism);
 
-            if (c15_mism) then
-                -- LCOV_EXCL_START
-                process_error(error_ctr, error_beh, exit_imm);
-                error("Mismatch in CRC15");
-                -- LCOV_EXCL_STOP
-            end if;
-
-            if (c17_mism) then
-                -- LCOV_EXCL_START
-                process_error(error_ctr, error_beh, exit_imm);
-                error("Mismatch in CRC17");
-                -- LCOV_EXCL_STOP
-            end if;
-
-            if (c21_mism) then
-                -- LCOV_EXCL_START
-                process_error(error_ctr, error_beh, exit_imm);
-                error("Mismatch in CRC21");
-                -- LCOV_EXCL_STOP
-            end if;
+            check_false(c15_mism, "Mismatch in CRC15");
+            check_false(c17_mism, "Mismatch in CRC17");
+            check_false(c21_mism, "Mismatch in CRC21");
 
             loop_ctr <= loop_ctr + 1;
         end loop;
