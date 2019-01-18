@@ -7,3 +7,9 @@
 *~
 .fuse_hidden*
 .mypy_cache
+debian/ctucanfd-drv
+debian/*.log
+debian/*.substvars
+debian/debhelper-build-stamp
+debian/*.debhelper
+debian/files

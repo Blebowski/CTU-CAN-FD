@@ -1,0 +1,22 @@
+Source: ctucanfd-drv
+Maintainer: Pavel Pisa <pisa@cmp.felk.cvut.cz>
+Section: admin
+Priority: optional
+Build-Depends: debhelper (>=9),
+               dkms
+Standards-Version: 1.0.0
+Vcs-Browser: https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core
+Vcs-Git: https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core.git
+Homepage: https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core
+
+Package: ctucanfd-drv
+Architecture: all
+Depends: ${misc:Depends}
+Description: CTU CAN FD IP Core driver
+ CAN with Flexible Data-rate IP Core developed
+ at Department of Measurement of FEE CTU.
+ .
+ This package provides driver for the core.
+ It supports PCI express cards as well as it provides
+ platform driver for SoC integration when appropriate
+ device tree is provided.
