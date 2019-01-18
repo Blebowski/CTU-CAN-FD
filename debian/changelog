@@ -1,0 +1,5 @@
+ctucanfd-drv (1.0.0) unstable; urgency=medium
+
+  * Initial dkms build.
+
+ -- Pavel Pisa <ppisa@pikron.com>  Fri, 18 Jan 2019 19:09:04 +0100

@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+
+export OMIT_KERNEL_PASSES = y
+
+PACKAGE_NAME=$(shell grep PACKAGE_NAME= driver/dkms.conf | cut -d= -f2 | cut -d\" -f2)
+PACKAGE_VERSION=$(shell grep PACKAGE_VERSION= driver/dkms.conf | cut -d= -f2 | cut -d\" -f2)
+export PACKAGE_NAME PACKAGE_VERSION
+
+%:
+	dh $@ --with dkms
+
+# Nothing to configure, build or auto-install (this all happens after
+# installation using dkms)
+override_dh_auto_configure:
+override_dh_auto_build:
+override_dh_auto_install:
