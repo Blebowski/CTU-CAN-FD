@@ -316,7 +316,7 @@ static inline bool ctu_can_fd_is_enabled(struct ctucanfd_priv *priv)
 	union ctu_can_fd_mode_command_status_settings reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
-	return reg.s.ena == ENABLED;
+	return reg.s.ena == CTU_CAN_ENABLED;
 }
 
 

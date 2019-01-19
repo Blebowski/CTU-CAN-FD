@@ -2786,9 +2786,9 @@ package body CANtestLib is
     begin
         CAN_read(data, MODE_ADR, ID, mem_bus);
         if turn_on then
-            data(ENA_IND) := ENABLED;
+            data(ENA_IND) := CTU_CAN_ENABLED;
         else
-            data(ENA_IND) := DISABLED;
+            data(ENA_IND) := CTU_CAN_DISABLED;
         end if;
         CAN_write(data, MODE_ADR, ID, mem_bus);
         CAN_read(readback, MODE_ADR, ID, mem_bus);

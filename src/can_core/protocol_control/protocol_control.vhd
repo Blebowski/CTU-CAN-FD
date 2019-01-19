@@ -3214,7 +3214,7 @@ begin
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     when off =>     
-        if (drv_ena = ENABLED) then
+        if (drv_ena = CTU_CAN_ENABLED) then
             if (error_state /= bus_off and OP_State /= integrating) then
 
                 -- Note that here we don't want to execute FSM_Preset! We want
