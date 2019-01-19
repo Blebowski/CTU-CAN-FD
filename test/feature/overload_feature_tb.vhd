@@ -131,15 +131,9 @@ package body overload_feature is
             --------------------------------------------------------------------
             -- Check if overload started
             --------------------------------------------------------------------
-            if (protocol_type'VAL(to_integer(unsigned(
-                iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW)))) /=
-                overload)
-            then
-                -- LCOV_EXCL_START
-                report "Overload Frame did not start" severity error;
-                o.outcome:=false;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(protocol_type'VAL(to_integer(unsigned(
+                  iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW)))) =
+                  overload, "Overload Frame did not start");
 
             so.bl_inject <= RECESSIVE;
             so.bl_force <= false;

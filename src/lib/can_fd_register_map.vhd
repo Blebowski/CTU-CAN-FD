@@ -312,8 +312,8 @@ package can_fd_register_map is
   constant INT_LOOP_ENABLED   : std_logic := '1';
 
   -- "ENA" field enumerated values
-  constant DISABLED           : std_logic := '0';
-  constant ENABLED            : std_logic := '1';
+  constant CTU_CAN_DISABLED   : std_logic := '0';
+  constant CTU_CAN_ENABLED    : std_logic := '1';
 
   -- "NISOFD" field enumerated values
   constant ISO_FD             : std_logic := '0';

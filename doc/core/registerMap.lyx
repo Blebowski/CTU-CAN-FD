@@ -4930,8 +4930,8 @@ ILBP Internal loop-back option (recommended  only for testing). If internal loop
 \end_layout
 \begin_layout Description
 ENA Enable bit for the whole CAN FD Controller. When disabled, IP Core acts as if not connected to the CAN Bus.\begin_inset Newline newline\end_inset
-		0b0  - DISABLED - The CAN Core is disabled.\begin_inset Newline newline\end_inset
-		0b1  - ENABLED - The CAN Core is enabled.
+		0b0  - CTU_CAN_DISABLED - The CAN Core is disabled.\begin_inset Newline newline\end_inset
+		0b1  - CTU_CAN_ENABLED - The CAN Core is enabled.
 \end_layout
 \begin_layout Description
 NISOFD Selection between two possible CAN FD specifications. This bit should be modified only when SETTINGS[ENA]=0.\begin_inset Newline newline\end_inset

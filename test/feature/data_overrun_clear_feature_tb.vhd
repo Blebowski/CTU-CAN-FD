@@ -133,7 +133,7 @@ package body data_overrun_clear_feature is
             CAN_wait_frame_sent(ID_1, mem_bus(1));
             get_controller_status(status, ID_1, mem_bus(1));
             if (status.data_overrun) then
-                report "Overrun Flag Detected!";                
+                info("Overrun Flag Detected!");
                 exit;
             end if;
         end loop;
@@ -142,10 +142,8 @@ package body data_overrun_clear_feature is
         -- Check Interrupt Status on Data Overrun!
         ------------------------------------------------------------------------
         read_int_status(interrupts, ID_1, mem_bus(1));
-        if (not interrupts.data_overrun_int) then
-            report "Data overrun Interrupt not captured as expected!"
-                severity error;
-        end if;
+        check(interrupts.data_overrun_int,
+             "Data overrun Interrupt not captured as expected!");
 
         ------------------------------------------------------------------------
         -- Clear data overrun flag and clear data overrun interrupt!
@@ -159,9 +157,8 @@ package body data_overrun_clear_feature is
         -- Read interrupt status and check data overrun was cleared!
         ------------------------------------------------------------------------  
         read_int_status(interrupts, ID_1, mem_bus(1));
-        if (interrupts.data_overrun_int) then
-            report "Data overrun Interrupt was not cleared!" severity error;
-        end if;
+        check_false(interrupts.data_overrun_int,
+                    "Data overrun Interrupt was not cleared!");
 
     end procedure;
 

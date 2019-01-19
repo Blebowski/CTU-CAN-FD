@@ -119,10 +119,9 @@ architecture mess_filt_unit_test of CAN_test is
     end procedure;
 
 
-    function validate(
+    impure function validate(
         signal drv_settings   :in     mess_filter_drv_type;
         signal filt_res       :in     std_logic;
-        signal log_level      :in     log_lvl_type;
         signal frame_info     :in     mess_filter_input_type)
     return boolean is
         variable join         :       std_logic_vector(1 downto 0);
@@ -141,15 +140,18 @@ architecture mess_filt_unit_test of CAN_test is
         variable frame_conc   :       std_logic_vector(28 downto 0);
         variable low_conc     :       std_logic_vector(28 downto 0);
         variable high_conc    :       std_logic_vector(28 downto 0);
+        variable inv_type     :       boolean;
     begin
 
         -- Filters disabled but result is positive -> error
         if (drv_settings.drv_filters_ena = '0') then
+            
+          check(frame_info.rec_ident_valid = filt_res,
+                "Filters disabled but result positive");
 
           if (frame_info.rec_ident_valid = filt_res) then
               return true;
           else
-              log("Filters disabled but result positive", error_l, log_level);
               return false;
           end if;
         end if;
@@ -208,60 +210,40 @@ architecture mess_filt_unit_test of CAN_test is
         --------------------------------------------
         -- Invalid frame type was not filtered out
         --------------------------------------------
-        if( (A_type = false)    and
-          (B_type = false)    and
-          (C_type = false)    and
-          (ran_type = false)  and
-          (filt_res = '1')
-        )then
-            log("Invalid frame type was not filtered out", error_l, log_level);
-            return false;
-        end if;
+        check((A_type = true)    or
+              (B_type = true)    or
+              (C_type = true)    or
+              (ran_type = true)  or
+              (filt_res = '0'),
+              "No filter should have valid frame type, but output is valid!");
 
         -------------------------------------------
         -- Valid or invalid frames on input
         -------------------------------------------
-        if( ((A_type and  A_vals) or
+        if(((A_type and  A_vals) or
            (B_type and B_vals) or
            (C_type and C_vals) or
            (ran_type and ran_vals))
           and
-           (drv_settings.drv_filters_ena='1')
+           (drv_settings.drv_filters_ena = '1')
           and
-           (frame_info.rec_ident_valid='1')
+           (frame_info.rec_ident_valid = '1')
         ) then
-
+        
+            check(filt_res = '1', "Valid frame did not pass filters!");
             if (filt_res = '1') then   --Is detected
                 return true;
-
-            elsif (filt_res = '0') then -- Is not detected
-                -- LCOV_EXCL_START
-                log("Valid frame not detected", error_l, log_level);
-                return false;
-                -- LCOV_EXCL_STOP
             else
-                -- LCOV_EXCL_START
-                log("Filter res undefined", error_l, log_level);
                 return false;
-                -- LCOV_EXCL_STOP
             end if;
 
         else
-
-            if (filt_res = '1') then   --Is detected
-                -- LCOV_EXCL_START
-                log("Invalid frame but frame detected", error_l, log_level);
-                return false;
-                -- LCOV_EXCL_STOP
-
-            elsif (filt_res = '0') then -- Is not detected
+            
+            check(filt_res = '0', "Invalid frame passed filters!");
+            if (filt_res = '0') then -- Is not detected
                 return true;
-
             else
-                -- LCOV_EXCL_START
-                log("Filter res undefined", error_l, log_level);
                 return false;
-                -- LCOV_EXCL_STOP
             end if;
 
         end if;
@@ -346,30 +328,28 @@ begin
     ----------------------------------------------------------------------------
     test_proc : process
     begin
-        log("Restarting Message filter test!", info_l, log_level);
+        info("Restarting Message filter test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted Message filter test", info_l, log_level);
+        info("Restarted Message filter test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting message filter main loop", info_l, log_level);
+        info("Starting message filter main loop");
 
         while (loop_ctr < iterations  or exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr),
-                info_l, log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             generate_input    (rand_ctr, frame_info);
             generate_setting  (rand_ctr, drv_settings);
 
             wait for 10 ns;
 
-            if (validate(drv_settings, out_ident_valid, log_level, frame_info)
-                = false)
+            if (validate(drv_settings, out_ident_valid, frame_info) = false)
             then
                 process_error(error_ctr, error_beh, exit_imm);
             end if;

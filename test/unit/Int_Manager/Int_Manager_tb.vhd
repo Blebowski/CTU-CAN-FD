@@ -473,42 +473,18 @@ begin
         end if;
 
         -- Checking the expected and real outputs
-        if (int_ena         /= int_ena_exp) then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            log("Interrupt enable mismatch", error_l, log_level);
-            -- LCOV_EXCL_STOP
+        check(int_ena = int_ena_exp, "Interrupt enable mismatch");
+        check(int_mask = int_mask_exp, "Interrupt mask mismatch");
+        check(int_vector = int_status_exp, "Interrupt vector mismatch");
+        
+        if (int_out = '0') then
+            int_output := false;
+        elsif (int_out = '1') then
+            int_output := true;
+        else
+            error("Interrupt value undefined!");
         end if;
-
-        if (int_mask        /= int_mask_exp) then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            log("Interrupt mask mismatch", error_l, log_level);
-            -- LCOV_EXCL_STOP
-        end if;
-
-        if (int_vector      /= int_status_exp) then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            log("Interrupt vector mismatch", error_l, log_level);
-            -- LCOV_EXCL_STOP
-        end if;
-
-        if ((exp_output = true  and int_out = '0') or
-            (exp_output = false and int_out = '1'))
-        then
-            -- LCOV_EXCL_START
-            outcome         := false;
-            log("Interrupt output mismatch", error_l, log_level);
-            -- LCOV_EXCL_STOP
-        end if;
-
-        -- Checking the outputs
-        if (outcome = false) then
-            -- LCOV_EXCL_START
-            process_error(error_ctr_2, error_beh, exit_imm);
-            -- LCOV_EXCL_STOP
-        end if;
+        check(exp_output = int_output, "Interrupt output mismatch");
 
     end process;
 
@@ -524,22 +500,21 @@ begin
     test_proc : process
         variable outcome : boolean := false;
     begin
-        log("Restarting Interrupt test!", info_l, log_level);
+        info("Restarting Interrupt test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 1, rand_ctr);
-        log("Restarted Interrupttest", info_l, log_level);
+        info("Restarted Interrupt test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting Interrupt main loop", info_l, log_level);
+        info("Starting Interrupt main loop");
 
         while (loop_ctr < iterations  or  exit_imm)
         loop
-              log("Starting loop nr "&integer'image(loop_ctr), info_l,
-                    log_level);
+              info("Starting loop nr " & integer'image(loop_ctr));
 
               wait until falling_edge(clk_sys);
 

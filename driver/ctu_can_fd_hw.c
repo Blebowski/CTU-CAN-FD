@@ -142,7 +142,7 @@ void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable)
 	union ctu_can_fd_mode_command_status_settings reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
-	reg.s.ena = enable ? ENABLED : DISABLED;
+	reg.s.ena = enable ? CTU_CAN_ENABLED : CTU_CAN_DISABLED;
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
 }
 

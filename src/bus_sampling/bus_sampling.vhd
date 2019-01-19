@@ -548,7 +548,7 @@ begin
 
         elsif rising_edge(clk_sys) then
 
-            if (drv_ena = ENABLED) then
+            if (drv_ena = CTU_CAN_ENABLED) then
                 case sp_control is
 
                 ----------------------------------------------------------------
@@ -599,7 +599,7 @@ begin
 
         elsif rising_edge(clk_sys) then
 
-            if (drv_ena = ENABLED and bit_err_enable = '1') then
+            if (drv_ena = CTU_CAN_ENABLED and bit_err_enable = '1') then
                 case sp_control is
 
                 ----------------------------------------------------------------

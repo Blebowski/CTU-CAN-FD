@@ -65,7 +65,7 @@
 --             Break out of loop in this case and check that N=8!
 --
 --  Just found out that Gedit supports insertion of emojis. Lets see how
---   this is gonna work... 🙄🤔😳🤤
+--   this is gonna work... 🙄🤔😳🤤🙄🙄
 --
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -121,13 +121,7 @@ package body suspend_transmission_feature is
         set_error_counters(error_ctrs, ID_1, mem_bus(1));        
         wait for 30 ns;
         get_fault_state(fault_state, ID_1, mem_bus(1));
-        if (fault_state /= fc_error_passive) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Node 1 not Error passive as expected!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(fault_state = fc_error_passive, "Node 1 not Error passive!");
 
         ------------------------------------------------------------------------
         -- Force Node 2 to error Active and Check it!
@@ -136,13 +130,7 @@ package body suspend_transmission_feature is
         set_error_counters(error_ctrs, ID_2, mem_bus(2));        
         wait for 30 ns;
         get_fault_state(fault_state, ID_2, mem_bus(2));
-        if (fault_state /= fc_error_active) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Node 2 not Error Active as expected!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(fault_state = fc_error_active, "Node 2 not Error Active!");
 
         ------------------------------------------------------------------------
         -- Generate frame, hardcode ID to 514, Identifier type to BASE
@@ -165,11 +153,11 @@ package body suspend_transmission_feature is
             --------------------------------------------------------------------
             CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
             CAN_send_frame(CAN_frame, 2, ID_1, mem_bus(1), frame_sent);
-            report "Inserted 2 frames to Node 1";
+            info("Inserted 2 frames to Node 1");
 
             wait for 500 ns;
             CAN_insert_TX_frame(CAN_frame, 1, ID_2, mem_bus(2));
-            report "Inserted 1 frame to Node 2";
+            info("Inserted 1 frame to Node 2");
 
             --------------------------------------------------------------------
             -- Wait until the end of EOF field
@@ -189,7 +177,7 @@ package body suspend_transmission_feature is
             loop
                 wait until rising_edge(mem_bus(1).clk_sys);
             end loop;
-            report "End of EOF field";
+            info("End of EOF field");
             wait for 40 ns;
 
             --------------------------------------------------------------------
@@ -204,7 +192,7 @@ package body suspend_transmission_feature is
             -- end of intermission.
             --------------------------------------------------------------------
             CAN_wait_n_bits(n + 2, true, ID_1, mem_bus(1));
-            report "Waited " & integer'image(n) & " bits";
+            info("Waited " & integer'image(n) & " bits");
 
             -- Give command to the frame in Node 2 for transmission!
             send_TXT_buf_cmd(buf_set_ready, 1, ID_2, mem_bus(2));
@@ -217,38 +205,27 @@ package body suspend_transmission_feature is
             loop
                 wait until rising_edge(mem_bus(1).clk_sys);
             end loop;
-            report "Frame started";
+            info("Frame started");
             wait for 40 ns;
 
             -- Check Operational State of Node 1!
             get_controller_status(status, ID_1, mem_bus(1));
+            
+            check(status.transmitter or status.receiver,
+                  "Unit Not Transmitter NOR Receiver");
+            
             if (status.receiver) then
                 if (n < 8) then
-                    report "Unit turned receiver on bit: " & integer'image(n);
-                else
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    report "Unit turned receiver after 8 bit Suspend"
-                        severity error;
-                    -- LCOV_EXCL_STOP
+                    info("Unit turned receiver on bit: " & integer'image(n));
                 end if;
+                check(n < 8, "Unit turned receiver after 8 bit Suspend");
+                
             elsif (status.transmitter) then
-                if (n < 8) then
-                    -- LCOV_EXCL_START
-                    o.outcome := false;
-                    report "Suspend transmission shorter than 8 bits!"
-                        severity error;
-                    -- LCOV_EXCL_STOP
-                else
-                    report "Suspend transmission equal to 8 bits!";
+                check(n >= 8, "Suspend transmission shorter than 8 bits!");
+                if (n >= 8) then
+                    info("Suspend transmission equal to 8 bits!");
                     exit;
                 end if;
-            else
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                report "Unit in SOF, but not Transceiver nor Receiver!"
-                    severity error;
-                -- LCOV_EXCL_STOP
             end if;
             n := n + 1;
 
@@ -268,7 +245,7 @@ package body suspend_transmission_feature is
         -- Buffers.
         ------------------------------------------------------------------------
         CAN_wait_bus_idle(ID_1, mem_bus(1));
-        report "Last frame was sent!";
+        info("Last frame was sent!");
 
   end procedure;
 

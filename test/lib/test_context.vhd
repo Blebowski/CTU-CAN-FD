@@ -60,6 +60,9 @@ context ctu_can_test_context is
 
     Library ieee;
     use IEEE.std_logic_textio.all;
+        
+    library vunit_lib;
+    context vunit_lib.vunit_context;
 
 end context;
 

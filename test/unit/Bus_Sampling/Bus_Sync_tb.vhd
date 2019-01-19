@@ -286,22 +286,21 @@ begin
         variable outcome   : boolean := false;
         variable rand_val  : real    := 0.0;
     begin
-        log("Restarting Bus sampling unit test!", info_l, log_level);
+        info("Restarting Bus sampling unit test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted Bus sampling unit test", info_l, log_level);
+        info("Restarted Bus sampling unit test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting Bus sampling main loop", info_l, log_level);
+        info("Starting Bus sampling main loop");
 
         while (loop_ctr < iterations  or  exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                    log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             --------------------------------------------------------------------
             -- NOMINAL sampling
@@ -318,14 +317,9 @@ begin
             for i in 0 to 50 loop
                 wait until rising_edge(rx_trig);
                 wait for 20 ns;
-
-                if ((data_tx /= data_rx) and bit_Error = '0') then
-                    -- LCOV_EXCL_START
-                    process_error(error_ctr, error_beh, exit_imm);
-                    log("TX and RX Data mismatch and no bit error fired!",
-                      error_l, log_level);
-                    -- LCOV_EXCL_STOP
-                end if;
+                -- Check that when TX RX mismatch occurs, Bit Error is 1!
+                check_implication(data_tx /= data_rx, bit_Error = '1',
+                      "TX and RX Data mismatch and no bit error fired!");
             end loop;
 
             --------------------------------------------------------------------
@@ -343,14 +337,8 @@ begin
             for i in 0 to 50 loop
                 wait until rising_edge(rx_trig);
                 wait for 20 ns;
-
-                if ((data_tx /= data_rx) and bit_Error = '0') then
-                    -- LCOV_EXCL_START
-                    process_error(error_ctr, error_beh, exit_imm);
-                    log("TX and RX Data are mismatching and no bit error fired!",
-                      error_l, log_level);
-                    -- LCOV_EXCL_STOP
-                end if;
+                check((data_tx = data_rx) or (bit_Error = '1'),
+                      "TX and RX Data are mismatching and no bit error fired!");
             end loop;
 
 
@@ -407,16 +395,9 @@ begin
 
                 -- Here we compare the TX data delayed by Transciever delay
                 -- measured amount!
-                if ((tran_data_sr(to_integer(unsigned(trv_delay_out))) /=
-                     data_rx) and
-                     bit_Error='0')
-                then
-                    -- LCOV_EXCL_START
-                    process_error(error_ctr, error_beh, exit_imm);
-                    log("TX and RX Data mismatch, and no bit error fired!",
-                       error_l, log_level);
-                    -- LCOV_EXCL_STOP
-                end if;
+                check((tran_data_sr(to_integer(unsigned(trv_delay_out))) = data_rx)
+                      or (bit_Error = '1'),
+                      "TX and RX Data mismatch, and no bit error fired!");
             end loop;
 
           loop_ctr <= loop_ctr + 1;

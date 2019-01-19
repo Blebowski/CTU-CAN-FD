@@ -142,7 +142,7 @@ begin
             unknown_OP_state              <= '0';
 
 
-            if (drv_ena /= ENABLED) then
+            if (drv_ena /= CTU_CAN_ENABLED) then
                 OP_State_r                <= integrating;
             elsif (set_transciever = '1') then
                 OP_State_r                <= transciever;
@@ -156,7 +156,7 @@ begin
                 -- Waiting for 11 consecutive recessive bits
                 ----------------------------------------------------------------
                 when integrating =>
-                    if (drv_ena = ENABLED) then
+                    if (drv_ena = CTU_CAN_ENABLED) then
                         if (rec_trig = '1') then
                             -- Counting up the integration period
                             if (integ_counter = INTEGRATING_DURATION) then

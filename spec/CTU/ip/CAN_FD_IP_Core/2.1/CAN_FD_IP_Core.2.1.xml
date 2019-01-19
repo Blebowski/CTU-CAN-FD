@@ -532,14 +532,14 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
-								<ipxact:name>ENABLED</ipxact:name>
-								<ipxact:displayName>ENABLED</ipxact:displayName>
+								<ipxact:name>CTU_CAN_ENABLED</ipxact:name>
+								<ipxact:displayName>CTU_CAN_ENABLED</ipxact:displayName>
 								<ipxact:description>The CAN Core is enabled.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>DISABLED</ipxact:name>
-								<ipxact:displayName>DISABLED</ipxact:displayName>
+								<ipxact:name>CTU_CAN_DISABLED</ipxact:name>
+								<ipxact:displayName>CTU_CAN_DISABLED</ipxact:displayName>
 								<ipxact:description>The CAN Core is disabled.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>

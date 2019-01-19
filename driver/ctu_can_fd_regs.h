@@ -250,8 +250,8 @@ enum ctu_can_fd_settings_ilbp {
 };
 
 enum ctu_can_fd_settings_ena {
-	DISABLED       = 0x0,
-	ENABLED        = 0x1,
+	CTU_CAN_DISABLED       = 0x0,
+	CTU_CAN_ENABLED        = 0x1,
 };
 
 enum ctu_can_fd_settings_nisofd {

@@ -197,37 +197,37 @@ package body Arbitration_feature is
                 frame_1.ident_type = frame_2.ident_type)
             then
                 exp_winner := 2;
-                report "Expecting collision";
+                info("Expecting collision");
 
             -- CAN 2.0 and CAN FD frames with matching ID will cause collision!
             elsif (frame_1.frame_format /= frame_2.frame_format) then
                 exp_winner := 2;
-                report "Expecting collision";
+                info("Expecting collision");
 
             -- Same RTR, but different ident type, IDENT type selects winner!
             elsif (frame_1.ident_type = BASE and
                    frame_2.ident_type = EXTENDED)
             then
-                report "Testing victory of BASE against EXTENDED";
+                info("Testing victory of BASE against EXTENDED");
                 exp_winner := 0;
 
             elsif (frame_1.ident_type = EXTENDED and
                    frame_2.ident_type = BASE)
             then
-                report "Testing victory of BASE against EXTENDED";
+                info("Testing victory of BASE against EXTENDED");
                 exp_winner := 1;
 
             -- Same identifiers, different RTRs, RTR always selects winner!
             elsif (frame_1.rtr = NO_RTR_FRAME and
                    frame_2.rtr = RTR_FRAME)
             then
-                report "Testing victory of non RTR against RTR";
+                info("Testing victory of non RTR against RTR");
                 exp_winner := 0;
 
             elsif (frame_1.rtr = RTR_FRAME and
                    frame_2.rtr = NO_RTR_FRAME)
             then
-                report "Testing victory of non RTR against RTR";
+                info("Testing victory of non RTR against RTR");
                 exp_winner := 1;
             end if;
 
@@ -305,24 +305,21 @@ package body Arbitration_feature is
         end loop;
 
         ------------------------------------------------------------------------
+        -- Print Frame info
+        ------------------------------------------------------------------------
+        info("Frame 1:");
+        CAN_print_frame(frame_1);
+        info("Frame 2:");
+        CAN_print_frame(frame_2);
+
+        ------------------------------------------------------------------------
         -- Check whether expected winner is the unit which lost the arbitration
         ------------------------------------------------------------------------
-        if (unit_rec = 1 and exp_winner = 0) or
-           (unit_rec = 2 and exp_winner = 1)
-        then
-            -- LCOV_EXCL_START
-            report "Wrong unit lost arbitration. Expected: " &
-                integer'image(exp_winner) & " Real: " & integer'image(unit_rec)
-            severity error;
-
-            report "Frame 1:";
-            CAN_print_frame(frame_1, info_l);
-            report "Frame 2:";
-            CAN_print_frame(frame_2, info_l);
-
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
+        check_false((unit_rec = 1 and exp_winner = 0) or
+                    (unit_rec = 2 and exp_winner = 1),
+                    "Wrong unit lost arbitration. Expected: " &
+                    integer'image(exp_winner) & 
+                    " Real: " & integer'image(unit_rec));
 
         ------------------------------------------------------------------------
         -- Send abort transmission to both frames so that no unit will
@@ -343,20 +340,18 @@ package body Arbitration_feature is
         end if;
 
         ------------------------------------------------------------------------
+        -- Print Frame info
+        ------------------------------------------------------------------------
+        info("Frame 1:");
+        CAN_print_frame(frame_1);
+        info("Frame 2:");
+        CAN_print_frame(frame_2);
+
+        ------------------------------------------------------------------------
         -- If error frame is transmitted and collision not have appeared
         ------------------------------------------------------------------------
-        if (unit_rec = 3 and exp_winner /= 2) then
-            -- LCOV_EXCL_START
-            report "Collision should have appeared" severity error;
-
-            report "Frame 1:";
-            CAN_print_frame(frame_1, info_l);
-            report "Frame 2:";
-            CAN_print_frame(frame_2, info_l);
-
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
+        check_false(unit_rec = 3 and exp_winner /= 2,
+            "Collision should have appeared");
 
         wait for 100000 ns;
   end procedure;

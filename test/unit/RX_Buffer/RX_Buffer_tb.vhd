@@ -241,7 +241,7 @@ architecture rx_buf_unit_test of CAN_test is
         if (rand_val = '1') then
             rec_abort  <= '1';
             wait until rising_edge(clk_sys);
-            log("Data storing was aborted!", info_l, log_level);
+            info("Data storing was aborted!");
 
             rec_abort  <= '0';
             wait until rising_edge(clk_sys);
@@ -313,11 +313,7 @@ architecture rx_buf_unit_test of CAN_test is
         wait for 1 ns;
 
         -- Check that overrun was cleared
-        if (rx_data_overrun = '1') then
-            -- LCOV_EXCL_START
-            log("Overrun not cleared!", error_l, log_level);
-            -- LCOV_EXCL_STOP
-        end if;
+        check(rx_data_overrun = '0', "Overrun not cleared!");
 
         ------------------------------------------------------------------------
         -- Initiate Frame by SOF pulse and store timestamp!
@@ -360,7 +356,7 @@ architecture rx_buf_unit_test of CAN_test is
         rec_esi            <= CAN_frame.esi;
         rec_rtr            <= CAN_frame.rtr;
 
-        log("Storing metadata", info_l, log_level);
+        info("Storing metadata");
         wait until rising_edge(clk_sys);
 
         -- Send signal to store metadata
@@ -385,7 +381,7 @@ architecture rx_buf_unit_test of CAN_test is
                                    CAN_frame.data((i * 4));
 
                 store_data      <= '1';
-                log("Storing data word", info_l, log_level);
+                info("Storing data word");
                 wait until rising_edge(clk_sys);
                 store_data      <= '0';
                 wait until rising_edge(clk_sys);
@@ -407,7 +403,7 @@ architecture rx_buf_unit_test of CAN_test is
         -- We commit frame to the buffer and store it to test memories!
         ------------------------------------------------------------------------
         rec_message_valid <= '1';
-        log("Frame valid!", info_l, log_level);
+        info("Frame valid!");
         wait until rising_edge(clk_sys);
 
         ------------------------------------------------------------------------
@@ -426,7 +422,7 @@ architecture rx_buf_unit_test of CAN_test is
         -- occur!
         ------------------------------------------------------------------------
         if (rx_data_overrun = '1') then
-            log("Data overrun appeared!", info_l, log_level);
+            info("Data overrun appeared!");
 
         ------------------------------------------------------------------------
         -- If overrun did not happend, insert frame to input test memory!
@@ -466,14 +462,12 @@ architecture rx_buf_unit_test of CAN_test is
             drv_read_start        <= '1';
             out_mem(out_pointer)  <= buff_out;
 
+            -------------------------------------------------------------------
             -- Check that word is exactly matching the word in in_mem at the
-            -- same position
-            if (buff_out /= in_mem(out_pointer)) then
-                -- LCOV_EXCL_START
-                log("Buffer FUCKED UP, index: " & integer'image(out_pointer),
-                    error_l, log_level);
-                -- LCOV_EXCL_STOP
-            end if;
+            -- same position!
+            -------------------------------------------------------------------
+            check(buff_out = in_mem(out_pointer),
+                  "Buffer FUCKED UP, index: " & integer'image(out_pointer));
 
             out_pointer           <= out_pointer + 1;
             wait until rising_edge(clk_sys);
@@ -575,17 +569,17 @@ begin
         variable enough_space : boolean := true;
         variable was_inserted : boolean := false;
     begin
-        log("Restarting RX Buffer test!", info_l, log_level);
+        info("Restarting RX Buffer test!");
         wait for 5 ns;
         reset_test(res_n, status, run, stim_errs);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted RX Bufrer test", info_l, log_level);
+        info("Restarted RX Bufrer test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         ------------------------------------------------------------------------
         -- Main loop of the test
         ------------------------------------------------------------------------
-        log("Starting RX buffer main loop", info_l, log_level);
+        info("Starting RX buffer main loop");
 
         while (loop_ctr < iterations or exit_imm)
         loop
@@ -697,12 +691,7 @@ begin
         cons_res := false;
         compare_data(in_mem, out_mem, cons_res);
 
-        if (cons_res = false) then
-            -- LCOV_EXCL_START
-            process_error(cons_errs, error_beh, exit_imm_d_3);
-            log("Data consistency check failed !", error_l, log_level);
-            -- LCOV_EXCL_STOP
-        end if;
+        check(cons_res, "Data consistency check failed !");
 
         -- Now we can tell to the other circuits that one iteration is over
         iteration_done <= true;

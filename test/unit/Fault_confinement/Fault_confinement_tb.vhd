@@ -338,17 +338,25 @@ begin
 
         wait until falling_edge(clk_sys);
 
-        if ( (tx_err_model /= to_integer(unsigned(tx_counter_out))) or
-             (rx_err_model /= to_integer(unsigned(rx_counter_out))) or
-             (norm_err_model /= to_integer(unsigned(err_counter_norm_out))) or
-             (fd_err_model /= to_integer(unsigned(err_counter_fd_out))))
-        then
-            -- LCOV_EXCL_START
-            log("Error counters not as expected", error_l, log_level);
-            err_ctr_1 <= err_ctr_1 + 1;
-            -- LCOV_EXCL_STOP
-        end if;
-
+        info("TX Error counter, Model: " & integer'image(tx_err_model) & " " &
+              "DUT: " & integer'image(to_integer(unsigned(tx_counter_out))));
+        check(tx_err_model = to_integer(unsigned(tx_counter_out)),
+              "TX Counter Mismatch");
+        
+        info("RX Error counter, Model: " & integer'image(rx_err_model) & " " &
+              "DUT: " & integer'image(to_integer(unsigned(rx_counter_out))));
+        check(rx_err_model = to_integer(unsigned(rx_counter_out)),
+              "RX Counter Mismatch");
+        
+        info("Nominal Error counter, Model: " & integer'image(norm_err_model) & " " &
+              "DUT: " & integer'image(to_integer(unsigned(err_counter_norm_out))));
+        check(norm_err_model = to_integer(unsigned(err_counter_norm_out)),
+              "Nominal Bit Rate Counter Mismatch");
+        
+        info("Data Error counter, Model: " & integer'image(fd_err_model) & " " &
+              "DUT: " & integer'image(to_integer(unsigned(err_counter_fd_out))));
+        check(fd_err_model = to_integer(unsigned(err_counter_fd_out)),
+              "Data Bit Rate Counter Mismatch");
     end process;
 
 
@@ -374,12 +382,7 @@ begin
 
         wait until rising_edge(clk_sys);
 
-        if (fc_model /= error_state_out) then
-            -- LCOV_EXCL_START
-            log("Fault confinement state differs!", error_l, log_level);
-            err_ctr_2 <= err_ctr_2 + 1;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(fc_model = error_state_out, "Fault confinement state differs!");
 
     end process;
 
@@ -391,16 +394,15 @@ begin
     ----------------------------------------------------------------------------
     test_proc : process
     begin
-        log("Restarting Fault confinement test!", info_l, log_level);
+        info("Restarting Fault confinement test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
-        log("Restarted Fault confinement test", info_l, log_level);
+        info("Restarted Fault confinement test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         while (loop_ctr < iterations or exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             wait until rising_edge(clk_sys);
             wait until rising_edge(clk_sys);
