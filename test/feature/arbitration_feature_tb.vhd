@@ -308,9 +308,9 @@ package body Arbitration_feature is
         -- Print Frame info
         ------------------------------------------------------------------------
         info("Frame 1:");
-        CAN_print_frame(frame_1, info_l);
+        CAN_print_frame(frame_1);
         info("Frame 2:");
-        CAN_print_frame(frame_2, info_l);
+        CAN_print_frame(frame_2);
 
         ------------------------------------------------------------------------
         -- Check whether expected winner is the unit which lost the arbitration
@@ -343,9 +343,9 @@ package body Arbitration_feature is
         -- Print Frame info
         ------------------------------------------------------------------------
         info("Frame 1:");
-        CAN_print_frame(frame_1, info_l);
+        CAN_print_frame(frame_1);
         info("Frame 2:");
-        CAN_print_frame(frame_2, info_l);
+        CAN_print_frame(frame_2);
 
         ------------------------------------------------------------------------
         -- If error frame is transmitted and collision not have appeared

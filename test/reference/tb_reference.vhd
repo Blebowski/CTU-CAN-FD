@@ -409,10 +409,10 @@ begin
             CAN_compare_frames(TX_frame, RX_frame, false, result);
  
             info("TX Frame:");
-            CAN_print_frame(TX_frame, log_level);
+            CAN_print_frame(TX_frame);
                 
             info("RX Frame:");
-            CAN_print_frame(RX_frame, log_level);
+            CAN_print_frame(RX_frame);
             
             check(result, "TX, RX frames mismatch!");
             

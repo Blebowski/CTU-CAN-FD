@@ -1219,10 +1219,10 @@ begin
 
             -- Print the frames in the end
             info("Generated CAN frame:");
-            CAN_print_frame(tx_frame, info_l);
+            CAN_print_frame(tx_frame);
 
             info("Receied CAN frame:");
-            CAN_print_frame(rx_frame, info_l);
+            CAN_print_frame(rx_frame);
 
             info("Expected bit sequence:");
             write(msg1, sw_seq(seq_length - 1 downto 0));

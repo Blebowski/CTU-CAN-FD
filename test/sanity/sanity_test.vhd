@@ -372,7 +372,7 @@ architecture behavioral of sanity_test is
                 while (tx_mems(i)(tx_r_ptr)(8) = '1') loop
                     tmp_mem := tx_mems(i);
                     read_frame_from_test_mem(TX_frame, tmp_mem, tx_r_ptr);
-                    CAN_print_frame(TX_frame, error_l);
+                    CAN_print_frame(TX_frame);
                 end loop;
 
                 error("RX Memory Node " & integer'image(i) & ":");
@@ -380,7 +380,7 @@ architecture behavioral of sanity_test is
                 while (rx_mems(i)(rx_r_ptr)(8) = '1') loop
                     tmp_mem := rx_mems(i);
                     read_frame_from_test_mem(RX_frame, tmp_mem, rx_r_ptr);
-                    CAN_print_frame(RX_frame, error_l);
+                    CAN_print_frame(RX_frame);
                 end loop;
                 -- LCOV_EXCL_STOP
             end if;
