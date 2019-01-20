@@ -4407,11 +4407,11 @@ package body CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
-        variable lower_word           :       std_logic_vector(31 downto 0);
-        variable upper_word           :       std_logic_vector(31 downto 0);
+        variable lower_word     :       std_logic_vector(31 downto 0);
+        variable upper_word     :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(lower_word, TIMESTAMP_L_W_ADR, ID, mem_bus);
-        CAN_read(upper_word, TIMESTAMP_U_W_ADR, ID, mem_bus);
+        CAN_read(lower_word, TIMESTAMP_LOW_ADR, ID, mem_bus);
+        CAN_read(upper_word, TIMESTAMP_HIGH_ADR, ID, mem_bus);
 
         ts := upper_word & lower_word;
     end procedure;

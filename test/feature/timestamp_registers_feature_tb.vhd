@@ -88,26 +88,33 @@ package body timestamp_registers_feature is
         wait for 1000 ns;
 
         for i in 0 to 50 loop
-            ------------------------------------------------------------------------
+            -------------------------------------------------------------------
             -- Read and save timestamp from registers
-            ------------------------------------------------------------------------
+            -------------------------------------------------------------------
             ts_input := iout(1).stat_bus(STAT_TS_HIGH downto STAT_TS_LOW);
 
-            ------------------------------------------------------------------------
+            -------------------------------------------------------------------
             -- Read timestamp with lib function
-            ------------------------------------------------------------------------
+            -------------------------------------------------------------------
             CAN_read_timestamp(ts_read, ID_1, mem_bus(1));
 
-            ------------------------------------------------------------------------
+            -------------------------------------------------------------------
             -- Compare both values
-            ------------------------------------------------------------------------
+            -------------------------------------------------------------------
             info("Timestamp input: 0x" & to_hstring(ts_input));
             info("Timestamp read: 0x" & to_hstring(ts_read));
 
-            diff := unsigned(ts_input) - unsigned(ts_read);
+            -------------------------------------------------------------------
+            -- Substract Read timestamp from Input timestamp. Input timestamp is
+            -- stored first, thus it will be always lower than read timestamp 
+            -- (memory access lasts one clock cycle). When substracting in this
+            -- order, we avoid underflow on "unsigned" data type, which is
+            -- defined from 0.
+            -------------------------------------------------------------------
+            diff := unsigned(ts_read) - unsigned(ts_input);
 
-            check(diff < 10, "Timestamp difference is too big! " & 
-                             "Difference " & integer'image(to_integer(diff)));
+            check(to_integer(diff) < 10, "Timestamp difference is too big! " & 
+                  "Difference " & integer'image(to_integer(diff)));
         end loop;
 
     end procedure;
