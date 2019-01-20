@@ -821,9 +821,22 @@ begin
   
   sof_pulse             <=  sof_pulse_r;
 
-  -- TX Data word endian swap
-  tx_data_word          <= endian_swap_32(tran_data);
-  
+  -----------------------------------------------------------------------------
+  -- TX Data word endian swapper
+  -----------------------------------------------------------------------------
+  endian_swapper_tx_comp : endian_swapper 
+  generic map(
+      swap_by_signal    => false,
+      swap_gen          => true,
+      word_size         => 4,   -- Number of Groups
+      group_size        => 8    -- Group size (bits)
+  )
+  port map(
+      input             => tran_data,
+      output            => tx_data_word,
+      swap_in           => '0' -- Inactive, swap by generic
+  );
+
   -----------------------
   --Auxiliarly vectors
   -----------------------
