@@ -774,7 +774,7 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv,
 	return true;
 }
 
-static u64 ctu_can_fd_read_timestamp(struct ctucanfd_priv *priv)
+u64 ctu_can_fd_read_timestamp(struct ctucanfd_priv *priv)
 {
 	union ctu_can_fd_timestamp_low ts_low;
 	union ctu_can_fd_timestamp_high ts_high;

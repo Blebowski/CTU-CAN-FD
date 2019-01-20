@@ -966,7 +966,7 @@ static inline union ctu_can_fd_debug_register
  * Returns:
  *	Value of timestamp in CTU CAN FD Core
  */
-static u64 ctu_can_fd_read_timestamp(struct ctucanfd_priv *priv);
+u64 ctu_can_fd_read_timestamp(struct ctucanfd_priv *priv);
 
 
 extern const struct can_bittiming_const ctu_can_fd_bit_timing_max;
