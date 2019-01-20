@@ -136,7 +136,6 @@ package body txt_buffer_hazard_feature is
         -- Read status of CTU CAN FD controller.
         get_controller_status(status, ID_1, mem_bus(1));
 
-
         -- Is controller transmitting?
         if (status.transmitter) then
             -- Is also TXT buffer in transmitting state? Or if set_abort command
