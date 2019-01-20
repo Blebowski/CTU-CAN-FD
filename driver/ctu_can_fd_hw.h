@@ -955,6 +955,20 @@ static inline union ctu_can_fd_debug_register
 	return reg;
 }
 
+
+/*
+ * Read timestamp value which is used internally by CTU CAN FD Core.
+ * Reads timestamp twice and checks consistency betwen upper and
+ * lower timestamp word.
+ *
+ * Arguments:
+ *	priv	Private info
+ * Returns:
+ *	Value of timestamp in CTU CAN FD Core
+ */
+u64 ctu_can_fd_read_timestamp(struct ctucanfd_priv *priv);
+
+
 extern const struct can_bittiming_const ctu_can_fd_bit_timing_max;
 extern const struct can_bittiming_const ctu_can_fd_bit_timing_data_max;
 
