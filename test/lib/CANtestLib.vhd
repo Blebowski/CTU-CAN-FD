@@ -1788,6 +1788,22 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
+
+    ----------------------------------------------------------------------------
+    -- Read Timestamp from TIMESTAMP_LOW and TIMESTAMP_HIGH registers 
+    -- 
+    -- Arguments:
+    --  ts             	Variable in which timestamp will be stored
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_read_timestamp(
+        variable ts		        : out   std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ); 
+
+
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Component declarations
@@ -4383,6 +4399,24 @@ package body CANtestLib is
         trv_delay := to_integer(unsigned(data(
                             TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)));
     end procedure;
+
+
+
+    procedure CAN_read_timestamp(
+        variable ts	            : out   std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable lower_word     :       std_logic_vector(31 downto 0);
+        variable upper_word     :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(lower_word, TIMESTAMP_LOW_ADR, ID, mem_bus);
+        CAN_read(upper_word, TIMESTAMP_HIGH_ADR, ID, mem_bus);
+
+        ts := upper_word & lower_word;
+    end procedure;
+
+
 end package body;
 
 
