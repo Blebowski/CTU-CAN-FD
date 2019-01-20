@@ -96,7 +96,7 @@ def add_flags(ui, lib, build) -> None:
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
     lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
     ui.set_sim_option("ghdl.elab_flags", ["-Wl,-lgcov", "-Wl,--coverage", "-Wl,-no-pie", "-fpsl"])
-    ui.set_sim_option("ghdl.sim_flags", ["--ieee-asserts=disable-at-0"])
+    ui.set_sim_option("ghdl.sim_flags", ["--ieee-asserts=disable-at-0", "--psl-report=psl_output"])
     modelsim_init_files = get_common_modelsim_init_files()
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
 
