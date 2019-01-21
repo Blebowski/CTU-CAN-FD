@@ -651,6 +651,12 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>common/endian_swapper.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>common/inf_ram_wrapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -1022,6 +1028,13 @@
 
       <spirit:file>
         <spirit:name>common/endian_swap.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>common/endian_swapper.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
