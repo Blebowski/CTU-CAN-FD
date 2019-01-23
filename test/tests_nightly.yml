@@ -100,6 +100,8 @@ feature:
         message_filter:
             iterations: 1
         timestamp_registers:
+        txt_buffer_hazard:
+            iterations: 10
 sanity:
     default:
         <<: *default
