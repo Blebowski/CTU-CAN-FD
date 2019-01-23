@@ -251,7 +251,9 @@ int main(int argc, char *argv[])
             case 'p':
                 addrs[0] = pci_find_bar(0x1172, 0xcafd, 0, 1);
                 if (!addrs[0])
-                    err(1, "-p PCI device not found");
+                    addrs[0] = pci_find_bar(0x1760, 0xff00, 0, 1);
+                    if (!addrs[0])
+                        err(1, "-p PCI device not found");
                 addrs[1] = addrs[0] + 0x4000;
             break;
             case 'h':
