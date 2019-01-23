@@ -10,4 +10,4 @@ feature:
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
-        timestamp_registers:
+        txt_buffer_hazard:

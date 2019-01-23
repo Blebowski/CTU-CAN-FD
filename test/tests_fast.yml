@@ -71,6 +71,8 @@ feature:
         message_filter:
             iterations: 1
         timestamp_registers:
+        txt_buffer_hazard:
+            iterations: 5
 reference:
     default:
         <<: *default
