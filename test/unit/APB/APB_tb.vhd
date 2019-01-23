@@ -133,10 +133,12 @@ begin
 
     assert s_apb_pslverr = '0' or arstn = '0' or now = 0 fs report "Slave error!" severity error;
 
-    main:process
-        procedure apb_write(constant addr : std_logic_vector(11 downto 0);
-                            constant data : std_logic_vector(31 downto 0);
-                            constant be   : std_logic_vector(3 downto 0)) is
+    main_proc : process
+        procedure apb_write(
+            constant addr : std_logic_vector(11 downto 0);
+            constant data : std_logic_vector(31 downto 0);
+            constant be   : std_logic_vector(3 downto 0)
+        ) is
             variable i : natural := 0;
         begin
             s_apb_paddr <= (others => '0');
@@ -153,7 +155,7 @@ begin
                 wait until rising_edge(aclk);
                 exit L when s_apb_pready = '1';
                 i := i + 1;
-                assert i < 5 report "Peripheral is stalling for too many cycles for APB write." severity error;
+                check(i < 5, "Peripheral is stalling for too many cycles for APB write.");
             end loop;
             s_apb_penable <= '0';
             s_apb_psel <= '0';
@@ -175,7 +177,7 @@ begin
                 wait until rising_edge(aclk);
                 exit L when s_apb_pready = '1';
                 i := i + 1;
-                assert i < 5 report "Peripheral is stalling for too many cycles for APB read." severity error;
+                check(i < 5, "Peripheral is stalling for too many cycles for APB read.");
             end loop;
             s_apb_penable <= '0';
             s_apb_psel <= '0';
@@ -186,14 +188,14 @@ begin
         begin
             apb_write(addr, data, b"1111");
             apb_read(addr);
-            assert s_apb_prdata = data report "pattern " & to_hstring(data) & " mismatch: got " & to_hstring(s_apb_prdata);
+            check(s_apb_prdata = data, "pattern " & to_hstring(data) & " mismatch: got " & to_hstring(s_apb_prdata));
         end procedure;
     begin
         s_apb_penable  <= '0';
         s_apb_pprot    <= (others => 'X');
         s_apb_psel     <= '0';
 
-        log("Restarting APB test", info_l, log_level);
+        info("Restarting APB test");
         status         <= waiting;
         if not run then wait until run; end if;
         print_test_info(iterations, log_level, error_beh, error_tol);
@@ -206,22 +208,22 @@ begin
 
         -- read just after HW reset
         apb_read(DEVICE_ID_ADR);
-        assert s_apb_prdata = x"0201CAFD" report "CAN ID reg mismatch (just after HW reset)";
+        check(s_apb_prdata = x"0201CAFD", "CAN ID reg mismatch (just after HW reset)");
 
         apb_write(BTR_ADR, x"FFFFFFFF", b"1111");
         apb_read(DEVICE_ID_ADR);
-        assert s_apb_prdata = x"0201CAFD" report "CAN ID reg mismatch";
+        check(s_apb_prdata = x"0201CAFD", "CAN ID reg mismatch");
         apb_read(BTR_ADR);
-        assert s_apb_prdata = x"FFFFFFFF" report "readback mismatch";
+        check(s_apb_prdata = x"FFFFFFFF", "readback mismatch");
 
         apb_write(BTR_ADR, x"00000000", b"0011");
         apb_read(BTR_ADR);
-        assert s_apb_prdata = x"FFFF0000" report "write low word: readback mismatch";
+        check(s_apb_prdata = x"FFFF0000", "write low word: readback mismatch");
 
         apb_write(BTR_ADR, x"FFFFFFFF", b"1111");
         apb_write(BTR_ADR, x"00000000", b"1100");
         apb_read(BTR_ADR);
-        assert s_apb_prdata = x"0000FFFF" report "write high word: readback mismatch";
+        check(s_apb_prdata = x"0000FFFF", "write high word: readback mismatch");
 
         apb_test_pattern(BTR_ADR, x"AAAAAAAA");
         apb_test_pattern(BTR_ADR, x"55555555");
@@ -231,10 +233,10 @@ begin
 
         apb_write(BTR_ADR, x"87654321", b"1111");
         apb_read(BTR_ADR);
-        assert s_apb_prdata = x"87654321" report "readback mismatch";
+        check(s_apb_prdata = x"87654321", "readback mismatch");
         apb_write(BTR_ADR, x"000055aa", b"0011");
         apb_read(BTR_ADR);
-        assert s_apb_prdata = x"876555aa" report "write low word: readback mismatch";
+        check(s_apb_prdata = x"876555aa", "write low word: readback mismatch");
 
         -- write after HW reset
         arstn     <= '0';
@@ -242,7 +244,7 @@ begin
         arstn     <= '1';
         apb_write(BTR_ADR, x"DEADBEEF", b"1111");
         apb_read(BTR_ADR);
-        assert s_apb_prdata = x"DEADBEEF" report "Readback for write-after-HW-reset mismatch.";
+        check(s_apb_prdata = x"DEADBEEF", "Readback for write-after-HW-reset mismatch.");
 
         wait until aclk;
         wait until aclk;

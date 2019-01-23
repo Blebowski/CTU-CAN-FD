@@ -307,12 +307,7 @@ begin
 
         -- At any point the data should be matching the data in
         -- the shadow buffer
-        if (txt_word /= shadow_mem(txt_addr)) then
-            -- LCOV_EXCL_START
-            process_error(data_coh_err_ctr, error_beh, exit_imm_1);
-            log("Data coherency error!", error_l, log_level);
-            -- LCOV_EXCL_STOP
-        end if;
+        check(txt_word = shadow_mem(txt_addr), "Data coherency error!");
     end process;
 
 
@@ -370,15 +365,10 @@ begin
         wait until rising_edge(clk_sys);
         wait until falling_edge(clk_sys);
         -- Check whether the state ended up as expected
-        if (txtb_state /= txtb_exp_state) then
-            -- LCOV_EXCL_START
-            process_error(state_coh_error_ctr, error_beh, exit_imm_2);
-            log("State not updated as expected! Actual: " &
-	              to_hstring(txtb_state) & " Expected: " &
-                  to_hstring(txtb_exp_state),
-                  error_l, log_level);
-            -- LCOV_EXCL_STOP
-        end if;
+        check(txtb_state = txtb_exp_state,
+              "State not updated as expected! Actual: " &
+	               to_hstring(txtb_state) & " Expected: " &
+                   to_hstring(txtb_exp_state));
 
         -- Set all the commands to be inactive
         txt_hw_cmd.valid   <= '0';
@@ -403,22 +393,22 @@ begin
         variable rand_nr    : real;
         variable rand_time  : time;
     begin
-        log("Restarting TXT Buffer test!", info_l, log_level);
+        info("Restarting TXT Buffer test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted TXT Buffer test", info_l, log_level);
+        info("Restarted TXT Buffer test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting TXT Buffer main loop", info_l, log_level);
+        info("Starting TXT Buffer main loop");
 
         while (loop_ctr < iterations  or  exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr),
-                                        info_l, log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
+            
             wait until falling_edge(clk_sys);
             wait until rising_edge(clk_sys);
             wait until rising_edge(clk_sys);

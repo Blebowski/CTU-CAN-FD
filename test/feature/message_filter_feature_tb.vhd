@@ -163,13 +163,8 @@ package body message_filter_feature is
         CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
         CAN_wait_frame_sent(ID_1, mem_bus(1));
         get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        if (rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Frame is not received when Message filters are disabled!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check_false(rx_state.rx_empty,
+            "Frame is not received when Message filters are disabled!");
 
         ------------------------------------------------------------------------
         -- Enable message filters. Send frame and check that no frame is
@@ -185,13 +180,8 @@ package body message_filter_feature is
         CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
         CAN_wait_frame_sent(ID_1, mem_bus(1));
         get_rx_buf_state(rx_state, ID_1, mem_bus(1));
-        if (not rx_state.rx_empty) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Frame passed Message filters when all filters are disabled!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(rx_state.rx_empty,
+            "Frame passed Message filters when all filters are disabled!");
 
 
         ------------------------------------------------------------------------
@@ -240,8 +230,7 @@ package body message_filter_feature is
                 mask_filt_config.acc_CAN_FD := false;
                 mask_filt_config.ident_type := CAN_frame.ident_type;
 
-                report "Starting scenario: " & integer'image(i) & "." &
-                        integer'image(j); 
+                info("Starting scenario: " & integer'image(i) & "."); 
 
                 -- Set accepted frame type based on scenario:
                 if (j < 4) then
@@ -270,8 +259,7 @@ package body message_filter_feature is
                 tmp_log_vect(tmp_int) := '1';
                 mask_filt_config.ID_mask :=
                     to_integer(unsigned(tmp_log_vect));
-                report "Filter mask: " &
-                         integer'image(mask_filt_config.ID_mask);
+                info("Filter mask: " & integer'image(mask_filt_config.ID_mask));
 
                 -- Generate bit value which will either match or not match
                 -- this mask depending on scenario.
@@ -280,8 +268,7 @@ package body message_filter_feature is
                 tmp_log_vect(tmp_int) := tmp_log;
                 mask_filt_config.ID_value := 
                         to_integer(unsigned(tmp_log_vect));
-                report "Filter value: " &
-                        integer'image(mask_filt_config.ID_value);
+                info("Filter value: " & integer'image(mask_filt_config.ID_value));
 
                 -- Set equal for scenarios wher Bit mask is match, set
                 -- opposite where it is not equal!
@@ -298,8 +285,7 @@ package body message_filter_feature is
                 end if;
                 id_hw_to_sw(tmp_log_vect, CAN_frame.ident_type,
                             CAN_frame.identifier);
-                report "CAN ID: " &
-                        integer'image(CAN_frame.identifier);
+                info("CAN ID: " & integer'image(CAN_frame.identifier));
 
                 -- Calculate whether frame should pass or not
                 should_pass := false;
@@ -321,17 +307,11 @@ package body message_filter_feature is
                 get_rx_buf_state(rx_state, ID_1, mem_bus(1));
 
                 -- Check!
-                if ((rx_state.rx_empty = true) and (should_pass = true)) then
-                    -- LCOV_EXCL_START
-                    report "Frame should have passed but did NOT!" severity
-                        error;
-                    -- LCOV_EXCL_STOP
-                end if;
-                if ((rx_state.rx_empty = false) and (should_pass = false)) then
-                    -- LCOV_EXCL_START
-                    report "Frame should NOT have passed but did!" severity
-                        error;
-                end if;
+               check_false((rx_state.rx_empty = true) and (should_pass = true),
+                    "Frame should have passed but did NOT!");
+                    
+               check_false((rx_state.rx_empty = false) and (should_pass = false),
+                    "Frame should NOT have passed but did!");
             end loop;
         end loop;
 
@@ -380,12 +360,9 @@ package body message_filter_feature is
         CAN_frame.ident_type := BASE;
         CAN_frame.rtr := RTR_FRAME;
  
-        report "ID value: " &
-                 integer'image(CAN_frame.identifier);
-        report "Low threshold: " &
-                 integer'image(l_th);
-        report "High threshold: " &
-                 integer'image(h_th);
+        info("ID value: " & integer'image(CAN_frame.identifier));
+        info("Low threshold: " & integer'image(l_th));
+        info("High threshold: " & integer'image(h_th));
 
         ------------------------------------------------------------------------
         -- Execute test of range fitlers. Following scenarios are tested:
@@ -423,20 +400,20 @@ package body message_filter_feature is
                 -- LCOV_EXCL_START
                 case i is
                     when 1 =>
-                        report "Frame with ID lower than Low threshold passed," &
-                               "but should NOT!" severity error;
+                        error("Frame with ID lower than Low threshold passed," &
+                              "but should NOT!");
                     when 2 =>
-                        report "Frame with ID equal to Low threshold didnt pass," &
-                               "but should!" severity error;
+                        error("Frame with ID equal to Low threshold didnt pass," &
+                              "but should!");
                     when 3 =>                        
-                        report "Frame with ID betwen Low and High threshold did" &
-                               "not pass, but should!" severity error;
+                        error("Frame with ID betwen Low and High threshold did" &
+                              "not pass, but should!");
                     when 4 =>                        
-                        report "Frame with ID equal to Hig threshold did not," &
-                               "pass, but should!" severity error;
+                        error("Frame with ID equal to Hig threshold did not," &
+                              "pass, but should!");
                     when 5 =>
-                        report "Frame with ID higher than High threshold did," &
-                               "pass, but should NOT!" severity error;
+                        error("Frame with ID higher than High threshold did," &
+                              "pass, but should NOT!");
                 end case;
                 -- LCOV_EXCL_STOP
             end if;

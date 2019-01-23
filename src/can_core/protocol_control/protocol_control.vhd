@@ -821,9 +821,22 @@ begin
   
   sof_pulse             <=  sof_pulse_r;
 
-  -- TX Data word endian swap
-  tx_data_word          <= endian_swap_32(tran_data);
-  
+  -----------------------------------------------------------------------------
+  -- TX Data word endian swapper
+  -----------------------------------------------------------------------------
+  endian_swapper_tx_comp : endian_swapper 
+  generic map(
+      swap_by_signal    => false,
+      swap_gen          => true,
+      word_size         => 4,   -- Number of Groups
+      group_size        => 8    -- Group size (bits)
+  )
+  port map(
+      input             => tran_data,
+      output            => tx_data_word,
+      swap_in           => '0' -- Inactive, swap by generic
+  );
+
   -----------------------
   --Auxiliarly vectors
   -----------------------
@@ -3214,7 +3227,7 @@ begin
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     when off =>     
-        if (drv_ena = ENABLED) then
+        if (drv_ena = CTU_CAN_ENABLED) then
             if (error_state /= bus_off and OP_State /= integrating) then
 
                 -- Note that here we don't want to execute FSM_Preset! We want

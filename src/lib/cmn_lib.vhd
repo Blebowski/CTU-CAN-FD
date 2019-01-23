@@ -45,6 +45,7 @@
 --------------------------------------------------------------------------------
 -- Revision History:
 --    10.12.2018   Created file
+--    20.1.2019    Added endian swapper
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -154,6 +155,24 @@ package cmn_lib is
         signal output               : out   std_logic
     );
     end component dff_arst;
+
+
+    ----------------------------------------------------------------------------
+    -- Endian swapper
+    ----------------------------------------------------------------------------
+    component endian_swapper is 
+    generic (
+        constant swap_by_signal        :     boolean := false;
+        constant swap_gen              :     boolean := false;
+        constant word_size             :     natural := 4;
+        constant group_size            :     natural := 8  
+    );  
+    port (
+        signal input   : in  std_logic_vector(word_size * group_size - 1 downto 0);
+        signal output  : out std_logic_vector(word_size * group_size - 1 downto 0);
+        signal swap_in : in  std_logic
+        );
+    end component;
 
 
 

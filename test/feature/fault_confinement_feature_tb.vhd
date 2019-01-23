@@ -122,21 +122,11 @@ package body fault_confinement_feature is
         ------------------------------------------------------------------------
         get_fault_thresholds(fault_th_2, ID_1, mem_bus(1));
 
-        if (fault_th.ewl /= fault_th_2.ewl) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Error warning limit threshold was not set properly!"
-                severity error;
-            -- LCOV_EXCL_START
-        end if;
+        check(fault_th.ewl = fault_th_2.ewl,
+              "Error warning limit threshold was not set properly!");
 
-        if (fault_th.erp /= fault_th_2.erp) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Error passive threshold was not set properly!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(fault_th.erp = fault_th_2.erp,
+              "Error passive threshold was not set properly!");
 
         ------------------------------------------------------------------------
         -- Read fault confinement state
@@ -146,31 +136,16 @@ package body fault_confinement_feature is
         if (err_counters.tx_counter > 255 or
             err_counters.rx_counter > 255)
         then
-            if (fault_state /= fc_bus_off) then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                report "Unit not Bus off as expected!"
-                    severity error;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(fault_state /= fc_bus_off, "Unit not Bus off as expected!");
+            
         elsif (err_counters.tx_counter < fault_th.ewl and
                err_counters.rx_counter < fault_th.ewl)
         then
-            if (fault_state /= fc_error_active) then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                report "Unit not Error Active as expected!"
-                    severity error;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(fault_state = fc_error_active,
+                  "Unit not Error Active as expected!");
         else
-          if (fault_state /= fc_error_passive) then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                report "Unit not Error Passive as expected!"
-                    severity error;
-                -- LCOV_EXCL_STOP
-            end if;
+          check(fault_state = fc_error_passive,
+                "Unit not Error Passive as expected!");
         end if;
 
     end procedure;

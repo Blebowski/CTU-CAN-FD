@@ -135,12 +135,8 @@ package body forbid_fd_feature is
         read_error_counters(err_counters_2, ID_1, mem_bus(1));
 
         -- Counter should be increased
-        if ((err_counters_1.rx_counter + 1 + 8) /= err_counters_2.rx_counter) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "RX Error counter not incremented as expected!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check((err_counters_1.rx_counter + 1 + 8) = err_counters_2.rx_counter,
+              "RX Error counter not incremented as expected!");
 
         ------------------------------------------------------------------------
         -- Now send the same frame, but not the FD type. Wait until bus is idle
@@ -159,12 +155,8 @@ package body forbid_fd_feature is
         -- But it should be increased by 8 since it is the first node that
         -- detected the error!
         ------------------------------------------------------------------------
-        if ((err_counters_1.rx_counter + 8) /= err_counters_2.rx_counter) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "RX Error counter not incremented as expected!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check((err_counters_1.rx_counter + 8) = err_counters_2.rx_counter,
+              "RX Error counter not incremented as expected!");
 
         ------------------------------------------------------------------------
         -- Now enable the FD support of Node 1
@@ -189,12 +181,8 @@ package body forbid_fd_feature is
         -- Counter should be less than the value read now or both should be
         -- zeroes when counter cannnot already be lowered...
         ------------------------------------------------------------------------
-        if ((err_counters_1.rx_counter + 7) /= err_counters_2.rx_counter) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "RX Error counter not decremented as expected!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check((err_counters_1.rx_counter + 7) = err_counters_2.rx_counter,
+              "RX Error counter not decremented as expected!");
 
         ------------------------------------------------------------------------
         -- Since counter is incremented more than decremented, after many
@@ -202,7 +190,7 @@ package body forbid_fd_feature is
         -- this we clear error counters
         ------------------------------------------------------------------------
         if (err_counters_2.rx_counter > 70) then
-            report "Resetting error counters";
+            info("Resetting error counters");
             err_counters_2.rx_counter := 0;
             err_counters_2.tx_counter := 0;
             set_error_counters(err_counters_2, ID_1, mem_bus(1));

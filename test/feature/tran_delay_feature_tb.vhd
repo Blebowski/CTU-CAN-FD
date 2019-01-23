@@ -114,14 +114,10 @@ package body tran_delay_feature is
         ------------------------------------------------------------------------
         -- Check if delay is matching environment transceiver delay...
         -- Note, that 2 DFFs sync. chain must be taken into account
+        -- Feature TB has delay hardcoded to 20!
         ------------------------------------------------------------------------
-        if (delay /= 22) then
-			-- LCOV_EXCL_START
-            o.outcome := false;
-			report "Transceiver delay not measured as expected: " &
-				integer'image(delay) severity error;
-			-- LCOV_EXCL_STOP
-        end if;
+        check(delay = 22, "Transceiver delay not measured as expected: " &
+				integer'image(delay));
 
   end procedure;
 

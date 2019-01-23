@@ -86,6 +86,9 @@
 --                reading wrong value from TRV_DELAY register during measurment.
 --   10.12.2018   Re-factored, added generic Shift register instances. Added
 --                generic synchronisation chain module.
+--    16.1.2019   Replaced TX Data Shift register with FIFO like TX Data Cache.
+--                TX Data are stored only once per bit. TX Data Cache consumes
+--                drastically less DFFs. 
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -203,16 +206,14 @@ architecture rtl of bus_sampling is
 
     -- Shift registers length
     constant SSP_SHIFT_LENGTH        :     natural := 130;
-    constant TX_DATA_SHIFT_LENGTH    :     natural := 130;
+    
+    -- Depth of FIFO Cache for TX Data
+    constant TX_CACHE_DEPTH          :     natural := 8;
 
     -- Reset value for secondar sampling point shift registers
     constant SSP_SHIFT_RST_VAL       :     std_logic_vector(SSP_SHIFT_LENGTH - 1
                                                             downto 0) :=
                                                 (OTHERS => '0');
-
-    constant TX_DATA_SHIFT_RST_VAL   :     std_logic_vector(TX_DATA_SHIFT_LENGTH - 1
-                                                            downto 0) :=
-                                                (OTHERS => RECESSIVE);
 
     constant SSP_DELAY_SAT_VAL       :     natural := SSP_SHIFT_LENGTH - 1; 
 
@@ -262,10 +263,6 @@ architecture rtl of bus_sampling is
     -- Secondary sample signal 1 and 2 clk_sys cycles delayed
     signal sample_sec_del_1          :     std_logic;
     signal sample_sec_del_2          :     std_logic;
-
-    -- Shift Register for storing the TX data for secondary sample point
-    signal tx_data_shift             :     std_logic_vector
-                                            (TX_DATA_SHIFT_LENGTH - 1 downto 0);
 
     -- Delayed TX Data from TX Data shift register at position of secondary
     -- sampling point.
@@ -445,40 +442,32 @@ begin
     );
 
     ----------------------------------------------------------------------------
-    -- Shift register for TX data. Stored by shift register to be compared
-    -- with sampled RX Data in Secondary sampling point to detect bit error.
-    ----------------------------------------------------------------------------
-    tx_data_shift_reg_comp : shift_reg
-    generic map(
-        reset_polarity     => ACT_RESET,
-        reset_value        => TX_DATA_SHIFT_RST_VAL,
-        width              => TX_DATA_SHIFT_LENGTH,
-        shift_down         => false
-    )
-    port map(
-        clk                => clk_sys,
-        res_n              => shift_regs_res_n,
-
-        input              => data_tx,
-        enable             => '1',
-
-        reg_stat           => tx_data_shift,
-        output             => open
-    );
-
-
-    ----------------------------------------------------------------------------
     -- Secondary sampling point address decoder. Secondary sampling point
     -- is taken from SSP Shift register at position of transceiver delay.
     ----------------------------------------------------------------------------
     sample_sec_comb <= sample_sec_shift(to_integer(unsigned(ssp_delay)));
 
+
     ----------------------------------------------------------------------------
-    -- Delayed TX data address decoder. At the time of secondary sampling point,
-    -- TX data from TX Data shift register at position of transceiver delay are
-    -- taken for bit error detection!
+    -- TX DATA Cache. Stores TX Data when Sample point enters the SSP shift
+    -- register and reads data when Sample point steps out of shift register.
+    -- This gets the TX data which correspond to the RX Bit in Secondary
+    -- sampling point.
     ----------------------------------------------------------------------------
-    tx_data_delayed <= tx_data_shift(to_integer(unsigned(ssp_delay)));
+    tx_data_cache_comp : tx_data_cache
+    generic map(
+        reset_polarity    => ACT_RESET,
+        tx_cache_depth    => TX_CACHE_DEPTH,
+        tx_cache_res_val  => RECESSIVE
+    )
+    port map(
+        clk_sys           => clk_sys,
+        res_n             => shift_regs_res_n,
+        write             => sample_dbt,
+        read              => sample_sec,
+        data_in           => data_tx,
+        data_out          => tx_data_delayed
+    );
 
 
     ----------------------------------------------------------------------------
@@ -559,7 +548,7 @@ begin
 
         elsif rising_edge(clk_sys) then
 
-            if (drv_ena = ENABLED) then
+            if (drv_ena = CTU_CAN_ENABLED) then
                 case sp_control is
 
                 ----------------------------------------------------------------
@@ -610,7 +599,7 @@ begin
 
         elsif rising_edge(clk_sys) then
 
-            if (drv_ena = ENABLED and bit_err_enable = '1') then
+            if (drv_ena = CTU_CAN_ENABLED and bit_err_enable = '1') then
                 case sp_control is
 
                 ----------------------------------------------------------------

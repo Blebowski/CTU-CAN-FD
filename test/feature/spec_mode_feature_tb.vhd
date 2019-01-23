@@ -167,13 +167,7 @@ package body spec_mode_feature is
                = delim_ack)
         loop
             wait until rising_edge(mem_bus(1).clk_sys);
-            if (bus_level = DOMINANT) then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                report "ACK detected when there should be no ACK!"
-                    severity error;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(bus_level = RECESSIVE, "ACK should be recessive now!");
         end loop;
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
@@ -184,22 +178,11 @@ package body spec_mode_feature is
         read_traffic_counters(ctr_2_1, ID_1, mem_bus(1));
         read_traffic_counters(ctr_2_2, ID_2, mem_bus(2));
 
-        if (ctr_1_1.tx_frames + 1 /= ctr_2_1.tx_frames) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "TX Frames counter incremented unexpectedly!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(ctr_1_1.tx_frames + 1 = ctr_2_1.tx_frames,
+              "TX Frames counter incremented unexpectedly!");
 
-        if (ctr_1_2.rx_frames + 1 /= ctr_2_2.rx_frames) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "RX Frames counter incremented unexpectedly!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
-
+        check(ctr_1_2.rx_frames + 1 = ctr_2_2.rx_frames,
+              "RX Frames counter incremented unexpectedly!");
 
         ------------------------------------------------------------------------
         -- Part 2
@@ -261,21 +244,11 @@ package body spec_mode_feature is
         read_traffic_counters(ctr_2_1, ID_1, mem_bus(1));
         read_traffic_counters(ctr_2_2, ID_2, mem_bus(2));
 
-        if (ctr_1_1.tx_frames + 2 /= ctr_2_1.tx_frames) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "TX Frames counter incremented unexpectedly!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(ctr_1_1.tx_frames + 2 = ctr_2_1.tx_frames,
+              "TX Frames counter incremented unexpectedly!");
 
-        if (ctr_1_2.rx_frames + 2 /= ctr_2_2.rx_frames) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "RX Frames counter incremented unexpectedly!"
-                severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(ctr_1_2.rx_frames + 2 = ctr_2_2.rx_frames,
+              "RX Frames counter incremented unexpectedly!");
 
   end procedure;
 

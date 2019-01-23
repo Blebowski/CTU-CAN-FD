@@ -87,6 +87,9 @@ use work.can_constants.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
+library vunit_lib;
+context vunit_lib.vunit_context;
+
 package CANtestLib is
 
     ----------------------------------------------------------------------------
@@ -569,6 +572,37 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
+    -- Set highest loglevel that should be shown.
+    -- Log levels are connected to CAN_test as input signals and driven by
+    -- VUnit from configuration.
+    --
+    -- Log levels are bound to Vunit Logging library:
+    --  info_l  - All logs are shown
+    --  warning_l - warning(), error(), failure() are shown
+    --  error_l   - error(), failure() are shown
+    --
+    -- Default VUnit logger is used.
+    --
+    -- Arguments:
+    --  log_level        Severity level which is set in current test.
+    ----------------------------------------------------------------------------
+    procedure set_log_level(
+          constant log_level      : in    log_lvl_type
+    );
+
+
+    ---------------------------------------------------------------------------
+    -- Configure error behaviour (Quit / Go On) of Vunit.
+    --
+    -- Arguments:
+    --  log_level        Severity level which is set in current test.
+    ----------------------------------------------------------------------------
+    procedure set_error_beh(
+          constant error_beh      : in    err_beh_type
+    );
+    
+
+    ----------------------------------------------------------------------------
     -- Generates clock signal for the test with custom period, duty cycle and
     -- clock jitter.
     --
@@ -635,22 +669,6 @@ package CANtestLib is
         constant duty           : in    natural;
         constant epsilon_ppm    : in    natural
     ) return generate_clock_precomputed_t;
-
-
-    ----------------------------------------------------------------------------
-    -- Reports message when severity level is lower or equal than severity
-    -- of message.
-    --
-    -- Arguments:
-    --  message         String to be reported.
-    --  log_severity    Severity level which is set in current test.
-    --  log_level       Severity of message
-    ----------------------------------------------------------------------------
-    procedure log(
-        constant message        : in    String;
-        constant log_severity   : in    log_lvl_type;
-        constant log_level      : in    log_lvl_type
-    );
 
 
     ----------------------------------------------------------------------------
@@ -724,7 +742,7 @@ package CANtestLib is
 
 
     -- variation of above, only returns the seed value
-    function apply_rand_seed(
+    impure function apply_rand_seed(
         constant seed            : in   natural;
         constant offset          : in   natural
     ) return natural;
@@ -1156,8 +1174,7 @@ package CANtestLib is
     --  severity        Severity level that should be used to print the frame.
     ----------------------------------------------------------------------------
     procedure CAN_print_frame(
-        constant frame          : in    SW_CAN_frame_type;
-        constant log_level      : in    log_lvl_type
+        constant frame          : in    SW_CAN_frame_type
     );
 
 
@@ -1709,7 +1726,7 @@ package CANtestLib is
     function str_equal(a : string; b : string) return boolean;
 
     -- Pad string with spaces.
-    function strtolen(n : natural; src : string) return string;
+    impure function strtolen(n : natural; src : string) return string;
 
 
     ----------------------------------------------------------------------------
@@ -1770,6 +1787,22 @@ package CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+
+
+    ----------------------------------------------------------------------------
+    -- Read Timestamp from TIMESTAMP_LOW and TIMESTAMP_HIGH registers 
+    -- 
+    -- Arguments:
+    --  ts             	Variable in which timestamp will be stored
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_read_timestamp(
+        variable ts		        : out   std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ); 
+
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -1833,19 +1866,15 @@ package body CANtestLib is
         -- Evaluate the test result
         if (errors < error_th or errors = error_th) then
             status    <= passed;
-            report "Test result: SUCCESS" severity note;
+            info("Test result: SUCCES");
             wait for 200 ns;
             --std.env.stop(0);
         else
             status    <= failed;
-            report "Test result: FAILURE" severity error;
+            error("Test result: FAILURE");
             wait for 200 ns;
             --std.env.stop(1);
         end if;
-
-        -- Finish the test
-        --wait for 200 ns;
-        --report "Test END" severity failure;
 
     end procedure;
 
@@ -1945,46 +1974,6 @@ package body CANtestLib is
     end function;
 
 
-    procedure log(
-        constant Message        : in    String;
-        constant log_severity   : in    log_lvl_type;
-        constant log_level      : in    log_lvl_type
-   )is
-    begin
-
-    if (log_level = info_l) then
-        if (log_severity = info_l) then
-            report Message severity NOTE;
-        elsif (log_severity = warning_l)then
-            report Message severity WARNING;
-        elsif (log_severity = error_l) then
-            report Message severity ERROR;
-        else
-            report "Unsupported log severity type in 'log' function"
-            severity failure;
-        end if;
-
-    elsif (log_level = warning_l) then
-
-        if (log_severity = warning_l) then
-            report Message severity WARNING;
-        elsif (log_severity = error_l) then
-            report Message severity ERROR;
-        end if;
-
-    elsif (log_level = error_l) then
-
-        if (log_severity = error_l) then
-            report Message severity ERROR;
-        end if;
-
-    else
-        report "Unsupported severity type in 'log' function" severity failure;
-    end if;
-
-    end procedure;
-
-
     procedure reset_test(
         signal res_n            : out   std_logic;
         signal status           : out   test_status_type;
@@ -2025,6 +2014,41 @@ package body CANtestLib is
 
         wait for 0 ns;
     end procedure;
+    
+    
+    procedure set_log_level(
+         constant log_level      : in    log_lvl_type
+    ) is
+    begin
+        case log_level is
+            when error_l =>
+                show_all(display_handler);
+                hide(display_handler, debug);
+                hide(display_handler, info);
+                hide(display_handler, warning);
+            when warning_l =>
+                show_all(display_handler);
+                hide(display_handler, debug);
+                hide(display_handler, info);
+            when info_l =>
+                show_all(display_handler);
+                --hide(logger, display_handler, debug);
+            when others =>
+                failure("Unknwon log level.");
+        end case;
+    end procedure;
+    
+    
+    procedure set_error_beh(
+          constant error_beh      : in    err_beh_type
+    ) is
+    begin
+        if (error_beh = quit) then
+            set_stop_level(error);
+        else
+            set_stop_level(failure);
+        end if;
+    end procedure;    
 
 
     procedure print_test_info(
@@ -2034,35 +2058,37 @@ package body CANtestLib is
         constant error_tol      : in    natural
     )is
     begin
-        report "Test info:";
-        report "Number of iterations: " & integer'image(iterations);
+        info("Test info:");
+        info("Number of iterations: " & integer'image(iterations));
 
         if (log_level = info_l) then
-            report "Log level: INFO,WARNING,ERROR logs are shown!";
+            info("Log level: INFO,WARNING,ERROR logs are shown!");
         elsif (log_level = warning_l) then
-            report "Log level: WARNING,ERROR logs are shown!";
+            info("Log level: WARNING,ERROR logs are shown!");
         else
-            report "Log level: ERROR logs are shown!";
+            info("Log level: ERROR logs are shown!");
         end if;
+        set_log_level(log_level);
 
         if (error_beh = go_on) then
-            report "When error is detected test runs on";
+            info("When error is detected test runs on");
         else
-            report "When error is detected test quits";
+            info("When error is detected test quits");
         end if;
+        set_error_beh(error_beh);
 
-        report "Error tolerance: " & integer'image(error_tol);
+        info("Error tolerance: " & integer'image(error_tol));
     end;
 
 
-    function apply_rand_seed(
+    impure function apply_rand_seed(
         constant seed            : in   natural;
         constant offset          : in   natural
     ) return natural is
         variable tmp             :      natural;
     begin
         tmp := seed + offset;
-        report "Random initialized with seed " & natural'image(seed);
+        info("Random initialized with seed " & natural'image(seed));
         return tmp mod RAND_POOL_SIZE;
     end function;
 
@@ -2101,7 +2127,7 @@ package body CANtestLib is
         when 48 => dlc := "1110";
         when 64 => dlc := "1111";
         when others =>
-			report "Invalid data length" severity error;
+			error("Invalid data length");
 			dlc := "0000";
         end case;
 	end procedure;
@@ -2217,10 +2243,8 @@ package body CANtestLib is
         variable id_vect        :       std_logic_vector(28 downto 0);
     begin
         if (id_type = EXTENDED) then
-            if (id_in > 536870911) then
-                report "Extended Identifier Exceeds the maximal value!"
-                severity error;
-            end if;
+            check(id_in < 536870912,
+                  "Extended Identifier Exceeds the maximal value!");
             id_vect := std_logic_vector(to_unsigned(id_in, 29));
 
             id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
@@ -2228,10 +2252,8 @@ package body CANtestLib is
             id_out(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) :=
                 id_vect(17 downto 0);
         else
-            if (id_in > 2047) then
-                report "Base Identifier Exceeds the maximal value!"
-                severity error;
-            end if;
+            check(id_in < 2048,
+                  "Base Identifier Exceeds the maximal value!");
             id_vect := "000000000000000000" &
                            std_logic_vector(to_unsigned(id_in, 11));
             id_out(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) :=
@@ -2367,16 +2389,12 @@ package body CANtestLib is
         constant  w_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     )is
-        variable msg            :       line;
     begin
 
         -- Check for access alignment
         if (not aval_is_aligned(w_address, w_size)) then
-            write(msg, string'("Unaligned Avalon write, Adress :"));
-            hwrite(msg, w_address);
-            write(msg, string'(" Size: "));
-            write(msg, aval_access_size'image(w_size));
-            writeline(output, msg);
+            warning("Unaligned Avalon write, Adress :" & to_hstring(w_address)
+                    & " Size: " & aval_access_size'image(w_size)); 
         else
             wait until falling_edge(mem_bus.clk_sys);
             mem_bus.scs       <=  '1';
@@ -2409,11 +2427,8 @@ package body CANtestLib is
 
         -- Check for access alignment
         if (not aval_is_aligned(r_address, r_size)) then
-            write(msg, string'("Unaligned Avalon Read, Adress :"));
-            hwrite(msg, r_address);
-            write(msg, string'(" Size: "));
-            write(msg, aval_access_size'image(r_size));
-            writeline(output, msg);
+            warning("Unaligned Avalon Read, Adress :" & to_hstring(r_address) &
+                    " Size: " & aval_access_size'image(r_size));
         else
             wait until falling_edge(mem_bus.clk_sys);
             mem_bus.scs       <=  '1';
@@ -2434,25 +2449,23 @@ package body CANtestLib is
     end procedure;
 
 
-    function aval_is_invalid_burst_size(
+    impure function aval_is_invalid_burst_size(
         constant data_length    :       natural
     ) return boolean
     is
     begin
         if ((data_length mod 4) = 0) then
-            return false;
-            report "Invalid Avalon Burst size: "
+            warning("Invalid Avalon Burst size: "
                     & integer'image(data_length) &
-                   " Burst size should be 32 bit aligned!"
-                    severity warning;
+                    " Burst size should be 32 bit aligned!");
+            return false;
         end if;
 
         if ((data_length / 4) > 64) then
-            report "Invalid Avalon Burst size: "
+            warning("Invalid Avalon Burst size: "
                     & integer'image(data_length) &
-                   " Burst size should not be larger than 64 words! " &
-                   " (Vector of 64 * 32 = 2048 bits)"
-                    severity warning;
+                    " Burst size should not be larger than 64 words! " &
+                    " (Vector of 64 * 32 = 2048 bits)");
             return false;
         end if;
 
@@ -2472,9 +2485,8 @@ package body CANtestLib is
         variable  msg           :       line;
     begin
         if (not aval_is_aligned(w_address, BIT_32)) then
-            write(msg, string'("Unaligned Avalon Write Burst, Adress:"));
-            hwrite(msg, w_address);
-            writeline(output, msg);
+            warning("Unaligned Avalon Write Burst, Adress:" &
+                    to_hstring(w_address));
             return;
         end if;
         
@@ -2526,9 +2538,8 @@ package body CANtestLib is
         variable  msg           :       line;
     begin
         if (not aval_is_aligned(r_address, BIT_32)) then
-            write(msg, string'("Unaligned Avalon Read Burst, Adress:"));
-            hwrite(msg, r_address);
-            writeline(output, msg);
+            warning("Unaligned Avalon Read Burst, Adress:" &
+                    to_hstring(r_address));
             return;
         end if;
         
@@ -2716,57 +2727,37 @@ package body CANtestLib is
     )is
         variable msg                :       line;
     begin
-        write(msg, string'("Nominal Bit timing: "));
+        info("Nominal Bit timing: " &
+             "BRP:  " & integer'image(bus_timing.tq_nbt) & " " &
+             "PROP: " & integer'image(bus_timing.prop_nbt) & " " &
+             "PH1:  " & integer'image(bus_timing.ph1_nbt) & " " &
+             "PH2:  " & integer'image(bus_timing.ph2_nbt) & " " &
+             "SJW:  " & integer'image(bus_timing.sjw_nbt));
 
-        -- Baud Rate Prescaler
-        write(msg, string'("BRP: " & integer'image(bus_timing.tq_nbt) & " "));
-
-        -- Propagation segment
-        write(msg, string'("PROP: " & integer'image(bus_timing.prop_nbt) & " "));
-
-        -- Phase 1 segment
-        write(msg, string'("PH1: " & integer'image(bus_timing.ph1_nbt) & " "));
-
-        -- Phase 2 segment
-        write(msg, string'("PH2: " & integer'image(bus_timing.ph2_nbt) & " "));
-      
-        -- SJW
-        write(msg, string'("SJW: " & integer'image(bus_timing.sjw_nbt) & " "));
-
-        write(msg, string'("Data Bit timing: "));
-
-        -- Baud Rate Prescaler - FD
-        write(msg, string'("BRP: " & integer'image(bus_timing.tq_dbt) & " "));
-
-        -- Propagation segment - FD
-        write(msg, string'("PROP: " & integer'image(bus_timing.prop_dbt) & " "));
-
-        -- Phase 1 segment - FD
-        write(msg, string'("PH1: " & integer'image(bus_timing.ph1_dbt) & " "));
-
-        -- Phase 2 segment - FD
-        write(msg, string'("PH2: " & integer'image(bus_timing.ph2_dbt) & " "));
-      
-        -- SJW - FD
-        write(msg, string'("SJW: " & integer'image(bus_timing.sjw_dbt) & " "));
-
-        writeline(output, msg);
+        info("Data Bit timing: " &
+             "BRP:  " & integer'image(bus_timing.tq_dbt) &
+             "PROP: " & integer'image(bus_timing.prop_dbt) &
+             "PH1:  " & integer'image(bus_timing.ph1_dbt) &
+             "PH2:  " & integer'image(bus_timing.ph2_dbt) &
+             "SJW:  " & integer'image(bus_timing.sjw_dbt));
     end procedure;
 
 
     procedure CAN_print_bus_matrix(
         constant   bus_matrix     : in   bus_matrix_type
     )is
-        variable msg              :       line;
+        variable x                : integer;
+        variable y                : integer;
     begin
-        write(msg, string'("Bus matrix: "));
-        writeline(output, msg);
+        info("Bus matrix: ");
 
         for i in 1 to NODE_COUNT loop
             for j in 1 to NODE_COUNT loop
-                write(msg, string'(real'image(bus_matrix(i, j)) & " "));
+                x := i;
+                y := j;
+                info("Index: " & integer'image(x) & "," & integer'image(y) &
+                     " Value: " & real'image(bus_matrix(i, j)));
             end loop;
-            writeline(output, msg);
         end loop;
 
     end procedure;
@@ -2783,9 +2774,9 @@ package body CANtestLib is
     begin
         CAN_read(data, MODE_ADR, ID, mem_bus);
         if turn_on then
-            data(ENA_IND) := ENABLED;
+            data(ENA_IND) := CTU_CAN_ENABLED;
         else
-            data(ENA_IND) := DISABLED;
+            data(ENA_IND) := CTU_CAN_DISABLED;
         end if;
         CAN_write(data, MODE_ADR, ID, mem_bus);
         CAN_read(readback, MODE_ADR, ID, mem_bus);
@@ -2844,8 +2835,7 @@ package body CANtestLib is
                 cfg(3) := '0';
             end if;
         else
-            report "Unsupported CAN frame type"
-                severity error;
+            error("Unsupported CAN frame type");
         end if;
     end procedure;
 
@@ -2880,7 +2870,7 @@ package body CANtestLib is
             value_offset := FILTER_C_VAL_ADR;
             ctrl_offset  := FCNB_IND;
         else
-            report "Unsupported mask filter!" severity error;
+            error("Unsupported mask filter!");
         end if;
 
         -- Configure filter mask
@@ -2920,8 +2910,7 @@ package body CANtestLib is
 
         -- Check High threshold aint lower than Low threshold
         if (config.ID_th_low > config.ID_th_high) then
-            report "High threshold of Range filter Lower than Low threshold!"
-                severity warning;
+            warning("High threshold of Range filter Lower than Low threshold!");
         end if;
         id_sw_to_hw(config.ID_th_high, config.ident_type, ident_hth_vect);
 
@@ -3027,62 +3016,54 @@ package body CANtestLib is
 
 
     procedure CAN_print_frame(
-        constant frame          : in    SW_CAN_frame_type;
-        constant log_level      : in    log_lvl_type
+        constant frame          : in    SW_CAN_frame_type
     )is
-        variable msg            :       line;
         variable data_byte      :       std_logic_vector(7 downto 0);
+        variable str_msg        :       string(1 to 512) := (OTHERS => ' ');
     begin
 
-        write(msg, string'("CAN Frame:"));
+        str_msg(1 to 10) := "CAN Frame:";
 
         -- Identifier
-        write(msg, string'(" ID : 0x"));
-        hwrite(msg, std_logic_vector(to_unsigned(frame.identifier, 32)), RIGHT,
-                    8);
+        str_msg(11 to 18) := " ID : 0x";
+        str_msg(19 to 26) :=
+            to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32)));
 
         -- Metadata
-        write(msg, string'("    DLC: "));
-        hwrite(msg, frame.dlc);
+        str_msg(27 to 35) := "    DLC: ";
 
         if (frame.rtr = RTR_FRAME) then
-            write(msg, string'("    RTR Frame"));
+            str_msg(36 to 48) := "    RTR Frame";
         else
-            write(msg, string'("             "));
+            str_msg(36 to 48) := "             ";
         end if;
 
         if (frame.ident_type = BASE) then
-            write(msg, string'("    BASE identifier    "));
+            str_msg(49 to 71) := "    BASE identifier    ";
         else
-            write(msg, string'("    EXTENDED identifier"));
+            str_msg(49 to 71) := "    EXTENDED identifier";
         end if;
 
         if (frame.frame_format = NORMAL_CAN) then
-            write(msg, string'("    CAN 2.0 frame"));
+            str_msg(72 to 88) := "    CAN 2.0 frame";
         else
-            write(msg, string'("    CAN FD frame "));
+            str_msg(72 to 88) := "    CAN FD frame ";
         end if;
 
-        write(msg, string'("    RWCNT (read word count): "));
-        write(msg, Integer'image(frame.rwcnt));
+        str_msg(89 to 117) := "    RWCNT (read word count): ";
+        str_msg(118 to 127) :=
+            to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10))); 
 
         -- Data words
         if (frame.rtr = NO_RTR_FRAME and frame.data_length > 0) then
-            write(msg, string'("    Data: "));
+            str_msg(128 to 137) := "    Data: ";
             for i in 0 to frame.data_length - 1 loop
                 data_byte := frame.data(i);
-                write(msg, string'("0x"));
-                hwrite(msg, frame.data(i));
-                write(msg, string'(" "));
+                str_msg(138 + i * 5 to 142 + i * 5) :=
+                    "0x" & to_hstring(frame.data(i)) & " ";
             end loop;
         end if;
-
-        writeline(output, msg);
-
---        info_l,
---        warning_l,
---        error_l
-
+        info(str_msg);
     end procedure;
 
 
@@ -3174,12 +3155,12 @@ package body CANtestLib is
 
         -- Identifier
         if (frame.ident_type = BASE and frame.identifier > 2047) then
-            report "Incorrect BASE Identifier length" severity error;
+            error("Incorrect BASE Identifier length");
 
         elsif (frame.ident_type = EXTENDED and
                frame.identifier > 536870911)
         then
-            report "Incorrect EXTENDED Identifier length" severity error;
+            error("Incorrect EXTENDED Identifier length");
         end if;
 
         ident_vect := std_logic_vector(to_unsigned(frame.identifier, 29));
@@ -3198,7 +3179,7 @@ package body CANtestLib is
             memory(pointer + 1)(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
                                     ident_vect(28 downto 18);
         else
-            report "Unsupported Identifier type" severity error;
+            error("Unsupported Identifier type");
         end if;
 
         -- Timestamp
@@ -3260,7 +3241,7 @@ package body CANtestLib is
                                memory(pointer)
                                 (IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
         else
-            report "Unsupported Identifier type" severity error;
+            error("Unsupported Identifier type");
         end if;
 
         frame.identifier  := to_integer(unsigned(aux_vect));
@@ -3314,7 +3295,7 @@ package body CANtestLib is
         when 3 => buf_offset := TXTB3_DATA_1_ADR;
         when 4 => buf_offset := TXTB4_DATA_1_ADR;
         when others =>
-            report "Unsupported TX buffer number" severity error;
+            error("Unsupported TX buffer number");
         end case;
 
         -- Frame format word
@@ -3375,8 +3356,8 @@ package body CANtestLib is
             buf_state = buf_ab_progress or
             buf_state = buf_ready)
         then
-            report "Unable to send the frame, TXT buffer is READY, " &
-                   "TX is in progress, or Abort is in progress" severity error;
+            error("Unable to send the frame, TXT buffer is READY, " &
+                  "TX is in progress, or Abort is in progress");
             outcome     := false;
             return;
         end if;
@@ -3545,9 +3526,7 @@ package body CANtestLib is
         end if;
         
         -- Check Minimal Bit time
-        if (wait_time < 7) then
-            report "Calculated Bit Time shorter than minimal!" severity error;
-        end if;
+        check(wait_time > 6, "Calculated Bit Time shorter than minimal!");
 
         -- Count number of bits to wait
         -- Reading config took some time too, correct "wait_time" by 4 cycles
@@ -3680,8 +3659,8 @@ package body CANtestLib is
         when TXT_ABT  => retVal := buf_aborted;
         when TXT_ETY  => retVal := buf_empty;
         when others =>
-        report "Invalid TXT Buffer state: " &
-                  integer'image(to_integer(unsigned(b_state))) severity error;
+        error("Invalid TXT Buffer state: " &
+              integer'image(to_integer(unsigned(b_state))));
         end case;
 
     end procedure;
@@ -4318,10 +4297,10 @@ package body CANtestLib is
                and b(b'left+len to b'right) = btail;
     end function str_equal;
 
-    function strtolen(n : natural; src : string) return string is
+    impure function strtolen(n : natural; src : string) return string is
         variable s : string(1 to n) := (others => ' ');
     begin
-        assert src'length <= n report "String too long." severity failure;
+        check(src'length <= n, "String too long.");
         s(src'range) := src;
         return s;
     end function strtolen;
@@ -4386,7 +4365,7 @@ package body CANtestLib is
         when ALC_RTR =>
             alc := 33;
         when others =>
-            report "Unsupported ALC type" severity error;
+            error("Unsupported ALC type");
         end case;
 
     end procedure;
@@ -4420,6 +4399,24 @@ package body CANtestLib is
         trv_delay := to_integer(unsigned(data(
                             TRV_DELAY_VALUE_H downto TRV_DELAY_VALUE_L)));
     end procedure;
+
+
+
+    procedure CAN_read_timestamp(
+        variable ts	            : out   std_logic_vector(63 downto 0);
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable lower_word     :       std_logic_vector(31 downto 0);
+        variable upper_word     :       std_logic_vector(31 downto 0);
+    begin
+        CAN_read(lower_word, TIMESTAMP_LOW_ADR, ID, mem_bus);
+        CAN_read(upper_word, TIMESTAMP_HIGH_ADR, ID, mem_bus);
+
+        ts := upper_word & lower_word;
+    end procedure;
+
+
 end package body;
 
 

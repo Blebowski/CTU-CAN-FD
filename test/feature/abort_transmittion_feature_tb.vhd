@@ -147,7 +147,7 @@ package body abort_transmittion_feature is
         PC_State := protocol_type'VAL(to_integer(unsigned(
                      iout(1).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))));
 
-        report "PC State: " & protocol_type'Image(PC_State);
+        info("PC State: " & protocol_type'Image(PC_State));
         if (PC_State = sof or PC_State = arbitration or PC_State = control or
             PC_State = data or PC_State = crc)
         then
@@ -155,7 +155,7 @@ package body abort_transmittion_feature is
         else
             still_tx := false;
         end if;
-        report "Wait end";
+        info("Wait end");
 
         if still_tx then
 
@@ -173,12 +173,7 @@ package body abort_transmittion_feature is
             end loop;
 
             get_controller_status(status, ID_1, mem_bus(1));
-            if (status.transmitter) then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                report "Unit did not abort the transmission!" severity error;
-                -- LCOV_EXCL_STOP
-            end if;
+            check_false(status.transmitter, "Unit did not abort the transmission!");
 
             --------------------------------------------------------------------
             -- Now wait until unit 2 starts transmitting error frame! Note that
@@ -208,12 +203,7 @@ package body abort_transmittion_feature is
             -- Check that unit is now idle since it is after transmittion already
             --------------------------------------------------------------------
             get_controller_status(status, ID_1, mem_bus(1));
-            if (not status.bus_status) then
-                -- LCOV_EXCL_START
-                report "Unit is not Idle!" severity error;
-                o.outcome := false;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(status.bus_status, "Unit is not Idle!");
 
         end if;
 

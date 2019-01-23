@@ -140,7 +140,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Recieve INT node 1, TX int node 2
         ------------------------------------------------------------------------
-        report "Starting TX RX interrupt";
+        info("Starting TX RX interrupt");
         int_ena.receive_int := true;
         write_int_enable(int_ena, ID_1, mem_bus(1));
         int_ena.receive_int := false;
@@ -164,18 +164,11 @@ package body interrupt_feature is
         -- Check that interrupt was generated
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_1, mem_bus(1));
-        if (not int_stat.receive_int) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "RX Interrupt not present!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(int_stat.receive_int, "RX Interrupt not present!");
         clear_int_status(int_stat, ID_1, mem_bus(1));
 
         read_int_status(int_stat, ID_2, mem_bus(2));
-        if (not int_stat.transmitt_int) then
-            o.outcome := false;
-        end if;
+        check(int_stat.transmitt_int, "TX Interrupt not present");
         clear_int_status(int_stat, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
@@ -184,7 +177,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Error Interrupt both nodes
         ------------------------------------------------------------------------
-        report "Starting Error interrupt";
+        info("Starting Error interrupt");
         int_ena.bus_error_int := true;
         write_int_enable(int_ena, ID_1, mem_bus(1));
         write_int_enable(int_ena, ID_2, mem_bus(2));
@@ -209,21 +202,11 @@ package body interrupt_feature is
         -- Detect interrupt error flag
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_1, mem_bus(1));
-        if (not int_stat.bus_error_int) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Bus error Interrput not present (Node 1)" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(int_stat.bus_error_int, "Bus error Interrput not present (Node 1)");
         clear_int_status(int_stat, ID_1, mem_bus(1));
 
         read_int_status(int_stat, ID_2, mem_bus(2));
-        if (not int_stat.bus_error_int) then
-            -- LCOV_EXCL_START
-            report "Bus error Interrupt no present (Node 2)" severity error;
-            o.outcome := false;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(int_stat.bus_error_int, "Bus error Interrupt no present (Node 2)");
         CAN_wait_frame_sent(ID_1, mem_bus(1));
         clear_int_status(int_stat, ID_2, mem_bus(2));
         wait for 15000 ns;
@@ -235,7 +218,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Data overrun interrupt and recieve buffer full interrupt node 2
         ------------------------------------------------------------------------
-        report "Starting Data overrun, recieve buffer interrupt";
+        info("Starting Data overrun, recieve buffer interrupt");
         int_ena.data_overrun_int := true;
         int_ena.rx_buffer_full_int := true;
         write_int_enable(int_ena, ID_2, mem_bus(2));
@@ -254,7 +237,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         get_rx_buf_state(buf_info, ID_2, mem_bus(2));
 
-        --report "Buffer size: " & Integer'image(buf_info.rx_buff_size);
+        info("Buffer size: " & Integer'image(buf_info.rx_buff_size));
 
         -- Send RTR frames till we fill the buffer
         CAN_frame.rtr := RTR_FRAME;
@@ -267,16 +250,10 @@ package body interrupt_feature is
             -- On last frame RX Buffer should be full. Check if interrupt was
             -- fired and clear it!
             if (i = (buf_info.rx_buff_size / 4)) then
-                if (iout(2).irq = '0') then
-                    -- LCOV_EXCL_START
-                    report "RX Buffer Full interrupt is not active!"
-                        severity error;
-                    o.outcome := false;
-                    -- LCOV_EXCL_STOP
-                else
-                    read_int_status(int_stat, ID_2, mem_bus(2));
-                    clear_int_status(int_stat, ID_2, mem_bus(2));
-                end if;
+                check_false(iout(2).irq = '0',
+                            "RX Buffer Full interrupt is not active!");
+                read_int_status(int_stat, ID_2, mem_bus(2));
+                clear_int_status(int_stat, ID_2, mem_bus(2));
             end if;
         end loop;
 
@@ -286,19 +263,9 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_2, mem_bus(2));
 
-        if (not int_stat.rx_buffer_full_int) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "RX Buffer Full Interrupt not present!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(int_stat.rx_buffer_full_int, "RX Buffer Full Interrupt not present!");
+        check(int_stat.data_overrun_int, "Data overrun Interrupt not present!");
 
-        if (not int_stat.data_overrun_int) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Data overrun Interrupt not present!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
         clear_int_status(int_stat, ID_2, mem_bus(2));
         wait for 30000 ns;
 
@@ -309,7 +276,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Bit rate shift interrupt on both nodes
         ------------------------------------------------------------------------
-        report "Starting Bit rate shift interrupt";
+        info("Starting Bit rate shift interrupt");
 
         int_ena.bit_rate_shift_int := true;
         write_int_enable(int_ena, ID_1, mem_bus(1));
@@ -330,12 +297,7 @@ package body interrupt_feature is
         -- Detect the Bit rate shift interrupt flag
         ------------------------------------------------------------------------
         read_int_status(int_stat, ID_2, mem_bus(2));
-        if (not int_stat.bit_rate_shift_int) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Bit Rate shift interrupt not present" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(int_stat.bit_rate_shift_int, "Bit Rate shift interrupt not present");
         CAN_wait_frame_sent(ID_2,mem_bus(2));
         clear_int_status(int_stat, ID_2, mem_bus(2));
 
@@ -348,7 +310,7 @@ package body interrupt_feature is
         ------------------------------------------------------------------------
         -- Arbitration lost interrupt in node 1
         ------------------------------------------------------------------------
-        report "Starting arbitration lost int";
+        info("Starting arbitration lost int");
         int_ena.arb_lost_int := true;
         write_int_enable(int_ena, ID_1, mem_bus(1));
 
@@ -366,12 +328,7 @@ package body interrupt_feature is
         wait until rising_edge(iout(1).irq);
 
         read_int_status(int_stat, ID_1, mem_bus(1));
-        if (not int_stat.arb_lost_int) then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            report "Arbitration Lost Interrupt not present!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
+        check(int_stat.arb_lost_int, "Arbitration Lost Interrupt not present!");
         clear_int_status(int_stat, ID_1, mem_bus(1));
 
         -- Send abort command on node that lost arbitration so that it does
@@ -389,7 +346,7 @@ package body interrupt_feature is
         read_int_status(int_stat, ID_2, mem_bus(2));
         clear_int_status(int_stat, ID_2, mem_bus(2));
 
-        report "Finished interrupt test";
+        info("Finished interrupt test");
         wait for 300000 ns;
 
     end procedure;

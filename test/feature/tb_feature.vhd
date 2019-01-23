@@ -244,7 +244,7 @@ begin
         loop_ctr <= 0;
         wait until run = true;
         if hw_reset_on_new_test then
-            log("HW Restart of feature test environment started!",info_l,log_level);
+            info("HW Restart of feature test environment started!");
             wait for 5 ns;
             error_ctr <= 0;
             p(1).res_n <= '0';
@@ -252,7 +252,7 @@ begin
             wait for 100 ns;
             p(1).res_n <= '1';
             p(2).res_n <= '1';
-            log("HW Restart of feature test environment finished",info_l,log_level);
+            info("HW Restart of feature test environment finished");
             wait for 250 ns; -- wait until the core is really out of reset
         end if;
 
@@ -265,7 +265,7 @@ begin
         -------------------------------
         while (loop_ctr<iterations and not exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l, log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
             --Wait on signal from higher level wrapper to move to the next iteration
             wait until iteration_done = true;
 
@@ -411,22 +411,22 @@ begin
 
         apply_rand_seed(seed, 0, rand_ctr);
 
-        report "Restarting mem_bus(1)";
+        info("Restarting mem_bus(1)");
         restart_mem_bus(mem_bus(1));
-        report "Restarting mem_bus(1)";
+        info("Restarting mem_bus(1)");
         restart_mem_bus(mem_bus(2));
-        report "Waiting for out of reset";
+        info("Waiting for out of reset");
 
         --wait for 10 ns;
         wait until status_int = running;
         --wait until iout(1).hw_reset = '1' and iout(2).hw_reset = '1';
         --wait for 10 ns;
-        report "... ready .. let's begin";
+        info("... ready .. let's begin");
 
         --Execute the controllers configuration
         CAN_turn_controller(true, ID_1, mem_bus(1));
         CAN_turn_controller(true, ID_2, mem_bus(2));
-        report "Controllers are ON";
+        info("Controllers are ON");
 
         --Set default retransmitt limit to 0
         -- Failed frames are not retransmited
@@ -434,12 +434,12 @@ begin
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
-        report "RETR limit set";
+        info("RETR limit set");
         -------------------------------------------------
         -- Main test loop
         -------------------------------------------------
         while status_int /= passed loop
-            report "Iteration ...";
+            info("Iteration ...");
             iteration_done <= false;
             exec_feature_test(test_name => test_name,
                               o         => o,
@@ -449,12 +449,12 @@ begin
                               so        => so,
                               bus_level => bus_level
                               );
-            report "... out of exec function";
+            info("... out of exec function");
 
             if (o.outcome = false) then
                 -- LCOV_EXCL_START
                 process_error(error_ctr, error_beh, exit_imm);
-                report "Feature test failed!" severity error;
+                error("Feature test failed!");
                 -- LCOV_EXCL_STOP
             end if;
 

@@ -142,7 +142,7 @@ void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable)
 	union ctu_can_fd_mode_command_status_settings reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
-	reg.s.ena = enable ? ENABLED : DISABLED;
+	reg.s.ena = enable ? CTU_CAN_ENABLED : CTU_CAN_DISABLED;
 	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
 }
 
@@ -772,6 +772,23 @@ bool ctu_can_fd_insert_frame(struct ctucanfd_priv *priv,
 	}
 
 	return true;
+}
+
+u64 ctu_can_fd_read_timestamp(struct ctucanfd_priv *priv)
+{
+	union ctu_can_fd_timestamp_low ts_low;
+	union ctu_can_fd_timestamp_high ts_high;
+	union ctu_can_fd_timestamp_high ts_high_2;
+
+    ts_high.u32 = priv->read_reg(priv, CTU_CAN_FD_TIMESTAMP_HIGH);	
+    ts_low.u32 = priv->read_reg(priv, CTU_CAN_FD_TIMESTAMP_LOW);
+	ts_high_2.u32 = priv->read_reg(priv, CTU_CAN_FD_TIMESTAMP_HIGH);
+
+	if (ts_high.u32 != ts_high_2.u32){
+		ts_low.u32 = priv->read_reg(priv, CTU_CAN_FD_TIMESTAMP_LOW);
+	}
+
+	return (( (u64) ts_high_2.u32) << 32) | ( (u64) ts_low.u32);
 }
 
 // TODO: AL_CAPTURE and ERROR_CAPTURE

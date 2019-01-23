@@ -756,6 +756,26 @@ package can_components is
 
 
     ----------------------------------------------------------------------------
+    -- TX Data cache
+    ----------------------------------------------------------------------------
+    component tx_data_cache is
+    generic(
+        constant reset_polarity         :     std_logic;
+        constant tx_cache_depth         :     natural range 4 to 32 := 8;
+        constant tx_cache_res_val       :     std_logic
+    );
+    port(
+        signal clk_sys                  :in   std_logic;
+        signal res_n                    :in   std_logic;
+        signal write                    :in   std_logic;        
+        signal read                     :in   std_logic;
+        signal data_in                  :in   std_logic;
+        signal data_out                 :out  std_logic
+    );
+    end component;
+    
+
+    ----------------------------------------------------------------------------
     -- Data edge detector
     ----------------------------------------------------------------------------
     component data_edge_detector is

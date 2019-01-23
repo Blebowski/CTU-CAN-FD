@@ -119,24 +119,12 @@ package body data_length_code_feature is
         -- to 8!). Thus RWCNT field should be 5!
         ------------------------------------------------------------------------
         CAN_read_frame(CAN_frame_2, ID_2, mem_bus(2));
-        if (CAN_frame_2.rwcnt /= 5 or 
-            CAN_frame_2.dlc /= CAN_frame.dlc)
-        then
-            -- LCOV_EXCL_START
-            o.outcome := false;
-            CAN_print_frame(CAN_frame_2, info_l);
-            report "Invalid DLC received!" severity error;
-            -- LCOV_EXCL_STOP
-        end if;
-
+        check(CAN_frame_2.dlc = CAN_frame.dlc, "Invalid DLC received!");
+        check(CAN_frame_2.rwcnt = 5, "Invalid DLC received!");
+          
         for i in 8 to 63 loop
-            if (CAN_frame_2.data(i) /= "00000000") then
-                -- LCOV_EXCL_START
-                o.outcome := false;
-                report "Byte index " & integer'image(i) & " not zero!"
-                    severity error;
-                -- LCOV_EXCL_STOP
-            end if;
+            check(CAN_frame_2.data(i) = "00000000",
+                  "Byte index " & integer'image(i) & " not zero!");
         end loop;
 
   end procedure;

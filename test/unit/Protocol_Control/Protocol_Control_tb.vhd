@@ -562,7 +562,7 @@ architecture Protocol_Control_unit_test of CAN_test is
             when 7 =>   tmp  := "100";
             when others =>
                 -- LCOV_EXCL_START
-                report "Invalid stuff counter value" severity failure;
+                failure("Invalid stuff counter value");
                 -- LCOV_EXCL_STOP
         end case;
 
@@ -673,7 +673,7 @@ architecture Protocol_Control_unit_test of CAN_test is
             ptr             := ptr + 5;
         when others =>
             -- LCOV_EXCL_START
-            report "Invalid CAN FD Frame settings" severity error;
+            failure("Invalid CAN FD Frame settings");
             -- LCOV_EXCL_STOP
         end case;
 
@@ -1105,11 +1105,9 @@ begin
             end if;
 
             -- Break if there is more data than expected!
+            check(rxb_mem_ptr <= 19, "Data size exceeds 64 bytes");
             if (rxb_mem_ptr > 19) then
-                -- LCOV_EXCL_START
-                log("Data size exceeds 64 bytes", error_l, log_level);
                 exit;
-                -- LCOV_EXCL_STOP
             end if;
 
             -- Store data word
@@ -1142,22 +1140,21 @@ begin
         variable stf_length     : natural;
         variable rx_ptr         : natural := 0;
     begin
-        log("Restarting Protocol control unit test!", info_l, log_level);
+        info("Restarting Protocol control unit test!");
         wait for 5 ns;
         reset_test(res_n, status, run, error_ctr);
         apply_rand_seed(seed, 0, rand_ctr);
-        log("Restarted Protocol control unit test", info_l, log_level);
+        info("Restarted Protocol control unit test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
         -------------------------------
         -- Main loop of the test
         -------------------------------
-        log("Starting Protocol control main loop", info_l, log_level);
+        info("Starting Protocol control main loop");
 
         while (loop_ctr < iterations  or  exit_imm)
         loop
-            log("Starting loop nr " & integer'image(loop_ctr), info_l,
-                log_level);
+            info("Starting loop nr " & integer'image(loop_ctr));
 
             --------------------------------------------------------------------
             -- Erase SW bit sequence and recorded bit sequence
@@ -1170,7 +1167,7 @@ begin
             -- TXT Buffer as selected by TX Arbitrator. Put metadata on inputs
             -- of the Frame.
             --------------------------------------------------------------------
-            log("Generating frame for transmittion", info_l, log_level);
+            info("Generating frame for transmittion");
             CAN_generate_frame(rand_ctr, tx_frame);
             txtb_mem_ptr <= 0;
             wait for 0 ns;
@@ -1196,14 +1193,14 @@ begin
             --------------------------------------------------------------------
             -- Calculate expected bitstream by SW model of CAN.
             --------------------------------------------------------------------
-            log("Calculating expected frame by SW CAN", info_l, log_level);
+            info("Calculating expected frame by SW CAN");
             gen_sw_CAN(tx_frame, error_st, drv_fd_type, CRC15, CRC17, CRC21,
                         dst_ctr_1, sw_seq, seq_length);
 
             --------------------------------------------------------------------
             -- Start transmitting by Protocol control 1
             --------------------------------------------------------------------
-            log("Starting transmittion and recording on bus", info_l, log_level);
+            info("Starting transmittion and recording on bus");
             tran_frame_valid_in_1 <= '1';
 
             --------------------------------------------------------------------
@@ -1216,32 +1213,29 @@ begin
             tran_frame_valid_in_1 <= '0';
 
             -- Compare results
-            log("Comparing results", info_l, log_level);
+            info("Comparing results");
             CAN_compare_frames(tx_frame, rx_frame, false, out_frm);
             compare_bit_seq(sw_seq, rec_seq, seq_length, out_seq);
 
-            -- Process possible error in TX/RX Frames or sequences mismatch
-            if (out_seq = false or out_frm = false) then
-                -- LCOV_EXCL_START
-                log("Generated CAN frame:", error_l, log_level);
-                CAN_print_frame(tx_frame, info_l);
+            -- Print the frames in the end
+            info("Generated CAN frame:");
+            CAN_print_frame(tx_frame);
 
-                log("Receied CAN frame:", error_l, log_level);
-                CAN_print_frame(rx_frame, info_l);
+            info("Receied CAN frame:");
+            CAN_print_frame(rx_frame);
 
-                log("Expected bit sequence:", error_l, log_level);
-                write(msg1, sw_seq(seq_length - 1 downto 0));
-                writeline(output, msg1);
+            info("Expected bit sequence:");
+            write(msg1, sw_seq(seq_length - 1 downto 0));
+            writeline(output, msg1);
 
-                log("Received bit sequence:", error_l, log_level);
-                write(msg2, rec_seq(seq_length - 1 downto 0));
-                writeline(output, msg2);
+            info("Received bit sequence:");
+            write(msg2, rec_seq(seq_length - 1 downto 0));
+            writeline(output, msg2);
 
-                process_error(error_ctr, error_beh, exit_imm);
-                -- LCOV_EXCL_STOP
-                wait;
-            end if;
-
+            -- Process possible error in TX/RX Frames or Bit sequences mismatch
+            check(out_seq, "Bit sequence is not matching!");
+            check(out_frm, "Received frame is not matching!");
+            
             loop_ctr <= loop_ctr + 1;
         end loop;
 

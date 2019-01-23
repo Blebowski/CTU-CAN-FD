@@ -113,7 +113,7 @@ def test(obj, config, vunit_args):
     ui = create_vunit(obj, vunit_args, out_basename)
 
     lib = ui.add_library("lib")
-    add_common_sources(lib)
+    add_common_sources(lib, ui)
 
     tests = []
     if run_unit:
