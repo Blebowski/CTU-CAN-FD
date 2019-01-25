@@ -253,4 +253,21 @@ begin
         txt_buf_ready          => txt_buf_ready
     );
 
+    
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Functional coverage
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    func_cov_block : block
+    begin 
+    
+    -- psl default clock is rising_edge(clk_sys);
+      
+    -- psl txtb_set_ready_cov : cover (txt_sw_cmd.set_rdy = '1');
+    -- psl txtb_set_empty_cov : cover (txt_sw_cmd.set_ety = '1');
+    -- psl txtb_set_abort_cov : cover (txt_sw_cmd.set_abt = '1');
+        
+    end block;
+
 end architecture;
