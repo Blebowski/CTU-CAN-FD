@@ -154,13 +154,15 @@ def create_psl_file_page(filename, psl_points):
 	"""
 	Create HTML file with list of PSL coverage statements.
 	"""
-	html_cov_path = os.path.join(func_cov_dir, "{}.html".format(filename))
+	parsed_file_name = os.path.basename(filename)
+	html_cov_path = os.path.join(func_cov_dir, 
+						"{}.html".format(parsed_file_name))
 	html_file = open(html_cov_path, 'w')
 
 	doc, tag, text = Doc().tagtext()
 
 	# Add Common header
-	add_psl_html_header(doc, tag, text, filename, psl_points)
+	add_psl_html_header(doc, tag, text, parsed_file_name, psl_points)
 
 	# Add "Cover" and "Assertion" points
 	psl_types = [{"name" : "Cover Points" , "type" : "cover"}, \
@@ -189,8 +191,9 @@ def create_psl_file_refs_table(doc, tag, text, psl_by_files):
 	for file_name, psl_list in psl_by_files.items():
 		with tag('tr'):
 			with tag('td'):
-				with tag('a', href=file_name+".html"):
-					text(file_name)
+				name = os.path.basename(file_name)
+				with tag('a', href=name+".html"):
+					text(name)
 			coverage_types = ["cover", "assertion"]
 			for coverage_type in coverage_types:
 				[ok, nok] = calc_coverage_results(psl_list, coverage_type)
