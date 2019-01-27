@@ -13,6 +13,10 @@ class UnitTests(TestsBase):
         add_sources(self.lib, ['unit/**/*.vhd'])
         self._create_wrapper(self.build / "tb_wrappers.vhd")
 
+    def add_psl_cov_file(self, tb, name):
+        psl_flag = "--psl-report=psl_cov_unit_{}.json".format(name)
+        tb.set_sim_option("ghdl.sim_flags", [psl_flag])
+
     def configure(self) -> bool:
         lib, config, build = self.lib, self.config, self.build
         default = config['default']
@@ -43,6 +47,7 @@ class UnitTests(TestsBase):
             init_files = get_common_modelsim_init_files()
             init_files += [str(tcl)]
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
+            self.add_psl_cov_file(tb, name)
             self.add_modelsim_gui_file(tb, cfg, name)
         return self._check_for_unconfigured()
 

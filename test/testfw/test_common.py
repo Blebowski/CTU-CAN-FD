@@ -71,7 +71,6 @@ def add_sources(lib, patterns) -> None:
             if f != "tb_wrappers.vhd":
                 lib.add_source_file(str(f))
 
-
 def add_common_sources(lib, ui) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
     ui.enable_check_preprocessing()
@@ -93,10 +92,6 @@ def add_flags(ui, lib, build) -> None:
     for rt in reference_tests:
         rt.scan_tests_from_file(str(build / "../reference/vunit_reference_wrapper.vhd"))
 
-    sanity_tests = lib.get_test_benches('*sanity*', allow_empty=True)
-    for st in sanity_tests:
-        st.scan_tests_from_file(str(build / "../sanity/tb_sanity.vhd"))
-
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
     lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
 
@@ -109,20 +104,6 @@ def add_flags(ui, lib, build) -> None:
     # Global simulation flags
     sim_flags = ["--ieee-asserts=disable-at-0"]
     ui.set_sim_option("ghdl.sim_flags", sim_flags)
-
-    # PSL Coverage file is per-test specific! This must be set to avoid overwriting
-    # coverage results between tests
-    log.debug("Setting PSL coverage paths")
-    testbenches = lib.get_test_benches()
-    for testbench in testbenches:
-        log.debug("Testbench:")
-        log.debug(testbench.name)
-        tests = testbench.get_tests()
-        log.debug("Test cases:")
-        for test in tests:
-            log.debug(test.name)
-            psl_flag = "--psl-report=psl_cov_{}_{}.json".format(testbench.name, test.name)
-            test.set_sim_option("ghdl.sim_flags", [psl_flag])
 
     modelsim_init_files = get_common_modelsim_init_files()
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)

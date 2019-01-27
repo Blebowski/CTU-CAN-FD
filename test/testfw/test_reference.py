@@ -18,6 +18,10 @@ class ReferenceTests(TestsBase):
         sources.append('reference/vunit_reference_wrapper.vhd')
         add_sources(self.lib, sources)
 
+    def create_psl_cov_file_opt(self, name):
+        psl_flag = "--psl-report=psl_cov_reference_{}.json".format(name)
+        return {"ghdl.sim_flags" : [psl_flag]}
+
     def configure(self) -> bool:
         tb = self.lib.get_test_benches('*reference*')[0]
         default = self.config['default']
@@ -34,7 +38,8 @@ class ReferenceTests(TestsBase):
                 'seed'         : get_seed(cfg),
                 'data_path'    : str(self.build) + '/../' + cfg['data_path'],
             }
-            tb.add_config(data_set, generics=generics)
+            psl_opts = self.create_psl_cov_file_opt(data_set)
+            tb.add_config(data_set, generics=generics, sim_options=psl_opts)
 
             tcl = self.build / 'modelsim_init_{}.tcl'.format(data_set)
             with tcl.open('wt', encoding='utf-8') as f:

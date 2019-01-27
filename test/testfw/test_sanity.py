@@ -42,6 +42,10 @@ class SanityTests(TestsBase):
     def add_sources(self):
         add_sources(self.lib, ['sanity/**/*.vhd'])
 
+    def create_psl_cov_file_opt(self, name):
+        psl_flag = "--psl-report=psl_cov_sanity_{}.json".format(name)
+        return {"ghdl.sim_flags" : [psl_flag]}
+
     def configure(self):
         # TODO: wave
         tb = self.lib.get_test_benches('*tb_sanity')[0]
@@ -72,5 +76,8 @@ class SanityTests(TestsBase):
                 'timing_config': vhdl_serialize(cfg['timing_config']),
                 'gauss_iter'   : vhdl_serialize(cfg['gauss_iter']),
             }
-            tb.add_config(name, generics=generics)
-        return True
+
+            sanity_cfg_name = name.replace(" ", "_").replace("/", "_").strip('"')
+            psl_opts = self.create_psl_cov_file_opt(sanity_cfg_name)
+            tb.add_config(name, generics=generics, sim_options=psl_opts)
+            return True
