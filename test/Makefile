@@ -1,5 +1,7 @@
 PYTHON := python3
 XUNIT ?= 0
+BUILD_DIR = build
+TESTFW_DIR = testfw
 
 TEST_FLAGS = -p`nproc`
 TEST_OPTS_test_debug := --no-strict
@@ -13,13 +15,13 @@ test_%: tests_%.yml FORCE
 	$(PYTHON) run.py test $(TEST_OPTS_$@) $< -- $(TEST_FLAGS)
 
 coverage:
-	lcov --capture --directory build --output-file code_coverage.info
+	lcov --capture --directory $(BUILD_DIR) --output-file code_coverage.info
 	genhtml code_coverage.info --output-directory code_html
 
 functional_coverage:
-	mkdir -p build/functional_coverage
-	cp build/psl_coverage.json build/functional_coverage/psl_coverage.json
-	$(PYTHON) testfw/test_parse_psl_coverage.py
+	mkdir -p $(BUILD_DIR)/functional_coverage
+	cp $(BUILD_DIR)/psl_cov_*.json $(BUILD_DIR)/functional_coverage
+	$(PYTHON) $(TESTFW_DIR)/test_parse_psl_coverage.py
 
 clean:
 	-rm -Rf build
