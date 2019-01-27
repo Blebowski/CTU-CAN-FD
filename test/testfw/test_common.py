@@ -93,6 +93,10 @@ def add_flags(ui, lib, build) -> None:
     for rt in reference_tests:
         rt.scan_tests_from_file(str(build / "../reference/vunit_reference_wrapper.vhd"))
 
+    sanity_tests = lib.get_test_benches('*sanity*', allow_empty=True)
+    for st in sanity_tests:
+        st.scan_tests_from_file(str(build / "../sanity/tb_sanity.vhd"))
+
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
     lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
 
