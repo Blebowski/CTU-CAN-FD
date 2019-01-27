@@ -127,9 +127,7 @@ def test(obj, config, strict, vunit_args):
 
     for t in tests:
         t.add_sources()
-
     add_flags(ui, lib, build)
-
     conf_ok = [t.configure() for t in tests]
 
     # check for unknown tests

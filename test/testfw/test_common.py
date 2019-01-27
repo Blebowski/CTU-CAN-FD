@@ -102,9 +102,23 @@ def add_flags(ui, lib, build) -> None:
     elab_flags.append("-fpsl");
     ui.set_sim_option("ghdl.elab_flags",elab_flags)
 
+    # Global simulation flags
     sim_flags = ["--ieee-asserts=disable-at-0"]
-    sim_flags.append("--psl-report=psl_coverage.json")
     ui.set_sim_option("ghdl.sim_flags", sim_flags)
+
+    # PSL Coverage file is per-test specific! This must be set to avoid overwriting
+    # coverage results between tests
+    log.debug("Setting PSL coverage paths")
+    testbenches = lib.get_test_benches()
+    for testbench in testbenches:
+        log.debug("Testbench:")
+        log.debug(testbench.name)
+        tests = testbench.get_tests()
+        log.debug("Test cases:")
+        for test in tests:
+            log.debug(test.name)
+            psl_flag = "--psl-report=psl_cov_{}_{}.json".format(testbench.name, test.name)
+            test.set_sim_option("ghdl.sim_flags", [psl_flag])
 
     modelsim_init_files = get_common_modelsim_init_files()
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
