@@ -291,7 +291,7 @@ architecture rtl of memory_registers is
     signal Event_Logger_in          : Event_Logger_in_t;
 
     -- Status register - combinational decoder
-    signal status_comb              : std_logic_vector(7 downto 0);
+    signal status_comb              : std_logic_vector(15 downto 0);
 
     -- Padding for interrupt read data
     constant INT_PAD_H_IND          : natural :=
@@ -563,20 +563,20 @@ begin
                                               STAT_RX_COUNTER_LOW)))
                                     else
                                   '0';
-                                
+
     status_comb(TXS_IND mod 8) <= '1' when (OP_State = transciever) else
                                   '0';
 
     status_comb(RXS_IND mod 8) <= '1' when (OP_State = reciever) else
                                   '0';
-  
+
     status_comb(TXNF_IND mod 8) <= '1' when (txtb_state(0) = TXT_ETY or
                                              txtb_state(1) = TXT_ETY or
                                              txtb_state(2) = TXT_ETY or
                                              txtb_state(3) = TXT_ETY)
                                        else
                                    '0';
-  
+
     -- When at least one message is availiable in the buffer
     status_comb(RXNE_IND mod 8) <= not rx_empty;
 
@@ -586,6 +586,7 @@ begin
                                        else
                                    '0';
 
+    status_comb(15 downto 8) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
