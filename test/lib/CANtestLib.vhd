@@ -249,6 +249,15 @@ package CANtestLib is
     end record;
 
 
+    -- SSP (Secondary Sampling Point) configuration options
+    type SSP_set_command_type is (
+        ssp_measured, 
+        ssp_meas_n_offset, 
+        ssp_offset  
+    );
+-- Use only TRV_DELAY
+-- Use TRV_DELAY + fixed offset given by user
+-- Use only offset given by user
 
 
     ----------------------------------------------------------------------------
@@ -371,7 +380,6 @@ package CANtestLib is
         buf_set_ready,
         buf_set_abort
     );
-
 
 
     ----------------------------------------------------------------------------
@@ -1803,6 +1811,23 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     ); 
 
+
+    ----------------------------------------------------------------------------
+    -- Configure SSP (Secondary Sampling Point) configuration: choose applicable
+    -- SSP delaying source and set offest given by the user (if eventually used).   
+    -- 
+    -- Arguments:
+    --  ssp_source      Select required source of delaying.
+    --  ssp_offset      Amount of clock cycles to wait for.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_configure_ssp(
+        variable ssp_source     : in    SSP_set_command_type;    
+        variable ssp_offset_val : out   std_logic_vector(31 downto 0);  -- TODO check value range   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -4416,6 +4441,35 @@ package body CANtestLib is
         ts := upper_word & lower_word;
     end procedure;
 
+
+    procedure CAN_configure_ssp(
+        variable ssp_source     : in    SSP_set_command_type;    
+        variable ssp_offset_val : out   std_logic_vector(31 downto 0);  
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+
+        case ssp_source is
+            when ssp_measured =>
+               data(SSP_SRC_H downto SSP_SRC_L) := "00";
+            when ssp_meas_n_offset =>
+                data(SSP_SRC_H downto SSP_SRC_L) := "01";
+            when ssp_offset =>
+                data(SSP_SRC_H downto SSP_SRC_L) := "10";
+            when others =>
+                error("Unsupported SSP type.");
+            end case;
+
+        --data(SSP_OFFSET_H downto SSP_OFFSET_L) := 
+        --                        std_logic_vector(to_unsigned(ssp_offset_val));
+
+        data(SSP_OFFSET_H downto SSP_OFFSET_L) := ssp_offset_val;
+
+        CAN_write(data, SSP_CFG_ADR, ID, mem_bus, BIT_8);
+    end procedure;
 
 end package body;
 
