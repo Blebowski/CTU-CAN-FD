@@ -139,7 +139,7 @@ u32 ctu_can_fd_get_version(struct ctucanfd_priv *priv)
 
 void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable)
 {
-	union ctu_can_fd_mode_command_status_settings reg;
+	union ctu_can_fd_mode_settings reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 	reg.s.ena = enable ? CTU_CAN_ENABLED : CTU_CAN_DISABLED;
@@ -148,7 +148,7 @@ void ctu_can_fd_enable(struct ctucanfd_priv *priv, bool enable)
 
 void ctu_can_fd_reset(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_mode_command_status_settings mode;
+	union ctu_can_fd_mode_settings mode;
 
 	mode.u32 = 0;
 	mode.s.rst = 1;
@@ -160,7 +160,7 @@ void ctu_can_fd_reset(struct ctucanfd_priv *priv)
 
 bool ctu_can_fd_set_ret_limit(struct ctucanfd_priv *priv, bool enable, u8 limit)
 {
-	union ctu_can_fd_mode_command_status_settings reg;
+	union ctu_can_fd_mode_settings reg;
 
 	if (limit > CTU_CAN_FD_RETR_MAX)
 		return false;
@@ -176,7 +176,7 @@ void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv,
 			     const struct can_ctrlmode *mode)
 {
 	u32 flags = mode->flags;
-	union ctu_can_fd_mode_command_status_settings reg;
+	union ctu_can_fd_mode_settings reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 
@@ -211,29 +211,29 @@ void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv,
 
 void ctu_can_fd_rel_rx_buf(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_mode_command_status_settings reg;
+	union ctu_can_fd_status_command reg;
 
-	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+	reg.u32 = 0;
 	reg.s.rrb = 1;
-	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_STATUS, reg.u32);
 }
 
 void ctu_can_fd_clr_overrun_flag(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_mode_command_status_settings reg;
+	union ctu_can_fd_status_command reg;
 
-	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+	reg.u32 = 0;
 	reg.s.cdo = 1;
-	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_STATUS, reg.u32);
 }
 
 void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_mode_command_status_settings reg;
+	union ctu_can_fd_status_command reg;
 
-	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+	reg.u32 = 0;
 	reg.s.abt = 1;
-	priv->write_reg(priv, CTU_CAN_FD_MODE, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_STATUS, reg.u32);
 }
 
 // TODO: rather than set(value, mask) interface, provide

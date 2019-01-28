@@ -252,8 +252,8 @@ int main(int argc, char *argv[])
                 addrs[0] = pci_find_bar(0x1172, 0xcafd, 0, 1);
                 if (!addrs[0])
                     addrs[0] = pci_find_bar(0x1760, 0xff00, 0, 1);
-                    if (!addrs[0])
-                        err(1, "-p PCI device not found");
+                if (!addrs[0])
+                    err(1, "-p PCI device not found");
                 addrs[1] = addrs[0] + 0x4000;
             break;
             case 'h':
@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
     ctu_can_fd_reset(priv);
 
     {
-        union ctu_can_fd_mode_command_status_settings mode;
+        union ctu_can_fd_mode_settings mode;
         mode.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 
         if (mode.s.ena) {
