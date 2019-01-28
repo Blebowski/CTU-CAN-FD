@@ -1824,7 +1824,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure CAN_configure_ssp(
         variable ssp_source     : in    SSP_set_command_type;    
-        variable ssp_offset_val : out   std_logic_vector(31 downto 0);  -- TODO check value range   
+        variable ssp_offset_val : out   std_logic_vector(6 downto 0);   
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -4444,14 +4444,13 @@ package body CANtestLib is
 
     procedure CAN_configure_ssp(
         variable ssp_source     : in    SSP_set_command_type;    
-        variable ssp_offset_val : out   std_logic_vector(31 downto 0);  
+        variable ssp_offset_val : out   std_logic_vector(6 downto 0);  
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
         variable data           :       std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
     begin
-
         case ssp_source is
             when ssp_measured =>
                data(SSP_SRC_H downto SSP_SRC_L) := "00";
@@ -4462,9 +4461,6 @@ package body CANtestLib is
             when others =>
                 error("Unsupported SSP type.");
             end case;
-
-        --data(SSP_OFFSET_H downto SSP_OFFSET_L) := 
-        --                        std_logic_vector(to_unsigned(ssp_offset_val));
 
         data(SSP_OFFSET_H downto SSP_OFFSET_L) := ssp_offset_val;
 
