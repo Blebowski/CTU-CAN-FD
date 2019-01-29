@@ -9,11 +9,11 @@ log = logging.getLogger(__name__)
 
 
 class UnitTests(TestsBase):
-    def add_sources(self):
+    def add_sources(self) -> None:
         add_sources(self.lib, ['unit/**/*.vhd'])
         self._create_wrapper(self.build / "tb_wrappers.vhd")
 
-    def configure(self):
+    def configure(self) -> bool:
         lib, config, build = self.lib, self.config, self.build
         default = config['default']
         unit_tests = lib.get_test_benches('*_unit_test')
@@ -44,9 +44,9 @@ class UnitTests(TestsBase):
             init_files += [str(tcl)]
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
             self.add_modelsim_gui_file(tb, cfg, name)
-        self._check_for_unconfigured()
+        return self._check_for_unconfigured()
 
-    def _check_for_unconfigured(self):
+    def _check_for_unconfigured(self) -> bool:
         lib, config = self.lib, self.config
         # check for unconfigured unit tests
         unit_tests = lib.get_test_benches('*tb_*_unit_test')
@@ -55,8 +55,9 @@ class UnitTests(TestsBase):
         unconfigured = [tb for tb in unit_tests if tb.name not in configured]
         if len(unconfigured):
             log.warn("Unit tests with no configuration found (defaults will be used): {}".format(', '.join(tb.name for tb in unconfigured)))
+        return len(unconfigured) == 0
 
-    def _create_wrapper(self, fname):
+    def _create_wrapper(self, fname) -> None:
         fname = str(fname)
         files = self.lib.get_source_files()
         tests = []
@@ -67,8 +68,6 @@ class UnitTests(TestsBase):
                     m = r.match(l)
                     if m:
                         tests.append(m.group(1))
-        configs = []
-        tbs = []
         c = self.jinja_env.get_template('unit_wrappers.vhd').render(tests=tests)
         with open(fname, "wt", encoding='utf-8') as f:
             f.write(c)

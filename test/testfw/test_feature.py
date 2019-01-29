@@ -26,7 +26,7 @@ class FeatureTests(TestsBase):
         tb = self.lib.get_test_benches('*tb_feature')[0]
         tb.scan_tests_from_file(str(wrname))
 
-    def configure(self) -> None:
+    def configure(self) -> bool:
         tb = self.lib.get_test_benches('*tb_feature')[0]
         default = self.config['default']
         self.add_modelsim_gui_file(tb, default, 'feature')
@@ -60,9 +60,9 @@ class FeatureTests(TestsBase):
                 'seed'         : get_seed(cfg)
             }
             tb.add_config(name, generics=generics)
-        self._check_for_unconfigured()
+        return self._check_for_unconfigured()
 
-    def _check_for_unconfigured(self):
+    def _check_for_unconfigured(self) -> bool:
         config = self.config
         # check for unconfigured unit tests
         test_files = self.base.glob('feature/*_feature_tb.vhd')
@@ -72,6 +72,7 @@ class FeatureTests(TestsBase):
         unconfigured = [tb for tb in all_tests if tb not in configured]
         if len(unconfigured):
             log.warn("Feature tests with no configuration found (will not be run): {}".format(', '.join(unconfigured)))
+        return len(unconfigured) == 0
 
     def _create_wrapper(self, ofile: Path) -> None:
         template = self.jinja_env.get_template('pkg_feature_exec_dispath-body.vhd')

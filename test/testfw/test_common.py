@@ -7,6 +7,7 @@ from pathlib import Path
 from jinja2 import Environment, PackageLoader
 from pprint import pprint
 import random
+from typing import List
 
 __all__ = ['add_sources', 'add_common_sources', 'get_common_modelsim_init_files',
            'add_flags', 'dict_merge', 'vhdl_serialize', 'dump_sim_options',
@@ -30,13 +31,17 @@ class TestsBase:
     def jinja_env(self):
         return jinja_env
 
-    def add_sources(self):
+    def add_sources(self) -> None:
         raise NotImplementedError()
 
-    def configure(self):
+    def configure(self) -> bool:
+        """Configure the tests.
+
+        Return False if there were unconfigured tests found."""
+
         raise NotImplementedError()
 
-    def add_modelsim_gui_file(self, tb, cfg, name):
+    def add_modelsim_gui_file(self, tb, cfg, name) -> None:
         if 'wave' in cfg:
             tcl = self.base / cfg['wave']
             if not tcl.exists():
@@ -58,7 +63,7 @@ class TestsBase:
         tb.set_sim_option("modelsim.init_file.gui", str(tcl))
 
 
-def add_sources(lib, patterns):
+def add_sources(lib, patterns) -> None:
     for pattern in patterns:
         p = join(str(d.parent), pattern)
         log.debug('Adding sources matching {}'.format(p))
@@ -67,19 +72,19 @@ def add_sources(lib, patterns):
                 lib.add_source_file(str(f))
 
 
-def add_common_sources(lib, ui):
+def add_common_sources(lib, ui) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
     ui.enable_check_preprocessing()
     ui.enable_location_preprocessing() #(additional_subprograms=['log'])
     add_sources(lib, ['*.vhd', 'lib/*.vhd'])
 
 
-def get_common_modelsim_init_files():
+def get_common_modelsim_init_files() -> List[str]:
     modelsim_init_files = '../lib/test_lib.tcl,modelsim_init.tcl'
     modelsim_init_files = [str(d/x) for x in modelsim_init_files.split(',')]
     return modelsim_init_files
 
-def add_flags(ui, lib, build):
+def add_flags(ui, lib, build) -> None:
     unit_tests = lib.get_test_benches('*_unit_test', allow_empty=True)
     for ut in unit_tests:
         ut.scan_tests_from_file(str(build / "../unit/vunittb_wrapper.vhd"))
@@ -96,11 +101,11 @@ def add_flags(ui, lib, build):
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
 
 
-def get_seed(cfg):
+def get_seed(cfg) -> int:
     if 'seed' in cfg and 'randomize' in cfg:
         log.warning('Both "seed" and "randomize" are set - seed takes precedence')
     if 'seed' in cfg:
-        seed = cfg['seed']
+        seed = int(cfg['seed'], 0)
     elif cfg.get('randomize', False):
         # only 31 bits
         seed = int(random.random() * 2**31) & 0x7FFFFFFF
@@ -109,14 +114,14 @@ def get_seed(cfg):
     return seed
 
 
-def dict_merge(up, *lowers):
+def dict_merge(up, *lowers) -> None:
     for lower in lowers:
         for k, v in lower.items():
             if k not in up:
                 up[k] = v
 
 
-def vhdl_serialize(o):
+def vhdl_serialize(o) -> str:
     if isinstance(o, Iterable):
         ss = []
         for x in o:
@@ -126,7 +131,7 @@ def vhdl_serialize(o):
         return str(o)
 
 
-def dump_sim_options(lib):
+def dump_sim_options(lib) -> None:
     for tb in lib.get_test_benches('*'):
         for cfgs in tb._test_bench.get_configuration_dicts():
             for name, cfg in cfgs.items():
