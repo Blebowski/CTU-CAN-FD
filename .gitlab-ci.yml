@@ -5,6 +5,23 @@ before_script:
     - export LANG=C.UTF-8
     - export PYTHONUNBUFFERED=1
 
+stages:
+    - precheck
+    - build
+    - test
+    - deploy
+
+check_component:
+    stage: precheck
+    script:
+        - mv src/component.xml src/component.xml-orig
+        - scripts/gen_vivado_component.py
+        - diff -u src/component.xml-orig src/component.xml || (echo "Vivado component file is not up-to-date. Either run scripts/gen_vivado_component.py or download the file from this job's artifacts."; exit 1)
+    artifacts:
+        expire_in: 1 week
+        paths:
+            - src/component.xml
+
 build_ip_and_tests:
     stage: build
     artifacts:
