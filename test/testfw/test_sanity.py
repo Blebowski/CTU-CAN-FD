@@ -73,3 +73,4 @@ class SanityTests(TestsBase):
                 'gauss_iter'   : vhdl_serialize(cfg['gauss_iter']),
             }
             tb.add_config(name, generics=generics)
+        return True

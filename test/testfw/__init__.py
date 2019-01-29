@@ -73,8 +73,10 @@ def create():
 @cli.command()
 @click.argument('config', type=click.Path())
 @click.argument('vunit_args', nargs=-1)
+@click.option('--strict/--no-strict', default=True,
+              help='Return non-zero if an unconfigured test was found.')
 @click.pass_obj
-def test(obj, config, vunit_args):
+def test(obj, config, strict, vunit_args):
     """Run the tests. Configuration is passed in YAML config file.
 
     You mas pass arguments directly to VUnit by appending them at the command end.
@@ -105,40 +107,46 @@ def test(obj, config, vunit_args):
     build.mkdir(exist_ok=True)
     os.chdir(str(build))
 
-    run_unit = 'unit' in config
-    run_feature = 'feature' in config
-    run_sanity = 'sanity' in config
-    run_reference = 'reference' in config
-
     ui = create_vunit(obj, vunit_args, out_basename)
 
     lib = ui.add_library("lib")
     add_common_sources(lib, ui)
 
-    tests = []
-    if run_unit:
-        tests.append(test_unit.UnitTests(ui, lib, config['unit'], build, base))
-    if run_sanity:
-        tests.append(test_sanity.SanityTests(ui, lib, config['sanity'], build, base))
-    if run_feature:
-        tests.append(test_feature.FeatureTests(ui, lib, config['feature'], build, base))
-    if run_reference:
-        tests.append(test_reference.ReferenceTests(ui, lib, config['reference'], build, base))
+    tests_classes = [
+        # key in config, factory
+        ('unit', test_unit.UnitTests),
+        ('sanity', test_sanity.SanityTests),
+        ('feature', test_feature.FeatureTests),
+        ('reference', test_reference.ReferenceTests),
+    ]
 
+    tests = []
+    for cfg_key, factory in tests_classes:
+        if cfg_key in config:
+            tests.append(factory(ui, lib, config[cfg_key], build, base))
 
     for t in tests:
         t.add_sources()
+
     add_flags(ui, lib, build)
-    for t in tests:
-        t.configure()
+
+    conf_ok = [t.configure() for t in tests]
 
     # check for unknown tests
     all_benches = lib.get_test_benches('*')
-    unknown_tests = [tb for tb in all_benches if not re.match('tb_.*?_unit_test|tb_sanity|tb_feature|tb_reference_wrapper', tb.name)]
+    pattern = 'tb_.*?_unit_test|tb_sanity|tb_feature|tb_reference_wrapper'
+    unknown_tests = [tb for tb in all_benches
+                     if not re.match(pattern, tb.name)]
     if len(unknown_tests):
-        log.warn('Unknown tests (defaults will be used): {}'.format(', '.join(tb.name for tb in unknown_tests)))
+        log.warn('Unknown tests (defaults will be used): {}'
+                 .format(', '.join(tb.name for tb in unknown_tests)))
 
-    vunit_run(ui, build, out_basename)
+    res = vunit_run(ui, build, out_basename)
+    if not all(conf_ok) and strict:
+        log.error('Some test cases were discovered but not configured (see above).')
+        if res == 0:
+            res = 1
+    sys.exit(res)
 
 
 def create_vunit(obj, vunit_args, out_basename):
@@ -152,7 +160,7 @@ def create_vunit(obj, vunit_args, out_basename):
     return ui
 
 
-def vunit_run(ui, build, out_basename):
+def vunit_run(ui, build, out_basename) -> int:
     try:
         vunit_ifc.run(ui)
         res = None
@@ -168,7 +176,7 @@ def vunit_run(ui, build, out_basename):
             print('<?xml-stylesheet href="xunit.xsl" type="text/xsl"?>', file=f)
             f.write(c)
         out.unlink()
-    sys.exit(res)
+    return res
 
 
 """

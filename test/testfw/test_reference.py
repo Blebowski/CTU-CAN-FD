@@ -18,7 +18,7 @@ class ReferenceTests(TestsBase):
         sources.append('reference/vunit_reference_wrapper.vhd')
         add_sources(self.lib, sources)
 
-    def configure(self) -> None:
+    def configure(self) -> bool:
         tb = self.lib.get_test_benches('*reference*')[0]
         default = self.config['default']
         self.add_modelsim_gui_file(tb, default, 'sanity')
@@ -47,3 +47,4 @@ class ReferenceTests(TestsBase):
             init_files += [str(tcl)]
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
             self.add_modelsim_gui_file(tb, cfg, data_set)
+        return True
