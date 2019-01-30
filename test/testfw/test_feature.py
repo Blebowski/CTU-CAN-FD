@@ -64,8 +64,8 @@ class FeatureTests(TestsBase):
                 'seed'         : get_seed(cfg)
             }
 
-        psl_opts = self.create_psl_cov_file_opt(name)
-        tb.add_config(name, generics=generics, sim_options=psl_opts)
+            psl_opts = self.create_psl_cov_file_opt(name)
+            tb.add_config(name, generics=generics, sim_options=psl_opts)
         return self._check_for_unconfigured()
 
     def _check_for_unconfigured(self) -> bool:
