@@ -20,7 +20,7 @@ coverage:
 
 functional_coverage:
 	mkdir -p $(BUILD_DIR)/functional_coverage/coverage_data
-	mkdir -p $(BUILD_DIR)/functional_coverage/html		
+	mkdir -p $(BUILD_DIR)/functional_coverage/html
 	cp $(BUILD_DIR)/psl_cov_*.json $(BUILD_DIR)/functional_coverage/coverage_data
 	$(PYTHON) $(TESTFW_DIR)/test_parse_psl_coverage.py
 

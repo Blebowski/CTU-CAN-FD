@@ -82,6 +82,7 @@ test_ip_fast:
         - cd test
         - make test_fast
         - make coverage
+        - make functional_coverage
     coverage: "/lines......: ([^%]+%)/"
     artifacts:
         when: always
