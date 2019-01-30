@@ -11,17 +11,129 @@ from yattag import Doc
 test_dir = Path(Path(abspath(__file__)).parent).parent
 build_dir = os.path.join(str(test_dir.absolute()), "build")
 func_cov_dir = os.path.join(str(build_dir), "functional_coverage")
+psl_dir = os.path.join(str(func_cov_dir), "coverage_data")
+html_dir = os.path.join(str(func_cov_dir), "html")
+
+dut_top = " "
 
 log = logging.getLogger(__name__)
 
-def load_json_psl_coverage():
+
+def merge_psl_coverage_files(out_file, in_file_prefix):
+	"""
+	Merge PSL coverage details from multiple files to single file
+	"""
+	if(out_file.startswith(in_file_prefix)):
+		log.error("File name for merging should not have the same prefix as merged files")
+		system.exit(0)
+
+	json_out_path = os.path.join(func_cov_dir, out_file)
+	json_out_file = open(json_out_path, 'w')
+	json_out_list = []
+	for filename in os.listdir(psl_dir):
+		if (not (filename.startswith(in_file_prefix) and \
+		         filename.endswith(".json"))):
+			continue
+
+		in_filename = os.path.join(psl_dir, filename)
+		print("Merging JSON PSL coverage from: {}".format(in_filename))
+		json_in_file = open(in_filename, 'r')
+		json_obj = json.load(json_in_file)
+
+		# Add test name to each PSL point
+		for psl_point in json_obj["details"]:
+			psl_point["test"] = filename.strip(in_file_prefix).replace(".json","")
+
+		json_out_list.extend(json_obj["details"])
+
+	json_str = json.dumps(json_out_list, indent=1)
+	json_out_file.write(json_str)
+	json_out_file.close()
+
+
+def collapse_psl_coverage_files(non_collapsed):
+	"""
+	Collapses PSL coverage which is output from multiple testcase/testbench
+	runs into single psl_coverage output.
+	If DUT is instantiated in multiple testbenches, above levels of
+	hierarchy from "dut_top" will be ignored and these files will be collapsed.
+	E.g. if "dut_top" = "can_top_level",
+	then multiple instances of CTU CAN FD will not generate multiple PSL outputs.
+	Collapsing policy is following:
+		- cover - If at least one of collapsed points is covered -> COVERED
+		- assert - If at least one of collapsed points is failed -> FAILED
+	Each cover point which is covered has also appended a testcase name where
+	it was covered.
+	"""
+	log.info("Collapsing PSL points with common hierarchy below: {}".format(dut_top))
+	collapsed = []
+
+	# We do stupid quadratic sort because we don't really care if it is gonna last 10
+	# or 40 seconds... If we ever get to the point that this takes too long we know
+	# that we have reeealy lot of PSL points and we turned into Semiconductor monster!
+	for psl_in in non_collapsed:
+
+		found = False
+		for psl_out in collapsed:
+
+			# Check if name in output list is equal to searched name from "dut_top"
+			# entity down. Skip if not
+			in_name = psl_in["name"].split(dut_top)[-1]
+			out_name = psl_out["name"].split(dut_top)[-1]
+			if (out_name != in_name):
+				continue
+
+			if (not ("colapsed_points" in psl_out)):
+				psl_out["colapsed_name"] = str(dut_top + in_name)
+				psl_out["colapsed_points"] = []
+
+			psl_out["colapsed_points"].append(psl_in)
+
+			# If any of colapsed points is covered -> whole point is covered
+			if (psl_in["status"] == "covered"):
+				psl_out["status"] = "covered"
+				psl_out["count"] += psl_in["count"]
+
+			# If any of colapsed points is failed -> whole point is failed
+			if (psl_in["status"] == "failed"):
+				psl_out["status"] = "failed"
+
+			# Assertion hits add up for both failed and passed
+			if (psl_out["directive"] == "assertion"):
+				psl_out["count"] += psl_in["count"]
+
+			found = True
+			break;
+
+		# Input point was not collapsed into any of output points -> Add directly
+		if (not found):
+			collapsed.append(psl_in)
+
+	return collapsed
+
+
+def get_collapsed_file_name(psl_point):
+	"""
+	Create unique file name for collapsed PSL points
+	"""
+	file_name = dut_top + psl_point["name"].split(dut_top)[-1]
+	file_name = file_name.replace(".","_")
+	file_name = file_name.replace(" ","_")
+	file_name = file_name.replace(")","_")
+	file_name = file_name.replace("(","_")
+	file_name = file_name.replace("@","_")
+	file_name = file_name + "_" + str(psl_point["line"])
+	return file_name
+
+
+def load_json_psl_coverage(filename):
 	"""
 	Load PSL Coverage JSON file to JSON object.
 	"""
-	psl_cov_path = os.path.join(func_cov_dir, "psl_coverage.json")
+	psl_cov_path = os.path.join(func_cov_dir, filename)
 	
 	# Read JSON string from file
-	log.info("Loading JSON PSL output: {}".format(psl_cov_path))	
+	log.info("Loading JSON PSL output: {}".format(psl_cov_path))
 	json_file = open(psl_cov_path, 'r')
 	return json.load(json_file)
 
@@ -34,7 +146,7 @@ def split_json_coverage_by_file(json):
 		filename.
 	"""
 	file_dict = {}
-	for psl_point in json["details"]:
+	for psl_point in json:
 
 		# Create new list if first PSL of a file is parsed
 		if (not(psl_point["file"] in file_dict)):
@@ -90,6 +202,35 @@ def calc_coverage_color(coverage):
 		return "Red"
 
 
+def print_cov_cell_percentage(doc, tag, text, psl_points, coverage_type, merge_abs_vals):
+	"""
+	"""
+	[ok, nok] = calc_coverage_results(psl_points, coverage_type)
+	summ = max(1, ok + nok)
+	percents = ok/summ * 100
+	color = calc_coverage_color(percents)
+
+	if (merge_abs_vals):
+		if (ok + nok > 0):
+			with tag('td', bgcolor=color):
+				text("({}/{}) {}%".format(ok, summ, percents))
+		else:
+			with tag('td', bgcolor="Silver"):
+				text("NA")
+	else:
+		with tag('td'):
+			text(ok)
+		with tag('td'):
+			text(nok)
+
+		if (ok + nok > 0):
+			with tag('td', bgcolor=color):
+				text("{}%".format(percents))
+		else:
+			with tag('td', bgcolor="Silver"):
+				text("NA")	
+				
+
 def add_psl_html_header(doc, tag, text, filename, psl_points):
 	"""
 	Create HTML page header with info about coverage data within list of
@@ -116,38 +257,82 @@ def add_psl_html_header(doc, tag, text, filename, psl_points):
 				# Calculate results for each type
 				coverage_types = ["cover", "assertion"]
 				for coverage_type in coverage_types:
-					[ok, nok] = calc_coverage_results(psl_points, coverage_type)
-					summ = max(1, ok + nok)
-					percents = ok/summ * 100
-					color = calc_coverage_color(percents)
-					with tag('td'):
-						text(ok)
-					with tag('td'):
-						text(nok)
-					with tag('td', bgcolor=color):
-						text("{}%".format(percents))
+					print_cov_cell_percentage(doc, tag, text, psl_points, \
+						coverage_type, merge_abs_vals=False)
 
 
-def add_psl_table_entry(doc, tag, text, psl_point):
+def add_non_colapsed_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White"):
 	"""
-	Add PSL point in JSON format to HTML table.
-	"""
-	with tag('tr'):
-		with tag('td'):
-			text(psl_point["name"].split(".")[-1])
-		with tag('td'):
-			text(psl_point["line"])
-		with tag('td'):
-			text(psl_point["count"])
+	Add HTML table entry for non-collapsed PSL functional coverage point. 
 
-		if (psl_point["status"] == "covered" or \
-			psl_point["status"] == "passed"):
-			color = "Lime"
+	"""
+	with tag('td'):
+		text(psl_point["name"].split(".")[-1])		
+	with tag('td'):
+		text(psl_point["test"])
+	with tag('td', width="50%", style="word-break:break-all;"):
+		text(dut_top + psl_point["name"])
+	with tag('td'):
+		text(psl_point["line"])
+	with tag('td'):
+		text(psl_point["count"])
+
+	if (psl_point["status"] == "covered" or \
+		psl_point["status"] == "passed"):
+		color = "Lime"
+	else:
+		color = "red"
+
+	with tag('td', ('bgcolor',color)):
+		text(psl_point["status"])
+
+
+def add_colapsed_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White"):
+	"""
+	Add HTML table entry for collapsed PSL functional coverage point. Adds
+	llink reference to collapsed entries on separate site.
+	"""
+	with tag('td'):
+		text(psl_point["name"].split(".")[-1])
+	
+	with tag('td'):
+		file_name = get_collapsed_file_name(psl_point)
+		with tag('a', href=file_name+".html"):
+			text("Open collapsed tests")
+	with tag('td'):
+		text(dut_top + psl_point["name"].split(dut_top)[-1])
+	with tag('td'):
+		text(psl_point["line"])
+	with tag('td'):
+		text(psl_point["count"])
+
+	if (psl_point["status"] == "covered" or \
+		psl_point["status"] == "passed"):
+		color = "Lime"
+	else:
+		color = "red"
+
+	with tag('td', ('bgcolor',color)):
+		text(psl_point["status"])
+
+
+def add_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White"):
+	"""
+	Add PSL point in JSON format to HTML table. For collapsed entries,
+	overall result is shown and link to collapsed points is inserted.
+	"""
+	# Add default entry (single or collapsed)
+	with tag('tr', ('bgcolor',def_bg_color)):
+		if ("colapsed_points" in psl_point):
+			add_colapsed_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White")
 		else:
-			color = "red"
+			add_non_colapsed_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White")
 
-		with tag('td', ('bgcolor',color)):
-			text(psl_point["status"])
+	# Create separate page with collapsed PSL points for this PSL statement
+	# Add unique filename
+	if ("colapsed_points" in psl_point):
+		file_name = os.path.join(html_dir, get_collapsed_file_name(psl_point))
+		create_psl_file_page(file_name, psl_point["colapsed_points"]);
 
 
 def create_psl_file_page(filename, psl_points):
@@ -155,7 +340,7 @@ def create_psl_file_page(filename, psl_points):
 	Create HTML file with list of PSL coverage statements.
 	"""
 	parsed_file_name = os.path.basename(filename)
-	html_cov_path = os.path.join(func_cov_dir, 
+	html_cov_path = os.path.join(html_dir, 
 						"{}.html".format(parsed_file_name))
 	html_file = open(html_cov_path, 'w')
 
@@ -173,7 +358,7 @@ def create_psl_file_page(filename, psl_points):
 				with tag('caption'):
 					with tag('font', size=5):
 						text(psl_type["name"])
-				titles = ["PSL Point Name", "Line", "Count", "Status"]
+				titles = ["PSL Point Name", "Test name", "Full Path Name", "Line", "Count", "Status"]
 				add_html_table_header(doc, tag, text, titles, back_color="Peru")
 				for psl_point in psl_points:
 					if (psl_point["directive"] == psl_type["type"]):
@@ -192,16 +377,12 @@ def create_psl_file_refs_table(doc, tag, text, psl_by_files):
 		with tag('tr'):
 			with tag('td'):
 				name = os.path.basename(file_name)
-				with tag('a', href=name+".html"):
+				with tag('a', href= os.path.join("html", name + ".html")):
 					text(name)
 			coverage_types = ["cover", "assertion"]
 			for coverage_type in coverage_types:
-				[ok, nok] = calc_coverage_results(psl_list, coverage_type)
-				summ = max(1, ok + nok)
-				percents = ok/summ * 100
-				color = calc_coverage_color(percents)
-				with tag('td', bgcolor=color):
-					text("({}/{}) {}%".format(ok, summ, percents))
+				print_cov_cell_percentage(doc, tag, text, psl_list, \
+						coverage_type, merge_abs_vals=True)
 
 
 def create_psl_report(psl_by_files, psl_orig):
@@ -232,7 +413,23 @@ def create_psl_report(psl_by_files, psl_orig):
 
 
 if __name__ == "__main__":
-	json_orig = load_json_psl_coverage()
-	json_parsed = split_json_coverage_by_file(json_orig)
-	create_psl_report(json_parsed, json_orig["details"])
 
+	dut_top = "can_top_level"
+
+	# Merge PSL coverage files from all Testcases
+	merge_psl_coverage_files("merged_psl.json", "psl_cov")
+	json_orig = load_json_psl_coverage("merged_psl.json")
+	json_by_file = split_json_coverage_by_file(json_orig)
+
+	# Colapse for each source file and also Merge all colapsed into
+	# single list so that overal coverage is calculated only out of colapsed
+	# psl points!
+	json_by_file_colapsed = {}
+	json_together_colapsed = []
+	for filename, psls_for_file in json_by_file.items():
+		colapsed = collapse_psl_coverage_files(psls_for_file);
+		json_by_file_colapsed[filename] = colapsed
+		json_together_colapsed.extend(colapsed)
+
+	# Create PSL report
+	create_psl_report(json_by_file_colapsed, json_together_colapsed)
