@@ -90,6 +90,7 @@ test_ip_fast:
             - test/code_html
             - test/tests_fast.xml
             - test/xunit.xsl
+            - test/build/functional_coverage
         reports:
             junit: [test/tests_fast.xml]
 
@@ -119,8 +120,9 @@ pages:
         - cp test/tests_*.xml public/
         - mv test/code_html public/coverage || true
         - cp doc/core/Progdokum.pdf public/ || true
-    only:
-        - master
+        - cp -R test/functional_coverage/* public/functional_coverage/ || true
+#    only:
+#        - master
     artifacts:
         paths:
             - public
