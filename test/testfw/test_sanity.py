@@ -42,8 +42,15 @@ class SanityTests(TestsBase):
     def add_sources(self):
         add_sources(self.lib, ['sanity/**/*.vhd'])
 
+    def format_valid_test_name(self, name):
+        valid_name = name.replace(" ", '_')
+        valid_name = valid_name.replace("/", "_")
+        valid_name = valid_name.replace("", "_")
+        return valid_name
+
     def create_psl_cov_file_opt(self, name):
-        psl_path = "functional_coverage/coverage_data/psl_cov_sanity_{}.json".format(name)
+        test_name = self.format_valid_test_name("psl_cov_sanity_{}.json".format(name))
+        psl_path = "functional_coverage/coverage_data/{}".format(test_name)
         psl_flag = "--psl-report={}".format(psl_path)
         return {"ghdl.sim_flags" : [psl_flag]}
 

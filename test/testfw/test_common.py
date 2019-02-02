@@ -62,7 +62,6 @@ class TestsBase:
                     '''.format(name)), file=f)
         tb.set_sim_option("modelsim.init_file.gui", str(tcl))
 
-
 def add_sources(lib, patterns) -> None:
     for pattern in patterns:
         p = join(str(d.parent), pattern)
