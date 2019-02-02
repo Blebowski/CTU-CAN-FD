@@ -102,7 +102,7 @@ feature:
             iterations: 1
         timestamp_registers:
         txt_buffer_hazard:
-            iterations: 2
+            iterations: 1
 sanity:
     default:
         <<: *default

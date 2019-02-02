@@ -120,7 +120,7 @@ package body txt_buffer_hazard_feature is
     CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
 
     -- Repeat test several times
-    for i in 1 to 200 loop
+    for i in 1 to 100 loop
 
         -- Give "Set ready" command to the buffer
         send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
