@@ -2025,10 +2025,12 @@ package body CANtestLib is
                 show_all(display_handler);
                 hide(display_handler, debug);
                 hide(display_handler, info);
+                hide(display_handler, pass);
                 hide(display_handler, warning);
             when warning_l =>
                 show_all(display_handler);
                 hide(display_handler, debug);
+                hide(display_handler, pass);
                 hide(display_handler, info);
             when info_l =>
                 show_all(display_handler);
@@ -2449,19 +2451,19 @@ package body CANtestLib is
     end procedure;
 
 
-    impure function aval_is_invalid_burst_size(
+    impure function aval_is_valid_burst_size(
         constant data_length    :       natural
     ) return boolean
     is
     begin
-        if ((data_length mod 4) = 0) then
+        if ((data_length mod 32) /= 0) then
             warning("Invalid Avalon Burst size: "
                     & integer'image(data_length) &
                     " Burst size should be 32 bit aligned!");
             return false;
         end if;
 
-        if ((data_length / 4) > 64) then
+        if ((data_length / 32) > 64) then
             warning("Invalid Avalon Burst size: "
                     & integer'image(data_length) &
                     " Burst size should not be larger than 64 words! " &
@@ -2490,7 +2492,7 @@ package body CANtestLib is
             return;
         end if;
         
-        if (aval_is_invalid_burst_size(w_data'length)) then
+        if (not aval_is_valid_burst_size(w_data'length)) then
             return;
         end if;
 
@@ -2543,7 +2545,7 @@ package body CANtestLib is
             return;
         end if;
         
-        if (aval_is_invalid_burst_size(r_data'length)) then
+        if (not aval_is_valid_burst_size(r_data'length)) then
             return;
         end if;
 
