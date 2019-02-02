@@ -211,29 +211,29 @@ void ctu_can_fd_set_mode_reg(struct ctucanfd_priv *priv,
 
 void ctu_can_fd_rel_rx_buf(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_status_command reg;
+	union ctu_can_fd_command reg;
 
 	reg.u32 = 0;
 	reg.s.rrb = 1;
-	priv->write_reg(priv, CTU_CAN_FD_STATUS, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_COMMAND, reg.u32);
 }
 
 void ctu_can_fd_clr_overrun_flag(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_status_command reg;
+	union ctu_can_fd_command reg;
 
 	reg.u32 = 0;
 	reg.s.cdo = 1;
-	priv->write_reg(priv, CTU_CAN_FD_STATUS, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_COMMAND, reg.u32);
 }
 
 void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_status_command reg;
+	union ctu_can_fd_command reg;
 
 	reg.u32 = 0;
 	reg.s.abt = 1;
-	priv->write_reg(priv, CTU_CAN_FD_STATUS, reg.u32);
+	priv->write_reg(priv, CTU_CAN_FD_COMMAND, reg.u32);
 }
 
 // TODO: rather than set(value, mask) interface, provide
