@@ -108,25 +108,33 @@ package body txt_buffer_hazard_feature is
   begin
         o.outcome := true;
 
+    -- Wait till Integration phase is over
+    for i in 0 to 3000 loop
+        wait until rising_edge(mem_bus(1).clk_sys);
+    end loop;
+
+    -- Generate CAN frame
+    CAN_generate_frame(rand_ctr, CAN_frame);
+
+    -- Insert the frame for transmittion
+    CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
+
     -- Repeat test several times
-    for i in 1 to 50 loop
-        -- Generate CAN frame
-        CAN_generate_frame(rand_ctr, CAN_frame);
-
-        -- Insert the frame for transmittion
-        CAN_insert_TX_frame(CAN_frame, 1, ID_1, mem_bus(1));
-
-        -- Wait some random time before sending first command
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 0, 200);
+    for i in 1 to 200 loop
 
         -- Give "Set ready" command to the buffer
         send_TXT_buf_cmd(buf_set_ready, 1, ID_1, mem_bus(1));
+
+        -- Wait for some clock cycles before sending abort command.
+        for j in 0 to i loop
+            wait until rising_edge(mem_bus(1).clk_sys);
+        end loop;
 
         -- Give "Set abort" command to the buffer
         send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
 
         -- Wait for some clock cycles before reading buffer and controller state
-        for i in 0 to 600 loop
+        for i in 0 to 20 loop
             wait until rising_edge(mem_bus(1).clk_sys);
         end loop;
 
