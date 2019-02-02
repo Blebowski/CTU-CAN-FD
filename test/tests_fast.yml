@@ -1,5 +1,6 @@
 _default: &default
     log_level: info
+    psl_coverage: true
     error_tolerance: 0
     # seed: 0 # optional; use to reconstruct results from randomized runs
     # randomize: false
@@ -72,7 +73,7 @@ feature:
             iterations: 1
         timestamp_registers:
         txt_buffer_hazard:
-            iterations: 5
+            iterations: 20
 reference:
     default:
         <<: *default

@@ -357,4 +357,31 @@ begin
         end if;
     end process;
 
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Functional coverage
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    func_cov_block : block
+    begin 
+    
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- Each FSM state
+    -- psl txtb_fsm_empty : cover (buf_fsm = txt_empty);
+    -- psl txtb_fsm_ready : cover (buf_fsm = txt_ready);
+    -- psl txtb_fsm_tx_prog : cover (buf_fsm = txt_tx_prog);
+    -- psl txtb_fsm_ab_prog : cover (buf_fsm = txt_ab_prog);
+    -- psl txtb_fsm_error : cover (buf_fsm = txt_error);
+    -- psl txtb_fsm_aborted : cover (buf_fsm = txt_aborted);
+    -- psl txtb_fsm_tx_ok : cover (buf_fsm = txt_ok);
+    
+    -- Simultaneous HW and SW Commands
+    -- psl txtb_rdy_hazard : cover (txt_hw_cmd.lock = '1' and hw_cbs = '1' and
+    --                              txt_sw_cmd.set_abt = '1' and sw_cbs = '1');
+
+    
+    
+    end block;
+
 end architecture;

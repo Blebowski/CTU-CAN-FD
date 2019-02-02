@@ -253,4 +253,30 @@ begin
         txt_buf_ready          => txt_buf_ready
     );
 
+    
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Functional coverage
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    func_cov_block : block
+    begin 
+    
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- Each SW command active
+    -- psl txtb_set_ready_cov : cover (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1');
+    -- psl txtb_set_empty_cov : cover (txt_sw_cmd.set_ety = '1' and sw_cbs = '1');
+    -- psl txtb_set_abort_cov : cover (txt_sw_cmd.set_abt = '1' and sw_cbs = '1');
+      
+    -- HW Commands
+    -- psl txtb_hw_lock : cover (txt_hw_cmd.lock = '1' and hw_cbs = '1');
+    -- psl txtb_hw_unlock : cover (txt_hw_cmd.unlock = '1' and hw_cbs = '1');
+    -- psl txtb_hw_valid : cover (txt_hw_cmd.valid = '1' and hw_cbs = '1');
+    -- psl txtb_hw_err : cover (txt_hw_cmd.err = '1' and hw_cbs = '1');
+    -- psl txtb_hw_arbl : cover (txt_hw_cmd.arbl = '1' and hw_cbs = '1');
+    -- psl txtb_hw_failed : cover (txt_hw_cmd.failed = '1' and hw_cbs = '1');
+    
+    end block;
+
 end architecture;

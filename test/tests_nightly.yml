@@ -1,5 +1,6 @@
 _default: &default
     log_level: info
+    psl_coverage: true
     error_tolerance: 0
     randomize: true
 unit:

@@ -42,6 +42,18 @@ class SanityTests(TestsBase):
     def add_sources(self):
         add_sources(self.lib, ['sanity/**/*.vhd'])
 
+    def format_valid_test_name(self, name):
+        valid_name = name.replace(" ", '_')
+        valid_name = valid_name.replace("/", "_")
+        valid_name = valid_name.replace("", "_")
+        return valid_name
+
+    def create_psl_cov_file_opt(self, name):
+        test_name = self.format_valid_test_name("psl_cov_sanity_{}.json".format(name))
+        psl_path = "functional_coverage/coverage_data/{}".format(test_name)
+        psl_flag = "--psl-report={}".format(psl_path)
+        return {"ghdl.sim_flags" : [psl_flag]}
+
     def configure(self):
         # TODO: wave
         tb = self.lib.get_test_benches('*tb_sanity')[0]
@@ -72,5 +84,13 @@ class SanityTests(TestsBase):
                 'timing_config': vhdl_serialize(cfg['timing_config']),
                 'gauss_iter'   : vhdl_serialize(cfg['gauss_iter']),
             }
-            tb.add_config(name, generics=generics)
-        return True
+
+            sanity_cfg_name = name.replace(" ", "_").replace("/", "_").strip('"')
+
+            if (cfg['psl_coverage']):
+                psl_opts = self.create_psl_cov_file_opt(name)
+                tb.add_config(name, generics=generics, sim_options=psl_opts)
+            else:
+                tb.add_config(name, generics=generics)	
+
+            return True

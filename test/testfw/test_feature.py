@@ -26,6 +26,11 @@ class FeatureTests(TestsBase):
         tb = self.lib.get_test_benches('*tb_feature')[0]
         tb.scan_tests_from_file(str(wrname))
 
+    def create_psl_cov_file_opt(self, name):
+        psl_path = "functional_coverage/coverage_data/psl_cov_feature_{}.json".format(name)
+        psl_flag = "--psl-report={}".format(psl_path)
+        return {"ghdl.sim_flags" : [psl_flag]}
+
     def configure(self) -> bool:
         tb = self.lib.get_test_benches('*tb_feature')[0]
         default = self.config['default']
@@ -59,7 +64,13 @@ class FeatureTests(TestsBase):
                 'test_name'    : name,
                 'seed'         : get_seed(cfg)
             }
-            tb.add_config(name, generics=generics)
+
+            if (cfg['psl_coverage']):
+                psl_opts = self.create_psl_cov_file_opt(name)
+                tb.add_config(name, generics=generics, sim_options=psl_opts)
+            else:
+                tb.add_config(name, generics=generics)	
+
         return self._check_for_unconfigured()
 
     def _check_for_unconfigured(self) -> bool:

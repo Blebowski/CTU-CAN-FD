@@ -62,7 +62,6 @@ class TestsBase:
                     '''.format(name)), file=f)
         tb.set_sim_option("modelsim.init_file.gui", str(tcl))
 
-
 def add_sources(lib, patterns) -> None:
     for pattern in patterns:
         p = join(str(d.parent), pattern)
@@ -70,7 +69,6 @@ def add_sources(lib, patterns) -> None:
         for f in glob(p, recursive=True):
             if f != "tb_wrappers.vhd":
                 lib.add_source_file(str(f))
-
 
 def add_common_sources(lib, ui) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
@@ -95,8 +93,17 @@ def add_flags(ui, lib, build) -> None:
 
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
     lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
-    ui.set_sim_option("ghdl.elab_flags", ["-Wl,-lgcov", "-Wl,--coverage", "-Wl,-no-pie", "-fpsl"])
-    ui.set_sim_option("ghdl.sim_flags", ["--ieee-asserts=disable-at-0"])
+
+    elab_flags = ["-Wl,-lgcov"]
+    elab_flags.append("-Wl,--coverage");
+    elab_flags.append("-Wl,-no-pie");
+    elab_flags.append("-fpsl");
+    ui.set_sim_option("ghdl.elab_flags",elab_flags)
+
+    # Global simulation flags
+    sim_flags = ["--ieee-asserts=disable-at-0"]
+    ui.set_sim_option("ghdl.sim_flags", sim_flags)
+
     modelsim_init_files = get_common_modelsim_init_files()
     ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
 
