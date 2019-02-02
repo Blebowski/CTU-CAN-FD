@@ -3906,7 +3906,7 @@ package body CANtestLib is
             data(CDO_IND)        := '1';
         end if;
 
-        CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_32);
     end procedure;
 
 
@@ -3917,7 +3917,7 @@ package body CANtestLib is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, STATUS_ADR, ID, mem_bus, BIT_8);
+        CAN_read(data, STATUS_ADR, ID, mem_bus, BIT_32);
 
         status.receive_buffer           := false;
         status.data_overrun             := false;
