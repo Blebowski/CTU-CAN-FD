@@ -922,10 +922,11 @@ begin
                 end if;
 
                 -- If any of the nodes turned error passive
-                check_false(erp_detected(1) or erp_detected(2) or
-                            erp_detected(3) or erp_detected(4),
-                           "Some unit turned error passive -> " &
+                if (erp_detected(1) or erp_detected(2) or
+                    erp_detected(3) or erp_detected(4)) then
+                    error("Some unit turned error passive -> " &
                            "Most probably traffic consitency check will fail!");
+                end if;
                 wait for 100 ns;
             end loop;
 
@@ -939,7 +940,7 @@ begin
 
             -- Now evaluate the memories content...
             check_memories(tx_mems, rx_mems, outcome);
-            check(outcome, "Traffic consitency check error!");
+            check(outcome, "Traffic consitency check");
 
             wait for 1000 ns;
             loop_ctr <= loop_ctr + 1;
