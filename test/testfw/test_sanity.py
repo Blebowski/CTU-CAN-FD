@@ -43,7 +43,8 @@ class SanityTests(TestsBase):
         add_sources(self.lib, ['sanity/**/*.vhd'])
 
     def create_psl_cov_file_opt(self, name):
-        psl_flag = "--psl-report=psl_cov_sanity_{}.json".format(name)
+        psl_path = "functional_coverage/coverage_data/psl_cov_sanity_{}.json".format(name)
+        psl_flag = "--psl-report={}".format(psl_path)
         return {"ghdl.sim_flags" : [psl_flag]}
 
     def configure(self):
@@ -78,6 +79,11 @@ class SanityTests(TestsBase):
             }
 
             sanity_cfg_name = name.replace(" ", "_").replace("/", "_").strip('"')
-            psl_opts = self.create_psl_cov_file_opt(sanity_cfg_name)
-            tb.add_config(name, generics=generics, sim_options=psl_opts)
+
+            if (cfg['psl_coverage']):
+                psl_opts = self.create_psl_cov_file_opt(name)
+                tb.add_config(name, generics=generics, sim_options=psl_opts)
+            else:
+                tb.add_config(name, generics=generics)	
+
             return True

@@ -11,3 +11,4 @@ feature:
         wave: feature/feature_env_setup.tcl
     tests:
         txt_buffer_hazard:
+            iterations: 1

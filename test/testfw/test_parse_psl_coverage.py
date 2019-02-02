@@ -36,7 +36,7 @@ def merge_psl_coverage_files(out_file, in_file_prefix):
 			continue
 
 		in_filename = os.path.join(psl_dir, filename)
-		print("Merging JSON PSL coverage from: {}".format(in_filename))
+		print("Merging JSON PSL coverage from: {}\n".format(in_filename))
 		json_in_file = open(in_filename, 'r')
 		json_obj = json.load(json_in_file)
 

@@ -10,6 +10,7 @@ from os.path import abspath
 from .log import MyLogRecord
 
 d = Path(abspath(__file__)).parent
+func_cov_dir = os.path.join(str(d.parent), "build/functional_coverage")
 
 
 def setup_logging() -> None:
@@ -124,6 +125,11 @@ def test(obj, config, strict, vunit_args):
     for cfg_key, factory in tests_classes:
         if cfg_key in config:
             tests.append(factory(ui, lib, config[cfg_key], build, base))
+
+    if not os.path.exists(func_cov_dir):
+        os.makedirs(func_cov_dir);
+        os.makedirs(os.path.join(func_cov_dir, "html"))
+        os.makedirs(os.path.join(func_cov_dir, "coverage_data"))
 
     for t in tests:
         t.add_sources()

@@ -120,7 +120,7 @@ pages:
         - cp test/tests_*.xml public/
         - mv test/code_html public/coverage || true
         - cp doc/core/Progdokum.pdf public/ || true
-        - cp -R test/functional_coverage/* public/functional_coverage/ || true
+        - cp -R test/build/functional_coverage/* public/functional_coverage/ || true
 #    only:
 #        - master
     artifacts:
