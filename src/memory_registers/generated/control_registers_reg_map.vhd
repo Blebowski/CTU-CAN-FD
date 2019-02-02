@@ -53,40 +53,40 @@ use work.cmn_reg_map_pkg.all;
 
 entity control_registers_reg_map is
 generic (
-    constant CLEAR_READ_DATA     : boolean := true;
-    constant SUP_RANGE           : boolean := true;
-    constant RESET_POLARITY      : std_logic := '0';
-    constant SUP_FILT_B          : boolean := true;
-    constant SUP_FILT_C          : boolean := true;
     constant DATA_WIDTH          : natural := 32;
     constant ADDRESS_WIDTH       : natural := 8;
     constant REGISTERED_READ     : boolean := true;
-    constant SUP_FILT_A          : boolean := true
+    constant CLEAR_READ_DATA     : boolean := true;
+    constant RESET_POLARITY      : std_logic := '0';
+    constant SUP_FILT_A          : boolean := true;
+    constant SUP_RANGE           : boolean := true;
+    constant SUP_FILT_C          : boolean := true;
+    constant SUP_FILT_B          : boolean := true
 );
 port (
     signal clk_sys               :in std_logic;
     signal res_n                 :in std_logic;
-    signal w_data                :in std_logic_vector(data_width - 1 downto 0);
-    signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
-    signal cs                    :in std_logic;
-    signal write                 :in std_logic;
-    signal control_registers_out :out Control_registers_out_t;
     signal address               :in std_logic_vector(address_width - 1 downto 0);
+    signal w_data                :in std_logic_vector(data_width - 1 downto 0);
+    signal r_data                :out std_logic_vector(data_width - 1 downto 0);
+    signal cs                    :in std_logic;
     signal read                  :in std_logic;
-    signal control_registers_in  :in Control_registers_in_t;
-    signal r_data                :out std_logic_vector(data_width - 1 downto 0)
+    signal write                 :in std_logic;
+    signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+    signal control_registers_out :out Control_registers_out_t;
+    signal control_registers_in  :in Control_registers_in_t
 );
 end entity control_registers_reg_map;
 
 
 architecture rtl of control_registers_reg_map is
-  signal read_data_mux_in : std_logic_vector(1215 downto 0);
   signal reg_sel : std_logic_vector(37 downto 0);
-  signal read_mux_ena                : std_logic;
   constant ADDR_VECT
                  : std_logic_vector(227 downto 0) := "100101100100100011100010100001100000011111011110011101011100011011011010011001011000010111010110010101010100010011010010010001010000001111001110001101001100001011001010001001001000000111000110000101000100000011000010000001000000";
-  signal control_registers_out_i : Control_registers_out_t;
+  signal read_data_mux_in : std_logic_vector(1215 downto 0);
   signal read_data_mask_n : std_logic_vector(31 downto 0);
+  signal control_registers_out_i : Control_registers_out_t;
+  signal read_mux_ena                : std_logic;
 begin
 
     ----------------------------------------------------------------------------
@@ -95,18 +95,18 @@ begin
 
     address_decoder_control_registers_comp : address_decoder
     generic map(
-        registered_out                  => false ,
+        address_width                   => 6 ,
         address_entries                 => 38 ,
         addr_vect                       => ADDR_VECT ,
-        address_width                   => 6 ,
+        registered_out                  => false ,
         reset_polarity                  => RESET_POLARITY 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
+        address                         => address(7 downto 2) ,-- in
         enable                          => cs ,-- in
-        addr_dec                        => reg_sel ,-- out
-        address                         => address(7 downto 2) -- in
+        addr_dec                        => reg_sel -- out
     );
 
     ----------------------------------------------------------------------------
@@ -116,17 +116,17 @@ begin
     mode_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000001" ,
         data_mask                       => "11111111" ,
-        reset_value                     => "00110000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00110000" ,
+        auto_clear                      => "00000001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(1) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(1) ,-- in
         w_be                            => be(0 downto 0) ,-- in
         reg_value                       => control_registers_out_i.mode -- out
     );
@@ -138,17 +138,17 @@ begin
     settings_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000" ,
         data_mask                       => "11111111" ,
-        reset_value                     => "00000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000" ,
+        auto_clear                      => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(1) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(1) ,-- in
         w_be                            => be(2 downto 2) ,-- in
         reg_value                       => control_registers_out_i.settings -- out
     );
@@ -160,17 +160,17 @@ begin
     command_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000000001111110" ,
         data_mask                       => "0000000001111110" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000000001111110" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(2) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 16) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(2) ,-- in
         w_be                            => be(3 downto 2) ,-- in
         reg_value                       => control_registers_out_i.command -- out
     );
@@ -182,17 +182,17 @@ begin
     int_stat_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000111111111111" ,
         data_mask                       => "0000111111111111" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000111111111111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(3) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(3) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_stat -- out
     );
@@ -204,17 +204,17 @@ begin
     int_ena_set_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000011111111111" ,
         data_mask                       => "0000111111111111" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000011111111111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(4) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(4) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_ena_set -- out
     );
@@ -226,17 +226,17 @@ begin
     int_ena_clr_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000011111111111" ,
         data_mask                       => "0000111111111111" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000011111111111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(5) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(5) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_ena_clr -- out
     );
@@ -248,17 +248,17 @@ begin
     int_mask_set_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000011111111111" ,
         data_mask                       => "0000111111111111" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000011111111111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(6) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(6) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_mask_set -- out
     );
@@ -270,17 +270,17 @@ begin
     int_mask_clr_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000011111111111" ,
         data_mask                       => "0000111111111111" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000011111111111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(7) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(7) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_mask_clr -- out
     );
@@ -292,17 +292,17 @@ begin
     btr_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "11111111111111111111111111111111" ,
-        reset_value                     => "00010000010100001010000110000101" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00010000010100001010000110000101" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(8) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(8) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.btr -- out
     );
@@ -314,17 +314,17 @@ begin
     btr_fd_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "11111111111110111110111110111111" ,
-        reset_value                     => "00010000001000000110000110000011" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00010000001000000110000110000011" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(9) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(9) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.btr_fd -- out
     );
@@ -336,17 +336,17 @@ begin
     ewl_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000" ,
         data_mask                       => "11111111" ,
-        reset_value                     => "01100000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "01100000" ,
+        auto_clear                      => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(10) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(10) ,-- in
         w_be                            => be(0 downto 0) ,-- in
         reg_value                       => control_registers_out_i.ewl -- out
     );
@@ -358,17 +358,17 @@ begin
     erp_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000" ,
         data_mask                       => "11111111" ,
-        reset_value                     => "10000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "10000000" ,
+        auto_clear                      => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(10) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(10) ,-- in
         w_be                            => be(1 downto 1) ,-- in
         reg_value                       => control_registers_out_i.erp -- out
     );
@@ -380,17 +380,17 @@ begin
     ctr_pres_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000001111011111111" ,
         data_mask                       => "00000000000000000001111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000001111011111111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(13) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(13) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.ctr_pres -- out
     );
@@ -403,17 +403,17 @@ begin
     filter_a_mask_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(14) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(14) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask -- out
     );
@@ -432,17 +432,17 @@ begin
     filter_a_val_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(15) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(15) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_a_val -- out
     );
@@ -461,17 +461,17 @@ begin
     filter_b_mask_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(16) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(16) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask -- out
     );
@@ -490,17 +490,17 @@ begin
     filter_b_val_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(17) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(17) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_b_val -- out
     );
@@ -519,17 +519,17 @@ begin
     filter_c_mask_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(18) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(18) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask -- out
     );
@@ -548,17 +548,17 @@ begin
     filter_c_val_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(19) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(19) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_c_val -- out
     );
@@ -577,17 +577,17 @@ begin
     filter_ran_low_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(20) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(20) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low -- out
     );
@@ -606,17 +606,17 @@ begin
     filter_ran_high_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00011111111111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(21) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(21) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high -- out
     );
@@ -634,17 +634,17 @@ begin
     filter_control_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000000000000000" ,
         data_mask                       => "1111111111111111" ,
-        reset_value                     => "0000000000001111" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000001111" ,
+        auto_clear                      => "0000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(22) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(22) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_control -- out
     );
@@ -656,17 +656,17 @@ begin
     rx_settings_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000" ,
         data_mask                       => "00000001" ,
-        reset_value                     => "00000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000" ,
+        auto_clear                      => "00000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(25) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(25) ,-- in
         w_be                            => be(2 downto 2) ,-- in
         reg_value                       => control_registers_out_i.rx_settings -- out
     );
@@ -678,21 +678,21 @@ begin
     rx_data_access_signaller_comp : access_signaller
     generic map(
         reset_polarity                  => RESET_POLARITY ,
-        write_signalling                => False ,
         data_width                      => 32 ,
         read_signalling                 => True ,
-        write_signalling_reg            => False ,
-        read_signalling_reg             => False 
+        write_signalling                => False ,
+        read_signalling_reg             => False ,
+        write_signalling_reg            => False 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        be                              => be(3 downto 0) ,-- in
         cs                              => reg_sel(26) ,-- in
-        write                           => write ,-- in
         read                            => read ,-- in
-        read_signal                     => control_registers_out_i.rx_data_read ,-- out
-        write_signal                    => open -- out
+        write                           => write ,-- in
+        be                              => be(3 downto 0) ,-- in
+        write_signal                    => open ,-- out
+        read_signal                     => control_registers_out_i.rx_data_read -- out
     );
 
     ----------------------------------------------------------------------------
@@ -702,17 +702,17 @@ begin
     tx_command_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000111100000111" ,
         data_mask                       => "0000111100000111" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000111100000111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(28) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(28) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.tx_command -- out
     );
@@ -724,17 +724,17 @@ begin
     tx_priority_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000000000000000" ,
         data_mask                       => "0111011101110111" ,
-        reset_value                     => "0000000000000001" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000001" ,
+        auto_clear                      => "0000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(29) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(29) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.tx_priority -- out
     );
@@ -746,17 +746,17 @@ begin
     ssp_cfg_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "0000000000000000" ,
         data_mask                       => "0000001101111111" ,
-        reset_value                     => "0000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(31) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 16) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(31) ,-- in
         w_be                            => be(3 downto 2) ,-- in
         reg_value                       => control_registers_out_i.ssp_cfg -- out
     );
@@ -778,20 +778,20 @@ begin
 
     data_mux_control_registers_comp : data_mux
     generic map(
-        registered_out                  => REGISTERED_READ ,
         data_out_width                  => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
+        data_in_width                   => 1216 ,
         sel_width                       => 6 ,
-        data_in_width                   => 1216 
+        registered_out                  => REGISTERED_READ ,
+        reset_polarity                  => RESET_POLARITY 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        enable                          => read_mux_ena ,-- in
         data_selector                   => address(7 downto 2) ,-- in
         data_in                         => read_data_mux_in ,-- in
-        data_out                        => r_data ,-- out
-        data_mask_n                     => read_data_mask_n -- in
+        data_mask_n                     => read_data_mask_n ,-- in
+        enable                          => read_mux_ena ,-- in
+        data_out                        => r_data -- out
     );
 
   ------------------------------------------------------------------------------

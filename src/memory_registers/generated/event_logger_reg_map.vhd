@@ -54,35 +54,35 @@ use work.cmn_reg_map_pkg.all;
 entity event_logger_reg_map is
 generic (
     constant DATA_WIDTH          : natural := 32;
-    constant CLEAR_READ_DATA     : boolean := true;
+    constant ADDRESS_WIDTH       : natural := 8;
     constant REGISTERED_READ     : boolean := true;
-    constant RESET_POLARITY      : std_logic := '0';
-    constant ADDRESS_WIDTH       : natural := 8
+    constant CLEAR_READ_DATA     : boolean := true;
+    constant RESET_POLARITY      : std_logic := '0'
 );
 port (
     signal clk_sys               :in std_logic;
     signal res_n                 :in std_logic;
-    signal w_data                :in std_logic_vector(data_width - 1 downto 0);
-    signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
-    signal cs                    :in std_logic;
-    signal write                 :in std_logic;
     signal address               :in std_logic_vector(address_width - 1 downto 0);
-    signal read                  :in std_logic;
-    signal event_logger_in       :in Event_Logger_in_t;
+    signal w_data                :in std_logic_vector(data_width - 1 downto 0);
     signal r_data                :out std_logic_vector(data_width - 1 downto 0);
-    signal event_logger_out      :out Event_Logger_out_t
+    signal cs                    :in std_logic;
+    signal read                  :in std_logic;
+    signal write                 :in std_logic;
+    signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+    signal event_logger_out      :out Event_Logger_out_t;
+    signal event_logger_in       :in Event_Logger_in_t
 );
 end entity event_logger_reg_map;
 
 
 architecture rtl of event_logger_reg_map is
+  signal reg_sel  : std_logic_vector(5 downto 0);
   constant ADDR_VECT
                  : std_logic_vector(35 downto 0) := "000101000100000011000010000001000000";
   signal read_data_mux_in : std_logic_vector(191 downto 0);
-  signal reg_sel  : std_logic_vector(5 downto 0);
-  signal read_mux_ena                : std_logic;
-  signal event_logger_out_i : Event_Logger_out_t;
   signal read_data_mask_n : std_logic_vector(31 downto 0);
+  signal event_logger_out_i : Event_Logger_out_t;
+  signal read_mux_ena                : std_logic;
 begin
 
     ----------------------------------------------------------------------------
@@ -91,18 +91,18 @@ begin
 
     address_decoder_event_logger_comp : address_decoder
     generic map(
-        registered_out                  => false ,
+        address_width                   => 6 ,
         address_entries                 => 6 ,
         addr_vect                       => ADDR_VECT ,
-        address_width                   => 6 ,
+        registered_out                  => false ,
         reset_polarity                  => RESET_POLARITY 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
+        address                         => address(7 downto 2) ,-- in
         enable                          => cs ,-- in
-        addr_dec                        => reg_sel ,-- out
-        address                         => address(7 downto 2) -- in
+        addr_dec                        => reg_sel -- out
     );
 
     ----------------------------------------------------------------------------
@@ -112,17 +112,17 @@ begin
     log_trig_config_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00000000000000111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(0) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(0) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => event_logger_out_i.log_trig_config -- out
     );
@@ -134,17 +134,17 @@ begin
     log_capt_config_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00000000000000000000000000000000" ,
         data_mask                       => "00000000000111111111111111111111" ,
-        reset_value                     => "00000000000000000000000000000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(1) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(1) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => event_logger_out_i.log_capt_config -- out
     );
@@ -156,17 +156,17 @@ begin
     log_command_reg_comp : memory_reg
     generic map(
         data_width                      => 8 ,
-        reset_polarity                  => RESET_POLARITY ,
-        auto_clear                      => "00001111" ,
         data_mask                       => "00001111" ,
-        reset_value                     => "00000000" 
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000" ,
+        auto_clear                      => "00001111" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(3) ,-- in
-        write                           => write ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(3) ,-- in
         w_be                            => be(0 downto 0) ,-- in
         reg_value                       => event_logger_out_i.log_command -- out
     );
@@ -188,20 +188,20 @@ begin
 
     data_mux_event_logger_comp : data_mux
     generic map(
-        registered_out                  => REGISTERED_READ ,
         data_out_width                  => 32 ,
-        reset_polarity                  => RESET_POLARITY ,
+        data_in_width                   => 192 ,
         sel_width                       => 6 ,
-        data_in_width                   => 192 
+        registered_out                  => REGISTERED_READ ,
+        reset_polarity                  => RESET_POLARITY 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        enable                          => read_mux_ena ,-- in
         data_selector                   => address(7 downto 2) ,-- in
         data_in                         => read_data_mux_in ,-- in
-        data_out                        => r_data ,-- out
-        data_mask_n                     => read_data_mask_n -- in
+        data_mask_n                     => read_data_mask_n ,-- in
+        enable                          => read_mux_ena ,-- in
+        data_out                        => r_data -- out
     );
 
   ------------------------------------------------------------------------------
