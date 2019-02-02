@@ -2025,10 +2025,12 @@ package body CANtestLib is
                 show_all(display_handler);
                 hide(display_handler, debug);
                 hide(display_handler, info);
+                hide(display_handler, pass);
                 hide(display_handler, warning);
             when warning_l =>
                 show_all(display_handler);
                 hide(display_handler, debug);
+                hide(display_handler, pass);
                 hide(display_handler, info);
             when info_l =>
                 show_all(display_handler);
