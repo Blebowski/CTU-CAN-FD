@@ -423,8 +423,8 @@ int main(int argc, char *argv[])
         u32 rxsz = reg.s.rx_buff_size - reg.s.rx_mem_free;
 
         printf("%u RX frames, %u words", nrxf, rxsz);
-        printf(", status 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_STATUS));
-        printf(", settings 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_SETTINGS));
+        printf(", status 0x%08hhx", ctu_can_fd_read32(priv, CTU_CAN_FD_STATUS));
+        printf(", settings 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_SETTINGS));
         printf(", INT_STAT 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_INT_STAT));
         printf(", INT_ENA_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_ENA_SET));
         printf(", INT_MASK_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_MASK_SET));
