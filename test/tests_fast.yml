@@ -73,7 +73,7 @@ feature:
             iterations: 1
         timestamp_registers:
         txt_buffer_hazard:
-            iterations: 20
+            iterations: 2
 reference:
     default:
         <<: *default
