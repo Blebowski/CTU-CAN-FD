@@ -972,5 +972,106 @@ begin
         end if;
         -- pragma translate_on
     end process;
-
+    
+    
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Functional coverage
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    --
+    -- psl rx_buf_empty_cov : 
+    --      cover (rx_empty = '1');
+    --
+    -- psl rx_buf_not_empty_to_empty_cov :
+    --      cover {rx_empty = '0'; rx_empty = '1'};
+    --
+    -- psl rx_buf_rx_full_cov :
+    --      cover (rx_full = '1');
+    -- 
+    -- psl rx_buf_rx_full_to_not_full_cov :
+    --      cover {(rx_full = '1'); (rx_full = '0')};
+    --
+    -- psl rx_buf_overrun_cov :
+    --      cover (overrun_condition = true);
+    --
+    -- psl rx_buf_commit_overrun_abort_cov :
+    --      cover (commit_overrun_abort = '1');
+    --
+    -- psl rx_buf_overrun_flags_cov :
+    --      cover (data_overrun_int = '1' and data_overrun_r = '1');
+    --
+    -- psl rx_buf_overrun_clear_cov :
+    --      cover (drv_clr_ovr = '1');
+    --
+    -- psl rx_buf_write_extra_ts_cov :
+    --      cover (write_extra_ts = '1');
+    -- 
+    -- psl rx_buf_release_receive_buffer_cov :
+    --      cover (drv_erase_rx = '1'); 
+    --
+    -- psl rx_buf_commit_and_read_cov :
+    --      cover (read_increment = '1' and commit_rx_frame = '1'); 
+    --
+    -- psl rx_buf_commit_after_read_cov :
+    --      cover {read_increment = '1'; commit_rx_frame = '1'}; 
+    --
+    -- psl rx_buf_read_after_commit_cov :
+    --      cover {commit_rx_frame = '1'; read_increment = '1'};
+    --
+    -- psl rx_buf_write_and_read_cov :
+    --      cover (write_raw_intent = '1' and read_increment = '1');
+    --
+    -- psl rx_buf_read_after_write_cov :
+    --      cover {write_raw_intent = '1'; read_increment = '1'};
+    --
+    -- psl rx_buf_write_after_read_cov :
+    --      cover {read_increment = '1'; write_raw_intent = '1'};
+    --
+    -- psl rx_buf_sof_timestamp :
+    --      cover (drv_rtsopt = RTS_BEG and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_eof_timestamp :
+    --      cover (drv_rtsopt = RTS_END and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_burst_read_short_cov :
+    --      cover {(read_increment = '1')[*4]};
+    --
+    -- psl rx_buf_burst_read_max_cov :
+    --      cover {(read_increment = '1')[*20]};
+    --
+    -- psl rx_buf_frame_abort_cov :
+    --      cover (rec_abort = '1');
+    --
+    -- psl rx_buf_store_rtr_cov :
+    --      cover (rec_is_rtr = '1' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_empty_frame_cov :
+    --      cover (rec_dlc_in = "0000" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_1_byte_frame_cov :
+    --      cover (rec_dlc_in = "0001" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_2_byte_frame_cov :
+    --      cover (rec_dlc_in = "0010" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_3_byte_frame_cov :
+    --      cover (rec_dlc_in = "0011" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_4_byte_frame_cov :
+    --      cover (rec_dlc_in = "0100" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_5_byte_frame_cov :
+    --      cover (rec_dlc_in = "0101" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_8_byte_frame_cov :
+    --      cover (rec_dlc_in = "1000" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_64_byte_frame_cov :
+    --      cover (rec_dlc_in = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --
+    -- psl rx_buf_store_abort_cov :
+    --      cover (rec_abort = '1');
+    
 end architecture;
