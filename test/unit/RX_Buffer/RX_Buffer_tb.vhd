@@ -466,6 +466,9 @@ architecture rx_buf_unit_test of CAN_test is
             -- Check that word is exactly matching the word in in_mem at the
             -- same position!
             -------------------------------------------------------------------
+            info("Buffer output: " & to_hstring(buff_out));
+            info("Model output: " & to_hstring(in_mem(out_pointer)));
+            info("Word nr. :" & integer'image(i));
             check(buff_out = in_mem(out_pointer),
                   "Buffer FUCKED UP, index: " & integer'image(out_pointer));
 
