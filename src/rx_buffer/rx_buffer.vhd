@@ -875,9 +875,11 @@ begin
     );
 
     -- Memory written either on regular write or Extra timestamp write
-    RAM_write           <= '1' when (write_raw_OK = '1' or write_extra_ts = '1')
-                               else
-                           '0';
+    RAM_write  <= '1' when (write_raw_OK = '1' or
+                           (write_extra_ts = '1' and data_overrun_int = '0' and
+                            overrun_condition = false))
+                      else
+                  '0';
 
     -- Write address is given by write pointer
     RAM_write_address   <= std_logic_vector(to_unsigned(
