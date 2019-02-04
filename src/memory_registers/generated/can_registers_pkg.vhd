@@ -50,9 +50,9 @@ use ieee.std_logic_1164.all;
 package can_registers_pkg is
 
   type Control_registers_out_t is record
-     mode                        : std_logic_vector(7 downto 0);
-     command                     : std_logic_vector(7 downto 0);
-     settings                    : std_logic_vector(7 downto 0);
+     mode                        : std_logic_vector(15 downto 0);
+     settings                    : std_logic_vector(15 downto 0);
+     command                     : std_logic_vector(31 downto 0);
      int_stat                    : std_logic_vector(15 downto 0);
      int_ena_set                 : std_logic_vector(15 downto 0);
      int_ena_clr                 : std_logic_vector(15 downto 0);
@@ -83,7 +83,7 @@ package can_registers_pkg is
   type Control_registers_in_t is record
      device_id                   : std_logic_vector(15 downto 0);
      version                     : std_logic_vector(15 downto 0);
-     status                      : std_logic_vector(7 downto 0);
+     status                      : std_logic_vector(31 downto 0);
      int_stat                    : std_logic_vector(15 downto 0);
      int_ena_set                 : std_logic_vector(15 downto 0);
      int_mask_set                : std_logic_vector(15 downto 0);

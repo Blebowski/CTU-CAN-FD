@@ -80,10 +80,10 @@ end entity control_registers_reg_map;
 
 
 architecture rtl of control_registers_reg_map is
-  signal reg_sel : std_logic_vector(36 downto 0);
+  signal reg_sel : std_logic_vector(38 downto 0);
   constant ADDR_VECT
-                 : std_logic_vector(221 downto 0) := "100101100100100010100001100000011111011110011101011100011011011010011001011000010111010110010101010100010011010010010001010000001111001110001101001100001011001010001001001000000111000110000101000100000011000010000001000000";
-  signal read_data_mux_in : std_logic_vector(1215 downto 0);
+                 : std_logic_vector(233 downto 0) := "100110100101100100100011100010100001100000011111011110011101011100011011011010011001011000010111010110010101010100010011010010010001010000001111001110001101001100001011001010001001001000000111000110000101000100000011000010000001000000";
+  signal read_data_mux_in : std_logic_vector(1247 downto 0);
   signal read_data_mask_n : std_logic_vector(31 downto 0);
   signal control_registers_out_i : Control_registers_out_t;
   signal read_mux_ena                : std_logic;
@@ -96,7 +96,7 @@ begin
     address_decoder_control_registers_comp : address_decoder
     generic map(
         address_width                   => 6 ,
-        address_entries                 => 37 ,
+        address_entries                 => 39 ,
         addr_vect                       => ADDR_VECT ,
         registered_out                  => false ,
         reset_polarity                  => RESET_POLARITY 
@@ -115,42 +115,20 @@ begin
 
     mode_reg_comp : memory_reg
     generic map(
-        data_width                      => 8 ,
-        data_mask                       => "11111111" ,
+        data_width                      => 16 ,
+        data_mask                       => "0000000011111111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "00110000" ,
-        auto_clear                      => "00000001" 
+        reset_value                     => "0000000000110000" ,
+        auto_clear                      => "0000000000000001" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(7 downto 0) ,-- in
+        data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
-        w_be                            => be(0 downto 0) ,-- in
+        w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.mode -- out
-    );
-
-    ----------------------------------------------------------------------------
-    -- COMMAND register
-    ----------------------------------------------------------------------------
-
-    command_reg_comp : memory_reg
-    generic map(
-        data_width                      => 8 ,
-        data_mask                       => "01111110" ,
-        reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "00000000" ,
-        auto_clear                      => "01111110" 
-    )
-    port map(
-        clk_sys                         => clk_sys ,-- in
-        res_n                           => res_n ,-- in
-        data_in                         => w_data(15 downto 8) ,-- in
-        write                           => write ,-- in
-        cs                              => reg_sel(1) ,-- in
-        w_be                            => be(1 downto 1) ,-- in
-        reg_value                       => control_registers_out_i.command -- out
     );
 
     ----------------------------------------------------------------------------
@@ -159,20 +137,42 @@ begin
 
     settings_reg_comp : memory_reg
     generic map(
-        data_width                      => 8 ,
-        data_mask                       => "11111111" ,
+        data_width                      => 16 ,
+        data_mask                       => "0000000011111111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "00000000" ,
-        auto_clear                      => "00000000" 
+        reset_value                     => "0000000000000000" ,
+        auto_clear                      => "0000000000000000" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        data_in                         => w_data(31 downto 24) ,-- in
+        data_in                         => w_data(31 downto 16) ,-- in
         write                           => write ,-- in
         cs                              => reg_sel(1) ,-- in
-        w_be                            => be(3 downto 3) ,-- in
+        w_be                            => be(3 downto 2) ,-- in
         reg_value                       => control_registers_out_i.settings -- out
+    );
+
+    ----------------------------------------------------------------------------
+    -- COMMAND register
+    ----------------------------------------------------------------------------
+
+    command_reg_comp : memory_reg
+    generic map(
+        data_width                      => 32 ,
+        data_mask                       => "00000000000000000000000001111110" ,
+        reset_polarity                  => RESET_POLARITY ,
+        reset_value                     => "00000000000000000000000000000000" ,
+        auto_clear                      => "00000000000000000000000001111110" 
+    )
+    port map(
+        clk_sys                         => clk_sys ,-- in
+        res_n                           => res_n ,-- in
+        data_in                         => w_data(31 downto 0) ,-- in
+        write                           => write ,-- in
+        cs                              => reg_sel(3) ,-- in
+        w_be                            => be(3 downto 0) ,-- in
+        reg_value                       => control_registers_out_i.command -- out
     );
 
     ----------------------------------------------------------------------------
@@ -192,7 +192,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(2) ,-- in
+        cs                              => reg_sel(4) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_stat -- out
     );
@@ -214,7 +214,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(3) ,-- in
+        cs                              => reg_sel(5) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_ena_set -- out
     );
@@ -236,7 +236,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(4) ,-- in
+        cs                              => reg_sel(6) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_ena_clr -- out
     );
@@ -258,7 +258,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(5) ,-- in
+        cs                              => reg_sel(7) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_mask_set -- out
     );
@@ -280,7 +280,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(6) ,-- in
+        cs                              => reg_sel(8) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.int_mask_clr -- out
     );
@@ -302,7 +302,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(7) ,-- in
+        cs                              => reg_sel(9) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.btr -- out
     );
@@ -324,7 +324,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(8) ,-- in
+        cs                              => reg_sel(10) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.btr_fd -- out
     );
@@ -346,7 +346,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(7 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(9) ,-- in
+        cs                              => reg_sel(11) ,-- in
         w_be                            => be(0 downto 0) ,-- in
         reg_value                       => control_registers_out_i.ewl -- out
     );
@@ -368,7 +368,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 8) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(9) ,-- in
+        cs                              => reg_sel(11) ,-- in
         w_be                            => be(1 downto 1) ,-- in
         reg_value                       => control_registers_out_i.erp -- out
     );
@@ -390,7 +390,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(12) ,-- in
+        cs                              => reg_sel(14) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.ctr_pres -- out
     );
@@ -413,7 +413,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(13) ,-- in
+        cs                              => reg_sel(15) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_a_mask -- out
     );
@@ -442,7 +442,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(14) ,-- in
+        cs                              => reg_sel(16) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_a_val -- out
     );
@@ -471,7 +471,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(15) ,-- in
+        cs                              => reg_sel(17) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_b_mask -- out
     );
@@ -500,7 +500,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(16) ,-- in
+        cs                              => reg_sel(18) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_b_val -- out
     );
@@ -529,7 +529,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(17) ,-- in
+        cs                              => reg_sel(19) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_c_mask -- out
     );
@@ -558,7 +558,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(18) ,-- in
+        cs                              => reg_sel(20) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_c_val -- out
     );
@@ -587,7 +587,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(19) ,-- in
+        cs                              => reg_sel(21) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_low -- out
     );
@@ -616,7 +616,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(20) ,-- in
+        cs                              => reg_sel(22) ,-- in
         w_be                            => be(3 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_ran_high -- out
     );
@@ -644,7 +644,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(21) ,-- in
+        cs                              => reg_sel(23) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.filter_control -- out
     );
@@ -666,7 +666,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(23 downto 16) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(24) ,-- in
+        cs                              => reg_sel(26) ,-- in
         w_be                            => be(2 downto 2) ,-- in
         reg_value                       => control_registers_out_i.rx_settings -- out
     );
@@ -687,7 +687,7 @@ begin
     port map(
         clk_sys                         => clk_sys ,-- in
         res_n                           => res_n ,-- in
-        cs                              => reg_sel(25) ,-- in
+        cs                              => reg_sel(27) ,-- in
         read                            => read ,-- in
         write                           => write ,-- in
         be                              => be(3 downto 0) ,-- in
@@ -712,7 +712,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(27) ,-- in
+        cs                              => reg_sel(29) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.tx_command -- out
     );
@@ -734,7 +734,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(15 downto 0) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(28) ,-- in
+        cs                              => reg_sel(30) ,-- in
         w_be                            => be(1 downto 0) ,-- in
         reg_value                       => control_registers_out_i.tx_priority -- out
     );
@@ -756,7 +756,7 @@ begin
         res_n                           => res_n ,-- in
         data_in                         => w_data(31 downto 16) ,-- in
         write                           => write ,-- in
-        cs                              => reg_sel(30) ,-- in
+        cs                              => reg_sel(32) ,-- in
         w_be                            => be(3 downto 2) ,-- in
         reg_value                       => control_registers_out_i.ssp_cfg -- out
     );
@@ -779,7 +779,7 @@ begin
     data_mux_control_registers_comp : data_mux
     generic map(
         data_out_width                  => 32 ,
-        data_in_width                   => 1216 ,
+        data_in_width                   => 1248 ,
         sel_width                       => 6 ,
         registered_out                  => REGISTERED_READ ,
         reset_polarity                  => RESET_POLARITY 
@@ -798,116 +798,119 @@ begin
   -- Read data driver
   ------------------------------------------------------------------------------
   read_data_mux_in  <= 
-    -- Adress:148
+    -- Adress:152
     control_registers_in.timestamp_high &
 
-    -- Adress:144
+    -- Adress:148
     control_registers_in.timestamp_low &
 
-    -- Adress:140
-    "00000000" & "00000000" & "00000000" & "00000000" &
-
-    -- Adress:136
+    -- Adress:144
     control_registers_in.yolo_reg &
 
-    -- Adress:132
+    -- Adress:140
     control_registers_in.debug_register &
 
-    -- Adress:128
+    -- Adress:136
     control_registers_in.tx_counter &
 
-    -- Adress:124
+    -- Adress:132
     control_registers_in.rx_counter &
 
-    -- Adress:120
+    -- Adress:128
     control_registers_out_i.ssp_cfg & control_registers_in.trv_delay &
 
-    -- Adress:116
-    "00000000" & "00000000" & control_registers_in.alc & control_registers_in.err_capt &
+    -- Adress:124
+    "00000000" & control_registers_in.alc & "00000000" & control_registers_in.err_capt &
 
-    -- Adress:112
+    -- Adress:120
     "00000000" & "00000000" & control_registers_out_i.tx_priority &
 
-    -- Adress:108
+    -- Adress:116
     "00000000" & "00000000" & "00000000" & "00000000" &
 
-    -- Adress:104
+    -- Adress:112
     "00000000" & "00000000" & control_registers_in.tx_status &
 
-    -- Adress:100
+    -- Adress:108
     control_registers_in.rx_data &
 
-    -- Adress:96
+    -- Adress:104
     "00000000" & control_registers_out_i.rx_settings & control_registers_in.rx_status &
 
-    -- Adress:92
+    -- Adress:100
     control_registers_in.rx_pointers &
 
-    -- Adress:88
+    -- Adress:96
     control_registers_in.rx_mem_info &
 
-    -- Adress:84
+    -- Adress:92
     control_registers_in.filter_status & control_registers_out_i.filter_control &
 
-    -- Adress:80
+    -- Adress:88
     control_registers_out_i.filter_ran_high &
 
-    -- Adress:76
+    -- Adress:84
     control_registers_out_i.filter_ran_low &
 
-    -- Adress:72
+    -- Adress:80
     control_registers_out_i.filter_c_val &
 
-    -- Adress:68
+    -- Adress:76
     control_registers_out_i.filter_c_mask &
 
-    -- Adress:64
+    -- Adress:72
     control_registers_out_i.filter_b_val &
 
-    -- Adress:60
+    -- Adress:68
     control_registers_out_i.filter_b_mask &
 
-    -- Adress:56
+    -- Adress:64
     control_registers_out_i.filter_a_val &
 
-    -- Adress:52
+    -- Adress:60
     control_registers_out_i.filter_a_mask &
 
-    -- Adress:48
+    -- Adress:56
     "00000000" & "00000000" & "00000000" & "00000000" &
 
-    -- Adress:44
+    -- Adress:52
     control_registers_in.err_fd & control_registers_in.err_norm &
 
-    -- Adress:40
+    -- Adress:48
     control_registers_in.txc & control_registers_in.rxc &
 
-    -- Adress:36
+    -- Adress:44
     control_registers_in.fault_state & control_registers_out_i.erp & control_registers_out_i.ewl &
 
-    -- Adress:32
+    -- Adress:40
     control_registers_out_i.btr_fd &
 
-    -- Adress:28
+    -- Adress:36
     control_registers_out_i.btr &
+
+    -- Adress:32
+    "00000000" & "00000000" & "00000000" & "00000000" &
+
+    -- Adress:28
+    "00000000" & "00000000" & control_registers_in.int_mask_set &
 
     -- Adress:24
     "00000000" & "00000000" & "00000000" & "00000000" &
 
     -- Adress:20
-    "00000000" & "00000000" & control_registers_in.int_mask_set &
-
-    -- Adress:16
-    "00000000" & "00000000" & "00000000" & "00000000" &
-
-    -- Adress:12
     "00000000" & "00000000" & control_registers_in.int_ena_set &
 
-    -- Adress:8
+    -- Adress:16
     "00000000" & "00000000" & control_registers_in.int_stat &
 
+    -- Adress:12
+    "00000000" & "00000000" & "00000000" & "00000000" &
+
+    -- Adress:8
+    control_registers_in.status &
+
     -- Adress:4
-    control_registers_out_i.settings & control_registers_in.status & "00000000" & control_registers_out_i.mode &
+    control_registers_out_i.settings & control_registers_out_i.mode &
 
     -- Adress:0
     control_registers_in.version & control_registers_in.device_id;

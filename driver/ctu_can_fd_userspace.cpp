@@ -252,8 +252,8 @@ int main(int argc, char *argv[])
                 addrs[0] = pci_find_bar(0x1172, 0xcafd, 0, 1);
                 if (!addrs[0])
                     addrs[0] = pci_find_bar(0x1760, 0xff00, 0, 1);
-                    if (!addrs[0])
-                        err(1, "-p PCI device not found");
+                if (!addrs[0])
+                    err(1, "-p PCI device not found");
                 addrs[1] = addrs[0] + 0x4000;
             break;
             case 'h':
@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
     ctu_can_fd_reset(priv);
 
     {
-        union ctu_can_fd_mode_command_status_settings mode;
+        union ctu_can_fd_mode_settings mode;
         mode.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 
         if (mode.s.ena) {
@@ -423,8 +423,8 @@ int main(int argc, char *argv[])
         u32 rxsz = reg.s.rx_buff_size - reg.s.rx_mem_free;
 
         printf("%u RX frames, %u words", nrxf, rxsz);
-        printf(", status 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_STATUS));
-        printf(", settings 0x%02hhx", ctu_can_fd_read8(priv, CTU_CAN_FD_SETTINGS));
+        printf(", status 0x%08hhx", ctu_can_fd_read32(priv, CTU_CAN_FD_STATUS));
+        printf(", settings 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_SETTINGS));
         printf(", INT_STAT 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_INT_STAT));
         printf(", INT_ENA_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_ENA_SET));
         printf(", INT_MASK_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_MASK_SET));

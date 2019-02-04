@@ -291,7 +291,7 @@ architecture rtl of memory_registers is
     signal Event_Logger_in          : Event_Logger_in_t;
 
     -- Status register - combinational decoder
-    signal status_comb              : std_logic_vector(7 downto 0);
+    signal status_comb              : std_logic_vector(31 downto 0);
 
     -- Padding for interrupt read data
     constant INT_PAD_H_IND          : natural :=
@@ -547,45 +547,46 @@ begin
     ---------------------------------------------------------------------------
     -- Status register - combinational decoder
     ---------------------------------------------------------------------------
-    status_comb(IDLE_IND mod 8) <= '1' when (error_state = bus_off) else
-                                   '1' when (OP_State = integrating) else
-                                   '1' when (OP_State = idle) else
-                                   '0';
+    status_comb(IDLE_IND) <= '1' when (error_state = bus_off) else
+                             '1' when (OP_State = integrating) else
+                             '1' when (OP_State = idle) else
+                             '0';
 
-    status_comb(EWL_IND mod 8) <= '1' when 
-                                    (control_registers_out.ewl 
-                                      < 
-                                     stat_bus(STAT_TX_COUNTER_HIGH downto
-                                              STAT_TX_COUNTER_LOW) or
-                                    (control_registers_out.ewl 
-                                      < 
-                                     stat_bus(STAT_RX_COUNTER_HIGH downto
-                                              STAT_RX_COUNTER_LOW)))
-                                    else
-                                  '0';
-                                
-    status_comb(TXS_IND mod 8) <= '1' when (OP_State = transciever) else
-                                  '0';
+    status_comb(EWL_IND) <= '1' when 
+                            (control_registers_out.ewl 
+                              < 
+                             stat_bus(STAT_TX_COUNTER_HIGH downto
+                                      STAT_TX_COUNTER_LOW) or
+                            (control_registers_out.ewl 
+                              < 
+                             stat_bus(STAT_RX_COUNTER_HIGH downto
+                                      STAT_RX_COUNTER_LOW)))
+                            else
+                            '0';
 
-    status_comb(RXS_IND mod 8) <= '1' when (OP_State = reciever) else
-                                  '0';
-  
-    status_comb(TXNF_IND mod 8) <= '1' when (txtb_state(0) = TXT_ETY or
-                                             txtb_state(1) = TXT_ETY or
-                                             txtb_state(2) = TXT_ETY or
-                                             txtb_state(3) = TXT_ETY)
-                                       else
-                                   '0';
-  
+    status_comb(TXS_IND) <= '1' when (OP_State = transciever) else
+                            '0';
+
+    status_comb(RXS_IND) <= '1' when (OP_State = reciever) else
+                            '0';
+
+    status_comb(TXNF_IND) <= '1' when (txtb_state(0) = TXT_ETY or
+                                       txtb_state(1) = TXT_ETY or
+                                       txtb_state(2) = TXT_ETY or
+                                       txtb_state(3) = TXT_ETY)
+                                 else
+                             '0';
+
     -- When at least one message is availiable in the buffer
-    status_comb(RXNE_IND mod 8) <= not rx_empty;
+    status_comb(RXNE_IND) <= not rx_empty;
 
-    status_comb(DOR_IND mod 8) <= rx_data_overrun;
+    status_comb(DOR_IND) <= rx_data_overrun;
 
-    status_comb(EFT_IND mod 8)  <= '1' when (PC_state = error)
-                                       else
-                                   '0';
+    status_comb(EFT_IND)  <= '1' when (PC_state = error)
+                                 else
+                             '0';
 
+    status_comb(31 downto 8) <= (others => '0');
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------

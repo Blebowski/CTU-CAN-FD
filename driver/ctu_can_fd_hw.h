@@ -291,13 +291,13 @@ void ctu_can_fd_abort_tx(struct ctucanfd_priv *priv);
  * Returns:
  *	Mode/status structure with multiple mode flags.
  */
-static inline union ctu_can_fd_mode_command_status_settings
+static inline union ctu_can_fd_status
 	ctu_can_get_status(struct ctucanfd_priv *priv)
 {
 	/* MODE and STATUS are within the same word */
-	union ctu_can_fd_mode_command_status_settings res;
+	union ctu_can_fd_status res;
 
-	res.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
+	res.u32 = priv->read_reg(priv, CTU_CAN_FD_STATUS);
 	return res;
 }
 
@@ -313,7 +313,7 @@ static inline union ctu_can_fd_mode_command_status_settings
  */
 static inline bool ctu_can_fd_is_enabled(struct ctucanfd_priv *priv)
 {
-	union ctu_can_fd_mode_command_status_settings reg;
+	union ctu_can_fd_mode_settings reg;
 
 	reg.u32 = priv->read_reg(priv, CTU_CAN_FD_MODE);
 	return reg.s.ena == CTU_CAN_ENABLED;

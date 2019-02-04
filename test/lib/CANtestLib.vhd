@@ -2795,14 +2795,14 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-        CAN_read(data, MODE_ADR, ID, mem_bus);
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
         if enable then
             data(RTRLE_IND) := '1';
         else
             data(RTRLE_IND) := '0';
         end if;
         data(RTRTH_H downto RTRTH_L) := std_logic_vector(to_unsigned(limit, 4));
-        CAN_write(data, MODE_ADR, ID, mem_bus);
+        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
     
@@ -3454,15 +3454,15 @@ package body CANtestLib is
     begin
 
         -- Wait until unit starts to transmitt or reciesve
-        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
-            CAN_read(r_data, MODE_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until bus is idle now
-        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(IDLE_IND) = '0') loop
-            CAN_read(r_data, MODE_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
 
     end procedure;
@@ -3476,9 +3476,9 @@ package body CANtestLib is
                                         (OTHERS => '0');
     begin
         -- Wait until bus is idle
-        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(IDLE_IND) = '0') loop
-            CAN_read(r_data, MODE_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
     end procedure;
 
@@ -3491,15 +3491,15 @@ package body CANtestLib is
                                         (OTHERS => '0');
     begin
         -- Wait until unit starts to transmitt or recieve
-        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
-        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until error frame is not being transmitted
-        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(EFT_IND) = '0') loop
-        CAN_read(r_data, MODE_ADR, ID, mem_bus);
+        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
     end procedure;
 
@@ -3552,7 +3552,7 @@ package body CANtestLib is
     begin
         -- Wait until unit starts to transmitt or recieve
         while (true) loop
-            CAN_read(r_data, MODE_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
             if (exit_trans and r_data(TXS_IND) = '1') then
                 exit;
             end if;
@@ -3782,10 +3782,10 @@ package body CANtestLib is
             data(ACF_IND)       := '1';
         end if;
 
-        CAN_write(data, MODE_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, MODE_ADR, ID, mem_bus, BIT_16);
 
         -- Following modes are stored in SETTINGS register
-        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
 
         if (mode.iso_fd_support) then
             data(NISOFD_IND)   := '0';
@@ -3799,7 +3799,7 @@ package body CANtestLib is
             data(ILBP_IND)   := '0';
         end if;
 
-        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
 
@@ -3906,7 +3906,7 @@ package body CANtestLib is
             data(CDO_IND)        := '1';
         end if;
 
-        CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_32);
     end procedure;
 
 
@@ -3917,7 +3917,7 @@ package body CANtestLib is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, STATUS_ADR, ID, mem_bus, BIT_8);
+        CAN_read(data, STATUS_ADR, ID, mem_bus, BIT_32);
 
         status.receive_buffer           := false;
         status.data_overrun             := false;
@@ -3970,18 +3970,18 @@ package body CANtestLib is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
 
         if (enable) then
-            data(ENA_IND)       := '1';
+            data(RTRLE_IND)       := '1';
         else
-            data(ENA_IND)       := '0';
+            data(RTRLE_IND)       := '0';
         end if;
 
         data(RTRTH_H downto RTRTH_L) :=
             std_logic_vector(to_unsigned(limit, RTRTH_H - RTRTH_L + 1));
 
-        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
 
@@ -3992,7 +3992,7 @@ package body CANtestLib is
     ) is
         variable data           :       std_logic_vector(31 downto 0);
     begin
-        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
 
         if (enable) then
             data(ENA_IND) := '1';
@@ -4000,7 +4000,7 @@ package body CANtestLib is
             data(ENA_IND) := '0';
         end if;
 
-        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
 

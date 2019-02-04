@@ -59,52 +59,52 @@ package can_fd_register_map is
   constant DEVICE_ID_ADR             : std_logic_vector(11 downto 0) := x"000";
   constant VERSION_ADR               : std_logic_vector(11 downto 0) := x"002";
   constant MODE_ADR                  : std_logic_vector(11 downto 0) := x"004";
-  constant COMMAND_ADR               : std_logic_vector(11 downto 0) := x"005";
-  constant STATUS_ADR                : std_logic_vector(11 downto 0) := x"006";
-  constant SETTINGS_ADR              : std_logic_vector(11 downto 0) := x"007";
-  constant INT_STAT_ADR              : std_logic_vector(11 downto 0) := x"008";
-  constant INT_ENA_SET_ADR           : std_logic_vector(11 downto 0) := x"00C";
-  constant INT_ENA_CLR_ADR           : std_logic_vector(11 downto 0) := x"010";
-  constant INT_MASK_SET_ADR          : std_logic_vector(11 downto 0) := x"014";
-  constant INT_MASK_CLR_ADR          : std_logic_vector(11 downto 0) := x"018";
-  constant BTR_ADR                   : std_logic_vector(11 downto 0) := x"01C";
-  constant BTR_FD_ADR                : std_logic_vector(11 downto 0) := x"020";
-  constant EWL_ADR                   : std_logic_vector(11 downto 0) := x"024";
-  constant ERP_ADR                   : std_logic_vector(11 downto 0) := x"025";
-  constant FAULT_STATE_ADR           : std_logic_vector(11 downto 0) := x"026";
-  constant RXC_ADR                   : std_logic_vector(11 downto 0) := x"028";
-  constant TXC_ADR                   : std_logic_vector(11 downto 0) := x"02A";
-  constant ERR_NORM_ADR              : std_logic_vector(11 downto 0) := x"02C";
-  constant ERR_FD_ADR                : std_logic_vector(11 downto 0) := x"02E";
-  constant CTR_PRES_ADR              : std_logic_vector(11 downto 0) := x"030";
-  constant FILTER_A_MASK_ADR         : std_logic_vector(11 downto 0) := x"034";
-  constant FILTER_A_VAL_ADR          : std_logic_vector(11 downto 0) := x"038";
-  constant FILTER_B_MASK_ADR         : std_logic_vector(11 downto 0) := x"03C";
-  constant FILTER_B_VAL_ADR          : std_logic_vector(11 downto 0) := x"040";
-  constant FILTER_C_MASK_ADR         : std_logic_vector(11 downto 0) := x"044";
-  constant FILTER_C_VAL_ADR          : std_logic_vector(11 downto 0) := x"048";
-  constant FILTER_RAN_LOW_ADR        : std_logic_vector(11 downto 0) := x"04C";
-  constant FILTER_RAN_HIGH_ADR       : std_logic_vector(11 downto 0) := x"050";
-  constant FILTER_CONTROL_ADR        : std_logic_vector(11 downto 0) := x"054";
-  constant FILTER_STATUS_ADR         : std_logic_vector(11 downto 0) := x"056";
-  constant RX_MEM_INFO_ADR           : std_logic_vector(11 downto 0) := x"058";
-  constant RX_POINTERS_ADR           : std_logic_vector(11 downto 0) := x"05C";
-  constant RX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"060";
-  constant RX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"062";
-  constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"064";
-  constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"068";
-  constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"06C";
-  constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"070";
-  constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"074";
-  constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"075";
-  constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"078";
-  constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"07A";
-  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"07C";
-  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"080";
-  constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"084";
-  constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"088";
-  constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"090";
-  constant TIMESTAMP_HIGH_ADR        : std_logic_vector(11 downto 0) := x"094";
+  constant SETTINGS_ADR              : std_logic_vector(11 downto 0) := x"006";
+  constant STATUS_ADR                : std_logic_vector(11 downto 0) := x"008";
+  constant COMMAND_ADR               : std_logic_vector(11 downto 0) := x"00C";
+  constant INT_STAT_ADR              : std_logic_vector(11 downto 0) := x"010";
+  constant INT_ENA_SET_ADR           : std_logic_vector(11 downto 0) := x"014";
+  constant INT_ENA_CLR_ADR           : std_logic_vector(11 downto 0) := x"018";
+  constant INT_MASK_SET_ADR          : std_logic_vector(11 downto 0) := x"01C";
+  constant INT_MASK_CLR_ADR          : std_logic_vector(11 downto 0) := x"020";
+  constant BTR_ADR                   : std_logic_vector(11 downto 0) := x"024";
+  constant BTR_FD_ADR                : std_logic_vector(11 downto 0) := x"028";
+  constant EWL_ADR                   : std_logic_vector(11 downto 0) := x"02C";
+  constant ERP_ADR                   : std_logic_vector(11 downto 0) := x"02D";
+  constant FAULT_STATE_ADR           : std_logic_vector(11 downto 0) := x"02E";
+  constant RXC_ADR                   : std_logic_vector(11 downto 0) := x"030";
+  constant TXC_ADR                   : std_logic_vector(11 downto 0) := x"032";
+  constant ERR_NORM_ADR              : std_logic_vector(11 downto 0) := x"034";
+  constant ERR_FD_ADR                : std_logic_vector(11 downto 0) := x"036";
+  constant CTR_PRES_ADR              : std_logic_vector(11 downto 0) := x"038";
+  constant FILTER_A_MASK_ADR         : std_logic_vector(11 downto 0) := x"03C";
+  constant FILTER_A_VAL_ADR          : std_logic_vector(11 downto 0) := x"040";
+  constant FILTER_B_MASK_ADR         : std_logic_vector(11 downto 0) := x"044";
+  constant FILTER_B_VAL_ADR          : std_logic_vector(11 downto 0) := x"048";
+  constant FILTER_C_MASK_ADR         : std_logic_vector(11 downto 0) := x"04C";
+  constant FILTER_C_VAL_ADR          : std_logic_vector(11 downto 0) := x"050";
+  constant FILTER_RAN_LOW_ADR        : std_logic_vector(11 downto 0) := x"054";
+  constant FILTER_RAN_HIGH_ADR       : std_logic_vector(11 downto 0) := x"058";
+  constant FILTER_CONTROL_ADR        : std_logic_vector(11 downto 0) := x"05C";
+  constant FILTER_STATUS_ADR         : std_logic_vector(11 downto 0) := x"05E";
+  constant RX_MEM_INFO_ADR           : std_logic_vector(11 downto 0) := x"060";
+  constant RX_POINTERS_ADR           : std_logic_vector(11 downto 0) := x"064";
+  constant RX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"068";
+  constant RX_SETTINGS_ADR           : std_logic_vector(11 downto 0) := x"06A";
+  constant RX_DATA_ADR               : std_logic_vector(11 downto 0) := x"06C";
+  constant TX_STATUS_ADR             : std_logic_vector(11 downto 0) := x"070";
+  constant TX_COMMAND_ADR            : std_logic_vector(11 downto 0) := x"074";
+  constant TX_PRIORITY_ADR           : std_logic_vector(11 downto 0) := x"078";
+  constant ERR_CAPT_ADR              : std_logic_vector(11 downto 0) := x"07C";
+  constant ALC_ADR                   : std_logic_vector(11 downto 0) := x"07E";
+  constant TRV_DELAY_ADR             : std_logic_vector(11 downto 0) := x"080";
+  constant SSP_CFG_ADR               : std_logic_vector(11 downto 0) := x"082";
+  constant RX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"084";
+  constant TX_COUNTER_ADR            : std_logic_vector(11 downto 0) := x"088";
+  constant DEBUG_REGISTER_ADR        : std_logic_vector(11 downto 0) := x"08C";
+  constant YOLO_REG_ADR              : std_logic_vector(11 downto 0) := x"090";
+  constant TIMESTAMP_LOW_ADR         : std_logic_vector(11 downto 0) := x"094";
+  constant TIMESTAMP_HIGH_ADR        : std_logic_vector(11 downto 0) := x"098";
 
   ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
@@ -245,63 +245,17 @@ package can_fd_register_map is
   constant AFM_RSTVAL         : std_logic := '0';
 
   ------------------------------------------------------------------------------
-  -- COMMAND register
-  --
-  -- Writing logic 1 into each bit gives different command to the IP Core. After
-  --  writing logic 1, logic 0 does not have to be written.
-  ------------------------------------------------------------------------------
-  constant ABT_IND                : natural := 9;
-  constant RRB_IND               : natural := 10;
-  constant CDO_IND               : natural := 11;
-  constant ERCRST_IND            : natural := 12;
-  constant RXFCRST_IND           : natural := 13;
-  constant TXFCRST_IND           : natural := 14;
-
-  -- COMMAND register reset values
-  constant ABT_RSTVAL         : std_logic := '0';
-  constant RRB_RSTVAL         : std_logic := '0';
-  constant CDO_RSTVAL         : std_logic := '0';
-  constant ERCRST_RSTVAL      : std_logic := '0';
-  constant RXFCRST_RSTVAL     : std_logic := '0';
-  constant TXFCRST_RSTVAL     : std_logic := '0';
-
-  ------------------------------------------------------------------------------
-  -- STATUS register
-  --
-  -- Register signals various states of CTU CAN FD IP Core. Logic 1 signals acti
-  -- ve status/flag.
-  ------------------------------------------------------------------------------
-  constant RXNE_IND              : natural := 16;
-  constant DOR_IND               : natural := 17;
-  constant TXNF_IND              : natural := 18;
-  constant EFT_IND               : natural := 19;
-  constant RXS_IND               : natural := 20;
-  constant TXS_IND               : natural := 21;
-  constant EWL_IND               : natural := 22;
-  constant IDLE_IND              : natural := 23;
-
-  -- STATUS register reset values
-  constant RXNE_RSTVAL        : std_logic := '0';
-  constant TXNF_RSTVAL        : std_logic := '0';
-  constant DOR_RSTVAL         : std_logic := '0';
-  constant EFT_RSTVAL         : std_logic := '0';
-  constant RXS_RSTVAL         : std_logic := '0';
-  constant TXS_RSTVAL         : std_logic := '0';
-  constant EWL_RSTVAL         : std_logic := '0';
-  constant IDLE_RSTVAL        : std_logic := '1';
-
-  ------------------------------------------------------------------------------
   -- SETTINGS register
   --
   -- This register enables the whole CAN FD Core, configures FD Type, Internal l
   -- oopback and retransmission options.
   ------------------------------------------------------------------------------
-  constant RTRLE_IND             : natural := 24;
-  constant RTRTH_L               : natural := 25;
-  constant RTRTH_H               : natural := 28;
-  constant ILBP_IND              : natural := 29;
-  constant ENA_IND               : natural := 30;
-  constant NISOFD_IND            : natural := 31;
+  constant RTRLE_IND             : natural := 16;
+  constant RTRTH_L               : natural := 17;
+  constant RTRTH_H               : natural := 20;
+  constant ILBP_IND              : natural := 21;
+  constant ENA_IND               : natural := 22;
+  constant NISOFD_IND            : natural := 23;
 
   -- "RTRLE" field enumerated values
   constant RTRLE_DISABLED     : std_logic := '0';
@@ -325,6 +279,52 @@ package can_fd_register_map is
   constant ILBP_RSTVAL        : std_logic := '0';
   constant ENA_RSTVAL         : std_logic := '0';
   constant NISOFD_RSTVAL      : std_logic := '0';
+
+  ------------------------------------------------------------------------------
+  -- STATUS register
+  --
+  -- Register signals various states of CTU CAN FD IP Core. Logic 1 signals acti
+  -- ve status/flag.
+  ------------------------------------------------------------------------------
+  constant RXNE_IND               : natural := 0;
+  constant DOR_IND                : natural := 1;
+  constant TXNF_IND               : natural := 2;
+  constant EFT_IND                : natural := 3;
+  constant RXS_IND                : natural := 4;
+  constant TXS_IND                : natural := 5;
+  constant EWL_IND                : natural := 6;
+  constant IDLE_IND               : natural := 7;
+
+  -- STATUS register reset values
+  constant RXNE_RSTVAL        : std_logic := '0';
+  constant TXNF_RSTVAL        : std_logic := '0';
+  constant DOR_RSTVAL         : std_logic := '0';
+  constant EFT_RSTVAL         : std_logic := '0';
+  constant RXS_RSTVAL         : std_logic := '0';
+  constant TXS_RSTVAL         : std_logic := '0';
+  constant EWL_RSTVAL         : std_logic := '0';
+  constant IDLE_RSTVAL        : std_logic := '1';
+
+  ------------------------------------------------------------------------------
+  -- COMMAND register
+  --
+  -- Writing logic 1 into each bit gives different command to the IP Core. After
+  --  writing logic 1, logic 0 does not have to be written.
+  ------------------------------------------------------------------------------
+  constant ABT_IND                : natural := 1;
+  constant RRB_IND                : natural := 2;
+  constant CDO_IND                : natural := 3;
+  constant ERCRST_IND             : natural := 4;
+  constant RXFCRST_IND            : natural := 5;
+  constant TXFCRST_IND            : natural := 6;
+
+  -- COMMAND register reset values
+  constant ABT_RSTVAL         : std_logic := '0';
+  constant RRB_RSTVAL         : std_logic := '0';
+  constant CDO_RSTVAL         : std_logic := '0';
+  constant ERCRST_RSTVAL      : std_logic := '0';
+  constant RXFCRST_RSTVAL     : std_logic := '0';
+  constant TXFCRST_RSTVAL     : std_logic := '0';
 
   ------------------------------------------------------------------------------
   -- INT_STAT register
@@ -943,10 +943,10 @@ package can_fd_register_map is
   -- Arbitration lost capture register. Determines bit position of last arbitrat
   -- ion lost.
   ------------------------------------------------------------------------------
-  constant ALC_BIT_L              : natural := 8;
-  constant ALC_BIT_H             : natural := 12;
-  constant ALC_ID_FIELD_L        : natural := 13;
-  constant ALC_ID_FIELD_H        : natural := 15;
+  constant ALC_BIT_L             : natural := 16;
+  constant ALC_BIT_H             : natural := 20;
+  constant ALC_ID_FIELD_L        : natural := 21;
+  constant ALC_ID_FIELD_H        : natural := 23;
 
   -- "ALC_ID_FIELD" field enumerated values
   constant ALC_BASE_ID : std_logic_vector(2 downto 0) := "000";

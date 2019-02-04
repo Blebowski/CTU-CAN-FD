@@ -43,52 +43,52 @@ enum ctu_can_fd_can_registers {
 	CTU_CAN_FD_DEVICE_ID              = 0x0,
 	CTU_CAN_FD_VERSION                = 0x2,
 	CTU_CAN_FD_MODE                   = 0x4,
-	CTU_CAN_FD_COMMAND                = 0x5,
-	CTU_CAN_FD_STATUS                 = 0x6,
-	CTU_CAN_FD_SETTINGS               = 0x7,
-	CTU_CAN_FD_INT_STAT               = 0x8,
-	CTU_CAN_FD_INT_ENA_SET            = 0xc,
-	CTU_CAN_FD_INT_ENA_CLR           = 0x10,
-	CTU_CAN_FD_INT_MASK_SET          = 0x14,
-	CTU_CAN_FD_INT_MASK_CLR          = 0x18,
-	CTU_CAN_FD_BTR                   = 0x1c,
-	CTU_CAN_FD_BTR_FD                = 0x20,
-	CTU_CAN_FD_EWL                   = 0x24,
-	CTU_CAN_FD_ERP                   = 0x25,
-	CTU_CAN_FD_FAULT_STATE           = 0x26,
-	CTU_CAN_FD_RXC                   = 0x28,
-	CTU_CAN_FD_TXC                   = 0x2a,
-	CTU_CAN_FD_ERR_NORM              = 0x2c,
-	CTU_CAN_FD_ERR_FD                = 0x2e,
-	CTU_CAN_FD_CTR_PRES              = 0x30,
-	CTU_CAN_FD_FILTER_A_MASK         = 0x34,
-	CTU_CAN_FD_FILTER_A_VAL          = 0x38,
-	CTU_CAN_FD_FILTER_B_MASK         = 0x3c,
-	CTU_CAN_FD_FILTER_B_VAL          = 0x40,
-	CTU_CAN_FD_FILTER_C_MASK         = 0x44,
-	CTU_CAN_FD_FILTER_C_VAL          = 0x48,
-	CTU_CAN_FD_FILTER_RAN_LOW        = 0x4c,
-	CTU_CAN_FD_FILTER_RAN_HIGH       = 0x50,
-	CTU_CAN_FD_FILTER_CONTROL        = 0x54,
-	CTU_CAN_FD_FILTER_STATUS         = 0x56,
-	CTU_CAN_FD_RX_MEM_INFO           = 0x58,
-	CTU_CAN_FD_RX_POINTERS           = 0x5c,
-	CTU_CAN_FD_RX_STATUS             = 0x60,
-	CTU_CAN_FD_RX_SETTINGS           = 0x62,
-	CTU_CAN_FD_RX_DATA               = 0x64,
-	CTU_CAN_FD_TX_STATUS             = 0x68,
-	CTU_CAN_FD_TX_COMMAND            = 0x6c,
-	CTU_CAN_FD_TX_PRIORITY           = 0x70,
-	CTU_CAN_FD_ERR_CAPT              = 0x74,
-	CTU_CAN_FD_ALC                   = 0x75,
-	CTU_CAN_FD_TRV_DELAY             = 0x78,
-	CTU_CAN_FD_SSP_CFG               = 0x7a,
-	CTU_CAN_FD_RX_COUNTER            = 0x7c,
-	CTU_CAN_FD_TX_COUNTER            = 0x80,
-	CTU_CAN_FD_DEBUG_REGISTER        = 0x84,
-	CTU_CAN_FD_YOLO_REG              = 0x88,
-	CTU_CAN_FD_TIMESTAMP_LOW         = 0x90,
-	CTU_CAN_FD_TIMESTAMP_HIGH        = 0x94,
+	CTU_CAN_FD_SETTINGS               = 0x6,
+	CTU_CAN_FD_STATUS                 = 0x8,
+	CTU_CAN_FD_COMMAND                = 0xc,
+	CTU_CAN_FD_INT_STAT              = 0x10,
+	CTU_CAN_FD_INT_ENA_SET           = 0x14,
+	CTU_CAN_FD_INT_ENA_CLR           = 0x18,
+	CTU_CAN_FD_INT_MASK_SET          = 0x1c,
+	CTU_CAN_FD_INT_MASK_CLR          = 0x20,
+	CTU_CAN_FD_BTR                   = 0x24,
+	CTU_CAN_FD_BTR_FD                = 0x28,
+	CTU_CAN_FD_EWL                   = 0x2c,
+	CTU_CAN_FD_ERP                   = 0x2d,
+	CTU_CAN_FD_FAULT_STATE           = 0x2e,
+	CTU_CAN_FD_RXC                   = 0x30,
+	CTU_CAN_FD_TXC                   = 0x32,
+	CTU_CAN_FD_ERR_NORM              = 0x34,
+	CTU_CAN_FD_ERR_FD                = 0x36,
+	CTU_CAN_FD_CTR_PRES              = 0x38,
+	CTU_CAN_FD_FILTER_A_MASK         = 0x3c,
+	CTU_CAN_FD_FILTER_A_VAL          = 0x40,
+	CTU_CAN_FD_FILTER_B_MASK         = 0x44,
+	CTU_CAN_FD_FILTER_B_VAL          = 0x48,
+	CTU_CAN_FD_FILTER_C_MASK         = 0x4c,
+	CTU_CAN_FD_FILTER_C_VAL          = 0x50,
+	CTU_CAN_FD_FILTER_RAN_LOW        = 0x54,
+	CTU_CAN_FD_FILTER_RAN_HIGH       = 0x58,
+	CTU_CAN_FD_FILTER_CONTROL        = 0x5c,
+	CTU_CAN_FD_FILTER_STATUS         = 0x5e,
+	CTU_CAN_FD_RX_MEM_INFO           = 0x60,
+	CTU_CAN_FD_RX_POINTERS           = 0x64,
+	CTU_CAN_FD_RX_STATUS             = 0x68,
+	CTU_CAN_FD_RX_SETTINGS           = 0x6a,
+	CTU_CAN_FD_RX_DATA               = 0x6c,
+	CTU_CAN_FD_TX_STATUS             = 0x70,
+	CTU_CAN_FD_TX_COMMAND            = 0x74,
+	CTU_CAN_FD_TX_PRIORITY           = 0x78,
+	CTU_CAN_FD_ERR_CAPT              = 0x7c,
+	CTU_CAN_FD_ALC                   = 0x7e,
+	CTU_CAN_FD_TRV_DELAY             = 0x80,
+	CTU_CAN_FD_SSP_CFG               = 0x82,
+	CTU_CAN_FD_RX_COUNTER            = 0x84,
+	CTU_CAN_FD_TX_COUNTER            = 0x88,
+	CTU_CAN_FD_DEBUG_REGISTER        = 0x8c,
+	CTU_CAN_FD_YOLO_REG              = 0x90,
+	CTU_CAN_FD_TIMESTAMP_LOW         = 0x94,
+	CTU_CAN_FD_TIMESTAMP_HIGH        = 0x98,
 	CTU_CAN_FD_TXTB1_DATA_1         = 0x100,
 	CTU_CAN_FD_TXTB1_DATA_2         = 0x104,
 	CTU_CAN_FD_TXTB1_DATA_20        = 0x14c,
@@ -133,9 +133,9 @@ enum ctu_can_fd_device_id_device_id {
 	CTU_CAN_FD_ID    = 0xcafd,
 };
 
-union ctu_can_fd_mode_command_status_settings {
+union ctu_can_fd_mode_settings {
 	uint32_t u32;
-	struct ctu_can_fd_mode_command_status_settings_s {
+	struct ctu_can_fd_mode_settings_s {
 #ifdef __LITTLE_ENDIAN_BITFIELD
   /* MODE */
 		uint32_t rst                     : 1;
@@ -146,52 +146,22 @@ union ctu_can_fd_mode_command_status_settings {
 		uint32_t rtrp                    : 1;
 		uint32_t tsm                     : 1;
 		uint32_t acf                     : 1;
-		uint32_t reserved_8              : 1;
-  /* COMMAND */
-		uint32_t abt                     : 1;
-		uint32_t rrb                     : 1;
-		uint32_t cdo                     : 1;
-		uint32_t ercrst                  : 1;
-		uint32_t rxfcrst                 : 1;
-		uint32_t txfcrst                 : 1;
-		uint32_t reserved_15             : 1;
-  /* STATUS */
-		uint32_t rxne                    : 1;
-		uint32_t dor                     : 1;
-		uint32_t txnf                    : 1;
-		uint32_t eft                     : 1;
-		uint32_t rxs                     : 1;
-		uint32_t txs                     : 1;
-		uint32_t ewl                     : 1;
-		uint32_t idle                    : 1;
+		uint32_t reserved_15_8           : 8;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t ilbp                    : 1;
 		uint32_t ena                     : 1;
 		uint32_t nisofd                  : 1;
+		uint32_t reserved_31_24          : 8;
 #else
+		uint32_t reserved_31_24          : 8;
 		uint32_t nisofd                  : 1;
 		uint32_t ena                     : 1;
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t idle                    : 1;
-		uint32_t ewl                     : 1;
-		uint32_t txs                     : 1;
-		uint32_t rxs                     : 1;
-		uint32_t eft                     : 1;
-		uint32_t txnf                    : 1;
-		uint32_t dor                     : 1;
-		uint32_t rxne                    : 1;
-		uint32_t reserved_15             : 1;
-		uint32_t txfcrst                 : 1;
-		uint32_t rxfcrst                 : 1;
-		uint32_t ercrst                  : 1;
-		uint32_t cdo                     : 1;
-		uint32_t rrb                     : 1;
-		uint32_t abt                     : 1;
-		uint32_t reserved_8              : 1;
+		uint32_t reserved_15_8           : 8;
 		uint32_t acf                     : 1;
 		uint32_t tsm                     : 1;
 		uint32_t rtrp                    : 1;
@@ -257,6 +227,60 @@ enum ctu_can_fd_settings_ena {
 enum ctu_can_fd_settings_nisofd {
 	ISO_FD           = 0x0,
 	NON_ISO_FD       = 0x1,
+};
+
+union ctu_can_fd_status {
+	uint32_t u32;
+	struct ctu_can_fd_status_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+  /* STATUS */
+		uint32_t rxne                    : 1;
+		uint32_t dor                     : 1;
+		uint32_t txnf                    : 1;
+		uint32_t eft                     : 1;
+		uint32_t rxs                     : 1;
+		uint32_t txs                     : 1;
+		uint32_t ewl                     : 1;
+		uint32_t idle                    : 1;
+		uint32_t reserved_31_8          : 24;
+#else
+		uint32_t reserved_31_8          : 24;
+		uint32_t idle                    : 1;
+		uint32_t ewl                     : 1;
+		uint32_t txs                     : 1;
+		uint32_t rxs                     : 1;
+		uint32_t eft                     : 1;
+		uint32_t txnf                    : 1;
+		uint32_t dor                     : 1;
+		uint32_t rxne                    : 1;
+#endif
+	} s;
+};
+
+union ctu_can_fd_command {
+	uint32_t u32;
+	struct ctu_can_fd_command_s {
+#ifdef __LITTLE_ENDIAN_BITFIELD
+		uint32_t reserved_0              : 1;
+  /* COMMAND */
+		uint32_t abt                     : 1;
+		uint32_t rrb                     : 1;
+		uint32_t cdo                     : 1;
+		uint32_t ercrst                  : 1;
+		uint32_t rxfcrst                 : 1;
+		uint32_t txfcrst                 : 1;
+		uint32_t reserved_31_7          : 25;
+#else
+		uint32_t reserved_31_7          : 25;
+		uint32_t txfcrst                 : 1;
+		uint32_t rxfcrst                 : 1;
+		uint32_t ercrst                  : 1;
+		uint32_t cdo                     : 1;
+		uint32_t rrb                     : 1;
+		uint32_t abt                     : 1;
+		uint32_t reserved_0              : 1;
+#endif
+	} s;
 };
 
 union ctu_can_fd_int_stat {
@@ -803,14 +827,16 @@ union ctu_can_fd_err_capt_alc {
   /* ERR_CAPT */
 		uint32_t err_pos                 : 5;
 		uint32_t err_type                : 3;
+		uint32_t reserved_15_8           : 8;
   /* ALC */
 		uint32_t alc_bit                 : 5;
 		uint32_t alc_id_field            : 3;
-		uint32_t reserved_31_16         : 16;
+		uint32_t reserved_31_24          : 8;
 #else
-		uint32_t reserved_31_16         : 16;
+		uint32_t reserved_31_24          : 8;
 		uint32_t alc_id_field            : 3;
 		uint32_t alc_bit                 : 5;
+		uint32_t reserved_15_8           : 8;
 		uint32_t err_type                : 3;
 		uint32_t err_pos                 : 5;
 #endif
