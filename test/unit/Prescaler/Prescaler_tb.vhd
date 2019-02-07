@@ -78,6 +78,12 @@ architecture presc_unit_test of CAN_test is
     -- Bit time - Nominal bit time
     signal clk_tq_dbt           : std_logic := '0';
 
+    -- Connections for sample and sync signals to DUT
+    signal sample_nbt_i         : std_logic_vector(2 downto 0);
+    signal sample_dbt_i         : std_logic_vector(2 downto 0);
+    signal sync_nbt_i           : std_logic_vector(1 downto 0);
+    signal sync_dbt_i           : std_logic_vector(1 downto 0);
+
     -- Sample signal for nominal bit time
     signal sample_nbt           : std_logic := '0';
 
@@ -419,22 +425,29 @@ begin
         drv_bus              =>  drv_bus  ,
         clk_tq_nbt           =>  clk_tq_nbt,
         clk_tq_dbt           =>  clk_tq_dbt,
-        sample_nbt           =>  sample_nbt,
-        sample_dbt           =>  sample_dbt,
-        sample_nbt_del_1     =>  sample_nbt_del_1,
-        sample_dbt_del_1     =>  sample_dbt_del_1,
-        sample_nbt_del_2     =>  sample_nbt_del_2,
-        sample_dbt_del_2     =>  sample_dbt_del_2,
-        sync_nbt             =>  sync_nbt,
-        sync_dbt             =>  sync_dbt,
+        sample_nbt           =>  sample_nbt_i,
+        sample_dbt           =>  sample_dbt_i,
+        sync_nbt             =>  sync_nbt_i,
+        sync_dbt             =>  sync_dbt_i,
         data_tx              =>  data_tx,
-        sync_nbt_del_1       =>  sync_nbt_del_1,
-        sync_dbt_del_1       =>  sync_dbt_del_1 ,
         bt_FSM_out           =>  bt_FSM_out,
         hard_sync_edge_valid =>  hard_sync_edge_valid,
         sp_control           =>  sp_control,
         sync_control         =>  sync_control
     );
+
+    -- Connect new vector signals to old signals for backwards compatibility
+    sample_nbt       <= sample_nbt_i(2);
+    sample_nbt_del_1 <= sample_nbt_i(1);
+    sample_nbt_del_2 <= sample_nbt_i(0);
+    sample_dbt       <= sample_dbt_i(2);
+    sample_dbt_del_1 <= sample_dbt_i(1);
+    sample_dbt_del_2 <= sample_dbt_i(0);
+
+    sync_nbt        <= sync_nbt_i(1);
+    sync_nbt_del_1  <= sync_nbt_i(0);
+    sync_dbt        <= sync_dbt_i(1);
+    sync_dbt_del_1  <= sync_dbt_i(0);
 
     drv_bus(DRV_TQ_NBT_HIGH downto DRV_TQ_NBT_LOW)    <= drv_tq_nbt;
     drv_bus(DRV_TQ_DBT_HIGH downto DRV_TQ_DBT_LOW)    <= drv_tq_dbt;
@@ -590,7 +603,7 @@ begin
         end if;
 
         -- Generate parameters for new resynchronisation
-        wait until falling_edge(clk_sys) and bt_FSM_out = sync;
+        wait until falling_edge(clk_sys) and bt_FSM_out = tseg1;
         gen_sync_edge_settings(rand_ctr_sync_edge, setting, sp_control,
                                     sync_time, positive_resync);
 
@@ -606,15 +619,13 @@ begin
             sync_edge <= '1';
             wait until falling_edge(clk_sys);
             sync_edge <= '0';
-            wait until (bt_FSM_out /= sync);
+            wait until (bt_FSM_out /= tseg1);
         else
 
             -- For positive resync -> start from PROP(or PH1) phase, for
             -- Negative resync -> start by PH2 phase
-            if (positive_resync) then
-                wait until (bt_FSM_out /= sync);
-            else
-                wait until (bt_FSM_out = ph2);
+            if (positive_resync = false) then
+                wait until (bt_FSM_out = tseg2);
             end if;
 
             for i in 1 to sync_time - 1 loop
@@ -622,7 +633,7 @@ begin
 
                 -- Break if Bit time in any case finished earlier, e.g. BRS
                 -- testing started
-                if (bt_FSM_out = sync) then
+                if (bt_FSM_out = tseg1) then
                     skip_sync := true;
                     exit;
                 end if;
@@ -635,7 +646,6 @@ begin
             end if;
 
         end if;
-
     end process;
 
 
@@ -690,8 +700,8 @@ begin
             info("Starting loop nr " & integer'image(loop_ctr));
 
             -- Generates random bit time settings for new bits.
-            wait until bt_FSM_out = ph2;
-            wait until bt_FSM_out = sync;
+            wait until bt_FSM_out = tseg2;
+            wait until bt_FSM_out = tseg1;
             gen_bit_time_setting(rand_ctr, setting);
 
             -- Sets random sampling
@@ -709,8 +719,8 @@ begin
             -- cycle instead of one time quanta). Note that Bit Timing does not
             -- have to be changed during the bit duration, but is set only once
             -- at controller configuration!
-            wait until bt_FSM_out = ph2;
-            wait until bt_FSM_out = sync;
+            wait until bt_FSM_out = tseg2;
+            wait until bt_FSM_out = tseg1;
 
             --------------------------------------------------------------------
             -- Check duration of default bit lenght without synchronisation
@@ -773,7 +783,7 @@ begin
             --------------------------------------------------------------------
             -- Check duration with Re-synchronisation turned ON
             --------------------------------------------------------------------
-            wait until bt_FSM_out = sync;
+            wait until bt_FSM_out = tseg1;
             wait until rising_edge(clk_sys);
             sync_control    <= RE_SYNC;
 
@@ -813,8 +823,8 @@ begin
 
             -- Wait till next bit so that resynchronisation and bit rate switch
             -- does not affect each other!
-            wait until bt_fsm_out /= sync;
-            wait until bt_fsm_out = sync;
+            wait until bt_fsm_out /= tseg1;
+            wait until bt_fsm_out = tseg1;
 
             --------------------------------------------------------------------
             -- Test the duration of bits during bit-rate switching, to verify
@@ -842,7 +852,7 @@ begin
             -- Nominal Bit-rate part, count length between sync trigger and
             -- sample trigger!
             sp_control <= NOMINAL_SAMPLE;
-            wait until bt_FSM_out = ph2;
+            wait until bt_FSM_out = tseg2;
             wait until falling_edge(clk_sys) and sync_nbt = '1';
             count_cycles_until(clk_sys, nom_ctr, sample_nbt);
 
@@ -867,7 +877,7 @@ begin
             -- data-rate)
             --------------------------------------------------------------------
             info("Checking duration of CRC delimiter bit");
-            wait until bt_FSM_out = ph2;
+            wait until bt_FSM_out = tseg2;
             wait until falling_edge(clk_sys) and sync_dbt = '1';
             count_cycles_until(clk_sys, data_ctr, sample_dbt);
 

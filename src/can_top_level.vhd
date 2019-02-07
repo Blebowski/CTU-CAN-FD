@@ -436,6 +436,12 @@ architecture rtl of CAN_top_level is
     signal sync_nbt_del_1 : std_logic;
     signal sync_dbt_del_1 : std_logic;
 
+    -- Trigger outputs from Prescaler
+    signal sample_nbt_i   : std_logic_vector(2 downto 0);
+    signal sample_dbt_i   : std_logic_vector(2 downto 0);
+    signal sync_nbt_i     : std_logic_vector(1 downto 0);
+    signal sync_dbt_i     : std_logic_vector(1 downto 0);
+
     signal sp_control   : std_logic_vector(1 downto 0);
     signal sync_control : std_logic_vector(1 downto 0);
 
@@ -777,6 +783,28 @@ begin
     );
 
     prescaler_comp : prescaler
+    generic map(
+      reset_polarity        => '0',
+      capt_btr              => false,
+      capt_tseg_1           => true,
+      capt_tseg_2           => false,
+      capt_sjw              => false,
+      
+      -- Width of Bit time segments      
+      tseg1_nbt_width       => 8, 
+      tseg2_nbt_width       => 6,
+      tq_nbt_width          => 8,
+      sjw_nbt_width         => 5,
+      
+      tseg1_dbt_width       => 7,
+      tseg2_dbt_width       => 5,
+      tq_dbt_width          => 8,
+      sjw_dbt_width         => 5,
+      ipt_length            => 4,
+      
+      sync_trigger_count    => 2,
+      sample_trigger_count  => 3
+    )
     port map(
         clk_sys              => clk_sys,
         res_n                => res_n_int,
@@ -785,22 +813,30 @@ begin
         drv_bus              => drv_bus,
         clk_tq_nbt           => clk_tq_nbt,
         clk_tq_dbt           => clk_tq_dbt,
-        sample_nbt           => sample_nbt,
-        sample_dbt           => sample_dbt,
+        sample_nbt           => sample_nbt_i,
+        sample_dbt           => sample_dbt_i,
         bt_FSM_out           => bt_FSM_out,
-        sample_nbt_del_1     => sample_nbt_del_1,
-        sample_dbt_del_1     => sample_dbt_del_1,
-        sample_nbt_del_2     => sample_nbt_del_2,
-        sample_dbt_del_2     => sample_dbt_del_2,
-        sync_nbt             => sync_nbt,
-        sync_dbt             => sync_dbt,
-        sync_nbt_del_1       => sync_nbt_del_1,
-        sync_dbt_del_1       => sync_dbt_del_1,
+        sync_nbt             => sync_nbt_i,
+        sync_dbt             => sync_dbt_i,
         data_tx              => data_tx,
         hard_sync_edge_valid => hard_sync_edge_valid,
         sp_control           => sp_control,
         sync_control         => sync_control
     );
+    
+    -- Temporary internal connections. Will be replaced during protocol
+    -- control re-work!
+    sample_nbt           <= sample_nbt_i(2);
+    sample_dbt           <= sample_dbt_i(2);
+    sample_nbt_del_1     <= sample_nbt_i(1);
+    sample_dbt_del_1     <= sample_dbt_i(1);
+    sample_nbt_del_2     <= sample_dbt_i(0);
+    sample_dbt_del_2     <= sample_dbt_i(0);
+    sync_nbt_del_1       <= sync_nbt_i(0);
+    sync_dbt_del_1       <= sync_dbt_i(0);
+    sync_nbt             <= sync_nbt_i(1);
+    sync_dbt             <= sync_dbt_i(1);
+
 
     bus_sampling_comp : bus_sampling
     generic map (

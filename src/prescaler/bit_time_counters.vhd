@@ -41,16 +41,18 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Information processing Time checker.
+--  Contains two counters:
+--      1. Time Quanta counter.
+--      2. Bit time counter.
 --
---   Checks length of Information processing time after Sample point between
---   PH1 and PH2. Functions like a half-handshake. When 'ipt_req' comes, interna
---   shift register is preloaded. This shift register shifts each clock cycle
---   and after input value was shifted till the very end, 'ipt_gnt' is set
---   high and remains high till the next 'ipt_req'.
----------------------------------------------------------------------------------------------------------------------------------------------
+--  Time Quanta counter counts duration of Time quanta segment and provides
+--- Time Quanta edge signal.
+--  Bit Time counter counts with granularity of Time Quanta and provides value
+--  of Bit Time counter to the output.
+--
+--------------------------------------------------------------------------------
 -- Revision History:
---    03.02.2019   Created file
+--    15.02.2019   Created file
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -71,13 +73,16 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity ipt_checker is
+entity bit_time_counters is
     generic (
         -- Reset polarity
-        reset_polarity : std_logic := '0';
-
-        -- Length of Information processing time in clock cycles.
-        ipt_length     : natural := 4
+        reset_polarity  : std_logic := '0';
+        
+        -- Bit Time counter width
+        bt_width        : natural := 8;
+        
+        -- Time Qunata counter width
+        tq_width        : natural := 8
     );
     port(
         -----------------------------------------------------------------------
@@ -87,86 +92,117 @@ entity ipt_checker is
         signal res_n            : in    std_logic;
 
         -----------------------------------------------------------------------
-        -- Control interface (Handshake-like)
+        -- Control signals
         -----------------------------------------------------------------------
-        signal ipt_req          : in    std_logic;
-        signal ipt_gnt          : out   std_logic
+        
+        -- Prescaler value
+        signal prescaler        : in    std_logic_vector(tq_width - 1 downto 0);
+        
+        -- Time Quanta reset (synchronous)
+        signal tq_reset         : in    std_logic;
+        
+        -- Bit Time reset (synchronous)
+        signal bt_reset         : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Time Quanta edge
+        signal tq_edge          : out   std_logic;
+        
+        -- Bit Time counter
+        signal bt_counter       : out   std_logic_vector(bt_width - 1 downto 0)
     );
 end entity;
 
-
-architecture rtl of ipt_checker is
-
-    -- Internal Shift register
-    signal ipt_sr       : std_logic_vector(ipt_length - 1 downto 0);
-    signal ipt_sr_nxt   : std_logic_vector(ipt_length - 1 downto 0);
-
-    -- Clock enable for internal shift register. 
-    signal ipt_sr_ce  :  std_logic;
+architecture rtl of bit_time_counters is
     
-    -- IPT shift register is empty 
-    signal ipt_empty  :  std_logic;
-    
-    ---------------------------------------------------------------------------    
-    -- IPT constants
-    ---------------------------------------------------------------------------
-    constant IPT_ZEROES : std_logic_vector(ipt_length - 1 downto 0) :=
+    -- Time Quanta Counter
+    signal tq_counter_d         : std_logic_vector(tq_width - 1 downto 0);
+    signal tq_counter_q         : std_logic_vector(tq_width - 1 downto 0);
+    signal tq_counter_ce        : std_logic;
+
+    signal tq_edge_i            : std_logic;
+
+    constant tq_zeroes : std_logic_vector(tq_width - 1 downto 0) :=
         (OTHERS => '0');
-        
-    constant IPT_ONES : std_logic_vector(ipt_length - 1 downto 0) :=
+    constant tq_run_th : std_logic_vector(tq_width - 1 downto 0) :=
+        (0 => '1', OTHERS => '0');
+    
+    -- Bit Time counter
+    signal bt_counter_d         : std_logic_vector(bt_width - 1 downto 0);
+    signal bt_counter_q         : std_logic_vector(bt_width - 1 downto 0);
+    
+    constant bt_zeroes : std_logic_vector(bt_width - 1 downto 0) :=
+        (OTHERS => '0');
+    constant bt_ones : std_logic_vector(bt_width - 1 downto 0) :=
         (OTHERS => '1');
-    
-begin
+
+begin    
 
     ---------------------------------------------------------------------------
-    -- Shift register clock enable. Tick when:
-    --  1. There is a request to measure IPT till grant (shift reg preload)
-    --  2. Shift register is not empty, shifting is in progress.
+    -- If prescaler is defined as 0 or 1, there is no need to run the counter!
+    -- Run it only when Prescaler is higher than 1! 
     ---------------------------------------------------------------------------
-    ipt_sr_ce <= '1' when (ipt_req = '1') else
-                 '1' when (ipt_empty = '0') else
-                 '0';
+    tq_counter_ce <= '1' when (prescaler > tq_run_th) else
+                     '0';
 
-    -- Is shift register empty??
-    ipt_empty <= '1' when (ipt_sr = IPT_ZEROES) else
-                 '0';
-    
     ---------------------------------------------------------------------------
-    -- IPT Shift register. Next value:
-    --  1. Preload upon request
-    --  2. Shift to the right
+    -- Time quanta counter next value:
+    --  1. Erase when reaching value of prescaler.
+    --  2. Erase when re-started.
+    --  3. Add 1 ohterwise!
     ---------------------------------------------------------------------------
-    ipt_sr_nxt <= IPT_ONES when (ipt_req = '1') else
-                  '0' & ipt_sr(ipt_length - 1 downto 1);
-    
-    
-    ---------------------------------------------------------------------------
-    -- IPT Shift register. Register assignment
-    ---------------------------------------------------------------------------
-    ipt_sr_proc : process(res_n, clk_sys)
+    tq_counter_d <=
+        (OTHERS => '0') when (unsigned(tq_counter_q) = unsigned(prescaler) - 1)
+                        else
+        (OTHERS => '0') when (tq_reset = '1')
+                        else
+        std_logic_vector(unsigned(tq_counter_q) + 1);
+
+    tq_proc : process(clk_sys, res_n)
     begin
         if (res_n = reset_polarity) then
-            ipt_sr <= IPT_ZEROES;
+            tq_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (ipt_sr_ce = '1') then
-                ipt_sr <= ip_sr_nxt;
+            if (tq_counter_ce = '1') then
+                tq_counter_q <= tq_counter_d;
+            end if;
+        end if;
+    end process;
+    
+    ---------------------------------------------------------------------------
+    -- Time quanta edge
+    ---------------------------------------------------------------------------
+    tq_edge_i <= '1' when (tq_counter_ce = '0' or tq_counter_q = tq_zeroes) else
+                 '0';
+    tq_edge <= tq_edge_i;
+
+    ---------------------------------------------------------------------------
+    -- Bit time counter
+    ---------------------------------------------------------------------------
+    bt_counter_d <= bt_zeroes when (bt_reset = '1') else
+                    std_logic_vector(unsigned(bt_counter_q) + 1);
+
+    bt_counter_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = reset_polarity) then
+            bt_counter_q <= (OTHERS => '0');
+        elsif (rising_edge(clk_sys)) then
+            if (tq_edge_i = '1') then
+                bt_counter_q <= bt_counter_d;
             end if;
         end if;
     end process;
 
     ---------------------------------------------------------------------------
-    -- Grant computation. We grant only if the shift register has shifted
-    -- till the very end!
     ---------------------------------------------------------------------------
-    ipt_gnt <= '1' when (ipt_empty = '1' and ipt_req = '0') else
-               '0';
-    
+    -- Assertions
     ---------------------------------------------------------------------------
-    -- Check that no next IPT request will come till grant to the first
-    -- request has been given. This should not occur since there should not
-    -- be sample points so close to each other.
     ---------------------------------------------------------------------------
-    -- psl ipt_half_handshake_asrt :
-    --      assert (not (ipt_empty = '0' and ipt_req = '1'));
+    -- psl default clock is rising_edge(clk_sys);
+    --
+    -- psl no_bt_overflow_asrt : assert never
+    --      (bt_counter_q = bt_ones and tq_edge = '1' and bt_reset = '0');
 
 end architecture rtl;

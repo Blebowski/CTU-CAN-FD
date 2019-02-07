@@ -48,7 +48,7 @@
 --   shift register is preloaded. This shift register shifts each clock cycle
 --   and after input value was shifted till the very end, 'ipt_gnt' is set
 --   high and remains high till the next 'ipt_req'.
----------------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Revision History:
 --    03.02.2019   Created file
 --------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ entity ipt_checker is
         -----------------------------------------------------------------------
         signal ipt_req          : in    std_logic;
         signal ipt_gnt          : out   std_logic
-    )
+    );
 end entity;
 
 
@@ -149,7 +149,7 @@ begin
             ipt_sr <= IPT_ZEROES;
         elsif (rising_edge(clk_sys)) then
             if (ipt_sr_ce = '1') then
-                ipt_sr <= ip_sr_nxt;
+                ipt_sr <= ipt_sr_nxt;
             end if;
         end if;
     end process;
