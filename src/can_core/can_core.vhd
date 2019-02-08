@@ -1026,7 +1026,7 @@ begin
     ----------------------------------------------------------------------------
     stat_bus(511 downto 370)                              <= (OTHERS => '0');
     stat_bus(299 downto 297)                              <= (OTHERS => '0');
-    stat_bus(187 downto 183)                              <= (OTHERS => '0');
+    stat_bus(187 downto 186)                              <= (OTHERS => '0');
     stat_bus(99 downto 90)                                <= (OTHERS => '0');
     stat_bus(60 downto 32)                                <= (OTHERS => '0');
 
@@ -1141,6 +1141,11 @@ begin
 
     stat_bus(STAT_TRAN_TRIG)                                   <=  tran_trig;
     stat_bus(STAT_REC_TRIG)                                    <=  rec_trig;
+    
+    stat_bus(STAT_SAMPLE_NBT_DEL_1)                            <=  sample_nbt_del_1;
+    stat_bus(STAT_SAMPLE_DBT_DEL_1)                            <=  sample_dbt_del_1;
+    stat_bus(STAT_SAMPLE_SEC_DEL_1)                            <=  sample_sec_del_1;
+    
     stat_bus(STAT_ALC_ID_FIELD_HIGH downto STAT_ALC_BIT_LOW)   <=  alc;
 
     stat_bus(STAT_RX_CTR_HIGH downto STAT_RX_CTR_LOW)          <=  rx_counter;

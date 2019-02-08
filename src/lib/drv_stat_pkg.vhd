@@ -414,6 +414,9 @@ package drv_stat_pkg is
     constant STAT_CRC_ENA_INDEX        : natural := 180;
     constant STAT_TRAN_TRIG            : natural := 181;
     constant STAT_REC_TRIG             : natural := 182;
+    constant STAT_SAMPLE_NBT_DEL_1     : natural := 183;
+    constant STAT_SAMPLE_DBT_DEL_1     : natural := 184;
+    constant STAT_SAMPLE_SEC_DEL_1     : natural := 185;
 
     -- Arbitration lost capture
     constant STAT_ALC_ID_FIELD_HIGH  : natural := 296;
