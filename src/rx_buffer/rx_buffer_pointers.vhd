@@ -379,5 +379,32 @@ begin
     begin
         read_pointer_inc_1_int <= (read_pointer_int + 1) mod buff_size;
     end process;
+    
+    
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- Functional coverage
+    ----------------------------------------------------------------------------
+    ----------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    --
+    -- psl rx_no_raw_mem_free_cov : 
+    --      cover (rx_mem_free_raw = 0);
+    --
+    -- psl rx_all_raw_mem_free_cov : 
+    --      cover (rx_mem_free_raw = buff_size);
+    --
+    -- psl rx_no_int_mem_free_cov : 
+    --      cover (rx_mem_free_int = 0);
+    --
+    -- psl rx_all_int_mem_free_cov : 
+    --      cover (rx_mem_free_int = buff_size);
+    --
+    -- psl rx_write_ptr_higher_than_read_ptr_cov : 
+    --      cover (write_pointer_int > read_pointer_int);
+    --
+    -- psl rx_read_ptr_higher_than_write_ptr_cov : 
+    --      cover (read_pointer_int > write_pointer_int);    
+    
 
 end architecture;
