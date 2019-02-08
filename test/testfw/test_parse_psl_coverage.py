@@ -414,7 +414,8 @@ def create_psl_report(psl_by_files, psl_orig):
 
 if __name__ == "__main__":
 
-	dut_top = "can_top_level"
+	#dut_top = "can_top_level"
+	dut_top = "."
 
 	# Merge PSL coverage files from all Testcases
 	merge_psl_coverage_files("merged_psl.json", "psl_cov")
