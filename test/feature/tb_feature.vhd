@@ -120,7 +120,7 @@ architecture feature_env_test of CAN_feature_test is
 
         data_in         : std_logic_vector(31 downto 0);
         data_out        : std_logic_vector(31 downto 0);
-        adress          : std_logic_vector(23 downto 0);
+        adress          : std_logic_vector(15 downto 0);
         scs             : std_logic; --Chip select
         srd             : std_logic; --Serial read
         swr             : std_logic; --Serial write
@@ -194,7 +194,7 @@ begin
         -------------------------------------------------
         x1: mem_bus(i).clk_sys    <= p(i).clk_sys;
         x2: p(i).data_in          <= mem_bus(i).data_in;
-        x3: p(i).adress           <= mem_bus(i).address;
+        x3: p(i).adress           <= mem_bus(i).address(15 downto 0);
         x4: p(i).scs              <= mem_bus(i).scs;
         x5: p(i).swr              <= mem_bus(i).swr;
         x6: p(i).srd              <= mem_bus(i).srd;
