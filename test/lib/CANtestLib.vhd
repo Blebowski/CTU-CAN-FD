@@ -1824,7 +1824,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure CAN_configure_ssp(
         variable ssp_source     : in    SSP_set_command_type;    
-        variable ssp_offset_val : out   std_logic_vector(6 downto 0);   
+        variable ssp_offset_val : in   std_logic_vector(6 downto 0);   
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -4444,7 +4444,7 @@ package body CANtestLib is
 
     procedure CAN_configure_ssp(
         variable ssp_source     : in    SSP_set_command_type;    
-        variable ssp_offset_val : out   std_logic_vector(6 downto 0);  
+        variable ssp_offset_val : in    std_logic_vector(6 downto 0);  
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
@@ -4453,18 +4453,18 @@ package body CANtestLib is
     begin
         case ssp_source is
             when ssp_measured =>
-               data(SSP_SRC_H downto SSP_SRC_L) := "00";
+               data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEASURED;    --"00";
             when ssp_meas_n_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := "01";
+                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEAS_N_OFFSET;  --"01";
             when ssp_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := "10";
+                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET; --"10";   
             when others =>
                 error("Unsupported SSP type.");
             end case;
 
         data(SSP_OFFSET_H downto SSP_OFFSET_L) := ssp_offset_val;
 
-        CAN_write(data, SSP_CFG_ADR, ID, mem_bus, BIT_8);
+        CAN_write(data, SSP_CFG_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
 end package body;
