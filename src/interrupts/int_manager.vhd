@@ -70,6 +70,7 @@
 --   11.12.2018   Separated interrupt logic to dedicated sub-module. Added
 --                option to have configurable set/clear of interrupt by
 --                generic option...
+--    23.2.2019   Added PSL functional coverage.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -282,7 +283,97 @@ begin
             int_status             => int_vect_i(i),
             int_mask               => int_mask_i(i),
             int_ena                => int_ena_i(i)
-        );  
+        );
     end generate int_module_gen;
+
+
+    ---------------------------------------------------------------------------
+    -- Functional coverage
+    ---------------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl rxi_set_cov : cover
+    --  {int_vect_i(RXI_IND) = '0';int_vect_i(RXI_IND) = '1'};
+
+    -- psl rxi_enable_cov : cover
+    --  (int_vect_i(RXI_IND) = '1' and int_ena(RXI_IND) = '1');
+
+
+    -- psl txi_set_cov : cover
+    --  {int_vect_i(TXI_IND) = '0';int_vect_i(TXI_IND) = '1'};
+
+    -- psl txi_enable_cov : cover
+    --  (int_vect_i(TXI_IND) = '1' and int_ena(TXI_IND) = '1');
+
+
+    -- psl ewli_int_set_cov : cover
+    --  {int_vect_i(EWLI_IND) = '0';int_vect_i(EWLI_IND) = '1'};
+
+    -- psl ewli_enable_cov : cover
+    --  (int_vect_i(EWLI_IND) = '1' and int_ena(EWLI_IND) = '1');
+
+
+    -- psl doi_int_set_cov : cover
+    --  {int_vect_i(DOI_IND) = '0';int_vect_i(DOI_IND) = '1'};
+
+    -- psl doi_enable_cov : cover
+    --  (int_vect_i(DOI_IND) = '1' and int_ena(DOI_IND) = '1');
+
+
+    -- psl epi_int_set_cov : cover
+    --  {int_vect_i(EPI_IND) = '0';int_vect_i(EPI_IND) = '1'};
+
+    -- psl epi_enable_cov : cover
+    --  (int_vect_i(EPI_IND) = '1' and int_ena(EPI_IND) = '1');
+
+
+    -- psl ali_int_set_cov : cover
+    --  {int_vect_i(ALI_IND) = '0';int_vect_i(ALI_IND) = '1'};
+
+    -- psl ali_enable_cov : cover
+    --  (int_vect_i(ALI_IND) = '1' and int_ena(ALI_IND) = '1');
+
+
+    -- psl beu_int_set_cov : cover
+    --  {int_vect_i(BEI_IND) = '0';int_vect_i(BEI_IND) = '1'};
+
+    -- psl bei_enable_cov : cover
+    --  (int_vect_i(BEI_IND) = '1' and int_ena(BEI_IND) = '1');
+
+
+    -- psl lfi_int_set_cov : cover
+    --  {int_vect_i(LFI_IND) = '0';int_vect_i(LFI_IND) = '1'};
+
+    -- psl lfi_enable_cov : cover
+    --  (int_vect_i(LFI_IND) = '1' and int_ena(LFI_IND) = '1');
+
+
+    -- psl rxfi_int_set_cov : cover
+    --  {int_vect_i(RXFI_IND) = '0';int_vect_i(RXFI_IND) = '1'};
+
+    -- psl rxfi_enable_cov : cover
+    --  (int_vect_i(RXFI_IND) = '1' and int_ena(RXFI_IND) = '1');
+
+
+    -- psl bsi_int_set_cov : cover
+    --  {int_vect_i(BSI_IND) = '0';int_vect_i(BSI_IND) = '1'};
+
+    -- psl bsi_enable_cov : cover
+    --  (int_vect_i(BSI_IND) = '1' and int_ena(BSI_IND) = '1');
+
+
+    -- psl rbnei_int_set_cov : cover
+    --  {int_vect_i(RBNEI_IND) = '0';int_vect_i(RBNEI_IND) = '1'};
+
+    -- psl rbnei_enable_cov : cover
+    --  (int_vect_i(RBNEI_IND) = '1' and int_ena(RBNEI_IND) = '1');
+
+
+    -- psl txbhci_int_set_cov : cover
+    --  {int_vect_i(TXBHCI_IND) = '0';int_vect_i(TXBHCI_IND) = '1'};
+
+    -- psl txbhci_enable_cov : cover
+    --  (int_vect_i(TXBHCI_IND) = '1' and int_ena(TXBHCI_IND) = '1');
 
 end architecture;
