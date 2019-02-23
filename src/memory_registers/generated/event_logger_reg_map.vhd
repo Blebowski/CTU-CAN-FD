@@ -237,4 +237,45 @@ begin
 
     Event_Logger_out <= Event_Logger_out_i;
 
+    ----------------------------------------------------------------------------
+    -- PSL functional coverage
+    ----------------------------------------------------------------------------
+    --  psl default clock is rising_edge(clk_sys);
+    --  psl log_trig_config_write_access_cov : cover (
+    --     cs = '1' and write = '1' and reg_sel(0) = '1' and 
+    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1'));
+
+    --  psl log_trig_config_read_access_cov : cover (
+    --     cs = '1' and read = '1' and reg_sel(0) = '1' and 
+    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1'));
+
+    --  psl log_capt_config_write_access_cov : cover (
+    --     cs = '1' and write = '1' and reg_sel(1) = '1' and 
+    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1'));
+
+    --  psl log_capt_config_read_access_cov : cover (
+    --     cs = '1' and read = '1' and reg_sel(1) = '1' and 
+    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1'));
+
+    --  psl log_status_read_access_cov : cover (
+    --     cs = '1' and read = '1' and reg_sel(2) = '1' and 
+    --     (be(0) = '1' or be(1) = '1'));
+
+    --  psl log_pointers_read_access_cov : cover (
+    --     cs = '1' and read = '1' and reg_sel(2) = '1' and 
+    --     (be(2) = '1' or be(3) = '1'));
+
+    --  psl log_command_write_access_cov : cover (
+    --     cs = '1' and write = '1' and reg_sel(3) = '1' and 
+    --     (be(0) = '1'));
+
+    --  psl log_capt_event_1_read_access_cov : cover (
+    --     cs = '1' and read = '1' and reg_sel(4) = '1' and 
+    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1'));
+
+    --  psl log_capt_event_2_read_access_cov : cover (
+    --     cs = '1' and read = '1' and reg_sel(5) = '1' and 
+    --     (be(0) = '1' or be(1) = '1' or be(2) = '1' or be(3) = '1'));
+
+
 end architecture rtl;
