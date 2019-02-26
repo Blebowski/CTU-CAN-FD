@@ -175,6 +175,19 @@ package cmn_lib is
     end component;
 
 
+    ----------------------------------------------------------------------------
+    -- DLC decoder
+    ----------------------------------------------------------------------------
+    component dlc_decoder is
+        port (
+            signal dlc              :   in std_logic_vector(3 downto 0);
+            signal frame_type       :   in std_logic;
+    
+            signal data_length      :   out std_logic_vector(6 downto 0);
+            signal is_valid         :   out std_logic
+        );
+    end component;
+
 
 end package cmn_lib;
 
