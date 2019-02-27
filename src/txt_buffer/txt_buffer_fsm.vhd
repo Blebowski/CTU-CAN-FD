@@ -41,11 +41,12 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Transmitt Message Buffer FSM.
+--  Transmitt Frame Buffer FSM.
 --------------------------------------------------------------------------------
 -- Revision History:
 --
 --    07.11.2018   Created file
+--    27.02.2019   Added PSL assertions.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -119,7 +120,13 @@ architecture rtl of txt_buffer_fsm is
     -- FSM state of the buffer
     signal buf_fsm                : txt_fsm_type;
 
+    -- Abort command applied
+    signal abort_applied          : std_logic;
+
 begin
+
+    abort_applied <= '1' when (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') else
+                     '0';
 
     ----------------------------------------------------------------------------
     -- Buffer FSM process
@@ -163,7 +170,7 @@ begin
                     end if;
 
                 -- Abort the ready buffer
-                elsif (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') then
+                elsif (abort_applied = '1') then
                     buf_fsm       <= txt_aborted;
                 else
                     buf_fsm       <= buf_fsm;
@@ -191,7 +198,7 @@ begin
                     end if;
 
                 -- Request abort during transmission
-                elsif (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') then 
+                elsif (abort_applied = '1') then 
                     buf_fsm         <= txt_ab_prog;
                 else
                     buf_fsm         <= buf_fsm;  
@@ -307,10 +314,10 @@ begin
                         '0';
 
     -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
-    -- Abort signal must not be active. If not considered,
-    -- race conditions between HW and SW commands could occur.
+    -- Abort signal must not be active. If not considered, race condition
+    -- between HW and SW commands could occur!
     txt_buf_ready       <= '1' when ((buf_fsm = txt_ready) and
-                                     (txt_sw_cmd.set_abt = '0'))
+                                     (abort_applied = '0'))
                                else
                            '0';
 
@@ -323,65 +330,55 @@ begin
         TXT_ERR   when txt_error,
         TXT_ABT   when txt_aborted,
         TXT_ETY   when txt_empty;
+    
 
-
-    ----------------------------------------------------------------------------
-    -- Monitoring invalid command combinations!
-    ----------------------------------------------------------------------------
-    lock_check_proc : process(clk_sys)
-    begin
-        if (rising_edge(clk_sys)) then
-            if (txt_hw_cmd.lock       = '1'       and
-                buf_fsm              /= txt_ready and
-                hw_cbs                = '1') 
-            then
-                report "Buffer not READY and LOCK occurred on TXT Buffer: " &
-                        integer'image(ID) & " Buffer state: " & 
-                        txt_fsm_type'image(buf_fsm) severity error;
-            end if;
-        end if;
-    end process;
-
-
-    unlock_check_proc : process(clk_sys)
-    begin
-        if (rising_edge(clk_sys)) then
-            if (txt_hw_cmd.unlock     = '1'         and
-                buf_fsm              /= txt_tx_prog and
-                buf_fsm              /= txt_ab_prog and
-                hw_cbs                = '1')
-            then
-                report "Buffer not 'TX_prog' or 'AB_prog' and UNLOCK" &
-                       " occurred on Buffer: " & integer'image(ID) severity error;
-            end if;
-        end if;
-    end process;
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Functional coverage
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
-    func_cov_block : block
-    begin 
-    
     -- psl default clock is rising_edge(clk_sys);
 
     -- Each FSM state
-    -- psl txtb_fsm_empty : cover (buf_fsm = txt_empty);
-    -- psl txtb_fsm_ready : cover (buf_fsm = txt_ready);
-    -- psl txtb_fsm_tx_prog : cover (buf_fsm = txt_tx_prog);
-    -- psl txtb_fsm_ab_prog : cover (buf_fsm = txt_ab_prog);
-    -- psl txtb_fsm_error : cover (buf_fsm = txt_error);
-    -- psl txtb_fsm_aborted : cover (buf_fsm = txt_aborted);
-    -- psl txtb_fsm_tx_ok : cover (buf_fsm = txt_ok);
+    -- psl txtb_fsm_empty_cov : cover (buf_fsm = txt_empty);
+    -- psl txtb_fsm_ready_cov : cover (buf_fsm = txt_ready);
+    -- psl txtb_fsm_tx_prog_cov : cover (buf_fsm = txt_tx_prog);
+    -- psl txtb_fsm_ab_prog_cov : cover (buf_fsm = txt_ab_prog);
+    -- psl txtb_fsm_error_cov : cover (buf_fsm = txt_error);
+    -- psl txtb_fsm_aborted_cov : cover (buf_fsm = txt_aborted);
+    -- psl txtb_fsm_tx_ok_cov : cover (buf_fsm = txt_ok);
     
     -- Simultaneous HW and SW Commands
-    -- psl txtb_rdy_hazard : cover (txt_hw_cmd.lock = '1' and hw_cbs = '1' and
-    --                              txt_sw_cmd.set_abt = '1' and sw_cbs = '1');
-
+    -- psl txtb_hw_sw_cmd_hazard_cov : cover
+    --  (txt_hw_cmd.lock = '1' and hw_cbs = '1' and
+    --   txt_sw_cmd.set_abt = '1' and sw_cbs = '1');
     
-    
-    end block;
+    ----------------------------------------------------------------------------
+    -- Assertions
+    ----------------------------------------------------------------------------
+    -- HW Lock command should never arrive when the buffer is in other state
+    -- than ready
+    --
+    -- psl txtb_lock_only_in_rdy_asrt : assert always
+    --  ((txt_hw_cmd.lock = '1' and hw_cbs = '1') -> buf_fsm = txt_ready)
+    --  report "TXT Buffer " & integer'image(ID) &
+    --  " not READY when LOCK command occurred!" severity error;
+    ----------------------------------------------------------------------------
+    -- HW Unlock command is valid only when Buffer is TX in Progress or Abort in
+    -- progress.
+    --
+    -- psl txtb_unlock_only_in_tx_prog_asrt : assert always
+    --  ((txt_hw_cmd.unlock = '1' and hw_cbs = '1') ->
+    --   (buf_fsm = txt_tx_prog or buf_fsm = txt_ab_prog))
+    --  report "TXT Buffer " & integer'image(ID) &
+    --  " not READY when LOCK command occurred!" severity error;
+    ----------------------------------------------------------------------------
+    -- HW Lock command should never occur when there was abort in previous cycle!
+    --
+    -- psl txtb_no_lock_after_abort : assert never
+    --  {abort_applied = '1';txt_hw_cmd.lock = '1' and hw_cbs = '1'}
+    --  report "LOCK command after ABORT was applied!" severity error;
+    ----------------------------------------------------------------------------
 
 end architecture;
