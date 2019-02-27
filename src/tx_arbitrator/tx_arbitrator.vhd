@@ -637,21 +637,22 @@ begin
   -- psl txt_buf_change_cov : cover
   --    (txtb_changed = '1' and txt_hw_cmd.lock = '1')
   --    report "TX Buffer changed between two frames";
+  --
+  -- psl txt_buf_sim_chng_and_lock_cov : cover
+  --    (select_index_changed = '1' and txt_hw_cmd.lock = '1');
 
   -----------------------------------------------------------------------------
   -- Assertions
   -----------------------------------------------------------------------------
-  -- Following assertion verifies that if TXT Buffer becomes unavailable and
-  -- the lock is not active (e.g. set_abort command), then output signalling
-  -- must drop for at least 3 clock cycles since loading procedure is restarted!
-  -- 
-  -- psl txtb_rdy_to_not_rdy_asrt : assert always
-  --    {select_buf_avail='1' and txt_hw_cmd.lock = '0';select_buf_avail='0'} |->
-  --    {tran_frame_valid_out='0';tran_frame_valid_out='0';tran_frame_valid_out='0'}
-  --    report "TX Arbitrator output not 0 after buffer was aborted";
+  -- When TXT Buffer is not ready for more than one cycle, LOCK command might
+  -- not occur. If it is not ready for one clock cycle, it might still be
+  -- due to set abort and LOCK command applied simultaneously. This is OK.
+  -- But as soon as buffer is not ready for second cycle, LOCK command can't
+  -- be active!
   --
-  -- psl txtb_no_lock_when_not_ready_asrt : assert always
-  --   (txt_hw_cmd.lock = '1' -> tran_frame_valid_out = '1')
+  -- psl txtb_no_lock_when_not_ready_asrt : assert never
+  --   {tran_frame_valid_out = '0';
+  --    tran_frame_valid_out = '0' and txt_hw_cmd.lock = '1'}
   --   report "NO TXT Buffer ready and lock occurs!" severity error;
-
+  -----------------------------------------------------------------------------
 end architecture;
