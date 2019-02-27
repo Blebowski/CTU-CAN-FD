@@ -586,5 +586,73 @@ begin
     end if;
   end process;
 
+  ------------------------------------------------------------------------------
+  -- Functional coverage
+  ------------------------------------------------------------------------------
+  -- psl default clock is rising_edge(clk_sys);
 
+  -- psl txt_lock_cov : cover
+  --    (txt_hw_cmd.lock = '1');
+  --
+  -- psl txt_unlock_cov : cover
+  --    (txt_hw_cmd.unlock = '1');
+  --
+  -- psl txt_lock_buf_1_cov : cover
+  --    (txt_hw_cmd_buf_index = 0 and txt_hw_cmd.lock = '1');
+  --
+  -- psl txt_lock_buf_2_cov : cover
+  --    (txt_hw_cmd_buf_index = 1 and txt_hw_cmd.lock = '1');
+  --
+  -- psl txt_lock_buf_3_cov : cover
+  --    (txt_hw_cmd_buf_index = 2 and txt_hw_cmd.lock = '1');
+  --
+  -- psl txt_lock_buf_4_cov : cover
+  --    (txt_hw_cmd_buf_index = 3 and txt_hw_cmd.lock = '1');
+  --
+  -- psl txt_prio_change_cov : cover
+  --    {select_buf_avail = '1';
+  --     select_buf_avail = '1' and select_buf_index'active;
+  --     select_buf_avail = '1'};
+  --
+  -- Here it is enough to make sure that two concrete buffers with the
+  -- same priority are ready! Here we only test the proper index selection
+  -- in case of equal priorities!
+  -- psl txt_buf_eq_priority_cov : cover
+  --    (txt_buf_ready(0) = '1' and txt_buf_ready(1) = '1' and
+  --     txt_buf_prio(0) = txt_buf_prio(1))
+  --    report "Selected Buffer index changed while buffer selected";
+  --
+  -- Change of buffer from Ready to not Ready but not due to lock (e.g.
+  --  set abort). Again one buffer is enough!
+  -- psl buf_ready_to_not_ready_cov : cover
+  --    {txt_buf_ready(0) = '1' and select_buf_index = 0 and 
+  --     txt_hw_cmd.lock = '0'; txt_buf_ready(0) = '0'}
+  --    report "Buffer became non-ready but not due to lock command"; 
+  --
+  -- psl txt_buf_all_ready_cov : cover
+  --    (txt_buf_ready(0) = '1' and txt_buf_ready(1) = '1' and
+  --     txt_buf_ready(2) = '1' and txt_buf_ready(3) = '1')
+  --    report "All TXT Buffers ready";
+  --
+  -- psl txt_buf_change_cov : cover
+  --    (txtb_changed = '1' and txt_hw_cmd.lock = '1')
+  --    report "TX Buffer changed between two frames";
+  --
+  -- psl txt_buf_sim_chng_and_lock_cov : cover
+  --    (select_index_changed = '1' and txt_hw_cmd.lock = '1');
+
+  -----------------------------------------------------------------------------
+  -- Assertions
+  -----------------------------------------------------------------------------
+  -- When TXT Buffer is not ready for more than one cycle, LOCK command might
+  -- not occur. If it is not ready for one clock cycle, it might still be
+  -- due to set abort and LOCK command applied simultaneously. This is OK.
+  -- But as soon as buffer is not ready for second cycle, LOCK command can't
+  -- be active!
+  --
+  -- psl txtb_no_lock_when_not_ready_asrt : assert never
+  --   {tran_frame_valid_out = '0';
+  --    tran_frame_valid_out = '0' and txt_hw_cmd.lock = '1'}
+  --   report "NO TXT Buffer ready and lock occurs!" severity error;
+  -----------------------------------------------------------------------------
 end architecture;
