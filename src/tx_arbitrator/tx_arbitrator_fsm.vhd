@@ -291,20 +291,13 @@ begin
         store_last_txtb_index   <= '1';
 
     ------------------------------------------------------------------------
-    -- Keep the arbitrator in selection of the lowest word as
-    -- long as there is no buffer with valid frame.
-    -- If Selected buffer changes, restart the selection.
+    -- Restart the selection if one of following occurs:
+    --  1. Selected Buffer changed.
+    --  2. There is not buffer marked as ready -> Hold in not selected!
     ------------------------------------------------------------------------
-    elsif ((select_buf_avail = '0')) then
+    elsif (select_buf_avail = '0' or select_index_changed = '1') then
         load_ts_lw_addr         <= '1';
         frame_valid_com_clear   <= '1';
-
-    ------------------------------------------------------------------------
-    -- Selected buffer index on the output of priority decoder has changed
-    -- during selection. Restart the selection!
-    ------------------------------------------------------------------------
-    elsif (select_index_changed = '1') then
-        load_ts_lw_addr         <= '1';
 
     else
   
