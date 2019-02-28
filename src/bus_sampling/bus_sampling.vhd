@@ -566,56 +566,24 @@ begin
     ----------------------------------------------------------------------------
     -- Sampling of bus value
     ----------------------------------------------------------------------------
-    sample_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            prev_Sample           <=  RECESSIVE;
-
-        elsif rising_edge(clk_sys) then
-
-            if (drv_ena = CTU_CAN_ENABLED) then
-                case sp_control is
-
-                ----------------------------------------------------------------
-                -- Sampling with Nominal Bit Time 
-                -- (normal CAN, transceiver, receiver)
-                --
-                -- Tripple sampling option selects the majority from last 
-                -- three sampled values
-                ----------------------------------------------------------------
-                when NOMINAL_SAMPLE =>
-                    if (sample_nbt = '1') then
-                        prev_Sample <= data_rx_nbt;
-                    end if;
-
-                ----------------------------------------------------------------
-                -- Sampling with Data Bit Time (CAN FD, reciever).
-                ----------------------------------------------------------------
-                when DATA_SAMPLE =>
-                    if (sample_dbt = '1') then  
-                        prev_Sample <= CAN_rx_i;
-                    end if;
-
-                ----------------------------------------------------------------
-                -- Sampling with Secondary sampling point.
-                -- (CAN FD, transciever)
-                ----------------------------------------------------------------
-                when SECONDARY_SAMPLE =>
-                    if (sample_sec = '1') then
-                        prev_Sample <= CAN_rx_i;
-                    end if; 
-
-                 when others =>
-                    prev_Sample <= prev_Sample;
-                end case;
-
-            end if;
-        end if;
-    end process sample_proc;
-
-
-    -- Propagating sampled data to CAN Core
-    data_rx            <= prev_Sample;
+    sample_mux_comp : sample_mux
+    generic map(
+        reset_polarity         => reset_polarity,
+        pipeline_sampled_data  => true
+    )
+    port map(
+        clk_sys                => clk_sys,
+        res_n                  => res_n, 
+        drv_ena                => drv_ena,
+        sp_control             => sp_control,
+        sample_nbt             => sample_nbt,
+        sample_dbt             => sample_dbt,
+        sample_sec             => sample_sec,
+        data_rx_nbt            => data_rx_nbt,
+        can_rx_i               => can_rx_i,
+        prev_sample            => prev_sample,
+        data_rx                => data_rx
+    );
 
     --Output data propagation
     CAN_tx             <= data_tx;

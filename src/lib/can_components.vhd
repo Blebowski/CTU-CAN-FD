@@ -820,6 +820,26 @@ package can_components is
         );
     end component;
 
+    component sample_mux is
+    generic(
+        constant reset_polarity         :     std_logic;
+        constant pipeline_sampled_data  :     boolean := true
+    );
+    port(
+        signal clk_sys                  :in   std_logic;
+        signal res_n                    :in   std_logic;       
+        signal drv_ena                  :in   std_logic;
+        signal sp_control               :in   std_logic_vector(1 downto 0);
+        signal sample_nbt               :in   std_logic;
+        signal sample_dbt               :in   std_logic;
+        signal sample_sec               :in   std_logic;
+        signal data_rx_nbt              :in   std_logic;
+        signal can_rx_i                 :in   std_logic;
+        signal prev_sample              :out  std_logic;
+        signal data_rx                  :out  std_logic
+    );
+    end component sample_mux;
+
     ----------------------------------------------------------------------------
     -- Event Logger module
     ----------------------------------------------------------------------------
