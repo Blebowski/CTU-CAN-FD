@@ -804,7 +804,8 @@ begin
 
     bus_sampling_comp : bus_sampling
     generic map (
-        use_Sync             => use_sync
+        use_Sync             => use_sync,
+        reset_polarity       => ACT_RESET 
     )
     port map(
         clk_sys              => clk_sys,
