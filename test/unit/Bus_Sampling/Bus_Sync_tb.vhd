@@ -151,7 +151,8 @@ begin
 
     bus_sampling_comp : bus_sampling
     GENERIC map(
-        use_Sync              =>  true
+        use_Sync              =>  true,
+        reset_polarity        => '0'
     )
     PORT map(
         clk_sys                =>  clk_sys,

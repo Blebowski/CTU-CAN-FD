@@ -117,7 +117,10 @@ entity bus_sampling is
         -- Turn off only when Synthetizer puts synchronisation chain automati-
         -- cally on the output pins! Otherwise metastability issues will occur!
         ------------------------------------------------------------------------
-        constant use_Sync               :     boolean := false 
+        constant use_Sync               :     boolean := false;
+        
+        -- Reset polarity
+        constant reset_polarity         :     std_logic := '0'
     );  
     PORT(
         ------------------------------------------------------------------------
@@ -266,7 +269,7 @@ architecture rtl of bus_sampling is
 
     -- Delayed TX Data from TX Data shift register at position of secondary
     -- sampling point.
-    signal tx_data_delayed           :      std_logic;
+    signal data_tx_delayed           :      std_logic;
 
     -- Shift Register for generating secondary sampling signal
     signal sample_sec_shift          :     std_logic_vector
@@ -466,7 +469,7 @@ begin
         write             => sample_dbt,
         read              => sample_sec,
         data_in           => data_tx,
-        data_out          => tx_data_delayed
+        data_out          => data_tx_delayed
     );
 
 
@@ -537,6 +540,28 @@ begin
     data_rx_nbt <= CAN_rx_trs_majority when (drv_sam = TSM_ENABLE) else
                    CAN_rx_i;
 
+    ---------------------------------------------------------------------------
+    -- Bit error detector
+    ---------------------------------------------------------------------------
+    bit_errror_detector_comp : bit_errror_detector
+    generic map(
+         reset_polarity  => reset_polarity
+    )
+    port map(
+        clk_sys             => clk_sys,
+        res_n               => res_n,       
+        bit_err_enable      => bit_err_enable,
+        drv_ena             => drv_ena,
+        sp_control          => sp_control,
+        sample_nbt          => sample_nbt,
+        sample_dbt          => sample_dbt,
+        sample_sec          => sample_sec,
+        data_tx             => data_tx,
+        data_tx_delayed     => data_tx_delayed,
+        data_rx_nbt         => data_rx_nbt,
+        can_rx_i            => can_rx_i,
+        bit_error           => bit_Error_reg
+        );
 
     ----------------------------------------------------------------------------
     -- Sampling of bus value
@@ -587,80 +612,6 @@ begin
             end if;
         end if;
     end process sample_proc;
-
-    
-    ----------------------------------------------------------------------------
-    -- Bit Error detection process
-    ----------------------------------------------------------------------------
-    bit_err_detect_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = ACT_RESET) then
-            bit_Error_reg         <=  '0';
-
-        elsif rising_edge(clk_sys) then
-
-            if (drv_ena = CTU_CAN_ENABLED and bit_err_enable = '1') then
-                case sp_control is
-
-                ----------------------------------------------------------------
-                -- Sampling with nominal bit time 
-                -- (normal CAN, transciever, reciever)
-                ----------------------------------------------------------------
-                when NOMINAL_SAMPLE =>
-                    if (sample_nbt = '1') then
-
-                        -- If TX data are equal to RX Data -> No problem.
-                        if (data_rx_nbt = data_tx) then 
-                            bit_Error_reg <= '0';
-                        else
-                            bit_Error_reg <= '1';
-                        end if;
-
-                    end if;
-
-                ----------------------------------------------------------------
-                -- Sampling with data bit time (CAN FD, reciever)
-                ----------------------------------------------------------------
-                when DATA_SAMPLE =>
-                    if (sample_dbt = '1') then 
-
-                        --Bit Error detection when sampling
-                        if (CAN_rx_i = data_tx) then 
-                            bit_Error_reg <= '0';
-                        else
-                            bit_Error_reg <= '1';
-                        end if; 
-                    end if;
-
-                ----------------------------------------------------------------
-                -- Sampling with transciever delay compensation
-                -- (CAN FD, transciever)
-                ----------------------------------------------------------------
-                when SECONDARY_SAMPLE =>
-                    if (sample_sec = '1') then
-
-                        -- Bit Error comparison differs in this case, not actual
-                        -- transmitted bit is compared, but delayed bit is
-                        -- compared (in ssp_shift register)
-                        if (CAN_rx_i = tx_data_delayed) then
-                            bit_Error_reg <= '0';
-                        else
-                            bit_Error_reg <= '1';
-                        end if;
-                    end if; 
-                    
-                 when others =>
-
-                end case;
-
-            -- If whole Core is disabled, or Bit Error detection is disabled,
-            -- hold permanently in zero!
-            else
-                bit_Error_reg <= '0';
-            end if;
-
-        end if;  
-    end process bit_err_detect_proc;
 
 
     -- Propagating sampled data to CAN Core

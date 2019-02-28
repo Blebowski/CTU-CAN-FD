@@ -729,7 +729,8 @@ package can_components is
     ----------------------------------------------------------------------------
     component bus_sampling is
         generic (
-            use_Sync : boolean
+            use_Sync : boolean;
+            reset_polarity : std_logic
         );
         port(
             signal clk_sys              : in  std_logic;
@@ -841,6 +842,27 @@ package can_components is
             signal log_read_pointer     : out std_logic_vector(7 downto 0);
             signal log_size             : out std_logic_vector(7 downto 0);
             signal log_state_out        : out logger_state_type
+        );
+    end component;
+    
+    component bit_errror_detector is
+    generic(
+        constant reset_polarity         :     std_logic
+    );
+    port(
+        signal clk_sys                  :in   std_logic;
+        signal res_n                    :in   std_logic;       
+        signal bit_err_enable           :in   std_logic;
+        signal drv_ena                  :in   std_logic;
+        signal sp_control               :in   std_logic_vector(1 downto 0);
+        signal sample_nbt               :in   std_logic;
+        signal sample_dbt               :in   std_logic;
+        signal sample_sec               :in   std_logic;
+        signal data_tx                  :in   std_logic;
+        signal data_tx_delayed          :in   std_logic;
+        signal data_rx_nbt              :in   std_logic;
+        signal can_rx_i                 :in   std_logic;
+        signal bit_error                :out  std_logic
         );
     end component;
 
