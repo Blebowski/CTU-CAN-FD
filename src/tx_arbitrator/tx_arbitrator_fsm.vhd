@@ -346,7 +346,6 @@ begin
 
         end case;
       end if;
-    
   end process;
 
   ------------------------------------------------------------------------------
@@ -355,8 +354,8 @@ begin
   -- psl default clock is rising_edge(clk_sys);
   --
   -- psl txt_buf_wait_till_timestamp_cov : cover
-  --    (tx_arb_fsm = arb_sel_ffw and fsm_wait_state = false and
-  --     timestamp_valid = '1')
+  --    (tx_arb_fsm = arb_sel_upp_ts and fsm_wait_state = false and
+  --     timestamp_valid = '0')
   --    report "TXT Buffer waiting for Timestamp to reach TX Time";
 
 end architecture;
