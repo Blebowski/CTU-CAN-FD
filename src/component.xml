@@ -543,6 +543,12 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>bus_sampling/bit_error_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>bus_sampling/bus_sampling.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -550,6 +556,12 @@
 
       <spirit:file>
         <spirit:name>bus_sampling/data_edge_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bus_sampling/sample_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
@@ -914,6 +926,13 @@
       </spirit:file>
 
       <spirit:file>
+        <spirit:name>bus_sampling/bit_error_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
         <spirit:name>bus_sampling/bus_sampling.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
@@ -922,6 +941,13 @@
 
       <spirit:file>
         <spirit:name>bus_sampling/data_edge_detector.vhd</spirit:name>
+        <spirit:fileType>vhdlSource</spirit:fileType>
+        <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
+        <spirit:logicalName>xil_defaultlib</spirit:logicalName>
+      </spirit:file>
+
+      <spirit:file>
+        <spirit:name>bus_sampling/sample_mux.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
