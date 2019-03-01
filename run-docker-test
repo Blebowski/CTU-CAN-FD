@@ -13,6 +13,8 @@ if [ -d /build ]; then
     export LC_ALL=C.UTF-8
     export LANG=C.UTF-8
     export PYTHONUNBUFFERED=1
+    export HOME=$(mktemp -d /tmp/home.XXXXX)
+
     cd /build/test
     if [ $# -gt 0 ]; then
         exec "$@"
@@ -20,6 +22,8 @@ if [ -d /build ]; then
         exec bash
     fi
 else
-    docker run --rm -ti -v $PWD:/build mjerabek/ghdl:upstream-gcc /build/run-docker-test "$@"
+    d="$(realpath "$(dirname "$0")")"
+    #"
+    docker run --rm -ti -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v "$d:/build" --user $(id -u):$(id -g) registry.gitlab.com/canfd/server-tools/ghdl:gtkwave /build/run-docker-test "$@"
 fi
 
