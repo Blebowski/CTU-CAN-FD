@@ -1,4 +1,4 @@
-image: mjerabek/ghdl:upstream-gcc
+image: registry.gitlab.com/canfd/server-tools/ghdl
 before_script:
     - "export PATH=/opt/ghdl/bin:$PATH"
     - export LC_ALL=C.UTF-8
@@ -66,7 +66,7 @@ build_doc:
 build_linux_driver:
     stage: build
     only: *only
-    image: hathi.duckdns.org/user/ctucanfd_drvtest
+    image: registry.gitlab.com/canfd/server-tools/ctucanfd_drvtest
     script:
         - cd driver/linux
         - "make -j`nproc` KDIR=/linux/build"
