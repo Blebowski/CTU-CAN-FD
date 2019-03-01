@@ -48,11 +48,8 @@ build_driver:
 
 build_doc:
     stage: build
+    only: *only
     image: registry.gitlab.com/canfd/server-tools/lyx
-    only:
-        - master
-        - tags
-        - web # debug only!
     script:
         - export LC_ALL=en_US.UTF-8
         - export LANG=en_US.UTF-8
