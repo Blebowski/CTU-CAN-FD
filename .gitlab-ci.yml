@@ -14,13 +14,16 @@ stages:
 check_component:
     stage: precheck
     script:
-        - mv src/component.xml src/component.xml-orig
         - scripts/gen_vivado_component.py
-        - diff -u src/component.xml-orig src/component.xml || (echo "Vivado component file is not up-to-date. Either run scripts/gen_vivado_component.py or download the file from this job's artifacts."; exit 1)
+        - cd scripts && ./update_reg_map
+        - git diff --exit-code || (echo "Vivado component file or register map products are not up-to-date. Either run scripts/gen_vivado_component.py and scripts/update_reg_map or download the files from this job's artifacts."; exit 1)
     artifacts:
         expire_in: 1 week
         paths:
             - src/component.xml
+            - doc/core/registerMap.lyx
+            - driver/ctu_can_fd_regs.h
+            - src/lib/can_fd_register_map.vhd
 
 build_ip_and_tests:
     stage: build
@@ -122,3 +125,6 @@ pages:
     artifacts:
         paths:
             - public
+
+variables:
+    GIT_SUBMODULE_STRATEGY: recursive
