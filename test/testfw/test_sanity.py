@@ -57,7 +57,6 @@ class SanityTests(TestsBase):
         # TODO: wave
         tb = self.lib.get_test_benches('*tb_sanity')[0]
         default = self.config['default']
-        self.add_modelsim_gui_file(tb, default, 'sanity')
         for name, cfg in self.config['tests'].items():
             if 'wave' in cfg:
                 log.warn('"wave" in sanity test config {} is ignored' +
@@ -92,4 +91,5 @@ class SanityTests(TestsBase):
             else:
                 tb.add_config(name, generics=generics)	
 
-            return True
+        self.add_modelsim_gui_file(tb, default, 'sanity')
+        return True
