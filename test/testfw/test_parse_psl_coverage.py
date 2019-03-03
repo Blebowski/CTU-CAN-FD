@@ -7,6 +7,8 @@ from os.path import join, abspath
 from pathlib import Path
 import json
 from yattag import Doc
+from typing import Tuple
+
 
 test_dir = Path(Path(abspath(__file__)).parent).parent
 build_dir = os.path.join(str(test_dir.absolute()), "build")
@@ -19,16 +21,14 @@ dut_top = " "
 log = logging.getLogger(__name__)
 
 
-def merge_psl_coverage_files(out_file, in_file_prefix):
+def merge_psl_coverage_files(out_file: str, in_file_prefix: str) -> None:
 	"""
 	Merge PSL coverage details from multiple files to single file
 	"""
-	if(out_file.startswith(in_file_prefix)):
-		log.error("File name for merging should not have the same prefix as merged files")
-		system.exit(0)
+	if (out_file.startswith(in_file_prefix)):
+		raise ValueError("File name for merging should not have the same prefix as merged files")
 
 	json_out_path = os.path.join(func_cov_dir, out_file)
-	json_out_file = open(json_out_path, 'w')
 	json_out_list = []
 	for filename in os.listdir(psl_dir):
 		if (not (filename.startswith(in_file_prefix) and \
@@ -37,8 +37,8 @@ def merge_psl_coverage_files(out_file, in_file_prefix):
 
 		in_filename = os.path.join(psl_dir, filename)
 		print("Merging JSON PSL coverage from: {}\n".format(in_filename))
-		json_in_file = open(in_filename, 'r')
-		json_obj = json.load(json_in_file)
+		with  open(in_filename, 'r') as json_in_file:
+			json_obj = json.load(json_in_file)
 
 		# Add test name to each PSL point
 		for psl_point in json_obj["details"]:
@@ -46,9 +46,8 @@ def merge_psl_coverage_files(out_file, in_file_prefix):
 
 		json_out_list.extend(json_obj["details"])
 
-	json_str = json.dumps(json_out_list, indent=1)
-	json_out_file.write(json_str)
-	json_out_file.close()
+	with open(json_out_path, 'w') as json_out_file:
+		json.dump(json_out_list, json_out_file, indent=1)
 
 
 def collapse_psl_coverage_files(non_collapsed):
@@ -112,7 +111,7 @@ def collapse_psl_coverage_files(non_collapsed):
 	return collapsed
 
 
-def get_collapsed_file_name(psl_point):
+def get_collapsed_file_name(psl_point) -> str:
 	"""
 	Create unique file name for collapsed PSL points
 	"""
@@ -126,7 +125,7 @@ def get_collapsed_file_name(psl_point):
 	return file_name
 
 
-def load_json_psl_coverage(filename):
+def load_json_psl_coverage(filename: str):
 	"""
 	Load PSL Coverage JSON file to JSON object.
 	"""
@@ -134,8 +133,8 @@ def load_json_psl_coverage(filename):
 	
 	# Read JSON string from file
 	log.info("Loading JSON PSL output: {}".format(psl_cov_path))
-	json_file = open(psl_cov_path, 'r')
-	return json.load(json_file)
+	with open(psl_cov_path, 'r') as json_file:
+		return json.load(json_file)
 
 
 def split_json_coverage_by_file(json):
@@ -167,7 +166,7 @@ def add_html_table_header(doc, tag, text, headers, back_color="White"):
 				text(header)
 
 
-def calc_coverage_results(psl_points, psl_type):
+def calc_coverage_results(psl_points, psl_type) -> Tuple[int,int]:
 	"""
 	Calculate coverage results from list of PSL points in JSON format.
 	"""
@@ -181,16 +180,15 @@ def calc_coverage_results(psl_points, psl_type):
 			ok += 1
 		else:
 			nok +=1
-	return [ok, nok]
+	return ok, nok
 
 
-def calc_coverage_color(coverage):
+def calc_coverage_color(coverage: float) -> str:
 	"""
 	Return color based on coverage result.
 	"""
 	if (coverage < 0 or coverage > 100):
-		log("Invalid coverage input should be between 0 - 100 %")
-		return
+		raise ValueError("Invalid coverage input should be between 0 - 100 %")
 
 	if (coverage > 90):
 		return "Lime"
@@ -202,10 +200,10 @@ def calc_coverage_color(coverage):
 		return "Red"
 
 
-def print_cov_cell_percentage(doc, tag, text, psl_points, coverage_type, merge_abs_vals):
+def print_cov_cell_percentage(doc, tag, text, psl_points, coverage_type, merge_abs_vals) -> None:
 	"""
 	"""
-	[ok, nok] = calc_coverage_results(psl_points, coverage_type)
+	ok, nok = calc_coverage_results(psl_points, coverage_type)
 	summ = max(1, ok + nok)
 	percents = ok/summ * 100
 	color = calc_coverage_color(percents)
@@ -228,8 +226,8 @@ def print_cov_cell_percentage(doc, tag, text, psl_points, coverage_type, merge_a
 				text("{}%".format(percents))
 		else:
 			with tag('td', bgcolor="Silver"):
-				text("NA")	
-				
+				text("NA")
+
 
 def add_psl_html_header(doc, tag, text, filename, psl_points):
 	"""
@@ -267,7 +265,7 @@ def add_non_colapsed_psl_table_entry(doc, tag, text, psl_point, def_bg_color="Wh
 
 	"""
 	with tag('td'):
-		text(psl_point["name"].split(".")[-1])		
+		text(psl_point["name"].split(".")[-1])
 	with tag('td'):
 		text(psl_point["test"])
 	with tag('td', width="50%", style="word-break:break-all;"):
@@ -335,14 +333,13 @@ def add_psl_table_entry(doc, tag, text, psl_point, def_bg_color="White"):
 		create_psl_file_page(file_name, psl_point["colapsed_points"]);
 
 
-def create_psl_file_page(filename, psl_points):
+def create_psl_file_page(filename: str, psl_points):
 	"""
 	Create HTML file with list of PSL coverage statements.
 	"""
 	parsed_file_name = os.path.basename(filename)
 	html_cov_path = os.path.join(html_dir, 
 						"{}.html".format(parsed_file_name))
-	html_file = open(html_cov_path, 'w')
 
 	doc, tag, text = Doc().tagtext()
 
@@ -364,8 +361,8 @@ def create_psl_file_page(filename, psl_points):
 					if (psl_point["directive"] == psl_type["type"]):
 						add_psl_table_entry(doc, tag, text, psl_point)
 
-	html_file.write(doc.getvalue())
-	html_file.close()
+	with open(html_cov_path, 'w', encoding='utf-8') as html_file:
+		html_file.write(doc.getvalue())
 
 
 def create_psl_file_refs_table(doc, tag, text, psl_by_files):
@@ -395,7 +392,6 @@ def create_psl_report(psl_by_files, psl_orig):
 		create_psl_file_page(file_name, psl_list)
 
 	html_rep_path = os.path.join(func_cov_dir, "functional_coverage_report.html")
-	html_file = open(html_rep_path, 'w')
 
 	doc, tag, text = Doc().tagtext()
 
@@ -408,8 +404,8 @@ def create_psl_report(psl_by_files, psl_orig):
 			add_html_table_header(doc, tag, text, header, back_color="Peru")
 			create_psl_file_refs_table(doc, tag, text, psl_by_files)
 	
-	html_file.write(doc.getvalue())
-	html_file.close()
+	with open(html_rep_path, 'w', encoding='utf-8') as html_file:
+		html_file.write(doc.getvalue())
 
 
 if __name__ == "__main__":

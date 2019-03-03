@@ -114,8 +114,8 @@ def add_common_sources(lib, ui) -> None:
 
 
 def get_common_modelsim_init_files() -> List[str]:
-    modelsim_init_files = '../lib/test_lib.tcl,modelsim_init.tcl'
-    modelsim_init_files = [str(d/x) for x in modelsim_init_files.split(',')]
+    modelsim_init_files = ['../lib/test_lib.tcl', 'modelsim_init.tcl']
+    modelsim_init_files = [str(d/x) for x in modelsim_init_files]
     return modelsim_init_files
 
 def get_common_sim_flags() -> List[str]:
@@ -134,10 +134,10 @@ def add_flags(ui, lib, build) -> None:
     lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
 
     elab_flags = ["-Wl,-lgcov"]
-    elab_flags.append("-Wl,--coverage");
-    elab_flags.append("-Wl,-no-pie");
-    elab_flags.append("-fpsl");
-    ui.set_sim_option("ghdl.elab_flags",elab_flags)
+    elab_flags.append("-Wl,--coverage")
+    elab_flags.append("-Wl,-no-pie")
+    elab_flags.append("-fpsl")
+    ui.set_sim_option("ghdl.elab_flags", elab_flags)
 
     # Global simulation flags
     sim_flags = get_common_sim_flags()

@@ -89,7 +89,7 @@ class SanityTests(TestsBase):
                 psl_opts = self.create_psl_cov_file_opt(name)
                 tb.add_config(name, generics=generics, sim_options=psl_opts)
             else:
-                tb.add_config(name, generics=generics)	
+                tb.add_config(name, generics=generics)
 
         self.add_modelsim_gui_file(tb, default, 'sanity')
         return True
