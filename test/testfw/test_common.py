@@ -7,6 +7,7 @@ from pathlib import Path
 from jinja2 import Environment, PackageLoader
 from pprint import pprint
 import random
+from .gtkwave import tcl2gtkw
 from typing import List
 
 __all__ = ['add_sources', 'add_common_sources', 'get_common_modelsim_init_files',
@@ -20,12 +21,13 @@ jinja_env = Environment(loader=PackageLoader(__package__, 'data'), autoescape=Fa
 
 
 class TestsBase:
-    def __init__(self, ui, lib, config, build, base):
+    def __init__(self, ui, lib, config, build, base, create_ghws: bool):
         self.ui = ui
         self.lib = lib
         self.config = config
         self.build = build
         self.base = base
+        self.create_ghws = create_ghws
 
     @property
     def jinja_env(self):
@@ -41,7 +43,9 @@ class TestsBase:
 
         raise NotImplementedError()
 
-    def add_modelsim_gui_file(self, tb, cfg, name) -> None:
+    def add_modelsim_gui_file(self, tb, cfg, name, tcl_init_files: List[str] = None) -> None:
+        if tcl_init_files is None:
+            tcl_init_files = get_common_modelsim_init_files()
         if 'wave' in cfg:
             tcl = self.base / cfg['wave']
             if not tcl.exists():
@@ -60,7 +64,39 @@ class TestsBase:
                     run_simulation
                     get_test_results
                     '''.format(name)), file=f)
+
         tb.set_sim_option("modelsim.init_file.gui", str(tcl))
+        if 'gtkw' in cfg:
+            gtkw = self.base / cfg['gtkw']
+            if not gtkw.exists():
+                log.warn('GTKW wave file {} not found'.format(cfg['gtkw']))
+        else:
+            gtkw = tcl.with_suffix('.gtkw')
+            tclfname = tcl.relative_to(self.base)
+            ghw_file = self.build / (tb.name+'.elab.ghw')
+            # We need the GHW file for TCL -> GTKW conversion. If we are
+            # generating them, there is no sense in actually doing
+            # the conversion now.
+            if self.create_ghws:
+                log.info('Will generate {}'.format(ghw_file))
+                sim_flags = get_common_sim_flags()
+                sim_flags += ['--wave=' + str(ghw_file)]
+                tb.set_sim_option("ghdl.sim_flags", sim_flags)
+            else:
+                if not ghw_file.exists():
+                    log.warning("Cannot convert wave file {} to gtkw, because"
+                                " GHW file is missing. Run test with "
+                                "--create-ghws.".format(tclfname))
+                    gtkw = None
+                else:
+                    log.info('Converting wave file {} to gtkw ...'.format(tclfname))
+                    tcl2gtkw(str(tcl), tcl_init_files, str(gtkw), ghw_file)
+
+        if gtkw:
+            try:
+                tb.set_sim_option("ghdl.gtkw_file", str(gtkw))
+            except ValueError:
+                log.warning('Setting GTKW file per test is not supported in this VUnit version.')
 
 def add_sources(lib, patterns) -> None:
     for pattern in patterns:
@@ -78,9 +114,12 @@ def add_common_sources(lib, ui) -> None:
 
 
 def get_common_modelsim_init_files() -> List[str]:
-    modelsim_init_files = '../lib/test_lib.tcl,modelsim_init.tcl'
-    modelsim_init_files = [str(d/x) for x in modelsim_init_files.split(',')]
+    modelsim_init_files = ['../lib/test_lib.tcl', 'modelsim_init.tcl']
+    modelsim_init_files = [str(d/x) for x in modelsim_init_files]
     return modelsim_init_files
+
+def get_common_sim_flags() -> List[str]:
+    return ["--ieee-asserts=disable-at-0"]
 
 def add_flags(ui, lib, build) -> None:
     unit_tests = lib.get_test_benches('*_unit_test', allow_empty=True)
@@ -95,13 +134,13 @@ def add_flags(ui, lib, build) -> None:
     lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
 
     elab_flags = ["-Wl,-lgcov"]
-    elab_flags.append("-Wl,--coverage");
-    elab_flags.append("-Wl,-no-pie");
-    elab_flags.append("-fpsl");
-    ui.set_sim_option("ghdl.elab_flags",elab_flags)
+    elab_flags.append("-Wl,--coverage")
+    elab_flags.append("-Wl,-no-pie")
+    elab_flags.append("-fpsl")
+    ui.set_sim_option("ghdl.elab_flags", elab_flags)
 
     # Global simulation flags
-    sim_flags = ["--ieee-asserts=disable-at-0"]
+    sim_flags = get_common_sim_flags()
     ui.set_sim_option("ghdl.sim_flags", sim_flags)
 
     modelsim_init_files = get_common_modelsim_init_files()

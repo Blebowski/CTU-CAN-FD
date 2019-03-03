@@ -2,3 +2,5 @@ vunit_hdl
 pyvcd
 attr
 jinja2
+tkinter
+parsy
