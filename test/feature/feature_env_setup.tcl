@@ -59,7 +59,7 @@ quietly set PROTOCOL_CONTROL  "protocol_control_comp"
 
 #Add common waves for each test entity
 add_test_status_waves
-add wave error_ctr
+add wave $TCOMP/error_ctr
 add wave -label "Name of test" $TCOMP/test_name
 
 #Add circuit specific signals
