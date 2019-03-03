@@ -36,6 +36,9 @@ class TclFuncs:
         log.debug('Sourcing '+file)
         self.tcl.eval('source "{}"'.format(file))
 
+    def eval(self, code: str):
+        self.tcl.eval(code)
+
     def finalize(self):
         pass
 
@@ -135,6 +138,8 @@ class TclFuncs:
                 i += 1
             elif a0 == '-expand':
                 o.expand = True
+            elif a0 == '-event':
+                pass
             elif a0 == '-group':
                 if o.group:
                     self.gtkw.end_group(o.group, closed=False)
@@ -165,6 +170,7 @@ def tcl2gtkw(tcl_wave, tcl_init_files: List[str], gtkw, ghw: Path):
         gtkw = GTKWSave(f)
         gtkw.zoom_markers(-27.0)
         c = TclFuncs(gtkw, hierarchy)
+        c.tcl.eval('set SILENT_SANITY "false"')  # TODO: propagate from YML config
         c.tcl.createcommand('vunit_help', lambda: None)
         for tcl in tcl_init_files:
             c.source(tcl)
