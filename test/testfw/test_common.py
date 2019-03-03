@@ -21,12 +21,13 @@ jinja_env = Environment(loader=PackageLoader(__package__, 'data'), autoescape=Fa
 
 
 class TestsBase:
-    def __init__(self, ui, lib, config, build, base):
+    def __init__(self, ui, lib, config, build, base, create_ghws: bool):
         self.ui = ui
         self.lib = lib
         self.config = config
         self.build = build
         self.base = base
+        self.create_ghws = create_ghws
 
     @property
     def jinja_env(self):
@@ -44,7 +45,7 @@ class TestsBase:
 
     def add_modelsim_gui_file(self, tb, cfg, name, tcl_init_files: List[str] = None) -> None:
         if tcl_init_files is None:
-            tcl_init_files = tb.get_sim_option("modelsim.init_files.after_load")
+            tcl_init_files = get_common_modelsim_init_files()
         if 'wave' in cfg:
             tcl = self.base / cfg['wave']
             if not tcl.exists():
@@ -72,11 +73,30 @@ class TestsBase:
         else:
             gtkw = tcl.with_suffix('.gtkw')
             tclfname = tcl.relative_to(self.base)
-            log.info('Converting wave file {} to gtkw ...'.format(tclfname))
-            tcl2gtkw(str(tcl), tcl_init_files, str(gtkw))
+            ghw_file = self.build / (tb.name+'.elab.ghw')
+            # We need the GHW file for TCL -> GTKW conversion. If we are
+            # generating them, there is no sense in actually doing
+            # the conversion now.
+            if self.create_ghws:
+                log.info('Will generate {}'.format(ghw_file))
+                sim_flags = get_common_sim_flags()
+                sim_flags += ['--wave=' + str(ghw_file)]
+                tb.set_sim_option("ghdl.sim_flags", sim_flags)
+            else:
+                if not ghw_file.exists():
+                    log.warning("Cannot convert wave file {} to gtkw, because"
+                                " GHW file is missing. Run test with "
+                                "--create-ghws.".format(tclfname))
+                    gtkw = None
+                else:
+                    log.info('Converting wave file {} to gtkw ...'.format(tclfname))
+                    tcl2gtkw(str(tcl), tcl_init_files, str(gtkw), ghw_file)
 
         if gtkw:
-            tb.set_sim_option("ghdl.gtkw_file", str(gtkw))
+            try:
+                tb.set_sim_option("ghdl.gtkw_file", str(gtkw))
+            except ValueError:
+                log.warning('Setting GTKW file per test is not supported in this VUnit version.')
 
 def add_sources(lib, patterns) -> None:
     for pattern in patterns:
@@ -98,6 +118,9 @@ def get_common_modelsim_init_files() -> List[str]:
     modelsim_init_files = [str(d/x) for x in modelsim_init_files.split(',')]
     return modelsim_init_files
 
+def get_common_sim_flags() -> List[str]:
+    return ["--ieee-asserts=disable-at-0"]
+
 def add_flags(ui, lib, build) -> None:
     unit_tests = lib.get_test_benches('*_unit_test', allow_empty=True)
     for ut in unit_tests:
@@ -117,7 +140,7 @@ def add_flags(ui, lib, build) -> None:
     ui.set_sim_option("ghdl.elab_flags",elab_flags)
 
     # Global simulation flags
-    sim_flags = ["--ieee-asserts=disable-at-0"]
+    sim_flags = get_common_sim_flags()
     ui.set_sim_option("ghdl.sim_flags", sim_flags)
 
     modelsim_init_files = get_common_modelsim_init_files()

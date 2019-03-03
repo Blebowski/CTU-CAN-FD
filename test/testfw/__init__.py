@@ -76,8 +76,10 @@ def create():
 @click.argument('vunit_args', nargs=-1)
 @click.option('--strict/--no-strict', default=True,
               help='Return non-zero if an unconfigured test was found.')
+@click.option('--create-ghws/--no-create-ghws', default=False,
+              help='Only elaborate and create basic GHW files necessary for converting TCL layout files to GTKW files for gtkwave..')
 @click.pass_obj
-def test(obj, config, strict, vunit_args):
+def test(obj, config, strict, create_ghws, vunit_args):
     """Run the tests. Configuration is passed in YAML config file.
 
     You mas pass arguments directly to VUnit by appending them at the command end.
@@ -108,6 +110,10 @@ def test(obj, config, strict, vunit_args):
     build.mkdir(exist_ok=True)
     os.chdir(str(build))
 
+    if create_ghws:
+        # discard the passed vunit_args, it does only evil
+        vunit_args = ['--elaborate']
+
     ui = create_vunit(obj, vunit_args, out_basename)
 
     lib = ui.add_library("lib")
@@ -124,7 +130,7 @@ def test(obj, config, strict, vunit_args):
     tests = []
     for cfg_key, factory in tests_classes:
         if cfg_key in config:
-            tests.append(factory(ui, lib, config[cfg_key], build, base))
+            tests.append(factory(ui, lib, config[cfg_key], build, base, create_ghws=create_ghws))
 
     if not os.path.exists(func_cov_dir):
         os.makedirs(func_cov_dir);

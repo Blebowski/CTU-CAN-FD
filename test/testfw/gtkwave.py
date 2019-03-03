@@ -4,6 +4,8 @@ from typing import List
 import logging
 import traceback
 import functools
+from pathlib import Path
+from . import ghw_parse
 
 log = logging.getLogger('gtkwave')
 
@@ -20,8 +22,9 @@ def logexc(f):
 
 
 class TclFuncs:
-    def __init__(self, gtkw: str):
+    def __init__(self, gtkw: str, hierarchy):
         self.gtkw = gtkw
+        self.hierarchy = hierarchy
 
         # set up TCL
         tcl = tkinter.Tcl()
@@ -39,9 +42,63 @@ class TclFuncs:
     def tcl_quietly(self, *args):
         return self.tcl.call(*args)
 
+    def sigtype(self, sig: str):
+        fqn = sig.replace('/', '.')
+        type = ghw_parse.find(self.hierarchy, fqn)
+        return type
+
+    def convsig(self, sig: str) -> str:
+        fqn = sig.replace('/', '.')
+        type = ghw_parse.find(self.hierarchy, fqn)
+        if ghw_parse.is_array(type):
+            range, type = ghw_parse.strip_array(type)
+            l, r = range.left, range.right
+            fqn += '({}:{})'.format(l, r)
+        fqn = 'top.' + fqn
+        return fqn.replace('(', '[').replace(')', ']')
+
+    def _add_trace(self, signal, type, *, label: str, datafmt: str, expand: bool, **kwds):
+        if ghw_parse.is_record(type):
+            with self.gtkw.group(label, closed=not expand):
+                for iname, itype in type.items.items():
+                    # do not pass label
+                    self._add_trace(signal+'/'+iname, itype, datafmt=datafmt, expand=False, label=None, **kwds)
+        else:
+            signal = self.convsig(signal)
+            self.gtkw.trace(signal, alias=label, datafmt=datafmt, **kwds)
+
+    class Opts:
+        def reset(self):
+            self.label = None
+            self.format = 'hex'
+            self.signal = None
+            self.isdivider = False
+            self.group = None
+            self.expand = False
+            self.color = None
+
+        def __init__(self):
+            self.reset()
+
     @staticmethod
-    def convsig(sig: str) -> str:
-        return 'top.' + sig.replace('/', '.').replace('(', '[').replace(')', ']')
+    def conv_color(clr: str) -> int:
+        colors = [
+            'normal',
+            'red',
+            'orange',
+            'yellow',
+            'green',
+            'blue',
+            'indigo',
+            'violet',
+            'cycle',
+        ]
+        mapping = {
+            'cyan': 'yellow'
+        }
+        clr = clr.lower()
+        clr = mapping.get(clr)
+        return colors.index(clr)
 
     @logexc
     def tcl_add(self, *args):
@@ -50,57 +107,62 @@ class TclFuncs:
             raise ValueError("Unsupported add TCL command")
         i += 1
 
-        label = None
-        format = 'hex'
-        signal = None
-        isdivider = False
-        group = None
-
+        o = self.Opts()
         while i < len(args):
             a0 = args[i]
             i += 1
             if a0 == '-label':
-                label = args[i]
+                o.label = args[i]
                 i += 1
             elif a0 == '-hexadecimal':
-                format = 'hex'
+                o.format = 'hex'
             elif a0 == '-unsigned':
-                format = 'dec'
+                o.format = 'dec'
+            elif a0 == '-decimal':
+                o.format = 'dec'
             elif a0 == '-signed':  # ????
-                format = 'signed'
+                o.format = 'signed'
             elif a0 == '-noupdate':
                 pass
+            elif a0 == '-color':
+                o.color = self.conv_color(args[i])
+                i += 1
             elif a0 == '-divider':
-                isdivider = True
+                o.isdivider = True
             elif a0 == '-height':
                 i += 1
+            elif a0 == '-expand':
+                o.expand = True
             elif a0 == '-group':
-                if group:
-                    self.gtkw.end_group(group, closed=False)
-                group = args[i]
-                self.gtkw.begin_group(group, closed=False)
+                if o.group:
+                    self.gtkw.end_group(o.group, closed=False)
+                o.group = args[i]
+                self.gtkw.begin_group(o.group, closed=False)
                 i += 1
             elif a0[0] == '-':
                 raise ValueError("Unknown TCL add wave arg " + a0)
             else:
                 signal = a0
-                if isdivider:
+                if o.isdivider:
                     self.gtkw.blank(label=signal)
                 else:
-                    self.gtkw.trace(self.convsig(signal), alias=label, datafmt=format)
-                label = None
-                format = 'hex'
-                signal = None
-                isdivider = False
-        if group:
-            self.gtkw.end_group(group)
+                    try:
+                        type = self.sigtype(signal)
+                    except KeyError as e:
+                        log.warning(e.args[0])
+                        break
+                    self._add_trace(signal, type, label=o.label, datafmt=o.format, expand=o.expand, color=o.color)
+                o.reset()
+        if o.group:
+            self.gtkw.end_group(o.group)
 
 
-def tcl2gtkw(tcl_wave, tcl_init_files: List[str], gtkw):
+def tcl2gtkw(tcl_wave, tcl_init_files: List[str], gtkw, ghw: Path):
+    hierarchy = ghw_parse.parse(ghw)
     with open(gtkw, 'wt') as f:
         gtkw = GTKWSave(f)
         gtkw.zoom_markers(-27.0)
-        c = TclFuncs(gtkw)
+        c = TclFuncs(gtkw, hierarchy)
         c.tcl.createcommand('vunit_help', lambda: None)
         for tcl in tcl_init_files:
             c.source(tcl)
