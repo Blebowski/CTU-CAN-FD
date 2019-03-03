@@ -51,8 +51,10 @@ class TclFuncs:
         fqn = sig.replace('/', '.')
         type = ghw_parse.find(self.hierarchy, fqn)
         if ghw_parse.is_array(type):
-            range, type = ghw_parse.strip_array(type)
-            l, r = range.left, range.right
+            ranges, type = ghw_parse.strip_array(type)
+            if len(ranges) > 1:
+                raise NotImplementedError("Multidimensional arrays are not supported (yet)")
+            l, r = ranges[0].left, ranges[0].right
             fqn += '({}:{})'.format(l, r)
         fqn = 'top.' + fqn
         return fqn.replace('(', '[').replace(')', ']')

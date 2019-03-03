@@ -13,6 +13,12 @@ class t_base:
     name: Optional[str] = attr.ib(default=None, kw_only=True)
 
 
+@attr.s
+class t_ref:
+    """Unresolved reference to another type."""
+    name: str = attr.ib(kw_only=True)
+
+
 class Direction(Enum):
     to = 'to'
     downto = 'downto'
@@ -23,19 +29,19 @@ class t_range:
     left: int = attr.ib(kw_only=True)
     direction: Direction = attr.ib(kw_only=True)
     right: int = attr.ib(kw_only=True)
+    range_type: t_base = attr.ib(kw_only=True, default=t_ref(name='integer'))
 
 
 @attr.s
 class t_array(t_base):
     type: t_base = attr.ib(kw_only=True)
-    range_type: t_base = attr.ib(kw_only=True)
-    range: t_range = attr.ib(kw_only=True)
+    ranges: List[t_range] = attr.ib(kw_only=True)
 
 
 @attr.s
 class t_subarray(t_base):
     type: t_array = attr.ib(kw_only=True)
-    range: t_range = attr.ib(kw_only=True)
+    ranges: List[t_range] = attr.ib(kw_only=True)
 
 
 @attr.s
@@ -66,12 +72,6 @@ class type_binding:
     @classmethod
     def create(cls, factory, *, name, **kwds) -> 'type_binding':
         return cls(name=name, type=factory(**kwds))
-
-
-@attr.s
-class t_ref:
-    """Unresolved reference to another type."""
-    name: str = attr.ib(kw_only=True)
 
 
 def tb(factory):
@@ -136,13 +136,13 @@ range = seq(list_item.tag('left'),
 
 # std_logic, std_logic_vector(1 to 2)
 Type = T_REF.desc('type')
-type_or_array = seq(Type.tag('type'),
-                    (LP >> range.tag('range') << RP)
-                    ).combine_dict(t_subarray).desc('array') | Type
-
 type_int_range = seq(Type.tag('type'),
                      ws >> _range >> ws >> range.tag('range')
                      ).combine_dict(t_number)
+type_or_array = seq(Type.tag('type'),
+                    (LP >> range.sep_by(COMMA, min=1).tag('ranges') << RP)
+                    ).combine_dict(t_subarray).desc('array') | type_int_range | Type
+
 
 # --- Record
 record_item = seq(ows >> t_name,
@@ -157,6 +157,7 @@ record = seq(_type >> ws >> t_name,
 td_rng_1 = seq(_type >> ws >> t_name <<
                ws << _is << ws << _range << ws << _rng_unconstrained).combine_dict(tb(t_base))
 
+# type natural is integer range 0 to 123
 td_rng = seq((_type | _subtype) >> ws >> t_name,
              ws >> _is >> ws >> T_REF.tag('type'),
              ws >> _range >> ws >> range.tag('range')).combine_dict(tb(t_number)) \
@@ -164,8 +165,8 @@ td_rng = seq((_type | _subtype) >> ws >> t_name,
 
 # type std_ulogic_vector is array (natural range <>) of std_ulogic;
 td_arr = seq(_type >> ws >> t_name,
-             ws >> _is >> ws >> _array >> LP >> T_REF.tag('range_type'),
-             ws >> _range >> ws >> range.tag('range'),
+             ws >> _is >> ws >> _array >> LP >> (T_REF.tag('range_type') >>
+                ws >> _range >> ws >> range).sep_by(COMMA, min=1).tag('ranges'),
              RP >> _of >> ws >> type_or_array.tag('type')).combine_dict(tb(t_array)).desc('arr')
 
 # type A is B
@@ -176,7 +177,7 @@ td_alias = seq((_type | _subtype) >> ws >> t_name,
 # subtype runner_sync_t is std_ulogic_vector (0 to 2);
 td_subarr = seq(_subtype >> ws >> t_name,
                 ws >> _is >> ws >> T_REF.tag('type'),
-                LP >> range.tag('range') << RP).combine_dict(tb(t_subarray)).desc('subarr')
+                LP >> range.sep_by(COMMA, min=1).tag('ranges') << RP).combine_dict(tb(t_subarray)).desc('subarr')
 
 # type time is range <> units ... end units;
 td_units = seq(_type >> ws >> t_name <<
@@ -260,11 +261,19 @@ if __name__ == '__main__':
     end units;'''))
 
     pprint(top.parse('subtype logger_memory_type is logger_memory_type (0 to 15);'))
-    #"""
     pprint(td_alias.parse('subtype phase_locks_t is phase_locks_unresolved_t'))
 
     pprint((type_int_range|type_or_array).parse('integer range 0 to 100'))
     pprint(top.parse('type mem_bus_arr_t is array (integer range <>) of avalon_mem_type;'))
+    #"""
+
+    # pprint(range.sep_by(COMMA, min=1).parse('integer range <>'))
+    # pprint(range.sep_by(COMMA, min=1).parse('integer range <>, integer range <>'))
+    pprint(td_arr.parse('type delay_matrix_type is array (integer range <>) of time'))
+    pprint(td_arr.parse('type delay_matrix_type is array (integer range <>, integer range <>) of time'))
+    pprint(td_subarr.parse('subtype delay_matrix_type is delay_matrix_type (1 to 4, 1 to 4)'))
+
+
     res = parse(open('aaa', encoding='latin1').read())
     @attr.s
     class w:

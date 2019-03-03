@@ -10,7 +10,7 @@ from pprint import pprint
 import re
 import pickle
 from functools import wraps
-from typing import Tuple
+from typing import Tuple, List
 import hashlib
 
 GHWDUMP = 'ghwdump'
@@ -127,11 +127,11 @@ def is_record(type) -> bool:
     return isinstance(type, types.t_record)
 
 
-def strip_array(type) -> Tuple[types.t_range, types.t_base]:
-    range = type.range
+def strip_array(type) -> Tuple[List[types.t_range], types.t_base]:
+    ranges = type.ranges
     while isinstance(type, types.t_subarray):
         type = type.type
-    return range, type
+    return ranges, type
 
 
 @cached
