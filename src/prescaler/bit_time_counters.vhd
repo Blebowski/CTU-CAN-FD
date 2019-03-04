@@ -191,7 +191,7 @@ begin
         if (res_n = reset_polarity) then
             bt_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (tq_edge_i = '1' and drv_ena = '1') then
+            if ((tq_edge_i = '1' and drv_ena = '1') or bt_reset = '1') then
                 bt_counter_q <= bt_counter_d;
             end if;
         end if;
