@@ -122,6 +122,8 @@ architecture presc_unit_test of CAN_test is
 
     signal drv_sjw_nbt          :   std_logic_vector (4 downto 0) := "00000";
     signal drv_sjw_dbt          :   std_logic_vector (4 downto 0) := "00000";
+   
+    signal drv_ena              :   std_logic := '0';
 
     ---------------------------------------
     --Internal test signals and constants
@@ -440,12 +442,14 @@ begin
     sample_nbt       <= sample_nbt_i(2);
     sample_nbt_del_1 <= sample_nbt_i(1);
     sample_nbt_del_2 <= sample_nbt_i(0);
+    
     sample_dbt       <= sample_dbt_i(2);
     sample_dbt_del_1 <= sample_dbt_i(1);
     sample_dbt_del_2 <= sample_dbt_i(0);
 
     sync_nbt        <= sync_nbt_i(1);
     sync_nbt_del_1  <= sync_nbt_i(0);
+
     sync_dbt        <= sync_dbt_i(1);
     sync_dbt_del_1  <= sync_dbt_i(0);
 
@@ -459,6 +463,8 @@ begin
     drv_bus(DRV_PH2_DBT_HIGH downto DRV_PH2_DBT_LOW)  <= drv_ph2_dbt;
     drv_bus(DRV_SJW_HIGH downto DRV_SJW_LOW)          <= drv_sjw_nbt;
     drv_bus(DRV_SJW_DBT_HIGH downto DRV_SJW_DBT_LOW)  <= drv_sjw_dbt;
+    
+    drv_bus(DRV_ENA_INDEX)  <= drv_ena;
 
 
     ----------------------------------------------------------------------------
@@ -537,7 +543,7 @@ begin
     -- Checking that two consecutive sync or sample signals are not present!!
     ----------------------------------------------------------------------------
     trig_coherency_proc : process
-        variable was_sync : boolean := false;
+        variable was_sync : boolean := true;
     begin
         wait until falling_edge(clk_sys) and
                     (sync_nbt = '1' or sample_nbt = '1' or
@@ -546,13 +552,17 @@ begin
         if (sync_nbt = '1' or sync_dbt = '1') then
 
             -- Here error occures due to two consecutive sync signals
-            check_false(was_sync, "Two consecutive sync signals!");
+            if (was_sync) then
+                error("Two consecutive sync signals!");
+            end if;
             was_sync := true;
 
         elsif (sample_nbt = '1' or sample_dbt = '1') then
 
             -- Here error occures due to two consecutive sample signals
-            check(was_sync, "Two consecutive sample signals!");
+            if (not was_sync) then
+                error("Two consecutive sample signals!");
+            end if;
             was_sync := false;
         end if;
     end process;
@@ -566,8 +576,9 @@ begin
         wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
 
         wait for 15 ns; -- One and half clock cycle
-        check(sync_nbt_del_1 = '1' or sync_dbt_del_1 = '1',
-              "Sync sequnce not complete, delay 1 CLK signal missing!");
+        if (sync_nbt_del_1 = '0' and sync_dbt_del_1 = '0') then
+            error("Sync sequnce not complete, delay 1 CLK signal missing!");
+        end if;
     end process;
 
 
@@ -581,12 +592,14 @@ begin
                     (sample_nbt = '1' or sample_dbt = '1');
 
         wait until falling_edge(clk_sys);
-        check(sample_nbt_del_1 = '1' or sample_dbt_del_1 = '1',
-              "Sample sequnce not complete, delay 1 CLK signal missing!");
-
+            if (sample_nbt_del_1 = '0' and sample_dbt_del_1 = '0') then
+               error("Sample sequnce not complete, delay 1 CLK signal missing!");
+            end if;
+           
         wait until falling_edge(clk_sys);
-        check(sample_nbt_del_2 = '1' or sample_dbt_del_2 = '1',
-              "Sample sequnce not complete, delay 2 CLK signal missing!");
+            if (sample_nbt_del_2 = '0' and sample_dbt_del_2 = '0') then
+              error("Sample sequnce not complete, delay 2 CLK signal missing!");
+            end if;
     end process;
 
 
@@ -688,8 +701,7 @@ begin
 
         reset_test(res_n, status, run, main_err_ctr);
         info("Restarted Prescaler unit test");
-        print_test_info(iterations, log_level, error_beh,  error_tol);
-
+        print_test_info(iterations, log_level, error_beh, error_tol);
 
         ------------------------------------------------------------------------
         -- Main test loop
@@ -697,21 +709,55 @@ begin
         info("Starting Prescaler unit main loop");
 
         while (loop_ctr < iterations or exit_imm) loop
+            
+            info("*************************************************");
             info("Starting loop nr " & integer'image(loop_ctr));
+            info("*************************************************");
 
             -- Generates random bit time settings for new bits.
-            wait until bt_FSM_out = tseg2;
-            wait until bt_FSM_out = tseg1;
             gen_bit_time_setting(rand_ctr, setting);
 
+            drv_ena <= '0';
+            wait for 100 ns;
+            drv_ena <= '1';
+            wait for 100 ns;
+
+            wait until bt_FSM_out = tseg2;
+            wait until bt_FSM_out = tseg1;
+
+            info("*************************************************");
+            info("*************** BIT TIME SETTINGS ***************");
+            info("*************************************************");
+            
+            info("BRP Data   : " & integer'image(to_integer(unsigned(drv_tq_dbt))));
+            info("TSEG1 Data : " & integer'image(to_integer(
+                             unsigned(drv_ph1_dbt) +
+                             unsigned(drv_prs_dbt) + 1)));
+            info("TSEG2 Data : " & integer'image(to_integer(unsigned(drv_ph2_dbt))));
+            info("SJW Data   : " & integer'image(to_integer(unsigned(drv_sjw_dbt))));
+            
+            info("BRP Nominal   : " & integer'image(to_integer(unsigned(drv_tq_nbt))));
+            info("TSEG1 Nominal : " & integer'image(to_integer(
+                               unsigned(drv_ph1_nbt) +
+                               unsigned(drv_prs_nbt) + 1)));
+            info("TSEG2 Nominal : " & integer'image(to_integer(unsigned(drv_ph2_nbt))));
+            info("SJW Nominal   : " & integer'image(to_integer(unsigned(drv_sjw_nbt))));
+        
             -- Sets random sampling
             rand_real_v(rand_ctr, rand_real_value);
             if (rand_real_value > 0.5) then
                 sp_control <= DATA_SAMPLE;
+                info("Basic bit rate: DATA");
             else
                 sp_control <= NOMINAL_SAMPLE;
+                info("Basic bit rate: NOMINAL");
             end if;
-
+            
+            info("************************************************");
+            info("************************************************");
+            
+            wait for 0 ns;
+            
             -- After applying the Bit time settings the first bit can be fucked
             -- up due to register updates. Wait for a bit which starts with
             -- clean new timing set properly (tq_edge update takes one clock
@@ -726,7 +772,11 @@ begin
             -- Check duration of default bit lenght without synchronisation
             --------------------------------------------------------------------
             sync_control  <= NO_SYNC;
+            
+            info("************************************************");
             info("Starting Check without synchronisation");
+            info("************************************************");
+            
             for i in 1 to 4 loop
 
                 -- Check distance between "SYNC" and "SAMPLE" trigger
@@ -749,12 +799,20 @@ begin
                     tmp_text := "Data      ";
                 end if;
 
+                -- We must extend the duration of TSEG1 by one clock cycle since
+                -- Sync trigger now occurs in the last cycle of TSEG2 instead of
+                -- first cycle in TSEG1! This was done as part of Prescaler re-work
+                -- in 02-2019.
+                exp_dur := exp_dur + 1;
+
                 check(check_ctr = exp_dur, "SYNC+PROP+PH1 " & tmp_text &
-                          " did not last expected time!");
+                          " did not last expected time!," &
+                          "Expected cycles: " & integer'image(exp_dur) &
+                          " Real cycles: " & integer'image(check_ctr));
                 
                 -- Check distance between two consecutive "SYNC" triggers
                 -- (whole bit time)
-                info("Checking distance two consecutive SYNC");
+                info("Checking distance of two consecutive SYNC signals");
                 wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
                 wait for 15 ns;
                 count_cycles_until(clk_sys, check_ctr, sync_nbt, sync_dbt);
@@ -787,7 +845,10 @@ begin
             wait until rising_edge(clk_sys);
             sync_control    <= RE_SYNC;
 
+            info("************************************************");
             info("Starting Check with Resynchronisation");
+            info("************************************************");
+            
             for i in 0 to 4 loop
 
                 wait until rising_edge(clk_sys) and
@@ -847,7 +908,10 @@ begin
             --------------------------------------------------------------------
             -- Emulate a BRS bit
             --------------------------------------------------------------------
+            
+            info("************************************************");
             info("Checking duration of BRS bit");
+            info("************************************************");
 
             -- Nominal Bit-rate part, count length between sync trigger and
             -- sample trigger!
@@ -858,14 +922,17 @@ begin
 
             -- Delay before Sampling type switching as if caused by Protocol
             -- Control! (three clock cycles)
-            wait until rising_edge(clk_sys);
-            wait until rising_edge(clk_sys);
-            wait until rising_edge(clk_sys);
+            wait until falling_edge(clk_sys);
+            wait until falling_edge(clk_sys);
+            wait until falling_edge(clk_sys);
             sp_control <= DATA_SAMPLE;
 
             -- Wait till the end of the bit time
             count_cycles_until(clk_sys, data_ctr, sync_dbt);
 
+            wait until rising_edge(clk_sys);
+            wait until rising_edge(clk_sys);
+            
             -- Check duration, count with two cycle delay.
             check(exp_dur_BRS = (nom_ctr + data_ctr + 2),
                       "BRS bit length not as expected, " &
@@ -876,7 +943,11 @@ begin
             -- Emulate CRC delimiter bit (as if switching back to Nominal
             -- data-rate)
             --------------------------------------------------------------------
+            
+            info("************************************************");
             info("Checking duration of CRC delimiter bit");
+            info("************************************************");
+
             wait until bt_FSM_out = tseg2;
             wait until falling_edge(clk_sys) and sync_dbt = '1';
             count_cycles_until(clk_sys, data_ctr, sample_dbt);
@@ -897,6 +968,15 @@ begin
                       "Real: " & integer'image(nom_ctr + data_ctr + 2));
 
             wait until rising_edge(clk_sys);
+
+            --------------------------------------------------------------------
+            -- Test Hard synchronisation!
+            --------------------------------------------------------------------
+
+            info("************************************************");
+            info("Checking HARD Synchronisation!");
+            info("************************************************");
+            
 
             loop_ctr <= loop_ctr + 1;
         end loop;
