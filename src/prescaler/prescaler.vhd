@@ -42,7 +42,6 @@
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Prescaler circuit.
---
 --                                                                          
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -244,6 +243,14 @@ architecture rtl of prescaler is
     -- Sync trigger request (in beginning of SYNC segment)
     signal sync_req             : std_logic;
     
+    constant nbt_ones   : std_logic_vector(bt_width_nbt - 1 downto 0) :=
+        (OTHERS => '1');
+    constant dbt_ones   : std_logic_vector(bt_width_nbt - 1 downto 0) :=
+        (OTHERS => '1');
+
+    -- Signal that expected semgent length should be loaded after restart!
+    signal start_edge           : std_logic;
+
 begin
 
     drv_ena <= drv_bus(DRV_ENA_INDEX);
@@ -278,7 +285,8 @@ begin
         tseg1_dbt  => tseg1_dbt,
         tseg2_dbt  => tseg2_dbt,
         brp_dbt    => brp_dbt,
-        sjw_dbt    => sjw_dbt
+        sjw_dbt    => sjw_dbt,
+        start_edge => start_edge
     );
 
     ---------------------------------------------------------------------------
@@ -337,6 +345,7 @@ begin
         tseg_1               => tseg1_nbt,
         tseg_2               => tseg2_nbt,
         sjw                  => sjw_nbt,
+        start_edge           => start_edge,
         bt_counter           => bt_counter_nbt,
         segm_end             => segment_end,
         h_sync_valid         => h_sync_valid,
@@ -359,6 +368,7 @@ begin
         prescaler       => brp_nbt,
         tq_reset        => segment_end,
         bt_reset        => segment_end,
+        drv_ena         => drv_ena,
         tq_edge         => tq_edge_nbt,
         bt_counter      => bt_counter_nbt
     );
@@ -385,6 +395,7 @@ begin
         tseg_1               => tseg1_dbt,
         tseg_2               => tseg2_dbt,
         sjw                  => sjw_dbt,
+        start_edge           => start_edge,
         bt_counter           => bt_counter_dbt,
         segm_end             => segment_end,
         h_sync_valid         => h_sync_valid,
@@ -393,7 +404,7 @@ begin
     
     
     ---------------------------------------------------------------------------
-    -- Bit Time counter (Nominal Bit Time)
+    -- Bit Time counter (Data Bit Time)
     ---------------------------------------------------------------------------
     bit_time_counters_dbt_comp : bit_time_counters
     generic map(
@@ -407,6 +418,7 @@ begin
         prescaler       => brp_dbt,
         tq_reset        => segment_end,
         bt_reset        => segment_end,
+        drv_ena         => drv_ena,
         tq_edge         => tq_edge_dbt,
         bt_counter      => bt_counter_dbt
     );
@@ -436,7 +448,7 @@ begin
     
     
     ---------------------------------------------------------------------------
-    -- End of Segment detector
+    -- Bit time FSM
     ---------------------------------------------------------------------------
     bit_time_fsm_comp : bit_time_fsm
     generic map(
@@ -451,7 +463,8 @@ begin
         is_tseg1         => is_tseg1,
         is_tseg2         => is_tseg2,
         sample_req       => sample_req,
-        sync_req         => sync_req
+        sync_req         => sync_req,
+        bt_FSM_out       => bt_FSM_out
     );
     
     ---------------------------------------------------------------------------
@@ -479,5 +492,24 @@ begin
     -- Internal signals to output propagation
     ---------------------------------------------------------------------------
     hard_sync_edge_valid <= h_sync_valid;
+    
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    --
+    -- psl no_nbt_bt_overflow_asrt : assert never
+    --      (bt_counter_dbt = nbt_ones and tq_edge_nbt = '1' and
+    --       segment_end = '0' and sp_control = NOMINAL_SAMPLE)
+    --  report "Nominal Bit time counter overflow!" severity error;
+    --
+    -- psl no_dbt_bt_overflow_asrt : assert never
+    --      (bt_counter_dbt = dbt_ones and tq_edge_dbt = '1' and
+    --       segment_end = '0' and
+    --       (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE))
+    --  report "Data Bit time counter overflow!" severity error;
+    --
 
 end architecture;

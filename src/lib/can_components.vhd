@@ -762,7 +762,8 @@ package can_components is
         signal tseg1_dbt  : out std_logic_vector(tseg1_dbt_width - 1 downto 0);
         signal tseg2_dbt  : out std_logic_vector(tseg2_dbt_width - 1 downto 0);
         signal brp_dbt    : out std_logic_vector(tq_dbt_width - 1 downto 0);
-        signal sjw_dbt    : out std_logic_vector(sjw_dbt_width - 1 downto 0)
+        signal sjw_dbt    : out std_logic_vector(sjw_dbt_width - 1 downto 0);
+        signal start_edge : out std_logic
     );
     end component;
 
@@ -798,6 +799,7 @@ package can_components is
         signal tseg_2       : in    std_logic_vector(tseg2_width - 1 downto 0);
         signal sjw          : in    std_logic_vector(sjw_width - 1 downto 0);
         signal bt_counter   : in    std_logic_vector(bt_width - 1 downto 0);
+        signal start_edge   : in    std_logic;
         signal segm_end         : in    std_logic;
         signal h_sync_valid     : in    std_logic;
         signal exit_segm_req    : out   std_logic
@@ -816,6 +818,7 @@ package can_components is
         signal prescaler        : in    std_logic_vector(tq_width - 1 downto 0);
         signal tq_reset         : in    std_logic;
         signal bt_reset         : in    std_logic;
+        signal drv_ena          : in    std_logic;
         signal tq_edge          : out   std_logic;
         signal bt_counter       : out   std_logic_vector(bt_width - 1 downto 0)
     );
@@ -855,7 +858,8 @@ package can_components is
         signal is_tseg1         : out   std_logic;
         signal is_tseg2         : out   std_logic;
         signal sample_req       : out   std_logic;
-        signal sync_req         : out   std_logic
+        signal sync_req         : out   std_logic;
+        signal bt_FSM_out       : out   bit_time_type
     );
     end component;
 

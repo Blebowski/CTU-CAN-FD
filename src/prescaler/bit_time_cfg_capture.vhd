@@ -145,7 +145,10 @@ entity bit_time_cfg_capture is
         signal brp_dbt    : out std_logic_vector(tq_dbt_width - 1 downto 0);
         
         -- Synchronisation Jump Width - Data Bit Time
-        signal sjw_dbt    : out std_logic_vector(sjw_dbt_width - 1 downto 0)
+        signal sjw_dbt    : out std_logic_vector(sjw_dbt_width - 1 downto 0);
+        
+        -- Signal to load the expected segment length by Bit time counters
+        signal start_edge : out std_logic
     );
 end entity;
 
@@ -190,8 +193,8 @@ architecture rtl of bit_time_cfg_capture is
     ---------------------------------------------------------------------------
     signal drv_ena                :   std_logic;
     signal drv_ena_reg            :   std_logic;
-    signal drv_ena_edge           :   std_logic;
-    
+    signal drv_ena_reg_2          :   std_logic;
+        
     -- Capture signal
     signal capture                :   std_logic;
     
@@ -219,15 +222,22 @@ begin
     drv_ena_reg_proc : process(res_n, clk_sys)
     begin
         if (res_n = reset_polarity) then
-            drv_ena_reg <= '0';
+            drv_ena_reg     <= '0';
+            drv_ena_reg_2   <= '0';
         elsif (rising_edge(clk_sys)) then
-            drv_ena_reg <= drv_ena;
+            drv_ena_reg     <= drv_ena;
+            drv_ena_reg_2   <= drv_ena_reg;
         end if;
     end process;
 
     -- Capture the configuration upon enabbling of the core.
     capture <= '1' when (drv_ena = '1' and drv_ena_reg = '0') else
                '0';
+
+    -- Start edge is generated one clock cycle after the capture so that
+    -- resynchronisation will capture correct values already!
+    start_edge <= '1' when (drv_ena_reg_2 = '0' and drv_ena_reg = '1') else
+                  '0';
 
     ---------------------------------------------------------------------------
     -- Calculation of next values for capture registers

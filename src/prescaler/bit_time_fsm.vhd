@@ -101,7 +101,10 @@ entity bit_time_fsm is
         signal sample_req       : out   std_logic;
         
         -- Sync signal request
-        signal sync_req         : out   std_logic
+        signal sync_req         : out   std_logic;
+        
+        -- Bit time FSM output
+        signal bt_FSM_out       : out   bit_time_type
     );
 end entity;
 
@@ -119,7 +122,7 @@ begin
     ----------------------------------------------------------------------------
     -- Next state process (combinational)
     ----------------------------------------------------------------------------
-    next_state_proc : process(current_state, h_sync_valid, segm_end)
+    next_state_proc : process(current_state, h_sync_valid, segm_end, drv_ena)
     begin
         next_state <= current_state;
     
@@ -127,22 +130,29 @@ begin
             next_state <= reset;
         elsif (h_sync_valid = '1') then
             next_state <= tseg1;
-        elsif (segm_end = '1') then
+        else
             case current_state is
             when tseg1 =>
-                next_state <= tseg2;
+                if (segm_end = '1') then
+                    next_state <= tseg2;
+                end if;
             when tseg2 =>
-                next_state <= tseg1;
+                if (segm_end = '1') then
+                    next_state <= tseg1;
+                end if;
             when reset =>
                 next_state <= tseg1;
             end case;
         end if;
     end process;
     
+    -- State register to output propagation
+    bt_FSM_out <= current_state;
+    
     ----------------------------------------------------------------------------
     -- Current state process (combinational)
     ----------------------------------------------------------------------------
-    curr_state_proc : process(current_state, h_sync_valid, segm_end)
+    curr_state_proc : process(current_state, segm_end)
     begin
         -- Default values
         is_tseg1       <= '0';
@@ -152,7 +162,6 @@ begin
         
         case current_state is
         when reset =>
-        
         when tseg1 =>
             is_tseg1 <= '1';
             if (segm_end = '1') then

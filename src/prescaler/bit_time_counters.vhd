@@ -104,6 +104,9 @@ entity bit_time_counters is
         -- Bit Time reset (synchronous)
         signal bt_reset         : in    std_logic;
         
+        -- Core is enabled
+        signal drv_ena          : in    std_logic;
+        
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
@@ -135,8 +138,6 @@ architecture rtl of bit_time_counters is
     
     constant bt_zeroes : std_logic_vector(bt_width - 1 downto 0) :=
         (OTHERS => '0');
-    constant bt_ones : std_logic_vector(bt_width - 1 downto 0) :=
-        (OTHERS => '1');
 
 begin    
 
@@ -144,7 +145,7 @@ begin
     -- If prescaler is defined as 0 or 1, there is no need to run the counter!
     -- Run it only when Prescaler is higher than 1! 
     ---------------------------------------------------------------------------
-    tq_counter_ce <= '1' when (prescaler > tq_run_th) else
+    tq_counter_ce <= '1' when (prescaler > tq_run_th and drv_ena = '1') else
                      '0';
 
     ---------------------------------------------------------------------------
@@ -174,9 +175,10 @@ begin
     ---------------------------------------------------------------------------
     -- Time quanta edge
     ---------------------------------------------------------------------------
-    tq_edge_i <= '1' when (tq_counter_ce = '0' or tq_counter_q = tq_zeroes) else
+    tq_edge_i <= '1' when (tq_counter_ce = '0' or 
+                           unsigned(tq_counter_q) = unsigned(prescaler) - 1)
+                     else
                  '0';
-    tq_edge <= tq_edge_i;
 
     ---------------------------------------------------------------------------
     -- Bit time counter
@@ -189,20 +191,16 @@ begin
         if (res_n = reset_polarity) then
             bt_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (tq_edge_i = '1') then
+            if (tq_edge_i = '1' and drv_ena = '1') then
                 bt_counter_q <= bt_counter_d;
             end if;
         end if;
     end process;
-
+    
     ---------------------------------------------------------------------------
+    -- Internal signals to output propagation
     ---------------------------------------------------------------------------
-    -- Assertions
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    -- psl default clock is rising_edge(clk_sys);
-    --
-    -- psl no_bt_overflow_asrt : assert never
-    --      (bt_counter_q = bt_ones and tq_edge = '1' and bt_reset = '0');
+    bt_counter <= bt_counter_q;
+    tq_edge <= tq_edge_i;
 
 end architecture rtl;

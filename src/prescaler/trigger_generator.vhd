@@ -171,20 +171,40 @@ begin
     ---------------------------------------------------------------------------
     -- Sync trigger capture register
     ---------------------------------------------------------------------------
-    sync_req_flag_q <= '1' when (sample_sr_empty = '0' and sync_req = '1') else
+    sync_req_flag_d <= '1' when (sample_sr_empty = '0' and sync_req = '1') else
                        '0' when (sample_sr_empty = '1') else
-                       sync_req_flag_d;
+                       sync_req_flag_q;
 
-    sync_req_flag_dq <= sync_req_flag_d or sync_req_flag_q;
-    
+    sync_req_flag_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = reset_polarity) then
+            sync_req_flag_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            sync_req_flag_q <= sync_req_flag_d;
+        end if;
+    end process;
+
+    sync_req_flag_dq <= sync_req or sync_req_flag_q;
+
+
     ---------------------------------------------------------------------------
     -- Sample trigger capture register
     ---------------------------------------------------------------------------
-    sample_req_flag_q <= '1' when (sync_sr_empty = '0' and sample_req = '1') else
+    sample_req_flag_d <= '1' when (sync_sr_empty = '0' and sample_req = '1') else
                          '0' when (sync_sr_empty = '1') else
-                         sample_req_flag_d;
+                         sample_req_flag_q;
 
-    sync_req_flag_dq <= sync_req_flag_d or sync_req_flag_q;
+    sample_req_flag_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = reset_polarity) then
+            sample_req_flag_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            sample_req_flag_q <= sample_req_flag_d;
+        end if;
+    end process;
+
+    sample_req_flag_dq <= sample_req or sample_req_flag_q;
+    
 
     ---------------------------------------------------------------------------
     -- Decoding internal value of triggers. Allow for trigger to propagate
@@ -236,10 +256,10 @@ begin
         sample_trig_sr_proc : process(clk_sys, res_n)
         begin
             if (res_n = reset_polarity) then
-                sample_sr(sample_sr'length - 3 downto 0) <= (OTHERS => '0');
+                sample_sr(sample_sr'length - 2 downto 0) <= (OTHERS => '0');
             elsif (rising_edge(clk_sys)) then
-                sample_sr(sample_sr'length - 3 downto 0) <=
-                    sample_sr(sample_sr'length - 2 downto 1);    
+                sample_sr(sample_sr'length - 2 downto 0) <=
+                    sample_sr(sample_sr'length - 1 downto 1);
             end if;
         end process;
     end generate sample_trig_sr_gen;
@@ -263,7 +283,7 @@ begin
         sample_trig_i when (sp_control = NOMINAL_SAMPLE) else
         '0';
 
-    sample_dbt(sync_trigger_count - 1) <=
+    sample_dbt(sample_trigger_count - 1) <=
         sample_trig_i when (sp_control = DATA_SAMPLE or
                             sp_control = SECONDARY_SAMPLE)
                       else

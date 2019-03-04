@@ -220,6 +220,9 @@ entity resynchronisation is
         -- Synchronisation Jump Width
         signal sjw          : in    std_logic_vector(sjw_width - 1 downto 0);
         
+        -- Circuit operation has started -> load expected segment length reg.
+        signal start_edge   : in    std_logic;
+        
         -----------------------------------------------------------------------
         -- Bit Time counter interface
         -----------------------------------------------------------------------
@@ -311,14 +314,13 @@ begin
     -- Re-synchronisation data-path
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    sel_tseg1 <= '1' when (h_sync_valid = '1') else
+    sel_tseg1 <= '1' when (h_sync_valid = '1' or start_edge = '1') else
                  '1' when (segm_end = '1' and is_tseg2 = '1') else
-                 '1' when (is_tseg1 = '1') else
                  '0';
 
     basic_segm_length <= 
-        resize(unsigned(tseg_2), bs_width) when (sel_tseg1 = '1') else
-        resize(unsigned(tseg_1), bs_width);
+        resize(unsigned(tseg_1), bs_width) when (sel_tseg1 = '1') else
+        resize(unsigned(tseg_2), bs_width);
 
     segm_extension <= 
         resize(unsigned(sjw), ext_width) when (phase_err_mt_sjw = '1') else
@@ -339,10 +341,11 @@ begin
     --  2. Value post-resynchronisation.
     ---------------------------------------------------------------------------
     exp_seg_length_d <=
-        resize(basic_segm_length, exp_width) when (segm_end = '1') else
+        resize(basic_segm_length, exp_width) when (segm_end = '1' or start_edge = '1') else
         resize(sync_segm_length, exp_width);
 
-    exp_seg_length_ce <= '1' when (segm_end = '1' or resync_edge_valid = '1')
+    exp_seg_length_ce <= '1' when (segm_end = '1' or resync_edge_valid = '1' or
+                                   start_edge = '1')
                              else
                          '0';
 
@@ -389,7 +392,7 @@ begin
     -- segment.
     ---------------------------------------------------------------------------
     exit_segm_regular <= '1' when (resize(unsigned(bt_counter), exp_width) >=
-                                   resize(unsigned(exp_seg_length_q), exp_width))
+                                   resize(unsigned(exp_seg_length_q) - 1, exp_width))
                              else
                          '0';
 

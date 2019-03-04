@@ -102,7 +102,7 @@ entity segment_end_detector is
         -- Time Quanta edges (Nominal and Data)
         signal tq_edge_nbt        : in    std_logic;
         signal tq_edge_dbt        : in    std_logic;
-
+        
         -----------------------------------------------------------------------
         -- Outputs - Decision that current segment should end
         -----------------------------------------------------------------------
@@ -243,7 +243,7 @@ begin
     --  2. Data Bit Time Resynchronisation signals end of segment, Data
     --     Time Quanta edge and Sample control is either DATA_SAMPLE or
     --     SECONDARY_SAMPLE!
-    --  3. 
+    --  3. Hard synchronisation induced end of segment.
     ---------------------------------------------------------------------------
     segment_end_i <= '1' when (tseg1_end_req_valid = '1' or
                                tseg2_end_req_valid = '1' or
