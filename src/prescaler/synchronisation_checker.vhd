@@ -94,7 +94,7 @@ entity synchronisation_checker is
         signal no_pos_resync    : in    std_logic;
         
         -- End of segment
-        signal segment_end      : out   std_logic;
+        signal segment_end      : in    std_logic;
         
         -- Phase parts signalling
         signal is_tseg1         : in    std_logic;

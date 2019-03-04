@@ -181,7 +181,7 @@ begin
         
         -- Request is valid either when flag is captured or when combinational
         -- request is valid!
-        segm_end_req_capt_dq(i) <= segm_end_req_capt_d(i) OR segm_end_req_capt_q(i);
+        segm_end_req_capt_dq(i) <= req_input(i) OR segm_end_req_capt_q(i);
     end generate;
  
  

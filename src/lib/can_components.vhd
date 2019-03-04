@@ -873,7 +873,7 @@ package can_components is
         signal sync_control     : in    std_logic_vector(1 downto 0);
         signal sync_edge        : in    std_logic;
         signal no_pos_resync    : in    std_logic;
-        signal segment_end      : out   std_logic;
+        signal segment_end      : in    std_logic;
         signal is_tseg1         : in    std_logic;
         signal is_tseg2         : in    std_logic;
         signal resync_edge_valid    : out std_logic;
