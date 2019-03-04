@@ -711,7 +711,7 @@ package can_components is
           tseg2_dbt_width       : natural := 5;
           tq_dbt_width          : natural := 8;
           sjw_dbt_width         : natural := 5;
-          ipt_length            : natural := 4;
+          ipt_length            : natural := 3;
           sync_trigger_count    : natural range 2 to 8 := 2;
           sample_trigger_count  : natural range 2 to 8 := 3
         );

@@ -94,7 +94,7 @@ entity prescaler is
       sjw_dbt_width         : natural := 5;
       
       -- Length of information processing time (in clock cycles)
-      ipt_length            : natural := 4;
+      ipt_length            : natural := 3;
       
       -- Number of signals in Sync trigger
       sync_trigger_count    : natural range 2 to 8 := 2;
