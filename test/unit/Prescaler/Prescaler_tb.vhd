@@ -626,38 +626,60 @@ begin
         wait for 0 ns;
         skip_sync := false;
 
-        -- If resynchronisation length is generated as 0, "sync_edge" should
-        -- come in "sync" state
-        if (sync_time = 0) then
-            sync_edge <= '1';
-            wait until falling_edge(clk_sys);
-            sync_edge <= '0';
-            wait until (bt_FSM_out /= tseg1);
-        else
+        -- Print info about generated synchronisation edge!
+        if (sync_control = RE_SYNC or sync_control = HARD_SYNC) then
+            info("-------------------------------------------------");
+            info("Synchronisation edge generated!");
+            info("-------------------------------------------------");
 
-            -- For positive resync -> start from PROP(or PH1) phase, for
-            -- Negative resync -> start by PH2 phase
-            if (positive_resync = false) then
-                wait until (bt_FSM_out = tseg2);
-            end if;
-
-            for i in 1 to sync_time - 1 loop
-                wait until rising_edge(clk_sys);
-
-                -- Break if Bit time in any case finished earlier, e.g. BRS
-                -- testing started
-                if (bt_FSM_out = tseg1) then
-                    skip_sync := true;
-                    exit;
-                end if;
-            end loop;
-
-            if (skip_sync = false) then
+            -- If resynchronisation length is generated as 0, "sync_edge" should
+            -- come in "sync" state
+            if (sync_time = 0) then
                 sync_edge <= '1';
-                wait until rising_edge(clk_sys);
+                wait until falling_edge(clk_sys);
                 sync_edge <= '0';
+                wait until (bt_FSM_out /= tseg1);
+                info("Edge is in SYNC -> No synchronisation");
+            else
+    
+                if (sync_control = RE_SYNC) then
+                    info("This is RE-SYNCHRONISATION edge!");
+                elsif (sync_control = HARD_SYNC) then
+                    info("This is HARD-SYNCHRONISATION edge");
+                else
+                    info("Synchronisation is disabled");
+                end if;
+    
+                -- For positive resync -> start from PROP(or PH1) phase, for
+                -- Negative resync -> start by PH2 phase!
+                if (positive_resync = false) then
+                    wait until (bt_FSM_out = tseg2);
+                    info("Negative Re-synchronisation (e<0)!");
+                else
+                    info("Positive Re-synchronisation (e>0)!");
+                end if;
+    
+                info("Generated sync_time: " & integer'image(sync_time));
+    
+                for i in 1 to sync_time - 1 loop
+                    wait until rising_edge(clk_sys);
+    
+                    -- Break if Bit time in any case finished earlier, e.g. BRS
+                    -- testing started
+                    if (bt_FSM_out = tseg1) then
+                        skip_sync := true;
+                        exit;
+                    end if;
+                end loop;
+    
+                if (skip_sync = false) then
+                    sync_edge <= '1';
+                    wait until rising_edge(clk_sys);
+                    sync_edge <= '0';
+                end if;
             end if;
-
+        else
+            wait for 100 ns;
         end if;
     end process;
 
@@ -934,10 +956,10 @@ begin
             wait until rising_edge(clk_sys);
             
             -- Check duration, count with two cycle delay.
-            check(exp_dur_BRS = (nom_ctr + data_ctr + 2),
+            check(exp_dur_BRS = (nom_ctr + data_ctr + 3),
                       "BRS bit length not as expected, " &
                       "Expected: " & integer'image(exp_dur_BRS) &
-                      "Real: " & integer'image(nom_ctr + data_ctr + 2));
+                      " Real: " & integer'image(nom_ctr + data_ctr + 3));
 
             --------------------------------------------------------------------
             -- Emulate CRC delimiter bit (as if switching back to Nominal
@@ -953,19 +975,22 @@ begin
             count_cycles_until(clk_sys, data_ctr, sample_dbt);
 
             -- Delay three clock cycles again, as if caused by Protocol Control !
-            wait until rising_edge(clk_sys);
-            wait until rising_edge(clk_sys);
-            wait until rising_edge(clk_sys);
+            wait until falling_edge(clk_sys);
+            wait until falling_edge(clk_sys);
+            wait until falling_edge(clk_sys);
             sp_control <= NOMINAL_SAMPLE;
 
             -- Wait until the end of bit time
             count_cycles_until(clk_sys, nom_ctr, sync_nbt);
 
+            wait until rising_edge(clk_sys);
+            wait until rising_edge(clk_sys);
+            
             -- Check the duration
-            check(exp_dur_CRC_del = (nom_ctr + data_ctr + 2),
+            check(exp_dur_CRC_del = (nom_ctr + data_ctr + 3),
                       "CRC delimiter bit length not as expected, " &
                       "Expected: " & integer'image(exp_dur_CRC_del) &
-                      "Real: " & integer'image(nom_ctr + data_ctr + 2));
+                      " Real: " & integer'image(nom_ctr + data_ctr + 3));
 
             wait until rising_edge(clk_sys);
 
@@ -977,7 +1002,6 @@ begin
             info("Checking HARD Synchronisation!");
             info("************************************************");
             
-
             loop_ctr <= loop_ctr + 1;
         end loop;
 
