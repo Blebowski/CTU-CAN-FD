@@ -320,7 +320,7 @@ begin
     port map(
         clk_sys        => clk_sys,
         res_n          => res_n,
-        ipt_req        => sample_req,
+        is_tseg2       => is_tseg2,
         ipt_gnt        => ipt_ok
     );
 

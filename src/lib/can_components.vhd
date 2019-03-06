@@ -770,12 +770,12 @@ package can_components is
     component ipt_checker is
     generic (
         reset_polarity : std_logic := '0';
-        ipt_length     : natural := 4
+        ipt_length     : natural range 2 to 8 := 4
     );
     port(
         signal clk_sys          : in    std_logic;
         signal res_n            : in    std_logic;
-        signal ipt_req          : in    std_logic;
+        signal is_tseg2         : in    std_logic;
         signal ipt_gnt          : out   std_logic
     );
     end component;

@@ -77,7 +77,7 @@ entity ipt_checker is
         reset_polarity : std_logic := '0';
 
         -- Length of Information processing time in clock cycles.
-        ipt_length     : natural := 4
+        ipt_length     : natural range 2 to 8 := 4 
     );
     port(
         -----------------------------------------------------------------------
@@ -89,7 +89,7 @@ entity ipt_checker is
         -----------------------------------------------------------------------
         -- Control interface (Handshake-like)
         -----------------------------------------------------------------------
-        signal ipt_req          : in    std_logic;
+        signal is_tseg2         : in    std_logic;
         signal ipt_gnt          : out   std_logic
     );
 end entity;
@@ -98,8 +98,8 @@ end entity;
 architecture rtl of ipt_checker is
 
     -- Internal Shift register
-    signal ipt_sr       : std_logic_vector(ipt_length - 1 downto 0);
-    signal ipt_sr_nxt   : std_logic_vector(ipt_length - 1 downto 0);
+    signal ipt_sr       : std_logic_vector(ipt_length - 2 downto 0);
+    signal ipt_sr_nxt   : std_logic_vector(ipt_length - 2 downto 0);
 
     -- Clock enable for internal shift register. 
     signal ipt_sr_ce  :  std_logic;
@@ -107,16 +107,37 @@ architecture rtl of ipt_checker is
     -- IPT shift register is empty 
     signal ipt_empty  :  std_logic;
     
+    -- IPT request (in beginning of TSEG2)
+    signal ipt_req    :  std_logic;
+    
+    -- TSEG2 register
+    signal is_tseg2_r :  std_logic;
+    
     ---------------------------------------------------------------------------    
     -- IPT constants
     ---------------------------------------------------------------------------
-    constant IPT_ZEROES : std_logic_vector(ipt_length - 1 downto 0) :=
+    constant IPT_ZEROES : std_logic_vector(ipt_length - 2 downto 0) :=
         (OTHERS => '0');
         
-    constant IPT_ONES : std_logic_vector(ipt_length - 1 downto 0) :=
+    constant IPT_ONES : std_logic_vector(ipt_length - 2 downto 0) :=
         (OTHERS => '1');
     
 begin
+
+    ---------------------------------------------------------------------------
+    -- TSEG2 registering, request formed in the beginning of TSEG2
+    ---------------------------------------------------------------------------
+    tseg2_reg_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = reset_polarity) then
+            is_tseg2_r <= '0';
+        elsif (rising_edge(clk_sys)) then
+            is_tseg2_r <= is_tseg2;
+        end if;
+    end process;
+
+    ipt_req <= '1' when (is_tseg2 = '1' and is_tseg2_r = '0') else
+               '0';
 
     ---------------------------------------------------------------------------
     -- Shift register clock enable. Tick when:
@@ -137,7 +158,7 @@ begin
     --  2. Shift to the right
     ---------------------------------------------------------------------------
     ipt_sr_nxt <= IPT_ONES when (ipt_req = '1') else
-                  '0' & ipt_sr(ipt_length - 1 downto 1);
+                  '0' & ipt_sr(ipt_length - 2 downto 1);
     
     
     ---------------------------------------------------------------------------
