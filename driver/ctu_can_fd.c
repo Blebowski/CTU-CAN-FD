@@ -85,10 +85,13 @@ struct ctucan_priv {
 	int irq_flags;
 	unsigned long drv_flags;
 
+	union ctu_can_fd_frame_form_w rxfrm_first_word;
+
 	struct list_head peers_on_pdev;
 };
 
-#define CTUCAN_FLAG_RX_SCHED	1
+#define CTUCAN_FLAG_RX_SCHED		1
+#define CTUCAN_FLAG_RX_FFW_BUFFERED	2
 
 static int ctucan_reset(struct net_device *ndev)
 {
@@ -338,7 +341,12 @@ static int ctucan_rx(struct net_device *ndev)
 	u64 ts;
 	union ctu_can_fd_frame_form_w ffw;
 
-	ffw = ctu_can_fd_read_rx_ffw(&priv->p);
+	if (test_bit(CTUCAN_FLAG_RX_FFW_BUFFERED, &priv->drv_flags)) {
+		ffw = priv->rxfrm_first_word;
+		clear_bit(CTUCAN_FLAG_RX_FFW_BUFFERED, &priv->drv_flags);
+	} else {
+		ffw = ctu_can_fd_read_rx_ffw(&priv->p);
+	}
 
 	if (ffw.s.fdf == FD_CAN)
 		skb = alloc_canfd_skb(ndev, &cf);
@@ -346,12 +354,8 @@ static int ctucan_rx(struct net_device *ndev)
 		skb = alloc_can_skb(ndev, (struct can_frame **)&cf);
 
 	if (unlikely(!skb)) {
-		int i;
-		/* Remove the rest of the frame from the controller */
-		for (i = 0; i < ffw.s.rwcnt; i++)
-			ctu_can_fd_read_rx_word(&priv->p);
-
-		stats->rx_dropped++;
+		priv->rxfrm_first_word = ffw;
+		set_bit(CTUCAN_FLAG_RX_FFW_BUFFERED, &priv->drv_flags);
 		return 0;
 	}
 
