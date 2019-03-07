@@ -9,8 +9,8 @@
  *     Martin Jerabek <martin.jerabek01@gmail.com>
  *
  * Project advisors:
- *	Jiri Novak <jnovak@fel.cvut.cz>
- *	Pavel Pisa <pisa@cmp.felk.cvut.cz>
+ *     Jiri Novak <jnovak@fel.cvut.cz>
+ *     Pavel Pisa <pisa@cmp.felk.cvut.cz>
  *
  * Department of Measurement         (http://meas.fel.cvut.cz/)
  * Faculty of Electrical Engineering (http://www.fel.cvut.cz)
@@ -25,12 +25,6 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor,
- * Boston, MA  02110-1301, USA.
- *
  ******************************************************************************/
 
 #include <linux/clk.h>
@@ -65,8 +59,7 @@ static bool pci_use_second = 1;
 module_param(pci_use_second, bool, 0444);
 MODULE_PARM_DESC(pci_use_second, "Use the second CAN core on PCIe card. Default: 1 (yes)");
 
-/*
- * TX buffer rotation:
+/* TX buffer rotation:
  * - when a buffer transitions to empty state, rotate order and priorities
  * - if more buffers seem to transition at the same time, rotate
  *   by the number of buffers
@@ -92,10 +85,13 @@ struct ctucan_priv {
 	int irq_flags;
 	unsigned long drv_flags;
 
+	union ctu_can_fd_frame_form_w rxfrm_first_word;
+
 	struct list_head peers_on_pdev;
 };
 
-#define CTUCAN_FLAG_RX_SCHED	1
+#define CTUCAN_FLAG_RX_SCHED		1
+#define CTUCAN_FLAG_RX_FFW_BUFFERED	2
 
 static int ctucan_reset(struct net_device *ndev)
 {
@@ -108,14 +104,12 @@ static int ctucan_reset(struct net_device *ndev)
 	for (i = 0; i < 100; ++i) {
 		if (ctu_can_fd_check_access(&priv->p))
 			return 0;
-		udelay(100);
+		usleep_range(100, 200);
 	}
 
 	netdev_warn(ndev, "device did not leave reset\n");
 	return -ETIMEDOUT;
 }
-
-
 
 /**
  * ctucan_set_bittiming - CAN set bit timing routine
@@ -133,7 +127,7 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 
 	if (ctu_can_fd_is_enabled(&priv->p)) {
 		netdev_alert(ndev,
-				 "BUG! Cannot set bittiming - CAN is enabled\n");
+			     "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
 	}
 
@@ -142,7 +136,6 @@ static int ctucan_set_bittiming(struct net_device *ndev)
 
 	return 0;
 }
-
 
 /**
  * ctucan_set_data_bittiming - CAN set data bit timing routine
@@ -160,7 +153,7 @@ static int ctucan_set_data_bittiming(struct net_device *ndev)
 
 	if (ctu_can_fd_is_enabled(&priv->p)) {
 		netdev_alert(ndev,
-				 "BUG! Cannot set bittiming - CAN is enabled\n");
+			     "BUG! Cannot set bittiming - CAN is enabled\n");
 		return -EPERM;
 	}
 
@@ -196,7 +189,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 	priv->txb_tail = 0;
 	priv->p.write_reg(&priv->p, CTU_CAN_FD_TX_PRIORITY, priv->txb_prio);
 
-
 	err = ctucan_set_bittiming(ndev);
 	if (err < 0)
 		return err;
@@ -205,7 +197,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 	if (err < 0)
 		return err;
 
-
 	/* Enable interrupts */
 	int_ena.u32 = 0;
 	int_ena.s.rbnei = 1;
@@ -213,7 +204,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	int_ena.s.ewli = 1;
 	int_ena.s.epi = 1;
-	int_ena.s.doi = 1;
 
 	int_enamask_mask.u32 = 0xFFFFFFFF;
 
@@ -279,7 +269,6 @@ static int ctucan_do_set_mode(struct net_device *ndev, enum can_mode mode)
 	return ret;
 }
 
-
 /**
  * ctucan_start_xmit - Starts the transmission
  * @skb:	sk_buff pointer that contains data to be Txed
@@ -301,7 +290,6 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 
 	if (can_dropped_invalid_skb(ndev, skb))
 		return NETDEV_TX_OK;
-
 
 	/* Check if the TX buffer is full */
 	if (unlikely(!CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))) {
@@ -352,20 +340,21 @@ static int ctucan_rx(struct net_device *ndev)
 	u64 ts;
 	union ctu_can_fd_frame_form_w ffw;
 
-	ffw = ctu_can_fd_read_rx_ffw(&priv->p);
+	if (test_bit(CTUCAN_FLAG_RX_FFW_BUFFERED, &priv->drv_flags)) {
+		ffw = priv->rxfrm_first_word;
+		clear_bit(CTUCAN_FLAG_RX_FFW_BUFFERED, &priv->drv_flags);
+	} else {
+		ffw = ctu_can_fd_read_rx_ffw(&priv->p);
+	}
 
 	if (ffw.s.fdf == FD_CAN)
 		skb = alloc_canfd_skb(ndev, &cf);
 	else
-		skb = alloc_can_skb(ndev, (struct can_frame **) &cf);
+		skb = alloc_can_skb(ndev, (struct can_frame **)&cf);
 
 	if (unlikely(!skb)) {
-		int i;
-		/* Remove the rest of the frame from the controller */
-		for (i = 0; i < ffw.s.rwcnt; i++)
-			ctu_can_fd_read_rx_word(&priv->p);
-
-		stats->rx_dropped++;
+		priv->rxfrm_first_word = ffw;
+		set_bit(CTUCAN_FLAG_RX_FFW_BUFFERED, &priv->drv_flags);
 		return 0;
 	}
 
@@ -403,9 +392,7 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	/*
-	 * EWI: error warning
-	 * DOI: RX overrun
+	/* EWI: error warning
 	 * EPI: error passive or bus off
 	 * ALI: arbitration lost (just informative)
 	 * BEI: bus error interrupt
@@ -465,39 +452,6 @@ err_warning:
 		}
 	}
 
-	/* Check for RX FIFO Overflow interrupt */
-	if (isr.s.doi) {
-		union ctu_can_fd_int_stat icr;
-
-		netdev_info(ndev, "  doi (rx fifo overflow)");
-		stats->rx_over_errors++;
-		stats->rx_errors++;
-		if (skb) {
-			cf->can_id |= CAN_ERR_CRTL;
-			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
-		}
-
-		/* Clear Data Overrun */
-		ctu_can_fd_clr_overrun_flag(&priv->p);
-		/* TODO: this still sometimes fails without the dummy read
-		 * Theoretically it is possible for the 2 bus accesses (flg
-		 * clear, irq clear) to become tightly adjacent and the
-		 * pipelining effects will cause that the IRQ clear request
-		 * is ignored.
-		 * The dummy read would prevent this.
-		 * We still have to write a feature test for this.
-		 */
-#ifdef DEBUG
-		netdev_info(ndev, "  DOS=%d after COMMAND[CDR]",
-				   ctu_can_get_status(&priv->p).s.dor);
-#endif
-
-		/* And clear the DOI flag again */
-		icr.u32 = 0;
-		icr.s.doi = 1;
-		ctu_can_fd_int_clr(&priv->p, icr);
-	}
-
 	/* Check for Bus Error interrupt */
 	if (isr.s.bei) {
 		netdev_info(ndev, "  bus error");
@@ -532,29 +486,42 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	struct net_device *ndev = napi->dev;
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	int work_done = 0;
-	union ctu_can_fd_int_stat isr, iec;
+	union ctu_can_fd_status status;
+	u32 framecnt;
+	u32 i;
 	//netdev_dbg(ndev, "ctucan_rx_poll");
 
-	iec.u32 = 0;
-	iec.s.rbnei = 1;
-
-	/* Get the interrupt status */
-	isr = ctu_can_fd_int_sts(&priv->p);
-	while (isr.s.rbnei && work_done < quota) {
-		u32 framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
-
-		netdev_dbg(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO",
-			    framecnt);
-		if (framecnt == 0) {
-			netdev_err(ndev, "rx_poll: RBNEI set, but there are no frames in the FIFO!");
-			break;
+	framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
+	while (framecnt && work_done < quota) {
+		netdev_dbg(ndev, "rx_poll: %d frames in RX FIFO", framecnt);
+		for (i = 0; i < framecnt; ++i) {
+			ctucan_rx(ndev);
+			work_done++;
 		}
-		/* TODO: maybe process DOI too? */
+		framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
+	}
 
-		ctucan_rx(ndev);
-		ctu_can_fd_int_clr(&priv->p, iec);
-		work_done++;
-		isr = ctu_can_fd_int_sts(&priv->p);
+	/* Check for RX FIFO Overflow */
+	status = ctu_can_get_status(&priv->p);
+	if (status.s.dor) {
+		struct net_device_stats *stats = &ndev->stats;
+		struct can_frame *cf;
+		struct sk_buff *skb;
+
+		netdev_info(ndev, "  rx fifo overflow");
+		stats->rx_over_errors++;
+		stats->rx_errors++;
+		skb = alloc_can_err_skb(ndev, &cf);
+		if (skb) {
+			cf->can_id |= CAN_ERR_CRTL;
+			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
+			stats->rx_packets++;
+			stats->rx_bytes += cf->can_dlc;
+			netif_rx(skb);
+		}
+
+		/* Clear Data Overrun */
+		ctu_can_fd_clr_overrun_flag(&priv->p);
 	}
 
 	if (work_done)
@@ -562,8 +529,14 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 
 	if (work_done < quota) {
 		if (napi_complete_done(napi, work_done)) {
-			iec.s.doi = 1; /* Also re-enable DOI */
+			union ctu_can_fd_int_stat iec;
+			/* Clear and enable RBNEI. It is level-triggered, so
+			 * there is no race condition.
+			 */
+			iec.u32 = 0;
+			iec.s.rbnei = 1;
 			clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			ctu_can_fd_int_clr(&priv->p, iec);
 			ctu_can_fd_int_ena_set(&priv->p, iec);
 		}
 	}
@@ -577,7 +550,7 @@ static void ctucan_rotate_txb_prio(struct net_device *ndev)
 	u32 prio = priv->txb_prio;
 	u32 nbuffersm1 = priv->txb_mask; /* nbuffers - 1 */
 
-	prio = (prio << 4) | ((prio >> (nbuffersm1*4)) & 0xF);
+	prio = (prio << 4) | ((prio >> (nbuffersm1 * 4)) & 0xF);
 	netdev_dbg(ndev, "%s: from 0x%08x to 0x%08x",
 		   __func__, priv->txb_prio, prio);
 	priv->txb_prio = prio;
@@ -599,14 +572,12 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 
 	netdev_dbg(ndev, "%s", __func__);
 
-	/*
-	 *  read tx_status
+	/*  read tx_status
 	 *  if txb[n].finished (bit 2)
 	 *	if ok -> echo
 	 *	if error / aborted -> ?? (find how to handle oneshot mode)
 	 *	txb_tail++
 	 */
-
 
 	icr.u32 = 0;
 	icr.s.txbhci = 1;
@@ -714,10 +685,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 			netdev_dbg(ndev, "RXBNEI");
 			icr.u32 = 0;
 			icr.s.rbnei = 1;
+			/* Clear and disable RXBNEI, schedule NAPI */
 			ctu_can_fd_int_clr(&priv->p, icr);
-
-			/* Disable RXBNEI and DOI */
-			icr.s.doi = 1;
 			ctu_can_fd_int_ena_clr(&priv->p, icr);
 			set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 			napi_schedule(&priv->napi);
@@ -733,10 +702,9 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		}
 
 		/* Error interrupts */
-		if (isr.s.ewli || isr.s.doi || isr.s.epi || isr.s.ali) {
+		if (isr.s.ewli || isr.s.epi || isr.s.ali) {
 			union ctu_can_fd_int_stat ierrmask = { .s = {
-				  .ewli = 1, .doi = 1, .epi = 1,
-				  .ali = 1, .bei = 1 } };
+				  .ewli = 1, .epi = 1, .ali = 1, .bei = 1 } };
 			icr.u32 = isr.u32 & ierrmask.u32;
 
 			netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x",
@@ -801,18 +769,12 @@ static int ctucan_open(struct net_device *ndev)
 	ret = pm_runtime_get_sync(priv->dev);
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
-				__func__, ret);
+			   __func__, ret);
 		return ret;
 	}
 
-	/*
-	 * ret = ctucan_reset(ndev);
-	 * if (ret < 0)
-	 *	goto err;
-	 */
-
 	ret = request_irq(ndev->irq, ctucan_interrupt, priv->irq_flags,
-			ndev->name, ndev);
+			  ndev->name, ndev);
 	if (ret < 0) {
 		netdev_err(ndev, "irq allocation for CAN failed\n");
 		goto err;
@@ -881,7 +843,7 @@ static int ctucan_close(struct net_device *ndev)
  * Return: 0 on success and failure value on error
  */
 static int ctucan_get_berr_counter(const struct net_device *ndev,
-					struct can_berr_counter *bec)
+				   struct can_berr_counter *bec)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	int ret;
@@ -891,7 +853,7 @@ static int ctucan_get_berr_counter(const struct net_device *ndev,
 	ret = pm_runtime_get_sync(priv->dev);
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
-				__func__, ret);
+			   __func__, ret);
 		return ret;
 	}
 
@@ -943,11 +905,9 @@ static __maybe_unused int ctucan_resume(struct device *dev)
 	return 0;
 }
 
-
 static const struct dev_pm_ops ctucan_dev_pm_ops = {
 	SET_SYSTEM_SLEEP_PM_OPS(ctucan_suspend, ctucan_resume)
 };
-
 
 /**
  * ctucan_probe_common - Device type independent registration call
@@ -966,9 +926,9 @@ static const struct dev_pm_ops ctucan_dev_pm_ops = {
  * Return: 0 on success and failure value on error
  */
 static int ctucan_probe_common(struct device *dev, void __iomem *addr,
-	      int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
-	      int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
-				     struct net_device *ndev))
+		int irq, unsigned int ntxbufs, unsigned long can_clk_rate,
+		int pm_enable_call, void (*set_drvdata_fnc)(struct device *dev,
+		struct net_device *ndev))
 {
 	struct ctucan_priv *priv;
 	struct net_device *ndev;
@@ -981,7 +941,7 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 
 	priv = netdev_priv(ndev);
 	INIT_LIST_HEAD(&priv->peers_on_pdev);
-	priv->txb_mask = ntxbufs-1;
+	priv->txb_mask = ntxbufs - 1;
 	priv->dev = dev;
 	priv->can.bittiming_const = &ctu_can_fd_bit_timing_max;
 	priv->can.data_bittiming_const = &ctu_can_fd_bit_timing_data_max;
@@ -1030,7 +990,7 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	ret = pm_runtime_get_sync(dev);
 	if (ret < 0) {
 		netdev_err(ndev, "%s: pm_runtime_get failed(%d)\n",
-			__func__, ret);
+			   __func__, ret);
 		goto err_pmdisable;
 	}
 
@@ -1064,8 +1024,8 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 	pm_runtime_put(dev);
 
 	netdev_dbg(ndev, "mem_base=0x%p irq=%d clock=%d, txb mask:%d\n",
-			priv->p.mem_base, ndev->irq, priv->can.clock.freq,
-			priv->txb_mask);
+		   priv->p.mem_base, ndev->irq, priv->can.clock.freq,
+		   priv->txb_mask);
 
 	return 0;
 
@@ -1083,7 +1043,7 @@ err_free:
 #ifdef CONFIG_OF
 
 static void ctucan_platform_set_drvdata(struct device *dev,
-				       struct net_device *ndev)
+					struct net_device *ndev)
 {
 	struct platform_device *pdev = container_of(dev, struct platform_device,
 						    dev);
@@ -1125,7 +1085,7 @@ static int ctucan_platform_probe(struct platform_device *pdev)
 	}
 
 	/*
-	ret = of_property_read_u32(pdev->dev.of_node, "tx-fifo-depth", &tx_max);
+	ret = of_property_read_u32(pdev->dev.of_node, "tntxbufs", &ntxbufs);
 	if (ret < 0)
 		goto err;
 	*/
@@ -1162,7 +1122,6 @@ static int ctucan_platform_remove(struct platform_device *pdev)
 	return 0;
 }
 
-
 /* Match table for OF platform binding */
 static const struct of_device_id ctucan_of_match[] = {
 	{ .compatible = "ctu,canfd-2", },
@@ -1191,7 +1150,8 @@ module_platform_driver(ctucanfd_driver);
 
 #ifndef PCI_DEVICE_DATA
 #define PCI_DEVICE_DATA(vend, dev, data) \
-	.vendor = PCI_VENDOR_ID_##vend, .device = PCI_DEVICE_ID_##vend##_##dev, \
+	.vendor = PCI_VENDOR_ID_##vend, \
+	.device = PCI_DEVICE_ID_##vend##_##dev, \
 	.subvendor = PCI_ANY_ID, .subdevice = PCI_ANY_ID, 0, 0, \
 	.driver_data = (kernel_ulong_t)(data)
 #endif
@@ -1223,7 +1183,7 @@ struct ctucan_pci_board_data *ctucan_pci_get_bdata(struct pci_dev *pdev)
 }
 
 static void ctucan_pci_set_drvdata(struct device *dev,
-				       struct net_device *ndev)
+				   struct net_device *ndev)
 {
 	struct pci_dev *pdev = container_of(dev, struct pci_dev, dev);
 	struct ctucan_priv *priv = netdev_priv(ndev);
@@ -1282,12 +1242,12 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	}
 
 	dev_info(dev, "ctucan BAR0 0x%08llx 0x%08llx\n",
-		(long long)pci_resource_start(pdev, 0),
-		(long long)pci_resource_len(pdev, 0));
+		 (long long)pci_resource_start(pdev, 0),
+		 (long long)pci_resource_len(pdev, 0));
 
 	dev_info(dev, "ctucan BAR1 0x%08llx 0x%08llx\n",
-		(long long)pci_resource_start(pdev, 1),
-		(long long)pci_resource_len(pdev, 1));
+		 (long long)pci_resource_start(pdev, 1),
+		 (long long)pci_resource_len(pdev, 1));
 
 	addr = pci_iomap(pdev, 1, pci_resource_len(pdev, 1));
 	if (!addr) {
@@ -1343,10 +1303,10 @@ static int ctucan_pci_probe(struct pci_dev *pdev,
 	while (pci_use_second && (core_i < num_cores)) {
 		addr += 0x4000;
 		ret = ctucan_probe_common(dev, addr, irq, ntxbufs, 100000000,
-				  0, ctucan_pci_set_drvdata);
+					  0, ctucan_pci_set_drvdata);
 		if (ret < 0) {
 			dev_info(dev, "CTU CAN FD core %d initialization failed\n",
-				core_i);
+				 core_i);
 			break;
 		}
 		core_i++;
@@ -1409,10 +1369,8 @@ static void ctucan_pci_remove(struct pci_dev *pdev)
 	if (bdata->cra_base)
 		iowrite32(0, (char *)bdata->cra_base + CYCLONE_IV_CRA_A2P_IE);
 
-
 	while ((priv = list_first_entry_or_null(&bdata->ndev_list_head,
-			struct ctucan_priv, peers_on_pdev)) != NULL) {
-
+				struct ctucan_priv, peers_on_pdev)) != NULL) {
 		ndev = priv->can.dev;
 
 		unregister_candev(ndev);
@@ -1448,6 +1406,7 @@ static const struct pci_device_id ctucan_pci_tbl[] = {
 		CTUCAN_WITH_CTUCAN_ID)},
 	{},
 };
+
 static struct pci_driver ctucan_pci_driver = {
 	.name = KBUILD_MODNAME,
 	.id_table = ctucan_pci_tbl,
