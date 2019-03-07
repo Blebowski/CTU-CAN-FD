@@ -204,7 +204,6 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	int_ena.s.ewli = 1;
 	int_ena.s.epi = 1;
-	int_ena.s.doi = 1;
 
 	int_enamask_mask.u32 = 0xFFFFFFFF;
 
@@ -394,7 +393,6 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	skb = alloc_can_err_skb(ndev, &cf);
 
 	/* EWI: error warning
-	 * DOI: RX overrun
 	 * EPI: error passive or bus off
 	 * ALI: arbitration lost (just informative)
 	 * BEI: bus error interrupt
@@ -454,39 +452,6 @@ err_warning:
 		}
 	}
 
-	/* Check for RX FIFO Overflow interrupt */
-	if (isr.s.doi) {
-		union ctu_can_fd_int_stat icr;
-
-		netdev_info(ndev, "  doi (rx fifo overflow)");
-		stats->rx_over_errors++;
-		stats->rx_errors++;
-		if (skb) {
-			cf->can_id |= CAN_ERR_CRTL;
-			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
-		}
-
-		/* Clear Data Overrun */
-		ctu_can_fd_clr_overrun_flag(&priv->p);
-		/* TODO: this still sometimes fails without the dummy read
-		 * Theoretically it is possible for the 2 bus accesses (flg
-		 * clear, irq clear) to become tightly adjacent and the
-		 * pipelining effects will cause that the IRQ clear request
-		 * is ignored.
-		 * The dummy read would prevent this.
-		 * We still have to write a feature test for this.
-		 */
-#ifdef DEBUG
-		netdev_info(ndev, "  DOS=%d after COMMAND[CDR]",
-			    ctu_can_get_status(&priv->p).s.dor);
-#endif
-
-		/* And clear the DOI flag again */
-		icr.u32 = 0;
-		icr.s.doi = 1;
-		ctu_can_fd_int_clr(&priv->p, icr);
-	}
-
 	/* Check for Bus Error interrupt */
 	if (isr.s.bei) {
 		netdev_info(ndev, "  bus error");
@@ -521,29 +486,42 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	struct net_device *ndev = napi->dev;
 	struct ctucan_priv *priv = netdev_priv(ndev);
 	int work_done = 0;
-	union ctu_can_fd_int_stat isr, iec;
+	union ctu_can_fd_status status;
+	u32 framecnt;
+	u32 i;
 	//netdev_dbg(ndev, "ctucan_rx_poll");
 
-	iec.u32 = 0;
-	iec.s.rbnei = 1;
-
-	/* Get the interrupt status */
-	isr = ctu_can_fd_int_sts(&priv->p);
-	while (isr.s.rbnei && work_done < quota) {
-		u32 framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
-
-		netdev_dbg(ndev, "rx_poll: RBNEI set, %d frames in RX FIFO",
-			   framecnt);
-		if (framecnt == 0) {
-			netdev_err(ndev, "rx_poll: RBNEI set, but there are no frames in the FIFO!");
-			break;
+	framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
+	while (framecnt && work_done < quota) {
+		netdev_dbg(ndev, "rx_poll: %d frames in RX FIFO", framecnt);
+		for (i = 0; i < framecnt; ++i) {
+			ctucan_rx(ndev);
+			work_done++;
 		}
-		/* TODO: maybe process DOI too? */
+		framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
+	}
 
-		ctucan_rx(ndev);
-		ctu_can_fd_int_clr(&priv->p, iec);
-		work_done++;
-		isr = ctu_can_fd_int_sts(&priv->p);
+	/* Check for RX FIFO Overflow */
+	status = ctu_can_get_status(&priv->p);
+	if (status.s.dor) {
+		struct net_device_stats *stats = &ndev->stats;
+		struct can_frame *cf;
+		struct sk_buff *skb;
+
+		netdev_info(ndev, "  rx fifo overflow");
+		stats->rx_over_errors++;
+		stats->rx_errors++;
+		skb = alloc_can_err_skb(ndev, &cf);
+		if (skb) {
+			cf->can_id |= CAN_ERR_CRTL;
+			cf->data[1] |= CAN_ERR_CRTL_RX_OVERFLOW;
+			stats->rx_packets++;
+			stats->rx_bytes += cf->can_dlc;
+			netif_rx(skb);
+		}
+
+		/* Clear Data Overrun */
+		ctu_can_fd_clr_overrun_flag(&priv->p);
 	}
 
 	if (work_done)
@@ -551,8 +529,14 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 
 	if (work_done < quota) {
 		if (napi_complete_done(napi, work_done)) {
-			iec.s.doi = 1; /* Also re-enable DOI */
+			union ctu_can_fd_int_stat iec;
+			/* Clear and enable RBNEI. It is level-triggered, so
+			 * there is no race condition.
+			 */
+			iec.u32 = 0;
+			iec.s.rbnei = 1;
 			clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			ctu_can_fd_int_clr(&priv->p, iec);
 			ctu_can_fd_int_ena_set(&priv->p, iec);
 		}
 	}
@@ -701,10 +685,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 			netdev_dbg(ndev, "RXBNEI");
 			icr.u32 = 0;
 			icr.s.rbnei = 1;
+			/* Clear and disable RXBNEI, schedule NAPI */
 			ctu_can_fd_int_clr(&priv->p, icr);
-
-			/* Disable RXBNEI and DOI */
-			icr.s.doi = 1;
 			ctu_can_fd_int_ena_clr(&priv->p, icr);
 			set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 			napi_schedule(&priv->napi);
@@ -720,10 +702,9 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		}
 
 		/* Error interrupts */
-		if (isr.s.ewli || isr.s.doi || isr.s.epi || isr.s.ali) {
+		if (isr.s.ewli || isr.s.epi || isr.s.ali) {
 			union ctu_can_fd_int_stat ierrmask = { .s = {
-				  .ewli = 1, .doi = 1, .epi = 1,
-				  .ali = 1, .bei = 1 } };
+				  .ewli = 1, .epi = 1, .ali = 1, .bei = 1 } };
 			icr.u32 = isr.u32 & ierrmask.u32;
 
 			netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x",
