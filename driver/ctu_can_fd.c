@@ -628,13 +628,11 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 					/* do not clear nor wake */
 					return;
 				}
-				/* some_buffers_processed is still false */
 				goto clear;
 			}
 			priv->txb_tail++;
 			first = false;
 			some_buffers_processed = true;
-
 			/* Adjust priorities *before* marking the buffer
 			 * as empty.
 			 */
@@ -642,11 +640,16 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 			ctu_can_fd_txt_set_empty(&priv->p, txb_idx);
 		}
 clear:
-		/* Clear the interrupt again as not to receive it again for
-		 * a buffer we already handled (possibly causing the bug log)
-		 */
-		ctu_can_fd_int_clr(&priv->p, icr);
+		/* If no buffers were processed this time, wa cannot
+		 * clear - that would introduce a race condition. */
+		if (some_buffers_processed) {
+			/* Clear the interrupt again as not to receive it again
+			 * for a buffer we already handled (possibly causing
+			 * the bug log) */
+			ctu_can_fd_int_clr(&priv->p, icr);
+		}
 	} while (some_buffers_processed);
+
 	can_led_event(ndev, CAN_LED_EVENT_TX);
 	netif_wake_queue(ndev);
 }
@@ -696,9 +699,7 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		/* TX Buffer HW Command Interrupt */
 		if (isr.s.txbhci) {
 			netdev_dbg(ndev, "TXBHCI");
-			icr.u32 = 0;
-			icr.s.txbhci = 1;
-			ctu_can_fd_int_clr(&priv->p, icr);
+			/* Cleared inside */
 			ctucan_tx_interrupt(ndev);
 		}
 
