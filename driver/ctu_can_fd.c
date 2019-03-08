@@ -740,16 +740,16 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 static void ctucan_chip_stop(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	union ctu_can_fd_int_stat ena, mask;
+	union ctu_can_fd_int_stat mask;
 
 	netdev_dbg(ndev, "ctucan_chip_stop");
 
-	ena.u32 = 0;
+	mask.u32 = 0xffffffff;
 
 	/* Disable interrupts and disable can */
-	ctu_can_fd_int_ena(&priv->p, ena, mask);
+	ctu_can_fd_int_mask_set(&priv->p, mask);
 	ctu_can_fd_enable(&priv->p, false);
-	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+	// clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 	priv->can.state = CAN_STATE_STOPPED;
 }
 
