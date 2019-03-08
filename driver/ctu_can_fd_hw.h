@@ -371,6 +371,32 @@ void ctu_can_fd_int_ena(struct ctucanfd_priv *priv,
 			union ctu_can_fd_int_stat val);
 
 /*
+ * Mask interrupts of CTU CAN FD Core.
+ *
+ * Arguments:
+ *	priv	Private info
+ *	mask	Mask of interrupts which should be masked.
+ */
+static inline void ctu_can_fd_int_mask_set(struct ctucanfd_priv *priv,
+					   union ctu_can_fd_int_stat mask)
+{
+	priv->write_reg(priv, CTU_CAN_FD_INT_MASK_SET, mask.u32);
+}
+
+/*
+ * Unmask interrupts of CTU CAN FD Core.
+ *
+ * Arguments:
+ *	priv	Private info
+ *	mask	Mask of interrupts which should be unmasked.
+ */
+static inline void ctu_can_fd_int_mask_clr(struct ctucanfd_priv *priv,
+					   union ctu_can_fd_int_stat mask)
+{
+	priv->write_reg(priv, CTU_CAN_FD_INT_MASK_CLR, mask.u32);
+}
+
+/*
  * Mask/Unmask interrupts of CTU CAN FD Core.
  *
  * Arguments:

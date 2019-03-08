@@ -225,8 +225,9 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 
-	ctu_can_fd_int_mask(&priv->p, int_msk, int_enamask_mask);
-	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
+	/* It's after reset, so there is no need to clear anything */
+	ctu_can_fd_int_mask_set(&priv->p, int_msk);
+	ctu_can_fd_int_ena_set(&priv->p, int_ena);
 
 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
 
@@ -722,8 +723,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 
 		imask.u32 = 0xffffffff;
 		ival.u32 = 0;
-		ctu_can_fd_int_ena(&priv->p, imask, ival);
-		ctu_can_fd_int_mask(&priv->p, imask, ival);
+		ctu_can_fd_int_ena_clr(&priv->p, ival);
+		ctu_can_fd_int_mask_set(&priv->p, imask);
 	}
 
 	return IRQ_HANDLED;
