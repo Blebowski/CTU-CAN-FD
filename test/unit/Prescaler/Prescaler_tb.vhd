@@ -667,9 +667,11 @@ begin
             drv_ena <= '0';
             
             wait until rising_edge(clk_sys) and (bt_FSM_out = reset and bt_fsm_mod = reset);
+            res_n <= '0';
             
             wait for 100 ns;
             
+            res_n <= '1';
             drv_ena <= '1';
             wait for 1000 ns;
             
