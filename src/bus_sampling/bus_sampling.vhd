@@ -543,7 +543,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit error detector
     ---------------------------------------------------------------------------
-    bit_errror_detector_comp : bit_errror_detector
+    bit_error_detector_comp : bit_error_detector
     generic map(
          reset_polarity  => reset_polarity
     )
