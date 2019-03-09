@@ -113,7 +113,7 @@ def add_common_sources(lib, ui) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
     ui.enable_check_preprocessing()
     ui.enable_location_preprocessing() #(additional_subprograms=['log'])
-    add_sources(lib, ['*.vhd', 'lib/*.vhd'])
+    add_sources(lib, ['*.vhd', 'lib/*.vhd', 'models/*.vhd'])
 
 
 def get_common_modelsim_init_files() -> List[str]:
