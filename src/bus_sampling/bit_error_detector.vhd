@@ -64,7 +64,7 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity bit_errror_detector is
+entity bit_error_detector is
     generic(
         -- Reset polarity
         constant reset_polarity         :     std_logic
@@ -119,7 +119,7 @@ entity bit_errror_detector is
         );
 end entity;
 
-architecture rtl of bit_errror_detector is
+architecture rtl of bit_error_detector is
 
     -- Internal sample signal (muxed for NBT, DBT and SAMPLE)
     signal sample           : std_logic;

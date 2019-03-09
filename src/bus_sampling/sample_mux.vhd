@@ -170,5 +170,8 @@ begin
     insert_pipeline_false_gen : if (pipeline_sampled_data = false) generate
         data_rx <= rx_data_i;
     end generate insert_pipeline_false_gen;
+    
+    -- Internal signal to output propagation
+    prev_sample <= sample_prev_q;
 
 end architecture;

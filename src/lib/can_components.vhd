@@ -865,7 +865,7 @@ package can_components is
         );
     end component;
     
-    component bit_errror_detector is
+    component bit_error_detector is
     generic(
         constant reset_polarity         :     std_logic
     );
