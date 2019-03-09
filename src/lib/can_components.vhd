@@ -841,7 +841,8 @@ package can_components is
         signal tq_edge_nbt        : in    std_logic;
         signal tq_edge_dbt        : in    std_logic;
         signal segm_end           : out   std_logic;
-        signal h_sync_valid       : out   std_logic
+        signal h_sync_valid       : out   std_logic;
+        signal bt_ctr_clear       : out   std_logic
     );
     end component;
 

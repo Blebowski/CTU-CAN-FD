@@ -103,56 +103,56 @@ entity prescaler is
       sample_trigger_count  : natural range 2 to 8 := 3
     );
     port(
-    ------------------------
-    --Clock and async reset-
-    ------------------------
+    ---------------------------------------------------------------------------
+    -- Clock and async reset
+    ---------------------------------------------------------------------------
     signal clk_sys              :in std_logic;  --System clock
     signal res_n                :in std_logic;   --Async reset
     
-    -----------------------
-    --Bus synch Interface--
-    -----------------------
+    ---------------------------------------------------------------------------
+    -- Bus synch Interface
+    ---------------------------------------------------------------------------
     signal sync_edge            :in std_logic;        --Edge for synchronisation
     signal OP_State             :in oper_mode_type;   --Protocol control state
     
     --Driving Bus
     signal drv_bus              :in std_logic_vector(1023 downto 0); 
     
-    -------------------------------------
-    --Generated clock - Nominal bit time-
-    -------------------------------------
+    ---------------------------------------------------------------------------
+    -- Generated clock - Nominal bit time
+    ---------------------------------------------------------------------------
     --Time quantum clock - Nominal bit time
     signal clk_tq_nbt           :out std_logic;
     
     --Time quantum - Data bit time
     signal clk_tq_dbt           :out std_logic;
     
-    --------------------------------------
-    --Sample signals and delayed signals
-    --------------------------------------
+    ---------------------------------------------------------------------------
+    -- Sample signals and delayed signals
+    ---------------------------------------------------------------------------
     signal sample_nbt   :out std_logic_vector(sample_trigger_count - 1 downto 0); 
     signal sample_dbt   :out std_logic_vector(sample_trigger_count - 1 downto 0);
 
-    --------------------------------------
+    ---------------------------------------------------------------------------
     -- Sync Signals
-    --------------------------------------
+    ---------------------------------------------------------------------------
     signal sync_nbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
     signal sync_dbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
     
     signal bt_FSM_out           :out bit_time_type;
     
-    --What is actual node transmitting on the bus
+    -- What is actual node transmitting on the bus
     signal data_tx              :in   std_logic;
     
-    --Validated hard synchronisation edge to start Protocol control FSM
-    --Note: Sync edge from busSync.vhd cant be used! If it comes during sample 
-    --      nbt, sequence it causes errors! It needs to be strictly before or 
-    --      strictly after this sequence!!! 
+    -- Validated hard synchronisation edge to start Protocol control FSM
+    -- Note: Sync edge from busSync.vhd cant be used! If it comes during sample 
+    --       nbt, sequence it causes errors! It needs to be strictly before or 
+    --       strictly after this sequence!!! 
     signal hard_sync_edge_valid :out std_logic; 
     
-    -------------------------
-    --Clock source control --
-    -------------------------
+    ---------------------------------------------------------------------------
+    -- Bit timing and Synchronisation control
+    ---------------------------------------------------------------------------
     signal sp_control           :in std_logic_vector(1 downto 0);
     signal sync_control         :in std_logic_vector(1 downto 0)
   );
@@ -192,14 +192,11 @@ architecture rtl of prescaler is
     signal tseg2_dbt :  std_logic_vector(tseg2_dbt_width - 1 downto 0);
     signal brp_dbt   :  std_logic_vector(tq_dbt_width - 1 downto 0);
     signal sjw_dbt   :  std_logic_vector(sjw_dbt_width - 1 downto 0);
-
+    
     -- No positive resynchronisation.
     -- TODO: Move this to operation control FSM!
     signal no_pos_resync  :  std_logic;
-    
-    ---------------------------------------------------------------------------
-    -- Internal signals
-    ---------------------------------------------------------------------------
+
     -- End of segment is detected (by segment end detector)
     signal segment_end          : std_logic;
     
@@ -250,10 +247,21 @@ architecture rtl of prescaler is
 
     -- Signal that expected semgent length should be loaded after restart!
     signal start_edge           : std_logic;
+    
+    -- Bit time counter clear
+    signal bt_ctr_clear         : std_logic;
 
 begin
 
     drv_ena <= drv_bus(DRV_ENA_INDEX);
+    
+    ---------------------------------------------------------------------------
+    -- No positive resynchronisation detection.
+    -- TODO: This will be moved to Operation control!
+    ---------------------------------------------------------------------------
+    no_pos_resync <= '1' when (OP_State = transciever and data_tx = DOMINANT)
+                         else
+                     '0';
 
     ---------------------------------------------------------------------------
     -- Bit time config capture
@@ -366,8 +374,8 @@ begin
         clk_sys         => clk_sys,
         res_n           => res_n,
         prescaler       => brp_nbt,
-        tq_reset        => segment_end,
-        bt_reset        => segment_end,
+        tq_reset        => bt_ctr_clear,
+        bt_reset        => bt_ctr_clear,
         drv_ena         => drv_ena,
         tq_edge         => tq_edge_nbt,
         bt_counter      => bt_counter_nbt
@@ -416,8 +424,8 @@ begin
         clk_sys         => clk_sys,
         res_n           => res_n,
         prescaler       => brp_dbt,
-        tq_reset        => segment_end,
-        bt_reset        => segment_end,
+        tq_reset        => bt_ctr_clear,
+        bt_reset        => bt_ctr_clear,
         drv_ena         => drv_ena,
         tq_edge         => tq_edge_dbt,
         bt_counter      => bt_counter_dbt
@@ -443,7 +451,8 @@ begin
         tq_edge_nbt        => tq_edge_nbt,
         tq_edge_dbt        => tq_edge_dbt,
         segm_end           => segment_end,
-        h_sync_valid       => h_sync_valid
+        h_sync_valid       => h_sync_valid,
+        bt_ctr_clear       => bt_ctr_clear
     );
     
     
@@ -492,6 +501,9 @@ begin
     -- Internal signals to output propagation
     ---------------------------------------------------------------------------
     hard_sync_edge_valid <= h_sync_valid;
+    
+    clk_tq_nbt  <= tq_edge_nbt;
+    clk_tq_dbt  <= tq_edge_dbt;
     
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------

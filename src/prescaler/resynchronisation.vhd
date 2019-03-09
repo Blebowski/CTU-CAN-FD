@@ -307,6 +307,13 @@ architecture rtl of resynchronisation is
     -- Regular exit of Bit segment
     signal exit_segm_regular    : std_logic;
      
+    -- Regular exit for TSEG1, TSEG2
+    signal exit_segm_regular_tseg1 : std_logic;
+    signal exit_segm_regular_tseg2 : std_logic;
+    
+    -- SJW more than 0
+    signal sjw_mt_zero             : std_logic;
+     
 begin
 
     ---------------------------------------------------------------------------
@@ -316,6 +323,7 @@ begin
     ---------------------------------------------------------------------------
     sel_tseg1 <= '1' when (h_sync_valid = '1' or start_edge = '1') else
                  '1' when (segm_end = '1' and is_tseg2 = '1') else
+                 '1' when (segm_end = '0' and is_tseg1 = '1') else
                  '0';
 
     basic_segm_length <= 
@@ -379,11 +387,14 @@ begin
                             else
                         '0';
 
+    sjw_mt_zero <= '1' when (unsigned(sjw) > 0) else
+                   '0';
+
     ---------------------------------------------------------------------------
     -- Immediate exit occurs during PH2 when resync edge occurs.
     ---------------------------------------------------------------------------
     exit_ph2_immediate <= '1' when (phase_err_mt_sjw = '0' and is_tseg2 = '1' and
-                                    resync_edge_valid = '1') 
+                                    resync_edge_valid = '1')
                               else
                           '0';
 
@@ -396,6 +407,28 @@ begin
                              else
                          '0';
 
+
+    ---------------------------------------------------------------------------
+    -- TSEG1 is finished when Bit time counter reached value, but not when
+    -- resync-edge is there at the same time! If we did not consider resync
+    -- edge, we would ignore resync edge which arrives just at the same clock
+    -- cycle as bit time!
+    ---------------------------------------------------------------------------
+    exit_segm_regular_tseg1 <=  '0' when (is_tseg1 = '1' and 
+                                          resync_edge_valid = '1' and
+                                          sjw_mt_zero = '1')
+                                    else
+                                '1' when (is_tseg1 = '1' and exit_segm_regular = '1')
+                                    else
+                                '0';
+
+    ---------------------------------------------------------------------------
+    -- TSEG2 is finished when Bit time counter reached expected value!
+    ---------------------------------------------------------------------------
+    exit_segm_regular_tseg2 <= '1' when (is_tseg2 = '1' and exit_segm_regular = '1')
+                                   else
+                               '0';
+
     ---------------------------------------------------------------------------
     -- Capture request to end of segment. Re-synchronisation is not Time Quanta
     -- aligned, so we must capture the flag.
@@ -405,8 +438,8 @@ begin
     --  3. PROP or PH1 regular segment exit.
     ---------------------------------------------------------------------------
     exit_segm_req <= '1' when (exit_ph2_immediate = '1') else
-                     '1' when (is_tseg2 = '1' and exit_segm_regular = '1') else
-                     '1' when (is_tseg1 = '1' and exit_segm_regular = '1') else
+                     '1' when (exit_segm_regular_tseg1 = '1' or
+                               exit_segm_regular_tseg2 = '1') else
                      '0';
 
 end architecture rtl;

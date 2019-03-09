@@ -42,6 +42,14 @@
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Bit time FSM.
+--
+--  Bit Time FSM has three states:
+--      1. Reset
+--      2. TSEG1
+--      3. TSEG2
+--
+--  Output of Bit time FSM are SYNC and SAMPLE requests for SYNC and SAMPLE
+--  trigger generator.    
 --------------------------------------------------------------------------------
 -- Revision History:
 --    15.02.2019   Created file
@@ -162,6 +170,10 @@ begin
         
         case current_state is
         when reset =>
+            if (drv_ena = CTU_CAN_ENABLED) then
+                sync_req <= '1';    
+            end if;
+            
         when tseg1 =>
             is_tseg1 <= '1';
             if (segm_end = '1') then

@@ -44,10 +44,10 @@
 --  Information processing Time checker.
 --
 --   Checks length of Information processing time after Sample point between
---   PH1 and PH2. Functions like a half-handshake. When 'ipt_req' comes, interna
---   shift register is preloaded. This shift register shifts each clock cycle
---   and after input value was shifted till the very end, 'ipt_gnt' is set
---   high and remains high till the next 'ipt_req'.
+--   PH1 and PH2. Functions like a half-handshake. When 'ipt_req' comes,
+--   internal shift register is preloaded. This shift register shifts each 
+--   clock cycle and after input value was shifted till the very end, 'ipt_gnt'
+--   is set high and remains high till the next 'ipt_req'.
 --------------------------------------------------------------------------------
 -- Revision History:
 --    03.02.2019   Created file
