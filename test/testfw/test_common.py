@@ -94,9 +94,12 @@ class TestsBase:
 
         if gtkw:
             try:
-                tb.set_sim_option("ghdl.gtkw_file", str(gtkw))
+                tb.set_sim_option("ghdl.gtkwave_flags", ['--save='+str(gtkw)])
             except ValueError:
-                log.warning('Setting GTKW file per test is not supported in this VUnit version.')
+                try:
+                    tb.set_sim_option("ghdl.gtkw_file", str(gtkw))
+                except ValueError:
+                    log.warning('Setting GTKW file per test is not supported in this VUnit version.')
 
 def add_sources(lib, patterns) -> None:
     for pattern in patterns:
