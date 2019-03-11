@@ -784,7 +784,7 @@ begin
 
     prescaler_comp : prescaler
     generic map(
-      reset_polarity        => '0',
+      reset_polarity        => ACT_RESET,
       capt_btr              => false,
       capt_tseg_1           => true,
       capt_tseg_2           => false,
@@ -830,7 +830,7 @@ begin
     sample_dbt           <= sample_dbt_i(2);
     sample_nbt_del_1     <= sample_nbt_i(1);
     sample_dbt_del_1     <= sample_dbt_i(1);
-    sample_nbt_del_2     <= sample_dbt_i(0);
+    sample_nbt_del_2     <= sample_nbt_i(0);
     sample_dbt_del_2     <= sample_dbt_i(0);
     sync_nbt_del_1       <= sync_nbt_i(0);
     sync_dbt_del_1       <= sync_dbt_i(0);
