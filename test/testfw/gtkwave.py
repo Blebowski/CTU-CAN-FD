@@ -81,11 +81,11 @@ class TclFuncs:
             self.format = 'hex'
             self.signal = None
             self.isdivider = False
-            self.group = None
             self.expand = False
             self.color = None
 
         def __init__(self):
+            self.group = None
             self.reset()
 
     @staticmethod
@@ -145,8 +145,10 @@ class TclFuncs:
                 pass
             elif a0 == '-group':
                 if o.group:
+                    log.debug('Closing group {}'.format(o.group))
                     self.gtkw.end_group(o.group, closed=False)
                 o.group = args[i]
+                log.debug('Opening group {}'.format(o.group))
                 self.gtkw.begin_group(o.group, closed=False)
                 i += 1
             elif a0[0] == '-':
@@ -164,6 +166,7 @@ class TclFuncs:
                     self._add_trace(signal, type, label=o.label, datafmt=o.format, expand=o.expand, color=o.color)
                 o.reset()
         if o.group:
+            log.debug('Closing group {}'.format(o.group))
             self.gtkw.end_group(o.group)
 
 
