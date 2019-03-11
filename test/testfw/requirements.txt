@@ -1,6 +1,7 @@
 vunit_hdl
 pyvcd
-attr
+attrs
 jinja2
-tkinter
 parsy
+pyyaml
+click
