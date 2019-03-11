@@ -93,7 +93,7 @@ def find(h, fqn):
             m = re.match(r'^([^(]+)\(([0-9]+)\)$', name)
             if not m:
                 raise KeyError('{} (from {}) not found in {}'
-                               .format(name, fqn, list(curr.children.keys())),
+                               .format(name, fqn, sorted(curr.children.keys())),
                                name, fqn, list(curr.children.keys()))
             #print(name, m.groups())
             name, index = m.groups()

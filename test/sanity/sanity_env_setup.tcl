@@ -57,7 +57,7 @@ add_test_status_waves
 # for AHDL simulation. Component path must be added to have correct path
 # to internal signals
 set WRCOMP $TCOMP
-append WRCOMP "/i_st"
+append WRCOMP "/t_sanity"
 
 add wave $WRCOMP/error_ctr
 add wave $WRCOMP/loop_ctr

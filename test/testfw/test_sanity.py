@@ -1,6 +1,7 @@
 import logging
+from textwrap import dedent
 from .test_common import TestsBase, add_sources, dict_merge, vhdl_serialize, \
-                         get_seed
+                         get_seed, get_common_modelsim_init_files
 
 log = logging.getLogger(__name__)
 
@@ -54,9 +55,19 @@ class SanityTests(TestsBase):
         return {"ghdl.sim_flags" : [psl_flag]}
 
     def configure(self):
-        # TODO: wave
         tb = self.lib.get_test_benches('*tb_sanity')[0]
         default = self.config['default']
+
+        tcl = self.build / 'modelsim_init_sanity.tcl'
+        with tcl.open('wt', encoding='utf-8') as f:
+            print(dedent('''\
+                global TCOMP
+                set TCOMP tb_sanity
+                '''), file=f)
+
+        init_files = get_common_modelsim_init_files()
+        init_files += [str(tcl)]
+
         for name, cfg in self.config['tests'].items():
             if 'wave' in cfg:
                 log.warn('"wave" in sanity test config {} is ignored' +
@@ -91,5 +102,5 @@ class SanityTests(TestsBase):
             else:
                 tb.add_config(name, generics=generics)
 
-        self.add_modelsim_gui_file(tb, default, 'sanity')
+        self.add_modelsim_gui_file(tb, default, 'sanity', init_files)
         return True
