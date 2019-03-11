@@ -63,7 +63,7 @@ class TclFuncs:
             l, r = ranges[0].left, ranges[0].right
             fqn += '({}:{})'.format(l, r)
         fqn = 'top.' + fqn
-        return fqn.replace('(', '[').replace(')', ']')
+        return fqn.replace('(', '[').replace(')', ']').lower()
 
     def _add_trace(self, signal, type, *, label: str, datafmt: str, expand: bool, **kwds):
         if ghw_parse.is_record(type):
