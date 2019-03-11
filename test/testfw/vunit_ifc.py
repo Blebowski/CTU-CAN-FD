@@ -4,7 +4,7 @@ import signal
 
 __all__ = ['run']
 def get_children_pids(parent_pid):
-    cmd = ['ps', '-o', 'pid', '--ppid', parent_pid, '--noheaders']
+    cmd = ['ps', '-o', 'pid', '--ppid', str(parent_pid), '--noheaders']
     res = subprocess.run(cmd, stdout=subprocess.PIPE, check=False)
     out = res.stdout.decode('ascii')
     return [int(pid_str) for pid_str in out.split() if int(pid_str) != parent_pid]
