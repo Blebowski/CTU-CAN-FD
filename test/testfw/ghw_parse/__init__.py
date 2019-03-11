@@ -74,8 +74,8 @@ def inject_types(h, ts):
             inject_types(c, ts)
 
 
-def find(h, fqn):
-    names = fqn.split('.')
+def find_raw(h, fqn):
+    names = fqn.lower().split('.')
     curr = h
     def children(o):
         return o.items if isinstance(o, types.t_record) else o.children
@@ -112,7 +112,11 @@ def find(h, fqn):
             else:
                 raise KeyError('{} (from {}) not found in {}'
                                .format(name, fqn, list(curr.children.keys())))
+    return curr
 
+
+def find(h, fqn):
+    curr = find_raw(h, fqn)
     if not isinstance(curr, types.t_base):
         curr = curr.type
     return curr

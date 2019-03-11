@@ -28,6 +28,16 @@ class ReferenceTests(TestsBase):
         default = self.config['default']
         self.add_modelsim_gui_file(tb, default, 'sanity')
 
+        tcl = self.build / 'modelsim_init_reference.tcl'
+        with tcl.open('wt', encoding='utf-8') as f:
+            print(dedent('''\
+                global TCOMP
+                set TCOMP i_test
+                '''), file=f)
+
+        init_files = get_common_modelsim_init_files()
+        init_files += [str(tcl)]
+
         for data_set,cfg in self.config['tests'].items():
             dict_merge(cfg, default)
             # bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
@@ -44,17 +54,8 @@ class ReferenceTests(TestsBase):
                 psl_opts = self.create_psl_cov_file_opt(data_set)
                 tb.add_config(data_set, generics=generics, sim_options=psl_opts)
             else:
-                tb.add_config(data_set, generics=generics)	
-            
-            tcl = self.build / 'modelsim_init_{}.tcl'.format(data_set)
-            with tcl.open('wt', encoding='utf-8') as f:
-                print(dedent('''\
-                    global TCOMP
-                    set TCOMP i_test
-                    '''), file=f)
+                tb.add_config(data_set, generics=generics)
 
-            init_files = get_common_modelsim_init_files()
-            init_files += [str(tcl)]
             tb.set_sim_option("modelsim.init_files.after_load", init_files)
-            self.add_modelsim_gui_file(tb, cfg, data_set)
+            self.add_modelsim_gui_file(tb, cfg, data_set, init_files)
         return True

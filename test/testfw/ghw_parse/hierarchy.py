@@ -74,7 +74,7 @@ def parse(s: str) -> dict:
     curr_ws = 0
     last = dict()
     stack = [last]
-    for i, line in enumerate(lines[:4096]):
+    for i, line in enumerate(lines):
         l = line.lstrip()
         if not l:
             continue

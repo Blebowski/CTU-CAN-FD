@@ -1,5 +1,5 @@
 global TCOMP
-set TCOMP tb_bit_stuffing_unit_test/tb/i_test
+# set TCOMP tb/i_test
 
 proc start_CAN_simulation {test_wrapper} {
 }

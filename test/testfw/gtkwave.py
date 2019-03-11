@@ -4,6 +4,7 @@ from typing import List
 import logging
 import traceback
 import functools
+import re
 from pathlib import Path
 from . import ghw_parse
 
@@ -47,11 +48,13 @@ class TclFuncs:
 
     def sigtype(self, sig: str):
         fqn = sig.replace('/', '.')
+        fqn = re.sub(r'__([0-9]+)', r'(\1)', fqn)
         type = ghw_parse.find(self.hierarchy, fqn)
         return type
 
     def convsig(self, sig: str) -> str:
         fqn = sig.replace('/', '.')
+        fqn = re.sub(r'__([0-9]+)', r'(\1)', fqn)
         type = ghw_parse.find(self.hierarchy, fqn)
         if ghw_parse.is_array(type):
             ranges, type = ghw_parse.strip_array(type)
@@ -60,7 +63,7 @@ class TclFuncs:
             l, r = ranges[0].left, ranges[0].right
             fqn += '({}:{})'.format(l, r)
         fqn = 'top.' + fqn
-        return fqn.replace('(', '[').replace(')', ']')
+        return fqn.replace('(', '[').replace(')', ']').lower()
 
     def _add_trace(self, signal, type, *, label: str, datafmt: str, expand: bool, **kwds):
         if ghw_parse.is_record(type):
@@ -78,11 +81,11 @@ class TclFuncs:
             self.format = 'hex'
             self.signal = None
             self.isdivider = False
-            self.group = None
             self.expand = False
             self.color = None
 
         def __init__(self):
+            self.group = None
             self.reset()
 
     @staticmethod
@@ -142,8 +145,10 @@ class TclFuncs:
                 pass
             elif a0 == '-group':
                 if o.group:
+                    log.debug('Closing group {}'.format(o.group))
                     self.gtkw.end_group(o.group, closed=False)
                 o.group = args[i]
+                log.debug('Opening group {}'.format(o.group))
                 self.gtkw.begin_group(o.group, closed=False)
                 i += 1
             elif a0[0] == '-':
@@ -161,6 +166,7 @@ class TclFuncs:
                     self._add_trace(signal, type, label=o.label, datafmt=o.format, expand=o.expand, color=o.color)
                 o.reset()
         if o.group:
+            log.debug('Closing group {}'.format(o.group))
             self.gtkw.end_group(o.group)
 
 
