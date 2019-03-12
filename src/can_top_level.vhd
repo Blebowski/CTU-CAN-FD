@@ -411,13 +411,7 @@ architecture rtl of CAN_top_level is
 
     --Protocol control state
     signal OP_State       : oper_mode_type;
-
-    --Time quantum clock - Nominal bit time
-    signal clk_tq_nbt : std_logic;
-
-    --Bit time - Nominal bit time
-    signal clk_tq_dbt : std_logic;
-
+    
     --Sample signal for nominal bit time
     signal sample_nbt       : std_logic;
 
@@ -447,12 +441,10 @@ architecture rtl of CAN_top_level is
 
     signal bt_FSM_out : bit_time_type;
 
-    --Validated hard synchronisation edge to start Protocol control FSM
+    -- Validated hard synchronisation edge to start Protocol control FSM
     signal hard_sync_edge_valid : std_logic;
-    --Note: Sync edge from busSync.vhd cant be used! If it comes during sample
-    -- nbt, sequence it causes errors! It needs to be strictly before or
-    -- strictly after this sequence!!!
 
+    signal no_pos_resync : std_logic;
 
     ----------------------------------------------------------------------------
     -- Bus Synchroniser Interface
@@ -770,6 +762,7 @@ begin
         sample_sec_del_1      => sample_sec_del_1,
         sample_sec_del_2      => sample_sec_del_2,
         sync_control          => sync_control,
+        no_pos_resync         => no_pos_resync,
         data_rx               => data_rx,
         data_tx               => data_tx,
         timestamp             => timestamp,
@@ -808,20 +801,18 @@ begin
     port map(
         clk_sys              => clk_sys,
         res_n                => res_n_int,
-        OP_State             => OP_State,
         sync_edge            => sync_edge,
         drv_bus              => drv_bus,
-        clk_tq_nbt           => clk_tq_nbt,
-        clk_tq_dbt           => clk_tq_dbt,
         sample_nbt           => sample_nbt_i,
         sample_dbt           => sample_dbt_i,
         bt_FSM_out           => bt_FSM_out,
         sync_nbt             => sync_nbt_i,
         sync_dbt             => sync_dbt_i,
-        data_tx              => data_tx,
+        time_quanta_clk      => time_quanta_clk,
         hard_sync_edge_valid => hard_sync_edge_valid,
         sp_control           => sp_control,
-        sync_control         => sync_control
+        sync_control         => sync_control,
+        no_pos_resync        => no_pos_resync
     );
     
     -- Temporary internal connections. Will be replaced during protocol
@@ -903,10 +894,6 @@ begin
         log_size          <= (others => '0');
 		log_state_out     <= config;
     end generate event_logger_gen_false;
-
-    --Bit time clock output propagation
-    time_quanta_clk <= clk_tq_nbt when sp_control = NOMINAL_SAMPLE else
-                       clk_tq_dbt;
 
     OP_State <= oper_mode_type'val(to_integer(unsigned(
                     stat_bus(STAT_OP_STATE_HIGH downto STAT_OP_STATE_LOW))));

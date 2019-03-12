@@ -255,7 +255,10 @@ entity can_core is
         --       trigger signal therefore logically belongs here
 
         -- Synchronisation control signal (Hard sync, Re Sync)
-        signal sync_control           :out  std_logic_vector(1 downto 0); 
+        signal sync_control           :out  std_logic_vector(1 downto 0);
+        
+        -- No positive resynchronisation
+        signal no_pos_resync          :out  std_logic;
 
         ------------------------------------------------------------------------
         -- Recieve and transcieved data interface
@@ -1003,6 +1006,15 @@ begin
                                             drv_int_loopback_ena = '1') 
                                       else
                             data_tx_from_PC;
+                         
+    
+    ----------------------------------------------------------------------------
+    -- No positive resynchronisation for transceiver due to RECESSIVE to
+    -- DOMINANT transition.
+    ----------------------------------------------------------------------------
+    no_pos_resync <= '1' when (OP_State = transciever and data_tx = DOMINANT)
+                         else
+                     '0';
 
 
     ----------------------------------------------------------------------------

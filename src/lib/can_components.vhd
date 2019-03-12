@@ -663,6 +663,7 @@ package can_components is
             signal sample_sec_del_1      : in  std_logic;
             signal sample_sec_del_2      : in  std_logic;
             signal sync_control          : out std_logic_vector(1 downto 0);
+            signal no_pos_resync         : out std_logic;
             signal data_rx               : in  std_logic;
             signal data_tx               : out std_logic;
             signal timestamp             : in  std_logic_vector(63 downto 0);
@@ -719,19 +720,17 @@ package can_components is
             signal clk_sys              : in  std_logic;
             signal res_n                : in  std_logic;
             signal sync_edge            : in  std_logic;
-            signal OP_State             : in  oper_mode_type;
             signal drv_bus              : in  std_logic_vector(1023 downto 0);
-            signal clk_tq_nbt           : out std_logic;
-            signal clk_tq_dbt           : out std_logic;
             signal sample_nbt           : out std_logic_vector(sample_trigger_count - 1 downto 0); 
             signal sample_dbt           : out std_logic_vector(sample_trigger_count - 1 downto 0);
             signal sync_nbt             : out std_logic_vector(sync_trigger_count - 1 downto 0);
             signal sync_dbt             : out std_logic_vector(sync_trigger_count - 1 downto 0);
+            signal time_quanta_clk      : out std_logic;
             signal bt_FSM_out           : out bit_time_type;
-            signal data_tx              : in  std_logic;
             signal hard_sync_edge_valid : out std_logic;
             signal sp_control           : in  std_logic_vector(1 downto 0);
-            signal sync_control         : in  std_logic_vector(1 downto 0)
+            signal sync_control         : in  std_logic_vector(1 downto 0);
+            signal no_pos_resync        : in  std_logic
         );
     end component;
 

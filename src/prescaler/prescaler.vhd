@@ -42,6 +42,10 @@
 --------------------------------------------------------------------------------
 -- Purpose:
 --  Prescaler circuit.
+--
+--  Implements functionality of Bit Time measurement. Handles Hard Synchroni-
+--  sation and Re-synchronisation. Generates SYNC and SAMPLE Triggering signals
+--  for CAN TX and CAN RX Datapath processing.
 --                                                                          
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -83,78 +87,70 @@ entity prescaler is
       capt_sjw              :   boolean := false;
       
       -- Width of Bit time segments      
-      tseg1_nbt_width       : natural := 8; 
-      tseg2_nbt_width       : natural := 6;
-      tq_nbt_width          : natural := 8;
-      sjw_nbt_width         : natural := 5;
+      tseg1_nbt_width       :   natural := 8; 
+      tseg2_nbt_width       :   natural := 6;
+      tq_nbt_width          :   natural := 8;
+      sjw_nbt_width         :   natural := 5;
       
-      tseg1_dbt_width       : natural := 7;
-      tseg2_dbt_width       : natural := 5;
-      tq_dbt_width          : natural := 8;
-      sjw_dbt_width         : natural := 5;
+      tseg1_dbt_width       :   natural := 7;
+      tseg2_dbt_width       :   natural := 5;
+      tq_dbt_width          :   natural := 8;
+      sjw_dbt_width         :   natural := 5;
       
       -- Length of information processing time (in clock cycles)
-      ipt_length            : natural := 3;
+      ipt_length            :   natural := 3;
       
       -- Number of signals in Sync trigger
-      sync_trigger_count    : natural range 2 to 8 := 2;
+      sync_trigger_count    :   natural range 2 to 8 := 2;
     
       -- Number of signals in Sample trigger
-      sample_trigger_count  : natural range 2 to 8 := 3
+      sample_trigger_count  :   natural range 2 to 8 := 3
     );
     port(
-    ---------------------------------------------------------------------------
-    -- Clock and async reset
-    ---------------------------------------------------------------------------
-    signal clk_sys              :in std_logic;  --System clock
-    signal res_n                :in std_logic;   --Async reset
+        -----------------------------------------------------------------------
+        -- Clock and async reset
+        -----------------------------------------------------------------------
+        signal clk_sys              :in std_logic;
+        signal res_n                :in std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Bus sampling Interface
+        -----------------------------------------------------------------------
+        -- Synchronisation edge
+        signal sync_edge            :in std_logic;
     
-    ---------------------------------------------------------------------------
-    -- Bus synch Interface
-    ---------------------------------------------------------------------------
-    signal sync_edge            :in std_logic;        --Edge for synchronisation
-    signal OP_State             :in oper_mode_type;   --Protocol control state
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        signal drv_bus              :in std_logic_vector(1023 downto 0); 
+        
+        -----------------------------------------------------------------------
+        -- Sample signals and delayed signals
+        -----------------------------------------------------------------------
+        signal sample_nbt   :out std_logic_vector(sample_trigger_count - 1 downto 0); 
+        signal sample_dbt   :out std_logic_vector(sample_trigger_count - 1 downto 0);
     
-    --Driving Bus
-    signal drv_bus              :in std_logic_vector(1023 downto 0); 
-    
-    ---------------------------------------------------------------------------
-    -- Generated clock - Nominal bit time
-    ---------------------------------------------------------------------------
-    --Time quantum clock - Nominal bit time
-    signal clk_tq_nbt           :out std_logic;
-    
-    --Time quantum - Data bit time
-    signal clk_tq_dbt           :out std_logic;
-    
-    ---------------------------------------------------------------------------
-    -- Sample signals and delayed signals
-    ---------------------------------------------------------------------------
-    signal sample_nbt   :out std_logic_vector(sample_trigger_count - 1 downto 0); 
-    signal sample_dbt   :out std_logic_vector(sample_trigger_count - 1 downto 0);
-
-    ---------------------------------------------------------------------------
-    -- Sync Signals
-    ---------------------------------------------------------------------------
-    signal sync_nbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
-    signal sync_dbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
-    
-    signal bt_FSM_out           :out bit_time_type;
-    
-    -- What is actual node transmitting on the bus
-    signal data_tx              :in   std_logic;
-    
-    -- Validated hard synchronisation edge to start Protocol control FSM
-    -- Note: Sync edge from busSync.vhd cant be used! If it comes during sample 
-    --       nbt, sequence it causes errors! It needs to be strictly before or 
-    --       strictly after this sequence!!! 
-    signal hard_sync_edge_valid :out std_logic; 
-    
-    ---------------------------------------------------------------------------
-    -- Bit timing and Synchronisation control
-    ---------------------------------------------------------------------------
-    signal sp_control           :in std_logic_vector(1 downto 0);
-    signal sync_control         :in std_logic_vector(1 downto 0)
+        -----------------------------------------------------------------------
+        -- Sync Signals
+        -----------------------------------------------------------------------
+        signal sync_nbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
+        signal sync_dbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
+        
+        -- Time quanta clock synchronisation output
+        signal time_quanta_clk      :out std_logic;
+        
+        -- Bit time FSM output
+        signal bt_FSM_out           :out bit_time_type;
+        
+        -- Hard synchronisation occured
+        signal hard_sync_edge_valid :out std_logic; 
+        
+        -----------------------------------------------------------------------
+        -- Bit timing and Synchronisation control
+        -----------------------------------------------------------------------
+        signal sp_control           :in std_logic_vector(1 downto 0);
+        signal sync_control         :in std_logic_vector(1 downto 0);
+        signal no_pos_resync        :in std_logic
   );
 end entity;
 
@@ -193,10 +189,6 @@ architecture rtl of prescaler is
     signal brp_dbt   :  std_logic_vector(tq_dbt_width - 1 downto 0);
     signal sjw_dbt   :  std_logic_vector(sjw_dbt_width - 1 downto 0);
     
-    -- No positive resynchronisation.
-    -- TODO: Move this to operation control FSM!
-    signal no_pos_resync  :  std_logic;
-
     -- End of segment is detected (by segment end detector)
     signal segment_end          : std_logic;
     
@@ -217,14 +209,14 @@ architecture rtl of prescaler is
     signal ipt_ok               : std_logic;
      
     -- Size of internal Bit time counters.
-    constant bt_width_nbt : natural :=
+    constant bt_width_nbt       : natural :=
         max(tseg1_nbt_width, tseg2_nbt_width) + 1;
-    constant bt_width_dbt : natural :=
+    constant bt_width_dbt       : natural :=
         max(tseg1_dbt_width, tseg2_dbt_width) + 1;
    
     -- Bit time counter values. 
-    signal bt_counter_nbt   : std_logic_vector(bt_width_nbt - 1 downto 0);
-    signal bt_counter_dbt   : std_logic_vector(bt_width_dbt - 1 downto 0);
+    signal bt_counter_nbt       : std_logic_vector(bt_width_nbt - 1 downto 0);
+    signal bt_counter_dbt       : std_logic_vector(bt_width_dbt - 1 downto 0);
     
     -- Exit segment requests from re-synchronisation circuits
     signal exit_segm_req_nbt    : std_logic;
@@ -238,31 +230,24 @@ architecture rtl of prescaler is
     signal sample_req           : std_logic;
     
     -- Sync trigger request (in beginning of SYNC segment)
-    signal sync_req             : std_logic;
-    
-    constant nbt_ones   : std_logic_vector(bt_width_nbt - 1 downto 0) :=
-        (OTHERS => '1');
-    constant dbt_ones   : std_logic_vector(bt_width_nbt - 1 downto 0) :=
-        (OTHERS => '1');
+    signal sync_req             : std_logic;   
 
     -- Signal that expected semgent length should be loaded after restart!
     signal start_edge           : std_logic;
     
     -- Bit time counter clear
     signal bt_ctr_clear         : std_logic;
+    
+    -- Constants defined for PSL assertions only.
+    constant nbt_ones   : std_logic_vector(bt_width_nbt - 1 downto 0) :=
+        (OTHERS => '1');
+    constant dbt_ones   : std_logic_vector(bt_width_nbt - 1 downto 0) :=
+        (OTHERS => '1');
 
 begin
 
     drv_ena <= drv_bus(DRV_ENA_INDEX);
     
-    ---------------------------------------------------------------------------
-    -- No positive resynchronisation detection.
-    -- TODO: This will be moved to Operation control!
-    ---------------------------------------------------------------------------
-    no_pos_resync <= '1' when (OP_State = transciever and data_tx = DOMINANT)
-                         else
-                     '0';
-
     ---------------------------------------------------------------------------
     -- Bit time config capture
     ---------------------------------------------------------------------------
@@ -502,9 +487,11 @@ begin
     ---------------------------------------------------------------------------
     hard_sync_edge_valid <= h_sync_valid;
     
-    clk_tq_nbt  <= tq_edge_nbt;
-    clk_tq_dbt  <= tq_edge_dbt;
-    
+    -- Time quanta clock output
+    time_quanta_clk <= tq_edge_nbt when (sp_control = NOMINAL_SAMPLE)
+                                   else
+                       tq_edge_dbt;
+
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
     -- Assertions
