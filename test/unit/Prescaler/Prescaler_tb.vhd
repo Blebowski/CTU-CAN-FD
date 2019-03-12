@@ -41,8 +41,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Unit test for the prescaler circuit. At the time of implementation
---  "prescaler_v3.vhd" was used!
+--  Unit test for the prescaler circuit.
 --------------------------------------------------------------------------------
 -- Revision History:
 --    7.6.2016   Created file
@@ -51,6 +50,7 @@
 --   29.3.2018   Added check for the bit-rate switching to verify the compen-
 --               sation mechanism, and provide stable reference in case of
 --               reimplementation.
+--   12.3.2019   Replaced direct checks by a model of prescaler.
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
@@ -158,6 +158,8 @@ architecture presc_unit_test of CAN_test is
     -- Random counter for synchronisation edge generation
     signal rand_ctr_sync_edge     :   natural range 0 to RAND_POOL_SIZE := 0;
     
+    -- No positive re-synchronisation
+    signal no_pos_resync          :   std_logic;
     
     ---------------------------------------------------------------------------
     -- Model outputs
@@ -307,19 +309,16 @@ begin
         clk_sys              =>  clk_sys,
         res_n                =>  res_n,
         sync_edge            =>  sync_edge,
-        OP_State             =>  OP_State,
         drv_bus              =>  drv_bus  ,
-        clk_tq_nbt           =>  clk_tq_nbt,
-        clk_tq_dbt           =>  clk_tq_dbt,
         sample_nbt           =>  sample_nbt_i,
         sample_dbt           =>  sample_dbt_i,
         sync_nbt             =>  sync_nbt_i,
         sync_dbt             =>  sync_dbt_i,
-        data_tx              =>  data_tx,
         bt_FSM_out           =>  bt_FSM_out,
         hard_sync_edge_valid =>  hard_sync_edge_valid,
         sp_control           =>  sp_control,
-        sync_control         =>  sync_control
+        sync_control         =>  sync_control,
+        no_pos_resync        =>  no_pos_resync
     );
 
     -- Connect new vector signals to old signals for backwards compatibility
@@ -376,6 +375,9 @@ begin
     trig_signals.sync_nbt_del_1    <=  sync_nbt_del_1;
     trig_signals.sync_dbt_del_1    <=  sync_dbt_del_1;
 
+    no_pos_resync <= '1' when (OP_State = transciever and data_tx = DOMINANT)
+                         else
+                     '0';
 
     ----------------------------------------------------------------------------
     -- Clock generation
@@ -558,8 +560,6 @@ begin
                 wait for 50 ns;
                 error("Bit time FSM state mismatch");
             end if;
-            
-            -- TODO: Implement checks with SYNC and SAMPLE signals!
 
         end if;
     end process;
@@ -570,29 +570,19 @@ begin
     ---------------------------------------------------------------------------
     prescaler_model_comp : prescaler_model
     generic map(
-      reset_polarity        => '0',
-      ipt_length            => 3,
-      sync_trigger_count    => 2,
-      sample_trigger_count  => 3,
-      clock_period          => 10 ns
+        reset_polarity          => '0',
+        clock_period            => 10 ns
     )
     port map(
-        clk_sys        => clk_sys,
-        res_n          => res_n,
-        sync_edge      => sync_edge,
-        OP_State       => OP_State,
-        drv_bus        => drv_bus,
-        clk_tq_nbt     => clk_tq_nbt_mod,
-        clk_tq_dbt     => clk_tq_dbt_mod,
-        sample_nbt     => sample_nbt_mod, 
-        sample_dbt     => sample_dbt_mod,
-        sync_nbt       => sync_nbt_mod,
-        sync_dbt       => sync_dbt_mod,
-        bt_FSM_out           => bt_FSM_mod,
-        data_tx              => data_tx,
-        hard_sync_edge_valid => hard_sync_edge_valid_mod, 
-        sp_control           => sp_control,
-        sync_control         => sync_control
+        clk_sys                 => clk_sys,
+        res_n                   => res_n,
+        sync_edge               => sync_edge,
+        OP_State                => OP_State,
+        drv_bus                 => drv_bus,
+        bt_FSM_out              => bt_FSM_mod,
+        data_tx                 => data_tx,
+        sp_control              => sp_control,
+        sync_control            => sync_control
     );
 
 

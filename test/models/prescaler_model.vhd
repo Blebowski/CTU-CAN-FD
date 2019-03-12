@@ -66,6 +66,8 @@
 --  These flags are also set for TSEG1 process when edge occured in TSEG2, so
 --  that resync edge would not be considered more times between two sample
 --  points!
+--
+--  TODO: Model does not implement trigger sequences so far!
 --                                                                 
 --------------------------------------------------------------------------------
 -- Revision History:
@@ -95,71 +97,36 @@ entity prescaler_model is
       -- Reset polarity
       reset_polarity        :   std_logic := '0';
       
-      -- Length of information processing time (in clock cycles)
-      ipt_length            :   natural := 3;
-      
-      -- Number of signals in Sync trigger
-      sync_trigger_count    :   natural range 2 to 8 := 2;
-    
-      -- Number of signals in Sample trigger
-      sample_trigger_count  :   natural range 2 to 8 := 3;
-      
       -- Clock period
       clock_period          :   time := 10 ns
     );
     port(
-    ---------------------------------------------------------------------------
-    -- Clock and async reset
-    ---------------------------------------------------------------------------
-    signal clk_sys              :in std_logic;  --System clock
-    signal res_n                :in std_logic;   --Async reset
+        -----------------------------------------------------------------------
+        -- Clock and async reset
+        -----------------------------------------------------------------------
+        signal clk_sys              :in std_logic;
+        signal res_n                :in std_logic;
     
-    ---------------------------------------------------------------------------
-    -- Bus synch Interface
-    ---------------------------------------------------------------------------
-    signal sync_edge            :in std_logic;        --Edge for synchronisation
-    signal OP_State             :in oper_mode_type;   --Protocol control state
+        -----------------------------------------------------------------------
+        -- Bus synch Interface
+        -----------------------------------------------------------------------
+        signal sync_edge            :in std_logic;
+        signal OP_State             :in oper_mode_type;
+        
+        -- Driving Bus
+        signal drv_bus              :in std_logic_vector(1023 downto 0); 
+        
+        -- Bit time FSM output
+        signal bt_FSM_out           :out bit_time_type;
     
-    --Driving Bus
-    signal drv_bus              :in std_logic_vector(1023 downto 0); 
+        -- What is actual node transmitting on the bus
+        signal data_tx              :in   std_logic;
     
-    ---------------------------------------------------------------------------
-    -- Generated clock
-    ---------------------------------------------------------------------------
-    --Time quantum clock - Nominal bit time
-    signal clk_tq_nbt           :out std_logic;
-    
-    --Time quantum - Data bit time
-    signal clk_tq_dbt           :out std_logic;
-    
-    ---------------------------------------------------------------------------
-    -- Sample signals and delayed signals
-    ---------------------------------------------------------------------------
-    signal sample_nbt   :out std_logic_vector(sample_trigger_count - 1 downto 0); 
-    signal sample_dbt   :out std_logic_vector(sample_trigger_count - 1 downto 0);
-
-    ---------------------------------------------------------------------------
-    -- Sync Signals
-    ---------------------------------------------------------------------------
-    signal sync_nbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
-    signal sync_dbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
-    
-    signal bt_FSM_out           :out bit_time_type;
-    
-    -- What is actual node transmitting on the bus
-    signal data_tx              :in   std_logic;
-    
-    -- Validated hard synchronisation edge to start Protocol control FSM
-    -- Note: Sync edge from busSync.vhd cant be used! If it comes during sample 
-    --       nbt, sequence it causes errors! It needs to be strictly before or 
-    --       strictly after this sequence!!! 
-    signal hard_sync_edge_valid :out std_logic; 
-    
-    ---------------------------------------------------------------------------
-    -- Bit time and Synchronisation config
-    ---------------------------------------------------------------------------
-    signal sp_control           :in std_logic_vector(1 downto 0);
-    signal sync_control         :in std_logic_vector(1 downto 0)
+        -----------------------------------------------------------------------
+        -- Bit time and Synchronisation config
+        -----------------------------------------------------------------------
+        signal sp_control           :in std_logic_vector(1 downto 0);
+        signal sync_control         :in std_logic_vector(1 downto 0)
   );
 end entity;
 
@@ -515,6 +482,7 @@ begin
 
     ---------------------------------------------------------------------------
     -- Bit time process
+    -- Counts TSEG1 and starts TSEG2 processes for NBT and for DBT.
     ---------------------------------------------------------------------------
     bt_proc : process
         variable exp_dur      : integer := 0;

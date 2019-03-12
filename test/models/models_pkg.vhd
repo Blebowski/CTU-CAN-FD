@@ -74,9 +74,6 @@ package models_pkg is
     component prescaler_model is
     generic(
       reset_polarity        :   std_logic := '0';
-      ipt_length            :   natural := 3;
-      sync_trigger_count    :   natural range 2 to 8 := 2;
-      sample_trigger_count  :   natural range 2 to 8 := 3;
       clock_period          :   time := 10 ns
     );
     port(
@@ -85,15 +82,8 @@ package models_pkg is
         signal sync_edge            :in std_logic;        --Edge for synchronisation
         signal OP_State             :in oper_mode_type;   --Protocol control state
         signal drv_bus              :in std_logic_vector(1023 downto 0); 
-        signal clk_tq_nbt           :out std_logic;
-        signal clk_tq_dbt           :out std_logic;    
-        signal sample_nbt   :out std_logic_vector(sample_trigger_count - 1 downto 0); 
-        signal sample_dbt   :out std_logic_vector(sample_trigger_count - 1 downto 0);
-        signal sync_nbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
-        signal sync_dbt     :out std_logic_vector(sync_trigger_count - 1 downto 0);
         signal bt_FSM_out           :out bit_time_type;
         signal data_tx              :in   std_logic;
-        signal hard_sync_edge_valid :out std_logic;     
         signal sp_control           :in std_logic_vector(1 downto 0);
         signal sync_control         :in std_logic_vector(1 downto 0)
   );
