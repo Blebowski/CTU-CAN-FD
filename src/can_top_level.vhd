@@ -793,7 +793,6 @@ begin
       tseg2_dbt_width       => 5,
       tq_dbt_width          => 8,
       sjw_dbt_width         => 5,
-      ipt_length            => 4,
       
       sync_trigger_count    => 2,
       sample_trigger_count  => 3

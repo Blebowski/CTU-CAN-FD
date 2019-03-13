@@ -96,9 +96,6 @@ entity segment_end_detector is
         signal exit_segm_req_nbt  : in    std_logic;
         signal exit_segm_req_dbt  : in    std_logic;
 
-        -- Information processing time has elapsed after Sample point
-        signal ipt_ok             : in    std_logic;
-        
         -- Bit time segments indication
         signal is_tseg1           : in    std_logic;
         signal is_tseg2           : in    std_logic;
@@ -260,15 +257,14 @@ begin
         '0';
  
     ---------------------------------------------------------------------------
-    -- Time segment end requests. Note that for TSEG2 we must take IPT into
-    -- account!
+    -- Time segment end requests.
     ---------------------------------------------------------------------------
     tseg1_end_req_valid <=
         '1' when (is_tseg1 = '1' and segm_end_nbt_dbt_valid = '1') else
         '0';
 
     tseg2_end_req_valid <=
-        '1' when (is_tseg2 = '1' and segm_end_nbt_dbt_valid = '1' and ipt_ok = '1')
+        '1' when (is_tseg2 = '1' and segm_end_nbt_dbt_valid = '1')
             else
         '0';
     

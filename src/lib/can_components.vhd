@@ -712,7 +712,6 @@ package can_components is
           tseg2_dbt_width       : natural := 5;
           tq_dbt_width          : natural := 8;
           sjw_dbt_width         : natural := 5;
-          ipt_length            : natural := 3;
           sync_trigger_count    : natural range 2 to 8 := 2;
           sample_trigger_count  : natural range 2 to 8 := 3
         );
@@ -791,7 +790,6 @@ package can_components is
         signal clk_sys              : in    std_logic;
         signal res_n                : in    std_logic;
         signal resync_edge_valid    : in    std_logic;
-        signal ipt_ok               : in    std_logic;
         signal is_tseg1             : in    std_logic;
         signal is_tseg2             : in    std_logic;
         signal tseg_1       : in    std_logic_vector(tseg1_width - 1 downto 0);
@@ -834,7 +832,6 @@ package can_components is
         signal h_sync_edge_valid  : in    std_logic;
         signal exit_segm_req_nbt  : in    std_logic;
         signal exit_segm_req_dbt  : in    std_logic;
-        signal ipt_ok             : in    std_logic;
         signal is_tseg1           : in    std_logic;
         signal is_tseg2           : in    std_logic;
         signal tq_edge_nbt        : in    std_logic;

@@ -97,9 +97,6 @@ entity prescaler is
       tq_dbt_width          :   natural := 8;
       sjw_dbt_width         :   natural := 5;
       
-      -- Length of information processing time (in clock cycles)
-      ipt_length            :   natural := 3;
-      
       -- Number of signals in Sync trigger
       sync_trigger_count    :   natural range 2 to 8 := 2;
     
@@ -205,9 +202,6 @@ architecture rtl of prescaler is
     signal resync_edge_valid    : std_logic;
     signal h_sync_edge_valid    : std_logic;
 
-    -- Information processing Time has elapsed, TSEG2 may end
-    signal ipt_ok               : std_logic;
-     
     -- Size of internal Bit time counters.
     constant bt_width_nbt       : natural :=
         max(tseg1_nbt_width, tseg2_nbt_width) + 1;
@@ -302,21 +296,7 @@ begin
         h_sync_edge_valid => h_sync_edge_valid
     );
 
-    ---------------------------------------------------------------------------
-    -- Information processing time checker
-    ---------------------------------------------------------------------------
-    ipt_checker_comp : ipt_checker
-    generic map(
-        reset_polarity => reset_polarity, 
-        ipt_length     => ipt_length
-    )
-    port map(
-        clk_sys        => clk_sys,
-        res_n          => res_n,
-        is_tseg2       => is_tseg2,
-        ipt_gnt        => ipt_ok
-    );
-
+    
     ---------------------------------------------------------------------------
     -- Re-synchronisation (Nominal Bit Time)
     ---------------------------------------------------------------------------
@@ -332,7 +312,6 @@ begin
         clk_sys              => clk_sys,
         res_n                => res_n,
         resync_edge_valid    => resync_edge_valid,
-        ipt_ok               => ipt_ok,
         is_tseg1             => is_tseg1,
         is_tseg2             => is_tseg2,
         tseg_1               => tseg1_nbt,
@@ -382,7 +361,6 @@ begin
         clk_sys              => clk_sys,
         res_n                => res_n,
         resync_edge_valid    => resync_edge_valid,
-        ipt_ok               => ipt_ok,
         is_tseg1             => is_tseg1,
         is_tseg2             => is_tseg2,
         tseg_1               => tseg1_dbt,
@@ -430,7 +408,6 @@ begin
         h_sync_edge_valid  => h_sync_edge_valid, 
         exit_segm_req_nbt  => exit_segm_req_nbt,
         exit_segm_req_dbt  => exit_segm_req_dbt,
-        ipt_ok             => ipt_ok,
         is_tseg1           => is_tseg1,
         is_tseg2           => is_tseg2,
         tq_edge_nbt        => tq_edge_nbt,

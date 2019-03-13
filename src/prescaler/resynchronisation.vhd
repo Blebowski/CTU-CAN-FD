@@ -195,10 +195,7 @@ entity resynchronisation is
         -----------------------------------------------------------------------
         -- There is a valid re-synchronisation edge
         signal resync_edge_valid    : in    std_logic;
-        
-        -- Information processing time OK, PH2 may end
-        signal ipt_ok               : in    std_logic;
-        
+
         -----------------------------------------------------------------------
         -- Bit Time FSM interface
         -----------------------------------------------------------------------        
@@ -432,8 +429,7 @@ begin
     ---------------------------------------------------------------------------
     -- Capture request to end of segment. Re-synchronisation is not Time Quanta
     -- aligned, so we must capture the flag.
-    --  1. Immediate exit of PH2, we still need to capture in case that this
-    --     resynchronisation is delayed till IPT_OK.
+    --  1. Immediate exit of PH2.
     --  2. PH2, regular segment exit.
     --  3. PROP or PH1 regular segment exit.
     ---------------------------------------------------------------------------
