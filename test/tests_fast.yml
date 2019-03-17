@@ -64,7 +64,6 @@ feature:
         rtr_pref:
         data_length_code:
         bus_start:
-        suspend_transmission:
         data_overrun_clear:
             iterations: 1
         txtb_state:
