@@ -520,26 +520,6 @@ architecture rtl of can_core is
     -- Signals start of frame to rest of the design
     signal sof_pulse_r             :     std_logic;
     
-
-
-    for operation_control_comp    : operation_control  
-            use entity work.operation_control(rtl);
-
-    for protocol_control_comp     : protocol_control
-            use entity work.protocol_control(rtl);
-
-    for fault_confinement_comp  : fault_confinement
-            use entity work.fault_confinement(rtl);
-
-    for crc_wrapper_comp  : crc_wrapper
-            use entity work.crc_wrapper(rtl);
-
-    for bit_stuffing_comp   : bit_stuffing
-            use entity work.bit_stuffing(rtl);
-
-    for bit_destuffing_comp : bit_destuffing
-            use entity work.bit_destuffing(rtl);
-   
 begin
   
     -- Internal signals to output propagation
