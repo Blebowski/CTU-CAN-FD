@@ -134,9 +134,9 @@ def add_flags(ui, lib, build) -> None:
         rt.scan_tests_from_file(str(build / "../reference/vunit_reference_wrapper.vhd"))
 
     #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
-    lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl"])
+    lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl", "-g"])
 
-    elab_flags = ["-Wl,-lgcov"]
+    elab_flags = ["-Wl,-lgcov", "-g"]
     elab_flags.append("-Wl,--coverage")
     elab_flags.append("-Wl,-no-pie")
     elab_flags.append("-fpsl")

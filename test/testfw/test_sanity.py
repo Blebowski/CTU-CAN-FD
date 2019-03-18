@@ -96,7 +96,7 @@ class SanityTests(TestsBase):
 
             sanity_cfg_name = name.replace(" ", "_").replace("/", "_").strip('"')
 
-            if (cfg['psl_coverage']):
+            if cfg['psl_coverage']:
                 psl_opts = self.create_psl_cov_file_opt(name)
                 tb.add_config(name, generics=generics, sim_options=psl_opts)
             else:

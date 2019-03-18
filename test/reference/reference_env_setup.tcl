@@ -69,5 +69,3 @@ add wave -label "CAN RX" $TCOMP/can_rx
 add wave -noupdate -divider -height 20 "CAN Node"
 add wave -label "Protocol control" $TCOMP/CAN_inst/can_core_comp/PC_State
 add wave -label "Bit timing state" $TCOMP/CAN_inst/bt_FSM_out
-
-
