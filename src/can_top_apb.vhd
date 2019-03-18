@@ -104,7 +104,7 @@ architecture rtl of CTU_CAN_FD_v1_0 is
  
     signal reg_data_in      : std_logic_vector(31 downto 0);
     signal reg_data_out     : std_logic_vector(31 downto 0);
-    signal reg_addr         : std_logic_vector(23 downto 0);
+    signal reg_addr         : std_logic_vector(15 downto 0);
     signal reg_be           : std_logic_vector(3 downto 0);
     signal reg_rden         : std_logic;
     signal reg_wren         : std_logic;

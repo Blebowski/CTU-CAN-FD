@@ -81,7 +81,7 @@ entity apb_ifc is
 
         reg_data_in_o    : out std_logic_vector(31 downto 0);
         reg_data_out_i   : in  std_logic_vector(31 downto 0);
-        reg_addr_o       : out std_logic_vector(23 downto 0);
+        reg_addr_o       : out std_logic_vector(15 downto 0);
         reg_be_o         : out std_logic_vector(3 downto 0);
         reg_rden_o       : out std_logic;
         reg_wren_o       : out std_logic;
@@ -118,9 +118,6 @@ begin
 
     reg_data_in_o <= s_apb_pwdata;
     s_apb_prdata  <= reg_data_out_i;
-
-    reg_addr_o(COMP_TYPE_ADRESS_HIGHER downto COMP_TYPE_ADRESS_LOWER) <=
-        CAN_COMPONENT_TYPE;
 
     reg_addr_o(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) <=
         std_logic_vector(to_unsigned(ID, 4));

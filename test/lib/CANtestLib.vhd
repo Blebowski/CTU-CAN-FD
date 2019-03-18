@@ -389,7 +389,7 @@ package CANtestLib is
         clk_sys                 :   std_logic;
         data_in                 :   std_logic_vector(31 downto 0);
         data_out                :   std_logic_vector(31 downto 0);
-        address                 :   std_logic_vector(23 downto 0);
+        address                 :   std_logic_vector(31 downto 0);
         scs                     :   std_logic;
         swr                     :   std_logic;
         srd                     :   std_logic;
@@ -894,7 +894,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure aval_write(
         constant  w_data        : in    std_logic_vector(31 downto 0);
-        constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  w_address     : in    std_logic_vector;
         constant  w_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     );
@@ -912,7 +912,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure aval_read(
         variable  r_data        : out   std_logic_vector(31 downto 0);
-        constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  r_address     : in    std_logic_vector;
         constant  r_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     );
@@ -932,7 +932,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure aval_write_burst(
         constant  w_data        : in    std_logic_vector;
-        constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  w_address     : in    std_logic_vector;
         constant  stat_burst    : in    boolean := false;
         signal    mem_bus       : inout Avalon_mem_type
     );
@@ -952,7 +952,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure aval_read_burst(
         variable  r_data        : out   std_logic_vector;
-        constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  r_address     : in    std_logic_vector;
         constant  stat_burst    : in    boolean := false;
         signal    mem_bus       : inout Avalon_mem_type
     );
@@ -964,7 +964,6 @@ package CANtestLib is
     -- 32 bits, burst access is executed.
     --
     -- Address bits meaning is following:
-    --  [19:16]     Component type (always CAN_COMPONENT_TYPE)
     --  [15:12]     Identifier (Index) of core. Allows to distinguish between
     --              up to 16 instances of CTU CAN FD Core.
     --  [11:0]      Register or Buffer offset within a the core.
@@ -993,7 +992,6 @@ package CANtestLib is
     -- 32 bits, burst access is executed.
     --
     -- Address bits meaning is following:
-    --  [19:16]     Component type (always CAN_COMPONENT_TYPE)
     --  [15:12]     Identifier (Index) of core. Allows to distinguish between
     --              up to 16 instances of CTU CAN FD Core.
     --  [11:0]      Register or Buffer offset within a the core.
@@ -2381,11 +2379,16 @@ package body CANtestLib is
     end function;
 
 
-    function bsize_to_be(
-        constant address       : in    std_logic_vector(23 downto 0);
+    impure function bsize_to_be(
+        constant address       : in    std_logic_vector;
         constant size          : in    aval_access_size
     ) return std_logic_vector is
     begin
+    
+        if (address'length < 2) then
+            error("Address to BE conversion. Invalid address");
+        end if;
+     
         if (size = BIT_32) then
             return "1111";
         end if;
@@ -2412,10 +2415,12 @@ package body CANtestLib is
 
     procedure aval_write(
         constant  w_data        : in    std_logic_vector(31 downto 0);
-        constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  w_address     : in    std_logic_vector;
         constant  w_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     )is
+        variable  w_addr_padded :       std_logic_vector(31 downto 0) :=
+            (OTHERS => '0');
     begin
 
         -- Check for access alignment
@@ -2423,13 +2428,15 @@ package body CANtestLib is
             warning("Unaligned Avalon write, Adress :" & to_hstring(w_address)
                     & " Size: " & aval_access_size'image(w_size)); 
         else
+            w_addr_padded(w_address'length - 1 downto 0) := w_address; 
+            
             wait until falling_edge(mem_bus.clk_sys);
             mem_bus.scs       <=  '1';
             mem_bus.swr       <=  '1';
             mem_bus.sbe       <=  bsize_to_be(w_address, w_size);
 
             -- Align the adress for the Core!
-            mem_bus.address   <=  w_address(23 downto 2) & "00";
+            mem_bus.address   <=  w_addr_padded(31 downto 2) & "00";
             mem_bus.data_in   <=  w_data;
 
             wait until falling_edge(mem_bus.clk_sys);
@@ -2445,11 +2452,13 @@ package body CANtestLib is
 
     procedure aval_read(
         variable  r_data        : out   std_logic_vector(31 downto 0);
-        constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  r_address     : in    std_logic_vector;
         constant  r_size        : in    aval_access_size;
         signal    mem_bus       : inout Avalon_mem_type
     )is
         variable  msg           :       line;
+        variable  r_addr_padded :       std_logic_vector(31 downto 0) :=
+            (OTHERS => '0');
     begin
 
         -- Check for access alignment
@@ -2457,13 +2466,15 @@ package body CANtestLib is
             warning("Unaligned Avalon Read, Adress :" & to_hstring(r_address) &
                     " Size: " & aval_access_size'image(r_size));
         else
+            r_addr_padded(r_address'length - 1 downto 0) := r_address; 
+            
             wait until falling_edge(mem_bus.clk_sys);
             mem_bus.scs       <=  '1';
             mem_bus.srd       <=  '1';
             mem_bus.sbe       <=  bsize_to_be(r_address, r_size);
 
             -- Align the adress for the Core!
-            mem_bus.address   <=  r_address(23 downto 2) & "00";
+            mem_bus.address   <=  r_addr_padded(31 downto 2) & "00";
 
             wait until falling_edge(mem_bus.clk_sys);
             r_data            :=  mem_bus.data_out;
@@ -2502,11 +2513,11 @@ package body CANtestLib is
 
     procedure aval_write_burst(
         constant  w_data        : in    std_logic_vector;
-        constant  w_address     : in    std_logic_vector(23 downto 0);
+        constant  w_address     : in    std_logic_vector;
         constant  stat_burst    : in    boolean := false;
         signal    mem_bus       : inout Avalon_mem_type
     ) is
-        variable  act_address   :       std_logic_vector(23 downto 0) :=
+        variable  act_address   :       std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
         variable  increment     :       natural := 0;
         variable  msg           :       line;
@@ -2530,15 +2541,16 @@ package body CANtestLib is
         if (not stat_burst) then
             increment := 4;
         end if;
-        act_address := w_address;
+        
+        act_address(w_address'length - 1 downto 0) := w_address;
 
         -- Iterate through the addresses
         for i in 0 to (w_data'length / 32) - 1 loop
 
             -- Increment address
             act_address := std_logic_vector(to_unsigned(
-                            to_integer(unsigned(act_address)) + increment, 24));
-            mem_bus.address   <= act_address(23 downto 2) & "00";
+                            to_integer(unsigned(act_address)) + increment, 32));
+            mem_bus.address   <= act_address(31 downto 2) & "00";
 
             -- Choose proper data
             mem_bus.data_in   <= w_data(32 * (i + 1) - 1 downto 32 * i);
@@ -2555,11 +2567,11 @@ package body CANtestLib is
 
     procedure aval_read_burst(
         variable  r_data        : out   std_logic_vector;
-        constant  r_address     : in    std_logic_vector(23 downto 0);
+        constant  r_address     : in    std_logic_vector;
         constant  stat_burst    : in    boolean := false;
         signal    mem_bus       : inout Avalon_mem_type
     )is
-        variable  act_address   :       std_logic_vector(23 downto 0) :=
+        variable  act_address   :       std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
         variable  increment     :       natural := 0;
         variable  msg           :       line;
@@ -2583,14 +2595,14 @@ package body CANtestLib is
         if (not stat_burst) then
             increment := 4;
         end if;
-        act_address := r_address;
+        act_address(r_address'length - 1 downto 0) := r_address;
 
         -- Iterate through the addresses
         for i in 0 to (r_data'length / 32) - 1 loop
             -- Increment address
             act_address := std_logic_vector(to_unsigned(
-                            to_integer(unsigned(act_address)) + increment, 24));
-            mem_bus.address   <= act_address(23 downto 2) & "00";
+                            to_integer(unsigned(act_address)) + increment, 32));
+            mem_bus.address   <= act_address(31 downto 2) & "00";
 
             wait until falling_edge(mem_bus.clk_sys);
 
@@ -2613,11 +2625,9 @@ package body CANtestLib is
         constant  w_size        : in    aval_access_size := BIT_32;
         constant  stat_burst    : in    boolean := false
     )is
-        variable int_address    :       std_logic_vector(23 downto 0);
+        variable int_address    :       std_logic_vector(15 downto 0);
     begin
-        int_address       := CAN_COMPONENT_TYPE &
-                             std_logic_vector(to_unsigned(ID, 4)) &
-                             "0000" & w_offset;
+        int_address       := std_logic_vector(to_unsigned(ID, 4)) & w_offset;
 
         -- Single access for single word -> burst otherwise!
         if (w_data'length = 32) then
@@ -2636,11 +2646,9 @@ package body CANtestLib is
         constant  r_size        : in    aval_access_size := BIT_32;
         constant  stat_burst    : in    boolean := false
     )is
-        variable int_address   :   std_logic_vector(23 downto 0);
+        variable int_address   :   std_logic_vector(15 downto 0);
     begin
-        int_address       := CAN_COMPONENT_TYPE &
-                             std_logic_vector(to_unsigned(ID, 4)) &
-                             "0000" & r_offset;
+        int_address       := std_logic_vector(to_unsigned(ID, 4)) & r_offset;
         if (r_data'length = 32) then
             aval_read(r_data, int_address, r_size, mem_bus);
         else

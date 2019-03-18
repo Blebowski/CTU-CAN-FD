@@ -506,12 +506,6 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
-\begin_inset CommandInset include
-LatexCommand input
-filename "version.tex"
-
-\end_inset
-
 
 \end_layout
 
@@ -533,7 +527,7 @@ Ille Ondrej, Martin Jeřábek
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="8" columns="4">
+<lyxtabular version="3" rows="9" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top" width="1.5cm">
 <column alignment="center" valignment="top" width="2cm">
@@ -812,11 +806,49 @@ Added CRC Wrapper.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 2.1.3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Ondrej Ille
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+01-2019
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Added TIMESTAMP_LOW, TIMESTAMP_HIGH registers.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2.1.4
 \end_layout
 
 \end_inset
@@ -834,7 +866,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-01-2019
+02-2019
 \end_layout
 
 \end_inset
@@ -843,7 +875,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Added TIMESTAMP_LOW, TIMESTAMP_HIGH registers.
+Removed 0x3 in bits 23:20 of address.
 \end_layout
 
 \end_inset
@@ -1943,10 +1975,6 @@ ID
  With this architecture, it is possible to create up to 16 instances on
  a single parallel memory bus.
  More cores can be instantiated when using Interconnect components.
- Address bits 23:20 must have constant value 0x3.
- This requirement is given by a custom system for which this core was originally
- developed.
- Description of this system is beyond the scope of this document.
 \end_layout
 
 \begin_layout Standard
@@ -1959,9 +1987,8 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="3">
+<lyxtabular version="3" rows="2" columns="2">
 <features tabularvalignment="middle">
-<column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
 <row>
@@ -1969,16 +1996,7 @@ status open
 \begin_inset Text
 
 \begin_layout Plain Layout
-Avalon Address 23:20
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Avalon Address 19:16
+Avalon Address 15:12
 \end_layout
 
 \end_inset
@@ -1987,22 +2005,13 @@ Avalon Address 19:16
 \begin_inset Text
 
 \begin_layout Plain Layout
-Avalon Address 15:0
+Avalon Address 11:0
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0x3
-\end_layout
-
-\end_inset
-</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -2639,7 +2648,7 @@ in
 \begin_inset Text
 
 \begin_layout Plain Layout
-24
+16
 \end_layout
 
 \end_inset

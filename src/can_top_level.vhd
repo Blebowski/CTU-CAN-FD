@@ -129,7 +129,7 @@ entity can_top_level is
         ---------------------
         signal data_in  : in  std_logic_vector(31 downto 0);
         signal data_out : out std_logic_vector(31 downto 0);
-        signal adress   : in  std_logic_vector(23 downto 0);
+        signal adress   : in  std_logic_vector(15 downto 0);
         signal scs      : in  std_logic;    --Chip select
         signal srd      : in  std_logic;    --Serial read
         signal swr      : in  std_logic;    --Serial write
@@ -512,7 +512,6 @@ begin
 
     memory_registers_comp : memory_registers
     generic map(
-        compType        => CAN_COMPONENT_TYPE,
         use_logger      => use_logger,
         sup_filtA       => sup_filtA,
         sup_filtB       => sup_filtB,

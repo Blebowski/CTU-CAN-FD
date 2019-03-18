@@ -86,7 +86,7 @@ package can_components is
             signal res_n           : in  std_logic;
             signal data_in         : in  std_logic_vector(31 downto 0);
             signal data_out        : out std_logic_vector(31 downto 0);
-            signal adress          : in  std_logic_vector(23 downto 0);
+            signal adress          : in  std_logic_vector(15 downto 0);
             signal scs             : in  std_logic;
             signal srd             : in  std_logic;
             signal swr             : in  std_logic;
@@ -116,7 +116,6 @@ package can_components is
     ----------------------------------------------------------------------------
     component memory_registers is
         generic(
-            constant compType      : std_logic_vector(3 downto 0) := CAN_COMPONENT_TYPE;
             constant use_logger    : boolean                      := true;
             constant sup_filtA     : boolean                      := true;
             constant sup_filtB     : boolean                      := true;
@@ -135,7 +134,7 @@ package can_components is
             signal res_out              : out std_logic;
             signal data_in              : in  std_logic_vector(31 downto 0);
             signal data_out             : out std_logic_vector(31 downto 0);
-            signal adress               : in  std_logic_vector(23 downto 0);
+            signal adress               : in  std_logic_vector(15 downto 0);
             signal scs                  : in  std_logic;
             signal srd                  : in  std_logic;
             signal swr                  : in  std_logic;
@@ -1164,7 +1163,7 @@ package can_components is
 
             reg_data_in_o    : out std_logic_vector(31 downto 0);
             reg_data_out_i   : in  std_logic_vector(31 downto 0);
-            reg_addr_o       : out std_logic_vector(23 downto 0);
+            reg_addr_o       : out std_logic_vector(15 downto 0);
             reg_be_o         : out std_logic_vector(3 downto 0);
             reg_rden_o       : out std_logic;
             reg_wren_o       : out std_logic;

@@ -154,30 +154,13 @@ package can_constants is
     ----------------------------------------------------------------------------
     -- Memory Access
     ----------------------------------------------------------------------------
-    -- General Purpose register
-    constant GPR_COMPONENT_TYPE : std_logic_vector(3 downto 0) := x"1";
-
-    -- OutPut Multiplexor component type
-    constant OUTMUX_COMPONENT_TYPE : std_logic_vector(3 downto 0) := x"2";
-
-    -- FlexRay Node
-    constant FLEXRAY_COMPONENT_TYPE : std_logic_vector(3 downto 0) := x"3";
-
-    -- CAN Node
-    constant CAN_COMPONENT_TYPE : std_logic_vector(3 downto 0) := x"4";
-
-    -- LIN Node
-    constant LIN_COMPONENT_TYPE : std_logic_vector(3 downto 0) := x"5";
-
     constant ACT_CSC : std_logic := '1';
     constant ACT_SRD : std_logic := '1';
     constant ACT_SWR : std_logic := '1';
 
-    -- Address ranges for component type and identifier
-    constant COMP_TYPE_ADRESS_HIGHER : natural := 23;
-    constant COMP_TYPE_ADRESS_LOWER  : natural := 20;
-    constant ID_ADRESS_HIGHER        : natural := 19;
-    constant ID_ADRESS_LOWER         : natural := 16;
+    -- Address ranges for identifier
+    constant ID_ADRESS_HIGHER        : natural := 15;
+    constant ID_ADRESS_LOWER         : natural := 12;
 
     constant CAN_DEVICE_ID : std_logic_vector(31 downto 0) := x"0000CAFD";
   

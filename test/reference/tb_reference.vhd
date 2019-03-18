@@ -69,7 +69,7 @@ architecture CAN_reference_test of CAN_test is
     signal timestamp        : std_logic_vector(63 downto 0) := (OTHERS => '0');
     signal data_in          : std_logic_vector(31 downto 0) := (OTHERS => '0');
     signal data_out         : std_logic_vector(31 downto 0);
-    signal adress           : std_logic_vector(23 downto 0) := (OTHERS => '0');
+    signal adress           : std_logic_vector(15 downto 0) := (OTHERS => '0');
     signal scs              : std_logic := '0';
     signal srd              : std_logic := '0';
     signal swr              : std_logic := '0';
@@ -304,7 +304,7 @@ begin
     scs <= mem_bus.scs;
     srd <= mem_bus.srd;
     swr <= mem_bus.swr;
-    adress <= mem_bus.address;
+    adress <= mem_bus.address(15 downto 0);
     data_in <= mem_bus.data_in;
 
     mem_bus.data_out <= data_out;
