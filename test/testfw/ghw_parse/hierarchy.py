@@ -56,6 +56,7 @@ def factory(line: str):
         'port-in':      signal.create,
         'port-out':     signal.create,
         'port-inout':   signal.create,
+        'port-buffer':  signal.create,
         'generate-for': generate_for.create,
         'package':      container.create,
         'process':      container.create,
