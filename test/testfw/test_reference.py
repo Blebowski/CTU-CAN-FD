@@ -26,13 +26,12 @@ class ReferenceTests(TestsBase):
     def configure(self) -> bool:
         tb = self.lib.get_test_benches('*reference*')[0]
         default = self.config['default']
-        self.add_modelsim_gui_file(tb, default, 'sanity')
 
         tcl = self.build / 'modelsim_init_reference.tcl'
         with tcl.open('wt', encoding='utf-8') as f:
             print(dedent('''\
                 global TCOMP
-                set TCOMP i_test
+                set TCOMP tb_reference_wrapper/i_test
                 '''), file=f)
 
         init_files = get_common_modelsim_init_files()
@@ -56,6 +55,6 @@ class ReferenceTests(TestsBase):
             else:
                 tb.add_config(data_set, generics=generics)
 
-            tb.set_sim_option("modelsim.init_files.after_load", init_files)
-            self.add_modelsim_gui_file(tb, cfg, data_set, init_files)
+        tb.set_sim_option("modelsim.init_files.after_load", init_files)
+        self.add_modelsim_gui_file(tb, default, 'reference', init_files)
         return True
