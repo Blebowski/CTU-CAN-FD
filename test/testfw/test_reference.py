@@ -37,7 +37,7 @@ class ReferenceTests(TestsBase):
         init_files = get_common_modelsim_init_files()
         init_files += [str(tcl)]
 
-        for data_set,cfg in self.config['tests'].items():
+        for data_set, cfg in self.config['tests'].items():
             dict_merge(cfg, default)
             # bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
             generics = {
