@@ -122,8 +122,10 @@ def test(obj, *, config, strict, create_ghws, vunit_args):
     strict = bool(strict)
 
     if create_ghws:
-        # discard the passed vunit_args, it does only evil
-        vunit_args = ['--elaborate']
+        # filter out "-g" (gui mode) - it causes problems.
+        # It's not 100% fool-proof, but should catch 99% of cases.
+        vunit_args = [a for a in vunit_args if a != '-g']
+        vunit_args += ['--elaborate']
 
     ui = create_vunit(obj, vunit_args, out_basename)
 
