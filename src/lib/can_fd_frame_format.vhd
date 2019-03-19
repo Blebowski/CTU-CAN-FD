@@ -50,6 +50,25 @@ use ieee.std_logic_1164.all;
 package can_fd_frame_format is
 
   ------------------------------------------------------------------------------
+  -- Common types
+  ------------------------------------------------------------------------------
+  type t_reg_type is (
+    reg_none,
+    reg_write_only,
+    reg_read_only,
+    reg_read_write,
+    reg_read_write_once
+  );
+
+  type t_reg is record
+       address       : std_logic_vector(11 downto 0);
+       size                                : integer;
+       reg_type                         : t_reg_type;
+       reset_val     : std_logic_vector(31 downto 0);
+  end record;
+
+
+  ------------------------------------------------------------------------------
   ------------------------------------------------------------------------------
   -- Address block: CAN_FD_Frame_format
   ------------------------------------------------------------------------------
@@ -63,6 +82,44 @@ package can_fd_frame_format is
   constant DATA_1_4_W_ADR            : std_logic_vector(11 downto 0) := x"010";
   constant DATA_5_8_W_ADR            : std_logic_vector(11 downto 0) := x"014";
   constant DATA_61_64_W_ADR          : std_logic_vector(11 downto 0) := x"04C";
+
+  ------------------------------------------------------------------------------
+  -- Register list
+  ------------------------------------------------------------------------------
+
+  type t_CAN_FD_Frame_format_list is array (0 to 6) of t_reg;
+
+  constant CAN_FD_Frame_format_list : t_CAN_FD_Frame_format_list :=(
+
+    (address   => FRAME_FORM_W_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000"),
+    (address   => IDENTIFIER_W_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000"),
+    (address   => TIMESTAMP_L_W_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000"),
+    (address   => TIMESTAMP_U_W_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000"),
+    (address   => DATA_1_4_W_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000"),
+    (address   => DATA_5_8_W_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000"),
+    (address   => DATA_61_64_W_ADR,
+     size      => 32,
+     reg_type  => reg_none,
+     reset_val => "00000000000000000000000000000000")
+  );
 
   ------------------------------------------------------------------------------
   -- FRAME_FORM_W register

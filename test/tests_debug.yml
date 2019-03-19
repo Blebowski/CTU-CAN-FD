@@ -1,3 +1,4 @@
+strict: false  # unconfigured tests reported as error; defaults to true
 _default: &default
     log_level: info
     error_tolerance: 0

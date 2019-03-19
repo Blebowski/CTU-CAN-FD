@@ -73,6 +73,7 @@
 --                anymore.
 --     15.2.2018  Added generic amount of TXT Buffers and support for TXT
 --                buffer FSM, HW commands and SW commands.
+--     18.3.2019  Remove explicit architecture assignments.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -129,7 +130,7 @@ entity can_top_level is
         ---------------------
         signal data_in  : in  std_logic_vector(31 downto 0);
         signal data_out : out std_logic_vector(31 downto 0);
-        signal adress   : in  std_logic_vector(23 downto 0);
+        signal adress   : in  std_logic_vector(15 downto 0);
         signal scs      : in  std_logic;    --Chip select
         signal srd      : in  std_logic;    --Serial read
         signal swr      : in  std_logic;    --Serial write
@@ -477,20 +478,6 @@ architecture rtl of CAN_top_level is
     -- Transceiver delay output
     signal trv_delay_out : std_logic_vector(15 downto 0);
 
-
-    ----------------------------------------------------------------------------
-    -- Defining explicit architectures for used entites
-    ----------------------------------------------------------------------------
-    for memory_registers_comp   : memory_registers use entity work.memory_registers(rtl);
-    for rx_buffer_comp          : rx_buffer use entity work.rx_buffer(rtl);
-    for tx_arbitrator_comp      : tx_arbitrator use entity work.tx_arbitrator(rtl);
-    for frame_filters_comp      : frame_filters use entity work.frame_filters(rtl);
-    for int_manager_comp        : int_manager use entity work.int_manager(rtl);
-    for can_core_comp           : can_core use entity work.can_core(rtl);
-    for prescaler_comp          : prescaler use entity work.prescaler(rtl);
-    for bus_sampling_comp       : bus_sampling use entity work.bus_sampling(rtl);
-    for rst_sync_comp           : rst_sync use entity work.rst_sync(rtl);
-
 begin
 
     -- synthesis translate_off
@@ -510,7 +497,6 @@ begin
 
     memory_registers_comp : memory_registers
     generic map(
-        compType        => CAN_COMPONENT_TYPE,
         use_logger      => use_logger,
         sup_filtA       => sup_filtA,
         sup_filtB       => sup_filtB,

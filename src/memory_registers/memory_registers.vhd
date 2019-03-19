@@ -148,8 +148,6 @@ use work.can_registers_pkg.all;
 
 entity memory_registers is
     generic(
-        constant compType     :std_logic_vector(3 downto 0)    := CAN_COMPONENT_TYPE;
-
         -- Whenever event logger is present
         constant use_logger   :boolean                         := true;
 
@@ -190,7 +188,7 @@ entity memory_registers is
         ------------------------------------------------------------------------
         signal data_in              :in   std_logic_vector(31 downto 0);
         signal data_out             :out  std_logic_vector(31 downto 0);
-        signal adress               :in   std_logic_vector(23 downto 0);
+        signal adress               :in   std_logic_vector(15 downto 0);
         signal scs                  :in   std_logic;
         signal srd                  :in   std_logic;
         signal swr                  :in   std_logic;
@@ -392,8 +390,6 @@ begin
     end generate txtb_cs_gen;
 
     can_core_cs <= '1' when (scs = ACT_CSC) and
-                            (adress(COMP_TYPE_ADRESS_HIGHER downto
-                                    COMP_TYPE_ADRESS_LOWER) = compType) and
                             (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
                              std_logic_vector(to_unsigned(ID, 4)))
                        else
@@ -446,7 +442,7 @@ begin
     control_registers_reg_map_comp : control_registers_reg_map
     generic map(
         DATA_WIDTH            => 32,
-        ADDRESS_WIDTH         => 24,
+        ADDRESS_WIDTH         => 16,
         REGISTERED_READ       => true,
         CLEAR_READ_DATA       => true,
         RESET_POLARITY        => ACT_RESET,
@@ -480,7 +476,7 @@ begin
         event_logger_reg_map_comp : event_logger_reg_map
         generic map(
             DATA_WIDTH            => 32,
-            ADDRESS_WIDTH         => 24,
+            ADDRESS_WIDTH         => 16,
             CLEAR_READ_DATA       => true,
             REGISTERED_READ       => true,
             RESET_POLARITY        => ACT_RESET

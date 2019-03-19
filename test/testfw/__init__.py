@@ -71,15 +71,19 @@ def create():
     pass
 
 
+# NOTE: I'd like to use [True, False, None] for strict, but click is damn
+#       stubborn about interpreting None as False
 @cli.command()
 @click.argument('config', type=click.Path())
 @click.argument('vunit_args', nargs=-1)
-@click.option('--strict/--no-strict', default=True,
+@click.option('--__strict-from-config', 'strict', flag_value=-1, default=True, hidden=True)
+@click.option('--strict', 'strict', flag_value=1,
               help='Return non-zero if an unconfigured test was found.')
+@click.option('--no-strict', 'strict', flag_value=0)
 @click.option('--create-ghws/--no-create-ghws', default=False,
               help='Only elaborate and create basic GHW files necessary for converting TCL layout files to GTKW files for gtkwave..')
 @click.pass_obj
-def test(obj, config, strict, create_ghws, vunit_args):
+def test(obj, *, config, strict, create_ghws, vunit_args):
     """Run the tests. Configuration is passed in YAML config file.
 
     You mas pass arguments directly to VUnit by appending them at the command end.
@@ -110,9 +114,18 @@ def test(obj, config, strict, create_ghws, vunit_args):
     build.mkdir(exist_ok=True)
     os.chdir(str(build))
 
+    if 'strict' in config:
+        if strict == -1:
+            strict = config['strict']
+    if strict == -1:
+        strict = 0
+    strict = bool(strict)
+
     if create_ghws:
-        # discard the passed vunit_args, it does only evil
-        vunit_args = ['--elaborate']
+        # filter out "-g" (gui mode) - it causes problems.
+        # It's not 100% fool-proof, but should catch 99% of cases.
+        vunit_args = [a for a in vunit_args if a != '-g']
+        vunit_args += ['--elaborate']
 
     ui = create_vunit(obj, vunit_args, out_basename)
 

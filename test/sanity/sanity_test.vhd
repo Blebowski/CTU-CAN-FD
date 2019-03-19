@@ -158,7 +158,7 @@ architecture behavioral of sanity_test is
         array (1 to NODE_COUNT) of std_logic_vector(3 downto 0);
 
     type mem_addr_arr_type is
-        array (1 to NODE_COUNT) of std_logic_vector(23 downto 0);
+        array (1 to NODE_COUNT) of std_logic_vector(15 downto 0);
 
     signal mem_aux_data_in      : mem_vect_arr_type :=
                                     (OTHERS => (OTHERS => '0'));
@@ -485,7 +485,7 @@ begin
 
         mb_arr(i).clk_sys       <=  mem_aux_clk(i);
         mem_aux_data_in(i)      <=  mb_arr(i).data_in;
-        mem_aux_address(i)      <=  mb_arr(i).address;
+        mem_aux_address(i)      <=  mb_arr(i).address(15 downto 0);
         mem_aux_scs(i)          <=  mb_arr(i).scs;
         mem_aux_swr(i)          <=  mb_arr(i).swr;
         mem_aux_srd(i)          <=  mb_arr(i).srd;
