@@ -123,11 +123,8 @@ package can_types is
     );
 
     type bit_time_type is (
-        sync,
-        prop,
-        ph1,
-        ph2,
-        h_sync,
+        tseg1,
+        tseg2,
         reset
     );
 

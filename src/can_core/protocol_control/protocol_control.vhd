@@ -2446,7 +2446,7 @@ begin
                         -- frame otherwise. If sampled
                         --------------------------------------------------------
                         when 0 =>
-                            if (ack_recieved = '1' and data_rx = RECESSIVE) then
+                            if (ack_recieved = '1') then
                                 PC_State            <= eof;
                             else
                                 PC_State            <= error;

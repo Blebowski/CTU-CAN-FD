@@ -41,29 +41,52 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---   Declaration of test contex.
---
---  Context definitions are used for tests only since free version of Quartus
---  does not support context clause for synthesis.
+--  Package with component declarations for models
 --------------------------------------------------------------------------------
 -- Revision History:
---    02.01.2019   Created File - Ondrej Ille
---    05.03.2019   Add 'models_pkg'.
+--    05.03.2019  Created file
 --------------------------------------------------------------------------------
 
-context ctu_can_test_context is
+Library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.ALL;
+use ieee.math_real.ALL;
 
-    Library lib;
-    use lib.CANtestLib.All;
-    use lib.models_pkg.All;
-    use lib.randomLib.All;
+-- Name of work library is by default set to "lib" in GHDL.
+Library lib;
+use lib.id_transfer.all;
+use lib.can_constants.all;
+use lib.can_components.all;
+use lib.can_types.all;
+use lib.cmn_lib.all;
+use lib.drv_stat_pkg.all;
+use lib.endian_swap.all;
+use lib.reduce_lib.all;
 
-    use STD.textio.all;
+use lib.CAN_FD_register_map.all;
+use lib.CAN_FD_frame_format.all;
 
-    Library ieee;
-    use IEEE.std_logic_textio.all;
-        
-    library vunit_lib;
-    context vunit_lib.vunit_context;
+Library work;
+use work.CANtestLib.All;
 
-end context;
+package models_pkg is
+
+    component prescaler_model is
+    generic(
+      reset_polarity        :   std_logic := '0';
+      clock_period          :   time := 10 ns
+    );
+    port(
+        signal clk_sys              :in std_logic;  --System clock
+        signal res_n                :in std_logic;   --Async reset
+        signal sync_edge            :in std_logic;        --Edge for synchronisation
+        signal OP_State             :in oper_mode_type;   --Protocol control state
+        signal drv_bus              :in std_logic_vector(1023 downto 0); 
+        signal bt_FSM_out           :out bit_time_type;
+        signal data_tx              :in   std_logic;
+        signal sp_control           :in std_logic_vector(1 downto 0);
+        signal sync_control         :in std_logic_vector(1 downto 0)
+  );
+  end component;
+
+end package;

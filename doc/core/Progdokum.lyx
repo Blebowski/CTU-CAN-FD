@@ -506,6 +506,12 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
 
 \end_layout
 
@@ -866,7 +872,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-02-2019
+03-2019
 \end_layout
 
 \end_inset
@@ -875,7 +881,8 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Removed 0x3 in bits 23:20 of address.
+Re-worked Prescaler.
+ Removed 0x3 in bits 23:20 of address.
 \end_layout
 
 \end_inset
@@ -11104,43 +11111,1555 @@ name "fig:INT-manager-block"
 
 \begin_layout Subsection
 Prescaler
+\end_layout
+
+\begin_layout Standard
+Prescaler handles following functions:
+\end_layout
+
+\begin_layout Itemize
+
+\shape smallcaps
+Time Quanta
+\shape default
+ counting.
+\end_layout
+
+\begin_layout Itemize
+Bit Time counting (
+\shape smallcaps
+Synchronisation Segment, Propagation Segment, Phase 1 Segment, Phase 2 Segment).
+ 
+\shape default
+Prescaler treats Bit time segments as TSEG1 and TSEG2.
+\end_layout
+
+\begin_layout Itemize
+
+\shape smallcaps
+Hard Synchronisation, Resynchronisation.
+\end_layout
+
+\begin_layout Itemize
+Proper duration of Bits where Bit rate is switched.
+\end_layout
+
+\begin_layout Itemize
+Generation of Triggering signals for TX and RX Datapath.
+\end_layout
+
+\begin_layout Standard
+Generic configuration parameters are shown in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
-reference "subsec-Operation-control"
+reference "tab:Prescaler-generics"
 plural "false"
 caps "false"
 noprefix "false"
 
 \end_inset
 
+.
+ Interface list is shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Prescaler-Interface"
+plural "false"
+caps "false"
+noprefix "false"
 
-\end_layout
-
-\begin_layout Description
-File prescaler.vhd
-\end_layout
-
-\begin_layout Description
-Used
-\begin_inset space ~
 \end_inset
 
-in can_top_level.vhd
-\end_layout
-
-\begin_layout Description
-Entity 
-\family roman
-\shape italic
-prescaler
+.
 \end_layout
 
 \begin_layout Standard
-Prescaler implements functionality of CAN 
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="16" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top" width="10cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+reset_polarity
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+'0'
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Active value of reset signal
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+capt_btr
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Insert Capture register for Baud rate prescaler.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+capt_tseg1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+true
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Insert Capture register for Time segment 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+capt_tseg2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Insert Capture register for Time segment 2.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+capt_sjw
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+boolean
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+false
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Insert Capture register for SJW.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+tseg1_nbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Internal width of Time segment 1 (Nominal).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+tseg2_nbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Internal width of Time segment 2 (Nominal).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+tq_nbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Width of Bit time counter (Nominal).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sjw_nbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Internal width of SJW.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+tseg1_dbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Internal width of Time segment 1 (Data).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+tseg2_dbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Internal width of Time segment 2 (Data).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+tq_dbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Width of Bit time counter (Data).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sjw_dbt_width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Internal width of SJW.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sync_trigger_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of Sync Trigger signals.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sample_trigger_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of Sample Trigger signals.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Prescaler generic parameters
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Prescaler-generics"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="15" columns="5">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="0pt">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top">
+<column alignment="left" valignment="top" width="7cm">
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Direction
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Width
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+clk_sys
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+System clock
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+res_n
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Asynchronous reset
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sync_edge
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Synchronisation edge occured.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+drv_bus
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1024
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Driving Bus
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sample_nbt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sample_trigger_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+stdd_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sampling (RX) triggers - Nominal Bit time.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sample_dbt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sample_trigger_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sampling (RX) triggers - Data Bit time.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sync_nbt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sync_trigger_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sync (TX) triggers - Nominal Bit time.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sync_dbt
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sync_trigger_count
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sync (TX) triggers - Data Bit time.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+time_quanta_clk
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
 \shape smallcaps
-Bus Timing
+Time Quanta
 \shape default
- and its block diagram is shown in 
+ clock.
+ Debug output only.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+bit_time_FSM_out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+bit_time_type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit time FSM output
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+hard_sync_edge_valid
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Hard synchronisation edge occured.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sp_control
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sampling control.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+sync_control
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Synchronisation control.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+no_pos_resync
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No positive resynchronisation should be performed.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Prescaler interface
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Prescaler-Interface"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Prescaler block diagram is shown in 
 \begin_inset ERT
 status open
 
@@ -11164,91 +12683,160 @@ noprefix "false"
 \end_inset
 
 .
- Elementary time interval on CAN Bus is 
-\shape smallcaps
-Time Quant
-\shape default
-um.
- Firstly, proper 
-\shape smallcaps
-Time Quantum
-\shape default
- duration (
-\family roman
+ Prescaler consists of following modules:
+\end_layout
+
+\begin_layout Itemize
+Bit time config capture - Captures Bit time configuration (from Driving
+ Bus) into capture register.
+ Configuration is captured upon enabling of the core (rising edge on 
 \shape italic
-tq_m
-\family default
-\shape default
-) is multiplexed by Sample Control (
-\family roman
-\shape italic
-sp_control
-\family default
-\shape default
-) from 
-\shape smallcaps
-Nominal Bit-rate
-\shape default
- 
-\shape smallcaps
-Time Quantum
-\shape default
- (
-\family roman
-\shape italic
-tq_nbt
-\family default
-\shape default
-) and 
-\shape smallcaps
-Data Bit-Rate Time Quantum
-\shape default
- (
-\family roman
-\shape italic
-tq_dbt
-\family default
+drv_ena
 \shape default
 ).
+ Insertion of capture registers is configurable by 
+\shape italic
+capt_tseg1, capt_tseg2, capt_sjw, capt_btr
+\shape default
+ generics.
+ Adds duration of 
+\shape smallcaps
+Propagation Segment, Phase 1 Segment, Sync Segment
+\shape default
+ to create length of TSEG1.
+ Length of TSEG2 is given by 
+\shape smallcaps
+Phase 2 Segment.
+\end_layout
+
+\begin_layout Itemize
+Synchronisation checker - Determines if a synchronisation edge is for 
+\shape smallcaps
+Hard Synchronisation
+\shape default
+,
+\shape smallcaps
+ Resynchronisation
+\shape default
+ or it should be ignored (No synchronisation).
+ Validates if a synchronisation edge is first edge which ocurred since last
  
 \shape smallcaps
-Time Quantum
-\shape default
- is measured via Time Quantum Counter (
-\family roman
-\shape italic
-tq_counter
-\family default
-\shape default
-) and start of new 
+Sample Point.
+\end_layout
+
+\begin_layout Itemize
+Resynchronisation - Determines if a 
 \shape smallcaps
-Time Quantum
+Bit Time
 \shape default
- is signaled via 
-\family roman
-\shape italic
-tq_edge
-\family default
-\shape default
- signal.
- Additional clock signal outputs with frequency matching 
+ segment (TSEG1 or TSEG2) should be ended by comparing Bit time counter
+ with expected segment length.
+ If Bit time counter is equal or higher than Expected segment length, signals
+ End of segment request to Segment End Detector.
+ Expected segment length register holds expected length of TSEG1 , TSEG2
+ segments.
+ Expected segment length register is loaded in start of each segment or
+ upon 
 \shape smallcaps
-Bit-Rate
-\shape default
- are provided in 
-\family roman
-\shape italic
-clk_tq_nbt
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-clk_tq_dbt
-\family default
+Resynchronisation
 \shape default
 .
+ Provides means for immediate end of segment request in case of 
+\shape smallcaps
+Negative Resynchronisation 
+\shape default
+which should end in the actual clock cycle (without one clock cycle delay).
+ Such a 
+\shape smallcaps
+Resynchronisation
+\shape default
+ occurs when SJW < Phase error in TSEG2.
+ Resynchronisation block diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:resynchronisation-block-diagram-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ There are two Resynchronisation modules, one for 
+\shape smallcaps
+Nominal Bit-Rate 
+\shape default
+and one for 
+\shape smallcaps
+Data Bit-Rate.
  
+\shape default
+Both of these modules operate in parallel.
+\end_layout
+
+\begin_layout Itemize
+Bit time counter - Counts duration of 
+\shape smallcaps
+Time Quanta 
+\shape default
+and 
+\shape smallcaps
+Bit Time
+\shape default
+ segments.
+ There are two Bit time counter modules.
+ Both of these modules operate in parallel.
+ Both Bit time counter modules are re-started upon start of 
+\shape smallcaps
+Bit Time
+\shape default
+ segments to force alignment of 
+\shape smallcaps
+Time Quanta
+\shape default
+ to start of segment.
+\end_layout
+
+\begin_layout Itemize
+Segment End Detector - Processes requests from Resynchronisation modules
+ and Synchronisation checker and detects actual end of segment.
+ End of segment is detected only when Sample control is corresponding to
+ a module which generated end of segment request.
+ Holds requests in capture registers if these requests are not aligned with
+ 
+\shape smallcaps
+Time Quanta
+\shape default
+.
+ Segment end is only signalled when 
+\shape smallcaps
+Time Quanta
+\shape default
+ is reached.
+\end_layout
+
+\begin_layout Itemize
+Bit time FSM - Determines which Bit time segment is being measured (TSEG1
+ or TSEG2).
+ Provides RX and TX Trigger requests to Trigger generator.
+ These requests represent 
+\shape smallcaps
+Sample Point
+\shape default
+ and start of Bit time.
+\end_layout
+
+\begin_layout Itemize
+Trigger generator - Generates TX and RX Triggers from TX and RX Trigger
+ requests.
+ Implements capturing scheme to capture a Trigger request when another trigger
+ sequence is still active and delay the trigger until the first sequence
+ is finished.
+ This architecture makes it possible to achieve higher degree of pipelining
+ on TX and RX Datapath than length of 
+\shape smallcaps
+Information processing time.
 \end_layout
 
 \begin_layout Standard
@@ -11262,7 +12850,7 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename ../pics/Visio_generated/Prescaler_Block_Diagram.pdf
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/Prescaler_block_diagram.pdf
 	lyxscale 20
 	scale 70
 
@@ -11296,488 +12884,47 @@ name "fig:prescaler-block-diagram"
 \end_layout
 
 \begin_layout Standard
-
-\shape smallcaps
-Bit Time
-\shape default
- behavior is controlled by Bit Time FSM whose state transition diagram is
- shown in 
-\begin_inset ERT
+\begin_inset Float figure
+placement H
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Visio_generated/Resynchronisation_block_diagram.pdf
+	lyxscale 20
+	scale 70
+
+\end_inset
 
 
-\backslash
-hyperref[fig:Bit-Time-FSM]{Figure }
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Resynchronisation block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:resynchronisation-block-diagram-1"
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
 
 
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:Bit-Time-FSM"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-.
- Each segment of 
-\shape smallcaps
-Bit Time
-\shape default
- is handled by a separate state (
-\family roman
-\shape italic
-sync
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-prop
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-ph1
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-ph2
-\family default
-\shape default
-).
- Additional state, which is a substitute for 
-\family roman
-\shape italic
-sync
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-ph1
-\family default
-\shape default
- and 
-\family roman
-\shape italic
-ph2
-\family default
-\shape default
- in case of 
-\shape smallcaps
-Hard Synchronization
-\shape default
- is 
-\family roman
-\shape italic
-h_sync
-\family default
-\shape default
-.
- Duration of each state is controlled by Bit Time Counter (
-\family roman
-\shape italic
-bt_counter
-\family default
-\shape default
-) which is directly set inside Bit Time FSM.
- Bit Time Counter is compared with real duration of 
-\shape smallcaps
-Phase 1
-\shape default
- and 
-\shape smallcaps
-Phase 2
-\shape default
- registers (
-\family roman
-\shape italic
-ph1_real
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-ph2_real
-\family default
-\shape default
-).
- These registers are driven by resynchronization process.
- Upon start of Bit (in 
-\family roman
-\shape italic
-sync
-\family default
-\shape default
-), both registers are set to its nominal values as configured from SW.
- If 
-\shape smallcaps
-Synchronization Edge
-\shape default
- is signaled (
-\family roman
-\shape italic
-sync_edge
-\family default
-\shape default
-) and Synchronization Type (
-\family roman
-\shape italic
-sync_control
-\family default
-\shape default
-) is set to 
-\family roman
-\shape italic
-RESYNC
-\family default
-\shape default
-, 
-\family roman
-\shape italic
-ph1_real
-\family default
-\shape default
- / 
-\family roman
-\shape italic
-ph2_real
-\family default
-\shape default
- are lengthened / shortened accordingly.
- If 
-\shape smallcaps
-Synchronization Edge
-\shape default
- is active during 
-\family roman
-\shape italic
-prop
-\family default
-\shape default
- or 
-\family roman
-\shape italic
-ph1
-\family default
-\shape default
-, 
-\shape smallcaps
-Positive Resynchronization
-\shape default
- is signaled (
-\family roman
-\shape italic
-pos_resync_cond
-\family default
-\shape default
-).
- If 
-\shape smallcaps
-Synchronization Edge
-\shape default
- arrives during 
-\family roman
-\shape italic
-ph2
-\family default
-\shape default
-, 
-\shape smallcaps
-Negative Resynchronization
-\shape default
- is signaled (
-\family roman
-\shape italic
-neg_resync_cond
-\family default
-\shape default
-).
 \end_layout
 
-\begin_layout Standard
-Special bits from 
-\shape smallcaps
-Bit Timing
-\shape default
- point of view are 
-\shape smallcaps
-Bit Rate Shift
-\shape default
- and 
-\shape smallcaps
-CRC Delimiter
-\shape default
-.
- During these bits, 
-\shape smallcaps
-Bit-Rate
-\shape default
- is shifted in 
-\shape smallcaps
-Sample Point
-\shape default
-.
- As explained in 
-\begin_inset CommandInset ref
-LatexCommand nameref
-reference "sec-Information-processing"
-plural "false"
-caps "false"
-noprefix "false"
-
 \end_inset
 
- 
-\shape smallcaps
-Information Processing Time
-\shape default
- is 4 clock cycles due to architecture of Triggering Signals, and it is
- not possible to determine if 
-\shape smallcaps
-Bit-Rate
-\shape default
- was shifted sooner than 4 clock cycles after sampling the actual bus value!
- If 
-\shape smallcaps
-Nominal Bit-Rate
-\shape default
- was used during these 4 clock cycles, overall length of 
-\shape smallcaps
-Phase 2
-\shape default
- segment would not be correct.
- To avoid this problem, 
-\family roman
-\shape italic
-ph2
-\family default
-\shape default
- is always measured with two counters.
- Bit Time Counter (
-\family roman
-\shape italic
-bt_counter
-\family default
-\shape default
-) is used for bits where 
-\shape smallcaps
-Bit-Rate
-\shape default
- shift did not occur, and its validity in 
-\family roman
-\shape italic
-ph2
-\family default
-\shape default
- -> 
-\family roman
-\shape italic
-sync
-\family default
-\shape default
- transition is selected by 
-\family roman
-\shape italic
-use_default_ctr
-\family default
-\shape default
- signal.
- If 
-\shape smallcaps
-Bit-Rate
-\shape default
- shift occurred, Special Bit Counter (
-\family roman
-\shape italic
-bt_counter_sw
-\family default
-\shape default
-) is used.
- This counter is preset to value of 
-\shape smallcaps
-Phase 2
-\shape default
- * 
-\shape smallcaps
-Baud Rate Prescaler
-\shape default
- (
-\family roman
-\shape italic
-ph2_extra
-\family default
-\shape default
-), thus counting in clock cycles instead of 
-\shape smallcaps
-Time Quant
-\shape default
-um.
- To detect change of 
-\shape smallcaps
-Bit-Rate
-\shape default
-, Sample Control signal is stored upon transition to 
-\family roman
-\shape italic
-ph2
-\family default
-\shape default
- in 
-\family roman
-\shape italic
-sp_control_stored
-\family default
-\shape default
-.
- Upon mismatch between actual 
-\shape smallcaps
-Bit-Rate
-\shape default
- type (
-\family roman
-\shape italic
-sp_control
-\family default
-\shape default
-) and stored 
-\shape smallcaps
-Bit-Rate
-\shape default
- (
-\family roman
-\shape italic
-sp_control_stored
-\family default
-\shape default
-), usage of extra counter is selected (
-\family roman
-\shape italic
-use_spec_counter
-\family default
-\shape default
-).
- During 
-\shape smallcaps
-Bit-Rate
-\shape default
- shift 
-\shape smallcaps
-Resynchronization
-\shape default
- also needs to be performed (extra counter is used, 
-\family roman
-\shape italic
-ph2_real
-\family default
-\shape default
- is not used and extra counter is counting till 0), 
-\family roman
-\shape italic
-brs_resync
-\family default
-\shape default
- signal is used.
- If 
-\shape smallcaps
-Resynchronization
-\shape default
- edge occurs during 
-\shape smallcaps
-Phase 2
-\shape default
-, 
-\family roman
-\shape italic
-brs_resync
-\family default
-\shape default
- is set.
- Upon nearest 
-\shape smallcaps
-Time Quantum
-\shape default
- actual bit is terminated as if 
-\shape smallcaps
-Phase 2
-\shape default
- was shortened.
-\end_layout
 
-\begin_layout Standard
-As explained in 
-\begin_inset CommandInset ref
-LatexCommand nameref
-reference "sec-Information-processing"
-plural "false"
-caps "false"
-noprefix "false"
-
-\end_inset
-
-, 
-\shape smallcaps
-Information Processing Time
-\shape default
- of CTU CAN FD is 4 clock cycles.
- It is not possible to decrease duration of 
-\shape smallcaps
-Phase 2
-\shape default
- to less than 4 clock cycles.
- There is no guarantee that 
-\shape smallcaps
-Resynchronization
-\shape default
- edge (
-\family roman
-\shape italic
-sync_edge
-\family default
-\shape default
-), will not occur in less than 4 clock cycles after 
-\shape smallcaps
-Sample Point
-\shape default
-.
- To make sure that 
-\shape smallcaps
-Phase 2
-\shape default
- will not be shortened to less than 4 clock cycles, additional counter is
- used (
-\family roman
-\shape italic
-ipt_counter
-\family default
-\shape default
-).
- This counter is set to 3 upon each transition to 
-\shape smallcaps
-Phase 2
-\shape default
-.
- Counter is decremented each clock cycle, and 
-\shape smallcaps
-Phase 2
-\shape default
- is not allowed to exit until zero is reached.
- This fact is signaled by 
-\family roman
-\shape italic
-ipt_ok
-\family default
-\shape default
-.
 \end_layout
 
 \begin_layout Standard

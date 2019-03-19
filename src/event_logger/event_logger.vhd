@@ -509,10 +509,8 @@ begin
 
                             if (i = 17) then
                                 case bt_FSM is
-                                    when sync    => bit_type_vect <= "0001"; 
-                                    when prop    => bit_type_vect <= "0010";
-                                    when ph1     => bit_type_vect <= "0100";
-                                    when ph2     => bit_type_vect <= "1000";
+                                    when tseg1   => bit_type_vect <= "0001"; 
+                                    when tseg2   => bit_type_vect <= "1000";
                                     when others  => bit_type_vect <= "0000";
                                 end case;
                             end if; 

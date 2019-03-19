@@ -662,6 +662,7 @@ package can_components is
             signal sample_sec_del_1      : in  std_logic;
             signal sample_sec_del_2      : in  std_logic;
             signal sync_control          : out std_logic_vector(1 downto 0);
+            signal no_pos_resync         : out std_logic;
             signal data_rx               : in  std_logic;
             signal data_tx               : out std_logic;
             signal timestamp             : in  std_logic_vector(63 downto 0);
@@ -696,32 +697,204 @@ package can_components is
     -- Prescaler module
     ----------------------------------------------------------------------------
     component prescaler is
+        generic(
+          reset_polarity        : std_logic := '0';
+          capt_btr              : boolean := false;
+          capt_tseg_1           : boolean := true;
+          capt_tseg_2           : boolean := false;
+          capt_sjw              : boolean := false;
+          tseg1_nbt_width       : natural := 8; 
+          tseg2_nbt_width       : natural := 6;
+          tq_nbt_width          : natural := 8;
+          sjw_nbt_width         : natural := 5;
+          tseg1_dbt_width       : natural := 7;
+          tseg2_dbt_width       : natural := 5;
+          tq_dbt_width          : natural := 8;
+          sjw_dbt_width         : natural := 5;
+          sync_trigger_count    : natural range 2 to 8 := 2;
+          sample_trigger_count  : natural range 2 to 8 := 3
+        );
         port(
             signal clk_sys              : in  std_logic;
             signal res_n                : in  std_logic;
             signal sync_edge            : in  std_logic;
-            signal OP_State             : in  oper_mode_type;
             signal drv_bus              : in  std_logic_vector(1023 downto 0);
-            signal clk_tq_nbt           : out std_logic;
-            signal clk_tq_dbt           : out std_logic;
-            signal sample_nbt           : out std_logic;
-            signal sample_dbt           : out std_logic;
-            signal sample_nbt_del_1     : out std_logic;
-            signal sample_dbt_del_1     : out std_logic;
-            signal sample_nbt_del_2     : out std_logic;
-            signal sample_dbt_del_2     : out std_logic;
-            signal sync_nbt             : out std_logic;
-            signal sync_dbt             : out std_logic;
-            signal sync_nbt_del_1       : out std_logic;
-            signal sync_dbt_del_1       : out std_logic;
+            signal sample_nbt           : out std_logic_vector(sample_trigger_count - 1 downto 0); 
+            signal sample_dbt           : out std_logic_vector(sample_trigger_count - 1 downto 0);
+            signal sync_nbt             : out std_logic_vector(sync_trigger_count - 1 downto 0);
+            signal sync_dbt             : out std_logic_vector(sync_trigger_count - 1 downto 0);
+            signal time_quanta_clk      : out std_logic;
             signal bt_FSM_out           : out bit_time_type;
-            signal data_tx              : in  std_logic;
             signal hard_sync_edge_valid : out std_logic;
             signal sp_control           : in  std_logic_vector(1 downto 0);
-            signal sync_control         : in  std_logic_vector(1 downto 0)
+            signal sync_control         : in  std_logic_vector(1 downto 0);
+            signal no_pos_resync        : in  std_logic
         );
     end component;
 
+    component bit_time_cfg_capture is
+    generic (
+        reset_polarity : std_logic := '0';
+        capt_btr        : boolean := false;
+        capt_tseg_1     : boolean := true;
+        capt_tseg_2     : boolean := false;
+        capt_sjw        : boolean := false;
+        tseg1_nbt_width : natural := 8;
+        tseg2_nbt_width : natural := 8;
+        tq_nbt_width    : natural := 8;
+        sjw_nbt_width   : natural := 5;
+        tseg1_dbt_width : natural := 8;
+        tseg2_dbt_width : natural := 8;
+        tq_dbt_width    : natural := 8;
+        sjw_dbt_width   : natural := 5
+    );
+    port(
+        signal clk_sys          : in    std_logic;
+        signal res_n            : in    std_logic;
+        signal drv_bus          : in    std_logic_vector(1023 downto 0);
+        signal tseg1_nbt  : out std_logic_vector(tseg1_nbt_width - 1 downto 0);
+        signal tseg2_nbt  : out std_logic_vector(tseg2_nbt_width - 1 downto 0);
+        signal brp_nbt    : out std_logic_vector(tq_nbt_width - 1 downto 0);
+        signal sjw_nbt    : out std_logic_vector(sjw_nbt_width - 1 downto 0);
+        signal tseg1_dbt  : out std_logic_vector(tseg1_dbt_width - 1 downto 0);
+        signal tseg2_dbt  : out std_logic_vector(tseg2_dbt_width - 1 downto 0);
+        signal brp_dbt    : out std_logic_vector(tq_dbt_width - 1 downto 0);
+        signal sjw_dbt    : out std_logic_vector(sjw_dbt_width - 1 downto 0);
+        signal start_edge : out std_logic
+    );
+    end component;
+
+    component ipt_checker is
+    generic (
+        reset_polarity : std_logic := '0';
+        ipt_length     : natural range 2 to 8 := 4
+    );
+    port(
+        signal clk_sys          : in    std_logic;
+        signal res_n            : in    std_logic;
+        signal is_tseg2         : in    std_logic;
+        signal ipt_gnt          : out   std_logic
+    );
+    end component;
+    
+    component resynchronisation is
+    generic (
+        reset_polarity          :       std_logic := '0';
+        sjw_width               :       natural := 4;
+        tseg1_width             :       natural := 8;
+        tseg2_width             :       natural := 8;
+        bt_width                :       natural := 8
+    );
+    port(
+        signal clk_sys              : in    std_logic;
+        signal res_n                : in    std_logic;
+        signal resync_edge_valid    : in    std_logic;
+        signal is_tseg1             : in    std_logic;
+        signal is_tseg2             : in    std_logic;
+        signal tseg_1       : in    std_logic_vector(tseg1_width - 1 downto 0);
+        signal tseg_2       : in    std_logic_vector(tseg2_width - 1 downto 0);
+        signal sjw          : in    std_logic_vector(sjw_width - 1 downto 0);
+        signal bt_counter   : in    std_logic_vector(bt_width - 1 downto 0);
+        signal start_edge   : in    std_logic;
+        signal segm_end         : in    std_logic;
+        signal h_sync_valid     : in    std_logic;
+        signal exit_segm_req    : out   std_logic
+    );
+    end component;
+
+    component bit_time_counters is
+    generic (
+        reset_polarity  : std_logic := '0';
+        bt_width        : natural := 8;
+        tq_width        : natural := 8
+    );
+    port(
+        signal clk_sys          : in    std_logic;
+        signal res_n            : in    std_logic;
+        signal prescaler        : in    std_logic_vector(tq_width - 1 downto 0);
+        signal tq_reset         : in    std_logic;
+        signal bt_reset         : in    std_logic;
+        signal drv_ena          : in    std_logic;
+        signal tq_edge          : out   std_logic;
+        signal bt_counter       : out   std_logic_vector(bt_width - 1 downto 0)
+    );
+    end component;
+
+    component segment_end_detector is
+    generic (
+        reset_polarity          :       std_logic := '0'
+    );
+    port(
+        signal clk_sys            : in    std_logic;
+        signal res_n              : in    std_logic;
+        signal sp_control         : in    std_logic_vector(1 downto 0);
+        signal h_sync_edge_valid  : in    std_logic;
+        signal exit_segm_req_nbt  : in    std_logic;
+        signal exit_segm_req_dbt  : in    std_logic;
+        signal is_tseg1           : in    std_logic;
+        signal is_tseg2           : in    std_logic;
+        signal tq_edge_nbt        : in    std_logic;
+        signal tq_edge_dbt        : in    std_logic;
+        signal segm_end           : out   std_logic;
+        signal h_sync_valid       : out   std_logic;
+        signal bt_ctr_clear       : out   std_logic
+    );
+    end component;
+
+    component bit_time_fsm is
+    generic (
+        reset_polarity  : std_logic := '0'
+    );
+    port(
+        signal clk_sys          : in    std_logic;
+        signal res_n            : in    std_logic;
+        signal segm_end         : in    std_logic;
+        signal h_sync_valid     : in    std_logic;
+        signal drv_ena          : in    std_logic;
+        signal is_tseg1         : out   std_logic;
+        signal is_tseg2         : out   std_logic;
+        signal sample_req       : out   std_logic;
+        signal sync_req         : out   std_logic;
+        signal bt_FSM_out       : out   bit_time_type
+    );
+    end component;
+
+    component synchronisation_checker is
+    generic (
+        reset_polarity          :       std_logic := '0'
+    );
+    port(
+        signal clk_sys          : in    std_logic;
+        signal res_n            : in    std_logic;
+        signal sync_control     : in    std_logic_vector(1 downto 0);
+        signal sync_edge        : in    std_logic;
+        signal no_pos_resync    : in    std_logic;
+        signal segment_end      : in    std_logic;
+        signal is_tseg1         : in    std_logic;
+        signal is_tseg2         : in    std_logic;
+        signal resync_edge_valid    : out std_logic;
+        signal h_sync_edge_valid    : out std_logic
+    );
+    end component;
+
+    component trigger_generator is
+    generic (
+        reset_polarity          : std_logic := '0';
+        sync_trigger_count      : natural range 2 to 8 := 2;
+        sample_trigger_count    : natural range 2 to 8 := 3
+    );
+    port(
+        signal clk_sys          : in    std_logic;
+        signal res_n            : in    std_logic;
+        signal sample_req       : in    std_logic;
+        signal sync_req         : in    std_logic;
+        signal sp_control       : in    std_logic_vector(1 downto 0);
+        signal sample_nbt : out std_logic_vector(sample_trigger_count - 1 downto 0);
+        signal sample_dbt : out std_logic_vector(sample_trigger_count - 1 downto 0);
+        signal sync_nbt : out std_logic_vector(sync_trigger_count - 1 downto 0);
+        signal sync_dbt : out std_logic_vector(sync_trigger_count - 1 downto 0)
+    );
+    end component;
 
     ----------------------------------------------------------------------------
     -- Bus Sampling module
