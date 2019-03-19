@@ -506,6 +506,12 @@ CTU CAN FD IP Core
 \begin_inset Text
 
 \begin_layout Plain Layout
+\begin_inset CommandInset include
+LatexCommand input
+filename "version.tex"
+
+\end_inset
+
 
 \end_layout
 
@@ -875,7 +881,8 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-Re-worked Prescaler. Removed 0x3 in bits 23:20 of address.
+Re-worked Prescaler.
+ Removed 0x3 in bits 23:20 of address.
 \end_layout
 
 \end_inset
