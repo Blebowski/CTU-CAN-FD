@@ -119,10 +119,11 @@ class TestsBase:
             if not gtkw.exists():
                 log.warn('GTKW wave file {} not found'.format(cfg['gtkw']))
         else:
-            gtkw = tcl.with_suffix('.gtkw')
             tclfname = tcl.relative_to(self.base)
+            base = str(tclfname.with_suffix("")).replace('/', '__')
+            gtkw = self.build / (base+'.gtkw')
             ghw_file = self.build / (tb.name+'.elab.ghw')
-            wave_opt_file = tcl.with_suffix('.wevaopt.txt')
+            wave_opt_file = gtkw.with_suffix('.wevaopt.txt')
             # We need the GHW file for TCL -> GTKW conversion. If we are
             # generating them, there is no sense in actually doing
             # the conversion now.
