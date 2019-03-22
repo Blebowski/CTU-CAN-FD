@@ -3,6 +3,8 @@ _default: &default
     error_tolerance: 0
     # seed: 0 # optional; use to reconstruct results from randomized runs
     # randomize: false
+    # In GUI mode, dump all signals, not only these included in layout file.
+    dump_all_signals: true
 reference:
     default:
         <<: *default

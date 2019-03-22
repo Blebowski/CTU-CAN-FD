@@ -80,10 +80,12 @@ def create():
 @click.option('--strict', 'strict', flag_value=1,
               help='Return non-zero if an unconfigured test was found.')
 @click.option('--no-strict', 'strict', flag_value=0)
+@click.option('--dumpall', is_flag=True, flag_value=True, default=False,
+              help='In GUI mode, dump all signals, not only these included in layout file.')
 @click.option('--create-ghws/--no-create-ghws', default=False,
               help='Only elaborate and create basic GHW files necessary for converting TCL layout files to GTKW files for gtkwave..')
 @click.pass_obj
-def test(obj, *, config, strict, create_ghws, vunit_args):
+def test(obj, *, config, strict, create_ghws, dumpall, vunit_args):
     """Run the tests. Configuration is passed in YAML config file.
 
     You mas pass arguments directly to VUnit by appending them at the command end.
@@ -143,7 +145,9 @@ def test(obj, *, config, strict, create_ghws, vunit_args):
     tests = []
     for cfg_key, factory in tests_classes:
         if cfg_key in config:
-            tests.append(factory(ui, lib, config[cfg_key], build, base, create_ghws=create_ghws))
+            tests.append(factory(ui, lib, config[cfg_key], build, base,
+                                 create_ghws=create_ghws,
+                                 force_unrestricted_dump_signals=dumpall))
 
     (func_cov_dir / "html").mkdir(parents=True, exist_ok=True)
     (func_cov_dir / "coverage_data").mkdir(parents=True, exist_ok=True)
