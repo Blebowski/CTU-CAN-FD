@@ -104,6 +104,7 @@ package CANtestLib is
 
     -- Logger severity type (severities in increasing order)
     type log_lvl_type is (
+        debug_l,
         info_l,
         warning_l,
         error_l
@@ -585,7 +586,8 @@ package CANtestLib is
     -- VUnit from configuration.
     --
     -- Log levels are bound to Vunit Logging library:
-    --  info_l  - All logs are shown
+    --  debug_l   - All logs are shown (even pass and trace)
+    --  info_l    - info(), warning(), error(), failure() are shown
     --  warning_l - warning(), error(), failure() are shown
     --  error_l   - error(), failure() are shown
     --
@@ -2043,24 +2045,25 @@ package body CANtestLib is
          constant log_level      : in    log_lvl_type
     ) is
     begin
-        case log_level is
-            when error_l =>
-                show_all(display_handler);
-                hide(display_handler, debug);
-                hide(display_handler, info);
-                hide(display_handler, pass);
-                hide(display_handler, warning);
-            when warning_l =>
-                show_all(display_handler);
-                hide(display_handler, debug);
-                hide(display_handler, pass);
-                hide(display_handler, info);
-            when info_l =>
-                show_all(display_handler);
-                --hide(logger, display_handler, debug);
-            when others =>
-                failure("Unknwon log level.");
-        end case;
+        show_all(display_handler);
+        if log_level >= debug_l then
+            null;
+        end if;
+
+        if log_level >= info_l then
+            hide(display_handler, pass);
+            hide(display_handler, trace);
+            null;
+        end if;
+
+        if log_level >= warning_l then
+            hide(display_handler, debug);
+            hide(display_handler, info);
+        end if;
+
+        if log_level >= error_l then
+            hide(display_handler, warning);
+        end if;
     end procedure;
     
     
@@ -2086,13 +2089,7 @@ package body CANtestLib is
         info("Test info:");
         info("Number of iterations: " & integer'image(iterations));
 
-        if (log_level = info_l) then
-            info("Log level: INFO,WARNING,ERROR logs are shown!");
-        elsif (log_level = warning_l) then
-            info("Log level: WARNING,ERROR logs are shown!");
-        else
-            info("Log level: ERROR logs are shown!");
-        end if;
+        info("Log level: " & log_lvl_type'image(log_level));
         set_log_level(log_level);
 
         if (error_beh = go_on) then
