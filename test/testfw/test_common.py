@@ -122,6 +122,7 @@ class TestsBase:
             gtkw = tcl.with_suffix('.gtkw')
             tclfname = tcl.relative_to(self.base)
             ghw_file = self.build / (tb.name+'.elab.ghw')
+            wave_opt_file = tcl.with_suffix('.wevaopt.txt')
             # We need the GHW file for TCL -> GTKW conversion. If we are
             # generating them, there is no sense in actually doing
             # the conversion now.
@@ -136,8 +137,11 @@ class TestsBase:
                     gtkw = None
                 else:
                     log.info('Converting wave file {} to gtkw ...'.format(tclfname))
-                    tcl2gtkw(str(tcl), tcl_init_files, str(gtkw), ghw_file)
-
+                    used_signals = tcl2gtkw(str(tcl), tcl_init_files, str(gtkw), ghw_file)
+                    with wave_opt_file.open('wt') as f:
+                        f.write('$ version 1.1\n')
+                        f.writelines('\n'.join(used_signals))
+                    sim_options['ghdl.sim_flags'] += ['--read-wave-opt='+str(wave_opt_file)]
         if gtkw:
             try:
                 tb.set_sim_option("ghdl.gtkwave_flags", [])
