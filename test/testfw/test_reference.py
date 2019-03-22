@@ -1,8 +1,7 @@
 import logging
 from pathlib import Path
 from .test_common import add_sources, TestsBase, dict_merge, \
-                         get_common_modelsim_init_files, get_seed
-from textwrap import dedent
+                         get_seed, OptionsDict
 
 log = logging.getLogger(__name__)
 
@@ -18,28 +17,20 @@ class ReferenceTests(TestsBase):
         sources.append('reference/vunit_reference_wrapper.vhd')
         add_sources(self.lib, sources)
 
-    def create_psl_cov_file_opt(self, name):
-        psl_path = "functional_coverage/coverage_data/psl_cov_reference_{}.json".format(name)
-        psl_flag = "--psl-report={}".format(psl_path)
-        return {"ghdl.sim_flags" : [psl_flag]}
-
     def configure(self) -> bool:
         tb = self.lib.get_test_benches('*reference*')[0]
         default = self.config['default']
 
-        tcl = self.build / 'modelsim_init_reference.tcl'
-        with tcl.open('wt', encoding='utf-8') as f:
-            print(dedent('''\
-                global TCOMP
-                set TCOMP tb_reference_wrapper/i_test
-                '''), file=f)
+        # TODO: is this necessary?
+        tb.scan_tests_from_file(str(self.base / "reference/vunit_reference_wrapper.vhd"))
 
-        init_files = get_common_modelsim_init_files()
-        init_files += [str(tcl)]
+        sim_options = self.get_default_sim_options()
+        # generate & set per-test modelsim tcl file
+        sim_options += self.generate_init_tcl('modelsim_init_reference.tcl', 'tb_reference_wrapper/i_test')
+        sim_options += self.add_modelsim_gui_file(tb, default, 'reference', sim_options['modelsim.init_files.after_load'])
 
         for data_set, cfg in self.config['tests'].items():
             dict_merge(cfg, default)
-            # bm = len_to_matrix(cfg['topology'], cfg['bus_len_v'])
             generics = {
                 'timeout'      : cfg['timeout'],
                 'iterations'   : cfg['iterations'],
@@ -48,13 +39,10 @@ class ReferenceTests(TestsBase):
                 'seed'         : get_seed(cfg),
                 'data_path'    : str(self.build) + '/../' + cfg['data_path'],
             }
+            local_sim_options = OptionsDict()
+            if cfg['psl_coverage']:
+                local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, data_set))
+            local_sim_options = sim_options + local_sim_options
+            tb.add_config(data_set, generics=generics, sim_options=local_sim_options)
 
-            if (cfg['psl_coverage']):
-                psl_opts = self.create_psl_cov_file_opt(data_set)
-                tb.add_config(data_set, generics=generics, sim_options=psl_opts)
-            else:
-                tb.add_config(data_set, generics=generics)
-
-        tb.set_sim_option("modelsim.init_files.after_load", init_files)
-        self.add_modelsim_gui_file(tb, default, 'reference', init_files)
         return True

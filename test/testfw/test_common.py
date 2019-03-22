@@ -8,16 +8,55 @@ from jinja2 import Environment, PackageLoader
 from pprint import pprint
 import random
 from .gtkwave import tcl2gtkw
-from typing import List
+from typing import List, Tuple
+import copy
+import re
 
-__all__ = ['add_sources', 'add_common_sources', 'get_common_modelsim_init_files',
-           'add_flags', 'dict_merge', 'vhdl_serialize', 'dump_sim_options',
-           'TestsBase', 'get_seed']
+__all__ = ['add_sources', 'add_common_sources',
+           'dict_merge', 'vhdl_serialize', 'dump_sim_options',
+           'TestsBase', 'get_seed', 'OptionsDict']
 
 d = Path(abspath(__file__)).parent
 log = logging.getLogger(__name__)
 
 jinja_env = Environment(loader=PackageLoader(__package__, 'data'), autoescape=False)
+
+
+class OptionsDict(dict):
+    # def __getattr__(self, key):
+    #     return self[key]
+
+    def __iadd__(self, upper: dict):
+        self.__merge(self, upper)
+        return self
+
+    def __add__(self, upper: dict) -> 'OptionsDict':
+        res = copy.deepcopy(self)
+        res += upper
+        return res
+
+    def __radd__(self, lower: dict) -> 'OptionsDict':
+        res = copy.deepcopy(lower)
+        res += self
+        return res
+
+    @classmethod
+    def __merge(cls, lower, upper) -> None:
+        if isinstance(lower, OptionsDict):
+            if not isinstance(upper, OptionsDict):
+                raise TypeError('Cannot merge {} and {}'.format(type(lower), type('upper')))
+
+            for k, v in upper.items():
+                if k not in lower:
+                    lower[k] = v
+                else:
+                    cls.__merge(lower[k], v)
+        elif isinstance(lower, list):
+            if not isinstance(upper, list):
+                raise TypeError('Cannot merge {} and {}'.format(type(lower), type('upper')))
+            lower.extend(upper)
+        else:
+            raise TypeError('Cannot merge {} and {}'.format(type(lower), type('upper')))
 
 
 class TestsBase:
@@ -43,9 +82,18 @@ class TestsBase:
 
         raise NotImplementedError()
 
-    def add_modelsim_gui_file(self, tb, cfg, name, tcl_init_files: List[str] = None) -> None:
-        if tcl_init_files is None:
-            tcl_init_files = get_common_modelsim_init_files()
+    def generate_init_tcl(self, fname: str, tcomp: str) -> OptionsDict:
+        tcl = self.build / fname
+        with tcl.open('wt', encoding='utf-8') as f:
+            print(dedent('''\
+                global TCOMP
+                set TCOMP {}
+                '''.format(tcomp)), file=f)
+        return OptionsDict({"modelsim.init_files.after_load": [str(tcl)]})
+
+    def add_modelsim_gui_file(self, tb, cfg, name, tcl_init_files: List[str]) -> OptionsDict:
+        """Return sim_options to add to the testcase."""
+        sim_options = OptionsDict({'ghdl.sim_flags': []})
         if 'wave' in cfg:
             tcl = self.base / cfg['wave']
             if not tcl.exists():
@@ -65,7 +113,7 @@ class TestsBase:
                     get_test_results
                     '''.format(name)), file=f)
 
-        tb.set_sim_option("modelsim.init_file.gui", str(tcl))
+        sim_options["modelsim.init_file.gui"] = str(tcl)
         if 'gtkw' in cfg:
             gtkw = self.base / cfg['gtkw']
             if not gtkw.exists():
@@ -79,9 +127,7 @@ class TestsBase:
             # the conversion now.
             if self.create_ghws:
                 log.info('Will generate {}'.format(ghw_file))
-                sim_flags = get_common_sim_flags()
-                sim_flags += ['--wave=' + str(ghw_file)]
-                tb.set_sim_option("ghdl.sim_flags", sim_flags)
+                sim_options["ghdl.sim_flags"] += ['--wave=' + str(ghw_file)]
             else:
                 if not ghw_file.exists():
                     log.warning("Cannot convert wave file {} to gtkw, because"
@@ -94,12 +140,32 @@ class TestsBase:
 
         if gtkw:
             try:
-                tb.set_sim_option("ghdl.gtkwave_flags", ['--save='+str(gtkw)])
+                tb.set_sim_option("ghdl.gtkwave_flags", [])
+                sim_options["ghdl.gtkwave_flags"] = ['--save='+str(gtkw)]
             except ValueError:
                 try:
-                    tb.set_sim_option("ghdl.gtkw_file", str(gtkw))
+                    tb.set_sim_option("ghdl.gtkw_file", "")
+                    sim_options["ghdl.gtkw_file"] = str(gtkw)
                 except ValueError:
                     log.warning('Setting GTKW file per test is not supported in this VUnit version.')
+        return OptionsDict(sim_options)
+
+    def get_default_sim_options(self) -> OptionsDict:
+        c, s = get_default_compile_and_sim_options()
+        return s
+
+    def add_psl_cov(self, name) -> OptionsDict:
+        name = re.sub(r'[^a-zA-Z0-9_-]', '_', name)
+        psl_path = self.build / "functional_coverage" / "coverage_data" \
+                    / "psl_cov_{}.json".format(name)
+        sim_flags = ["--psl-report={}".format(psl_path)]
+        return OptionsDict({"ghdl.sim_flags": sim_flags})
+
+    @staticmethod
+    def set_sim_options(tb, options: OptionsDict) -> None:
+        for k, v in options.items():
+            tb.set_sim_option(k, v)
+
 
 def add_sources(lib, patterns) -> None:
     for pattern in patterns:
@@ -109,6 +175,7 @@ def add_sources(lib, patterns) -> None:
             if f != "tb_wrappers.vhd":
                 lib.add_source_file(str(f))
 
+
 def add_common_sources(lib, ui) -> None:
     add_sources(lib, ['../src/**/*.vhd'])
     ui.enable_check_preprocessing()
@@ -116,38 +183,41 @@ def add_common_sources(lib, ui) -> None:
     add_sources(lib, ['*.vhd', 'lib/*.vhd', 'models/*.vhd'])
 
 
-def get_common_modelsim_init_files() -> List[str]:
-    modelsim_init_files = ['../lib/test_lib.tcl', 'modelsim_init.tcl']
-    modelsim_init_files = [str(d/x) for x in modelsim_init_files]
-    return modelsim_init_files
+def get_default_compile_and_sim_options() -> Tuple[OptionsDict, OptionsDict]:
+    # TODO: move to config
+    debug = True
+    coverage = True
+    psl = True
 
-def get_common_sim_flags() -> List[str]:
-    return ["--ieee-asserts=disable-at-0"]
+    compile_flags = []  # type: List[str]
+    elab_flags = ["-Wl,-no-pie"]
 
-def add_flags(ui, lib, build) -> None:
-    unit_tests = lib.get_test_benches('*_unit_test', allow_empty=True)
-    for ut in unit_tests:
-        ut.scan_tests_from_file(str(build / "../unit/vunittb_wrapper.vhd"))
+    if debug:
+        compile_flags += ['-g']
+        elab_flags += ['-g']
+    if coverage:
+        compile_flags += ["-fprofile-arcs", "-ftest-coverage"]
+        elab_flags += ["-Wl,-lgcov", "-Wl,--coverage"]
+    if psl:
+        compile_flags += ['-fpsl']
+        elab_flags += ['-fpsl']
 
-    reference_tests = lib.get_test_benches('*reference*', allow_empty=True)
-    for rt in reference_tests:
-        rt.scan_tests_from_file(str(build / "../reference/vunit_reference_wrapper.vhd"))
+    compile_options = OptionsDict()
+    compile_options["ghdl.flags"] = compile_flags
 
-    #lib.add_compile_option("ghdl.flags", ["-Wc,-g"])
-    lib.add_compile_option("ghdl.flags", ["-fprofile-arcs", "-ftest-coverage", "-fpsl", "-g"])
+    cmif = ['../lib/test_lib.tcl', 'modelsim_init.tcl']
+    common_modelsim_init_files = [str(d/x) for x in cmif]
+    sim_options = OptionsDict({
+        "ghdl.elab_flags": elab_flags,
+        "modelsim.init_files.after_load": common_modelsim_init_files,
+        "ghdl.sim_flags": ["--ieee-asserts=disable-at-0"],
+    })
+    return compile_options, sim_options
 
-    elab_flags = ["-Wl,-lgcov", "-g"]
-    elab_flags.append("-Wl,--coverage")
-    elab_flags.append("-Wl,-no-pie")
-    elab_flags.append("-fpsl")
-    ui.set_sim_option("ghdl.elab_flags", elab_flags)
 
-    # Global simulation flags
-    sim_flags = get_common_sim_flags()
-    ui.set_sim_option("ghdl.sim_flags", sim_flags)
-
-    modelsim_init_files = get_common_modelsim_init_files()
-    ui.set_sim_option("modelsim.init_files.after_load", modelsim_init_files)
+def get_compile_options() -> OptionsDict:
+    c, s = get_default_compile_and_sim_options()
+    return c
 
 
 def get_seed(cfg) -> int:

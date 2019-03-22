@@ -27,7 +27,7 @@ setup_logging()
 from . import vunit_ifc
 from . import test_unit, test_sanity, test_feature, test_reference
 from vunit.ui import VUnit
-from .test_common import add_common_sources, add_flags
+from .test_common import add_common_sources, get_compile_options
 
 
 #-------------------------------------------------------------------------------
@@ -150,7 +150,11 @@ def test(obj, *, config, strict, create_ghws, vunit_args):
 
     for t in tests:
         t.add_sources()
-    add_flags(ui, lib, build)
+
+    c = get_compile_options()
+    for k, v in c.items():
+        lib.set_compile_option(k, v)
+
     conf_ok = [t.configure() for t in tests]
 
     # check for unknown tests
@@ -198,27 +202,3 @@ def vunit_run(ui, build, out_basename) -> int:
             f.write(c)
         out.unlink()
     return res
-
-
-"""
-+ vunit configurations
-+ pass modelsim gui file via ui.set_sim_option("modelsim.init_file.gui", ...)
-+ include the standard library files in ui.set_sim_option("modelsim.init_files.after_load", [...])
-+ set TCOMP global variable
-
-- allow preprocessed calls to log()
-- use some log from vunit?
-- use random from unit?
-
-+ use per-test default configurations (with set tcl files etc.), different sanity configurations
-x pass encoded composite generics (sanity test)
-
-+ use watchdog - pass the time in config: test_runner_watchdog(runner, 10 ms);
-
-- bash completion for files & tests:
-    - click._bashcompletion.get_choices -> extend the if to check if the given argument is an instance of XXX
-      and implement completion method for that instance. Complete test names.
-
-- feature tests
-- sanity - optimize bus delay shift registers
-"""
