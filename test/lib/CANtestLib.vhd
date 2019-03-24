@@ -1182,6 +1182,9 @@ package CANtestLib is
     procedure CAN_print_frame(
         constant frame          : in    SW_CAN_frame_type
     );
+    procedure CAN_print_frame_simple(
+        constant frame          : in    SW_CAN_frame_type
+    );
 
 
     ----------------------------------------------------------------------------
@@ -1427,7 +1430,12 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
-
+    procedure send_TXT_buf_cmd(
+        constant cmd            : in    SW_TXT_Buffer_command_type;
+        constant buf_vector     : in    std_logic_vector(3 downto 0);  
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
     ----------------------------------------------------------------------------
     -- Read state of TXT Buffer.
     --
@@ -3100,6 +3108,24 @@ package body CANtestLib is
         end if;
         info(str_msg);
     end procedure;
+    
+      procedure CAN_print_frame_simple(
+        constant frame          : in    SW_CAN_frame_type
+    )is
+        variable data_byte      :       std_logic_vector(7 downto 0);
+        variable str_msg        :       string(1 to 512) := (OTHERS => ' ');
+    begin
+
+        str_msg(1 to 10) := "CAN Frame:";
+
+        -- Identifier
+        str_msg(11 to 18) := " ID : 0x";
+        str_msg(19 to 26) :=
+            to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32)));
+
+  
+        info(str_msg);
+    end procedure;
 
 
     procedure CAN_compare_frames(
@@ -3669,6 +3695,50 @@ package body CANtestLib is
         -- Give the command
         CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
     end procedure;
+    
+    
+    
+    
+    -- constant buf_vector     : in    std_logic_vector(7 downto 0);  No
+    procedure send_TXT_buf_cmd(
+        constant cmd            : in    SW_TXT_Buffer_command_type;
+        constant buf_vector     : in    std_logic_vector(3 downto 0);  
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable data           :         std_logic_vector(31 downto 0)
+                                            := (OTHERS => '0');
+    begin
+        -- Set active command bit in TX_COMMAND register based on input command
+        data(TXCE_IND) := '0';
+        data(TXCR_IND) := '0';
+        data(TXCA_IND) := '0';
+        if (cmd = buf_set_empty) then
+            data(TXCE_IND) := '1';
+        elsif (cmd = buf_set_ready) then
+            data(TXCR_IND) := '1';
+        elsif (cmd = buf_set_abort) then
+            data(TXCA_IND) := '1';
+        end if;
+
+        
+        -- Set index of Buffer on which the command should be executed.
+        for i in 0 to 3 loop
+        	if(buf_vector(i) = '1') then
+        		data(i + TXB1_IND) := '1';
+        	end if;
+        end loop;  
+
+        -- Give the command
+        CAN_write(data, TX_COMMAND_ADR, ID, mem_bus);
+    end procedure;
+    
+    
+    
+    
+    
+    
+    
 
 
     procedure get_tx_buf_state(
