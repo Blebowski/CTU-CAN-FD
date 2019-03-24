@@ -1,6 +1,6 @@
 from vcd.gtkw import GTKWSave
 import tkinter
-from typing import List
+from typing import List, Set
 import logging
 import traceback
 import functools
@@ -25,6 +25,7 @@ def logexc(f):
 class TclFuncs:
     def __init__(self, gtkw: str, hierarchy):
         self.gtkw = gtkw
+        self.used_signals = set()  # type: Set[str]
         self.hierarchy = hierarchy
 
         # set up TCL
@@ -65,6 +66,13 @@ class TclFuncs:
         fqn = 'top.' + fqn
         return fqn.replace('(', '[').replace(')', ']').lower()
 
+    def convsig_wave_opt(self, sig: str) -> str:
+        sig = re.sub(r'__([0-9]+)', r'(\1)', sig)
+        sig = re.sub(r'\([^)]+\)', '', sig)
+        if sig[0] != '/':
+            sig = '/'+sig
+        return sig
+
     def _add_trace(self, signal, type, *, label: str, datafmt: str, expand: bool, **kwds):
         if ghw_parse.is_record(type):
             with self.gtkw.group(label, closed=not expand):
@@ -72,6 +80,7 @@ class TclFuncs:
                     # do not pass label
                     self._add_trace(signal+'/'+iname, itype, datafmt=datafmt, expand=False, label=None, **kwds)
         else:
+            self.used_signals.add(self.convsig_wave_opt(signal))
             signal = self.convsig(signal)
             self.gtkw.trace(signal, alias=label, datafmt=datafmt, **kwds)
 
@@ -170,7 +179,7 @@ class TclFuncs:
             self.gtkw.end_group(o.group)
 
 
-def tcl2gtkw(tcl_wave, tcl_init_files: List[str], gtkw, ghw: Path):
+def tcl2gtkw(tcl_wave, tcl_init_files: List[str], gtkw, ghw: Path) -> List[str]:
     hierarchy = ghw_parse.parse(ghw)
     with open(gtkw, 'wt') as f:
         gtkw = GTKWSave(f)
@@ -183,3 +192,5 @@ def tcl2gtkw(tcl_wave, tcl_init_files: List[str], gtkw, ghw: Path):
         c.tcl.createcommand('run_simulation', lambda: None)
         c.source(tcl_wave)
         c.finalize()
+    used_signals = sorted(c.used_signals)
+    return used_signals

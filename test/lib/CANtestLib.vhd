@@ -1,30 +1,30 @@
 --------------------------------------------------------------------------------
--- 
+--
 -- CTU CAN FD IP Core
 -- Copyright (C) 2015-2018
--- 
+--
 -- Authors:
 --     Ondrej Ille <ondrej.ille@gmail.com>
 --     Martin Jerabek <martin.jerabek01@gmail.com>
--- 
--- Project advisors: 
+--
+-- Project advisors:
 -- 	Jiri Novak <jnovak@fel.cvut.cz>
 -- 	Pavel Pisa <pisa@cmp.felk.cvut.cz>
--- 
+--
 -- Department of Measurement         (http://meas.fel.cvut.cz/)
 -- Faculty of Electrical Engineering (http://www.fel.cvut.cz)
 -- Czech Technical University        (http://www.cvut.cz/)
--- 
+--
 -- Permission is hereby granted, free of charge, to any person obtaining a copy
 -- of this VHDL component and associated documentation files (the "Component"),
 -- to deal in the Component without restriction, including without limitation
 -- the rights to use, copy, modify, merge, publish, distribute, sublicense,
 -- and/or sell copies of the Component, and to permit persons to whom the
 -- Component is furnished to do so, subject to the following conditions:
--- 
+--
 -- The above copyright notice and this permission notice shall be included in
 -- all copies or substantial portions of the Component.
--- 
+--
 -- THE COMPONENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 -- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 -- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -32,11 +32,11 @@
 -- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 -- FROM, OUT OF OR IN CONNECTION WITH THE COMPONENT OR THE USE OR OTHER DEALINGS
 -- IN THE COMPONENT.
--- 
+--
 -- The CAN protocol is developed by Robert Bosch GmbH and protected by patents.
 -- Anybody who wants to implement this IP core on silicon has to obtain a CAN
 -- protocol license from Bosch.
--- 
+--
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
@@ -104,6 +104,7 @@ package CANtestLib is
 
     -- Logger severity type (severities in increasing order)
     type log_lvl_type is (
+        debug_l,
         info_l,
         warning_l,
         error_l
@@ -251,9 +252,9 @@ package CANtestLib is
 
     -- SSP (Secondary Sampling Point) configuration options
     type SSP_set_command_type is (
-        ssp_measured, 
-        ssp_meas_n_offset, 
-        ssp_offset  
+        ssp_measured,
+        ssp_meas_n_offset,
+        ssp_offset
     );
 -- Use only TRV_DELAY
 -- Use TRV_DELAY + fixed offset given by user
@@ -466,7 +467,7 @@ package CANtestLib is
     type SW_CAN_mask_filter_type is (
         filter_A,
         filter_B,
-        filter_C  
+        filter_C
     );
 
 
@@ -482,7 +483,7 @@ package CANtestLib is
     type SW_CAN_range_filter_config is record
         ID_th_low               :   natural;
         ID_th_high              :   natural;
-        ident_type              :   std_logic;        
+        ident_type              :   std_logic;
         acc_CAN_2_0             :   boolean;
         acc_CAN_FD              :   boolean;
     end record;
@@ -515,7 +516,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     -- Bit sequence generator
     ----------------------------------------------------------------------------
-    
+
     -- Longest possible CAN FD Frame is aroud 700 bits. If each bit has opposite
     -- polarity than previous one, this could use up to 700 entries. Have some
     -- reserve...
@@ -585,7 +586,8 @@ package CANtestLib is
     -- VUnit from configuration.
     --
     -- Log levels are bound to Vunit Logging library:
-    --  info_l  - All logs are shown
+    --  debug_l   - All logs are shown (even pass and trace)
+    --  info_l    - info(), warning(), error(), failure() are shown
     --  warning_l - warning(), error(), failure() are shown
     --  error_l   - error(), failure() are shown
     --
@@ -608,7 +610,7 @@ package CANtestLib is
     procedure set_error_beh(
           constant error_beh      : in    err_beh_type
     );
-    
+
 
     ----------------------------------------------------------------------------
     -- Generates clock signal for the test with custom period, duty cycle and
@@ -919,7 +921,7 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Execute write access on Avalon memory bus via Avalon burst. 
+    -- Execute write access on Avalon memory bus via Avalon burst.
     -- Does not support unaligned accesses. Size of the burst is given by
     -- length of "w_data".
     --
@@ -939,7 +941,7 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Execute read access on Avalon memory bus via Avalon burst. 
+    -- Execute read access on Avalon memory bus via Avalon burst.
     -- Does not support unaligned accesses. Size of the burst is given by
     -- length of "r_data".
     --
@@ -1378,7 +1380,7 @@ package CANtestLib is
     --
     -- Arguments:
     --  bits            Number of Bit times to wait for
-    --  exit_trans      Exit when unit turns transceiver.         
+    --  exit_trans      Exit when unit turns transceiver.
     --  exit_rec        Exit when unit turns receiver.
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
@@ -1463,7 +1465,7 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Set options of RX Buffer. 
+    -- Set options of RX Buffer.
     --
     -- Arguments:
     --  options         Options to be applied on RX Buffer.
@@ -1796,8 +1798,8 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Read Timestamp from TIMESTAMP_LOW and TIMESTAMP_HIGH registers 
-    -- 
+    -- Read Timestamp from TIMESTAMP_LOW and TIMESTAMP_HIGH registers
+    --
     -- Arguments:
     --  ts             	Variable in which timestamp will be stored
     --  ID              Index of CTU CAN FD Core instance.
@@ -1807,13 +1809,13 @@ package CANtestLib is
         variable ts		        : out   std_logic_vector(63 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
-    ); 
+    );
 
 
     ----------------------------------------------------------------------------
     -- Configure SSP (Secondary Sampling Point) configuration: choose applicable
-    -- SSP delaying source and set offest given by the user (if eventually used).   
-    -- 
+    -- SSP delaying source and set offest given by the user (if eventually used).
+    --
     -- Arguments:
     --  ssp_source      Select required source of delaying.
     --  ssp_offset      Amount of clock cycles to wait for.
@@ -1821,8 +1823,8 @@ package CANtestLib is
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
     procedure CAN_configure_ssp(
-        variable ssp_source     : in    SSP_set_command_type;    
-        variable ssp_offset_val : in   std_logic_vector(6 downto 0);   
+        variable ssp_source     : in    SSP_set_command_type;
+        variable ssp_offset_val : in   std_logic_vector(6 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -2037,33 +2039,34 @@ package body CANtestLib is
 
         wait for 0 ns;
     end procedure;
-    
-    
+
+
     procedure set_log_level(
          constant log_level      : in    log_lvl_type
     ) is
     begin
-        case log_level is
-            when error_l =>
-                show_all(display_handler);
-                hide(display_handler, debug);
-                hide(display_handler, info);
-                hide(display_handler, pass);
-                hide(display_handler, warning);
-            when warning_l =>
-                show_all(display_handler);
-                hide(display_handler, debug);
-                hide(display_handler, pass);
-                hide(display_handler, info);
-            when info_l =>
-                show_all(display_handler);
-                --hide(logger, display_handler, debug);
-            when others =>
-                failure("Unknwon log level.");
-        end case;
+        show_all(display_handler);
+        if log_level >= debug_l then
+            null;
+        end if;
+
+        if log_level >= info_l then
+            hide(display_handler, pass);
+            hide(display_handler, trace);
+            null;
+        end if;
+
+        if log_level >= warning_l then
+            hide(display_handler, debug);
+            hide(display_handler, info);
+        end if;
+
+        if log_level >= error_l then
+            hide(display_handler, warning);
+        end if;
     end procedure;
-    
-    
+
+
     procedure set_error_beh(
           constant error_beh      : in    err_beh_type
     ) is
@@ -2073,7 +2076,7 @@ package body CANtestLib is
         else
             set_stop_level(failure);
         end if;
-    end procedure;    
+    end procedure;
 
 
     procedure print_test_info(
@@ -2086,13 +2089,7 @@ package body CANtestLib is
         info("Test info:");
         info("Number of iterations: " & integer'image(iterations));
 
-        if (log_level = info_l) then
-            info("Log level: INFO,WARNING,ERROR logs are shown!");
-        elsif (log_level = warning_l) then
-            info("Log level: WARNING,ERROR logs are shown!");
-        else
-            info("Log level: ERROR logs are shown!");
-        end if;
+        info("Log level: " & log_lvl_type'image(log_level));
         set_log_level(log_level);
 
         if (error_beh = go_on) then
@@ -2384,11 +2381,11 @@ package body CANtestLib is
         constant size          : in    aval_access_size
     ) return std_logic_vector is
     begin
-    
+
         if (address'length < 2) then
             error("Address to BE conversion. Invalid address");
         end if;
-     
+
         if (size = BIT_32) then
             return "1111";
         end if;
@@ -2426,10 +2423,10 @@ package body CANtestLib is
         -- Check for access alignment
         if (not aval_is_aligned(w_address, w_size)) then
             warning("Unaligned Avalon write, Adress :" & to_hstring(w_address)
-                    & " Size: " & aval_access_size'image(w_size)); 
+                    & " Size: " & aval_access_size'image(w_size));
         else
-            w_addr_padded(w_address'length - 1 downto 0) := w_address; 
-            
+            w_addr_padded(w_address'length - 1 downto 0) := w_address;
+
             wait until falling_edge(mem_bus.clk_sys);
             mem_bus.scs       <=  '1';
             mem_bus.swr       <=  '1';
@@ -2466,8 +2463,8 @@ package body CANtestLib is
             warning("Unaligned Avalon Read, Adress :" & to_hstring(r_address) &
                     " Size: " & aval_access_size'image(r_size));
         else
-            r_addr_padded(r_address'length - 1 downto 0) := r_address; 
-            
+            r_addr_padded(r_address'length - 1 downto 0) := r_address;
+
             wait until falling_edge(mem_bus.clk_sys);
             mem_bus.scs       <=  '1';
             mem_bus.srd       <=  '1';
@@ -2527,7 +2524,7 @@ package body CANtestLib is
                     to_hstring(w_address));
             return;
         end if;
-        
+
         if (not aval_is_valid_burst_size(w_data'length)) then
             return;
         end if;
@@ -2541,7 +2538,7 @@ package body CANtestLib is
         if (not stat_burst) then
             increment := 4;
         end if;
-        
+
         act_address(w_address'length - 1 downto 0) := w_address;
 
         -- Iterate through the addresses
@@ -2581,7 +2578,7 @@ package body CANtestLib is
                     to_hstring(r_address));
             return;
         end if;
-        
+
         if (not aval_is_valid_burst_size(r_data'length)) then
             return;
         end if;
@@ -2838,7 +2835,7 @@ package body CANtestLib is
         CAN_write(data, SETTINGS_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
-    
+
     procedure config_filter_frame_types(
         constant ident_type     : in    std_logic;
         constant acc_CAN_2_0    : in    boolean;
@@ -3087,7 +3084,7 @@ package body CANtestLib is
 
         str_msg(89 to 117) := "    RWCNT (read word count): ";
         str_msg(118 to 127) :=
-            to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10))); 
+            to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10)));
 
         -- Data words
         if (frame.rtr = NO_RTR_FRAME and frame.data_length > 0) then
@@ -3559,7 +3556,7 @@ package body CANtestLib is
                             (bus_timing.prop_dbt + bus_timing.ph1_dbt +
                              bus_timing.ph2_dbt + 1);
         end if;
-        
+
         -- Check Minimal Bit time
         check(wait_time > 6, "Calculated Bit Time shorter than minimal!");
 
@@ -4453,8 +4450,8 @@ package body CANtestLib is
 
 
     procedure CAN_configure_ssp(
-        variable ssp_source     : in    SSP_set_command_type;    
-        variable ssp_offset_val : in    std_logic_vector(6 downto 0);  
+        variable ssp_source     : in    SSP_set_command_type;
+        variable ssp_offset_val : in    std_logic_vector(6 downto 0);
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     ) is
@@ -4467,7 +4464,7 @@ package body CANtestLib is
             when ssp_meas_n_offset =>
                 data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEAS_N_OFFSET;  --"01";
             when ssp_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET; --"10";   
+                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET; --"10";
             when others =>
                 error("Unsupported SSP type.");
             end case;
@@ -4491,7 +4488,7 @@ entity CAN_test is
 
         -- Used only for "reference" test
         constant data_path      :in     string  :=
-                    "test/reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1" 
+                    "test/reference/data_sets/log_500Kb_2Mb_80p_1K_samples_1"
     );
     port (
 

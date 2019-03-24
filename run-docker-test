@@ -24,6 +24,9 @@ if [ -d /build ]; then
 else
     d="$(realpath "$(dirname "$0")")"
     #"
-    docker run --rm -ti -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v "$d:/build" --user $(id -u):$(id -g) registry.gitlab.com/canfd/server-tools/ghdl:gtkwave /build/run-docker-test "$@"
+    docker run --rm -ti -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v "$d:/build" --user $(id -u):$(id -g) --memory 6G \
+        registry.gitlab.com/canfd/server-tools/ghdl:gtkwave \
+        /build/run-docker-test "$@"
 fi
 

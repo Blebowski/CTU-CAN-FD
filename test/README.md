@@ -16,6 +16,12 @@ Features:
  * `gtkw`: a path to GTKW file with waveform layout definition for gtkwave; if
            set together with `wave`, this takes precedence. The specified gtkw
            file is not modified.
+ * `dump_all_signals`: If true, dump all signals in GUI mode, not only these
+                       included in the layout file. May be overriden by
+                       `--dumpall` commandline option. By default, it is set to
+                       true, but for long-lasting tests with lots of signals it
+                       may be necessary to set it to false to prevent `gtkwave`
+                       to run out of memory while loading waveforms.
  * many more
 
 ## Using waveform layout files
@@ -23,8 +29,12 @@ Features:
 * Specify the file in YML config, either as `gtkw` or `wave` (tcl). Later, this
   might be extended to native gtkw-generating python files.
 * Run the tests with `--create-ghws`. This generates signal and type hierarchy.
-  You should run this each time you modify a signal in the layout (or add a signal both to code and to layout).
+  You should run this each time you modify a signal in the layout (or add a
+  signal both to code and to layout).
 * Run in gui mode, using the VUnit `-g` flag.
+* If a layout file is specified and `dump_all_signals` is false (and
+  `--dumpall` is not used), only the signals specified in the layout file are
+  dumped.
 
 # How it works
 
