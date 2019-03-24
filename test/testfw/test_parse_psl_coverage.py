@@ -205,7 +205,7 @@ def print_cov_cell_percentage(doc, tag, text, psl_points: List[TPslPoint],
     if (merge_abs_vals):
         if (ok + nok > 0):
             with tag('td', bgcolor=color):
-                text("({}/{}) {}%".format(ok, summ, percents))
+                text("({}/{}) {:.1f}%".format(ok, summ, percents))
         else:
             with tag('td', bgcolor="Silver"):
                 text("NA")
@@ -217,7 +217,7 @@ def print_cov_cell_percentage(doc, tag, text, psl_points: List[TPslPoint],
 
         if (ok + nok > 0):
             with tag('td', bgcolor=color):
-                text("{}%".format(percents))
+                text("{:.1f}%".format(percents))
         else:
             with tag('td', bgcolor="Silver"):
                 text("NA")
