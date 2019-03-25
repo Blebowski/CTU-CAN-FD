@@ -123,10 +123,7 @@ package body txt_buffer_priority_feature is
   begin
         o.outcome := true;
 
-    -- Wait till Integration phase is over
- --   for i in 0 to 3000 loop
- ---       wait until rising_edge(mem_bus(1).clk_sys);
- --   end loop;
+
     
     -- TODO Generate priorities
     priority_array(1) := 6;		-- Priority of TXT Buffer 1
@@ -149,56 +146,45 @@ package body txt_buffer_priority_feature is
  	--data := std_logic_vector(to_unsigned(17185, data'length)); -- 17185: B4 1st, B3 2nd, B2 3rd, B1 last.
  	address := TX_PRIORITY_ADR;
     CAN_write(data, address, ID_1, mem_bus(1), BIT_16);
-    
-    
-       -- seradit odeslane ramce podle priorit
-    --- najit nejvyssi prioritu
-    --- ramec dat na prvni pozici
-    --- najit druhou nejvyssi prioritu, dal ramec hned za to
-    
+   
 
 	
-    
-  	-- prvni pozice v poli = frame s nejvyssi prioritou
-  	-- druhy frame, druha nejvyssi priorita
+    -- Sorting buffer priorities - descending. First generate frame to buffer 
+    -- with the highest priority. In each iteration find unfulfilled buffer with 
+    -- the highest available priority and insert new frame to it .
 	for j in 1 to 4 loop
-	    priority_value_tmp := 0;
-	    priority_value_max := 0;
+	    priority_value_tmp := 0;	-- Init value for each iteration.
+	    priority_value_max := 0;	-- Init value for each iteration.
+		    
+		-- Find unused buffer with the highest priority (used buffer = priority 8)
 	    for i in 1 to 4 loop
-		    if((priority_array_bckp(i) > priority_value_max) AND (priority_array_bckp(i) /= 8)) then
-				priority_value_max := priority_array_bckp(i);
-				priority_index_max := i;
-				
-				
+		    if((priority_array_bckp(i) > priority_value_max) AND 
+		    	(priority_array_bckp(i) /= 8)) then
+				priority_value_max := priority_array_bckp(i);	-- The highest priority	found
+				priority_index_max := i;		-- Index of buffer with the highest priority				
 			end if;    	
 		end loop; 
 		
-		-- Nejvyssi prioritu ma buffer cislo 'priority_index_max'
-		priority_array_bckp(priority_index_max) := 8;
-		info("Priority indexy: " & Integer'image(priority_index_max) & ":");
+		-- Print buffer number with its priority value.		
+		info("[" & Integer'image(j) & "] Priority " & 
+				Integer'image(priority_array_bckp(priority_index_max)) & " in buffer " & 
+				Integer'image(priority_index_max) & ".");
+				
+		-- Mark buffer as used
+		priority_array_bckp(priority_index_max) := 8;	
 	
-	
-		-- Frame s nejvyssi prioritou je v poli prvni.
-		-- At nize dam frame do bufferu s jakymkoliv cislem, prvni frame v poli musi dorazit prvni.
-    	-- Generate CAN frame
-		--CAN_generate_frame(rand_ctr, CAN_frame);
+    	-- Generate CAN frame		-
 		CAN_generate_frame(rand_ctr, CAN_frame_array_tx(j));
+		CAN_print_frame_simple(CAN_frame_array_tx(j));
 
-		-- Frame s nejvyssi prioritou dam do bufferu cislo 'priority_index_max'.
 		-- Insert the frame for transmittion
-    	-- CAN_insert_TX_frame(CAN_frame, i, ID_1, mem_bus(1));
     	CAN_insert_TX_frame(CAN_frame_array_tx(j), priority_index_max, ID_1, mem_bus(1));
  	end loop;   
+ 	info("Note: higher priority value -> higher priority");
     
-
-    -- TODO atomic access
-  	for i in 1 to 4 loop
-  		-- Give "Set ready" command to the buffer
-  		send_TXT_buf_cmd(buf_set_ready, i, ID_1, mem_bus(1));
-  	end loop;  
   	
   	-- Atomic set ready command
-  	--send_TXT_buf_cmd(buf_set_ready, "1111", ID_1, mem_bus(1));
+  	send_TXT_buf_cmd(buf_set_ready, "1111", ID_1, mem_bus(1));
   	info("Set ready command done.");
   	
     ------------------------------------------------------------------------
@@ -211,47 +197,18 @@ package body txt_buffer_priority_feature is
 	--	end if;
     -- end loop;
     CAN_wait_frame_sent(ID_1, mem_bus(1));
-        CAN_wait_frame_sent(ID_1, mem_bus(1));
-            CAN_wait_frame_sent(ID_1, mem_bus(1));
-                CAN_wait_frame_sent(ID_1, mem_bus(1));
+	CAN_wait_frame_sent(ID_1, mem_bus(1));
+    CAN_wait_frame_sent(ID_1, mem_bus(1));
+    CAN_wait_frame_sent(ID_1, mem_bus(1));
     
-  info("DEBUG 2");
-  
-        ------------------------------------------------------------------------
-    -- Loop as long as one of the units turns to be reciever, or error
-    -- appears.
-    ------------------------------------------------------------------------
-  --  while (unit_rec = 0) loop
-    --    get_controller_status(stat_1, ID_1, mem_bus(1));
-
-        -- Unit 1 turned reciever
-    --    if (stat_1.receiver) then
-    --        unit_rec := 1;
-    --    end if;
-
-        -- Error frame transmitted by unit 1
-   --     if (stat_1.error_transmission) then
-   --        unit_rec := 3;
-  --      end if;
-
---    end loop;
-    
-   info("DEBUG 3");   
-   
-   
-    --CAN_wait_bus_idle(ID_1, mem_bus(1));
 	
-	
+	-- Read all frames on the second node
 	for i in 1 to 4 loop
-		--info("Read Frame 1:");
 		info("Read Frame " & Integer'image(i) & ":");
- 
 		CAN_read_frame(CAN_frame_array_rx(i), ID_2, mem_bus(2));
 	end loop; 
         
-        
-        
-    
+   	-- Generate some debug logs.
  	info("TX frames:");
     for i in 1 to 4 loop
     	CAN_print_frame_simple(CAN_frame_array_tx(i));
@@ -262,20 +219,23 @@ package body txt_buffer_priority_feature is
     	CAN_print_frame_simple(CAN_frame_array_rx(i));
     end loop; 
     	        
+    	        
     -- Eval results    
   	for i in 1 to 4 loop
-		--CAN_compare_frames(CAN_frame_array_rx(i), CAN_frame_array_tx(i), false, frame_equal);
+		CAN_compare_frames(CAN_frame_array_tx(i), CAN_frame_array_rx(i), false, frame_equal);
 		
-		--info("TX frame number  " & Integer'image(i) & ":");
-		---CAN_print_frame_simple(CAN_frame_array_tx(i));
-		--info("RX frame number  " & Integer'image(i) & ":");
-		--CAN_print_frame_simple(CAN_frame_array_rx(i));
-		--check_false(frame_equal,"FRAMES ARE DIFFERENT!");
+		if(frame_equal = false) then
+			info("FRAMES NOT EQUAL:");
+			CAN_print_frame(CAN_frame_array_rx(i));
+			CAN_print_frame(CAN_frame_array_tx(i));			
+			o.outcome := false;
+			exit;
+		end if;
+
+		-- check_false(frame_equal = true, "FRAMES ARE DIFFERENT!");
 	end loop; 
           
-        
-        
-     --  CAN_compare_frames();
+
         
 
     -- Repeat test several times
