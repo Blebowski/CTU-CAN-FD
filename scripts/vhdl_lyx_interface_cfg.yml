@@ -1,0 +1,5 @@
+template: "../doc/core/template.lyx"
+source_list:
+    can_core:
+        vhdl_file: "../src/can_core/can_core.vhd"
+        lyx_output: "../doc/core/entity_docs/can_core.lyx"
