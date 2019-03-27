@@ -95,6 +95,9 @@ entity error_counters is
         -- Decrement error counter by 1
         dec_one                :in   std_logic;
         
+        -- Reset error counters (asynchronously)
+        reset_err_counters     :in   std_logic;
+        
         -- Preload TX Error counter
         tx_err_ctr_pload       :in   std_logic;
         
@@ -175,7 +178,7 @@ begin
                          else
                      '0';
 
-    -- Increment by 1 or 8
+   -- Increment by 1 or 8
    err_ctr_inc <= "000000001" when (inc_one = '1') else
                   "000001000";
 
@@ -184,7 +187,7 @@ begin
    ----------------------------------------------------------------------------
    tx_err_ctr_dec <=  (tx_err_ctr_q - 1) when (tx_err_ctr_q > 0) else
                       tx_err_ctr_q;
-   
+
    -- Next value for error counter inctement when any of "inc" commands is
    -- valid. Decrement otherwise!
    tx_err_ctr_d <=                 
@@ -198,13 +201,13 @@ begin
    tx_err_ctr_ce <= '1' when (modif_err_ctrs = '1' and is_transmitter = '1') else
                     '1' when (tx_err_ctr_pload = '1') else
                     '0';
-                       
+
    ----------------------------------------------------------------------------
    -- TX Error counter register
    ----------------------------------------------------------------------------
-   tx_err_ctr_reg_proc : process(clk_sys, res_n)
+   tx_err_ctr_reg_proc : process(clk_sys, res_n, reset_err_counters)
    begin
-       if (res_n = G_RESET_POLARITY) then
+       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
            tx_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (tx_err_ctr_ce = '1') then
@@ -237,9 +240,9 @@ begin
    ----------------------------------------------------------------------------
    -- RX Error counter register
    ----------------------------------------------------------------------------
-   rx_err_ctr_reg_proc : process(clk_sys, res_n)
+   rx_err_ctr_reg_proc : process(clk_sys, res_n, reset_err_counters)
    begin
-       if (res_n = G_RESET_POLARITY) then
+       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
            rx_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (rx_err_ctr_ce = '1') then
@@ -279,9 +282,9 @@ begin
    ----------------------------------------------------------------------------
    -- Nominal / Data Bit rate error counters registers
    ----------------------------------------------------------------------------
-   nom_err_ctr_proc : process(clk_sys, res_n)
+   nom_err_ctr_proc : process(clk_sys, res_n, reset_err_counters)
    begin
-       if (res_n = G_RESET_POLARITY) then
+       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
            nom_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (nom_err_ctr_ce = '1') then
@@ -290,9 +293,9 @@ begin
        end if;
    end process;
 
-   dat_err_ctr_proc : process(clk_sys, res_n)
+   dat_err_ctr_proc : process(clk_sys, res_n, reset_err_counters)
    begin
-       if (res_n = G_RESET_POLARITY) then
+       if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
            dat_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (dat_err_ctr_ce = '1') then
