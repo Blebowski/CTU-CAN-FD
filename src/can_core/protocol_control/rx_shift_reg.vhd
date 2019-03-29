@@ -133,7 +133,7 @@ entity rx_shift_reg is
         rx_store_brs            :in  std_logic;
 
         -- Store stuff count
-        rx_store_stuff_count    :out std_logic;
+        rx_store_stuff_count    :in  std_logic;
         
         -----------------------------------------------------------------------
         -- RX Buffer interface
@@ -353,4 +353,31 @@ begin
     ---------------------------------------------------------------------------
     store_data_word <= rx_shift_reg;
 
+
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl rx_shift_reg_byte_config : assert never
+    --  (rx_shift_in_sel = '1') and 
+    --  (rx_store_base_id = '1' or rx_store_ext_id = '1' or 
+    --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
+    --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or
+    --   rx_store_stuff_count = '1')
+    --  report "RX Shift register should be configured as Byte shift " &
+    --  "register only during DATA phase of CAN frame"
+    --  severity error;
+    
+    -- psl no_simul_capture_and_clear : assert never
+    --  (res_n_internal = G_RESET_POLARITY) and
+    --  (rx_store_base_id = '1' or rx_store_ext_id = '1' or 
+    --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
+    --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or
+    --   rx_store_stuff_count = '1')
+    --  report "RX Shift register should not be cleared when RX Data should" &
+    --         " be stored!"
+    --  severity error;
+    
 end architecture;
