@@ -49,7 +49,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -67,51 +66,51 @@ use work.CAN_FD_frame_format.all;
 entity sample_mux is
     generic(
         -- Reset polarity
-        constant reset_polarity         :     std_logic;
-        
-        -- Pipeline data output
-        constant pipeline_sampled_data  :     boolean := true
+        G_RESET_POLARITY     :     std_logic := '0'    
     );
     port(
         ------------------------------------------------------------------------
         -- Clock and Async reset
         ------------------------------------------------------------------------
-        signal clk_sys                  :in   std_logic;
-        signal res_n                    :in   std_logic;       
+        -- System clock
+        clk_sys              :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in   std_logic;       
         
         ------------------------------------------------------------------------
         -- Control signals
         ------------------------------------------------------------------------
         -- CTU CAN FD enabled
-        signal drv_ena                  :in   std_logic;
+        drv_ena              :in   std_logic;
         
         -- Sample control (nominal, data, secondary)
-        signal sp_control               :in   std_logic_vector(1 downto 0);
+        sp_control           :in   std_logic_vector(1 downto 0);
         
-        -- Input sample signals
-        signal sample_nbt               :in   std_logic;
-        signal sample_dbt               :in   std_logic;
-        signal sample_sec               :in   std_logic;
+        -- RX Trigger - Nominal Bit Time
+        sample_nbt           :in   std_logic;
+        
+        -- RX Trigger - Data Bit time
+        sample_dbt           :in   std_logic;
+        
+        -- RX Trigger - Secondary Sampling
+        sample_sec           :in   std_logic;
 
         -----------------------------------------------------------------------
-        -- RX Data inputs
+        -- Datapath
         -----------------------------------------------------------------------
-        -- Receieved data in Nominal Bit time (either directly sampled data,
-        -- or tripple sampling output)
-        signal data_rx_nbt              :in   std_logic;
+        -- Receieved data in Nominal Bit time
+        data_rx_nbt          :in   std_logic;
 
-        -- Received data (Nominal and Data)
-        signal can_rx_i                 :in   std_logic;
+        -- Received data (Nominal Bit Time and Data Bit Time)
+        can_rx_i             :in   std_logic;
 
-        ------------------------------------------------------------------------
-        -- Outputs
-        ------------------------------------------------------------------------
-        -- Sampled value of RX in Sample point (DFF output)
-        signal prev_sample              : out std_logic;
+        -- Sampled value of RX pin in Sample point (DFF output)
+        prev_sample          :out  std_logic;
         
-        -- Sampled value of RX in Sample point (either DFF or direct output)
-        signal data_rx                  : out std_logic
-        );
+        -- Sampled value of RX pin in Sample point (either DFF or direct output)
+        data_rx              :out  std_logic
+    );
 end entity;
 
 architecture rtl of sample_mux is
@@ -150,7 +149,7 @@ begin
 
     sample_prev_req_proc : process(clk_sys, res_n)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             sample_prev_q <= RECESSIVE;
         elsif (rising_edge(clk_sys)) then
             if (drv_ena = '1') then
@@ -160,16 +159,9 @@ begin
     end process;
 
     ----------------------------------------------------------------------------
-    -- Receive data. If pipeline is inserted, then use directly sample_prev,
-    -- if not, then pipe the input to output directly! 
+    -- Internal signal to output propagation
     ----------------------------------------------------------------------------
-    insert_pipeline_true_gen : if (pipeline_sampled_data = true) generate
-        data_rx <= sample_prev_q;
-    end generate insert_pipeline_true_gen;
-    
-    insert_pipeline_false_gen : if (pipeline_sampled_data = false) generate
-        data_rx <= rx_data_i;
-    end generate insert_pipeline_false_gen;
+    rx_data_i <= rx_data_i;
     
     -- Internal signal to output propagation
     prev_sample <= sample_prev_q;

@@ -49,7 +49,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -67,55 +66,56 @@ use work.CAN_FD_frame_format.all;
 entity bit_error_detector is
     generic(
         -- Reset polarity
-        constant reset_polarity         :     std_logic
+        G_RESET_POLARITY         :     std_logic
     );
     port(
         ------------------------------------------------------------------------
         -- Clock and Async reset
         ------------------------------------------------------------------------
-        signal clk_sys                  :in   std_logic;
-        signal res_n                    :in   std_logic;       
+        -- System clock
+        clk_sys                  :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                    :in   std_logic;
         
         ------------------------------------------------------------------------
         -- Control signals
         ------------------------------------------------------------------------
-        -- Bit error detection enabled
-        signal bit_err_enable           :in   std_logic;
+        -- CTU CAN FD Core is enabled
+        drv_ena                  :in   std_logic;
         
-        -- Core is enabled
-        signal drv_ena                  :in   std_logic;
+        -- Sample control
+        sp_control               :in   std_logic_vector(1 downto 0);
         
-        -- Sample control (nominal, data, secondary)
-        signal sp_control               :in   std_logic_vector(1 downto 0);
+        -- RX Trigger - Nominal Bit time
+        sample_nbt               :in   std_logic;
         
-        -- Input sample signals
-        signal sample_nbt               :in   std_logic;
-        signal sample_dbt               :in   std_logic;
-        signal sample_sec               :in   std_logic;
+        -- RX Trigger - Data Bit time
+        sample_dbt               :in   std_logic;
         
+        -- RX Trigger - Secondary Sample
+        sample_sec               :in   std_logic;
+
         -----------------------------------------------------------------------
-        -- TX Data inputs
+        -- TX / RX Datapath
         -----------------------------------------------------------------------
-        -- Regulary transmitted data
-        signal data_tx                  :in   std_logic;
+        -- Actually transmitted data on CAN bus
+        data_tx                  :in   std_logic;
         
         -- Delayed transmitted data (for detection in secondary sampling point)
-        signal data_tx_delayed          :in   std_logic;
+        data_tx_delayed          :in   std_logic;
         
-        -----------------------------------------------------------------------
-        -- RX Data inputs
-        -----------------------------------------------------------------------
-        -- Receieved data in Nominal Bit time (either directly sampled data,
-        -- or tripple sampling output)
-        signal data_rx_nbt              :in   std_logic;
+        -- Receieved data in Nominal Bit time
+        data_rx_nbt              :in   std_logic;
 
-        -- Received data (Nominal and Data)
-        signal can_rx_i                 :in   std_logic;
+        -- Received data (both Nominal Bit time and Data Bit time)
+        can_rx_i                 :in   std_logic;
 
-        ------------------------------------------------------------------------
-        -- Bit error output
-        ------------------------------------------------------------------------
-        signal bit_error                : out std_logic
+        -----------------------------------------------------------------------
+        -- Status outputs
+        -----------------------------------------------------------------------
+        -- Bit error detected
+        bit_error                : out std_logic
         );
 end entity;
 
@@ -160,7 +160,7 @@ begin
     -- Bit Error detection. If expected data is not equal to actual data in
     -- sample point -> Bit Error!
     ----------------------------------------------------------------------------
-    bit_error_d <= '0' when (drv_ena = CTU_CAN_DISABLED or bit_err_enable = '0') else
+    bit_error_d <= '0' when (drv_ena = CTU_CAN_DISABLED) else
                    '1' when (exp_data /= act_data and sample = '1') else
                    '0' when (exp_data = act_data and sample = '1') else
                    bit_error_q;
@@ -170,7 +170,7 @@ begin
     ----------------------------------------------------------------------------
     bit_error_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             bit_error_q <= '0';
         elsif (rising_edge(clk_sys)) then
             bit_error_q <= bit_error_d;
