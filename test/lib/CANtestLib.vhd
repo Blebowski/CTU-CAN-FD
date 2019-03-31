@@ -251,13 +251,13 @@ package CANtestLib is
 
     -- SSP (Secondary Sampling Point) configuration options
     type SSP_set_command_type is (
-        ssp_measured, 
-        ssp_meas_n_offset, 
-        ssp_offset  
+        ssp_measured,   -- Use only TRV_DELAY
+        ssp_meas_n_offset,  -- Use TRV_DELAY + fixed offset given by user
+        ssp_offset      -- Use only offset given by user
     );
--- Use only TRV_DELAY
--- Use TRV_DELAY + fixed offset given by user
--- Use only offset given by user
+
+
+
 
 
     ----------------------------------------------------------------------------
@@ -1430,6 +1430,17 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
+
+    ----------------------------------------------------------------------------
+    -- Give command to selected TXT Buffers in one bus access.
+    --
+    -- Arguments:
+    --  cmd             Command to give to TXT Buffer.
+    --  buf_vector      Bit vector with TXT Buffers which should receive 
+    --                  the command (eg. "1001" = command for buffers 1 and 4.)
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
     procedure send_TXT_buf_cmd(
         constant cmd            : in    SW_TXT_Buffer_command_type;
         constant buf_vector     : in    std_logic_vector(3 downto 0);  
