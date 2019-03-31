@@ -41,15 +41,22 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  
+--  The aim here is to test whether TX arbitrator selects a frame from TXT
+--  Buffer with the highest priority and sends it, in case of more TXT Buffers
+--  in "READY" state.
 --
 --  Test sequence:  
---      1. 
---      2. 
+--      1. Generate and set random priorities to TX buffers.
+--      2. Sort the priorities by size (highest priority first)
+--      3. Generate CAN frame for each TX buffer
+--      4. Give set ready command to all buffers at the same time
+--      5. Wait until all frames are received on the second node
+--      6. Check if all frames were received in correct order.
 --
 --------------------------------------------------------------------------------
 -- Revision History:
 --      24.3.2019   Created file
+--      31.3.2019   Test completed.
 --------------------------------------------------------------------------------
 
 context work.ctu_can_synth_context;
