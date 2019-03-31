@@ -96,15 +96,18 @@ package body txt_buffer_priority_feature is
         variable priority_value_max :       natural range 0 to 8;
         variable priority_index_max :       natural range 0 to 8;       
         variable frame_equal        :       boolean := false;
+        variable tmp_int            :       natural := 0;
 
     begin
         o.outcome := true;
-        
-        -- TODO Generate priorities
-        priority_array(1) := 3;     -- Priority of TXT Buffer 1
-        priority_array(2) := 5;     -- Priority of TXT Buffer 2
-        priority_array(3) := 7;     -- Priority of TXT Buffer 3
-        priority_array(4) := 5;     -- Priority of TXT Buffer 4
+            
+
+        --  Generate random priorities
+        for j in 1 to 4 loop
+            rand_int_v(rand_ctr, 7, tmp_int);   -- Get random number
+            priority_array(j) := tmp_int;     -- Priority of TXT Buffer N
+            wait for 0 ns;  -- Wait to 'refresh' random generator
+        end loop;
         
         
        -- Convert priorities to vector
