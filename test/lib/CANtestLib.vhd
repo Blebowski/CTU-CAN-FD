@@ -1845,6 +1845,24 @@ package CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+    
+    ----------------------------------------------------------------------------
+    -- Configure priority of the TXT Buffers in TX Arbitrator. Higher priority 
+    -- value signals that buffer is selected earlier for transmission. 
+    -- 
+    -- Arguments:
+    --  buff_number     Select required buffer.
+    --  priority        Value between 0 and 7, details in datasheet.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_configure_tx_priority(
+        constant buff_number    : in    natural range 1 to 4;
+        variable priority       : in    natural range 0 to 7;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );    
+    
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -4558,6 +4576,43 @@ package body CANtestLib is
         CAN_write(data, SSP_CFG_ADR, ID, mem_bus, BIT_16);
     end procedure;
 
+
+
+    procedure CAN_configure_tx_priority(
+        constant buff_number    : in    natural range 1 to 4;
+        variable priority       : in    natural range 0 to 7;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+   ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+        variable address        :       std_logic_vector(11 downto 0) :=
+            (OTHERS => '0');
+    begin   
+        -- Read current register value to variable
+        address := TX_PRIORITY_ADR;
+        CAN_read(data, address, ID, mem_bus, BIT_16);
+        info("Read 'TX_PRIORITY_ADR': 0x" & to_hstring(data) & ".");
+        
+       -- Select buffer and modify appropriate bits in the register
+        case buff_number is
+            when 1 =>
+                data (2 downto 0) := std_logic_vector(to_unsigned(priority, 3));
+            when 2 =>
+                data (6 downto 4) := std_logic_vector(to_unsigned(priority, 3));
+            when 3 =>
+                data (10 downto 8) := std_logic_vector(to_unsigned(priority, 3));
+            when 4 =>
+                data (14 downto 12) := std_logic_vector(to_unsigned(priority, 3));
+            when others =>
+                error("Unsupported TX buffer number.");
+            end case;
+
+        -- Write back new value and exit procedure
+        info("Write 'TX_PRIORITY_ADR': 0x" & to_hstring(data) & ".");
+        address := TX_PRIORITY_ADR;
+        CAN_write(data, address, ID, mem_bus, BIT_16);
+    end procedure;
 end package body;
 
 
