@@ -101,26 +101,17 @@ package body txt_buffer_priority_feature is
     begin
         o.outcome := true;
             
-
-        --  Generate random priorities
+        --  Generate random priorities and write it to the Priority register
         for j in 1 to 4 loop
             rand_int_v(rand_ctr, 7, tmp_int);   -- Get random number
             priority_array(j) := tmp_int;     -- Priority of TXT Buffer N
             wait for 0 ns;  -- Wait to 'refresh' random generator
+            
+            -- Write generated priority to the register
+            CAN_configure_tx_priority(j, priority_array(j), ID_1, mem_bus(1)); 
         end loop;
-        
-        
-       -- Convert priorities to vector
-        data := std_logic_vector(to_unsigned(0, 16)) &
-                std_logic_vector(to_unsigned(priority_array(4), 4)) &    -- Priority of TXT Buffer 4
-                std_logic_vector(to_unsigned(priority_array(3), 4)) &   -- Priority of TXT Buffer 3
-                std_logic_vector(to_unsigned(priority_array(2), 4)) &   -- Priority of TXT Buffer 2
-                std_logic_vector(to_unsigned(priority_array(1), 4));    -- Priority of TXT Buffer 1
-    
-        -- Set tx buffer priorities
-        address := TX_PRIORITY_ADR;
-        CAN_write(data, address, ID_1, mem_bus(1), BIT_16);
-       
+
+
         -- Sorting buffer priorities - descending. First generate frame to buffer 
         -- with the highest priority. In each iteration find unfulfilled buffer with 
         -- the highest available priority and insert new frame to it .
