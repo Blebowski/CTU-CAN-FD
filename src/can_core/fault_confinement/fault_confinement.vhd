@@ -84,7 +84,10 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity fault_confinement is 
+entity fault_confinement is
+    generic(
+        G_RESET_POLARITY       :     std_logic := '0'
+    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -108,13 +111,13 @@ entity fault_confinement is
         error_passive_changed  :out  std_logic;
 
         -- Error warning limit was reached
-        error_warning_limit    :out  std_logic; 
+        error_warning_limit    :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Operation control Interface
         -----------------------------------------------------------------------
         -- Unit is transceiver
-        is_transceiver         :in   std_logic;
+        is_transmitter         :in   std_logic;
         
         -- Unit is receiver
         is_receiver            :in   std_logic;
@@ -133,47 +136,55 @@ entity fault_confinement is
         
         -- Decrement error counter by 1
         dec_one                :in   std_logic;
+        
+        -- Set unit to error active (after re-integration). Erases eror
+        -- counters to 0!
+        set_err_active         :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Fault confinement State indication
         -----------------------------------------------------------------------
         -- Unit is error active
-        is_err_active           :in   std_logic;
+        is_err_active           :out   std_logic;
         
         -- Unit is error passive
-        is_err_passive          :in   std_logic;
+        is_err_passive          :out   std_logic;
         
         -- Unit is Bus-off
-        is_bus_off              :in   std_logic;
+        is_bus_off              :out   std_logic;
 
         -----------------------------------------------------------------------
         -- Error counters
         -----------------------------------------------------------------------
         -- TX Error counter
-        tx_counter_out          :out  std_logic_vector(8 downto 0);
+        tx_err_ctr              :out  std_logic_vector(8 downto 0);
         
         -- RX Error counter
-        rx_counter_out          :out  std_logic_vector(8 downto 0);
+        rx_err_ctr              :out  std_logic_vector(8 downto 0);
         
         -- Error counter in Nominal Bit-rate
-        err_counter_norm_out    :out  std_logic_vector(15 downto 0);
+        norm_err_ctr            :out  std_logic_vector(15 downto 0);
         
         -- Error counter in Data Bit-rate
-        err_counter_fd_out      :out  std_logic_vector(15 downto 0)
+        data_err_ctr            :out  std_logic_vector(15 downto 0)
     );
 end entity;
-
 
 architecture rtl of fault_confinement is
  
     ---------------------------------------------------------------------------
     -- Driving bus aliases
     ---------------------------------------------------------------------------
-    signal drv_ewl                   :     std_logic_vector(7 downto 0);
-    signal drv_erp                   :     std_logic_vector(7 downto 0);
-    signal drv_ctr_val               :     std_logic_vector(8 downto 0);
-    signal drv_ctr_sel               :     std_logic_vector(3 downto 0);
-    signal drv_clr_err_ctrs          :     std_logic;
+    signal drv_ewl               :     std_logic_vector(7 downto 0);
+    signal drv_erp               :     std_logic_vector(7 downto 0);
+    signal drv_ctr_val           :     std_logic_vector(8 downto 0);
+    signal drv_ctr_sel           :     std_logic_vector(3 downto 0);
+    signal drv_clr_err_ctrs      :     std_logic;
+
+    signal tx_err_ctr_i          :     std_logic_vector(8 downto 0);
+    signal rx_err_ctr_i          :     std_logic_vector(8 downto 0);
+
+    signal set_err_active_q      :     std_logic;
 
 begin
   
@@ -186,15 +197,90 @@ begin
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
     drv_clr_err_ctrs    <=  drv_bus(DRV_ERR_CTR_CLR);
 
+    dff_arst_inst : dff_arst
+    generic map(
+        reset_polarity     => G_RESET_POLARITY,
+        rst_val            => '0'
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+        input              => set_err_active,
+        load               => '1',
+        output             => set_err_active_q
+    );
+    
     ---------------------------------------------------------------------------
-    -- Error counters to output propagation
+    -- Fault confinement FSM
     ---------------------------------------------------------------------------
-    tx_counter_out          <=  std_logic_vector(to_unsigned(tx_counter, 9));
-    rx_counter_out          <=  std_logic_vector(to_unsigned(rx_counter, 9));
+    fault_confinement_fsm_inst : fault_confinement_fsm
+    generic map(
+        G_RESET_POLARITY       => G_RESET_POLARITY
+    )
+    port map(
+        clk_sys                => clk_sys,
+        res_n                  => res_n,
 
-    err_counter_norm_out    <=  std_logic_vector(to_unsigned(
-                                    err_counter_norm, 16));
-    err_counter_fd_out      <=  std_logic_vector(to_unsigned(
-                                    err_counter_fd, 16));
+        ewl                    => drv_ewl,
+        erp                    => drv_erp,
+
+        set_err_active         => set_err_active_q,       
+        tx_err_ctr             => tx_err_ctr_i,
+        rx_err_ctr             => rx_err_ctr_i,
+
+        is_err_active          => is_err_active,
+        is_err_passive         => is_err_passive,
+        is_bus_off             => is_bus_off,
+       
+        error_passive_changed  => error_passive_changed,
+        error_warning_limit    => error_warning_limit
+    );
+
+
+    ---------------------------------------------------------------------------
+    -- Error counters
+    ---------------------------------------------------------------------------
+    error_counters_inst : error_counters
+    generic map(
+        G_RESET_POLARITY       => G_RESET_POLARITY
+    )
+    port map(
+        clk_sys                => clk_sys,
+        res_n                  => res_n,
+        sp_control             => sp_control,
+        inc_one                => inc_one,
+        inc_eight              => inc_eight,
+        dec_one                => dec_one,
+        reset_err_counters     => set_err_active_q,
+        tx_err_ctr_pload       => drv_ctr_sel(0),
+        rx_err_ctr_pload       => drv_ctr_sel(1),
+        err_ctr_pload_val      => drv_ctr_val,
+        is_transmitter         => is_transmitter,
+        is_receiver            => is_receiver,
+
+        rx_err_ctr             => rx_err_ctr_i,
+        tx_err_ctr             => tx_err_ctr_i,
+        norm_err_ctr           => norm_err_ctr,
+        data_err_ctr           => data_err_ctr
+    );
+
+
+    ---------------------------------------------------------------------------
+    -- Internal signals to output propagation
+    ---------------------------------------------------------------------------
+    tx_err_ctr           <= tx_err_ctr_i;
+    rx_err_ctr           <= rx_err_ctr_i;
+    
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl no_cmd_in_idle_asrt : assert never
+    -- (inc_one = '1' or inc_eight = '1' or dec_one = '1') and
+    -- (is_transmitter = '0' and is_receiver = '0')
+    -- report "Error counters incremented when unit is not Transmitter nor " &
+    --   "receiver"
+    -- severity error;
 
 end architecture;

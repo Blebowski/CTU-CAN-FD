@@ -119,10 +119,7 @@ entity fault_confinement_fsm is
         error_passive_changed   :out  std_logic;
 
         -- Error warning limit was reached
-        error_warning_limit     :out  std_logic;
-        
-        -- Bus off start (for Interrupt)
-        bus_off_start           :out  std_logic
+        error_warning_limit     :out  std_logic
     );
 end entity;
 
@@ -217,9 +214,6 @@ begin
        
         when s_error_passive =>
             is_err_passive <= '1';
-            if (tx_err_ctr_mt_255 = '1') then
-                bus_off_start <= '1';
-            end if;
 
         when s_bus_off =>
             is_bus_off <= '1';

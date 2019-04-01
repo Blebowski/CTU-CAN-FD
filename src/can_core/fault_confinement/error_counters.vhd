@@ -68,7 +68,7 @@ use work.CAN_FD_frame_format.all;
 entity error_counters is
     generic(
         -- Reset polarity
-        g_reset_polarity       :     std_logic := '0'
+        G_RESET_POLARITY       :     std_logic := '0'
     );
     port(
         -----------------------------------------------------------------------
@@ -105,7 +105,7 @@ entity error_counters is
         rx_err_ctr_pload       :in   std_logic;
 
         -- Preload value for Error counters
-        err_ctr_pload_val      :in   std_logic_vector(8 downto 0);
+        drv_ctr_val            :in   std_logic_vector(8 downto 0);
         
         -- Unit is transmitter
         is_transmitter         :in   std_logic;
@@ -123,10 +123,10 @@ entity error_counters is
         tx_err_ctr             :out  std_logic_vector(8 downto 0);
         
         -- Nominal Bit Rate Error counter
-        err_counter_nom        :out  std_logic_vector(15 downto 0);
+        norm_err_ctr           :out  std_logic_vector(15 downto 0);
         
         -- Nominal Bit Rate Error counter
-        err_counter_data       :out  std_logic_vector(15 downto 0)
+        data_err_ctr           :out  std_logic_vector(15 downto 0)
     );
 end entity;
 
@@ -157,9 +157,9 @@ architecture rtl of error_counters is
     
     -- Error counters for nominal bit errors, data bit errors
     signal nom_err_ctr_d     : unsigned(15 downto 0);
-    signal dat_err_ctr_d     : unsigned(15 downto 0);
+    signal data_err_ctr_d     : unsigned(15 downto 0);
     signal nom_err_ctr_q     : unsigned(15 downto 0);
-    signal dat_err_ctr_q     : unsigned(15 downto 0);
+    signal data_err_ctr_q     : unsigned(15 downto 0);
     
     -- Selected value of counter
     signal nom_dat_sel_ctr   : unsigned(15 downto 0);
@@ -169,7 +169,7 @@ architecture rtl of error_counters is
     
     -- Clock enables for error counter registers
     signal nom_err_ctr_ce : std_logic;
-    signal dat_err_ctr_ce : std_logic;
+    signal data_err_ctr_ce : std_logic;
     
 begin
 
@@ -191,7 +191,7 @@ begin
    -- Next value for error counter inctement when any of "inc" commands is
    -- valid. Decrement otherwise!
    tx_err_ctr_d <=                 
-       unsigned(err_ctr_pload_val) when (tx_err_ctr_pload = '1') else
+             unsigned(drv_ctr_val) when (tx_err_ctr_pload = '1') else
         tx_err_ctr_q + err_ctr_inc when (inc_one = '1' or inc_eight = '1')
                                    else
                     tx_err_ctr_dec;
@@ -227,7 +227,7 @@ begin
    -- Next value for error counter inctement when any of "inc" commands is
    -- valid. Decrement otherwise!
    rx_err_ctr_d <=
-       unsigned(err_ctr_pload_val) when (rx_err_ctr_pload = '1') else
+             unsigned(drv_ctr_val) when (rx_err_ctr_pload = '1') else
         rx_err_ctr_q + err_ctr_inc when (inc_one = '1' or inc_eight = '1') else
                     rx_err_ctr_dec;
       
@@ -260,12 +260,12 @@ begin
 
    -- Selection of counter to be incremented
    nom_dat_sel_ctr <= nom_err_ctr_q when (sp_control = NOMINAL_SAMPLE) else
-                      dat_err_ctr_q; 
+                      data_err_ctr_q; 
 
    nom_dat_sel_ctr_add <= nom_dat_sel_ctr + 1;
 
    nom_err_ctr_d <= nom_dat_sel_ctr_add;
-   dat_err_ctr_d <= nom_dat_sel_ctr_add;
+   data_err_ctr_d <= nom_dat_sel_ctr_add;
 
    -- Clock enables for counters, increment only
    nom_err_ctr_ce <= '1' when (inc_one = '1' or inc_eight = '1') and
@@ -273,11 +273,11 @@ begin
                          else
                      '0';
    
-   dat_err_ctr_ce <= '1' when (inc_one = '1' or inc_eight = '1') and
-                              (sp_control = DATA_SAMPLE or 
-                               sp_control = SECONDARY_SAMPLE)
-                         else
-                     '0';
+   data_err_ctr_ce <= '1' when (inc_one = '1' or inc_eight = '1') and
+                               (sp_control = DATA_SAMPLE or 
+                                sp_control = SECONDARY_SAMPLE)
+                          else
+                      '0';
    
    ----------------------------------------------------------------------------
    -- Nominal / Data Bit rate error counters registers
@@ -296,10 +296,10 @@ begin
    dat_err_ctr_proc : process(clk_sys, res_n, reset_err_counters)
    begin
        if (res_n = G_RESET_POLARITY or reset_err_counters = '1') then
-           dat_err_ctr_q <= (OTHERS => '0');
+           data_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
-           if (dat_err_ctr_ce = '1') then
-               dat_err_ctr_q <= dat_err_ctr_d;
+           if (data_err_ctr_ce = '1') then
+               data_err_ctr_q <= data_err_ctr_d;
            end if;
        end if;
    end process;
@@ -310,8 +310,8 @@ begin
    rx_err_ctr  <= std_logic_vector(rx_err_ctr_q);
    tx_err_ctr  <= std_logic_vector(tx_err_ctr_q);
 
-   err_counter_nom <= nom_err_ctr_q;
-   err_counter_data <= dat_err_ctr_q;
+   norm_err_ctr <= nom_err_ctr_q;
+   data_err_ctr <= data_err_ctr_q;
 
    ----------------------------------------------------------------------------
    -- Assertions
