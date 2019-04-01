@@ -56,7 +56,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -73,57 +72,54 @@ use work.CAN_FD_frame_format.all;
 
 entity crc_calc is
     generic(
-
+        -- Reset polarity
+        G_RESET_POLARITY    : std_logic := '0';
+        
         -- Width of CRC sequence
-        constant crc_width      :       natural;
-
-        -- Reset Polarity
-        constant reset_polarity :       std_logic := '0';
+        G_CRC_WIDTH         : natural;
 
         -- CRC Polynomial
-        constant polynomial     :       std_logic_vector
+        G_POLYNOMIAL        : std_logic_vector
     );
     port(
         ------------------------------------------------------------------------
-        -- Inputs
+        -- System clock and Asynchronous Reset
         ------------------------------------------------------------------------
+        -- System clock input 
+        clk_sys    :in   std_logic;
 
         -- Asynchronous reset
-        signal res_n      :in   std_logic;
+        res_n      :in   std_logic;
 
-        -- System clock input 
-        signal clk_sys    :in   std_logic;
+        ------------------------------------------------------------------------
+        -- CRC Calculation control
+        ------------------------------------------------------------------------
+        -- Serial data input for CRC calculation
+        data_in    :in   std_logic;
 
-        -- Serial data input
-        signal data_in    :in   std_logic;
-
-        -- Trigger to sample the input value
-        signal trig       :in   std_logic;
+        -- Trigger to sample the input data
+        trig       :in   std_logic;
  
-        -- By transition from 0 to 1 on enable sampled on clk_sys rising edge 
-        -- (and with trig='1') operation is started. First bit of data already 
-        -- has to be on data_in input.
-        -- Circuit works as long as enable=1.
-        signal enable     :in   std_logic; 
+        -- CRC calculation enabled
+        enable     :in   std_logic; 
 
         -- Initialization vector for CRC calculation
-        signal init_vect  :in   std_logic_vector(crc_width - 1 downto 0);
+        init_vect  :in   std_logic_vector(G_CRC_WIDTH - 1 downto 0);
 
         ------------------------------------------------------------------------
-        -- CRC value
+        -- CRC output
         ------------------------------------------------------------------------
-        signal crc         :out  std_logic_vector(crc_width - 1 downto 0)
+        crc         :out  std_logic_vector(G_CRC_WIDTH - 1 downto 0)
     );    
-  
 end entity;
-
 
 architecture rtl of crc_calc is
 
     ----------------------------------------------------------------------------
     -- Internal registers
     ----------------------------------------------------------------------------
-    signal crc_reg          :     std_logic_vector(crc_width - 1 downto 0);
+    -- CRC register
+    signal crc_reg          :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
     
     -- Holds previous value of enable input. Detects 0 to 1 transition
     signal start_reg        :     std_logic;
@@ -132,25 +128,24 @@ architecture rtl of crc_calc is
     signal crc_nxt          :     std_logic;
 
     -- Shifted value of CRC register. Insert 0 from left
-    signal crc_shift        :     std_logic_vector(crc_width - 1 downto 0);
+    signal crc_shift        :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
 
     -- XORed value 
-    signal crc_shift_n_xor  :     std_logic_vector(crc_width - 1 downto 0);
+    signal crc_shift_n_xor  :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
 
     -- Combinational value of next CRC value
-    signal crc_nxt_val      :     std_logic_vector(crc_width - 1 downto 0);
-
+    signal crc_nxt_val      :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
 
 begin
    
     ----------------------------------------------------------------------------
     -- Calculation of next CRC value
     ----------------------------------------------------------------------------
-    crc_nxt         <= data_in xor crc_reg(crc_width - 1);
+    crc_nxt         <= data_in xor crc_reg(G_CRC_WIDTH - 1);
   
     crc_shift       <= crc_reg(crc_width - 2 downto 0) & '0';
     
-    crc_shift_n_xor <= crc_shift xor polynomial(crc_width - 1 downto 0);
+    crc_shift_n_xor <= crc_shift xor G_POLYNOMIAL(G_CRC_WIDTH - 1 downto 0);
 
     crc_nxt_val     <= crc_shift_n_xor when (crc_nxt = '1') 
                                        else
@@ -161,7 +156,7 @@ begin
     ----------------------------------------------------------------------------
     start_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             start_reg       <= '0';
         elsif rising_edge(clk_sys) then
             start_reg       <= enable;
@@ -173,7 +168,7 @@ begin
     ----------------------------------------------------------------------------
     crc_calc_proc : process(res_n, clk_sys)
     begin 
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             crc_reg             <= (OTHERS => '0');
         elsif rising_edge(clk_sys) then 
 
