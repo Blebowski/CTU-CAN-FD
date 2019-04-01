@@ -53,12 +53,12 @@
 --               is disabled. This makes sure that after Node was turned off,
 --               it needs to integrate for 11 recessive bits again, before
 --               turning Transceiver or Receiver!
+--   01.04.2019  Re-implemented.
 --------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -74,144 +74,152 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity operation_control is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     :     std_logic    
+    );
     port(
         ------------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys              :in   std_logic; 
-        signal res_n                :in   std_logic;
+        -- System clock
+        clk_sys              :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in   std_logic;
 
+        ------------------------------------------------------------------------
+        -- Memory registers Interface
+        ------------------------------------------------------------------------
         -- Driving bus
-        signal drv_bus              :in   std_logic_vector(1023 downto 0);
+        drv_bus              :in   std_logic_vector(1023 downto 0);
 
-        -- Driving signals
-        signal arbitration_lost     :in   std_logic;
-        signal PC_State             :in   protocol_type;
-        signal tran_data_valid_in   :in   std_logic;
+        ------------------------------------------------------------------------
+        -- Protocol Control Interface
+        ------------------------------------------------------------------------
+        -- Arbitration lost
+        arbitration_lost     :in   std_logic;
+        
+        -- Transmitted frame is valid
+        tran_data_valid      :in   std_logic;
 
-        -- Set OP_State FSM into transciever state (Used at SOF)
-        signal set_transciever      :in   std_logic; 
+        -- Set unit to be transmitter (in SOF)
+        set_transmitter      :in   std_logic; 
 
-        -- Set OP_State FSM into reciever state
-        signal set_reciever         :in   std_logic;
+        -- Set unit to be receiver
+        set_receiver         :in   std_logic;
 
-        signal is_idle              :in   std_logic; --Unit is idle
-
-        signal unknown_OP_state     :out  std_logic;
-
-        -- Bit time triggering signals
-        signal tran_trig            :in   std_logic;
-        signal rec_trig             :in   std_logic;
-
-        signal data_rx              :in   std_logic;
+        -- Set unit to be idle
+        set_idle             :in   std_logic;
 
         -- Status outputs
-        signal OP_State             :out  oper_mode_type
+        is_transmitter       :out  std_logic;
+        
+        -- Unit is receiver
+        is_receiver          :out  std_logic;
+        
+        -- Unit is idle
+        is_idle              :out  std_logic
     );
-
-    ----------------------------------------------------------------------------
-    -- Internal registers
-    ----------------------------------------------------------------------------
-    signal OP_State_r               :     oper_mode_type; -- Operational mode
-
-    -- Counter to INTEGRATING_DURATION, to switch from integrating to bus idle
-    signal integ_counter            :     natural range 0 to 11; 
-    signal drv_ena                  :     std_logic;
-    
 end entity;
 
-
 architecture rtl of operation_control is
+    
+    -- CTU CAN FD is enabled
+    signal drv_ena           :     std_logic;
+    
+    -- Operation control FSM
+    signal curr_state        :     t_operation_control_state;
+    signal next_state        :     t_operation_control_state;
+
 begin
   
-    -- Registers to output propagation
-    OP_State                          <= OP_State_r;
-    drv_ena                           <= drv_bus(DRV_ENA_INDEX);
-  
-    OP_proc : process(clk_sys, res_n)
+    -- Driving bus aliases
+    drv_ena <= drv_bus(DRV_ENA_INDEX);
+
+    ---------------------------------------------------------------------------
+    -- Next state
+    ---------------------------------------------------------------------------
+    next_state_proc : process(curr_state, set_idle, set_transmitter,
+        set_receiver, tran_data_valid, arbitration_lost)
     begin
-        if (res_n = ACT_RESET) then
-            OP_State_r                    <= integrating;
-            integ_counter                 <= 1;
-            unknown_OP_state              <= '0';
-
-        elsif rising_edge(clk_sys) then
-            -- Presetting the registers to avoid latches
-            OP_State_r                    <= OP_State_r;
-            integ_counter                 <= integ_counter;
-            unknown_OP_state              <= '0';
-
-
-            if (drv_ena /= CTU_CAN_ENABLED) then
-                OP_State_r                <= integrating;
-            elsif (set_transciever = '1') then
-                OP_State_r                <= transciever;
-            elsif (set_reciever = '1') then
-                OP_State_r                <= reciever;
-            else
-                case OP_State_r is
-
-                ----------------------------------------------------------------
-                -- Integrating
-                -- Waiting for 11 consecutive recessive bits
-                ----------------------------------------------------------------
-                when integrating =>
-                    if (drv_ena = CTU_CAN_ENABLED) then
-                        if (rec_trig = '1') then
-                            -- Counting up the integration period
-                            if (integ_counter = INTEGRATING_DURATION) then
-                                OP_State_r          <= idle;
-                                integ_counter       <= 1;
-                            else
-                                if (data_rx = RECESSIVE) then 
-                                    integ_counter   <= integ_counter + 1;
-                                else
-                                    integ_counter   <= 1;
-                                end if;
-                            end if;
-                        end if;
-                    else
-                        integ_counter      <= 1;
-                        OP_State_r         <= OP_State_r;
-                    end if;
-
-                ----------------------------------------------------------------
-                -- Idle
-                -- Bus is idle, there is no frame in progress
-                ----------------------------------------------------------------
-                when idle =>
-                    if (is_idle = '0') then
-                        if (tran_trig = '1' and tran_data_valid_in = '1') then
-                            OP_State_r        <= transciever;    
-                        elsif (rec_trig = '1' and data_rx = DOMINANT) then
-                            OP_State_r        <= reciever;
-                        end if;
-                    end if;
-
-                ----------------------------------------------------------------
-                -- Transceiver
-                -- Unit is transmitter of a frame.
-                ----------------------------------------------------------------
-                when transciever =>
-                    if (arbitration_lost = '1') then
-                        OP_State_r          <= reciever;
-                    elsif (is_idle = '1') then
-                        OP_State_r          <= idle;
-                    end if;
-
-                ----------------------------------------------------------------
-                -- Receiver
-                -- Unit is receiver of a frame.
-                ----------------------------------------------------------------
-                when reciever =>
-                    if (is_idle = '1') then
-                        OP_State_r          <= idle;
-                    end if;              
-                when others =>
-                    unknown_OP_state        <= '1';
-                end case;
-            end if;
+        next_state <= curr_state;
+        
+        if (drv_ena = CTU_CAN_DISABLED) then
+            next_state <= s_oc_off; 
+        else
+            case curr_state is
+            when s_oc_off =>
+                if (set_idle = '1') then
+                    next_state <= s_oc_idle;
+                end if;
+            when s_oc_idle =>
+                if (set_transmitter = '1') then
+                    next_state <= s_oc_transmitter;
+                elsif (set_receiver = '1') then
+                    next_state <= s_oc_receiver;
+                end if;
+            when s_oc_transmitter =>
+                if (set_idle = '1') then
+                    next_state <= s_oc_idle;
+                elsif (set_receiver = '1' or arbitration_lost = '1') then
+                    next_state <= s_oc_receiver;
+                end if;
+            when s_oc_receiver =>
+                if (set_idle = '1') then
+                    next_state <= s_oc_idle;
+                elsif (set_transmitter = '1') then
+                    next_state <= s_oc_receiver;
+                end if;
+            end case;
         end if;
     end process;
-  
+
+    ---------------------------------------------------------------------------
+    -- Current state
+    ---------------------------------------------------------------------------
+    curr_state_proc : process(curr_state)
+    begin
+        is_idle <= '0';
+        is_transmitter <= '0';
+        is_receiver <= '0';
+        
+        case curr_state is
+        when s_oc_off =>
+        when s_oc_idle =>
+            is_idle <= '1';
+        when s_oc_transmitter =>
+            is_transmitter <= '1';
+        when s_oc_receiver =>
+            is_receiver <= '1';
+        end case;
+    end process;
+
+    ---------------------------------------------------------------------------
+    -- State register
+    ---------------------------------------------------------------------------
+    state_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            curr_state <= s_oc_off;
+        elsif (rising_edge(clk_sys)) then
+            curr_state <= next_state;
+        end if;
+    end process;
+
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl valid_arb_lost_asrt : assert never
+    --  (arbitration_lost = '1' and curr_state /= s_oc_transmitter)
+    -- report "Unit which is not transmitter lost arbitration"
+    -- severity error;
+    
+    -- psl no_tx_rx_req_in_idle_asrt : assert never
+    --  (set_transmitter = '1' or set_receiver = '1') and (curr_state = s_oc_off)
+    -- report "Unit which is OFF can't be set to Transmitter or Receiver"
+    -- severity error;
+
 end architecture;
