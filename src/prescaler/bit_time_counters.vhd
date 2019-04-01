@@ -58,7 +58,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -76,70 +75,72 @@ use work.CAN_FD_frame_format.all;
 entity bit_time_counters is
     generic (
         -- Reset polarity
-        reset_polarity  : std_logic := '0';
+        G_RESET_POLARITY  : std_logic := '0';
         
         -- Bit Time counter width
-        bt_width        : natural := 8;
+        G_BT_WIDTH        : natural := 8;
         
-        -- Time Qunata counter width
-        tq_width        : natural := 8
+        -- Baud rate prescaler width
+        G_BRP_WIDTH       : natural := 8
     );
     port(
         -----------------------------------------------------------------------
         -- Clock and reset
         -----------------------------------------------------------------------
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchrnous reset
+        res_n            : in    std_logic;
 
         -----------------------------------------------------------------------
         -- Control signals
         -----------------------------------------------------------------------
+        -- Baud rate Prescaler
+        brp              : in    std_logic_vector(G_BRP_WIDTH - 1 downto 0);
         
-        -- Prescaler value
-        signal prescaler        : in    std_logic_vector(tq_width - 1 downto 0);
+        -- Time Quanta Counter reset (synchronous)
+        tq_reset         : in    std_logic;
         
-        -- Time Quanta reset (synchronous)
-        signal tq_reset         : in    std_logic;
+        -- Bit Time counter reset (synchronous)
+        bt_reset         : in    std_logic;
         
-        -- Bit Time reset (synchronous)
-        signal bt_reset         : in    std_logic;
-        
-        -- Core is enabled
-        signal drv_ena          : in    std_logic;
+        -- CTU CAN FD is enabled
+        drv_ena          : in    std_logic;
         
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
         -- Time Quanta edge
-        signal tq_edge          : out   std_logic;
-        
+        tq_edge         : out   std_logic;
+       
         -- Bit Time counter
-        signal bt_counter       : out   std_logic_vector(bt_width - 1 downto 0)
+        bt_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
     );
 end entity;
 
 architecture rtl of bit_time_counters is
     
     -- Time Quanta Counter
-    signal tq_counter_d         : std_logic_vector(tq_width - 1 downto 0);
-    signal tq_counter_q         : std_logic_vector(tq_width - 1 downto 0);
+    signal tq_counter_d         : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
+    signal tq_counter_q         : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
     signal tq_counter_ce        : std_logic;
 
     signal tq_edge_i            : std_logic;
 
-    constant tq_zeroes : std_logic_vector(tq_width - 1 downto 0) :=
+    constant tq_zeroes : std_logic_vector(G_BRP_WIDTH - 1 downto 0) :=
         (OTHERS => '0');
-    constant tq_run_th : std_logic_vector(tq_width - 1 downto 0) :=
+    constant tq_run_th : std_logic_vector(G_BRP_WIDTH - 1 downto 0) :=
         (0 => '1', OTHERS => '0');
     
     -- Bit Time counter
-    signal bt_counter_d         : std_logic_vector(bt_width - 1 downto 0);
-    signal bt_counter_q         : std_logic_vector(bt_width - 1 downto 0);
+    signal bt_counter_d         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
+    signal bt_counter_q         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
     
-    constant bt_zeroes : std_logic_vector(bt_width - 1 downto 0) :=
+    constant bt_zeroes : std_logic_vector(G_BT_WIDTH - 1 downto 0) :=
         (OTHERS => '0');
 
-begin    
+begin
 
     ---------------------------------------------------------------------------
     -- If prescaler is defined as 0 or 1, there is no need to run the counter!
@@ -163,7 +164,7 @@ begin
 
     tq_proc : process(clk_sys, res_n)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             tq_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (tq_counter_ce = '1') then
@@ -188,7 +189,7 @@ begin
 
     bt_counter_proc : process(clk_sys, res_n)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             bt_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if ((tq_edge_i = '1' and drv_ena = '1') or bt_reset = '1') then

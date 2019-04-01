@@ -59,10 +59,10 @@
 --             | SYNC |     PROP     |    PH1    |    PH2   |
 --             +------+--------------+-----------+----------+
 --    Sync __¯¯____________________________________________¯¯____
---         ____¯¯____________________________________________¯¯__
+--         ______________________________________________________
 --         ____________________________________¯¯________________
 --    Sample_____________________________________¯¯______________
---         ________________________________________¯¯____________
+--         ______________________________________________________
 --    Clock _¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_
 
 --  Note that trigger signal sequence should always be completed. Due to
@@ -81,7 +81,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -99,85 +98,69 @@ use work.CAN_FD_frame_format.all;
 entity trigger_generator is
     generic (
         -- Reset polarity
-        reset_polarity          : std_logic := '0';
-        
-        -- Number of signals in Sync trigger
-        sync_trigger_count      : natural range 2 to 8 := 2;
-        
+        G_RESET_POLARITY          : std_logic := '0';
+
         -- Number of signals in Sample trigger
-        sample_trigger_count    : natural range 2 to 8 := 3
+        G_SAMPLE_TRIGGER_COUNT    : natural range 2 to 8 := 3
     );
     port(
         -----------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         -----------------------------------------------------------------------
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n            : in    std_logic;
 
         -----------------------------------------------------------------------
-        -- Trigger requests
+        -- Control signal
         -----------------------------------------------------------------------
-        signal sample_req       : in    std_logic;
-        signal sync_req         : in    std_logic;
+        -- Sample point Request (RX Trigger request)
+        sample_req       : in    std_logic;
+        
+        -- Sync Trigger Request (TX Trigger request)
+        sync_req         : in    std_logic;
 
-        -- Sampling type (Nominal, Data)
-        signal sp_control       : in    std_logic_vector(1 downto 0);
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control       : in    std_logic_vector(1 downto 0);
         
         -----------------------------------------------------------------------
         -- Trigger outputs
         -----------------------------------------------------------------------
-        -- Sample
-        signal sample_nbt : out std_logic_vector(sample_trigger_count - 1 downto 0);
-        signal sample_dbt : out std_logic_vector(sample_trigger_count - 1 downto 0);
+        -- RX Triggers (Two in two following clock cycles)
+        rx_triggers     : out std_logic_vector(G_SAMPLE_TRIGGER_COUNT - 1 downto 0);
         
-        -- Sync
-        signal sync_nbt : out std_logic_vector(sync_trigger_count - 1 downto 0);
-        signal sync_dbt : out std_logic_vector(sync_trigger_count - 1 downto 0)
+        -- TX Trigger
+        tx_trigger      : out std_logic
     );
 end entity;
 
 architecture rtl of trigger_generator is
 
-    -- Shift registers for Trigger generation
-    signal sync_sr      :   std_logic_vector(sync_trigger_count - 2 downto 0);
-    signal sample_sr    :   std_logic_vector(sample_trigger_count - 2 downto 0);
+    -- Register to create delayed version of Sample Trigger by one clock cycle.     
+    signal sample_q           : std_logic;
 
-    -- Shift registers for Trigger generation are equal to zeroes
-    signal sync_sr_empty    : std_logic;
-    signal sample_sr_empty  : std_logic;
-
-    -- Trigger request flags. Set when a request for trigger arrives and
-    -- another trigger is still in progress
+    ---------------------------------------------------------------------------
+    -- Trigger request flag. Set when a request for Sync trigger arrives and
+    -- another Sample is still in progress
+    ---------------------------------------------------------------------------
     signal sync_req_flag_d    : std_logic;
     signal sync_req_flag_q    : std_logic;
     signal sync_req_flag_dq   : std_logic;
-
-    signal sample_req_flag_d  : std_logic;
-    signal sample_req_flag_q  : std_logic;
-    signal sample_req_flag_dq : std_logic;
-
-    -- Trigger signals (internal values)
-    signal sync_trig_i      : std_logic;
-    signal sample_trig_i    : std_logic;
-
-    -- Constants with zero values for shift registers
-    constant sync_sr_zeroes : std_logic_vector(sync_trigger_count - 2 downto 0) :=
-        (OTHERS => '0');
-    constant sample_sr_zeroes : std_logic_vector(sample_trigger_count - 2 downto 0) :=
-        (OTHERS => '0');
 
 begin
     
     ---------------------------------------------------------------------------
     -- Sync trigger capture register
     ---------------------------------------------------------------------------
-    sync_req_flag_d <= '1' when (sample_sr_empty = '0' and sync_req = '1') else
-                       '0' when (sample_sr_empty = '1') else
+    sync_req_flag_d <= '1' when (sample_q = '1' and sync_req = '1') else
+                       '0' when (sample_q = '0') else
                        sync_req_flag_q;
 
     sync_req_flag_proc : process(clk_sys, res_n)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             sync_req_flag_q <= '0';
         elsif (rising_edge(clk_sys)) then
             sync_req_flag_q <= sync_req_flag_d;
@@ -186,130 +169,32 @@ begin
 
     sync_req_flag_dq <= sync_req or sync_req_flag_q;
 
-
     ---------------------------------------------------------------------------
-    -- Sample trigger capture register
+    -- Register to create delayed version of RX Trigger (for processing by
+    -- Protocol Control)
     ---------------------------------------------------------------------------
-    sample_req_flag_d <= '1' when (sync_sr_empty = '0' and sample_req = '1') else
-                         '0' when (sync_sr_empty = '1') else
-                         sample_req_flag_q;
-
-    sample_req_flag_proc : process(clk_sys, res_n)
+    rx_trig_reg_proc : process(clk_sys, res_n)
     begin
-        if (res_n = reset_polarity) then
-            sample_req_flag_q <= '0';
+        if (res_n = G_RESET_POLARITY) then
+            sample_q <= '0';
         elsif (rising_edge(clk_sys)) then
-            sample_req_flag_q <= sample_req_flag_d;
+            sample_q <= sample_req;
         end if;
     end process;
 
-    sample_req_flag_dq <= sample_req or sample_req_flag_q;
-    
 
     ---------------------------------------------------------------------------
-    -- Decoding internal value of triggers. Allow for trigger to propagate
-    -- only if the other trigger has already passed!
+    -- RX Trigger, driven directly. Since Sync Trigger lasts only one
+    -- clock cycle, and trigger request might never occur at once, we don't
+    -- have to do any capturing!
     ---------------------------------------------------------------------------
-    sync_trig_i <= '1' when (sync_req_flag_dq = '1' and sample_sr_empty = '1') else
-                   '0';
-    sample_trig_i <= '1' when (sample_req_flag_dq = '1' and sync_sr_empty = '1') else
-                     '0';
-
-    ---------------------------------------------------------------------------
-    -- Decoding if pipeline trigger registers are empty or not
-    ---------------------------------------------------------------------------
-    sync_sr_empty <= '1' when (sync_sr = sync_sr_zeroes) else
-                     '0';
-    sample_sr_empty <= '1' when (sample_sr = sample_sr_zeroes) else
-                       '0';
+    rx_triggers(1) <= sample_req;
+    rx_triggers(0) <= sample_q;
 
     ---------------------------------------------------------------------------
-    -- Shift register instances
+    -- TX Trigger is active when either direct trigger or flag is active.
     ---------------------------------------------------------------------------
-    
-    -- Highest bit of shift register
-    trig_sr_highest_bit_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = reset_polarity) then
-            sync_sr(sync_sr'length - 1)       <= '0';
-            sample_sr(sample_sr'length - 1)   <= '0';
-        elsif (rising_edge(clk_sys)) then
-            sync_sr(sync_sr'length - 1)     <= sync_trig_i;
-            sample_sr(sample_sr'length - 1) <= sample_trig_i;
-        end if;
-    end process;
-    
-    -- Next bits, instantiated only when there are more than 2 triggers
-    sync_trig_sr_gen : if (sync_trigger_count > 2) generate
-        sync_trig_sr_proc : process(clk_sys, res_n)
-        begin
-            if (res_n = reset_polarity) then
-                sync_sr(sync_sr'length - 2 downto 0) <= (OTHERS => '0');
-            elsif (rising_edge(clk_sys)) then
-                sync_sr(sync_sr'length - 2 downto 0) <=
-                    sync_sr(sync_sr'length - 1 downto 1);
-            end if;
-        end process;
-    end generate sync_trig_sr_gen;
-
-    sample_trig_sr_gen : if (sample_trigger_count > 2) generate
-        sample_trig_sr_proc : process(clk_sys, res_n)
-        begin
-            if (res_n = reset_polarity) then
-                sample_sr(sample_sr'length - 2 downto 0) <= (OTHERS => '0');
-            elsif (rising_edge(clk_sys)) then
-                sample_sr(sample_sr'length - 2 downto 0) <=
-                    sample_sr(sample_sr'length - 1 downto 1);
-            end if;
-        end process;
-    end generate sample_trig_sr_gen;
-
-    ---------------------------------------------------------------------------
-    -- Propagation of trigger signals to output!
-    ---------------------------------------------------------------------------
-
-    -- First triggers (direct output, not from shift register)
-    sync_nbt(sync_trigger_count - 1) <=
-        sync_trig_i when (sp_control = NOMINAL_SAMPLE) else
-        '0';
-
-    sync_dbt(sync_trigger_count - 1) <=
-        sync_trig_i when (sp_control = DATA_SAMPLE or
-                          sp_control = SECONDARY_SAMPLE)
-                    else
-        '0';
-    
-    sample_nbt(sample_trigger_count - 1) <=
-        sample_trig_i when (sp_control = NOMINAL_SAMPLE) else
-        '0';
-
-    sample_dbt(sample_trigger_count - 1) <=
-        sample_trig_i when (sp_control = DATA_SAMPLE or
-                            sp_control = SECONDARY_SAMPLE)
-                      else
-        '0';
-        
-    -- Next triggers (outputs from shift registers)
-    sync_nbt(sync_trigger_count - 2 downto 0) <=
-        sync_sr(sync_trigger_count - 2 downto 0)
-        when (sp_control = NOMINAL_SAMPLE) else
-        (OTHERS => '0');
-        
-    sync_dbt(sync_trigger_count - 2 downto 0) <=
-        sync_sr(sync_trigger_count - 2 downto 0) 
-        when (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE) else
-        (OTHERS => '0');
-
-    sample_nbt(sample_trigger_count - 2 downto 0) <=
-        sample_sr(sample_trigger_count - 2 downto 0)
-        when (sp_control = NOMINAL_SAMPLE) else
-        (OTHERS => '0');
-        
-    sample_dbt(sample_trigger_count - 2 downto 0) <=
-        sample_sr(sample_trigger_count - 2 downto 0)
-        when (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE) else
-        (OTHERS => '0');
-
+    tx_trigger <= sync_req_flag_dq;
     
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
@@ -330,32 +215,21 @@ begin
     ---------------------------------------------------------------------------
     
     ---------------------------------------------------------------------------
-    -- If any request is captured, there should not come another request of
-    -- the same type! Only other trigger type request might come!
+    -- If any request for TX trigger is captured, there should not come another 
+    -- request the same trigger! Only RX trigger type request might come!
     --
     -- psl sync_req_flag_overrun_asrt : assert never
     --  (sync_req = '1' and sync_req_flag_q = '1')
     --  report "Sync request should not occur when previous is not finished!"
     --  severity error;
-    --
-    -- psl sample_req_flag_overrun_asrt : assert never
-    --  (sample_req = '1' and sample_req_flag_q = '1')
-    --  report "Sample request should not occur when previous is not finished!"
-    --  severity error;
-    --
     ---------------------------------------------------------------------------
     
     ---------------------------------------------------------------------------
     -- If any trigger is not yet fully generated (there are non-zeroes in its
     -- shift register), there should never come other request of the same type.
     --
-    -- psl sync_req_and_sync_sr_non_zero_asrt : assert never
-    --  (sync_req = '1' and sync_sr_empty = '0')
-    --  report "Sync request should not occur if its shift register is not empty!"
-    --  severity error;
-    --
     -- psl sample_req_and_sync_sr_non_zero_asrt : assert never
-    --  (sample_req = '1' and sample_sr_empty = '0')
+    --  (sample_req = '1' and sample_q = '0')
     --  report "Sample request should not occur if its shift register is not empty!"
     --  severity error;
     ---------------------------------------------------------------------------

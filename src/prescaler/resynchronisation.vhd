@@ -151,7 +151,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -169,77 +168,80 @@ use work.CAN_FD_frame_format.all;
 entity resynchronisation is
     generic (
         -- Reset polarity
-        reset_polarity          :       std_logic := '0';
+        G_RESET_POLARITY          :       std_logic := '0';
         
         -- SJW width
-        sjw_width               :       natural := 4;
+        G_SJW_WIDTH               :       natural := 4;
         
         -- TSEG1 width
-        tseg1_width             :       natural := 8;
+        G_TSEG1_WIDTH             :       natural := 8;
         
         -- TSEG2 width
-        tseg2_width             :       natural := 8;
+        G_TSEG2_WIDTH             :       natural := 8;
         
         -- Bit counter width
-        bt_width                :       natural := 8
+        G_BT_WIDTH                :       natural := 8
     );
     port(
         -----------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         -----------------------------------------------------------------------
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n            : in    std_logic;
 
         -----------------------------------------------------------------------
         -- Control interface
         -----------------------------------------------------------------------
-        -- There is a valid re-synchronisation edge
-        signal resync_edge_valid    : in    std_logic;
+        -- There is a valid re-synchronisation edge.
+        resync_edge_valid    : in    std_logic;
 
         -----------------------------------------------------------------------
         -- Bit Time FSM interface
         -----------------------------------------------------------------------        
         -- Bit time is in SYNC, PROP or PH1
-        signal is_tseg1         : in    std_logic;
+        is_tseg1         : in    std_logic;
         
         -- Bit time is in PH2
-        signal is_tseg2         : in    std_logic;
+        is_tseg2         : in    std_logic;
         
         -----------------------------------------------------------------------
         -- Bit Time config capture interface
         -----------------------------------------------------------------------
         -- Time segment 1 (SYNC + PROP + PH1)
-        signal tseg_1       : in    std_logic_vector(tseg1_width - 1 downto 0);
+        tseg_1       : in    std_logic_vector(G_TSEG1_WIDTH - 1 downto 0);
         
         -- Time segment 2 (PH2)
-        signal tseg_2       : in    std_logic_vector(tseg2_width - 1 downto 0);
+        tseg_2       : in    std_logic_vector(G_TSEG2_WIDTH - 1 downto 0);
         
         -- Synchronisation Jump Width
-        signal sjw          : in    std_logic_vector(sjw_width - 1 downto 0);
+        sjw          : in    std_logic_vector(G_SJW_WIDTH - 1 downto 0);
         
         -- Circuit operation has started -> load expected segment length reg.
-        signal start_edge   : in    std_logic;
+        start_edge   : in    std_logic;
         
         -----------------------------------------------------------------------
         -- Bit Time counter interface
         -----------------------------------------------------------------------
         -- Bit time counter
-        signal bt_counter   : in    std_logic_vector(bt_width - 1 downto 0);
+        bt_counter   : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
 
         -----------------------------------------------------------------------
         -- End of segment detector
         -----------------------------------------------------------------------
         -- End of segment (either TSEG1 or TSEG2)
-        signal segm_end         : in    std_logic;
+        segm_end         : in    std_logic;
         
         -- Hard synchronisation valid
-        signal h_sync_valid     : in    std_logic;
+        h_sync_valid     : in    std_logic;
 
         -----------------------------------------------------------------------
         -- Output interface (signalling end of segment)
         -----------------------------------------------------------------------
         -- End of segment request
-        signal exit_segm_req    : out   std_logic
+        exit_segm_req    : out   std_logic
     );
 end entity;
 
@@ -260,40 +262,40 @@ architecture rtl of resynchronisation is
     ---------------------------------------------------------------------------
     -- Internal constants, calculation of data-path widths.
     ---------------------------------------------------------------------------
-    constant bs_width : natural := max(tseg1_width, tseg1_width);
-    constant ext_width : natural := max(bt_width, sjw_width);
-    constant exp_width : natural := max(bs_width, ext_width) + 1;
+    constant C_BS_WIDTH : natural := max(G_TSEG1_WIDTH, G_TSEG2_WIDTH);
+    constant C_EXT_WIDTH : natural := max(G_BT_WIDTH, G_SJW_WIDTH);
+    constant C_EXP_WIDTH : natural := max(C_BS_WIDTH, C_EXT_WIDTH) + 1;
     
-    constant e_width     : natural := max(bt_width, tseg2_width);
-    constant e_sjw_width : natural := max(e_width, sjw_width);
+    constant C_E_WIDTH     : natural := max(C_BT_WIDTH, G_TSEG2_WIDTH);
+    constant C_E_SJW_WIDTH : natural := max(C_E_WIDTH, G_SJW_WIDTH);
 
     -- Selector between TSEG1 and TSEG2
     signal sel_tseg1            : std_logic;
     
     -- Length of TSEG1 or TSEG2 (without resynchronisation)
-    signal basic_segm_length    : unsigned(bs_width - 1 downto 0);
+    signal basic_segm_length    : unsigned(C_BS_WIDTH - 1 downto 0);
     
     -- Length which should be added to the basic segment length (positive only)
-    signal segm_extension       : unsigned(ext_width - 1 downto 0);
+    signal segm_extension       : unsigned(C_EXT_WIDTH - 1 downto 0);
     
     -- Base length of segment +/- segment extension
-    signal segm_ext_add         : unsigned(exp_width - 1 downto 0);
-    signal segm_ext_sub         : unsigned(exp_width - 1 downto 0);
+    signal segm_ext_add         : unsigned(C_EXP_WIDTH - 1 downto 0);
+    signal segm_ext_sub         : unsigned(C_EXP_WIDTH - 1 downto 0);
     
     -- Expected segment length register
-    signal exp_seg_length_d     : unsigned(exp_width - 1 downto 0);
-    signal exp_seg_length_q     : unsigned(exp_width - 1 downto 0);
+    signal exp_seg_length_d     : unsigned(C_EXP_WIDTH - 1 downto 0);
+    signal exp_seg_length_q     : unsigned(C_EXP_WIDTH - 1 downto 0);
     signal exp_seg_length_ce    : std_logic;
     
     -- Expected length of segment after re-synchronisation
-    signal sync_segm_length     : unsigned(exp_width - 1 downto 0);
+    signal sync_segm_length     : unsigned(C_EXP_WIDTH - 1 downto 0);
 
 
     -- Negative phase error (in PH2)
-    signal neg_phase_err        : unsigned(e_width - 1 downto 0);
+    signal neg_phase_err        : unsigned(C_E_WIDTH - 1 downto 0);
 
     -- Phase error
-    signal phase_err            : unsigned(e_width - 1 downto 0);
+    signal phase_err            : unsigned(C_E_WIDTH - 1 downto 0);
 
     -- Phase error higher than SJW
     signal phase_err_mt_sjw     : std_logic;
@@ -324,18 +326,18 @@ begin
                  '0';
 
     basic_segm_length <= 
-        resize(unsigned(tseg_1), bs_width) when (sel_tseg1 = '1') else
-        resize(unsigned(tseg_2), bs_width);
+        resize(unsigned(tseg_1), C_BS_WIDTH) when (sel_tseg1 = '1') else
+        resize(unsigned(tseg_2), C_BS_WIDTH);
 
     segm_extension <= 
-        resize(unsigned(sjw), ext_width) when (phase_err_mt_sjw = '1') else
-        resize(unsigned(bt_counter), ext_width);
+        resize(unsigned(sjw), C_EXT_WIDTH) when (phase_err_mt_sjw = '1') else
+        resize(unsigned(bt_counter), C_EXT_WIDTH);
 
-    segm_ext_add <= resize(basic_segm_length, exp_width) +
-                    resize(segm_extension, exp_width);
+    segm_ext_add <= resize(basic_segm_length, C_EXP_WIDTH) +
+                    resize(segm_extension, C_EXP_WIDTH);
 
-    segm_ext_sub <= resize(basic_segm_length, exp_width) -
-                    resize(segm_extension, exp_width);
+    segm_ext_sub <= resize(basic_segm_length, C_EXP_WIDTH) -
+                    resize(segm_extension, C_EXP_WIDTH);
 
     sync_segm_length <= segm_ext_sub when (is_tseg2 = '1') else
                         segm_ext_add;
@@ -346,8 +348,8 @@ begin
     --  2. Value post-resynchronisation.
     ---------------------------------------------------------------------------
     exp_seg_length_d <=
-        resize(basic_segm_length, exp_width) when (segm_end = '1' or start_edge = '1') else
-        resize(sync_segm_length, exp_width);
+        resize(basic_segm_length, C_EXP_WIDTH) when (segm_end = '1' or start_edge = '1') else
+        resize(sync_segm_length, C_EXP_WIDTH);
 
     exp_seg_length_ce <= '1' when (segm_end = '1' or resync_edge_valid = '1' or
                                    start_edge = '1')
@@ -356,7 +358,7 @@ begin
 
     exp_seg_length_proc : process(res_n, clk_sys)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = g_reset_polarity) then
             exp_seg_length_q <= (others => '1');
         elsif (rising_edge(clk_sys)) then
             if (exp_seg_length_ce = '1') then
@@ -373,14 +375,14 @@ begin
     -- is never higher than tseg_2 in tseg_2. If we are in tseg_1 neg_phase
     -- err underflows, but we don't care since we don't use it then!
     ---------------------------------------------------------------------------
-    neg_phase_err  <= resize(unsigned(tseg_2), e_width) -
-                      resize(unsigned(bt_counter), e_width); 
+    neg_phase_err  <= resize(unsigned(tseg_2), C_E_WIDTH) -
+                      resize(unsigned(bt_counter), C_E_WIDTH); 
 
-    phase_err <= resize(neg_phase_err, e_width) when (is_tseg2 = '1') else
-                 resize(unsigned(bt_counter), e_width);
+    phase_err <= resize(neg_phase_err, C_E_WIDTH) when (is_tseg2 = '1') else
+                 resize(unsigned(bt_counter), C_E_WIDTH);
 
-    phase_err_mt_sjw <= '1' when (resize(phase_err, e_sjw_width) >
-                                  resize(unsigned(sjw), e_sjw_width))
+    phase_err_mt_sjw <= '1' when (resize(phase_err, C_E_SJW_WIDTH) >
+                                  resize(unsigned(sjw), C_E_SJW_WIDTH))
                             else
                         '0';
 
@@ -399,8 +401,8 @@ begin
     -- Regular end occurs when Bit time counter reaches expected length of
     -- segment.
     ---------------------------------------------------------------------------
-    exit_segm_regular <= '1' when (resize(unsigned(bt_counter), exp_width) >=
-                                   resize(unsigned(exp_seg_length_q) - 1, exp_width))
+    exit_segm_regular <= '1' when (resize(unsigned(bt_counter), C_EXP_WIDTH) >=
+                                   resize(unsigned(exp_seg_length_q) - 1, C_EXP_WIDTH))
                              else
                          '0';
 

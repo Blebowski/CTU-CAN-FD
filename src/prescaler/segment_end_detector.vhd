@@ -56,7 +56,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -74,42 +73,56 @@ use work.CAN_FD_frame_format.all;
 entity segment_end_detector is
     generic (
         -- Reset polarity
-        reset_polarity          :       std_logic := '0'
+        G_RESET_POLARITY   :       std_logic := '0'
     );
     port(
         -----------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         -----------------------------------------------------------------------
-        signal clk_sys            : in    std_logic;
-        signal res_n              : in    std_logic;
+        -- System clock
+        clk_sys            : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n              : in    std_logic;
         
         -----------------------------------------------------------------------
         -- Control interface
         -----------------------------------------------------------------------
-        -- Sample point type
-        signal sp_control         : in    std_logic_vector(1 downto 0);
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control         : in    std_logic_vector(1 downto 0);
         
         -- Hard synchronisation edge is valid
-        signal h_sync_edge_valid  : in    std_logic;
+        h_sync_edge_valid  : in    std_logic;
         
-        -- Nominal and Data Bit Time segment end request
-        signal exit_segm_req_nbt  : in    std_logic;
-        signal exit_segm_req_dbt  : in    std_logic;
+        -- Segment end request (Nominal)
+        exit_segm_req_nbt  : in    std_logic;
+        
+        -- Segment end request (Data)
+        exit_segm_req_dbt  : in    std_logic;
 
-        -- Bit time segments indication
-        signal is_tseg1           : in    std_logic;
-        signal is_tseg2           : in    std_logic;
+        -- Bit time FSM is in TSEG1
+        is_tseg1           : in    std_logic;
+        
+        -- Bit time FSM is in TSEG2
+        is_tseg2           : in    std_logic;
 
-        -- Time Quanta edges (Nominal and Data)
-        signal tq_edge_nbt        : in    std_logic;
-        signal tq_edge_dbt        : in    std_logic;
+        -- Nominal Time quanta is active
+        tq_edge_nbt        : in    std_logic;
+        
+        -- Data Time quanta is active
+        tq_edge_dbt        : in    std_logic;
         
         -----------------------------------------------------------------------
-        -- Outputs - Decision that current segment should end!
+        -- Status signals
         -----------------------------------------------------------------------
-        signal segm_end           : out   std_logic;
-        signal h_sync_valid       : out   std_logic;
-        signal bt_ctr_clear       : out   std_logic
+        -- Segment end
+        segm_end           : out   std_logic;
+        
+        -- Hard Synchronisation is valid
+        h_sync_valid       : out   std_logic;
+        
+        -- Clear Bit time counters
+        bt_ctr_clear       : out   std_logic
     );
 end entity;
 
@@ -186,7 +199,7 @@ begin
         
         end_of_segm_req_proc : process(clk_sys, res_n)
         begin
-            if (res_n = reset_polarity) then
+            if (res_n = G_RESET_POLARITY) then
                 segm_end_req_capt_q(i) <= '0';
             elsif (rising_edge(clk_sys)) then
                 if (segm_end_req_capt_ce(i) = '1') then

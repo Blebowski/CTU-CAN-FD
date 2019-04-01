@@ -53,7 +53,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -71,40 +70,49 @@ use work.CAN_FD_frame_format.all;
 entity synchronisation_checker is
     generic (
         -- Reset polarity
-        reset_polarity          :       std_logic := '0'
+        G_RESET_POLARITY        :       std_logic := '0'
     );
     port(
         -----------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         -----------------------------------------------------------------------
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchronous Reset
+        res_n            : in    std_logic;
         
         -----------------------------------------------------------------------
         -- Control interface
         -----------------------------------------------------------------------
-        -- Synchronisation control (No sync, re-sync, Hard-sync)
-        signal sync_control     : in    std_logic_vector(1 downto 0);
+        -- Synchronisation control (No synchronisation, Hard Synchronisation,
+        -- Resynchronisation
+        sync_control     : in    std_logic_vector(1 downto 0);
         
-        -- Synchronisation edge (RECESSIVE to DOMINANT)
-        signal sync_edge        : in    std_logic;
+        -- Synchronisation edge (from Bus sampling)
+        sync_edge        : in    std_logic;
         
         -- No re-synchronisation should be executed due to positive phase
         -- error
-        signal no_pos_resync    : in    std_logic;
+        no_pos_resync    : in    std_logic;
         
         -- End of segment
-        signal segment_end      : in    std_logic;
+        segment_end      : in    std_logic;
         
-        -- Phase parts signalling
-        signal is_tseg1         : in    std_logic;
-        signal is_tseg2         : in    std_logic;
+        -- Bit time FSM is in TSEG1
+        is_tseg1         : in    std_logic;
+        
+        -- Bit time FSM is in TSEG2
+        is_tseg2         : in    std_logic;
         
         -----------------------------------------------------------------------
-        -- Outputs - valid synchronisation edges
+        -- Status
         -----------------------------------------------------------------------
-        signal resync_edge_valid    : out std_logic;
-        signal h_sync_edge_valid    : out std_logic
+        -- Resynchronisation edge is valid
+        resync_edge_valid    : out std_logic;
+        
+        -- Hard synchronisation edge is valid
+        h_sync_edge_valid    : out std_logic
     );
 end entity;
 
@@ -150,7 +158,7 @@ begin
     
     sync_flag_proc : process(res_n, clk_sys)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             sync_flag <= '0';
         elsif (rising_edge(clk_sys)) then
             if (sync_flag_ce = '1') then
