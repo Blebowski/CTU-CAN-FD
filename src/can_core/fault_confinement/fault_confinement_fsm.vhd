@@ -67,7 +67,7 @@ use work.CAN_FD_frame_format.all;
 entity fault_confinement_fsm is
     generic(
         -- Reset polarity
-        G_RESET_POLARITY       :     std_logic := '0'
+        G_RESET_POLARITY        :     std_logic := '0'
     );
     port(
         -----------------------------------------------------------------------
@@ -160,21 +160,21 @@ begin
         next_state <= curr_state;
 
         case curr_state is
-        when s_error_active =>
+        when s_fc_error_active =>
             if (tx_err_ctr_mt_erp = '1' or rx_err_ctr_mt_erp = '1') then
-                next_state <= s_error_passive;   
+                next_state <= s_fc_error_passive;   
             end if;
 
-        when s_error_passive =>
+        when s_fc_error_passive =>
             if (tx_err_ctr_mt_255 = '1') then
-                next_state <= s_bus_off;
+                next_state <= s_fc_bus_off;
             elsif (tx_err_ctr_mt_erp = '0' and rx_err_ctr_mt_erp = '0') then
-                next_state <= s_error_active;
+                next_state <= s_fc_error_active;
             end if;
 
-        when s_bus_off =>
+        when s_fc_bus_off =>
             if (set_err_active = '1') then
-                next_state <= s_err_active;
+                next_state <= s_fc_err_active;
             end if;
         end case;
         
@@ -186,7 +186,7 @@ begin
     fault_conf_state_reg : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            curr_state <= s_error_active;
+            curr_state <= s_fc_bus_off;
         elsif (rising_edge(clk_sys)) then
             curr_state <= next_state;
         end if;
@@ -201,24 +201,21 @@ begin
         is_err_active     <= '0';
         is_err_passive    <= '0';
         is_bus_off        <= '0';
-        
         error_passive_changed  <= '0';
-        bus_off_start <= '0';
        
         case curr_state is
-        when s_error_active =>
+        when s_fc_error_active =>
             is_err_active <= '1';
             if (tx_err_ctr_mt_erp = '1' or rx_err_ctr_mt_erp = '1') then
                 error_passive_changed <= '1';
             end if;
        
-        when s_error_passive =>
+        when s_fc_error_passive =>
             is_err_passive <= '1';
 
-        when s_bus_off =>
+        when s_fc_bus_off =>
             is_bus_off <= '1';
         end case;
-
     end process;
 
 end architecture;
