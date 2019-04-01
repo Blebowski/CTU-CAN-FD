@@ -44,11 +44,11 @@
 --  Recieve buffer for messages. RAM memory type of N*32 bit words. Reading of 
 --  data from registers done word by word. In registers reading implemented in 
 --  the way that one read moves to the next word. Storing the message into the
---  buffer is sequential operation started with valid rec_message_valid for one
+--  buffer is sequential operation started with valid rec_valid for one
 --  clock cycle. In following up to 20 clock cycles recieved data has to be va-
 --  lid to be fully stored
 --
---  Note:This is guaranteed from CAN Core. rec_message_valid is active in the 
+--  Note:This is guaranteed from CAN Core. rec_valid is active in the 
 --  end of EOF field. Intermission field follows with 11 bit times (minimum 55 
 --  clock cycles) where recieved data are not changed, only overload condition 
 --  may be signallised!
@@ -179,132 +179,120 @@ use work.CAN_FD_frame_format.all;
 
 entity rx_buffer is
     generic(
-
-        -- Only 2^k are allowed as buff_size. Memory adressing is in modular 
-        -- arithmetic, synthesis of modulo by number other than 2^k might not
-        -- play nicely (will consume lot of LUTs)!!
-        buff_size                   :       natural range 32 to 4096 := 32
+        -- Reset polarity
+        G_RESET_POLARITY            :       std_logic := '0';
+        
+        -- RX Buffer size
+        G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32
     );
     port(
         ------------------------------------------------------------------------
-        -- Clocks and reset 
+        -- Clocks and Asynchronous reset 
         ------------------------------------------------------------------------
-        signal clk_sys              :in     std_logic; --System clock
-        signal res_n                :in     std_logic; --Async. reset
+        -- System clock
+        clk_sys              :in     std_logic;
         
+        -- Async. reset
+        res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
-        -- Metadata from CAN Core (provided discrete)
+        -- Metadata from CAN Core
         ------------------------------------------------------------------------
-        
-        -- Message Identifier
-        signal rec_ident_in         :in     std_logic_vector(28 downto 0);
+        -- Frame Identifier
+        rec_ident_in         :in     std_logic_vector(28 downto 0);
         
         -- Data length code
-        signal rec_dlc_in           :in     std_logic_vector(3 downto 0);
+        rec_dlc_in           :in     std_logic_vector(3 downto 0);
         
         -- Recieved identifier type (0-BASE Format, 1-Extended Format);
-        signal rec_ident_type_in    :in     std_logic;
+        rec_ident_type_in    :in     std_logic;
         
         -- Recieved frame type (0-Normal CAN, 1- CAN FD)
-        signal rec_frame_type_in    :in     std_logic;
+        rec_frame_type_in    :in     std_logic;
         
         -- Recieved frame is RTR Frame(0-No, 1-Yes)
-        signal rec_is_rtr           :in     std_logic;
+        rec_is_rtr           :in     std_logic;
         
         -- Whenever frame was recieved with BIT Rate shift 
-        signal rec_brs              :in     std_logic;
+        rec_brs              :in     std_logic;
 
         -- Recieved error state indicator
-        signal rec_esi              :in     std_logic;
-
+        rec_esi              :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals from CAN Core which control storing of CAN Frame.
         ------------------------------------------------------------------------
-
         -- After control field of CAN frame, metadata are valid and can be stored.
         -- This command starts the RX FSM for storing.
-        signal store_metadata       :in     std_logic;
+        store_metadata       :in     std_logic;
        
         -- Signal that one word of data can be stored (TX_DATA_X_W). This signal
         -- is active when 4 bytes were received or data reception has finished 
         -- on 4 byte unaligned number of frames! (Thus allowing to store also
         -- data which are not 4 byte aligned!
-        signal store_data           :in     std_logic;
+        store_data           :in     std_logic;
 
         -- Data word which should be stored when "store_data" is active!
-        signal store_data_word      :in     std_logic_vector(31 downto 0);
+        store_data_word      :in     std_logic_vector(31 downto 0);
 
-        -- When frame reception is succesfull, in the end of EOF field, CAN Core
-        -- gives acknowledge by this signal. This means that frame was received
-        -- OK, and Error frame can no longer occur in it.
-        signal rec_message_valid    :in     std_logic;
+        -- Received frame valid (commit RX Frame)
+        rec_valid            :in     std_logic;
         
-        -- If error frame occurred, CAN Core activates this signal.
-        -- "write_pointer_raw" will be restarted to last committed value in
-        -- "write_pointer".
-        signal rec_abort            :in     std_logic;
+        -- Abort storing of RX Frame to RX Buffer.
+        rec_abort            :in     std_logic;
 
         -- Signals start of frame. If timestamp on RX frame should be captured
         -- in the beginning of the frame, this pulse captures the timestamp!
-        signal sof_pulse            :in     std_logic;
+        sof_pulse            :in     std_logic;
 
-
-        ------------------------------------
+        -----------------------------------------------------------------------
         -- Status signals of recieve buffer
-        ------------------------------------
-        
+        -----------------------------------------------------------------------
         -- Actual size of synthetised message buffer (in 32 bit words)
-        signal rx_buf_size          :out    std_logic_vector(12 downto 0);
+        rx_buf_size          :out    std_logic_vector(12 downto 0);
         
         -- Signal whenever buffer is full (no free memory words)
-        signal rx_full              :out    std_logic;
+        rx_full              :out    std_logic;
         
         -- Signal whenever buffer is empty (no frame (message) is stored)
-        signal rx_empty             :out    std_logic;
+        rx_empty             :out    std_logic;
         
         -- Number of frames (messages) stored in recieve buffer
-        signal rx_message_count     :out    std_logic_vector(10 downto 0);
+        rx_message_count     :out    std_logic_vector(10 downto 0);
         
         -- Number of free 32 bit wide words
-        signal rx_mem_free          :out    std_logic_vector(12 downto 0);
+        rx_mem_free          :out    std_logic_vector(12 downto 0);
         
         -- Position of read pointer
-        signal rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
+        rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
         
         -- Position of write pointer
-        signal rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
+        rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
         
         -- Overrun occurred, data were discarded!
         -- (This is a flag and persists until it is cleared by SW)! 
-        signal rx_data_overrun      :out    std_logic;
+        rx_data_overrun      :out    std_logic;
         
         -- External timestamp input
-        signal timestamp            :in     std_logic_vector(63 downto 0);
+        timestamp            :in     std_logic_vector(63 downto 0);
 
-
-        ------------------------------------
-        -- User registers interface
-        ------------------------------------
-        
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
         -- Actually loaded data for reading
-        signal rx_read_buff         :out    std_logic_vector(31 downto 0);
+        rx_read_buff         :out    std_logic_vector(31 downto 0);
         
         -- Driving bus from registers
-        signal drv_bus              :in     std_logic_vector(1023 downto 0)
+        drv_bus              :in     std_logic_vector(1023 downto 0)
     );
 end entity;
-
 
 architecture rtl of rx_buffer is
 
     ----------------------------------------------------------------------------
+    -- Driving bus aliases
     ----------------------------------------------------------------------------
-    -- Driving bus signal aliases
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
+    
     -- Erase command from driving registers. Resets FIFO pointers!
     signal drv_erase_rx             :       std_logic;
 
@@ -319,43 +307,40 @@ architecture rtl of rx_buffer is
 
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
     -- FIFO  Memory - Pointers
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
+    
     -- Read Pointer (access from SW)
-    signal read_pointer             :       integer range 0 to buff_size - 1;
+    signal read_pointer             :       integer range 0 to G_RX_BUFF_SIZE - 1;
 
     -- Read pointer incremented by 1 (combinationally)
-    signal read_pointer_inc_1       :       integer range 0 to buff_size - 1;
+    signal read_pointer_inc_1       :       integer range 0 to G_RX_BUFF_SIZE - 1;
 
     -- Write pointer (committed, available to SW, after frame was stored)
-    signal write_pointer            :       integer range 0 to buff_size - 1;
+    signal write_pointer            :       integer range 0 to G_RX_BUFF_SIZE - 1;
 
     -- Write pointer RAW. Changing during frame, as frame is continously stored
     -- to the buffer. When frame is sucesfully received, it is updated to
     -- write pointer!
-    signal write_pointer_raw        :       integer range 0 to buff_size - 1;
+    signal write_pointer_raw        :       integer range 0 to G_RX_BUFF_SIZE - 1;
 
     -- Extra write pointer which is used for storing timestamp at the end of
     -- data frame!
-    signal write_pointer_extra_ts   :       integer range 0 to buff_size - 1;
+    signal write_pointer_extra_ts   :       integer range 0 to G_RX_BUFF_SIZE - 1;
 
     -- Final pointer to memory. "write_pointer_raw" and 
     -- "write_pointer_extra_ts" are multiplexed based on RX FSM! 
-    signal memory_write_pointer     :       integer range 0 to buff_size - 1;
+    signal memory_write_pointer     :       integer range 0 to G_RX_BUFF_SIZE - 1;
 
     -- Data that will be written to the RX Buffer memory!
     signal memory_write_data        :       std_logic_vector(31 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_int          :       integer range -1 to buff_size + 1;
+    signal rx_mem_free_int          :       integer range -1 to G_RX_BUFF_SIZE + 1;
+
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
     -- FIFO  Memory - Free words, Overrun status
-    ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
 
     -- Data overrun flag. Recieved message was lost, because there was not
@@ -381,7 +366,7 @@ architecture rtl of rx_buffer is
     -- stored is 4 (FRAME_FORMAT +  IDENTIFIER + 2 * TIMESTAMP). Since we need
     -- to store 0 and also buff_size / 4 values we need one value more than can
     -- fit into buff_size / 4 width counter. Use one bit wider counter.
-    signal message_count            :       natural range 0 to (buff_size / 2) - 1; 
+    signal message_count            :       natural range 0 to (G_RX_BUFF_SIZE / 2) - 1; 
 
     -- Counter for reading the frame. When whole frame is read,
     -- number of frames must be decremented.
@@ -389,18 +374,16 @@ architecture rtl of rx_buffer is
 
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
     -- FIFO  Memory - Commands which manipulate pointers, or indicate intent
     --  to write or read from the memory.
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
-    -- When commit of RX Frame is signalled by CAN Core (rec_message_valid)
+    
+    -- When commit of RX Frame is signalled by CAN Core (rec_valid)
     -- "commit_rx_frame" is set to indicate that frame was sucesfully
-    -- stored. Note that "rec_message_valid" is not enough to indicate that
+    -- stored. Note that "rec_valid" is not enough to indicate that
     -- frame was stored sucesfully! If frame storing fails at some point due
     -- to lack of memory in FIFO, Protocol control will still finish the frame
-    -- and provide "rec_message_valid"! Thus RX FSM sets "commit_rx_frame" only
+    -- and provide "rec_valid"! Thus RX FSM sets "commit_rx_frame" only
     -- if "data_overrun" did not occur during the frame!
     signal commit_rx_frame          :       std_logic;
 
@@ -419,11 +402,9 @@ architecture rtl of rx_buffer is
 
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
     -- RX Buffer FSM outputs
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
+    
     -- Indicates that FSM is in a state which would like to perform write of a
     -- word to RX Buffer memory!
     signal write_raw_intent         :       std_logic;
@@ -449,11 +430,9 @@ architecture rtl of rx_buffer is
 
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
     -- RX FSM, Timestamp capturing, combinationally decoded words
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
+    
     -- Combinationally decoded size of the frame (without Frame format word)
     -- from received DLC (the size is in 32-bit words).
     signal rwcnt_com                :       natural range 0 to 31;
@@ -467,10 +446,8 @@ architecture rtl of rx_buffer is
 
 
     ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
     -- RAM wrapper signals
     ----------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
     
     -- Write control signal    
     signal RAM_write                :       std_logic;
@@ -501,7 +478,7 @@ begin
     rx_read_pointer_pos   <= std_logic_vector(to_unsigned(read_pointer, 12));
     rx_write_pointer_pos  <= std_logic_vector(to_unsigned(write_pointer, 12));
     rx_data_overrun       <= data_overrun_r;
-    rx_buf_size           <= std_logic_vector(to_unsigned(buff_size, 13));
+    rx_buf_size           <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
 
     rx_empty_int          <= '1' when (message_count = 0)
                                  else
@@ -520,12 +497,15 @@ begin
     -- RX Buffer FSM component
     ----------------------------------------------------------------------------
     rx_buffer_fsm_comp : rx_buffer_fsm
+    generic map(
+        G_RESET_POLARITY    => G_RESET_POLARITY
+    )
     port map(
         clk_sys             => clk_sys,
         res_n               => res_n,
         store_metadata      => store_metadata,
         store_data          => store_data,
-        rec_message_valid   => rec_message_valid,
+        rec_valid           => rec_valid,
         rec_abort           => rec_abort,
         sof_pulse           => sof_pulse,
         drv_bus             => drv_bus,
@@ -544,7 +524,7 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_pointers_comp : rx_buffer_pointers
     generic map(
-        buff_size               => buff_size
+        G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE
     )
     port map(
         clk_sys                 => clk_sys,
@@ -701,12 +681,12 @@ begin
     ----------------------------------------------------------------------------
     capt_ts_proc : process(clk_sys, res_n)
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = G_RESET_POLARITY) then
             timestamp_capture       <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
             
-            if ((drv_rtsopt = RTS_END and rec_message_valid = '1') or
+            if ((drv_rtsopt = RTS_END and rec_valid = '1') or
                 (drv_rtsopt = RTS_BEG and sof_pulse = '1')) 
             then  
                 timestamp_capture   <= timestamp;
@@ -724,7 +704,7 @@ begin
     ----------------------------------------------------------------------------
     read_frame_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
+        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
             read_frame_counter           <= 0;
 
         elsif (rising_edge(clk_sys)) then
@@ -762,7 +742,7 @@ begin
     ---------------------------------------------------------------------------
     message_count_ctr_proc : process(res_n, clk_sys, drv_erase_rx)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
+        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
             message_count <= 0;
 
         elsif (rising_edge(clk_sys)) then
@@ -788,13 +768,13 @@ begin
     ----------------------------------------------------------------------------
     commit_proc : process(res_n, clk_sys, drv_erase_rx)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
+        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
             commit_rx_frame       <= '0';
             commit_overrun_abort  <= '0';
 
         elsif (rising_edge(clk_sys)) then
 
-            if (((rec_message_valid = '1' and drv_rtsopt = RTS_BEG) or
+            if (((rec_valid = '1' and drv_rtsopt = RTS_BEG) or
                  (store_extra_ts_end = '1')))
             then
                 if (data_overrun_int = '0') then
@@ -818,7 +798,7 @@ begin
     ----------------------------------------------------------------------------
     dor_proc : process(res_n, clk_sys, drv_erase_rx)
     begin
-        if (res_n = ACT_RESET or drv_erase_rx = '1') then
+        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
             data_overrun_r      <= '0';
             data_overrun_int    <= '0';
 
@@ -858,9 +838,9 @@ begin
     rx_buf_RAM : inf_RAM_wrapper 
     generic map (
         word_width           => 32,
-        depth                => buff_size,
+        depth                => G_RX_BUFF_SIZE,
         address_width        => RAM_write_address'length,
-        reset_polarity       => ACT_RESET,
+        reset_polarity       => G_RESET_POLARITY,
         simulation_reset     => true,
         sync_read            => true
     )
@@ -929,7 +909,7 @@ begin
     --  2. Store data "n" times, n = ceil(data_length / 4). De-facto RWCNT field
     --     contains number of remaining words (apart from FRAME_FORMAT_W). Thus,
     --     RWCNT - 3 = number of expected data words.
-    --  3. Get "rec_abort" or "rec_message_valid" command.
+    --  3. Get "rec_abort" or "rec_valid" command.
     --
     --  This process verifies that "rec_data" command comes expected number of
     --  times (RWCNT - 3). This verifies consistency of storing protocol by
@@ -961,7 +941,7 @@ begin
 
             -- Check when frame was received that proper number of "store_data"
             -- commands did arrive.
-            if (rec_message_valid = '1' and 
+            if (rec_valid = '1' and 
                 act_data_stores /= exp_data_stores)
             then
                 report "'store_data' count corrupted by CAN Core! " &
