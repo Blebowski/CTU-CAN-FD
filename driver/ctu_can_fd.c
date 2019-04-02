@@ -489,16 +489,13 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	int work_done = 0;
 	union ctu_can_fd_status status;
 	u32 framecnt;
-	u32 i;
 	//netdev_dbg(ndev, "ctucan_rx_poll");
 
 	framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
+	netdev_dbg(ndev, "rx_poll: %d frames in RX FIFO", framecnt);
 	while (framecnt && work_done < quota) {
-		netdev_dbg(ndev, "rx_poll: %d frames in RX FIFO", framecnt);
-		for (i = 0; i < framecnt; ++i) {
-			ctucan_rx(ndev);
-			work_done++;
-		}
+		ctucan_rx(ndev);
+		work_done++;
 		framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
 	}
 
@@ -528,7 +525,7 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	if (work_done)
 		can_led_event(ndev, CAN_LED_EVENT_RX);
 
-	if (work_done < quota) {
+	if (!framecnt) {
 		if (napi_complete_done(napi, work_done)) {
 			union ctu_can_fd_int_stat iec;
 			/* Clear and enable RBNEI. It is level-triggered, so
@@ -689,11 +686,12 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 			netdev_dbg(ndev, "RXBNEI");
 			icr.u32 = 0;
 			icr.s.rbnei = 1;
-			/* Clear and mask RXBNEI, schedule NAPI.
-			 * Even if another IRQ fires, isr.s.rbnei will always
-			 * be 0 (masked). */
-			ctu_can_fd_int_clr(&priv->p, icr);
+			/* Mask RXBNEI the first then clear interrupt,
+			 * then schedule NAPI. Even if another IRQ fires,
+			 * isr.s.rbnei will always be 0 (masked).
+			 */
 			ctu_can_fd_int_mask_set(&priv->p, icr);
+			ctu_can_fd_int_clr(&priv->p, icr);
 			// set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 			napi_schedule(&priv->napi);
 		}
