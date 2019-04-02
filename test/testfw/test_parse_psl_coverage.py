@@ -335,7 +335,7 @@ def create_psl_file_page(filename: Path, psl_points: List[TPslPoint]) -> None:
     Create HTML file with list of PSL coverage statements.
     """
     parsed_file_name = filename.name
-    html_cov_path = html_dir / filename.with_suffix('.html').name
+    html_cov_path = html_dir / '{}.html'.format(filename.name)
 
     doc, tag, text = Doc().tagtext()
 
