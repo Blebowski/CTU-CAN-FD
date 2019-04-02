@@ -145,8 +145,9 @@ architecture rtl of error_counters is
     -- Selected error counter
     signal err_ctr_selected : unsigned(8 downto 0);
 
-    -- At least one of commands modifying counters is active
-    signal modif_err_ctrs   : std_logic;
+    -- Modify TX/RX Error counter
+    signal modif_tx_ctr   : std_logic;
+    signal modif_rx_ctr   : std_logic;
 
     -- Error counters increment
     signal err_ctr_inc      : unsigned(8 downto 0);
@@ -173,10 +174,13 @@ architecture rtl of error_counters is
     
 begin
 
+    modif_tx_ctr <= '1' when (inc_eight = '1' or dec_one = '1') else
+                    '0';
+
    -- Counters are modified either +1. +8 or -1
-   modif_err_ctrs <= '1' when (inc_one = '1' or inc_eight = '1' or dec_one = '1')
-                         else
-                     '0';
+   modif_rx_ctr <= '1' when (inc_one = '1' or inc_eight = '1' or dec_one = '1')
+                       else
+                   '0';
 
    -- Increment by 1 or 8
    err_ctr_inc <= "000000001" when (inc_one = '1') else
@@ -192,13 +196,13 @@ begin
    -- valid. Decrement otherwise!
    tx_err_ctr_d <=                 
              unsigned(drv_ctr_val) when (tx_err_ctr_pload = '1') else
-        tx_err_ctr_q + err_ctr_inc when (inc_one = '1' or inc_eight = '1')
+                  tx_err_ctr_q + 8 when (inc_eight = '1')
                                    else
                     tx_err_ctr_dec;
 
    -- Clock enable: Tick error counter register when unit is transmitter and
    -- one of commands is valid!
-   tx_err_ctr_ce <= '1' when (modif_err_ctrs = '1' and is_transmitter = '1') else
+   tx_err_ctr_ce <= '1' when (modif_tx_ctr = '1' and is_transmitter = '1') else
                     '1' when (tx_err_ctr_pload = '1') else
                     '0';
 
@@ -233,7 +237,7 @@ begin
       
    -- Clock enable: Tick error counter register when unit is transmitter and
    -- one of commands is valid!
-   rx_err_ctr_ce <= '1' when (modif_err_ctrs = '1' and is_receiver = '1') else
+   rx_err_ctr_ce <= '1' when (modif_rx_ctr = '1' and is_receiver = '1') else
                     '1' when (rx_err_ctr_pload = '1') else
                     '0';
 

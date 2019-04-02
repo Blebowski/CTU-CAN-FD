@@ -126,39 +126,54 @@ entity error_detector is
         -----------------------------------------------------------------------
         -- Bit error enable
         bit_error_enable        :in   std_logic;
-        
+
         -- Stuff error enable
         stuff_error_enable      :in   std_logic;
 
         -- Fixed Bit stuffing method
         fixed_stuff             :in   std_logic;
-        
+
         -- Error position field (from Protocol control)
         err_pos                 :in   std_logic_vector(4 downto 0);
 
         -- Perform CRC Check
         crc_check               :in   std_logic;
-        
+
         -- Clear CRC Error flag
         crc_clear_error_flag    :in   std_logic;
-        
+
         -- CRC Source (CRC15, CRC17, CRC21)
         crc_src                 :in   std_logic_vector(1 downto 0);
-        
+
         -- FD Type (ISO FD, NON-ISO FD)
         drv_fd_type             :in   std_logic;
+
+        -- Arbitration field is being transmitted / received
+        is_arbitration          :in   std_logic;
+
+        -- Unit is transmitter of frame
+        is_transmitter          :in   std_logic;
+
+        -- Unit is error passive
+        is_err_passive          :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Status output
         -----------------------------------------------------------------------
         -- Error frame request
         err_frm_req             :out  std_logic;
-        
+
+        -- Error detected (for Fault confinement)
+        error_detected          :out  std_logic;
+
         -- Error code capture
         erc_capture             :out  std_logic_vector(7 downto 0);
-        
+
         -- CRC error
-        crc_error               :out  std_logic
+        crc_error               :out  std_logic;
+
+        -- Error counters should remain unchanged
+        err_ctrs_unchanged      :out  std_logic
     );
 end entity;
 
@@ -278,7 +293,6 @@ begin
                        else
                    '0';
 
-    
     crc_error_d <= '0' when (crc_clear_error_flag = '1') else
                    crc_error_c when (crc_check = '1') else
                    crc_error_q;
@@ -292,8 +306,34 @@ begin
         end if;
     end process;
     
-
+    --------------------------------------------------------------------------
+    -- Error detected for Fault Confinement. Valid when there are:
+    --  1. Either Error frame request (Bit, Stuff, ACK, Form Errors)
+    --  2. CRC error is just detected (edge).
     ---------------------------------------------------------------------------
+    error_detected <= '1' when err_frm_req_i or 
+                               (crc_error_c = '1' and crc_error_d = '0')
+                          else
+                      '0';
+                      
+    --------------------------------------------------------------------------
+    -- Error counters should remain unchanged according to 12.1.4.2 in 
+    -- ISO11898-1:2015 in following cases:
+    --  1. Error passive transmitter detects ACK error.
+    --  2. Transmitter detects stuff error in Arbitration when bit should
+    --     have been recessive, but was transmitted dominant!
+    --------------------------------------------------------------------------
+    err_ctrs_unchanged <= '1' when (ack_error = '1' and is_err_passive = '1')
+                              else
+                          '1' when (stuff_error = '1' and
+                                    stuff_error_enable = '1' and
+                                    is_arbitration = '1' and
+                                    rx_data = DOMINANT and
+                                    tx_data = RECESSIVE)
+                              else
+                          '0';
+
+    --------------------------------------------------------------------------
     -- Error code, next value
     ---------------------------------------------------------------------------
     err_type_d <= "000" when (bit_error = '1' and bit_error_enable = '1') else
@@ -322,5 +362,15 @@ begin
     -- Internal signal to output propagation
     erc_capture <= err_pos_q & err_type_q;
     crc_error <= crc_error_q;
+    
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl crc_src_correct_asrt : assert always
+    --  (crc_src = CRC15 or crc_src = CRC17 or crc_src = CRC21)
+    -- report "CRC Source has invalid value!"
+    -- severity error;
 
 end architecture;

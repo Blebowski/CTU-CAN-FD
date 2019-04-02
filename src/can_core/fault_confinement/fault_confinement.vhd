@@ -86,60 +86,72 @@ use work.CAN_FD_frame_format.all;
 
 entity fault_confinement is
     generic(
-        G_RESET_POLARITY       :     std_logic := '0'
+        G_RESET_POLARITY        :     std_logic := '0'
     );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
         -----------------------------------------------------------------------
         -- System clock
-        clk_sys                :in   std_logic;
+        clk_sys                 :in   std_logic;
         
         -- Asynchronous reset
-        res_n                  :in   std_logic;
+        res_n                   :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
         -- Driving Bus
-        drv_bus                :in   std_logic_vector(1023 downto 0);
+        drv_bus                 :in   std_logic_vector(1023 downto 0);
           
         -----------------------------------------------------------------------
         -- Error signalling for interrupts
         -----------------------------------------------------------------------
         -- Error passive state changed
-        error_passive_changed  :out  std_logic;
+        error_passive_changed   :out  std_logic;
 
         -- Error warning limit was reached
-        error_warning_limit    :out  std_logic;
+        error_warning_limit     :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Operation control Interface
         -----------------------------------------------------------------------
-        -- Unit is transceiver
-        is_transmitter         :in   std_logic;
+        -- Unit is transmitter
+        is_transmitter          :in   std_logic;
         
         -- Unit is receiver
-        is_receiver            :in   std_logic;
+        is_receiver             :in   std_logic;
         
         -----------------------------------------------------------------------
         -- Protocol control Interface
         -----------------------------------------------------------------------
         -- Sample control (Nominal, Data, Secondary)
-        sp_control             :in   std_logic_vector(1 downto 0);
+        sp_control              :in   std_logic_vector(1 downto 0);
 
-        -- Increment error counter by 1 
-        inc_one                :in   std_logic;
-        
-        -- Increment error counter by 8
-        inc_eight              :in   std_logic;
-        
-        -- Decrement error counter by 1
-        dec_one                :in   std_logic;
-        
         -- Set unit to error active (after re-integration). Erases eror
         -- counters to 0!
-        set_err_active         :in   std_logic;
+        set_err_active          :in   std_logic;
+        
+        -- Error is detected
+        error_detected          :in   std_logic;
+        
+        -- Error counter should remain unchanged
+        err_ctrs_unchanged      :in   std_logic;
+        
+        -- Primary Error
+        primary_error           :in   std_logic;
+        
+        -- Active Error Flag or Overload flag is being tranmsmitted
+        act_err_ovr_flag        :in   std_logic;
+        
+        -- Error delimiter too late
+        err_delim_late          :in   std_logic;
+        
+        -- Transmission of frame valid
+        tran_valid              :in   std_logic;
+        
+        -- Reception of frame valid
+        rec_valid               :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Fault confinement State indication
@@ -181,10 +193,16 @@ architecture rtl of fault_confinement is
     signal drv_ctr_sel           :     std_logic_vector(3 downto 0);
     signal drv_clr_err_ctrs      :     std_logic;
 
+    -- Internal TX/RX Error counter values
     signal tx_err_ctr_i          :     std_logic_vector(8 downto 0);
     signal rx_err_ctr_i          :     std_logic_vector(8 downto 0);
 
     signal set_err_active_q      :     std_logic;
+    
+    -- Increment decrement commands
+    signal inc_one               :     std_logic;
+    signal inc_eight             :     std_logic;
+    signal dec_one               :     std_logic;
 
 begin
   
@@ -264,18 +282,35 @@ begin
         data_err_ctr           => data_err_ctr
     );
 
+    fault_confinement_rules_inst : fault_confinement_rules
+    port map(
+        is_transmitter         => is_transmitter,
+        is_receiver            => is_receiver,
+        error_detected         => error_detected,
+        err_ctrs_unchanged     => err_ctrs_unchanged,
+        primary_error          => primary_error,
+        act_err_ovr_flag       => act_err_ovr_flag,
+        err_delim_late         => err_delim_late,
+        tran_valid             => tran_valid,
+        rec_valid              => rec_valid,
+
+        inc_one                => inc_one,
+        inc_eight              => inc_eight,
+        dec_one                => dec_one
+    );
+
 
     ---------------------------------------------------------------------------
     -- Internal signals to output propagation
     ---------------------------------------------------------------------------
     tx_err_ctr           <= tx_err_ctr_i;
     rx_err_ctr           <= rx_err_ctr_i;
-    
+
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
-    
+
     -- psl no_cmd_in_idle_asrt : assert never
     -- (inc_one = '1' or inc_eight = '1' or dec_one = '1') and
     -- (is_transmitter = '0' and is_receiver = '0')
