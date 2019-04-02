@@ -101,16 +101,19 @@ entity control_counter is
         -- Status signals
         -----------------------------------------------------------------------
         -- Control counter is equal to zero
-        ctrl_ctr_zero         : out std_logic;
+        ctrl_ctr_zero         :out std_logic;
+        
+        -- Control counter is equal to one
+        ctrl_ctr_one          :out std_logic;
 
         -- Control counter is divisible by 8 (aligned to byte)
-        ctrl_ctr_mod_8        : out std_logic
+        ctrl_ctr_mod_8        :out std_logic
     );
 end entity;
 
 architecture rtl of control_counter is
 
-    -- Retransmitt limit counter
+    -- Control counter
     signal ctrl_ctr_d : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
     signal ctrl_ctr_q : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
 
@@ -129,26 +132,33 @@ begin
                    '1' when (ctrl_ctr_pload = '1') else
                    '0';
 
+    ctrl_ctr_zero <= '1' when (ctrl_ctr_q = 0) else
+                     '0';
+
+    ctrl_ctr_one <= '1' when (ctrl_ctr_q = 1) else
+                    '0';
+
+    ctrl_ctr_mod_8 <= '1' when (ctrl_ctr_q(2 downto 0) = "000")
+                          else
+                      '0';
+
     ---------------------------------------------------------------------------
     -- Counter register
     ---------------------------------------------------------------------------                   
     retr_ctr_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            ctrl_ctr_d <= (OTHERS => '0');
+            ctrl_ctr_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (ctrl_ctr_ce = '1') then
-                ctrl_ctr_d <= ctrl_ctr_q;
+                ctrl_ctr_q <= ctrl_ctr_d;
             end if;
         end if;
     end process;
-
-    -- Retransmitt limit reached indication
     
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
-    
     -- psl default clock is rising_edge(clk_sys);
 
     -- psl retr_ctr_simul_set_and_clear_asrt : assert never
