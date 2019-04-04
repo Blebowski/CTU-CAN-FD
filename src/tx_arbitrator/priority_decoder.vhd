@@ -72,30 +72,28 @@ use work.CAN_FD_frame_format.all;
 
 entity priority_decoder is
     generic(
-        buf_count               :  natural range 1 to 8
+        buf_count        :  natural range 1 to 8
     );
     port( 
-
-        -- No clock, nor reset, decoder is combinational only!
-
         ------------------------------------------------------------------------
-        -- Buffer information
+        -- TXT Buffer information
         ------------------------------------------------------------------------
-        signal prio             : in  txtb_priorities_type;
-        signal prio_valid       : in  std_logic_vector(buf_count - 1 downto 0);
+        -- TXT Buffer priority
+        prio             : in  txtb_priorities_type;
+        
+        -- TXT Buffer is valid for selection
+        prio_valid       : in  std_logic_vector(buf_count - 1 downto 0);
 
         ------------------------------------------------------------------------
         -- Output interface
         ------------------------------------------------------------------------
-
         -- Whether selected buffer is valid 
         -- (at least one of the buffers must be non-empty and allowed)
-        signal output_valid     : out  std_logic;
+        output_valid     : out  std_logic;
 
         -- Index of highest priority buffer which is non-empty and allowed
         -- for transmission
-        signal output_index     : out  natural range 0 to buf_count - 1
-
+        output_index     : out  natural range 0 to buf_count - 1
     );
 end entity;
 

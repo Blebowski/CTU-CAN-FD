@@ -71,69 +71,68 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity tx_arbitrator_fsm is
-  port( 
-    ------------------------
-    -- Clock and reset    
-    ------------------------
-    signal clk_sys                :in  std_logic;
-    signal res_n                  :in  std_logic;
-    
-    -------------------------------
-    -- Priority decoder interface
-    -------------------------------
-
-    -- TXT Buffer is valid and selected for transmission
-    signal select_buf_avail       :in  std_logic;
-
-    -- Priority decoder output has changed. TXT Arbitrator FSM has to restart
-    -- selection process.
-    signal select_index_changed   :in  std_logic;
-
-    -----------------------------------
-    -- Timestamp comparison interface
-    -----------------------------------
-    signal timestamp_valid        :in  std_logic;
-
-    -------------------------------
-    -- CAN Core Interface
-    -------------------------------
-
-    -- Commands from CAN Core for manipulation of TXT Buffers
-    signal txt_hw_cmd             :in txt_hw_cmd_type;  
-
-    ---------------------------------------------------------------------------
-    -- TX Arbitrator FSM outputs
-    ---------------------------------------------------------------------------
-
-    -- Load Timestamp lower word to metadata pointer
-    signal load_ts_lw_addr        :out std_logic;
-
-    -- Load Timestamp upper word to metadata pointer
-    signal load_ts_uw_addr        :out std_logic;
-
-    -- Load Frame format word to metadata pointer
-    signal load_ffmt_w_addr       :out std_logic;
-
-    -- Store timestamp lower word
-    signal store_ts_l_w           :out std_logic;
-
-    -- Store metadata (Frame format word) on the output of TX Arbitrator
-    signal store_md_w             :out std_logic;
-
-    -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
-    -- Buffer)
-    signal tx_arb_locked          :out std_logic;
-
-    -- Store last locked TXT Buffer index
-    signal store_last_txtb_index  :out std_logic;
-
-    -- Set valid selected buffer on TX Arbitrator output.
-    signal frame_valid_com_set    :out std_logic;    
-
-    -- Clear valid selected buffer on TX Arbitrator output.
-    signal frame_valid_com_clear  :out std_logic 
+    port( 
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in  std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Priority decoder interface
+        -----------------------------------------------------------------------
+        -- TXT Buffer is valid and selected for transmission
+        select_buf_avail       :in  std_logic;
+        
+        -- Priority decoder output has changed. TXT Arbitrator FSM has to restart
+        -- selection process.
+        select_index_changed   :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Timestamp comparison interface
+        -----------------------------------------------------------------------
+        timestamp_valid        :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- CAN Core Interface
+        -----------------------------------------------------------------------
+        -- HW Commands from CAN Core for manipulation with TXT Buffers 
+        txt_hw_cmd             :in txt_hw_cmd_type;  
+        
+        ---------------------------------------------------------------------------
+        -- TX Arbitrator FSM outputs
+        ---------------------------------------------------------------------------
+        -- Load Timestamp lower word to metadata pointer
+        load_ts_lw_addr        :out std_logic;
+        
+        -- Load Timestamp upper word to metadata pointer
+        load_ts_uw_addr        :out std_logic;
+        
+        -- Load Frame format word to metadata pointer
+        load_ffmt_w_addr       :out std_logic;
+        
+        -- Store timestamp lower word
+        store_ts_l_w           :out std_logic;
+        
+        -- Store metadata (Frame format word) on the output of TX Arbitrator
+        store_md_w             :out std_logic;
+        
+        -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
+        -- Buffer)
+        tx_arb_locked          :out std_logic;
+        
+        -- Store last locked TXT Buffer index
+        store_last_txtb_index  :out std_logic;
+        
+        -- Set valid selected buffer on TX Arbitrator output.
+        frame_valid_com_set    :out std_logic;    
+        
+        -- Clear valid selected buffer on TX Arbitrator output.
+        frame_valid_com_clear  :out std_logic 
   );
-    
 end entity;
 
 architecture rtl of tx_arbitrator_fsm is
