@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 from .test_common import add_sources, TestsBase, dict_merge, \
-                         get_common_modelsim_init_files, get_seed
+                         get_seed, OptionsDict
 from textwrap import dedent
 import re
 
@@ -26,25 +26,14 @@ class FeatureTests(TestsBase):
         tb = self.lib.get_test_benches('*tb_feature')[0]
         tb.scan_tests_from_file(str(wrname))
 
-    def create_psl_cov_file_opt(self, name):
-        psl_path = "functional_coverage/coverage_data/psl_cov_feature_{}.json".format(name)
-        psl_flag = "--psl-report={}".format(psl_path)
-        return {"ghdl.sim_flags" : [psl_flag]}
-
     def configure(self) -> bool:
         tb = self.lib.get_test_benches('*tb_feature')[0]
         default = self.config['default']
 
+        sim_options = self.get_default_sim_options()
         # generate & set per-test modelsim tcl file
-        tcl = self.build / 'modelsim_init_feature.tcl'
-        with tcl.open('wt', encoding='utf-8') as f:
-            print(dedent('''\
-                global TCOMP
-                set TCOMP tb_feature/test_comp
-                '''), file=f)
-        init_files = get_common_modelsim_init_files()
-        init_files += [str(tcl)]
-        tb.set_sim_option("modelsim.init_files.after_load", init_files)
+        sim_options += self.generate_init_tcl('modelsim_init_feature.tcl', 'tb_feature/test_comp')
+        sim_options += self.add_modelsim_gui_file(tb, default, 'feature', sim_options['modelsim.init_files.after_load'])
 
         for name, cfg in self.config['tests'].items():
             if cfg is None:
@@ -64,12 +53,13 @@ class FeatureTests(TestsBase):
                 'seed'         : get_seed(cfg)
             }
 
-            if (cfg['psl_coverage']):
-                psl_opts = self.create_psl_cov_file_opt(name)
-                tb.add_config(name, generics=generics, sim_options=psl_opts)
-            else:
-                tb.add_config(name, generics=generics)
-        self.add_modelsim_gui_file(tb, default, 'feature', init_files)
+            local_sim_options = OptionsDict()
+            if cfg['psl_coverage']:
+                local_sim_options += self.add_psl_cov('{}.{}'.format(tb.name, name))
+
+            local_sim_options = sim_options + local_sim_options
+            tb.add_config(name, generics=generics, sim_options=local_sim_options)
+
         return self._check_for_unconfigured()
 
     def _check_for_unconfigured(self) -> bool:

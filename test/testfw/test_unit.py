@@ -2,7 +2,7 @@ import re
 import logging
 from textwrap import dedent
 from .test_common import add_sources, dict_merge, TestsBase, \
-                         get_common_modelsim_init_files, get_seed
+                         get_seed, OptionsDict
 from pprint import pprint
 
 log = logging.getLogger(__name__)
@@ -13,15 +13,14 @@ class UnitTests(TestsBase):
         add_sources(self.lib, ['unit/**/*.vhd'])
         self._create_wrapper(self.build / "tb_wrappers.vhd")
 
-    def add_psl_cov_file(self, tb, name):
-        psl_path = "functional_coverage/coverage_data/psl_cov_unit_{}.json".format(name)
-        psl_flag = "--psl-report={}".format(psl_path)
-        tb.set_sim_option("ghdl.sim_flags", [psl_flag])
-
     def configure(self) -> bool:
         lib, config, build = self.lib, self.config, self.build
         default = config['default']
         unit_tests = lib.get_test_benches('*_unit_test')
+
+        for ut in unit_tests:
+            ut.scan_tests_from_file(str(build / "../unit/vunittb_wrapper.vhd"))
+
         for name, cfg in config['tests'].items():
             dict_merge(cfg, default)
             tb = lib.get_test_benches('*tb_{}_unit_test'.format(name),
@@ -39,19 +38,15 @@ class UnitTests(TestsBase):
             tb.set_generic('error_tol', cfg['error_tolerance'])
             tb.set_generic('seed', get_seed(cfg))
 
+            sim_options = self.get_default_sim_options()
             # generate & set per-test modelsim tcl file
-            tcl = build / 'modelsim_init_{}.tcl'.format(name)
-            with tcl.open('wt', encoding='utf-8') as f:
-                print(dedent('''\
-                    global TCOMP
-                    set TCOMP tb_{}_unit_test/tb/i_test
-                    '''.format(name)), file=f)
-            init_files = get_common_modelsim_init_files()
-            init_files += [str(tcl)]
-            tb.set_sim_option("modelsim.init_files.after_load", init_files)
-            if (cfg['psl_coverage']):
-                self.add_psl_cov_file(tb, name)
-            self.add_modelsim_gui_file(tb, cfg, name, tcl_init_files=init_files)
+            sim_options += self.generate_init_tcl('modelsim_init_{}.tcl'.format(name), 'tb_{}_unit_test/tb/i_test'.format(name))
+            sim_options += self.add_modelsim_gui_file(tb, cfg, name, sim_options['modelsim.init_files.after_load'])
+
+            if cfg['psl_coverage']:
+                sim_options += self.add_psl_cov(tb.name)
+            self.set_sim_options(tb, sim_options)
+
         return self._check_for_unconfigured()
 
     def _check_for_unconfigured(self) -> bool:

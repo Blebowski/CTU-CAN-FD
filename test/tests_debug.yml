@@ -5,6 +5,8 @@ _default: &default
     psl_coverage: false
     # seed: 0 # optional; use to reconstruct results from randomized runs
     # randomize: false
+    # In GUI mode, dump all signals, not only these included in layout file.
+    dump_all_signals: true
 feature:
     default:
         <<: *default

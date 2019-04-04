@@ -3,6 +3,8 @@ _default: &default
     psl_coverage: true
     error_tolerance: 0
     randomize: true
+    # In GUI mode, dump all signals, not only these included in layout file.
+    dump_all_signals: true
 unit:
     default:
         <<: *default
@@ -109,6 +111,7 @@ sanity:
         timeout: 2 sec
         gauss_iter: 40
         wave: sanity/sanity_env_setup.tcl
+        dump_all_signals: false
     tests:
         "1Mb/10Mb 20 m Star":
             topology: star
