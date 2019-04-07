@@ -77,7 +77,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -92,55 +91,56 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity bit_stuffing is 
+entity bit_stuffing is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     :     std_logic := '0'
+    );
     port(
-
         ------------------------------------------------------------------------
-        -- Clock and Async reset
+        -- Clock and Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys        :in   std_logic;
-        signal res_n          :in   std_logic;
-
-        ------------------------------------------------------------------------
-        -- Prescaler interface - sampling
-        ------------------------------------------------------------------------
-        --Trigger signal for propagating the data 
-        --(one clk_sys delayed behind beginning of bit time) 
-        signal tran_trig_1    :in   std_logic; 
-
-        ------------------------------------------------------------------------
-        --CAN Core interface
-        ------------------------------------------------------------------------
-
-        -- Enabling the operation of the circuit
-        signal enable         :in   std_logic; 
-
-        -- Data Input sampled
-        signal data_in        :in   std_logic;
-
-        -- If fixed bit stuffing should be used (CRC of CAN FD)
-        signal fixed_stuff    :in   std_logic;    
-
-        -- Logic 1 signals stuffed bit for CAN Core. CAN Core has to halt the 
-        -- data sending for one bit-time 
-        signal data_halt      :out  std_logic;    
-
-        -- Length of Bit Stuffing
-        signal length         :in   std_logic_vector(2 downto 0); 
-
-        -- Bit stuffing counter
-        signal bst_ctr        :out  natural range 0 to 7;
-
-        ------------------------------------------------------------------------
-        --Bus Synchroniser interface
-        ------------------------------------------------------------------------
-        signal data_out       :out  std_logic --Data output
-        --Note: Data are sent into bus synchroniser but can be also
-        --      fed back to CAN Core for CRC calculation in CAN FD Phase!
+        -- System clock
+        clk_sys             :in   std_logic;
         
+        -- Asynchronous reset
+        res_n               :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Data-path
+        ------------------------------------------------------------------------
+        -- Data Input (from Protocol Control)
+        data_in             :in   std_logic;
+        
+        -- Data Output (to CAN Bus)
+        data_out            :out  std_logic;
+        
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- TX Trigger for Bit Stuffing (in SYNC segment) 
+        tx_trigger          :in   std_logic; 
+        
+        -- Bit Stuffing enabled. If not, data are only passed to the output
+        stuff_enable        :in   std_logic;
+
+        -- Bit Stuffing type (0-Normal, 1-Fixed)
+        fixed_stuff         :in   std_logic;    
+
+        -- Length of Bit Stuffing rule
+        stuff_length        :in   std_logic_vector(2 downto 0); 
+
+        ------------------------------------------------------------------------
+        -- Bus Synchroniser interface
+        ------------------------------------------------------------------------
+        -- Number of stuffed bits with Normal Bit stuffing
+        bst_ctr             :out  natural range 0 to 7;
+        
+        -- Stuff bit is inserted, Protocol control operation to be halted for
+        -- one bit time
+        data_halt           :out  std_logic
     );
 end entity;
-
 
 architecture rtl of bit_stuffing is
 
@@ -235,14 +235,14 @@ begin
     ---------------------------------------------------------------------------
     dff_ena_reg : dff_arst
     generic map(
-        reset_polarity     => ACT_RESET,
+        reset_polarity     => G_RESET_POLARITY,
         rst_val            => '0'
     )
     port map(
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => enable,
+        input              => stuff_enable,
         load               => '1',
         output             => enable_prev
     );
@@ -261,7 +261,7 @@ begin
     --  2. Store "fixed_stuff" configuration when data are processed
     ---------------------------------------------------------------------------    
     fixed_reg_nxt <= '0'         when (enable_prev = '0') else
-                     fixed_stuff when (tran_trig_1 = '1') else
+                     fixed_stuff when (tx_trigger = '1') else
                      fixed_reg;
 
     ---------------------------------------------------------------------------
@@ -271,7 +271,7 @@ begin
     ---------------------------------------------------------------------------
     dff_fixed_stuff_reg : dff_arst
     generic map(
-        reset_polarity     => ACT_RESET,
+        reset_polarity     => G_RESET_POLARITY,
         rst_val            => '0'
     )
     port map(
@@ -279,7 +279,7 @@ begin
         clk                => clk_sys,
 
         input              => fixed_reg_nxt,
-        load               => enable,
+        load               => stuff_enable,
         output             => fixed_reg
     );
 
@@ -296,7 +296,7 @@ begin
     --  3. Keep previous value otherwise.
     ---------------------------------------------------------------------------
     stuff_ctr_nxt <= 0             when (enable_prev = '0') else
-                     stuff_ctr_add when (tran_trig_1 = '1' and
+                     stuff_ctr_add when (tx_trigger = '1' and
                                          stuff_lvl_reached = '1' and
                                          fixed_stuff = '0') else
                      stuff_ctr;
@@ -306,11 +306,11 @@ begin
     ---------------------------------------------------------------------------    
     stuff_ctr_proc : process(res_n, clk_sys)
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = G_RESET_POLARITY) then
             stuff_ctr           <=  0;
 
         elsif rising_edge(clk_sys) then
-            if (enable = '1') then
+            if (stuff_enable = '1') then
                 stuff_ctr       <= stuff_ctr_nxt;
             end if;  
         end if;
@@ -337,7 +337,7 @@ begin
     --  2. When processing bit and should be restarted by dedicated signal.    
     ---------------------------------------------------------------------------
     same_bits_rst <= '1' when (enable_prev = '0') or
-                              (tran_trig_1 = '1' and same_bits_rst_trig = '1')
+                              (tx_trigger = '1' and same_bits_rst_trig = '1')
                          else
                      '0';
 
@@ -356,7 +356,7 @@ begin
     --  3. Keep original value otherwise.
     ---------------------------------------------------------------------------
     same_bits_nxt <= 1             when (same_bits_rst = '1') else
-                     same_bits_add when (tran_trig_1 = '1') else
+                     same_bits_add when (tx_trigger = '1') else
                      same_bits;
 
 
@@ -368,8 +368,8 @@ begin
     --  2. Fixed bit stuffing, number of same bits is equal to one more than
     --     rule length, since stuff bit is not included then!
     ---------------------------------------------------------------------------
-    stuff_lvl_reached <= '1' when (same_bits = unsigned(length) and fixed_stuff = '0') or
-                                  (same_bits = unsigned(length) + 1 and fixed_stuff = '1')
+    stuff_lvl_reached <= '1' when (same_bits = unsigned(stuff_length) and fixed_stuff = '0') or
+                                  (same_bits = unsigned(stuff_length) + 1 and fixed_stuff = '1')
                              else
                          '0';
 
@@ -379,11 +379,11 @@ begin
     ---------------------------------------------------------------------------
     same_bits_ctr_proc : process(res_n, clk_sys)
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = G_RESET_POLARITY) then
             same_bits           <=  1;
 
         elsif rising_edge(clk_sys) then
-            if (enable = '1') then
+            if (stuff_enable = '1') then
                 same_bits       <= same_bits_nxt;
             else
                 same_bits       <= 1;
@@ -410,15 +410,15 @@ begin
     --  4. Keep previous value otherwise
     ---------------------------------------------------------------------------
     data_out_nxt_ena <= RECESSIVE      when (enable_prev = '0') else
-                        (not data_out_int) when (tran_trig_1 = '1' and insert_stuff_bit = '1') else
-                        data_in        when (tran_trig_1 = '1') else
+                        (not data_out_int) when (tx_trigger = '1' and insert_stuff_bit = '1') else
+                        data_in        when (tx_trigger = '1') else
                         data_out_int;
 
-    data_out_nxt <= data_out_nxt_ena when (enable = '1') else
-                    data_in          when (tran_trig_1 = '1') else
+    data_out_nxt <= data_out_nxt_ena when (stuff_enable = '1') else
+                    data_in          when (tx_trigger = '1') else
                     data_out_int;
 
-    data_out_load <= '1' when (enable = '1' or tran_trig_1 = '1') else
+    data_out_load <= '1' when (stuff_enable = '1' or tx_trigger = '1') else
                      '0';
 
     ---------------------------------------------------------------------------
@@ -428,7 +428,7 @@ begin
     ---------------------------------------------------------------------------
     dff_data_out_reg : dff_arst
     generic map(
-        reset_polarity     => ACT_RESET,
+        reset_polarity     => G_RESET_POLARITY,
         rst_val            => RECESSIVE
     )
     port map(
@@ -450,9 +450,9 @@ begin
     --  2. Signal halt when stuff bit is inserted.
     --  3. Erase when bit is processed, but stuff bit is not inserted.
     ---------------------------------------------------------------------------
-    halt_reg_nxt <= '0' when (enable_prev = '0' or enable = '0') else
-                    '1' when (tran_trig_1 = '1' and insert_stuff_bit = '1') else
-                    '0' when (tran_trig_1 = '1') else
+    halt_reg_nxt <= '0' when (enable_prev = '0' or stuff_enable = '0') else
+                    '1' when (tx_trigger = '1' and insert_stuff_bit = '1') else
+                    '0' when (tx_trigger = '1') else
                     halt_reg;
 
     ---------------------------------------------------------------------------
@@ -460,7 +460,7 @@ begin
     ---------------------------------------------------------------------------
     dff_halt_reg : dff_arst
     generic map(
-        reset_polarity     => ACT_RESET,
+        reset_polarity     => G_RESET_POLARITY,
         rst_val            => '0'
     )
     port map(
