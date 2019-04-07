@@ -104,6 +104,8 @@ feature:
         timestamp_registers:
         txt_buffer_hazard:
             iterations: 1
+        txt_buffer_priority:
+            iterations: 1
 sanity:
     default:
         <<: *default
