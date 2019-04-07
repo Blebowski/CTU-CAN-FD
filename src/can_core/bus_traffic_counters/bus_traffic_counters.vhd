@@ -52,7 +52,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -68,41 +67,59 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity bus_traffic_counters is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       : std_logic := '0'
+    );
     port(
         ------------------------------------------------------------------------
-        -- System clock and Reset
+        -- System clock and Asynchronous Reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous Reset
+        res_n                  :in   std_logic;
 
-        -- Clear signals (used as async. reset, not preload to lower resource
-        -- usage)
-        signal clear_rx_ctr           :in   std_logic;
-        signal clear_tx_ctr           :in   std_logic;
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Clear RX Traffic counter (Glitch free)
+        clear_rx_ctr           :in   std_logic;
+        
+        -- Clear TX Traffic counter (Glitch free)
+        clear_tx_ctr           :in   std_logic;
 
-        -- Increment signals (upon sucesfull transmission or reception of frame)
-        signal inc_tx_ctr             :in   std_logic;
-        signal inc_rx_ctr             :in   std_logic;
+        -- Increment TX Traffic Counter
+        inc_tx_ctr             :in   std_logic;
+        
+        -- Increment RX Traffic Counter
+        inc_rx_ctr             :in   std_logic;
 
+        ------------------------------------------------------------------------
         -- Counter outputs
-        signal tx_ctr                 :out  std_logic_vector(31 downto 0);
-        signal rx_ctr                 :out  std_logic_vector(31 downto 0)
+        ------------------------------------------------------------------------
+        -- TX Traffic counter
+        tx_ctr                 :out  std_logic_vector(31 downto 0);
+        
+        -- RX Traffic counter
+        rx_ctr                 :out  std_logic_vector(31 downto 0)
     );
 end entity;
 
 architecture rtl of bus_traffic_counters is
 
-    signal tx_ctr_int                :     std_logic_vector(31 downto 0);
-    signal rx_ctr_int                :     std_logic_vector(31 downto 0);
+    signal tx_ctr_int          :     std_logic_vector(31 downto 0);
+    signal rx_ctr_int          :     std_logic_vector(31 downto 0);
 
     -- Input selector
-    signal sel                        :     std_logic;   
+    signal sel                 :     std_logic;   
 
     -- Selected value to increment
-    signal sel_value                  :     std_logic_vector(31 downto 0);
+    signal sel_value           :     std_logic_vector(31 downto 0);
 
     -- Incremented value by 1
-    signal inc_value                  :     std_logic_vector(31 downto 0);
+    signal inc_value           :     std_logic_vector(31 downto 0);
 
 begin
 
@@ -126,7 +143,7 @@ begin
     ----------------------------------------------------------------------------
     tx_ctr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = ACT_RESET or clear_tx_ctr = '1') then
+        if (res_n = G_RESET_POLARITY or clear_tx_ctr = '1') then
             tx_ctr_int        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
@@ -142,7 +159,7 @@ begin
     ----------------------------------------------------------------------------
     rx_ctr_proc : process(clk_sys, res_n)
     begin
-        if (res_n = ACT_RESET or clear_rx_ctr = '1') then
+        if (res_n = G_RESET_POLARITY or clear_rx_ctr = '1') then
             rx_ctr_int        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
@@ -153,11 +170,13 @@ begin
     end process;
 
     ---------------------------------------------------------------------------
-    -- Assertion that both inputs are not active at the same time since only
-    -- single adder is used. This would corrupt counter values.
+    -- Assertions
     ---------------------------------------------------------------------------
-    assert not (inc_tx_ctr = '1' and inc_rx_ctr = '1') report
-        "RX frame counter and TX frame counter can't be incremented at once"
-        severity error;
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl no_simul_inc_tx_rx_asrt : assert never
+    -- (inc_tx_ctr = '1' and inc_rx_ctr = '1')
+    -- report "Simultaneous increment of TX and RX error traffic counter"
+    -- severity error;
 
 end architecture;
