@@ -76,7 +76,7 @@ feature:
         txt_buffer_hazard:
             iterations: 1
         txt_buffer_priority:
-            iterations: 1
+            iterations: 5
 reference:
     default:
         <<: *default
