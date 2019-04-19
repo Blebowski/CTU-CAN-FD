@@ -138,7 +138,7 @@ end entity;
 architecture rtl of tx_arbitrator_fsm is
 
   -- TX Arbitrator FSM state
-  signal tx_arb_fsm               : tx_arb_state_type;  
+  signal tx_arb_fsm               : t_tx_arb_state;  
  
   signal fsm_wait_state           : boolean;
 
@@ -151,7 +151,7 @@ begin
   tx_arb_fsm_proc : process(clk_sys, res_n)
   begin
     if (res_n = ACT_RESET) then
-        tx_arb_fsm            <= arb_sel_low_ts;
+        tx_arb_fsm            <= s_arb_sel_low_ts;
       
         fsm_wait_state        <= true;
         
@@ -164,9 +164,9 @@ begin
         ------------------------------------------------------------------------
         -- Finishing the transmission = unlocking the buffer
         ------------------------------------------------------------------------      
-        if (tx_arb_fsm = arb_locked) then
+        if (tx_arb_fsm = s_arb_locked) then
             if (txt_hw_cmd.unlock = '1') then
-                tx_arb_fsm            <= arb_sel_low_ts;
+                tx_arb_fsm            <= s_arb_sel_low_ts;
                 fsm_wait_state        <= true;
             end if;
 
@@ -174,7 +174,7 @@ begin
         -- Locking the buffer
         ------------------------------------------------------------------------
         elsif (txt_hw_cmd.lock     = '1') then
-            tx_arb_fsm              <= arb_locked;
+            tx_arb_fsm              <= s_arb_locked;
             
         ------------------------------------------------------------------------
         -- Keep the arbitrator in selection of the lowest word as
@@ -182,7 +182,7 @@ begin
         -- If Selected buffer changes, restart the selection.
         ------------------------------------------------------------------------
         elsif ((select_buf_avail = '0')) then
-            tx_arb_fsm              <= arb_sel_low_ts;
+            tx_arb_fsm              <= s_arb_sel_low_ts;
             fsm_wait_state          <= true;
             
         ------------------------------------------------------------------------
@@ -190,7 +190,7 @@ begin
         -- during selection. Restart the selection!
         ------------------------------------------------------------------------
         elsif (select_index_changed = '1') then
-            tx_arb_fsm              <= arb_sel_low_ts;
+            tx_arb_fsm              <= s_arb_sel_low_ts;
             fsm_wait_state          <= true;
 
         else
@@ -207,9 +207,9 @@ begin
             --------------------------------------------------------------------
             -- Polling on Low timestamp of the highest prority TXT buffer
             --------------------------------------------------------------------
-            when arb_sel_low_ts =>
+            when s_arb_sel_low_ts =>
                 if (not fsm_wait_state) then
-                    tx_arb_fsm         <= arb_sel_upp_ts;
+                    tx_arb_fsm         <= s_arb_sel_upp_ts;
                     fsm_wait_state     <= true;
                 end if;        
 
@@ -218,10 +218,10 @@ begin
             -- now output of TXT Buffers give the upper timestamp
             -- Lower timestamp is stored from previous state.
             --------------------------------------------------------------------  
-            when arb_sel_upp_ts =>
+            when s_arb_sel_upp_ts =>
                 if (not fsm_wait_state) then
                     if (timestamp_valid = '1') then
-                        tx_arb_fsm         <= arb_sel_ffw;
+                        tx_arb_fsm         <= s_arb_sel_ffw;
                         fsm_wait_state     <= true;
                     end if;
                 end if;
@@ -233,15 +233,16 @@ begin
             -- can store its index to the output and us it for access from 
             -- CAN Core.
             --------------------------------------------------------------------  
-            when arb_sel_ffw =>
+            when s_arb_sel_ffw =>
                 if (not fsm_wait_state) then
-                    tx_arb_fsm               <= arb_sel_low_ts;
+                    tx_arb_fsm               <= s_arb_sel_low_ts;
                     fsm_wait_state           <= true;
                 end if;
 
             --------------------------------------------------------------------
             -- By default only arb_locked is here, but it is checked before
-            -- next state decoder!
+            -- next state decoder! So it is OK that this "others" will never
+            -- be covered here!
             --------------------------------------------------------------------  
             when others =>
             end case;
@@ -276,7 +277,7 @@ begin
     -- Finishing the transmission = unlocking the Buffer -> Signal
     -- start of new buffer selection, first Timestamp Low word is loaded.
     ------------------------------------------------------------------------      
-    if (tx_arb_fsm = arb_locked) then
+    if (tx_arb_fsm = s_arb_locked) then
         if (txt_hw_cmd.unlock = '1') then
             load_ts_lw_addr <= '1';
         else
@@ -305,7 +306,7 @@ begin
         --------------------------------------------------------------------
         -- Polling on Low timestamp of the highest prority TXT buffer
         --------------------------------------------------------------------
-        when arb_sel_low_ts =>
+        when s_arb_sel_low_ts =>
             if (fsm_wait_state = false) then
                 load_ts_uw_addr    <= '1';
                 store_ts_l_w       <= '1';
@@ -316,7 +317,7 @@ begin
         -- now output of TXT Buffers give the upper timestamp
         -- Lower timestamp is stored from previous state.
         --------------------------------------------------------------------  
-        when arb_sel_upp_ts =>
+        when s_arb_sel_upp_ts =>
             if (fsm_wait_state = false) then
                 if (timestamp_valid = '1') then
                     load_ffmt_w_addr   <= '1';
@@ -330,7 +331,7 @@ begin
         -- can store its index to the output and us it for access from 
         -- CAN Core.
         --------------------------------------------------------------------  
-        when arb_sel_ffw =>
+        when s_arb_sel_ffw =>
             if (fsm_wait_state = false) then
                 load_ts_lw_addr        <= '1';
                 frame_valid_com_set    <= '1';
