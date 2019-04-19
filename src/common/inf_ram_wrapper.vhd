@@ -54,66 +54,66 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 
-entity inf_ram_wrapper is
+entity g_inf_ram_wrapper is
     generic(
-
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '1';
+        
         -- Width of memory word (in bits)
-        constant word_width           :     natural := 32;
+        G_WORD_WIDTH           :     natural := 32;
 
         -- Memory depth (in words)
-        constant depth                :     natural := 32;
+        G_DEPTH                :     natural := 32;
 
         -- Address width (in bits)
-        constant address_width        :     natural := 8;
-
-        -- Polarity of reset
-        constant reset_polarity       :     std_logic := '1';
+        G_ADDRESS_WIDTH        :     natural := 8;
 
         -- RAM content reset upon reset
-        constant simulation_reset     :     boolean := true;
+        G_SIMULATION_RESET     :     boolean := true;
 
         -- Synchronous read
-        constant sync_read            :     boolean := true
+        G_SYNC_READ            :     boolean := true
     );
   port(
         ------------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        clk_sys     :in   std_logic;
+        res_n       :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Port A - Data input
         ------------------------------------------------------------------------
-        signal addr_A                 :in   std_logic_vector(address_width -1
-                                                downto 0);
-        signal write                  :in   std_logic;
-        signal data_in                :in   std_logic_vector(word_width - 1
-                                                downto 0);
+        -- Address
+        addr_A      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Write signal
+        write       :in   std_logic;
+        
+        -- Data input
+        data_in     :in   std_logic_vector(G_WORD_WIDTH - 1 downto 0);
 
         ------------------------------------------------------------------------   
         -- Port B - Data output
         ------------------------------------------------------------------------
-        signal addr_B                 :in   std_logic_vector(address_width - 1
-                                                downto 0);
-        signal data_out               :out  std_logic_vector(word_width - 1
-                                                downto 0)
+        -- Address
+        addr_B      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Data output
+        data_out    :out  std_logic_vector(G_WORD_WIDTH - 1 downto 0)
     );
-             
 end entity;
-
 
 architecture rtl of inf_RAM_wrapper is
 
     ----------------------------------------------------------------------------
     -- Memory definition
     ----------------------------------------------------------------------------
-    type memory_type is array(0 to depth - 1) of
-            std_logic_vector(word_width - 1 downto 0);
-    signal ram_memory                 :     memory_type;
+    type memory_type is array(0 to G_DEPTH - 1) of
+            std_logic_vector(G_WORD_WIDTH - 1 downto 0);
+    signal ram_memory        :     memory_type;
 
-    signal int_read_data              :     std_logic_vector(word_width - 1
-                                                downto 0);
+    signal int_read_data     :     std_logic_vector(G_WORD_WIDTH - 1 downto 0);
 
 begin
 
@@ -122,10 +122,10 @@ begin
     ----------------------------------------------------------------------------
     ram_write_process : process(res_n, clk_sys)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
 
             -- pragma translate_off
-            if (simulation_reset) then
+            if (G_SIMULATION_RESET) then
                 ram_memory <= (OTHERS => (OTHERS => '0'));
             end if;            
             -- pragma translate_on
@@ -147,13 +147,13 @@ begin
     int_read_data <= ram_memory(to_integer(unsigned(addr_B)));
 
     -- Synchronous read
-    sync_read_gen : if (sync_read) generate
+    sync_read_gen : if (G_SYNC_READ) generate
         ram_read_process : process(res_n, clk_sys)
         begin
-            if (res_n = reset_polarity) then
+            if (res_n = G_RESET_POLARITY) then
 
                 -- pragma translate_off
-                if (simulation_reset) then                            
+                if (G_SIMULATION_RESET) then                            
                     data_out <= (OTHERS => '0');
                 end if;
                 -- pragma translate_on
@@ -166,7 +166,7 @@ begin
     end generate;
 
     -- Asynchronous read
-    async_read_gen : if (not sync_read) generate
+    async_read_gen : if (not G_SYNC_READ) generate
         data_out <= int_read_data;
     end generate;
 

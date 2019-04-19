@@ -60,11 +60,17 @@ use work.CAN_FD_frame_format.all;
 
 entity dlc_decoder is
     port (
-        signal dlc              :   in std_logic_vector(3 downto 0);
-        signal frame_type       :   in std_logic;
+        -- DLC Input (as in CAN Standard)
+        dlc              :   in std_logic_vector(3 downto 0);
+        
+        -- Frame Type (0 - CAN 2.0, 1 - CAN FD)
+        frame_type       :   in std_logic;
 
-        signal data_length      :   out std_logic_vector(6 downto 0);
-        signal is_valid         :   out std_logic
+        -- Data length (decoded)
+        data_length      :   out std_logic_vector(6 downto 0);
+        
+        -- Validity indication (0 for CAN 2.0 frames with dlc > 0) 
+        is_valid         :   out std_logic
     );
 end dlc_decoder;
 
@@ -82,7 +88,6 @@ architecture rtl of dlc_decoder is
     signal dlc_int              :   natural range 0 to 64;
 
 begin
-    
     
     -- Typecast to natural
     dlc_int <= to_integer(unsigned(dlc));
@@ -118,18 +123,12 @@ begin
     data_length <= data_len_can_2_0 when (frame_type = NORMAL_CAN) else
                    data_len_can_fd;
                    
-            
+    ---------------------------------------------------------------------------
     -- DLC is valid:
     --  1. in every case for CAN FD
     --  2. only for values <= 8 for CAN 2.0                        
+    ---------------------------------------------------------------------------
     is_valid <= '1' when ((dlc_int <= 8) and (frame_type = NORMAL_CAN)) else
                 '1' when (frame_type = FD_CAN) else  
                 '0';             
 end rtl;
-
-
-
-
-
-
-

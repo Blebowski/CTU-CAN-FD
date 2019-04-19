@@ -52,16 +52,27 @@ use ieee.std_logic_1164.all;
 
 entity dff_arst is
     generic (
-        constant reset_polarity     :       std_logic;
-        constant rst_val            :       std_logic
+        -- Reset polarity
+        G_RESET_POLARITY   :       std_logic;
+        
+        -- Reset value
+        G_RST_VAL          :       std_logic
     );    
     port (
-        signal arst                 : in    std_logic;
-        signal clk                  : in    std_logic;
+        -- Asynchronous reset
+        arst               : in    std_logic;
+        
+        -- Clock
+        clk                : in    std_logic;
 
-        signal input                : in    std_logic;
-        signal load                 : in    std_logic;
-        signal output               : out   std_logic
+        -- Data input (D)
+        input              : in    std_logic;
+        
+        -- Clock enable (CE)
+        load               : in    std_logic;
+        
+        -- Data output (Q)
+        output             : out   std_logic
     );
 end dff_arst;
 
@@ -71,8 +82,8 @@ begin
     -- DFF process
     dff_proc : process (clk, arst)
     begin
-        if (arst = reset_polarity) then
-            output     <= rst_val;
+        if (arst = G_RESET_POLARITY) then
+            output     <= G_RST_VAL;
 
         elsif (rising_edge(clk)) then
             if (load = '1') then

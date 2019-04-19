@@ -53,12 +53,18 @@ use ieee.std_logic_1164.all;
 
 entity rst_sync is
     generic (
-        constant reset_polarity     :       std_logic
+        -- Reset polarity
+        G_RESET_POLARITY    :       std_logic
     );    
     port (
-        signal clk                  : in    std_logic;
-        signal arst                 : in    std_logic;
-        signal rst                  : out   std_logic
+        -- Clock
+        clk                 : in    std_logic;
+        
+        -- Asynchronous reset
+        arst                : in    std_logic;
+        
+        -- Synchronous reset
+        rst                 : out   std_logic
     );
 end rst_sync;
 
@@ -72,11 +78,11 @@ begin
     -- Reset synchroniser process
     rst_sync_proc : process (clk, arst)
     begin
-        if (arst = reset_polarity) then
-            rff     <= reset_polarity;
-            rst     <= reset_polarity;
+        if (arst = G_RESET_POLARITY) then
+            rff     <= G_RESET_POLARITY;
+            rst     <= G_RESET_POLARITY;
         elsif (rising_edge(clk)) then
-            rff     <= not (reset_polarity);
+            rff     <= not (G_RESET_POLARITY);
             rst     <= rff;
         end if;
     end process;
