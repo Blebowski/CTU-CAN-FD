@@ -227,12 +227,12 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rec_ident <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_base_id = '1' and rx_trigger = '1') then
+            if (rx_store_base_id = '1') then
                 rec_ident(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
                     rx_shift_reg(9 downto 0) & rx_data;
             end if;
 
-            if (rx_store_ext_id = '1' and rx_trigger = '1') then
+            if (rx_store_ext_id = '1') then
                 rec_ident(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <= 
                     rx_shift_reg(16 downto 0) & rx_data;
             end if;
@@ -247,7 +247,7 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rec_ident_type <= '0';    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_ide = '1' and rx_trigger = '1') then
+            if (rx_store_ide = '1') then
                 rec_ident_type <= rx_data;
             end if;
         end if;
@@ -261,7 +261,7 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rec_is_rtr <= '0';    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_rtr = '1' and rx_trigger = '1') then
+            if (rx_store_rtr = '1') then
                 rec_is_rtr <= rx_data;
             end if;
         end if;
@@ -275,7 +275,7 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rec_frame_type <= '0';    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_edl = '1' and rx_trigger = '1') then
+            if (rx_store_edl = '1') then
                 rec_frame_type <= rx_data;
             end if;
         end if;
@@ -289,7 +289,7 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rec_esi <= '0';    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_esi = '1' and rx_trigger = '1') then
+            if (rx_store_esi = '1') then
                 rec_esi <= rx_data;
             end if;
         end if;
@@ -303,7 +303,7 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rec_brs <= '0';    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_brs = '1' and rx_trigger = '1') then
+            if (rx_store_brs = '1') then
                 rec_brs <= rx_data;
             end if;
         end if;
@@ -317,7 +317,7 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rec_dlc <= '0';    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_dlc = '1' and rx_trigger = '1') then
+            if (rx_store_dlc = '1') then
                 rec_dlc <= rx_shift_reg(2 downto 0) & rx_data;
             end if;
         end if;
@@ -331,11 +331,12 @@ begin
         if (res_n_internal = G_RESET_POLARITY) then
             rx_stuff_count <= '0';    
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_dlc = '1' and rx_trigger = '1') then
+            if (rx_store_dlc = '1') then
                 rx_stuff_count <= rx_shift_reg(2 downto 0) & rx_data;
             end if;
         end if;
     end process;
+
 
     ---------------------------------------------------------------------------
     -- CRC Value propagation to output. Valid only when rx_trigger='1' in
@@ -379,5 +380,5 @@ begin
     --  report "RX Shift register should not be cleared when RX Data should" &
     --         " be stored!"
     --  severity error;
-    
+
 end architecture;
