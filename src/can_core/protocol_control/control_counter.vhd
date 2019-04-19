@@ -102,12 +102,15 @@ entity control_counter is
         -----------------------------------------------------------------------
         -- Control counter is equal to zero
         ctrl_ctr_zero         :out std_logic;
-        
+
         -- Control counter is equal to one
         ctrl_ctr_one          :out std_logic;
 
-        -- Control counter is divisible by 8 (aligned to byte)
-        ctrl_ctr_mod_8        :out std_logic
+        -- Control counter counted multiple of 8 bits
+        ctrl_counted_byte     :out std_logic;
+        
+        -- Control counter byte index within a memory word
+        ctrl_counted_byte_index   :out std_logic_vector(1 downto 0)
     );
 end entity;
 
@@ -119,6 +122,12 @@ architecture rtl of control_counter is
 
     -- Clock enable
     signal ctrl_ctr_ce : std_logic;
+
+    -- Complementary register
+    signal compl_q : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
+
+    -- Complementary register minus
+    signal ctrl_ctr_compl  : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
 
 begin
 
@@ -138,12 +147,21 @@ begin
     ctrl_ctr_one <= '1' when (ctrl_ctr_q = 1) else
                     '0';
 
-    ctrl_ctr_mod_8 <= '1' when (ctrl_ctr_q(2 downto 0) = "000")
-                          else
-                      '0';
+    ctrl_ctr_compl <= compl_q - ctrl_ctr_q;
+    
+    ---------------------------------------------------------------------------
+    -- Status signals calculated from complementary register
+    ---------------------------------------------------------------------------
+    -- Control counter counted number of bits divisible by 8!
+    ctrl_counted_byte <= '1' when (ctrl_ctr_compl(2 downto 0) = "000")
+                             else
+                         '0';
+
+    -- Byte index within memory word!
+    ctrl_counted_byte_index <= std_logic_vector(ctrl_ctr_compl(4 downto 3));
 
     ---------------------------------------------------------------------------
-    -- Counter register
+    -- Control Counter register
     ---------------------------------------------------------------------------                   
     retr_ctr_reg_proc : process(clk_sys, res_n)
     begin
@@ -156,6 +174,25 @@ begin
         end if;
     end process;
     
+    ---------------------------------------------------------------------------
+    -- Complementary register.
+    -- This register holds value of control counter in last pre-load. By
+    -- subtracting value of actual control counter from value of complementary
+    -- register, we can find out how many bits were already counted. This is
+    -- necessary for meauserement of Data field length!
+    ---------------------------------------------------------------------------   
+    compl_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            compl_q <= (OTHERS => '0');
+        elsif (rising_edge(clk_sys)) then
+            if (ctrl_ctr_pload = '1') then
+                compl_q <= ctrl_ctr_pload_val;
+            end if;
+        end if;
+    end process;
+
+
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
