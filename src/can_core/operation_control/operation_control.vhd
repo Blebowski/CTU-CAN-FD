@@ -99,9 +99,6 @@ entity operation_control is
         ------------------------------------------------------------------------
         -- Arbitration lost
         arbitration_lost     :in   std_logic;
-        
-        -- Transmitted frame is valid
-        tran_data_valid      :in   std_logic;
 
         -- Set unit to be transmitter (in SOF)
         set_transmitter      :in   std_logic; 
@@ -141,7 +138,7 @@ begin
     -- Next state
     ---------------------------------------------------------------------------
     next_state_proc : process(curr_state, set_idle, set_transmitter,
-        set_receiver, tran_data_valid, arbitration_lost)
+        set_receiver, arbitration_lost)
     begin
         next_state <= curr_state;
         
