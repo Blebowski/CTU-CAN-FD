@@ -274,7 +274,7 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Final mux: Choose crc based on what Protocol control demands
+    -- Final mux: Choose CRC based on what Protocol control demands
     ----------------------------------------------------------------------------
     crc_val <= crc15 & "000000" when (crc_src = CRC_15_SRC) else
                  crc17 & "0000" when (crc_src = CRC_17_SRC) else
