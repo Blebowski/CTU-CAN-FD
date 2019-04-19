@@ -171,42 +171,42 @@ architecture rtl of bit_destuffing is
     ---------------------------------------------------------------------------
     -- Previous value of fixed stuff - register 
     ---------------------------------------------------------------------------
-    signal fixed_prev              : std_logic;
-    signal fixed_prev_nxt          : std_logic;
+    signal fixed_prev_q            : std_logic;
+    signal fixed_prev_d            : std_logic;
 
     ---------------------------------------------------------------------------
     -- Counter with number of equal consecutive bits on input
     ---------------------------------------------------------------------------
-    signal same_bits               : natural range 0 to 7;
+    signal same_bits_d             : natural range 0 to 7;
+    signal same_bits_q             : natural range 0 to 7;
     signal same_bits_add           : natural range 0 to 7;
-    signal same_bits_nxt           : natural range 0 to 7;
     signal same_bits_erase         : std_logic;
 
     ---------------------------------------------------------------------------
     -- Register with flag that bit was destuffed from serial stream
     ---------------------------------------------------------------------------
-    signal destuffed_reg           : std_logic;
-    signal destuffed_reg_nxt       : std_logic;
+    signal destuffed_q             : std_logic;
+    signal destuffed_d             : std_logic;
 
     ---------------------------------------------------------------------------
     -- Register with error flag signalling stuff error
     ---------------------------------------------------------------------------
-    signal error_reg               : std_logic;
-    signal error_reg_nxt           : std_logic;
+    signal error_reg_q             : std_logic;
+    signal error_reg_d             : std_logic;
 
     ---------------------------------------------------------------------------
     -- ISO CAN FD destuff bit counter
     -- Counter of destuffed bits by non-fixed bit stuffing.
     ---------------------------------------------------------------------------
-    signal dst_bit_ctr             : natural range 0 to 7;
-    signal dst_bit_ctr_nxt         : natural range 0 to 7;
+    signal dst_bit_ctr_q           : natural range 0 to 7;
+    signal dst_bit_ctr_d           : natural range 0 to 7;
     signal dst_bit_ctr_add         : natural range 0 to 7;
 
     ---------------------------------------------------------------------------
     -- Value of previous processed bit.
     ---------------------------------------------------------------------------
-    signal prev_val                : std_logic;
-    signal prev_val_nxt            : std_logic;
+    signal prev_val_q              : std_logic;
+    signal prev_val_d              : std_logic;
 
 begin
 
@@ -231,7 +231,7 @@ begin
     -- Detection of change on fixed stuff settings upon mismatch between
     -- actual and registered value of fixed stuff settings from previous bit.
     ---------------------------------------------------------------------------
-    non_fix_to_fix_chng    <= '1' when (fixed_stuff = '1' and fixed_prev = '0')
+    non_fix_to_fix_chng    <= '1' when (fixed_stuff = '1' and fixed_prev_q = '0')
                                   else
                               '0';
 
@@ -243,8 +243,8 @@ begin
     --  2. Fixed bit stuffing, number of same bits is equal to one more than
     --     rule length, since stuff bit is not included then!
     ---------------------------------------------------------------------------
-    stuff_lvl_reached <= '1' when (same_bits = unsigned(destuff_length) and fixed_stuff = '0') or
-                                  (same_bits = unsigned(destuff_length) + 1 and fixed_stuff = '1')
+    stuff_lvl_reached <= '1' when (same_bits_q = unsigned(destuff_length) and fixed_stuff = '0') or
+                                  (same_bits_q = unsigned(destuff_length) + 1 and fixed_stuff = '1')
                              else
                          '0';
 
@@ -264,9 +264,9 @@ begin
     --  1. Re-started upon 0->1 transition on "enable"
     --  2. Store "fixed_stuff" configuration when data are processed
     ---------------------------------------------------------------------------    
-    fixed_prev_nxt <= '0'         when (enable_prev = '0') else
-                      fixed_stuff when (rx_trig = '1') else
-                      fixed_prev;
+    fixed_prev_d <= '0'         when (enable_prev = '0') else
+                    fixed_stuff when (rx_trig = '1') else
+                    fixed_prev_q;
 
 
     ---------------------------------------------------------------------------
@@ -277,7 +277,7 @@ begin
     --  3. Stuff error detection is enabled.
     ---------------------------------------------------------------------------
     stuff_rule_violate <= '1' when (discard_stuff_bit = '1' and
-                                    prev_val = data_in and
+                                    prev_val_q = data_in and
                                     stuff_error_enable = '1')
                               else
                           '0';
@@ -297,9 +297,9 @@ begin
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => fixed_prev_nxt,
+        input              => fixed_prev_d,
         load               => destuff_enable,
-        output             => fixed_prev
+        output             => fixed_prev_q
     );
 
 
@@ -307,7 +307,7 @@ begin
     -- Combinationally incremented valued of counter with number of destuffed
     -- bits.
     ---------------------------------------------------------------------------
-    dst_bit_ctr_add <= (dst_bit_ctr + 1) mod 8;
+    dst_bit_ctr_add <= (dst_bit_ctr_q + 1) mod 8;
 
 
     ----------------------------------------------------------------------------
@@ -316,11 +316,11 @@ begin
     --  2. Increment when non-fixed stuff bit is inserted
     --  3. Keep otherwise
     ---------------------------------------------------------------------------
-    dst_bit_ctr_nxt <= 0                when (enable_prev = '0') else
-                       dst_bit_ctr_add  when (rx_trig = '1' and 
-                                              stuff_lvl_reached = '1' and
-                                              fixed_stuff = '0') else
-                       dst_bit_ctr;
+    dst_bit_ctr_d <= 0                when (enable_prev = '0') else
+                     dst_bit_ctr_add  when (rx_trig = '1' and 
+                                            stuff_lvl_reached = '1' and
+                                            fixed_stuff = '0') else
+                     dst_bit_ctr_q;
 
 
     ---------------------------------------------------------------------------
@@ -329,11 +329,11 @@ begin
     dst_bit_ctr_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            dst_bit_ctr         <= 0;
+            dst_bit_ctr_q         <= 0;
 
         elsif (rising_edge(clk_sys)) then
             if (destuff_enable = '1') then
-                dst_bit_ctr     <= dst_bit_ctr_nxt;
+                dst_bit_ctr_q     <= dst_bit_ctr_d;
             end if;
         end if;
     end process;
@@ -349,7 +349,7 @@ begin
     same_bits_erase <= '1' when (destuff_enable = '0' or enable_prev = '0') else
                        '1' when (rx_trig = '1' and discard_stuff_bit = '1') else
                        '1' when (rx_trig = '1' and 
-                                 data_in /= prev_val and 
+                                 data_in /= prev_val_q and 
                                  fixed_stuff = '0') else
                        '0';
 
@@ -357,7 +357,7 @@ begin
     -- Combinationally incremented value of counter of equal consecutive
     -- bits by 1.
     ---------------------------------------------------------------------------    
-    same_bits_add   <= (same_bits + 1) mod 8;
+    same_bits_add   <= (same_bits_q + 1) mod 8;
 
 
     ----------------------------------------------------------------------------
@@ -366,9 +366,9 @@ begin
     --  2. Increment upon processing of bit.
     --  3. Keep its value otherwise.
     ---------------------------------------------------------------------------
-    same_bits_nxt   <= 1             when (same_bits_erase = '1') else
-                       same_bits_add when (rx_trig = '1') else
-                       same_bits;
+    same_bits_d   <= 1             when (same_bits_erase = '1') else
+                     same_bits_add when (rx_trig = '1') else
+                     same_bits_q;
 
 
     ----------------------------------------------------------------------------
@@ -377,10 +377,10 @@ begin
     same_bits_ctr_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            same_bits <= 1;
+            same_bits_q <= 1;
 
         elsif (rising_edge(clk_sys)) then
-            same_bits <= same_bits_nxt;
+            same_bits_q <= same_bits_d;
         end if;
     end process;
 
@@ -392,11 +392,11 @@ begin
     --  3. Erase when bit is processed but should not be discarded.
     --  4. Keep value otherwise.
     ---------------------------------------------------------------------------
-    destuffed_reg_nxt   <= '0' when (destuff_enable = '0') else
-                           '1' when (rx_trig = '1' and
-                                     discard_stuff_bit = '1') else
-                           '0' when (rx_trig = '1') else
-                           destuffed_reg;
+    destuffed_d   <= '0' when (destuff_enable = '0') else
+                     '1' when (rx_trig = '1' and
+                               discard_stuff_bit = '1') else
+                     '0' when (rx_trig = '1') else
+                     destuffed_q;
 
 
     ---------------------------------------------------------------------------
@@ -411,9 +411,9 @@ begin
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => destuffed_reg_nxt,
+        input              => destuffed_d,
         load               => '1',
-        output             => destuffed_reg
+        output             => destuffed_q
     );
 
 
@@ -422,8 +422,8 @@ begin
     --  1. Set when bit should be processed and stuff rule is violated.
     --  2. Cleared otherwise
     ---------------------------------------------------------------------------
-    error_reg_nxt <= '1' when (rx_trig = '1' and stuff_rule_violate = '1') else
-                     '0';
+    error_reg_d <= '1' when (rx_trig = '1' and stuff_rule_violate = '1') else
+                   '0';
 
 
     ---------------------------------------------------------------------------
@@ -438,9 +438,9 @@ begin
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => error_reg_nxt,
+        input              => error_reg_d,
         load               => '1',
-        output             => error_reg
+        output             => error_reg_q
     );
 
 
@@ -450,10 +450,10 @@ begin
     --  2. Set to RECESSIVE when non-fixed bit stuffing changes to fixed
     --     bit stuffing. TODO: IS THIS OK???
     ---------------------------------------------------------------------------
-    prev_val_nxt <= RECESSIVE when (destuff_enable = '1' and enable_prev = '0') else
-                    RECESSIVE when (rx_trig = '1' and non_fix_to_fix_chng = '1') else
-                    data_in   when (rx_trig = '1') else
-                    prev_val;
+    prev_val_d <= RECESSIVE when (destuff_enable = '1' and enable_prev = '0') else
+                  RECESSIVE when (rx_trig = '1' and non_fix_to_fix_chng = '1') else
+                  data_in   when (rx_trig = '1') else
+                  prev_val_q;
 
 
     ---------------------------------------------------------------------------
@@ -468,9 +468,9 @@ begin
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => prev_val_nxt,
+        input              => prev_val_d,
         load               => '1',
-        output             => prev_val
+        output             => prev_val_q
     );
 
 
@@ -482,9 +482,9 @@ begin
     -- via "destuffed".
     data_out    <= data_in;
 
-    destuffed   <= destuffed_reg;
-    stuff_error <= error_reg;
-    dst_ctr     <= dst_bit_ctr;
+    destuffed   <= destuffed_q;
+    stuff_error <= error_reg_q;
+    dst_ctr     <= dst_bit_ctr_q;
 
 
     ----------------------------------------------------------------------------
