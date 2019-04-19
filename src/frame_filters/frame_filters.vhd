@@ -63,7 +63,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -80,45 +79,57 @@ use work.CAN_FD_frame_format.all;
 
 entity frame_filters is
     generic(
-        -- Optional synthesis of received message filters
-        -- By default the behaviour is as if all the filters are present
-        constant sup_filtA          : boolean := true;
-        constant sup_filtB          : boolean := true;
-        constant sup_filtC          : boolean := true;
-        constant sup_range          : boolean := true
+        -- Reset polarity
+        G_RESET_POLARITY     : std_logic := '0';
+        
+        -- Support filter A
+        G_SUP_FILTA          : boolean := true;
+        
+        -- Support filter B
+        G_SUP_FILTB          : boolean := true;
+        
+        -- Support filter C
+        G_SUP_FILTC          : boolean := true;
+        
+        -- Support range filter
+        G_SUP_RANGE          : boolean := true
     );
     port(
         ------------------------------------------------------------------------
-        -- Clock an reset signals
+        -- Clock an Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys              : in std_logic; 	--System clock
-        signal res_n                : in std_logic;  --Async reset
-
-
-        ------------------------------------------------------------------------
-        -- Driving signals from CAN Core
-        ------------------------------------------------------------------------
-
-        -- Receieved identifier
-        signal rec_ident_in         : in  std_logic_vector(28 downto 0); 
-
-        -- Input message identifier type
-        -- (0-BASE Format, 1-Extended Format);
-        signal ident_type           : in  std_logic;
-
-        -- Input frame type (0-Normal CAN, 1- CAN FD) 
-        signal frame_type           : in  std_logic;
-
-        -- Identifier valid (active log 1)
-        signal rec_ident_valid      : in  std_logic;
-
-        -- Driving bus from registers
-        signal drv_bus              : in  std_logic_vector(1023 downto 0);
+        -- System clock
+        clk_sys              : in std_logic;
+        
+        -- Asynchronous reset
+        res_n                : in std_logic;
 
         ------------------------------------------------------------------------
-        -- Signal whenever identifier matches the filter identifiers
+        -- Memory registers interface
         ------------------------------------------------------------------------
-        signal out_ident_valid      : out   std_logic
+        -- Driving Bus
+        drv_bus              : in  std_logic_vector(1023 downto 0);
+
+        ------------------------------------------------------------------------
+        -- CAN Core interface
+        ------------------------------------------------------------------------
+        -- Receieved CAN ID
+        rec_ident_in         : in  std_logic_vector(28 downto 0); 
+
+        -- Received CAN ID type (0-Base Format, 1-Extended Format);
+        ident_type           : in  std_logic;
+
+        -- Input frame type (0-CAN 2.0, 1- CAN FD) 
+        frame_type           : in  std_logic;
+
+        -- Input Identifier is valid
+        rec_ident_valid      : in  std_logic;
+
+        ------------------------------------------------------------------------
+        -- Frame filters output
+        ------------------------------------------------------------------------
+        -- CAN ID passes the filters
+        out_ident_valid      : out   std_logic
     );
 end entity;
   
@@ -275,7 +286,7 @@ begin
     bit_filter_A_comp : bit_filter
     generic map(
         width           => 29,
-        is_present      => sup_filtA
+        is_present      => G_SUP_FILTA
     )
     port map(
         filter_mask     => drv_filter_A_mask,
@@ -288,7 +299,7 @@ begin
     bit_filter_B_comp : bit_filter
     generic map(
         width           => 29,
-        is_present      => sup_filtB
+        is_present      => G_SUP_FILTB
     )
     port map(
         filter_mask     => drv_filter_B_mask,
@@ -301,7 +312,7 @@ begin
     bit_filter_C_comp : bit_filter
     generic map(
         width           => 29,
-        is_present      => sup_filtC
+        is_present      => G_SUP_FILTC
     )
     port map(
         filter_mask     => drv_filter_C_mask,
@@ -315,7 +326,7 @@ begin
     range_filter_comp : range_filter
     generic map(
         width           => 29,
-        is_present      => sup_range
+        is_present      => G_SUP_RANGE
     )
     port map(
         filter_upp_th   => drv_filter_ran_hi_th,
@@ -332,14 +343,14 @@ begin
     -- turning filters on should not affect the acceptance! Everyhting should
     -- be affected!
     ---------------------------------------------------------------------------
-    filt_sup_gen_false : if (sup_filtA = false and sup_filtB = false and
-                             sup_filtC = false and sup_range = false) generate
+    filt_sup_gen_false : if (G_SUP_FILTA = false and G_SUP_FILTB = false and
+                             G_SUP_FILTC = false and G_SUP_RANGE = false) generate
         valid_reg           <= rec_ident_valid;
     end generate;
 
 
-    filt_sup_gen_true : if (sup_filtA = true or sup_filtB = true or
-                            sup_filtC = true or sup_range = true) generate
+    filt_sup_gen_true : if (G_SUP_FILTA = true or G_SUP_FILTB = true or
+                            G_SUP_FILTC = true or G_SUP_RANGE = true) generate
 
         min_one_filt_valid <= int_filter_A_valid   OR
                               int_filter_B_valid   OR
@@ -360,12 +371,11 @@ begin
     ----------------------------------------------------------------------------
     valid_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = G_RESET_POLARITY) then
             out_ident_valid   <= '0';
         elsif rising_edge(clk_sys) then
             out_ident_valid   <= valid_reg;
         end if;
     end process valid_reg_proc;
 
-  
 end architecture;

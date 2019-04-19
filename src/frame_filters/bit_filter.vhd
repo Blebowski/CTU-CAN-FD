@@ -51,7 +51,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -69,33 +68,33 @@ use work.CAN_FD_frame_format.all;
 entity bit_filter is
     generic(
         -- Filter width
-        constant width              :   natural;
+        G_WIDTH              :   natural;
 
         -- Filter presence
-        constant is_present         :   boolean
+        G_IS_PRESENT         :   boolean
     );
     port(
         -- Filter mask
-        signal filter_mask          : in  std_logic_vector(width - 1 downto 0);
+        filter_mask          : in  std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter value
-        signal filter_value         : in  std_logic_vector(width - 1 downto 0);
+        filter_value         : in  std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter input
-        signal filter_input         : in  std_logic_vector(width - 1 downto 0);
+        filter_input         : in  std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter enable (output is stuck at zero when disabled)
-        signal enable               : in  std_logic;
+        enable               : in  std_logic;
 
-        -- Filter output
-        signal valid                : out std_logic
+        -- '1' when Filter input passes the filter
+        valid                : out std_logic
     );
 end entity;
   
 architecture rtl of bit_filter is
 
-    signal masked_input             :   std_logic_vector(width - 1 downto 0);
-    signal masked_value             :   std_logic_vector(width - 1 downto 0);
+    signal masked_input             :   std_logic_vector(G_WIDTH - 1 downto 0);
+    signal masked_value             :   std_logic_vector(G_WIDTH - 1 downto 0);
 
 begin
 
@@ -103,7 +102,7 @@ begin
     masked_value <= filter_value and filter_mask;
 
     -- Filter A input frame type filtering 
-    gen_filt_pos : if (is_present = true) generate
+    gen_filt_pos : if (G_IS_PRESENT = true) generate
         valid <= '1' when (masked_input = masked_value) 
                           AND
                           (enable = '1')
@@ -111,7 +110,7 @@ begin
                  '0';
     end generate;
     
-    gen_filt_neg : if (is_present = false) generate
+    gen_filt_neg : if (G_IS_PRESENT = false) generate
         valid <= '0';
     end generate;  
   
