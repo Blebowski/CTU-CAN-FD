@@ -94,8 +94,11 @@ entity error_detector is
         -----------------------------------------------------------------------
         -- Error sources
         -----------------------------------------------------------------------
-        -- Bit error
+        -- Bit error (from Bus sampling)
         bit_error               :in   std_logic;
+        
+        -- Bit error in Arbitration field
+        bit_error_arb           :in   std_logic;
         
         -- Stuff error
         stuff_error             :in   std_logic;
@@ -105,6 +108,9 @@ entity error_detector is
         
         -- ACK Error
         ack_error               :in   std_logic;
+
+        -- CRC Error
+        crc_error               :in   std_logic;
         
         -----------------------------------------------------------------------
         -- CRC comparison data
@@ -139,8 +145,8 @@ entity error_detector is
         -- Perform CRC Check
         crc_check               :in   std_logic;
 
-        -- Clear CRC Error flag
-        crc_clear_error_flag    :in   std_logic;
+        -- Clear CRC match flag
+        crc_clear_match_flag    :in   std_logic;
 
         -- CRC Source (CRC15, CRC17, CRC21)
         crc_src                 :in   std_logic_vector(1 downto 0);
@@ -169,8 +175,8 @@ entity error_detector is
         -- Error code capture
         erc_capture             :out  std_logic_vector(7 downto 0);
 
-        -- CRC error
-        crc_error               :out  std_logic;
+        -- CRC match
+        crc_match               :out  std_logic;
 
         -- Error counters should remain unchanged
         err_ctrs_unchanged      :out  std_logic
@@ -190,10 +196,10 @@ architecture rtl of error_detector is
     -- Internal form error
     signal form_error_int : std_logic;
 
-    -- CRC Error detection
-    signal crc_error_c    : std_logic;
-    signal crc_error_d    : std_logic;
-    signal crc_error_q    : std_logic;
+    -- CRC Match detection
+    signal crc_match_c    : std_logic;
+    signal crc_match_d    : std_logic;
+    signal crc_match_q    : std_logic;
     
     -- Stuff counter should be checked
     signal stuff_count_check : std_logic;
@@ -222,6 +228,8 @@ begin
     err_frm_req_i <= '1' when (bit_error = '1' and bit_error_enable = '1') else
                      '1' when (stuff_error = '1' and stuff_error_enable = '1') else
                      '1' when (form_error = '1' or ack_error = '1') else
+                     '1' when (crc_error = '1') else
+                     '1' when (bit_error_arb = '1') else
                      '0';
 
     -- Fixed stuff error shall be reported as Form Error!
@@ -285,34 +293,33 @@ begin
                           else
                       '0';
 
-    -- CRC Error
-    crc_error_c <= '1' when (crc_15_ok = '0') or
+    -- CRC Match
+    crc_match_c <= '0' when (crc_15_ok = '0') or
                             (crc_17_ok = '0' and crc_16_17_check = '1') or
                             (crc_21_ok = '0' and crc_18_21_check = '1') or
                             (stuff_count_ok = '0' and stuff_count_check = '1')
                        else
-                   '0';
+                   '1';
 
-    crc_error_d <= '0' when (crc_clear_error_flag = '1') else
-                   crc_error_c when (crc_check = '1') else
-                   crc_error_q;
+    crc_match_d <= '0' when (crc_clear_match_flag = '1') else
+                   crc_match_c when (crc_check = '1') else
+                   crc_match_q;
     
     crc_error_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            crc_error_q <= '0';
+            crc_match_q <= '0';
         elsif (rising_edge(clk_sys)) then
-            crc_error_q <= crc_error_d;
+            crc_match_q <= crc_match_d;
         end if;
     end process;
     
     --------------------------------------------------------------------------
     -- Error detected for Fault Confinement. Valid when there are:
     --  1. Either Error frame request (Bit, Stuff, ACK, Form Errors)
-    --  2. CRC error is just detected (edge).
+    --  2. CRC error is detected by Protocol control.
     ---------------------------------------------------------------------------
-    error_detected <= '1' when err_frm_req_i or 
-                               (crc_error_c = '1' and crc_error_d = '0')
+    error_detected <= '1' when (err_frm_req_i or crc_error = '1')
                           else
                       '0';
                       
@@ -337,7 +344,7 @@ begin
     -- Error code, next value
     ---------------------------------------------------------------------------
     err_type_d <= "000" when (bit_error = '1' and bit_error_enable = '1') else
-                  "001" when (crc_error_q = '1') else
+                  "001" when (crc_error = '1') else
                   "010" when (form_error_int = '1') else
                   "011" when (ack_error = '1') else
                   "100" when (stuff_error = '1' and stuff_error_enable = '1') else
@@ -352,7 +359,7 @@ begin
             err_type_q <= "000";
             err_pos_q <= "11111";
         elsif (rising_edge(clk_sys)) then
-            if (err_frm_req_i = '1' or crc_error_q = '1') then
+            if (err_frm_req_i = '1' or crc_error = '1') then
                 err_type_q <= err_type_d;
                 err_pos_q  <= err_pos;
             end if;
@@ -361,7 +368,7 @@ begin
 
     -- Internal signal to output propagation
     erc_capture <= err_pos_q & err_type_q;
-    crc_error <= crc_error_q;
+    crc_match <= crc_match_q;
     
     ---------------------------------------------------------------------------
     -- Assertions
