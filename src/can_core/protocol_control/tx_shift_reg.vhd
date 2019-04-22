@@ -112,11 +112,20 @@ entity tx_shift_reg is
         -- Force Dominant value instead of value from shift register
         tx_dominant             :in  std_logic;
 
+        -- CRC Source (CRC15, CRC17, CRC21)
+        crc_src                 :in  std_logic_vector(1 downto 0);
+
         -----------------------------------------------------------------------
         -- CAN CRC Interface
         -----------------------------------------------------------------------
-        -- CRC sequence to be transmitted
-        calc_crc                :in   std_logic_vector(20 downto 0);
+        -- Calculated CRC 15
+        crc_15                  :in   std_logic_vector(14 downto 0);
+
+        -- Calculated CRC 17
+        crc_17                  :in   std_logic_vector(16 downto 0);
+        
+        -- Calculated CRC 21
+        crc_21                  :in   std_logic_vector(20 downto 0);
 
         -----------------------------------------------------------------------
         -- Error detector Interface
@@ -157,9 +166,8 @@ architecture rtl of tx_shift_reg is
     signal tx_base_id : std_logic_vector(10 downto 0);
     signal tx_ext_id : std_logic_vector(17 downto 0);
 
-    -- TX Data register
-    signal tx_data_d : std_logic;
-    signal tx_data_q : std_logic;
+    -- Selected CRC to be transmitted
+    signal tx_crc : std_logic_vector(20 downto 0);
 
 begin
     
@@ -176,6 +184,12 @@ begin
                              tx_load_crc = '1')
                        else
                    '0';
+
+    -- CRC to be transmitted
+    tx_crc <= crc_15 & "000000" when (crc_src = CRC15) else
+                crc_17 & "0000" when (crc_src = CRC17) else
+                        crc_21;
+    
 
     -- Choosing Base and Ext IDs from TXT Buffer RAM memory words!
     tx_base_id <= txt_buffer_word(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
@@ -194,7 +208,7 @@ begin
                   tx_ext_id & "00000000000000" when (tx_load_ext_id = '1') else
      tran_dlc & "0000000000000000000000000000" when (tx_load_dlc = '1') else
                                txt_buffer_word when (tx_load_data_word = '1') else
-                    calc_crc & "0000000000000" when (tx_load_crc = '1') else
+                      tx_crc & "0000000000000" when (tx_load_crc = '1') else
                                (OTHERS => '0');
 
     ---------------------------------------------------------------------------
@@ -222,24 +236,10 @@ begin
     ---------------------------------------------------------------------------
     -- Calculation of next data bit value!
     ---------------------------------------------------------------------------
-    tx_data_d <= DOMINANT when (err_frm_req = '1' and is_err_active = '1') else
-                 RECESSIVE when (err_frm_req = '1') else
-                 DOMINANT when (tx_dominant = '1') else
-                 tx_sr_output when (tx_shift_ena = '1') else
-                 RECESSIVE;
-
-    ---------------------------------------------------------------------------
-    -- Transmit data register. Loaded at start of bit time (with TX Trigger).
-    ---------------------------------------------------------------------------
-    tx_reg_proc : process(clk_sys, res_n)
-    begin
-        if (res_n = G_RESET_POLARITY) then
-            tx_data_q <= RECESSIVE;
-        elsif (rising_edge(clk_sys)) then
-            if (tx_trigger = '1') then
-                tx_data_q <= tx_data_d;
-            end if;
-        end if;
-    end process;
+    tx_data <= DOMINANT when (err_frm_req = '1' and is_err_active = '1') else
+               RECESSIVE when (err_frm_req = '1') else
+               DOMINANT when (tx_dominant = '1') else
+               tx_sr_output when (tx_shift_ena = '1') else
+               RECESSIVE;
 
 end architecture;

@@ -145,10 +145,16 @@ entity can_crc is
         crc_src          :in   std_logic_vector(1 downto 0);
 
         ------------------------------------------------------------------------
-        -- CRC Output
+        -- CRC Outputs
         ------------------------------------------------------------------------
-        -- CRC aligned to highest bit
-        crc_val          :out  std_logic_vector(20 downto 0)
+        -- Calculated CRC 15
+        crc_15           :out  std_logic_vector(14 downto 0);
+
+        -- Calculated CRC 17
+        crc_17           :out  std_logic_vector(16 downto 0);
+        
+        -- Calculated CRC 21
+        crc_21           :out  std_logic_vector(20 downto 0)
     );
 end entity;
 
@@ -165,11 +171,6 @@ architecture rtl of can_crc is
     ---------------------------------------------------------------------------
     -- Immediate outputs of CRC circuits
     ---------------------------------------------------------------------------
-
-    -- CRC calculated sequences
-    signal crc15            :     std_logic_vector(14 downto 0);
-    signal crc17            :     std_logic_vector(16 downto 0);
-    signal crc21            :     std_logic_vector(20 downto 0);
 
     -- Data inputs to CRC 17 and CRC 21
     signal crc_17_21_data_in   :     std_logic;
@@ -228,7 +229,7 @@ begin
         trig            => trig_rx_nbs,
         enable          => crc_enable,
         init_vect       => init_vect_15,
-        crc             => crc15
+        crc             => crc_15
     );
 
     ----------------------------------------------------------------------------
@@ -248,7 +249,7 @@ begin
         trig            => crc_17_21_trigger,
         enable          => crc_enable,
         init_vect       => init_vect_17,
-        crc             => crc17
+        crc             => crc_17
     );
 
 
@@ -269,15 +270,7 @@ begin
         trig            => crc_17_21_trigger,
         enable          => crc_enable,
         init_vect       => init_vect_21,
-        crc             => crc21
+        crc             => crc_21
     );
-
-
-    ----------------------------------------------------------------------------
-    -- Final mux: Choose CRC based on what Protocol control demands
-    ----------------------------------------------------------------------------
-    crc_val <= crc15 & "000000" when (crc_src = CRC_15_SRC) else
-                 crc17 & "0000" when (crc_src = CRC_17_SRC) else
-                 crc21;
 
 end architecture;

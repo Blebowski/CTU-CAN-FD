@@ -118,8 +118,14 @@ entity error_detector is
         -- Received CRC
         rx_crc                  :in   std_logic_vector(20 downto 0);
         
-        -- Calculated CRC
-        calc_crc                :in   std_logic_vector(20 downto 0);
+        -- Calculated CRC 15
+        crc_15                  :in   std_logic_vector(14 downto 0);
+
+        -- Calculated CRC 17
+        crc_17                  :in   std_logic_vector(16 downto 0);
+        
+        -- Calculated CRC 21
+        crc_21                  :in   std_logic_vector(20 downto 0);
         
         -- Received Stuff count (Gray coded)
         rx_stuff_count          :in   std_logic_vector(3 downto 0);
@@ -204,12 +210,6 @@ architecture rtl of error_detector is
     -- Stuff counter should be checked
     signal stuff_count_check : std_logic;
     
-    -- CRC bits 16-17 should be checked
-    signal crc_16_17_check : std_logic;
-    
-    -- CRC bits 18-21 should be checked
-    signal crc_18_21_check : std_logic;
-
     -- CRC Check results
     signal crc_15_ok       : std_logic;
     signal crc_17_ok       : std_logic;
@@ -264,27 +264,18 @@ begin
                              else
                          '0';
 
-    -- Check CRC Bits 16-17 for CRC17 and CRC21
-    crc_16_17_check <= '1' when (crc_src = CRC17 or crc_src = CRC21)
-                           else
-                       '0';
-
-    -- Check CRC Bits 18-21 only for CRC21
-    crc_18_21_check <= '1' when (crc_src = CRC21) else
-                       '0';
-
     -- CRC 15 bits check
-    crc_15_ok <= '1' when (rx_crc(14 downto 0) = calc_crc(14 downto 0))
+    crc_15_ok <= '1' when (rx_crc(14 downto 0) = crc_15)
                      else
                  '0';
 
     -- CRC 17 check
-    crc_17_ok <= '1' when (rx_crc(16 downto 15) = calc_crc(16 downto 15))
+    crc_17_ok <= '1' when (rx_crc(16 downto 0) = crc_17)
                      else
                  '0';
                  
     -- CRC 21 check
-    crc_21_ok <= '1' when (rx_crc(20 downto 17) = calc_crc(20 downto 17))
+    crc_21_ok <= '1' when (rx_crc(20 downto 0) = crc_21)
                      else
                  '0';
 
@@ -294,9 +285,9 @@ begin
                       '0';
 
     -- CRC Match
-    crc_match_c <= '0' when (crc_15_ok = '0') or
-                            (crc_17_ok = '0' and crc_16_17_check = '1') or
-                            (crc_21_ok = '0' and crc_18_21_check = '1') or
+    crc_match_c <= '0' when (crc_15_ok = '0' and crc_src = CRC15) or
+                            (crc_17_ok = '0' and crc_src = CRC17) or
+                            (crc_21_ok = '0' and crc_src = CRC21) or
                             (stuff_count_ok = '0' and stuff_count_check = '1')
                        else
                    '1';
@@ -369,12 +360,12 @@ begin
     -- Internal signal to output propagation
     erc_capture <= err_pos_q & err_type_q;
     crc_match <= crc_match_q;
-    
+
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
-    
+
     -- psl crc_src_correct_asrt : assert always
     --  (crc_src = CRC15 or crc_src = CRC17 or crc_src = CRC21)
     -- report "CRC Source has invalid value!"
