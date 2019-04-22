@@ -64,7 +64,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -82,36 +81,53 @@ use work.CAN_FD_frame_format.all;
 entity int_module is
     generic(        
         -- Reset polarity
-        constant reset_polarity        :    std_logic := '0';
+        G_RESET_POLARITY        :    std_logic := '0';
 
         -- If true, Interrupt status clear has priority over write.
-        constant clear_priority        :    boolean := true
+        G_CLEAR_PRIORITY         :    boolean := true
     );
     port(
         ------------------------------------------------------------------------
-        -- System Clock and reset
+        -- Clock and Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic; --System Clock
-        signal res_n                  :in   std_logic; --Async Reset
+        -- System Clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous Reset
+        res_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
-        -- Interrupt module control signals
+        -- Control control signals
         ------------------------------------------------------------------------
-        signal int_status_set         :in   std_logic;
-        signal int_status_clear       :in   std_logic;
+        -- Interrupt Status Set
+        int_status_set         :in   std_logic;
+        
+        -- Interrupt Status Clear
+        int_status_clear       :in   std_logic;
 
-        signal int_mask_set           :in   std_logic;
-        signal int_mask_clear         :in   std_logic;
+        -- Interrupt Mask Set
+        int_mask_set           :in   std_logic;
+        
+        -- Interrupt Mask Clear
+        int_mask_clear         :in   std_logic;
 
-        signal int_ena_set            :in   std_logic;
-        signal int_ena_clear          :in   std_logic;
+        -- Interrupt Enable Set
+        int_ena_set            :in   std_logic;
+        
+        -- Interrupt Enable Clear
+        int_ena_clear          :in   std_logic;
 
         ------------------------------------------------------------------------
-        -- Interrupt status signals
+        -- Interrupt output signals
         ------------------------------------------------------------------------
-        signal int_status             :out  std_logic;
-        signal int_mask               :out  std_logic;
-        signal int_ena                :out  std_logic
+        -- Interrupt status (Interrupt vector)
+        int_status             :out  std_logic;
+        
+        -- Interrupt mask
+        int_mask               :out  std_logic;
+        
+        -- Interrupt enable
+        int_ena                :out  std_logic
     );  
 end entity;
 
@@ -130,10 +146,10 @@ begin
     ------------------------------------------------------------------------
     -- Interrupt status - Set priority 
     ------------------------------------------------------------------------
-    set_priority_gen : if (clear_priority = false) generate    
+    set_priority_gen : if (G_CLEAR_PRIORITY = false) generate    
         int_stat_proc : process(res_n, clk_sys)
         begin
-            if (res_n = reset_polarity) then
+            if (res_n = G_RESET_POLARITY) then
                 int_status <= '0';
 
             elsif rising_edge(clk_sys) then
@@ -155,10 +171,10 @@ begin
     ------------------------------------------------------------------------
     -- Interrupt status - Clear priority 
     ------------------------------------------------------------------------
-    clear_priority_gen : if (clear_priority = true) generate    
+    clear_priority_gen : if (G_CLEAR_PRIORITY = true) generate    
         int_stat_proc : process(res_n, clk_sys)
         begin
-            if (res_n = reset_polarity) then
+            if (res_n = G_RESET_POLARITY) then
                 int_status <= '0';
 
             elsif rising_edge(clk_sys) then
@@ -183,7 +199,7 @@ begin
 
     int_mask_proc : process(res_n, clk_sys)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             int_mask_i <= '0';
 
         elsif rising_edge(clk_sys) then
@@ -201,13 +217,12 @@ begin
                                 else
                             '0';
 
-
     ------------------------------------------------------------------------
     -- Interrupt Enable
     ------------------------------------------------------------------------
     int_ena_proc : process(res_n, clk_sys)
     begin
-        if (res_n = reset_polarity) then
+        if (res_n = G_RESET_POLARITY) then
             int_ena_i <= '0';
 
         elsif rising_edge(clk_sys) then
@@ -226,6 +241,6 @@ begin
 
     -- Propagation to outputs
     int_mask <= int_mask_i;
-    int_ena <= int_ena_i;
+    int_ena  <= int_ena_i;
 
 end architecture;

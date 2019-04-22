@@ -76,7 +76,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -93,75 +92,80 @@ use work.CAN_FD_frame_format.all;
 
 entity int_manager is
     generic(
-        --Length in clock cycles how long will interrupt stay active
-        constant int_count            :natural range 0 to 32 := 11
+        -- Reset polarity
+        G_RESET_POLARITY     : std_logic := '0';
+        
+        -- Number of supported interrupts
+        G_INT_COUNT          : natural  := 11;
+        
+        -- Number of TXT Buffers
+        G_TXT_BUFFER_COUNT   : natural := 4
     );
     port(
         ------------------------------------------------------------------------
-        -- System Clock and reset
+        -- Clock and Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic; --System Clock
-        signal res_n                  :in   std_logic; --Async Reset
+        -- System clock
+        clk_sys                 :in   std_logic;
+        
+        -- Asynchronous Reset
+        res_n                   :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Interrupt sources
         ------------------------------------------------------------------------
         -- Valid Error appeared for interrupt
-        signal error_valid            :in   std_logic;
+        error_valid             :in   std_logic;
 
         -- Error pasive /Error acitve functionality changed
-        signal error_passive_changed  :in   std_logic;
+        error_passive_changed   :in   std_logic;
 
         -- Error warning limit reached
-        signal error_warning_limit    :in   std_logic;
+        error_warning_limit     :in   std_logic;
 
         -- Arbitration was lost input
-        signal arbitration_lost       :in   std_logic;
+        arbitration_lost        :in   std_logic;
 
-        -- Message stored in CAN Core was sucessfully transmitted
-        signal tx_finished            :in   std_logic;
+        -- Frame stored in CAN Core was sucessfully transmitted
+        tx_finished             :in   std_logic;
 
         -- Bit Rate Was Shifted
-        signal br_shifted             :in   std_logic;
+        br_shifted              :in   std_logic;
 
         -- Rx Buffer
-        signal rx_message_disc        :in   std_logic; --Income frame was discarded
-        signal rec_message_valid      :in   std_logic; --Message recieved!
-        -- Note : use the "out_ident_valid" signal of messageFilters. 
-        -- Therefore only interrupt is started for signals which pass income 
-        -- filters
-
-        signal rx_full                :in   std_logic;
-        -- RX Buffer is full (the last income message filled the remaining space)
-        -- NOTE! rec_message_valid will be in logic one for two clock cycles
-
+        rx_message_disc         :in   std_logic;
+        
+        -- Frame was succesfully received
+        rec_message_valid       :in   std_logic;
+        
+        -- RX Buffer is full
+        rx_full          :in   std_logic;
+        
         -- Recieve buffer is empty
-        signal rx_empty               :in   std_logic;
+        rx_empty         :in   std_logic;
 
         -- HW command on TXT Buffers interrupt
-        signal txt_hw_cmd_int         :in   std_logic_vector(TXT_BUFFER_COUNT - 1
-                                                             downto 0);
+        txt_hw_cmd_int   :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- Event logger
-        signal loger_finished         :in   std_logic;  --Event logging finsihed
+        loger_finished   :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Driving registers Interface
         ------------------------------------------------------------------------
-        signal drv_bus                :in   std_logic_vector(1023 downto 0);
+        drv_bus          :in   std_logic_vector(1023 downto 0);
 
         -- Interrupt output
-        signal int_out                :out  std_logic; 
+        int_out          :out  std_logic; 
 
-        -- Interrupt vector (Interrupt register of SJA1000)
-        signal int_vector             :out  std_logic_vector(
-                                                int_count - 1 downto 0);
+        -- Interrupt vector
+        int_vector       :out  std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-        signal int_mask               :out  std_logic_vector(
-                                                int_count - 1 downto 0);
+        -- Interrupt mask
+        int_mask         :out  std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-        signal int_ena                :out  std_logic_vector(
-                                                int_count - 1 downto 0)
+        -- Interrupt enable
+        int_ena          :out  std_logic_vector(G_INT_COUNT - 1 downto 0)
     );  
 end entity;
 
@@ -170,35 +174,35 @@ architecture rtl of int_manager is
     ----------------------------------------------------------------------------
     -- Driving bus aliases 
     ----------------------------------------------------------------------------
-    signal drv_int_vect_clr       :     std_logic_vector(int_count - 1 downto 0);
+    signal drv_int_vect_clr       :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    signal drv_int_ena_set        :     std_logic_vector(int_count - 1 downto 0);
+    signal drv_int_ena_set        :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    signal drv_int_ena_clr        :     std_logic_vector(int_count - 1 downto 0);
+    signal drv_int_ena_clr        :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    signal drv_int_mask_set       :     std_logic_vector(int_count - 1 downto 0);
+    signal drv_int_mask_set       :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    signal drv_int_mask_clr       :     std_logic_vector(int_count - 1 downto 0);
+    signal drv_int_mask_clr       :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
     ----------------------------------------------------------------------------
     -- Internal registers and signals
     ----------------------------------------------------------------------------
 
-    signal int_ena_i              :     std_logic_vector(int_count - 1 downto 0);
+    signal int_ena_i              :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    signal int_mask_i             :     std_logic_vector(int_count - 1 downto 0);
+    signal int_mask_i             :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    signal int_vect_i             :     std_logic_vector(int_count - 1 downto 0);
+    signal int_vect_i             :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    signal int_input_active       :     std_logic_vector(int_count - 1 downto 0);
+    signal int_input_active       :     std_logic_vector(G_INT_COUNT - 1 downto 0);
 
-    constant zero_mask            :     std_logic_vector(int_count - 1 downto 0)
+    constant zero_mask            :     std_logic_vector(G_INT_COUNT - 1 downto 0)
                                                 := (OTHERS => '0');
                                                 
     ----------------------------------------------------------------------------
     -- Reset over set priority assignment
     ----------------------------------------------------------------------------
-    type int_s_r_priority_type is array(0 to int_count - 1) of boolean;
+    type int_s_r_priority_type is array(0 to G_INT_COUNT - 1) of boolean;
     
     constant int_clear_priority     :     int_s_r_priority_type :=
         (false,  -- RXI_IND
@@ -260,11 +264,11 @@ begin
     ---------------------------------------------------------------------------
     -- Interrupt module instances
     ---------------------------------------------------------------------------
-    int_module_gen : for i in 0 to int_count - 1 generate
+    int_module_gen : for i in 0 to G_INT_COUNT - 1 generate
         
         int_module_comp : int_module
         generic map(        
-            reset_polarity         => ACT_RESET,
+            G_RESET_POLARITY       => G_RESET_POLARITY,
             clear_priority         => int_clear_priority(i)
         )
         port map(
