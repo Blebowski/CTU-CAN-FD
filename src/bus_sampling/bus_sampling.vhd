@@ -111,13 +111,19 @@ use work.CAN_FD_frame_format.all;
 entity bus_sampling is 
     generic(        
         -- Reset polarity
-        G_RESET_POLARITY     :     std_logic := '0';
+        G_RESET_POLARITY        :     std_logic := '0';
         
         -- Secondary sampling point Shift registers length
-        G_SSP_SHIFT_LENGTH   :     natural := 130;
+        G_SSP_SHIFT_LENGTH      :     natural := 130;
 
         -- Depth of FIFO Cache for TX Data
-        G_TX_CACHE_DEPTH     :     natural := 8
+        G_TX_CACHE_DEPTH        :     natural := 8;
+        
+        -- Width (number of bits) in transceiver delay measurement counter
+        G_TRV_CTR_WIDTH         :     natural := 7;
+        
+        -- Optional usage of saturated value of ssp_delay 
+        G_USE_SSP_SATURATION    :     boolean := true
     );  
     port(
         ------------------------------------------------------------------------
@@ -273,6 +279,9 @@ architecture rtl of bus_sampling is
     ---------------------------------------------------------------------------
     signal shift_regs_res_d     : std_logic;
     signal shift_regs_res_q     : std_logic;
+    
+    -- Enable for secondary sampling point shift register
+    signal ssp_sr_ce            : std_logic;
 
 begin
     
@@ -287,48 +296,45 @@ begin
     drv_ssp_delay_select  <= drv_bus(DRV_SSP_DELAY_SELECT_HIGH downto
                                      DRV_SSP_DELAY_SELECT_LOW);
 
-
     ----------------------------------------------------------------------------
     -- Synchronisation chain for input signal
     ----------------------------------------------------------------------------
-    can_rx_sig_sync_comp : sig_sync
+    can_rx_sig_sync_inst : sig_sync
     port map(
         clk     => clk_sys,
         async   => CAN_rx,
         sync    => CAN_rx_synced
     );
 
-
     ---------------------------------------------------------------------------
     -- Synchronisation-chain selection
     ---------------------------------------------------------------------------
     CAN_rx_i <= CAN_rx_synced;
-        
     
     ---------------------------------------------------------------------------
     -- Component for measurement of transceiver delay and calculation of
     -- secondary sampling point.
     ---------------------------------------------------------------------------
-    trv_delay_measurement_comp : trv_delay_measurement
+    trv_delay_measurement_inst : trv_delay_measurement
     generic map(
-        reset_polarity         => G_RESET_POLARITY,
-        trv_ctr_width          => 7,
-        use_ssp_saturation     => true,
-        ssp_saturation_lvl     => C_SSP_DELAY_SAT_VAL
+        G_RESET_POLARITY         => G_RESET_POLARITY,
+        G_TRV_CTR_WIDTH          => G_TRV_CTR_WIDTH,
+        G_USE_SSP_SATURATION     => G_USE_SSP_SATURATION,
+        G_SSP_SATURATION_LVL     => C_SSP_DELAY_SAT_VAL
     )
     port map(
-        clk_sys                => clk_sys,
-        res_n                  => res_n,
+        clk_sys                => clk_sys,                  -- IN
+        res_n                  => res_n,                    -- IN
 
-        meas_start             => edge_tx_valid,
-        meas_stop              => edge_rx_valid,
-        meas_enable            => trv_delay_calib,
+        meas_start             => edge_tx_valid,            -- IN
+        meas_stop              => edge_rx_valid,            -- IN
+        meas_enable            => trv_delay_calib,          -- IN
+        ssp_offset             => drv_ssp_offset,           -- IN                    
+        ssp_delay_select       => drv_ssp_delay_select,     -- IN
         
-        ssp_offset             => drv_ssp_offset,                                
-        ssp_delay_select       => drv_ssp_delay_select,
-        trv_meas_progress      => open,
-        trv_delay_shadowed     => trv_delay,
-        ssp_delay_shadowed     => ssp_delay        
+        trv_meas_progress      => open,                     -- OUT
+        trv_delay_shadowed     => trv_delay,                -- OUT
+        ssp_delay_shadowed     => ssp_delay                 -- OUT
     );
 
     
@@ -344,31 +350,30 @@ begin
     ---------------------------------------------------------------------------
     -- Tripple sampling majority selection
     ---------------------------------------------------------------------------
-    trs_maj_dec_comp : majority_decoder_3
+    trs_maj_dec_inst : majority_decoder_3
     port map(
-        input   => trs_reg,
-        output  => CAN_rx_trs_majority
+        input   => trs_reg,             -- IN
+        
+        output  => CAN_rx_trs_majority  -- OUT
     );
 
 
     ---------------------------------------------------------------------------
     -- Edge detector on TX, RX Data
     ---------------------------------------------------------------------------
-    data_edge_detector_comp : data_edge_detector
+    data_edge_detector_inst : data_edge_detector
     generic map(
-        reset_polarity      => G_RESET_POLARITY,
-        tx_edge_pipeline    => true,
-        rx_edge_pipeline    => true
+        G_RESET_POLARITY    => G_RESET_POLARITY
     )
     port map(
-        clk_sys             => clk_sys,
-        res_n               => res_n,
-        tx_data             => data_tx,
-        rx_data             => CAN_rx_i,
-        prev_rx_sample      => prev_sample,
+        clk_sys             => clk_sys,         -- IN
+        res_n               => res_n,           -- IN
+        tx_data             => data_tx,         -- IN
+        rx_data             => CAN_rx_i,        -- IN
+        prev_rx_sample      => prev_sample,     -- IN
         
-        tx_edge             => edge_tx_valid,
-        rx_edge             => edge_rx_valid
+        tx_edge             => edge_tx_valid,   -- OUT
+        rx_edge             => edge_rx_valid    -- OUT
     );
 
 
@@ -382,7 +387,7 @@ begin
     ----------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!
     ----------------------------------------------------------------------------
-    shift_regs_rst_reg_comp : dff_arst
+    shift_regs_rst_reg_inst : dff_arst
     generic map(
         reset_polarity     => G_RESET_POLARITY,
         rst_val            => '1'
@@ -391,12 +396,13 @@ begin
         -- Keep without reset! We can't use res_n to avoid reset recovery!
         -- This does not mind, since stable value will be here one clock cycle
         -- after reset by res_n.
-        arst               => '1',
-        clk                => sys_clk,
+        arst               => '1',                  -- IN
+        clk                => sys_clk,              -- IN
 
-        input              => shift_regs_res_d,
-        load               => '0',
-        output             => shift_regs_res_q
+        input              => shift_regs_res_d,     -- IN
+        load               => '0',                  -- IN
+        
+        output             => shift_regs_res_q      -- OUT
     );
 
 
@@ -404,23 +410,27 @@ begin
     -- Shift register for secondary sampling point. Normal sample point trigger
     -- is shifted into shift register to generate delayed sampling point.
     ----------------------------------------------------------------------------
-    ssp_shift_reg_comp : shift_reg
+    ssp_shift_reg_inst : shift_reg
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        reset_value        => C_SSP_SHIFT_RST_VAL,
-        width              => G_SSP_SHIFT_LENGTH,
-        shift_down         => false
+        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RESET_VALUE        => C_SSP_SHIFT_RST_VAL,
+        G_WIDTH              => G_SSP_SHIFT_LENGTH,
+        G_SHIFT_DOWN         => false
     )
     port map(
-        clk                => clk_sys,
-        res_n              => shift_regs_res_q,
+        clk                => clk_sys,              -- IN
+        res_n              => shift_regs_res_q,     -- IN
 
-        input              => sample_dbt,
-        enable             => '1',
+        input              => sample_dbt,           -- IN
+        enable             => ssp_sr_ce,            -- IN
 
-        reg_stat           => sample_sec_shift,
-        output             => open
+        reg_stat           => sample_sec_shift,     -- OUT
+        output             => open                  -- OUT
     );
+
+    -- Secondary sampling point shift register clock enable
+    ssp_sr_ce <= '1' when (sp_control = SECONDARY_SAMPLE) else
+                 '0';
 
     ----------------------------------------------------------------------------
     -- Secondary sampling point address decoder. Secondary sampling point
@@ -435,19 +445,20 @@ begin
     -- This gets the TX data which correspond to the RX Bit in Secondary
     -- sampling point.
     ----------------------------------------------------------------------------
-    tx_data_cache_comp : tx_data_cache
+    tx_data_cache_inst : tx_data_cache
     generic map(
-        reset_polarity    => G_RESET_POLARITY,
-        tx_cache_depth    => G_TX_CACHE_DEPTH,
-        tx_cache_res_val  => RECESSIVE
+        G_RESET_POLARITY    => G_RESET_POLARITY,
+        G_TX_CACHE_DEPTH    => G_TX_CACHE_DEPTH,
+        G_TX_CACHE_RES_VAL  => RECESSIVE
     )
     port map(
-        clk_sys           => clk_sys,
-        res_n             => shift_regs_res_q,
-        write             => sample_dbt,
-        read              => sample_sec,
-        data_in           => data_tx,
-        data_out          => data_tx_delayed
+        clk_sys           => clk_sys,               -- IN
+        res_n             => shift_regs_res_q,      -- IN
+        write             => sample_dbt,            -- IN
+        read              => sample_sec,            -- IN
+        data_in           => data_tx,               -- IN
+        
+        data_out          => data_tx_delayed        -- OUT
     );
 
 
@@ -475,24 +486,24 @@ begin
     -- desired then majority out of whole shift register is selected as sampled
     -- value!
     ----------------------------------------------------------------------------
-    trs_shift_reg_comp : shift_reg_preload
+    trs_shift_reg_inst : shift_reg_preload
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        reset_value        => "000",
-        width              => 3,
-        shift_down         => false
+        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RESET_VALUE        => "000",
+        G_WIDTH              => 3,
+        G_SHIFT_DOWN         => false
     )
     port map(
-        clk                => clk_sys,
-        res_n              => res_n,
+        clk                => clk_sys,      -- IN
+        res_n              => res_n,        -- IN
         
-        input              => CAN_rx_i,
-        preload            => '0',
-        preload_val        => "000",
-        enable             => '1',
+        input              => CAN_rx_i,     -- IN
+        preload            => '0',          -- IN
+        preload_val        => "000",        -- IN
+        enable             => '1',          -- IN
 
-        reg_stat           => trs_reg,
-        output             => open
+        reg_stat           => trs_reg,      -- OUT
+        output             => open          -- OUT
     );
 
 
@@ -506,44 +517,46 @@ begin
     ---------------------------------------------------------------------------
     -- Bit error detector
     ---------------------------------------------------------------------------
-    bit_error_detector_comp : bit_error_detector
+    bit_error_detector_inst : bit_error_detector
     generic map(
-         reset_polarity     => G_RESET_POLARITY
+         G_RESET_POLARITY   => G_RESET_POLARITY
     )
     port map(
-        clk_sys             => clk_sys,
-        res_n               => res_n,
-        drv_ena             => drv_ena,
-        sp_control          => sp_control,
-        sample_nbt          => sample_nbt,
-        sample_dbt          => sample_dbt,
-        sample_sec          => sample_sec_i,
-        data_tx             => data_tx,
-        data_tx_delayed     => data_tx_delayed,
-        data_rx_nbt         => data_rx_nbt,
-        can_rx_i            => can_rx_i,
-        bit_error           => bit_Error
-        );
+        clk_sys             => clk_sys,             -- IN
+        res_n               => res_n,               -- IN
+        drv_ena             => drv_ena,             -- IN
+        sp_control          => sp_control,          -- IN
+        sample_nbt          => sample_nbt,          -- IN
+        sample_dbt          => sample_dbt,          -- IN
+        sample_sec          => sample_sec_i,        -- IN
+        data_tx             => data_tx,             -- IN
+        data_tx_delayed     => data_tx_delayed,     -- IN
+        data_rx_nbt         => data_rx_nbt,         -- IN
+        can_rx_i            => can_rx_i,            -- IN
+        
+        bit_error           => bit_Error            -- OUT
+    );
 
     ----------------------------------------------------------------------------
     -- Sampling of bus value
     ----------------------------------------------------------------------------
-    sample_mux_comp : sample_mux
+    sample_mux_inst : sample_mux
     generic map(
-        reset_polarity         => G_RESET_POLARITY
+        G_RESET_POLARITY       => G_RESET_POLARITY
     )
     port map(
-        clk_sys                => clk_sys,
-        res_n                  => res_n, 
-        drv_ena                => drv_ena,
-        sp_control             => sp_control,
-        sample_nbt             => sample_nbt,
-        sample_dbt             => sample_dbt,
-        sample_sec             => sample_sec_i,
-        data_rx_nbt            => data_rx_nbt,
-        can_rx_i               => can_rx_i,
-        prev_sample            => prev_sample,
-        data_rx                => data_rx
+        clk_sys                => clk_sys,          -- IN
+        res_n                  => res_n,            -- IN
+        drv_ena                => drv_ena,          -- IN
+        sp_control             => sp_control,       -- IN
+        sample_nbt             => sample_nbt,       -- IN
+        sample_dbt             => sample_dbt,       -- IN
+        sample_sec             => sample_sec_i,     -- IN
+        data_rx_nbt            => data_rx_nbt,      -- IN
+        can_rx_i               => can_rx_i,         -- IN
+        
+        prev_sample            => prev_sample,      -- OUT
+        data_rx                => data_rx           -- OUT
     );
 
     -- Output data propagation - Pipe directly - no delay
