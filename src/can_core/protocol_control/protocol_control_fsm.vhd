@@ -68,10 +68,6 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity protocol_control_fsm is
-    generic(
-        -- Width of control counter
-        G_CTRL_CTR_WIDTH        :     natural := 9
-    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -269,8 +265,8 @@ entity protocol_control_fsm is
         -- Control counter byte index within a memory word
         ctrl_counted_byte_index :in    std_logic_vector(1 downto 0);
         
-        -- Control counter value
-        ctrl_ctr_val    :in    std_logic_vector(G_CTRL_CTR_WIDTH - 1 downto 0);
+        -- Control counter - TXT Buffer memory index
+        ctrl_ctr_mem_index      :in    std_logic_vector(4 downto 0);
 
         -----------------------------------------------------------------------
         -- Reintegration counter interface
@@ -1551,11 +1547,9 @@ begin
                 -- provides data on its output! Counter is divided by 32 since
                 -- each memory word contains 32 bits!
                 if (is_transmitter = '1') then
-                    txt_buf_ptr_d <= 
-                        to_integer(unsigned(ctrl_ctr_val(
-                            G_CTRL_CTR_WIDTH - 1 downto 5)) + 5);
+                    txt_buf_ptr_d <= to_integer(unsigned(ctrl_ctr_mem_index));
                 end if;
-                
+
                 if (ctrl_ctr_zero = '1') then
                     if (drv_fd_type = ISO_FD) then
                         ctrl_count_pload_val <= C_STUFF_COUNT_DURATION;

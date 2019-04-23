@@ -101,16 +101,19 @@ entity control_counter is
         -- Status signals
         -----------------------------------------------------------------------
         -- Control counter is equal to zero
-        ctrl_ctr_zero         :out std_logic;
+        ctrl_ctr_zero           :out std_logic;
 
         -- Control counter is equal to one
-        ctrl_ctr_one          :out std_logic;
+        ctrl_ctr_one            :out std_logic;
 
         -- Control counter counted multiple of 8 bits
-        ctrl_counted_byte     :out std_logic;
+        ctrl_counted_byte       :out std_logic;
         
         -- Control counter byte index within a memory word
-        ctrl_counted_byte_index   :out std_logic_vector(1 downto 0)
+        ctrl_counted_byte_index :out std_logic_vector(1 downto 0);
+        
+        -- Index of memory word in TXT Buffer
+        ctrl_ctr_mem_index      :out std_logic_vector(4 downto 0)
     );
 end entity;
 
@@ -192,6 +195,8 @@ begin
         end if;
     end process;
 
+    ctrl_ctr_mem_index <= std_logic_vector(unsigned(ctrl_ctr_q(
+                            G_CTRL_CTR_WIDTH - 1 downto 5)) + 5);
 
     ---------------------------------------------------------------------------
     -- Assertions
