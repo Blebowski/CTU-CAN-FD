@@ -221,11 +221,12 @@ begin
         rst_val            => '0'
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
-        input              => set_err_active,
-        load               => '1',
-        output             => set_err_active_q
+        arst               => res_n,                -- IN
+        clk                => clk_sys,              -- IN
+        input              => set_err_active,       -- IN
+        load               => '1',                  -- IN
+        
+        output             => set_err_active_q      -- OUT
     );
     
     ---------------------------------------------------------------------------
@@ -236,22 +237,22 @@ begin
         G_RESET_POLARITY       => G_RESET_POLARITY
     )
     port map(
-        clk_sys                => clk_sys,
-        res_n                  => res_n,
+        clk_sys                => clk_sys,                  -- IN
+        res_n                  => res_n,                    -- IN
 
-        ewl                    => drv_ewl,
-        erp                    => drv_erp,
+        ewl                    => drv_ewl,                  -- IN
+        erp                    => drv_erp,                  -- IN
 
-        set_err_active         => set_err_active_q,       
-        tx_err_ctr             => tx_err_ctr_i,
-        rx_err_ctr             => rx_err_ctr_i,
+        set_err_active         => set_err_active_q,         -- IN
+        tx_err_ctr             => tx_err_ctr_i,             -- IN
+        rx_err_ctr             => rx_err_ctr_i,             -- IN
 
-        is_err_active          => is_err_active,
-        is_err_passive         => is_err_passive,
-        is_bus_off             => is_bus_off,
+        is_err_active          => is_err_active,            -- OUT
+        is_err_passive         => is_err_passive,           -- OUT
+        is_bus_off             => is_bus_off,               -- OUT
        
-        error_passive_changed  => error_passive_changed,
-        error_warning_limit    => error_warning_limit
+        error_passive_changed  => error_passive_changed,    -- OUT
+        error_warning_limit    => error_warning_limit       -- OUT
     );
 
 
@@ -263,40 +264,40 @@ begin
         G_RESET_POLARITY       => G_RESET_POLARITY
     )
     port map(
-        clk_sys                => clk_sys,
-        res_n                  => res_n,
-        sp_control             => sp_control,
-        inc_one                => inc_one,
-        inc_eight              => inc_eight,
-        dec_one                => dec_one,
-        reset_err_counters     => set_err_active_q,
-        tx_err_ctr_pload       => drv_ctr_sel(0),
-        rx_err_ctr_pload       => drv_ctr_sel(1),
-        err_ctr_pload_val      => drv_ctr_val,
-        is_transmitter         => is_transmitter,
-        is_receiver            => is_receiver,
+        clk_sys                => clk_sys,              -- IN
+        res_n                  => res_n,                -- IN
+        sp_control             => sp_control,           -- IN
+        inc_one                => inc_one,              -- IN
+        inc_eight              => inc_eight,            -- IN
+        dec_one                => dec_one,              -- IN
+        reset_err_counters     => set_err_active_q,     -- IN
+        tx_err_ctr_pload       => drv_ctr_sel(0),       -- IN
+        rx_err_ctr_pload       => drv_ctr_sel(1),       -- IN
+        err_ctr_pload_val      => drv_ctr_val,          -- IN
+        is_transmitter         => is_transmitter,       -- IN
+        is_receiver            => is_receiver,          -- IN
 
-        rx_err_ctr             => rx_err_ctr_i,
-        tx_err_ctr             => tx_err_ctr_i,
-        norm_err_ctr           => norm_err_ctr,
-        data_err_ctr           => data_err_ctr
+        rx_err_ctr             => rx_err_ctr_i,         -- OUT
+        tx_err_ctr             => tx_err_ctr_i,         -- OUT
+        norm_err_ctr           => norm_err_ctr,         -- OUT
+        data_err_ctr           => data_err_ctr          -- OUT
     );
 
     fault_confinement_rules_inst : fault_confinement_rules
     port map(
-        is_transmitter         => is_transmitter,
-        is_receiver            => is_receiver,
-        error_detected         => error_detected,
-        err_ctrs_unchanged     => err_ctrs_unchanged,
-        primary_error          => primary_error,
-        act_err_ovr_flag       => act_err_ovr_flag,
-        err_delim_late         => err_delim_late,
-        tran_valid             => tran_valid,
-        rec_valid              => rec_valid,
+        is_transmitter         => is_transmitter,       -- IN
+        is_receiver            => is_receiver,          -- IN
+        error_detected         => error_detected,       -- IN
+        err_ctrs_unchanged     => err_ctrs_unchanged,   -- IN
+        primary_error          => primary_error,        -- IN
+        act_err_ovr_flag       => act_err_ovr_flag,     -- IN
+        err_delim_late         => err_delim_late,       -- IN
+        tran_valid             => tran_valid,           -- IN
+        rec_valid              => rec_valid,            -- IN
 
-        inc_one                => inc_one,
-        inc_eight              => inc_eight,
-        dec_one                => dec_one
+        inc_one                => inc_one,              -- OUT
+        inc_eight              => inc_eight,            -- OUT
+        dec_one                => dec_one               -- OUT
     );
 
 

@@ -266,27 +266,27 @@ begin
     ---------------------------------------------------------------------------
     int_module_gen : for i in 0 to G_INT_COUNT - 1 generate
         
-        int_module_comp : int_module
+        int_module_inst : int_module
         generic map(        
             G_RESET_POLARITY       => G_RESET_POLARITY,
             clear_priority         => int_clear_priority(i)
         )
         port map(
-            clk_sys                => clk_sys,
-            res_n                  => res_n,
+            clk_sys                => clk_sys,              -- IN
+            res_n                  => res_n,                -- IN
 
-            int_status_set         => int_input_active(i),
-            int_status_clear       => drv_int_vect_clr(i),
+            int_status_set         => int_input_active(i),  -- IN
+            int_status_clear       => drv_int_vect_clr(i),  -- IN
 
-            int_mask_set           => drv_int_mask_set(i),
-            int_mask_clear         => drv_int_mask_clr(i),
+            int_mask_set           => drv_int_mask_set(i),  -- IN
+            int_mask_clear         => drv_int_mask_clr(i),  -- IN
 
-            int_ena_set            => drv_int_ena_set(i),
-            int_ena_clear          => drv_int_ena_clr(i),
+            int_ena_set            => drv_int_ena_set(i),   -- IN
+            int_ena_clear          => drv_int_ena_clr(i),   -- IN
 
-            int_status             => int_vect_i(i),
-            int_mask               => int_mask_i(i),
-            int_ena                => int_ena_i(i)
+            int_status             => int_vect_i(i),        -- OUT
+            int_mask               => int_mask_i(i),        -- OUT
+            int_ena                => int_ena_i(i)          -- OUT
         );
     end generate int_module_gen;
 

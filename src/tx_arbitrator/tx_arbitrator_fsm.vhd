@@ -71,6 +71,10 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity tx_arbitrator_fsm is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :in  std_logic := '0'
+    );
     port( 
         -----------------------------------------------------------------------
         -- Clock and Asynchronous reset
@@ -150,7 +154,7 @@ begin
   ------------------------------------------------------------------------------
   tx_arb_fsm_proc : process(clk_sys, res_n)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = G_RESET_POLARITY) then
         tx_arb_fsm            <= s_arb_sel_low_ts;
       
         fsm_wait_state        <= true;

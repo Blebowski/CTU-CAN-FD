@@ -496,53 +496,55 @@ begin
     ----------------------------------------------------------------------------
     -- RX Buffer FSM component
     ----------------------------------------------------------------------------
-    rx_buffer_fsm_comp : rx_buffer_fsm
+    rx_buffer_fsm_inst : rx_buffer_fsm
     generic map(
         G_RESET_POLARITY    => G_RESET_POLARITY
     )
     port map(
-        clk_sys             => clk_sys,
-        res_n               => res_n,
-        store_metadata      => store_metadata,
-        store_data          => store_data,
-        rec_valid           => rec_valid,
-        rec_abort           => rec_abort,
-        sof_pulse           => sof_pulse,
-        drv_bus             => drv_bus,
-        write_raw_intent    => write_raw_intent,
-        write_extra_ts      => write_extra_ts,
-        store_extra_ts_end  => store_extra_ts_end,
-        data_selector       => data_selector,
-        store_extra_wr_ptr  => store_extra_wr_ptr,
-        inc_extra_wr_ptr    => inc_extra_wr_ptr,
-        reset_overrun_flag  => reset_overrun_flag
+        clk_sys             => clk_sys,             -- IN
+        res_n               => res_n,               -- IN
+        store_metadata      => store_metadata,      -- IN
+        store_data          => store_data,          -- IN
+        rec_valid           => rec_valid,           -- IN
+        rec_abort           => rec_abort,           -- IN
+        sof_pulse           => sof_pulse,           -- IN
+        drv_bus             => drv_bus,             -- IN
+        
+        write_raw_intent    => write_raw_intent,    -- OUT
+        write_extra_ts      => write_extra_ts,      -- OUT
+        store_extra_ts_end  => store_extra_ts_end,  -- OUT
+        data_selector       => data_selector,       -- OUT
+        store_extra_wr_ptr  => store_extra_wr_ptr,  -- OUT
+        inc_extra_wr_ptr    => inc_extra_wr_ptr,    -- OUT
+        reset_overrun_flag  => reset_overrun_flag   -- OUT
     );
 
 
     ----------------------------------------------------------------------------
     -- RX Buffer Memory pointers
     ----------------------------------------------------------------------------
-    rx_buffer_pointers_comp : rx_buffer_pointers
+    rx_buffer_pointers_inst : rx_buffer_pointers
     generic map(
         G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE
     )
     port map(
-        clk_sys                 => clk_sys,
-        res_n                   => res_n,
-        rec_abort               => rec_abort,
-        commit_rx_frame         => commit_rx_frame,
-        write_raw_OK            => write_raw_OK,
-        commit_overrun_abort    => commit_overrun_abort,
-        store_extra_wr_ptr      => store_extra_wr_ptr,
-        inc_extra_wr_ptr        => inc_extra_wr_ptr,
-        read_increment          => read_increment,
-        drv_bus                 => drv_bus,
-        read_pointer            => read_pointer,
-        read_pointer_inc_1      => read_pointer_inc_1,
-        write_pointer           => write_pointer,
-        write_pointer_raw       => write_pointer_raw,
-        write_pointer_extra_ts  => write_pointer_extra_ts,
-        rx_mem_free_int         => rx_mem_free_int
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n,                   -- IN
+        rec_abort               => rec_abort,               -- IN
+        commit_rx_frame         => commit_rx_frame,         -- IN
+        write_raw_OK            => write_raw_OK,            -- IN
+        commit_overrun_abort    => commit_overrun_abort,    -- IN
+        store_extra_wr_ptr      => store_extra_wr_ptr,      -- IN
+        inc_extra_wr_ptr        => inc_extra_wr_ptr,        -- IN
+        read_increment          => read_increment,          -- IN
+        drv_bus                 => drv_bus,                 -- IN
+        
+        read_pointer            => read_pointer,            -- OUT
+        read_pointer_inc_1      => read_pointer_inc_1,      -- OUT
+        write_pointer           => write_pointer,           -- OUT
+        write_pointer_raw       => write_pointer_raw,       -- OUT
+        write_pointer_extra_ts  => write_pointer_extra_ts,  -- OUT
+        rx_mem_free_int         => rx_mem_free_int          -- OUT
     );
 
 
@@ -835,23 +837,24 @@ begin
     ----------------------------------------------------------------------------
     -- RAM Memory of RX Buffer
     ----------------------------------------------------------------------------
-    rx_buf_RAM : inf_RAM_wrapper 
+    rx_buf_RAM_inst : inf_RAM_wrapper 
     generic map (
-        word_width           => 32,
-        depth                => G_RX_BUFF_SIZE,
-        address_width        => RAM_write_address'length,
-        reset_polarity       => G_RESET_POLARITY,
-        simulation_reset     => true,
-        sync_read            => true
+        G_WORD_WIDTH           => 32,
+        G_DEPTH                => G_RX_BUFF_SIZE,
+        G_ADDRESS_WIDTH        => RAM_write_address'length,
+        G_RESET_POLARITY       => G_RESET_POLARITY,
+        G_SIMULATION_RESET     => true,
+        G_SYNC_READ            => true
     )
     port map(
-        clk_sys              => clk_sys,
-        res_n                => res_n,
-        addr_A               => RAM_write_address,
-        write                => RAM_write, 
-        data_in              => memory_write_data,
-        addr_B               => RAM_read_address,
-        data_out             => RAM_data_out
+        clk_sys              => clk_sys,                -- IN
+        res_n                => res_n,                  -- IN
+        addr_A               => RAM_write_address,      -- IN
+        write                => RAM_write,              -- IN
+        data_in              => memory_write_data,      -- IN
+        addr_B               => RAM_read_address,       -- IN
+        
+        data_out             => RAM_data_out            -- OUT
     );
 
     -- Memory written either on regular write or Extra timestamp write

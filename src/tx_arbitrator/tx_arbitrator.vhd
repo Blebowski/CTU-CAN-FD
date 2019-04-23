@@ -154,8 +154,11 @@ use work.CAN_FD_frame_format.all;
 
 entity tx_arbitrator is
     generic(
+        -- Reset polarity
+        G_RESET_POLARITY    : std_logic := '0';
+        
         -- Number of TXT Buffers
-        buf_count   : natural range 1 to 8
+        G_TXT_BUF_COUNT     : natural range 1 to 8
     );
     port( 
         -----------------------------------------------------------------------
@@ -174,7 +177,7 @@ entity tx_arbitrator is
         txt_buf_in             :in txtb_output_type;
         
         -- TXT Buffer is ready, can be selected by TX Arbitrator
-        txt_buf_ready          :in std_logic_vector(buf_count - 1 downto 0);
+        txt_buf_ready          :in std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
         txtb_ptr               :out natural range 0 to 19;
@@ -240,7 +243,7 @@ architecture rtl of tx_arbitrator is
     -- Indicates the highest selected buffer and its validity from
     -- combinational priority decoder
     signal select_buf_avail           : std_logic;
-    signal select_buf_index           : natural range 0 to buf_count - 1;
+    signal select_buf_index           : natural range 0 to G_TXT_BUF_COUNT - 1;
    
     -- Input word from TXT Buffer !!!
     signal txtb_selected_input        : std_logic_vector(31 downto 0);
@@ -262,17 +265,17 @@ architecture rtl of tx_arbitrator is
     ---------------------------------------------------------------------------
   
     -- Registered values for detection of change
-    signal select_buf_index_reg       : natural range 0 to buf_count - 1;
+    signal select_buf_index_reg       : natural range 0 to G_TXT_BUF_COUNT - 1;
   
     -- Lower timestamp loaded from TXT Buffer
     signal ts_low_internal            : std_logic_vector(31 downto 0);
   
     -- Internal index of TXT Buffer stored at the time of buffer selection
-    signal int_txtb_index             : natural range 0 to buf_count - 1;
+    signal int_txtb_index             : natural range 0 to G_TXT_BUF_COUNT - 1;
   
     -- TXT Buffer internal index of last buffer that was locked
     -- From buffer change, Protocol control can erase retransmitt counter
-    signal last_txtb_index            : natural range 0 to buf_count - 1;
+    signal last_txtb_index            : natural range 0 to G_TXT_BUF_COUNT - 1;
   
     -- Pointer to TXT Buffer for loading CAN frame metadata and
     -- timstamp during the selection of TXT Buffer.
@@ -341,42 +344,44 @@ begin
   ------------------------------------------------------------------------------
   -- Priority decoder on TXT Buffers
   ------------------------------------------------------------------------------
-  priority_decoder_comp : priority_decoder 
+  priority_decoder_inst : priority_decoder 
   generic map(
-    buf_count       => buf_count
+     G_TXT_BUF_COUNT    => G_TXT_BUF_COUNT
   )
   port map( 
-     prio           => txt_buf_prio,
-     prio_valid     => txt_buf_ready,
-     output_valid   => select_buf_avail,
-     output_index   => select_buf_index
+     prio           => txt_buf_prio,        -- IN
+     prio_valid     => txt_buf_ready,       -- IN
+     
+     output_valid   => select_buf_avail,    -- OUT
+     output_index   => select_buf_index     -- OUT
   );
   
 
   ------------------------------------------------------------------------------
   -- TX Arbitrator FSM
   ------------------------------------------------------------------------------
-  tx_arbitrator_fsm_comp : tx_arbitrator_fsm
+  tx_arbitrator_fsm_inst : tx_arbitrator_fsm
+  generic map(
+    G_RESET_POLARITY     => G_RESET_POLARITY
+  )
   port map(
 
-    -- Inputs
-    clk_sys                => clk_sys,
-    res_n                  => res_n,
-    select_buf_avail       => select_buf_avail,
-    select_index_changed   => select_index_changed,
-    timestamp_valid        => timestamp_valid,
-    txt_hw_cmd             => txt_hw_cmd,
+    clk_sys                => clk_sys,                  -- IN
+    res_n                  => res_n,                    -- IN
+    select_buf_avail       => select_buf_avail,         -- IN
+    select_index_changed   => select_index_changed,     -- IN
+    timestamp_valid        => timestamp_valid,          -- IN
+    txt_hw_cmd             => txt_hw_cmd,               -- IN
 
-    -- Outputs
-    load_ts_lw_addr        => load_ts_lw_addr,
-    load_ts_uw_addr        => load_ts_uw_addr,
-    load_ffmt_w_addr       => load_ffmt_w_addr,
-    store_ts_l_w           => store_ts_l_w,
-    store_md_w             => store_md_w,
-    tx_arb_locked          => tx_arb_locked,
-    store_last_txtb_index  => store_last_txtb_index,
-    frame_valid_com_set    => frame_valid_com_set,
-    frame_valid_com_clear  => frame_valid_com_clear
+    load_ts_lw_addr        => load_ts_lw_addr,          -- OUT
+    load_ts_uw_addr        => load_ts_uw_addr,          -- OUT
+    load_ffmt_w_addr       => load_ffmt_w_addr,         -- OUT
+    store_ts_l_w           => store_ts_l_w,             -- OUT
+    store_md_w             => store_md_w,               -- OUT
+    tx_arb_locked          => tx_arb_locked,            -- OUT
+    store_last_txtb_index  => store_last_txtb_index,    -- OUT
+    frame_valid_com_set    => frame_valid_com_set,      -- OUT
+    frame_valid_com_clear  => frame_valid_com_clear     -- OUT
   );
     
 
@@ -455,7 +460,7 @@ begin
   ------------------------------------------------------------------------------
   low_ts_reg_proc : process(res_n, clk_sys)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = G_RESET_POLARITY) then
         ts_low_internal             <= (OTHERS => '0');
     elsif (rising_edge(clk_sys)) then
         if (store_ts_l_w = '1') then
@@ -470,7 +475,7 @@ begin
   ------------------------------------------------------------------------------
   meta_data_reg_proc : process(clk_sys, res_n)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = G_RESET_POLARITY) then
         tran_dlc_com                <= (OTHERS => '0');
         tran_is_rtr_com             <= '0';
         tran_ident_type_com         <= '0';
@@ -493,7 +498,7 @@ begin
   ------------------------------------------------------------------------------
   tran_frame_valid_com_proc : process(clk_sys, res_n)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = G_RESET_POLARITY) then
         tran_frame_valid_com        <= '0';
     elsif (rising_edge(clk_sys)) then
         if (frame_valid_com_set = '1') then
@@ -513,7 +518,7 @@ begin
   ------------------------------------------------------------------------------
   store_indices_proc : process(clk_sys, res_n)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = G_RESET_POLARITY) then
         last_txtb_index             <= 0;
         int_txtb_index              <= 0;
 
@@ -534,9 +539,9 @@ begin
     end if;
   end process;
 
-  txtb_changed        <= '0' when (last_txtb_index = int_txtb_index)
-                             else
-                         '1';
+  txtb_changed  <= '0' when (last_txtb_index = int_txtb_index)
+                       else
+                   '1';
 
 
   ------------------------------------------------------------------------------
@@ -546,7 +551,7 @@ begin
   ------------------------------------------------------------------------------
   sel_index_change_proc : process(clk_sys, res_n)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = G_RESET_POLARITY) then
         select_buf_index_reg  <= 0;
     elsif (rising_edge(clk_sys)) then
         select_buf_index_reg        <= select_buf_index;
@@ -564,7 +569,7 @@ begin
   ------------------------------------------------------------------------------
   store_meta_data_ptr_proc : process(clk_sys, res_n)
   begin
-    if (res_n = ACT_RESET) then
+    if (res_n = G_RESET_POLARITY) then
         txtb_pointer_meta           <= to_integer(unsigned(
                                         TIMESTAMP_L_W_ADR(11 downto 2)));
     elsif (rising_edge(clk_sys)) then

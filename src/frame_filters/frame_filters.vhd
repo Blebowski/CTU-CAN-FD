@@ -283,57 +283,61 @@ begin
     ---------------------------------------------------------------------------
     -- Filter instances
     ---------------------------------------------------------------------------
-    bit_filter_A_comp : bit_filter
+    bit_filter_A_inst : bit_filter
     generic map(
         width           => 29,
         is_present      => G_SUP_FILTA
     )
     port map(
-        filter_mask     => drv_filter_A_mask,
-        filter_value    => drv_filter_A_bits,
-        filter_input    => rec_ident_in,
-        enable          => filter_A_enable,
-        valid           => int_filter_A_valid
+        filter_mask     => drv_filter_A_mask,       -- IN
+        filter_value    => drv_filter_A_bits,       -- IN
+        filter_input    => rec_ident_in,            -- IN
+        enable          => filter_A_enable,         -- IN
+        
+        valid           => int_filter_A_valid       -- OUT
     );
 
-    bit_filter_B_comp : bit_filter
+    bit_filter_B_inst : bit_filter
     generic map(
         width           => 29,
         is_present      => G_SUP_FILTB
     )
     port map(
-        filter_mask     => drv_filter_B_mask,
-        filter_value    => drv_filter_B_bits,
-        filter_input    => rec_ident_in,
-        enable          => filter_B_enable,
-        valid           => int_filter_B_valid
+        filter_mask     => drv_filter_B_mask,       -- IN
+        filter_value    => drv_filter_B_bits,       -- IN
+        filter_input    => rec_ident_in,            -- IN
+        enable          => filter_B_enable,         -- IN
+        
+        valid           => int_filter_B_valid       -- OUT
     );
 
-    bit_filter_C_comp : bit_filter
+    bit_filter_C_inst : bit_filter
     generic map(
         width           => 29,
         is_present      => G_SUP_FILTC
     )
     port map(
-        filter_mask     => drv_filter_C_mask,
-        filter_value    => drv_filter_C_bits,
-        filter_input    => rec_ident_in,
-        enable          => filter_C_enable,
-        valid           => int_filter_C_valid
+        filter_mask     => drv_filter_C_mask,       -- IN
+        filter_value    => drv_filter_C_bits,       -- IN
+        filter_input    => rec_ident_in,            -- IN
+        enable          => filter_C_enable,         -- IN
+        
+        valid           => int_filter_C_valid       -- OUT
     );
    
                  
-    range_filter_comp : range_filter
+    range_filter_inst : range_filter
     generic map(
         width           => 29,
         is_present      => G_SUP_RANGE
     )
     port map(
-        filter_upp_th   => drv_filter_ran_hi_th,
-        filter_low_th   => drv_filter_ran_lo_th,
-        filter_input    => rec_ident_in,
-        enable          => filter_range_enable,
-        valid           => int_filter_ran_valid
+        filter_upp_th   => drv_filter_ran_hi_th,    -- IN
+        filter_low_th   => drv_filter_ran_lo_th,    -- IN
+        filter_input    => rec_ident_in,            -- IN
+        enable          => filter_range_enable,     -- IN
+        
+        valid           => int_filter_ran_valid     -- OUT
     );
 
  

@@ -69,6 +69,7 @@ use work.CAN_FD_frame_format.all;
 
 entity txt_buffer_fsm is
     generic(
+        -- Buffer ID
         G_ID                   :     natural
     );
     port(

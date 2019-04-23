@@ -255,7 +255,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit time config capture
     ---------------------------------------------------------------------------
-    bit_time_cfg_capture_comp : bit_time_cfg_capture
+    bit_time_cfg_capture_inst : bit_time_cfg_capture
     generic map (
         G_RESET_POLARITY    => G_RESET_POLARITY,
         G_TSEG1_NBT_WIDTH   => G_TSEG1_NBT_WIDTH,
@@ -268,45 +268,47 @@ begin
         G_SJW_DBT_WIDTH     => G_SJW_DBT_WIDTH
     )
     port map(
-        clk_sys    => clk_sys,
-        res_n      => res_n,
-        drv_bus    => drv_bus,
-        tseg1_nbt  => tseg1_nbt,
-        tseg2_nbt  => tseg2_nbt,
-        brp_nbt    => brp_nbt,
-        sjw_nbt    => sjw_nbt,
-        tseg1_dbt  => tseg1_dbt,
-        tseg2_dbt  => tseg2_dbt,
-        brp_dbt    => brp_dbt,
-        sjw_dbt    => sjw_dbt,
-        start_edge => start_edge
+        clk_sys    => clk_sys,      -- IN
+        res_n      => res_n,        -- IN
+        drv_bus    => drv_bus,      -- IN
+        
+        tseg1_nbt  => tseg1_nbt,    -- OUT
+        tseg2_nbt  => tseg2_nbt,    -- OUT
+        brp_nbt    => brp_nbt,      -- OUT
+        sjw_nbt    => sjw_nbt,      -- OUT
+        tseg1_dbt  => tseg1_dbt,    -- OUT
+        tseg2_dbt  => tseg2_dbt,    -- OUT
+        brp_dbt    => brp_dbt,      -- OUT
+        sjw_dbt    => sjw_dbt,      -- OUT
+        start_edge => start_edge    -- OUT
     );
 
     ---------------------------------------------------------------------------
     -- Synchronisation checker
     ---------------------------------------------------------------------------
-    synchronisation_checker_comp : synchronisation_checker
+    synchronisation_checker_inst : synchronisation_checker
     generic map(
         G_RESET_POLARITY    => G_RESET_POLARITY
     )
     port map(
-        clk_sys           => clk_sys,
-        res_n             => res_n,
-        sync_control      => sync_control,
-        sync_edge         => sync_edge,
-        no_pos_resync     => no_pos_resync,
-        segment_end       => segment_end,
-        is_tseg1          => is_tseg1,
-        is_tseg2          => is_tseg2,
-        resync_edge_valid => resync_edge_valid,
-        h_sync_edge_valid => h_sync_edge_valid
+        clk_sys           => clk_sys,               -- IN
+        res_n             => res_n,                 -- IN
+        sync_control      => sync_control,          -- IN
+        sync_edge         => sync_edge,             -- IN
+        no_pos_resync     => no_pos_resync,         -- IN
+        segment_end       => segment_end,           -- IN
+        is_tseg1          => is_tseg1,              -- IN
+        is_tseg2          => is_tseg2,              -- IN
+        
+        resync_edge_valid => resync_edge_valid,     -- OUT
+        h_sync_edge_valid => h_sync_edge_valid      -- OUT
     );
 
     
     ---------------------------------------------------------------------------
     -- Re-synchronisation (Nominal Bit Time)
     ---------------------------------------------------------------------------
-    resynchronisation_nbt_comp : resynchronisation
+    resynchronisation_nbt_inst : resynchronisation
     generic map(
         G_RESET_POLARITY       => G_RESET_POLARITY,
         G_SJW_WIDTH            => G_SJW_NBT_WIDTH,
@@ -315,47 +317,49 @@ begin
         G_BT_WIDTH             => C_BT_NBT_WIDTH
     )
     port map(
-        clk_sys              => clk_sys,
-        res_n                => res_n,
-        resync_edge_valid    => resync_edge_valid,
-        is_tseg1             => is_tseg1,
-        is_tseg2             => is_tseg2,
-        tseg_1               => tseg1_nbt,
-        tseg_2               => tseg2_nbt,
-        sjw                  => sjw_nbt,
-        start_edge           => start_edge,
-        bt_counter           => bt_counter_nbt,
-        segm_end             => segment_end,
-        h_sync_valid         => h_sync_valid,
-        exit_segm_req        => exit_segm_req_nbt
+        clk_sys              => clk_sys,            -- IN
+        res_n                => res_n,              -- IN
+        resync_edge_valid    => resync_edge_valid,  -- IN
+        is_tseg1             => is_tseg1,           -- IN
+        is_tseg2             => is_tseg2,           -- IN
+        tseg_1               => tseg1_nbt,          -- IN
+        tseg_2               => tseg2_nbt,          -- IN
+        sjw                  => sjw_nbt,            -- IN
+        start_edge           => start_edge,         -- IN
+        bt_counter           => bt_counter_nbt,     -- IN
+        segm_end             => segment_end,        -- IN
+        h_sync_valid         => h_sync_valid,       -- IN
+        
+        exit_segm_req        => exit_segm_req_nbt   -- OUT
     );
     
     
     ---------------------------------------------------------------------------
     -- Bit Time counter (Nominal Bit Time)
     ---------------------------------------------------------------------------
-    bit_time_counters_nbt_comp : bit_time_counters
+    bit_time_counters_nbt_inst : bit_time_counters
     generic map(
         G_RESET_POLARITY  => G_RESET_POLARITY,
         G_BT_WIDTH        => C_BT_NBT_WIDTH,
         G_TQ_WIDTH        => G_BRP_NBT_WIDTH
     )
     port map(
-        clk_sys         => clk_sys,
-        res_n           => res_n,
-        prescaler       => brp_nbt,
-        tq_reset        => bt_ctr_clear,
-        bt_reset        => bt_ctr_clear,
-        drv_ena         => drv_ena,
-        tq_edge         => tq_edge_nbt,
-        bt_counter      => bt_counter_nbt
+        clk_sys         => clk_sys,         -- IN
+        res_n           => res_n,           -- IN
+        prescaler       => brp_nbt,         -- IN
+        tq_reset        => bt_ctr_clear,    -- IN
+        bt_reset        => bt_ctr_clear,    -- IN
+        drv_ena         => drv_ena,         -- IN
+        
+        tq_edge         => tq_edge_nbt,     -- OUT     
+        bt_counter      => bt_counter_nbt   -- OUT
     );
     
 
     ---------------------------------------------------------------------------
     -- Re-synchronisation (Data Bit Time)
     ---------------------------------------------------------------------------
-    resynchronisation_dbt_comp : resynchronisation
+    resynchronisation_dbt_inst : resynchronisation
     generic map(
         G_RESET_POLARITY       => G_RESET_POLARITY,
         G_SJW_WIDTH            => G_SJW_DBT_WIDTH,
@@ -364,102 +368,107 @@ begin
         G_BT_WIDTH             => C_BT_DBT_WIDTH
     )
     port map(
-        clk_sys              => clk_sys,
-        res_n                => res_n,
-        resync_edge_valid    => resync_edge_valid,
-        is_tseg1             => is_tseg1,
-        is_tseg2             => is_tseg2,
-        tseg_1               => tseg1_dbt,
-        tseg_2               => tseg2_dbt,
-        sjw                  => sjw_dbt,
-        start_edge           => start_edge,
-        bt_counter           => bt_counter_dbt,
-        segm_end             => segment_end,
-        h_sync_valid         => h_sync_valid,
-        exit_segm_req        => exit_segm_req_dbt
+        clk_sys              => clk_sys,            -- IN
+        res_n                => res_n,              -- IN
+        resync_edge_valid    => resync_edge_valid,  -- IN
+        is_tseg1             => is_tseg1,           -- IN
+        is_tseg2             => is_tseg2,           -- IN
+        tseg_1               => tseg1_dbt,          -- IN
+        tseg_2               => tseg2_dbt,          -- IN
+        sjw                  => sjw_dbt,            -- IN
+        start_edge           => start_edge,         -- IN
+        bt_counter           => bt_counter_dbt,     -- IN
+        segm_end             => segment_end,        -- IN
+        h_sync_valid         => h_sync_valid,       -- IN
+        
+        exit_segm_req        => exit_segm_req_dbt   -- OUT
     );
     
     
     ---------------------------------------------------------------------------
     -- Bit Time counter (Data Bit Time)
     ---------------------------------------------------------------------------
-    bit_time_counters_dbt_comp : bit_time_counters
+    bit_time_counters_dbt_inst : bit_time_counters
     generic map(
         g_reset_polarity  => G_RESET_POLARITY,
         G_BT_WIDTH        => C_BT_DBT_WIDTH,
         G_TQ_WIDTH        => G_BRP_DBT_WIDTH
     )
     port map(
-        clk_sys         => clk_sys,
-        res_n           => res_n,
-        prescaler       => brp_dbt,
-        tq_reset        => bt_ctr_clear,
-        bt_reset        => bt_ctr_clear,
-        drv_ena         => drv_ena,
-        tq_edge         => tq_edge_dbt,
-        bt_counter      => bt_counter_dbt
+        clk_sys         => clk_sys,         -- IN
+        res_n           => res_n,           -- IN
+        prescaler       => brp_dbt,         -- IN
+        tq_reset        => bt_ctr_clear,    -- IN
+        bt_reset        => bt_ctr_clear,    -- IN
+        drv_ena         => drv_ena,         -- IN
+        
+        tq_edge         => tq_edge_dbt,     -- OUT
+        bt_counter      => bt_counter_dbt   -- OUT
     );
 
     ---------------------------------------------------------------------------
     -- End of Segment detector
     ---------------------------------------------------------------------------
-    segment_end_detector_comp : segment_end_detector
+    segment_end_detector_inst : segment_end_detector
     generic map(
         g_reset_polarity   => G_RESET_POLARITY
     )
     port map(
-        clk_sys            => clk_sys,
-        res_n              => res_n,
-        sp_control         => sp_control,
-        h_sync_edge_valid  => h_sync_edge_valid, 
-        exit_segm_req_nbt  => exit_segm_req_nbt,
-        exit_segm_req_dbt  => exit_segm_req_dbt,
-        is_tseg1           => is_tseg1,
-        is_tseg2           => is_tseg2,
-        tq_edge_nbt        => tq_edge_nbt,
-        tq_edge_dbt        => tq_edge_dbt,
-        segm_end           => segment_end,
-        h_sync_valid       => h_sync_valid,
-        bt_ctr_clear       => bt_ctr_clear
+        clk_sys            => clk_sys,              -- IN
+        res_n              => res_n,                -- IN
+        sp_control         => sp_control,           -- IN
+        h_sync_edge_valid  => h_sync_edge_valid,    -- IN
+        exit_segm_req_nbt  => exit_segm_req_nbt,    -- IN
+        exit_segm_req_dbt  => exit_segm_req_dbt,    -- IN
+        is_tseg1           => is_tseg1,             -- IN
+        is_tseg2           => is_tseg2,             -- IN
+        tq_edge_nbt        => tq_edge_nbt,          -- IN
+        tq_edge_dbt        => tq_edge_dbt,          -- IN
+        
+        segm_end           => segment_end,          -- OUT
+        h_sync_valid       => h_sync_valid,         -- OUT
+        bt_ctr_clear       => bt_ctr_clear          -- OUT
     );
 
 
     ---------------------------------------------------------------------------
     -- Bit time FSM
     ---------------------------------------------------------------------------
-    bit_time_fsm_comp : bit_time_fsm
+    bit_time_fsm_inst : bit_time_fsm
     generic map(
         G_RESET_POLARITY => G_RESET_POLARITY
     )
     port map(
-        clk_sys          => clk_sys,
-        res_n            => res_n,
-        segm_end         => segment_end,
-        h_sync_valid     => h_sync_valid,
-        drv_ena          => drv_ena,
-        is_tseg1         => is_tseg1,
-        is_tseg2         => is_tseg2,
-        sample_req       => sample_req,
-        sync_req         => sync_req,
-        bt_FSM_out       => bt_FSM_out
+        clk_sys          => clk_sys,            -- IN
+        res_n            => res_n,              -- IN
+        segm_end         => segment_end,        -- IN
+        h_sync_valid     => h_sync_valid,       -- IN
+        drv_ena          => drv_ena,            -- IN
+        is_tseg1         => is_tseg1,           -- IN
+        is_tseg2         => is_tseg2,           -- IN
+        sample_req       => sample_req,         -- IN
+        sync_req         => sync_req,           -- IN
+        
+        bt_FSM_out       => bt_FSM_out          -- OUT
     );
     
     ---------------------------------------------------------------------------
     -- Trigger generator
     ---------------------------------------------------------------------------
-    trigger_generator_comp : trigger_generator
+    trigger_generator_inst : trigger_generator
     generic map(
         G_RESET_POLARITY        => G_RESET_POLARITY,
         G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )
     port map(
-        clk_sys     => clk_sys,
-        res_n       => res_n,
-        sample_req  => sample_req,
-        sync_req    => sync_req,
-        sp_control  => sp_control,
-        rx_triggers => rx_triggers,
-        tx_trigger  => tx_trigger
+        clk_sys     => clk_sys,         -- IN
+        res_n       => res_n,           -- IN
+        sample_req  => sample_req,      -- IN
+        sync_req    => sync_req,        -- IN
+        sp_control  => sp_control,      -- IN
+        
+        rx_triggers => rx_triggers,     -- OUT
+        tx_trigger  => tx_trigger       -- OUT
     );
     
     ---------------------------------------------------------------------------
