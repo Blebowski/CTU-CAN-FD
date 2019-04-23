@@ -69,51 +69,55 @@ use work.CAN_FD_frame_format.all;
 
 entity txt_buffer_fsm is
     generic(
-        constant ID                   :     natural
+        G_ID                   :     natural
     );
     port(
         ------------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
-        -- SW Interface (Memory registers)
+        -- Memory registers interface
         ------------------------------------------------------------------------
-        signal txt_sw_cmd             :in   txt_sw_cmd_type;
-        signal sw_cbs                 :in   std_logic;
+        -- SW commands
+        txt_sw_cmd             :in   txt_sw_cmd_type;
+        
+        -- SW buffer select
+        sw_cbs                 :in   std_logic;
 
         ------------------------------------------------------------------------   
-        -- HW Interface (CAN Core
+        -- CAN Core interface
         ------------------------------------------------------------------------
-        signal txt_hw_cmd             :in   txt_hw_cmd_type;  
-        signal hw_cbs                 :in   std_logic;
+        -- HW Commands
+        txt_hw_cmd             :in   txt_hw_cmd_type;  
+        
+        -- HW Buffer select
+        hw_cbs                 :in   std_logic;
     
-        ------------------------------------------------------------------------
-        -- Other control signals
-        ------------------------------------------------------------------------
-        signal bus_off_start          :in   std_logic;
+        -- Bus-off start: TODO!!
+        bus_off_start          :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Status signals
         ------------------------------------------------------------------------
-
         -- Buffer accessible from SW
-        signal txtb_user_accessible   :out  std_logic;
+        txtb_user_accessible   :out  std_logic;
 
-        -- HW Command applied on TXT Buffer -> Interrupt!
-        signal txtb_hw_cmd_int        :out  std_logic;
+        -- HW Command applied on TXT Buffer.
+        txtb_hw_cmd_int        :out  std_logic;
 
         -- Buffer status (FSM state) encoded for reading by SW from registers!
-        signal txtb_state             :out  std_logic_vector(3 downto 0);
+        txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is ready to be locked by CAN Core for transmission
-        signal txt_buf_ready          :out  std_logic
-    );
-             
+        txt_buf_ready          :out  std_logic
+    );             
 end entity;
-
 
 architecture rtl of txt_buffer_fsm is
 
