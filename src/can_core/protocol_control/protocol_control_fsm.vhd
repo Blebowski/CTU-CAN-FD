@@ -415,6 +415,9 @@ entity protocol_control_fsm is
 
         -- CRC calculation enabled
         crc_enable              :out   std_logic;
+        
+        -- CRC calculation - speculative enable
+        crc_spec_enable         :out   std_logic;
 
         -- Bit error enable
         bit_error_enable        :out   std_logic;
@@ -521,12 +524,6 @@ architecture rtl of protocol_control_fsm is
     signal tx_load_crc_i             :  std_logic;
 
     signal tx_shift_ena_i            :  std_logic;
-
-    -- CRC Enable, disalbe manipulation
-    signal crc_enable_d              :  std_logic;
-    signal crc_enable_q              :  std_logic;
-    signal crc_enable_set            :  std_logic;
-    signal crc_enable_clear          :  std_logic;
 
     -- Internal signals for detected errors
     signal form_error_i              :  std_logic;
@@ -1160,6 +1157,10 @@ begin
         -- TXT Buffer pointer
         txt_buf_ptr_d <= 0;
 
+        -- CRC control
+        crc_enable <= '0';
+        crc_spec_enable <= '0';
+
         if (err_frm_req = '1') then
             ctrl_count_pload_i   <= '1';
             ctrl_count_pload_val <= C_ERR_FLG_DURATION;
@@ -1223,6 +1224,7 @@ begin
                 sof_pulse <= '1';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_SOF;
+                crc_enable <= '1';
                 
                 if (rx_data = RECESSIVE) then
                     form_error_i <= '1';
@@ -1238,6 +1240,7 @@ begin
                 is_arbitration <= '1';
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_ARB;
+                crc_enable <= '1';
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
@@ -1264,7 +1267,8 @@ begin
             when s_pc_rtr_srr_r1 =>
                 is_arbitration <= '1';
                 bit_err_disable <= '1';
-
+                crc_enable <= '1';
+                
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
                     retr_ctr_add <= '1';
@@ -1312,8 +1316,9 @@ begin
                     end if;
                 end if;
                 
-                rx_store_ide_i            <= '1';
-    
+                rx_store_ide_i <= '1';
+                crc_enable <= '1';
+                
                 if (ide_is_arbitration = '1') then
                     is_arbitration <= '1';
                     bit_err_disable <= '1';
@@ -1343,6 +1348,7 @@ begin
                 tx_shift_ena_i  <= '1';
                 err_pos <= ERC_POS_ARB;
                 bit_err_disable <= '1';
+                crc_enable <= '1';
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
@@ -1369,7 +1375,8 @@ begin
             when s_pc_rtr_r1 =>
                 is_arbitration <= '1';
                 bit_err_disable <= '1';
-
+                crc_enable <= '1';
+                
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
                     retr_ctr_add <= '1';
@@ -1400,6 +1407,8 @@ begin
             when s_pc_edl_r1 =>
                 rx_store_edl_i <= '1';
                 err_pos <= ERC_POS_CTRL;
+                crc_enable <= '1';
+                
                 if (is_transmitter = '1') then
                     if (tran_frame_type = NORMAL_CAN) then
                         tx_dominant <= '1';
@@ -1417,7 +1426,8 @@ begin
                 tx_load_dlc_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 trv_delay_calib <= '1';
-                    
+                crc_enable <= '1';
+                
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
                 end if;
@@ -1447,6 +1457,7 @@ begin
                 trv_delay_calib <= '1';
                 err_pos <= ERC_POS_CTRL;
                 perform_hsync <= '1';
+                crc_enable <= '1';
                 
             -------------------------------------------------------------------
             -- EDL/r0 bit in CAN 2.0 and CAN FD Frames with BASE identifier
@@ -1461,6 +1472,7 @@ begin
             
                 rx_store_edl_i <= '1';
                 err_pos <= ERC_POS_CTRL;
+                crc_enable <= '1';
                 
                 if (is_transmitter = '1' and tran_frame_type = NORMAL_CAN) then
                     tx_dominant <= '1';
@@ -1474,6 +1486,7 @@ begin
             when s_pc_brs =>
                 rx_store_brs_i <= '1';
                 err_pos <= ERC_POS_CTRL;
+                crc_enable <= '1';
                 
                 if (is_transmitter = '1' and tran_brs = BR_NO_SHIFT) then
                     tx_dominant <= '1';
@@ -1492,6 +1505,7 @@ begin
                 ctrl_count_pload_val <= C_EXT_ID_DURATION;
                 rx_store_esi_i <= '1';
                 err_pos <= ERC_POS_CTRL;
+                crc_enable <= '1';
                 
                 if (is_transmitter = '1' and is_err_active = '1') then
                     tx_dominant <= '1';
@@ -1505,6 +1519,7 @@ begin
                 rx_shift_ena <= '1';
                 tx_shift_ena_i  <= '1';
                 err_pos <= ERC_POS_CTRL;
+                crc_enable <= '1';
                 
                 -- Address first Data Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! Do it only when tran-
@@ -1541,6 +1556,7 @@ begin
                 rx_shift_in_sel <= '1';
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_DATA;
+                crc_enable <= '1';
                 
                 -- Address next word (the one after actually transmitted one),
                 -- so that when current word ends, TXT Buffer RAM already
@@ -1578,7 +1594,8 @@ begin
                 rx_shift_ena <= '1';
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_CRC;
-
+                crc_enable <= '1';
+                
                 if (ctrl_ctr_zero = '1') then
                     ctrl_count_pload_val <= crc_length_i;
                     tx_load_crc_i <= '1';
@@ -1750,6 +1767,7 @@ begin
                 -- Last (third) bit of intermission
                 if (ctrl_ctr_zero = '1') then
                     ctrl_count_pload_i <= '1';
+                    crc_spec_enable <= '1';
                     
                     -- Here FSM goes to Base ID (sampling of DOMINANT in the
                     -- third bit of intermission)!
@@ -1757,7 +1775,7 @@ begin
                         ctrl_count_pload_val <= C_BASE_ID_DURATION;
                         tx_load_base_id_i <= '1';
                         sof_pulse <= '1';
-
+                        
                     -- Here FSM goes to either IDLE, Suspend, or to SOF, when
                     -- it has sth. to transmitt. We preload SUSPEND length in
                     -- any case, since other states don't care about control
@@ -1800,6 +1818,7 @@ begin
             when s_pc_suspend =>
                 ctrl_ctr_ena <= '1';
                 perform_hsync <= '1';
+                crc_spec_enable <= '1';
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -1813,7 +1832,7 @@ begin
                     set_receiver <= '1';
                     stuff_enable_set <= '1';
                     rx_clear_d <= '1';
-                    
+
                 -- End of Suspend -> Unit goes to IDLE!
                 elsif (ctrl_ctr_zero = '1') then
                     set_idle <= '1';
@@ -1824,7 +1843,8 @@ begin
             -------------------------------------------------------------------
             when s_pc_idle =>
                 perform_hsync <= '1';
-                
+                crc_spec_enable <= '1';
+                                
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
                 txt_buf_ptr_d <= 1;
@@ -1834,6 +1854,7 @@ begin
                     ctrl_count_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
                     sof_pulse <= '1';
+                    crc_enable <= '1';
                 end if;
 
                 if (tx_frame_ready = '1') then

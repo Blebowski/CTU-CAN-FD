@@ -138,6 +138,9 @@ entity can_crc is
         -- Enable for all CRC circuits.
         crc_enable       :in   std_logic;
 
+        -- CRC calculation - speculative enable
+        crc_spec_enable  :in   std_logic;
+
         -- Unit is receiver of a frame
         is_receiver      :in   std_logic;
 
@@ -178,6 +181,10 @@ architecture rtl of can_crc is
     -- Triggers for CRC 17 and 21
     signal crc_17_21_trigger   :     std_logic;
     
+    -- Internal enable signals
+    signal crc_ena_15          :     std_logic;
+    signal crc_ena_17_21       :     std_logic;
+    
 begin
 
     -- ISO vs NON-ISO FD for selection of initialization vectors of 17 and 21.
@@ -212,6 +219,27 @@ begin
                                      else
                          trig_tx_wbs;
 
+    ---------------------------------------------------------------------------
+    -- CRC circuits calculate data with according trigger when enabled by
+    -- one of two enable signals:
+    --  1  Regular - CRC processes data regardless of data value.
+    --  2. Speculative - Processes data value only if it is DOMINANT! This
+    --     corresponds to processing DOMINANT bit in IDLE, Suspend or
+    --     Intermission and considering this bit as SOF! This bit must be
+    --     included in CRC calculation, but only when it is DOMINANT!
+    ---------------------------------------------------------------------------
+    crc_ena_15   <= '1' when (crc_enable = '1')
+                        else
+                    '1' when (crc_spec_enable = '1' and data_rx_nbs = DOMINANT)
+                        else
+                    '0';
+
+    crc_ena_17_21  <= '1' when (crc_enable = '1')
+                          else
+                      '1' when (crc_spec_enable = '1' and data_rx_wbs = DOMINANT)
+                          else
+                      '0';
+
     ----------------------------------------------------------------------------
     -- CRC 15 (from RX Data, no Bit Stuffing)
     ----------------------------------------------------------------------------
@@ -227,7 +255,7 @@ begin
 
         data_in         => data_rx_nbs,
         trig            => trig_rx_nbs,
-        enable          => crc_enable,
+        enable          => crc_ena_15,
         init_vect       => init_vect_15,
         crc             => crc_15
     );
@@ -247,7 +275,7 @@ begin
 
         data_in         => crc_17_21_data_in,
         trig            => crc_17_21_trigger,
-        enable          => crc_enable,
+        enable          => crc_ena_17_21,
         init_vect       => init_vect_17,
         crc             => crc_17
     );
@@ -268,7 +296,7 @@ begin
 
         data_in         => crc_17_21_data_in,
         trig            => crc_17_21_trigger,
-        enable          => crc_enable,
+        enable          => crc_ena_17_21,
         init_vect       => init_vect_21,
         crc             => crc_21
     );
