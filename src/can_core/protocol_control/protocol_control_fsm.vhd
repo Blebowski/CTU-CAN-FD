@@ -68,6 +68,10 @@ use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity protocol_control_fsm is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :    std_logic := '0'
+    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -245,10 +249,10 @@ entity protocol_control_fsm is
         -- Control counter interface
         -----------------------------------------------------------------------
         -- Preload control counter
-        ctrl_count_pload        :out   std_logic;
+        ctrl_ctr_pload          :out   std_logic;
         
         -- Control counter preload value
-        ctrl_count_pload_val    :out   std_logic_vector(8 downto 0);
+        ctrl_ctr_pload_val      :out   std_logic_vector(8 downto 0);
         
         -- Control counter is enabled
         ctrl_ctr_ena            :out   std_logic;
@@ -373,6 +377,9 @@ entity protocol_control_fsm is
         -- Active Error or Overload flag is being tranmsmitted
         act_err_ovr_flag        :out  std_logic;
 
+        -- Set unit to be error active
+        set_err_active          :out   std_logic;
+
         -- Error delimiter too late
         err_delim_late          :out  std_logic;
 
@@ -384,7 +391,7 @@ entity protocol_control_fsm is
         
         -- Unit is Bus off
         is_bus_off              :in   std_logic;
-
+        
         -----------------------------------------------------------------------
         -- Other control signals
         -----------------------------------------------------------------------
@@ -454,7 +461,7 @@ architecture rtl of protocol_control_fsm is
     signal allow_2bit_ack : std_logic;
 
     -- Preload control counter internal signal
-    signal ctrl_count_pload_i : std_logic;
+    signal ctrl_ctr_pload_i : std_logic;
     
     -- CRC Selection
     signal crc_use_21         : std_logic;
@@ -553,6 +560,7 @@ architecture rtl of protocol_control_fsm is
     -- Fault confinemnt interface
     signal primary_error_i           :  std_logic;
     signal err_delim_late_i          :  std_logic;
+    signal set_err_active_i          :  std_logic;
     
     -- Flag which holds whether FSM is in first bit of error delimiter 
     signal first_err_delim_d         :  std_logic;
@@ -570,7 +578,16 @@ architecture rtl of protocol_control_fsm is
     -- TXT Buffer pointer
     signal txt_buf_ptr_d             :  natural range 0 to 19;
     signal txt_buf_ptr_q             :  natural range 0 to 19;
+    
+    -- Retransmitt counter, add 1
+    signal retr_ctr_add_i            :  std_logic;
 
+    -- Start of frame pulse
+    signal sof_pulse_i               :  std_logic;
+
+    -- Retransmitt counter clear
+    signal retr_ctr_clear_i          :  std_logic;
+    
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -1062,8 +1079,8 @@ begin
         -----------------------------------------------------------------------
         -- Default values
         -----------------------------------------------------------------------
-        ctrl_count_pload       <= '0';
-        ctrl_count_pload_val   <= (OTHERS => '0');
+        ctrl_ctr_pload       <= '0';
+        ctrl_ctr_pload_val   <= (OTHERS => '0');
         ctrl_ctr_ena           <= '0';
         
         -- RX Buffer storing protocol
@@ -1072,7 +1089,7 @@ begin
         rec_abort_d <= '0';
         rec_valid_d <= '0';
 
-        sof_pulse <= '0';
+        sof_pulse_i <= '0';
         
         -- TXT Buffer HW Commands
         txt_hw_cmd_d.lock    <= '0';
@@ -1110,8 +1127,8 @@ begin
         
         reinteg_ctr_clr      <= '0';
         reinteg_ctr_enable   <= '0';
-        retr_ctr_clear <= '0';
-        retr_ctr_add   <= '0';
+        retr_ctr_clear_i <= '0';
+        retr_ctr_add_i <= '0';
         is_arbitration <= '0';
         tx_dominant    <= '0';
         crc_check      <= '0';
@@ -1141,6 +1158,7 @@ begin
         primary_error_i <= '0';
         err_delim_late_i <= '0';
         first_err_delim_d <= '0';
+        set_err_active_i <= '0';
         
         br_shifted <= '0';
         ack_received <= '0';
@@ -1162,12 +1180,12 @@ begin
         crc_spec_enable <= '0';
 
         if (err_frm_req = '1') then
-            ctrl_count_pload_i   <= '1';
-            ctrl_count_pload_val <= C_ERR_FLG_DURATION;
+            ctrl_ctr_pload_i   <= '1';
+            ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             rec_abort_d <= '1';
             
             txt_hw_cmd_d.unlock <= '1';
-            retr_ctr_add <= '1';
+            retr_ctr_add_i <= '1';
             crc_clear_match_flag <= '1';
             stuff_enable_clear <= '1';
 
@@ -1192,8 +1210,8 @@ begin
             -------------------------------------------------------------------
             when s_pc_off =>
                 if (drv_ena = CTU_CAN_ENABLED) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_INTEGRATION_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
 
             -------------------------------------------------------------------
@@ -1206,22 +1224,23 @@ begin
                 
                 -- Restart integration upon reception of DOMINANT bit!
                 if (rx_data = DOMINANT) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_INTEGRATION_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
                     set_idle <= '1';
+                    set_err_active_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
             -- Start of frame
             -------------------------------------------------------------------
             when s_pc_sof =>
-                ctrl_count_pload_i <= '1';
-                ctrl_count_pload_val <= C_BASE_ID_DURATION;
+                ctrl_ctr_pload_i <= '1';
+                ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                 tx_load_base_id_i <= '1';
-                sof_pulse <= '1';
+                sof_pulse_i <= '1';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_SOF;
                 crc_enable <= '1';
@@ -1244,7 +1263,7 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add <= '1';
+                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
@@ -1271,7 +1290,7 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add <= '1';
+                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
@@ -1300,14 +1319,14 @@ begin
             -------------------------------------------------------------------
             when s_pc_ide =>
                 if (rx_data = RECESSIVE) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_EXT_ID_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_EXT_ID_DURATION;
                     tx_load_ext_id_i <= '1';
                 end if;
                 
                 if (ide_is_arbitration = '1' and arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add <= '1';
+                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
@@ -1352,7 +1371,7 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add <= '1';
+                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
@@ -1379,7 +1398,7 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add <= '1';
+                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
@@ -1421,8 +1440,8 @@ begin
             -- r0 bit after EDL/r1 bit in Extended CAN Frames.
             -------------------------------------------------------------------
             when s_pc_r0_ext =>
-                ctrl_count_pload_i <= '1';
-                ctrl_count_pload_val <= C_DLC_DURATION;
+                ctrl_ctr_pload_i <= '1';
+                ctrl_ctr_pload_val <= C_DLC_DURATION;
                 tx_load_dlc_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 trv_delay_calib <= '1';
@@ -1465,8 +1484,8 @@ begin
             -------------------------------------------------------------------
             when s_pc_edl_r0 =>
                 if (rx_data = DOMINANT) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_DLC_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_DLC_DURATION;
                     tx_load_dlc_i <= '1';
                 end if;
             
@@ -1501,8 +1520,8 @@ begin
             -- ESI (Error State Indicator) Bit
             ------------------------------------------------------------------- 
             when s_pc_esi =>
-                ctrl_count_pload_i <= '1';
-                ctrl_count_pload_val <= C_EXT_ID_DURATION;
+                ctrl_ctr_pload_i <= '1';
+                ctrl_ctr_pload_val <= C_EXT_ID_DURATION;
                 rx_store_esi_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
@@ -1530,16 +1549,16 @@ begin
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_i <= '1';
+                    ctrl_ctr_pload_i <= '1';
                     if (no_data_field = '1') then
                         if (drv_fd_type = ISO_FD) then
-                            ctrl_count_pload_val <= C_STUFF_COUNT_DURATION;
+                            ctrl_ctr_pload_val <= C_STUFF_COUNT_DURATION;
                             tx_load_stuff_count_i <= '1';
                         else
-                            ctrl_count_pload_val <= crc_length_i;
+                            ctrl_ctr_pload_val <= crc_length_i;
                         end if;
                     else
-                        ctrl_count_pload_val <= data_length_c;
+                        ctrl_ctr_pload_val <= data_length_c;
                         tx_load_data_word_i <= '1';
                     end if;
 
@@ -1568,10 +1587,10 @@ begin
 
                 if (ctrl_ctr_zero = '1') then
                     if (drv_fd_type = ISO_FD) then
-                        ctrl_count_pload_val <= C_STUFF_COUNT_DURATION;
+                        ctrl_ctr_pload_val <= C_STUFF_COUNT_DURATION;
                         tx_load_stuff_count_i <= '1';
                     else
-                        ctrl_count_pload_val <= crc_length_i;
+                        ctrl_ctr_pload_val <= crc_length_i;
                         tx_load_crc_i <= '1';
                     end if;
                     -- Store data word at the end of data field.
@@ -1597,7 +1616,7 @@ begin
                 crc_enable <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_val <= crc_length_i;
+                    ctrl_ctr_pload_val <= crc_length_i;
                     tx_load_crc_i <= '1';
                     rx_store_stuff_count_i <= '1';
                 end if;
@@ -1681,8 +1700,8 @@ begin
             when s_pc_ack_sec =>
 
                 if (rx_data = RECESSIVE) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_EOF_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_EOF_DURATION;
                 end if;
 
                 if (is_receiver = '1' and crc_match = '0') then
@@ -1704,8 +1723,8 @@ begin
             -- ACK Delimiter
             -------------------------------------------------------------------
             when s_pc_ack_delim =>
-                ctrl_count_pload <= '1';
-                ctrl_count_pload_val <= C_EOF_DURATION;
+                ctrl_ctr_pload <= '1';
+                ctrl_ctr_pload_val <= C_EOF_DURATION;
                 
                 if (rx_data = DOMINANT) then
                     form_error_i <= '1';
@@ -1723,20 +1742,20 @@ begin
             when s_pc_eof =>
                 ctrl_ctr_ena <= '1';
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_i <= '1';
+                    ctrl_ctr_pload_i <= '1';
                     if (rx_data = RECESSIVE) then
-                        ctrl_count_pload_val <= C_INTERMISSION_DURATION;
+                        ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                         
                         -- No Error until the end of EOF means frame is valid
                         -- for transmitter!
                         if (is_transmitter = '1') then
                             txt_hw_cmd_d.unlock <= '1';
                             txt_hw_cmd_d.valid  <= '1';
-                            retr_ctr_clear <= '1';
+                            retr_ctr_clear_i <= '1';
                         end if;
                         
                     elsif (is_receiver = '1') then
-                        ctrl_count_pload_val <= C_OVR_FLG_DURATION;
+                        ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     end if;
                     
                     crc_clear_match_flag <= '1';
@@ -1766,22 +1785,22 @@ begin
 
                 -- Last (third) bit of intermission
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_i <= '1';
+                    ctrl_ctr_pload_i <= '1';
                     crc_spec_enable <= '1';
                     
                     -- Here FSM goes to Base ID (sampling of DOMINANT in the
                     -- third bit of intermission)!
                     if (rx_data = DOMINANT) then
-                        ctrl_count_pload_val <= C_BASE_ID_DURATION;
+                        ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                         tx_load_base_id_i <= '1';
-                        sof_pulse <= '1';
+                        sof_pulse_i <= '1';
                         
                     -- Here FSM goes to either IDLE, Suspend, or to SOF, when
                     -- it has sth. to transmitt. We preload SUSPEND length in
                     -- any case, since other states don't care about control
                     -- counter.
                     else
-                        ctrl_count_pload_val <= C_SUSPEND_DURATION;
+                        ctrl_ctr_pload_val <= C_SUSPEND_DURATION;
                     end if;
 
                     -- Lock Buffer when there is what to transmitt, and no
@@ -1803,8 +1822,8 @@ begin
     
                 -- First or second bit of intermission!
                 elsif (rx_data = DOMINANT) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_OVR_FLG_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                 end if;
                 
                 -- Second or third bit of intermission, Hard Synchronisation
@@ -1825,10 +1844,10 @@ begin
                 txt_buf_ptr_d <= 1;
                 
                 if (rx_data = DOMINANT) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_BASE_ID_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
-                    sof_pulse <= '1';
+                    sof_pulse_i <= '1';
                     set_receiver <= '1';
                     stuff_enable_set <= '1';
                     rx_clear_d <= '1';
@@ -1850,10 +1869,10 @@ begin
                 txt_buf_ptr_d <= 1;
                 
                 if (rx_data = DOMINANT) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_BASE_ID_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
-                    sof_pulse <= '1';
+                    sof_pulse_i <= '1';
                     crc_enable <= '1';
                 end if;
 
@@ -1877,9 +1896,9 @@ begin
             when s_pc_reintegrating_wait =>
                 bit_err_disable <= '1';
                 if (drv_bus_off_reset = '1') then
-                    ctrl_count_pload_i <= '1';
+                    ctrl_ctr_pload_i <= '1';
                     reinteg_ctr_clr    <= '1';
-                    ctrl_count_pload_val <= C_INTEGRATION_DURATION;
+                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
                     
             -------------------------------------------------------------------
@@ -1893,12 +1912,13 @@ begin
                 bit_err_disable <= '1';
                 
                 if (ctrl_ctr_zero = '1' and reinteg_ctr_expired = '0') then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_INTEGRATION_DURATION;    
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;    
                 end if;
 
                 if (reinteg_ctr_expired = '1') then
                     set_idle <= '1';
+                    set_err_active_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1907,8 +1927,8 @@ begin
             when s_pc_act_err_flag =>
                 ctrl_ctr_ena <= '1';
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_DELIM_WAIT_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
                 end if;
                 
@@ -1925,8 +1945,8 @@ begin
             when s_pc_pas_err_flag =>
                 ctrl_ctr_ena <= '1';
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_DELIM_WAIT_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
                 end if;
                 err_pos <= ERC_POS_ERR;
@@ -1944,8 +1964,8 @@ begin
                 end if;
 
                 if (rx_data = RECESSIVE) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_ERR_DELIM_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_ERR_DELIM_DURATION;
                 
                 -- Err flag (6 bits) + Delimiter wait (7 bits) elapsed and
                 -- dominant is detected, this signals 14 consecutive dominant
@@ -1972,11 +1992,11 @@ begin
             when s_pc_err_delim =>
                 ctrl_ctr_ena <= '1';
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_i <= '1';
+                    ctrl_ctr_pload_i <= '1';
                     if (rx_data = DOMINANT) then
-                        ctrl_count_pload_val <= C_OVR_FLG_DURATION;
+                        ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
-                        ctrl_count_pload_val <= C_INTERMISSION_DURATION;
+                        ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
                 end if;
 
@@ -2003,8 +2023,8 @@ begin
             when s_pc_ovr_delim_wait =>
                 err_pos <= ERC_POS_OVRL;
                 if (rx_data = RECESSIVE) then
-                    ctrl_count_pload_i <= '1';
-                    ctrl_count_pload_val <= C_OVR_DELIM_DURATION;
+                    ctrl_ctr_pload_i <= '1';
+                    ctrl_ctr_pload_val <= C_OVR_DELIM_DURATION;
                 end if;
 
             -------------------------------------------------------------------
@@ -2013,11 +2033,11 @@ begin
             when s_pc_ovr_delim  =>
                 ctrl_ctr_ena <= '1';
                 if (ctrl_ctr_zero = '1') then
-                    ctrl_count_pload_i <= '1';
+                    ctrl_ctr_pload_i <= '1';
                     if (rx_data = DOMINANT) then
-                        ctrl_count_pload_val <= C_OVR_FLG_DURATION;
+                        ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
-                        ctrl_count_pload_val <= C_INTERMISSION_DURATION;
+                        ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
                 end if;
                 
@@ -2057,8 +2077,8 @@ begin
     --  2. When preloaded by any state and RX trigger is active. This saves
     --     gating with RX Trigger in each FSM state!
     -----------------------------------------------------------------------
-    ctrl_count_pload <= ctrl_count_pload_i when (curr_state = s_pc_off) else
-                        ctrl_count_pload_i when (rx_trigger = '1') else
+    ctrl_ctr_pload <= ctrl_ctr_pload_i when (curr_state = s_pc_off) else
+                        ctrl_ctr_pload_i when (rx_trigger = '1') else
                         '0';
 
     -----------------------------------------------------------------------
@@ -2243,10 +2263,31 @@ begin
                           else
                       '0';
 
+    set_err_active <= '1' when (set_err_active_i = '1' and rx_trigger = '1')
+                          else
+                      '0';
+
     -- No positive resynchronisation for transmitter of dominant bit!
     no_pos_resync <= '1' when (is_transmitter = '1' and tx_data = DOMINANT)
                          else
                      '0';
+
+    ---------------------------------------------------------------------------
+    -- Retransmitt counter is manipulated only for one clock cycle
+    ---------------------------------------------------------------------------
+    retr_ctr_add <= '1' when (retr_ctr_add_i = '1' and rx_trigger = '1')
+                        else
+                    '0';
+
+    retr_ctr_clear <= '1' when (retr_ctr_clear_i = '1' and rx_trigger = '1')
+                          else
+                      '0';
+
+    -- Start of frame pulse is active in Sample point of SOF only!
+    sof_pulse <= '1' when (sof_pulse_i = '1' and rx_trigger = '1')
+                     else
+                 '0';
+                    
 
     ---------------------------------------------------------------------------
     -- Bit Stuffing / Destuffing enable
@@ -2271,7 +2312,7 @@ begin
     -- Synchronisation type
     ---------------------------------------------------------------------------
     sync_control_d <= NO_SYNC when (is_transmitter = '1' and
-                                    tran_frame_type ='1' and
+                                    tran_frame_type = '1' and
                                     sp_control_q = SECONDARY_SAMPLE)
                               else
                     HARD_SYNC when (perform_hsync = '1')
@@ -2298,6 +2339,7 @@ begin
             txt_buf_ptr_q <= txt_buf_ptr_d;
         end if;
     end process;
+    
 
     -----------------------------------------------------------------------
     -- Internal signals to output propagation
