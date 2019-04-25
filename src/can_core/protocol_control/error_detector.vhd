@@ -127,11 +127,11 @@ entity error_detector is
         -- Calculated CRC 21
         crc_21                  :in   std_logic_vector(20 downto 0);
         
-        -- Received Stuff count (Gray coded)
+        -- Received Stuff count (Gray coded) + Parity
         rx_stuff_count          :in   std_logic_vector(3 downto 0);
         
-        -- Counted stuff count (Gray coded)
-        calc_stuff_count        :in   std_logic_vector(3 downto 0);
+        -- Destuff counter mod 8
+        dst_ctr                 :in   natural range 0 to 7;
 
         -----------------------------------------------------------------------
         -- Control signals
@@ -176,7 +176,7 @@ entity error_detector is
         err_frm_req             :out  std_logic;
 
         -- Error detected (for Fault confinement)
-        error_detected          :out  std_logic;
+        err_detected            :out  std_logic;
 
         -- Error code capture
         erc_capture             :out  std_logic_vector(7 downto 0);
@@ -206,6 +206,10 @@ architecture rtl of error_detector is
     signal crc_match_c    : std_logic;
     signal crc_match_d    : std_logic;
     signal crc_match_q    : std_logic;
+    
+    -- De-Stuff counter grey coded
+    signal dst_ctr_grey   : std_logic_vector(2 downto 0);
+    signal dst_parity     : std_logic;
     
     -- Stuff counter should be checked
     signal stuff_count_check : std_logic;
@@ -255,6 +259,23 @@ begin
         err_frm_req <= err_frm_req_i;
     end generate err_pipeline_true_gen;
 
+
+    ---------------------------------------------------------------------------
+    -- De-Stuff counter grey-coding + parity
+    ---------------------------------------------------------------------------
+    with dst_ctr select dst_ctr_grey <= 
+        "000" when 0,
+        "001" when 1,
+        "011" when 2,
+        "010" when 3,
+        "110" when 4,
+        "111" when 5,
+        "101" when 6,
+        "100" when 7,
+        "000" when others;
+
+    dst_parity <= dst_ctr(0) xor dst_ctr(1) xor dst_ctr(2);
+
     ---------------------------------------------------------------------------
     -- CRC Check
     ---------------------------------------------------------------------------
@@ -280,7 +301,7 @@ begin
                  '0';
 
     -- Stuff counter OK, including parity!
-    stuff_count_ok <= '1' when (rx_stuff_count = calc_stuff_count)
+    stuff_count_ok <= '1' when (rx_stuff_count = dst_ctr_grey & dst_parity)
                           else
                       '0';
 
@@ -310,9 +331,9 @@ begin
     --  1. Either Error frame request (Bit, Stuff, ACK, Form Errors)
     --  2. CRC error is detected by Protocol control.
     ---------------------------------------------------------------------------
-    error_detected <= '1' when (err_frm_req_i or crc_error = '1')
-                          else
-                      '0';
+    err_detected <= '1' when (err_frm_req_i or crc_error = '1')
+                        else
+                    '0';
                       
     --------------------------------------------------------------------------
     -- Error counters should remain unchanged according to 12.1.4.2 in 

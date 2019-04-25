@@ -103,6 +103,9 @@ entity tx_shift_reg is
         -- Load Data word to TX Shift register
         tx_load_data_word       :in  std_logic;
 
+        -- Load Stuff count
+        tx_load_stuff_count     :in  std_logic;
+        
         -- Load CRC to TX Shift register
         tx_load_crc             :in  std_logic;
         
@@ -138,6 +141,12 @@ entity tx_shift_reg is
         -----------------------------------------------------------------------
         -- Unit is error active
         is_err_active           :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Bit Stuffing / Destuffing Interface
+        -----------------------------------------------------------------------
+        -- Stuff counter modulo 8
+        bst_ctr                 :in  std_logic_vector(3 downto 0);
 
         -----------------------------------------------------------------------
         -- TXT Buffers interface
@@ -169,6 +178,11 @@ architecture rtl of tx_shift_reg is
     -- Selected CRC to be transmitted
     signal tx_crc : std_logic_vector(20 downto 0);
 
+    -- Stuff counter (grey coded)
+    signal bst_ctr_grey : std_logic_vector(2 downto 0);
+    signal bst_parity   : std_logic;
+    signal stuff_count  : std_logic_vecto(3 downto 0);
+    
 begin
     
     -- Tick shift register in Sync (TX Trigger)!
@@ -181,6 +195,7 @@ begin
                              tx_load_ext_id = '1' or
                              tx_load_dlc = '1' or
                              tx_load_data_word = '1' or
+                             tx_load_stuff_count = '1' or
                              tx_load_crc = '1')
                        else
                    '0';
@@ -189,7 +204,22 @@ begin
     tx_crc <= crc_15 & "000000" when (crc_src = CRC15) else
                 crc_17 & "0000" when (crc_src = CRC17) else
                         crc_21;
+                        
+    -- Stuff counter grey coding
+    with bst_ctr select bst_ctr_grey <=
+        "000" when 0,
+        "001" when 1,
+        "011" when 2,
+        "010" when 3,
+        "110" when 4,
+        "111" when 5,
+        "101" when 6,
+        "100" when 7,
+        "000" when others;
     
+    bst_parity <= bst_ctr_grey(0) xor bst_ctr_grey(1) xor bst_ctr_grey(2);
+    
+    stuff_count <= bst_ctr_grey & bst_parity;
 
     -- Choosing Base and Ext IDs from TXT Buffer RAM memory words!
     tx_base_id <= txt_buffer_word(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
@@ -208,6 +238,7 @@ begin
                   tx_ext_id & "00000000000000" when (tx_load_ext_id = '1') else
      tran_dlc & "0000000000000000000000000000" when (tx_load_dlc = '1') else
                                txt_buffer_word when (tx_load_data_word = '1') else
+  stuff_count & "0000000000000000000000000000" when (tx_load_stuff_count = '1') else         
                       tx_crc & "0000000000000" when (tx_load_crc = '1') else
                                (OTHERS => '0');
 
