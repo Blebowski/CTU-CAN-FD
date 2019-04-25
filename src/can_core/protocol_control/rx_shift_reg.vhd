@@ -141,6 +141,9 @@ entity rx_shift_reg is
         -- RX CAN Identifier
         rec_ident               :out std_logic_vector(28 downto 0);
         
+        -- RX Data length code (D input)
+        rec_dlc_d               :out std_logic_vector(3 downto 0);
+        
         -- RX Data length code
         rec_dlc                 :out std_logic_vector(3 downto 0);
         
@@ -200,6 +203,13 @@ begin
     ---------------------------------------------------------------------------
     rx_shift_cmd <= '1' when (rx_trigger = '1' and rx_shift_ena = '1') else
                     '0';
+
+    ---------------------------------------------------------------------------
+    -- D input of received DLC is needed by Protocol control FSM in the last
+    -- bit of DLC. Thus it is needed at the same clock cycle as it is stored
+    -- so Q value is not yet there! 
+    ---------------------------------------------------------------------------
+    rec_dlc_d <= rx_shift_reg(2 downto 0) & rx_data;
 
     ---------------------------------------------------------------------------
     -- RX Shift register
