@@ -111,6 +111,9 @@ entity fault_confinement_fsm is
         
         -- Unit is Bus-off
         is_bus_off              :out  std_logic;
+        
+        -- Transition to bus off has occurred
+        bus_off_start           :out  std_logic;
        
         -----------------------------------------------------------------------
         -- Status outputs
@@ -202,6 +205,7 @@ begin
         is_err_passive    <= '0';
         is_bus_off        <= '0';
         error_passive_changed  <= '0';
+        bus_off_start <= '0';
        
         case curr_state is
         when s_fc_error_active =>
@@ -212,6 +216,9 @@ begin
        
         when s_fc_error_passive =>
             is_err_passive <= '1';
+            if (tx_err_ctr_mt_255 = '1') then
+                bus_off_start <= '1';
+            end if;
 
         when s_fc_bus_off =>
             is_bus_off <= '1';

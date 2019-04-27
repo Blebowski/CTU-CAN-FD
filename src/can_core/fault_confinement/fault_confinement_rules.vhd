@@ -79,7 +79,7 @@ entity fault_confinement_rules is
         -- Protocol Control interface
         -----------------------------------------------------------------------
         -- Error is detected
-        error_detected          :in   std_logic;
+        err_detected            :in   std_logic;
         
         -- Error counter should remain unchanged
         err_ctrs_unchanged      :in   std_logic;
@@ -121,7 +121,7 @@ begin
     -- Increment RX Error counter by 1 when Receiver detects an error which
     -- is not during Error flag or overload flag!
     ---------------------------------------------------------------------------
-    inc_one <= '1' when (error_detected = '1' and act_err_ovr_flag = '0' and
+    inc_one <= '1' when (err_detected = '1' and act_err_ovr_flag = '0' and
                          is_receiver = '1')
                    else
                '0';
@@ -132,16 +132,16 @@ begin
     --    flag (rule "b")
     --  - Transmitter/Receiver detect a bit error while sending Active Error
     --    flag or an overload flag! Note that other than bit error can't be
-    --    signalled in Error Flag on 'error_detected'! (rules "d" and "e")
+    --    signalled in Error Flag on 'err_detected'! (rules "d" and "e")
     --  - Transmitter sends Error flag but non of the exceptions are valid
     --     (rule "c")
     --  - Error delimiter comes too late (more than 14 consecutive bits),
     --    (rule "f")
     ---------------------------------------------------------------------------
     inc_eight <= '1' when (primary_error = '1' and is_receiver = '1') else
-                 '1' when (act_err_ovr_flag = '1' and error_detected = '1') else
+                 '1' when (act_err_ovr_flag = '1' and err_detected = '1') else
                  '1' when (is_transmitter = '1' and 
-                           error_detected = '1' and
+                           err_detected = '1' and
                            err_ctrs_unchanged = '0') else
                  '1' when (err_delim_late = '1') else
                  '0';         

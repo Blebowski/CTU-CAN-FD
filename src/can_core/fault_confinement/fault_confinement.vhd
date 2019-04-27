@@ -133,7 +133,7 @@ entity fault_confinement is
         set_err_active          :in   std_logic;
         
         -- Error is detected
-        error_detected          :in   std_logic;
+        err_detected            :in   std_logic;
         
         -- Error counter should remain unchanged
         err_ctrs_unchanged      :in   std_logic;
@@ -164,6 +164,9 @@ entity fault_confinement is
         
         -- Unit is Bus-off
         is_bus_off              :out   std_logic;
+        
+        -- Transition to bus off has occurred
+        bus_off_start           :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Error counters
@@ -250,6 +253,7 @@ begin
         is_err_active          => is_err_active,            -- OUT
         is_err_passive         => is_err_passive,           -- OUT
         is_bus_off             => is_bus_off,               -- OUT
+        bus_off_start          => bus_off_start,            -- OUT
        
         error_passive_changed  => error_passive_changed,    -- OUT
         error_warning_limit    => error_warning_limit       -- OUT
@@ -283,11 +287,14 @@ begin
         data_err_ctr           => data_err_ctr          -- OUT
     );
 
+    ---------------------------------------------------------------------------
+    -- Fault confinement rules
+    ---------------------------------------------------------------------------
     fault_confinement_rules_inst : fault_confinement_rules
     port map(
         is_transmitter         => is_transmitter,       -- IN
         is_receiver            => is_receiver,          -- IN
-        error_detected         => error_detected,       -- IN
+        err_detected           => err_detected,         -- IN
         err_ctrs_unchanged     => err_ctrs_unchanged,   -- IN
         primary_error          => primary_error,        -- IN
         act_err_ovr_flag       => act_err_ovr_flag,     -- IN
