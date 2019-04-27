@@ -129,7 +129,7 @@ entity protocol_control is
         tran_frame_valid        :in   std_logic;
         
         -- HW Commands for TX Arbitrator and TXT Buffers
-        txt_hw_cmd              :out  txt_hw_cmd_type;
+        txt_hw_cmd              :out  t_txt_hw_cmd;
         
         -- Pointer to TXT buffer memory
         txt_buf_ptr             :out  natural range 0 to 19;
@@ -253,6 +253,9 @@ entity protocol_control is
         ------------------------------------------------------------------------
         -- Bit Stuffing enabled
         stuff_enable            :out  std_logic;
+        
+        -- Bit De-stuffing enabled
+        destuff_enable          :out  std_logic;
 
         -- Bit Stuffing type (0-Normal, 1-Fixed)
         fixed_stuff             :out  std_logic;
@@ -373,6 +376,9 @@ architecture rtl of protocol_control is
   
   -- Internal Loopback enabled
   signal drv_int_loopback_ena     :     std_logic;
+  
+  -- Bus off restart
+  signal drv_bus_off_reset        :     std_logic;
   
   
   -----------------------------------------------------------------------------
@@ -531,7 +537,7 @@ begin
     drv_ena               <=  drv_bus(DRV_ENA_INDEX);
     drv_fd_type           <=  drv_bus(DRV_FD_TYPE_INDEX);
     drv_int_loopback_ena  <=  drv_bus(DRV_INT_LOOBACK_ENA_INDEX);
-  
+    drv_bus_off_reset     <=  drv_bus(DRV_ERR_CTR_CLR);
   
     ---------------------------------------------------------------------------
     -- TX Data word endian swapper
@@ -656,6 +662,7 @@ begin
         
         -- Bit Stuffing/Destuffing control signals
         stuff_enable            => stuff_enable,            -- OUT
+        destuff_enable          => destuff_enable,          -- OUT
         stuff_length            => stuff_length,            -- OUT
         fixed_stuff             => fixed_stuff,             -- OUT
         stuff_error_enable      => stuff_error_enable,      -- OUT
@@ -845,11 +852,11 @@ begin
         crc_17                  => crc_17,              -- IN
         crc_21                  => crc_21,              -- IN
 
-        err_frm_req             => err_frm_req,         -- IN
-        is_err_active           => is_err_active,       -- IN
-        bst_ctr                 => bst_ctr,             -- IN
-        txt_buffer_word         => txt_buffer_word,     -- IN
-        tran_dlc                => tran_dlc             -- IN
+        err_frm_req             => err_frm_req,             -- IN
+        is_err_active           => is_err_active,           -- IN
+        bst_ctr                 => bst_ctr,                 -- IN
+        txt_buffer_word         => txt_buffer_word_swap,    -- IN
+        tran_dlc                => tran_dlc                 -- IN
     );
 
 
@@ -913,10 +920,16 @@ begin
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
         
-    -- psl no_invalid_ack_err : assert never
+    -- psl no_invalid_ack_err_asrt : assert never
     --  ((ack_error = '1' or crc_error = 1' or stuff_error = '1' or form_error = '1') 
     --   and (err_ovr_flag = '1'))
     -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag"
     --  severity error;
+    
+    -- psl sample_sec_proper_asrt : assert never
+    --  (sp_control = SECONDARY_SAMPLE and is_transmitter = '0')
+    --  report "Secondary sampling is allowed only for transmitter)
+    --  severity error;
+
 
 end architecture;

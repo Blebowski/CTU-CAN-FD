@@ -149,7 +149,7 @@ entity protocol_control_fsm is
         tran_frame_valid        :in   std_logic;
         
         -- HW Commands to TXT Buffers
-        txt_hw_cmd              :out  txt_hw_cmd_type;
+        txt_hw_cmd              :out  t_txt_hw_cmd;
         
         -- Pointer to TXT Buffer memory
         txt_buf_ptr             :out  natural range 0 to 19;
@@ -334,6 +334,9 @@ entity protocol_control_fsm is
         -----------------------------------------------------------------------
         -- Bit Stuffing is enabled
         stuff_enable            :out   std_logic;
+        
+        -- Bit De-stuffing is enabled
+        destuff_enable          :out   std_logic;
 
         -- Length of Bit stuffing rule
         stuff_length            :out   std_logic_vector(2 downto 0);
@@ -502,8 +505,8 @@ architecture rtl of protocol_control_fsm is
     signal rec_abort_d          : std_logic;
 
     -- Internal commands for TXT Buffers
-    signal txt_hw_cmd_d         : txt_hw_cmd_type;
-    signal txt_hw_cmd_q         : txt_hw_cmd_type;
+    signal txt_hw_cmd_d         : t_txt_hw_cmd;
+    signal txt_hw_cmd_q         : t_txt_hw_cmd;
     
     -- Unit should go to suspend transmission field!
     signal go_to_suspend        : std_logic;
@@ -569,6 +572,10 @@ architecture rtl of protocol_control_fsm is
     -- Bit stuffing 
     signal stuff_enable_set          :  std_logic;
     signal stuff_enable_clear        :  std_logic;
+    
+    -- Bit stuffing disable
+    signal destuff_enable_set        :  std_logic;
+    signal destuff_enable_clear      :  std_logic;
 
     -- Bit error disable (internal)
     -- Note: Bit Error is rather disabled than enabled, since it is disabled on less
@@ -1163,11 +1170,13 @@ begin
         br_shifted <= '0';
         ack_received <= '0';
 
-        -- Bit Stuffing control
+        -- Bit Stuffing/Destuffing control
         stuff_length <= 5;
         fixed_stuff <= '0';
         stuff_enable_set <= '0';
         stuff_enable_clear <= '0';
+        destuff_enable_set <= '0';
+        destuff_enable_clear <= '0';
         
         -- Synchronisation control
         perform_hsync <= '0';
@@ -1187,6 +1196,7 @@ begin
             txt_hw_cmd_d.unlock <= '1';
             retr_ctr_add_i <= '1';
             crc_clear_match_flag <= '1';
+            destuff_enable_clear <= '1';
             stuff_enable_clear <= '1';
 
             if (sp_control_q = DATA_SAMPLE or 
@@ -1265,6 +1275,7 @@ begin
                     txt_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
+                    stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
                     else
@@ -1292,6 +1303,7 @@ begin
                     txt_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
+                    stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
                     else
@@ -1328,6 +1340,7 @@ begin
                     txt_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
+                    stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
                     else
@@ -1373,6 +1386,7 @@ begin
                     txt_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
+                    stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
                     else
@@ -1400,6 +1414,7 @@ begin
                     txt_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
+                    stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
                         txt_hw_cmd_d.failed  <= '1';
                     else
@@ -1659,6 +1674,7 @@ begin
                     sp_control_switch_nominal <= '1';
                     br_shifted <= '1';
                 end if;
+                destuff_enable_clear <= '1';
                 stuff_enable_clear <= '1';
                 
             -------------------------------------------------------------------
@@ -1816,8 +1832,14 @@ begin
                     -- Transmission/reception started -> Enable Bit stuffing!
                     -- Clear RX Shift Register!
                     if (frame_start = '1') then
-                        stuff_enable_set <= '1';
+                        destuff_enable_set <= '1';
                         rx_clear_d <= '1';
+                    end if;
+                    
+                    -- If we are starting transmission and not going to suspend
+                    -- start bit stuffing
+                    if (tx_frame_ready = '1' and go_to_suspend = '0') then
+                        stuff_enable_set <= '1';
                     end if;
     
                 -- First or second bit of intermission!
@@ -1849,12 +1871,21 @@ begin
                     tx_load_base_id_i <= '1';
                     sof_pulse_i <= '1';
                     set_receiver <= '1';
-                    stuff_enable_set <= '1';
+                    destuff_enable_set <= '1';
                     rx_clear_d <= '1';
 
-                -- End of Suspend -> Unit goes to IDLE!
+                -- End of Suspend -> Unit goes to IDLE if there is nothing to
+                -- transmitt, otherwise it goes to SOF and transmitts
                 elsif (ctrl_ctr_zero = '1') then
-                    set_idle <= '1';
+                    if (tx_frame_ready = '1') then
+                        rx_clear_d <= '1';
+                        set_transmitter <= '1';
+                        destuff_enable_set <= '1';
+                        stuff_enable_set <= '1';
+                        rx_clear_d <= '1';
+                    else
+                        set_idle <= '1';
+                    end if;
                 end if;
     
             -------------------------------------------------------------------
@@ -1883,11 +1914,16 @@ begin
                     set_receiver <= '1';
                 end if;
 
-                -- Transmission/reception started -> Enable Bit stuffing!
+                -- Transmission/reception started -> Enable Bit de-stuffing!
                 -- Clear RX Shift register!
                 if (frame_start = '1') then
-                    stuff_enable_set <= '1';
+                    destuff_enable_set <= '1';
                     rx_clear_d <= '1';
+                end if;
+                
+                -- Transmission started -> Enable bit stuffing!
+                if (tx_frame_ready = '1') then
+                    stuff_enable_set <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2290,24 +2326,42 @@ begin
                     
 
     ---------------------------------------------------------------------------
-    -- Bit Stuffing / Destuffing enable
+    -- Bit Stuffing enable
     ---------------------------------------------------------------------------
     stuff_ena_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
             stuff_enable <= '0';
-            stuff_error_enable <= '0';
         elsif (rising_edge(clk_sys)) then
             if (stuff_enable_set = '1') then
                stuff_enable <= '1';
-               stuff_error_enable <= '1';
             elsif (stuff_enable_clear = '1') then
                stuff_enable <= '0';
                stuff_error_enable <= '0';
            end if;
         end if;
     end process;
-
+    
+    ---------------------------------------------------------------------------
+    -- Bit DeStuffing enable, Stuff Error
+    ---------------------------------------------------------------------------
+    destuff_ena_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            destuff_enable <= '0';
+            stuff_error_enable <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (destuff_enable_set = '1') then
+                destuff_enable <= '1';
+                stuff_error_enable <= '1';
+            elsif (destuff_enable_clear = '1') then
+                stuff_error_enable <= '0';
+                destuff_enable <= '0';
+            end if;
+        end if;    
+    end process;
+    
+    
     ---------------------------------------------------------------------------
     -- Synchronisation type
     ---------------------------------------------------------------------------
