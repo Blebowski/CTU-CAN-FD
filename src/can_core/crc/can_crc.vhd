@@ -243,62 +243,65 @@ begin
     ----------------------------------------------------------------------------
     -- CRC 15 (from RX Data, no Bit Stuffing)
     ----------------------------------------------------------------------------
-    crc_calc_15_comp : crc_calc
+    crc_calc_15_inst : crc_calc
     generic map(
         G_CRC_WIDTH       => 15,
         G_RESET_POLARITY  => G_RESET_POLARITY,
         G_POLYNOMIAL      => G_CRC15_POL
     )
     port map(
-        res_n           => res_n,
-        clk_sys         => clk_sys,
+        res_n           => res_n,           -- IN
+        clk_sys         => clk_sys,         -- IN
 
-        data_in         => data_rx_nbs,
-        trig            => trig_rx_nbs,
-        enable          => crc_ena_15,
-        init_vect       => init_vect_15,
-        crc             => crc_15
+        data_in         => data_rx_nbs,     -- IN
+        trig            => trig_rx_nbs,     -- IN
+        enable          => crc_ena_15,      -- IN
+        init_vect       => init_vect_15,    -- IN
+        
+        crc             => crc_15           -- OUT
     );
 
     ----------------------------------------------------------------------------
     -- CRC 17 (from TX or RX Data, with Bit Stuffing)
     ----------------------------------------------------------------------------
-    crc_calc_17_rx_comp : crc_calc
+    crc_calc_17_rx_inst : crc_calc
     generic map(
         G_CRC_WIDTH       => 17,
         G_RESET_POLARITY  => G_RESET_POLARITY,
         G_POLYNOMIAL      => G_CRC17_POL
     )
     port map(
-        res_n           => res_n,
-        clk_sys         => clk_sys,
+        res_n           => res_n,               -- IN
+        clk_sys         => clk_sys,             -- IN
 
-        data_in         => crc_17_21_data_in,
-        trig            => crc_17_21_trigger,
-        enable          => crc_ena_17_21,
-        init_vect       => init_vect_17,
-        crc             => crc_17
+        data_in         => crc_17_21_data_in,   -- IN
+        trig            => crc_17_21_trigger,   -- IN
+        enable          => crc_ena_17_21,       -- IN
+        init_vect       => init_vect_17,        -- IN
+        
+        crc             => crc_17               -- OUT
     );
 
 
     ----------------------------------------------------------------------------
     -- CRC 21 (from TX or RX Data, with Bit Stuffing)
     ----------------------------------------------------------------------------
-    crc_calc_21_rx_comp : crc_calc
+    crc_calc_21_rx_inst : crc_calc
     generic map(
         G_CRC_WIDTH       => 21,
         G_RESET_POLARITY  => G_RESET_POLARITY,
         G_POLYNOMIAL      => G_CRC21_POL
     )
     port map(
-        res_n           => res_n,
-        clk_sys         => clk_sys,
+        res_n           => res_n,               -- IN
+        clk_sys         => clk_sys,             -- IN
 
-        data_in         => crc_17_21_data_in,
-        trig            => crc_17_21_trigger,
-        enable          => crc_ena_17_21,
-        init_vect       => init_vect_21,
-        crc             => crc_21
+        data_in         => crc_17_21_data_in,   -- IN
+        trig            => crc_17_21_trigger,   -- IN
+        enable          => crc_ena_17_21,       -- IN
+        init_vect       => init_vect_21,        -- IN
+        
+        crc             => crc_21               -- OUT
     );
 
 end architecture;
