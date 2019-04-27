@@ -325,15 +325,6 @@ begin
             crc_match_q <= crc_match_d;
         end if;
     end process;
-    
-    --------------------------------------------------------------------------
-    -- Error detected for Fault Confinement. Valid when there are:
-    --  1. Either Error frame request (Bit, Stuff, ACK, Form Errors)
-    --  2. CRC error is detected by Protocol control.
-    ---------------------------------------------------------------------------
-    err_detected <= '1' when (err_frm_req_i or crc_error = '1')
-                        else
-                    '0';
                       
     --------------------------------------------------------------------------
     -- Error counters should remain unchanged according to 12.1.4.2 in 
@@ -351,6 +342,10 @@ begin
                                     tx_data = RECESSIVE)
                               else
                           '0';
+
+
+    -- Error is detected when error frame is requested
+    err_detected <= err_frm_req_i;
 
     --------------------------------------------------------------------------
     -- Error code, next value
