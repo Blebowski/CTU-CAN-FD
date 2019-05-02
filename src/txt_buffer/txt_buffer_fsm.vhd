@@ -86,7 +86,7 @@ entity txt_buffer_fsm is
         -- Memory registers interface
         ------------------------------------------------------------------------
         -- SW commands
-        txt_sw_cmd             :in   txt_sw_cmd_type;
+        txt_sw_cmd             :in   t_txt_sw_cmd;
         
         -- SW buffer select
         sw_cbs                 :in   std_logic;
@@ -95,7 +95,7 @@ entity txt_buffer_fsm is
         -- CAN Core interface
         ------------------------------------------------------------------------
         -- HW Commands
-        txt_hw_cmd             :in   txt_hw_cmd_type;  
+        txt_hw_cmd             :in   t_txt_hw_cmd;  
         
         -- HW Buffer select
         hw_cbs                 :in   std_logic;

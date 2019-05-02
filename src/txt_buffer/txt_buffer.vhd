@@ -116,7 +116,7 @@ entity txt_buffer is
         signal tran_cs                :in   std_logic;
 
         -- SW commands from user registers
-        signal txt_sw_cmd             :in   txt_sw_cmd_type;
+        signal txt_sw_cmd             :in   t_txt_sw_cmd;
         signal txt_sw_buf_cmd_index   :in   std_logic_vector(
                                                 buf_count - 1 downto 0);
 
@@ -135,7 +135,7 @@ entity txt_buffer is
         ------------------------------------------------------------------------
 
         -- Commands from the CAN Core for manipulation of the CAN 
-        signal txt_hw_cmd             :in   txt_hw_cmd_type;  
+        signal txt_hw_cmd             :in   t_txt_hw_cmd;  
         signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
 
         -- Buffer output and pointer to the RAM memory
