@@ -131,7 +131,7 @@ entity bit_stuffing is
         stuff_length        :in   std_logic_vector(2 downto 0); 
 
         ------------------------------------------------------------------------
-        -- Bus Synchroniser interface
+        -- Status signals
         ------------------------------------------------------------------------
         -- Number of stuffed bits with Normal Bit stuffing
         bst_ctr             :out  natural range 0 to 7;

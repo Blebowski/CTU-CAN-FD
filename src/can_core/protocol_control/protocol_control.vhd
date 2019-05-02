@@ -330,11 +330,23 @@ entity protocol_control is
         -- Received frame is valid
         rec_valid               :out  std_logic;
 
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
         -- ACK received
         ack_received            :out  std_logic;
 
         -- Bit rate shifted
-        br_shifted              :out  std_logic
+        br_shifted              :out  std_logic;
+        
+        -- Form Error has occurred
+        form_error              :out  std_logic;
+
+        -- ACK Error has occurred
+        ack_error               :out  std_logic;
+        
+        -- CRC Error has occurred
+        crc_error               :out  std_logic
     );
 end entity;
 
@@ -480,10 +492,10 @@ architecture rtl of protocol_control is
   signal retr_limit_reached      :      std_logic;
 
   -- Form Error has occurred
-  signal form_error              :      std_logic;
+  signal form_error_i            :      std_logic;
 
   -- ACK Error has occurred
-  signal ack_error               :      std_logic;
+  signal ack_error_i             :      std_logic;
 
   -- Perform CRC check
   signal crc_check               :      std_logic;
@@ -495,7 +507,7 @@ architecture rtl of protocol_control is
   signal crc_match               :     std_logic;
 
   -- CRC error signalling
-  signal crc_error               :     std_logic;
+  signal crc_error_i             :     std_logic;
 
   -- Clear CRC Match flag
   signal crc_clear_match_flag    :      std_logic;
@@ -649,12 +661,12 @@ begin
         retr_limit_reached      => retr_limit_reached,      -- IN
 
         -- Error detector interface
-        form_error              => form_error,              -- OUT
-        ack_error               => ack_error,               -- OUT
+        form_error              => form_error_i,            -- OUT
+        ack_error               => form_error_i,            -- OUT
         crc_check               => crc_check,               -- OUT
         bit_error_arb           => bit_error_arb,           -- OUT
         crc_match               => crc_match,               -- IN
-        crc_error               => crc_error,               -- OUT
+        crc_error               => crc_error_i,             -- OUT
         crc_clear_match_flag    => crc_clear_match_flag,    -- OUT
         crc_src                 => crc_src_i,               -- OUT
         err_pos                 => err_pos,                 -- OUT
@@ -791,9 +803,9 @@ begin
         bit_error               => bit_error,           -- IN
         bit_error_arb           => bit_error_arb,       -- IN
         stuff_error             => stuff_error,         -- IN
-        form_error              => form_error,          -- IN
-        ack_error               => ack_error,           -- IN
-        crc_error               => crc_error,           -- IN
+        form_error              => form_error_i,        -- IN
+        ack_error               => ack_error_i,         -- IN
+        crc_error               => crc_error_i,         -- IN
         
         -- CRC comparison data
         rx_crc                  => rx_crc,              -- IN
@@ -914,6 +926,9 @@ begin
     rec_frame_type <= rec_frame_type_i;
     rec_is_rtr <= rec_is_rtr_i;
     rec_dlc <= rec_dlc_q;
+    form_error <= form_error_i;
+    ack_error <= ack_error_i;
+    crc_error <= crc_error_i;
     
     ---------------------------------------------------------------------------
     -- Assertions
@@ -921,7 +936,7 @@ begin
     -- psl default clock is rising_edge(clk_sys);
         
     -- psl no_invalid_ack_err_asrt : assert never
-    --  ((ack_error = '1' or crc_error = 1' or stuff_error = '1' or form_error = '1') 
+    --  ((ack_error = '1' or crc_error = 1' or stuff_error = '1' or form_error_i = '1') 
     --   and (err_ovr_flag = '1'))
     -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag"
     --  severity error;
