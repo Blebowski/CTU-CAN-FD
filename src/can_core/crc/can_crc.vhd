@@ -114,6 +114,9 @@ entity can_crc is
         -- TX Data with Bit Stuffing
         data_tx_wbs      :in   std_logic;
         
+        -- TX Data without Bit Stuffing
+        data_tx_nbs      :in   std_logic;
+        
         -- RX Data with Bit Stuffing
         data_rx_wbs      :in   std_logic;
         
@@ -125,6 +128,9 @@ entity can_crc is
         ------------------------------------------------------------------------
         -- Trigger for TX Data with Bit Stuffing
         trig_tx_wbs      :in   std_logic;
+        
+        -- Trigger for TX Data without Bit Stuffing
+        trig_tx_nbs      :in   std_logic;
         
         -- Trigger for RX Data with Bit Stuffing
         trig_rx_wbs      :in   std_logic;
@@ -176,14 +182,20 @@ architecture rtl of can_crc is
     ---------------------------------------------------------------------------
 
     -- Data inputs to CRC 17 and CRC 21
-    signal crc_17_21_data_in   :     std_logic;
+    signal crc_17_21_data_in    :     std_logic;
 
     -- Triggers for CRC 17 and 21
-    signal crc_17_21_trigger   :     std_logic;
+    signal crc_17_21_trigger    :     std_logic;
+    
+    -- Data inputs to CRC 15
+    signal crc_15_data_in       :     std_logic;
+
+    -- Triggers for CRC 15
+    signal crc_15_trigger       :     std_logic;
     
     -- Internal enable signals
-    signal crc_ena_15          :     std_logic;
-    signal crc_ena_17_21       :     std_logic;
+    signal crc_ena_15           :     std_logic;
+    signal crc_ena_17_21        :     std_logic;
     
 begin
 
@@ -218,6 +230,18 @@ begin
     crc_17_21_trigger <= trig_rx_wbs when (is_receiver = '1')
                                      else
                          trig_tx_wbs;
+                         
+    ---------------------------------------------------------------------------
+    -- Muxes for CRC 15. For Receiver choose crc from RX Stream,
+    -- for Transmitter use CRC from TX Stream.
+    ---------------------------------------------------------------------------
+    crc_15_data_in <= data_rx_nbs when (is_receiver = '1')
+                                  else
+                      data_tx_nbs;
+    
+    crc_15_trigger <= trig_rx_nbs when (is_receiver = '1')
+                                  else
+                      trig_tx_nbs;
 
     ---------------------------------------------------------------------------
     -- CRC circuits calculate data with according trigger when enabled by
@@ -230,13 +254,13 @@ begin
     ---------------------------------------------------------------------------
     crc_ena_15   <= '1' when (crc_enable = '1')
                         else
-                    '1' when (crc_spec_enable = '1' and data_rx_nbs = DOMINANT)
+                    '1' when (crc_spec_enable = '1' and crc_15_data_in = DOMINANT)
                         else
                     '0';
 
     crc_ena_17_21  <= '1' when (crc_enable = '1')
                           else
-                      '1' when (crc_spec_enable = '1' and data_rx_wbs = DOMINANT)
+                      '1' when (crc_spec_enable = '1' and crc_17_21_data_in = DOMINANT)
                           else
                       '0';
 
@@ -253,8 +277,8 @@ begin
         res_n           => res_n,           -- IN
         clk_sys         => clk_sys,         -- IN
 
-        data_in         => data_rx_nbs,     -- IN
-        trig            => trig_rx_nbs,     -- IN
+        data_in         => crc_15_data_in,  -- IN
+        trig            => crc_15_trigger,  -- IN
         enable          => crc_ena_15,      -- IN
         init_vect       => init_vect_15,    -- IN
         
