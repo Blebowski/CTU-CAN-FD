@@ -475,7 +475,7 @@ architecture rtl of protocol_control_fsm is
     ---------------------------------------------------------------------------
     -- No data field should be transmitted
     signal no_data_transmitter : std_logic;
-    signal no_data_receiver : std_logi;
+    signal no_data_receiver : std_logic;
     signal no_data_field : std_logic;
     
     -- Allow 2 bit long CRC delimiter
@@ -1328,6 +1328,8 @@ begin
                 is_arbitration <= '1';
                 bit_err_disable <= '1';
                 crc_enable <= '1';
+                rx_store_rtr_i <= '1';
+                err_pos <= ERC_POS_ARB;
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
@@ -1340,9 +1342,6 @@ begin
                         txt_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
-                
-                rx_store_rtr_i <= '1';
-                err_pos <= ERC_POS_ARB;
                 
                 if (is_transmitter = '1' and tran_ident_type = BASE) then
                     if (tran_frame_type = FD_CAN) then
@@ -1360,6 +1359,9 @@ begin
             -- IDE bit
             -------------------------------------------------------------------
             when s_pc_ide =>
+                rx_store_ide_i <= '1';
+                crc_enable <= '1';
+                
                 if (rx_data = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_EXT_ID_DURATION;
@@ -1377,9 +1379,6 @@ begin
                         txt_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
-                
-                rx_store_ide_i <= '1';
-                crc_enable <= '1';
                 
                 if (ide_is_arbitration = '1') then
                     is_arbitration <= '1';
@@ -1440,7 +1439,9 @@ begin
             when s_pc_rtr_r1 =>
                 is_arbitration <= '1';
                 bit_err_disable <= '1';
-                crc_enable <= '1';
+                crc_enable <= '1';                
+                rx_store_rtr_i <= '1';
+                err_pos <= ERC_POS_ARB;
                 
                 if (arbitration_lost_condition = '1') then
                     txt_hw_cmd_d.unlock <= '1';
@@ -1453,9 +1454,6 @@ begin
                         txt_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
-                
-                rx_store_rtr_i <= '1';
-                err_pos <= ERC_POS_ARB;
                 
                 if (is_transmitter = '1') then
                     if (tran_frame_type = FD_CAN or tran_ident_type = BASE) then
@@ -1511,6 +1509,12 @@ begin
             -- r0 bit in CAN FD Frames (both Base and Extended identifier)
             ------------------------------------------------------------------- 
             when s_pc_r0_fd =>
+                trv_delay_calib <= '1';
+                err_pos <= ERC_POS_CTRL;
+                perform_hsync <= '1';
+                crc_enable <= '1';
+                is_control <= '1';
+                
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
                 end if;
@@ -1521,28 +1525,22 @@ begin
                 if (rx_data = RECESSIVE) then
                     form_error_i <= '1';
                 end if;
-
-                trv_delay_calib <= '1';
-                err_pos <= ERC_POS_CTRL;
-                perform_hsync <= '1';
-                crc_enable <= '1';
-                is_control <= '1';
                 
             -------------------------------------------------------------------
             -- EDL/r0 bit in CAN 2.0 and CAN FD Frames with BASE identifier
             -- only!
             -------------------------------------------------------------------
             when s_pc_edl_r0 =>
+                rx_store_edl_i <= '1';
+                err_pos <= ERC_POS_CTRL;
+                crc_enable <= '1';
+                is_control <= '1';
+            
                 if (rx_data = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DLC_DURATION;
                     tx_load_dlc_i <= '1';
                 end if;
-            
-                rx_store_edl_i <= '1';
-                err_pos <= ERC_POS_CTRL;
-                crc_enable <= '1';
-                is_control <= '1';
                 
                 if (is_transmitter = '1' and tran_frame_type = NORMAL_CAN) then
                     tx_dominant <= '1';
@@ -1701,6 +1699,10 @@ begin
             -- CRC Delimiter
             -------------------------------------------------------------------
             when s_pc_crc_delim =>
+                destuff_enable_clear <= '1';
+                stuff_enable_clear <= '1';
+                err_pos <= ERC_POS_ACK;
+            
                 if (is_receiver = '1' and rx_trigger = '1') then
                     crc_check <= '1';
                 end if;
@@ -1708,7 +1710,6 @@ begin
                 if (rx_data = DOMINANT) then
                     form_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_ACK;
                 
                 if (sp_control_q = DATA_SAMPLE or 
                     sp_control_q = SECONDARY_SAMPLE)
@@ -1716,8 +1717,6 @@ begin
                     sp_control_switch_nominal <= '1';
                     br_shifted <= '1';
                 end if;
-                destuff_enable_clear <= '1';
-                stuff_enable_clear <= '1';
                 
             -------------------------------------------------------------------
             -- Secondary CRC Delimiter, or an ACK Slot if DOMINANT.
@@ -1729,6 +1728,8 @@ begin
             -- ACK Slot, or a ACK delim, if previous two bits were recessive!
             -------------------------------------------------------------------
             when s_pc_ack =>
+                err_pos <= ERC_POS_ACK;
+            
                 if (is_receiver = '1' and crc_match = '1' and
                     drv_ack_forb = '0')
                 then
@@ -1740,7 +1741,6 @@ begin
                 then
                     ack_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_ACK;
                 
                 if (rx_data = DOMINANT) then
                     ack_received <= '1';
@@ -1756,7 +1756,8 @@ begin
             -- Secondary ACK field (in FD Frames),or ACK Delimiter if RECESSIVE
             -------------------------------------------------------------------
             when s_pc_ack_sec =>
-
+                err_pos <= ERC_POS_ACK;
+                
                 if (rx_data = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_EOF_DURATION;
@@ -1765,7 +1766,6 @@ begin
                 if (is_receiver = '1' and crc_match = '0') then
                     crc_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_ACK;
 
                 if (rx_data = DOMINANT) then
                     ack_received <= '1';
@@ -1783,6 +1783,7 @@ begin
             when s_pc_ack_delim =>
                 ctrl_ctr_pload <= '1';
                 ctrl_ctr_pload_val <= C_EOF_DURATION;
+                err_pos <= ERC_POS_ACK;
                 
                 if (rx_data = DOMINANT) then
                     form_error_i <= '1';
@@ -1791,7 +1792,6 @@ begin
                 if (is_receiver = '1' and crc_match = '0') then
                     crc_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_ACK;
     
             -------------------------------------------------------------------
             -- End of Frame. Receiver sampling DOMINANT in last bit interprets
@@ -1800,7 +1800,8 @@ begin
             when s_pc_eof =>
                 ctrl_ctr_ena <= '1';
                 is_eof <= '1';
-                
+                err_pos <= ERC_POS_INTF;
+
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     if (rx_data = RECESSIVE) then
@@ -1831,7 +1832,6 @@ begin
                 if (rx_data = DOMINANT and ctrl_ctr_zero = '0') then
                     form_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_INTF;
     
             -------------------------------------------------------------------
             -- Intermission field
@@ -1978,6 +1978,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_reintegrating_wait =>
                 bit_err_disable <= '1';
+                
                 if (drv_bus_off_reset = '1') then
                     ctrl_ctr_pload_i <= '1';
                     reinteg_ctr_clr    <= '1';
@@ -2010,19 +2011,18 @@ begin
             when s_pc_act_err_flag =>
                 ctrl_ctr_ena <= '1';
                 is_error <= '1';
-                
+                tx_dominant <= '1';
+                err_pos <= ERC_POS_ERR;
+                       
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
                 end if;
                 
-                tx_dominant <= '1';
-                
                 if (rx_data = RECESSIVE) then
                     form_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_ERR;
 
             -------------------------------------------------------------------
             -- Passive error flag.
@@ -2030,23 +2030,28 @@ begin
             when s_pc_pas_err_flag =>
                 ctrl_ctr_ena <= '1';
                 is_error <= '1';
+                err_pos <= ERC_POS_ERR;
+                
+                -- Node sending Passive error flag may receive RECESSIVE or
+                -- DOMINANT, and DOMINANT shall not be treated as bit error!
+                bit_err_disable <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
                 end if;
-                err_pos <= ERC_POS_ERR;
-                
-                -- Node sending Passive error flag may receive RECESSIVE or
-                -- DOMINANT, and DOMINANT shall not be treated as bit error!
-                bit_err_disable <= '1';
 
             -------------------------------------------------------------------
             -- Wait till Error delimiter (detection of recessive bit)
             -------------------------------------------------------------------
             when s_pc_err_delim_wait =>
                 is_error <= '1';
+                err_pos <= ERC_POS_ERR;
+                
+                -- When waiting for RECESSIVE bit after Error delimiter, unit
+                -- may receive DOMINANT and not interpret this as Bit error!
+                bit_err_disable <= '1';
                 
                 if (ctrl_ctr_zero = '0') then
                     ctrl_ctr_ena <= '1';
@@ -2062,11 +2067,6 @@ begin
                 elsif (ctrl_ctr_zero = '1') then
                     err_delim_late_i <= '1';
                 end if;
-                err_pos <= ERC_POS_ERR;
-
-                -- When waiting for RECESSIVE bit after Error delimiter, unit
-                -- may receive DOMINANT and not interpret this as Bit error!
-                bit_err_disable <= '1';
 
                 -- Node received dominant bit as first bit after Error flag!
                 -- This shall be treated as primamry error
@@ -2081,7 +2081,8 @@ begin
             when s_pc_err_delim =>
                 is_error <= '1';
                 ctrl_ctr_ena <= '1';
-                
+                err_pos <= ERC_POS_ERR;
+                                
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     if (rx_data = DOMINANT) then
@@ -2094,7 +2095,6 @@ begin
                 if (rx_data = DOMINANT) then
                     form_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_ERR;
 
             -------------------------------------------------------------------
             -- Overload flag
@@ -2127,7 +2127,8 @@ begin
             when s_pc_ovr_delim  =>
                 ctrl_ctr_ena <= '1';
                 is_overload <= '1';
-                
+                err_pos <= ERC_POS_OVRL;
+
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     if (rx_data = DOMINANT) then
@@ -2140,7 +2141,6 @@ begin
                 if (rx_data = DOMINANT) then
                     form_error_i <= '1';
                 end if;
-                err_pos <= ERC_POS_OVRL;
 
             end case;
         end if;
