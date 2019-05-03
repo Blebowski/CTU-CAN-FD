@@ -2463,7 +2463,6 @@ begin
     sp_control <= sp_control_q;
     tran_valid <= txt_hw_cmd_q.valid;
     ssp_reset <= ssp_reset_q; 
-    pc_state <= curr_state;
     rx_clear <= rx_clear_q;
     sync_control <= sync_control_q;
     

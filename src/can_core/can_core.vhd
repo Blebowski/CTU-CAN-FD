@@ -344,7 +344,6 @@ architecture rtl of can_core is
     signal sync_control_i          :    std_logic_vector(1 downto 0); 
     signal ssp_reset_i             :    std_logic;
     signal trv_delay_calib_i       :    std_logic;
-    signal pc_state                :    t_protocol_control_state;
     signal tran_valid_i            :    std_logic;
     signal rec_valid_i             :    std_logic;
     signal ack_received_i          :    std_logic;
@@ -434,14 +433,14 @@ begin
         G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
     )
     port map(
-        clk_sys                 => clk_sys,
-        res_n                   => res_n,
+        clk_sys                 => clk_sys,             -- IN
+        res_n                   => res_n,               -- IN
         
         -- Memory registers interface
-        drv_bus                 => drv_bus,
-        alc                     => alc,
-        erc_capture             => erc_capture,
-        is_arbitration          => is_arbitration,
+        drv_bus                 => drv_bus,             -- IN
+        alc                     => alc,                 -- OUT
+        erc_capture             => erc_capture,         -- OUT
+        is_arbitration          => is_arbitration,      -- OUT
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
         is_crc                  => is_crc,              -- OUT
@@ -451,96 +450,95 @@ begin
         is_interframe           => is_interframe,       -- OUT
         
         -- TXT Buffers interface
-        txt_buffer_word         => txt_buffer_word_i,
-        tran_dlc                => tran_dlc_i,
-        tran_is_rtr             => tran_is_rtr_i,
-        tran_ident_type         => tran_ident_type_i,
-        tran_frame_type         => tran_frame_type_i,
-        tran_brs                => tran_brs_i,
-        tran_frame_valid        => tran_frame_valid_i,
-        txt_hw_cmd              => txt_hw_cmd_i,
-        txt_buf_ptr             => txt_buf_ptr,
-        txtb_changed            => txtb_changed,
+        txt_buffer_word         => txt_buffer_word_i,   -- IN
+        tran_dlc                => tran_dlc_i,          -- IN
+        tran_is_rtr             => tran_is_rtr_i,       -- IN
+        tran_ident_type         => tran_ident_type_i,   -- IN
+        tran_frame_type         => tran_frame_type_i,   -- IN
+        tran_brs                => tran_brs_i,          -- IN
+        tran_frame_valid        => tran_frame_valid_i,  -- IN
+        txt_hw_cmd              => txt_hw_cmd_i,        -- IN
+        txt_buf_ptr             => txt_buf_ptr,         -- OUT
+        txtb_changed            => txtb_changed,        -- OUT
         
         -- RX Buffer interface
-        rec_ident               => rec_ident_i,
-        rec_dlc                 => rec_dlc_i,
-        rec_is_rtr              => rec_is_rtr_i,
-        rec_ident_type          => rec_ident_type_i,
-        rec_frame_type          => rec_frame_type_i,
-        rec_brs                 => rec_brs_i,
-        rec_esi                 => rec_esi_i,
-        store_metadata          => store_metadata,
-        rec_abort               => rec_abort,
-        store_data              => store_data,
-        store_data_word         => store_data_word,
-        sof_pulse               => sof_pulse,
+        rec_ident               => rec_ident_i,         -- OUT
+        rec_dlc                 => rec_dlc_i,           -- OUT
+        rec_is_rtr              => rec_is_rtr_i,        -- OUT
+        rec_ident_type          => rec_ident_type_i,    -- OUT
+        rec_frame_type          => rec_frame_type_i,    -- OUT
+        rec_brs                 => rec_brs_i,           -- OUT
+        rec_esi                 => rec_esi_i,           -- OUT
+        store_metadata          => store_metadata,      -- OUT
+        rec_abort               => rec_abort,           -- OUT
+        store_data              => store_data,          -- OUT
+        store_data_word         => store_data_word,     -- OUT
+        sof_pulse               => sof_pulse,           -- OUT
     
         -- Operation control FSM Interface
-        is_transmitter          => is_transmitter,
-        is_receiver             => is_receiver,
-        is_idle                 => is_idle,
-        arbitration_lost        => arbitration_lost_i,
-        set_transmitter         => set_transmitter,
-        set_receiver            => set_receiver,
-        set_idle                => set_idle,
+        is_transmitter          => is_transmitter,      -- IN
+        is_receiver             => is_receiver,         -- IN
+        is_idle                 => is_idle,             -- IN
+        arbitration_lost        => arbitration_lost_i,  -- OUT
+        set_transmitter         => set_transmitter,     -- OUT
+        set_receiver            => set_receiver,        -- OUT
+        set_idle                => set_idle,            -- OUT
         
         -- Fault confinement Interface
-        is_err_active           => is_err_active,
-        is_err_passive          => is_err_passive,
-        is_bus_off              => is_bus_off_i,
-        err_detected            => err_detected_i,
-        primary_error           => primary_error,
-        act_err_ovr_flag        => act_err_ovr_flag,
-        err_delim_late          => err_delim_late,
-        set_err_active          => set_err_active,
-        err_ctrs_unchanged      => err_ctrs_unchanged,
+        is_err_active           => is_err_active,       -- IN
+        is_err_passive          => is_err_passive,      -- IN
+        is_bus_off              => is_bus_off_i,        -- IN
+        err_detected            => err_detected_i,      -- OUT
+        primary_error           => primary_error,       -- OUT
+        act_err_ovr_flag        => act_err_ovr_flag,    -- OUT
+        err_delim_late          => err_delim_late,      -- OUT
+        set_err_active          => set_err_active,      -- OUT
+        err_ctrs_unchanged      => err_ctrs_unchanged,  -- OUT
         
         -- TX and RX Trigger signals to Sample and Transmitt Data
-        tx_trigger              => pc_tx_trigger,
-        rx_trigger              => pc_rx_trigger,
+        tx_trigger              => pc_tx_trigger,       -- IN
+        rx_trigger              => pc_rx_trigger,       -- IN
 
         -- CAN Bus serial data stream
-        tx_data_nbs             => pc_tx_data_nbs,
-        rx_data_nbs             => pc_rx_data_nbs,
+        tx_data_nbs             => pc_tx_data_nbs,      -- OUT
+        rx_data_nbs             => pc_rx_data_nbs,      -- IN
 
         -- Bit Stuffing Interface
-        stuff_enable            => stuff_enable,
-        destuff_enable          => destuff_enable,
-        fixed_stuff             => fixed_stuff,
-        stuff_length            => stuff_length,
-        stuff_error_enable      => stuff_error_enable,
-        dst_ctr                 => dst_ctr,
-        bst_ctr                 => bst_ctr,
-        stuff_error             => stuff_error,
+        stuff_enable            => stuff_enable,        -- OUT
+        destuff_enable          => destuff_enable,      -- OUT
+        fixed_stuff             => fixed_stuff,         -- OUT
+        stuff_length            => stuff_length,        -- OUT
+        stuff_error_enable      => stuff_error_enable,  -- OUT
+        dst_ctr                 => dst_ctr,             -- IN
+        bst_ctr                 => bst_ctr,             -- IN
+        stuff_error             => stuff_error,         -- IN
         
         -- Bus Sampling Interface
-        bit_error               => bit_error,
+        bit_error               => bit_error,           -- IN
         
         -- CRC Interface
-        crc_enable              => crc_enable,
-        crc_spec_enable         => crc_spec_enable,
-        crc_src                 => crc_src,
-        crc_15                  => crc_15,
-        crc_17                  => crc_17,
-        crc_21                  => crc_21,
+        crc_enable              => crc_enable,          -- OUT
+        crc_spec_enable         => crc_spec_enable,     -- OUT
+        crc_src                 => crc_src,             -- OUT
+        crc_15                  => crc_15,              -- IN
+        crc_17                  => crc_17,              -- IN
+        crc_21                  => crc_21,              -- IN
         
         -- Control signals
-        sp_control              => sp_control_i,
-        sync_control            => sync_control_i,
-        no_pos_resync           => no_pos_resync,
-        ssp_reset               => ssp_reset_i,
-        trv_delay_calib         => trv_delay_calib_i,
-        pc_state                => pc_state,
-        tran_valid              => tran_valid_i,
-        rec_valid               => rec_valid_i,
+        sp_control              => sp_control_i,        -- OUT
+        sync_control            => sync_control_i,      -- OUT
+        no_pos_resync           => no_pos_resync,       -- OUT
+        ssp_reset               => ssp_reset_i,         -- OUT
+        trv_delay_calib         => trv_delay_calib_i,   -- OUT
+        tran_valid              => tran_valid_i,        -- OUT
+        rec_valid               => rec_valid_i,         -- OUT
         
         -- Status signals
-        ack_received            => ack_received_i,
-        br_shifted              => br_shifted_i,
-        form_error              => form_error,
-        ack_error               => ack_error,  
-        crc_error               => crc_error
+        ack_received            => ack_received_i,      -- OUT
+        br_shifted              => br_shifted_i,        -- OUT
+        form_error              => form_error,          -- OUT
+        ack_error               => ack_error,           -- OUT
+        crc_error               => crc_error            -- OUT
     );
 
 
@@ -552,20 +550,20 @@ begin
         G_RESET_POLARITY     => G_RESET_POLARITY    
     )
     port map(
-        clk_sys              => clk_sys,
-        res_n                => res_n,
+        clk_sys              => clk_sys,                -- IN
+        res_n                => res_n,                  -- IN
 
         -- Memory registers Interface
-        drv_bus              => drv_bus,
+        drv_bus              => drv_bus,                -- IN
 
         -- Protocol Control Interface
-        arbitration_lost     => arbitration_lost_i,
-        set_transmitter      => set_transmitter,
-        set_receiver         => set_receiver,
-        set_idle             => set_idle,
-        is_transmitter       => is_transmitter,
-        is_receiver          => is_receiver,
-        is_idle              => is_idle
+        arbitration_lost     => arbitration_lost_i,     -- IN
+        set_transmitter      => set_transmitter,        -- IN
+        set_receiver         => set_receiver,           -- IN
+        set_idle             => set_idle,               -- IN
+        is_transmitter       => is_transmitter,         -- OUT
+        is_receiver          => is_receiver,            -- OUT
+        is_idle              => is_idle                 -- OUT
     );
     
 
@@ -577,41 +575,41 @@ begin
         G_RESET_POLARITY     => G_RESET_POLARITY
     )
     port map(
-        clk_sys                 => clk_sys,
-        res_n                   => res_n,
+        clk_sys                 => clk_sys,                 -- IN
+        res_n                   => res_n,                   -- IN
 
         -- Memory registers interface
-        drv_bus                 => drv_bus,
+        drv_bus                 => drv_bus,                 -- IN
           
         -- Error signalling for interrupts
-        error_passive_changed   => error_passive_changed_i,
-        error_warning_limit     => error_warning_limit_i,
+        error_passive_changed   => error_passive_changed_i, -- OUT
+        error_warning_limit     => error_warning_limit_i,   -- OUT
 
         -- Operation control Interface
-        is_transmitter          => is_transmitter,
-        is_receiver             => is_receiver,
+        is_transmitter          => is_transmitter,          -- IN
+        is_receiver             => is_receiver,             -- IN
         
         -- Protocol control Interface
-        sp_control              => sp_control_i,
-        set_err_active          => set_err_active,
-        err_detected            => err_detected_i,
-        err_ctrs_unchanged      => err_ctrs_unchanged,
-        primary_error           => primary_error,
-        act_err_ovr_flag        => act_err_ovr_flag,
-        err_delim_late          => err_delim_late,
-        tran_valid              => tran_valid_i,
-        rec_valid               => rec_valid_i,
+        sp_control              => sp_control_i,            -- IN
+        set_err_active          => set_err_active,          -- IN
+        err_detected            => err_detected_i,          -- IN
+        err_ctrs_unchanged      => err_ctrs_unchanged,      -- IN
+        primary_error           => primary_error,           -- IN
+        act_err_ovr_flag        => act_err_ovr_flag,        -- IN
+        err_delim_late          => err_delim_late,          -- IN
+        tran_valid              => tran_valid_i,            -- IN
+        rec_valid               => rec_valid_i,             -- IN
 
         -- Fault confinement State indication
-        is_err_active           => is_err_active,
-        is_err_passive          => is_err_passive,
-        is_bus_off              => is_bus_off_i,
+        is_err_active           => is_err_active,           -- OUT
+        is_err_passive          => is_err_passive,          -- OUT
+        is_bus_off              => is_bus_off_i,            -- OUT
 
         -- Error counters
-        tx_err_ctr              => tx_err_ctr,
-        rx_err_ctr              => rx_err_ctr,
-        norm_err_ctr            => norm_err_ctr,
-        data_err_ctr            => data_err_ctr
+        tx_err_ctr              => tx_err_ctr,              -- OUT
+        rx_err_ctr              => rx_err_ctr,              -- OUT
+        norm_err_ctr            => norm_err_ctr,            -- OUT
+        data_err_ctr            => data_err_ctr             -- OUT
     );
 
 
@@ -626,34 +624,33 @@ begin
         G_CRC21_POL         => G_CRC21_POL
     )
     port map(
-        clk_sys          => clk_sys,
-        res_n            => res_n,
+        clk_sys          => clk_sys,                    -- IN
+        res_n            => res_n,                      -- IN
 
         -- Memory registers interface
-        drv_bus          => drv_bus,
+        drv_bus          => drv_bus,                    -- IN
 
         -- Data inputs for CRC calculation
-        data_tx_wbs      => crc_data_tx_wbs,
-        data_tx_nbs      => crc_data_tx_nbs,
-        data_rx_wbs      => crc_data_rx_wbs,
-        data_rx_nbs      => crc_data_rx_nbs,
+        data_tx_wbs      => crc_data_tx_wbs,            -- IN
+        data_tx_nbs      => crc_data_tx_nbs,            -- IN
+        data_rx_wbs      => crc_data_rx_wbs,            -- IN
+        data_rx_nbs      => crc_data_rx_nbs,            -- IN
 
         -- Trigger signals to process the data on each CRC input.
-        trig_tx_wbs      => crc_trig_tx_wbs,
-        trig_tx_nbs      => crc_trig_tx_nbs,
-        trig_rx_wbs      => crc_trig_rx_wbs,
-        trig_rx_nbs      => crc_trig_rx_nbs,
+        trig_tx_wbs      => crc_trig_tx_wbs,            -- IN
+        trig_tx_nbs      => crc_trig_tx_nbs,            -- IN
+        trig_rx_wbs      => crc_trig_rx_wbs,            -- IN
+        trig_rx_nbs      => crc_trig_rx_nbs,            -- IN
 
         -- Control signals
-        crc_enable       => crc_enable,
-        crc_spec_enable  => crc_spec_enable,
-        is_receiver      => is_receiver,
-        crc_src          => crc_src,
+        crc_enable       => crc_enable,                 -- IN
+        crc_spec_enable  => crc_spec_enable,            -- IN
+        is_receiver      => is_receiver,                -- IN
 
         -- CRC Outputs
-        crc_15           => crc_15,
-        crc_17           => crc_17,
-        crc_21           => crc_21
+        crc_15           => crc_15,                     -- OUT
+        crc_17           => crc_17,                     -- OUT
+        crc_21           => crc_21                      -- OUT
     );
 
 
@@ -665,22 +662,22 @@ begin
         G_RESET_POLARITY    => G_RESET_POLARITY
     )
     port map(
-        clk_sys             => clk_sys,
-        res_n               => res_n,
+        clk_sys             => clk_sys,                 -- IN
+        res_n               => res_n,                   -- IN
 
         -- Data-path
-        data_in             => bst_data_in,
-        data_out            => bst_data_out,
+        data_in             => bst_data_in,             -- IN
+        data_out            => bst_data_out,            -- OUT
         
         -- Control signals
-        tx_trigger          => bst_trigger,
-        stuff_enable        => stuff_enable,
-        fixed_stuff         => fixed_stuff,   
-        stuff_length        => stuff_length,
+        tx_trigger          => bst_trigger,             -- IN
+        stuff_enable        => stuff_enable,            -- IN
+        fixed_stuff         => fixed_stuff,             -- IN
+        stuff_length        => stuff_length,            -- IN
 
         -- Status signals
-        bst_ctr             => bst_ctr,
-        data_halt           => data_halt
+        bst_ctr             => bst_ctr,                 -- OUT
+        data_halt           => data_halt                -- OUT
     );
 
 
@@ -692,24 +689,24 @@ begin
         G_RESET_POLARITY    => G_RESET_POLARITY
     )
     port map(
-        clk_sys             => clk_sys,
-        res_n               => res_n,
+        clk_sys             => clk_sys,                 -- IN
+        res_n               => res_n,                   -- IN
 
         -- Data-path
-        data_in             => bds_data_in,
-        data_out            => bds_data_out,
+        data_in             => bds_data_in,             -- IN
+        data_out            => bds_data_out,            -- OUT
 
         -- Control signals
-        rx_trig             => bds_trigger,
-        destuff_enable      => destuff_enable,
-        stuff_error_enable  => stuff_error_enable,
-        fixed_stuff         => fixed_stuff,
-        destuff_length      => stuff_length,
+        rx_trig             => bds_trigger,             -- IN
+        destuff_enable      => destuff_enable,          -- IN
+        stuff_error_enable  => stuff_error_enable,      -- IN
+        fixed_stuff         => fixed_stuff,             -- IN
+        destuff_length      => stuff_length,            -- IN
        
         -- Status Outpus
-        stuff_error         => stuff_error,
-        destuffed           => destuffed,
-        dst_ctr             => dst_ctr
+        stuff_error         => stuff_error,             -- OUT
+        destuffed           => destuffed,               -- OUT
+        dst_ctr             => dst_ctr                  -- OUT
     );
 
 
@@ -721,18 +718,18 @@ begin
         G_RESET_POLARITY    => G_RESET_POLARITY
     )
     port map(
-        clk_sys             => clk_sys,
-        res_n               => res_n,
+        clk_sys             => clk_sys,                 -- IN
+        res_n               => res_n,                   -- IN
 
         -- Control signals
-        clear_rx_ctr        => drv_clr_rx_ctr,
-        clear_tx_ctr        => drv_clr_tx_ctr,
-        inc_tx_ctr          => tran_valid_i,
-        inc_rx_ctr          => rec_valid_i,
+        clear_rx_ctr        => drv_clr_rx_ctr,          -- IN
+        clear_tx_ctr        => drv_clr_tx_ctr,          -- IN
+        inc_tx_ctr          => tran_valid_i,            -- IN
+        inc_rx_ctr          => rec_valid_i,             -- IN
 
         -- Counter outputs
-        tx_ctr              => tx_ctr,
-        rx_ctr              => rx_ctr
+        tx_ctr              => tx_ctr,                  -- OUT
+        rx_ctr              => rx_ctr                   -- OUT
     );
                          
     

@@ -345,9 +345,6 @@ entity protocol_control is
         -- Enable measurement of Transciever delay
         trv_delay_calib         :out  std_logic;
 
-        -- Protocol control FSM state output
-        pc_state                :out  t_protocol_control_state;
-
         -- Transmitted frame is valid
         tran_valid              :out  std_logic;
 
@@ -734,7 +731,6 @@ begin
         no_pos_resync           => no_pos_resync,           -- OUT
         ssp_reset               => ssp_reset,               -- OUT
         trv_delay_calib         => trv_delay_calib,         -- OUT
-        pc_state                => pc_state,                -- OUT
         tran_valid              => tran_valid,              -- OUT
         ack_received            => ack_received,            -- OUT
         crc_enable              => crc_enable,              -- OUT

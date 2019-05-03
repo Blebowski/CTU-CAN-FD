@@ -150,9 +150,6 @@ entity can_crc is
         -- Unit is receiver of a frame
         is_receiver      :in   std_logic;
 
-        -- CRC source (CRC15, CRC17, CRC21)
-        crc_src          :in   std_logic_vector(1 downto 0);
-
         ------------------------------------------------------------------------
         -- CRC Outputs
         ------------------------------------------------------------------------
