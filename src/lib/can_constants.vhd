@@ -73,15 +73,6 @@ package can_constants is
     constant DOMINANT  : std_logic := '0';
     constant RECESSIVE : std_logic := '1';
 
-    constant INTEGRATING_DURATION : natural := 11;
-    constant TRAN_BUFF_SIZE       : natural := 600;
-
-    constant BASE_STUFF_LENGTH : natural := 5;
-    constant FD_STUFF_LENGTH   : natural := 4;
-
-    constant CAN_BASE_ID_LENGTH : natural := 11;
-    constant CAN_EXT_ID_LENGTH  : natural := 18;
-
     constant NO_SYNC   : std_logic_vector(1 downto 0) := "00";
     constant HARD_SYNC : std_logic_vector(1 downto 0) := "01";
     constant RE_SYNC   : std_logic_vector(1 downto 0) := "10";
@@ -96,55 +87,9 @@ package can_constants is
     constant DATA_SAMPLE      : std_logic_vector(1 downto 0) := "01";
     constant SECONDARY_SAMPLE : std_logic_vector(1 downto 0) := "10";
 
-    -- Tuples definition for older compiler (less than 2008)
-    constant DOMINANT_DOMINANT   : std_logic_vector(1 downto 0) := 
-                                    DOMINANT & DOMINANT;
-
-    constant DOMINANT_RECESSIVE  : std_logic_vector(1 downto 0) :=
-                                    DOMINANT & RECESSIVE;
-
-    constant RECESSIVE_DOMINANT  : std_logic_vector(1 downto 0) :=
-                                    RECESSIVE & DOMINANT;
-
-    constant RECESSIVE_RECESSIVE : std_logic_vector(1 downto 0) :=
-                                    RECESSIVE & RECESSIVE;
-
-    -- Error flag definitions 
-    constant PASSIVE_ERR_FLAG : std_logic := RECESSIVE;
-    constant ACTIVE_ERR_FLAG  : std_logic := DOMINANT;
-
-    constant ERROR_FLAG_LENGTH : natural := 6;
-
-    constant INC_ONE_CON   : std_logic_vector(2 downto 0) := "100";
-    constant INC_EIGHT_CON : std_logic_vector(2 downto 0) := "010";
-    constant DEC_ONE_CON   : std_logic_vector(2 downto 0) := "001";
-
     -- Common definitions should not be generic at the moment
     constant TXT_BUFFER_COUNT     : natural := 4;
-
     constant INT_COUNT            : natural := 12;                                    
-
-    constant ZERO      : std_logic := '0';
-    constant NO_ACTION : std_logic := '0';
-
-    constant ACK_ALLOWED  : std_logic := '0';
-    constant ACK_FORBIDEN : std_logic := '1';
-
-    constant LOOPBACK_ENA : std_logic := '1';
-    constant LOOPBACK_DIS : std_logic := '0';
-
-    constant RETR_LIM_DIS : std_logic := '0';
-    constant RETR_LIM_ENA : std_logic := '1';
-
-    constant SINGLE_SAMPLING  : std_logic := '0';
-    constant TRIPPLE_SAMPLING : std_logic := '1';
-
-    constant ALLOW_BUFFER  : std_logic := '1';
-    constant FORBID_BUFFER : std_logic := '0';
-
-    -- Definition of register directions for TXT1 and TXT2 buffers
-    constant TXT1_DIR : std_logic := '0';
-    constant TXT2_DIR : std_logic := '1';
 
     -- CRC polynomials
     constant CRC15_POL : std_logic_vector(15 downto 0) := x"C599";
@@ -164,4 +109,57 @@ package can_constants is
 
     constant CAN_DEVICE_ID : std_logic_vector(31 downto 0) := x"0000CAFD";
   
+    ----------------------------------------------------------------------------
+    -- Protocol control constants
+    --  (Note that each constant is one less than actual length of field since
+    --   control counter counts from this value till 0!)
+    ----------------------------------------------------------------------------
+    constant C_INTEGRATION_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(10, 9));
+
+    constant C_BASE_ID_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(10, 9));
+
+    constant C_EXT_ID_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(17, 9));
+
+    constant C_DLC_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(3, 9));
+
+    constant C_STUFF_COUNT_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(3, 9));
+
+    constant C_CRC15_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(14, 9));
+
+    constant C_CRC17_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(16, 9));
+
+    constant C_CRC21_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(20, 9));
+
+    constant C_EOF_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(6, 9));
+
+    constant C_OVR_FLG_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(5, 9));
+
+    constant C_OVR_DELIM_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(5, 9));
+
+    constant C_DELIM_WAIT_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(6, 9));
+
+    constant C_INTERMISSION_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(2, 9));
+
+    constant C_SUSPEND_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(7, 9));
+
+    constant C_ERR_FLG_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(5, 9));
+
+    constant C_ERR_DELIM_DURATION : std_logic_vector(8 downto 0) :=
+        std_logic_vector(to_unsigned(6, 9));
+        
 end package;
