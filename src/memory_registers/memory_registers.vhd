@@ -129,7 +129,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -148,131 +147,182 @@ use work.can_registers_pkg.all;
 
 entity memory_registers is
     generic(
-        -- Whenever event logger is present
-        constant use_logger   :boolean                         := true;
+        -- Reset polarity
+        G_RESET_POLARITY    : std_logic    := '0';
+        
+        -- Support logger
+        G_USE_LOGGER        : boolean                         := true;
 
-        -- Optional synthesis of received message filters
-        constant sup_filtA    :boolean                         := true;
+        -- Support Filter A
+        G_SUP_FILTA         : boolean                         := true;
 
-        -- By default the behaviour is as if all the filters are present
-        constant sup_filtB    :boolean                         := true;
-        constant sup_filtC    :boolean                         := true;
-        constant sup_range    :boolean                         := true;
-
-        -- Support of byte enable signal on memory bus interface
-        constant sup_be       :boolean                         := false;
+        -- Support Filter B
+        G_SUP_FILTB         : boolean                         := true;
+        
+        -- Support Filter C
+        G_SUP_FILTC         : boolean                         := true;
+        
+        -- Support Range Filter
+        G_SUP_RANGE         : boolean                         := true;
 
         -- Number of TXT Buffers
-        constant buf_count    :natural range 0 to 7            := 4;
+        G_TXT_BUF_COUNT     : natural range 0 to 7            := 4;
 
-        -- ID of the component
-        constant ID           :natural                         := 1;
+        -- ID on Memory bus
+        G_ID                : natural                         := 1;
+
+        -- Number of Interrupts
+        G_INT_COUNT         : natural                         := 12;
 
         -- DEVICE_ID (read from register)
-        constant DEVICE_ID    :std_logic_vector(15 downto 0);
+        G_DEVICE_ID         : std_logic_vector(15 downto 0)   := x"CAFD";
 
         -- MINOR Design version
-        constant VERSION_MINOR : std_logic_vector(7 downto 0);
+        G_VERSION_MINOR     : std_logic_vector(7 downto 0)    := x"01";
 
         -- MAJOR Design version
-        constant VERSION_MAJOR : std_logic_vector(7 downto 0)
+        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02"
     );
     port(
-        -- Clock and asynchronous reset
-        signal clk_sys              :in   std_logic;
-        signal res_n                :in   std_logic;
-        signal res_out              :out  std_logic;
+        ------------------------------------------------------------------------
+        -- Clock and Reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in   std_logic;
+        
+        -- Asynchronous reset        
+        res_n                :in   std_logic;
+        
+        -- Reset output (input reset + Software Reset)
+        res_out              :out  std_logic;
 
         ------------------------------------------------------------------------
         -- Memory Interface
         ------------------------------------------------------------------------
-        signal data_in              :in   std_logic_vector(31 downto 0);
-        signal data_out             :out  std_logic_vector(31 downto 0);
-        signal adress               :in   std_logic_vector(15 downto 0);
-        signal scs                  :in   std_logic;
-        signal srd                  :in   std_logic;
-        signal swr                  :in   std_logic;
-        signal sbe                  :in   std_logic_vector(3 downto 0);
-          
-        -- Timestamp input
-        signal timestamp            :in   std_logic_vector(63 downto 0);
+        -- Data input
+        data_in              :in   std_logic_vector(31 downto 0);
         
-        -- Driving and Status Bus
-        signal drv_bus              :out  std_logic_vector(1023 downto 0)
-                                            := (OTHERS => '0');
-        signal stat_bus             :in   std_logic_vector(511 downto 0);
+        -- Data output
+        data_out             :out  std_logic_vector(31 downto 0);
+        
+        -- Address
+        adress               :in   std_logic_vector(15 downto 0);
+        
+        -- Chip Select
+        scs                  :in   std_logic;
+        
+        -- Read
+        srd                  :in   std_logic;
+        
+        -- Write
+        swr                  :in   std_logic;
+        
+        -- Byte enable
+        sbe                  :in   std_logic_vector(3 downto 0);
+        
+        -- Timestamp input
+        timestamp            :in   std_logic_vector(63 downto 0);
+        
+        ------------------------------------------------------------------------
+        -- Buses to/from rest of CTU CAN FD
+        ------------------------------------------------------------------------
+        -- Driving Bus
+        drv_bus              :out  std_logic_vector(1023 downto 0);
+        
+        -- Status Bus
+        stat_bus             :in   std_logic_vector(511 downto 0);
 
         ------------------------------------------------------------------------
         -- RX Buffer Interface
         ------------------------------------------------------------------------
+        -- RX Buffer data output
+        rx_read_buff         :in   std_logic_vector(31 downto 0);
 
-        -- Actually loaded data for reading
-        signal rx_read_buff         :in   std_logic_vector(31 downto 0);
+        -- Size of RX buffer (in words)
+        rx_buf_size          :in   std_logic_vector(12 downto 0);
 
-        -- Size of  message buffer (in words)
-        signal rx_buf_size          :in   std_logic_vector(12 downto 0);
+        -- RX Buffer is full
+        rx_full              :in   std_logic;
 
-        -- Signal whenever buffer is full
-        signal rx_full              :in   std_logic;
+        -- RX Buffer is empty
+        rx_empty             :in   std_logic;
 
-        -- Signal whenever buffer is empty
-        signal rx_empty             :in   std_logic;
+        -- Number of frames in RX buffer
+        rx_message_count     :in   std_logic_vector(10 downto 0);
 
-        -- Number of frames in recieve buffer
-        signal rx_message_count     :in   std_logic_vector(10 downto 0);
-
-        -- Number of free 32 bit wide ''windows''
-        signal rx_mem_free          :in   std_logic_vector(12 downto 0);
+        -- Number of free 32 bit words
+        rx_mem_free          :in   std_logic_vector(12 downto 0);
 
         -- Position of read pointer
-        signal rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);
+        rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);
 
         -- Position of write pointer
-        signal rx_write_pointer_pos :in   std_logic_vector(11 downto 0);
+        rx_write_pointer_pos :in   std_logic_vector(11 downto 0);
             
-        -- Some data were discarded, register
-        signal rx_data_overrun      :in   std_logic;
+        -- Data overrun Flag
+        rx_data_overrun      :in   std_logic;
 
         ------------------------------------------------------------------------
-        -- Optimized, direct interface to TXT1 and TXT2 buffers
+        -- Interface to TXT Buffers
         ------------------------------------------------------------------------
+        -- TXT Buffer RAM - Data input
+        tran_data            :out  std_logic_vector(31 downto 0);
+        
+        -- TXT Buffer RAM - Address
+        tran_addr            :out  std_logic_vector(4 downto 0);
+        
+        -- TXT Buffer chip select
+        txtb_cs              :out  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
-        -- Data and address for access to RAM of TXT Buffer
-        signal tran_data            :out  std_logic_vector(31 downto 0);
-        signal tran_addr            :out  std_logic_vector(4 downto 0);
-        signal txtb_cs              :out  std_logic_vector(buf_count - 1 downto 0);
+        -- TXT Buffer status
+        txtb_state           :in   txtb_state_type;
 
-        -- Buffer status signals
-        signal txtb_state           :in   txtb_state_type;
-
-        -- Buffer commands + command index
-        signal txt_sw_cmd           :out  txt_sw_cmd_type;
-        signal txt_buf_cmd_index    :out  std_logic_vector(buf_count - 1 downto 0);
-        signal txt_buf_prior_out    :out  txtb_priorities_type;
+        -- SW Commands to TXT Buffer
+        txt_sw_cmd           :out  txt_sw_cmd_type;
+        
+        -- Command Index (Index in logic 1 means command is valid for buffer)          
+        txt_buf_cmd_index    :out  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+        
+        -- TXT Buffer priorities
+        txt_buf_prior_out    :out  txtb_priorities_type;
          
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
-        signal trv_delay_out        :in   std_logic_vector(15 downto 0);
+        -- Measured Transceiver Delay
+        trv_delay_out        :in   std_logic_vector(15 downto 0);
 
         ------------------------------------------------------------------------
         -- Event logger interface
         ------------------------------------------------------------------------
-        signal loger_act_data       :in   std_logic_vector(63 downto 0);
-        signal log_write_pointer    :in   std_logic_vector(7 downto 0);
-        signal log_read_pointer     :in   std_logic_vector(7 downto 0);
-        signal log_size             :in   std_logic_vector(7 downto 0);
-        signal log_state_out        :in   logger_state_type;
+        -- Logger RAM - Read Data
+        loger_act_data       :in   std_logic_vector(63 downto 0);
+        
+        -- Logger RAM - Write Pointer
+        log_write_pointer    :in   std_logic_vector(7 downto 0);
+        
+        -- Logger RAM - Read Pointer
+        log_read_pointer     :in   std_logic_vector(7 downto 0);
+        
+        -- Logger RAM - Size        
+        log_size             :in   std_logic_vector(7 downto 0);
+        
+        -- Logger FSM Status
+        log_state_out        :in   logger_state_type;
             
         ------------------------------------------------------------------------
         -- Interrrupt Interface
         ------------------------------------------------------------------------
-        signal int_vector           :in   std_logic_vector(INT_COUNT - 1 downto 0);
-        signal int_ena              :in   std_logic_vector(INT_COUNT - 1 downto 0);
-        signal int_mask             :in   std_logic_vector(INT_COUNT - 1 downto 0)
+        -- Interrupt vector
+        int_vector           :in   std_logic_vector(G_INT_COUNT - 1 downto 0);
+        
+        -- Interrupt enable
+        int_ena              :in   std_logic_vector(G_INT_COUNT - 1 downto 0);
+        
+        -- Interrupt mask
+        int_mask             :in   std_logic_vector(G_INT_COUNT - 1 downto 0)
     );  
 end entity;
-
 
 architecture rtl of memory_registers is
 
@@ -293,7 +343,7 @@ architecture rtl of memory_registers is
 
     -- Padding for interrupt read data
     constant INT_PAD_H_IND          : natural :=
-        Control_registers_in.int_stat'length - INT_COUNT;
+        Control_registers_in.int_stat'length - G_INT_COUNT;
 
     constant INT_PADDING            : std_logic_vector(INT_PAD_H_IND -1 downto 0) :=
         (OTHERS => '0');
@@ -310,13 +360,17 @@ architecture rtl of memory_registers is
     -- Read data from register sub-modules
     signal control_registers_rdata    : std_logic_vector(31 downto 0);
     signal event_logger_rdata         : std_logic_vector(31 downto 0);
-
-    -- Auxiliarly signals
-    signal PC_state               :     protocol_type;
-    signal PC_state_reg_vect      :     std_logic_vector(6 downto 0);
-    signal error_state            :     error_state_type;
-    signal OP_State               :     oper_mode_type;
-
+   
+    -- Fault confinement State Indication
+    signal is_err_active          :     std_logic;
+    signal is_err_passive         :     std_logic;
+    signal is_bus_off             :     std_logic;
+    
+    -- Operation control state indication
+    signal is_transmitter         :     std_logic;
+    signal is_receiver            :     std_logic;
+    signal is_idle                :     std_logic;
+    
     -- Internal value of output reset. This is combined res_n and MODE[RST]
     signal res_out_i              :     std_logic;
 
@@ -391,7 +445,7 @@ begin
 
     can_core_cs <= '1' when (scs = ACT_CSC) and
                             (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
-                             std_logic_vector(to_unsigned(ID, 4)))
+                             std_logic_vector(to_unsigned(G_ID, 4)))
                        else
                    '0';
 
@@ -417,7 +471,7 @@ begin
     ----------------------------------------------------------------------------
     chip_sel_reg_proc : process(res_n, clk_sys)
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = G_RESET_POLARITY) then
             control_registers_cs_reg  <= '0';
             evnt_logger_cs_reg        <= '0';
         elsif (rising_edge(clk_sys)) then
@@ -445,11 +499,11 @@ begin
         ADDRESS_WIDTH         => 16,
         REGISTERED_READ       => true,
         CLEAR_READ_DATA       => true,
-        RESET_POLARITY        => ACT_RESET,
-        SUP_FILT_A            => sup_filtA,
-        SUP_RANGE             => sup_range,
-        SUP_FILT_C            => sup_filtC,
-        SUP_FILT_B            => sup_filtB
+        RESET_POLARITY        => G_RESET_POLARITY,
+        SUP_FILT_A            => G_SUP_FILTA,
+        SUP_RANGE             => G_SUP_RANGE,
+        SUP_FILT_C            => G_SUP_FILTC,
+        SUP_FILT_B            => G_SUP_FILTB
     )
     port map(
         clk_sys               => clk_sys,
@@ -472,14 +526,14 @@ begin
     -- register will return 0 (logger not present) even when all the registers
     -- are not instantiated, thus we can still use this approach!
     ----------------------------------------------------------------------------
-    log_pres_gen : if (use_logger) generate
+    log_pres_gen : if (G_USE_LOGGER) generate
         event_logger_reg_map_comp : event_logger_reg_map
         generic map(
             DATA_WIDTH            => 32,
             ADDRESS_WIDTH         => 16,
             CLEAR_READ_DATA       => true,
             REGISTERED_READ       => true,
-            RESET_POLARITY        => ACT_RESET
+            RESET_POLARITY        => G_RESET_POLARITY
         )
         port map(
             clk_sys               => clk_sys,
@@ -515,37 +569,30 @@ begin
     -- Reset propagation to output
     -- Note: this works only for reset active in logic zero
     ----------------------------------------------------------------------------
-    res_out_i <=  ACT_RESET when (res_n = ACT_RESET) else
-                  ACT_RESET when (control_registers_out.mode(RST_IND) = '1') else
-                  (not ACT_RESET);
+    res_out_i <=  G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
+                  G_RESET_POLARITY when (control_registers_out.mode(RST_IND) = '1') else
+                  (not G_RESET_POLARITY);
     res_out <= res_out_i;
-
-    ----------------------------------------------------------------------------
-    -- Extract Protocol control state from Status Bus
-    ----------------------------------------------------------------------------
-    PC_state <=  protocol_type'VAL(to_integer(unsigned(
-                    stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))));
 
     ----------------------------------------------------------------------------
     -- Extract Fault confinement state from Status Bus
     ----------------------------------------------------------------------------
-    error_state <= error_state_type'VAL(
-                    to_integer(unsigned(stat_bus(STAT_ERROR_STATE_HIGH downto
-                                                 STAT_ERROR_STATE_LOW))));
-
+    is_err_active <= status_bus(STAT_IS_ERR_ACTIVE_INDEX);
+    is_err_passive <= status_bus(STAT_IS_ERR_PASSIVE_INDEX);
+    is_bus_off <= status_bus(STAT_IS_BUS_OFF_INDEX);
+    
     ----------------------------------------------------------------------------
-    -- Extract Operation Control state from Status Bus
+    -- Extract Operation Control information from Status Bus
     ----------------------------------------------------------------------------
-    OP_State <= oper_mode_type'VAL(to_integer(unsigned(
-                                    stat_bus(STAT_OP_STATE_HIGH downto
-                                             STAT_OP_STATE_LOW))));
+    is_transmitter <= stat_bus(STAT_IS_TRANSMITTER_INDEX);
+    is_receiver <= stat_bus(STAT_IS_RECEIVER_INDEX);
+    is_idle <= stat_bus(STAT_IS_IDLE_INDEX);
 
     ---------------------------------------------------------------------------
     -- Status register - combinational decoder
     ---------------------------------------------------------------------------
-    status_comb(IDLE_IND) <= '1' when (error_state = bus_off) else
-                             '1' when (OP_State = integrating) else
-                             '1' when (OP_State = idle) else
+    status_comb(IDLE_IND) <= '1' when (is_bus_off = '1') else
+                             '1' when (is_idle = '1') else
                              '0';
 
     status_comb(EWL_IND) <= '1' when 
@@ -560,11 +607,8 @@ begin
                             else
                             '0';
 
-    status_comb(TXS_IND) <= '1' when (OP_State = transciever) else
-                            '0';
-
-    status_comb(RXS_IND) <= '1' when (OP_State = reciever) else
-                            '0';
+    status_comb(TXS_IND) <= is_transmitter;
+    status_comb(RXS_IND) <= is_receiver;
 
     status_comb(TXNF_IND) <= '1' when (txtb_state(0) = TXT_ETY or
                                        txtb_state(1) = TXT_ETY or
@@ -578,9 +622,7 @@ begin
 
     status_comb(DOR_IND) <= rx_data_overrun;
 
-    status_comb(EFT_IND)  <= '1' when (PC_state = error)
-                                 else
-                             '0';
+    status_comb(EFT_IND)  <= stat_bus(STAT_IS_ERROR_INDEX);
 
     status_comb(31 downto 8) <= (others => '0');
 
@@ -970,13 +1012,13 @@ begin
         Control_registers_in.version(
             align_reg_to_wrd(VER_MINOR_H, length) downto
             align_reg_to_wrd(VER_MINOR_L, length)) <=
-            VERSION_MINOR;
+            G_VERSION_MINOR;
 
         -- Version major
         Control_registers_in.version(
             align_reg_to_wrd(VER_MAJOR_H, length) downto
             align_reg_to_wrd(VER_MAJOR_L, length)) <=
-            VERSION_MAJOR;
+            G_VERSION_MAJOR;
     end block version_reg_block;
 
 
@@ -1012,18 +1054,15 @@ begin
     begin
         -- ERA field - Error active
         Control_registers_in.fault_state(align_reg_to_wrd(ERA_IND, length)) <=
-            '1' when (error_state = error_active) else
-            '0';
+            is_err_active;
 
         -- ERP field - Error passive
         Control_registers_in.fault_state(align_reg_to_wrd(ERP_IND, length)) <=
-            '1' when (error_state = error_passive) else
-            '0';
+            is_err_passive;
 
         -- BOF field - Bus off
         Control_registers_in.fault_state(align_reg_to_wrd(BOF_IND, length)) <=
-            '1' when (error_state = bus_off) else
-            '0';
+            is_bus_off;
 
         -- Pad rest by zeroes
         Control_registers_in.fault_state(
@@ -1379,37 +1418,37 @@ begin
         -- PC_ARB field - Protocol control FSM - arbitration field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_ARB_IND, length)) <=
-            '1' when PC_State = arbitration else '0';
+            stat_bus(STAT_IS_ARBITRATION_INDEX);
 
         -- PC_CON field - Protocol control FSM - control field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_CON_IND, length)) <=
-            '1' when PC_State = control else '0';
+            stat_bus(STAT_IS_CONTROL_INDEX);
 
         -- PC_DAT field - Protocol control FSM - data field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_DAT_IND, length)) <=
-            '1' when PC_State = data else '0';
+            stat_bus(STAT_IS_DATA_INDEX);
 
         -- PC_CRC field - Protocol control FSM - CRC field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_CRC_IND, length)) <=
-            '1' when PC_State = crc else '0';
+            stat_bus(STAT_IS_CRC_INDEX);
 
         -- PC_EOF field - Protocol control FSM - EOF field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_EOF_IND, length)) <=
-            '1' when PC_State = eof else '0';
+            stat_bus(STAT_IS_EOF_INDEX);
 
         -- PC_OVR field - Protocol control FSM - Overload frame field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_OVR_IND, length)) <=
-            '1' when PC_State = overload else '0';
+            stat_bus(STAT_IS_OVERLOAD_INDEX);
 
         -- PC_INT field - Protocol control FSM - Interframe frame field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_INT_IND, length)) <=
-            '1' when PC_State = interframe else '0';
+            stat_bus(STAT_IS_INTERFRAME_INDEX);
 
         -- Pad rest by zeroes
         Control_registers_in.debug_register(31 downto 13) <= (OTHERS => '0');
@@ -1737,41 +1776,36 @@ begin
     ----------------------------------------------------------------------------
     -- Driving bus assignment
     ----------------------------------------------------------------------------
-    --Note:  All unused signals indices should be assigned to zero!
-    drv_bus(80 downto 61)                             <=  (OTHERS => '0');
-    drv_bus(349 downto 330)                           <=  (OTHERS => '0');
-    drv_bus(355 downto 354)                           <=  (OTHERS => '0');
-    drv_bus(360 downto 358)                           <=  (OTHERS => '0');
-    drv_bus(362 downto 361)                           <=  (OTHERS => '0');
-    drv_bus(365 downto 363)                           <=  (OTHERS => '0');
-    drv_bus(370 downto 368)                           <=  (OTHERS => '0');
-    drv_bus(371)                                      <=  '0';
-    drv_bus(399 downto 382)                           <=  (OTHERS => '0');
-    drv_bus(459 downto 445)                           <=  (OTHERS => '0');
-    drv_bus(464 downto 462)                           <=  (OTHERS => '0');
-    drv_bus(609 downto 601)                           <=  (OTHERS => '0');
-    drv_bus(579 downto 570)                           <=  (OTHERS => '0');
-    drv_bus(519 downto 511)                           <=  (OTHERS => '0');
-    drv_bus(506 downto 475)                           <=  (OTHERS => '0');
-    drv_bus(444 downto 430)                           <=  (OTHERS => '0');
+    -- Note:  All unused signals indices are assigned to zero!
+    drv_bus(80 downto 61)   <= (OTHERS => '0');
+    drv_bus(349 downto 330) <= (OTHERS => '0');
+    drv_bus(355 downto 354) <= (OTHERS => '0');
+    drv_bus(360 downto 358) <= (OTHERS => '0');
+    drv_bus(362 downto 361) <= (OTHERS => '0');
+    drv_bus(365 downto 363) <= (OTHERS => '0');
+    drv_bus(370 downto 368) <= (OTHERS => '0');
+    drv_bus(371)            <= '0';
+    drv_bus(399 downto 382) <= (OTHERS => '0');
+    drv_bus(459 downto 445) <= (OTHERS => '0');
+    drv_bus(464 downto 462) <= (OTHERS => '0');
+    drv_bus(609 downto 601) <= (OTHERS => '0');
+    drv_bus(579 downto 570) <= (OTHERS => '0');
+    drv_bus(519 downto 511) <= (OTHERS => '0');
+    drv_bus(506 downto 475) <= (OTHERS => '0');
+    drv_bus(444 downto 430) <= (OTHERS => '0');
 
-    drv_bus(1023 downto 876)                          <=  (OTHERS => '0');
+    drv_bus(1023 downto 876)<= (OTHERS => '0');
 
-    drv_bus(863 downto 844)                          <=  (OTHERS => '0');
-    drv_bus(831 downto 812)                          <=  (OTHERS => '0');
-    drv_bus(799 downto 780)                          <=  (OTHERS => '0');
-    drv_bus(767 downto 748)                          <=  (OTHERS => '0');
-    drv_bus(735 downto 614)                          <=  (OTHERS => '0');
+    drv_bus(863 downto 844) <= (OTHERS => '0');
+    drv_bus(831 downto 812) <= (OTHERS => '0');
+    drv_bus(799 downto 780) <= (OTHERS => '0');
+    drv_bus(767 downto 748) <= (OTHERS => '0');
+    drv_bus(735 downto 614) <= (OTHERS => '0');
 
-    drv_bus(367)                                     <= '0';
-    drv_bus(357)                                     <= '0';
-
-    -- TXT Buffer and TX Buffer (Obsolete)
-    drv_bus(DRV_ERASE_TXT1_INDEX)                     <=  '0';
-    drv_bus(DRV_ERASE_TXT2_INDEX)                     <=  '0';
-   
-    -- Obsolete - TODO: Clean-up
-    drv_bus(DRV_TRIG_CONFIG_DATA_HIGH downto
-            DRV_TRIG_CONFIG_DATA_LOW) <= (OTHERS => '0');
+    drv_bus(367)            <= '0';
+    drv_bus(366)            <= '0';
+    drv_bus(357)            <= '0';
+    drv_bus(356)            <= '0';
+    drv_bus(551 downto 520) <= (OTHERS => '0');
 
 end architecture;
