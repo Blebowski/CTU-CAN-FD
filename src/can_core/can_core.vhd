@@ -115,7 +115,7 @@ entity can_core is
         stat_bus               :out  std_logic_vector(511 downto 0);
 
         ------------------------------------------------------------------------
-        -- Tx Arbitrator interface
+        -- Tx Arbitrator and TXT Buffers interface
         ------------------------------------------------------------------------
         -- TX Data word
         txt_buffer_word        :in   std_logic_vector(31 downto 0);
@@ -148,7 +148,7 @@ entity can_core is
         txt_buf_ptr            :out  natural range 0 to 19;
 
         -- Transition to bus off has occurred
-        bus_off_start          :out  std_logic;
+        is_bus_off             :out  std_logic;
 
         ------------------------------------------------------------------------
         -- Recieve Buffer and Message Filter Interface
@@ -313,7 +313,7 @@ architecture rtl of can_core is
     -- Fault confinement Interface
     signal is_err_active           :    std_logic;
     signal is_err_passive          :    std_logic;
-    signal is_bus_off              :    std_logic;
+    signal is_bus_off_i            :    std_logic;
     signal err_detected_i          :    std_logic;
     signal primary_error           :    std_logic;
     signal act_err_ovr_flag        :    std_logic;
@@ -488,7 +488,7 @@ begin
         -- Fault confinement Interface
         is_err_active           => is_err_active,
         is_err_passive          => is_err_passive,
-        is_bus_off              => is_bus_off,
+        is_bus_off              => is_bus_off_i,
         err_detected            => err_detected_i,
         primary_error           => primary_error,
         act_err_ovr_flag        => act_err_ovr_flag,
@@ -605,8 +605,7 @@ begin
         -- Fault confinement State indication
         is_err_active           => is_err_active,
         is_err_passive          => is_err_passive,
-        is_bus_off              => is_bus_off,
-        bus_off_start           => bus_off_start,
+        is_bus_off              => is_bus_off_i,
 
         -- Error counters
         tx_err_ctr              => tx_err_ctr,
@@ -1046,7 +1045,7 @@ begin
         is_err_passive;
     
     stat_bus(STAT_IS_BUS_OFF_INDEX) <=
-        is_bus_off;
+        is_bus_off_i;
    
     stat_bus(STAT_FORM_ERROR_INDEX) <=
         form_error;
@@ -1159,5 +1158,6 @@ begin
     sp_control <= sp_control_i;
     ssp_reset <= ssp_reset_i;
     trv_delay_calib <= trv_delay_calib_i;
+    is_bus_off <= is_bus_off_i;
  
 end architecture;
