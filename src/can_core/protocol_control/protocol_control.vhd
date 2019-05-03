@@ -104,6 +104,30 @@ entity protocol_control is
         -- Error code capture
         erc_capture             :out  std_logic_vector(7 downto 0);
         
+        -- Arbitration field is being transmitted
+        is_arbitration          :out  std_logic;
+        
+        -- Control field is being transmitted
+        is_control              :out  std_logic;
+
+        -- Data field is being transmitted
+        is_data                 :out  std_logic;
+
+        -- CRC field is being transmitted
+        is_crc                  :out  std_logic;
+        
+        -- End of Frame field is being transmitted
+        is_eof                  :out  std_logic;
+
+        -- Error frame is being transmitted
+        is_error                :out  std_logic;
+        
+        -- Overload frame is being transmitted
+        is_overload             :out  std_logic;
+        
+        -- Interframe space is being transmitted
+        is_interframe           :out  std_logic;
+        
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
@@ -519,7 +543,7 @@ architecture rtl of protocol_control is
   signal err_pos                 :      std_logic_vector(4 downto 0);
     
   -- Arbitration field is being transmitted / received
-  signal is_arbitration          :      std_logic;
+  signal is_arbitration_i        :      std_logic;
   
   -- Bit error detection enabled
   signal bit_error_enable        :      std_logic;
@@ -591,6 +615,13 @@ begin
         drv_self_test_ena       => drv_self_test_ena,   -- IN
         drv_bus_mon_ena         => drv_bus_mon_ena,     -- IN
         drv_retr_lim_ena        => drv_retr_lim_ena,    -- IN
+        is_control              => is_control,          -- OUT
+        is_data                 => is_data,             -- OUT
+        is_crc                  => is_crc,              -- OUT
+        is_eof                  => is_eof,              -- OUT
+        is_error                => is_error,            -- OUT
+        is_overload             => is_overload,         -- OUT
+        is_interframe           => is_interframe,       -- OUT
 
         -- Data-path interface
         tx_data                 => tx_data_nbs_i,       -- IN
@@ -670,7 +701,7 @@ begin
         crc_clear_match_flag    => crc_clear_match_flag,    -- OUT
         crc_src                 => crc_src_i,               -- OUT
         err_pos                 => err_pos,                 -- OUT
-        is_arbitration          => is_arbitration,          -- OUT
+        is_arbitration          => is_arbitration_i,        -- OUT
         
         -- Bit Stuffing/Destuffing control signals
         stuff_enable            => stuff_enable,            -- OUT
@@ -824,7 +855,7 @@ begin
         crc_clear_match_flag    => crc_clear_match_flag,    -- IN
         crc_src                 => crc_src_i,               -- IN
         drv_fd_type             => drv_fd_type,             -- IN
-        is_arbitration          => is_arbitration,          -- IN
+        is_arbitration          => is_arbitration_i,        -- IN
         is_transmitter          => is_transmitter,          -- IN
         is_err_passive          => is_receiver,             -- IN
 
@@ -929,6 +960,7 @@ begin
     form_error <= form_error_i;
     ack_error <= ack_error_i;
     crc_error <= crc_error_i;
+    is_arbitration <= is_arbitration_i;
     
     ---------------------------------------------------------------------------
     -- Assertions

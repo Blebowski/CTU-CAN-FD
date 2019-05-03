@@ -114,6 +114,27 @@ entity protocol_control_fsm is
         
         -- Retransmition limit enabled for errornous frames
         drv_retr_lim_ena        :in   std_logic;
+        
+        -- Control field is being transmitted
+        is_control              :out  std_logic;
+
+        -- Data field is being transmitted
+        is_data                 :out  std_logic;
+
+        -- CRC field is being transmitted
+        is_crc                  :out  std_logic;
+        
+        -- End of Frame field is being transmitted
+        is_eof                  :out  std_logic;
+
+        -- Error frame is being transmitted
+        is_error                :out  std_logic;
+        
+        -- Overload frame is being transmitted
+        is_overload             :out  std_logic;
+        
+        -- Interframe space is being transmitted
+        is_interframe           :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Data-path interface
@@ -1187,6 +1208,15 @@ begin
         -- CRC control
         crc_enable <= '0';
         crc_spec_enable <= '0';
+        
+        -- Status signals for debug
+        is_control      <= '0';
+        is_data         <= '0';
+        is_crc          <= '0';
+        is_eof          <= '0';
+        is_error        <= '0';
+        is_overload     <= '0';
+        is_interframe   <= '0';
 
         if (err_frm_req = '1') then
             ctrl_ctr_pload_i   <= '1';
@@ -1358,6 +1388,8 @@ begin
                     if (tx_data = DOMINANT and rx_data = RECESSIVE) then
                         bit_error_arb_i <= '1';
                     end if;
+                else
+                    is_control <= '1';
                 end if;
 
                 if (is_transmitter = '1' and tran_ident_type = BASE) then
@@ -1442,6 +1474,7 @@ begin
                 rx_store_edl_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
+                is_control <= '1';
                 
                 if (is_transmitter = '1') then
                     if (tran_frame_type = NORMAL_CAN) then
@@ -1461,6 +1494,7 @@ begin
                 err_pos <= ERC_POS_CTRL;
                 trv_delay_calib <= '1';
                 crc_enable <= '1';
+                is_control <= '1';
                 
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
@@ -1492,6 +1526,7 @@ begin
                 err_pos <= ERC_POS_CTRL;
                 perform_hsync <= '1';
                 crc_enable <= '1';
+                is_control <= '1';
                 
             -------------------------------------------------------------------
             -- EDL/r0 bit in CAN 2.0 and CAN FD Frames with BASE identifier
@@ -1507,6 +1542,7 @@ begin
                 rx_store_edl_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
+                is_control <= '1';
                 
                 if (is_transmitter = '1' and tran_frame_type = NORMAL_CAN) then
                     tx_dominant <= '1';
@@ -1521,6 +1557,7 @@ begin
                 rx_store_brs_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
+                is_control <= '1';
                 
                 if (is_transmitter = '1' and tran_brs = BR_NO_SHIFT) then
                     tx_dominant <= '1';
@@ -1540,6 +1577,7 @@ begin
                 rx_store_esi_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
+                is_control <= '1';
                 
                 if (is_transmitter = '1' and is_err_active = '1') then
                     tx_dominant <= '1';
@@ -1554,6 +1592,7 @@ begin
                 tx_shift_ena_i  <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
+                is_control <= '1';
                 
                 -- Address first Data Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! Do it only when tran-
@@ -1591,6 +1630,7 @@ begin
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_DATA;
                 crc_enable <= '1';
+                is_data <= '1';
                 
                 -- Address next word (the one after actually transmitted one),
                 -- so that when current word ends, TXT Buffer RAM already
@@ -1629,6 +1669,7 @@ begin
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_CRC;
                 crc_enable <= '1';
+                is_crc <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_val <= crc_length_i;
@@ -1649,6 +1690,7 @@ begin
                 rx_shift_ena <= '1';
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_CRC;
+                is_crc <= '1';
 
                 if (is_fd_frame = '1') then
                     stuff_length <= 4;
@@ -1757,6 +1799,8 @@ begin
             -------------------------------------------------------------------
             when s_pc_eof =>
                 ctrl_ctr_ena <= '1';
+                is_eof <= '1';
+                
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     if (rx_data = RECESSIVE) then
@@ -1794,6 +1838,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_intermission =>
                 ctrl_ctr_ena <= '1';
+                is_interframe <= '1';
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -1860,6 +1905,7 @@ begin
                 ctrl_ctr_ena <= '1';
                 perform_hsync <= '1';
                 crc_spec_enable <= '1';
+                is_interframe <= '1';
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -1894,6 +1940,7 @@ begin
             when s_pc_idle =>
                 perform_hsync <= '1';
                 crc_spec_enable <= '1';
+                is_interframe <= '1';
                                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -1962,6 +2009,8 @@ begin
             -------------------------------------------------------------------
             when s_pc_act_err_flag =>
                 ctrl_ctr_ena <= '1';
+                is_error <= '1';
+                
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
@@ -1980,6 +2029,8 @@ begin
             -------------------------------------------------------------------
             when s_pc_pas_err_flag =>
                 ctrl_ctr_ena <= '1';
+                is_error <= '1';
+                
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
@@ -1995,6 +2046,8 @@ begin
             -- Wait till Error delimiter (detection of recessive bit)
             -------------------------------------------------------------------
             when s_pc_err_delim_wait =>
+                is_error <= '1';
+                
                 if (ctrl_ctr_zero = '0') then
                     ctrl_ctr_ena <= '1';
                 end if;
@@ -2026,7 +2079,9 @@ begin
             -- Error delimiter
             -------------------------------------------------------------------
             when s_pc_err_delim =>
+                is_error <= '1';
                 ctrl_ctr_ena <= '1';
+                
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     if (rx_data = DOMINANT) then
@@ -2045,6 +2100,7 @@ begin
             -- Overload flag
             -------------------------------------------------------------------
             when s_pc_ovr_flag =>
+                is_overload <= '1';
                 ctrl_ctr_ena <= '1';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_OVRL;
@@ -2057,7 +2113,9 @@ begin
             -- Wait till overload delimiter.
             -------------------------------------------------------------------
             when s_pc_ovr_delim_wait =>
+                is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
+                
                 if (rx_data = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_OVR_DELIM_DURATION;
@@ -2068,6 +2126,8 @@ begin
             -------------------------------------------------------------------
             when s_pc_ovr_delim  =>
                 ctrl_ctr_ena <= '1';
+                is_overload <= '1';
+                
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     if (rx_data = DOMINANT) then
