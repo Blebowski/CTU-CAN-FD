@@ -69,7 +69,10 @@ use work.CAN_FD_frame_format.all;
 
 entity txt_buffer_fsm is
     generic(
-        -- Buffer ID
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '0';
+        
+        -- TXT Buffer ID
         G_ID                   :     natural
     );
     port(
@@ -264,15 +267,18 @@ begin
             if (txt_sw_cmd.set_ety = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_empty;
             end if;
-          
+
         end case;
 
         --------------------------------------------------------------------
-        -- If Core goes to bus-off, TXT Buffer goes to failed, regardless of
-        -- any other SW or HW commands
+        -- If Core is bus-off, TXT Buffer goes to failed from any transient
+        -- state.
         --------------------------------------------------------------------
-        if (is_bus_off = '1') then
-            next_state       <= s_txt_error;
+        if (is_bus_off = '1' and (
+            (curr_state = s_txt_ab_prog) or (curr_state = s_txt_tx_prog) or
+            (curr_state = s_txt_ready)))
+        then
+            next_state <= s_txt_error;
         end if;
 
     end process;

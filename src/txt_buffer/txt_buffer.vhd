@@ -96,61 +96,74 @@ use work.CAN_FD_frame_format.all;
 
 entity txt_buffer is
     generic(
-        constant buf_count            :     natural range 1 to 8;
-        constant ID                   :     natural := 1
+        -- Reset polarity
+        G_RESET_POLARITY           :    std_logic := '0';
+        
+        -- Number of TXT Buffers
+        G_TXT_BUF_COUNT            :     natural range 1 to 8;
+        
+        -- TXT Buffer ID
+        G_ID                       :     natural := 1
     );
-  PORT(
+    port(
         ------------------------------------------------------------------------
-        -- Clock and reset
+        -- Clock and Asynchronous reset
         ------------------------------------------------------------------------
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
 
         ------------------------------------------------------------------------
-        -- Driving Registers Interface
+        -- Memory Registers Interface
         ------------------------------------------------------------------------
+        -- Data to be written to TXT Buffer RAM
+        tran_data              :in   std_logic_vector(31 downto 0);
+        
+        -- Address in TXT Buffer RAM
+        tran_addr              :in   std_logic_vector(4 downto 0);
+        
+        -- TXT Buffer RAM chip select
+        tran_cs                :in   std_logic;
 
-        -- Data and address for SW access into the RAM of TXT Buffer
-        signal tran_data              :in   std_logic_vector(31 downto 0);
-        signal tran_addr              :in   std_logic_vector(4 downto 0);
-        signal tran_cs                :in   std_logic;
+        -- SW commands
+        txt_sw_cmd             :in   t_txt_sw_cmd;
+        
+        -- TXT Buffer index for which SW command is valid
+        txt_sw_buf_cmd_index   :in   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
-        -- SW commands from user registers
-        signal txt_sw_cmd             :in   t_txt_sw_cmd;
-        signal txt_sw_buf_cmd_index   :in   std_logic_vector(
-                                                buf_count - 1 downto 0);
+        -- Buffer State (encoded for Memory registers)
+        txtb_state             :out  std_logic_vector(3 downto 0);
 
         ------------------------------------------------------------------------   
-        -- Status signals
+        -- Interrupt Manager Interface
         ------------------------------------------------------------------------
-        signal txtb_state             :out  std_logic_vector(3 downto 0);
-
-        ------------------------------------------------------------------------
-        -- Interrupt Manager
-        ------------------------------------------------------------------------
-        signal txt_hw_cmd_int         :out  std_logic;
+        -- HW Command applied
+        txt_hw_cmd_int         :out  std_logic;
 
         ------------------------------------------------------------------------
-        -- CAN Core and TX Arbiter Interface
+        -- CAN Core and TX Arbitrator Interface
         ------------------------------------------------------------------------
+        -- HW Commands 
+        txt_hw_cmd             :in   t_txt_hw_cmd;
+        
+        -- Index of TXT Buffer for which HW commands is valid          
+        txt_hw_cmd_buf_index   :in   natural range 0 to G_TXT_BUF_COUNT - 1;
 
-        -- Commands from the CAN Core for manipulation of the CAN 
-        signal txt_hw_cmd             :in   t_txt_hw_cmd;  
-        signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
+        -- TXT Buffer RAM data output
+        txt_word               :out  std_logic_vector(31 downto 0);
+        
+        -- TXT Buffer RAM address
+        txt_addr               :in   natural range 0 to 19;
 
-        -- Buffer output and pointer to the RAM memory
-        signal txt_word               :out  std_logic_vector(31 downto 0);
-        signal txt_addr               :in   natural range 0 to 19;
+        -- Unit just turned bus off.
+        is_bus_off             :in   std_logic;
 
-        signal bus_off_start          :in   std_logic;
-
-        -- Signals to the TX Arbitrator that it can be selected for transmission
-        -- (used as input to priority decoder)
-        signal txt_buf_ready          :out  std_logic
+        -- TXT Buffer is ready to be locked by CAN Core for transmission
+        txt_buf_ready          :out  std_logic
     );
-             
 end entity;
-
 
 architecture rtl of txt_buffer is
 
@@ -171,7 +184,6 @@ architecture rtl of txt_buffer is
     signal hw_cbs                 : std_logic;
     signal sw_cbs                 : std_logic;
 
-
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- RAM wrapper signals
@@ -188,11 +200,11 @@ architecture rtl of txt_buffer is
 begin
         
     -- Command buffer select signals
-    hw_cbs <= '1' when txt_hw_cmd_buf_index = ID
+    hw_cbs <= '1' when (txt_hw_cmd_buf_index = G_ID)
                   else
               '0';
   
-    sw_cbs <= '1' when txt_sw_buf_cmd_index(ID) = '1' 
+    sw_cbs <= '1' when (txt_sw_buf_cmd_index(G_ID) = '1') 
                   else
               '0';
     
@@ -214,7 +226,7 @@ begin
         word_width           => 32,
         depth                => 20,
         address_width        => RAM_read_address'length,
-        reset_polarity       => ACT_RESET,
+        reset_polarity       => G_RESET_POLARITY,
         simulation_reset     => true,
         sync_read            => true
     )
@@ -234,7 +246,8 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_fsm_comp : txt_buffer_fsm
     generic map(
-        ID                     => ID
+        G_RESET_POLARITY       => G_RESET_POLARITY, 
+        G_ID                   => G_ID
     )
     port map(
         clk_sys                => clk_sys,
@@ -245,7 +258,7 @@ begin
 
         txt_hw_cmd             => txt_hw_cmd,
         hw_cbs                 => hw_cbs,
-        bus_off_start          => bus_off_start,
+        is_bus_off             => is_bus_off,
 
         txtb_user_accessible   => txtb_user_accessible,
         txtb_hw_cmd_int        => txt_hw_cmd_int,
