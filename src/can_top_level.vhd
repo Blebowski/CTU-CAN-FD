@@ -192,9 +192,9 @@ entity can_top_level is
         -----------------------------------------------------------------------
         timestamp    : in std_logic_vector(63 downto 0)
     );
-end entity CAN_top_level;
+end entity can_top_level;
 
-architecture rtl of CAN_top_level is
+architecture rtl of can_top_level is
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -497,6 +497,12 @@ architecture rtl of CAN_top_level is
     -- Logging finished
     signal loger_finished       :  std_logic;
     
+    ------------------------------------------------------------------------
+    -- Bit time FSM outputs
+    ------------------------------------------------------------------------
+    -- Bit time FSM state
+    signal bt_fsm               :    t_bit_time;
+     
 begin
 
     -- synthesis translate_off
@@ -891,7 +897,8 @@ begin
         tx_trigger              => tx_trigger,
         
         -- Status outputs
-        time_quanta_clk         => time_quanta_clk
+        time_quanta_clk         => time_quanta_clk,
+        bt_fsm                  => bt_fsm
     );
   
  
@@ -956,7 +963,8 @@ begin
             log_read_pointer    => log_read_pointer,
             log_size            => log_size,
             log_state_out       => log_state_out,
-            data_overrun        => rx_data_overrun
+            data_overrun        => rx_data_overrun,
+            bt_fsm              => bt_fsm
         );
     end generate event_logger_gen_true;
 

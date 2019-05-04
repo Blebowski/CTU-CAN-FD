@@ -120,7 +120,8 @@ entity event_logger is
         signal sync_edge            :in   std_logic;
         signal data_overrun         :in   std_logic;
         signal timestamp            :in   std_logic_vector(63 downto 0);
-
+        signal bt_fsm               :in   t_bit_time;
+        
         -------------------
         --Status signals --
         -------------------
@@ -514,9 +515,11 @@ begin
                             end if;                  
 
                             if (i = 17) then
-                                -- TODO: Bit time segment temporarily thrown
-                                --       out!
-                                bit_type_vect <= "0000";
+                                case bt_fsm is
+                                    when tseg1   => bit_type_vect <= "0001"; 
+                                    when tseg2   => bit_type_vect <= "1000";
+                                    when others  => bit_type_vect <= "0000";
+                                end case;
                             end if; 
                           
                         end if;

@@ -64,1262 +64,3956 @@ use work.can_registers_pkg.all;
 
 package can_components is
 
-    ------------------------------------------------------------------------------
-    ------------------------------------------------------------------------------
-    ---- CAN FD Core top level entity
-    ------------------------------------------------------------------------------
-    ------------------------------------------------------------------------------
     component can_top_level is
         generic(
-            constant use_logger     : boolean               := true;
-            constant rx_buffer_size : natural range 32 to 4096 := 128;
-            constant use_sync       : boolean               := true;
-            constant ID             : natural range 0 to 15 := 1;
-            constant sup_filtA      : boolean               := true;
-            constant sup_filtB      : boolean               := true;
-            constant sup_filtC      : boolean               := true;
-            constant sup_range      : boolean               := true;
-            constant logger_size    : natural --range 0 to 512:=8
+            -- Insert logger instance
+            use_logger     : boolean                := true;
+    
+            -- RX Buffer RAM size (32 bit words)
+            rx_buffer_size : natural range 32 to 4096 := 128;
+    
+            -- ID (bits 19-16 of adress)
+            ID             : natural range 0 to 15  := 1;
+    
+            -- Insert Filter A
+            sup_filtA      : boolean                := true;
+            
+            -- Insert Filter B
+            sup_filtB      : boolean                := true;
+            
+            -- Insert Filter C
+            sup_filtC      : boolean                := true;
+            
+            -- Insert Range Filter
+            sup_range      : boolean                := true;
+            
+            -- Event Logger RAM size (32 bit words)
+            logger_size    : natural range 0 to 512 := 8
         );
         port(
-            signal clk_sys         : in  std_logic;
-            signal res_n           : in  std_logic;
-            signal data_in         : in  std_logic_vector(31 downto 0);
-            signal data_out        : out std_logic_vector(31 downto 0);
-            signal adress          : in  std_logic_vector(15 downto 0);
-            signal scs             : in  std_logic;
-            signal srd             : in  std_logic;
-            signal swr             : in  std_logic;
-            signal sbe             : in  std_logic_vector(3 downto 0);
-            signal int             : out std_logic;
-            signal CAN_tx          : out std_logic;
-            signal CAN_rx          : in  std_logic;
-            signal time_quanta_clk : out std_logic;
+            -----------------------------------------------------------------------
+            -- Clock and Asynchronous reset
+            -----------------------------------------------------------------------
+            -- System clock
+            clk_sys     : in std_logic;
+            
+            -- Asynchronous reset
+            res_n       : in std_logic;
+    
+            -----------------------------------------------------------------------
+            -- Memory interface
+            -----------------------------------------------------------------------
+            -- Input data
+            data_in     : in  std_logic_vector(31 downto 0);
+            
+            -- Output data
+            data_out    : out std_logic_vector(31 downto 0);
+            
+            -- Address
+            adress      : in  std_logic_vector(15 downto 0);
+            
+            -- Chip select
+            scs         : in  std_logic;
+            
+            -- Read indication
+            srd         : in  std_logic;
+            
+            -- Write indication
+            swr         : in  std_logic;
+            
+            -- Byte enable
+            sbe         : in  std_logic_vector(3 downto 0);
+            
+            -----------------------------------------------------------------------
+            -- Interrupt Interface
+            -----------------------------------------------------------------------
+            -- Interrupt output
+            int         : out std_logic;
+    
+            -----------------------------------------------------------------------
+            -- CAN Bus Interface
+            -----------------------------------------------------------------------
+            -- TX signal to CAN bus
+            can_tx      : out std_logic;
+            
+            -- RX signal from CAN bus
+            can_rx      : in  std_logic;
+    
+            -----------------------------------------------------------------------
+            -- Synchronisation signals
+            -----------------------------------------------------------------------
+            -- Time Quanta clocks
+            time_quanta_clk : out std_logic;
+    
+            -----------------------------------------------------------------------
+            -- Internal signals for testbenches
+            -----------------------------------------------------------------------
             -- synthesis translate_off
-            signal drv_bus_o    : out std_logic_vector(1023 downto 0);
-            signal stat_bus_o   : out std_logic_vector(511 downto 0);
+            -- Driving Bus output
+            drv_bus_o    : out std_logic_vector(1023 downto 0);
+            
+            -- Status Bus output
+            stat_bus_o   : out std_logic_vector(511 downto 0);
             -- synthesis translate_on
-            signal timestamp       : in  std_logic_vector(63 downto 0)
-      );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    ---- CAN Top level components
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
-
-    ----------------------------------------------------------------------------
-    -- Registers
-    ----------------------------------------------------------------------------
-    component memory_registers is
-        generic(
-            constant use_logger    : boolean                      := true;
-            constant sup_filtA     : boolean                      := true;
-            constant sup_filtB     : boolean                      := true;
-            constant sup_filtC     : boolean                      := true;
-            constant sup_range     : boolean                      := true;
-            constant sup_be        : boolean                      := false;
-            constant buf_count     : natural range 0 to 7         := 2;
-            constant ID            : natural;
-            constant DEVICE_ID     : std_logic_vector(15 downto 0);
-            constant VERSION_MINOR : std_logic_vector(7 downto 0);
-            constant VERSION_MAJOR : std_logic_vector(7 downto 0)
+    
+            -----------------------------------------------------------------------
+            -- Timestamp for time based transmission / reception
+            -----------------------------------------------------------------------
+            timestamp    : in std_logic_vector(63 downto 0)
         );
-        port(
-            signal clk_sys              : in  std_logic;
-            signal res_n                : in  std_logic;
-            signal res_out              : out std_logic;
-            signal data_in              : in  std_logic_vector(31 downto 0);
-            signal data_out             : out std_logic_vector(31 downto 0);
-            signal adress               : in  std_logic_vector(15 downto 0);
-            signal scs                  : in  std_logic;
-            signal srd                  : in  std_logic;
-            signal swr                  : in  std_logic;
-            signal sbe                  : in  std_logic_vector(3 downto 0);
-            signal timestamp            : in  std_logic_vector(63 downto 0);
-            signal drv_bus              : out std_logic_vector(1023 downto 0);
-            signal stat_bus             : in  std_logic_vector(511 downto 0);
-            signal rx_read_buff         : in  std_logic_vector(31 downto 0);
-            signal rx_buf_size          : in  std_logic_vector(12 downto 0);
-            signal rx_full              : in  std_logic;
-            signal rx_empty             : in  std_logic;
-            signal rx_message_count     : in  std_logic_vector(10 downto 0);
-            signal rx_mem_free          : in  std_logic_vector(12 downto 0);
-            signal rx_read_pointer_pos  : in  std_logic_vector(11 downto 0);
-            signal rx_write_pointer_pos : in  std_logic_vector(11 downto 0);
-            signal rx_data_overrun      : in  std_logic;
-            signal tran_data            : out std_logic_vector(31 downto 0);
-            signal tran_addr            : out std_logic_vector(4 downto 0);
-
-            signal txtb_cs              : out std_logic_vector(
-                                                buf_count - 1 downto 0);
-
-            signal txtb_state           : in  txtb_state_type;
-            signal txt_sw_cmd           : out txt_sw_cmd_type;
-
-            signal txt_buf_cmd_index    : out std_logic_vector(
-                                                buf_count - 1 downto 0);
-
-            signal txt_buf_prior_out    : out txtb_priorities_type;
-            signal trv_delay_out        : in  std_logic_vector(15 downto 0);
-
-            signal int_vector           : in  std_logic_vector(
-                                                INT_COUNT - 1 downto 0);
-
-            signal int_ena              : in  std_logic_vector(
-                                                INT_COUNT - 1 downto 0);
-
-            signal int_mask             : in  std_logic_vector(
-                                                INT_COUNT - 1 downto 0);
-
-            signal loger_act_data       : in  std_logic_vector(63 downto 0);
-            signal log_write_pointer    : in  std_logic_vector(7 downto 0);
-            signal log_read_pointer     : in  std_logic_vector(7 downto 0);
-            signal log_size             : in  std_logic_vector(7 downto 0);
-            signal log_state_out        : in  logger_state_type
-        );
-    end component;
-
-    ----------------------------------------------------------------------------
-    -- Control registers sub-module
-    ----------------------------------------------------------------------------
-    component control_registers_reg_map is
-        generic (
-            constant DATA_WIDTH          : natural := 32;
-            constant ADDRESS_WIDTH       : natural := 8;
-            constant REGISTERED_READ     : boolean := true;
-            constant CLEAR_READ_DATA     : boolean := true;
-            constant RESET_POLARITY      : std_logic := '0';
-            constant SUP_FILT_A          : boolean := true;
-            constant SUP_RANGE           : boolean := true;
-            constant SUP_FILT_C          : boolean := true;
-            constant SUP_FILT_B          : boolean := true
-        );
-        port (
-            signal clk_sys               :in std_logic;
-            signal res_n                 :in std_logic;
-            signal address               :in std_logic_vector(address_width - 1 downto 0);
-            signal w_data                :in std_logic_vector(data_width - 1 downto 0);
-            signal r_data                :out std_logic_vector(data_width - 1 downto 0);
-            signal cs                    :in std_logic;
-            signal read                  :in std_logic;
-            signal write                 :in std_logic;
-            signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
-            signal control_registers_out :out Control_registers_out_t;
-            signal control_registers_in  :in Control_registers_in_t
-        );
-    end component control_registers_reg_map;
-
-
-    ----------------------------------------------------------------------------
-    -- Event logger registers sub-module
-    ----------------------------------------------------------------------------
-    component event_logger_reg_map is
-        generic (
-            constant DATA_WIDTH          : natural := 32;
-            constant ADDRESS_WIDTH       : natural := 8;
-            constant REGISTERED_READ     : boolean := true;
-            constant CLEAR_READ_DATA     : boolean := true;
-            constant RESET_POLARITY      : std_logic := '0'
-        );
-        port (
-            signal clk_sys               :in std_logic;
-            signal res_n                 :in std_logic;
-            signal address               :in std_logic_vector(address_width - 1 downto 0);
-            signal w_data                :in std_logic_vector(data_width - 1 downto 0);
-            signal r_data                :out std_logic_vector(data_width - 1 downto 0);
-            signal cs                    :in std_logic;
-            signal read                  :in std_logic;
-            signal write                 :in std_logic;
-            signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
-            signal event_logger_out      :out Event_Logger_out_t;
-            signal event_logger_in       :in Event_Logger_in_t
-        );
-    end component event_logger_reg_map;
-
-
-    ----------------------------------------------------------------------------
-    -- RX Buffer module
-    ----------------------------------------------------------------------------
-    component rx_buffer is
-        generic(
-            buff_size                   :       natural range 32 to 4096 := 32
-        );
-        port(
-            signal clk_sys              :in     std_logic; --System clock
-            signal res_n                :in     std_logic; --Async. reset
-            signal rec_ident_in         :in     std_logic_vector(28 downto 0);
-            signal rec_dlc_in           :in     std_logic_vector(3 downto 0);
-            signal rec_ident_type_in    :in     std_logic;
-            signal rec_frame_type_in    :in     std_logic;
-            signal rec_is_rtr           :in     std_logic;
-            signal rec_brs              :in     std_logic;
-            signal rec_esi              :in     std_logic;
-            signal store_metadata       :in     std_logic;
-            signal store_data           :in     std_logic;
-            signal store_data_word      :in     std_logic_vector(31 downto 0);
-            signal rec_message_valid    :in     std_logic;
-            signal rec_abort            :in     std_logic;
-            signal sof_pulse            :in     std_logic;
-            signal rx_buf_size          :out    std_logic_vector(12 downto 0);
-            signal rx_full              :out    std_logic;
-            signal rx_empty             :out    std_logic;
-            signal rx_message_count     :out    std_logic_vector(10 downto 0);
-            signal rx_mem_free          :out    std_logic_vector(12 downto 0);
-            signal rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
-            signal rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
-            signal rx_data_overrun      :out    std_logic;
-            signal timestamp            :in     std_logic_vector(63 downto 0);
-            signal rx_read_buff         :out    std_logic_vector(31 downto 0);
-            signal drv_bus              :in     std_logic_vector(1023 downto 0)
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- RX Buffer FSM
-    ----------------------------------------------------------------------------    
-    component rx_buffer_fsm is
-        port(
-            signal clk_sys              :in     std_logic; --System clock
-            signal res_n                :in     std_logic; --Async. reset
-            signal store_metadata       :in     std_logic;
-            signal store_data           :in     std_logic;
-            signal rec_message_valid    :in     std_logic;
-            signal rec_abort            :in     std_logic;
-            signal sof_pulse            :in     std_logic;
-            signal drv_bus              :in     std_logic_vector(1023 downto 0);
-            signal write_raw_intent     :out    std_logic;
-            signal write_extra_ts       :out    std_logic;
-            signal store_extra_ts_end   :out    std_logic;
-            signal data_selector        :out    std_logic_vector(6 downto 0);
-            signal store_extra_wr_ptr   :out    std_logic;
-            signal inc_extra_wr_ptr     :out    std_logic;
-            signal reset_overrun_flag   :out    std_logic
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- RX Buffer Pointers
-    ----------------------------------------------------------------------------    
-    component rx_buffer_pointers is
-    generic(
-        buff_size                     :       natural range 32 to 4096 := 32
-    );
-    port(
-        signal clk_sys                :in     std_logic; --System clock
-        signal res_n                  :in     std_logic; --Async. reset
-        signal rec_abort              :in     std_logic;
-        signal commit_rx_frame        :in     std_logic;
-        signal write_raw_OK           :in     std_logic;
-        signal commit_overrun_abort   :in     std_logic;
-        signal store_extra_wr_ptr     :in     std_logic;
-        signal inc_extra_wr_ptr       :in     std_logic;
-        signal read_increment         :in     std_logic;
-        signal drv_bus                :in     std_logic_vector(1023 downto 0);
-        signal read_pointer           :out    integer range 0 to buff_size - 1;
-        signal read_pointer_inc_1     :out    integer range 0 to buff_size - 1;
-        signal write_pointer          :out    integer range 0 to buff_size - 1;
-        signal write_pointer_raw      :out    integer range 0 to buff_size - 1;
-        signal write_pointer_extra_ts :out    integer range 0 to buff_size - 1;
-        signal rx_mem_free_int        :out    integer range 0 to buff_size + 1
-    );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Inferred RAM wrapper
-    ----------------------------------------------------------------------------    
-    component inf_ram_wrapper is
-        generic(
-            constant word_width           :     natural := 32;
-            constant depth                :     natural := 32;
-            constant address_width        :     natural := 8;
-            constant reset_polarity       :     std_logic := '1';
-            constant simulation_reset     :     boolean := true;
-            constant sync_read            :     boolean := true
-        );
-        port(
-            signal clk_sys                :in   std_logic;
-            signal res_n                  :in   std_logic;
-            signal addr_A                 :in   std_logic_vector(address_width -1
-                                                downto 0);
-            signal write                  :in   std_logic;
-            signal data_in                :in   std_logic_vector(word_width - 1
-                                                downto 0);
-            signal addr_B                 :in   std_logic_vector(address_width - 1
-                                                downto 0);
-            signal data_out               :out  std_logic_vector(word_width - 1
-                                                downto 0)
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- TXT Buffer module
-    ----------------------------------------------------------------------------
-    component txt_buffer is
-        generic(
-            constant buf_count            :     natural range 1 to 8;
-            constant ID                   :     natural := 1
-        );
-        port(
-            signal clk_sys                :in   std_logic;
-            signal res_n                  :in   std_logic; --Async reset
-            signal tran_data              :in   std_logic_vector(31 downto 0);
-            signal tran_addr              :in   std_logic_vector(4 downto 0);
-            signal tran_cs                :in   std_logic;
-            signal txt_sw_cmd             :in   txt_sw_cmd_type;
-            signal txt_hw_cmd_int         :out  std_logic;
-            signal txt_sw_buf_cmd_index   :in   std_logic_vector(
-                                                    buf_count - 1 downto 0);
-
-            signal txtb_state             :out  std_logic_vector(3 downto 0);
-            signal txt_hw_cmd             :in   txt_hw_cmd_type;
-            signal bus_off_start          :in   std_logic;
-            signal txt_hw_cmd_buf_index   :in   natural range 0 to buf_count - 1;
-            signal txt_word               :out  std_logic_vector(31 downto 0);
-            signal txt_addr               :in   natural range 0 to 19;
-            signal txt_buf_ready          :out  std_logic
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- TXT Buffer FSM 
-    ----------------------------------------------------------------------------
-    component txt_buffer_fsm is
-    generic(
-        constant ID                   :     natural
-    );
-    port(
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
-        signal txt_sw_cmd             :in   txt_sw_cmd_type;
-        signal sw_cbs                 :in   std_logic;
-        signal txt_hw_cmd             :in   txt_hw_cmd_type;  
-        signal hw_cbs                 :in   std_logic;
-        signal bus_off_start          :in   std_logic;
-        signal txtb_user_accessible   :out  std_logic;
-        signal txtb_hw_cmd_int        :out  std_logic;
-        signal txtb_state             :out  std_logic_vector(3 downto 0);
-        signal txt_buf_ready          :out  std_logic
-    );
-    end component;
-
-    ----------------------------------------------------------------------------
-    -- TXT Arbitrator module
-    ----------------------------------------------------------------------------
-    component tx_arbitrator is
-    generic(
-        constant buf_count            :    natural range 1 to 8
-    );
-    port(
-        signal clk_sys                :in  std_logic;
-        signal res_n                  :in  std_logic;
-        signal txt_buf_in             :in txtb_output_type;
-
-        signal txt_buf_ready          :in std_logic_vector(buf_count - 1 downto 0);
-        signal txtb_ptr               :out natural range 0 to 19;
-        signal tran_data_word_out     :out std_logic_vector(31 downto 0);
-        signal tran_dlc_out           :out std_logic_vector(3 downto 0);
-        signal tran_is_rtr            :out std_logic;
-        signal tran_ident_type_out    :out std_logic;
-        signal tran_frame_type_out    :out std_logic;
-        signal tran_brs_out           :out std_logic;
-        signal tran_frame_valid_out   :out std_logic;
-        signal txt_hw_cmd             :in txt_hw_cmd_type;
-        signal txtb_changed           :out std_logic;
-        signal txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
-        signal txtb_core_pointer      :in natural range 0 to 19;
-        signal drv_bus                :in std_logic_vector(1023 downto 0);
-        signal txt_buf_prio           :in txtb_priorities_type;
-        signal timestamp              :in std_logic_vector(63 downto 0)
-    );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Priority decoder for TXT Buffer selection
-    ----------------------------------------------------------------------------
-    component priority_decoder is
-    generic(
-        constant buf_count          :   natural range 1 to 8
-    );
-    port(
-        signal prio                 : in  txtb_priorities_type;
-        signal prio_valid           : in  std_logic_vector(
-                                            buf_count - 1 downto 0);
-        signal output_valid         : out  std_logic;
-        signal output_index         : out  natural range 0 to buf_count - 1
-    );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- TX Arbitrator FSM
-    ----------------------------------------------------------------------------    
-    component tx_arbitrator_fsm is
-    port( 
-        signal clk_sys                :in  std_logic;
-        signal res_n                  :in  std_logic;
-
-        signal select_buf_avail       :in  std_logic;
-        signal select_index_changed   :in  std_logic;
-        signal timestamp_valid        :in  std_logic;
-        signal txt_hw_cmd             :in txt_hw_cmd_type;  
-
-        signal load_ts_lw_addr        :out std_logic;
-        signal load_ts_uw_addr        :out std_logic;
-        signal load_ffmt_w_addr       :out std_logic;
-        signal store_ts_l_w           :out std_logic;
-        signal store_md_w             :out std_logic;
-        signal tx_arb_locked          :out std_logic;
-        signal store_last_txtb_index  :out std_logic;
-        signal frame_valid_com_set    :out std_logic;
-        signal frame_valid_com_clear  :out std_logic 
-    );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Frame filters module
-    ----------------------------------------------------------------------------
-    component frame_filters is
-        generic(
-            constant sup_filtA : boolean := true;
-            constant sup_filtB : boolean := true;
-            constant sup_filtC : boolean := true;
-            constant sup_range : boolean := true
-        );
-        port(
-            signal clk_sys         : in  std_logic;
-            signal res_n           : in  std_logic;
-            signal rec_ident_in    : in  std_logic_vector(28 downto 0);
-            signal ident_type      : in  std_logic;
-            signal frame_type      : in  std_logic;
-            signal rec_ident_valid : in  std_logic;
-            signal drv_bus         : in  std_logic_vector(1023 downto 0);
-            signal out_ident_valid : out std_logic
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Generic Bit Filter
-    ----------------------------------------------------------------------------
-    component bit_filter is
-    generic(
-        constant width              :   natural;
-        constant is_present         :   boolean
-    );
-    port(
-        signal filter_mask          : in  std_logic_vector(width - 1 downto 0);
-        signal filter_value         : in  std_logic_vector(width - 1 downto 0);
-        signal filter_input         : in  std_logic_vector(width - 1 downto 0);
-        signal enable               : in  std_logic;
-        signal valid                : out std_logic
-    );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Range filter
-    ----------------------------------------------------------------------------
-    component range_filter is
-    generic(
-        constant width              :   natural;
-        constant is_present         :   boolean        
-    );
-    port(
-        signal filter_upp_th        : in    std_logic_vector(width - 1 downto 0);
-        signal filter_low_th        : in    std_logic_vector(width - 1 downto 0);
-        signal filter_input         : in    std_logic_vector(width - 1 downto 0);
-        signal enable               : in    std_logic;
-        signal valid                : out   std_logic
-    );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Interrupt manager module
-    ----------------------------------------------------------------------------
-    component int_manager is
-        generic(
-            constant int_count          :     natural range 0 to 32 := 11
-        );
-        port(
-            signal clk_sys                :in   std_logic;
-            signal res_n                  :in   std_logic;
-            signal error_valid            :in   std_logic;
-            signal error_passive_changed  :in   std_logic;
-            signal error_warning_limit    :in   std_logic;
-            signal arbitration_lost       :in   std_logic;
-            signal tx_finished            :in   std_logic;
-            signal br_shifted             :in   std_logic;
-            signal rx_message_disc        :in   std_logic;
-            signal rec_message_valid      :in   std_logic;
-            signal rx_full                :in   std_logic;
-            signal rx_empty               :in   std_logic;
-            signal txt_hw_cmd_int         :in   std_logic_vector(TXT_BUFFER_COUNT - 1
-                                                                 downto 0);
-            signal loger_finished         :in   std_logic;
-            signal drv_bus                :in   std_logic_vector(1023 downto 0);
-            signal int_out                :out  std_logic;
-
-            signal int_vector             :out  std_logic_vector(
-                                                    int_count - 1 downto 0);
-
-            signal int_mask               :out  std_logic_vector(
-                                                    int_count - 1 downto 0);
-
-            signal int_ena                :out  std_logic_vector(
-                                                    int_count - 1 downto 0)
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Single Interrupt module
-    ----------------------------------------------------------------------------
-    component int_module is
+    end component can_top_level;
+   
+   
+    component bus_sampling is 
         generic(        
-            constant reset_polarity        :    std_logic := '0';
-            constant clear_priority        :    boolean := true
-        );
-        port(
-            signal clk_sys                :in   std_logic; --System Clock
-            signal res_n                  :in   std_logic; --Async Reset
-
-            signal int_status_set         :in   std_logic;
-            signal int_status_clear       :in   std_logic;
-
-            signal int_mask_set           :in   std_logic;
-            signal int_mask_clear         :in   std_logic;
-
-            signal int_ena_set            :in   std_logic;
-            signal int_ena_clear          :in   std_logic;
-
-            signal int_status             :out  std_logic;
-            signal int_mask               :out  std_logic;
-            signal int_ena                :out  std_logic
+            -- Reset polarity
+            G_RESET_POLARITY        :     std_logic := '0';
+            
+            -- Secondary sampling point Shift registers length
+            G_SSP_SHIFT_LENGTH      :     natural := 130;
+    
+            -- Depth of FIFO Cache for TX Data
+            G_TX_CACHE_DEPTH        :     natural := 8;
+            
+            -- Width (number of bits) in transceiver delay measurement counter
+            G_TRV_CTR_WIDTH         :     natural := 7;
+            
+            -- Optional usage of saturated value of ssp_delay 
+            G_USE_SSP_SATURATION    :     boolean := true
         );  
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- CAN Core module
-    ----------------------------------------------------------------------------
-    component can_core is
         port(
-            signal clk_sys               : in  std_logic;
-            signal res_n                 : in  std_logic;
-            signal drv_bus               : in  std_logic_vector(1023 downto 0);
-            signal stat_bus              : out std_logic_vector(511 downto 0);
-            signal tran_data_in          : in  std_logic_vector(31 downto 0);
-            signal tran_dlc_in           : in  std_logic_vector(3 downto 0);
-            signal tran_is_rtr_in        : in  std_logic;
-            signal tran_ident_type_in    : in  std_logic;
-            signal tran_frame_type_in    : in  std_logic;
-            signal tran_brs_in           : in  std_logic;
-            signal tran_frame_valid_in   : in  std_logic;
-            signal txt_hw_cmd            : out txt_hw_cmd_type;
-            signal txtb_changed          : in  std_logic;
-            signal txt_buf_ptr           : out natural range 0 to 19;
-
-            signal rec_ident_out         : out std_logic_vector(28 downto 0);
-            signal rec_dlc_out           : out std_logic_vector(3 downto 0);
-            signal rec_ident_type_out    : out std_logic;
-            signal rec_frame_type_out    : out std_logic;
-            signal rec_is_rtr_out        : out std_logic;
-            signal rec_brs_out           : out std_logic;
-            signal rec_esi_out           : out std_logic;
-            signal rec_message_valid_out : out std_logic;
-            signal store_metadata        : out std_logic;
-            signal store_data            : out std_logic;
-            signal store_data_word       : out std_logic_vector(31 downto 0);
-            signal rec_abort             : out std_logic;
-
-            signal arbitration_lost_out  : out std_logic;
-            signal tx_finished           : out std_logic;
-            signal br_shifted            : out std_logic;
-            signal error_valid           : out std_logic;
-            signal error_passive_changed : out std_logic;
-            signal error_warning_limit   : out std_logic;
-            signal sample_nbt_del_2      : in  std_logic;
-            signal sample_dbt_del_2      : in  std_logic;
-            signal sample_nbt_del_1      : in  std_logic;
-            signal sample_dbt_del_1      : in  std_logic;
-            signal sync_nbt              : in  std_logic;
-            signal sync_dbt              : in  std_logic;
-            signal sync_nbt_del_1        : in  std_logic;
-            signal sync_dbt_del_1        : in  std_logic;
-            signal sample_sec            : in  std_logic;
-            signal sample_sec_del_1      : in  std_logic;
-            signal sample_sec_del_2      : in  std_logic;
-            signal sync_control          : out std_logic_vector(1 downto 0);
-            signal no_pos_resync         : out std_logic;
-            signal data_rx               : in  std_logic;
-            signal data_tx               : out std_logic;
-            signal timestamp             : in  std_logic_vector(63 downto 0);
-            signal sp_control            : out std_logic_vector(1 downto 0);
-            signal ssp_reset             : out std_logic;
-            signal trv_delay_calib       : out std_logic;
-            signal bit_Error_sec_sam     : in  std_logic;
-            signal hard_sync_edge        : in  std_logic;
-            signal bus_off_start         : out std_logic;
-            signal sof_pulse             : out std_logic
+            ------------------------------------------------------------------------
+            -- Clock and Async reset
+            ------------------------------------------------------------------------
+            -- System clock
+            clk_sys              :in   std_logic;
+            
+            -- Asynchronous reset
+            res_n                :in   std_logic;
+    
+            ------------------------------------------------------------------------
+            --  Physical layer interface
+            ------------------------------------------------------------------------
+            -- CAN serial stream output
+            can_rx               :in   std_logic;
+            
+            -- CAN serial stream input
+            can_tx               :out  std_logic;
+    
+            ------------------------------------------------------------------------
+            -- Memorz registers interface
+            ------------------------------------------------------------------------
+            -- Driving bus
+            drv_bus              :in   std_logic_vector(1023 downto 0);
+            
+            -- Measured Transceiver delay 
+            trv_delay            :out  std_logic_vector(15 downto 0);
+              
+            ------------------------------------------------------------------------
+            -- Prescaler interface
+            ------------------------------------------------------------------------
+            -- RX Trigger for Nominal Bit Time
+            rx_trigger           :in   std_logic;
+            
+            -- Valid synchronisation edge appeared (Recessive to Dominant)
+            sync_edge            :out  std_logic;
+    
+            ------------------------------------------------------------------------
+            -- CAN Core Interface
+            ------------------------------------------------------------------------
+            -- TX data
+            tx_data_wbs          :in   std_logic;
+    
+            -- RX data
+            rx_data_wbs          :out  std_logic;
+    
+            -- Sample control
+            sp_control           :in   std_logic_vector(1 downto 0);
+                
+            -- Reset for Secondary Sampling point Shift register.
+            ssp_reset            :in   std_logic;
+    
+            -- Calibration command for transciever delay compenstation
+            trv_delay_calib      :in   std_logic; 
+    
+            -- Secondary sampling RX trigger
+            sample_sec           :out  std_logic;
+    
+            -- Bit error detected
+            bit_error            :out  std_logic 
         );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Bus traffic counters
-    ----------------------------------------------------------------------------
-    component bus_traffic_counters is
-    port(
-        signal clk_sys                :in   std_logic;
-        signal res_n                  :in   std_logic;
-        signal clear_rx_ctr           :in   std_logic;
-        signal clear_tx_ctr           :in   std_logic;
-        signal inc_tx_ctr             :in   std_logic;
-        signal inc_rx_ctr             :in   std_logic;
-        signal tx_ctr                 :out  std_logic_vector(31 downto 0);
-        signal rx_ctr                 :out  std_logic_vector(31 downto 0)
-    );
-    end component;
-
-    ----------------------------------------------------------------------------
-    -- Prescaler module
-    ----------------------------------------------------------------------------
-    component prescaler is
+    end component bus_sampling;
+   
+    component bit_error_detector is
         generic(
-          reset_polarity        : std_logic := '0';
-          capt_btr              : boolean := false;
-          capt_tseg_1           : boolean := true;
-          capt_tseg_2           : boolean := false;
-          capt_sjw              : boolean := false;
-          tseg1_nbt_width       : natural := 8; 
-          tseg2_nbt_width       : natural := 6;
-          tq_nbt_width          : natural := 8;
-          sjw_nbt_width         : natural := 5;
-          tseg1_dbt_width       : natural := 7;
-          tseg2_dbt_width       : natural := 5;
-          tq_dbt_width          : natural := 8;
-          sjw_dbt_width         : natural := 5;
-          sync_trigger_count    : natural range 2 to 8 := 2;
-          sample_trigger_count  : natural range 2 to 8 := 3
+            -- Reset polarity
+            G_RESET_POLARITY         :     std_logic
         );
         port(
-            signal clk_sys              : in  std_logic;
-            signal res_n                : in  std_logic;
-            signal sync_edge            : in  std_logic;
-            signal drv_bus              : in  std_logic_vector(1023 downto 0);
-            signal sample_nbt           : out std_logic_vector(sample_trigger_count - 1 downto 0); 
-            signal sample_dbt           : out std_logic_vector(sample_trigger_count - 1 downto 0);
-            signal sync_nbt             : out std_logic_vector(sync_trigger_count - 1 downto 0);
-            signal sync_dbt             : out std_logic_vector(sync_trigger_count - 1 downto 0);
-            signal time_quanta_clk      : out std_logic;
-            signal bt_FSM_out           : out bit_time_type;
-            signal hard_sync_edge_valid : out std_logic;
-            signal sp_control           : in  std_logic_vector(1 downto 0);
-            signal sync_control         : in  std_logic_vector(1 downto 0);
-            signal no_pos_resync        : in  std_logic
-        );
-    end component;
-
-    component bit_time_cfg_capture is
-    generic (
-        reset_polarity : std_logic := '0';
-        capt_btr        : boolean := false;
-        capt_tseg_1     : boolean := true;
-        capt_tseg_2     : boolean := false;
-        capt_sjw        : boolean := false;
-        tseg1_nbt_width : natural := 8;
-        tseg2_nbt_width : natural := 8;
-        tq_nbt_width    : natural := 8;
-        sjw_nbt_width   : natural := 5;
-        tseg1_dbt_width : natural := 8;
-        tseg2_dbt_width : natural := 8;
-        tq_dbt_width    : natural := 8;
-        sjw_dbt_width   : natural := 5
-    );
-    port(
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
-        signal drv_bus          : in    std_logic_vector(1023 downto 0);
-        signal tseg1_nbt  : out std_logic_vector(tseg1_nbt_width - 1 downto 0);
-        signal tseg2_nbt  : out std_logic_vector(tseg2_nbt_width - 1 downto 0);
-        signal brp_nbt    : out std_logic_vector(tq_nbt_width - 1 downto 0);
-        signal sjw_nbt    : out std_logic_vector(sjw_nbt_width - 1 downto 0);
-        signal tseg1_dbt  : out std_logic_vector(tseg1_dbt_width - 1 downto 0);
-        signal tseg2_dbt  : out std_logic_vector(tseg2_dbt_width - 1 downto 0);
-        signal brp_dbt    : out std_logic_vector(tq_dbt_width - 1 downto 0);
-        signal sjw_dbt    : out std_logic_vector(sjw_dbt_width - 1 downto 0);
-        signal start_edge : out std_logic
-    );
-    end component;
-
-    component ipt_checker is
-    generic (
-        reset_polarity : std_logic := '0';
-        ipt_length     : natural range 2 to 8 := 4
-    );
-    port(
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
-        signal is_tseg2         : in    std_logic;
-        signal ipt_gnt          : out   std_logic
-    );
-    end component;
+            ------------------------------------------------------------------------
+            -- Clock and Async reset
+            ------------------------------------------------------------------------
+            -- System clock
+            clk_sys                  :in   std_logic;
+            
+            -- Asynchronous reset
+            res_n                    :in   std_logic;
+            
+            ------------------------------------------------------------------------
+            -- Control signals
+            ------------------------------------------------------------------------
+            -- CTU CAN FD Core is enabled
+            drv_ena                  :in   std_logic;
+            
+            -- Sample control
+            sp_control               :in   std_logic_vector(1 downto 0);
+            
+            -- RX Trigger
+            rx_trigger               :in   std_logic;
+            
+            -- RX Trigger - Secondary Sample
+            sample_sec               :in   std_logic;
     
-    component resynchronisation is
-    generic (
-        reset_polarity          :       std_logic := '0';
-        sjw_width               :       natural := 4;
-        tseg1_width             :       natural := 8;
-        tseg2_width             :       natural := 8;
-        bt_width                :       natural := 8
-    );
-    port(
-        signal clk_sys              : in    std_logic;
-        signal res_n                : in    std_logic;
-        signal resync_edge_valid    : in    std_logic;
-        signal is_tseg1             : in    std_logic;
-        signal is_tseg2             : in    std_logic;
-        signal tseg_1       : in    std_logic_vector(tseg1_width - 1 downto 0);
-        signal tseg_2       : in    std_logic_vector(tseg2_width - 1 downto 0);
-        signal sjw          : in    std_logic_vector(sjw_width - 1 downto 0);
-        signal bt_counter   : in    std_logic_vector(bt_width - 1 downto 0);
-        signal start_edge   : in    std_logic;
-        signal segm_end         : in    std_logic;
-        signal h_sync_valid     : in    std_logic;
-        signal exit_segm_req    : out   std_logic
-    );
-    end component;
-
-    component bit_time_counters is
-    generic (
-        reset_polarity  : std_logic := '0';
-        bt_width        : natural := 8;
-        tq_width        : natural := 8
-    );
-    port(
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
-        signal prescaler        : in    std_logic_vector(tq_width - 1 downto 0);
-        signal tq_reset         : in    std_logic;
-        signal bt_reset         : in    std_logic;
-        signal drv_ena          : in    std_logic;
-        signal tq_edge          : out   std_logic;
-        signal bt_counter       : out   std_logic_vector(bt_width - 1 downto 0)
-    );
-    end component;
-
-    component segment_end_detector is
-    generic (
-        reset_polarity          :       std_logic := '0'
-    );
-    port(
-        signal clk_sys            : in    std_logic;
-        signal res_n              : in    std_logic;
-        signal sp_control         : in    std_logic_vector(1 downto 0);
-        signal h_sync_edge_valid  : in    std_logic;
-        signal exit_segm_req_nbt  : in    std_logic;
-        signal exit_segm_req_dbt  : in    std_logic;
-        signal is_tseg1           : in    std_logic;
-        signal is_tseg2           : in    std_logic;
-        signal tq_edge_nbt        : in    std_logic;
-        signal tq_edge_dbt        : in    std_logic;
-        signal segm_end           : out   std_logic;
-        signal h_sync_valid       : out   std_logic;
-        signal bt_ctr_clear       : out   std_logic
-    );
-    end component;
-
-    component bit_time_fsm is
-    generic (
-        reset_polarity  : std_logic := '0'
-    );
-    port(
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
-        signal segm_end         : in    std_logic;
-        signal h_sync_valid     : in    std_logic;
-        signal drv_ena          : in    std_logic;
-        signal is_tseg1         : out   std_logic;
-        signal is_tseg2         : out   std_logic;
-        signal sample_req       : out   std_logic;
-        signal sync_req         : out   std_logic;
-        signal bt_FSM_out       : out   bit_time_type
-    );
-    end component;
-
-    component synchronisation_checker is
-    generic (
-        reset_polarity          :       std_logic := '0'
-    );
-    port(
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
-        signal sync_control     : in    std_logic_vector(1 downto 0);
-        signal sync_edge        : in    std_logic;
-        signal no_pos_resync    : in    std_logic;
-        signal segment_end      : in    std_logic;
-        signal is_tseg1         : in    std_logic;
-        signal is_tseg2         : in    std_logic;
-        signal resync_edge_valid    : out std_logic;
-        signal h_sync_edge_valid    : out std_logic
-    );
-    end component;
-
-    component trigger_generator is
-    generic (
-        reset_polarity          : std_logic := '0';
-        sync_trigger_count      : natural range 2 to 8 := 2;
-        sample_trigger_count    : natural range 2 to 8 := 3
-    );
-    port(
-        signal clk_sys          : in    std_logic;
-        signal res_n            : in    std_logic;
-        signal sample_req       : in    std_logic;
-        signal sync_req         : in    std_logic;
-        signal sp_control       : in    std_logic_vector(1 downto 0);
-        signal sample_nbt : out std_logic_vector(sample_trigger_count - 1 downto 0);
-        signal sample_dbt : out std_logic_vector(sample_trigger_count - 1 downto 0);
-        signal sync_nbt : out std_logic_vector(sync_trigger_count - 1 downto 0);
-        signal sync_dbt : out std_logic_vector(sync_trigger_count - 1 downto 0)
-    );
-    end component;
-
-    ----------------------------------------------------------------------------
-    -- Bus Sampling module
-    ----------------------------------------------------------------------------
-    component bus_sampling is
-        generic (
-            use_Sync : boolean;
-            reset_polarity : std_logic
-        );
-        port(
-            signal clk_sys              : in  std_logic;
-            signal res_n                : in  std_logic;
-            signal CAN_rx               : in  std_logic;
-            signal CAN_tx               : out std_logic;
-            signal drv_bus              : in  std_logic_vector(1023 downto 0);
-            signal sample_nbt           : in  std_logic;
-            signal sample_dbt           : in  std_logic;
-            signal sync_edge            : out std_logic;
-            signal data_tx              : in  std_logic;
-            signal data_rx              : out std_logic;
-            signal sp_control           : in  std_logic_vector(1 downto 0);
-            signal ssp_reset            : in  std_logic;
-            signal trv_delay_calib      : in  std_logic;
-            signal bit_err_enable       : in  std_logic;
-            signal sample_sec_out       : out std_logic;
-            signal sample_sec_del_1_out : out std_logic;
-            signal sample_sec_del_2_out : out std_logic;
-            signal trv_delay_out        : out std_logic_vector(15 downto 0);
-            signal bit_Error            : out std_logic
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- TX Data cache
-    ----------------------------------------------------------------------------
-    component tx_data_cache is
-    generic(
-        constant reset_polarity         :     std_logic;
-        constant tx_cache_depth         :     natural range 4 to 32 := 8;
-        constant tx_cache_res_val       :     std_logic
-    );
-    port(
-        signal clk_sys                  :in   std_logic;
-        signal res_n                    :in   std_logic;
-        signal write                    :in   std_logic;        
-        signal read                     :in   std_logic;
-        signal data_in                  :in   std_logic;
-        signal data_out                 :out  std_logic
-    );
-    end component;
+            -----------------------------------------------------------------------
+            -- TX / RX Datapath
+            -----------------------------------------------------------------------
+            -- Actually transmitted data on CAN bus
+            data_tx                  :in   std_logic;
+            
+            -- Delayed transmitted data (for detection in secondary sampling point)
+            data_tx_delayed          :in   std_logic;
+            
+            -- Receieved data in Nominal Bit time
+            data_rx_nbt              :in   std_logic;
     
-
-    ----------------------------------------------------------------------------
-    -- Data edge detector
-    ----------------------------------------------------------------------------
+            -- Received data (both Nominal Bit time and Data Bit time)
+            can_rx_i                 :in   std_logic;
+    
+            -----------------------------------------------------------------------
+            -- Status outputs
+            -----------------------------------------------------------------------
+            -- Bit error detected
+            bit_error                : out std_logic
+        );
+    end component;
+   
+   
     component data_edge_detector is
         generic(
-            constant reset_polarity         :     std_logic;
-            constant tx_edge_pipeline       :     boolean := true;
-            constant rx_edge_pipeline       :     boolean := true
+            -- Reset polarity
+            G_RESET_POLARITY         :     std_logic
         );
         port(
-            signal clk_sys                  :in   std_logic;
-            signal res_n                    :in   std_logic;
-            signal tx_data                  :in   std_logic;
-            signal rx_data                  :in   std_logic;
-            signal prev_rx_sample           :in   std_logic;
-            signal tx_edge                  :out  std_logic;
-            signal rx_edge                  :out  std_logic
-            );
-    end component;
-
-    ----------------------------------------------------------------------------
-    -- Transceiver Delay measurement
-    ----------------------------------------------------------------------------
-    component trv_delay_measurement is
-        generic(
-            constant reset_polarity         :     std_logic;
-            constant trv_ctr_width          :     natural := 7;
-            constant use_ssp_saturation     :     boolean := true;
-            constant ssp_saturation_lvl     :     natural
+            ------------------------------------------------------------------------
+            -- Clock and Asynchronous reset
+            ------------------------------------------------------------------------
+            -- System clock
+            clk_sys                  :in   std_logic;
+            
+            -- Asynchronous Reset
+            res_n                    :in   std_logic;
+    
+            ------------------------------------------------------------------------
+            -- Inputs
+            ------------------------------------------------------------------------
+            -- TX Data from CAN Core
+            tx_data                  :in   std_logic;
+            
+            -- RX Data (from CAN Bus)
+            rx_data                  :in   std_logic;
+            
+            -- RX Data value from previous Sample point.
+            prev_rx_sample           :in   std_logic;
+            
+            ------------------------------------------------------------------------
+            -- Outputs
+            ------------------------------------------------------------------------
+            -- Edge detected on TX Data
+            tx_edge                  :out  std_logic;
+    
+            -- Edge detected on RX Data                                             
+            rx_edge                  :out  std_logic
         );
-        port(
-            signal clk_sys                  :in   std_logic;
-            signal res_n                    :in   std_logic;
-            signal meas_start               :in   std_logic;
-            signal meas_stop                :in   std_logic;
-            signal meas_enable              :in   std_logic;
-            signal ssp_offset               :in   std_logic_vector(trv_ctr_width - 1 downto 0);
-            signal ssp_delay_select         :in   std_logic_vector(1 downto 0);
-            signal trv_meas_progress        :out  std_logic;
-            signal trv_delay_shadowed       :out  std_logic_vector(trv_ctr_width - 1 downto 0);
-            signal ssp_delay_shadowed       :out  std_logic_vector(trv_ctr_width downto 0)
-        );
-    end component;
-
+    end component data_edge_detector;
+   
+   
     component sample_mux is
     generic(
-        constant reset_polarity         :     std_logic;
-        constant pipeline_sampled_data  :     boolean := true
+        -- Reset polarity
+        G_RESET_POLARITY     :     std_logic := '0'    
     );
     port(
-        signal clk_sys                  :in   std_logic;
-        signal res_n                    :in   std_logic;       
-        signal drv_ena                  :in   std_logic;
-        signal sp_control               :in   std_logic_vector(1 downto 0);
-        signal sample_nbt               :in   std_logic;
-        signal sample_dbt               :in   std_logic;
-        signal sample_sec               :in   std_logic;
-        signal data_rx_nbt              :in   std_logic;
-        signal can_rx_i                 :in   std_logic;
-        signal prev_sample              :out  std_logic;
-        signal data_rx                  :out  std_logic
+        ------------------------------------------------------------------------
+        -- Clock and Async reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in   std_logic;       
+        
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- CTU CAN FD enabled
+        drv_ena              :in   std_logic;
+        
+        -- Sample control (nominal, data, secondary)
+        sp_control           :in   std_logic_vector(1 downto 0);
+        
+        -- RX Trigger
+        rx_trigger           :in   std_logic;
+        
+        -- RX Trigger - Secondary Sampling
+        sample_sec           :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Datapath
+        -----------------------------------------------------------------------
+        -- Receieved data in Nominal Bit time
+        data_rx_nbt          :in   std_logic;
+
+        -- Received data (Nominal Bit Time and Data Bit Time)
+        can_rx_i             :in   std_logic;
+
+        -- Sampled value of RX pin in Sample point (DFF output)
+        prev_sample          :out  std_logic;
+        
+        -- Sampled value of RX pin in Sample point (either DFF or direct output)
+        data_rx              :out  std_logic
     );
     end component sample_mux;
-
-    ----------------------------------------------------------------------------
-    -- Event Logger module
-    ----------------------------------------------------------------------------
-    component event_logger is
-        generic(
-            constant memory_size        :   natural := 16
-        );
-        port(
-            signal clk_sys              : in  std_logic;
-            signal res_n                : in  std_logic;
-            signal drv_bus              : in  std_logic_vector(1023 downto 0);
-            signal stat_bus             : in  std_logic_vector(511 downto 0);
-            signal sync_edge            : in  std_logic;
-            signal data_overrun         : in  std_logic;
-            signal timestamp            : in  std_logic_vector(63 downto 0);
-            signal bt_FSM               : in  bit_time_type;
-            signal loger_finished       : out std_logic;
-            signal loger_act_data       : out std_logic_vector(63 downto 0);
-            signal log_write_pointer    : out std_logic_vector(7 downto 0);
-            signal log_read_pointer     : out std_logic_vector(7 downto 0);
-            signal log_size             : out std_logic_vector(7 downto 0);
-            signal log_state_out        : out logger_state_type
-        );
-    end component;
-    
-    component bit_error_detector is
+   
+   
+    component trv_delay_measurement is
     generic(
-        constant reset_polarity         :     std_logic
+        -- Reset polarity
+        G_RESET_POLARITY         :     std_logic;
+        
+        -- Width (number of bits) in transceiver delay measurement counter
+        G_TRV_CTR_WIDTH          :     natural := 7;
+        
+        -- Optional usage of saturated value of ssp_delay 
+        G_USE_SSP_SATURATION     :     boolean := true;
+        
+        -- Saturation level for size of SSP_delay. This is to make sure that
+        -- if there is smaller shift register for secondary sampling point we
+        -- don't address outside of this register.
+        G_SSP_SATURATION_LVL     :     natural
     );
     port(
-        signal clk_sys                  :in   std_logic;
-        signal res_n                    :in   std_logic;       
-        signal bit_err_enable           :in   std_logic;
-        signal drv_ena                  :in   std_logic;
-        signal sp_control               :in   std_logic_vector(1 downto 0);
-        signal sample_nbt               :in   std_logic;
-        signal sample_dbt               :in   std_logic;
-        signal sample_sec               :in   std_logic;
-        signal data_tx                  :in   std_logic;
-        signal data_tx_delayed          :in   std_logic;
-        signal data_rx_nbt              :in   std_logic;
-        signal can_rx_i                 :in   std_logic;
-        signal bit_error                :out  std_logic
-        );
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys             :in   std_logic;
+        
+        -- Asynchronous reset        
+        res_n               :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Transceiver Delay measurement control
+        ------------------------------------------------------------------------
+        -- Start measurement (on TX Edge)
+        meas_start          :in   std_logic;
+        
+        -- Stop measurement (on RX Edge)
+        meas_stop           :in   std_logic;
+        
+        -- Measurement enabled (by Protocol control)
+        meas_enable         :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory registers interface
+        ------------------------------------------------------------------------
+        -- Secondary sampling point offset
+        ssp_offset          :in   std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+
+        -- Source of secondary sampling point 
+        -- (Measured, Offset, Measured and Offset)
+        ssp_delay_select    :in   std_logic_vector(1 downto 0);
+
+        ------------------------------------------------------------------------
+        -- Status outputs
+        ------------------------------------------------------------------------
+        -- Transceiver delay measurement is in progress
+        trv_meas_progress   :out  std_logic;
+        
+        -- Shadowed value of Transceiver delay. Updated when measurement ends.
+        trv_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
+                                               
+        -- Shadowed value of SSP configuration. Updated when measurement ends.
+        ssp_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH downto 0)
+    );
     end component;
+   
+    component tx_data_cache is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0';
+        
+        -- Depth of FIFO (Number of bits that can be stored)
+        G_TX_CACHE_DEPTH        :     natural range 4 to 32 := 8;
+        
+        -- FIFO reset value
+        G_TX_CACHE_RST_VAL      :     std_logic := '0'
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys         :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n           :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Store input data
+        write           :in   std_logic;
+        
+        -- Read output data
+        read            :in   std_logic;
+        
+        ------------------------------------------------------------------------
+        -- Data signals
+        ------------------------------------------------------------------------
+        -- Data inputs
+        data_in         :in   std_logic;
+        
+        -- Data output
+        data_out        :out  std_logic
+    );
+    end component tx_data_cache;
+    
+    
+    component bit_destuffing is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     :     std_logic := '0'
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              : in std_logic;
+        
+        -- Asynchronous reset
+        res_n                : in std_logic;
+
+        ------------------------------------------------------------------------
+        -- Data-path
+        ------------------------------------------------------------------------
+        -- Data input (from Bus Sampling)
+        data_in              : in std_logic;
+        
+        -- Data output (to Protocol Control)
+        data_out             : out std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- RX Trigger (in Sample point, from Prescaler).
+        rx_trig              : in std_logic;
+
+        -- Bit Destuffing is enabled.
+        destuff_enable       : in  std_logic;
+
+        -- Stuff error detection enabled.
+        stuff_error_enable   : in  std_logic;
+
+        -- Bit destuffing type (0-Normal, 1-Fixed)    
+        fixed_stuff          : in  std_logic;  
+
+        -- Length of Bit De-Stuffing rule
+        destuff_length       : in  std_logic_vector(2 downto 0);  
+       
+        ------------------------------------------------------------------------
+        -- Status Outpus
+        ------------------------------------------------------------------------
+        -- Stuff error detected (more equal consecutive bits than length of
+        -- stuff rule.
+        stuff_error          : out std_logic;
+        
+        -- Data output is not valid, actual bit is stuff bit.
+        destuffed            : out std_logic;
+        
+        -- Number of de-stuffed bits with normal bit stuffing method
+        dst_ctr              : out natural range 0 to 7
+    );
+    end component bit_destuffing;
+   
+   
+    component bit_stuffing is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     :     std_logic := '0'
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys             :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n               :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Data-path
+        ------------------------------------------------------------------------
+        -- Data Input (from Protocol Control)
+        data_in             :in   std_logic;
+        
+        -- Data Output (to CAN Bus)
+        data_out            :out  std_logic;
+        
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- TX Trigger for Bit Stuffing (in SYNC segment) 
+        tx_trigger          :in   std_logic; 
+        
+        -- Bit Stuffing enabled. If not, data are only passed to the output
+        stuff_enable        :in   std_logic;
+
+        -- Bit Stuffing type (0-Normal, 1-Fixed)
+        fixed_stuff         :in   std_logic;    
+
+        -- Length of Bit Stuffing rule
+        stuff_length        :in   std_logic_vector(2 downto 0); 
+
+        ------------------------------------------------------------------------
+        -- Status signals
+        ------------------------------------------------------------------------
+        -- Number of stuffed bits with Normal Bit stuffing
+        bst_ctr             :out  natural range 0 to 7;
+        
+        -- Stuff bit is inserted, Protocol control operation to be halted for
+        -- one bit time
+        data_halt           :out  std_logic
+    );
+    end component bit_stuffing;
 
 
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-    ---- CORE Top level components
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
+    component bus_traffic_counters is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       : std_logic := '0'
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- System clock and Asynchronous Reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous Reset
+        res_n                  :in   std_logic;
 
-    ----------------------------------------------------------------------------
-    -- CRC wrapper
-    ----------------------------------------------------------------------------
-    component crc_wrapper is
-        generic(
-            constant crc15_pol :     std_logic_vector(15 downto 0) := x"C599";
-            constant crc17_pol :     std_logic_vector(19 downto 0) := x"3685B";
-            constant crc21_pol :     std_logic_vector(23 downto 0) := x"302899"  
-        );
-        port(
-            signal res_n            :in   std_logic;
-            signal clk_sys          :in   std_logic;
-            signal data_tx_nbs      :in   std_logic;
-            signal data_tx_wbs      :in   std_logic;
-            signal data_rx_wbs      :in   std_logic;
-            signal data_rx_nbs      :in   std_logic;
-            signal trig_tx_nbs      :in   std_logic;
-            signal trig_tx_wbs      :in   std_logic;
-            signal trig_rx_wbs      :in   std_logic;
-            signal trig_rx_nbs      :in   std_logic;
-            signal enable           :in   std_logic;
-            signal drv_bus          :in   std_logic_vector(1023 downto 0);
-            signal use_rx_crc       :in   std_logic;
-            signal use_wbs_crc      :in   std_logic;
-            signal crc15            :out  std_logic_vector(14 downto 0);
-            signal crc17            :out  std_logic_vector(16 downto 0);
-            signal crc21            :out  std_logic_vector(20 downto 0)
-        );
-    end component;
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Clear RX Traffic counter (Glitch free)
+        clear_rx_ctr           :in   std_logic;
+        
+        -- Clear TX Traffic counter (Glitch free)
+        clear_tx_ctr           :in   std_logic;
+
+        -- Increment TX Traffic Counter
+        inc_tx_ctr             :in   std_logic;
+        
+        -- Increment RX Traffic Counter
+        inc_rx_ctr             :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Counter outputs
+        ------------------------------------------------------------------------
+        -- TX Traffic counter
+        tx_ctr                 :out  std_logic_vector(31 downto 0);
+        
+        -- RX Traffic counter
+        rx_ctr                 :out  std_logic_vector(31 downto 0)
+    );
+    end component bus_traffic_counters;
 
 
-    ----------------------------------------------------------------------------
-    -- CAN CRC module
-    ----------------------------------------------------------------------------
     component can_crc is
-        generic(
-            constant crc15_pol : std_logic_vector(15 downto 0) := x"C599";
-            constant crc17_pol : std_logic_vector(19 downto 0) := x"3685B";
-            constant crc21_pol : std_logic_vector(23 downto 0) := x"302899"
-        );
-        port(
-            signal data_in      : in  std_logic;
-            signal clk_sys      : in  std_logic;
-            signal trig         : in  std_logic;
-            signal res_n        : in  std_logic;
-            signal enable       : in  std_logic;
-            signal drv_bus      : in  std_logic_vector(1023 downto 0);
-            signal crc15        : out std_logic_vector(14 downto 0);
-            signal crc17        : out std_logic_vector(16 downto 0);
-            signal crc21        : out std_logic_vector(20 downto 0)
-        );
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY    :     std_logic := '0';
+        
+        -- CRC 15 polynomial
+        G_CRC15_POL         :     std_logic_vector(15 downto 0) := x"C599";
+        
+        -- CRC 17 polynomial
+        G_CRC17_POL         :     std_logic_vector(19 downto 0) := x"3685B";
+        
+        -- CRC 15 polynomial
+        G_CRC21_POL         :     std_logic_vector(23 downto 0) := x"302899"  
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- System clock and Asynchronous Reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys          :in   std_logic;
+
+        -- Asynchronous reset
+        res_n            :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory registers interface
+        ------------------------------------------------------------------------
+        -- Driving bus
+        drv_bus          :in   std_logic_vector(1023 downto 0);
+
+        ------------------------------------------------------------------------
+        -- Data inputs for CRC calculation
+        ------------------------------------------------------------------------
+        -- TX Data with Bit Stuffing
+        data_tx_wbs      :in   std_logic;
+        
+        -- TX Data without Bit Stuffing
+        data_tx_nbs      :in   std_logic;
+        
+        -- RX Data with Bit Stuffing
+        data_rx_wbs      :in   std_logic;
+        
+        -- RX Data without Bit Stuffing
+        data_rx_nbs      :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Trigger signals to process the data on each CRC input.
+        ------------------------------------------------------------------------
+        -- Trigger for TX Data with Bit Stuffing
+        trig_tx_wbs      :in   std_logic;
+        
+        -- Trigger for TX Data without Bit Stuffing
+        trig_tx_nbs      :in   std_logic;
+        
+        -- Trigger for RX Data with Bit Stuffing
+        trig_rx_wbs      :in   std_logic;
+        
+        -- Trigger for RX Data without Bit Stuffing
+        trig_rx_nbs      :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Enable for all CRC circuits.
+        crc_enable       :in   std_logic;
+
+        -- CRC calculation - speculative enable
+        crc_spec_enable  :in   std_logic;
+
+        -- Unit is receiver of a frame
+        is_receiver      :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- CRC Outputs
+        ------------------------------------------------------------------------
+        -- Calculated CRC 15
+        crc_15           :out  std_logic_vector(14 downto 0);
+
+        -- Calculated CRC 17
+        crc_17           :out  std_logic_vector(16 downto 0);
+        
+        -- Calculated CRC 21
+        crc_21           :out  std_logic_vector(20 downto 0)
+    );
     end component;
 
 
-    ----------------------------------------------------------------------------
-    -- Generic CRC calculation module
-    ----------------------------------------------------------------------------
     component crc_calc is
     generic(
-        constant crc_width      :     natural;
-        constant reset_polarity :       std_logic := '0';
-        constant polynomial     :     std_logic_vector
+        -- Reset polarity
+        G_RESET_POLARITY    : std_logic := '0';
+        
+        -- Width of CRC sequence
+        G_CRC_WIDTH         : natural;
+
+        -- CRC Polynomial
+        G_POLYNOMIAL        : std_logic_vector
     );
     port(
-        signal res_n            :in   std_logic;
-        signal clk_sys          :in   std_logic;
-        signal data_in          :in   std_logic;
-        signal trig             :in   std_logic;
-        signal enable           :in   std_logic; 
-        signal init_vect        :in   std_logic_vector(crc_width - 1 downto 0);
-        signal crc              :out  std_logic_vector(crc_width - 1 downto 0)
+        ------------------------------------------------------------------------
+        -- System clock and Asynchronous Reset
+        ------------------------------------------------------------------------
+        -- System clock input 
+        clk_sys    :in   std_logic;
+
+        -- Asynchronous reset
+        res_n      :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- CRC Calculation control
+        ------------------------------------------------------------------------
+        -- Serial data input for CRC calculation
+        data_in    :in   std_logic;
+
+        -- Trigger to sample the input data
+        trig       :in   std_logic;
+ 
+        -- CRC calculation enabled
+        enable     :in   std_logic; 
+
+        -- Initialization vector for CRC calculation
+        init_vect  :in   std_logic_vector(G_CRC_WIDTH - 1 downto 0);
+
+        ------------------------------------------------------------------------
+        -- CRC output
+        ------------------------------------------------------------------------
+        crc         :out  std_logic_vector(G_CRC_WIDTH - 1 downto 0)
     );    
     end component;
 
 
-    ----------------------------------------------------------------------------
-    -- Bit Stuffing
-    ----------------------------------------------------------------------------
-    component bit_stuffing is
-        port(
-            signal clk_sys     : in  std_logic;
-            signal res_n       : in  std_logic;
-            signal tran_trig_1 : in  std_logic;
-            signal enable      : in  std_logic;
-            signal data_in     : in  std_logic;
-            signal fixed_stuff : in  std_logic;
-            signal data_halt   : out std_logic;
-            signal length      : in  std_logic_vector(2 downto 0);
-            signal bst_ctr     : out natural range 0 to 7;
-            signal data_out    : out std_logic
-        );
-    end component;
+    component error_counters is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- System clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock input 
+        clk_sys                :in   std_logic;
+
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control inputs
+        -----------------------------------------------------------------------
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control             :in   std_logic_vector(1 downto 0);
+
+        -- Increment error counter by 1 
+        inc_one                :in   std_logic;
+        
+        -- Increment error counter by 8
+        inc_eight              :in   std_logic;
+        
+        -- Decrement error counter by 1
+        dec_one                :in   std_logic;
+        
+        -- Reset error counters (asynchronously)
+        reset_err_counters     :in   std_logic;
+        
+        -- Preload TX Error counter
+        tx_err_ctr_pload       :in   std_logic;
+        
+        -- Preload RX Error counter
+        rx_err_ctr_pload       :in   std_logic;
+
+        -- Preload value for Error counters
+        drv_ctr_val            :in   std_logic_vector(8 downto 0);
+        
+        -- Unit is transmitter
+        is_transmitter         :in   std_logic;
+        
+        -- Unit is receiver
+        is_receiver            :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Counter statuses
+        -----------------------------------------------------------------------
+        -- RX Error counter
+        rx_err_ctr             :out  std_logic_vector(8 downto 0);
+        
+        -- TX Error counter
+        tx_err_ctr             :out  std_logic_vector(8 downto 0);
+        
+        -- Nominal Bit Rate Error counter
+        norm_err_ctr           :out  std_logic_vector(15 downto 0);
+        
+        -- Nominal Bit Rate Error counter
+        data_err_ctr           :out  std_logic_vector(15 downto 0)
+    );
+    end component error_counters;
 
 
-    ----------------------------------------------------------------------------
-    -- Bit Destuffing
-    ----------------------------------------------------------------------------
-    component bit_destuffing is
-        port(
-            signal clk_sys            : in  std_logic;
-            signal res_n              : in  std_logic;
-            signal data_in            : in  std_logic;
-            signal trig_spl_1         : in  std_logic;
-            signal stuff_Error        : out std_logic;
-            signal data_out           : out std_logic;
-            signal destuffed          : out std_logic;
-            signal enable             : in  std_logic;
-            signal stuff_Error_enable : in  std_logic;
-            signal fixed_stuff        : in  std_logic;
-            signal length             : in  std_logic_vector(2 downto 0);
-            signal dst_ctr            : out natural range 0 to 7
-        );
-    end component;
+    component fault_confinement_fsm is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Error warning limit
+        ewl                     :in   std_logic_vector(8 downto 0);
+        
+        -- Error passive threshold
+        erp                     :in   std_logic_vector(8 downto 0);
+
+        -- Set unit to be error active
+        set_err_active          :in   std_logic;
+       
+        -----------------------------------------------------------------------
+        -- Error counters
+        -----------------------------------------------------------------------
+        -- TX Error counter
+        tx_err_ctr              :in   std_logic_vector(8 downto 0);
+        
+        -- RX Error counter
+        rx_err_ctr              :in   std_logic_vector(8 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Fault confinement State indication
+        -----------------------------------------------------------------------
+        -- Unit is error active
+        is_err_active           :out  std_logic;
+        
+        -- Unit is error passive
+        is_err_passive          :out  std_logic;
+        
+        -- Unit is Bus-off
+        is_bus_off              :out  std_logic;
+
+        -----------------------------------------------------------------------
+        -- Status outputs
+        -----------------------------------------------------------------------
+        -- Error passive state changed
+        error_passive_changed   :out  std_logic;
+
+        -- Error warning limit was reached
+        error_warning_limit     :out  std_logic
+    );
+    end component fault_confinement_fsm;
 
 
-    ----------------------------------------------------------------------------
-    -- Operation control module
-    ----------------------------------------------------------------------------
-    component operation_control is
-        port(
-            signal clk_sys            : in  std_logic;
-            signal res_n              : in  std_logic;
-            signal drv_bus            : in  std_logic_vector(1023 downto 0);
-            signal arbitration_lost   : in  std_logic;
-            signal PC_State           : in  protocol_type;
-            signal tran_data_valid_in : in  std_logic;
-            signal set_transciever    : in  std_logic;
-            signal set_reciever       : in  std_logic;
-            signal is_idle            : in  std_logic;
-            signal unknown_OP_state   : out std_logic;
-            signal tran_trig          : in  std_logic;
-            signal rec_trig           : in  std_logic;
-            signal data_rx            : in  std_logic;
-            signal OP_State           : out oper_mode_type
-        );
-    end component;
+    component fault_confinement_rules is
+    port(
+        -----------------------------------------------------------------------
+        -- Operation control interface
+        ------------------------------------------------------------------------
+        -- Unit is transmitter
+        is_transmitter          :in   std_logic;
+
+        -- Unit is receiver
+        is_receiver             :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Protocol Control interface
+        -----------------------------------------------------------------------
+        -- Error is detected
+        err_detected            :in   std_logic;
+        
+        -- Error counter should remain unchanged
+        err_ctrs_unchanged      :in   std_logic;
+        
+        -- Primary Error
+        primary_error           :in   std_logic;
+        
+        -- Active Error Flag or Overload flag is being tranmsmitted
+        act_err_ovr_flag        :in   std_logic;
+        
+        -- Error delimiter too late
+        err_delim_late          :in   std_logic;
+        
+        -- Transmission of frame valid
+        tran_valid              :in   std_logic;
+        
+        -- Reception of frame valid
+        rec_valid               :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Output signals to error counters
+        -----------------------------------------------------------------------
+        -- Increment Error counter by 1
+        inc_one                 :out  std_logic;
+
+        -- Increment Error counter by 8
+        inc_eight               :out  std_logic;
+        
+        -- Decrement Error counter by 1
+        dec_one                 :out  std_logic
+    );
+    end component fault_confinement_rules;
 
 
-    ----------------------------------------------------------------------------
-    -- Protocol Control module
-    ----------------------------------------------------------------------------
-    component protocol_control is
-        port(
-            signal clk_sys               : in  std_logic;
-            signal res_n                 : in  std_logic;
-            signal drv_bus               : in  std_logic_vector(1023 downto 0);
-            signal int_loop_back_ena     : out std_logic;
-            signal PC_State_out          : out protocol_type;
-            signal alc                   : out std_logic_vector(7 downto 0);
-            signal tran_data             : in  std_logic_vector(31 downto 0);
-            signal tran_dlc              : in  std_logic_vector(3 downto 0);
-            signal tran_is_rtr           : in  std_logic;
-            signal tran_ident_type       : in  std_logic;
-            signal tran_frame_type       : in  std_logic;
-            signal tran_brs              : in  std_logic;
-            signal txt_buf_ptr           : out natural range 0 to 19;
-            signal tran_frame_valid_in   : in  std_logic;
-            signal txt_hw_cmd            : out txt_hw_cmd_type;
-            signal txtb_changed          : in  std_logic;
-            signal br_shifted            : out std_logic;
-            signal rec_ident             : out std_logic_vector(28 downto 0);
-            signal rec_dlc               : out std_logic_vector(3 downto 0);
-            signal rec_is_rtr            : out std_logic;
-            signal rec_ident_type        : out std_logic;
-            signal rec_frame_type        : out std_logic;
-            signal rec_brs               : out std_logic;
-            signal rec_crc               : out std_logic_vector(20 downto 0);
-            signal rec_esi               : out std_logic;
-            signal store_metadata        : out std_logic;
-            signal rec_abort             : out std_logic;
-            signal store_data            : out std_logic;
-            signal store_data_word       : out std_logic_vector(31 downto 0);
-            signal OP_state              : in  oper_mode_type;
-            signal arbitration_lost      : out std_logic;
-            signal is_idle               : out std_logic;
-            signal set_transciever       : out std_logic;
-            signal set_reciever          : out std_logic;
-            signal ack_recieved_out      : out std_logic;
-            signal error_state           : in  error_state_type;
-            signal form_Error            : out std_logic;
-            signal CRC_Error             : out std_logic;
-            signal ack_Error             : out std_logic;
-            signal bit_Error_valid       : in  std_logic;
-            signal stuff_Error_valid     : in  std_logic;
-            signal inc_one               : out std_logic;
-            signal inc_eight             : out std_logic;
-            signal dec_one               : out std_logic;
-            signal tran_valid            : out std_logic;
-            signal rec_valid             : out std_logic;
-            signal tran_trig             : in  std_logic;
-            signal rec_trig              : in  std_logic;
-            signal data_tx               : out std_logic;
-            signal stuff_enable          : out std_logic;
-            signal fixed_stuff           : out std_logic;
-            signal stuff_length          : out std_logic_vector(2 downto 0);
-            signal data_rx               : in  std_logic;
-            signal destuff_enable        : out std_logic;
-            signal stuff_error_enable    : out std_logic;
-            signal fixed_destuff         : out std_logic;
-            signal destuff_length        : out std_logic_vector(2 downto 0);
-            signal dst_ctr               : in  natural range 0 to 7;
-            signal crc_enable            : out std_logic;
-            signal unknown_OP_state      : in  std_logic;
-            signal crc15                 : in  std_logic_vector(14 downto 0);
-            signal crc17                 : in  std_logic_vector(16 downto 0);
-            signal crc21                 : in  std_logic_vector(20 downto 0);
-            signal sync_control          : out std_logic_vector(1 downto 0);
-            signal sp_control            : out std_logic_vector(1 downto 0);
-            signal ssp_reset             : out std_logic;
-            signal trv_delay_calib       : out std_logic;
-            signal hard_sync_edge        : in  std_logic;
-            signal sof_pulse             : out std_logic
-        );
-    end component;
-
-
-    ----------------------------------------------------------------------------
-    -- Fault confinement
-    ----------------------------------------------------------------------------
     component fault_confinement is
-        port(
-            signal clk_sys               : in  std_logic;
-            signal res_n                 : in  std_logic;
-            signal drv_bus               : in  std_logic_vector(1023 downto 0);
-            signal stuff_Error           : in  std_logic;
-            signal error_valid           : out std_logic;
-            signal error_passive_changed : out std_logic;
-            signal error_warning_limit   : out std_logic;
-            signal OP_State              : in  oper_mode_type;
-            signal data_rx               : in  std_logic;
-            signal data_tx               : in  std_logic;
-            signal rec_trig              : in  std_logic;
-            signal tran_trig_1           : in  std_logic;
-            signal PC_State              : in  protocol_type;
-            signal sp_control            : in  std_logic_vector(1 downto 0);
-            signal form_Error            : in  std_logic;
-            signal CRC_Error             : in  std_logic;
-            signal ack_Error             : in  std_logic;
-            signal bit_Error_valid       : out std_logic;
-            signal stuff_Error_valid     : out std_logic;
-            signal inc_one               : in  std_logic;
-            signal inc_eight             : in  std_logic;
-            signal dec_one               : in  std_logic;
-            signal enable                : in  std_logic;
-            signal bit_Error_sec_sam     : in  std_logic;
-            signal err_capt              : out std_logic_vector(7 downto 0);
-            signal bit_Error_out         : out std_logic;
-            signal bus_off_start         : out std_logic;
-            signal tx_counter_out        : out std_logic_vector(8 downto 0);
-            signal rx_counter_out        : out std_logic_vector(8 downto 0);
-            signal err_counter_norm_out  : out std_logic_vector(15 downto 0);
-            signal err_counter_fd_out    : out std_logic_vector(15 downto 0);
-            signal error_state_out       : out error_state_type
-        );
+    generic(
+        G_RESET_POLARITY        :     std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving Bus
+        drv_bus                 :in   std_logic_vector(1023 downto 0);
+          
+        -----------------------------------------------------------------------
+        -- Error signalling for interrupts
+        -----------------------------------------------------------------------
+        -- Error passive state changed
+        error_passive_changed   :out  std_logic;
+
+        -- Error warning limit was reached
+        error_warning_limit     :out  std_logic;
+
+        -----------------------------------------------------------------------
+        -- Operation control Interface
+        -----------------------------------------------------------------------
+        -- Unit is transmitter
+        is_transmitter          :in   std_logic;
+        
+        -- Unit is receiver
+        is_receiver             :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Protocol control Interface
+        -----------------------------------------------------------------------
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control              :in   std_logic_vector(1 downto 0);
+
+        -- Set unit to error active (after re-integration). Erases eror
+        -- counters to 0!
+        set_err_active          :in   std_logic;
+        
+        -- Error is detected
+        err_detected            :in   std_logic;
+        
+        -- Error counter should remain unchanged
+        err_ctrs_unchanged      :in   std_logic;
+        
+        -- Primary Error
+        primary_error           :in   std_logic;
+        
+        -- Active Error Flag or Overload flag is being tranmsmitted
+        act_err_ovr_flag        :in   std_logic;
+        
+        -- Error delimiter too late
+        err_delim_late          :in   std_logic;
+        
+        -- Transmission of frame valid
+        tran_valid              :in   std_logic;
+        
+        -- Reception of frame valid
+        rec_valid               :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Fault confinement State indication
+        -----------------------------------------------------------------------
+        -- Unit is error active
+        is_err_active           :out   std_logic;
+        
+        -- Unit is error passive
+        is_err_passive          :out   std_logic;
+        
+        -- Unit is Bus-off
+        is_bus_off              :out   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Error counters
+        -----------------------------------------------------------------------
+        -- TX Error counter
+        tx_err_ctr              :out  std_logic_vector(8 downto 0);
+        
+        -- RX Error counter
+        rx_err_ctr              :out  std_logic_vector(8 downto 0);
+        
+        -- Error counter in Nominal Bit-rate
+        norm_err_ctr            :out  std_logic_vector(15 downto 0);
+        
+        -- Error counter in Data Bit-rate
+        data_err_ctr            :out  std_logic_vector(15 downto 0)
+    );
     end component;
+
+
+    component operation_control is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     :     std_logic    
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory registers Interface
+        ------------------------------------------------------------------------
+        -- Driving bus
+        drv_bus              :in   std_logic_vector(1023 downto 0);
+
+        ------------------------------------------------------------------------
+        -- Protocol Control Interface
+        ------------------------------------------------------------------------
+        -- Arbitration lost
+        arbitration_lost     :in   std_logic;
+
+        -- Set unit to be transmitter (in SOF)
+        set_transmitter      :in   std_logic; 
+
+        -- Set unit to be receiver
+        set_receiver         :in   std_logic;
+
+        -- Set unit to be idle
+        set_idle             :in   std_logic;
+
+        -- Status outputs
+        is_transmitter       :out  std_logic;
+        
+        -- Unit is receiver
+        is_receiver          :out  std_logic;
+        
+        -- Unit is idle
+        is_idle              :out  std_logic
+    );
+    end component;
+
+    component control_counter is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0';
+        
+        -- Width of control counter
+        G_CTRL_CTR_WIDTH        :     natural := 9 
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys         :in   std_logic;
+
+        -- Asynchronous reset
+        res_n           :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- RX Trigger (Decrements the counter)
+        rx_trigger            :in   std_logic;
+
+        -- Control counter counting is enabled
+        ctrl_ctr_ena          :in   std_logic;
+
+        -- Pre-load control counter
+        ctrl_ctr_pload        :in   std_logic;
+  
+        -- Pre-load value for control counter
+        ctrl_ctr_pload_val    :in   std_logic_vector(G_CTRL_CTR_WIDTH - 1 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Control counter is equal to zero
+        ctrl_ctr_zero           :out std_logic;
+
+        -- Control counter is equal to one
+        ctrl_ctr_one            :out std_logic;
+
+        -- Control counter counted multiple of 8 bits
+        ctrl_counted_byte       :out std_logic;
+        
+        -- Control counter byte index within a memory word
+        ctrl_counted_byte_index :out std_logic_vector(1 downto 0);
+        
+        -- Index of memory word in TXT Buffer
+        ctrl_ctr_mem_index      :out std_logic_vector(4 downto 0)
+    );
+    end component control_counter;
+
+    component error_detector is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0';
+        
+        -- Pipeline should be inserted on Error signalling
+        G_ERR_VALID_PIPELINE    :     boolean
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Data-path interface
+        -----------------------------------------------------------------------
+        -- Actual TX Data
+        tx_data                 :in   std_logic;
+        
+        -- Actual RX Data
+        rx_data                 :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Error sources
+        -----------------------------------------------------------------------
+        -- Bit error (from Bus sampling)
+        bit_error               :in   std_logic;
+        
+        -- Bit error in Arbitration field
+        bit_error_arb           :in   std_logic;
+        
+        -- Stuff error
+        stuff_error             :in   std_logic;
+        
+        -- Form Error
+        form_error              :in   std_logic;
+        
+        -- ACK Error
+        ack_error               :in   std_logic;
+
+        -- CRC Error
+        crc_error               :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- CRC comparison data
+        -----------------------------------------------------------------------
+        -- Received CRC
+        rx_crc                  :in   std_logic_vector(20 downto 0);
+        
+        -- Calculated CRC 15
+        crc_15                  :in   std_logic_vector(14 downto 0);
+
+        -- Calculated CRC 17
+        crc_17                  :in   std_logic_vector(16 downto 0);
+        
+        -- Calculated CRC 21
+        crc_21                  :in   std_logic_vector(20 downto 0);
+        
+        -- Received Stuff count (Gray coded) + Parity
+        rx_stuff_count          :in   std_logic_vector(3 downto 0);
+        
+        -- Destuff counter mod 8
+        dst_ctr                 :in   natural range 0 to 7;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Bit error enable
+        bit_error_enable        :in   std_logic;
+
+        -- Stuff error enable
+        stuff_error_enable      :in   std_logic;
+
+        -- Fixed Bit stuffing method
+        fixed_stuff             :in   std_logic;
+
+        -- Error position field (from Protocol control)
+        err_pos                 :in   std_logic_vector(4 downto 0);
+
+        -- Perform CRC Check
+        crc_check               :in   std_logic;
+
+        -- Clear CRC match flag
+        crc_clear_match_flag    :in   std_logic;
+
+        -- CRC Source (CRC15, CRC17, CRC21)
+        crc_src                 :in   std_logic_vector(1 downto 0);
+
+        -- FD Type (ISO FD, NON-ISO FD)
+        drv_fd_type             :in   std_logic;
+
+        -- Arbitration field is being transmitted / received
+        is_arbitration          :in   std_logic;
+
+        -- Unit is transmitter of frame
+        is_transmitter          :in   std_logic;
+
+        -- Unit is error passive
+        is_err_passive          :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Status output
+        -----------------------------------------------------------------------
+        -- Error frame request
+        err_frm_req             :out  std_logic;
+
+        -- Error detected (for Fault confinement)
+        err_detected            :out  std_logic;
+
+        -- Error code capture
+        erc_capture             :out  std_logic_vector(7 downto 0);
+
+        -- CRC match
+        crc_match               :out  std_logic;
+
+        -- Error counters should remain unchanged
+        err_ctrs_unchanged      :out  std_logic
+    );
+    end component;
+
+    component protocol_control_fsm is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :    std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Signals which cause state change
+        -----------------------------------------------------------------------
+        -- RX Trigger
+        rx_trigger              :in   std_logic;
+
+        -- Error frame request
+        err_frm_req             :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- CTU CAN FD is enabled
+        drv_ena                 :in   std_logic;
+        
+        -- CAN FD type (ISO / NON-ISO)
+        drv_fd_type             :in   std_logic;
+        
+        -- Command to start re-integration in Bus-off
+        drv_bus_off_reset       :in   std_logic;
+        
+        -- Forbidding acknowledge mode
+        drv_ack_forb            :in   std_logic;
+        
+        -- Self Test Mode enabled
+        drv_self_test_ena       :in   std_logic;
+
+        -- Bus Monitoring mode enabled
+        drv_bus_mon_ena         :in   std_logic;
+        
+        -- Retransmition limit enabled for errornous frames
+        drv_retr_lim_ena        :in   std_logic;
+        
+        -- Control field is being transmitted
+        is_control              :out  std_logic;
+
+        -- Data field is being transmitted
+        is_data                 :out  std_logic;
+
+        -- CRC field is being transmitted
+        is_crc                  :out  std_logic;
+        
+        -- End of Frame field is being transmitted
+        is_eof                  :out  std_logic;
+
+        -- Error frame is being transmitted
+        is_error                :out  std_logic;
+        
+        -- Overload frame is being transmitted
+        is_overload             :out  std_logic;
+        
+        -- Interframe space is being transmitted
+        is_interframe           :out  std_logic;
+
+        -----------------------------------------------------------------------
+        -- Data-path interface
+        -----------------------------------------------------------------------
+        -- Actual TX Data
+        tx_data                 :in   std_logic;
+        
+        -- Actual RX Data
+        rx_data                 :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- RX Buffer interface
+        -----------------------------------------------------------------------
+        -- Command to store CAN frame metadata to RX Buffer
+        store_metadata          :out  std_logic;
+
+        -- Command to store word of CAN Data
+        store_data              :out  std_logic;
+        
+        -- Received frame valid
+        rec_valid               :out  std_logic;
+        
+        -- Command to abort storing of RX frame (due to Error frame)
+        rec_abort               :out  std_logic;
+        
+        -- Start of Frame pulse
+        sof_pulse               :out  std_logic;
+
+        -----------------------------------------------------------------------
+        -- TXT Buffer, TX Arbitrator interface
+        -----------------------------------------------------------------------
+        -- There is a valid frame for transmission
+        tran_frame_valid        :in   std_logic;
+        
+        -- HW Commands to TXT Buffers
+        txtb_hw_cmd             :out  t_txtb_hw_cmd;
+        
+        -- Pointer to TXT Buffer memory
+        txtb_ptr             :out  natural range 0 to 19;
+        
+        -- TX Data length code
+        tran_dlc                :in   std_logic_vector(3 downto 0);
+        
+        -- TX Remote transmission request flag
+        tran_is_rtr             :in   std_logic;
+        
+        -- TX Frame type (0-CAN 2.0, 1-CAN FD)
+        tran_frame_type         :in   std_logic;
+
+        -- TX Bit rate shift
+        tran_brs                :in   std_logic;
+                
+        -----------------------------------------------------------------------
+        -- TX Shift register interface
+        -----------------------------------------------------------------------
+        -- Load Base Identifier to TX Shift register
+        tx_load_base_id         :out  std_logic;
+
+        -- Load extended Identifier to TX Shift register
+        tx_load_ext_id          :out  std_logic;
+
+        -- Load DLC
+        tx_load_dlc             :out  std_logic;
+
+        -- Load Data word to TX Shift register
+        tx_load_data_word       :out  std_logic;
+        
+        -- Load Stuff count
+        tx_load_stuff_count     :out  std_logic;
+
+        -- Load CRC to TX Shift register
+        tx_load_crc             :out  std_logic;
+
+        -- Shift register enable (shifts with TX Trigger)
+        tx_shift_ena            :out  std_logic;
+
+        -- Force Dominant value instead of value from shift register
+        tx_dominant             :out  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- RX Shift register interface
+        -----------------------------------------------------------------------
+        -- Clear all registers in RX Shift register
+        rx_clear                :out  std_logic;
+        
+        -- Store Base Identifier 
+        rx_store_base_id        :out  std_logic;
+        
+        -- Store Extended Identifier
+        rx_store_ext_id         :out  std_logic;
+        
+        -- Store Identifier extension
+        rx_store_ide            :out  std_logic;
+        
+        -- Store Remote transmission request
+        rx_store_rtr            :out  std_logic;
+        
+        -- Store EDL (FDF) bit
+        rx_store_edl            :out  std_logic;
+        
+        -- Store DLC
+        rx_store_dlc            :out  std_logic;
+        
+        -- Store ESI
+        rx_store_esi            :out  std_logic;
+        
+        -- Store BRS
+        rx_store_brs            :out  std_logic;
+        
+        -- Store stuff count and Stuff Count parity
+        rx_store_stuff_count    :out  std_logic;
+        
+        -- Clock Enable RX Shift register for each byte.
+        rx_shift_ena            :out  std_logic(3 downto 0);
+        
+        -- Selector for inputs of each byte of shift register
+        -- (0-Previous byte output, 1- RX Data input)
+        rx_shift_in_sel         :out  std_logic;
+        
+        -- RX value of Remote transmission request
+        rec_is_rtr              :in   std_logic;
+
+        -- RX value of DLC (combinational), valid only in last bit of DLC
+        rec_dlc_d               :in   std_logic_vector(3 downto 0);
+        
+        -- RX value of DLC (captured)
+        rec_dlc_q               :in   std_logic_vector(3 downto 0);
+        
+        -- RX frame type (0-CAN 2.0, 1- CAN FD)
+        rec_frame_type          :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control counter interface
+        -----------------------------------------------------------------------
+        -- Preload control counter
+        ctrl_ctr_pload          :out   std_logic;
+        
+        -- Control counter preload value
+        ctrl_ctr_pload_val      :out   std_logic_vector(8 downto 0);
+        
+        -- Control counter is enabled
+        ctrl_ctr_ena            :out   std_logic;
+        
+        -- Control counter is zero
+        ctrl_ctr_zero           :in    std_logic;
+        
+        -- Control counter is equal to 1
+        ctrl_ctr_one            :in    std_logic;
+
+        -- Control counter counted multiple of 8 bits
+        ctrl_counted_byte       :in    std_logic;
+
+        -- Control counter byte index within a memory word
+        ctrl_counted_byte_index :in    std_logic_vector(1 downto 0);
+        
+        -- Control counter - TXT Buffer memory index
+        ctrl_ctr_mem_index      :in    std_logic_vector(4 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Reintegration counter interface
+        -----------------------------------------------------------------------
+        -- Reintegration counter Clear (synchronous)
+        reinteg_ctr_clr         :out   std_logic;
+
+        -- Enable counting (with RX Trigger)
+        reinteg_ctr_enable      :out   std_logic;
+        
+        -- Reintegration counter expired (reached 128)
+        reinteg_ctr_expired     :in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Retransmitt counter interface
+        -----------------------------------------------------------------------
+        -- Clear Retransmitt counter
+        retr_ctr_clear          :out   std_logic;
+
+        -- Increment Retransmitt counter by 1
+        retr_ctr_add            :out   std_logic;
+
+        -- Retransmitt limit was reached
+        retr_limit_reached      :in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Error detector interface
+        -----------------------------------------------------------------------
+        -- Form Error has occurred
+        form_error              :out   std_logic;
+
+        -- ACK Error has occurred
+        ack_error               :out   std_logic;
+
+        -- Perform CRC check
+        crc_check               :out   std_logic;
+        
+        -- Bit Error in arbitration field
+        bit_error_arb           :out   std_logic;
+        
+        -- Calculated CRC and Stuff count are matching received ones
+        crc_match               :in   std_logic;
+
+        -- CRC error signalling
+        crc_error               :out  std_logic;
+
+        -- Clear CRC Match flag
+        crc_clear_match_flag    :out   std_logic;
+
+        -- CRC Source (CRC15, CRC17, CRC21)
+        crc_src                 :out   std_logic_vector(1 downto 0);
+        
+        -- Error position field (for Error capture)
+        err_pos                 :out   std_logic_vector(4 downto 0);
+        
+        -- Arbitration field is being transmitted / received
+        is_arbitration          :out   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Bit Stuffing/Destuffing control signals
+        -----------------------------------------------------------------------
+        -- Bit Stuffing is enabled
+        stuff_enable            :out   std_logic;
+        
+        -- Bit De-stuffing is enabled
+        destuff_enable          :out   std_logic;
+
+        -- Length of Bit stuffing rule
+        stuff_length            :out   std_logic_vector(2 downto 0);
+        
+        -- Fixed Bit stuffing method
+        fixed_stuff             :out   std_logic;
+        
+        -- Bit Stuff error detection enabled
+        stuff_error_enable      :out   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Operation control interface
+        -----------------------------------------------------------------------
+        -- Unit is transmitter
+        is_transmitter          :in   std_logic;
+        
+        -- Unit is receiver
+        is_receiver             :in   std_logic;
+
+        -- Unit is idle
+        is_idle                 :in   std_logic;
+
+        -- Loss of arbitration -> Turn receiver!
+        arbitration_lost        :out  std_logic;
+
+        -- Set unit to be transmitter (in SOF)
+        set_transmitter         :out  std_logic;
+
+        -- Set unit to be receiver
+        set_receiver            :out  std_logic;
+
+        -- Set unit to be idle
+        set_idle                :out  std_logic;
+
+        -----------------------------------------------------------------------
+        -- Fault confinement interface
+        -----------------------------------------------------------------------
+        -- Primary Error
+        primary_error           :out  std_logic;
+        
+        -- Active Error or Overload flag is being tranmsmitted
+        act_err_ovr_flag        :out  std_logic;
+
+        -- Set unit to be error active
+        set_err_active          :out   std_logic;
+
+        -- Error delimiter too late
+        err_delim_late          :out  std_logic;
+
+        -- Unit is error active
+        is_err_active           :in   std_logic;
+        
+        -- Unit is error passive
+        is_err_passive          :in   std_logic;
+        
+        -- Unit is Bus off
+        is_bus_off              :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Other control signals
+        -----------------------------------------------------------------------
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control              :out   std_logic_vector(1 downto 0);
+
+        -- Synchronisation control (No synchronisation, Hard Synchronisation,
+        -- Resynchronisation)
+        sync_control            :out   std_logic_vector(1 downto 0);
+
+        -- No Resynchronisation due to positive phase error
+        no_pos_resync           :out   std_logic;
+
+        -- Clear the Shift register for secondary sampling point.
+        ssp_reset               :out   std_logic;
+
+        -- Enable measurement of Transciever delay
+        trv_delay_calib         :out   std_logic;
+
+        -- Protocol control FSM state output
+        pc_state                :out   t_protocol_control_state;
+
+        -- Transmitted frame is valid
+        tran_valid              :out   std_logic;
+
+        -- ACK received
+        ack_received            :out   std_logic;
+
+        -- CRC calculation enabled
+        crc_enable              :out   std_logic;
+        
+        -- CRC calculation - speculative enable
+        crc_spec_enable         :out   std_logic;
+
+        -- Bit error enable
+        bit_error_enable        :out   std_logic;
+
+        -- Bit rate shifted
+        br_shifted              :out   std_logic
+    );
+    end component;
+
+    component protocol_control is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0';
+        
+        -- Control counter width
+        G_CTRL_CTR_WIDTH        :     natural := 9;
+        
+        -- Retransmitt limit counter width
+        G_RETR_LIM_CTR_WIDTH    :     natural := 4;
+        
+        -- Insert pipeline on "error_valid" 
+        G_ERR_VALID_PIPELINE    :     boolean := true
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving bus
+        drv_bus                 :in   std_logic_vector(1023 downto 0);
+        
+        -- Arbitration lost capture
+        alc                     :out  std_logic_vector(7 downto 0);
+        
+        -- Error code capture
+        erc_capture             :out  std_logic_vector(7 downto 0);
+        
+        -- Arbitration field is being transmitted
+        is_arbitration          :out  std_logic;
+        
+        -- Control field is being transmitted
+        is_control              :out  std_logic;
+
+        -- Data field is being transmitted
+        is_data                 :out  std_logic;
+
+        -- CRC field is being transmitted
+        is_crc                  :out  std_logic;
+        
+        -- End of Frame field is being transmitted
+        is_eof                  :out  std_logic;
+
+        -- Error frame is being transmitted
+        is_error                :out  std_logic;
+        
+        -- Overload frame is being transmitted
+        is_overload             :out  std_logic;
+        
+        -- Interframe space is being transmitted
+        is_interframe           :out  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- TXT Buffers interface
+        -----------------------------------------------------------------------
+        -- TX Data word
+        tran_word               :in   std_logic_vector(31 downto 0);
+        
+        -- TX Data length code
+        tran_dlc                :in   std_logic_vector(3 downto 0);
+        
+        -- TX Remote transmission request flag
+        tran_is_rtr             :in   std_logic;
+        
+        -- TX Identifier type (0-Basic, 1-Extended)
+        tran_ident_type         :in   std_logic;
+        
+        -- TX Frame type (0-CAN 2.0, 1-CAN FD)
+        tran_frame_type         :in   std_logic;
+        
+        -- TX Bit rate shift
+        tran_brs                :in   std_logic; 
+        
+        -- Frame in TXT Buffer is valid any can be transmitted.
+        tran_frame_valid        :in   std_logic;
+        
+        -- HW Commands for TX Arbitrator and TXT Buffers
+        txtb_hw_cmd             :out  t_txtb_hw_cmd;
+        
+        -- Pointer to TXT buffer memory
+        txtb_ptr                :out  natural range 0 to 19;
+        
+        -- Selected TXT Buffer index changed
+        txtb_changed            :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- RX Buffer interface
+        -----------------------------------------------------------------------
+        -- RX CAN Identifier
+        rec_ident               :out  std_logic_vector(28 downto 0);
+        
+        -- RX Data length code
+        rec_dlc                 :out  std_logic_vector(3 downto 0);
+        
+        -- RX Remote transmission request flag
+        rec_is_rtr              :out  std_logic;
+        
+        -- RX Recieved identifier type (0-BASE Format, 1-Extended Format);
+        rec_ident_type          :out  std_logic;
+        
+        -- RX frame type (0-CAN 2.0, 1- CAN FD)
+        rec_frame_type          :out  std_logic;
+        
+        -- RX Bit rate shift Flag
+        rec_brs                 :out  std_logic;
+        
+        -- RX Error state indicator 
+        rec_esi                 :out  std_logic;
+        
+        -- Store Metadata in RX Buffer
+        store_metadata          :out  std_logic;
+    
+        -- Abort storing of frame in RX Buffer. Revert to last frame.
+        rec_abort               :out  std_logic;
+    
+        -- Store data word to RX Buffer. 
+        store_data              :out  std_logic;
+        
+        -- Data words to be stored to RX Buffer.
+        store_data_word         :out  std_logic_vector(31 downto 0);
+    
+        -- Pulse in Start of Frame
+        sof_pulse               :out  std_logic;
+    
+        -----------------------------------------------------------------------
+        -- Operation control FSM Interface
+        -----------------------------------------------------------------------
+        -- Unit is transmitter
+        is_transmitter          :in   std_logic;
+        
+        -- Unit is receiver
+        is_receiver             :in   std_logic;
+        
+        -- Unit is idle
+        is_idle                 :in  std_logic;
+        
+        -- Loss of arbitration -> Turn receiver!
+        arbitration_lost        :out  std_logic;
+        
+        -- Set unit to be transmitter (in SOF)
+        set_transmitter         :out  std_logic;
+        
+        -- Set unit to be receiver
+        set_receiver            :out  std_logic;
+        
+        -- Set unit to be idle
+        set_idle                :out  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Fault confinement Interface
+        -----------------------------------------------------------------------
+        -- Unit is error active
+        is_err_active           :in   std_logic;
+        
+        -- Unit is error passive
+        is_err_passive          :in   std_logic;
+        
+        -- Unit is Bus-off
+        is_bus_off              :in   std_logic;
+        
+        -- Error detected
+        err_detected            :out  std_logic;
+        
+        -- Primary Error
+        primary_error           :out  std_logic;
+        
+        -- Active Error or Overload flag is being tranmsmitted
+        act_err_ovr_flag        :out  std_logic;
+
+        -- Error delimiter too late
+        err_delim_late          :out  std_logic;
+        
+        -- Set unit to be error active
+        set_err_active          :out   std_logic;
+        
+        -- Error counters should remain unchanged
+        err_ctrs_unchanged      :out   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- TX and RX Trigger signals to Sample and Transmitt Data
+        -----------------------------------------------------------------------
+        -- TX Trigger (in SYNC segment) 
+        tx_trigger              :in   std_logic;
+        
+        -- RX Trigger (one clock cycle delayed after Sample point)
+        rx_trigger              :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- CAN Bus serial data stream
+        ------------------------------------------------------------------------
+        -- TX Data
+        tx_data_nbs             :out  std_logic;
+
+        -- RX Data
+        rx_data_nbs             :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Bit Stuffing Interface
+        ------------------------------------------------------------------------
+        -- Bit Stuffing enabled
+        stuff_enable            :out  std_logic;
+        
+        -- Bit De-stuffing enabled
+        destuff_enable          :out  std_logic;
+
+        -- Bit Stuffing type (0-Normal, 1-Fixed)
+        fixed_stuff             :out  std_logic;
+
+        -- Length of Bit Stuffing rule
+        stuff_length            :out  std_logic_vector(2 downto 0);
+
+        -- Enable detection of Stuff Error
+        stuff_error_enable      :out  std_logic;
+
+        -- Number of de-stuffed bits modulo 8
+        dst_ctr                 :in   natural range 0 to 7;
+        
+        -- Number of stuffed bits modulo 8
+        bst_ctr                 :in   natural range 0 to 7;
+        
+        -- Stuff Error
+        stuff_error             :in   std_logic;
+        
+        ------------------------------------------------------------------------
+        -- Bus Sampling Interface
+        ------------------------------------------------------------------------
+        -- Bit Error detected
+        bit_error               :in   std_logic;
+        
+        -----------------------------------------------------------------------
+        -- CRC Interface
+        -----------------------------------------------------------------------
+        -- Enable CRC calculation
+        crc_enable              :out  std_logic;
+        
+        -- CRC calculation - speculative enable
+        crc_spec_enable         :out   std_logic;
+        
+        -- CRC Source to be used (CRC 15, CRC 17, CRC 21)
+        crc_src                 :out  std_logic_vector(1 downto 0);
+
+        -- Calculated CRC 15
+        crc_15                  :in   std_logic_vector(14 downto 0);
+
+        -- Calculated CRC 17
+        crc_17                  :in   std_logic_vector(16 downto 0);
+        
+        -- Calculated CRC 21
+        crc_21                  :in   std_logic_vector(20 downto 0);
+        
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control              :out  std_logic_vector(1 downto 0);
+        
+        -- Synchronisation control (No synchronisation, Hard Synchronisation,
+        -- Resynchronisation
+        sync_control            :out  std_logic_vector(1 downto 0); 
+        
+        -- No Resynchronisation due to positive phase error
+        no_pos_resync           :out   std_logic;
+        
+        -- Clear the Shift register for secondary sampling point.
+        ssp_reset               :out  std_logic;
+        
+        -- Enable measurement of Transciever delay
+        trv_delay_calib         :out  std_logic;
+
+        -- Transmitted frame is valid
+        tran_valid              :out  std_logic;
+
+        -- Received frame is valid
+        rec_valid               :out  std_logic;
+
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- ACK received
+        ack_received            :out  std_logic;
+
+        -- Bit rate shifted
+        br_shifted              :out  std_logic;
+        
+        -- Form Error has occurred
+        form_error              :out  std_logic;
+
+        -- ACK Error has occurred
+        ack_error               :out  std_logic;
+        
+        -- CRC Error has occurred
+        crc_error               :out  std_logic
+    );
+    end component protocol_control;
+
+
+    component reintegration_counter is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Clear (synchronous)
+        reinteg_ctr_clr         :in   std_logic;
+
+        -- Enable counting (with RX Trigger)
+        reinteg_ctr_enable      :in   std_logic;
+
+        -- RX Trigger
+        rx_trigger              :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Integration counter expired.
+        reinteg_ctr_expired     :out  std_logic
+    );
+    end component;
+
+
+    component retransmitt_counter is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0';
+        
+        -- Width of Retransmitt limit counter
+        G_RETR_LIM_CTR_WIDTH    :     natural := 4 
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys        :in   std_logic;
+
+        -- Asynchronous reset
+        res_n          :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Selected TXT Buffer changed in comparison to previous transmission
+        txtb_changed   :in   std_logic;
+
+        -- Clear the counter
+        retr_ctr_clear :in   std_logic;
+        
+        -- Increment the counter by 1
+        retr_ctr_add   :in   std_logic;
+        
+        -- Retransmitt limit
+        retr_limit     :in   std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Retransmitt limit was reached
+        retr_limit_reached  :out  std_logic
+    );
+    end component;
+
+
+    component rx_shift_reg is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Trigger signals
+        -----------------------------------------------------------------------
+        -- RX Trigger
+        rx_trigger              :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Data-path interface
+        -----------------------------------------------------------------------
+        -- Actual TX Data
+        tx_data                 :out  std_logic;
+
+        -- Actual RX Data
+        rx_data                 :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Protocol control FSM interface
+        -----------------------------------------------------------------------
+        -- Clear all registers in Shift register (Glitch free)
+        rx_clear                :in  std_logic;
+
+        -- Clock Enable RX Shift register for each byte.
+        rx_shift_ena            :in  std_logic(3 downto 0);
+
+        -- Selector for inputs of each byte of shift register
+        -- (0-Previous byte output, 1- RX Data input)
+        rx_shift_in_sel         :in  std_logic;
+
+        -- Store Base Identifier 
+        rx_store_base_id        :in  std_logic;
+
+        -- Store Extended Identifier
+        rx_store_ext_id         :in  std_logic;
+
+        -- Store Identifier extension
+        rx_store_ide            :in  std_logic;
+        
+        -- Store Remote transmission request
+        rx_store_rtr            :in  std_logic;
+        
+        -- Store EDL (FDF) bit
+        rx_store_edl            :in  std_logic;
+        
+        -- Store DLC
+        rx_store_dlc            :in  std_logic;
+        
+        -- Store ESI
+        rx_store_esi            :in  std_logic;
+        
+        -- Store BRS
+        rx_store_brs            :in  std_logic;
+
+        -- Store stuff count
+        rx_store_stuff_count    :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- RX Buffer interface
+        -----------------------------------------------------------------------
+        -- RX CAN Identifier
+        rec_ident               :out std_logic_vector(28 downto 0);
+        
+        -- RX Data length code (D input)
+        rec_dlc_d               :out std_logic_vector(3 downto 0);
+        
+        -- RX Data length code
+        rec_dlc                 :out std_logic_vector(3 downto 0);
+        
+        -- RX Remote transmission request flag
+        rec_is_rtr              :out std_logic;
+        
+        -- RX Recieved identifier type (0-BASE Format, 1-Extended Format);
+        rec_ident_type          :out std_logic;
+        
+        -- RX frame type (0-CAN 2.0, 1- CAN FD)
+        rec_frame_type          :out std_logic;
+        
+        -- RX Bit rate shift Flag
+        rec_brs                 :out std_logic;
+        
+        -- RX Error state indicator
+        rec_esi                 :out std_logic;
+        
+        -- Data words to be stored to RX Buffer. Valid only when rx_trigger='1'
+        -- in last bit of data word stored
+        store_data_word         :out std_logic_vector(31 downto 0);
+        
+        -----------------------------------------------------------------------
+        -- CRC information for CRC comparison
+        -----------------------------------------------------------------------
+        -- Received CRC
+        rx_crc                  :out std_logic_vector(20 downto 0);
+        
+        -- Received Stuff count + Stuff Parity
+        rx_stuff_count          :out std_logic_vector(3 downto 0)
+    );
+    end component;
+
+    component tx_shift_reg is
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous Reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+
+        -- Asynchronous reset
+        res_n                   :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Trigger signals
+        -----------------------------------------------------------------------
+        -- RX Trigger
+        tx_trigger              :in   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Data-path interface
+        -----------------------------------------------------------------------
+        -- Actual TX Data
+        tx_data                 :out   std_logic;
+
+        -----------------------------------------------------------------------
+        -- Protocol control FSM interface
+        -----------------------------------------------------------------------
+        -- Load Base Identifier to TX Shift register
+        tx_load_base_id         :in  std_logic;
+
+        -- Load extended Identifier to TX Shift register
+        tx_load_ext_id          :in  std_logic;
+
+        -- Load DLC to TX Shift register
+        tx_load_dlc             :in  std_logic;
+
+        -- Load Data word to TX Shift register
+        tx_load_data_word       :in  std_logic;
+
+        -- Load Stuff count
+        tx_load_stuff_count     :in  std_logic;
+        
+        -- Load CRC to TX Shift register
+        tx_load_crc             :in  std_logic;
+        
+        -- Shift register enable (shifts with TX Trigger)
+        tx_shift_ena            :in  std_logic;
+
+        -- Force Dominant value instead of value from shift register
+        tx_dominant             :in  std_logic;
+
+        -- CRC Source (CRC15, CRC17, CRC21)
+        crc_src                 :in  std_logic_vector(1 downto 0);
+
+        -----------------------------------------------------------------------
+        -- CAN CRC Interface
+        -----------------------------------------------------------------------
+        -- Calculated CRC 15
+        crc_15                  :in   std_logic_vector(14 downto 0);
+
+        -- Calculated CRC 17
+        crc_17                  :in   std_logic_vector(16 downto 0);
+        
+        -- Calculated CRC 21
+        crc_21                  :in   std_logic_vector(20 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Error detector Interface
+        -----------------------------------------------------------------------
+        -- Error frame request
+        err_frm_req             :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Fault confinement Interface
+        -----------------------------------------------------------------------
+        -- Unit is error active
+        is_err_active           :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Bit Stuffing / Destuffing Interface
+        -----------------------------------------------------------------------
+        -- Stuff counter modulo 8
+        bst_ctr                 :in  std_logic_vector(3 downto 0);
+
+        -----------------------------------------------------------------------
+        -- TXT Buffers interface
+        -----------------------------------------------------------------------
+        -- TXT Buffer RAM word
+        txt_buffer_word         :in   std_logic_vector(31 downto 0);
+
+        -- TX Data length code
+        tran_dlc                :in   std_logic_vector(3 downto 0)
+    );
+    end component;
+
+
+    component can_core is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :    std_logic := '0';
+        
+        -- Number of signals in Sample trigger
+        G_SAMPLE_TRIGGER_COUNT  :   natural range 2 to 8 := 2;
+        
+        -- Control counter width
+        G_CTRL_CTR_WIDTH        :     natural := 9;
+        
+        -- Retransmitt limit counter width
+        G_RETR_LIM_CTR_WIDTH    :     natural := 4;
+        
+        -- Insert pipeline on "error_valid" 
+        G_ERR_VALID_PIPELINE    :     boolean := true;
+        
+        -- CRC 15 polynomial
+        G_CRC15_POL             :     std_logic_vector(15 downto 0) := x"C599";
+        
+        -- CRC 17 polynomial
+        G_CRC17_POL             :     std_logic_vector(19 downto 0) := x"3685B";
+        
+        -- CRC 15 polynomial
+        G_CRC21_POL             :     std_logic_vector(23 downto 0) := x"302899"  
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
+        
+        ------------------------------------------------------------------------    
+        -- Memory registers interface
+        ------------------------------------------------------------------------
+        -- Driving bus
+        drv_bus                :in   std_logic_vector(1023 downto 0);
+
+        -- Status bus
+        stat_bus               :out  std_logic_vector(511 downto 0);
+
+        ------------------------------------------------------------------------
+        -- Tx Arbitrator and TXT Buffers interface
+        ------------------------------------------------------------------------
+        -- TX Data word
+        tran_word              :in   std_logic_vector(31 downto 0);
+        
+        -- TX Data length code
+        tran_dlc               :in   std_logic_vector(3 downto 0);
+        
+        -- TX Remote transmission request flag
+        tran_is_rtr            :in   std_logic;
+
+        -- TX Identifier type (0-Basic, 1-Extended)
+        tran_ident_type        :in   std_logic;
+
+        -- TX Frame type (0-CAN 2.0, 1-CAN FD)
+        tran_frame_type        :in   std_logic;
+
+        -- TX Bit Rate Shift
+        tran_brs               :in   std_logic;
+
+        -- Frame in TXT Buffer is valid any can be transmitted.
+        tran_frame_valid       :in   std_logic; 
+
+        -- HW Commands for TX Arbitrator and TXT Buffers
+        txtb_hw_cmd            :out  t_txtb_hw_cmd;
+
+        -- Selected TXT Buffer index changed
+        txtb_changed           :in   std_logic;
+
+        -- Pointer to TXT buffer memory
+        txtb_ptr               :out  natural range 0 to 19;
+
+        -- Transition to bus off has occurred
+        is_bus_off             :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- Recieve Buffer and Message Filter Interface
+        ------------------------------------------------------------------------
+        -- RX CAN Identifier
+        rec_ident              :out  std_logic_vector(28 downto 0);
+
+        -- RX Data length code
+        rec_dlc                :out  std_logic_vector(3 downto 0);
+
+        -- RX Recieved identifier type (0-BASE Format, 1-Extended Format);
+        rec_ident_type         :out  std_logic;
+
+        -- RX frame type (0-CAN 2.0, 1- CAN FD) 
+        rec_frame_type         :out  std_logic;
+
+        -- RX Remote transmission request Flag
+        rec_is_rtr             :out  std_logic;
+
+        -- RX Bit Rate Shift bit
+        rec_brs                :out  std_logic;
+
+        -- RX Error state indicator
+        rec_esi                :out  std_logic;
+
+        -- RX Frame received succesfully, can be commited to RX Buffer.
+        rec_valid              :out  std_logic; 
+
+        -- Metadata are received OK, and can be stored in RX Buffer.
+        store_metadata         :out  std_logic;
+
+        -- Store data word to RX Buffer. 
+        store_data             :out  std_logic;
+        
+        -- Data words to be stored to RX Buffer.
+        store_data_word        :out  std_logic_vector(31 downto 0);
+
+        -- Abort storing of frame in RX Buffer. Revert to last frame.
+        rec_abort              :out  std_logic;
+        
+        -- Pulse in Start of Frame
+        sof_pulse              :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- Interrupt Manager Interface 
+        ------------------------------------------------------------------------
+        -- Arbitration was lost
+        arbitration_lost       :out  std_logic;
+
+        -- Frame stored in CAN Core was sucessfully transmitted
+        tran_valid             :out  std_logic; 
+
+        -- Bit Rate Was Shifted
+        br_shifted             :out  std_logic;
+
+        -- Error is detected (Error frame will be transmitted)
+        err_detected           :out  std_logic;
+
+        -- Error passive state changed
+        error_passive_changed  :out  std_logic;
+
+        -- Error warning limit reached
+        error_warning_limit    :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- Prescaler interface 
+        ------------------------------------------------------------------------
+        -- RX Triggers (in Sample Point)
+        rx_triggers   :in   std_logic_vector(G_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+        
+        -- TX Trigger
+        tx_trigger    :in   std_logic;
+        
+        -- Synchronisation control (No synchronisation, Hard Synchronisation,
+        -- Resynchronisation
+        sync_control  :out  std_logic_vector(1 downto 0);
+        
+        -- No positive resynchronisation 
+        no_pos_resync :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- CAN Bus serial data stream
+        ------------------------------------------------------------------------
+        -- RX Data from CAN Bus
+        rx_data_wbs         :in   std_logic; 
+
+        -- TX Data to CAN Bus
+        tx_data_wbs         :out  std_logic; 
+
+        ------------------------------------------------------------------------
+        -- Others
+        ------------------------------------------------------------------------
+        timestamp           :in   std_logic_vector(63 downto 0);
+
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control          :out  std_logic_vector(1 downto 0); 
+
+        -- Secondary sample point reset
+        ssp_reset           :out  std_logic; 
+
+        -- Enable measurement of Transciever delay
+        trv_delay_calib     :out  std_logic;
+
+        -- Bit Error detected 
+        bit_error           :in   std_logic;
+        
+        -- Secondary sample signal 
+        sample_sec          :in   std_logic
+    );
+    end component;
+
+
+    component bit_filter is
+    generic(
+        -- Filter width
+        G_WIDTH              :   natural;
+
+        -- Filter presence
+        G_IS_PRESENT         :   boolean
+    );
+    port(
+        -- Filter mask
+        filter_mask          : in  std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Filter value
+        filter_value         : in  std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Filter input
+        filter_input         : in  std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Filter enable (output is stuck at zero when disabled)
+        enable               : in  std_logic;
+
+        -- '1' when Filter input passes the filter
+        valid                : out std_logic
+    );
+    end component;
+  
+  
+   component frame_filters is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     : std_logic := '0';
+        
+        -- Support filter A
+        G_SUP_FILTA          : boolean := true;
+        
+        -- Support filter B
+        G_SUP_FILTB          : boolean := true;
+        
+        -- Support filter C
+        G_SUP_FILTC          : boolean := true;
+        
+        -- Support range filter
+        G_SUP_RANGE          : boolean := true
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock an Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              : in std_logic;
+        
+        -- Asynchronous reset
+        res_n                : in std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory registers interface
+        ------------------------------------------------------------------------
+        -- Driving Bus
+        drv_bus              : in  std_logic_vector(1023 downto 0);
+
+        ------------------------------------------------------------------------
+        -- CAN Core interface
+        ------------------------------------------------------------------------
+        -- Receieved CAN ID
+        rec_ident            : in  std_logic_vector(28 downto 0); 
+
+        -- Received CAN ID type (0-Base Format, 1-Extended Format);
+        rec_ident_type       : in  std_logic;
+
+        -- Input frame type (0-CAN 2.0, 1- CAN FD) 
+        rec_frame_type       : in  std_logic;
+
+        -- Store Metadata in RX Buffer
+        store_metadata       : in  std_logic;
+
+        -- Command to store word of CAN Data
+        store_data           : in  std_logic;
+        
+        -- Received frame valid
+        rec_valid            : in  std_logic;
+        
+        -- Command to abort storing of RX frame (due to Error frame)
+        rec_abort            : in  std_logic;
+
+        ------------------------------------------------------------------------
+        -- Frame filters output
+        ------------------------------------------------------------------------
+        -- CAN ID passes the filters
+        ident_valid          : out   std_logic;
+        
+        -- Store Metadata in RX Buffer - Filtered
+        store_metadata_f     : out   std_logic;
+
+        -- Command to store word of CAN Data - Filtered
+        store_data_f         : out   std_logic;
+        
+        -- Received frame valid - Filtered
+        rec_valid_f          : out   std_logic;
+        
+        -- Command to abort storing of RX frame (due to Error frame) - Filtered
+        rec_abort_f          : out   std_logic
+    );
+    end component;
+
+
+    component range_filter is
+    generic(
+        -- Filter width
+        G_WIDTH              :   natural;
+
+        -- Filter presence
+        G_IS_PRESENT         :   boolean        
+    );
+    port(
+        -- Upper threshold of a filter
+        g_filter_upp_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Lower threshold of a filter
+        g_filter_low_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Filter input
+        g_filter_input       : in    std_logic_vector(G_WIDTH - 1 downto 0);
+
+        -- Filter enable (output is stuck at zero when disabled)
+        g_enable             : in    std_logic;
+
+        -- Filter output
+        g_valid              : out   std_logic
+    );
+    end component;
+
+
+    component int_manager is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY     : std_logic := '0';
+        
+        -- Number of supported interrupts
+        G_INT_COUNT          : natural  := 11;
+        
+        -- Number of TXT Buffers
+        G_TXT_BUFFER_COUNT   : natural := 4
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys                 :in   std_logic;
+        
+        -- Asynchronous Reset
+        res_n                   :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Interrupt sources
+        ------------------------------------------------------------------------
+        -- Error appeared
+        err_detected            :in   std_logic;
+
+        -- Error pasive /Error acitve functionality changed
+        error_passive_changed   :in   std_logic;
+
+        -- Error warning limit reached
+        error_warning_limit     :in   std_logic;
+
+        -- Arbitration was lost input
+        arbitration_lost        :in   std_logic;
+
+        -- Transmitted frame is valid
+        tran_valid              :in   std_logic;
+
+        -- Bit Rate Was Shifted
+        br_shifted              :in   std_logic;
+
+        -- Rx Buffer data overrun
+        rx_data_overrun         :in   std_logic;
+        
+        -- Received frame is valid
+        rec_valid               :in   std_logic;
+        
+        -- RX Buffer is full
+        rx_full          :in   std_logic;
+        
+        -- Recieve buffer is empty
+        rx_empty         :in   std_logic;
+
+        -- HW command on TXT Buffers interrupt
+        txtb_hw_cmd_int  :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        -- Event logger
+        loger_finished   :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory registers Interface
+        ------------------------------------------------------------------------
+        drv_bus          :in   std_logic_vector(1023 downto 0);
+
+        -- Interrupt output
+        int              :out  std_logic; 
+
+        -- Interrupt vector
+        int_vector       :out  std_logic_vector(G_INT_COUNT - 1 downto 0);
+
+        -- Interrupt mask
+        int_mask         :out  std_logic_vector(G_INT_COUNT - 1 downto 0);
+
+        -- Interrupt enable
+        int_ena          :out  std_logic_vector(G_INT_COUNT - 1 downto 0)
+    );  
+    end component int_manager;
+
+
+    component int_module is
+    generic(        
+        -- Reset polarity
+        G_RESET_POLARITY        :    std_logic := '0';
+
+        -- If true, Interrupt status clear has priority over write.
+        G_CLEAR_PRIORITY         :    boolean := true
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System Clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous Reset
+        res_n                  :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control control signals
+        ------------------------------------------------------------------------
+        -- Interrupt Status Set
+        int_status_set         :in   std_logic;
+        
+        -- Interrupt Status Clear
+        int_status_clear       :in   std_logic;
+
+        -- Interrupt Mask Set
+        int_mask_set           :in   std_logic;
+        
+        -- Interrupt Mask Clear
+        int_mask_clear         :in   std_logic;
+
+        -- Interrupt Enable Set
+        int_ena_set            :in   std_logic;
+        
+        -- Interrupt Enable Clear
+        int_ena_clear          :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Interrupt output signals
+        ------------------------------------------------------------------------
+        -- Interrupt status (Interrupt vector)
+        int_status             :out  std_logic;
+        
+        -- Interrupt mask
+        int_mask               :out  std_logic;
+        
+        -- Interrupt enable
+        int_ena                :out  std_logic
+    );  
+    end component;
+
+    component memory_registers is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY    : std_logic    := '0';
+        
+        -- Support logger
+        G_USE_LOGGER        : boolean                         := true;
+
+        -- Support Filter A
+        G_SUP_FILTA         : boolean                         := true;
+
+        -- Support Filter B
+        G_SUP_FILTB         : boolean                         := true;
+        
+        -- Support Filter C
+        G_SUP_FILTC         : boolean                         := true;
+        
+        -- Support Range Filter
+        G_SUP_RANGE         : boolean                         := true;
+
+        -- Number of TXT Buffers
+        G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
+
+        -- ID on Memory bus
+        G_ID                : natural                         := 1;
+
+        -- Number of Interrupts
+        G_INT_COUNT         : natural                         := 12;
+
+        -- DEVICE_ID (read from register)
+        G_DEVICE_ID         : std_logic_vector(15 downto 0)   := x"CAFD";
+
+        -- MINOR Design version
+        G_VERSION_MINOR     : std_logic_vector(7 downto 0)    := x"01";
+
+        -- MAJOR Design version
+        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02";
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in   std_logic;
+        
+        -- Asynchronous reset        
+        res_n                :in   std_logic;
+        
+        -- Reset output (input reset + Software Reset)
+        res_out              :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory Interface
+        ------------------------------------------------------------------------
+        -- Data input
+        data_in              :in   std_logic_vector(31 downto 0);
+        
+        -- Data output
+        data_out             :out  std_logic_vector(31 downto 0);
+        
+        -- Address
+        adress               :in   std_logic_vector(15 downto 0);
+        
+        -- Chip Select
+        scs                  :in   std_logic;
+        
+        -- Read
+        srd                  :in   std_logic;
+        
+        -- Write
+        swr                  :in   std_logic;
+        
+        -- Byte enable
+        sbe                  :in   std_logic_vector(3 downto 0);
+        
+        -- Timestamp input
+        timestamp            :in   std_logic_vector(63 downto 0);
+        
+        ------------------------------------------------------------------------
+        -- Buses to/from rest of CTU CAN FD
+        ------------------------------------------------------------------------
+        -- Driving Bus
+        drv_bus              :out  std_logic_vector(1023 downto 0);
+        
+        -- Status Bus
+        stat_bus             :in   std_logic_vector(511 downto 0);
+
+        ------------------------------------------------------------------------
+        -- RX Buffer Interface
+        ------------------------------------------------------------------------
+        -- RX Buffer data output
+        rx_read_buff         :in   std_logic_vector(31 downto 0);
+
+        -- Size of RX buffer (in words)
+        rx_buf_size          :in   std_logic_vector(12 downto 0);
+
+        -- RX Buffer is full
+        rx_full              :in   std_logic;
+
+        -- RX Buffer is empty
+        rx_empty             :in   std_logic;
+
+        -- Number of frames in RX buffer
+        rx_message_count     :in   std_logic_vector(10 downto 0);
+
+        -- Number of free 32 bit words
+        rx_mem_free          :in   std_logic_vector(12 downto 0);
+
+        -- Position of read pointer
+        rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);
+
+        -- Position of write pointer
+        rx_write_pointer_pos :in   std_logic_vector(11 downto 0);
+            
+        -- Data overrun Flag
+        rx_data_overrun      :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Interface to TXT Buffers
+        ------------------------------------------------------------------------
+        -- TXT Buffer RAM - Data input
+        txtb_port_a_data     :out  std_logic_vector(31 downto 0);
+        
+        -- TXT Buffer RAM - Address
+        txtb_port_a_address  :out  std_logic_vector(4 downto 0);
+        
+        -- TXT Buffer chip select
+        txtb_port_a_cs       :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        -- TXT Buffer status
+        txtb_state           :in   t_txt_bufs_state;
+
+        -- SW Commands to TXT Buffer
+        txtb_sw_cmd          :out  t_txt_sw_cmd;
+        
+        -- SW Command Index (Index in logic 1 means command is valid for TXT Buffer)          
+        txtb_sw_cmd_index    :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        
+        -- TXT Buffer priorities
+        txtb_prorities       :out  t_txt_bufs_priorities;
+         
+        ------------------------------------------------------------------------
+        -- Bus synchroniser interface
+        ------------------------------------------------------------------------
+        -- Measured Transceiver Delay
+        trv_delay            :in   std_logic_vector(15 downto 0);
+
+        ------------------------------------------------------------------------
+        -- Event logger interface
+        ------------------------------------------------------------------------
+        -- Logger RAM - Read Data
+        loger_act_data       :in   std_logic_vector(63 downto 0);
+        
+        -- Logger RAM - Write Pointer
+        log_write_pointer    :in   std_logic_vector(7 downto 0);
+        
+        -- Logger RAM - Read Pointer
+        log_read_pointer     :in   std_logic_vector(7 downto 0);
+        
+        -- Logger RAM - Size        
+        log_size             :in   std_logic_vector(7 downto 0);
+        
+        -- Logger FSM Status
+        log_state_out        :in   logger_state_type;
+            
+        ------------------------------------------------------------------------
+        -- Interrrupt Interface
+        ------------------------------------------------------------------------
+        -- Interrupt vector
+        int_vector           :in   std_logic_vector(G_INT_COUNT - 1 downto 0);
+        
+        -- Interrupt enable
+        int_ena              :in   std_logic_vector(G_INT_COUNT - 1 downto 0);
+        
+        -- Interrupt mask
+        int_mask             :in   std_logic_vector(G_INT_COUNT - 1 downto 0)
+    );  
+    end component memory_registers;
+
+
+    component bit_time_cfg_capture is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY   : std_logic := '0';
+        
+        -- TSEG1 Width - Nominal Bit Time
+        G_TSEG1_NBT_WIDTH  : natural := 8;
+        
+        -- TSEG2 Width - Nominal Bit Time
+        G_TSEG2_NBT_WIDTH  : natural := 8;
+        
+        -- Baud rate prescaler Width - Nominal Bit Time
+        G_BRP_NBT_WIDTH    : natural := 8;
+        
+        -- Synchronisation Jump width Width - Nominal Bit Time
+        G_SJW_NBT_WIDTH    : natural := 5;
+        
+        -- TSEG1 Width - Data Bit Time
+        G_TSEG1_DBT_WIDTH  : natural := 8;
+        
+        -- TSEG2 Width - Data Bit Time
+        G_TSEG2_DBT_WIDTH  : natural := 8;
+        
+        -- Baud rate prescaler width - Data Bit Time
+        G_BRP_DBT_WIDTH    : natural := 8;
+        
+        -- Synchronisation Jump Width width - Data Bit Time
+        G_SJW_DBT_WIDTH    : natural := 5
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys     : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n       : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Memory Registers interface
+        -----------------------------------------------------------------------
+        -- Driving Bus
+        drv_bus     : in    std_logic_vector(1023 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Output values
+        -----------------------------------------------------------------------
+        -- Time segment 1 - Nominal Bit Time
+        tseg1_nbt   : out   std_logic_vector(G_TSEG1_NBT_WIDTH - 1 downto 0);
+        
+        -- Time segment 2 - Nominal Bit Time
+        tseg2_nbt   : out   std_logic_vector(G_TSEG2_NBT_WIDTH - 1 downto 0);
+        
+        -- Baud Rate Prescaler - Nominal Bit Time
+        brp_nbt     : out   std_logic_vector(G_BRP_NBT_WIDTH - 1 downto 0);
+        
+        -- Synchronisation Jump Width - Nominal Bit Time
+        sjw_nbt     : out   std_logic_vector(G_SJW_NBT_WIDTH - 1 downto 0);
+        
+        -- Time segment 1 - Data Bit Time
+        tseg1_dbt   : out   std_logic_vector(G_TSEG1_DBT_WIDTH - 1 downto 0);
+        
+        -- Time segment 2 - Data Bit Time
+        tseg2_dbt   : out   std_logic_vector(G_TSEG2_DBT_WIDTH - 1 downto 0);
+        
+        -- Baud Rate Prescaler - Data Bit Time
+        brp_dbt     : out   std_logic_vector(G_BRP_DBT_WIDTH - 1 downto 0);
+        
+        -- Synchronisation Jump Width - Data Bit Time
+        sjw_dbt     : out   std_logic_vector(G_SJW_DBT_WIDTH - 1 downto 0);
+        
+        -- Signal to load the expected segment length by Bit time counters
+        start_edge  : out   std_logic
+    );
+    end component bit_time_cfg_capture;
+
+
+    component bit_time_counters is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY  : std_logic := '0';
+        
+        -- Bit Time counter width
+        G_BT_WIDTH        : natural := 8;
+        
+        -- Baud rate prescaler width
+        G_BRP_WIDTH       : natural := 8
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchrnous reset
+        res_n            : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signals
+        -----------------------------------------------------------------------
+        -- Baud rate Prescaler
+        brp              : in    std_logic_vector(G_BRP_WIDTH - 1 downto 0);
+        
+        -- Time Quanta Counter reset (synchronous)
+        tq_reset         : in    std_logic;
+        
+        -- Bit Time counter reset (synchronous)
+        bt_reset         : in    std_logic;
+        
+        -- CTU CAN FD is enabled
+        drv_ena          : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Time Quanta edge
+        tq_edge         : out   std_logic;
+       
+        -- Bit Time counter
+        bt_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
+    );
+    end component;
+
+
+    component bit_time_fsm is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY    : std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys             : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n               : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control interface 
+        -----------------------------------------------------------------------
+        -- Segment end (either due to re-sync, or reaching expected length)
+        segm_end            : in    std_logic;
+        
+        -- Hard synchronisation is valid
+        h_sync_valid        : in    std_logic;
+
+        -- CTU CAN FD is enabled
+        drv_ena             : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status signals 
+        -----------------------------------------------------------------------
+        -- Bit time FSM is in TSEG1
+        is_tseg1            : out   std_logic;
+        
+        -- Bit time FSM is in TSEG2
+        is_tseg2            : out   std_logic;
+        
+        -- Sample signal request (to sample point generator)
+        sample_req          : out   std_logic;
+        
+        -- Sync signal request
+        sync_req            : out   std_logic;
+        
+        -- Bit Tim FSM Output
+        bt_fsm              : out   t_bit_time 
+    );
+    end component;
+
+
+    component prescaler is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :   std_logic := '0';
+
+        -- TSEG1 Width - Nominal Bit Time
+        G_TSEG1_NBT_WIDTH       :   natural := 8;
+        
+        -- TSEG2 Width - Nominal Bit Time
+        G_TSEG2_NBT_WIDTH       :   natural := 8;
+        
+        -- Baud rate prescaler Width - Nominal Bit Time
+        G_BRP_NBT_WIDTH         :   natural := 8;
+        
+        -- Synchronisation Jump width Width - Nominal Bit Time
+        G_SJW_NBT_WIDTH         :   natural := 5;
+        
+        -- TSEG1 Width - Data Bit Time
+        G_TSEG1_DBT_WIDTH       :   natural := 8;
+        
+        -- TSEG2 Width - Data Bit Time
+        G_TSEG2_DBT_WIDTH       :   natural := 8;
+        
+        -- Baud rate prescaler width - Data Bit Time
+        G_BRP_DBT_WIDTH         :   natural := 8;
+        
+        -- Synchronisation Jump Width width - Data Bit Time
+        G_SJW_DBT_WIDTH         :   natural := 5;
+      
+        -- Number of signals in Sample trigger
+        G_SAMPLE_TRIGGER_COUNT  :   natural range 2 to 8 := 2
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving Bus
+        drv_bus              :in std_logic_vector(1023 downto 0); 
+        
+        -----------------------------------------------------------------------
+        -- Control Interface
+        -----------------------------------------------------------------------
+        -- Synchronisation edge (from Bus sampling)
+        sync_edge            :in std_logic;
+        
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control           :in std_logic_vector(1 downto 0);
+        
+        -- Synchronisation control (No synchronisation, Hard Synchronisation,
+        -- Resynchronisation
+        sync_control         :in std_logic_vector(1 downto 0);
+        
+        -- No re-synchronisation should be executed due to positive phase
+        -- error
+        no_pos_resync        :in std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Trigger signals
+        -----------------------------------------------------------------------
+        -- RX Triggers
+        rx_triggers     : out std_logic_vector(G_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+        
+        -- TX Trigger
+        tx_trigger      : out std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status outputs
+        -----------------------------------------------------------------------
+        -- Time quanta clock synchronisation output (debug only)
+        time_quanta_clk : out std_logic;
+        
+        -- Bit Time FSM state
+        bt_fsm          : out t_bit_time 
+    );
+    end component;
+
+
+    component resynchronisation is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY          :       std_logic := '0';
+        
+        -- SJW width
+        G_SJW_WIDTH               :       natural := 4;
+        
+        -- TSEG1 width
+        G_TSEG1_WIDTH             :       natural := 8;
+        
+        -- TSEG2 width
+        G_TSEG2_WIDTH             :       natural := 8;
+        
+        -- Bit counter width
+        G_BT_WIDTH                :       natural := 8
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n            : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control interface
+        -----------------------------------------------------------------------
+        -- There is a valid re-synchronisation edge.
+        resync_edge_valid    : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Bit Time FSM interface
+        -----------------------------------------------------------------------        
+        -- Bit time is in SYNC, PROP or PH1
+        is_tseg1         : in    std_logic;
+        
+        -- Bit time is in PH2
+        is_tseg2         : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Bit Time config capture interface
+        -----------------------------------------------------------------------
+        -- Time segment 1 (SYNC + PROP + PH1)
+        tseg_1       : in    std_logic_vector(G_TSEG1_WIDTH - 1 downto 0);
+        
+        -- Time segment 2 (PH2)
+        tseg_2       : in    std_logic_vector(G_TSEG2_WIDTH - 1 downto 0);
+        
+        -- Synchronisation Jump Width
+        sjw          : in    std_logic_vector(G_SJW_WIDTH - 1 downto 0);
+        
+        -- Circuit operation has started -> load expected segment length reg.
+        start_edge   : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Bit Time counter interface
+        -----------------------------------------------------------------------
+        -- Bit time counter
+        bt_counter   : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
+
+        -----------------------------------------------------------------------
+        -- End of segment detector
+        -----------------------------------------------------------------------
+        -- End of segment (either TSEG1 or TSEG2)
+        segm_end         : in    std_logic;
+        
+        -- Hard synchronisation valid
+        h_sync_valid     : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Output interface (signalling end of segment)
+        -----------------------------------------------------------------------
+        -- End of segment request
+        exit_segm_req    : out   std_logic
+    );
+    end component;
+
+
+    component segment_end_detector is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY   :       std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys            : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n              : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Control interface
+        -----------------------------------------------------------------------
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control         : in    std_logic_vector(1 downto 0);
+        
+        -- Hard synchronisation edge is valid
+        h_sync_edge_valid  : in    std_logic;
+        
+        -- Segment end request (Nominal)
+        exit_segm_req_nbt  : in    std_logic;
+        
+        -- Segment end request (Data)
+        exit_segm_req_dbt  : in    std_logic;
+
+        -- Bit time FSM is in TSEG1
+        is_tseg1           : in    std_logic;
+        
+        -- Bit time FSM is in TSEG2
+        is_tseg2           : in    std_logic;
+
+        -- Nominal Time quanta is active
+        tq_edge_nbt        : in    std_logic;
+        
+        -- Data Time quanta is active
+        tq_edge_dbt        : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status signals
+        -----------------------------------------------------------------------
+        -- Segment end
+        segm_end           : out   std_logic;
+        
+        -- Hard Synchronisation is valid
+        h_sync_valid       : out   std_logic;
+        
+        -- Clear Bit time counters
+        bt_ctr_clear       : out   std_logic
+    );
+    end component segment_end_detector;
+
+
+    component synchronisation_checker is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY        :       std_logic := '0'
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchronous Reset
+        res_n            : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Control interface
+        -----------------------------------------------------------------------
+        -- Synchronisation control (No synchronisation, Hard Synchronisation,
+        -- Resynchronisation
+        sync_control     : in    std_logic_vector(1 downto 0);
+        
+        -- Synchronisation edge (from Bus sampling)
+        sync_edge        : in    std_logic;
+        
+        -- No re-synchronisation should be executed due to positive phase
+        -- error
+        no_pos_resync    : in    std_logic;
+        
+        -- End of segment
+        segment_end      : in    std_logic;
+        
+        -- Bit time FSM is in TSEG1
+        is_tseg1         : in    std_logic;
+        
+        -- Bit time FSM is in TSEG2
+        is_tseg2         : in    std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Status
+        -----------------------------------------------------------------------
+        -- Resynchronisation edge is valid
+        resync_edge_valid    : out std_logic;
+        
+        -- Hard synchronisation edge is valid
+        h_sync_edge_valid    : out std_logic
+    );
+    end component;
+
+
+    component trigger_generator is
+    generic (
+        -- Reset polarity
+        G_RESET_POLARITY          : std_logic := '0';
+
+        -- Number of signals in Sample trigger
+        G_SAMPLE_TRIGGER_COUNT    : natural range 2 to 8 := 3
+    );
+    port(
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys          : in    std_logic;
+        
+        -- Asynchronous reset
+        res_n            : in    std_logic;
+
+        -----------------------------------------------------------------------
+        -- Control signal
+        -----------------------------------------------------------------------
+        -- Sample point Request (RX Trigger request)
+        sample_req       : in    std_logic;
+        
+        -- Sync Trigger Request (TX Trigger request)
+        sync_req         : in    std_logic;
+
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control       : in    std_logic_vector(1 downto 0);
+        
+        -----------------------------------------------------------------------
+        -- Trigger outputs
+        -----------------------------------------------------------------------
+        -- RX Triggers (Two in two following clock cycles)
+        rx_triggers     : out std_logic_vector(G_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+        
+        -- TX Trigger
+        tx_trigger      : out std_logic
+    );
+    end component;
+
+
+    component rx_buffer_fsm is
+    generic(
+        G_RESET_POLARITY     :       std_logic := '0'
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clocks and Asynchronouts reset 
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in     std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in     std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control signals from CAN Core (Filtered by Frame filters)
+        ------------------------------------------------------------------------
+        -- Start Storing of Metadata to RX Buffer (first 4 words of frame)
+        store_metadata_f     :in     std_logic;
+       
+        -- Store Data word to RX Buffer
+        store_data_f         :in     std_logic;
+
+        -- Received frame valid
+        rec_valid_f          :in     std_logic;
+        
+        -- Abort storing of RX Frame to RX Buffer.
+        rec_abort_f          :in     std_logic;
+
+        -- Start of Frame pulse
+        sof_pulse            :in     std_logic;
+
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving bus
+        drv_bus              :in     std_logic_vector(1023 downto 0);
+
+        -----------------------------------------------------------------------
+        -- FSM outputs
+        -----------------------------------------------------------------------
+        -- Intent to write to RX Buffer RAM
+        write_raw_intent     :out    std_logic;
+
+        -- Write Extra Timestamp to RX Buffer RAM memory
+        write_extra_ts       :out    std_logic;
+
+        -- Storing of extra Timestamp from end of frame has ended.
+        store_extra_ts_end   :out    std_logic;
+
+        -- Data selector for selection of memory word to be stored in RX Buffer 
+        -- RAM (one hot coded)
+        data_selector        :out    std_logic_vector(6 downto 0);
+
+        -- Load extra write pointer from regular write pointer
+        store_extra_wr_ptr   :out    std_logic;
+
+        -- Increment extra write pointer by 1
+        inc_extra_wr_ptr     :out    std_logic;
+
+        -- Reset internal overrun flag
+        reset_overrun_flag   :out    std_logic
+    );
+    end component;
+
+
+    component rx_buffer_pointers is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY      :       std_logic := '0';
+        
+        -- RX Buffer size
+        G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clocks and Asynchronous reset 
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in     std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in     std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Abort storing of frame in RX Buffer. Revert to last frame. Raw RX
+        -- pointer will be reverted to internal RX pointers.
+        rec_abort_f          :in     std_logic;
+
+        -- Commit RX Frame to RX Buffer. Raw pointer will be stored internal
+        -- RX pointer.
+        commit_rx_frame      :in     std_logic;
+
+        -- RX Buffer RAM is being written and there is enough space available.
+        write_raw_OK         :in     std_logic;
+
+        -- RX Frame is not commited, write pointer raw should be reverted to
+        -- last stored write_pointer value.
+        commit_overrun_abort :in     std_logic;
+
+        -- RX Buffer FSM signals to store write pointer to extra write pointer
+        store_extra_wr_ptr   :in     std_logic;
+
+        -- RX Buffer FSM signals to increment extra write pointer
+        inc_extra_wr_ptr     :in     std_logic;
+
+        -- RX Buffer RAM is being read by SW
+        read_increment       :in     std_logic;
+
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving bus
+        drv_bus              :in     std_logic_vector(1023 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Status outputs
+        -----------------------------------------------------------------------
+        -- Read Pointer (access from SW)
+        read_pointer           :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+
+        -- Read pointer incremented by 1 (combinationally)
+        read_pointer_inc_1     :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+
+        -- Write pointer (committed, available to SW, after frame was stored)
+        write_pointer          :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+
+        -- Write pointer RAW. Changing during frame, as frame is continously stored
+        -- to the buffer. When frame is sucesfully received, it is updated to
+        -- write pointer!
+        write_pointer_raw      :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+
+        -- Extra write pointer which is used for storing timestamp at the end of
+        -- data frame!
+        write_pointer_extra_ts :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+
+        -- Number of free memory words available for user
+        rx_mem_free_int        :out     integer range 0 to G_RX_BUFF_SIZE + 1
+    );
+    end component;
+
+
+    component rx_buffer is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY            :       std_logic := '0';
+        
+        -- RX Buffer size
+        G_RX_BUFF_SIZE              :       natural range 32 to 4096 := 32
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clocks and Asynchronous reset 
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in     std_logic;
+        
+        -- Async. reset
+        res_n                :in     std_logic;
+
+        ------------------------------------------------------------------------
+        -- Metadata from CAN Core
+        ------------------------------------------------------------------------
+        -- Frame Identifier
+        rec_ident            :in     std_logic_vector(28 downto 0);
+        
+        -- Data length code
+        rec_dlc              :in     std_logic_vector(3 downto 0);
+        
+        -- Recieved identifier type (0-BASE Format, 1-Extended Format);
+        rec_ident_type       :in     std_logic;
+        
+        -- Recieved frame type (0-Normal CAN, 1- CAN FD)
+        rec_frame_type       :in     std_logic;
+        
+        -- Recieved frame is RTR Frame(0-No, 1-Yes)
+        rec_is_rtr           :in     std_logic;
+        
+        -- Whenever frame was recieved with BIT Rate shift 
+        rec_brs              :in     std_logic;
+
+        -- Recieved error state indicator
+        rec_esi              :in     std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control signals from CAN Core which control storing of CAN Frame.
+        -- (Filtered by Frame Filters)
+        ------------------------------------------------------------------------
+        -- After control field of CAN frame, metadata are valid and can be stored.
+        -- This command starts the RX FSM for storing.
+        store_metadata_f     :in     std_logic;
+       
+        -- Signal that one word of data can be stored (TX_DATA_X_W). This signal
+        -- is active when 4 bytes were received or data reception has finished 
+        -- on 4 byte unaligned number of frames! (Thus allowing to store also
+        -- data which are not 4 byte aligned!
+        store_data_f         :in     std_logic;
+
+        -- Data word which should be stored when "store_data" is active!
+        store_data_word      :in     std_logic_vector(31 downto 0);
+
+        -- Received frame valid (commit RX Frame)
+        rec_valid_f          :in     std_logic;
+        
+        -- Abort storing of RX Frame to RX Buffer.
+        rec_abort_f          :in     std_logic;
+
+        -- Signals start of frame. If timestamp on RX frame should be captured
+        -- in the beginning of the frame, this pulse captures the timestamp!
+        sof_pulse            :in     std_logic;
+
+        -----------------------------------------------------------------------
+        -- Status signals of RX buffer
+        -----------------------------------------------------------------------
+        -- Actual size of synthetised message buffer (in 32 bit words)
+        rx_buf_size          :out    std_logic_vector(12 downto 0);
+        
+        -- Signal whenever buffer is full (no free memory words)
+        rx_full              :out    std_logic;
+        
+        -- Signal whenever buffer is empty (no frame (message) is stored)
+        rx_empty             :out    std_logic;
+        
+        -- Number of frames (messages) stored in recieve buffer
+        rx_message_count     :out    std_logic_vector(10 downto 0);
+        
+        -- Number of free 32 bit wide words
+        rx_mem_free          :out    std_logic_vector(12 downto 0);
+        
+        -- Position of read pointer
+        rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
+        
+        -- Position of write pointer
+        rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
+        
+        -- Overrun occurred, data were discarded!
+        -- (This is a flag and persists until it is cleared by SW)! 
+        rx_data_overrun      :out    std_logic;
+        
+        -- External timestamp input
+        timestamp            :in     std_logic_vector(63 downto 0);
+
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Actually loaded data for reading
+        rx_read_buff         :out    std_logic_vector(31 downto 0);
+        
+        -- Driving bus from registers
+        drv_bus              :in     std_logic_vector(1023 downto 0)
+    );
+    end component;
+
+    component priority_decoder is
+    generic(
+        -- Number of TXT Buffers
+        G_TXT_BUFFER_COUNT     : natural range 1 to 8
+    );
+    port( 
+        ------------------------------------------------------------------------
+        -- TXT Buffer information
+        ------------------------------------------------------------------------
+        -- TXT Buffer priority
+        prio             : in  txtb_priorities_type;
+        
+        -- TXT Buffer is valid for selection
+        prio_valid       : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+
+        ------------------------------------------------------------------------
+        -- Output interface
+        ------------------------------------------------------------------------
+        -- Whether selected buffer is valid 
+        -- (at least one of the buffers must be non-empty and allowed)
+        output_valid     : out  std_logic;
+
+        -- Index of highest priority buffer which is non-empty and allowed
+        -- for transmission
+        output_index     : out  natural range 0 to G_TXT_BUFFER_COUNT - 1
+    );
+    end component;
+
+
+    component tx_arbitrator_fsm is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :in  std_logic := '0'
+    );
+    port( 
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in  std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Priority decoder interface
+        -----------------------------------------------------------------------
+        -- TXT Buffer is valid and selected for transmission
+        select_buf_avail       :in  std_logic;
+        
+        -- Priority decoder output has changed. TXT Arbitrator FSM has to restart
+        -- selection process.
+        select_index_changed   :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- Timestamp comparison interface
+        -----------------------------------------------------------------------
+        timestamp_valid        :in  std_logic;
+        
+        -----------------------------------------------------------------------
+        -- CAN Core Interface
+        -----------------------------------------------------------------------
+        -- HW Commands from CAN Core for manipulation with TXT Buffers 
+        txt_hw_cmd             :in txt_hw_cmd_type;  
+        
+        ---------------------------------------------------------------------------
+        -- TX Arbitrator FSM outputs
+        ---------------------------------------------------------------------------
+        -- Load Timestamp lower word to metadata pointer
+        load_ts_lw_addr        :out std_logic;
+        
+        -- Load Timestamp upper word to metadata pointer
+        load_ts_uw_addr        :out std_logic;
+        
+        -- Load Frame format word to metadata pointer
+        load_ffmt_w_addr       :out std_logic;
+        
+        -- Store timestamp lower word
+        store_ts_l_w           :out std_logic;
+        
+        -- Store metadata (Frame format word) on the output of TX Arbitrator
+        store_md_w             :out std_logic;
+        
+        -- Signals that TX Arbitrator is locked (CAN Core is transmitting from TXT
+        -- Buffer)
+        tx_arb_locked          :out std_logic;
+        
+        -- Store last locked TXT Buffer index
+        store_last_txtb_index  :out std_logic;
+        
+        -- Set valid selected buffer on TX Arbitrator output.
+        frame_valid_com_set    :out std_logic;    
+        
+        -- Clear valid selected buffer on TX Arbitrator output.
+        frame_valid_com_clear  :out std_logic 
+    );
+    end component;
+
+
+    component tx_arbitrator is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        : std_logic := '0';
+        
+        -- Number of TXT Buffers
+        G_TXT_BUFFER_COUNT      : natural range 1 to 8
+    );
+    port( 
+        -----------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        -----------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in  std_logic;
+        
+        -- Asynchronous reset        
+        res_n                  :in  std_logic;
+
+        -----------------------------------------------------------------------
+        -- TXT Buffers interface
+        -----------------------------------------------------------------------
+        -- Data words from TXT Buffers RAM memories
+        txtb_port_b_data        :in t_txt_bufs_output;
+        
+        -- TXT Buffers are ready, can be selected by TX Arbitrator
+        txtb_ready              :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        
+        -- Pointer to TXT Buffer
+        txtb_port_b_address     :out natural range 0 to 19;
+
+        -----------------------------------------------------------------------
+        -- CAN Core Interface
+        -----------------------------------------------------------------------
+        -- TXT Buffer memory word
+        tran_word               :out std_logic_vector(31 downto 0);
+
+        -- TX Data length code
+        tran_dlc                :out std_logic_vector(3 downto 0);
+    
+        -- TX Remote transmission request flag
+        tran_is_rtr             :out std_logic;
+
+        -- TX Identifier type (0-Basic,1-Extended);
+        tran_ident_type         :out std_logic;
+    
+        -- TX Frame type (0-CAN 2.0, 1-CAN FD)
+        tran_frame_type         :out std_logic;
+    
+        -- TX Frame Bit rate shift Flag 
+        tran_brs                :out std_logic;
+    
+        -- There is valid frame selected, can be locked for transmission
+        tran_frame_valid        :out std_logic;
+
+        -- HW Commands from CAN Core for manipulation with TXT Buffers 
+        txtb_hw_cmd             :in t_txtb_hw_cmd;
+
+        -- Selected TXT Buffer changed in comparison to previous transmission
+        txtb_changed            :out std_logic;
+
+        -- Index of the TXT Buffer for which the actual HW command is valid
+        txtb_hw_cmd_buf_index   :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
+
+        -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
+        txtb_ptr                :in natural range 0 to 19;
+
+        -----------------------------------------------------------------------
+        -- Memory registers interface
+        -----------------------------------------------------------------------
+        -- Driving Bus
+        drv_bus                 :in std_logic_vector(1023 downto 0);
+
+        -- Priorities of TXT Buffers
+        txtb_prorities          :in t_txtb_priorities;
+    
+        -- TimeStamp value
+        timestamp               :in std_logic_vector(63 downto 0)
+    );
+    end component;
+
+
+    component txt_buffer_fsm is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '0';
+        
+        -- TXT Buffer ID
+        G_ID                   :     natural
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory registers interface
+        ------------------------------------------------------------------------
+        -- SW commands
+        txtb_sw_cmd             :in   t_txtb_sw_cmd;
+        
+        -- SW buffer select
+        sw_cbs                 :in   std_logic;
+
+        ------------------------------------------------------------------------   
+        -- CAN Core interface
+        ------------------------------------------------------------------------
+        -- HW Commands
+        txtb_hw_cmd             :in   t_txtb_hw_cmd;  
+        
+        -- HW Buffer select
+        hw_cbs                 :in   std_logic;
+    
+        -- Unit is Bus off
+        is_bus_off             :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Status signals
+        ------------------------------------------------------------------------
+        -- Buffer accessible from SW
+        txtb_user_accessible   :out  std_logic;
+
+        -- HW Command applied on TXT Buffer.
+        txtb_hw_cmd_int        :out  std_logic;
+
+        -- Buffer status (FSM state) encoded for reading by SW.
+        txtb_state             :out  std_logic_vector(3 downto 0);
+
+        -- TXT Buffer is ready to be locked by CAN Core for transmission
+        txt_buf_ready          :out  std_logic
+    );             
+    end component;
+
+    component txt_buffer is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '0';
+        
+        -- Number of TXT Buffers
+        G_TXT_BUF_COUNT        :     natural range 1 to 8;
+        
+        -- TXT Buffer ID
+        G_ID                   :     natural := 1
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Memory Registers Interface
+        ------------------------------------------------------------------------
+        -- Data to be written to TXT Buffer RAM
+        txtb_port_a_data       :in   std_logic_vector(31 downto 0);
+        
+        -- Address in TXT Buffer RAM
+        txtb_port_a_address    :in   std_logic_vector(4 downto 0);
+
+        -- TXT Buffer RAM chip select
+        txtb_port_a_cs         :in   std_logic;
+
+        -- SW commands
+        txtb_sw_cmd            :in   t_txt_sw_cmd;
+        
+        -- TXT Buffer index for which SW command is valid
+        txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+
+        -- Buffer State (encoded for Memory registers)
+        txtb_state             :out  std_logic_vector(3 downto 0);
+
+        ------------------------------------------------------------------------   
+        -- Interrupt Manager Interface
+        ------------------------------------------------------------------------
+        -- HW Command applied
+        txtb_hw_cmd_int         :out  std_logic;
+
+        ------------------------------------------------------------------------
+        -- CAN Core and TX Arbitrator Interface
+        ------------------------------------------------------------------------
+        -- HW Commands 
+        txtb_hw_cmd            :in   t_txtb_hw_cmd;
+        
+        -- Index of TXT Buffer for which HW commands is valid          
+        txtb_hw_cmd_index      :in   natural range 0 to G_TXT_BUF_COUNT - 1;
+
+        -- TXT Buffer RAM data output
+        txtb_port_b_data       :out  std_logic_vector(31 downto 0);
+        
+        -- TXT Buffer RAM address
+        txtb_port_b_address    :in   natural range 0 to 19;
+
+        -- Unit just turned bus off.
+        is_bus_off             :in   std_logic;
+
+        -- TXT Buffer is ready to be locked by CAN Core for transmission
+        txtb_ready          :out  std_logic
+    );
+    end component;
+
+
+
+    component event_logger is 
+    generic(
+        constant memory_size        :     natural := 16 --Only 2^k possible!
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and reset
+        ------------------------------------------------------------------------
+        signal clk_sys              :in   std_logic;
+        signal res_n                :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Driving signals 
+        ------------------------------------------------------------------------
+        signal drv_bus              :in   std_logic_vector(1023 downto 0);
+        signal stat_bus             :in   std_logic_vector(511 downto 0);
+        signal sync_edge            :in   std_logic;
+        signal data_overrun         :in   std_logic;
+        signal timestamp            :in   std_logic_vector(63 downto 0);
+
+        -------------------
+        --Status signals --
+        -------------------
+
+        --Logger finished interrrupt output
+        signal loger_finished       :out  std_logic;
+         
+        signal loger_act_data       :out  std_logic_vector(63 downto 0);
+        signal log_write_pointer    :out  std_logic_vector(7 downto 0);
+        signal log_read_pointer     :out  std_logic_vector(7 downto 0);
+        signal log_size             :out  std_logic_vector(7 downto 0);
+        signal log_state_out        :out  logger_state_type
+
+    );
+    end component;
+
+
+    component CTU_CAN_FD_v1_0 is
+    generic(
+        use_logger       : boolean                := true;
+        rx_buffer_size   : natural range 4 to 512 := 128;
+        use_sync         : boolean                := true;
+        sup_filtA        : boolean                := true;
+        sup_filtB        : boolean                := true;
+        sup_filtC        : boolean                := true;
+        sup_range        : boolean                := true;
+        logger_size      : natural range 0 to 512 := 8
+    );
+    port(
+        aclk             : in  std_logic;
+        arstn            : in  std_logic;
+
+        irq              : out std_logic;
+        CAN_tx           : out std_logic;
+        CAN_rx           : in  std_logic;
+        time_quanta_clk  : out std_logic;
+        timestamp        : in std_logic_vector(63 downto 0);
+
+        -- Ports of APB4
+        s_apb_paddr      : in  std_logic_vector(31 downto 0);
+        s_apb_penable    : in  std_logic;
+        s_apb_pprot      : in  std_logic_vector(2 downto 0);
+        s_apb_prdata     : out std_logic_vector(31 downto 0);
+        s_apb_pready     : out std_logic;
+        s_apb_psel       : in  std_logic;
+        s_apb_pslverr    : out std_logic;
+        s_apb_pstrb      : in  std_logic_vector(3 downto 0);
+        s_apb_pwdata     : in  std_logic_vector(31 downto 0);
+        s_apb_pwrite     : in  std_logic
+    );
+    end component CTU_CAN_FD_v1_0;
 
 
     ----------------------------------------------------------------------------
