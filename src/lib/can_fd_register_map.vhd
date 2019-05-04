@@ -144,7 +144,7 @@ package can_fd_register_map is
     (address   => MODE_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000110000"),
+     reset_val => "00000000000000000000000000010000"),
     (address   => SETTINGS_ADR,
      size      => 16,
      reg_type  => reg_read_write,
@@ -553,7 +553,6 @@ package can_fd_register_map is
   constant STM_IND                : natural := 2;
   constant AFM_IND                : natural := 3;
   constant FDE_IND                : natural := 4;
-  constant RTRP_IND               : natural := 5;
   constant TSM_IND                : natural := 6;
   constant ACF_IND                : natural := 7;
 
@@ -564,10 +563,6 @@ package can_fd_register_map is
   -- "TSM" field enumerated values
   constant TSM_DISABLE        : std_logic := '0';
   constant TSM_ENABLE         : std_logic := '1';
-
-  -- "RTRP" field enumerated values
-  constant RTR_EXTRA          : std_logic := '0';
-  constant RTR_STANDARD       : std_logic := '1';
 
   -- "ACF" field enumerated values
   constant ACF_DISABLED       : std_logic := '0';
@@ -589,7 +584,6 @@ package can_fd_register_map is
   constant RST_RSTVAL         : std_logic := '0';
   constant FDE_RSTVAL         : std_logic := '1';
   constant TSM_RSTVAL         : std_logic := '0';
-  constant RTRP_RSTVAL        : std_logic := '1';
   constant ACF_RSTVAL         : std_logic := '0';
   constant LOM_RSTVAL         : std_logic := '0';
   constant STM_RSTVAL         : std_logic := '0';
@@ -662,7 +656,6 @@ package can_fd_register_map is
   -- Writing logic 1 into each bit gives different command to the IP Core. After
   --  writing logic 1, logic 0 does not have to be written.
   ------------------------------------------------------------------------------
-  constant ABT_IND                : natural := 1;
   constant RRB_IND                : natural := 2;
   constant CDO_IND                : natural := 3;
   constant ERCRST_IND             : natural := 4;
@@ -670,7 +663,6 @@ package can_fd_register_map is
   constant TXFCRST_IND            : natural := 6;
 
   -- COMMAND register reset values
-  constant ABT_RSTVAL         : std_logic := '0';
   constant RRB_RSTVAL         : std_logic := '0';
   constant CDO_RSTVAL         : std_logic := '0';
   constant ERCRST_RSTVAL      : std_logic := '0';

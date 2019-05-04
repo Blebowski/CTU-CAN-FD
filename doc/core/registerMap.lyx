@@ -114,7 +114,7 @@ CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for
 \align center
 \begin_inset Tabular
 <lyxtabular columns="2" rows="7" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="4cm">
 <row>
@@ -263,7 +263,7 @@ Control registers memory region.\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="5" rows="41" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -2846,7 +2846,7 @@ Register contains the identifer of CTU CAN FD IP Core. It can be used to determi
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3089,7 +3089,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3362,7 +3362,7 @@ Version register with IP Core version.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3605,7 +3605,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3880,7 +3880,7 @@ MODE register controls operating modes.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4123,7 +4123,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4236,7 +4236,7 @@ TSM\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-RTRP\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -4310,7 +4310,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-1\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -4385,11 +4385,6 @@ FDE Enable flexible data rate support. When disabled, receiving recessive EDL bi
 		0b1  - FDE_ENABLE - Flexible data-rate support enabled.
 \end_layout
 \begin_layout Description
-RTRP RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when sending RTR Frames.\begin_inset Newline newline\end_inset
-		0b0  - RTR_EXTRA - When RTR Frame is sent, all zeroes are sent at DLC.\begin_inset Newline newline\end_inset
-		0b1  - RTR_STANDARD - When RTR Frame is sent, also the DLC inserted to TX Buffer is sent.
-\end_layout
-\begin_layout Description
 TSM Tripple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. CAN standard reccomends to use tripple sampling at low Bit rates.\begin_inset Newline newline\end_inset
 		0b0  - TSM_DISABLE - Tripple sampling mode disabled\begin_inset Newline newline\end_inset
 		0b1  - TSM_ENABLE - Tripple sampling mode enabled
@@ -4430,7 +4425,7 @@ This register enables the whole CAN FD Core, configures FD Type, Internal loopba
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4673,7 +4668,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4965,7 +4960,7 @@ Register signals various states of CTU CAN FD IP Core. Logic 1 signals active st
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5208,7 +5203,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5451,7 +5446,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5694,7 +5689,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5987,7 +5982,7 @@ Writing logic 1 into each bit gives different command to the IP Core. After writ
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6230,7 +6225,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6473,7 +6468,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6716,7 +6711,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6857,15 +6852,15 @@ RRB\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-ABT\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6935,7 +6930,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -6953,9 +6948,6 @@ Reset value\end_layout
 \end_inset
 
 
-\end_layout
-\begin_layout Description
-ABT Abort transmission of CAN frame. CTU CAN FD IP Core will immediately move to the Interframe state. If the Core is a receiver, this command has no effect. Aborting transmission can be used to release the bus immediately. If another unit is receiving frame whose transmission is aborted, it will start transmitting Error frame due to Stuff Error. TXT Buffer will move to TX Error state.
 \end_layout
 \begin_layout Description
 RRB Release Receive buffer. This command deletes all data from the Receive buffer and restarts its memory pointers.
@@ -7003,7 +6995,7 @@ Reading this register returns logic 1 for each interrupt which was captured (int
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7246,7 +7238,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7551,7 +7543,7 @@ Writing logic 1 to a bit enables according interrupt. Writing logic 0 has no eff
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7794,7 +7786,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8066,7 +8058,7 @@ Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Rea
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8309,7 +8301,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8581,7 +8573,7 @@ Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Readin
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8824,7 +8816,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9096,7 +9088,7 @@ Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Rea
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9339,7 +9331,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9611,7 +9603,7 @@ Bit timing register for nominal bit-rate. This register should be modified only 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9854,7 +9846,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -10097,7 +10089,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -10340,7 +10332,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -10624,7 +10616,7 @@ Bit timing register for data bit-rate. This register should be modified only whe
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -10867,7 +10859,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -11110,7 +11102,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -11353,7 +11345,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -11637,7 +11629,7 @@ Error warning limit register. This register should be modified only when SETTING
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -11909,7 +11901,7 @@ Error passive limit register. This register should be modified only when SETTING
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -12181,7 +12173,7 @@ Fault confinement state of the node. This state can be manipulated by writes to 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -12424,7 +12416,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -12702,7 +12694,7 @@ Counter for received frames.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -12945,7 +12937,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -13217,7 +13209,7 @@ Counter for transcieved frames.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -13460,7 +13452,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -13732,7 +13724,7 @@ Size: 2 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -13975,7 +13967,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -14247,7 +14239,7 @@ Size: 2 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -14490,7 +14482,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -14762,7 +14754,7 @@ Register for manipulation with error counters.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -15005,7 +14997,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -15248,7 +15240,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -15491,7 +15483,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -15775,7 +15767,7 @@ Bit mask for acceptance filter A. The identifier format is the same as transmitt
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -16018,7 +16010,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -16261,7 +16253,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -16504,7 +16496,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -16776,7 +16768,7 @@ Bit value for acceptance filters. Filters A, B, C are available. The identifier 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -17019,7 +17011,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -17262,7 +17254,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -17505,7 +17497,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -17777,7 +17769,7 @@ Bit mask for acceptance filter B. The identifier format is the same as transmitt
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -18020,7 +18012,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -18263,7 +18255,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -18506,7 +18498,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -18778,7 +18770,7 @@ Bit value for acceptance filter B. The identifier format is the same as transmit
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -19021,7 +19013,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -19264,7 +19256,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -19507,7 +19499,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -19779,7 +19771,7 @@ Bit mask for acceptance filter C. The identifier format is the same as transmitt
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -20022,7 +20014,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -20265,7 +20257,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -20508,7 +20500,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -20780,7 +20772,7 @@ Bit value for acceptance filter C. The identifier format is the same as transmit
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -21023,7 +21015,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -21266,7 +21258,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -21509,7 +21501,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -21781,7 +21773,7 @@ Low Identifier threshold for range filter. The identifier format is the same as 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -22024,7 +22016,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -22267,7 +22259,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -22510,7 +22502,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -22782,7 +22774,7 @@ High Identifier threshold for range filter. The identifier format is the same as
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -23025,7 +23017,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -23268,7 +23260,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -23511,7 +23503,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -23783,7 +23775,7 @@ Every filter can be configured to accept only selected frame types. Every bit is
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -24026,7 +24018,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -24343,7 +24335,7 @@ This register provides information if the Core is synthesized with fillter suppo
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -24586,7 +24578,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -24867,7 +24859,7 @@ Information register about FIFO memory of RX Buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -25110,7 +25102,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -25353,7 +25345,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -25596,7 +25588,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -25871,7 +25863,7 @@ Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol control F
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -26114,7 +26106,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -26357,7 +26349,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -26600,7 +26592,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -26875,7 +26867,7 @@ Information register one about FIFO Receive buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -27118,7 +27110,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -27396,7 +27388,7 @@ Settings register for FIFO RX Buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -27670,7 +27662,7 @@ Read data word from RX Buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -27913,7 +27905,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -28156,7 +28148,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -28399,7 +28391,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -28671,7 +28663,7 @@ Status of TXT Buffers.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -28914,7 +28906,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -29202,7 +29194,7 @@ Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -29445,7 +29437,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -29735,7 +29727,7 @@ Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals that
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -29978,7 +29970,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -30259,7 +30251,7 @@ Last error frame capture.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -30549,7 +30541,7 @@ Arbitration lost capture register. Determines bit position of last arbitration l
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -30829,7 +30821,7 @@ Size: 2 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -31072,7 +31064,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -31344,7 +31336,7 @@ Configuration of Secondary sampling point which is used for Transmitter in Data 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -31587,7 +31579,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -31865,7 +31857,7 @@ Counter for received frames to enable bus traffic measurement
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -32108,7 +32100,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -32351,7 +32343,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -32594,7 +32586,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -32866,7 +32858,7 @@ Counter for transmitted frames to enable bus traffic measurement.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -33109,7 +33101,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -33352,7 +33344,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -33595,7 +33587,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -33867,7 +33859,7 @@ Register for reading out state of the controller. This register is only for debu
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -34110,7 +34102,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -34353,7 +34345,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -34596,7 +34588,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -34892,7 +34884,7 @@ Register for fun :)
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -35135,7 +35127,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -35378,7 +35370,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -35621,7 +35613,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -35893,7 +35885,7 @@ Register with mirrored values of timestamp input. Bits 31:0 of timestamp input a
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -36136,7 +36128,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -36379,7 +36371,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -36622,7 +36614,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -36894,7 +36886,7 @@ Register with mirrored values of timestamp input. Bits 63:32 of timestamp input 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -37137,7 +37129,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -37380,7 +37372,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -37623,7 +37615,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -37882,7 +37874,7 @@ Access to this memory region is mapped to TXT Buffer 1.  CAN FD frame for transm
 \align center
 \begin_inset Tabular
 <lyxtabular columns="5" rows="6" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -38232,7 +38224,7 @@ Access to this memory region is mapped to TXT Buffer 2.  CAN FD frame for transm
 \align center
 \begin_inset Tabular
 <lyxtabular columns="5" rows="6" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -38582,7 +38574,7 @@ Access to this memory region is mapped to TXT Buffer 3.  CAN FD frame for transm
 \align center
 \begin_inset Tabular
 <lyxtabular columns="5" rows="6" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -38932,7 +38924,7 @@ Access to this memory region is mapped to TXT Buffer 4.  CAN FD frame for transm
 \align center
 \begin_inset Tabular
 <lyxtabular columns="5" rows="6" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -39282,7 +39274,7 @@ Registers for control of Event logger and memory access to event logger RAM. Acc
 \align center
 \begin_inset Tabular
 <lyxtabular columns="5" rows="8" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
 <column alignment="center" valignment="top" width="3cm">
@@ -39783,7 +39775,7 @@ Register for configuration of event logging triggering conditions. If Event logg
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -40026,7 +40018,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -40269,7 +40261,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -40512,7 +40504,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -40835,7 +40827,7 @@ Register for configuring which events to capture by event logger into the logger
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -41078,7 +41070,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -41321,7 +41313,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -41564,7 +41556,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -41896,7 +41888,7 @@ Status  register for Event logger.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -42139,7 +42131,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -42423,7 +42415,7 @@ Pointers to Logger RAM memory.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -42666,7 +42658,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -42941,7 +42933,7 @@ Register for controlling the state machine of Event logger and read pointer posi
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -43222,7 +43214,7 @@ First word of the captured event at read pointer position.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -43465,7 +43457,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -43708,7 +43700,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -43951,7 +43943,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -44223,7 +44215,7 @@ Second word of the captured event at read pointer position.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -44466,7 +44458,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -44709,7 +44701,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -44952,7 +44944,7 @@ Reset value\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">

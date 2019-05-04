@@ -116,9 +116,9 @@ begin
     mode_reg_comp : memory_reg
     generic map(
         data_width                      => 16 ,
-        data_mask                       => "0000000011111111" ,
+        data_mask                       => "0000000011011111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "0000000000110000" ,
+        reset_value                     => "0000000000010000" ,
         auto_clear                      => "0000000000000001" 
     )
     port map(
@@ -160,10 +160,10 @@ begin
     command_reg_comp : memory_reg
     generic map(
         data_width                      => 32 ,
-        data_mask                       => "00000000000000000000000001111110" ,
+        data_mask                       => "00000000000000000000000001111100" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000000000001111110" 
+        auto_clear                      => "00000000000000000000000001111100" 
     )
     port map(
         clk_sys                         => clk_sys ,-- in
