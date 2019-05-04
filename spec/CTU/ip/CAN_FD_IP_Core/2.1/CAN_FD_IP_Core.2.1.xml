@@ -124,32 +124,6 @@
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>RTRP</ipxact:name>
-						<ipxact:displayName>RTR_PREFFERED</ipxact:displayName>
-						<ipxact:description>RTR Frame preferred behavior. When RTR frame is sent non-zero dlc code can be inserted. This bit specifies the behavior of controller when sending RTR Frames.</ipxact:description>
-						<ipxact:bitOffset>5</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:enumeratedValues>
-							<ipxact:enumeratedValue>
-								<ipxact:name>RTR_STANDARD</ipxact:name>
-								<ipxact:displayName>RTR_STANDARD</ipxact:displayName>
-								<ipxact:description>When RTR Frame is sent, also the DLC inserted to TX Buffer is sent.</ipxact:description>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:enumeratedValue>
-							<ipxact:enumeratedValue>
-								<ipxact:name>RTR_EXTRA</ipxact:name>
-								<ipxact:displayName>RTR_EXTRA</ipxact:displayName>
-								<ipxact:description>When RTR Frame is sent, all zeroes are sent at DLC.</ipxact:description>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:enumeratedValue>
-						</ipxact:enumeratedValues>
-					</ipxact:field>
-					<ipxact:field>
 						<ipxact:name>ACF</ipxact:name>
 						<ipxact:displayName>ACF</ipxact:displayName>
 						<ipxact:description>Acknowledge forbidden mode. When this mode is enabled, acknowledge is not sent even if received CRC matches the calculated one.</ipxact:description>
@@ -263,19 +237,6 @@
 					<ipxact:size>32</ipxact:size>
 					<ipxact:volatile>true</ipxact:volatile>
 					<ipxact:access>write-only</ipxact:access>
-					<ipxact:field>
-						<ipxact:name>ABT</ipxact:name>
-						<ipxact:displayName>ABT</ipxact:displayName>
-						<ipxact:description>Abort transmission of CAN frame. CTU CAN FD IP Core will immediately move to the Interframe state. If the Core is a receiver, this command has no effect. Aborting transmission can be used to release the bus immediately. If another unit is receiving frame whose transmission is aborted, it will start transmitting Error frame due to Stuff Error. TXT Buffer will move to TX Error state.</ipxact:description>
-						<ipxact:bitOffset>1</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
-					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>RRB</ipxact:name>
 						<ipxact:displayName>RRB</ipxact:displayName>
