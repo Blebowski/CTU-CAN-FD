@@ -86,7 +86,7 @@
 --                   to put the frame which should be transmitted as first into
 --                   the buffer with lower priority!
 --                4. "tran_lock", "tran_unlock" and "tran_drop" signals removed
---                   and replaced with structure "txt_hw_cmd" where these signals
+--                   and replaced with structure "txtb_hw_cmd" where these signals
 --                   are elements.
 --    24.3.2018   Serialized loading of metadata from TXT Buffer. State machine
 --                is periodically loading metadata and comparing timestamps.
@@ -155,10 +155,10 @@ use work.CAN_FD_frame_format.all;
 entity tx_arbitrator is
     generic(
         -- Reset polarity
-        G_RESET_POLARITY    : std_logic := '0';
+        G_RESET_POLARITY        : std_logic := '0';
         
         -- Number of TXT Buffers
-        G_TXT_BUF_COUNT     : natural range 1 to 8
+        G_TXT_BUFFER_COUNT      : natural range 1 to 8
     );
     port( 
         -----------------------------------------------------------------------
@@ -173,64 +173,62 @@ entity tx_arbitrator is
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
-        -- Data words from TXT buffer memories
-        txt_buf_in             :in txtb_output_type;
+        -- Data words from TXT Buffers RAM memories
+        txtb_port_b_data        :in t_txt_bufs_output;
         
-        -- TXT Buffer is ready, can be selected by TX Arbitrator
-        txt_buf_ready          :in std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+        -- TXT Buffers are ready, can be selected by TX Arbitrator
+        txtb_ready              :in std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- Pointer to TXT Buffer
-        txtb_ptr               :out natural range 0 to 19;
+        txtb_port_b_address     :out natural range 0 to 19;
 
         -----------------------------------------------------------------------
         -- CAN Core Interface
         -----------------------------------------------------------------------
-
-        -- TX Frame data word
-        tran_data_word_out     :out std_logic_vector(31 downto 0);
+        -- TXT Buffer memory word
+        tran_word               :out std_logic_vector(31 downto 0);
 
         -- TX Data length code
-        tran_dlc_out           :out std_logic_vector(3 downto 0);
+        tran_dlc                :out std_logic_vector(3 downto 0);
     
         -- TX Remote transmission request flag
-        tran_is_rtr            :out std_logic;
+        tran_is_rtr             :out std_logic;
 
         -- TX Identifier type (0-Basic,1-Extended);
-        tran_ident_type_out    :out std_logic;
+        tran_ident_type         :out std_logic;
     
         -- TX Frame type (0-CAN 2.0, 1-CAN FD)
-        tran_frame_type_out    :out std_logic;
+        tran_frame_type         :out std_logic;
     
         -- TX Frame Bit rate shift Flag 
-        tran_brs_out           :out std_logic;
+        tran_brs                :out std_logic;
     
         -- There is valid frame selected, can be locked for transmission
-        tran_frame_valid_out   :out std_logic;
+        tran_frame_valid        :out std_logic;
 
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
-        txt_hw_cmd             :in txt_hw_cmd_type;
+        txtb_hw_cmd             :in t_txtb_hw_cmd;
 
         -- Selected TXT Buffer changed in comparison to previous transmission
-        txtb_changed           :out std_logic;
+        txtb_changed            :out std_logic;
 
         -- Index of the TXT Buffer for which the actual HW command is valid
-        txt_hw_cmd_buf_index   :out natural range 0 to buf_count - 1;
+        txtb_hw_cmd_buf_index   :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
-        txtb_core_pointer      :in natural range 0 to 19;
+        txtb_ptr                :in natural range 0 to 19;
 
         -----------------------------------------------------------------------
         -- Memory registers interface
         -----------------------------------------------------------------------
-    
         -- Driving Bus
-        drv_bus                :in std_logic_vector(1023 downto 0);
+        drv_bus                 :in std_logic_vector(1023 downto 0);
 
         -- Priorities of TXT Buffers
-        txt_buf_prio           :in txtb_priorities_type;
+        txtb_prorities          :in t_txtb_priorities;
     
         -- TimeStamp value
-        timestamp              :in std_logic_vector(63 downto 0)
+        timestamp               :in std_logic_vector(63 downto 0)
   );
 end entity;
 
@@ -243,7 +241,7 @@ architecture rtl of tx_arbitrator is
     -- Indicates the highest selected buffer and its validity from
     -- combinational priority decoder
     signal select_buf_avail           : std_logic;
-    signal select_buf_index           : natural range 0 to G_TXT_BUF_COUNT - 1;
+    signal select_buf_index           : natural range 0 to G_TXT_BUFFER_COUNT - 1;
    
     -- Input word from TXT Buffer !!!
     signal txtb_selected_input        : std_logic_vector(31 downto 0);
@@ -265,17 +263,17 @@ architecture rtl of tx_arbitrator is
     ---------------------------------------------------------------------------
   
     -- Registered values for detection of change
-    signal select_buf_index_reg       : natural range 0 to G_TXT_BUF_COUNT - 1;
+    signal select_buf_index_reg       : natural range 0 to G_TXT_BUFFER_COUNT - 1;
   
     -- Lower timestamp loaded from TXT Buffer
     signal ts_low_internal            : std_logic_vector(31 downto 0);
   
     -- Internal index of TXT Buffer stored at the time of buffer selection
-    signal int_txtb_index             : natural range 0 to G_TXT_BUF_COUNT - 1;
+    signal int_txtb_index             : natural range 0 to G_TXT_BUFFER_COUNT - 1;
   
     -- TXT Buffer internal index of last buffer that was locked
     -- From buffer change, Protocol control can erase retransmitt counter
-    signal last_txtb_index            : natural range 0 to G_TXT_BUF_COUNT - 1;
+    signal last_txtb_index            : natural range 0 to G_TXT_BUFFER_COUNT - 1;
   
     -- Pointer to TXT Buffer for loading CAN frame metadata and
     -- timstamp during the selection of TXT Buffer.
@@ -346,11 +344,11 @@ begin
   ------------------------------------------------------------------------------
   priority_decoder_inst : priority_decoder 
   generic map(
-     G_TXT_BUF_COUNT    => G_TXT_BUF_COUNT
+     G_TXT_BUFFER_COUNT    => G_TXT_BUFFER_COUNT
   )
   port map( 
-     prio           => txt_buf_prio,        -- IN
-     prio_valid     => txt_buf_ready,       -- IN
+     prio           => txtb_prorities,      -- IN
+     prio_valid     => txtb_ready,          -- IN
      
      output_valid   => select_buf_avail,    -- OUT
      output_index   => select_buf_index     -- OUT
@@ -371,7 +369,7 @@ begin
     select_buf_avail       => select_buf_avail,         -- IN
     select_index_changed   => select_index_changed,     -- IN
     timestamp_valid        => timestamp_valid,          -- IN
-    txt_hw_cmd             => txt_hw_cmd,               -- IN
+    txtb_hw_cmd             => txtb_hw_cmd,               -- IN
 
     load_ts_lw_addr        => load_ts_lw_addr,          -- OUT
     load_ts_uw_addr        => load_ts_uw_addr,          -- OUT
@@ -392,7 +390,7 @@ begin
   -- during selection, selection is restarted. Thus we can always during 
   -- selection use combinationally selected buffer !!!
   ------------------------------------------------------------------------------
-  txtb_selected_input <= txt_buf_in(select_buf_index);
+  txtb_selected_input <= txtb_port_b_data(select_buf_index);
   
 
   ------------------------------------------------------------------------------
@@ -417,28 +415,28 @@ begin
   -- During transmission, CAN Core is reading metadata from outputs. Since the
   -- frame is valid, it is logical to also have "tran_frame_valid" active!
   ------------------------------------------------------------------------------
-  tran_frame_valid_out <= '1' when ((select_buf_avail = '1' and 
-                                    tran_frame_valid_com = '1') or
-                                    (tx_arb_locked = '1'))
-                              else
-                          '0';
+  tran_frame_valid <= '1' when ((select_buf_avail = '1' and 
+                                tran_frame_valid_com = '1') or
+                                (tx_arb_locked = '1'))
+                          else
+                      '0';
   
 
   ------------------------------------------------------------------------------
   -- Output data word is selected based on the stored buffer index at the time
   -- of buffer locking.
   ------------------------------------------------------------------------------  
-  tran_data_word_out   <= txt_buf_in(int_txtb_index);
+  tran_word   <= txtb_port_b_data(int_txtb_index);
 
 
   ------------------------------------------------------------------------------
   -- Output frame metadata and Identifier for CAN Core
   ------------------------------------------------------------------------------
-  tran_dlc_out         <= tran_dlc_com;
-  tran_is_rtr          <= tran_is_rtr_com;
-  tran_ident_type_out  <= tran_ident_type_com;
-  tran_frame_type_out  <= tran_frame_type_com;
-  tran_brs_out         <= tran_brs_com;
+  tran_dlc         <= tran_dlc_com;
+  tran_is_rtr      <= tran_is_rtr_com;
+  tran_ident_type  <= tran_ident_type_com;
+  tran_frame_type  <= tran_frame_type_com;
+  tran_brs         <= tran_brs_com;
   
 
   ------------------------------------------------------------------------------
@@ -448,11 +446,11 @@ begin
   -- already provide pointer from FSM, not the one from CAN Core. It is already
   -- addressing the lower timestamp word for timestamp selection!
   ------------------------------------------------------------------------------
-  txtb_ptr            <= txtb_core_pointer when (tx_arb_locked = '1')
-                                           else
+  txtb_port_b_address <= txtb_ptr when (tx_arb_locked = '1')
+                                  else
                          txtb_pointer_meta;
 
-  txt_hw_cmd_buf_index <= int_txtb_index;
+  txtb_hw_cmd_buf_index <= int_txtb_index;
   
 
   ------------------------------------------------------------------------------
@@ -594,22 +592,22 @@ begin
   -- psl default clock is rising_edge(clk_sys);
 
   -- psl txt_lock_cov : cover
-  --    (txt_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd.lock = '1');
   --
   -- psl txt_unlock_cov : cover
-  --    (txt_hw_cmd.unlock = '1');
+  --    (txtb_hw_cmd.unlock = '1');
   --
   -- psl txt_lock_buf_1_cov : cover
-  --    (txt_hw_cmd_buf_index = 0 and txt_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_buf_index = 0 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_lock_buf_2_cov : cover
-  --    (txt_hw_cmd_buf_index = 1 and txt_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_buf_index = 1 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_lock_buf_3_cov : cover
-  --    (txt_hw_cmd_buf_index = 2 and txt_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_buf_index = 2 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_lock_buf_4_cov : cover
-  --    (txt_hw_cmd_buf_index = 3 and txt_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_buf_index = 3 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_prio_change_cov : cover
   --    {select_buf_avail = '1';
@@ -621,14 +619,14 @@ begin
   -- in case of equal priorities!
   -- psl txt_buf_eq_priority_cov : cover
   --    (txt_buf_ready(0) = '1' and txt_buf_ready(1) = '1' and
-  --     txt_buf_prio(0) = txt_buf_prio(1))
+  --     txtb_prorities(0) = txtb_prorities(1))
   --    report "Selected Buffer index changed while buffer selected";
   --
   -- Change of buffer from Ready to not Ready but not due to lock (e.g.
   --  set abort). Again one buffer is enough!
   -- psl buf_ready_to_not_ready_cov : cover
   --    {txt_buf_ready(0) = '1' and select_buf_index = 0 and 
-  --     txt_hw_cmd.lock = '0'; txt_buf_ready(0) = '0'}
+  --     txtb_hw_cmd.lock = '0'; txt_buf_ready(0) = '0'}
   --    report "Buffer became non-ready but not due to lock command"; 
   --
   -- psl txt_buf_all_ready_cov : cover
@@ -637,11 +635,11 @@ begin
   --    report "All TXT Buffers ready";
   --
   -- psl txt_buf_change_cov : cover
-  --    (txtb_changed = '1' and txt_hw_cmd.lock = '1')
+  --    (txtb_changed = '1' and txtb_hw_cmd.lock = '1')
   --    report "TX Buffer changed between two frames";
   --
   -- psl txt_buf_sim_chng_and_lock_cov : cover
-  --    (select_index_changed = '1' and txt_hw_cmd.lock = '1');
+  --    (select_index_changed = '1' and txtb_hw_cmd.lock = '1');
 
   -----------------------------------------------------------------------------
   -- Assertions
@@ -653,8 +651,8 @@ begin
   -- be active!
   --
   -- psl txtb_no_lock_when_not_ready_asrt : assert never
-  --   {tran_frame_valid_out = '0';
-  --    tran_frame_valid_out = '0' and txt_hw_cmd.lock = '1'}
+  --   {tran_frame_valid = '0';
+  --    tran_frame_valid = '0' and txtb_hw_cmd.lock = '1'}
   --   report "NO TXT Buffer ready and lock occurs!" severity error;
   -----------------------------------------------------------------------------
   

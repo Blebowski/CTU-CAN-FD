@@ -118,7 +118,7 @@ entity can_core is
         -- Tx Arbitrator and TXT Buffers interface
         ------------------------------------------------------------------------
         -- TX Data word
-        txt_buffer_word        :in   std_logic_vector(31 downto 0);
+        tran_word              :in   std_logic_vector(31 downto 0);
         
         -- TX Data length code
         tran_dlc               :in   std_logic_vector(3 downto 0);
@@ -139,13 +139,13 @@ entity can_core is
         tran_frame_valid       :in   std_logic; 
 
         -- HW Commands for TX Arbitrator and TXT Buffers
-        txt_hw_cmd             :out  t_txt_hw_cmd;
+        txtb_hw_cmd            :out  t_txtb_hw_cmd;
 
         -- Selected TXT Buffer index changed
         txtb_changed           :in   std_logic;
 
         -- Pointer to TXT buffer memory
-        txt_buf_ptr            :out  natural range 0 to 19;
+        txtb_ptr               :out  natural range 0 to 19;
 
         -- Transition to bus off has occurred
         is_bus_off             :out  std_logic;
@@ -277,14 +277,13 @@ architecture rtl of can_core is
     ----------------------------------------------------------------------------
 
     -- TXT Buffer control
-    signal txt_buffer_word_i        :   std_logic_vector(31 downto 0);
+    signal tran_word_i        :   std_logic_vector(31 downto 0);
     signal tran_dlc_i               :   std_logic_vector(3 downto 0);
     signal tran_is_rtr_i            :   std_logic;
     signal tran_ident_type_i        :   std_logic;
     signal tran_frame_type_i        :   std_logic;
-    signal tran_brs_i               :   std_logic;
-    signal tran_frame_valid_i       :   std_logic; 
-    signal txt_hw_cmd_i             :   t_txt_hw_cmd;
+    signal tran_brs_i               :   std_logic; 
+    signal txtb_hw_cmd_i             :   t_txtb_hw_cmd;
     
     -- Received frame
     signal rec_ident_i              :   std_logic_vector(28 downto 0);
@@ -450,15 +449,15 @@ begin
         is_interframe           => is_interframe,       -- OUT
         
         -- TXT Buffers interface
-        txt_buffer_word         => txt_buffer_word_i,   -- IN
+        tran_word               => tran_word_i,         -- IN
         tran_dlc                => tran_dlc_i,          -- IN
         tran_is_rtr             => tran_is_rtr_i,       -- IN
         tran_ident_type         => tran_ident_type_i,   -- IN
         tran_frame_type         => tran_frame_type_i,   -- IN
         tran_brs                => tran_brs_i,          -- IN
-        tran_frame_valid        => tran_frame_valid_i,  -- IN
-        txt_hw_cmd              => txt_hw_cmd_i,        -- IN
-        txt_buf_ptr             => txt_buf_ptr,         -- OUT
+        tran_frame_valid        => tran_frame_valid,    -- IN
+        txtb_hw_cmd             => txtb_hw_cmd_i,       -- IN
+        txtb_ptr                => txtb_ptr,            -- OUT
         txtb_changed            => txtb_changed,        -- OUT
         
         -- RX Buffer interface
@@ -1014,13 +1013,13 @@ begin
         tran_frame_type;
 
     stat_bus(STAT_TRAN_DATA_ACK_INDEX) <=
-        txt_hw_cmd_i.lock;
+        txtb_hw_cmd_i.lock;
 
     stat_bus(STAT_TRAN_BRS_INDEX) <=
         tran_brs;
 
     stat_bus(STAT_FRAME_STORE_INDEX) <=
-        txt_hw_cmd_i.lock;
+        txtb_hw_cmd_i.lock;
 
     -- Error counters and state
     stat_bus(STAT_TX_COUNTER_HIGH downto STAT_TX_COUNTER_LOW) <=
@@ -1135,7 +1134,7 @@ begin
     ---------------------------------------------------------------------------
     -- Internal signals to output propagation
     ---------------------------------------------------------------------------
-    txt_hw_cmd <= txt_hw_cmd_i;
+    txtb_hw_cmd <= txtb_hw_cmd_i;
     rec_ident <= rec_ident_i; 
     rec_dlc <= rec_dlc_i;
     rec_ident_type <= rec_ident_type_i;

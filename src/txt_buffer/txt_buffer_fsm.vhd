@@ -89,7 +89,7 @@ entity txt_buffer_fsm is
         -- Memory registers interface
         ------------------------------------------------------------------------
         -- SW commands
-        txt_sw_cmd             :in   t_txt_sw_cmd;
+        txtb_sw_cmd             :in   t_txtb_sw_cmd;
         
         -- SW buffer select
         sw_cbs                 :in   std_logic;
@@ -98,7 +98,7 @@ entity txt_buffer_fsm is
         -- CAN Core interface
         ------------------------------------------------------------------------
         -- HW Commands
-        txt_hw_cmd             :in   t_txt_hw_cmd;  
+        txtb_hw_cmd             :in   t_txtb_hw_cmd;  
         
         -- HW Buffer select
         hw_cbs                 :in   std_logic;
@@ -115,7 +115,7 @@ entity txt_buffer_fsm is
         -- HW Command applied on TXT Buffer.
         txtb_hw_cmd_int        :out  std_logic;
 
-        -- Buffer status (FSM state) encoded for reading by SW from registers!
+        -- Buffer status (FSM state) encoded for reading by SW.
         txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is ready to be locked by CAN Core for transmission
@@ -126,8 +126,8 @@ end entity;
 architecture rtl of txt_buffer_fsm is
 
     -- FSM signals
-    signal next_state          : t_txt_buf_fsm;
-    signal curr_state          : t_txt_buf_fsm;
+    signal next_state          : t_txt_buf_state;
+    signal curr_state          : t_txt_buf_state;
 
     -- Abort command applied
     signal abort_applied       : std_logic;
@@ -137,14 +137,14 @@ architecture rtl of txt_buffer_fsm is
 
 begin
 
-    abort_applied <= '1' when (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') else
+    abort_applied <= '1' when (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1') else
                      '0';
 
     ----------------------------------------------------------------------------
     -- Next state process
     ----------------------------------------------------------------------------
-    tx_buf_fsm_next_state_proc : process(curr_state, txt_sw_cmd, sw_cbs, 
-        txt_hw_cmd, hw_cbs, is_bus_off)
+    tx_buf_fsm_next_state_proc : process(curr_state, txtb_sw_cmd, sw_cbs, 
+        txtb_hw_cmd, hw_cbs, is_bus_off)
     begin
         next_state <= curr_state;
 
@@ -156,7 +156,7 @@ begin
         when s_txt_empty =>
 
             -- "Set_ready"
-            if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
+            if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
@@ -166,11 +166,11 @@ begin
         when s_txt_ready =>
           
             -- Locking for transmission
-            if (txt_hw_cmd.lock = '1' and hw_cbs = '1') then
+            if (txtb_hw_cmd.lock = '1' and hw_cbs = '1') then
 
                 -- Simultaneous "lock" and abort -> transmit, but
                 -- with abort pending
-                if (txt_sw_cmd.set_abt = '1' and sw_cbs = '1') then
+                if (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1') then
                     next_state     <= s_txt_ab_prog;
                 else
                     next_state     <= s_txt_tx_prog;
@@ -187,15 +187,15 @@ begin
         when s_txt_tx_prog =>
           
             -- Unlock the buffer
-            if (txt_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            if (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
 
                 -- Retransmitt reached, transmitt OK, or try again...
-                if (txt_hw_cmd.failed         = '1') then
+                if (txtb_hw_cmd.failed         = '1') then
                     next_state     <= s_txt_error;
-                elsif (txt_hw_cmd.valid       = '1') then
+                elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
-                elsif (txt_hw_cmd.err         = '1' or 
-                       txt_hw_cmd.arbl        = '1') then
+                elsif (txtb_hw_cmd.err         = '1' or 
+                       txtb_hw_cmd.arbl        = '1') then
                     next_state     <= s_txt_ready;
                 end if;
 
@@ -210,15 +210,15 @@ begin
         when s_txt_ab_prog =>
           
             -- Unlock the buffer
-            if (txt_hw_cmd.unlock = '1' and hw_cbs = '1') then
+            if (txtb_hw_cmd.unlock = '1' and hw_cbs = '1') then
 
                 -- Retransmitt reached, transmitt OK, or try again... 
-                if (txt_hw_cmd.failed         = '1') then
+                if (txtb_hw_cmd.failed         = '1') then
                     next_state     <= s_txt_error;
-                elsif (txt_hw_cmd.valid       = '1') then
+                elsif (txtb_hw_cmd.valid       = '1') then
                     next_state     <= s_txt_ok;
-                elsif (txt_hw_cmd.err         = '1' or 
-                       txt_hw_cmd.arbl        = '1') then
+                elsif (txtb_hw_cmd.err         = '1' or 
+                       txtb_hw_cmd.arbl        = '1') then
                     next_state     <= s_txt_aborted;
                 end if;
             end if;
@@ -229,12 +229,12 @@ begin
         when s_txt_error =>
 
             -- "Set_ready"
-            if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
+            if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (txt_sw_cmd.set_ety = '1' and sw_cbs = '1') then
+            if (txtb_sw_cmd.set_ety = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -244,12 +244,12 @@ begin
         when s_txt_aborted =>
           
             -- "Set_ready"
-            if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
+            if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (txt_sw_cmd.set_ety = '1' and sw_cbs = '1') then
+            if (txtb_sw_cmd.set_ety = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -259,12 +259,12 @@ begin
         when s_txt_ok =>
           
             -- "Set_ready"
-            if (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
+            if (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_ready;
             end if;
 
             -- "Set_empty"
-            if (txt_sw_cmd.set_ety = '1' and sw_cbs = '1') then
+            if (txtb_sw_cmd.set_ety = '1' and sw_cbs = '1') then
                 next_state       <= s_txt_empty;
             end if;
 
@@ -315,11 +315,11 @@ begin
 
     -- TXT Buffer HW Command generates interrupt upon transition to
     -- Failed, Done and Aborted states!
-    txtb_hw_cmd_int <= '1' when (hw_cbs = '1') and ((txt_hw_cmd.failed = '1') or
-                                                   (txt_hw_cmd.valid = '1') or
-                                                   ((txt_hw_cmd.unlock = '1') and
+    txtb_hw_cmd_int <= '1' when (hw_cbs = '1') and ((txtb_hw_cmd.failed = '1') or
+                                                   (txtb_hw_cmd.valid = '1') or
+                                                   ((txtb_hw_cmd.unlock = '1') and
                                                     (curr_state = s_txt_ab_prog)) or
-                                                   ((txt_sw_cmd.set_abt = '1') and
+                                                   ((txtb_sw_cmd.set_abt = '1') and
                                                     (sw_cbs = '1') and
                                                     (curr_state = s_txt_ready)))
                            else
@@ -362,8 +362,8 @@ begin
     
     -- Simultaneous HW and SW Commands
     -- psl txtb_hw_sw_cmd_hazard_cov : cover
-    --  (txt_hw_cmd.lock = '1' and hw_cbs = '1' and
-    --   txt_sw_cmd.set_abt = '1' and sw_cbs = '1');
+    --  (txtb_hw_cmd.lock = '1' and hw_cbs = '1' and
+    --   txtb_sw_cmd.set_abt = '1' and sw_cbs = '1');
     
     ----------------------------------------------------------------------------
     -- Assertions
@@ -372,7 +372,7 @@ begin
     -- than ready
     --
     -- psl txtb_lock_only_in_rdy_asrt : assert always
-    --  ((txt_hw_cmd.lock = '1' and hw_cbs = '1') -> buf_fsm = txt_ready)
+    --  ((txtb_hw_cmd.lock = '1' and hw_cbs = '1') -> buf_fsm = txt_ready)
     --  report "TXT Buffer " & integer'image(ID) &
     --  " not READY when LOCK command occurred!" severity error;
     ----------------------------------------------------------------------------
@@ -380,7 +380,7 @@ begin
     -- progress.
     --
     -- psl txtb_unlock_only_in_tx_prog_asrt : assert always
-    --  ((txt_hw_cmd.unlock = '1' and hw_cbs = '1') ->
+    --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
     --   (buf_fsm = txt_tx_prog or buf_fsm = txt_ab_prog))
     --  report "TXT Buffer " & integer'image(ID) &
     --  " not READY when LOCK command occurred!" severity error;
@@ -388,7 +388,7 @@ begin
     -- HW Lock command should never occur when there was abort in previous cycle!
     --
     -- psl txtb_no_lock_after_abort : assert never
-    --  {abort_applied = '1';txt_hw_cmd.lock = '1' and hw_cbs = '1'}
+    --  {abort_applied = '1';txtb_hw_cmd.lock = '1' and hw_cbs = '1'}
     --  report "LOCK command after ABORT was applied!" severity error;
     ----------------------------------------------------------------------------
 

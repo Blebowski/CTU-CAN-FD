@@ -132,7 +132,7 @@ entity protocol_control is
         -- TXT Buffers interface
         -----------------------------------------------------------------------
         -- TX Data word
-        txt_buffer_word         :in   std_logic_vector(31 downto 0);
+        tran_word               :in   std_logic_vector(31 downto 0);
         
         -- TX Data length code
         tran_dlc                :in   std_logic_vector(3 downto 0);
@@ -153,10 +153,10 @@ entity protocol_control is
         tran_frame_valid        :in   std_logic;
         
         -- HW Commands for TX Arbitrator and TXT Buffers
-        txt_hw_cmd              :out  t_txt_hw_cmd;
+        txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT buffer memory
-        txt_buf_ptr             :out  natural range 0 to 19;
+        txtb_ptr                :out  natural range 0 to 19;
         
         -- Selected TXT Buffer index changed
         txtb_changed            :in   std_logic;
@@ -185,7 +185,7 @@ entity protocol_control is
         -- RX Error state indicator 
         rec_esi                 :out  std_logic;
         
-        -- Metadata are received OK, and can be stored in RX Buffer.
+        -- Store Metadata in RX Buffer
         store_metadata          :out  std_logic;
     
         -- Abort storing of frame in RX Buffer. Revert to last frame.
@@ -418,7 +418,7 @@ architecture rtl of protocol_control is
   -- Internal signals
   -----------------------------------------------------------------------------
   -- TXT Buffer word (endianity swapped)
-  signal txt_buffer_word_swap     :     std_logic_vector(31 downto 0);
+  signal tran_word_swap           :     std_logic_vector(31 downto 0);
   
   -- Error frame request
   signal err_frm_req              :     std_logic;
@@ -583,9 +583,9 @@ begin
         G_GROUP_SIZE        => 8    -- Group size (bits)
     )
     port map(
-        input               => txt_buffer_word,           -- IN
-        output              => txt_buffer_word_swap,      -- OUT
-        swap_in             => '0'                        -- IN
+        input               => tran_word,           -- IN
+        output              => tran_word_swap,      -- OUT
+        swap_in             => '0'                  -- IN
     );
 
     
@@ -633,8 +633,8 @@ begin
 
         -- TXT Buffer, TX Arbitrator interface
         tran_frame_valid        => tran_frame_valid,    -- IN
-        txt_hw_cmd              => txt_hw_cmd,          -- OUT
-        txt_buf_ptr             => txt_buf_ptr,         -- OUT
+        txtb_hw_cmd             => txtb_hw_cmd,         -- OUT
+        txtb_ptr                => txtb_ptr,            -- OUT
         tran_dlc                => tran_dlc,            -- IN
         tran_is_rtr             => tran_is_rtr,         -- IN
         tran_frame_type         => tran_frame_type,     -- IN
@@ -894,7 +894,7 @@ begin
         err_frm_req             => err_frm_req,             -- IN
         is_err_active           => is_err_active,           -- IN
         bst_ctr                 => bst_ctr,                 -- IN
-        txt_buffer_word         => txt_buffer_word_swap,    -- IN
+        tran_word               => tran_word_swap,          -- IN
         tran_dlc                => tran_dlc                 -- IN
     );
 

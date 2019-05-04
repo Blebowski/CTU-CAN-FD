@@ -147,7 +147,7 @@ package can_types is
     );
   
     -- TXT buffer state type
-    type t_txt_buf_fsm is (
+    type t_txt_buf_state is (
         s_txt_empty,
         s_txt_ready,
         s_txt_tx_prog,
@@ -162,26 +162,26 @@ package can_types is
     ----------------------------------------------------------------------------
 
     -- Priorities of TXT Buffers
-    type t_txtb_priorities is array (0 to TXT_BUFFER_COUNT - 1) of
+    type t_txt_bufs_priorities is array (0 to TXT_BUFFER_COUNT - 1) of
         std_logic_vector(2 downto 0);
 
-    -- Memory outputs of TXT Buffer
-    type t_txtb_output is array (0 to TXT_BUFFER_COUNT - 1) of
+    -- Memory outputs of TXT Buffers
+    type t_txt_bufs_output is array (0 to TXT_BUFFER_COUNT - 1) of
         std_logic_vector(31 downto 0);
 
-    -- States of Buffer
-    type t_txtb_state is array (0 to TXT_BUFFER_COUNT - 1) of
+    -- States of Buffers
+    type t_txt_bufs_state is array (0 to TXT_BUFFER_COUNT - 1) of
         std_logic_vector(3 downto 0);
 
     -- SW commands
-    type t_txt_sw_cmd is record
+    type t_txtb_sw_cmd is record
         set_rdy   : std_logic;
         set_ety   : std_logic;
         set_abt   : std_logic;
     end record;
 
     -- HW commands
-    type t_txt_hw_cmd is record
+    type t_txtb_hw_cmd is record
         lock      : std_logic;
         unlock    : std_logic;
         valid     : std_logic;

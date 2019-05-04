@@ -86,7 +86,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -121,8 +120,6 @@ entity event_logger is
         signal sync_edge            :in   std_logic;
         signal data_overrun         :in   std_logic;
         signal timestamp            :in   std_logic_vector(63 downto 0);
-
-        signal bt_FSM               :in   bit_time_type;
 
         -------------------
         --Status signals --
@@ -228,6 +225,15 @@ architecture rtl of event_logger is
     signal   drv_log_cmd_abt      :     std_logic;
     signal   drv_log_cmd_up       :     std_logic;
     signal   drv_log_cmd_down     :     std_logic;
+    
+    -- Protocol control status
+    signal is_control              :    std_logic;
+    signal is_data                 :    std_logic;
+    signal is_crc                  :    std_logic;
+    signal is_eof                  :    std_logic;
+    signal is_error                :    std_logic;
+    signal is_overload             :    std_logic;
+    signal is_interframe           :    std_logic;
 
 begin
   
@@ -508,11 +514,9 @@ begin
                             end if;                  
 
                             if (i = 17) then
-                                case bt_FSM is
-                                    when tseg1   => bit_type_vect <= "0001"; 
-                                    when tseg2   => bit_type_vect <= "1000";
-                                    when others  => bit_type_vect <= "0000";
-                                end case;
+                                -- TODO: Bit time segment temporarily thrown
+                                --       out!
+                                bit_type_vect <= "0000";
                             end if; 
                           
                         end if;

@@ -112,10 +112,7 @@ entity bit_time_fsm is
         sample_req          : out   std_logic;
         
         -- Sync signal request
-        sync_req            : out   std_logic;
-        
-        -- Bit time FSM output
-        bt_FSM_out          : out   bit_time_type
+        sync_req            : out   std_logic
     );
 end entity;
 
@@ -156,9 +153,6 @@ begin
             end case;
         end if;
     end process;
-    
-    -- State register to output propagation
-    bt_FSM_out <= current_state;
     
     ----------------------------------------------------------------------------
     -- Current state process (combinational)

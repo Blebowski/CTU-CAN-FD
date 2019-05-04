@@ -87,11 +87,8 @@ entity bit_error_detector is
         -- Sample control
         sp_control               :in   std_logic_vector(1 downto 0);
         
-        -- RX Trigger - Nominal Bit time
-        sample_nbt               :in   std_logic;
-        
-        -- RX Trigger - Data Bit time
-        sample_dbt               :in   std_logic;
+        -- RX Trigger
+        rx_trigger               :in   std_logic;
         
         -- RX Trigger - Secondary Sample
         sample_sec               :in   std_logic;
@@ -139,10 +136,8 @@ begin
     ----------------------------------------------------------------------------
     -- Sample point multiplexor
     ----------------------------------------------------------------------------
-    sample <= sample_nbt when (sp_control = NOMINAL_SAMPLE) else
-              sample_dbt when (sp_control = DATA_SAMPLE) else
-              sample_sec when (sp_control = SECONDARY_SAMPLE) else
-              '0';
+    sample <= sample_sec when (sp_control = SECONDARY_SAMPLE) else
+              rx_trigger;
     
     ----------------------------------------------------------------------------
     -- Expected data mux. Choose between TX data and delayed TX Data

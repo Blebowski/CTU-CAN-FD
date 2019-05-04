@@ -152,13 +152,7 @@ entity prescaler is
         -- Status outputs
         -----------------------------------------------------------------------
         -- Time quanta clock synchronisation output (debug only)
-        time_quanta_clk      :out std_logic;
-        
-        -- Bit time FSM output
-        bt_FSM_out           :out bit_time_type;
-        
-        -- Hard synchronisation occured
-        hard_sync_edge_valid :out std_logic
+        time_quanta_clk :out std_logic
   );
 end entity;
 
@@ -447,9 +441,7 @@ begin
         is_tseg1         => is_tseg1,           -- IN
         is_tseg2         => is_tseg2,           -- IN
         sample_req       => sample_req,         -- IN
-        sync_req         => sync_req,           -- IN
-        
-        bt_FSM_out       => bt_FSM_out          -- OUT
+        sync_req         => sync_req            -- IN
     );
     
     ---------------------------------------------------------------------------
@@ -474,8 +466,6 @@ begin
     ---------------------------------------------------------------------------
     -- Internal signals to output propagation
     ---------------------------------------------------------------------------
-    hard_sync_edge_valid <= h_sync_valid;
-    
     -- Time quanta clock output
     time_quanta_clk <= tq_edge_nbt when (sp_control = NOMINAL_SAMPLE)
                                    else

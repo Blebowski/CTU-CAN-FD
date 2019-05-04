@@ -139,10 +139,10 @@ entity bus_sampling is
         --  Physical layer interface
         ------------------------------------------------------------------------
         -- CAN serial stream output
-        CAN_rx               :in   std_logic;
+        can_rx               :in   std_logic;
         
         -- CAN serial stream input
-        CAN_tx               :out  std_logic;
+        can_tx               :out  std_logic;
 
         ------------------------------------------------------------------------
         -- Memorz registers interface
@@ -150,18 +150,15 @@ entity bus_sampling is
         -- Driving bus
         drv_bus              :in   std_logic_vector(1023 downto 0);
         
-        -- Measured Transceiver delay output 
-        trv_delay_out        :out  std_logic_vector(15 downto 0);
+        -- Measured Transceiver delay 
+        trv_delay            :out  std_logic_vector(15 downto 0);
           
         ------------------------------------------------------------------------
         -- Prescaler interface
         ------------------------------------------------------------------------
         -- RX Trigger for Nominal Bit Time
-        sample_nbt           :in   std_logic;
-
-        -- RX Trigger for Data Bit Time
-        sample_dbt           :in   std_logic;
-
+        rx_trigger           :in   std_logic;
+        
         -- Valid synchronisation edge appeared (Recessive to Dominant)
         sync_edge            :out  std_logic;
 
@@ -169,10 +166,10 @@ entity bus_sampling is
         -- CAN Core Interface
         ------------------------------------------------------------------------
         -- TX data
-        data_tx              :in   std_logic;
+        tx_data_wbs          :in   std_logic;
 
         -- RX data
-        data_rx              :out  std_logic;
+        rx_data_wbs          :out  std_logic;
 
         -- Sample control
         sp_control           :in   std_logic_vector(1 downto 0);
@@ -187,7 +184,7 @@ entity bus_sampling is
         sample_sec           :out  std_logic;
 
         -- Bit error detected
-        bit_Error            :out  std_logic 
+        bit_error            :out  std_logic 
     );
 end entity;
 
@@ -225,17 +222,17 @@ architecture rtl of bus_sampling is
     -----------------------------------------------------------------------------
 
     -- CAN RX synchronisation chain output
-    signal CAN_rx_synced        : std_logic;
+    signal can_rx_synced        : std_logic;
 
     -- Internal received CAN Data. Selected between Raw input value and
     -- synchronised value by signal synchroniser.
-    signal CAN_rx_i             : std_logic;
+    signal can_rx_i             : std_logic;
 
     -- Majority value from all three sampled values in tripple sampling shift 
     -- register
-    signal CAN_rx_trs_majority  : std_logic; 
+    signal can_rx_trs_majority  : std_logic; 
 
-    -- CAN RX Data selected between normally sampled data (CAN_rx_i) and
+    -- CAN RX Data selected between normally sampled data (can_rx_i) and
     -- Tripple sampled data!
     signal data_rx_nbt          : std_logic;
 
@@ -270,7 +267,7 @@ architecture rtl of bus_sampling is
     signal ssp_delay            : std_logic_vector(7 downto 0);
     
     -- Measured transceived delay.
-    signal trv_delay            : std_logic_vector(6 downto 0);
+    signal trv_delay_i          : std_logic_vector(6 downto 0);
 
     ---------------------------------------------------------------------------
     -- Reset for shift registers. This is used instead of shift register with
@@ -302,14 +299,14 @@ begin
     can_rx_sig_sync_inst : sig_sync
     port map(
         clk     => clk_sys,
-        async   => CAN_rx,
-        sync    => CAN_rx_synced
+        async   => can_rx,
+        sync    => can_rx_synced
     );
 
     ---------------------------------------------------------------------------
     -- Synchronisation-chain selection
     ---------------------------------------------------------------------------
-    CAN_rx_i <= CAN_rx_synced;
+    can_rx_i <= can_rx_synced;
     
     ---------------------------------------------------------------------------
     -- Component for measurement of transceiver delay and calculation of
@@ -333,7 +330,7 @@ begin
         ssp_delay_select       => drv_ssp_delay_select,     -- IN
         
         trv_meas_progress      => open,                     -- OUT
-        trv_delay_shadowed     => trv_delay,                -- OUT
+        trv_delay_shadowed     => trv_delay_i,              -- OUT
         ssp_delay_shadowed     => ssp_delay                 -- OUT
     );
 
@@ -342,9 +339,9 @@ begin
     -- Propagate measured transceiver delay to output so that it can be
     -- read from Memory registers.
     ---------------------------------------------------------------------------
-    trv_delay_out(trv_delay_out'length - 1 downto trv_delay'length) <=
+    trv_delay(trv_delay'length - 1 downto trv_delay'length) <=
         (OTHERS => '0');
-    trv_delay_out(trv_delay'length - 1 downto 0) <= trv_delay;
+    trv_delay(trv_delay'length - 1 downto 0) <= trv_delay_i;
 
 
     ---------------------------------------------------------------------------
@@ -354,7 +351,7 @@ begin
     port map(
         input   => trs_reg,             -- IN
         
-        output  => CAN_rx_trs_majority  -- OUT
+        output  => can_rx_trs_majority  -- OUT
     );
 
 
@@ -368,8 +365,8 @@ begin
     port map(
         clk_sys             => clk_sys,         -- IN
         res_n               => res_n,           -- IN
-        tx_data             => data_tx,         -- IN
-        rx_data             => CAN_rx_i,        -- IN
+        tx_data             => tx_data_wbs,     -- IN
+        rx_data             => can_rx_i,        -- IN
         prev_rx_sample      => prev_sample,     -- IN
         
         tx_edge             => edge_tx_valid,   -- OUT
@@ -397,7 +394,7 @@ begin
         -- This does not mind, since stable value will be here one clock cycle
         -- after reset by res_n.
         arst               => '1',                  -- IN
-        clk                => sys_clk,              -- IN
+        clk                => clk_sys,              -- IN
 
         input              => shift_regs_res_d,     -- IN
         load               => '0',                  -- IN
@@ -421,7 +418,7 @@ begin
         clk                => clk_sys,              -- IN
         res_n              => shift_regs_res_q,     -- IN
 
-        input              => sample_dbt,           -- IN
+        input              => rx_trigger,           -- IN
         enable             => ssp_sr_ce,            -- IN
 
         reg_stat           => sample_sec_shift,     -- OUT
@@ -454,9 +451,9 @@ begin
     port map(
         clk_sys           => clk_sys,               -- IN
         res_n             => shift_regs_res_q,      -- IN
-        write             => sample_dbt,            -- IN
+        write             => rx_trigger,            -- IN
         read              => sample_sec,            -- IN
-        data_in           => data_tx,               -- IN
+        data_in           => tx_data_wbs,           -- IN
         
         data_out          => data_tx_delayed        -- OUT
     );
@@ -497,7 +494,7 @@ begin
         clk                => clk_sys,      -- IN
         res_n              => res_n,        -- IN
         
-        input              => CAN_rx_i,     -- IN
+        input              => can_rx_i,     -- IN
         preload            => '0',          -- IN
         preload_val        => "000",        -- IN
         enable             => '1',          -- IN
@@ -511,8 +508,8 @@ begin
     -- Selection of RX Data sampled in Nominal Bit-rate between Normally
     -- sampled and tripple sampled data.
     ---------------------------------------------------------------------------
-    data_rx_nbt <= CAN_rx_trs_majority when (drv_sam = TSM_ENABLE) else
-                   CAN_rx_i;
+    data_rx_nbt <= can_rx_trs_majority when (drv_sam = TSM_ENABLE) else
+                   can_rx_i;
 
     ---------------------------------------------------------------------------
     -- Bit error detector
@@ -526,10 +523,9 @@ begin
         res_n               => res_n,               -- IN
         drv_ena             => drv_ena,             -- IN
         sp_control          => sp_control,          -- IN
-        sample_nbt          => sample_nbt,          -- IN
-        sample_dbt          => sample_dbt,          -- IN
+        rx_trigger          => rx_trigger,          -- IN
         sample_sec          => sample_sec_i,        -- IN
-        data_tx             => data_tx,             -- IN
+        data_tx             => tx_data_wbs,         -- IN
         data_tx_delayed     => data_tx_delayed,     -- IN
         data_rx_nbt         => data_rx_nbt,         -- IN
         can_rx_i            => can_rx_i,            -- IN
@@ -549,18 +545,17 @@ begin
         res_n                  => res_n,            -- IN
         drv_ena                => drv_ena,          -- IN
         sp_control             => sp_control,       -- IN
-        sample_nbt             => sample_nbt,       -- IN
-        sample_dbt             => sample_dbt,       -- IN
+        rx_trigger             => rx_trigger,       -- IN
         sample_sec             => sample_sec_i,     -- IN
         data_rx_nbt            => data_rx_nbt,      -- IN
         can_rx_i               => can_rx_i,         -- IN
         
         prev_sample            => prev_sample,      -- OUT
-        data_rx                => data_rx           -- OUT
+        data_rx                => rx_data_wbs       -- OUT
     );
 
     -- Output data propagation - Pipe directly - no delay
-    CAN_tx             <= data_tx;
+    can_tx             <= tx_data_wbs;
 
     -- As synchroniation edge, valid edge on RX Data is selected!
     sync_edge          <= edge_rx_valid;

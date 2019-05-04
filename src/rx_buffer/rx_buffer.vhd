@@ -199,16 +199,16 @@ entity rx_buffer is
         -- Metadata from CAN Core
         ------------------------------------------------------------------------
         -- Frame Identifier
-        rec_ident_in         :in     std_logic_vector(28 downto 0);
+        rec_ident            :in     std_logic_vector(28 downto 0);
         
         -- Data length code
-        rec_dlc_in           :in     std_logic_vector(3 downto 0);
+        rec_dlc              :in     std_logic_vector(3 downto 0);
         
         -- Recieved identifier type (0-BASE Format, 1-Extended Format);
-        rec_ident_type_in    :in     std_logic;
+        rec_ident_type       :in     std_logic;
         
         -- Recieved frame type (0-Normal CAN, 1- CAN FD)
-        rec_frame_type_in    :in     std_logic;
+        rec_frame_type       :in     std_logic;
         
         -- Recieved frame is RTR Frame(0-No, 1-Yes)
         rec_is_rtr           :in     std_logic;
@@ -221,32 +221,33 @@ entity rx_buffer is
 
         ------------------------------------------------------------------------
         -- Control signals from CAN Core which control storing of CAN Frame.
+        -- (Filtered by Frame Filters)
         ------------------------------------------------------------------------
         -- After control field of CAN frame, metadata are valid and can be stored.
         -- This command starts the RX FSM for storing.
-        store_metadata       :in     std_logic;
+        store_metadata_f     :in     std_logic;
        
         -- Signal that one word of data can be stored (TX_DATA_X_W). This signal
         -- is active when 4 bytes were received or data reception has finished 
         -- on 4 byte unaligned number of frames! (Thus allowing to store also
         -- data which are not 4 byte aligned!
-        store_data           :in     std_logic;
+        store_data_f         :in     std_logic;
 
         -- Data word which should be stored when "store_data" is active!
         store_data_word      :in     std_logic_vector(31 downto 0);
 
         -- Received frame valid (commit RX Frame)
-        rec_valid            :in     std_logic;
+        rec_valid_f          :in     std_logic;
         
         -- Abort storing of RX Frame to RX Buffer.
-        rec_abort            :in     std_logic;
+        rec_abort_f          :in     std_logic;
 
         -- Signals start of frame. If timestamp on RX frame should be captured
         -- in the beginning of the frame, this pulse captures the timestamp!
         sof_pulse            :in     std_logic;
 
         -----------------------------------------------------------------------
-        -- Status signals of recieve buffer
+        -- Status signals of RX buffer
         -----------------------------------------------------------------------
         -- Actual size of synthetised message buffer (in 32 bit words)
         rx_buf_size          :out    std_logic_vector(12 downto 0);
@@ -503,10 +504,10 @@ begin
     port map(
         clk_sys             => clk_sys,             -- IN
         res_n               => res_n,               -- IN
-        store_metadata      => store_metadata,      -- IN
-        store_data          => store_data,          -- IN
-        rec_valid           => rec_valid,           -- IN
-        rec_abort           => rec_abort,           -- IN
+        store_metadata_f    => store_metadata_f,    -- IN
+        store_data_f        => store_data_f,        -- IN
+        rec_valid_f         => rec_valid_f,         -- IN
+        rec_abort_          => rec_abort_f,         -- IN
         sof_pulse           => sof_pulse,           -- IN
         drv_bus             => drv_bus,             -- IN
         
@@ -530,7 +531,7 @@ begin
     port map(
         clk_sys                 => clk_sys,                 -- IN
         res_n                   => res_n,                   -- IN
-        rec_abort               => rec_abort,               -- IN
+        rec_abort_f             => rec_abort_f,             -- IN
         commit_rx_frame         => commit_rx_frame,         -- IN
         write_raw_OK            => write_raw_OK,            -- IN
         commit_overrun_abort    => commit_overrun_abort,    -- IN
@@ -563,7 +564,7 @@ begin
     ----------------------------------------------------------------------------
     with data_selector select memory_write_data <=
         frame_form_w                     when "0000001",
-        "000" & rec_ident_in             when "0000010",
+        "000" & rec_ident                when "0000010",
         timestamp_capture(31 downto 0)   when "0000100",
         timestamp_capture(31 downto 0)   when "0001000",
         timestamp_capture(63 downto 32)  when "0010000",
@@ -630,7 +631,7 @@ begin
     ----------------------------------------------------------------------------
     -- Receive data size (in words) decoder
     ----------------------------------------------------------------------------
-    with rec_dlc_in select rwcnt_com <=
+    with rec_dlc select rwcnt_com <=
         3 when "0000", --Zero bits
         4 when "0001", --1 byte
         4 when "0010", --2 bytes
@@ -653,11 +654,11 @@ begin
     ----------------------------------------------------------------------------
     -- Frame format word assignment
     ----------------------------------------------------------------------------
-    frame_form_w(DLC_H downto DLC_L)      <= rec_dlc_in;
+    frame_form_w(DLC_H downto DLC_L)      <= rec_dlc;
     frame_form_w(4)                       <= '0';
     frame_form_w(RTR_IND)                 <= rec_is_rtr;
-    frame_form_w(IDE_IND)                 <= rec_ident_type_in;
-    frame_form_w(FDF_IND)                 <= rec_frame_type_in;
+    frame_form_w(IDE_IND)                 <= rec_ident_type;
+    frame_form_w(FDF_IND)                 <= rec_frame_type;
     frame_form_w(TBF_IND)                 <= '1'; -- All frames have the timestamp
     frame_form_w(BRS_IND)                 <= rec_brs;
     frame_form_w(ESI_RSV_IND)             <= rec_esi;
@@ -671,7 +672,7 @@ begin
     ----------------------------------------------------------------------------
     frame_form_w(RWCNT_H downto RWCNT_L)  <=
         "00011" when (rec_is_rtr = RTR_FRAME) else
-        "00101" when ((rec_frame_type_in = NORMAL_CAN) and (rec_dlc_in(3) = '1')) else
+        "00101" when ((rec_frame_type = NORMAL_CAN) and (rec_dlc(3) = '1')) else
          std_logic_vector(to_unsigned(rwcnt_com, (RWCNT_H - RWCNT_L + 1)));
 
     frame_form_w(31 downto 16)            <= (OTHERS => '0');
@@ -688,7 +689,7 @@ begin
 
         elsif (rising_edge(clk_sys)) then
             
-            if ((drv_rtsopt = RTS_END and rec_valid = '1') or
+            if ((drv_rtsopt = RTS_END and rec_valid_f = '1') or
                 (drv_rtsopt = RTS_BEG and sof_pulse = '1')) 
             then  
                 timestamp_capture   <= timestamp;
@@ -776,7 +777,7 @@ begin
 
         elsif (rising_edge(clk_sys)) then
 
-            if (((rec_valid = '1' and drv_rtsopt = RTS_BEG) or
+            if (((rec_valid_f = '1' and drv_rtsopt = RTS_BEG) or
                  (store_extra_ts_end = '1')))
             then
                 if (data_overrun_int = '0') then
@@ -926,11 +927,11 @@ begin
         if (rising_edge(clk_sys) and now /= 0 fs) then
 
             -- Calculate number of expected "store_data" commands from CAN Core.
-            if (rec_abort = '1') then
+            if (rec_abort_f = '1') then
                 exp_data_stores := 0;
                 act_data_stores := 0;
 
-            elsif (store_metadata = '1') then
+            elsif (store_metadata_f = '1') then
 
                 exp_data_stores := to_integer(unsigned(
                                     frame_form_w(RWCNT_H downto RWCNT_L))) - 3;
@@ -938,13 +939,13 @@ begin
             end if;
 
             -- Count actual number of "store_data" commands.
-            if (store_data = '1') then
+            if (store_data_f = '1') then
                 act_data_stores := act_data_stores + 1;
             end if;
 
             -- Check when frame was received that proper number of "store_data"
             -- commands did arrive.
-            if (rec_valid = '1' and 
+            if (rec_valid_f = '1' and 
                 act_data_stores /= exp_data_stores)
             then
                 report "'store_data' count corrupted by CAN Core! " &
@@ -1025,36 +1026,33 @@ begin
     --      cover {(read_increment = '1')[*20]};
     --
     -- psl rx_buf_frame_abort_cov :
-    --      cover (rec_abort = '1');
+    --      cover (rec_abort_f = '1');
     --
     -- psl rx_buf_store_rtr_cov :
     --      cover (rec_is_rtr = '1' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_empty_frame_cov :
-    --      cover (rec_dlc_in = "0000" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --      cover (rec_dlc = "0000" and rec_is_rtr = '0' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_1_byte_frame_cov :
-    --      cover (rec_dlc_in = "0001" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --      cover (rec_dlc = "0001" and rec_is_rtr = '0' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_2_byte_frame_cov :
-    --      cover (rec_dlc_in = "0010" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --      cover (rec_dlc = "0010" and rec_is_rtr = '0' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_3_byte_frame_cov :
-    --      cover (rec_dlc_in = "0011" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --      cover (rec_dlc = "0011" and rec_is_rtr = '0' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_4_byte_frame_cov :
-    --      cover (rec_dlc_in = "0100" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --      cover (rec_dlc = "0100" and rec_is_rtr = '0' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_5_byte_frame_cov :
-    --      cover (rec_dlc_in = "0101" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --      cover (rec_dlc = "0101" and rec_is_rtr = '0' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_8_byte_frame_cov :
-    --      cover (rec_dlc_in = "1000" and rec_is_rtr = '0' and commit_rx_frame = '1');
+    --      cover (rec_dlc = "1000" and rec_is_rtr = '0' and commit_rx_frame = '1');
     --
     -- psl rx_buf_store_64_byte_frame_cov :
-    --      cover (rec_dlc_in = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1');
-    --
-    -- psl rx_buf_store_abort_cov :
-    --      cover (rec_abort = '1');
+    --      cover (rec_dlc = "1111" and rec_is_rtr = '0' and commit_rx_frame = '1');
     
 end architecture;

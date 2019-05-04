@@ -81,19 +81,19 @@ entity rx_buffer_fsm is
         res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
-        -- Control signals from CAN Core.
+        -- Control signals from CAN Core (Filtered by Frame filters)
         ------------------------------------------------------------------------
         -- Start Storing of Metadata to RX Buffer (first 4 words of frame)
-        store_metadata       :in     std_logic;
+        store_metadata_f     :in     std_logic;
        
         -- Store Data word to RX Buffer
-        store_data           :in     std_logic;
+        store_data_f         :in     std_logic;
 
         -- Received frame valid
-        rec_valid            :in     std_logic;
+        rec_valid_f          :in     std_logic;
         
         -- Abort storing of RX Frame to RX Buffer.
-        rec_abort            :in     std_logic;
+        rec_abort_f          :in     std_logic;
 
         -- Start of Frame pulse
         sof_pulse            :in     std_logic;
@@ -162,8 +162,8 @@ begin
     ----------------------------------------------------------------------------
     -- Next State process
     ----------------------------------------------------------------------------
-    next_state_proc : process(curr_state, store_metadata, rec_abort, rec_valid,
-        drv_rtsopt)
+    next_state_proc : process(curr_state, store_metadata_f, rec_abort_f, 
+        rec_valid_f, drv_rtsopt)
     begin
         next_state <= curr_state;
         
@@ -173,7 +173,7 @@ begin
         -- Idle, waiting for "store_metada" to start storing first 4 words.
         --------------------------------------------------------------------
         when s_rxb_idle =>
-            if (store_metadata = '1') then
+            if (store_metadata_f = '1') then
                 next_state      <= s_rxb_store_frame_format;
             end if;
 
@@ -181,7 +181,7 @@ begin
         -- Storing FRAME_FORM_W. Proceed execpt if error ocurrs.
         --------------------------------------------------------------------
         when s_rxb_store_frame_format =>
-            if (rec_abort = '1') then
+            if (rec_abort_f = '1') then
                 next_state      <= s_rxb_idle;
             else
                 next_state      <= s_rxb_store_identifier;
@@ -195,7 +195,7 @@ begin
         -- repeat the writes with timestamp captured at the end of frame!
         --------------------------------------------------------------------
         when s_rxb_store_identifier =>
-            if (rec_abort = '1') then
+            if (rec_abort_f = '1') then
                 next_state      <= s_rxb_idle;
             else
                 next_state      <= s_rxb_store_beg_ts_low;
@@ -206,7 +206,7 @@ begin
         -- Store TIMESTAMP_L_W from beginning of frame.
         --------------------------------------------------------------------
         when s_rxb_store_beg_ts_low =>
-            if (rec_abort = '1') then
+            if (rec_abort_f = '1') then
                 next_state      <= s_rxb_idle;
             else
                 next_state      <= s_rxb_store_beg_ts_high;
@@ -217,7 +217,7 @@ begin
         -- Store first TIMESTAMP_U_W from beginning of frame.
         --------------------------------------------------------------------
         when s_rxb_store_beg_ts_high =>
-            if (rec_abort = '1') then
+            if (rec_abort_f = '1') then
                 next_state      <= s_rxb_idle;
             else                
                 next_state      <= s_rxb_store_data;
@@ -230,9 +230,9 @@ begin
         -- is realized via different states!
          --------------------------------------------------------------------
         when s_rxb_store_data =>
-            if (rec_abort = '1') then 
+            if (rec_abort_f = '1') then 
                 next_state          <= s_rxb_idle;
-            elsif (rec_valid = '1') then
+            elsif (rec_valid_f = '1') then
                 if (drv_rtsopt = RTS_END) then
                     next_state      <= s_rxb_store_end_ts_low;
                 else
@@ -349,7 +349,7 @@ begin
                  '0';
 
     -- Joined commands, for assertions only
-    cmd_join <= store_metadata & store_data & rec_valid & rec_abort; 
+    cmd_join <= store_metadata_f & store_data_f & rec_valid_f & rec_abort_f; 
 
     ---------------------------------------------------------------------------
     -- Assertions
@@ -357,13 +357,13 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     
     -- psl store_metadata_in_idle_asrt : assert never
-    --  (store_metadata = '1' and rx_fsm /= rxb_idle)
+    --  (store_metadata_f = '1' and rx_fsm /= rxb_idle)
     -- report "RX Buffer: Store metadata command did NOT come when RX buffer " &
     --        "is idle!"
     -- severity error;
     
     -- psl commit_or_store_data_asrt : assert never
-    --  (rec_message_valid = '1' or store_data = '1') and rx_fsm /= rxb_store_data)
+    --  (rec_valid_f = '1' or store_data_f = '1') and rx_fsm /= rxb_store_data)
     -- report "RX Buffer: Store data or frame commit commands did not come " &
     --        "when RX Buffer is receiving data!"
     -- severity error;

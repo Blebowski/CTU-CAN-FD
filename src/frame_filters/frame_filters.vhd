@@ -114,22 +114,43 @@ entity frame_filters is
         -- CAN Core interface
         ------------------------------------------------------------------------
         -- Receieved CAN ID
-        rec_ident_in         : in  std_logic_vector(28 downto 0); 
+        rec_ident            : in  std_logic_vector(28 downto 0); 
 
         -- Received CAN ID type (0-Base Format, 1-Extended Format);
-        ident_type           : in  std_logic;
+        rec_ident_type       : in  std_logic;
 
         -- Input frame type (0-CAN 2.0, 1- CAN FD) 
-        frame_type           : in  std_logic;
+        rec_frame_type       : in  std_logic;
 
-        -- Input Identifier is valid
-        rec_ident_valid      : in  std_logic;
+        -- Store Metadata in RX Buffer
+        store_metadata       : in  std_logic;
+
+        -- Command to store word of CAN Data
+        store_data           : in  std_logic;
+        
+        -- Received frame valid
+        rec_valid            : in  std_logic;
+        
+        -- Command to abort storing of RX frame (due to Error frame)
+        rec_abort            : in  std_logic;
 
         ------------------------------------------------------------------------
         -- Frame filters output
         ------------------------------------------------------------------------
         -- CAN ID passes the filters
-        out_ident_valid      : out   std_logic
+        ident_valid          : out   std_logic;
+        
+        -- Store Metadata in RX Buffer - Filtered
+        store_metadata_f     : out   std_logic;
+
+        -- Command to store word of CAN Data - Filtered
+        store_data_f         : out   std_logic;
+        
+        -- Received frame valid - Filtered
+        rec_valid_f          : out   std_logic;
+        
+        -- Command to abort storing of RX frame (due to Error frame) - Filtered
+        rec_abort_f          : out   std_logic
     );
 end entity;
   
@@ -211,12 +232,9 @@ architecture rtl of frame_filters is
     -- At least one filter output is valid
     signal min_one_filt_valid       :       std_logic;
 
-    ----------------------------------------------------------------------------
-    -- REGISTERS
-    ----------------------------------------------------------------------------
-
-    -- Register for valid output value
-    signal valid_reg                :       std_logic;  
+    -- Valid output value
+    signal ident_valid_d            :       std_logic;  
+    signal ident_valid_q            :       std_logic;  
  
 begin
 
@@ -255,7 +273,7 @@ begin
     ---------------------------------------------------------------------------
 
     -- Input frame type internal signal
-    int_data_ctrl               <= frame_type & ident_type;
+    int_data_ctrl               <= rec_frame_type & rec_ident_type;
     
     -- Decoder frame_type&ident_type to one-hot 
     with int_data_ctrl select int_data_type <=
@@ -291,7 +309,7 @@ begin
     port map(
         filter_mask     => drv_filter_A_mask,       -- IN
         filter_value    => drv_filter_A_bits,       -- IN
-        filter_input    => rec_ident_in,            -- IN
+        filter_input    => rec_ident,               -- IN
         enable          => filter_A_enable,         -- IN
         
         valid           => int_filter_A_valid       -- OUT
@@ -305,7 +323,7 @@ begin
     port map(
         filter_mask     => drv_filter_B_mask,       -- IN
         filter_value    => drv_filter_B_bits,       -- IN
-        filter_input    => rec_ident_in,            -- IN
+        filter_input    => rec_ident,               -- IN
         enable          => filter_B_enable,         -- IN
         
         valid           => int_filter_B_valid       -- OUT
@@ -319,7 +337,7 @@ begin
     port map(
         filter_mask     => drv_filter_C_mask,       -- IN
         filter_value    => drv_filter_C_bits,       -- IN
-        filter_input    => rec_ident_in,            -- IN
+        filter_input    => rec_ident,               -- IN
         enable          => filter_C_enable,         -- IN
         
         valid           => int_filter_C_valid       -- OUT
@@ -334,7 +352,7 @@ begin
     port map(
         filter_upp_th   => drv_filter_ran_hi_th,    -- IN
         filter_low_th   => drv_filter_ran_lo_th,    -- IN
-        filter_input    => rec_ident_in,            -- IN
+        filter_input    => rec_ident,               -- IN
         enable          => filter_range_enable,     -- IN
         
         valid           => int_filter_ran_valid     -- OUT
@@ -342,14 +360,13 @@ begin
 
  
     ---------------------------------------------------------------------------
-    -- If no filter is supported then output should be determined just by
-    -- input, regardless of 'drv_filters_ena'! If Core is not synthesized, 
-    -- turning filters on should not affect the acceptance! Everyhting should
-    -- be affected!
+    -- If no filter is supported then Identifier is always valid, regardless
+    -- of 'drv_filters_ena'! If Core is not synthesized,  turning filters on
+    -- should not affect the acceptance! Everyhting should be affected!
     ---------------------------------------------------------------------------
     filt_sup_gen_false : if (G_SUP_FILTA = false and G_SUP_FILTB = false and
                              G_SUP_FILTC = false and G_SUP_RANGE = false) generate
-        valid_reg           <= rec_ident_valid;
+        ident_valid_d <= '1';
     end generate;
 
 
@@ -363,9 +380,9 @@ begin
 
         -- If received message is valid and at least one of the filters is  
         -- matching the message passed the filter.
-        valid_reg             <=  (rec_ident_valid AND min_one_filt_valid)
-                                  when (drv_filters_ena = '1')
-                                  else rec_ident_valid;
+        ident_valid_d <=  min_one_filt_valid when (drv_filters_ena = '1')
+                                             else
+                                         '1';
     end generate;
 
 
@@ -376,10 +393,31 @@ begin
     valid_reg_proc : process(res_n, clk_sys)
     begin
         if (res_n = G_RESET_POLARITY) then
-            out_ident_valid   <= '0';
+            ident_valid_q <= '0';
         elsif rising_edge(clk_sys) then
-            out_ident_valid   <= valid_reg;
+            ident_valid_q   <= ident_valid_d;
         end if;
     end process valid_reg_proc;
+    
+    ---------------------------------------------------------------------------
+    -- Filtering RX Buffer commands
+    ---------------------------------------------------------------------------
+    store_metadata_f <= '1' when (store_metadata = '1' and ident_valid_q = '1')
+                            else
+                        '0';
+
+    store_data_f <= '1' when (store_data = '1' and ident_valid_q = '1')
+                        else
+                    '0';
+
+    rec_valid_f <= '1' when (rec_valid = '1' and ident_valid_q = '1')
+                       else
+                   '0';
+
+    rec_abort_f <= '1' when (rec_abort = '1' and ident_valid_q = '1')
+                       else
+                   '0';
+                   
+    ident_valid <= ident_valid_q;
 
 end architecture;

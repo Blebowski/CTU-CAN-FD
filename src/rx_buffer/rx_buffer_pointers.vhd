@@ -96,7 +96,7 @@ entity rx_buffer_pointers is
         ------------------------------------------------------------------------
         -- Abort storing of frame in RX Buffer. Revert to last frame. Raw RX
         -- pointer will be reverted to internal RX pointers.
-        rec_abort            :in     std_logic;
+        rec_abort_f          :in     std_logic;
 
         -- Commit RX Frame to RX Buffer. Raw pointer will be stored internal
         -- RX pointer.
@@ -243,14 +243,14 @@ begin
             --------------------------------------------------------------------
             -- Updating "write_pointer_raw_int":
             --      1. Increment when word is written to memory.
-            --      2. Reset when "rec_abort" is active (Error frame) or 
+            --      2. Reset when "rec_abort_f" is active (Error frame) or 
             --         frame finished and overrun occurred meanwhile. Reset to
             --         value of last commited write pointer.
             --------------------------------------------------------------------
             if (write_raw_OK = '1') then
                 write_pointer_raw_int<= (write_pointer_raw_int + 1) mod buff_size;
                         
-            elsif (rec_abort = '1' or commit_overrun_abort = '1') then
+            elsif (rec_abort_f = '1' or commit_overrun_abort = '1') then
                 write_pointer_raw_int <= write_pointer_int;
 
             end if;
@@ -306,7 +306,7 @@ begin
 
                 -- Read of memory word, and abort at the same time. Revert last
                 -- commited value of read pointer incremented by 1.
-                if (rec_abort = '1' or commit_overrun_abort = '1') then
+                if (rec_abort_f = '1' or commit_overrun_abort = '1') then
                     rx_mem_free_raw <= rx_mem_free_int_inc_1;
 
                 -- Read of memory word and no write of memory word. Load raw
@@ -322,7 +322,7 @@ begin
 
                 -- Abort, or abort was previously flaged -> Revert last commited
                 -- value.
-                if (rec_abort = '1' or commit_overrun_abort = '1') then
+                if (rec_abort_f = '1' or commit_overrun_abort = '1') then
                     rx_mem_free_raw <= rx_mem_free_int_int;
 
                 -- No read, write only, decrement by 1.

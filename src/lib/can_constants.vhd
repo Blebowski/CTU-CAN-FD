@@ -62,39 +62,20 @@ use ieee.std_logic_1164.all;
 
 package can_constants is
 
-    -- IP Core version related constants
-    constant CTU_CAN_FD_VERSION_MINOR : std_logic_vector(7 downto 0) := x"01";
-    constant CTU_CAN_FD_VERSION_MAJOR : std_logic_vector(7 downto 0) := x"02";
-
-    -- Active value of asynchronous reset 
-    constant ACT_RESET : std_logic := '0';
-
-    --Definition of basic logic levels for CAN bus
+    -- Definition of basic logic levels for CAN bus
     constant DOMINANT  : std_logic := '0';
     constant RECESSIVE : std_logic := '1';
 
+    -- Synchronisation options
     constant NO_SYNC   : std_logic_vector(1 downto 0) := "00";
     constant HARD_SYNC : std_logic_vector(1 downto 0) := "01";
     constant RE_SYNC   : std_logic_vector(1 downto 0) := "10";
 
-    -- CRC sources
-    constant CRC_15_SRC : std_logic_vector(1 downto 0) := "00";
-    constant CRC_17_SRC : std_logic_vector(1 downto 0) := "01";
-    constant CRC_21_SRC : std_logic_vector(1 downto 0) := "10";
-
-    -- Sample point control constants
+    -- Sample point type
     constant NOMINAL_SAMPLE   : std_logic_vector(1 downto 0) := "00";
     constant DATA_SAMPLE      : std_logic_vector(1 downto 0) := "01";
     constant SECONDARY_SAMPLE : std_logic_vector(1 downto 0) := "10";
 
-    -- Common definitions should not be generic at the moment
-    constant TXT_BUFFER_COUNT     : natural := 4;
-    constant INT_COUNT            : natural := 12;                                    
-
-    -- CRC polynomials
-    constant CRC15_POL : std_logic_vector(15 downto 0) := x"C599";
-    constant CRC17_POL : std_logic_vector(19 downto 0) := x"3685B";
-    constant CRC21_POL : std_logic_vector(23 downto 0) := x"302899";
 
     ----------------------------------------------------------------------------
     -- Memory Access

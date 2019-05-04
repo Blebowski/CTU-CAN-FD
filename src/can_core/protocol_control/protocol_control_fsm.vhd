@@ -151,13 +151,13 @@ entity protocol_control_fsm is
         -- Command to store CAN frame metadata to RX Buffer
         store_metadata          :out  std_logic;
 
-        -- Store whole word of CAN Data
+        -- Command to store word of CAN Data
         store_data              :out  std_logic;
         
         -- Received frame valid
         rec_valid               :out  std_logic;
         
-        -- Abort storing of RX frame (due to Error frame)
+        -- Command to abort storing of RX frame (due to Error frame)
         rec_abort               :out  std_logic;
         
         -- Start of Frame pulse
@@ -170,10 +170,10 @@ entity protocol_control_fsm is
         tran_frame_valid        :in   std_logic;
         
         -- HW Commands to TXT Buffers
-        txt_hw_cmd              :out  t_txt_hw_cmd;
+        txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT Buffer memory
-        txt_buf_ptr             :out  natural range 0 to 19;
+        txtb_ptr             :out  natural range 0 to 19;
         
         -- TX Data length code
         tran_dlc                :in   std_logic_vector(3 downto 0);
@@ -526,8 +526,8 @@ architecture rtl of protocol_control_fsm is
     signal rec_abort_d          : std_logic;
 
     -- Internal commands for TXT Buffers
-    signal txt_hw_cmd_d         : t_txt_hw_cmd;
-    signal txt_hw_cmd_q         : t_txt_hw_cmd;
+    signal txtb_hw_cmd_d         : t_txtb_hw_cmd;
+    signal txtb_hw_cmd_q         : t_txtb_hw_cmd;
     
     -- Unit should go to suspend transmission field!
     signal go_to_suspend        : std_logic;
@@ -604,8 +604,8 @@ architecture rtl of protocol_control_fsm is
     signal bit_err_disable           :  std_logic;
     
     -- TXT Buffer pointer
-    signal txt_buf_ptr_d             :  natural range 0 to 19;
-    signal txt_buf_ptr_q             :  natural range 0 to 19;
+    signal txtb_ptr_d             :  natural range 0 to 19;
+    signal txtb_ptr_q             :  natural range 0 to 19;
     
     -- Retransmitt counter, add 1
     signal retr_ctr_add_i            :  std_logic;
@@ -1120,12 +1120,12 @@ begin
         sof_pulse_i <= '0';
         
         -- TXT Buffer HW Commands
-        txt_hw_cmd_d.lock    <= '0';
-        txt_hw_cmd_d.unlock  <= '0';
-        txt_hw_cmd_d.valid   <= '0';
-        txt_hw_cmd_d.err     <= '0';
-        txt_hw_cmd_d.arbl    <= '0';
-        txt_hw_cmd_d.failed  <= '0';
+        txtb_hw_cmd_d.lock    <= '0';
+        txtb_hw_cmd_d.unlock  <= '0';
+        txtb_hw_cmd_d.valid   <= '0';
+        txtb_hw_cmd_d.err     <= '0';
+        txtb_hw_cmd_d.arbl    <= '0';
+        txtb_hw_cmd_d.failed  <= '0';
 
         -- RX Shift register interface
         rx_store_base_id_i        <= '0';
@@ -1203,7 +1203,7 @@ begin
         perform_hsync <= '0';
 
         -- TXT Buffer pointer
-        txt_buf_ptr_d <= 0;
+        txtb_ptr_d <= 0;
 
         -- CRC control
         crc_enable <= '0';
@@ -1223,7 +1223,7 @@ begin
             ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             rec_abort_d <= '1';
             
-            txt_hw_cmd_d.unlock <= '1';
+            txtb_hw_cmd_d.unlock <= '1';
             retr_ctr_add_i <= '1';
             crc_clear_match_flag <= '1';
             destuff_enable_clear <= '1';
@@ -1237,9 +1237,9 @@ begin
             end if;
 
             if (tx_failed = '1') then
-                txt_hw_cmd_d.failed  <= '1';
+                txtb_hw_cmd_d.failed  <= '1';
             else
-                txt_hw_cmd_d.err     <= '1';
+                txtb_hw_cmd_d.err     <= '1';
             end if;
 
         else
@@ -1302,14 +1302,14 @@ begin
                 crc_enable <= '1';
                 
                 if (arbitration_lost_condition = '1') then
-                    txt_hw_cmd_d.unlock <= '1';
+                    txtb_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
-                        txt_hw_cmd_d.failed  <= '1';
+                        txtb_hw_cmd_d.failed  <= '1';
                     else
-                        txt_hw_cmd_d.arbl    <= '1';
+                        txtb_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
                 
@@ -1332,14 +1332,14 @@ begin
                 err_pos <= ERC_POS_ARB;
                 
                 if (arbitration_lost_condition = '1') then
-                    txt_hw_cmd_d.unlock <= '1';
+                    txtb_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
-                        txt_hw_cmd_d.failed  <= '1';
+                        txtb_hw_cmd_d.failed  <= '1';
                     else
-                        txt_hw_cmd_d.arbl    <= '1';
+                        txtb_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
                 
@@ -1369,14 +1369,14 @@ begin
                 end if;
                 
                 if (ide_is_arbitration = '1' and arbitration_lost_condition = '1') then
-                    txt_hw_cmd_d.unlock <= '1';
+                    txtb_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
-                        txt_hw_cmd_d.failed  <= '1';
+                        txtb_hw_cmd_d.failed  <= '1';
                     else
-                        txt_hw_cmd_d.arbl    <= '1';
+                        txtb_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
                 
@@ -1414,14 +1414,14 @@ begin
                 crc_enable <= '1';
                 
                 if (arbitration_lost_condition = '1') then
-                    txt_hw_cmd_d.unlock <= '1';
+                    txtb_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
-                        txt_hw_cmd_d.failed  <= '1';
+                        txtb_hw_cmd_d.failed  <= '1';
                     else
-                        txt_hw_cmd_d.arbl    <= '1';
+                        txtb_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
                 
@@ -1444,14 +1444,14 @@ begin
                 err_pos <= ERC_POS_ARB;
                 
                 if (arbitration_lost_condition = '1') then
-                    txt_hw_cmd_d.unlock <= '1';
+                    txtb_hw_cmd_d.unlock <= '1';
                     retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
-                        txt_hw_cmd_d.failed  <= '1';
+                        txtb_hw_cmd_d.failed  <= '1';
                     else
-                        txt_hw_cmd_d.arbl    <= '1';
+                        txtb_hw_cmd_d.arbl    <= '1';
                     end if;
                 end if;
                 
@@ -1597,7 +1597,7 @@ begin
                 -- smitting to avoid toggling of RAM signals during reception
                 -- (possible power consideration)
                 if (is_transmitter = '1') then 
-                    txt_buf_ptr_d <= 4;
+                    txtb_ptr_d <= 4;
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
@@ -1635,7 +1635,7 @@ begin
                 -- provides data on its output! Counter is divided by 32 since
                 -- each memory word contains 32 bits!
                 if (is_transmitter = '1') then
-                    txt_buf_ptr_d <= to_integer(unsigned(ctrl_ctr_mem_index));
+                    txtb_ptr_d <= to_integer(unsigned(ctrl_ctr_mem_index));
                 end if;
 
                 if (ctrl_ctr_zero = '1') then
@@ -1810,8 +1810,8 @@ begin
                         -- No Error until the end of EOF means frame is valid
                         -- for transmitter!
                         if (is_transmitter = '1') then
-                            txt_hw_cmd_d.unlock <= '1';
-                            txt_hw_cmd_d.valid  <= '1';
+                            txtb_hw_cmd_d.unlock <= '1';
+                            txtb_hw_cmd_d.valid  <= '1';
                             retr_ctr_clear_i <= '1';
                         end if;
                         
@@ -1842,7 +1842,7 @@ begin
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
-                txt_buf_ptr_d <= 1;
+                txtb_ptr_d <= 1;
 
                 -- Last (third) bit of intermission
                 if (ctrl_ctr_zero = '1') then
@@ -1868,7 +1868,7 @@ begin
                     -- suspend! Unit becomes transmitter! If not, and DOMINANT
                     -- is received, become receiver! 
                     if (tx_frame_ready = '1' and go_to_suspend = '0') then
-                        txt_hw_cmd_d.lock <= '1';
+                        txtb_hw_cmd_d.lock <= '1';
                         set_transmitter   <= '1';
                     elsif (rx_data = DOMINANT) then
                         set_receiver   <= '1';
@@ -1909,7 +1909,7 @@ begin
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
-                txt_buf_ptr_d <= 1;
+                txtb_ptr_d <= 1;
                 
                 if (rx_data = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
@@ -1944,7 +1944,7 @@ begin
                                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
-                txt_buf_ptr_d <= 1;
+                txtb_ptr_d <= 1;
                 
                 if (rx_data = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
@@ -1955,7 +1955,7 @@ begin
                 end if;
 
                 if (tx_frame_ready = '1') then
-                    txt_hw_cmd_d.lock <= '1';
+                    txtb_hw_cmd_d.lock <= '1';
                     set_transmitter <= '1';
                 elsif (rx_data = DOMINANT) then
                     set_receiver <= '1';
@@ -2213,17 +2213,17 @@ begin
     -----------------------------------------------------------------------
     -- TXT Buffer HW commands pipeline
     -----------------------------------------------------------------------
-    txt_hw_cmd_proc : process(clk_sys, res_n)
+    txtb_hw_cmd_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            txt_hw_cmd_q.lock    <= '0';
-            txt_hw_cmd_q.unlock  <= '0';
-            txt_hw_cmd_q.valid   <= '0';
-            txt_hw_cmd_q.err     <= '0';
-            txt_hw_cmd_q.arbl    <= '0';
-            txt_hw_cmd_q.failed  <= '0';
+            txtb_hw_cmd_q.lock    <= '0';
+            txtb_hw_cmd_q.unlock  <= '0';
+            txtb_hw_cmd_q.valid   <= '0';
+            txtb_hw_cmd_q.err     <= '0';
+            txtb_hw_cmd_q.arbl    <= '0';
+            txtb_hw_cmd_q.failed  <= '0';
         elsif (rising_edge(clk_sys)) then
-            txt_hw_cmd_q <= txt_hw_cmd_d;
+            txtb_hw_cmd_q <= txtb_hw_cmd_d;
         end if;
     end process;
 
@@ -2445,12 +2445,12 @@ begin
     -----------------------------------------------------------------------
     -- TXT Buffer pointer registering
     -----------------------------------------------------------------------
-    txt_buf_ptr_reg_proc : process(clk_sys, res_n)
+    txtb_ptr_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            txt_buf_ptr_q <= 0;
+            txtb_ptr_q <= 0;
         elsif (rising_edge(clk_sys)) then
-            txt_buf_ptr_q <= txt_buf_ptr_d;
+            txtb_ptr_q <= txtb_ptr_d;
         end if;
     end process;
     
@@ -2459,9 +2459,9 @@ begin
     -- Internal signals to output propagation
     -----------------------------------------------------------------------
     crc_src <= crc_src_i;
-    txt_hw_cmd <= txt_hw_cmd_q;
+    txtb_hw_cmd <= txtb_hw_cmd_q;
     sp_control <= sp_control_q;
-    tran_valid <= txt_hw_cmd_q.valid;
+    tran_valid <= txtb_hw_cmd_q.valid;
     ssp_reset <= ssp_reset_q; 
     rx_clear <= rx_clear_q;
     sync_control <= sync_control_q;

@@ -166,7 +166,7 @@ entity memory_registers is
         G_SUP_RANGE         : boolean                         := true;
 
         -- Number of TXT Buffers
-        G_TXT_BUF_COUNT     : natural range 0 to 7            := 4;
+        G_TXT_BUFFER_COUNT  : natural range 0 to 7            := 4;
 
         -- ID on Memory bus
         G_ID                : natural                         := 1;
@@ -181,7 +181,7 @@ entity memory_registers is
         G_VERSION_MINOR     : std_logic_vector(7 downto 0)    := x"01";
 
         -- MAJOR Design version
-        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02"
+        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02";
     );
     port(
         ------------------------------------------------------------------------
@@ -266,31 +266,31 @@ entity memory_registers is
         -- Interface to TXT Buffers
         ------------------------------------------------------------------------
         -- TXT Buffer RAM - Data input
-        tran_data            :out  std_logic_vector(31 downto 0);
+        txtb_port_a_data     :out  std_logic_vector(31 downto 0);
         
         -- TXT Buffer RAM - Address
-        tran_addr            :out  std_logic_vector(4 downto 0);
+        txtb_port_a_address  :out  std_logic_vector(4 downto 0);
         
         -- TXT Buffer chip select
-        txtb_cs              :out  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+        txtb_port_a_cs       :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- TXT Buffer status
-        txtb_state           :in   txtb_state_type;
+        txtb_state           :in   t_txt_bufs_state;
 
         -- SW Commands to TXT Buffer
-        txt_sw_cmd           :out  txt_sw_cmd_type;
+        txtb_sw_cmd          :out  t_txt_sw_cmd;
         
-        -- Command Index (Index in logic 1 means command is valid for buffer)          
-        txt_buf_cmd_index    :out  std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+        -- SW Command Index (Index in logic 1 means command is valid for TXT Buffer)          
+        txtb_sw_cmd_index    :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
         
         -- TXT Buffer priorities
-        txt_buf_prior_out    :out  txtb_priorities_type;
+        txtb_prorities       :out  t_txt_bufs_priorities;
          
         ------------------------------------------------------------------------
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
         -- Measured Transceiver Delay
-        trv_delay_out        :in   std_logic_vector(15 downto 0);
+        trv_delay            :in   std_logic_vector(15 downto 0);
 
         ------------------------------------------------------------------------
         -- Event logger interface
@@ -418,30 +418,30 @@ begin
     ----------------------------------------------------------------------------
     -- Propagation of Avalon Data Bus to TXT Buffer RAM
     ----------------------------------------------------------------------------
-    tran_data             <= data_in;
+    txtb_port_a_data      <= data_in;
 
     ----------------------------------------------------------------------------
     -- Since TX_DATA registers are in separate region, which is word aligned,
     -- it is enough to take the lowest bits to create the address offset.
     ----------------------------------------------------------------------------
-    tran_addr             <= adress(6 downto 2);
+    txtb_port_a_address   <= adress(6 downto 2);
   
     ---------------------------------------------------------------------------
     -- TXT Buffer RAMs chip select signals.
     ---------------------------------------------------------------------------
-    txtb_cs_gen : for i in 0 to TXT_BUFFER_COUNT - 1 generate
-        type tx_buff_addr_type is array (0 to TXT_BUFFER_COUNT - 1) of
+    txtb_port_a_cs_gen : for i in 0 to G_TXT_BUFFER_COUNT - 1 generate
+        type tx_buff_addr_type is array (0 to G_TXT_BUFFER_COUNT - 1) of
             std_logic_vector(3 downto 0);
         signal buf_addr : tx_buff_addr_type := (TX_BUFFER_1_BLOCK,
                                                 TX_BUFFER_2_BLOCK,
                                                 TX_BUFFER_3_BLOCK,
                                                 TX_BUFFER_4_BLOCK);
     begin
-        txtb_cs(i)       <= '1' when ((adress(11 downto 8) = buf_addr(i)) and
-                                   scs='1' and swr='1')
-                            else
-                            '0';
-    end generate txtb_cs_gen;
+        txtb_port_a_cs(i) <= '1' when ((adress(11 downto 8) = buf_addr(i)) and
+                                        scs = '1' and swr = '1')
+                                 else
+                             '0';
+    end generate tran_cs_gen;
 
     can_core_cs <= '1' when (scs = ACT_CSC) and
                             (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
@@ -932,28 +932,28 @@ begin
     ---------------------------------------------------------------------------
     
     -- TX SW CMD - Set ready
-    txt_sw_cmd.set_rdy <= align_wrd_to_reg(
+    txtb_sw_cmd.set_rdy <= align_wrd_to_reg(
         control_registers_out.tx_command, TXCR_IND);
    
     -- TX SW CMD - Set empty
-    txt_sw_cmd.set_ety <= align_wrd_to_reg(
+    txtb_sw_cmd.set_ety <= align_wrd_to_reg(
         control_registers_out.tx_command, TXCE_IND);
 
     -- TX SW CMD - Set abort
-    txt_sw_cmd.set_abt <= align_wrd_to_reg(
+    txtb_sw_cmd.set_abt <= align_wrd_to_reg(
         control_registers_out.tx_command, TXCA_IND);
 
     -- TXT Buffer command indices
-    txt_buf_cmd_index(0) <= align_wrd_to_reg(
+    txtb_sw_cmd_index(0) <= align_wrd_to_reg(
         control_registers_out.tx_command, TXB1_IND);
 
-    txt_buf_cmd_index(1) <= align_wrd_to_reg(
+    txtb_sw_cmd_index(1) <= align_wrd_to_reg(
         control_registers_out.tx_command, TXB2_IND);
 
-    txt_buf_cmd_index(2) <= align_wrd_to_reg(
+    txtb_sw_cmd_index(2) <= align_wrd_to_reg(
         control_registers_out.tx_command, TXB3_IND);
 
-    txt_buf_cmd_index(3) <= align_wrd_to_reg(
+    txtb_sw_cmd_index(3) <= align_wrd_to_reg(
         control_registers_out.tx_command, TXB4_IND);
 
 
@@ -962,19 +962,19 @@ begin
     ---------------------------------------------------------------------------
 
     -- TXT Buffer 1 priority
-    txt_buf_prior_out(0) <= align_wrd_to_reg(
+    txtb_prorities(0) <= align_wrd_to_reg(
         control_registers_out.tx_priority, TXT1P_H, TXT1P_L);
 
     -- TXT Buffer 2 priority
-    txt_buf_prior_out(1) <= align_wrd_to_reg(
+    txtb_prorities(1) <= align_wrd_to_reg(
         control_registers_out.tx_priority, TXT2P_H, TXT2P_L);
 
     -- TXT Buffer 3 priority
-    txt_buf_prior_out(2) <= align_wrd_to_reg(
+    txtb_prorities(2) <= align_wrd_to_reg(
         control_registers_out.tx_priority, TXT3P_H, TXT3P_L);
 
     -- TXT Buffer 4 priority
-    txt_buf_prior_out(3) <= align_wrd_to_reg(
+    txtb_prorities(3) <= align_wrd_to_reg(
         control_registers_out.tx_priority, TXT4P_H, TXT4P_L);
 
     ---------------------------------------------------------------------------
@@ -999,7 +999,7 @@ begin
     ---------------------------------------------------------------------------
     -- DEVICE_ID register
     ---------------------------------------------------------------------------
-    Control_registers_in.device_id <= DEVICE_ID;
+    Control_registers_in.device_id <= G_DEVICE_ID;
 
     
     ---------------------------------------------------------------------------
@@ -1361,7 +1361,7 @@ begin
         Control_registers_in.trv_delay(
             align_reg_to_wrd(TRV_DELAY_VALUE_H, length) downto
             align_reg_to_wrd(TRV_DELAY_VALUE_L, length)) <=
-            trv_delay_out;
+            trv_delay;
  
     end block trv_delay_block;
 

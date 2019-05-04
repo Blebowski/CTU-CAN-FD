@@ -41,7 +41,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Provides interrupt on int_out output. Interrupt sources are configurable
+--  Provides interrupt on int output. Interrupt sources are configurable
 --  from drv_bus. Interrupt vector provides sources of last interrupts. It is 
 --  erased from driving bus by  drv_int_vect_erase
 --------------------------------------------------------------------------------
@@ -114,8 +114,8 @@ entity int_manager is
         ------------------------------------------------------------------------
         -- Interrupt sources
         ------------------------------------------------------------------------
-        -- Valid Error appeared for interrupt
-        error_valid             :in   std_logic;
+        -- Error appeared
+        err_detected            :in   std_logic;
 
         -- Error pasive /Error acitve functionality changed
         error_passive_changed   :in   std_logic;
@@ -126,17 +126,17 @@ entity int_manager is
         -- Arbitration was lost input
         arbitration_lost        :in   std_logic;
 
-        -- Frame stored in CAN Core was sucessfully transmitted
-        tx_finished             :in   std_logic;
+        -- Transmitted frame is valid
+        tran_valid              :in   std_logic;
 
         -- Bit Rate Was Shifted
         br_shifted              :in   std_logic;
 
-        -- Rx Buffer
-        rx_message_disc         :in   std_logic;
+        -- Rx Buffer data overrun
+        rx_data_overrun         :in   std_logic;
         
-        -- Frame was succesfully received
-        rec_message_valid       :in   std_logic;
+        -- Received frame is valid
+        rec_valid               :in   std_logic;
         
         -- RX Buffer is full
         rx_full          :in   std_logic;
@@ -145,18 +145,18 @@ entity int_manager is
         rx_empty         :in   std_logic;
 
         -- HW command on TXT Buffers interrupt
-        txt_hw_cmd_int   :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        txtb_hw_cmd_int  :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- Event logger
         loger_finished   :in   std_logic;
 
         ------------------------------------------------------------------------
-        -- Driving registers Interface
+        -- Memory registers Interface
         ------------------------------------------------------------------------
         drv_bus          :in   std_logic_vector(1023 downto 0);
 
         -- Interrupt output
-        int_out          :out  std_logic; 
+        int              :out  std_logic; 
 
         -- Interrupt vector
         int_vector       :out  std_logic_vector(G_INT_COUNT - 1 downto 0);
@@ -241,24 +241,24 @@ begin
     -- Driving Interrupt output when there is at least one active interrupt
     -- enabled.
     ---------------------------------------------------------------------------
-    int_out  <= '0' when (int_vect_i and int_ena_i) = zero_mask else
-                '1';
+    int  <= '0' when (int_vect_i and int_ena_i) = zero_mask else
+            '1';
 
     ---------------------------------------------------------------------------
     -- Interrupt register masking and enabling
     ---------------------------------------------------------------------------
-    int_input_active(RXI_IND)       <= rec_message_valid;
-    int_input_active(TXI_IND)       <= tx_finished;
+    int_input_active(RXI_IND)       <= rec_valid;
+    int_input_active(TXI_IND)       <= tran_valid;
     int_input_active(EWLI_IND)      <= error_warning_limit;
-    int_input_active(DOI_IND)       <= rx_message_disc;
+    int_input_active(DOI_IND)       <= rx_data_overrun;
     int_input_active(EPI_IND)       <= error_passive_changed;
     int_input_active(ALI_IND)       <= arbitration_lost;
-    int_input_active(BEI_IND)       <= error_valid;
+    int_input_active(BEI_IND)       <= err_detected;
     int_input_active(LFI_IND)       <= loger_finished;
     int_input_active(RXFI_IND)      <= rx_full;
     int_input_active(BSI_IND)       <= br_shifted;
     int_input_active(RBNEI_IND)     <= not rx_empty;
-    int_input_active(TXBHCI_IND)    <= or_reduce(txt_hw_cmd_int);
+    int_input_active(TXBHCI_IND)    <= or_reduce(txtb_hw_cmd_int);
 
 
     ---------------------------------------------------------------------------

@@ -70,7 +70,7 @@
 --                    progress" states.
 --     06.4.2018  Changed output from side of CAN Core to synchronous. Async.
 --                output did not allow inferrence of RAM in Altera FPGA.
---     30.8.2018  Added "txt_hw_cmd_int" output for Interrupt Manager. TXTB HW
+--     30.8.2018  Added "txtb_hw_cmd_int" output for Interrupt Manager. TXTB HW
 --                command Interrupt generated upon move to Done, Failed or
 --                Aborted states.
 --    10.11.2018  Separated TXT Buffer FSM to a standalone sub-module.
@@ -97,13 +97,13 @@ use work.CAN_FD_frame_format.all;
 entity txt_buffer is
     generic(
         -- Reset polarity
-        G_RESET_POLARITY           :    std_logic := '0';
+        G_RESET_POLARITY       :     std_logic := '0';
         
         -- Number of TXT Buffers
-        G_TXT_BUF_COUNT            :     natural range 1 to 8;
+        G_TXT_BUF_COUNT        :     natural range 1 to 8;
         
         -- TXT Buffer ID
-        G_ID                       :     natural := 1
+        G_ID                   :     natural := 1
     );
     port(
         ------------------------------------------------------------------------
@@ -119,19 +119,19 @@ entity txt_buffer is
         -- Memory Registers Interface
         ------------------------------------------------------------------------
         -- Data to be written to TXT Buffer RAM
-        tran_data              :in   std_logic_vector(31 downto 0);
+        txtb_port_a_data       :in   std_logic_vector(31 downto 0);
         
         -- Address in TXT Buffer RAM
-        tran_addr              :in   std_logic_vector(4 downto 0);
-        
+        txtb_port_a_address    :in   std_logic_vector(4 downto 0);
+
         -- TXT Buffer RAM chip select
-        tran_cs                :in   std_logic;
+        txtb_port_a_cs         :in   std_logic;
 
         -- SW commands
-        txt_sw_cmd             :in   t_txt_sw_cmd;
+        txtb_sw_cmd            :in   t_txt_sw_cmd;
         
         -- TXT Buffer index for which SW command is valid
-        txt_sw_buf_cmd_index   :in   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+        txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
 
         -- Buffer State (encoded for Memory registers)
         txtb_state             :out  std_logic_vector(3 downto 0);
@@ -140,28 +140,28 @@ entity txt_buffer is
         -- Interrupt Manager Interface
         ------------------------------------------------------------------------
         -- HW Command applied
-        txt_hw_cmd_int         :out  std_logic;
+        txtb_hw_cmd_int         :out  std_logic;
 
         ------------------------------------------------------------------------
         -- CAN Core and TX Arbitrator Interface
         ------------------------------------------------------------------------
         -- HW Commands 
-        txt_hw_cmd             :in   t_txt_hw_cmd;
+        txtb_hw_cmd            :in   t_txtb_hw_cmd;
         
         -- Index of TXT Buffer for which HW commands is valid          
-        txt_hw_cmd_buf_index   :in   natural range 0 to G_TXT_BUF_COUNT - 1;
+        txtb_hw_cmd_index      :in   natural range 0 to G_TXT_BUF_COUNT - 1;
 
         -- TXT Buffer RAM data output
-        txt_word               :out  std_logic_vector(31 downto 0);
+        txtb_port_b_data       :out  std_logic_vector(31 downto 0);
         
         -- TXT Buffer RAM address
-        txt_addr               :in   natural range 0 to 19;
+        txtb_port_b_address    :in   natural range 0 to 19;
 
         -- Unit just turned bus off.
         is_bus_off             :in   std_logic;
 
         -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txt_buf_ready          :out  std_logic
+        txtb_ready          :out  std_logic
     );
 end entity;
 
@@ -200,22 +200,22 @@ architecture rtl of txt_buffer is
 begin
         
     -- Command buffer select signals
-    hw_cbs <= '1' when (txt_hw_cmd_buf_index = G_ID)
+    hw_cbs <= '1' when (txtb_hw_cmd_index = G_ID)
                   else
               '0';
   
-    sw_cbs <= '1' when (txt_sw_buf_cmd_index(G_ID) = '1') 
+    sw_cbs <= '1' when (txtb_sw_cmd_index(G_ID) = '1') 
                   else
               '0';
     
     -- TXT Buffer RAM write signal
-    RAM_write <= '1' when (tran_cs = '1' and txtb_user_accessible = '1')
+    RAM_write <= '1' when (txtb_port_a_cs = '1' and txtb_user_accessible = '1')
                      else
                  '0';
 
     -- TXT Buffer read address (connected to read pointer)
     RAM_read_address   <= std_logic_vector(to_unsigned(
-                             txt_addr, RAM_read_address'length)); 
+                             txtb_port_b_address, RAM_read_address'length)); 
 
 
     ----------------------------------------------------------------------------
@@ -233,11 +233,11 @@ begin
     port map(
         clk_sys              => clk_sys,
         res_n                => res_n,
-        addr_A               => tran_addr,
+        addr_A               => txtb_port_a_address,
         write                => RAM_write, 
-        data_in              => tran_data,
+        data_in              => txtb_port_a_data,
         addr_B               => RAM_read_address,
-        data_out             => txt_word
+        data_out             => txtb_port_b_data
     );
 
     
@@ -253,17 +253,17 @@ begin
         clk_sys                => clk_sys,
         res_n                  => res_n,
 
-        txt_sw_cmd             => txt_sw_cmd,
+        txtb_sw_cmd            => txtb_sw_cmd,
         sw_cbs                 => sw_cbs,
 
-        txt_hw_cmd             => txt_hw_cmd,
+        txtb_hw_cmd            => txtb_hw_cmd,
         hw_cbs                 => hw_cbs,
         is_bus_off             => is_bus_off,
 
         txtb_user_accessible   => txtb_user_accessible,
-        txtb_hw_cmd_int        => txt_hw_cmd_int,
+        txtb_hw_cmd_int        => txtb_hw_cmd_int,
         txtb_state             => txtb_state,
-        txt_buf_ready          => txt_buf_ready
+        txtb_ready             => txtb_ready
     );
 
     
@@ -278,17 +278,17 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- Each SW command active
-    -- psl txtb_set_ready_cov : cover (txt_sw_cmd.set_rdy = '1' and sw_cbs = '1');
-    -- psl txtb_set_empty_cov : cover (txt_sw_cmd.set_ety = '1' and sw_cbs = '1');
-    -- psl txtb_set_abort_cov : cover (txt_sw_cmd.set_abt = '1' and sw_cbs = '1');
+    -- psl txtb_set_ready_cov : cover (txtb_sw_cmd.set_rdy = '1' and sw_cbs = '1');
+    -- psl txtb_set_empty_cov : cover (txtb_sw_cmd.set_ety = '1' and sw_cbs = '1');
+    -- psl txtb_set_abort_cov : cover (txtb_sw_cmd.set_abt = '1' and sw_cbs = '1');
       
     -- HW Commands
-    -- psl txtb_hw_lock : cover (txt_hw_cmd.lock = '1' and hw_cbs = '1');
-    -- psl txtb_hw_unlock : cover (txt_hw_cmd.unlock = '1' and hw_cbs = '1');
-    -- psl txtb_hw_valid : cover (txt_hw_cmd.valid = '1' and hw_cbs = '1');
-    -- psl txtb_hw_err : cover (txt_hw_cmd.err = '1' and hw_cbs = '1');
-    -- psl txtb_hw_arbl : cover (txt_hw_cmd.arbl = '1' and hw_cbs = '1');
-    -- psl txtb_hw_failed : cover (txt_hw_cmd.failed = '1' and hw_cbs = '1');
+    -- psl txtb_hw_lock : cover (txtb_hw_cmd.lock = '1' and hw_cbs = '1');
+    -- psl txtb_hw_unlock : cover (txtb_hw_cmd.unlock = '1' and hw_cbs = '1');
+    -- psl txtb_hw_valid : cover (txtb_hw_cmd.valid = '1' and hw_cbs = '1');
+    -- psl txtb_hw_err : cover (txtb_hw_cmd.err = '1' and hw_cbs = '1');
+    -- psl txtb_hw_arbl : cover (txtb_hw_cmd.arbl = '1' and hw_cbs = '1');
+    -- psl txtb_hw_failed : cover (txtb_hw_cmd.failed = '1' and hw_cbs = '1');
     
     end block;
 
