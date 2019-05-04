@@ -55,7 +55,6 @@
 Library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.ALL;
-use ieee.math_real.ALL;
 
 Library work;
 use work.id_transfer.all;
@@ -79,6 +78,9 @@ entity apb_ifc is
         aclk             : in  std_logic;
         arstn            : in  std_logic;
 
+        -----------------------------------------------------------------------
+        -- CTU CAN FD Interface
+        -----------------------------------------------------------------------
         reg_data_in_o    : out std_logic_vector(31 downto 0);
         reg_data_out_i   : in  std_logic_vector(31 downto 0);
         reg_addr_o       : out std_logic_vector(15 downto 0);
@@ -86,6 +88,9 @@ entity apb_ifc is
         reg_rden_o       : out std_logic;
         reg_wren_o       : out std_logic;
 
+        -----------------------------------------------------------------------
+        -- APB interface 
+        -----------------------------------------------------------------------
         s_apb_paddr      : in  std_logic_vector(31 downto 0);
         s_apb_penable    : in  std_logic;
         s_apb_pprot      : in  std_logic_vector(2 downto 0);
