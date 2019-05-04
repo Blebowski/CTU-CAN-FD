@@ -267,7 +267,6 @@ architecture rtl of can_core is
     ----------------------------------------------------------------------------
     signal drv_clr_rx_ctr          :     std_logic;
     signal drv_clr_tx_ctr          :     std_logic;
-    signal drv_int_loopback_ena    :     std_logic;
     signal drv_bus_mon_ena         :     std_logic;
    
     ----------------------------------------------------------------------------
@@ -396,6 +395,9 @@ architecture rtl of can_core is
     
     signal tx_data_wbs_i           :    std_logic;
     
+    -- Looped back data for bus monitoring mode
+    signal lpb_dominant            :    std_logic;
+    
     -- Error indication
     signal form_error              :    std_logic;
     signal ack_error               :    std_logic;
@@ -419,7 +421,6 @@ begin
     drv_clr_rx_ctr        <=  drv_bus(DRV_CLR_RX_CTR_INDEX);
     drv_clr_tx_ctr        <=  drv_bus(DRV_CLR_TX_CTR_INDEX);
     drv_bus_mon_ena       <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
-    drv_int_loopback_ena  <=  drv_bus(DRV_INT_LOOBACK_ENA_INDEX);
 
     ----------------------------------------------------------------------------
     -- Protocol control
@@ -867,18 +868,18 @@ begin
     crc_data_tx_wbs <= bst_data_out;
     crc_data_rx_wbs <= bds_data_in;
     
+    lpb_dominant <= rx_data_wbs and bst_data_out;
+    
     ---------------------------------------------------------------------------
-    -- Internal loop-back multiplexor. Post bit-stuff data is looped-back
-    -- and taken instead of data from the bus in two cases:
-    --  1. Listen only (Bus monitoring) mode -> Data is not send to the bus 
-    --     and TX each bit is re-routed internally.
-    --  2. Secondary sampling for for transmitter of Data bit rate. Due to 
-    --     transceiver delay, data might not be available at sample point,
-    --     thus TX data are taken instead.
+    -- Bit Stuffing data input:
+    --  1. Bit Destuffing output for secondary sampling. This-way core will
+    --     automatically receive what it transmitts without loop over
+    --     Transceiver. Bit Error is detected by Bus sampling properly.
+    --  2. Looped back dominant Bit for Bus monitoring Mode.
+    --  3. Regular RX Data
     ---------------------------------------------------------------------------
-    bds_data_in <= bst_data_out when (sp_control = SECONDARY_SAMPLE or
-                                      drv_bus_mon_ena = '1')
-                                else
+    bds_data_in <= bst_data_out when (sp_control = SECONDARY_SAMPLE) else
+                   lpb_dominant when (drv_bus_mon_ena = '1') else
                     rx_data_wbs;
 
     ---------------------------------------------------------------------------

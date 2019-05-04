@@ -115,6 +115,12 @@ entity protocol_control_fsm is
         -- Retransmition limit enabled for errornous frames
         drv_retr_lim_ena        :in   std_logic;
         
+        -- Internal Loopback enabled
+        drv_int_loopback_ena    :in   std_logic;
+        
+        -- Reception of CAN FD Frames is enabled
+        drv_can_fd_ena          :in   std_logic;
+        
         -- Control field is being transmitted
         is_control              :out  std_logic;
 
@@ -1547,6 +1553,10 @@ begin
                 else
                     ssp_reset_d <= '1';
                 end if;
+                
+                if (drv_can_fd_ena = FDE_DISABLE and rx_data = RECESSIVE) then
+                    form_error_i <= '1';
+                end if;
 
             -------------------------------------------------------------------
             -- BRS (Bit rate shift) Bit
@@ -2195,8 +2205,8 @@ begin
         elsif (rising_edge(clk_sys)) then
             
             -- Frame is stored to RX Buffer when unit is either receiver
-            -- or self test mode is enabled (loopback).
-            if (is_receiver = '1' or drv_self_test_ena = '1') then
+            -- or loopback mode is enabled.
+            if (is_receiver = '1' or drv_int_loopback_ena = '1') then
                 store_metadata     <= store_metadata_d;
                 store_data         <= store_data_d;
                 rec_valid          <= rec_valid_d;

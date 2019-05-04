@@ -381,7 +381,7 @@ architecture rtl of protocol_control is
   signal drv_rtr_pref             :     std_logic;
   
   -- Whenever FD Frames are supported for reciever
-  signal drv_CAN_fd_ena           :     std_logic;
+  signal drv_can_fd_ena           :     std_logic;
   
   -- Bus Monitoring mode enabled
   signal drv_bus_mon_ena          :     std_logic;
@@ -560,7 +560,7 @@ begin
     -- Driving bus aliases
     ---------------------------------------------------------------------------
     drv_rtr_pref          <=  drv_bus(DRV_RTR_PREF_INDEX);
-    drv_CAN_fd_ena        <=  drv_bus(DRV_CAN_FD_ENA_INDEX);
+    drv_can_fd_ena        <=  drv_bus(DRV_CAN_FD_ENA_INDEX);
     drv_bus_mon_ena       <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
     drv_retr_lim_ena      <=  drv_bus(DRV_RETR_LIM_ENA_INDEX);
     drv_retr_th           <=  drv_bus(DRV_RETR_TH_HIGH downto DRV_RETR_TH_LOW);
@@ -612,6 +612,7 @@ begin
         drv_self_test_ena       => drv_self_test_ena,   -- IN
         drv_bus_mon_ena         => drv_bus_mon_ena,     -- IN
         drv_retr_lim_ena        => drv_retr_lim_ena,    -- IN
+        drv_int_loopback_ena    => drv_int_loopback_ena,-- IN
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
         is_crc                  => is_crc,              -- OUT
