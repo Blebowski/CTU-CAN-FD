@@ -640,10 +640,6 @@ begin
     drv_bus(DRV_CAN_FD_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, FDE_IND);
 
-    -- RTRP - RTR Preffered behaviour
-    drv_bus(DRV_RTR_PREF_INDEX) <= align_wrd_to_reg(
-        control_registers_out.mode, RTRP_IND);
-
     -- Bus monitoring = listen only mode
     drv_bus(DRV_BUS_MON_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, LOM_IND);
@@ -673,10 +669,6 @@ begin
     drv_bus(DRV_CLR_OVR_INDEX) <= align_wrd_to_reg(
         control_registers_out.command, AFM_IND);
     
-    -- ABT - Immediate transmission abort   
-    drv_bus(DRV_ABORT_TRAN_INDEX) <= align_wrd_to_reg(
-        control_registers_out.command, ABT_IND);
-
     -- RRB - Release Receive Buffer
     drv_bus(DRV_ERASE_RX_INDEX) <= align_wrd_to_reg(
         control_registers_out.command, RRB_IND);
@@ -1802,6 +1794,8 @@ begin
     drv_bus(767 downto 748) <= (OTHERS => '0');
     drv_bus(735 downto 614) <= (OTHERS => '0');
 
+    drv_bus(472)            <= '0';
+    drv_bus(461)            <= '0';
     drv_bus(367)            <= '0';
     drv_bus(366)            <= '0';
     drv_bus(357)            <= '0';

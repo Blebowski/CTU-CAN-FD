@@ -377,9 +377,6 @@ architecture rtl of protocol_control is
   -- Driving bus aliases
   -----------------------------------------------------------------------------
   
-  -- RTR behavior setting
-  signal drv_rtr_pref             :     std_logic;
-  
   -- Whenever FD Frames are supported for reciever
   signal drv_can_fd_ena           :     std_logic;
   
@@ -394,9 +391,6 @@ architecture rtl of protocol_control is
   
   -- Self Test Mode enabled
   signal drv_self_test_ena        :     std_logic;
-  
-  -- Immediately abort transmittion
-  signal drv_abort_tran           :     std_logic;
   
   -- Forbidding acknowledge mode
   signal drv_ack_forb             :     std_logic;
@@ -559,13 +553,11 @@ begin
     ---------------------------------------------------------------------------
     -- Driving bus aliases
     ---------------------------------------------------------------------------
-    drv_rtr_pref          <=  drv_bus(DRV_RTR_PREF_INDEX);
     drv_can_fd_ena        <=  drv_bus(DRV_CAN_FD_ENA_INDEX);
     drv_bus_mon_ena       <=  drv_bus(DRV_BUS_MON_ENA_INDEX);
     drv_retr_lim_ena      <=  drv_bus(DRV_RETR_LIM_ENA_INDEX);
     drv_retr_th           <=  drv_bus(DRV_RETR_TH_HIGH downto DRV_RETR_TH_LOW);
     drv_self_test_ena     <=  drv_bus(DRV_SELF_TEST_ENA_INDEX);
-    drv_abort_tran        <=  drv_bus(DRV_ABORT_TRAN_INDEX);
     drv_ack_forb          <=  drv_bus(DRV_ACK_FORB_INDEX);
     drv_ena               <=  drv_bus(DRV_ENA_INDEX);
     drv_fd_type           <=  drv_bus(DRV_FD_TYPE_INDEX);

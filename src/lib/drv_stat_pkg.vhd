@@ -204,7 +204,6 @@ package drv_stat_pkg is
 
     -- Operation control FSM
     constant DRV_CAN_FD_ENA_INDEX    : natural := 460;
-    constant DRV_RTR_PREF_INDEX      : natural := 461;
     constant DRV_BUS_MON_ENA_INDEX   : natural := 470;
     constant DRV_SELF_TEST_ENA_INDEX : natural := 471;
 
@@ -212,8 +211,6 @@ package drv_stat_pkg is
 
     constant DRV_RETR_TH_LOW  : natural := 466;
     constant DRV_RETR_TH_HIGH : natural := 469;
-
-    constant DRV_ABORT_TRAN_INDEX : natural := 472;
 
     constant DRV_CLR_RX_CTR_INDEX : natural := 473;
     constant DRV_CLR_TX_CTR_INDEX : natural := 474;
