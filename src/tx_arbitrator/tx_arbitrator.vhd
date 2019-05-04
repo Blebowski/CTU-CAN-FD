@@ -213,7 +213,7 @@ entity tx_arbitrator is
         txtb_changed            :out std_logic;
 
         -- Index of the TXT Buffer for which the actual HW command is valid
-        txtb_hw_cmd_buf_index   :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
+        txtb_hw_cmd_index       :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
         txtb_ptr                :in natural range 0 to 19;
@@ -450,7 +450,7 @@ begin
                                   else
                          txtb_pointer_meta;
 
-  txtb_hw_cmd_buf_index <= int_txtb_index;
+  txtb_hw_cmd_index <= int_txtb_index;
   
 
   ------------------------------------------------------------------------------
@@ -598,16 +598,16 @@ begin
   --    (txtb_hw_cmd.unlock = '1');
   --
   -- psl txt_lock_buf_1_cov : cover
-  --    (txtb_hw_cmd_buf_index = 0 and txtb_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_index = 0 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_lock_buf_2_cov : cover
-  --    (txtb_hw_cmd_buf_index = 1 and txtb_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_index = 1 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_lock_buf_3_cov : cover
-  --    (txtb_hw_cmd_buf_index = 2 and txtb_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_index = 2 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_lock_buf_4_cov : cover
-  --    (txtb_hw_cmd_buf_index = 3 and txtb_hw_cmd.lock = '1');
+  --    (txtb_hw_cmd_index = 3 and txtb_hw_cmd.lock = '1');
   --
   -- psl txt_prio_change_cov : cover
   --    {select_buf_avail = '1';

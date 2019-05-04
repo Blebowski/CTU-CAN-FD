@@ -3794,7 +3794,7 @@ package can_components is
         txtb_changed            :out std_logic;
 
         -- Index of the TXT Buffer for which the actual HW command is valid
-        txtb_hw_cmd_buf_index   :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
+        txtb_hw_cmd_index       :out natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- Pointer to TXT Buffer given by CAN Core. Used for reading data words
         txtb_ptr                :in natural range 0 to 19;
