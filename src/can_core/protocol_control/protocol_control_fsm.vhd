@@ -127,20 +127,35 @@ entity protocol_control_fsm is
         -- Data field is being transmitted
         is_data                 :out  std_logic;
 
+        -- Stuff Count field is being transmitted
+        is_stuff_count          :out  std_logic;
+
         -- CRC field is being transmitted
         is_crc                  :out  std_logic;
         
+        -- CRC Delimiter is being transmitted
+        is_crc_delim            :out  std_logic;
+        
+        -- ACK field is being transmitted
+        is_ack_field            :out  std_logic;
+        
+        -- ACK Delimiter is being transmitted
+        is_ack_delim            :out  std_logic;
+        
         -- End of Frame field is being transmitted
         is_eof                  :out  std_logic;
+        
+        -- Intermission is being transmitted
+        is_intermission         :out  std_logic;
+        
+        -- Suspend transmission is being transmitted
+        is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
         is_error                :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
-        
-        -- Interframe space is being transmitted
-        is_interframe           :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Data-path interface
@@ -254,7 +269,7 @@ entity protocol_control_fsm is
         rx_store_stuff_count    :out  std_logic;
         
         -- Clock Enable RX Shift register for each byte.
-        rx_shift_ena            :out  std_logic(3 downto 0);
+        rx_shift_ena            :out  std_logic_vector(3 downto 0);
         
         -- Selector for inputs of each byte of shift register
         -- (0-Previous byte output, 1- RX Data input)
@@ -1144,7 +1159,7 @@ begin
         rx_store_brs_i            <= '0';
         rx_store_stuff_count_i    <= '0';
 
-        rx_shift_ena            <= '0';
+        rx_shift_ena            <= "0000";
         rx_shift_in_sel         <= '0';
         rx_clear_d              <= '0';
 
@@ -1218,11 +1233,16 @@ begin
         -- Status signals for debug
         is_control      <= '0';
         is_data         <= '0';
+        is_stuff_count  <= '0';
         is_crc          <= '0';
+        is_crc_delim    <= '0';
+        is_ack_field    <= '0';
+        is_ack_delim    <= '0';
         is_eof          <= '0';
+        is_suspend      <= '0';
         is_error        <= '0';
         is_overload     <= '0';
-        is_interframe   <= '0';
+        is_intermission <= '0';
 
         if (err_frm_req = '1') then
             ctrl_ctr_pload_i   <= '1';
@@ -1301,7 +1321,7 @@ begin
             when s_pc_base_id =>
                 bit_err_disable <= '1';
                 ctrl_ctr_ena <= '1';
-                rx_shift_ena <= '1';
+                rx_shift_ena <= "1111";
                 is_arbitration <= '1';
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_ARB;
@@ -1412,7 +1432,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_ext_id =>
                 ctrl_ctr_ena <= '1';
-                rx_shift_ena <= '1';
+                rx_shift_ena <= "1111";
                 is_arbitration <= '1';
                 tx_shift_ena_i  <= '1';
                 err_pos <= ERC_POS_ARB;
@@ -1596,7 +1616,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_dlc =>
                 ctrl_ctr_ena <= '1';
-                rx_shift_ena <= '1';
+                rx_shift_ena <= "1111";
                 tx_shift_ena_i  <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
@@ -1633,7 +1653,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_data =>
                 ctrl_ctr_ena <= '1';
-                rx_shift_ena <= '1';
+                rx_shift_ena(to_integer(unsigned(ctrl_counted_byte_index))) <= '1';
                 rx_shift_in_sel <= '1';
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_DATA;
@@ -1673,11 +1693,11 @@ begin
             -------------------------------------------------------------------
             when s_pc_stuff_count =>
                 ctrl_ctr_ena <= '1';
-                rx_shift_ena <= '1';
+                rx_shift_ena <= "1111";
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_CRC;
                 crc_enable <= '1';
-                is_crc <= '1';
+                is_stuff_count <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_val <= crc_length_i;
@@ -1695,7 +1715,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_crc =>
                 ctrl_ctr_ena <= '1';
-                rx_shift_ena <= '1';
+                rx_shift_ena <= "1111";
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_CRC;
                 is_crc <= '1';
@@ -1712,7 +1732,8 @@ begin
                 destuff_enable_clear <= '1';
                 stuff_enable_clear <= '1';
                 err_pos <= ERC_POS_ACK;
-            
+                is_crc_delim  <= '1';
+                
                 if (is_receiver = '1' and rx_trigger = '1') then
                     crc_check <= '1';
                 end if;
@@ -1733,13 +1754,15 @@ begin
             -------------------------------------------------------------------
             when s_pc_crc_delim_sec =>
                 err_pos <= ERC_POS_ACK;
-
+                is_crc_delim  <= '1';
+                
             -------------------------------------------------------------------
             -- ACK Slot, or a ACK delim, if previous two bits were recessive!
             -------------------------------------------------------------------
             when s_pc_ack =>
                 err_pos <= ERC_POS_ACK;
-            
+                is_ack_field  <= '1';
+                
                 if (is_receiver = '1' and crc_match = '1' and
                     drv_ack_forb = '0')
                 then
@@ -1767,6 +1790,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_ack_sec =>
                 err_pos <= ERC_POS_ACK;
+                is_ack_field  <= '1';
                 
                 if (rx_data = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
@@ -1794,6 +1818,7 @@ begin
                 ctrl_ctr_pload <= '1';
                 ctrl_ctr_pload_val <= C_EOF_DURATION;
                 err_pos <= ERC_POS_ACK;
+                is_ack_delim  <= '1';
                 
                 if (rx_data = DOMINANT) then
                     form_error_i <= '1';
@@ -1848,7 +1873,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_intermission =>
                 ctrl_ctr_ena <= '1';
-                is_interframe <= '1';
+                is_intermission <= '1';
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -1915,7 +1940,7 @@ begin
                 ctrl_ctr_ena <= '1';
                 perform_hsync <= '1';
                 crc_spec_enable <= '1';
-                is_interframe <= '1';
+                is_suspend <= '1';
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -1950,8 +1975,7 @@ begin
             when s_pc_idle =>
                 perform_hsync <= '1';
                 crc_spec_enable <= '1';
-                is_interframe <= '1';
-                                
+
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;

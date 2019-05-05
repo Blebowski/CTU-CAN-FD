@@ -181,7 +181,7 @@ entity memory_registers is
         G_VERSION_MINOR     : std_logic_vector(7 downto 0)    := x"01";
 
         -- MAJOR Design version
-        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02";
+        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02"
     );
     port(
         ------------------------------------------------------------------------
@@ -1395,7 +1395,7 @@ begin
         constant length : natural := Control_registers_in.debug_register'length;
     begin
 
-        -- STUFF_COUNT - Counter of stuffed bits modulo 8    
+        -- STUFF_COUNT - Counter of stuffed bits modulo 8
         Control_registers_in.debug_register(
             align_reg_to_wrd(STUFF_COUNT_H, length) downto
             align_reg_to_wrd(STUFF_COUNT_L, length)) <=
@@ -1422,10 +1422,30 @@ begin
             align_reg_to_wrd(PC_DAT_IND, length)) <=
             stat_bus(STAT_IS_DATA_INDEX);
 
+        -- PC_STC field - Protocol control FSM - Stuff count field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_STF_IND, length)) <=
+            stat_bus(STAT_IS_STUFF_COUNT_INDEX);
+
         -- PC_CRC field - Protocol control FSM - CRC field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_CRC_IND, length)) <=
             stat_bus(STAT_IS_CRC_INDEX);
+
+        -- PC_CRCD field - Protocol control FSM - CRC Delimiter field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_CRCD_IND, length)) <=
+            stat_bus(STAT_IS_CRC_DELIMITER_INDEX);
+            
+        -- PC_ACK field - Protocol control FSM - ACK field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_ACK_IND, length)) <=
+            stat_bus(STAT_IS_ACK_INDEX);
+
+        -- PC_ACKD field - Protocol control FSM - ACK Delimiter field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_ACKD_IND, length)) <=
+            stat_bus(STAT_IS_ACK_DELIMITER_INDEX);
 
         -- PC_EOF field - Protocol control FSM - EOF field
         Control_registers_in.debug_register(
@@ -1437,13 +1457,18 @@ begin
             align_reg_to_wrd(PC_OVR_IND, length)) <=
             stat_bus(STAT_IS_OVERLOAD_INDEX);
 
-        -- PC_INT field - Protocol control FSM - Interframe frame field
+        -- PC_INT field - Protocol control FSM - Intermission frame field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_INT_IND, length)) <=
-            stat_bus(STAT_IS_INTERFRAME_INDEX);
+            stat_bus(STAT_IS_INTERMISSION_INDEX);
+
+        -- PC_SUSP field - Protocol control FSM - Suspend transmission frame field
+        Control_registers_in.debug_register(
+            align_reg_to_wrd(PC_SUSP_IND, length)) <=
+            stat_bus(STAT_IS_SUSPEND_INDEX);
 
         -- Pad rest by zeroes
-        Control_registers_in.debug_register(31 downto 13) <= (OTHERS => '0');
+        Control_registers_in.debug_register(31 downto 18) <= (OTHERS => '0');
 
     end block debug_register_block;
 

@@ -407,11 +407,16 @@ architecture rtl of can_core is
     signal is_arbitration          :     std_logic;
     signal is_control              :     std_logic;
     signal is_data                 :     std_logic;
+    signal is_stuff_count          :     std_logic;
     signal is_crc                  :     std_logic;
+    signal is_crc_delim            :     std_logic;
+    signal is_ack_field            :     std_logic;
+    signal is_ack_delim            :     std_logic;
     signal is_eof                  :     std_logic;
     signal is_error                :     std_logic;
+    signal is_intermission         :     std_logic;
+    signal is_suspend              :     std_logic;
     signal is_overload             :     std_logic;
-    signal is_interframe           :     std_logic;
     
 begin
   
@@ -443,11 +448,16 @@ begin
         is_arbitration          => is_arbitration,      -- OUT
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
+        is_stuff_count          => is_stuff_count,      -- OUT
         is_crc                  => is_crc,              -- OUT
+        is_crc_delim            => is_crc_delim,        -- OUT
+        is_ack_field            => is_ack_field,        -- OUT
+        is_ack_delim            => is_ack_delim,        -- OUT
         is_eof                  => is_eof,              -- OUT
+        is_intermission         => is_intermission,     -- OUT
+        is_suspend              => is_suspend,          -- OUT
         is_error                => is_error,            -- OUT
         is_overload             => is_overload,         -- OUT
-        is_interframe           => is_interframe,       -- OUT
         
         -- TXT Buffers interface
         tran_word               => tran_word_i,         -- IN
@@ -893,7 +903,7 @@ begin
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
     ----------------------------------------------------------------------------
-    stat_bus(511 downto 378) <= (OTHERS => '0');
+    stat_bus(511 downto 383) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
     stat_bus(187 downto 186) <= (OTHERS => '0');
     stat_bus(98 downto 90)   <= (OTHERS => '0');
@@ -916,7 +926,7 @@ begin
 
     stat_bus(STAT_IS_RECEIVER_INDEX) <=
         is_receiver;
-        
+    
     stat_bus(STAT_PC_IS_ARBITRATION_INDEX) <=
         is_arbitration;
                
@@ -925,15 +935,30 @@ begin
     
     stat_bus(STAT_PC_IS_DATA_INDEX) <=
         is_data;
+    
+    stat_bus(STAT_PC_IS_STUFF_COUNT_INDEX) <=
+        is_stuff_count;
         
     stat_bus(STAT_PC_IS_CRC_INDEX) <=
         is_crc;
     
+    stat_bus(STAT_PC_IS_CRC_DELIM_INDEX) <=
+        is_crc_delim;
+    
+    stat_bus(STAT_PC_IS_ACK_FIELD_INDEX) <=
+        is_ack_field;
+        
+    stat_bus(STAT_PC_IS_ACK_DELIM_INDEX) <=
+        is_ack_delim;
+    
     stat_bus(STAT_PC_IS_EOF_INDEX) <=
         is_eof;
     
-    stat_bus(STAT_PC_IS_INTERFRAME_INDEX) <=
-        is_interframe;
+    stat_bus(STAT_PC_IS_INTERMISSION_INDEX) <=
+        is_intermission;
+    
+    stat_bus(STAT_PC_IS_SUSPEND_INDEX) <=
+        is_suspend;
         
     stat_bus(STAT_PC_IS_ERROR_INDEX) <=
         is_error;

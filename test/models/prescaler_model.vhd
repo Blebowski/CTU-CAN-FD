@@ -111,13 +111,13 @@ entity prescaler_model is
         -- Bus synch Interface
         -----------------------------------------------------------------------
         signal sync_edge            :in std_logic;
-        signal OP_State             :in oper_mode_type;
+        signal OP_State             :in t_operation_control_state;
         
         -- Driving Bus
         signal drv_bus              :in std_logic_vector(1023 downto 0); 
         
         -- Bit time FSM output
-        signal bt_FSM_out           :out bit_time_type;
+        signal bt_fsm               :out t_bit_time;
     
         -- What is actual node transmitting on the bus
         signal data_tx              :in   std_logic;
@@ -153,7 +153,7 @@ architecture func of prescaler_model is
     signal tseg2_s    : integer;
     signal sjw_s      : integer;
 
-    signal bt_fsm       : bit_time_type := reset;
+    signal bt_fsm_i      : t_bit_time := s_bt_reset;
 
     -- Time quanta counters
     signal tq_ctr_nbt   : integer := 0;
@@ -236,7 +236,7 @@ architecture func of prescaler_model is
         signal   sp_control      : in     std_logic_vector(1 downto 0);
         signal   sync_edge       : in     std_logic;
         signal   sync_control    : in     std_logic_vector(1 downto 0);
-        signal   bt_fsm          : in     bit_time_type;
+        signal   bt_fsm_i        : in     t_bit_time;
         signal   nom_dur         : in     integer;
         signal   brp             : in     integer;
         signal   sjw             : in     integer;
@@ -254,7 +254,7 @@ architecture func of prescaler_model is
         
         while (i < exp_duration) loop
             wait until (rising_edge(clk_sys) and tq_edge = '1') or
-                         (drv_ena = '0') or (bt_fsm'active);
+                         (drv_ena = '0') or (bt_fsm_i'active);
 
             i <= i + 1;
 
@@ -265,7 +265,7 @@ architecture func of prescaler_model is
             
             -- Finish if current bit segment is finished
             -- (e.g. due to another process)
-            if (bt_fsm'active) then
+            if (bt_fsm_i'active) then
                 exit;
             end if;
             
@@ -296,8 +296,8 @@ architecture func of prescaler_model is
                 
                 if (sync_control = RE_SYNC) then
                     -- Skip if Positive re-sync is not forbidden
-                    if (bt_fsm = tseg1 and data_tx = DOMINANT and
-                        OP_state = transciever)
+                    if (bt_fsm_i = s_bt_tseg1 and data_tx = DOMINANT and
+                        OP_state = s_oc_transmitter)
                     then
                         info("model: No pos resync for transmitter!");
                         wait for 0 ns;
@@ -318,7 +318,7 @@ architecture func of prescaler_model is
                     edge_occured.set(true);
     
                     -- Now we can truly re-synchronise!
-                    if (bt_fsm = tseg1) then
+                    if (bt_fsm_i = s_bt_tseg1) then
                         if (i > sjw) then
                             exp_duration <= exp_duration + sjw;
                         else
@@ -368,7 +368,7 @@ architecture func of prescaler_model is
             end if;
         end if;
         
-        if (bt_fsm'event) then
+        if (bt_fsm_i'event) then
             tq_ctr <= 0;
         end if;
 
@@ -386,7 +386,7 @@ architecture func of prescaler_model is
         signal brp      : in    integer
     ) is
     begin
-        if (bt_fsm'event and brp /= 1) then
+        if (bt_fsm_i'event and brp /= 1) then
             tq_edge <= '0';
         end if;
         
@@ -451,12 +451,12 @@ begin
     ---------------------------------------------------------------------------
     -- Time quanta counter Nominal
     ---------------------------------------------------------------------------
-    tq_nbt_edge_proc : process(clk_sys, bt_fsm, drv_ena, brp_nbt)
+    tq_nbt_edge_proc : process(clk_sys, bt_fsm_i, drv_ena, brp_nbt)
     begin
         set_tq_edge(tq_edge_nbt, tq_ctr_nbt, brp_nbt);
     end process;
     
-    tq_nbt_proc : process(clk_sys, bt_fsm, drv_ena, brp_nbt)
+    tq_nbt_proc : process(clk_sys, bt_fsm_i, drv_ena, brp_nbt)
     begin
         count_tq(tq_ctr_nbt, brp_nbt);
     end process;
@@ -465,12 +465,12 @@ begin
     ---------------------------------------------------------------------------
     -- Time quanta counter data
     ---------------------------------------------------------------------------
-    tq_dbt_edge_proc : process(clk_sys, bt_fsm, drv_ena, brp_dbt)
+    tq_dbt_edge_proc : process(clk_sys, bt_fsm_i, drv_ena, brp_dbt)
     begin
         set_tq_edge(tq_edge_dbt, tq_ctr_dbt, brp_dbt);
     end process;
 
-    tq_dbt_proc : process(clk_sys, bt_fsm, drv_ena, brp_dbt)
+    tq_dbt_proc : process(clk_sys, bt_fsm_i, drv_ena, brp_dbt)
     begin
         count_tq(tq_ctr_dbt, brp_dbt);
     end process;
@@ -491,7 +491,7 @@ begin
         
         if (drv_ena = '1') then
 
-            bt_fsm <= tseg1;
+            bt_fsm_i <= s_bt_tseg1;
            
             -- Execute segment 1 
             count_segment (
@@ -500,7 +500,7 @@ begin
                 sp_control => sp_control,
                 sync_edge => sync_edge,
                 sync_control => sync_control,
-                bt_fsm => bt_fsm,
+                bt_fsm_i => bt_fsm_i,
                 nom_dur => tseg1_s,
                 brp => brp_s,
                 sjw => sjw_s,
@@ -524,7 +524,7 @@ begin
                 h_sync_occured_tseg2_nbt.set(false);
                 h_sync_occured_tseg2_dbt.set(false);
 
-                bt_fsm <= tseg2;
+                bt_fsm_i <= s_bt_tseg2;
             
                 tseg2_nbt_req <= true;
                 tseg2_dbt_req <= true;
@@ -553,7 +553,7 @@ begin
         if (drv_ena /= '1') then
             tseg2_nbt_req <= false;
             tseg2_dbt_req <= false;
-            bt_fsm <= reset;
+            bt_fsm_i <= s_bt_reset;
             wait until drv_ena = '1';
         end if;
     end process;
@@ -575,7 +575,7 @@ begin
                 sp_control => sp_control,
                 sync_edge => sync_edge,
                 sync_control => sync_control,
-                bt_fsm => bt_fsm,
+                bt_fsm_i => bt_fsm_i,
                 nom_dur => tseg2_nbt,
                 brp => brp_nbt,
                 sjw => sjw_nbt,
@@ -617,7 +617,7 @@ begin
                 sp_control => sp_control,
                 sync_edge => sync_edge,
                 sync_control => sync_control,
-                bt_fsm => bt_fsm,
+                bt_fsm_i => bt_fsm_i,
                 nom_dur => tseg2_dbt,
                 brp => brp_dbt,
                 sjw => sjw_dbt,
@@ -643,6 +643,6 @@ begin
         end if;
     end process;
     
-    bt_FSM_out <= bt_fsm;
+    bt_fsm <= bt_fsm_i;
     
 end architecture;

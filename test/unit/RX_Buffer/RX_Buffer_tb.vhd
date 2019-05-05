@@ -642,7 +642,7 @@ begin
             wait for 5 ns;
         end if;
 
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 1, rand_ctr_3);
         end if;
 

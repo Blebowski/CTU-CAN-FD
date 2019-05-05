@@ -22,8 +22,6 @@ unit:
             wave: unit/Bus_Sampling/bsnc_unit.tcl
         crc:
             wave: unit/CRC/crct_unit.tcl
-        fault_confinement:
-            wave: unit/Fault_confinement/fault_conf_unit.tcl
         int_man:
             wave: unit/Int_Manager/intm_unit.tcl
         mess_filt:
@@ -48,7 +46,6 @@ feature:
         timeout: 100 ms
         wave: feature/feature_env_setup.tcl
     tests:
-        abort_transmittion:
         arbitration:
         fault_confinement:
         forbid_fd:

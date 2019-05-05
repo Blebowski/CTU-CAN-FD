@@ -67,15 +67,15 @@ architecture tx_buf_unit_test of CAN_test is
     -------------------------------
 
     -- Data and address for SW access into the RAM of TXT Buffer
-    signal tran_data              :     std_logic_vector(31 downto 0) :=
+    signal txtb_port_a_data              :     std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
-    signal tran_addr              :     std_logic_vector(4 downto 0) :=
+    signal txtb_port_a_address              :     std_logic_vector(4 downto 0) :=
                                             (OTHERS => '0');
-    signal tran_cs                :     std_logic := '0';
+    signal txtb_port_a_cs                :     std_logic := '0';
 
     -- SW commands from user registers
-    signal txt_sw_cmd             :     txt_sw_cmd_type := ('0','0','0');
-    signal txt_sw_buf_cmd_index   :     std_logic_vector(3 downto 0) :=
+    signal txtb_sw_cmd             :     t_txtb_sw_cmd := ('0','0','0');
+    signal txtb_sw_cmd_index       :     std_logic_vector(3 downto 0) :=
                                         (OTHERS => '1');
     ------------------
     --Status signals--
@@ -87,22 +87,22 @@ architecture tx_buf_unit_test of CAN_test is
     ------------------------------------
 
     -- Commands from the CAN Core for manipulation of the CAN
-    signal txt_hw_cmd             :     txt_hw_cmd_type :=
+    signal txtb_hw_cmd            :     t_txtb_hw_cmd :=
                                           ('0', '0', '0', '0', '0', '0');
 
-    signal txt_hw_cmd_int         :     std_logic;
-    signal txt_hw_cmd_buf_index   :     natural range 0 to 3 := 0;
+    signal txtb_hw_cmd_int         :     std_logic;
+    signal txtb_hw_cmd_index   :     natural range 0 to 3 := 0;
 
     -- Buffer output and pointer to the RAM memory
-    signal txt_word               :     std_logic_vector(31 downto 0);
-    signal txt_addr               :     natural range 0 to 19 := 0;
+    signal txtb_port_b_data               :     std_logic_vector(31 downto 0);
+    signal txtb_port_b_address               :     natural range 0 to 19 := 0;
 
     -- Signals to the TX Arbitrator that it can be selected for transmission
     -- (used as input to priority decoder)
-    signal txt_buf_ready          :     std_logic;
+    signal txtb_ready          :     std_logic;
 
     -- Signals that immediate transition to Bus-off state occurred!
-    signal bus_off_start          :     std_logic := '0';
+    signal is_bus_off          :     std_logic := '0';
 
     ------------------------------------
     -- Internal testbench signals
@@ -127,8 +127,8 @@ architecture tx_buf_unit_test of CAN_test is
     signal txtb_exp_state         :     std_logic_vector(3 downto 0);
 
     procedure calc_exp_state(
-        signal sw_cmd             : in  txt_sw_cmd_type;
-        signal hw_cmd             : in  txt_hw_cmd_type;
+        signal sw_cmd             : in  t_txtb_sw_cmd;
+        signal hw_cmd             : in  t_txtb_hw_cmd;
         signal act_state          : in  std_logic_vector(3 downto 0);
         signal exp_state          : out std_logic_vector(3 downto 0)
     ) is
@@ -211,25 +211,25 @@ begin
     ----------------------------------------------------------------------------
     txt_buffer_comp : txt_buffer
     generic map(
-        buf_count               => 4,
-        ID                      => 0
+        G_TXT_BUFFER_COUNT      => 4,
+        G_ID                    => 0
     )
     port map(
         clk_sys                 => clk_sys,
         res_n                   => res_n,
-        tran_data               => tran_data,
-        tran_addr               => tran_addr,
-        tran_cs                 => tran_cs,
-        txt_sw_cmd              => txt_sw_cmd,
-        txt_sw_buf_cmd_index    => txt_sw_buf_cmd_index,
+        txtb_port_a_data        => txtb_port_a_data,
+        txtb_port_a_address     => txtb_port_a_address,
+        txtb_port_a_cs          => txtb_port_a_cs,
+        txtb_sw_cmd             => txtb_sw_cmd,
+        txtb_sw_cmd_index       => txtb_sw_cmd_index,
         txtb_state              => txtb_state,
-        txt_hw_cmd              => txt_hw_cmd,
-        txt_hw_cmd_int          => txt_hw_cmd_int,
-        txt_hw_cmd_buf_index    => txt_hw_cmd_buf_index,
-        bus_off_start           => bus_off_start,
-        txt_word                => txt_word,
-        txt_addr                => txt_addr,
-        txt_buf_ready           => txt_buf_ready
+        txtb_hw_cmd             => txtb_hw_cmd,
+        txtb_hw_cmd_int         => txtb_hw_cmd_int,
+        txtb_hw_cmd_index       => txtb_hw_cmd_index,
+        is_bus_off              => is_bus_off,
+        txtb_port_b_data        => txtb_port_b_data,
+        txtb_port_b_address     => txtb_port_b_address,
+        txtb_ready              => txtb_ready
     );
 
 
@@ -246,8 +246,8 @@ begin
     data_gen_proc : process
         variable buf_fsm : std_logic_vector(3 downto 0);
     begin
-        tran_cs      <= '0';
-        while res_n = ACT_RESET loop
+        txtb_port_a_cs      <= '0';
+        while res_n = C_RESET_POLARITY loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 3, rand_gen_ctr);
         end loop;
@@ -255,16 +255,16 @@ begin
         -- Generate random address and data and attempt to store it
         -- to the buffer.
         wait until rising_edge(clk_sys);
-        rand_logic_vect_s(rand_gen_ctr, tran_data, 0.5);
-        rand_logic_vect_s(rand_gen_ctr, tran_addr, 0.5);
-        if (to_integer(unsigned(tran_addr)) > 19) then
-            tran_addr  <= "00000";
+        rand_logic_vect_s(rand_gen_ctr, txtb_port_a_data, 0.5);
+        rand_logic_vect_s(rand_gen_ctr, txtb_port_a_address, 0.5);
+        if (to_integer(unsigned(txtb_port_a_address)) > 19) then
+            txtb_port_a_address  <= "00000";
         end if;
-        tran_cs <=  '1';
+        txtb_port_a_cs <=  '1';
         wait for 0 ns;
 
         wait until rising_edge(clk_sys);
-        tran_cs <= '0';
+        txtb_port_a_cs <= '0';
         buf_fsm := txtb_state;
         wait until rising_edge(clk_sys);
         -- Data should be stored only if the buffer is accessible by user,
@@ -274,10 +274,10 @@ begin
             buf_fsm /= TXT_TRAN and
             buf_fsm /= TXT_ABTP)
         then
-            shadow_mem(to_integer(unsigned(tran_addr))) <= tran_data;
+            shadow_mem(to_integer(unsigned(txtb_port_a_address))) <= txtb_port_a_data;
         end if;
 
-        tran_cs <=  '0';
+        txtb_port_a_cs <=  '0';
         wait until rising_edge(clk_sys);
     end process;
 
@@ -288,7 +288,7 @@ begin
     data_read_proc : process
         variable tmp   : std_logic_vector(4 downto 0);
     begin
-        while res_n = ACT_RESET loop
+        while res_n = C_RESET_POLARITY loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 2, rand_read_ctr);
         end loop;
@@ -301,13 +301,13 @@ begin
             tmp    := "00000";
         end if;
 
-        txt_addr <= to_integer(unsigned(tmp));
+        txtb_port_b_address <= to_integer(unsigned(tmp));
 
-        wait until falling_edge(clk_sys) and tran_cs = '0';
+        wait until falling_edge(clk_sys) and txtb_port_a_cs = '0';
 
         -- At any point the data should be matching the data in
         -- the shadow buffer
-        check(txt_word = shadow_mem(txt_addr), "Data coherency error!");
+        check(txtb_port_b_data = shadow_mem(txtb_port_b_address), "Data coherency error!");
     end process;
 
 
@@ -318,7 +318,7 @@ begin
         variable tmp_real : real;
     begin
 
-        while res_n = ACT_RESET loop
+        while res_n = C_RESET_POLARITY loop
             wait until rising_edge(clk_sys);
             apply_rand_seed(seed, 1, rand_com_gen_ctr);
         end loop;
@@ -326,41 +326,41 @@ begin
         wait until falling_edge(clk_sys);
 
         -- Generate HW commands
-        rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.lock, 0.2);
-        rand_logic_s(rand_com_gen_ctr, txt_hw_cmd.unlock, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txtb_hw_cmd.lock, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txtb_hw_cmd.unlock, 0.2);
 
         if (txtb_state /= TXT_RDY) then
-            txt_hw_cmd.lock   <= '0';
+            txtb_hw_cmd.lock   <= '0';
         end if;
 
         if (txtb_state /= TXT_TRAN and txtb_state /= TXT_ABTP) then
-            txt_hw_cmd.unlock <= '0';
+            txtb_hw_cmd.unlock <= '0';
         end if;
         wait for 0 ns;
 
-        if (txt_hw_cmd.unlock = '1') then
+        if (txtb_hw_cmd.unlock = '1') then
             rand_real_v(rand_com_gen_ctr, tmp_real);
 
             if (tmp_real < 0.3) then
-                 txt_hw_cmd.valid  <= '1';
+                 txtb_hw_cmd.valid  <= '1';
             elsif (tmp_real < 0.6) then
-                 txt_hw_cmd.arbl   <= '1';
+                 txtb_hw_cmd.arbl   <= '1';
             elsif (tmp_real < 0.8) then
-                 txt_hw_cmd.err    <= '1';
+                 txtb_hw_cmd.err    <= '1';
             else
-                 txt_hw_cmd.failed <='1';
+                 txtb_hw_cmd.failed <='1';
             end if;
 
         end if;
 
         -- Generate SW commands
-        rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_rdy, 0.2);
-        rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_ety, 0.2);
-        rand_logic_s(rand_com_gen_ctr, txt_sw_cmd.set_abt, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txtb_sw_cmd.set_rdy, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txtb_sw_cmd.set_ety, 0.2);
+        rand_logic_s(rand_com_gen_ctr, txtb_sw_cmd.set_abt, 0.2);
         wait for 0 ns;
 
         -- Calculate the expected state
-        calc_exp_state(txt_sw_cmd, txt_hw_cmd, txtb_state, txtb_exp_state);
+        calc_exp_state(txtb_sw_cmd, txtb_hw_cmd, txtb_state, txtb_exp_state);
 
         wait until rising_edge(clk_sys);
         wait until falling_edge(clk_sys);
@@ -371,15 +371,15 @@ begin
                    to_hstring(txtb_exp_state));
 
         -- Set all the commands to be inactive
-        txt_hw_cmd.valid   <= '0';
-        txt_hw_cmd.err     <= '0';
-        txt_hw_cmd.arbl    <= '0';
-        txt_hw_cmd.failed  <= '0';
-        txt_hw_cmd.lock    <= '0';
-        txt_hw_cmd.unlock  <= '0';
-        txt_sw_cmd.set_rdy <= '0';
-        txt_sw_cmd.set_ety <= '0';
-        txt_sw_cmd.set_abt <= '0';
+        txtb_hw_cmd.valid   <= '0';
+        txtb_hw_cmd.err     <= '0';
+        txtb_hw_cmd.arbl    <= '0';
+        txtb_hw_cmd.failed  <= '0';
+        txtb_hw_cmd.lock    <= '0';
+        txtb_hw_cmd.unlock  <= '0';
+        txtb_sw_cmd.set_rdy <= '0';
+        txtb_sw_cmd.set_ety <= '0';
+        txtb_sw_cmd.set_abt <= '0';
 
     end process;
 

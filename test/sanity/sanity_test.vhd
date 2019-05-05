@@ -462,7 +462,6 @@ begin
         generic map(
              use_logger       => true,
              rx_buffer_size   => 64,
-             use_sync         => true,
              ID               => i,
              logger_size      => 16
         )

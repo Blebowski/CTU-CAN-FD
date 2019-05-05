@@ -207,7 +207,7 @@ begin
     begin
         wait until falling_edge(clk_sys) and tx_trig = '1' and res_n = '1';
 
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 2, rand_ctr_data_gen);
         end if;
 
@@ -229,7 +229,7 @@ begin
     begin
         wait until rising_edge(clk_sys);
 
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 1, rand_ctr_noise_gen);
         end if;
 

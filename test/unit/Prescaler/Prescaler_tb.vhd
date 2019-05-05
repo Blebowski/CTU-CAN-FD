@@ -68,7 +68,7 @@ architecture presc_unit_test of CAN_test is
     signal sync_edge            : std_logic := '0';
 
     -- Protocol control state
-    signal OP_State             : oper_mode_type := reciever;
+    signal OP_State             : t_operation_control_state := s_oc_receiver;
     signal drv_bus              : std_logic_vector(1023 downto 0) :=
                                     (OTHERS => '0');
 
@@ -79,11 +79,9 @@ architecture presc_unit_test of CAN_test is
     signal clk_tq_dbt           : std_logic := '0';
 
     -- Connections for sample and sync signals to DUT
-    signal sample_nbt_i         : std_logic_vector(2 downto 0);
-    signal sample_dbt_i         : std_logic_vector(2 downto 0);
-    signal sync_nbt_i           : std_logic_vector(1 downto 0);
-    signal sync_dbt_i           : std_logic_vector(1 downto 0);
-
+    signal rx_triggers          : std_logic_vector(1 downto 0);
+    signal tx_trigger           : std_logic;
+    
     -- Sample signal for nominal bit time
     signal sample_nbt           : std_logic := '0';
 
@@ -93,15 +91,10 @@ architecture presc_unit_test of CAN_test is
     -- Delayed signals
     signal sample_nbt_del_1     : std_logic := '0';
     signal sample_dbt_del_1     : std_logic := '0';
-    signal sample_nbt_del_2     : std_logic := '0';
-    signal sample_dbt_del_2     : std_logic := '0';
 
     signal sync_nbt             : std_logic := '0';
     signal sync_dbt             : std_logic := '0';
-    signal sync_nbt_del_1       : std_logic := '0';
-    signal sync_dbt_del_1       : std_logic := '0';
-    signal bt_FSM_out           : bit_time_type;
-    signal hard_sync_edge_valid : std_logic := '0';
+    signal bt_fsm               : t_bit_time;
     signal sp_control           : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
     signal sync_control         : std_logic_vector(1 downto 0) :=
@@ -170,8 +163,7 @@ architecture presc_unit_test of CAN_test is
     signal sample_dbt_mod     : std_logic_vector(2 downto 0);
     signal sync_nbt_mod       : std_logic_vector(1 downto 0);
     signal sync_dbt_mod       : std_logic_vector(1 downto 0);
-    signal bt_FSM_mod         : bit_time_type;
-    signal hard_sync_edge_valid_mod : std_logic; 
+    signal bt_FSM_mod         : t_bit_time;
 
     -- Check towards model outputs enabled
     signal mod_check_enabled  : boolean;
@@ -310,31 +302,23 @@ begin
         res_n                =>  res_n,
         sync_edge            =>  sync_edge,
         drv_bus              =>  drv_bus  ,
-        sample_nbt           =>  sample_nbt_i,
-        sample_dbt           =>  sample_dbt_i,
-        sync_nbt             =>  sync_nbt_i,
-        sync_dbt             =>  sync_dbt_i,
-        bt_FSM_out           =>  bt_FSM_out,
-        hard_sync_edge_valid =>  hard_sync_edge_valid,
+        rx_triggers          =>  rx_triggers,
+        tx_trigger           =>  tx_trigger,
+        bt_fsm               =>  bt_fsm,
         sp_control           =>  sp_control,
         sync_control         =>  sync_control,
         no_pos_resync        =>  no_pos_resync
     );
 
     -- Connect new vector signals to old signals for backwards compatibility
-    sample_nbt       <= sample_nbt_i(2);
-    sample_nbt_del_1 <= sample_nbt_i(1);
-    sample_nbt_del_2 <= sample_nbt_i(0);
+    sample_nbt       <= rx_triggers(1);
+    sample_nbt_del_1 <= rx_triggers(0);
     
-    sample_dbt       <= sample_dbt_i(2);
-    sample_dbt_del_1 <= sample_dbt_i(1);
-    sample_dbt_del_2 <= sample_dbt_i(0);
+    sample_dbt       <= rx_triggers(1);
+    sample_dbt_del_1 <= rx_triggers(0);
 
-    sync_nbt        <= sync_nbt_i(1);
-    sync_nbt_del_1  <= sync_nbt_i(0);
-
-    sync_dbt        <= sync_dbt_i(1);
-    sync_dbt_del_1  <= sync_dbt_i(0);
+    sync_nbt        <= tx_trigger;
+    sync_dbt        <= tx_trigger;
 
     drv_bus(DRV_TQ_NBT_HIGH downto DRV_TQ_NBT_LOW)    <= drv_tq_nbt;
     drv_bus(DRV_TQ_DBT_HIGH downto DRV_TQ_DBT_LOW)    <= drv_tq_dbt;
@@ -368,14 +352,10 @@ begin
     trig_signals.sample_dbt        <=  sample_dbt;
     trig_signals.sample_nbt_del_1  <=  sample_nbt_del_1;
     trig_signals.sample_dbt_del_1  <=  sample_dbt_del_1;
-    trig_signals.sample_nbt_del_2  <=  sample_nbt_del_2;
-    trig_signals.sample_dbt_del_2  <=  sample_dbt_del_2;
     trig_signals.sync_nbt          <=  sync_nbt;
     trig_signals.sync_dbt          <=  sync_dbt;
-    trig_signals.sync_nbt_del_1    <=  sync_nbt_del_1;
-    trig_signals.sync_dbt_del_1    <=  sync_dbt_del_1;
 
-    no_pos_resync <= '1' when (OP_State = transciever and data_tx = DOMINANT)
+    no_pos_resync <= '1' when (OP_State = s_oc_transmitter and data_tx = DOMINANT)
                          else
                      '0';
 
@@ -465,20 +445,6 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Checking that all sync signals in the sequence are generated every time!
-    ----------------------------------------------------------------------------
-    sync_seq_check_proc : process
-    begin
-        wait until rising_edge(sync_nbt) or rising_edge(sync_dbt);
-
-        wait for 15 ns; -- One and half clock cycle
-        if (sync_nbt_del_1 = '0' and sync_dbt_del_1 = '0') then
-            error("Sync sequnce not complete, delay 1 CLK signal missing!");
-        end if;
-    end process;
-
-
-    ----------------------------------------------------------------------------
     -- Checking that all sample signals in the sequence are generated every
     -- time!
     ----------------------------------------------------------------------------
@@ -492,10 +458,6 @@ begin
                error("Sample sequnce not complete, delay 1 CLK signal missing!");
             end if;
            
-        wait until rising_edge(clk_sys);
-            if (sample_nbt_del_2 = '0' and sample_dbt_del_2 = '0') then
-              error("Sample sequnce not complete, delay 2 CLK signal missing!");
-            end if;
     end process;
 
 
@@ -508,7 +470,7 @@ begin
         variable skip_sync          : boolean;
         variable rand_wait_time     : integer;
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 1, rand_ctr_sync_edge);
         end if;
 
@@ -531,7 +493,7 @@ begin
    
         if (sync_control = RE_SYNC) then
             info("This is RE-SYNCHRONISATION edge!");
-            if (bt_fsm_out = tseg1) then
+            if (bt_fsm = s_bt_tseg1) then
                 info("Positive resynchronisation");
             else
                 info("Negative Resynchronisation");
@@ -556,7 +518,7 @@ begin
         
         if (mod_check_enabled) then
             
-            if (bt_fsm_out /= bt_fsm_mod) then
+            if (bt_fsm /= bt_fsm_mod) then
                 wait for 50 ns;
                 error("Bit time FSM state mismatch");
             end if;
@@ -579,7 +541,7 @@ begin
         sync_edge               => sync_edge,
         OP_State                => OP_State,
         drv_bus                 => drv_bus,
-        bt_FSM_out              => bt_FSM_mod,
+        bt_fsm                  => bt_FSM_mod,
         data_tx                 => data_tx,
         sp_control              => sp_control,
         sync_control            => sync_control
@@ -656,7 +618,7 @@ begin
             info("model check - DISABLE");
             drv_ena <= '0';
             
-            wait until rising_edge(clk_sys) and (bt_FSM_out = reset and bt_fsm_mod = reset);
+            wait until rising_edge(clk_sys) and (bt_fsm = s_bt_reset and bt_fsm_mod = s_bt_reset);
             res_n <= '0';
             
             wait for 100 ns;
@@ -692,10 +654,10 @@ begin
                 info("Basic bit rate: NOMINAL");
             end if;
         
-            wait until bt_FSM_out = tseg2;
-            wait until bt_FSM_out = tseg1;
-            wait until bt_FSM_out = tseg2;
-            wait until bt_FSM_out = tseg1;
+            wait until bt_fsm = s_bt_tseg2;
+            wait until bt_fsm = s_bt_tseg1;
+            wait until bt_fsm = s_bt_tseg2;
+            wait until bt_fsm = s_bt_tseg1;
                     
             info("************************************************");
             
@@ -769,11 +731,11 @@ begin
             --------------------------------------------------------------------
             -- Check duration with Re-synchronisation turned ON
             --------------------------------------------------------------------
-            wait until bt_FSM_out = tseg1;
+            wait until bt_fsm = s_bt_tseg1;
             
             -- Switch to Re-synchronisation in sample point as Protocol Control
             -- would do!
-            wait until bt_FSM_out = tseg2;
+            wait until bt_fsm = s_bt_tseg2;
             wait until falling_edge(clk_sys);
             wait until falling_edge(clk_sys);
             wait until falling_edge(clk_sys);
@@ -785,8 +747,8 @@ begin
             
             -- Here just iterate 5 bits and rely on model to check the re-sync.
             for i in 0 to 4 loop
-                wait until bt_fsm_out = tseg1;
-                wait until bt_fsm_out = tseg2;
+                wait until bt_fsm = s_bt_tseg1;
+                wait until bt_fsm = s_bt_tseg2;
             end loop;
 
             info("************************************************");
@@ -798,13 +760,13 @@ begin
             mod_check_enabled <= false;
             sp_control        <= NOMINAL_SAMPLE;
             
-            wait until bt_FSM_out = tseg2;
-            wait until bt_FSM_out = tseg1;
+            wait until bt_fsm = s_bt_tseg2;
+            wait until bt_fsm = s_bt_tseg1;
             
             mod_check_enabled <= true;
             
             -- Move to sample point! 
-            wait until bt_FSM_out = tseg2;
+            wait until bt_fsm = s_bt_tseg2;
             
             -------------------------------------------------------------------
             -- Delay for 0 to 3 clock cycles. This accounts for possible
@@ -820,11 +782,11 @@ begin
             
             sp_control <= DATA_SAMPLE;
 
-            wait until bt_FSM_out = tseg1;
+            wait until bt_fsm = s_bt_tseg1;
             
             -- Wait for two more bits between (in case models would get lost)
-            wait until bt_FSM_out = tseg1;
-            wait until bt_FSM_out = tseg1;
+            wait until bt_fsm = s_bt_tseg1;
+            wait until bt_fsm = s_bt_tseg1;
 
             --------------------------------------------------------------------
             -- Emulate CRC delimiter bit (as if switching back to Nominal
@@ -835,7 +797,7 @@ begin
             info("Checking duration of CRC delimiter bit");
             info("************************************************");
 
-            wait until bt_FSM_out = tseg2;
+            wait until bt_fsm = s_bt_tseg2;
 
             -------------------------------------------------------------------
             -- Delay for 0 to 3 clock cycles. This accounts for possible
@@ -851,7 +813,7 @@ begin
             
             sp_control <= NOMINAL_SAMPLE;
             
-            wait until bt_FSM_out = tseg1;
+            wait until bt_fsm = s_bt_tseg1;
 
             --------------------------------------------------------------------
             -- Test Hard synchronisation!
@@ -864,27 +826,27 @@ begin
             mod_check_enabled <= false;
             sp_control        <= NOMINAL_SAMPLE;
             
-            wait until bt_FSM_out = tseg2;
-            wait until bt_FSM_out = tseg1;
+            wait until bt_fsm = s_bt_tseg2;
+            wait until bt_fsm = s_bt_tseg1;
             
             mod_check_enabled <= true;
             
             -- Move to sample point! 
-            wait until bt_FSM_out = tseg2;
+            wait until bt_fsm = s_bt_tseg2;
             
             sync_control <= HARD_SYNC;
             
             for i in 0 to 10 loop
-                wait until bt_FSM_out = tseg1;
-                wait until bt_FSM_out = tseg2;
+                wait until bt_fsm = s_bt_tseg1;
+                wait until bt_fsm = s_bt_tseg2;
             end loop;
             
-            wait until bt_fsm_out = tseg2;
+            wait until bt_fsm = s_bt_tseg2;
             sync_control <= NO_SYNC;
             
-            wait until bt_fsm_out = tseg1;
-            wait until bt_fsm_out = tseg2;
-            wait until bt_fsm_out = tseg1;
+            wait until bt_fsm = s_bt_tseg1;
+            wait until bt_fsm = s_bt_tseg2;
+            wait until bt_fsm = s_bt_tseg1;
             
             
             loop_ctr <= loop_ctr + 1;

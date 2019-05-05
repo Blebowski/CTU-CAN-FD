@@ -260,6 +260,21 @@ package CANtestLib is
 -- Use TRV_DELAY + fixed offset given by user
 -- Use only offset given by user
 
+    -- Protocol control Debug values
+    type SW_PC_Debug is (
+        pc_deb_arbitration,
+        pc_deb_control,
+        pc_deb_data,
+        pc_deb_stuff_count,
+        pc_deb_crc,
+        pc_deb_crc_delim,
+        pc_deb_ack,
+        pc_deb_ack_delim,
+        pc_deb_eof,
+        pc_deb_intermission,
+        pc_deb_suspend,
+        pc_deb_overload
+    );
 
     ----------------------------------------------------------------------------
     -- Message filter types
@@ -270,7 +285,6 @@ package CANtestLib is
         rec_ident_in            :   std_logic_vector(28 downto 0);
         ident_type              :   std_logic;
         frame_type              :   std_logic;
-        rec_ident_valid         :   std_logic;
     end record;
 
     -- Driving bus values on the input off message filter
@@ -343,20 +357,10 @@ package CANtestLib is
         sample_nbt_del_1        :   std_logic;
         sample_dbt_del_1        :   std_logic;
 
-        -- Sample signal delayed by two clock cycle (Nominal and Data)
-        -- (Used for Processing the data by Protocol control)
-        sample_nbt_del_2        :   std_logic;
-        sample_dbt_del_2        :   std_logic;
-
         -- Synchronisation signal
         -- (Used to transmitt data)
         sync_nbt                :   std_logic;
         sync_dbt                :   std_logic;
-
-        -- Synchronisation signal by one clock cycle (Nominal and Data)
-        -- (Used for Bit stuffing)
-        sync_nbt_del_1          :   std_logic;
-        sync_dbt_del_1          :   std_logic;
     end record;
 
 
@@ -1828,6 +1832,52 @@ package CANtestLib is
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
+
+    
+    ----------------------------------------------------------------------------
+    -- Read Debug register to obtain Protocol Control Debug Information.
+    --
+    -- Arguments:
+    --  pc_dbg          Output value.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_read_pc_debug(
+        variable pc_dbg         : out   SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+    
+    
+    ----------------------------------------------------------------------------
+    -- Poll on Debug register until Protocol control is in desired state.
+    --
+    -- Arguments:
+    --  pc_dbg          State to poll on.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+    
+    
+    ----------------------------------------------------------------------------
+    -- Poll on Debug register until Protocol control is NOT in desired state.
+    --
+    -- Arguments:
+    --  pc_dbg          State to poll on.
+    --  ID              Index of CTU CAN FD Core instance.
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_not_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    );
+    
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -3800,10 +3850,6 @@ package body CANtestLib is
             data(FDE_IND)       := '1';
         end if;
 
-        if (mode.rtr_pref) then
-            data(RTRP_IND)  := '1';
-        end if;
-
         if (mode.tripple_sampling) then
             data(TSM_IND)       := '1';
         end if;
@@ -3871,10 +3917,6 @@ package body CANtestLib is
             mode.flexible_data_rate     := true;
         end if;
 
-        if (data(RTRP_IND) = '1') then
-            mode.rtr_pref               := true;
-        end if;
-
         if (data(TSM_IND) = '1') then
             mode.tripple_sampling       := true;
         end if;
@@ -3923,10 +3965,6 @@ package body CANtestLib is
         variable data           :       std_logic_vector(31 downto 0);
     begin
         data := (OTHERS => '0');
-
-        if (command.abort_transmission) then
-            data(ABT_IND)        := '1';
-        end if;
 
         if (command.release_rec_buffer) then
             data(RRB_IND)        := '1';
@@ -4473,6 +4511,75 @@ package body CANtestLib is
 
         CAN_write(data, SSP_CFG_ADR, ID, mem_bus, BIT_16);
     end procedure;
+    
+    
+    procedure CAN_read_pc_debug(
+        variable pc_dbg         : out   SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    ) is
+        variable data           :       std_logic_vector(31 downto 0) :=
+                                            (OTHERS => '0');
+    begin
+        CAN_read(data, DEBUG_REGISTER_ADR, ID, mem_bus);
+    
+        if (data(PC_ARB_IND) = '1') then
+            pc_dbg := pc_deb_arbitration;
+        elsif (data(PC_CON_IND) = '1') then
+            pc_dbg := pc_deb_control;
+        elsif (data(PC_DAT_IND) = '1') then
+            pc_dbg := pc_deb_data;
+        elsif (data(PC_STC_IND) = '1') then
+            pc_dbg := pc_deb_stuff_count;
+        elsif (data(PC_CRC_IND) = '1') then
+            pc_dbg := pc_deb_crc;
+        elsif (data(PC_CRCD_IND) = '1') then
+            pc_dbg := pc_deb_crc_delim;
+        elsif (data(PC_ACK_IND) = '1') then
+            pc_dbg := pc_deb_ack;
+        elsif (data(PC_ACKD_IND) = '1') then
+            pc_dbg := pc_deb_ack_delim;
+        elsif (data(PC_EOF_IND) = '1') then
+            pc_dbg := pc_deb_eof;
+        elsif (data(PC_INT_IND) = '1') then
+            pc_dbg := pc_deb_intermission;
+        elsif (data(PC_SUSP_IND) = '1') then
+            pc_dbg := pc_deb_suspend;
+        elsif (data(PC_OVR_IND) = '1') then
+            pc_dbg := pc_deb_overload;
+        end if;
+    end procedure;
+
+
+    procedure CAN_wait_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable read_state     :       SW_PC_Debug;
+    begin
+        CAN_read_pc_debug(read_state, ID, mem_bus);
+        while (read_state /= pc_state) loop
+            wait until rising_edge(mem_bus.clk_sys);
+            CAN_read_pc_debug(read_state, ID, mem_bus);
+        end loop;
+    end procedure;
+    
+    
+    procedure CAN_wait_not_pc_state(
+        constant pc_state       : in    SW_PC_Debug;   
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type
+    )is
+        variable read_state     :       SW_PC_Debug;
+    begin
+        CAN_read_pc_debug(read_state, ID, mem_bus);
+        while (read_state = pc_state) loop
+            wait until rising_edge(mem_bus.clk_sys);
+            CAN_read_pc_debug(read_state, ID, mem_bus);
+        end loop;    
+    end procedure;
+    
 
 end package body;
 

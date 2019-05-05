@@ -113,20 +113,35 @@ entity protocol_control is
         -- Data field is being transmitted
         is_data                 :out  std_logic;
 
+        -- Stuff Count field is being transmitted
+        is_stuff_count          :out  std_logic;
+
         -- CRC field is being transmitted
         is_crc                  :out  std_logic;
         
+        -- CRC Delimiter is being transmitted
+        is_crc_delim            :out  std_logic;
+        
+        -- ACK field is being transmitted
+        is_ack_field            :out  std_logic;
+        
+        -- ACK Delimiter is being transmitted
+        is_ack_delim            :out  std_logic;
+        
         -- End of Frame field is being transmitted
         is_eof                  :out  std_logic;
+        
+        -- Intermission is being transmitted
+        is_intermission         :out  std_logic;
+        
+        -- Suspend transmission is being transmitted
+        is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
         is_error                :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
-        
-        -- Interframe space is being transmitted
-        is_interframe           :out  std_logic;
         
         -----------------------------------------------------------------------
         -- TXT Buffers interface
@@ -607,11 +622,16 @@ begin
         drv_int_loopback_ena    => drv_int_loopback_ena,-- IN
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
+        is_stuff_count          => is_stuff_count,      -- OUT
         is_crc                  => is_crc,              -- OUT
+        is_crc_delim            => is_crc_delim,        -- OUT
+        is_ack_field            => is_ack_field,        -- OUT
+        is_ack_delim            => is_ack_delim,        -- OUT
         is_eof                  => is_eof,              -- OUT
+        is_intermission         => is_intermission,     -- OUT
+        is_suspend              => is_suspend,          -- OUT
         is_error                => is_error,            -- OUT
         is_overload             => is_overload,         -- OUT
-        is_interframe           => is_interframe,       -- OUT
 
         -- Data-path interface
         tx_data                 => tx_data_nbs_i,       -- IN

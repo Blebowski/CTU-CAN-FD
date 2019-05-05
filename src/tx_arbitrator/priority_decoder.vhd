@@ -80,7 +80,7 @@ entity priority_decoder is
         -- TXT Buffer information
         ------------------------------------------------------------------------
         -- TXT Buffer priority
-        prio             : in  txtb_priorities_type;
+        prio             : in  t_txt_bufs_priorities;
         
         -- TXT Buffer is valid for selection
         prio_valid       : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);

@@ -51,6 +51,7 @@ Library ieee;
 use ieee.std_logic_1164.all;
 
 use work.can_constants.all;
+use work.can_config.all;
 
 package can_types is
 
@@ -162,15 +163,15 @@ package can_types is
     ----------------------------------------------------------------------------
 
     -- Priorities of TXT Buffers
-    type t_txt_bufs_priorities is array (0 to TXT_BUFFER_COUNT - 1) of
+    type t_txt_bufs_priorities is array (0 to C_TXT_BUFFER_COUNT - 1) of
         std_logic_vector(2 downto 0);
 
     -- Memory outputs of TXT Buffers
-    type t_txt_bufs_output is array (0 to TXT_BUFFER_COUNT - 1) of
+    type t_txt_bufs_output is array (0 to C_TXT_BUFFER_COUNT - 1) of
         std_logic_vector(31 downto 0);
 
     -- States of Buffers
-    type t_txt_bufs_state is array (0 to TXT_BUFFER_COUNT - 1) of
+    type t_txt_bufs_state is array (0 to C_TXT_BUFFER_COUNT - 1) of
         std_logic_vector(3 downto 0);
 
     -- SW commands

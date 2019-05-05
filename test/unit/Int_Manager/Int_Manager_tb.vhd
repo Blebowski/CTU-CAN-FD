@@ -68,7 +68,7 @@ architecture int_man_unit_test of CAN_test is
     ----------------------------------------------
 
     -- Valid Error appeared for interrupt
-    signal error_valid            :   std_logic := '0';
+    signal err_detected            :   std_logic := '0';
 
     -- Error pasive /Error acitve functionality changed
     signal error_passive_changed  :   std_logic := '0';
@@ -80,16 +80,16 @@ architecture int_man_unit_test of CAN_test is
     signal arbitration_lost       :   std_logic := '0';
 
     -- Message stored in CAN Core was sucessfully transmitted
-    signal tx_finished            :   std_logic := '0';
+    signal tran_valid            :   std_logic := '0';
 
     -- Bit Rate Was Shifted
     signal br_shifted             :   std_logic := '0';
 
     -- Income message was discarded
-    signal rx_message_disc        :   std_logic := '0';
+    signal rx_data_overrun        :   std_logic := '0';
 
     -- Message recieved!
-    signal rec_message_valid      :   std_logic := '0';
+    signal rec_valid      :   std_logic := '0';
 
     -- RX Buffer full
     signal rx_full                :   std_logic := '0';
@@ -101,17 +101,16 @@ architecture int_man_unit_test of CAN_test is
     signal rx_empty               :   std_logic := '1';
 
     -- HW command on TX Buffer
-    signal txt_hw_cmd_int         :   std_logic_vector(TXT_BUFFER_COUNT - 1
-                                                        downto 0);
+    signal txtb_hw_cmd_int   :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
 
     ----------------------------------------------
     -- Status signals
     ----------------------------------------------
-    signal int_ena                :   std_logic_vector(int_count - 1 downto 0);
-    signal int_vector             :   std_logic_vector(int_count - 1 downto 0);
-    signal int_mask               :   std_logic_vector(int_count - 1 downto 0);
+    signal int_ena                :   std_logic_vector(C_INT_COUNT - 1 downto 0);
+    signal int_vector             :   std_logic_vector(C_INT_COUNT - 1 downto 0);
+    signal int_mask               :   std_logic_vector(C_INT_COUNT - 1 downto 0);
 
-    signal int_out                :   std_logic;
+    signal int                :   std_logic;
 
     ----------------------------------------------
     -- Internal testbench signals
@@ -123,30 +122,28 @@ architecture int_man_unit_test of CAN_test is
 
     signal error_ctr_2            :   natural;
 
-    constant int_count            :   natural := 12;
-
     -- Driving signals from memory registers!
-    signal drv_int_clear          :   std_logic_vector(int_count - 1 downto 0)
+    signal drv_int_clear          :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
-    signal drv_int_ena_set        :   std_logic_vector(int_count - 1 downto 0)
+    signal drv_int_ena_set        :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
-    signal drv_int_ena_clear      :   std_logic_vector(int_count - 1 downto 0)
+    signal drv_int_ena_clear      :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
-    signal drv_int_mask_set       :   std_logic_vector(int_count - 1 downto 0)
+    signal drv_int_mask_set       :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
-    signal drv_int_mask_clear     :   std_logic_vector(int_count - 1 downto 0)
+    signal drv_int_mask_clear     :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
 
     -- Expected status, mask and enable (similar as in DUT)
-    signal int_ena_exp            :   std_logic_vector(int_count - 1 downto 0)
+    signal int_ena_exp            :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
-    signal int_status_exp         :   std_logic_vector(int_count - 1 downto 0)
+    signal int_status_exp         :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
-    signal int_mask_exp           :   std_logic_vector(int_count - 1 downto 0)
+    signal int_mask_exp           :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
 
     -- Joined input vector
-    signal int_input              :   std_logic_vector(int_count - 1 downto 0)
+    signal int_input              :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
 
 
@@ -157,7 +154,7 @@ architecture int_man_unit_test of CAN_test is
         signal rand_ctr               :inout   natural range 0 to RAND_POOL_SIZE;
 
         -- Valid Error appeared for interrupt
-        signal error_valid            :inout   std_logic;
+        signal err_detected            :inout   std_logic;
 
         -- Error pasive /Error acitve functionality changed
         signal error_passive_changed  :inout   std_logic;
@@ -169,16 +166,16 @@ architecture int_man_unit_test of CAN_test is
         signal arbitration_lost       :inout   std_logic;
 
         -- Message stored in CAN Core was sucessfully transmitted
-        signal tx_finished            :inout   std_logic;
+        signal tran_valid            :inout   std_logic;
 
         -- Bit Rate Was Shifted
         signal br_shifted             :inout   std_logic;
 
         -- Income message was discarded
-        signal rx_message_disc        :inout   std_logic;
+        signal rx_data_overrun        :inout   std_logic;
 
         -- Message recieved!
-        signal rec_message_valid      :inout   std_logic;
+        signal rec_valid      :inout   std_logic;
 
         -- RX Buffer full
         signal rx_full                :inout   std_logic;
@@ -190,15 +187,15 @@ architecture int_man_unit_test of CAN_test is
         signal rx_empty               :inout   std_logic;
 
         -- TXT HW Command
-        signal txt_hw_cmd_int         :inout   std_logic_vector(TXT_BUFFER_COUNT - 1
+        signal txtb_hw_cmd_int         :inout   std_logic_vector(C_TXT_BUFFER_COUNT - 1
                                                                 downto 0)
     )is
         variable tmp                  :        std_logic;
     begin
-        if (error_valid = '1') then
-            rand_logic_s(rand_ctr, error_valid, 0.85);
+        if (err_detected = '1') then
+            rand_logic_s(rand_ctr, err_detected, 0.85);
         else
-            rand_logic_s(rand_ctr, error_valid, 0.1);
+            rand_logic_s(rand_ctr, err_detected, 0.1);
         end if;
 
         if (error_passive_changed = '1') then
@@ -219,10 +216,10 @@ architecture int_man_unit_test of CAN_test is
             rand_logic_s(rand_ctr, arbitration_lost, 0.05);
         end if;
 
-        if (tx_finished = '1') then
-            rand_logic_s(rand_ctr, tx_finished, 0.95);
+        if (tran_valid = '1') then
+            rand_logic_s(rand_ctr, tran_valid, 0.95);
         else
-            rand_logic_s(rand_ctr, tx_finished, 0.05);
+            rand_logic_s(rand_ctr, tran_valid, 0.05);
         end if;
 
         if (br_shifted = '1') then
@@ -231,16 +228,16 @@ architecture int_man_unit_test of CAN_test is
             rand_logic_s(rand_ctr, br_shifted, 0.05);
         end if;
 
-        if (rx_message_disc = '1') then
-            rand_logic_s(rand_ctr, rx_message_disc, 0.95);
+        if (rx_data_overrun = '1') then
+            rand_logic_s(rand_ctr, rx_data_overrun, 0.95);
         else
-            rand_logic_s(rand_ctr, rx_message_disc, 0.05);
+            rand_logic_s(rand_ctr, rx_data_overrun, 0.05);
         end if;
 
-        if (rec_message_valid = '1') then
-            rand_logic_s(rand_ctr, rec_message_valid, 0.95);
+        if (rec_valid = '1') then
+            rand_logic_s(rand_ctr, rec_valid, 0.95);
         else
-            rand_logic_s(rand_ctr, rec_message_valid, 0.05);
+            rand_logic_s(rand_ctr, rec_valid, 0.05);
         end if;
 
         if (rx_full = '1') then
@@ -261,13 +258,13 @@ architecture int_man_unit_test of CAN_test is
             rand_logic_s(rand_ctr, rx_empty, 0.05);
         end if;
 
-        for i in 0 to TXT_BUFFER_COUNT - 1 loop
-            if (txt_hw_cmd_int(i) = '1') then
+        for i in 0 to C_TXT_BUFFER_COUNT - 1 loop
+            if (txtb_hw_cmd_int(i) = '1') then
                 rand_logic_v(rand_ctr, tmp, 0.95);
             else
                 rand_logic_v(rand_ctr, tmp, 0.05);
             end if;
-            txt_hw_cmd_int(i) <= tmp;
+            txtb_hw_cmd_int(i) <= tmp;
         end loop;
 
     end procedure;
@@ -278,11 +275,11 @@ architecture int_man_unit_test of CAN_test is
     -- registers!
     ----------------------------------------------------------------------------
     procedure generate_commands(
-        signal drv_int_clear       :out std_logic_vector(int_count - 1 downto 0);
-        signal drv_int_ena_set     :out std_logic_vector(int_count - 1 downto 0);
-        signal drv_int_ena_clear   :out std_logic_vector(int_count - 1 downto 0);
-        signal drv_int_mask_set    :out std_logic_vector(int_count - 1 downto 0);
-        signal drv_int_mask_clear  :out std_logic_vector(int_count - 1 downto 0);
+        signal drv_int_clear       :out std_logic_vector(C_INT_COUNT - 1 downto 0);
+        signal drv_int_ena_set     :out std_logic_vector(C_INT_COUNT - 1 downto 0);
+        signal drv_int_ena_clear   :out std_logic_vector(C_INT_COUNT - 1 downto 0);
+        signal drv_int_mask_set    :out std_logic_vector(C_INT_COUNT - 1 downto 0);
+        signal drv_int_mask_clear  :out std_logic_vector(C_INT_COUNT - 1 downto 0);
         signal rand_ctr            :inout natural range 0 to RAND_POOL_SIZE
     ) is
         variable tmp             : real;
@@ -325,43 +322,43 @@ begin
     ----------------------------------------------------------------------------
     int_manager_comp : int_manager
     GENERIC map(
-        int_count             => int_count
+        G_INT_COUNT           => C_INT_COUNT
     )
     PORT map(
         clk_sys               =>   clk_sys,
         res_n                 =>   res_n,
-        error_valid           =>   error_valid,
+        err_detected           =>   err_detected,
         error_passive_changed =>   error_passive_changed,
         error_warning_limit   =>   error_warning_limit,
         arbitration_lost      =>   arbitration_lost,
-        tx_finished           =>   tx_finished ,
+        tran_valid           =>   tran_valid ,
         br_shifted            =>   br_shifted,
         rx_empty              =>   rx_empty,
-        txt_hw_cmd_int        =>   txt_hw_cmd_int,
-        rx_message_disc       =>   rx_message_disc ,
-        rec_message_valid     =>   rec_message_valid ,
+        txtb_hw_cmd_int        =>   txtb_hw_cmd_int,
+        rx_data_overrun       =>   rx_data_overrun ,
+        rec_valid     =>   rec_valid ,
         rx_full               =>   rx_full,
         loger_finished        =>   loger_finished,
         drv_bus               =>   drv_bus ,
-        int_out               =>   int_out,
+        int               =>   int,
         int_vector            =>   int_vector,
         int_mask              =>   int_mask,
         int_ena               =>   int_ena
     );
 
     -- Joining interrupt inputs to interrupt status
-    int_input(BEI_IND)            <=  error_valid;
+    int_input(BEI_IND)            <=  err_detected;
     int_input(ALI_IND)            <=  arbitration_lost;
     int_input(EPI_IND)            <=  error_passive_changed;
-    int_input(DOI_IND)            <=  rx_message_disc;
+    int_input(DOI_IND)            <=  rx_data_overrun;
     int_input(EWLI_IND)           <=  error_warning_limit;
-    int_input(TXI_IND)            <=  tx_finished;
-    int_input(RXI_IND)            <=  rec_message_valid;
+    int_input(TXI_IND)            <=  tran_valid;
+    int_input(RXI_IND)            <=  rec_valid;
     int_input(LFI_IND)            <=  loger_finished;
     int_input(RXFI_IND)           <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
-    int_input(TXBHCI_IND)         <=  or_reduce(txt_hw_cmd_int);
+    int_input(TXBHCI_IND)         <=  or_reduce(txtb_hw_cmd_int);
 
 
     ----------------------------------------------------------------------------
@@ -377,16 +374,16 @@ begin
     src_gen : process
     begin
         wait for 195 ns;
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 1, rand_ctr_1);
         end if;
 
         while true loop
             wait until falling_edge(clk_sys);
-            generate_sources(rand_ctr_1, error_valid, error_passive_changed ,
-                           error_warning_limit , arbitration_lost, tx_finished,
-                           br_shifted, rx_message_disc , rec_message_valid ,
-                           rx_full , loger_finished, rx_empty, txt_hw_cmd_int);
+            generate_sources(rand_ctr_1, err_detected, error_passive_changed ,
+                           error_warning_limit , arbitration_lost, tran_valid,
+                           br_shifted, rx_data_overrun , rec_valid ,
+                           rx_full , loger_finished, rx_empty, txtb_hw_cmd_int);
         end loop;
     end process;
 
@@ -417,7 +414,7 @@ begin
         variable int_output     : boolean;
         variable outcome        : boolean;
         variable exp_output     : boolean;
-        constant zeroes         : std_logic_vector(int_count - 1 downto 0) :=
+        constant zeroes         : std_logic_vector(C_INT_COUNT - 1 downto 0) :=
                                       (OTHERS => '0');
     begin
 
@@ -429,7 +426,7 @@ begin
 
         outcome := true;
 
-        for i in 0 to int_count - 1 loop
+        for i in 0 to C_INT_COUNT - 1 loop
 
             -- Interrupt enable
             if (drv_int_ena_set(i) = '1') then
@@ -477,9 +474,9 @@ begin
         check(int_mask = int_mask_exp, "Interrupt mask mismatch");
         check(int_vector = int_status_exp, "Interrupt vector mismatch");
         
-        if (int_out = '0') then
+        if (int = '0') then
             int_output := false;
-        elsif (int_out = '1') then
+        elsif (int = '1') then
             int_output := true;
         else
             error("Interrupt value undefined!");

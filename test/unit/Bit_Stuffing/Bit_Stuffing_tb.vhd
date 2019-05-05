@@ -699,7 +699,7 @@ begin
         variable tmp        : real := 0.0;
     begin
 
-        while (res_n = ACT_RESET) loop
+        while (res_n = C_RESET_POLARITY) loop
             wait until rising_edge(clk_sys);
         end loop;
 

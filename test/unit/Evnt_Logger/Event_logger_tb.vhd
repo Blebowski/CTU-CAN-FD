@@ -369,7 +369,7 @@ begin
     begin
         wait until rising_edge(clk_sys);
 
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 1, rand_ctr_2);
         end if;
 
@@ -432,7 +432,7 @@ begin
     ----------------------------------------------------------------------------
     ev_edge_proc : process(clk_sys, res_n)
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             evnt_inputs_reg <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             evnt_inputs_reg <= evnt_inputs;
@@ -454,7 +454,7 @@ begin
     ev_logger_model_proc : process
         variable log_ptr           : natural := 0;
     begin
-        while (res_n = ACT_RESET) loop
+        while (res_n = C_RESET_POLARITY) loop
             wait until rising_edge(clk_sys);
         end loop;
 

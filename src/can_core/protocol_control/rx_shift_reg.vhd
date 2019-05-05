@@ -102,7 +102,7 @@ entity rx_shift_reg is
         rx_clear                :in  std_logic;
 
         -- Clock Enable RX Shift register for each byte.
-        rx_shift_ena            :in  std_logic(3 downto 0);
+        rx_shift_ena            :in  std_logic_vector(3 downto 0);
 
         -- Selector for inputs of each byte of shift register
         -- (0-Previous byte output, 1- RX Data input)
@@ -186,7 +186,7 @@ architecture rtl of rx_shift_reg is
     signal rx_shift_reg   : std_logic_vector(31 downto 0);
 
     -- RX Shift register shift
-    signal rx_shift_cmd   : std_logic; 
+    signal rx_shift_cmd   : std_logic_vector(3 downto 0);
 
 begin
 
@@ -201,8 +201,11 @@ begin
     -- Protocol control keeps the register disabled when e.g Bus is idle
     -- to save power!
     ---------------------------------------------------------------------------
-    rx_shift_cmd <= '1' when (rx_trigger = '1' and rx_shift_ena = '1') else
-                    '0';
+    rx_shift_cmd_gen : for i in 0 to 3 generate
+        rx_shift_cmd(i) <= '1' when (rx_trigger = '1' and rx_shift_ena(i) = '1')
+                               else
+                           '0';
+    end generate rx_shift_cmd_gen;
 
     ---------------------------------------------------------------------------
     -- D input of received DLC is needed by Protocol control FSM in the last
@@ -224,7 +227,7 @@ begin
         clk                  => clk_sys,
         res_n                => res_n_internal,
         input                => rx_data,
-        byte_clock_ena       => rx_shift_ena,
+        byte_clock_ena       => rx_shift_cmd,
         byte_input_sel       => rx_shift_in_sel,
         reg_stat             => rx_shift_reg
     );

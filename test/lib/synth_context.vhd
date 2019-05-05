@@ -64,8 +64,8 @@ context ctu_can_synth_context is
     use lib.can_types.all;
     use lib.cmn_lib.all;
     use lib.drv_stat_pkg.all;
-    use lib.endian_swap.all;
     use lib.reduce_lib.all;
+    use lib.can_config.all;
     
     use lib.CAN_FD_register_map.all;
     use lib.CAN_FD_frame_format.all;

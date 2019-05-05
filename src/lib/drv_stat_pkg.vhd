@@ -434,13 +434,18 @@ package drv_stat_pkg is
     constant STAT_TS_HIGH : natural := 369;
     constant STAT_TS_LOW  : natural := 306;
     
-    constant STAT_PC_IS_ARBITRATION_INDEX : natural := 370;
-    constant STAT_PC_IS_CONTROL_INDEX : natural := 371;
-    constant STAT_PC_IS_DATA_INDEX : natural := 372;
-    constant STAT_PC_IS_CRC_INDEX : natural := 373;
-    constant STAT_PC_IS_EOF_INDEX : natural := 374;
-    constant STAT_PC_IS_INTERFRAME_INDEX : natural := 375;
-    constant STAT_PC_IS_ERROR_INDEX : natural := 376;
-    constant STAT_PC_IS_OVERLOAD_INDEX : natural := 377;
+    constant STAT_PC_IS_ARBITRATION_INDEX   : natural := 370;
+    constant STAT_PC_IS_CONTROL_INDEX       : natural := 371;
+    constant STAT_PC_IS_DATA_INDEX          : natural := 372;
+    constant STAT_PC_IS_STUFF_COUNT_INDEX   : natural := 373;
+    constant STAT_PC_IS_CRC_INDEX           : natural := 374;
+    constant STAT_PC_IS_CRC_DELIM_INDEX     : natural := 375;
+    constant STAT_PC_IS_ACK_FIELD_INDEX     : natural := 376;
+    constant STAT_PC_IS_ACK_DELIM_INDEX     : natural := 377;
+    constant STAT_PC_IS_EOF_INDEX           : natural := 378;
+    constant STAT_PC_IS_INTERMISSION_INDEX  : natural := 379;
+    constant STAT_PC_IS_SUSPEND_INDEX       : natural := 380;
+    constant STAT_PC_IS_ERROR_INDEX         : natural := 381;
+    constant STAT_PC_IS_OVERLOAD_INDEX      : natural := 382;
 
 end package;

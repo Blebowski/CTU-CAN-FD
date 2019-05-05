@@ -1320,27 +1320,44 @@ package can_components is
         -- Retransmition limit enabled for errornous frames
         drv_retr_lim_ena        :in   std_logic;
         
+        -- Arbitration field is being transmitted
+        is_arbitration          :out  std_logic;
+        
         -- Control field is being transmitted
         is_control              :out  std_logic;
 
         -- Data field is being transmitted
         is_data                 :out  std_logic;
 
+        -- Stuff Count field is being transmitted
+        is_stuff_count          :out  std_logic;
+
         -- CRC field is being transmitted
         is_crc                  :out  std_logic;
         
+        -- CRC Delimiter is being transmitted
+        is_crc_delim            :out  std_logic;
+        
+        -- ACK field is being transmitted
+        is_ack_field            :out  std_logic;
+        
+        -- ACK Delimiter is being transmitted
+        is_ack_delim            :out  std_logic;
+        
         -- End of Frame field is being transmitted
         is_eof                  :out  std_logic;
+        
+        -- Intermission is being transmitted
+        is_intermission         :out  std_logic;
+        
+        -- Suspend transmission is being transmitted
+        is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
         is_error                :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
-        
-        -- Interframe space is being transmitted
-        is_interframe           :out  std_logic;
-
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
@@ -1453,7 +1470,7 @@ package can_components is
         rx_store_stuff_count    :out  std_logic;
         
         -- Clock Enable RX Shift register for each byte.
-        rx_shift_ena            :out  std_logic(3 downto 0);
+        rx_shift_ena            :out  std_logic_vector(3 downto 0);
         
         -- Selector for inputs of each byte of shift register
         -- (0-Previous byte output, 1- RX Data input)
@@ -1551,9 +1568,6 @@ package can_components is
         
         -- Error position field (for Error capture)
         err_pos                 :out   std_logic_vector(4 downto 0);
-        
-        -- Arbitration field is being transmitted / received
-        is_arbitration          :out   std_logic;
         
         -----------------------------------------------------------------------
         -- Bit Stuffing/Destuffing control signals
@@ -1699,7 +1713,7 @@ package can_components is
         -- Error code capture
         erc_capture             :out  std_logic_vector(7 downto 0);
         
-        -- Arbitration field is being transmitted
+                -- Arbitration field is being transmitted
         is_arbitration          :out  std_logic;
         
         -- Control field is being transmitted
@@ -1708,21 +1722,36 @@ package can_components is
         -- Data field is being transmitted
         is_data                 :out  std_logic;
 
+        -- Stuff Count field is being transmitted
+        is_stuff_count          :out  std_logic;
+
         -- CRC field is being transmitted
         is_crc                  :out  std_logic;
         
+        -- CRC Delimiter is being transmitted
+        is_crc_delim            :out  std_logic;
+        
+        -- ACK field is being transmitted
+        is_ack_field            :out  std_logic;
+        
+        -- ACK Delimiter is being transmitted
+        is_ack_delim            :out  std_logic;
+        
         -- End of Frame field is being transmitted
         is_eof                  :out  std_logic;
+        
+        -- Intermission is being transmitted
+        is_intermission         :out  std_logic;
+        
+        -- Suspend transmission is being transmitted
+        is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
         is_error                :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
-        
-        -- Interframe space is being transmitted
-        is_interframe           :out  std_logic;
-        
+                
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
@@ -2082,7 +2111,7 @@ package can_components is
         rx_clear                :in  std_logic;
 
         -- Clock Enable RX Shift register for each byte.
-        rx_shift_ena            :in  std_logic(3 downto 0);
+        rx_shift_ena            :in  std_logic_vector(3 downto 0);
 
         -- Selector for inputs of each byte of shift register
         -- (0-Previous byte output, 1- RX Data input)
@@ -2745,7 +2774,7 @@ package can_components is
         G_VERSION_MINOR     : std_logic_vector(7 downto 0)    := x"01";
 
         -- MAJOR Design version
-        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02";
+        G_VERSION_MAJOR     : std_logic_vector(7 downto 0)    := x"02"
     );
     port(
         ------------------------------------------------------------------------
@@ -2842,7 +2871,7 @@ package can_components is
         txtb_state           :in   t_txt_bufs_state;
 
         -- SW Commands to TXT Buffer
-        txtb_sw_cmd          :out  t_txt_sw_cmd;
+        txtb_sw_cmd          :out  t_txtb_sw_cmd;
         
         -- SW Command Index (Index in logic 1 means command is valid for TXT Buffer)          
         txtb_sw_cmd_index    :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -3644,7 +3673,7 @@ package can_components is
         -- TXT Buffer information
         ------------------------------------------------------------------------
         -- TXT Buffer priority
-        prio             : in  txtb_priorities_type;
+        prio             : in  t_txt_bufs_priorities;
         
         -- TXT Buffer is valid for selection
         prio_valid       : in  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -3697,7 +3726,7 @@ package can_components is
         -- CAN Core Interface
         -----------------------------------------------------------------------
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
-        txt_hw_cmd             :in txt_hw_cmd_type;  
+        txt_hw_cmd             :in t_txtb_hw_cmd;  
         
         ---------------------------------------------------------------------------
         -- TX Arbitrator FSM outputs
@@ -3806,7 +3835,7 @@ package can_components is
         drv_bus                 :in std_logic_vector(1023 downto 0);
 
         -- Priorities of TXT Buffers
-        txtb_prorities          :in t_txtb_priorities;
+        txtb_prorities          :in t_txt_bufs_priorities;
     
         -- TimeStamp value
         timestamp               :in std_logic_vector(63 downto 0)
@@ -3876,7 +3905,7 @@ package can_components is
         G_RESET_POLARITY       :     std_logic := '0';
         
         -- Number of TXT Buffers
-        G_TXT_BUF_COUNT        :     natural range 1 to 8;
+        G_TXT_BUFFER_COUNT     :     natural range 1 to 8;
         
         -- TXT Buffer ID
         G_ID                   :     natural := 1
@@ -3904,10 +3933,10 @@ package can_components is
         txtb_port_a_cs         :in   std_logic;
 
         -- SW commands
-        txtb_sw_cmd            :in   t_txt_sw_cmd;
+        txtb_sw_cmd            :in   t_txtb_sw_cmd;
         
         -- TXT Buffer index for which SW command is valid
-        txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+        txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- Buffer State (encoded for Memory registers)
         txtb_state             :out  std_logic_vector(3 downto 0);
@@ -3925,7 +3954,7 @@ package can_components is
         txtb_hw_cmd            :in   t_txtb_hw_cmd;
         
         -- Index of TXT Buffer for which HW commands is valid          
-        txtb_hw_cmd_index      :in   natural range 0 to G_TXT_BUF_COUNT - 1;
+        txtb_hw_cmd_index      :in   natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- TXT Buffer RAM data output
         txtb_port_b_data       :out  std_logic_vector(31 downto 0);

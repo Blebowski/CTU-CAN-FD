@@ -60,7 +60,6 @@ use lib.can_components.all;
 use lib.can_types.all;
 use lib.cmn_lib.all;
 use lib.drv_stat_pkg.all;
-use lib.endian_swap.all;
 use lib.reduce_lib.all;
 
 use lib.CAN_FD_register_map.all;
@@ -71,22 +70,42 @@ use work.CANtestLib.All;
 
 package models_pkg is
 
-    component prescaler_model is
+   component prescaler_model is
     generic(
+      -- Reset polarity
       reset_polarity        :   std_logic := '0';
+      
+      -- Clock period
       clock_period          :   time := 10 ns
     );
     port(
-        signal clk_sys              :in std_logic;  --System clock
-        signal res_n                :in std_logic;   --Async reset
-        signal sync_edge            :in std_logic;        --Edge for synchronisation
-        signal OP_State             :in oper_mode_type;   --Protocol control state
+        -----------------------------------------------------------------------
+        -- Clock and async reset
+        -----------------------------------------------------------------------
+        signal clk_sys              :in std_logic;
+        signal res_n                :in std_logic;
+    
+        -----------------------------------------------------------------------
+        -- Bus synch Interface
+        -----------------------------------------------------------------------
+        signal sync_edge            :in std_logic;
+        signal OP_State             :in t_operation_control_state;
+        
+        -- Driving Bus
         signal drv_bus              :in std_logic_vector(1023 downto 0); 
-        signal bt_FSM_out           :out bit_time_type;
+        
+        -- Bit time FSM output
+        signal bt_FSM               :out t_bit_time;
+    
+        -- What is actual node transmitting on the bus
         signal data_tx              :in   std_logic;
+    
+        -----------------------------------------------------------------------
+        -- Bit time and Synchronisation config
+        -----------------------------------------------------------------------
         signal sp_control           :in std_logic_vector(1 downto 0);
         signal sync_control         :in std_logic_vector(1 downto 0)
-  );
-  end component;
+    );
+    end component;
 
 end package;

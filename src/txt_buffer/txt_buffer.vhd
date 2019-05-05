@@ -100,7 +100,7 @@ entity txt_buffer is
         G_RESET_POLARITY       :     std_logic := '0';
         
         -- Number of TXT Buffers
-        G_TXT_BUF_COUNT        :     natural range 1 to 8;
+        G_TXT_BUFFER_COUNT     :     natural range 1 to 8;
         
         -- TXT Buffer ID
         G_ID                   :     natural := 1
@@ -131,7 +131,7 @@ entity txt_buffer is
         txtb_sw_cmd            :in   t_txt_sw_cmd;
         
         -- TXT Buffer index for which SW command is valid
-        txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUF_COUNT - 1 downto 0);
+        txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
 
         -- Buffer State (encoded for Memory registers)
         txtb_state             :out  std_logic_vector(3 downto 0);
@@ -149,7 +149,7 @@ entity txt_buffer is
         txtb_hw_cmd            :in   t_txtb_hw_cmd;
         
         -- Index of TXT Buffer for which HW commands is valid          
-        txtb_hw_cmd_index      :in   natural range 0 to G_TXT_BUF_COUNT - 1;
+        txtb_hw_cmd_index      :in   natural range 0 to G_TXT_BUFFER_COUNT - 1;
 
         -- TXT Buffer RAM data output
         txtb_port_b_data       :out  std_logic_vector(31 downto 0);
@@ -161,7 +161,7 @@ entity txt_buffer is
         is_bus_off             :in   std_logic;
 
         -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txtb_ready          :out  std_logic
+        txtb_ready             :out  std_logic
     );
 end entity;
 

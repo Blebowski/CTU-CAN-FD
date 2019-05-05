@@ -651,7 +651,7 @@ begin
         txt_buffer_inst : txt_buffer
         generic map(
             G_RESET_POLARITY       => C_RESET_POLARITY,
-            G_TXT_BUF_COUNT        => C_TXT_BUF_COUNT,
+            G_TXT_BUFFER_COUNT     => C_TXT_BUFFER_COUNT,
             G_ID                   => i
         )
         port map(

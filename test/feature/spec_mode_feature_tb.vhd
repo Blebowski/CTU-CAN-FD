@@ -111,6 +111,7 @@ package body spec_mode_feature is
         variable ctr_1_2            :       SW_traffic_counters;
         variable ctr_2_1            :       SW_traffic_counters;
         variable ctr_2_2            :       SW_traffic_counters;
+        variable pc_state           :       SW_PC_Debug;
     begin
         o.outcome := true;
 
@@ -142,32 +143,28 @@ package body spec_mode_feature is
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
-        -- Wait until one of the nodes is in ack field plus one more clock
-        -- cycles since after CRC we are in ack_delim immediately, thus bus
-        -- level can still be last bit of CRC which can be dominant!
+        -- Wait until Node 2 is in CRC Delimiter. Transmitted bit might still
+        -- be DOMINANT since last bit of CRC might be dominant. TX Bit is
+        -- updated in SYNC segment. Wait for rising edge on bus_level if so!
         ------------------------------------------------------------------------
-        while (protocol_type'VAL(to_integer(unsigned(
-               iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
-               /= delim_ack)
-        loop
-            wait until rising_edge(mem_bus(1).clk_sys);
-        end loop;
+        CAN_wait_pc_state(pc_deb_crc_delim, ID_2, mem_bus(2));
         if (bus_level = DOMINANT) then
             wait until rising_edge(bus_level);
         end if;
 
         ------------------------------------------------------------------------
         -- Now monitor the bus level to see if it is recessive during whole
-        -- acknowledge field. Monitor always on reciever! IN FD transciever
-        -- workaround is used for state switching in TX trigger just slightly
-        -- delayed!!!
+        -- CRC Delimim, ACK and ACK Delim. Monitor always on reciever! IN FD
+        -- transciever workaround is used for state switching in TX trigger 
+        -- just slightly delayed!!!
         ------------------------------------------------------------------------
-        while (protocol_type'VAL(to_integer(unsigned(
-               iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
-               = delim_ack)
+        CAN_read_pc_debug(pc_state, ID_2, mem_bus(2));
+        while (pc_state = pc_deb_crc_delim or pc_state = pc_deb_ack or 
+               pc_state = pc_deb_ack_delim)
         loop
-            wait until rising_edge(mem_bus(1).clk_sys);
-            check(bus_level = RECESSIVE, "ACK should be recessive now!");
+            check(bus_level = RECESSIVE,
+                  "CRC Delim, ACK and ACK Delim should be recessive now!");
+            CAN_read_pc_debug(pc_state, ID_2, mem_bus(2));
         end loop;
 
         CAN_wait_bus_idle(ID_1, mem_bus(1));
@@ -208,35 +205,26 @@ package body spec_mode_feature is
         CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
 
         ------------------------------------------------------------------------
-        -- Wait until node 2 is in ack field Since bus is delayed we have to
-        -- wait until the first rising edge on income data!
+        -- Wait until node 2 is in CRC Delimiter field since bus is delayed we
+        -- have to wait until the first rising edge on income data!
         ------------------------------------------------------------------------
-        while (protocol_type'VAL(to_integer(unsigned(
-                iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
-                /= delim_ack)
-        loop
-            wait until rising_edge(mem_bus(1).clk_sys);
-        end loop;
-
+        CAN_wait_pc_state(pc_deb_crc_delim, ID_2, mem_bus(2));
         if (bus_level = DOMINANT) then
             wait until rising_edge(bus_level);
         end if;
 
         ------------------------------------------------------------------------
         -- Now monitor the bus level to see if it is recessive during whole
-        -- acknowledge field.
+        -- CRC Delim, ACK and ACK Delim field.
         ------------------------------------------------------------------------
-        while (protocol_type'VAL(to_integer(unsigned(
-                iout(2).stat_bus(STAT_PC_STATE_HIGH downto STAT_PC_STATE_LOW))))
-                = delim_ack)
+        while (pc_state = pc_deb_crc_delim or pc_state = pc_deb_ack or 
+               pc_state = pc_deb_ack_delim)
         loop
-            wait until rising_edge(mem_bus(1).clk_sys);
-            if (bus_level = DOMINANT) then
-                o.outcome := false;
-            end if;
+            check(bus_level = RECESSIVE,
+                  "CRC Delim, ACK and ACK Delim should be recessive now!");
+            CAN_read_pc_debug(pc_state, ID_2, mem_bus(2));
         end loop;
-
-        CAN_wait_bus_idle(ID_1,mem_bus(1));
+        CAN_wait_bus_idle(ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- Check the TX RX counters
