@@ -1369,19 +1369,29 @@ package can_fd_register_map is
   constant PC_ARB_IND             : natural := 6;
   constant PC_CON_IND             : natural := 7;
   constant PC_DAT_IND             : natural := 8;
-  constant PC_CRC_IND             : natural := 9;
-  constant PC_EOF_IND            : natural := 10;
-  constant PC_OVR_IND            : natural := 11;
-  constant PC_INT_IND            : natural := 12;
+  constant PC_STC_IND             : natural := 9;
+  constant PC_CRC_IND            : natural := 10;
+  constant PC_CRCD_IND           : natural := 11;
+  constant PC_ACK_IND            : natural := 12;
+  constant PC_ACKD_IND           : natural := 13;
+  constant PC_EOF_IND            : natural := 14;
+  constant PC_INT_IND            : natural := 15;
+  constant PC_SUSP_IND           : natural := 16;
+  constant PC_OVR_IND            : natural := 17;
 
   -- DEBUG_REGISTER register reset values
   constant STUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
   constant DESTUFF_COUNT_RSTVAL : std_logic_vector(2 downto 0) := "000";
   constant PC_ARB_RSTVAL      : std_logic := '0';
+  constant PC_ACKD_RSTVAL     : std_logic := '0';
+  constant PC_ACK_RSTVAL      : std_logic := '0';
+  constant PC_CRCD_RSTVAL     : std_logic := '0';
+  constant PC_STC_RSTVAL      : std_logic := '0';
   constant PC_CON_RSTVAL      : std_logic := '0';
   constant PC_DAT_RSTVAL      : std_logic := '0';
   constant PC_CRC_RSTVAL      : std_logic := '0';
   constant PC_EOF_RSTVAL      : std_logic := '0';
+  constant PC_SUSP_RSTVAL     : std_logic := '0';
   constant PC_OVR_RSTVAL      : std_logic := '0';
   constant PC_INT_RSTVAL      : std_logic := '0';
 

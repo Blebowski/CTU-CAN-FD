@@ -1524,6 +1524,50 @@
 						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 					<ipxact:field>
+						<ipxact:name>PC_ACKD</ipxact:name>
+						<ipxact:description>Protocol control State machine is in ACK Delimiter field.</ipxact:description>
+						<ipxact:bitOffset>13</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PC_ACK</ipxact:name>
+						<ipxact:description>Protocol control State machine is in ACK field.</ipxact:description>
+						<ipxact:bitOffset>12</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PC_CRCD</ipxact:name>
+						<ipxact:description>Protocol control State machine is in CRC Delimiter field.</ipxact:description>
+						<ipxact:bitOffset>11</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PC_STC</ipxact:name>
+						<ipxact:description>Protocol control State machine is in Stuff Count field.</ipxact:description>
+						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
 						<ipxact:name>PC_CON</ipxact:name>
 						<ipxact:description>Protocol control State machine is in Control field.</ipxact:description>
 						<ipxact:bitOffset>7</ipxact:bitOffset>
@@ -1548,7 +1592,7 @@
 					<ipxact:field>
 						<ipxact:name>PC_CRC</ipxact:name>
 						<ipxact:description>Protocol control State machine is in CRC field.</ipxact:description>
-						<ipxact:bitOffset>9</ipxact:bitOffset>
+						<ipxact:bitOffset>10</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -1559,7 +1603,18 @@
 					<ipxact:field>
 						<ipxact:name>PC_EOF</ipxact:name>
 						<ipxact:description>Protocol control State machine is in End of file field.</ipxact:description>
-						<ipxact:bitOffset>10</ipxact:bitOffset>
+						<ipxact:bitOffset>14</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>PC_SUSP</ipxact:name>
+						<ipxact:description>Protocol control State machine is in Suspend transmission field.</ipxact:description>
+						<ipxact:bitOffset>16</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -1570,7 +1625,7 @@
 					<ipxact:field>
 						<ipxact:name>PC_OVR</ipxact:name>
 						<ipxact:description>Protocol control State machine is in Overload field.</ipxact:description>
-						<ipxact:bitOffset>11</ipxact:bitOffset>
+						<ipxact:bitOffset>17</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
@@ -1580,8 +1635,8 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>PC_INT</ipxact:name>
-						<ipxact:description>Protocol control State machine is in Interrupt field.</ipxact:description>
-						<ipxact:bitOffset>12</ipxact:bitOffset>
+						<ipxact:description>Protocol control State machine is in Intermission field.</ipxact:description>
+						<ipxact:bitOffset>15</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
 								<ipxact:value>0</ipxact:value>
