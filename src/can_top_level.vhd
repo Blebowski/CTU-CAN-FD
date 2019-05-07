@@ -47,7 +47,6 @@
 --      1x Interrupt manager
 --      1x Prescaler (v3)
 --      1x Bus synchronizes
---      1x Event Logger
 --      1x Rx buffer
 --      2x TXT buffer
 --      1x Tx Arbitrator
@@ -97,9 +96,6 @@ use work.CAN_FD_frame_format.all;
 
 entity can_top_level is
     generic(
-        -- Insert logger instance
-        use_logger     : boolean                := true;
-
         -- RX Buffer RAM size (32 bit words)
         rx_buffer_size : natural range 32 to 4096 := 128;
 
@@ -116,10 +112,7 @@ entity can_top_level is
         sup_filtC      : boolean                := true;
         
         -- Insert Range Filter
-        sup_range      : boolean                := true;
-        
-        -- Event Logger RAM size (32 bit words)
-        logger_size    : natural range 0 to 512 := 8
+        sup_range      : boolean                := true
     );
     port(
         -----------------------------------------------------------------------
@@ -274,24 +267,6 @@ architecture rtl of can_top_level is
     
     -- TXT Buffer priorities
     signal txtb_prorities       :    t_txt_bufs_priorities;
-
-    ------------------------------------------------------------------------
-    -- Event logger <-> Memory registers Interface
-    ------------------------------------------------------------------------
-    -- Logger RAM - Read Data
-    signal loger_act_data       :     std_logic_vector(63 downto 0);
-    
-    -- Logger RAM - Write Pointer
-    signal log_write_pointer    :     std_logic_vector(7 downto 0);
-    
-    -- Logger RAM - Read Pointer
-    signal log_read_pointer     :     std_logic_vector(7 downto 0);
-    
-    -- Logger RAM - Size        
-    signal log_size             :     std_logic_vector(7 downto 0);
-    
-    -- Logger FSM Status
-    signal log_state_out        :     logger_state_type;
     
     ------------------------------------------------------------------------
     -- Interrupt Manager <-> Memory registers Interface
@@ -492,12 +467,6 @@ architecture rtl of can_top_level is
     signal sync_edge            :  std_logic;
     
     ------------------------------------------------------------------------
-    -- Event Logger Status signals
-    ------------------------------------------------------------------------
-    -- Logging finished
-    signal loger_finished       :  std_logic;
-    
-    ------------------------------------------------------------------------
     -- Bit time FSM outputs
     ------------------------------------------------------------------------
     -- Bit time FSM state
@@ -529,7 +498,6 @@ begin
     memory_registers_inst : memory_registers
     generic map(
         G_RESET_POLARITY    => C_RESET_POLARITY,
-        G_USE_LOGGER        => use_logger,
         G_SUP_FILTA         => sup_filtA,
         G_SUP_FILTB         => sup_filtB,
         G_SUP_FILTC         => sup_filtC,
@@ -583,13 +551,6 @@ begin
         -- Bus synchroniser interface
         trv_delay            => trv_delay,              -- IN
 
-        -- Event logger interface
-        loger_act_data       => loger_act_data,         -- IN
-        log_write_pointer    => log_write_pointer,      -- IN
-        log_read_pointer     => log_read_pointer,       -- IN
-        log_size             => log_size,               -- IN
-        log_state_out        => log_state_out,          -- IN
-            
         -- Interrrupt Interface
         int_vector           => int_vector,             -- IN
         int_ena              => int_ena,                -- IN
@@ -775,7 +736,6 @@ begin
         rx_full                 => rx_full,                 -- IN
         rx_empty                => rx_empty,                -- IN
         txtb_hw_cmd_int         => txtb_hw_cmd_int,         -- IN
-        loger_finished          => loger_finished,          -- IN
 
         -- Memory registers Interface
         drv_bus                 => drv_bus,                 -- IN
@@ -938,43 +898,5 @@ begin
         sample_sec              => sample_sec,      -- OUT
         bit_error               => bit_error        -- OUT
     );
-    
-
-    ---------------------------------------------------------------------------
-    -- Event Logger
-    ---------------------------------------------------------------------------
-    event_logger_gen_true : if (use_logger) generate
-        event_logger_inst : event_logger
-        generic map(
-            memory_size         => logger_size
-        )
-        port map(
-            clk_sys             => clk_sys,
-            res_n               => res_n_i,
-
-            drv_bus             => drv_bus,
-            stat_bus            => stat_bus,
-            sync_edge           => sync_edge,
-            timestamp           => timestamp,
-
-            loger_finished      => loger_finished,
-            loger_act_data      => loger_act_data,
-            log_write_pointer   => log_write_pointer,
-            log_read_pointer    => log_read_pointer,
-            log_size            => log_size,
-            log_state_out       => log_state_out,
-            data_overrun        => rx_data_overrun,
-            bt_fsm              => bt_fsm
-        );
-    end generate event_logger_gen_true;
-
-    event_logger_gen_false : if (not use_logger) generate
-        loger_finished    <= '0';
-        loger_act_data    <= (others => '0');
-        log_write_pointer <= (others => '0');
-        log_read_pointer  <= (others => '0');
-        log_size          <= (others => '0');
-		log_state_out     <= config;
-    end generate event_logger_gen_false;
 
 end architecture;

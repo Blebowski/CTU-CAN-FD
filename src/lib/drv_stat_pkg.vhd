@@ -222,59 +222,6 @@ package drv_stat_pkg is
     constant DRV_FD_TYPE_INDEX : natural := 510;
 
     ----------------------------------------------------------------------------
-    -- Event logger
-    ----------------------------------------------------------------------------
-    constant DRV_TRIG_CONFIG_DATA_HIGH : natural := 551;
-    constant DRV_TRIG_CONFIG_DATA_LOW  : natural := 520;
-
-    constant DRV_TRIG_SOF_INDEX         : natural := 552;
-    constant DRV_TRIG_ARB_LOST_INDEX    : natural := 553;
-    constant DRV_TRIG_REC_VALID_INDEX   : natural := 554;
-    constant DRV_TRIG_TRAN_VALID_INDEX  : natural := 555;
-    constant DRV_TRIG_OVL_INDEX         : natural := 556;
-    constant DRV_TRIG_ERROR_INDEX       : natural := 557;
-    constant DRV_TRIG_BRS_INDEX         : natural := 558;
-    constant DRV_TRIG_USER_WRITE_INDEX  : natural := 559;
-    constant DRV_TRIG_ARB_START_INDEX   : natural := 560;
-    constant DRV_TRIG_CONTR_START_INDEX : natural := 561;
-    constant DRV_TRIG_DATA_START_INDEX  : natural := 562;
-    constant DRV_TRIG_CRC_START_INDEX   : natural := 563;
-    constant DRV_TRIG_ACK_REC_INDEX     : natural := 564;
-    constant DRV_TRIG_ACK_N_REC_INDEX   : natural := 565;
-    constant DRV_TRIG_EWL_REACHED_INDEX : natural := 566;
-    constant DRV_TRIG_ERP_CHANGED_INDEX : natural := 567;
-    constant DRV_TRIG_TRAN_START_INDEX  : natural := 568;
-    constant DRV_TRIG_REC_START_INDEX   : natural := 569;
-
-    constant DRV_CAP_SOF_INDEX         : natural := 580;
-    constant DRV_CAP_ARB_LOST_INDEX    : natural := 581;
-    constant DRV_CAP_REC_VALID_INDEX   : natural := 582;
-    constant DRV_CAP_TRAN_VALID_INDEX  : natural := 583;
-    constant DRV_CAP_OVL_INDEX         : natural := 584;
-    constant DRV_CAP_ERROR_INDEX       : natural := 585;
-    constant DRV_CAP_BRS_INDEX         : natural := 586;
-    constant DRV_CAP_ARB_START_INDEX   : natural := 587;
-    constant DRV_CAP_CONTR_START_INDEX : natural := 588;
-    constant DRV_CAP_DATA_START_INDEX  : natural := 589;
-    constant DRV_CAP_CRC_START_INDEX   : natural := 590;
-    constant DRV_CAP_ACK_REC_INDEX     : natural := 591;
-    constant DRV_CAP_ACK_N_REC_INDEX   : natural := 592;
-    constant DRC_CAP_EWL_REACHED_INDEX : natural := 593;
-    constant DRV_CAP_ERP_CHANGED_INDEX : natural := 594;
-    constant DRV_CAP_TRAN_START_INDEX  : natural := 595;
-    constant DRV_CAP_REC_START_INDEX   : natural := 596;
-    constant DRV_CAP_SYNC_EDGE_INDEX   : natural := 597;
-    constant DRV_CAP_STUFFED_INDEX     : natural := 598;
-    constant DRV_CAP_DESTUFFED_INDEX   : natural := 599;
-    constant DRV_CAP_OVR_INDEX         : natural := 600;
-
-    constant DRV_LOG_CMD_STR_INDEX  : natural := 610;
-    constant DRV_LOG_CMD_ABT_INDEX  : natural := 611;
-    constant DRV_LOG_CMD_UP_INDEX   : natural := 612;
-    constant DRV_LOG_CMD_DOWN_INDEX : natural := 613;
-
-
-    ----------------------------------------------------------------------------
     -- RX, TX and TXT Buffer frame format signal indexes
     ----------------------------------------------------------------------------
     --Tx Message format (Format A)
@@ -447,5 +394,6 @@ package drv_stat_pkg is
     constant STAT_PC_IS_SUSPEND_INDEX       : natural := 380;
     constant STAT_PC_IS_ERROR_INDEX         : natural := 381;
     constant STAT_PC_IS_OVERLOAD_INDEX      : natural := 382;
+    constant STAT_SOF_PULSE_INDEX           : natural := 383;
 
 end package;

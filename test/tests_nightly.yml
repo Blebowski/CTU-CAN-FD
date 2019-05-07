@@ -37,8 +37,6 @@ unit:
             wave: unit/TX_Arbitrator/txar_unit.tcl
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
-        event_logger:
-            wave: unit/Evnt_Logger/evlg_unit.tcl
 reference:
     default:
         <<: *default

@@ -3972,43 +3972,6 @@ package can_components is
 
 
 
-    component event_logger is 
-    generic(
-        constant memory_size        :     natural := 16 --Only 2^k possible!
-    );
-    port(
-        ------------------------------------------------------------------------
-        -- Clock and reset
-        ------------------------------------------------------------------------
-        signal clk_sys              :in   std_logic;
-        signal res_n                :in   std_logic;
-
-        ------------------------------------------------------------------------
-        -- Driving signals 
-        ------------------------------------------------------------------------
-        signal drv_bus              :in   std_logic_vector(1023 downto 0);
-        signal stat_bus             :in   std_logic_vector(511 downto 0);
-        signal sync_edge            :in   std_logic;
-        signal data_overrun         :in   std_logic;
-        signal timestamp            :in   std_logic_vector(63 downto 0);
-
-        -------------------
-        --Status signals --
-        -------------------
-
-        --Logger finished interrrupt output
-        signal loger_finished       :out  std_logic;
-         
-        signal loger_act_data       :out  std_logic_vector(63 downto 0);
-        signal log_write_pointer    :out  std_logic_vector(7 downto 0);
-        signal log_read_pointer     :out  std_logic_vector(7 downto 0);
-        signal log_size             :out  std_logic_vector(7 downto 0);
-        signal log_state_out        :out  logger_state_type
-
-    );
-    end component;
-
-
     component CTU_CAN_FD_v1_0 is
     generic(
         use_logger       : boolean                := true;

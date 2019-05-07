@@ -149,9 +149,6 @@ entity memory_registers is
     generic(
         -- Reset polarity
         G_RESET_POLARITY    : std_logic    := '0';
-        
-        -- Support logger
-        G_USE_LOGGER        : boolean                         := true;
 
         -- Support Filter A
         G_SUP_FILTA         : boolean                         := true;
@@ -291,24 +288,6 @@ entity memory_registers is
         ------------------------------------------------------------------------
         -- Measured Transceiver Delay
         trv_delay            :in   std_logic_vector(15 downto 0);
-
-        ------------------------------------------------------------------------
-        -- Event logger interface
-        ------------------------------------------------------------------------
-        -- Logger RAM - Read Data
-        loger_act_data       :in   std_logic_vector(63 downto 0);
-        
-        -- Logger RAM - Write Pointer
-        log_write_pointer    :in   std_logic_vector(7 downto 0);
-        
-        -- Logger RAM - Read Pointer
-        log_read_pointer     :in   std_logic_vector(7 downto 0);
-        
-        -- Logger RAM - Size        
-        log_size             :in   std_logic_vector(7 downto 0);
-        
-        -- Logger FSM Status
-        log_state_out        :in   logger_state_type;
             
         ------------------------------------------------------------------------
         -- Interrrupt Interface
@@ -332,12 +311,6 @@ architecture rtl of memory_registers is
     -- Control registers input
     signal Control_registers_in     : Control_registers_in_t;
 
-    -- Event Logger output
-    signal Event_Logger_out         : Event_Logger_out_t;
-
-    -- Event Logger input
-    signal Event_Logger_in          : Event_Logger_in_t;
-
     -- Status register - combinational decoder
     signal status_comb              : std_logic_vector(31 downto 0);
 
@@ -353,13 +326,10 @@ architecture rtl of memory_registers is
 
     -- Chip select signals for each memory sub-block
     signal control_registers_cs       : std_logic;
-    signal evnt_logger_cs             : std_logic;  
     signal control_registers_cs_reg   : std_logic;
-    signal evnt_logger_cs_reg         : std_logic;
 
     -- Read data from register sub-modules
     signal control_registers_rdata    : std_logic_vector(31 downto 0);
-    signal event_logger_rdata         : std_logic_vector(31 downto 0);
    
     -- Fault confinement State Indication
     signal is_err_active          :     std_logic;
@@ -459,24 +429,14 @@ begin
                             '0';
 
     ----------------------------------------------------------------------------
-    -- Event logger chip select signals
-    ----------------------------------------------------------------------------
-    evnt_logger_cs <= '1' when (adress(11 downto 8) = EVENT_LOGGER_BLOCK)
-                                and (can_core_cs = '1')
-                                else
-                      '0';
-
-    ----------------------------------------------------------------------------
     -- Registering control registers chip select
     ----------------------------------------------------------------------------
     chip_sel_reg_proc : process(res_n, clk_sys)
     begin
         if (res_n = G_RESET_POLARITY) then
             control_registers_cs_reg  <= '0';
-            evnt_logger_cs_reg        <= '0';
         elsif (rising_edge(clk_sys)) then
             control_registers_cs_reg  <= control_registers_cs;
-            evnt_logger_cs_reg        <= evnt_logger_cs;
         end if;
     end process;
 
@@ -486,8 +446,6 @@ begin
     ----------------------------------------------------------------------------
     data_out <= control_registers_rdata when (control_registers_cs_reg = '1')
                                         else
-                event_logger_rdata when (evnt_logger_cs_reg = '1')
-                                   else
                 (OTHERS => '0');
 
     ----------------------------------------------------------------------------
@@ -518,51 +476,6 @@ begin
         control_registers_out => control_registers_out,
         control_registers_in  => control_registers_in
     );
-
-    ----------------------------------------------------------------------------
-    -- Event Logger registers instance - 
-    -- Synthesized only when Logger should be synthesized! Otherwise all zeroes
-    -- are returned. Note that reading LOG_EXIST bit by SW from LOG_STATUS
-    -- register will return 0 (logger not present) even when all the registers
-    -- are not instantiated, thus we can still use this approach!
-    ----------------------------------------------------------------------------
-    log_pres_gen : if (G_USE_LOGGER) generate
-        event_logger_reg_map_comp : event_logger_reg_map
-        generic map(
-            DATA_WIDTH            => 32,
-            ADDRESS_WIDTH         => 16,
-            CLEAR_READ_DATA       => true,
-            REGISTERED_READ       => true,
-            RESET_POLARITY        => G_RESET_POLARITY
-        )
-        port map(
-            clk_sys               => clk_sys,
-            res_n                 => res_out_i,
-            address               => adress,
-            w_data                => data_in,
-            r_data                => event_logger_rdata,
-            cs                    => evnt_logger_cs,
-            read                  => srd,
-            write                 => swr,
-            be                    => sbe,
-            event_logger_out      => event_logger_out,
-            event_logger_in       => event_logger_in
-        );
-    end generate log_pres_gen;
-
-    ---------------------------------------------------------------------------
-    -- When event logger is not present, read data are driven to zeroes,
-    -- control signals for Event Logger are driven to 0!
-    ---------------------------------------------------------------------------
-    log_not_pres_gen : if (not use_logger) generate
-
-        event_logger_rdata <= (OTHERS => '0');
-
-        event_logger_out.log_trig_config <= (OTHERS => '0');
-        event_logger_out.log_capt_config <= (OTHERS => '0');
-        event_logger_out.log_command     <= (OTHERS => '0');
-
-    end generate log_not_pres_gen;
 
 
     ----------------------------------------------------------------------------
@@ -1507,287 +1420,6 @@ begin
             timestamp(63 downto 32);
 
     end block timestamp_registers_block;
-    
-
-
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    -- Event Logger - Write registers to Driving Bus Connection
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    
-    ---------------------------------------------------------------------------
-    -- LOG_TRIG_CONFIG - Logger triggering configuration
-    ---------------------------------------------------------------------------
-
-    -- T_SOF - Trigger on Start of frame
-    drv_bus(DRV_TRIG_SOF_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_SOF_IND);
-
-    -- T_ARBL - Trigger on Arbitration lost
-    drv_bus(DRV_TRIG_ARB_LOST_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_ARBL_IND);
-
-    -- T_REV - Trigger on RX Frame valid
-    drv_bus(DRV_TRIG_REC_VALID_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_REV_IND);
-
-    -- T_REV - Trigger on TX Frame valid
-    drv_bus(DRV_TRIG_TRAN_VALID_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_TRV_IND);
-
-    -- T_OVL - Trigger on Overload Frame
-    drv_bus(DRV_TRIG_OVL_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_OVL_IND);
-
-    -- T_ERR - Trigger on Error Frame
-    drv_bus(DRV_TRIG_ERROR_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_ERR_IND);
-
-    -- T_BRS - Trigger on Bit-rate shift
-    drv_bus(DRV_TRIG_BRS_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_BRS_IND);
-
-    -- T_USRW - Trigger on User write
-    drv_bus(DRV_TRIG_USER_WRITE_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_USRW_IND);
-
-    -- T_ARBS - Trigger on Arbitration field start
-    drv_bus(DRV_TRIG_ARB_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_ARBS_IND);
-
-    -- T_CTRS - Trigger on Control field start
-    drv_bus(DRV_TRIG_CONTR_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_CTRS_IND);
-
-    -- T_DATS - Trigger on Data field start
-    drv_bus(DRV_TRIG_DATA_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_DATS_IND);
-
-    -- T_CRCS - Trigger on CRC field start
-    drv_bus(DRV_TRIG_CRC_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_CRCS_IND);
-
-    -- T_ACKR - Trigger on ACK Received
-    drv_bus(DRV_TRIG_ACK_REC_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_ACKR_IND);
-
-    -- T_ACKNR - Trigger on ACK Not Received
-    drv_bus(DRV_TRIG_ACK_N_REC_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_ACKNR_IND);
-
-    -- T_EWLR - Trigger on Error Warning limit reached
-    drv_bus(DRV_TRIG_EWL_REACHED_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_EWLR_IND);
-
-    -- T_ERPC - Trigger on Error Passive changed
-    drv_bus(DRV_TRIG_ERP_CHANGED_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_ERPC_IND);
-
-    -- T_TRS - Trigger on Transmission started
-    drv_bus(DRV_TRIG_TRAN_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_TRS_IND);
-
-    -- T_RES - Trigger on Reception started
-    drv_bus(DRV_TRIG_REC_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_trig_config, T_RES_IND);
-
-
-    ---------------------------------------------------------------------------
-    -- LOG_CAPT_CONFIG - Logger capture configuration
-    ---------------------------------------------------------------------------
-
-    -- C_SOF - Capture Start of Frame
-    drv_bus(DRV_CAP_SOF_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_SOF_IND);
-
-    -- C_ARBL - Capture Arbitration lost
-    drv_bus(DRV_CAP_ARB_LOST_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_ARBL_IND);
-
-    -- C_REV - Capture RX Frame valid
-    drv_bus(DRV_CAP_REC_VALID_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_REV_IND);
-
-    -- C_TRAN - Capture TX Frame valid
-    drv_bus(DRV_CAP_TRAN_VALID_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_TRV_IND);
-
-    -- C_OVL - Capture Overload Frame
-    drv_bus(DRV_CAP_OVL_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_OVL_IND);
-
-    -- C_ERR - Capture Error Frame
-    drv_bus(DRV_CAP_ERROR_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_ERR_IND);
-
-    -- C_BRS - Capture Bit-Rate shift Frame
-    drv_bus(DRV_CAP_BRS_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_BRS_IND);
-
-    -- C_ARBS - Capture Arbitration field start
-    drv_bus(DRV_CAP_ARB_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_ARBS_IND);
-
-    -- C_CTRS - Capture Control field start
-    drv_bus(DRV_CAP_CONTR_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_CTRS_IND);
-
-    -- C_DATS - Capture Data field start
-    drv_bus(DRV_CAP_DATA_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_DATS_IND);
-
-    -- C_CRCS - Capture CRC field start
-    drv_bus(DRV_CAP_CRC_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_CRCS_IND);
-
-    -- C_ACKR - Capture ACK received
-    drv_bus(DRV_CAP_ACK_REC_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_ACKR_IND);
-
-    -- C_ACKNR - Capture ACK received
-    drv_bus(DRV_CAP_ACK_N_REC_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_ACKNR_IND);
-
-    -- C_EWLR - Capture Error warning limit reached
-    drv_bus(DRC_CAP_EWL_REACHED_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_EWLR_IND);
-
-    -- C_ERC - Capture Error passive state changed
-    drv_bus(DRV_CAP_ERP_CHANGED_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_ERC_IND);
-
-    -- C_TRS - Capture Transmission started
-    drv_bus(DRV_CAP_TRAN_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_TRS_IND);
-
-    -- C_RES - Capture Reception started
-    drv_bus(DRV_CAP_REC_START_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_RES_IND);
-
-    -- C_SYNE - Capture Synchronisation edge event
-    drv_bus(DRV_CAP_SYNC_EDGE_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_SYNE_IND);
-    
-    -- C_STUFF - Capture Stuff Bit insertion
-    drv_bus(DRV_CAP_STUFFED_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_STUFF_IND);
-
-    -- C_DESTUFF - Capture Stuff Bit discarded
-    drv_bus(DRV_CAP_DESTUFFED_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_DESTUFF_IND);
-
-    -- C_OVR - Capture Data Overrun
-    drv_bus(DRV_CAP_OVR_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_capt_config, C_OVR_IND);
-
-
-    ---------------------------------------------------------------------------
-    -- LOG_COMMAND
-    ---------------------------------------------------------------------------
-
-    -- LOG_STR - Logger start
-    drv_bus(DRV_LOG_CMD_STR_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_command, LOG_STR_IND);
-
-    -- LOG_ABT - Logger Abort
-    drv_bus(DRV_LOG_CMD_ABT_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_command, LOG_ABT_IND);
-
-    -- LOG_UP - Logger Read Pointer UP
-    drv_bus(DRV_LOG_CMD_UP_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_command, LOG_UP_IND);
-
-    -- LOG_DOWN - Logger Read Pointer Down
-    drv_bus(DRV_LOG_CMD_DOWN_INDEX) <= align_wrd_to_reg(
-        Event_Logger_out.log_command, LOG_UP_IND);
-
-
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    -- Event Logger - Readable registers
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-
-    ---------------------------------------------------------------------------
-    -- LOG_STATUS register
-    ---------------------------------------------------------------------------
-    log_status_block : block
-        constant length : natural := Event_Logger_in.log_status'length;
-    begin
-
-        -- LOG_CFG - Logger in config state
-        Event_Logger_in.log_status(align_reg_to_wrd(LOG_CFG_IND, length)) <=
-            '1' when (log_state_out = config)
-                else
-            '0';
-
-        -- LOG_CFG - Logger in ready state
-        Event_Logger_in.log_status(align_reg_to_wrd(LOG_RDY_IND, length)) <=
-            '1' when (log_state_out = ready)
-                else
-            '0';
-
-        -- LOG_RUN - Logger in running state
-        Event_Logger_in.log_status(align_reg_to_wrd(LOG_RUN_IND, length)) <=
-            '1' when (log_state_out = running)
-                else
-            '0';
-
-        -- LOG_EXIST - Whether Event logger is supported
-        log_exist_gen : if (use_logger) generate
-            Event_Logger_in.log_status(
-                align_reg_to_wrd(LOG_EXIST_IND, length)) <= '1';
-        end generate log_exist_gen;
-
-        log_not_exist_gen : if (not use_logger) generate
-            Event_Logger_in.log_status(
-                align_reg_to_wrd(LOG_EXIST_IND, length)) <= '0';
-        end generate log_not_exist_gen;
-
-        -- LOG_SIZE - Size of event logger memory
-        Event_Logger_in.log_status(
-            align_reg_to_wrd(LOG_SIZE_H, length) downto
-            align_reg_to_wrd(LOG_SIZE_L, length)) <=
-            log_size;
-
-        -- Pad unused by zeroes
-        Event_Logger_in.log_status(6 downto 3) <= (OTHERS => '0');
-
-    end block log_status_block;
-
-
-    ---------------------------------------------------------------------------
-    -- LOG_POINTERS
-    ---------------------------------------------------------------------------
-    log_pointers_block : block
-        constant length : natural := Event_Logger_in.log_pointers'length;
-    begin
-
-        -- LOG_RPP - Read pointer position
-        Event_Logger_in.log_pointers(
-            align_reg_to_wrd(LOG_RPP_H, length) downto
-            align_reg_to_wrd(LOG_RPP_L, length)) <=
-            log_read_pointer;
-
-        -- LOG_WPP - Write pointer position
-        Event_Logger_in.log_pointers(
-            align_reg_to_wrd(LOG_WPP_H, length) downto
-            align_reg_to_wrd(LOG_WPP_L, length)) <=
-            log_write_pointer;
-
-    end block log_pointers_block;
-
-
-    ---------------------------------------------------------------------------
-    -- LOG_CAPT_EVENT_1 - Read word from Logger RAM
-    ---------------------------------------------------------------------------
-    Event_Logger_in.log_capt_event_1 <= loger_act_data(63 downto 32);
-
-    ---------------------------------------------------------------------------
-    -- LOG_CAPT_EVENT_2 - Read word from Logger RAM
-    ---------------------------------------------------------------------------
-    Event_Logger_in.log_capt_event_2 <= loger_act_data(31 downto 0);
 
    
     ----------------------------------------------------------------------------
@@ -1818,6 +1450,11 @@ begin
     drv_bus(799 downto 780) <= (OTHERS => '0');
     drv_bus(767 downto 748) <= (OTHERS => '0');
     drv_bus(735 downto 614) <= (OTHERS => '0');
+    
+    drv_bus(613 downto 610) <= (OTHERS => '0');
+    drv_bus(600 downto 580) <= (OTHERS => '0');
+    drv_bus(569 downto 552) <= (OTHERS => '0');
+    drv_bus(551 downto 520) <= (OTHERS => '0');
 
     drv_bus(472)            <= '0';
     drv_bus(461)            <= '0';
