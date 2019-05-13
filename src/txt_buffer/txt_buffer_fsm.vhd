@@ -61,7 +61,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -119,7 +118,7 @@ entity txt_buffer_fsm is
         txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txt_buf_ready          :out  std_logic
+        txtb_ready          :out  std_logic
     );             
 end entity;
 
@@ -144,7 +143,7 @@ begin
     -- Next state process
     ----------------------------------------------------------------------------
     tx_buf_fsm_next_state_proc : process(curr_state, txtb_sw_cmd, sw_cbs, 
-        txtb_hw_cmd, hw_cbs, is_bus_off)
+        txtb_hw_cmd, hw_cbs, is_bus_off, abort_applied)
     begin
         next_state <= curr_state;
 
@@ -328,10 +327,10 @@ begin
     -- Buffer is ready for selection by TX Arbitrator only in state "Ready"
     -- Abort signal must not be active. If not considered, race condition
     -- between HW and SW commands could occur!
-    txt_buf_ready       <= '1' when ((curr_state = s_txt_ready) and
-                                     (abort_applied = '0'))
-                               else
-                           '0';
+    txtb_ready       <= '1' when ((curr_state = s_txt_ready) and
+                                  (abort_applied = '0'))
+                            else
+                        '0';
 
     -- Encoding Buffer FSM to output values read from TXT Buffer status register.
     with curr_state select txtb_state <= 
@@ -352,13 +351,13 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- Each FSM state
-    -- psl txtb_fsm_empty_cov : cover (buf_fsm = txt_empty);
-    -- psl txtb_fsm_ready_cov : cover (buf_fsm = txt_ready);
-    -- psl txtb_fsm_tx_prog_cov : cover (buf_fsm = txt_tx_prog);
-    -- psl txtb_fsm_ab_prog_cov : cover (buf_fsm = txt_ab_prog);
-    -- psl txtb_fsm_error_cov : cover (buf_fsm = txt_error);
-    -- psl txtb_fsm_aborted_cov : cover (buf_fsm = txt_aborted);
-    -- psl txtb_fsm_tx_ok_cov : cover (buf_fsm = txt_ok);
+    -- psl txtb_fsm_empty_cov : cover (curr_state = s_txt_empty);
+    -- psl txtb_fsm_ready_cov : cover (curr_state = s_txt_ready);
+    -- psl txtb_fsm_tx_prog_cov : cover (curr_state = s_txt_tx_prog);
+    -- psl txtb_fsm_ab_prog_cov : cover (curr_state = s_txt_ab_prog);
+    -- psl txtb_fsm_error_cov : cover (curr_state = s_txt_error);
+    -- psl txtb_fsm_aborted_cov : cover (curr_state = s_txt_aborted);
+    -- psl txtb_fsm_tx_ok_cov : cover (curr_state = s_txt_ok);
     
     -- Simultaneous HW and SW Commands
     -- psl txtb_hw_sw_cmd_hazard_cov : cover
@@ -372,8 +371,8 @@ begin
     -- than ready
     --
     -- psl txtb_lock_only_in_rdy_asrt : assert always
-    --  ((txtb_hw_cmd.lock = '1' and hw_cbs = '1') -> buf_fsm = txt_ready)
-    --  report "TXT Buffer " & integer'image(ID) &
+    --  ((txtb_hw_cmd.lock = '1' and hw_cbs = '1') -> curr_state = s_txt_ready)
+    --  report "TXT Buffer " & integer'image(G_ID) &
     --  " not READY when LOCK command occurred!" severity error;
     ----------------------------------------------------------------------------
     -- HW Unlock command is valid only when Buffer is TX in Progress or Abort in
@@ -381,8 +380,8 @@ begin
     --
     -- psl txtb_unlock_only_in_tx_prog_asrt : assert always
     --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
-    --   (buf_fsm = txt_tx_prog or buf_fsm = txt_ab_prog))
-    --  report "TXT Buffer " & integer'image(ID) &
+    --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog))
+    --  report "TXT Buffer " & integer'image(G_ID) &
     --  " not READY when LOCK command occurred!" severity error;
     ----------------------------------------------------------------------------
     -- HW Lock command should never occur when there was abort in previous cycle!

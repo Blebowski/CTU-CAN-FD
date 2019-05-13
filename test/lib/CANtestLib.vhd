@@ -3101,51 +3101,52 @@ package body CANtestLib is
         constant frame          : in    SW_CAN_frame_type
     )is
         variable data_byte      :       std_logic_vector(7 downto 0);
-        variable str_msg        :       string(1 to 512) := (OTHERS => ' ');
+        variable str_msg        :       string(1 to 400) := (OTHERS => ' ');
+        variable str_len        :       natural := 0;
     begin
 
-        str_msg(1 to 10) := "CAN Frame:";
+        info("*************************************************************");
 
         -- Identifier
-        str_msg(11 to 18) := " ID : 0x";
-        str_msg(19 to 26) :=
-            to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32)));
+        info("ID : 0x" & 
+            to_hstring(std_logic_vector(to_unsigned(frame.identifier, 32))));
 
         -- Metadata
-        str_msg(27 to 35) := "    DLC: ";
+        info("DLC: " & to_hstring(frame.dlc) & ", Data length:" &
+              to_string(frame.data_length));
 
         if (frame.rtr = RTR_FRAME) then
-            str_msg(36 to 48) := "    RTR Frame";
-        else
-            str_msg(36 to 48) := "             ";
+            info("RTR Frame");
         end if;
 
         if (frame.ident_type = BASE) then
-            str_msg(49 to 71) := "    BASE identifier    ";
+            info("BASE identifier");
         else
-            str_msg(49 to 71) := "    EXTENDED identifier";
+            info("EXTENDED identifier");
         end if;
 
         if (frame.frame_format = NORMAL_CAN) then
-            str_msg(72 to 88) := "    CAN 2.0 frame";
+            info("CAN 2.0 frame");
         else
-            str_msg(72 to 88) := "    CAN FD frame ";
+            info("CAN FD frame");
         end if;
 
-        str_msg(89 to 117) := "    RWCNT (read word count): ";
-        str_msg(118 to 127) :=
-            to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10)));
+        info("RWCNT (read word count): " &
+            to_string(std_logic_vector(to_unsigned(frame.rwcnt, 10))));
 
         -- Data words
         if (frame.rtr = NO_RTR_FRAME and frame.data_length > 0) then
-            str_msg(128 to 137) := "    Data: ";
+            str_msg(1 to 6) := "Data: ";
+            str_len := 6 + 5 * frame.data_length;
             for i in 0 to frame.data_length - 1 loop
                 data_byte := frame.data(i);
-                str_msg(138 + i * 5 to 142 + i * 5) :=
+                str_msg(7 + i * 5 to 11 + i * 5) :=
                     "0x" & to_hstring(frame.data(i)) & " ";
             end loop;
+            info(str_msg(1 to str_len));
         end if;
-        info(str_msg);
+        
+        info("*************************************************************");
     end procedure;
 
 

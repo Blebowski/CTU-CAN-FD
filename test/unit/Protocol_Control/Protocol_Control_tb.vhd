@@ -215,6 +215,10 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- CAN Bus serial data stream
     signal tx_data_nbs_1             :  std_logic;
 
+    -- Sampled TX data by TX Trigger (emulation of Bit Stuffing)
+    signal tx_data_nbs_1_q           :  std_logic;
+    signal tx_data_nbs_2_q           :  std_logic;
+
     -- Bit Stuffing Interface
     signal stuff_enable_1            :  std_logic;
     signal destuff_enable_1          :  std_logic;
@@ -719,6 +723,7 @@ begin
 
         -- CAN Bus serial data stream
         tx_data_nbs             => tx_data_nbs_1,
+        tx_data_wbs             => tx_data_nbs_1_q,
         rx_data_nbs             => bus_level,
 
         -- Bit Stuffing Interface
@@ -836,11 +841,12 @@ begin
         err_ctrs_unchanged      => err_ctrs_unchanged_2,
         
         -- TX and RX Trigger signals to Sample and Transmitt Data
-        tx_trigger              => tx_trigger_2,
-        rx_trigger              => rx_trigger_2,
+        tx_trigger              => tx_trigger_1,
+        rx_trigger              => rx_trigger_1,
 
         -- CAN Bus serial data stream
         tx_data_nbs             => tx_data_nbs_2,
+        tx_data_wbs             => tx_data_nbs_2_q,
         rx_data_nbs             => bus_level,
 
         -- Bit Stuffing Interface
@@ -880,11 +886,28 @@ begin
         ack_error               => ack_error_2,
         crc_error               => crc_error_2
     );
+    
+    ----------------------------------------------------------------------------
+    -- Sampling of TX Data
+    -- emulation of Bit Stuffing
+    ----------------------------------------------------------------------------
+    tx_sample_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = C_RESET_POLARITY) then
+            tx_data_nbs_1_q <= RECESSIVE;
+            tx_data_nbs_2_q <= RECESSIVE;
+        elsif (rising_edge(clk_sys)) then
+            if (tx_trigger_1 = '1') then
+                tx_data_nbs_1_q <= tx_data_nbs_1;
+                tx_data_nbs_2_q <= tx_data_nbs_2;
+            end if;
+        end if;
+    end process;
 
     ----------------------------------------------------------------------------
     -- Creating bus level
     ----------------------------------------------------------------------------
-    bus_level             <= tx_data_nbs_1 AND tx_data_nbs_2;
+    bus_level             <= tx_data_nbs_1_q AND tx_data_nbs_2_q;
 
 
     ----------------------------------------------------------------------------
@@ -930,7 +953,7 @@ begin
         --      are transmitting at the same time!
 
     begin
-        generate_simple_trig(rnd_ctr_tr, tx_trigger_1, rx_trigger_2, clk_sys, min_diff);
+        generate_simple_trig(rnd_ctr_tr, tx_trigger_1, rx_trigger_1, clk_sys, min_diff);
     end process;
 
 
@@ -1034,6 +1057,11 @@ begin
         info("Restarted Protocol control unit test");
         print_test_info(iterations, log_level, error_beh, error_tol);
 
+        info("Wait till Integration is over!");
+        for i in 0 to 10 loop
+            wait until rising_edge(rx_trigger_1);
+        end loop;
+
         -------------------------------
         -- Main loop of the test
         -------------------------------
@@ -1075,6 +1103,8 @@ begin
             rand_int_v(rand_ctr, 7, stf_length);
             dst_ctr_2 <= stf_length;
             dst_ctr_1 <= stf_length;
+            bst_ctr_1 <= stf_length;
+            bst_ctr_2 <= stf_length;
             wait for 0 ns;
 
             --------------------------------------------------------------------
@@ -1088,13 +1118,14 @@ begin
             -- Start transmitting by Protocol control 1
             --------------------------------------------------------------------
             info("Starting transmittion and recording on bus");
+            wait until rx_trigger_1 = '1';
             tran_frame_valid_1 <= '1';
 
             --------------------------------------------------------------------
             -- Record what comes out of Protocol control 1, read frame which
             -- was received!
             --------------------------------------------------------------------
-            record_bit_seq(bus_level, rx_trigger_2, seq_length, rec_seq);
+            record_bit_seq(bus_level, rx_trigger_1, seq_length, rec_seq);
             rx_ptr := 0;
             read_frame_from_test_mem(rx_frame, rxb_mem, rx_ptr);
             tran_frame_valid_1 <= '0';
@@ -1108,16 +1139,16 @@ begin
             info("Generated CAN frame:");
             CAN_print_frame(tx_frame);
 
-            info("Receied CAN frame:");
+            info("Received CAN frame:");
             CAN_print_frame(rx_frame);
 
-            info("Expected bit sequence:");
-            write(msg1, sw_seq(seq_length - 1 downto 0));
-            writeline(output, msg1);
+            info("Sequence length: " & to_string(seq_length));
 
+            info("Expected bit sequence:");
+            info(to_string(sw_seq(seq_length - 1 downto 0)));
+            
             info("Received bit sequence:");
-            write(msg2, rec_seq(seq_length - 1 downto 0));
-            writeline(output, msg2);
+            info(to_string(rec_seq(seq_length - 1 downto 0)));
 
             -- Process possible error in TX/RX Frames or Bit sequences mismatch
             check(out_seq, "Bit sequence is not matching!");

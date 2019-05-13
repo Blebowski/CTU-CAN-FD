@@ -139,9 +139,9 @@ architecture mess_filt_unit_test of CAN_test is
         variable inv_type     :       boolean;
     begin
 
-        -- Filters disabled but result is positive -> error
+        -- Filters disabled -> Output is considered always valid
         if (drv_settings.drv_filters_ena = '0') then
-          -- TODO: Fix me!
+          return true;
         end if;
 
         join := frame_info.frame_type & frame_info.ident_type;
@@ -249,7 +249,14 @@ begin
         rec_ident_type     =>  ident_type,
         rec_frame_type     =>  frame_type,
         drv_bus            =>  drv_bus,
-        ident_valid        =>  out_ident_valid
+        ident_valid        =>  out_ident_valid,
+        
+        -- Don't test command filtering as this is trivial. Testing is done on
+        -- out ident valid only!
+        store_metadata     =>  '0',
+        store_data         =>  '0',
+        rec_valid          =>  '0',
+        rec_abort          =>  '0'
     );
 
 

@@ -94,9 +94,6 @@ architecture int_man_unit_test of CAN_test is
     -- RX Buffer full
     signal rx_full                :   std_logic := '0';
 
-    -- Event logging finsihed
-    signal loger_finished         :   std_logic := '0';
-
     -- RX Buffer not empty
     signal rx_empty               :   std_logic := '1';
 
@@ -180,9 +177,6 @@ architecture int_man_unit_test of CAN_test is
         -- RX Buffer full
         signal rx_full                :inout   std_logic;
 
-        -- Event loggging finished
-        signal loger_finished         :inout   std_logic;
-
         -- RX Buffer empty
         signal rx_empty               :inout   std_logic;
 
@@ -244,12 +238,6 @@ architecture int_man_unit_test of CAN_test is
             rand_logic_s(rand_ctr, rx_full, 0.95);
         else
             rand_logic_s(rand_ctr, rx_full, 0.05);
-        end if;
-
-        if (loger_finished = '1') then
-            rand_logic_s(rand_ctr, loger_finished, 0.95);
-        else
-            rand_logic_s(rand_ctr, loger_finished, 0.05);
         end if;
 
         if (rx_empty = '0') then
@@ -327,20 +315,19 @@ begin
     PORT map(
         clk_sys               =>   clk_sys,
         res_n                 =>   res_n,
-        err_detected           =>   err_detected,
+        err_detected          =>   err_detected,
         error_passive_changed =>   error_passive_changed,
         error_warning_limit   =>   error_warning_limit,
         arbitration_lost      =>   arbitration_lost,
-        tran_valid           =>   tran_valid ,
+        tran_valid            =>   tran_valid ,
         br_shifted            =>   br_shifted,
         rx_empty              =>   rx_empty,
-        txtb_hw_cmd_int        =>   txtb_hw_cmd_int,
+        txtb_hw_cmd_int       =>   txtb_hw_cmd_int,
         rx_data_overrun       =>   rx_data_overrun ,
-        rec_valid     =>   rec_valid ,
+        rec_valid             =>   rec_valid ,
         rx_full               =>   rx_full,
-        loger_finished        =>   loger_finished,
         drv_bus               =>   drv_bus ,
-        int               =>   int,
+        int                   =>   int,
         int_vector            =>   int_vector,
         int_mask              =>   int_mask,
         int_ena               =>   int_ena
@@ -354,7 +341,6 @@ begin
     int_input(EWLI_IND)           <=  error_warning_limit;
     int_input(TXI_IND)            <=  tran_valid;
     int_input(RXI_IND)            <=  rec_valid;
-    int_input(LFI_IND)            <=  loger_finished;
     int_input(RXFI_IND)           <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
@@ -383,7 +369,7 @@ begin
             generate_sources(rand_ctr_1, err_detected, error_passive_changed ,
                            error_warning_limit , arbitration_lost, tran_valid,
                            br_shifted, rx_data_overrun , rec_valid ,
-                           rx_full , loger_finished, rx_empty, txtb_hw_cmd_int);
+                           rx_full , rx_empty, txtb_hw_cmd_int);
         end loop;
     end process;
 

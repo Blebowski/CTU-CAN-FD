@@ -59,7 +59,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -67,14 +66,11 @@ use work.CAN_FD_frame_format.all;
 
 entity CTU_CAN_FD_v1_0 is
     generic(
-        use_logger       : boolean                := true;
         rx_buffer_size   : natural range 4 to 512 := 128;
-        use_sync         : boolean                := true;
         sup_filtA        : boolean                := true;
         sup_filtB        : boolean                := true;
         sup_filtC        : boolean                := true;
-        sup_range        : boolean                := true;
-        logger_size      : natural range 0 to 512 := 8
+        sup_range        : boolean                := true
     );
     port(
         aclk             : in  std_logic;
@@ -112,14 +108,11 @@ begin
 
     i_can : CAN_top_level
         generic map (
-            use_logger      => use_logger,
             rx_buffer_size  => rx_buffer_size,
-            use_sync        => use_sync,
             sup_filtA       => sup_filtA,
             sup_filtB       => sup_filtB,
             sup_filtC       => sup_filtC,
-            sup_range       => sup_range,
-            logger_size     => logger_size
+            sup_range       => sup_range
         )
         port map (
             clk_sys         => aclk,

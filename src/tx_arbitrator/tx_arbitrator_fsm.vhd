@@ -64,7 +64,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -104,7 +103,7 @@ entity tx_arbitrator_fsm is
         -- CAN Core Interface
         -----------------------------------------------------------------------
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
-        txt_hw_cmd             :in txt_hw_cmd_type;  
+        txtb_hw_cmd             :in t_txtb_hw_cmd;  
         
         ---------------------------------------------------------------------------
         -- TX Arbitrator FSM outputs
@@ -169,7 +168,7 @@ begin
         -- Finishing the transmission = unlocking the buffer
         ------------------------------------------------------------------------      
         if (tx_arb_fsm = s_arb_locked) then
-            if (txt_hw_cmd.unlock = '1') then
+            if (txtb_hw_cmd.unlock = '1') then
                 tx_arb_fsm            <= s_arb_sel_low_ts;
                 fsm_wait_state        <= true;
             end if;
@@ -177,7 +176,7 @@ begin
         ------------------------------------------------------------------------
         -- Locking the buffer
         ------------------------------------------------------------------------
-        elsif (txt_hw_cmd.lock     = '1') then
+        elsif (txtb_hw_cmd.lock     = '1') then
             tx_arb_fsm              <= s_arb_locked;
             
         ------------------------------------------------------------------------
@@ -262,7 +261,7 @@ begin
   ------------------------------------------------------------------------------
   tx_arb_fsm_out_proc : process(tx_arb_fsm, fsm_wait_state, timestamp_valid,
                                 select_index_changed, select_buf_avail,
-                                txt_hw_cmd)
+                                txtb_hw_cmd)
   begin
     
     -- By default all outputs are inactive
@@ -282,7 +281,7 @@ begin
     -- start of new buffer selection, first Timestamp Low word is loaded.
     ------------------------------------------------------------------------      
     if (tx_arb_fsm = s_arb_locked) then
-        if (txt_hw_cmd.unlock = '1') then
+        if (txtb_hw_cmd.unlock = '1') then
             load_ts_lw_addr <= '1';
         else
             tx_arb_locked   <= '1';
@@ -291,7 +290,7 @@ begin
     ------------------------------------------------------------------------
     -- Locking the buffer, only store the last TXT Buffer index!
     ------------------------------------------------------------------------      
-    elsif (txt_hw_cmd.lock = '1') then
+    elsif (txtb_hw_cmd.lock = '1') then
         store_last_txtb_index   <= '1';
 
     ------------------------------------------------------------------------
@@ -358,7 +357,7 @@ begin
   -- psl default clock is rising_edge(clk_sys);
   --
   -- psl txt_buf_wait_till_timestamp_cov : cover
-  --    (tx_arb_fsm = arb_sel_upp_ts and fsm_wait_state = false and
+  --    (tx_arb_fsm = s_arb_sel_upp_ts and fsm_wait_state = false and
   --     timestamp_valid = '0')
   --    report "TXT Buffer waiting for Timestamp to reach TX Time";
 

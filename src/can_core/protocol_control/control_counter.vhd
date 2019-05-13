@@ -58,7 +58,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -96,6 +95,9 @@ entity control_counter is
   
         -- Pre-load value for control counter
         ctrl_ctr_pload_val    :in   std_logic_vector(G_CTRL_CTR_WIDTH - 1 downto 0);
+        
+        -- Complementary counter enable
+        compl_ctr_ena           :in    std_logic;
 
         -----------------------------------------------------------------------
         -- Status signals
@@ -126,18 +128,22 @@ architecture rtl of control_counter is
     -- Clock enable
     signal ctrl_ctr_ce : std_logic;
 
-    -- Complementary register
-    signal compl_q : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
-
-    -- Complementary register minus
-    signal ctrl_ctr_compl  : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
+    -- Complementary counter
+    signal compl_ctr_d  : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
+    signal compl_ctr_q  : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
+    signal compl_ctr_div_32 : unsigned(G_CTRL_CTR_WIDTH - 6 downto 0);
+    signal compl_ctr_div_32_plus_5 : integer range 0 to 21;
+    signal compl_ctr_ce : std_logic;
+    
+    constant C_CTRL_CTR_ZEROES : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0) :=
+        (OTHERS => '0');
 
 begin
 
     -- Next value
-    ctrl_ctr_d <= ctrl_ctr_pload_val when (ctrl_ctr_pload = '1') else
-                  (ctrl_ctr_q - 1)   when (rx_trigger = '1') else
-                  ctrl_ctr_q;
+    ctrl_ctr_d <= unsigned(ctrl_ctr_pload_val) when (ctrl_ctr_pload = '1') else
+                              (ctrl_ctr_q - 1) when (rx_trigger = '1') else
+                                   ctrl_ctr_q;
                  
     -- Clock enable
     ctrl_ctr_ce <= '1' when (rx_trigger = '1' and ctrl_ctr_ena = '1') else
@@ -149,20 +155,7 @@ begin
 
     ctrl_ctr_one <= '1' when (ctrl_ctr_q = 1) else
                     '0';
-
-    ctrl_ctr_compl <= compl_q - ctrl_ctr_q;
     
-    ---------------------------------------------------------------------------
-    -- Status signals calculated from complementary register
-    ---------------------------------------------------------------------------
-    -- Control counter counted number of bits divisible by 8!
-    ctrl_counted_byte <= '1' when (ctrl_ctr_compl(2 downto 0) = "000")
-                             else
-                         '0';
-
-    -- Byte index within memory word!
-    ctrl_counted_byte_index <= std_logic_vector(ctrl_ctr_compl(4 downto 3));
-
     ---------------------------------------------------------------------------
     -- Control Counter register
     ---------------------------------------------------------------------------                   
@@ -178,34 +171,64 @@ begin
     end process;
     
     ---------------------------------------------------------------------------
-    -- Complementary register.
-    -- This register holds value of control counter in last pre-load. By
-    -- subtracting value of actual control counter from value of complementary
-    -- register, we can find out how many bits were already counted. This is
-    -- necessary for meauserement of Data field length!
+    -- Complementary counter.
+    --
+    -- This counter counts bits during data field. This is done to calculate
+    -- address of Data word in TXT Buffer, byte index within memory word and
+    -- indicate whole byte of data elapsed!
+    -- 
+    -- Counter is erased when control counter is preloaded (upon data field),
+    -- and counts only during data field.
     ---------------------------------------------------------------------------   
+    compl_ctr_d <= (OTHERS => '0') when (ctrl_ctr_pload = '1') else
+                   compl_ctr_q + 1;
+    
+    compl_ctr_ce <= '1' when (ctrl_ctr_pload = '1') else
+                    '1' when (compl_ctr_ena = '1') else
+                    '0';
+    
     compl_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            compl_q <= (OTHERS => '0');
+            compl_ctr_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (ctrl_ctr_pload = '1') then
-                compl_q <= ctrl_ctr_pload_val;
+            if (compl_ctr_ce = '1') then
+                compl_ctr_q <= compl_ctr_d;
             end if;
         end if;
     end process;
 
-    ctrl_ctr_mem_index <= std_logic_vector(unsigned(ctrl_ctr_q(
-                            G_CTRL_CTR_WIDTH - 1 downto 5)) + 5);
+    ---------------------------------------------------------------------------
+    -- Status signals calculated from complementary counter
+    ---------------------------------------------------------------------------
+    -- Control counter counted number of bits is on last bit within a byte!
+    ctrl_counted_byte <= '1' when (compl_ctr_q(2 downto 0) = "111")
+                             else
+                         '0';
+
+    -- Byte index within memory word!
+    ctrl_counted_byte_index <= std_logic_vector(compl_ctr_q(4 downto 3));
+    
+    -- Complementary counter divided by 32
+    compl_ctr_div_32 <= compl_ctr_q(G_CTRL_CTR_WIDTH - 1 downto 5);
+
+    -- Complementary counter divided by 32, + 5
+    compl_ctr_div_32_plus_5 <= to_integer(compl_ctr_div_32) + 5;
+    
+    ---------------------------------------------------------------------------
+    -- Index of word in TXT Buffer memory. Always Index one word further than
+    -- we are transmitting to allow loading data on TXT Buffer RAM output:
+    --  Data Bytes 1 - 4 (0 - 32) = Address word 5
+    --  Data Bytes 5 - 8 (33 - 64) = Address word 6
+    --  ...
+    --  Data Bytes 61 - 64 () = Address word 19
+    ---------------------------------------------------------------------------
+    ctrl_ctr_mem_index <= std_logic_vector(to_unsigned(compl_ctr_div_32_plus_5, 5));
 
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
 
-    -- psl retr_ctr_simul_set_and_clear_asrt : assert never
-    --  (rx_trigger = '1' and ctrl_ctr_ena = '1' and ctrl_ctr_pload = '0')
-    -- report "Control counter underflow!"
-    -- severity error;
 
 end architecture;

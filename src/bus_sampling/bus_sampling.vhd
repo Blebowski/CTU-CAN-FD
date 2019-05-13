@@ -102,7 +102,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -297,7 +296,12 @@ begin
     -- Synchronisation chain for input signal
     ----------------------------------------------------------------------------
     can_rx_sig_sync_inst : sig_sync
+    generic map(
+        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RESET_VALUE        => RECESSIVE
+    )
     port map(
+        res_n   => res_n,
         clk     => clk_sys,
         async   => can_rx,
         sync    => can_rx_synced
@@ -339,9 +343,9 @@ begin
     -- Propagate measured transceiver delay to output so that it can be
     -- read from Memory registers.
     ---------------------------------------------------------------------------
-    trv_delay(trv_delay'length - 1 downto trv_delay'length) <=
+    trv_delay(trv_delay'length - 1 downto trv_delay_i'length) <=
         (OTHERS => '0');
-    trv_delay(trv_delay'length - 1 downto 0) <= trv_delay_i;
+    trv_delay(trv_delay_i'length - 1 downto 0) <= trv_delay_i;
 
 
     ---------------------------------------------------------------------------
@@ -386,8 +390,8 @@ begin
     ----------------------------------------------------------------------------
     shift_regs_rst_reg_inst : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '1'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '1'
     )
     port map(
         -- Keep without reset! We can't use res_n to avoid reset recovery!
@@ -446,7 +450,7 @@ begin
     generic map(
         G_RESET_POLARITY    => G_RESET_POLARITY,
         G_TX_CACHE_DEPTH    => G_TX_CACHE_DEPTH,
-        G_TX_CACHE_RES_VAL  => RECESSIVE
+        G_TX_CACHE_RST_VAL  => RECESSIVE
     )
     port map(
         clk_sys           => clk_sys,               -- IN

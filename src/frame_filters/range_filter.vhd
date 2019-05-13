@@ -59,7 +59,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -75,19 +74,19 @@ entity range_filter is
     );
     port(
         -- Upper threshold of a filter
-        g_filter_upp_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
+        filter_upp_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Lower threshold of a filter
-        g_filter_low_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
+        filter_low_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter input
-        g_filter_input       : in    std_logic_vector(G_WIDTH - 1 downto 0);
+        filter_input       : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter enable (output is stuck at zero when disabled)
-        g_enable             : in    std_logic;
+        enable             : in    std_logic;
 
         -- Filter output
-        g_valid              : out   std_logic
+        valid              : out   std_logic
     );
 end entity;
   

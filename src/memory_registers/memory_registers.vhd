@@ -137,7 +137,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -275,7 +274,7 @@ entity memory_registers is
         txtb_state           :in   t_txt_bufs_state;
 
         -- SW Commands to TXT Buffer
-        txtb_sw_cmd          :out  t_txt_sw_cmd;
+        txtb_sw_cmd          :out  t_txtb_sw_cmd;
         
         -- SW Command Index (Index in logic 1 means command is valid for TXT Buffer)          
         txtb_sw_cmd_index    :out  std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -411,7 +410,7 @@ begin
                                         scs = '1' and swr = '1')
                                  else
                              '0';
-    end generate tran_cs_gen;
+    end generate txtb_port_a_cs_gen;
 
     can_core_cs <= '1' when (scs = ACT_CSC) and
                             (adress(ID_ADRESS_HIGHER downto ID_ADRESS_LOWER) =
@@ -490,9 +489,9 @@ begin
     ----------------------------------------------------------------------------
     -- Extract Fault confinement state from Status Bus
     ----------------------------------------------------------------------------
-    is_err_active <= status_bus(STAT_IS_ERR_ACTIVE_INDEX);
-    is_err_passive <= status_bus(STAT_IS_ERR_PASSIVE_INDEX);
-    is_bus_off <= status_bus(STAT_IS_BUS_OFF_INDEX);
+    is_err_active <= stat_bus(STAT_IS_ERR_ACTIVE_INDEX);
+    is_err_passive <= stat_bus(STAT_IS_ERR_PASSIVE_INDEX);
+    is_bus_off <= stat_bus(STAT_IS_BUS_OFF_INDEX);
     
     ----------------------------------------------------------------------------
     -- Extract Operation Control information from Status Bus
@@ -535,7 +534,7 @@ begin
 
     status_comb(DOR_IND) <= rx_data_overrun;
 
-    status_comb(EFT_IND)  <= stat_bus(STAT_IS_ERROR_INDEX);
+    status_comb(EFT_IND)  <= stat_bus(STAT_PC_IS_ERROR_INDEX);
 
     status_comb(31 downto 8) <= (others => '0');
 
@@ -631,34 +630,34 @@ begin
     -- Set of all Interrupt clears at the same time. We assume that vectors
     -- are addressed at LSB bits!
     drv_bus(DRV_INT_CLR_HIGH downto DRV_INT_CLR_LOW) <= align_wrd_to_reg(
-        control_registers_out.int_stat, INT_COUNT - 1, 0);
+        control_registers_out.int_stat, G_INT_COUNT - 1, 0);
 
     ---------------------------------------------------------------------------
     -- INT_ENA_SET - Interrupt enable set
     ---------------------------------------------------------------------------
     drv_bus(DRV_INT_ENA_SET_HIGH downto DRV_INT_ENA_SET_LOW) <= align_wrd_to_reg(
-            control_registers_out.int_ena_set, INT_COUNT - 1, 0);
+            control_registers_out.int_ena_set, G_INT_COUNT - 1, 0);
 
 
     ---------------------------------------------------------------------------
     -- INT_ENA_CLR - Interrupt enable clear
     ---------------------------------------------------------------------------
     drv_bus(DRV_INT_ENA_CLR_HIGH downto DRV_INT_ENA_CLR_LOW) <= align_wrd_to_reg(
-            control_registers_out.int_ena_clr, INT_COUNT - 1, 0);
+            control_registers_out.int_ena_clr, G_INT_COUNT - 1, 0);
 
      
     ---------------------------------------------------------------------------
     -- INT_MASK_SET - Interrupt mask set
     ---------------------------------------------------------------------------
     drv_bus(DRV_INT_MASK_SET_HIGH downto DRV_INT_MASK_SET_LOW) <= align_wrd_to_reg(
-            control_registers_out.int_mask_set, INT_COUNT - 1, 0);
+            control_registers_out.int_mask_set, G_INT_COUNT - 1, 0);
 
 
     ---------------------------------------------------------------------------
     -- INT_MASK_CLR - Interrupt mask clear
     ---------------------------------------------------------------------------
     drv_bus(DRV_INT_MASK_CLR_HIGH downto DRV_INT_MASK_CLR_LOW) <= align_wrd_to_reg(
-            control_registers_out.int_mask_clr, INT_COUNT - 1, 0);
+            control_registers_out.int_mask_clr, G_INT_COUNT - 1, 0);
 
 
     ---------------------------------------------------------------------------
@@ -1035,49 +1034,49 @@ begin
     begin
     
         -- SFA - Support Filter A -> yes
-        sup_filt_A_gen : if (sup_filtA) generate
+        sup_filt_A_gen : if (G_SUP_FILTA) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFA_IND, length)) <= '1';
         end generate sup_filt_A_gen;
 
         -- SFA - Support filter A -> no
-        not_sup_filt_A_gen : if (not sup_filtA) generate
+        not_sup_filt_A_gen : if (not G_SUP_FILTA) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFA_IND, length)) <= '0';
         end generate not_sup_filt_A_gen;
 
         -- SFB - Support Filter B -> yes
-        sup_filt_B_gen : if (sup_filtB) generate
+        sup_filt_B_gen : if (G_SUP_FILTB) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFB_IND, length)) <= '1';
         end generate sup_filt_B_gen;
 
         -- SFB - Support filter B -> no
-        not_sup_filt_B_gen : if (not sup_filtB) generate
+        not_sup_filt_B_gen : if (not G_SUP_FILTB) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFB_IND, length)) <= '0';
         end generate not_sup_filt_B_gen;
 
         -- SFC - Support Filter C -> yes
-        sup_filt_C_gen : if (sup_filtC) generate
+        sup_filt_C_gen : if (G_SUP_FILTC) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFC_IND, length)) <= '1';
         end generate sup_filt_C_gen;
 
         -- SFC - Support filter C -> no
-        not_sup_filt_C_gen : if (not sup_filtC) generate
+        not_sup_filt_C_gen : if (not G_SUP_FILTC) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFC_IND, length)) <= '0';
         end generate not_sup_filt_C_gen;
 
         -- SFR - Support Filter Range -> yes
-        sup_filt_range_gen : if (sup_range) generate
+        sup_filt_range_gen : if (G_SUP_RANGE) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFR_IND, length)) <= '1';
         end generate sup_filt_range_gen;
 
         -- SFR - Support filter Range -> no
-        not_sup_filt_range_gen : if (not sup_range) generate
+        not_sup_filt_range_gen : if (not G_SUP_RANGE) generate
             Control_registers_in.filter_status(
                 align_reg_to_wrd(SFR_IND, length)) <= '0';
         end generate not_sup_filt_range_gen;
@@ -1323,62 +1322,62 @@ begin
         -- PC_ARB field - Protocol control FSM - arbitration field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_ARB_IND, length)) <=
-            stat_bus(STAT_IS_ARBITRATION_INDEX);
+            stat_bus(STAT_PC_IS_ARBITRATION_INDEX);
 
         -- PC_CON field - Protocol control FSM - control field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_CON_IND, length)) <=
-            stat_bus(STAT_IS_CONTROL_INDEX);
+            stat_bus(STAT_PC_IS_CONTROL_INDEX);
 
         -- PC_DAT field - Protocol control FSM - data field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_DAT_IND, length)) <=
-            stat_bus(STAT_IS_DATA_INDEX);
+            stat_bus(STAT_PC_IS_DATA_INDEX);
 
         -- PC_STC field - Protocol control FSM - Stuff count field
         Control_registers_in.debug_register(
-            align_reg_to_wrd(PC_STF_IND, length)) <=
-            stat_bus(STAT_IS_STUFF_COUNT_INDEX);
+            align_reg_to_wrd(PC_STC_IND, length)) <=
+            stat_bus(STAT_PC_IS_STUFF_COUNT_INDEX);
 
         -- PC_CRC field - Protocol control FSM - CRC field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_CRC_IND, length)) <=
-            stat_bus(STAT_IS_CRC_INDEX);
+            stat_bus(STAT_PC_IS_CRC_INDEX);
 
         -- PC_CRCD field - Protocol control FSM - CRC Delimiter field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_CRCD_IND, length)) <=
-            stat_bus(STAT_IS_CRC_DELIMITER_INDEX);
+            stat_bus(STAT_PC_IS_CRC_DELIM_INDEX);
             
         -- PC_ACK field - Protocol control FSM - ACK field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_ACK_IND, length)) <=
-            stat_bus(STAT_IS_ACK_INDEX);
+            stat_bus(STAT_PC_IS_ACK_FIELD_INDEX);
 
         -- PC_ACKD field - Protocol control FSM - ACK Delimiter field
         Control_registers_in.debug_register(
-            align_reg_to_wrd(PC_ACKD_IND, length)) <=
-            stat_bus(STAT_IS_ACK_DELIMITER_INDEX);
+            align_reg_to_wrd(PC_ACK_IND, length)) <=
+            stat_bus(STAT_PC_IS_ACK_DELIM_INDEX);
 
         -- PC_EOF field - Protocol control FSM - EOF field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_EOF_IND, length)) <=
-            stat_bus(STAT_IS_EOF_INDEX);
+            stat_bus(STAT_PC_IS_EOF_INDEX);
 
         -- PC_OVR field - Protocol control FSM - Overload frame field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_OVR_IND, length)) <=
-            stat_bus(STAT_IS_OVERLOAD_INDEX);
+            stat_bus(STAT_PC_IS_OVERLOAD_INDEX);
 
         -- PC_INT field - Protocol control FSM - Intermission frame field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_INT_IND, length)) <=
-            stat_bus(STAT_IS_INTERMISSION_INDEX);
+            stat_bus(STAT_PC_IS_INTERMISSION_INDEX);
 
         -- PC_SUSP field - Protocol control FSM - Suspend transmission frame field
         Control_registers_in.debug_register(
             align_reg_to_wrd(PC_SUSP_IND, length)) <=
-            stat_bus(STAT_IS_SUSPEND_INDEX);
+            stat_bus(STAT_PC_IS_SUSPEND_INDEX);
 
         -- Pad rest by zeroes
         Control_registers_in.debug_register(31 downto 18) <= (OTHERS => '0');

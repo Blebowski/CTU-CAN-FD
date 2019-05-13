@@ -61,7 +61,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -76,7 +75,7 @@ entity endian_swapper is
         
         -- When true, output word is endian swapped as long as "swap_by_signal"
         -- is true. Otherwise it has no meaning.
-        G_SWAP                  :     boolean := false;
+        G_SWAP_GEN              :     boolean := false;
 
         -- Size of word (in groups)
         G_WORD_SIZE             :     natural := 4;
@@ -131,12 +130,12 @@ begin
     swap_by_generic_gen : if (not G_SWAP_BY_SIGNAL) generate
         
         -- Swap
-        swap_by_generic_true_gen : if (G_SWAP) generate
+        swap_by_generic_true_gen : if (G_SWAP_GEN) generate
             output <= swapped;    
         end generate swap_by_generic_true_gen;
         
         -- Don't Swap
-        swap_by_generic_false_gen : if (not G_SWAP) generate
+        swap_by_generic_false_gen : if (not G_SWAP_GEN) generate
             output <= input;    
         end generate swap_by_generic_false_gen;
 

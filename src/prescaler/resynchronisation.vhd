@@ -159,7 +159,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -266,7 +265,7 @@ architecture rtl of resynchronisation is
     constant C_EXT_WIDTH : natural := max(G_BT_WIDTH, G_SJW_WIDTH);
     constant C_EXP_WIDTH : natural := max(C_BS_WIDTH, C_EXT_WIDTH) + 1;
     
-    constant C_E_WIDTH     : natural := max(C_BT_WIDTH, G_TSEG2_WIDTH);
+    constant C_E_WIDTH     : natural := max(G_BT_WIDTH, G_TSEG2_WIDTH);
     constant C_E_SJW_WIDTH : natural := max(C_E_WIDTH, G_SJW_WIDTH);
 
     -- Selector between TSEG1 and TSEG2

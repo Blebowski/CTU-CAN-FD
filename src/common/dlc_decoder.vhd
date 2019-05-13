@@ -104,7 +104,7 @@ begin
         0;
 
     -- Typecast byte length in CAN FD frame to vector
-    data_len_8_to_64 <= std_logic_vector(to_unsigned(data_len_8_to_64_int, 6));
+    data_len_8_to_64 <= std_logic_vector(to_unsigned(data_len_8_to_64_int, 7));
 
 
     -- Mux for CAN 2.0 DLC:

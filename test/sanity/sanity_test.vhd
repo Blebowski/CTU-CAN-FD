@@ -460,10 +460,8 @@ begin
     comp_gen : for i in 1 to NODE_COUNT generate
         node_1_comp : CAN_top_level
         generic map(
-             use_logger       => true,
              rx_buffer_size   => 64,
-             ID               => i,
-             logger_size      => 16
+             ID               => i
         )
         port map(
              res_n            => res_n_v(i),

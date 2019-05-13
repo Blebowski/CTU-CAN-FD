@@ -68,7 +68,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -338,12 +337,12 @@ begin
     generic map(
         G_RESET_POLARITY  => G_RESET_POLARITY,
         G_BT_WIDTH        => C_BT_NBT_WIDTH,
-        G_TQ_WIDTH        => G_BRP_NBT_WIDTH
+        G_BRP_WIDTH       => G_BRP_NBT_WIDTH
     )
     port map(
         clk_sys         => clk_sys,         -- IN
         res_n           => res_n,           -- IN
-        prescaler       => brp_nbt,         -- IN
+        brp             => brp_nbt,         -- IN
         tq_reset        => bt_ctr_clear,    -- IN
         bt_reset        => bt_ctr_clear,    -- IN
         drv_ena         => drv_ena,         -- IN
@@ -389,12 +388,12 @@ begin
     generic map(
         g_reset_polarity  => G_RESET_POLARITY,
         G_BT_WIDTH        => C_BT_DBT_WIDTH,
-        G_TQ_WIDTH        => G_BRP_DBT_WIDTH
+        G_BRP_WIDTH       => G_BRP_DBT_WIDTH
     )
     port map(
         clk_sys         => clk_sys,         -- IN
         res_n           => res_n,           -- IN
-        prescaler       => brp_dbt,         -- IN
+        brp             => brp_dbt,         -- IN
         tq_reset        => bt_ctr_clear,    -- IN
         bt_reset        => bt_ctr_clear,    -- IN
         drv_ena         => drv_ena,         -- IN
@@ -484,12 +483,12 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     --
     -- psl no_nbt_bt_overflow_asrt : assert never
-    --      (bt_counter_dbt = nbt_ones and tq_edge_nbt = '1' and
+    --      (bt_counter_dbt = C_NBT_ONES and tq_edge_nbt = '1' and
     --       segment_end = '0' and sp_control = NOMINAL_SAMPLE)
     --  report "Nominal Bit time counter overflow!" severity error;
     --
     -- psl no_dbt_bt_overflow_asrt : assert never
-    --      (bt_counter_dbt = dbt_ones and tq_edge_dbt = '1' and
+    --      (bt_counter_dbt = C_DBT_ONES and tq_edge_dbt = '1' and
     --       segment_end = '0' and
     --       (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE))
     --  report "Data Bit time counter overflow!" severity error;

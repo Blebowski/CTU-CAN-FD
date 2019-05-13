@@ -58,7 +58,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -111,7 +110,7 @@ architecture rtl of reintegration_counter is
 begin
 
     -- Next value
-    reinteg_ctr_d <= 0 when (reinteg_ctr_clr = '1') else
+    reinteg_ctr_d <= (OTHERS => '0') when (reinteg_ctr_clr = '1') else
                      reinteg_ctr_q + 1;
 
     -- Clock enable

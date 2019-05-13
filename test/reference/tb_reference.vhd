@@ -274,10 +274,8 @@ begin
     ----------------------------------------------------------------------------
     CAN_inst : CAN_top_level
         generic map(
-            use_logger        => true,
             rx_buffer_size    => 64,
-            ID                => 0,
-            logger_size       => 16
+            ID                => 0
         )
         port map(
             clk_sys           => clk_sys,

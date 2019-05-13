@@ -68,35 +68,25 @@ architecture bus_sync_unit_test of CAN_test is
                                             (OTHERS => '0');
 
     -- Sample command for nominal bit time
-    signal sample_nbt               :   std_logic := '0';
-
-    -- Sample command for data bit timing
-    signal sample_dbt               :   std_logic:= '0';
+    signal rx_trigger               :   std_logic := '0';
 
     -- Synchronisation edge appeared
     signal sync_edge                :   std_logic:= '0';
 
     -- Transcieve data value
-    signal data_tx                  :   std_logic:= '0';
+    signal tx_data_wbs                  :   std_logic:= '0';
 
     -- Recieved data value
-    signal data_rx                  :   std_logic:= '0';
+    signal rx_data_wbs                  :   std_logic:= '0';
     signal sp_control               :   std_logic_vector(1 downto 0) :=
                                             (OTHERS => '0');
     signal ssp_reset                :   std_logic:= '0';
     signal trv_delay_calib          :   std_logic:= '0';
-    signal bit_err_enable           :   std_logic:= '1';
 
     -- Secondary sample signal
-    signal sample_sec_out           :   std_logic:= '0';
+    signal sample_sec           :   std_logic:= '0';
 
-    -- Bit destuffing trigger for secondary sample point
-    signal sample_sec_del_1_out     :   std_logic:= '0';
-
-    -- Rec trig for secondary sample point
-    signal sample_sec_del_2_out     :   std_logic:= '0';
-
-    signal trv_delay_out            :   std_logic_vector(15 downto 0);
+    signal trv_delay            :   std_logic_vector(15 downto 0);
     signal bit_Error                :   std_logic:= '0';
 
     -- Internal testbench signals
@@ -151,8 +141,7 @@ begin
 
     bus_sampling_comp : bus_sampling
     GENERIC map(
-        use_Sync              =>  true,
-        reset_polarity        => '0'
+        G_RESET_POLARITY       => '0'
     )
     PORT map(
         clk_sys                =>  clk_sys,
@@ -160,19 +149,15 @@ begin
         CAN_rx                 =>  CAN_rx,
         CAN_tx                 =>  CAN_tx,
         drv_bus                =>  drv_bus,
-        sample_nbt             =>  sample_nbt,
-        sample_dbt             =>  sample_dbt,
+        rx_trigger             =>  rx_trigger,
         sync_edge              =>  sync_edge,
-        data_tx                =>  data_tx,
-        data_rx                =>  data_rx,
+        tx_data_wbs                =>  tx_data_wbs,
+        rx_data_wbs                =>  rx_data_wbs,
         sp_control             =>  sp_control,
         ssp_reset              =>  ssp_reset,
         trv_delay_calib        =>  trv_delay_calib,
-        bit_err_enable         =>  bit_err_enable,
-        sample_sec_out         =>  sample_sec_out ,
-        sample_sec_del_1_out   =>  sample_sec_del_1_out,
-        sample_sec_del_2_out   =>  sample_sec_del_2_out,
-        trv_delay_out          =>  trv_delay_out,
+        sample_sec         =>  sample_sec ,
+        trv_delay          =>  trv_delay,
         bit_Error              =>  bit_Error
     );
 
@@ -196,8 +181,7 @@ begin
         generate_trig(tx_trig, rx_trig, clk_sys, seg1, seg2);
     end process;
 
-    sample_nbt <= rx_trig;
-    sample_dbt <= rx_trig;
+    rx_trigger <= rx_trig;
 
 
     ----------------------------------------------------------------------------
@@ -212,9 +196,9 @@ begin
         end if;
 
         if (generate_ones = true) then
-            data_tx <= RECESSIVE;
+            tx_data_wbs <= RECESSIVE;
         else
-            rand_logic_s(rand_ctr_data_gen, data_tx, 0.5);
+            rand_logic_s(rand_ctr_data_gen, tx_data_wbs, 0.5);
         end if;
     end process;
 
@@ -272,7 +256,7 @@ begin
         ------------------------------------------------------------------------
         -- Storing the transmitted data for testbench
         ------------------------------------------------------------------------
-        tran_data_sr <= tran_data_sr(159 downto 0) & data_tx;
+        tran_data_sr <= tran_data_sr(159 downto 0) & tx_data_wbs;
     end process;
 
     CAN_rx <= tran_del_sr(tran_del);
@@ -319,7 +303,7 @@ begin
                 wait until rising_edge(rx_trig);
                 wait for 20 ns;
                 -- Check that when TX RX mismatch occurs, Bit Error is 1!
-                check_implication(data_tx /= data_rx, bit_Error = '1',
+                check_implication(tx_data_wbs /= rx_data_wbs, bit_Error = '1',
                       "TX and RX Data mismatch and no bit error fired!");
             end loop;
 
@@ -338,7 +322,7 @@ begin
             for i in 0 to 50 loop
                 wait until rising_edge(rx_trig);
                 wait for 20 ns;
-                check((data_tx = data_rx) or (bit_Error = '1'),
+                check((tx_data_wbs = rx_data_wbs) or (bit_Error = '1'),
                       "TX and RX Data are mismatching and no bit error fired!");
             end loop;
 
@@ -391,12 +375,12 @@ begin
 
             --Check the bits
             for i in 0 to 50 loop
-                wait until rising_edge(sample_sec_out);
+                wait until rising_edge(sample_sec);
                 wait for 20 ns;
 
                 -- Here we compare the TX data delayed by Transciever delay
                 -- measured amount!
-                check((tran_data_sr(to_integer(unsigned(trv_delay_out))) = data_rx)
+                check((tran_data_sr(to_integer(unsigned(trv_delay))) = rx_data_wbs)
                       or (bit_Error = '1'),
                       "TX and RX Data mismatch, and no bit error fired!");
             end loop;

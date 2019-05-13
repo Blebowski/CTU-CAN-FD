@@ -171,7 +171,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -365,8 +364,8 @@ architecture rtl of rx_buffer is
 
     -- Number of frames currently stored in RX Buffer. Smallest frame length
     -- stored is 4 (FRAME_FORMAT +  IDENTIFIER + 2 * TIMESTAMP). Since we need
-    -- to store 0 and also buff_size / 4 values we need one value more than can
-    -- fit into buff_size / 4 width counter. Use one bit wider counter.
+    -- to store 0 and also G_RX_BUFF_SIZE / 4 values we need one value more than can
+    -- fit into G_RX_BUFF_SIZE / 4 width counter. Use one bit wider counter.
     signal message_count            :       natural range 0 to (G_RX_BUFF_SIZE / 2) - 1; 
 
     -- Counter for reading the frame. When whole frame is read,
@@ -507,7 +506,7 @@ begin
         store_metadata_f    => store_metadata_f,    -- IN
         store_data_f        => store_data_f,        -- IN
         rec_valid_f         => rec_valid_f,         -- IN
-        rec_abort_          => rec_abort_f,         -- IN
+        rec_abort_f         => rec_abort_f,         -- IN
         sof_pulse           => sof_pulse,           -- IN
         drv_bus             => drv_bus,             -- IN
         
@@ -526,6 +525,7 @@ begin
     ----------------------------------------------------------------------------
     rx_buffer_pointers_inst : rx_buffer_pointers
     generic map(
+        G_RESET_POLARITY        => G_RESET_POLARITY,
         G_RX_BUFF_SIZE          => G_RX_BUFF_SIZE
     )
     port map(
@@ -895,14 +895,14 @@ begin
     -- on memory pointers, using non power of 2 value would result in increased
     -- logic usage!
     ----------------------------------------------------------------------------
-    assert ((buff_size = 32) or
-            (buff_size = 64) or
-            (buff_size = 128) or
-            (buff_size = 256) or
-            (buff_size = 512) or
-            (buff_size = 1024) or
-            (buff_size = 2048) or
-            (buff_size = 4096))
+    assert ((G_RX_BUFF_SIZE = 32) or
+            (G_RX_BUFF_SIZE = 64) or
+            (G_RX_BUFF_SIZE = 128) or
+            (G_RX_BUFF_SIZE = 256) or
+            (G_RX_BUFF_SIZE = 512) or
+            (G_RX_BUFF_SIZE = 1024) or
+            (G_RX_BUFF_SIZE = 2048) or
+            (G_RX_BUFF_SIZE = 4096))
     report "Unsupported RX Buffer size! RX Buffer must be power of 2!"
         severity failure;
 

@@ -60,7 +60,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -259,7 +258,7 @@ begin
     ----------------------------------------------------------------------------
     -- Current State process (outputs)
     ----------------------------------------------------------------------------
-    curr_state_proc : process(curr_state, store_data)
+    curr_state_proc : process(curr_state, store_data_f)
     begin
         write_raw_intent <= '0';
         write_extra_ts <= '0'; 
@@ -306,11 +305,13 @@ begin
         when s_rxb_store_data =>
             data_selector    <= "1000000";
             
-            if (store_data = '1') then
+            if (store_data_f = '1') then
                 write_raw_intent      <= '1';
             end if;
             
         when s_rxb_store_end_ts_low =>
+            data_selector    <= "0001000";
+
             -- Extra write pointer is incremented once more when lower
             -- timestamp word was stored, to point to higher timestamp word.
             inc_extra_wr_ptr <= '1';
@@ -357,26 +358,26 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     
     -- psl store_metadata_in_idle_asrt : assert never
-    --  (store_metadata_f = '1' and rx_fsm /= rxb_idle)
+    --  (store_metadata_f = '1' and curr_state /= s_rxb_idle)
     -- report "RX Buffer: Store metadata command did NOT come when RX buffer " &
     --        "is idle!"
     -- severity error;
     
     -- psl commit_or_store_data_asrt : assert never
-    --  (rec_valid_f = '1' or store_data_f = '1') and rx_fsm /= rxb_store_data)
+    --  ((rec_valid_f = '1' or store_data_f = '1') and curr_state /= s_rxb_store_data)
     -- report "RX Buffer: Store data or frame commit commands did not come " &
     --        "when RX Buffer is receiving data!"
     -- severity error;
 
     -- psl sof_pulse_asrt_asrt : assert never
-    --   (sof_pulse = '1' and rx_fsm /= rxb_idle)
-    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!""
+    --   (sof_pulse = '1' and curr_state /= s_rxb_idle)
+    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
     -- severity error;
     
     -- psl rx_buf_cmds_one_hot_asrt : assert never
     --   (cmd_join /= "0000" and cmd_join /= "0001" and cmd_join /= "0010"
     --    and cmd_join /= "0100" and cmd_join /= "1000")
-    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!""
+    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
     -- severity error;
 
 end architecture;

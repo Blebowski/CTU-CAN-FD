@@ -54,14 +54,10 @@ context work.ctu_can_test_context;
 architecture apb_unit_test of CAN_test is
     component CTU_CAN_FD_v1_0 is
         generic(
-            use_logger       : boolean                := true;
-            rx_buffer_size   : natural range 4 to 512 := 128;
-            use_sync         : boolean                := true;
             sup_filtA        : boolean                := true;
             sup_filtB        : boolean                := true;
             sup_filtC        : boolean                := true;
-            sup_range        : boolean                := true;
-            logger_size      : natural range 0 to 512 := 8
+            sup_range        : boolean                := true
         );
         port(
             aclk             : in  std_logic;
@@ -103,8 +99,6 @@ architecture apb_unit_test of CAN_test is
 begin
     can: CTU_CAN_FD_v1_0
         generic map (
-            use_logger  => false,
-            use_sync    => false,
             sup_filtA   => false,
             sup_filtB   => false,
             sup_filtC   => false,

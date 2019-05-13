@@ -54,7 +54,7 @@ Library ieee;
 USE IEEE.std_logic_1164.all;
 USE IEEE.numeric_std.ALL;
 
-entity g_inf_ram_wrapper is
+entity inf_ram_wrapper is
     generic(
         -- Reset polarity
         G_RESET_POLARITY       :     std_logic := '1';
@@ -174,11 +174,11 @@ begin
     ----------------------------------------------------------------------------
     -- Assertions on size
     ----------------------------------------------------------------------------
-    assert ((word_width = 8) or
-            (word_width = 16) or
-            (word_width = 32) or
-            (word_width = 64) or
-            (word_width = 128))
+    assert ((G_WORD_WIDTH = 8) or
+            (G_WORD_WIDTH = 16) or
+            (G_WORD_WIDTH = 32) or
+            (G_WORD_WIDTH = 64) or
+            (G_WORD_WIDTH = 128))
     report "Unsupported inferred RAM word width! " &
            "Only 8, 16, 32, 64 and 128 are allowed!"
         severity failure;

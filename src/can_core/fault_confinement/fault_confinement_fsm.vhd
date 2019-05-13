@@ -58,7 +58,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -174,7 +173,7 @@ begin
 
         when s_fc_bus_off =>
             if (set_err_active = '1') then
-                next_state <= s_fc_err_active;
+                next_state <= s_fc_error_active;
             end if;
         end case;
         

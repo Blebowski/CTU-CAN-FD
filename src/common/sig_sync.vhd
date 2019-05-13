@@ -59,6 +59,9 @@ entity sig_sync is
         G_RESET_VALUE        : std_logic := '1'
     );
     port (
+        -- Reset
+        res_n                : in    std_logic;
+        
         -- Clock
         clk                  : in    std_logic;
         

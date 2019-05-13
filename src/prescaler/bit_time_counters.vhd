@@ -66,7 +66,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -146,7 +145,7 @@ begin
     -- If prescaler is defined as 0 or 1, there is no need to run the counter!
     -- Run it only when Prescaler is higher than 1! 
     ---------------------------------------------------------------------------
-    tq_counter_ce <= '1' when (prescaler > tq_run_th and drv_ena = '1') else
+    tq_counter_ce <= '1' when (brp > tq_run_th and drv_ena = '1') else
                      '0';
 
     ---------------------------------------------------------------------------
@@ -156,7 +155,7 @@ begin
     --  3. Add 1 ohterwise!
     ---------------------------------------------------------------------------
     tq_counter_d <=
-        (OTHERS => '0') when (unsigned(tq_counter_q) = unsigned(prescaler) - 1)
+        (OTHERS => '0') when (unsigned(tq_counter_q) = unsigned(brp) - 1)
                         else
         (OTHERS => '0') when (tq_reset = '1')
                         else
@@ -177,7 +176,7 @@ begin
     -- Time quanta edge
     ---------------------------------------------------------------------------
     tq_edge_i <= '1' when (tq_counter_ce = '0' or 
-                           unsigned(tq_counter_q) = unsigned(prescaler) - 1)
+                           unsigned(tq_counter_q) = unsigned(brp) - 1)
                      else
                  '0';
 

@@ -72,7 +72,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -90,7 +89,7 @@ entity can_crc is
         G_CRC17_POL         :     std_logic_vector(19 downto 0) := x"3685B";
         
         -- CRC 15 polynomial
-        G_CRC21_POL         :     std_logic_vector(23 downto 0) := x"302899"  
+        G_CRC21_POL         :     std_logic_vector(23 downto 0) := x"302899"
     );
     port(
         ------------------------------------------------------------------------

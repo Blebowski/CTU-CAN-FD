@@ -85,7 +85,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -118,8 +117,8 @@ entity bit_stuffing is
         ------------------------------------------------------------------------
         -- Control signals
         ------------------------------------------------------------------------
-        -- TX Trigger for Bit Stuffing (in SYNC segment) 
-        tx_trigger          :in   std_logic; 
+        -- Bit Stuffing Trigger (in SYNC segment) 
+        bst_trigger          :in   std_logic; 
         
         -- Bit Stuffing enabled. If not, data are only passed to the output
         stuff_enable        :in   std_logic;
@@ -235,8 +234,8 @@ begin
     ---------------------------------------------------------------------------
     dff_ena_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -261,7 +260,7 @@ begin
     --  2. Store "fixed_stuff" configuration when data are processed
     ---------------------------------------------------------------------------    
     fixed_reg_nxt <= '0'         when (enable_prev = '0') else
-                     fixed_stuff when (tx_trigger = '1') else
+                     fixed_stuff when (bst_trigger = '1') else
                      fixed_reg;
 
     ---------------------------------------------------------------------------
@@ -271,8 +270,8 @@ begin
     ---------------------------------------------------------------------------
     dff_fixed_stuff_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -296,7 +295,7 @@ begin
     --  3. Keep previous value otherwise.
     ---------------------------------------------------------------------------
     stuff_ctr_nxt <= 0             when (enable_prev = '0') else
-                     stuff_ctr_add when (tx_trigger = '1' and
+                     stuff_ctr_add when (bst_trigger = '1' and
                                          stuff_lvl_reached = '1' and
                                          fixed_stuff = '0') else
                      stuff_ctr;
@@ -337,7 +336,7 @@ begin
     --  2. When processing bit and should be restarted by dedicated signal.    
     ---------------------------------------------------------------------------
     same_bits_rst <= '1' when (enable_prev = '0') or
-                              (tx_trigger = '1' and same_bits_rst_trig = '1')
+                              (bst_trigger = '1' and same_bits_rst_trig = '1')
                          else
                      '0';
 
@@ -356,7 +355,7 @@ begin
     --  3. Keep original value otherwise.
     ---------------------------------------------------------------------------
     same_bits_nxt <= 1             when (same_bits_rst = '1') else
-                     same_bits_add when (tx_trigger = '1') else
+                     same_bits_add when (bst_trigger = '1') else
                      same_bits;
 
 
@@ -410,15 +409,15 @@ begin
     --  4. Keep previous value otherwise
     ---------------------------------------------------------------------------
     data_out_nxt_ena <= RECESSIVE      when (enable_prev = '0') else
-                        (not data_out_int) when (tx_trigger = '1' and insert_stuff_bit = '1') else
-                        data_in        when (tx_trigger = '1') else
+                        (not data_out_int) when (bst_trigger = '1' and insert_stuff_bit = '1') else
+                        data_in        when (bst_trigger = '1') else
                         data_out_int;
 
     data_out_nxt <= data_out_nxt_ena when (stuff_enable = '1') else
-                    data_in          when (tx_trigger = '1') else
+                    data_in          when (bst_trigger = '1') else
                     data_out_int;
 
-    data_out_load <= '1' when (stuff_enable = '1' or tx_trigger = '1') else
+    data_out_load <= '1' when (stuff_enable = '1' or bst_trigger = '1') else
                      '0';
 
     ---------------------------------------------------------------------------
@@ -428,8 +427,8 @@ begin
     ---------------------------------------------------------------------------
     dff_data_out_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => RECESSIVE
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => RECESSIVE
     )
     port map(
         arst               => res_n,
@@ -451,8 +450,8 @@ begin
     --  3. Erase when bit is processed, but stuff bit is not inserted.
     ---------------------------------------------------------------------------
     halt_reg_nxt <= '0' when (enable_prev = '0' or stuff_enable = '0') else
-                    '1' when (tx_trigger = '1' and insert_stuff_bit = '1') else
-                    '0' when (tx_trigger = '1') else
+                    '1' when (bst_trigger = '1' and insert_stuff_bit = '1') else
+                    '0' when (bst_trigger = '1') else
                     halt_reg;
 
     ---------------------------------------------------------------------------
@@ -460,8 +459,8 @@ begin
     ---------------------------------------------------------------------------
     dff_halt_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,

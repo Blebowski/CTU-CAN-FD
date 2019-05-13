@@ -139,7 +139,7 @@ begin
     ---------------------------------------------------------------------------
     -- Assertion for correct length of reset value
     ---------------------------------------------------------------------------
-    assert (reset_value'length = G_WIDTH) report "Invalid length of shift " &
+    assert (G_RESET_VALUE'length = G_WIDTH) report "Invalid length of shift " &
          "register reset value" severity error;
 
 end rtl;

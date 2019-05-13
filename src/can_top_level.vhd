@@ -87,7 +87,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 use work.can_config.all;
 
@@ -254,7 +253,7 @@ architecture rtl of can_top_level is
     signal txtb_port_a_address  :    std_logic_vector(4 downto 0);
     
     -- TXT Buffer chip select
-    signal txtb_port_a_cs       :    std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_port_a_cs       :    std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
 
     -- TXT Buffer status
     signal txtb_state           :    t_txt_bufs_state;
@@ -263,7 +262,7 @@ architecture rtl of can_top_level is
     signal txtb_sw_cmd          :    t_txtb_sw_cmd;
     
     -- Command Index (Index in logic 1 means command is valid for buffer)          
-    signal txtb_sw_cmd_index    :    std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_sw_cmd_index    :    std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
     
     -- TXT Buffer priorities
     signal txtb_prorities       :    t_txt_bufs_priorities;
@@ -355,10 +354,10 @@ architecture rtl of can_top_level is
     -- TXT Buffers <-> TX Arbitrator
     ------------------------------------------------------------------------    
     -- Index of TXT Buffer for which HW commands is valid          
-    signal txtb_hw_cmd_index   :   natural range 0 to G_TXT_BUF_COUNT - 1;
+    signal txtb_hw_cmd_index   :   natural range 0 to C_TXT_BUFFER_COUNT - 1;
     
     -- TXT Buffers are ready, can be selected by TX Arbitrator
-    signal txtb_ready          :   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+    signal txtb_ready          :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
         
     -- Pointer to TXT Buffer
     signal txtb_ptr            :   natural range 0 to 19;
@@ -484,7 +483,7 @@ begin
     ---------------------------------------------------------------------------
     rst_sync_comp : rst_sync
     generic map(
-        reset_polarity  => C_RESET_POLARITY
+        G_RESET_POLARITY  => C_RESET_POLARITY
     )
     port map(
         clk             => clk_sys,
@@ -505,9 +504,9 @@ begin
         G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT, 
         G_ID                => ID,
         G_INT_COUNT         => C_INT_COUNT,
-        G_DEVICE_ID         => C_DEVICE_ID,
-        G_VERSION_MINOR     => C_VERSION_MINOR,
-        G_VERSION_MAJOR     => C_VERSION_MAJOR
+        G_DEVICE_ID         => C_CAN_DEVICE_ID,
+        G_VERSION_MINOR     => C_CTU_CAN_FD_VERSION_MINOR,
+        G_VERSION_MAJOR     => C_CTU_CAN_FD_VERSION_MAJOR
     )
     port map(
         clk_sys             => clk_sys,         -- IN
@@ -622,10 +621,10 @@ begin
             -- Memory Registers Interface
             txtb_port_a_data       => txtb_port_a_data,     -- IN
             txtb_port_a_address    => txtb_port_a_address,  -- IN
-            txtb_port_a_cs         => txtb_port_a_cs,       -- IN
+            txtb_port_a_cs         => txtb_port_a_cs(i),    -- IN
             txtb_sw_cmd            => txtb_sw_cmd,          -- IN
             txtb_sw_cmd_index      => txtb_sw_cmd_index,    -- IN
-            txtb_state             => txtb_state,           -- OUT
+            txtb_state             => txtb_state(i),        -- OUT
     
             -- Interrupt Manager Interface
             txtb_hw_cmd_int        => txtb_hw_cmd_int(i),   -- OUT
@@ -646,7 +645,7 @@ begin
     tx_arbitrator_inst : tx_arbitrator
     generic map(
         G_RESET_POLARITY        => C_RESET_POLARITY,
-        C_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT
+        G_TXT_BUFFER_COUNT      => C_TXT_BUFFER_COUNT
     )
     port map( 
         clk_sys                 => clk_sys,             -- IN
@@ -696,8 +695,8 @@ begin
 
         -- CAN Core interface
         rec_ident           => rec_ident,           -- IN
-        ident_type          => rec_ident_type,      -- IN
-        frame_type          => rec_frame_type,      -- IN
+        rec_ident_type      => rec_ident_type,      -- IN
+        rec_frame_type      => rec_frame_type,      -- IN
         store_metadata      => store_metadata,      -- IN
         store_data          => store_data,          -- IN
         rec_valid           => rec_valid,           -- IN
@@ -756,8 +755,8 @@ begin
         G_RETR_LIM_CTR_WIDTH    => C_RETR_LIM_CTR_WIDTH,
         G_ERR_VALID_PIPELINE    => C_ERR_VALID_PIPELINE,
         G_CRC15_POL             => C_CRC15_POL,
-        G_CRC17_POL             => C_CRC15_POL,
-        G_CRC21_POL             => C_CRC15_POL
+        G_CRC17_POL             => C_CRC17_POL,
+        G_CRC21_POL             => C_CRC21_POL
     )
     port map(
         clk_sys                 => clk_sys,             -- IN
@@ -890,8 +889,8 @@ begin
         sync_edge               => sync_edge,       -- OUT
 
         -- CAN Core Interface
-        data_tx                 => tx_data_wbs,     -- IN
-        data_rx                 => rx_data_wbs,     -- OUT
+        tx_data_wbs             => tx_data_wbs,     -- IN
+        rx_data_wbs             => rx_data_wbs,     -- OUT
         sp_control              => sp_control,      -- IN
         ssp_reset               => ssp_reset,       -- IN
         trv_delay_calib         => trv_delay_calib, -- IN

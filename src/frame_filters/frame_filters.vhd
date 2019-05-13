@@ -71,7 +71,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -303,8 +302,8 @@ begin
     ---------------------------------------------------------------------------
     bit_filter_A_inst : bit_filter
     generic map(
-        width           => 29,
-        is_present      => G_SUP_FILTA
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_FILTA
     )
     port map(
         filter_mask     => drv_filter_A_mask,       -- IN
@@ -317,8 +316,8 @@ begin
 
     bit_filter_B_inst : bit_filter
     generic map(
-        width           => 29,
-        is_present      => G_SUP_FILTB
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_FILTB
     )
     port map(
         filter_mask     => drv_filter_B_mask,       -- IN
@@ -331,8 +330,8 @@ begin
 
     bit_filter_C_inst : bit_filter
     generic map(
-        width           => 29,
-        is_present      => G_SUP_FILTC
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_FILTC
     )
     port map(
         filter_mask     => drv_filter_C_mask,       -- IN
@@ -346,8 +345,8 @@ begin
                  
     range_filter_inst : range_filter
     generic map(
-        width           => 29,
-        is_present      => G_SUP_RANGE
+        G_WIDTH           => 29,
+        G_IS_PRESENT      => G_SUP_RANGE
     )
     port map(
         filter_upp_th   => drv_filter_ran_hi_th,    -- IN

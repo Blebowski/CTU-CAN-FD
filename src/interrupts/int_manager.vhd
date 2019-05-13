@@ -84,7 +84,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -146,9 +145,6 @@ entity int_manager is
 
         -- HW command on TXT Buffers interrupt
         txtb_hw_cmd_int  :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
-
-        -- Event logger
-        loger_finished   :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers Interface
@@ -254,7 +250,6 @@ begin
     int_input_active(EPI_IND)       <= error_passive_changed;
     int_input_active(ALI_IND)       <= arbitration_lost;
     int_input_active(BEI_IND)       <= err_detected;
-    int_input_active(LFI_IND)       <= loger_finished;
     int_input_active(RXFI_IND)      <= rx_full;
     int_input_active(BSI_IND)       <= br_shifted;
     int_input_active(RBNEI_IND)     <= not rx_empty;
@@ -269,7 +264,7 @@ begin
         int_module_inst : int_module
         generic map(        
             G_RESET_POLARITY       => G_RESET_POLARITY,
-            clear_priority         => int_clear_priority(i)
+            G_CLEAR_PRIORITY       => int_clear_priority(i)
         )
         port map(
             clk_sys                => clk_sys,              -- IN

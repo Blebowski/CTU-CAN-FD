@@ -58,7 +58,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -135,7 +134,7 @@ begin
     retr_ctr_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            retr_ctr_d <= (OTHERS => '0');
+            retr_ctr_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (retr_ctr_ce = '1') then
                 retr_ctr_q <= retr_ctr_d;

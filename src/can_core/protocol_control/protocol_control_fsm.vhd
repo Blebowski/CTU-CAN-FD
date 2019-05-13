@@ -61,7 +61,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -160,8 +159,8 @@ entity protocol_control_fsm is
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
-        -- Actual TX Data
-        tx_data                 :in   std_logic;
+        -- Actual TX Data (post bit stuffing)
+        tx_data_wbs             :in   std_logic;
         
         -- Actual RX Data
         rx_data                 :in   std_logic;
@@ -194,7 +193,7 @@ entity protocol_control_fsm is
         txtb_hw_cmd             :out  t_txtb_hw_cmd;
         
         -- Pointer to TXT Buffer memory
-        txtb_ptr             :out  natural range 0 to 19;
+        txtb_ptr                :out  natural range 0 to 19;
         
         -- TX Data length code
         tran_dlc                :in   std_logic_vector(3 downto 0);
@@ -204,6 +203,9 @@ entity protocol_control_fsm is
         
         -- TX Frame type (0-CAN 2.0, 1-CAN FD)
         tran_frame_type         :in   std_logic;
+        
+        -- Identifier type (BASIC, EXTENDED)
+        tran_ident_type         :in   std_logic;
 
         -- TX Bit rate shift
         tran_brs                :in   std_logic;
@@ -313,6 +315,9 @@ entity protocol_control_fsm is
         
         -- Control counter - TXT Buffer memory index
         ctrl_ctr_mem_index      :in    std_logic_vector(4 downto 0);
+        
+        -- Complementary counter enable
+        compl_ctr_ena           :out   std_logic;
 
         -----------------------------------------------------------------------
         -- Reintegration counter interface
@@ -519,7 +524,10 @@ architecture rtl of protocol_control_fsm is
     signal rec_data_length    : std_logic_vector(6 downto 0);
     signal rec_data_length_c  : std_logic_vector(6 downto 0);
 
-    signal data_length_c      : std_logic;
+    signal data_length_c         : std_logic_vector(6 downto 0);
+    signal data_length_shifted_c : std_logic_vector(9 downto 0);
+    signal data_length_sub_c     : unsigned(9 downto 0);
+    signal data_length_bits_c    : std_logic_vector(8 downto 0);
     
     -- FD Frame is being transmitted/received
     signal is_fd_frame        : std_logic;
@@ -552,6 +560,9 @@ architecture rtl of protocol_control_fsm is
     
     -- Unit should go to suspend transmission field!
     signal go_to_suspend        : std_logic;
+    
+    -- Unit should go to stuff count field
+    signal go_to_stuff_count    : std_logic;
     
     -- Internal store commands for RX Shift register
     signal rx_store_base_id_i        :  std_logic;
@@ -588,8 +599,8 @@ architecture rtl of protocol_control_fsm is
     signal sp_control_switch_nominal :  std_logic;
     
     signal sp_control_ce             :  std_logic;
-    signal sp_control_d              :  std_logic;
-    signal sp_control_q              :  std_logic;
+    signal sp_control_d              :  std_logic_vector(1 downto 0);
+    signal sp_control_q              :  std_logic_vector(1 downto 0);
 
     -- Secondary sampling point shift register reset
     signal ssp_reset_d               :  std_logic;
@@ -637,6 +648,9 @@ architecture rtl of protocol_control_fsm is
     -- Retransmitt counter clear
     signal retr_ctr_clear_i          :  std_logic;
     
+    -- Complementary counter enable
+    signal compl_ctr_ena_i           :  std_logic;
+    
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -677,7 +691,7 @@ begin
                           '0';
 
     arbitration_lost_condition <= '1' when (is_transmitter = '1' and 
-                                            tx_data = RECESSIVE and
+                                            tx_data_wbs = RECESSIVE and
                                             rx_data = DOMINANT)
                                       else
                                   '0';
@@ -691,7 +705,11 @@ begin
                    '1' when (is_receiver = '1' and rec_frame_type = FD_CAN)
                        else
                    '0';
-                   
+
+    go_to_stuff_count <= '1' when (drv_fd_type = ISO_FD and is_fd_frame = '1')
+                             else
+                         '0';
+
     frame_start <= '1' when (tx_frame_ready = '1' and go_to_suspend = '0') else
                    '1' when (rx_data = DOMINANT) else
                    '0';
@@ -716,12 +734,12 @@ begin
                   '0';
                             
 
-    crc_src_i <= CRC21 when (crc_use_21 = '1') else
-                 CRC17 when (crc_use_17 = '1') else
-                 CRC15;
+    crc_src_i <= C_CRC21_SRC when (crc_use_21 = '1') else
+                 C_CRC17_SRC when (crc_use_17 = '1') else
+                 C_CRC15_SRC;
 
-    crc_length_i <= C_CRC15_DURATION when (crc_src_i = CRC15) else
-                    C_CRC17_DURATION when (crc_src_i = CRC17) else
+    crc_length_i <= C_CRC15_DURATION when (crc_src_i = C_CRC15_SRC) else
+                    C_CRC17_DURATION when (crc_src_i = C_CRC17_SRC) else
                     C_CRC21_DURATION;
 
     ---------------------------------------------------------------------------
@@ -757,11 +775,25 @@ begin
     -- Data field length (valid only in Sample point of last bit of DLC)
     data_length_c <= tran_data_length when (is_transmitter = '1') else
                      rec_data_length_c;
-
+                     
+    -- Shift by 3 (Multiply by 8)
+    data_length_shifted_c <= data_length_c & "000";
+    
+    -- Subtract 1 (control counter counts till field length minus 1)
+    data_length_sub_c <= unsigned(data_length_shifted_c) - 1;
+    
+    -- Convert to length of control counter
+    data_length_bits_c <= std_logic_vector(
+            data_length_sub_c(ctrl_ctr_pload_val'length - 1 downto 0));
+    
     ---------------------------------------------------------------------------
     -- Next state process
     ---------------------------------------------------------------------------
-    next_state_proc : process
+    next_state_proc : process(
+        curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
+        drv_fd_type, allow_2bit_crc_delim, allow_2bit_ack, is_receiver,
+        is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset,
+        reinteg_ctr_expired, rx_data)
     begin
         next_state <= curr_state;
 
@@ -887,7 +919,7 @@ begin
             when s_pc_dlc =>
                 if (ctrl_ctr_zero = '1') then 
                     if (no_data_field = '1') then
-                        if (drv_fd_type = ISO_FD) then
+                        if (go_to_stuff_count = '1') then
                             next_state <= s_pc_stuff_count;
                         else
                             next_state <= s_pc_crc;
@@ -902,7 +934,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_data =>
                 if (ctrl_ctr_zero = '1') then
-                    if (drv_fd_type = ISO_FD) then
+                    if (go_to_stuff_count = '1') then
                         next_state <= s_pc_stuff_count;
                     else
                         next_state <= s_pc_crc;
@@ -922,7 +954,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_crc =>
                 if (ctrl_ctr_zero = '1') then
-                    next_state <= s_pc_prim_crc_delim;
+                    next_state <= s_pc_crc_delim;
                 end if;
            
             -------------------------------------------------------------------
@@ -978,7 +1010,7 @@ begin
             when s_pc_eof =>
                 if (ctrl_ctr_zero = '1') then
                     if (rx_data = RECESSIVE) then
-                        next_state <= s_pc_itermission;
+                        next_state <= s_pc_intermission;
                     elsif (is_receiver = '1') then
                         next_state <= s_pc_ovr_flag;
                     end if;
@@ -1122,15 +1154,24 @@ begin
     ---------------------------------------------------------------------------
     -- Current state process
     ---------------------------------------------------------------------------
-    curr_state_proc : process
+    curr_state_proc : process(
+        curr_state, err_frm_req, sp_control_q, tx_failed, drv_ena, rx_data,
+        ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter,
+        tran_ident_type, tran_frame_type, tran_is_rtr, ide_is_arbitration,
+        drv_can_fd_ena, tran_brs, rx_trigger, is_err_active, no_data_field,
+        drv_fd_type, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
+        is_receiver, crc_match, drv_ack_forb, drv_self_test_ena, tx_frame_ready,
+        go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset,
+        reinteg_ctr_expired, first_err_delim_q)
     begin
 
         -----------------------------------------------------------------------
         -- Default values
         -----------------------------------------------------------------------
-        ctrl_ctr_pload       <= '0';
+        ctrl_ctr_pload_i     <= '0';
         ctrl_ctr_pload_val   <= (OTHERS => '0');
-        ctrl_ctr_ena           <= '0';
+        ctrl_ctr_ena         <= '0';
+        compl_ctr_ena_i      <= '0';
         
         -- RX Buffer storing protocol
         store_metadata_d <= '0';
@@ -1213,7 +1254,7 @@ begin
         ack_received <= '0';
 
         -- Bit Stuffing/Destuffing control
-        stuff_length <= 5;
+        stuff_length <= std_logic_vector(to_unsigned(5, 3));
         fixed_stuff <= '0';
         stuff_enable_set <= '0';
         stuff_enable_clear <= '0';
@@ -1310,6 +1351,7 @@ begin
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_SOF;
                 crc_enable <= '1';
+                txtb_ptr_d <= 1;
                 
                 if (rx_data = RECESSIVE) then
                     form_error_i <= '1';
@@ -1326,6 +1368,7 @@ begin
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 crc_enable <= '1';
+                txtb_ptr_d <= 1;
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1343,7 +1386,7 @@ begin
                     rx_store_base_id_i <= '1';
                 end if;
                 
-                if (tx_data = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
                     bit_error_arb_i <= '1';
                 end if;
 
@@ -1356,6 +1399,7 @@ begin
                 crc_enable <= '1';
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
+                txtb_ptr_d <= 1;
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1372,12 +1416,12 @@ begin
                 if (is_transmitter = '1' and tran_ident_type = BASE) then
                     if (tran_frame_type = FD_CAN) then
                         tx_dominant <= '1';
-                    elsif (tran_is_rtr = NO_RTR) then
+                    elsif (tran_is_rtr = NO_RTR_FRAME) then
                         tx_dominant <= '1';
                     end if;
                 end if;
                 
-                if (tx_data = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
                     bit_error_arb_i <= '1';
                 end if;
 
@@ -1387,6 +1431,7 @@ begin
             when s_pc_ide =>
                 rx_store_ide_i <= '1';
                 crc_enable <= '1';
+                txtb_ptr_d <= 1;
                 
                 if (rx_data = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
@@ -1410,7 +1455,7 @@ begin
                     is_arbitration <= '1';
                     bit_err_disable <= '1';
                     
-                    if (tx_data = DOMINANT and rx_data = RECESSIVE) then
+                    if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
                         bit_error_arb_i <= '1';
                     end if;
                 else
@@ -1455,7 +1500,7 @@ begin
                     rx_store_ext_id_i         <= '1';
                 end if;
 
-                if (tx_data = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
                     bit_error_arb_i <= '1';
                 end if;
 
@@ -1482,12 +1527,14 @@ begin
                 end if;
                 
                 if (is_transmitter = '1') then
-                    if (tran_frame_type = FD_CAN or tran_ident_type = BASE) then
+                    if (tran_frame_type = FD_CAN) then
+                        tx_dominant <= '1';
+                    elsif (tran_is_rtr = NO_RTR_FRAME) then
                         tx_dominant <= '1';
                     end if;
                 end if;
                 
-                if (tx_data = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
                     bit_error_arb_i <= '1';
                 end if;
 
@@ -1601,7 +1648,8 @@ begin
             ------------------------------------------------------------------- 
             when s_pc_esi =>
                 ctrl_ctr_pload_i <= '1';
-                ctrl_ctr_pload_val <= C_EXT_ID_DURATION;
+                ctrl_ctr_pload_val <= C_DLC_DURATION;
+                tx_load_dlc_i <= '1';
                 rx_store_esi_i <= '1';
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
@@ -1633,14 +1681,15 @@ begin
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     if (no_data_field = '1') then
-                        if (drv_fd_type = ISO_FD) then
+                        if (go_to_stuff_count = '1') then
                             ctrl_ctr_pload_val <= C_STUFF_COUNT_DURATION;
                             tx_load_stuff_count_i <= '1';
                         else
                             ctrl_ctr_pload_val <= crc_length_i;
+                            tx_load_crc_i <= '1';
                         end if;
                     else
-                        ctrl_ctr_pload_val <= data_length_c;
+                        ctrl_ctr_pload_val <= data_length_bits_c;
                         tx_load_data_word_i <= '1';
                     end if;
 
@@ -1659,6 +1708,7 @@ begin
                 err_pos <= ERC_POS_DATA;
                 crc_enable <= '1';
                 is_data <= '1';
+                compl_ctr_ena_i <= '1';
                 
                 -- Address next word (the one after actually transmitted one),
                 -- so that when current word ends, TXT Buffer RAM already
@@ -1669,20 +1719,25 @@ begin
                 end if;
 
                 if (ctrl_ctr_zero = '1') then
-                    if (drv_fd_type = ISO_FD) then
+                    if (go_to_stuff_count = '1') then
                         ctrl_ctr_pload_val <= C_STUFF_COUNT_DURATION;
                         tx_load_stuff_count_i <= '1';
                     else
                         ctrl_ctr_pload_val <= crc_length_i;
                         tx_load_crc_i <= '1';
                     end if;
+                    ctrl_ctr_pload_i <= '1';
+                    
                     -- Store data word at the end of data field.
                     store_data_d <= '1';
                 end if;
 
                 -- Store data word when multiple of 4 data bytes were counted!
+                -- Avoid storing at the end of Data field, because CRC must be
+                -- preloaded then!
                 if (ctrl_counted_byte = '1' and 
-                    ctrl_counted_byte_index = "11")
+                    ctrl_counted_byte_index = "11" and
+                    ctrl_ctr_zero = '0')
                 then
                     store_data_d <= '1';
                     tx_load_data_word_i <= '1';
@@ -1701,12 +1756,13 @@ begin
                 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_val <= crc_length_i;
+                    ctrl_ctr_pload_i <= '1';
                     tx_load_crc_i <= '1';
                     rx_store_stuff_count_i <= '1';
                 end if;
     
                 if (is_fd_frame = '1') then
-                    stuff_length <= 4;
+                    stuff_length <= std_logic_vector(to_unsigned(4, 3));
                     fixed_stuff <= '1';
                 end if;
 
@@ -1721,7 +1777,7 @@ begin
                 is_crc <= '1';
 
                 if (is_fd_frame = '1') then
-                    stuff_length <= 4;
+                    stuff_length <= std_logic_vector(to_unsigned(4, 3));
                     fixed_stuff <= '1';
                 end if;
 
@@ -1815,7 +1871,7 @@ begin
             -- ACK Delimiter
             -------------------------------------------------------------------
             when s_pc_ack_delim =>
-                ctrl_ctr_pload <= '1';
+                ctrl_ctr_pload_i <= '1';
                 ctrl_ctr_pload_val <= C_EOF_DURATION;
                 err_pos <= ERC_POS_ACK;
                 is_ack_delim  <= '1';
@@ -1855,6 +1911,10 @@ begin
                     end if;
                     
                     crc_clear_match_flag <= '1';
+                
+                -- Detecting dominant during EOF is treated as form error!
+                elsif (rx_data = DOMINANT) then
+                    form_error_i <= '1';
                 end if;
 
                 -- If there is no error (RX Recessive) in one bit before end
@@ -2208,8 +2268,8 @@ begin
     --     gating with RX Trigger in each FSM state!
     -----------------------------------------------------------------------
     ctrl_ctr_pload <= ctrl_ctr_pload_i when (curr_state = s_pc_off) else
-                        ctrl_ctr_pload_i when (rx_trigger = '1') else
-                        '0';
+                      ctrl_ctr_pload_i when (rx_trigger = '1') else
+                      '0';
 
     -----------------------------------------------------------------------
     -- Registering control commands to RX Buffer due to following reasons
@@ -2230,7 +2290,10 @@ begin
             
             -- Frame is stored to RX Buffer when unit is either receiver
             -- or loopback mode is enabled.
-            if (is_receiver = '1' or drv_int_loopback_ena = '1') then
+            -- Each command is active only for one clock cycle!
+            if ((is_receiver = '1' or drv_int_loopback_ena = '1') and
+                (rx_trigger = '1'))
+            then
                 store_metadata     <= store_metadata_d;
                 store_data         <= store_data_d;
                 rec_valid          <= rec_valid_d;
@@ -2398,7 +2461,7 @@ begin
                       '0';
 
     -- No positive resynchronisation for transmitter of dominant bit!
-    no_pos_resync <= '1' when (is_transmitter = '1' and tx_data = DOMINANT)
+    no_pos_resync <= '1' when (is_transmitter = '1' and tx_data_wbs = DOMINANT)
                          else
                      '0';
 
@@ -2417,7 +2480,13 @@ begin
     sof_pulse <= '1' when (sof_pulse_i = '1' and rx_trigger = '1')
                      else
                  '0';
-                    
+
+    ---------------------------------------------------------------------------
+    -- Complementary counter counts only in Sample point once per bit time.
+    ---------------------------------------------------------------------------
+    compl_ctr_ena <= '1' when (compl_ctr_ena_i = '1' and rx_trigger = '1')
+                         else
+                     '0';
 
     ---------------------------------------------------------------------------
     -- Bit Stuffing enable
@@ -2499,6 +2568,7 @@ begin
     ssp_reset <= ssp_reset_q; 
     rx_clear <= rx_clear_q;
     sync_control <= sync_control_q;
+    txtb_ptr <= txtb_ptr_q;
     
     bit_error_enable <= not bit_err_disable;
 

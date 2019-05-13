@@ -66,9 +66,6 @@ package can_components is
 
     component can_top_level is
         generic(
-            -- Insert logger instance
-            use_logger     : boolean                := true;
-    
             -- RX Buffer RAM size (32 bit words)
             rx_buffer_size : natural range 32 to 4096 := 128;
     
@@ -85,10 +82,7 @@ package can_components is
             sup_filtC      : boolean                := true;
             
             -- Insert Range Filter
-            sup_range      : boolean                := true;
-            
-            -- Event Logger RAM size (32 bit words)
-            logger_size    : natural range 0 to 512 := 8
+            sup_range      : boolean                := true
         );
         port(
             -----------------------------------------------------------------------
@@ -517,7 +511,7 @@ package can_components is
         -- Control signals
         ------------------------------------------------------------------------
         -- RX Trigger (in Sample point, from Prescaler).
-        rx_trig              : in std_logic;
+        bds_trigger          : in std_logic;
 
         -- Bit Destuffing is enabled.
         destuff_enable       : in  std_logic;
@@ -575,7 +569,7 @@ package can_components is
         -- Control signals
         ------------------------------------------------------------------------
         -- TX Trigger for Bit Stuffing (in SYNC segment) 
-        tx_trigger          :in   std_logic; 
+        bst_trigger         :in   std_logic; 
         
         -- Bit Stuffing enabled. If not, data are only passed to the output
         stuff_enable        :in   std_logic;
@@ -1126,6 +1120,9 @@ package can_components is
   
         -- Pre-load value for control counter
         ctrl_ctr_pload_val    :in   std_logic_vector(G_CTRL_CTR_WIDTH - 1 downto 0);
+        
+        -- Complementary counter enable
+        compl_ctr_ena         :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Status signals
@@ -1320,6 +1317,12 @@ package can_components is
         -- Retransmition limit enabled for errornous frames
         drv_retr_lim_ena        :in   std_logic;
         
+         -- Internal Loopback enabled
+        drv_int_loopback_ena    :in   std_logic;
+        
+        -- Reception of CAN FD Frames is enabled
+        drv_can_fd_ena          :in   std_logic;
+        
         -- Arbitration field is being transmitted
         is_arbitration          :out  std_logic;
         
@@ -1361,8 +1364,8 @@ package can_components is
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
-        -- Actual TX Data
-        tx_data                 :in   std_logic;
+        -- Actual TX Data (With Bit stuffing)
+        tx_data_wbs             :in   std_logic;
         
         -- Actual RX Data
         rx_data                 :in   std_logic;
@@ -1405,6 +1408,9 @@ package can_components is
         
         -- TX Frame type (0-CAN 2.0, 1-CAN FD)
         tran_frame_type         :in   std_logic;
+
+        -- Identifier type (BASIC, EXTENDED)
+        tran_ident_type         :in   std_logic;
 
         -- TX Bit rate shift
         tran_brs                :in   std_logic;
@@ -1514,6 +1520,9 @@ package can_components is
         
         -- Control counter - TXT Buffer memory index
         ctrl_ctr_mem_index      :in    std_logic_vector(4 downto 0);
+        
+        -- Complementary counter enable
+        compl_ctr_ena           :out   std_logic;
 
         -----------------------------------------------------------------------
         -- Reintegration counter interface
@@ -1892,6 +1901,9 @@ package can_components is
         ------------------------------------------------------------------------
         -- TX Data
         tx_data_nbs             :out  std_logic;
+        
+        -- TX Data (post bit stuffing)
+        tx_data_wbs             :in   std_logic;
 
         -- RX Data
         rx_data_nbs             :in   std_logic;
@@ -2187,6 +2199,10 @@ package can_components is
     end component;
 
     component tx_shift_reg is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0'
+    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -2267,13 +2283,16 @@ package can_components is
         -- Bit Stuffing / Destuffing Interface
         -----------------------------------------------------------------------
         -- Stuff counter modulo 8
-        bst_ctr                 :in  std_logic_vector(3 downto 0);
+        bst_ctr                 :in  natural range 0 to 7;
 
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
         -- TXT Buffer RAM word
-        txt_buffer_word         :in   std_logic_vector(31 downto 0);
+        tran_word               :in   std_logic_vector(31 downto 0);
+        
+        -- TXT Buffer RAM word (byte endianity swapped)
+        tran_word_swapped       :in   std_logic_vector(31 downto 0);
 
         -- TX Data length code
         tran_dlc                :in   std_logic_vector(3 downto 0)
@@ -2588,19 +2607,19 @@ package can_components is
     );
     port(
         -- Upper threshold of a filter
-        g_filter_upp_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
+        filter_upp_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Lower threshold of a filter
-        g_filter_low_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
+        filter_low_th      : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter input
-        g_filter_input       : in    std_logic_vector(G_WIDTH - 1 downto 0);
+        filter_input       : in    std_logic_vector(G_WIDTH - 1 downto 0);
 
         -- Filter enable (output is stuck at zero when disabled)
-        g_enable             : in    std_logic;
+        enable             : in    std_logic;
 
         -- Filter output
-        g_valid              : out   std_logic
+        valid              : out   std_logic
     );
     end component;
 
@@ -2661,9 +2680,6 @@ package can_components is
 
         -- HW command on TXT Buffers interrupt
         txtb_hw_cmd_int  :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
-
-        -- Event logger
-        loger_finished   :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers Interface
@@ -2743,9 +2759,6 @@ package can_components is
         -- Reset polarity
         G_RESET_POLARITY    : std_logic    := '0';
         
-        -- Support logger
-        G_USE_LOGGER        : boolean                         := true;
-
         -- Support Filter A
         G_SUP_FILTA         : boolean                         := true;
 
@@ -2884,25 +2897,7 @@ package can_components is
         ------------------------------------------------------------------------
         -- Measured Transceiver Delay
         trv_delay            :in   std_logic_vector(15 downto 0);
-
-        ------------------------------------------------------------------------
-        -- Event logger interface
-        ------------------------------------------------------------------------
-        -- Logger RAM - Read Data
-        loger_act_data       :in   std_logic_vector(63 downto 0);
-        
-        -- Logger RAM - Write Pointer
-        log_write_pointer    :in   std_logic_vector(7 downto 0);
-        
-        -- Logger RAM - Read Pointer
-        log_read_pointer     :in   std_logic_vector(7 downto 0);
-        
-        -- Logger RAM - Size        
-        log_size             :in   std_logic_vector(7 downto 0);
-        
-        -- Logger FSM Status
-        log_state_out        :in   logger_state_type;
-            
+                    
         ------------------------------------------------------------------------
         -- Interrrupt Interface
         ------------------------------------------------------------------------
@@ -3726,7 +3721,7 @@ package can_components is
         -- CAN Core Interface
         -----------------------------------------------------------------------
         -- HW Commands from CAN Core for manipulation with TXT Buffers 
-        txt_hw_cmd             :in t_txtb_hw_cmd;  
+        txtb_hw_cmd            :in t_txtb_hw_cmd;  
         
         ---------------------------------------------------------------------------
         -- TX Arbitrator FSM outputs
@@ -3895,7 +3890,7 @@ package can_components is
         txtb_state             :out  std_logic_vector(3 downto 0);
 
         -- TXT Buffer is ready to be locked by CAN Core for transmission
-        txt_buf_ready          :out  std_logic
+        txtb_ready             :out  std_logic
     );             
     end component;
 
@@ -3970,6 +3965,83 @@ package can_components is
     );
     end component;
 
+
+    component inf_ram_wrapper is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '1';
+        
+        -- Width of memory word (in bits)
+        G_WORD_WIDTH           :     natural := 32;
+
+        -- Memory depth (in words)
+        G_DEPTH                :     natural := 32;
+
+        -- Address width (in bits)
+        G_ADDRESS_WIDTH        :     natural := 8;
+
+        -- RAM content reset upon reset
+        G_SIMULATION_RESET     :     boolean := true;
+
+        -- Synchronous read
+        G_SYNC_READ            :     boolean := true
+    );
+  port(
+        ------------------------------------------------------------------------
+        -- Clock and Reset
+        ------------------------------------------------------------------------
+        clk_sys     :in   std_logic;
+        res_n       :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Port A - Data input
+        ------------------------------------------------------------------------
+        -- Address
+        addr_A      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Write signal
+        write       :in   std_logic;
+        
+        -- Data input
+        data_in     :in   std_logic_vector(G_WORD_WIDTH - 1 downto 0);
+
+        ------------------------------------------------------------------------   
+        -- Port B - Data output
+        ------------------------------------------------------------------------
+        -- Address
+        addr_B      :in   std_logic_vector(G_ADDRESS_WIDTH - 1 downto 0);
+        
+        -- Data output
+        data_out    :out  std_logic_vector(G_WORD_WIDTH - 1 downto 0)
+    );
+    end component;
+
+    component control_registers_reg_map is
+    generic (
+        constant DATA_WIDTH          : natural := 32;
+        constant ADDRESS_WIDTH       : natural := 8;
+        constant REGISTERED_READ     : boolean := true;
+        constant CLEAR_READ_DATA     : boolean := true;
+        constant RESET_POLARITY      : std_logic := '0';
+        constant SUP_FILT_A          : boolean := true;
+        constant SUP_RANGE           : boolean := true;
+        constant SUP_FILT_C          : boolean := true;
+        constant SUP_FILT_B          : boolean := true
+    );
+    port (
+        signal clk_sys               :in std_logic;
+        signal res_n                 :in std_logic;
+        signal address               :in std_logic_vector(address_width - 1 downto 0);
+        signal w_data                :in std_logic_vector(data_width - 1 downto 0);
+        signal r_data                :out std_logic_vector(data_width - 1 downto 0);
+        signal cs                    :in std_logic;
+        signal read                  :in std_logic;
+        signal write                 :in std_logic;
+        signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+        signal control_registers_out :out Control_registers_out_t;
+        signal control_registers_in  :in Control_registers_in_t
+    );
+    end component control_registers_reg_map;
 
 
     component CTU_CAN_FD_v1_0 is

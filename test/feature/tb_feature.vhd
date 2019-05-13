@@ -154,10 +154,8 @@ begin
     g_inst: for i in 1 to 2 generate
         CAN_inst: CAN_top_level
         generic map(
-            use_logger        => true,
             rx_buffer_size    => 64,
-            ID                => i,
-            logger_size       => 16
+            ID                => i
         )
         port map(
             clk_sys           => p(i).clk_sys,

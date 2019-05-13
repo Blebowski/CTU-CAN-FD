@@ -58,7 +58,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -197,7 +196,7 @@ architecture rtl of error_detector is
     -- Error capture register
     signal err_type_d     : std_logic_vector(2 downto 0);
     signal err_type_q     : std_logic_vector(2 downto 0);
-    signal err_pos_q      : std_logic_vector(5 downto 0);
+    signal err_pos_q      : std_logic_vector(4 downto 0);
     
     -- Internal form error
     signal form_error_int : std_logic;
@@ -219,6 +218,9 @@ architecture rtl of error_detector is
     signal crc_17_ok       : std_logic;
     signal crc_21_ok       : std_logic;
     signal stuff_count_ok  : std_logic;
+
+    -- Destuff counter converted to vector
+    signal dst_ctr_vect    : std_logic_vector(2 downto 0);
 
 begin
 
@@ -257,7 +259,7 @@ begin
     err_pipeline_false_gen : if (not G_ERR_VALID_PIPELINE) generate
     begin
         err_frm_req <= err_frm_req_i;
-    end generate err_pipeline_true_gen;
+    end generate err_pipeline_false_gen;
 
 
     ---------------------------------------------------------------------------
@@ -274,14 +276,15 @@ begin
         "100" when 7,
         "000" when others;
 
-    dst_parity <= dst_ctr(0) xor dst_ctr(1) xor dst_ctr(2);
+    dst_ctr_vect <= std_logic_vector(to_unsigned(dst_ctr, 3));
+    dst_parity <= dst_ctr_grey(0) xor dst_ctr_grey(1) xor dst_ctr_grey(2);
 
     ---------------------------------------------------------------------------
     -- CRC Check
     ---------------------------------------------------------------------------
     -- Check stuff counters for ISO FD and FD Frames only!
     stuff_count_check <= '1' when (drv_fd_type = ISO_FD) and
-                                  (crc_src = CRC17 or crc_src = CRC21)
+                                  (crc_src = C_CRC17_SRC or crc_src = C_CRC21_SRC)
                              else
                          '0';
 
@@ -306,9 +309,9 @@ begin
                       '0';
 
     -- CRC Match
-    crc_match_c <= '0' when (crc_15_ok = '0' and crc_src = CRC15) or
-                            (crc_17_ok = '0' and crc_src = CRC17) or
-                            (crc_21_ok = '0' and crc_src = CRC21) or
+    crc_match_c <= '0' when (crc_15_ok = '0' and crc_src = C_CRC15_SRC) or
+                            (crc_17_ok = '0' and crc_src = C_CRC17_SRC) or
+                            (crc_21_ok = '0' and crc_src = C_CRC21_SRC) or
                             (stuff_count_ok = '0' and stuff_count_check = '1')
                        else
                    '1';
@@ -381,10 +384,5 @@ begin
     -- Assertions
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
-
-    -- psl crc_src_correct_asrt : assert always
-    --  (crc_src = CRC15 or crc_src = CRC17 or crc_src = CRC21)
-    -- report "CRC Source has invalid value!"
-    -- severity error;
 
 end architecture;

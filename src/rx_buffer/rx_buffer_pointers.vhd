@@ -67,7 +67,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -248,7 +247,7 @@ begin
             --         value of last commited write pointer.
             --------------------------------------------------------------------
             if (write_raw_OK = '1') then
-                write_pointer_raw_int<= (write_pointer_raw_int + 1) mod buff_size;
+                write_pointer_raw_int<= (write_pointer_raw_int + 1) mod G_RX_BUFF_SIZE;
                         
             elsif (rec_abort_f = '1' or commit_overrun_abort = '1') then
                 write_pointer_raw_int <= write_pointer_int;
@@ -280,7 +279,7 @@ begin
 
             elsif (inc_extra_wr_ptr = '1') then
                 write_pointer_extra_ts_int <= (write_pointer_extra_ts_int + 1) mod
-                                              buff_size;
+                                              G_RX_BUFF_SIZE;
 
             end if;
 
@@ -294,8 +293,8 @@ begin
     mem_free_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
         if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
-            rx_mem_free_int_int     <= buff_size;
-            rx_mem_free_raw         <= buff_size;
+            rx_mem_free_int_int     <= G_RX_BUFF_SIZE;
+            rx_mem_free_raw         <= G_RX_BUFF_SIZE;
 
         elsif (rising_edge(clk_sys)) then
 
@@ -371,7 +370,7 @@ begin
     ----------------------------------------------------------------------------
     read_pointer_inc_proc : process(read_pointer_int)
     begin
-        read_pointer_inc_1_int <= (read_pointer_int + 1) mod buff_size;
+        read_pointer_inc_1_int <= (read_pointer_int + 1) mod G_RX_BUFF_SIZE;
     end process;
     
     
@@ -386,13 +385,13 @@ begin
     --      cover (rx_mem_free_raw = 0);
     --
     -- psl rx_all_raw_mem_free_cov : 
-    --      cover (rx_mem_free_raw = buff_size);
+    --      cover (rx_mem_free_raw = G_RX_BUFF_SIZE);
     --
     -- psl rx_no_int_mem_free_cov : 
     --      cover (rx_mem_free_int = 0);
     --
     -- psl rx_all_int_mem_free_cov : 
-    --      cover (rx_mem_free_int = buff_size);
+    --      cover (rx_mem_free_int = G_RX_BUFF_SIZE);
     --
     -- psl rx_write_ptr_higher_than_read_ptr_cov : 
     --      cover (write_pointer_int > read_pointer_int);

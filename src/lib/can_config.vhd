@@ -120,6 +120,6 @@ package can_config is
     constant C_CRC21_POL : std_logic_vector(23 downto 0) := x"302899";
     
     -- Device ID
-    constant C_CAN_DEVICE_ID : std_logic_vector(31 downto 0) := x"0000CAFD";
+    constant C_CAN_DEVICE_ID : std_logic_vector(15 downto 0) := x"CAFD";
   
 end package;

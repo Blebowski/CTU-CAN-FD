@@ -59,13 +59,16 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
 entity tx_shift_reg is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :     std_logic := '0'
+    );
     port(
         -----------------------------------------------------------------------
         -- Clock and Asynchronous Reset
@@ -146,13 +149,16 @@ entity tx_shift_reg is
         -- Bit Stuffing / Destuffing Interface
         -----------------------------------------------------------------------
         -- Stuff counter modulo 8
-        bst_ctr                 :in  std_logic_vector(3 downto 0);
+        bst_ctr                 :in   natural range 0 to 7;
 
         -----------------------------------------------------------------------
         -- TXT Buffers interface
         -----------------------------------------------------------------------
         -- TXT Buffer RAM word
-        txt_buffer_word         :in   std_logic_vector(31 downto 0);
+        tran_word               :in   std_logic_vector(31 downto 0);
+        
+        -- TXT Buffer RAM word (byte endianity swapped)
+        tran_word_swapped       :in   std_logic_vector(31 downto 0);
 
         -- TX Data length code
         tran_dlc                :in   std_logic_vector(3 downto 0)
@@ -169,7 +175,7 @@ architecture rtl of tx_shift_reg is
     
     -- Shift register preload
     signal tx_sr_pload      : std_logic;
-    signal tx_sr_pload_val  : std_logic;
+    signal tx_sr_pload_val  : std_logic_vector(31 downto 0);
 
     -- ID Loaded from TXT Buffer RAM
     signal tx_base_id : std_logic_vector(10 downto 0);
@@ -181,7 +187,10 @@ architecture rtl of tx_shift_reg is
     -- Stuff counter (grey coded)
     signal bst_ctr_grey : std_logic_vector(2 downto 0);
     signal bst_parity   : std_logic;
-    signal stuff_count  : std_logic_vecto(3 downto 0);
+    signal stuff_count  : std_logic_vector(3 downto 0);
+    
+    constant C_RX_SHIFT_REG_RST_VAL : std_logic_vector(31 downto 0) :=
+        x"00000000";
     
 begin
     
@@ -201,8 +210,8 @@ begin
                    '0';
 
     -- CRC to be transmitted
-    tx_crc <= crc_15 & "000000" when (crc_src = CRC15) else
-                crc_17 & "0000" when (crc_src = CRC17) else
+    tx_crc <= crc_15 & "000000" when (crc_src = C_CRC15_SRC) else
+                crc_17 & "0000" when (crc_src = C_CRC17_SRC) else
                         crc_21;
                         
     -- Stuff counter grey coding
@@ -222,8 +231,8 @@ begin
     stuff_count <= bst_ctr_grey & bst_parity;
 
     -- Choosing Base and Ext IDs from TXT Buffer RAM memory words!
-    tx_base_id <= txt_buffer_word(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
-    tx_ext_id <= txt_buffer_word(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
+    tx_base_id <= tran_word(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L);
+    tx_ext_id <= tran_word(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L);
 
     ---------------------------------------------------------------------------
     -- Shift register pre-load value:
@@ -234,12 +243,12 @@ begin
     --  5. Calculated CRC is loaded from output of CAN CRC.
     ---------------------------------------------------------------------------
     tx_sr_pload_val <=
-         tx_base_id & "0000000000000000000000" when (tx_load_base_id = '1') else
+          tx_base_id & "000000000000000000000" when (tx_load_base_id = '1') else
                   tx_ext_id & "00000000000000" when (tx_load_ext_id = '1') else
      tran_dlc & "0000000000000000000000000000" when (tx_load_dlc = '1') else
-                               txt_buffer_word when (tx_load_data_word = '1') else
+                             tran_word_swapped when (tx_load_data_word = '1') else
   stuff_count & "0000000000000000000000000000" when (tx_load_stuff_count = '1') else         
-                      tx_crc & "0000000000000" when (tx_load_crc = '1') else
+                        tx_crc & "00000000000" when (tx_load_crc = '1') else
                                (OTHERS => '0');
 
     ---------------------------------------------------------------------------
@@ -248,7 +257,7 @@ begin
     tx_shift_reg_inst : shift_reg_preload
     generic map(
         G_RESET_POLARITY     => G_RESET_POLARITY,
-        G_RESET_VALUE        => x"000000000",
+        G_RESET_VALUE        => C_RX_SHIFT_REG_RST_VAL,
         G_WIDTH              => 32,
         G_SHIFT_DOWN         => false
     )

@@ -62,7 +62,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -283,6 +282,9 @@ entity protocol_control is
         ------------------------------------------------------------------------
         -- TX Data
         tx_data_nbs             :out  std_logic;
+        
+        -- TX Data (post bit stuffing)
+        tx_data_wbs             :in   std_logic;
 
         -- RX Data
         rx_data_nbs             :in   std_logic;
@@ -427,7 +429,7 @@ architecture rtl of protocol_control is
   -- Internal signals
   -----------------------------------------------------------------------------
   -- TXT Buffer word (endianity swapped)
-  signal tran_word_swap           :     std_logic_vector(31 downto 0);
+  signal tran_word_swapped        :     std_logic_vector(31 downto 0);
   
   -- Error frame request
   signal err_frm_req              :     std_logic;
@@ -461,7 +463,7 @@ architecture rtl of protocol_control is
   signal rx_store_stuff_count    :     std_logic;
     
   -- Clock Enable RX Shift register for each byte.
-  signal rx_shift_ena            :     std_logic(3 downto 0);
+  signal rx_shift_ena            :     std_logic_vector(3 downto 0);
     
   -- Selector for inputs of each byte of shift register
   -- (0-Previous byte output, 1- RX Data input)
@@ -502,6 +504,9 @@ architecture rtl of protocol_control is
     
   -- Control counter - TXT Buffer memory index
   signal ctrl_ctr_mem_index      :      std_logic_vector(4 downto 0);
+  
+  -- Complementary counter enable
+  signal compl_ctr_ena           :      std_logic;
   
   -- Reintegration counter Clear (synchronous)
   signal reinteg_ctr_clr         :      std_logic;
@@ -591,7 +596,7 @@ begin
     )
     port map(
         input               => tran_word,           -- IN
-        output              => tran_word_swap,      -- OUT
+        output              => tran_word_swapped,   -- OUT
         swap_in             => '0'                  -- IN
     );
 
@@ -620,6 +625,7 @@ begin
         drv_bus_mon_ena         => drv_bus_mon_ena,     -- IN
         drv_retr_lim_ena        => drv_retr_lim_ena,    -- IN
         drv_int_loopback_ena    => drv_int_loopback_ena,-- IN
+        drv_can_fd_ena          => drv_can_fd_ena,      -- IN
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
         is_stuff_count          => is_stuff_count,      -- OUT
@@ -634,7 +640,7 @@ begin
         is_overload             => is_overload,         -- OUT
 
         -- Data-path interface
-        tx_data                 => tx_data_nbs_i,       -- IN
+        tx_data_wbs             => tx_data_wbs,         -- IN
         rx_data                 => rx_data_nbs,         -- IN
 
         -- RX Buffer interface
@@ -651,6 +657,7 @@ begin
         tran_dlc                => tran_dlc,            -- IN
         tran_is_rtr             => tran_is_rtr,         -- IN
         tran_frame_type         => tran_frame_type,     -- IN
+        tran_ident_type         => tran_ident_type,     -- IN
         tran_brs                => tran_brs,            -- IN
                 
         -- TX Shift register interface
@@ -690,6 +697,7 @@ begin
         ctrl_counted_byte       => ctrl_counted_byte,       -- IN
         ctrl_counted_byte_index => ctrl_counted_byte_index, -- IN
         ctrl_ctr_mem_index      => ctrl_ctr_mem_index,      -- IN
+        compl_ctr_ena           => compl_ctr_ena,           -- OUT
 
         -- Reintegration counter interface
         reinteg_ctr_clr         => reinteg_ctr_clr,         -- OUT
@@ -769,6 +777,7 @@ begin
         ctrl_ctr_ena            => ctrl_ctr_ena,            -- IN
         ctrl_ctr_pload          => ctrl_ctr_pload,          -- IN
         ctrl_ctr_pload_val      => ctrl_ctr_pload_val,      -- IN
+        compl_ctr_ena           => compl_ctr_ena,           -- IN
 
         -- Status signals
         ctrl_ctr_zero           => ctrl_ctr_zero,           -- OUT
@@ -870,7 +879,7 @@ begin
 
         -- Status output
         err_frm_req             => err_frm_req,         -- OUT
-        error_detected          => err_detected,        -- OUT
+        err_detected            => err_detected,        -- OUT
         erc_capture             => erc_capture,         -- OUT
         crc_match               => crc_match,           -- OUT
         err_ctrs_unchanged      => err_ctrs_unchanged   -- OUT
@@ -895,7 +904,7 @@ begin
         tx_load_data_word       => tx_load_data_word,   -- IN
         tx_load_stuff_count     => tx_load_stuff_count, -- IN
         tx_load_crc             => tx_load_crc,         -- IN
-        tx_shift_ena            => tx_load_crc,         -- IN
+        tx_shift_ena            => tx_shift_ena,        -- IN
         tx_dominant             => tx_dominant,         -- IN
         crc_src                 => crc_src_i,           -- IN
 
@@ -907,7 +916,8 @@ begin
         err_frm_req             => err_frm_req,             -- IN
         is_err_active           => is_err_active,           -- IN
         bst_ctr                 => bst_ctr,                 -- IN
-        tran_word               => tran_word_swap,          -- IN
+        tran_word               => tran_word,               -- IN
+        tran_word_swapped       => tran_word_swapped,       -- IN
         tran_dlc                => tran_dlc                 -- IN
     );
 
@@ -977,14 +987,14 @@ begin
     -- psl default clock is rising_edge(clk_sys);
         
     -- psl no_invalid_ack_err_asrt : assert never
-    --  ((ack_error = '1' or crc_error = 1' or stuff_error = '1' or form_error_i = '1') 
-    --   and (err_ovr_flag = '1'))
+    --  ((ack_error = '1' or crc_error = '1' or
+    --    stuff_error = '1' or form_error_i = '1') and (is_error = '1'))
     -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag"
     --  severity error;
     
     -- psl sample_sec_proper_asrt : assert never
     --  (sp_control = SECONDARY_SAMPLE and is_transmitter = '0')
-    --  report "Secondary sampling is allowed only for transmitter)
+    --  report "Secondary sampling is allowed only for transmitter"
     --  severity error;
 
 

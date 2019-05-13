@@ -104,7 +104,7 @@ package cmn_lib is
         
         -- When true, output word is endian swapped as long as "swap_by_signal"
         -- is true. Otherwise it has no meaning.
-        G_SWAP                  :     boolean := false;
+        G_SWAP_GEN              :     boolean := false;
 
         -- Size of word (in groups)
         G_WORD_SIZE             :     natural := 4;
@@ -240,7 +240,7 @@ package cmn_lib is
         -- Status signals
         -----------------------------------------------------------------------
         -- Shift register status
-        reg_stat        : out   std_logic_vector(4 * G_NUM_BYTES - 1 downto 0)
+        reg_stat        : out   std_logic_vector(8 * G_NUM_BYTES - 1 downto 0)
     );
     end component shift_reg_byte;
 
@@ -343,6 +343,9 @@ package cmn_lib is
         G_RESET_VALUE        : std_logic := '1'
     );
     port (
+        -- Reset
+        res_n                : in    std_logic;
+        
         -- Clock
         clk                  : in    std_logic;
         

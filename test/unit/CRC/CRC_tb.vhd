@@ -72,9 +72,9 @@ architecture CRC_unit_test of CAN_test is
     signal enable      :   std_logic := '0';
     signal drv_bus     :   std_logic_vector(1023 downto 0) := (OTHERS => '0');
 
-    signal crc15       :   std_logic_vector(14 downto 0) := (OTHERS => '0');
-    signal crc17       :   std_logic_vector(16 downto 0) := (OTHERS => '0');
-    signal crc21       :   std_logic_vector(20 downto 0) := (OTHERS => '0');
+    signal crc_15       :   std_logic_vector(14 downto 0) := (OTHERS => '0');
+    signal crc_17       :   std_logic_vector(16 downto 0) := (OTHERS => '0');
+    signal crc_21       :   std_logic_vector(20 downto 0) := (OTHERS => '0');
 
     --TX trigger for crc, corresponds to trigger
     -- signal delayed by one from Protocol control trigger
@@ -255,21 +255,41 @@ begin
     ----------------------------------------------------------------------------
     can_crc_comp : can_crc
     generic map(
-        crc15_pol  =>  CRC15_POL,
-        crc17_pol  =>  CRC17_POL,
-        crc21_pol  =>  CRC21_POL
+        G_RESET_POLARITY    => '0',
+        G_CRC15_POL         => C_CRC15_POL,
+        G_CRC17_POL         => C_CRC17_POL,
+        G_CRC21_POL         => C_CRC21_POL
     )
     port map(
-        data_in    =>  data_in,
-        clk_sys    =>  clk_sys,
-        trig       =>  trig,
-        res_n      =>  res_n,
-        enable     =>  enable,
-        drv_bus    =>  drv_bus,
+        -- System clock and Asynchronous Reset
+        clk_sys          => clk_sys,
+        res_n            => res_n,
 
-        crc15      =>  crc15,
-        crc17      =>  crc17,
-        crc21      =>  crc21
+        -- Memory registers interface
+        drv_bus          => drv_bus,
+
+        -- Data inputs for CRC calculation. Use the same data input for each
+        -- CRC calculation as workaround!
+        data_tx_wbs      => data_in,
+        data_tx_nbs      => data_in,
+        data_rx_wbs      => data_in,
+        data_rx_nbs      => data_in,
+
+        -- Trigger signals to process the data on each CRC input.
+        trig_tx_wbs      => trig,
+        trig_tx_nbs      => trig,
+        trig_rx_wbs      => trig,
+        trig_rx_nbs      => trig,
+
+        -- Control signals. So far don't use speculative calculation
+        crc_enable       => enable,
+        crc_spec_enable  => '0',
+        is_receiver      => '0',
+
+        -- CRC Outputs
+        crc_15           => crc_15,
+        crc_17           => crc_17,
+        crc_21           => crc_21
     );
 
     -- Flexible data rate type
@@ -289,7 +309,7 @@ begin
     sample_gen : process
         variable min_diff : natural := 0;
     begin
-        if (res_n = ACT_RESET) then
+        if (res_n = C_RESET_POLARITY) then
             apply_rand_seed(seed, 1, rnd_ctr_tr);
         end if;
         generate_simple_trig(rnd_ctr_tr, tx_trig, rx_trig, clk_sys, min_diff);
@@ -331,7 +351,7 @@ begin
             gen_bit_sequence(rand_ctr, 10, 620, bit_seq, gen_length);
 
             info("Calculating software CRC");
-            calc_crc(bit_seq, gen_length, CRC15_POL, CRC17_POL, CRC21_POL,
+            calc_crc(bit_seq, gen_length, C_CRC15_POL, C_CRC17_POL, C_CRC21_POL,
                    drv_fd_type, crc_15_mod, crc_17_mod, crc_21_mod);
 
             info("Putting bit sequence to DUT");
@@ -339,12 +359,12 @@ begin
                        gen_length);
 
             info("Comparing SW CRC and DUT output");
-            compare_results(crc15, crc17, crc21, crc_15_mod, crc_17_mod,
+            compare_results(crc_15, crc_17, crc_21, crc_15_mod, crc_17_mod,
                             crc_21_mod, c15_mism, c17_mism, c21_mism);
 
-            check_false(c15_mism, "Mismatch in CRC15");
-            check_false(c17_mism, "Mismatch in CRC17");
-            check_false(c21_mism, "Mismatch in CRC21");
+            check_false(c15_mism, "Mismatch in CRC 15");
+            check_false(c17_mism, "Mismatch in CRC 17");
+            check_false(c21_mism, "Mismatch in CRC 21");
 
             loop_ctr <= loop_ctr + 1;
         end loop;

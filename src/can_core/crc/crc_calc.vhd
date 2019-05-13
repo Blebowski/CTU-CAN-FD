@@ -64,7 +64,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -143,7 +142,7 @@ begin
     ----------------------------------------------------------------------------
     crc_nxt         <= data_in xor crc_reg(G_CRC_WIDTH - 1);
   
-    crc_shift       <= crc_reg(crc_width - 2 downto 0) & '0';
+    crc_shift       <= crc_reg(G_CRC_WIDTH - 2 downto 0) & '0';
     
     crc_shift_n_xor <= crc_shift xor G_POLYNOMIAL(G_CRC_WIDTH - 1 downto 0);
 

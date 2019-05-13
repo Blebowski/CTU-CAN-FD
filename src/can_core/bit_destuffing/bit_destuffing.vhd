@@ -41,7 +41,7 @@
 
 --------------------------------------------------------------------------------
 --Purpose:
---  Bit destuffing circuit. Data sampled always with valid rx_trig signal. 
+--  Bit destuffing circuit. Data sampled always with valid bds_trigger signal. 
 --  Length of bitStuffing controlled via stuff_length input. Stuff error signa-
 --  lises Error when the stuff rule is not valid (stuff_lenght+1) consecutive   
 --  bits of the same polarity. Signal destuffed  indicates that current output
@@ -87,7 +87,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -120,8 +119,8 @@ entity bit_destuffing is
         ------------------------------------------------------------------------
         -- Control signals
         ------------------------------------------------------------------------
-        -- RX Trigger (in Sample point, from Prescaler).
-        rx_trig              : in std_logic;
+        -- Bit Destuffing Trigger (in Sample point, from Prescaler).
+        bds_trigger              : in std_logic;
 
         -- Bit Destuffing is enabled.
         destuff_enable       : in  std_logic;
@@ -215,8 +214,8 @@ begin
     ---------------------------------------------------------------------------
     dff_ena_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -265,7 +264,7 @@ begin
     --  2. Store "fixed_stuff" configuration when data are processed
     ---------------------------------------------------------------------------    
     fixed_prev_d <= '0'         when (enable_prev = '0') else
-                    fixed_stuff when (rx_trig = '1') else
+                    fixed_stuff when (bds_trigger = '1') else
                     fixed_prev_q;
 
 
@@ -290,8 +289,8 @@ begin
     ---------------------------------------------------------------------------
     dff_fixed_stuff_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -317,7 +316,7 @@ begin
     --  3. Keep otherwise
     ---------------------------------------------------------------------------
     dst_bit_ctr_d <= 0                when (enable_prev = '0') else
-                     dst_bit_ctr_add  when (rx_trig = '1' and 
+                     dst_bit_ctr_add  when (bds_trigger = '1' and 
                                             stuff_lvl_reached = '1' and
                                             fixed_stuff = '0') else
                      dst_bit_ctr_q;
@@ -347,8 +346,8 @@ begin
     --     previous processed bit.
     ---------------------------------------------------------------------------
     same_bits_erase <= '1' when (destuff_enable = '0' or enable_prev = '0') else
-                       '1' when (rx_trig = '1' and discard_stuff_bit = '1') else
-                       '1' when (rx_trig = '1' and 
+                       '1' when (bds_trigger = '1' and discard_stuff_bit = '1') else
+                       '1' when (bds_trigger = '1' and 
                                  data_in /= prev_val_q and 
                                  fixed_stuff = '0') else
                        '0';
@@ -367,7 +366,7 @@ begin
     --  3. Keep its value otherwise.
     ---------------------------------------------------------------------------
     same_bits_d   <= 1             when (same_bits_erase = '1') else
-                     same_bits_add when (rx_trig = '1') else
+                     same_bits_add when (bds_trigger = '1') else
                      same_bits_q;
 
 
@@ -393,9 +392,9 @@ begin
     --  4. Keep value otherwise.
     ---------------------------------------------------------------------------
     destuffed_d   <= '0' when (destuff_enable = '0') else
-                     '1' when (rx_trig = '1' and
+                     '1' when (bds_trigger = '1' and
                                discard_stuff_bit = '1') else
-                     '0' when (rx_trig = '1') else
+                     '0' when (bds_trigger = '1') else
                      destuffed_q;
 
 
@@ -404,8 +403,8 @@ begin
     ---------------------------------------------------------------------------
     dff_destuffed_flag_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -422,7 +421,7 @@ begin
     --  1. Set when bit should be processed and stuff rule is violated.
     --  2. Cleared otherwise
     ---------------------------------------------------------------------------
-    error_reg_d <= '1' when (rx_trig = '1' and stuff_rule_violate = '1') else
+    error_reg_d <= '1' when (bds_trigger = '1' and stuff_rule_violate = '1') else
                    '0';
 
 
@@ -431,8 +430,8 @@ begin
     ---------------------------------------------------------------------------
     dff_error_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -451,8 +450,8 @@ begin
     --     bit stuffing. TODO: IS THIS OK???
     ---------------------------------------------------------------------------
     prev_val_d <= RECESSIVE when (destuff_enable = '1' and enable_prev = '0') else
-                  RECESSIVE when (rx_trig = '1' and non_fix_to_fix_chng = '1') else
-                  data_in   when (rx_trig = '1') else
+                  RECESSIVE when (bds_trigger = '1' and non_fix_to_fix_chng = '1') else
+                  data_in   when (bds_trigger = '1') else
                   prev_val_q;
 
 
@@ -461,8 +460,8 @@ begin
     ---------------------------------------------------------------------------
     dff_prev_val_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => RECESSIVE
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => RECESSIVE
     )
     port map(
         arst               => res_n,

@@ -59,7 +59,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -183,10 +182,13 @@ architecture rtl of rx_shift_reg is
     signal res_n_internal : std_logic;
 
     -- Shift register status
-    signal rx_shift_reg   : std_logic_vector(31 downto 0);
+    signal rx_shift_reg_q : std_logic_vector(31 downto 0);
 
     -- RX Shift register shift
     signal rx_shift_cmd   : std_logic_vector(3 downto 0);
+    
+    -- Shift register input selector demuxed
+    signal rx_shift_in_sel_demuxed : std_logic_vector(3 downto 0);
 
 begin
 
@@ -212,7 +214,10 @@ begin
     -- bit of DLC. Thus it is needed at the same clock cycle as it is stored
     -- so Q value is not yet there! 
     ---------------------------------------------------------------------------
-    rec_dlc_d <= rx_shift_reg(2 downto 0) & rx_data;
+    rec_dlc_d <= rx_shift_reg_q(2 downto 0) & rx_data;
+
+    rx_shift_in_sel_demuxed <= rx_shift_in_sel & rx_shift_in_sel &
+                               rx_shift_in_sel & rx_shift_in_sel;
 
     ---------------------------------------------------------------------------
     -- RX Shift register
@@ -228,8 +233,8 @@ begin
         res_n                => res_n_internal,
         input                => rx_data,
         byte_clock_ena       => rx_shift_cmd,
-        byte_input_sel       => rx_shift_in_sel,
-        reg_stat             => rx_shift_reg
+        byte_input_sel       => rx_shift_in_sel_demuxed,
+        reg_stat             => rx_shift_reg_q
     );
 
     ---------------------------------------------------------------------------
@@ -242,12 +247,12 @@ begin
         elsif (rising_edge(clk_sys)) then
             if (rx_store_base_id = '1') then
                 rec_ident(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
-                    rx_shift_reg(9 downto 0) & rx_data;
+                    rx_shift_reg_q(9 downto 0) & rx_data;
             end if;
 
             if (rx_store_ext_id = '1') then
                 rec_ident(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <= 
-                    rx_shift_reg(16 downto 0) & rx_data;
+                    rx_shift_reg_q(16 downto 0) & rx_data;
             end if;
         end if;
     end process;
@@ -328,10 +333,10 @@ begin
     dlc_store_proc : process(clk_sys, res_n_internal)
     begin
         if (res_n_internal = G_RESET_POLARITY) then
-            rec_dlc <= '0';    
+            rec_dlc <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_dlc = '1') then
-                rec_dlc <= rx_shift_reg(2 downto 0) & rx_data;
+                rec_dlc <= rx_shift_reg_q(2 downto 0) & rx_data;
             end if;
         end if;
     end process;
@@ -342,10 +347,10 @@ begin
     stuff_count_store_proc : process(clk_sys, res_n_internal)
     begin
         if (res_n_internal = G_RESET_POLARITY) then
-            rx_stuff_count <= '0';    
+            rx_stuff_count <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (rx_store_dlc = '1') then
-                rx_stuff_count <= rx_shift_reg(2 downto 0) & rx_data;
+            if (rx_store_stuff_count = '1') then
+                rx_stuff_count <= rx_shift_reg_q(2 downto 0) & rx_data;
             end if;
         end if;
     end process;
@@ -355,7 +360,7 @@ begin
     -- CRC Value propagation to output. Valid only when rx_trigger='1' in
     -- the last clock cycle of last CRC bit.
     ---------------------------------------------------------------------------
-    rx_crc <= rx_shift_reg(20 downto 0);
+    rx_crc <= rx_shift_reg_q(20 downto 0);
     
     ---------------------------------------------------------------------------
     -- Output data word. Valid one clock cycle after rx_trigger='1'. Whole 
@@ -365,7 +370,7 @@ begin
     -- stored! Due to this, when storing data word to RX Buffer, it must be
     -- stored one clock cycle after rx_trigger='1'!
     ---------------------------------------------------------------------------
-    store_data_word <= rx_shift_reg;
+    store_data_word <= rx_shift_reg_q;
 
 
     ---------------------------------------------------------------------------

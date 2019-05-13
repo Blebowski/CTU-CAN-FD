@@ -88,7 +88,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -128,7 +127,7 @@ entity txt_buffer is
         txtb_port_a_cs         :in   std_logic;
 
         -- SW commands
-        txtb_sw_cmd            :in   t_txt_sw_cmd;
+        txtb_sw_cmd            :in   t_txtb_sw_cmd;
         
         -- TXT Buffer index for which SW command is valid
         txtb_sw_cmd_index      :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
@@ -221,14 +220,14 @@ begin
     ----------------------------------------------------------------------------
     -- RAM Memory of TXT Buffer
     ----------------------------------------------------------------------------
-    txt_buf_RAM : inf_RAM_wrapper 
+    txt_buf_ram_inst : inf_RAM_wrapper 
     generic map (
-        word_width           => 32,
-        depth                => 20,
-        address_width        => RAM_read_address'length,
-        reset_polarity       => G_RESET_POLARITY,
-        simulation_reset     => true,
-        sync_read            => true
+        G_WORD_WIDTH           => 32,
+        G_DEPTH                => 20,
+        G_ADDRESS_WIDTH        => RAM_read_address'length,
+        G_RESET_POLARITY       => G_RESET_POLARITY,
+        G_SIMULATION_RESET     => true,
+        G_SYNC_READ            => true
     )
     port map(
         clk_sys              => clk_sys,
@@ -244,7 +243,7 @@ begin
     ----------------------------------------------------------------------------
     -- TXT Buffer FSM
     ----------------------------------------------------------------------------
-    txt_buffer_fsm_comp : txt_buffer_fsm
+    txt_buffer_fsm_inst : txt_buffer_fsm
     generic map(
         G_RESET_POLARITY       => G_RESET_POLARITY, 
         G_ID                   => G_ID

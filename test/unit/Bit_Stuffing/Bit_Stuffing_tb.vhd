@@ -45,7 +45,7 @@
 --
 --  Unit test makes use of bit stuffing/destuffing symmetry. Random data are
 --  generated on input of bit stuffing. Data are stuffed and compared with
---  reference SW model. Then data are destuffed and output is compared with
+--  reference SW model. Then data are destuff_enable and output is compared with
 --  generated data (before bit stuffing). Additional error might be generated
 --  on input of bit de-stuffing forcing n + 1 consecutive bits of equal value.
 --
@@ -101,16 +101,16 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal tx_trig_ack          :   std_logic := '0';
 
     -- Bit stuffing trigger (one clock delayed from tx_trig)
-    signal bs_trig              :   std_logic := '0';
+    signal bst_trigger              :   std_logic := '0';
 
     -- Bit destuffin trigger
-    signal bd_trig              :   std_logic := '0';
+    signal bds_trigger              :   std_logic := '0';
 
     -- Intent to receive data
     signal rx_trig_intent       :   std_logic := '0';
 
     -- Trigger on which data are really sampled! New data are not received if
-    -- data are destuffed ("destuffed" is active)!
+    -- data are destuff_enable ("destuff_enable" is active)!
     signal rx_trig_ack          :   std_logic := '0';
 
     ----------------------------------------------------------------------------
@@ -134,11 +134,11 @@ architecture bit_stuffing_unit_test of CAN_test is
     ----------------------------------------------------------------------------
     -- Control signals
     ----------------------------------------------------------------------------
-    signal bs_enable            :   std_logic := '0';
-    signal bd_enable            :   std_logic := '0';
+    signal stuff_enable            :   std_logic := '0';
+    signal destuff_enable            :   std_logic := '0';
     signal fixed_stuff          :   std_logic := '0';  -- Common for both
-    signal bs_length            :   std_logic_vector(2 downto 0) := "100";
-    signal bd_length            :   std_logic_vector(2 downto 0) := "100";
+    signal stuff_length            :   std_logic_vector(2 downto 0) := "100";
+    signal destuff_length            :   std_logic_vector(2 downto 0) := "100";
     signal stuff_error_enable   :   std_logic := '1';
 
     ----------------------------------------------------------------------------
@@ -147,8 +147,8 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal data_halt            :   std_logic := '0';
     signal destuffed            :   std_logic := '0';
     signal stuff_error          :   std_logic := '0';
-    signal bs_ctr               :   natural range 0 to 7 := 0;
-    signal bd_ctr               :   natural range 0 to 7 := 0;
+    signal bst_ctr               :   natural range 0 to 7 := 0;
+    signal dst_ctr               :   natural range 0 to 7 := 0;
 
 
     ----------------------------------------------------------------------------
@@ -420,8 +420,8 @@ architecture bit_stuffing_unit_test of CAN_test is
         -- Triggering signals
         signal tx_trig_ack  : in    std_logic;
         signal rx_trig_ack  : in    std_logic;
-        signal bs_trig      : in    std_logic;
-        signal bd_trig      : in    std_logic;
+        signal bst_trigger      : in    std_logic;
+        signal bds_trigger      : in    std_logic;
         signal no_trigger   : in    boolean;
 
         -- Data signals
@@ -431,11 +431,11 @@ architecture bit_stuffing_unit_test of CAN_test is
         signal err_data     : in    std_logic;
 
         -- Bit stuffing and destuffing configuration
-        signal bs_enable    : inout std_logic;
-        signal bd_enable    : inout std_logic;
+        signal stuff_enable    : inout std_logic;
+        signal destuff_enable    : inout std_logic;
         signal fixed_stuff  : inout std_logic;
-        signal bs_length    : inout std_logic_vector(2 downto 0);
-        signal bd_length    : inout std_logic_vector(2 downto 0);
+        signal stuff_length    : inout std_logic_vector(2 downto 0);
+        signal destuff_length    : inout std_logic_vector(2 downto 0);
 
         -- Pointers to input data
         signal nbs_index    : out   natural;
@@ -501,13 +501,13 @@ architecture bit_stuffing_unit_test of CAN_test is
         end if;
 
         -- Enable Bit stuffing and destuffing. Set no fixed stuffing.
-        bs_enable    <= '1';
-        bd_enable    <= '1';
+        stuff_enable    <= '1';
+        destuff_enable    <= '1';
         fixed_stuff  <= '0';
 
         -- Set non fixed length
-        bs_length    <= set.stuff_length_non_fixed;
-        bd_length    <= set.stuff_length_non_fixed;
+        stuff_length    <= set.stuff_length_non_fixed;
+        destuff_length    <= set.stuff_length_non_fixed;
 
         -- Transmitt, receive and sample stuffed data!
         while true loop
@@ -543,14 +543,14 @@ architecture bit_stuffing_unit_test of CAN_test is
                 set.tx_data_seq(nbs_ptr + 6) = '1' and
                 set.tx_data_seq(nbs_ptr + 7) = '1' and
                 set.tx_data_seq(nbs_ptr + 8) = '1' and
-                bs_trig = '1')
+                bst_trigger = '1')
             then
                 info("Recursive stuff ocurred!");
             end if;
 
             -- Checking Bit stuffed sequence and that bit was stuffed when
             -- supposed to!
-            if (bs_trig = '1') then
+            if (bst_trigger = '1') then
                 wait for 1 ns;
                 check(stuffed_data = set.stuffed_data_seq(wbs_ptr),
                       "Stuffed data mismatch");
@@ -574,8 +574,8 @@ architecture bit_stuffing_unit_test of CAN_test is
                 info("Change to fixed stuffing.");
 
                 fixed_stuff  <= '1';
-                bs_length    <= set.stuff_length_fixed;
-                bd_length    <= set.stuff_length_fixed;
+                stuff_length    <= set.stuff_length_fixed;
+                destuff_length    <= set.stuff_length_fixed;
             end if;
 
             -- Check if we are in the end
@@ -589,8 +589,8 @@ architecture bit_stuffing_unit_test of CAN_test is
         end loop;
 
         -- Finish test step by turning bit stuffing off!
-        bs_enable    <= '0';
-        bd_enable    <= '0';
+        stuff_enable    <= '0';
+        destuff_enable    <= '0';
         wbs_ptr      := 0;
         nbs_ptr      := 0;
         nbs_index    <= 0;
@@ -604,34 +604,40 @@ architecture bit_stuffing_unit_test of CAN_test is
 begin
 
     bit_stuffing_comp : bit_stuffing
+    generic map(
+        G_RESET_POLARITY   => '0'
+    )
     port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
-        tran_trig_1        =>  bs_trig,
-        enable             =>  bs_enable,
+        bst_trigger        =>  bst_trigger,
+        stuff_enable       =>  stuff_enable,
         data_in            =>  tx_data,
         fixed_stuff        =>  fixed_stuff,
         data_halt          =>  data_halt,
-        length             =>  bs_length,
-        bst_ctr            =>  bs_ctr,
+        stuff_length       =>  stuff_length,
+        bst_ctr            =>  bst_ctr,
         data_out           =>  stuffed_data
     );
 
 
     bit_destuffing_comp : bit_destuffing
-    PORT map(
+    generic map(
+        G_RESET_POLARITY   => '0'
+    )
+    port map(
         clk_sys            =>  clk_sys,
         res_n              =>  res_n,
         data_in            =>  joined_data,
-        trig_spl_1         =>  bd_trig,
+        bds_trigger        =>  bds_trigger,
         stuff_Error        =>  stuff_error,
         data_out           =>  rx_data,
-        destuffed          =>  destuffed,
-        enable             =>  bd_enable,
+        destuff_enable     =>  destuff_enable,
         stuff_Error_enable =>  stuff_error_enable,
         fixed_stuff        =>  fixed_stuff,
-        length             =>  bd_length,
-        dst_ctr            =>  bd_ctr
+        destuff_length     =>  destuff_length,
+        destuffed          =>  destuffed,
+        dst_ctr            =>  dst_ctr
     );
 
 
@@ -651,12 +657,12 @@ begin
         tx_trig_intent       <= '1';
         wait until falling_edge(clk_sys);
         tx_trig_intent       <= '0';
-        bs_trig              <= '1';
+        bst_trigger              <= '1';
         wait until falling_edge(clk_sys);
-        bs_trig              <= '0';
-        bd_trig              <= '1';
+        bst_trigger              <= '0';
+        bds_trigger              <= '1';
         wait until falling_edge(clk_sys);
-        bd_trig              <= '0';
+        bds_trigger              <= '0';
         rx_trig_intent       <= '1';
         wait until falling_edge(clk_sys);
         rx_trig_intent       <= '0';
@@ -672,8 +678,8 @@ begin
     tx_trig_ack <= tx_trig_intent and (not data_halt);
     rx_trig_ack <= rx_trig_intent and (not destuffed);
 
-    no_trigger <= true when (tx_trig_intent = '0' and bs_trig = '0' and
-                             bd_trig = '0' and rx_trig_intent = '0')
+    no_trigger <= true when (tx_trig_intent = '0' and bst_trigger = '0' and
+                             bds_trigger = '0' and rx_trig_intent = '0')
                        else
                   false;
 
@@ -681,7 +687,7 @@ begin
     -- stuff bit!
     sw_mod_prop_proc : process
     begin
-        wait until (rising_edge(clk_sys) and bs_trig = '1');
+        wait until (rising_edge(clk_sys) and bst_trigger = '1');
         exp_stuffed         <= set.stuffed_data_seq(wbs_index);
         should_be_stuffed   <= set.stuffed_bits_mark(wbs_index);
     end process;
@@ -689,7 +695,7 @@ begin
     ----------------------------------------------------------------------------
     -- When bit stuff occurs, value of next bit should be oposite of previous
     -- one! Bit destuffing is thus expecting bit of opposite polarity that
-    -- should be destuffed. If this does not occur, stuff error should be
+    -- should be destuff_enable. If this does not occur, stuff error should be
     -- detected!
     --
     -- With some random chance, if stuff bit occurs force stuff error and
@@ -710,7 +716,7 @@ begin
         rand_real_v(rand_st_err_ctr, tmp);
         if (tmp > 0.98) then
             err_data <= '1';
-            wait until rising_edge(clk_sys) and (bd_trig = '1');
+            wait until rising_edge(clk_sys) and (bds_trigger = '1');
             wait for 1 ns;
 
             info("Stuff error inserted");
@@ -759,10 +765,10 @@ begin
         loop
             info("Starting loop nr " & integer'image(loop_ctr));
 
-            exec_bs_test_step(rand_ctr, set, tx_trig_ack, rx_trig_ack, bs_trig,
-                              bd_trig, no_trigger, tx_data, rx_data,
-                              stuffed_data, err_data, bs_enable, bd_enable,
-                              fixed_stuff, bs_length, bd_length, nbs_index,
+            exec_bs_test_step(rand_ctr, set, tx_trig_ack, rx_trig_ack, bst_trigger,
+                              bds_trigger, no_trigger, tx_data, rx_data,
+                              stuffed_data, err_data, stuff_enable, destuff_enable,
+                              fixed_stuff, stuff_length, destuff_length, nbs_index,
                               wbs_index, stat_err_ctr, log_level, error_beh,
                               exit_imm);
             loop_ctr <= loop_ctr + 1;

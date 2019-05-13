@@ -109,7 +109,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -258,7 +257,7 @@ begin
     ----------------------------------------------------------------------------                                             
     trv_delay_ctr_add <= std_logic_vector(to_unsigned(
                             to_integer(unsigned(trv_delay_ctr_reg) + 1),
-                            g_trv_delay_ctr_reg'length));                     
+                            trv_delay_ctr_reg'length));                     
 
     ----------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.

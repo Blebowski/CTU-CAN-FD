@@ -71,23 +71,23 @@ architecture rx_buf_unit_test of CAN_test is
     signal res_n                    :    std_logic := '0';
 
     -- Metadata and idntifier
-    signal rec_ident_in             :    std_logic_vector(28 downto 0) :=
+    signal rec_ident             :    std_logic_vector(28 downto 0) :=
                                             (OTHERS => '0');
-    signal rec_dlc_in               :    std_logic_vector(3 downto 0) :=
+    signal rec_dlc               :    std_logic_vector(3 downto 0) :=
                                             (OTHERS => '0');
-    signal rec_ident_type_in        :    std_logic := '0';
-    signal rec_frame_type_in        :    std_logic := '0';
+    signal rec_ident_type        :    std_logic := '0';
+    signal rec_frame_type        :    std_logic := '0';
     signal rec_is_rtr               :    std_logic := '0';
     signal rec_brs                  :    std_logic := '0';
     signal rec_esi                  :    std_logic := '0';
 
     -- Control signals from CAN Core
-    signal store_metadata           :    std_logic := '0';
-    signal store_data               :    std_logic := '0';
+    signal store_metadata_f           :    std_logic := '0';
+    signal store_data_f               :    std_logic := '0';
     signal store_data_word          :    std_logic_vector(31 downto 0) :=
                                             (OTHERS => '0');
-    signal rec_message_valid        :    std_logic := '0';
-    signal rec_abort                :    std_logic := '0';
+    signal rec_valid_f        :    std_logic := '0';
+    signal rec_abort_f                :    std_logic := '0';
     signal sof_pulse                :    std_logic := '0';
 
     signal timestamp                :    std_logic_vector(63 downto 0) :=
@@ -152,7 +152,7 @@ architecture rx_buf_unit_test of CAN_test is
     signal out_pointer              :    natural := 0;
     signal mod_pointer              :    natural := 0;
 
-    constant buff_size              :    natural := 32;
+    constant C_RX_BUFF_SIZE              :    natural := 32;
 
 
     ----------------------------------------------------------------------------
@@ -227,7 +227,7 @@ architecture rx_buf_unit_test of CAN_test is
     ----------------------------------------------------------------------------
     procedure generate_random_abort(
         signal   rand_ctr             :inout  natural range 0 to RAND_POOL_SIZE;
-        signal   rec_abort            :out    std_logic;
+        signal   rec_abort_f            :out    std_logic;
         signal   clk_sys              :in     std_logic;
         variable abort_present        :out    boolean;
         constant chances              :in     real;
@@ -239,11 +239,11 @@ architecture rx_buf_unit_test of CAN_test is
         abort_present := false;
 
         if (rand_val = '1') then
-            rec_abort  <= '1';
+            rec_abort_f  <= '1';
             wait until rising_edge(clk_sys);
             info("Data storing was aborted!");
 
-            rec_abort  <= '0';
+            rec_abort_f  <= '0';
             wait until rising_edge(clk_sys);
             abort_present := true;
         end if;
@@ -265,8 +265,8 @@ architecture rx_buf_unit_test of CAN_test is
         signal   clk_sys            :in     std_logic;
 
         -- Received Metadata and identifier
-        signal   rec_ident_in       :out    std_logic_vector(28 downto 0);
-        signal   rec_dlc_in         :out    std_logic_vector(3 downto 0);
+        signal   rec_ident       :out    std_logic_vector(28 downto 0);
+        signal   rec_dlc         :out    std_logic_vector(3 downto 0);
         signal   rec_frame_type     :out    std_logic;
         signal   rec_ident_type     :out    std_logic;
         signal   rec_brs            :out    std_logic;
@@ -275,11 +275,11 @@ architecture rx_buf_unit_test of CAN_test is
 
         -- Storing protocol between RX Buffer and CAN Core
         signal   sof_pulse          :out    std_logic;
-        signal   store_metadata     :out    std_logic;
-        signal   store_data         :out    std_logic;
+        signal   store_metadata_f     :out    std_logic;
+        signal   store_data_f         :out    std_logic;
         signal   store_data_word    :out    std_logic_vector(31 downto 0);
-        signal   rec_abort          :out    std_logic;
-        signal   rec_message_valid  :out    std_logic;
+        signal   rec_abort_f          :out    std_logic;
+        signal   rec_valid_f  :out    std_logic;
 
         signal   drv_rtsopt         :in     std_logic;
         signal   drv_clr_ovr        :inout  std_logic;
@@ -335,7 +335,7 @@ architecture rx_buf_unit_test of CAN_test is
         ------------------------------------------------------------------------
         wait_rand_cycles(rand_ctr, clk_sys, 10, 50);
 
-        generate_random_abort(rand_ctr, rec_abort, clk_sys, abort_present, 0.1,
+        generate_random_abort(rand_ctr, rec_abort_f, clk_sys, abort_present, 0.1,
                               log_level);
 
         if (abort_present) then
@@ -348,8 +348,8 @@ architecture rx_buf_unit_test of CAN_test is
 
         -- Put metadata on input of RX Buffer!
         id_sw_to_hw(CAN_frame.identifier, CAN_frame.ident_type, id_out);
-        rec_ident_in       <= id_out;
-        rec_dlc_in         <= CAN_frame.dlc;
+        rec_ident       <= id_out;
+        rec_dlc         <= CAN_frame.dlc;
         rec_frame_type     <= CAN_frame.frame_format;
         rec_ident_type     <= CAN_frame.ident_type;
         rec_brs            <= CAN_frame.brs;
@@ -360,9 +360,9 @@ architecture rx_buf_unit_test of CAN_test is
         wait until rising_edge(clk_sys);
 
         -- Send signal to store metadata
-        store_metadata     <= '1';
+        store_metadata_f     <= '1';
         wait until rising_edge(clk_sys);
-        store_metadata     <= '0';
+        store_metadata_f     <= '0';
         wait until rising_edge(clk_sys);
 
         ------------------------------------------------------------------------
@@ -380,13 +380,13 @@ architecture rx_buf_unit_test of CAN_test is
                                    CAN_frame.data((i * 4) + 1) &
                                    CAN_frame.data((i * 4));
 
-                store_data      <= '1';
+                store_data_f      <= '1';
                 info("Storing data word");
                 wait until rising_edge(clk_sys);
-                store_data      <= '0';
+                store_data_f      <= '0';
                 wait until rising_edge(clk_sys);
 
-                generate_random_abort(rand_ctr, rec_abort, clk_sys, abort_present,
+                generate_random_abort(rand_ctr, rec_abort_f, clk_sys, abort_present,
                                       0.05, log_level);
                 if (abort_present) then
                     wait until rising_edge(clk_sys);
@@ -402,7 +402,7 @@ architecture rx_buf_unit_test of CAN_test is
         -- If we got here, no abort was generated, thus frame was stored OK!
         -- We commit frame to the buffer and store it to test memories!
         ------------------------------------------------------------------------
-        rec_message_valid <= '1';
+        rec_valid_f <= '1';
         info("Frame valid!");
         wait until rising_edge(clk_sys);
 
@@ -415,7 +415,7 @@ architecture rx_buf_unit_test of CAN_test is
         else
             CAN_frame.timestamp  := stored_ts;
         end if;
-        rec_message_valid <= '0';
+        rec_valid_f <= '0';
 
         ------------------------------------------------------------------------
         -- Check that during whole storing of this frame data overrun did not
@@ -499,32 +499,33 @@ architecture rx_buf_unit_test of CAN_test is
         end loop;
     end procedure;
 
-  for rx_Buffer_comp : rx_buffer use entity work.rx_buffer(rtl);
+  for rx_Buffer_inst : rx_buffer use entity work.rx_buffer(rtl);
 
 begin
 
     ----------------------------------------------------------------------------
     -- Buffer component
     ----------------------------------------------------------------------------
-    rx_buffer_comp : rx_buffer
+    rx_buffer_inst : rx_buffer
     generic map(
-        buff_size                => buff_size
+        G_RESET_POLARITY       => '0',
+        G_RX_BUFF_SIZE         => C_RX_BUFF_SIZE
     )
     port map(
         clk_sys                  => clk_sys,
         res_n                    => res_n,
-        rec_ident_in             => rec_ident_in,
-        rec_dlc_in               => rec_dlc_in,
-        rec_ident_type_in        => rec_ident_type_in,
-        rec_frame_type_in        => rec_frame_type_in,
+        rec_ident                => rec_ident,
+        rec_dlc                  => rec_dlc,
+        rec_ident_type           => rec_ident_type,
+        rec_frame_type           => rec_frame_type,
         rec_is_rtr               => rec_is_rtr,
         rec_brs                  => rec_brs,
         rec_esi                  => rec_esi,
-        store_metadata           => store_metadata,
-        store_data               => store_data,
+        store_metadata_f         => store_metadata_f,
+        store_data_f             => store_data_f,
         store_data_word          => store_data_word,
-        rec_message_valid        => rec_message_valid,
-        rec_abort                => rec_abort,
+        rec_valid_f              => rec_valid_f,
+        rec_abort_f              => rec_abort_f,
         sof_pulse                => sof_pulse,
         timestamp                => timestamp,
         drv_bus                  => drv_bus,
@@ -552,10 +553,10 @@ begin
 
 	-- Common input memory is not filled totally so that one iteration
 	-- of test won't take too long!
-    in_mem_full <= true when in_pointer + buff_size + 1 > 300 else
+    in_mem_full <= true when in_pointer + C_RX_BUFF_SIZE + 1 > 300 else
                    false;
 
-    out_mem_full <= true when out_pointer + buff_size + 1 > 300 else
+    out_mem_full <= true when out_pointer + C_RX_BUFF_SIZE + 1 > 300 else
                  false;
 
     drv_bus(DRV_READ_START_INDEX)   <= drv_read_start;
@@ -604,10 +605,10 @@ begin
             while (in_mem_full = false) loop
                 -- Now buffer has for sure space. Frame is inserted into the
                 -- RX Buffer, Model and stored also into common memory
-                insert_frame_to_RX_Buffer(rand_ctr, clk_sys, rec_ident_in,
-                    rec_dlc_in, rec_frame_type_in, rec_ident_type_in, rec_brs,
-                    rec_esi, rec_is_rtr, sof_pulse, store_metadata, store_data,
-                    store_data_word, rec_abort, rec_message_valid, drv_rtsopt,
+                insert_frame_to_RX_Buffer(rand_ctr, clk_sys, rec_ident,
+                    rec_dlc, rec_frame_type, rec_ident_type, rec_brs,
+                    rec_esi, rec_is_rtr, sof_pulse, store_metadata_f, store_data_f,
+                    store_data_word, rec_abort_f, rec_valid_f, drv_rtsopt,
                     drv_clr_ovr, in_mem, in_pointer, timestamp, log_level);
             end loop;
 

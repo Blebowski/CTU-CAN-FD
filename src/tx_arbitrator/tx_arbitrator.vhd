@@ -146,7 +146,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -225,7 +224,7 @@ entity tx_arbitrator is
         drv_bus                 :in std_logic_vector(1023 downto 0);
 
         -- Priorities of TXT Buffers
-        txtb_prorities          :in t_txtb_priorities;
+        txtb_prorities          :in t_txt_bufs_priorities;
     
         -- TimeStamp value
         timestamp               :in std_logic_vector(63 downto 0)
@@ -369,7 +368,7 @@ begin
     select_buf_avail       => select_buf_avail,         -- IN
     select_index_changed   => select_index_changed,     -- IN
     timestamp_valid        => timestamp_valid,          -- IN
-    txtb_hw_cmd             => txtb_hw_cmd,               -- IN
+    txtb_hw_cmd            => txtb_hw_cmd,              -- IN
 
     load_ts_lw_addr        => load_ts_lw_addr,          -- OUT
     load_ts_uw_addr        => load_ts_uw_addr,          -- OUT
@@ -618,20 +617,20 @@ begin
   -- same priority are ready! Here we only test the proper index selection
   -- in case of equal priorities!
   -- psl txt_buf_eq_priority_cov : cover
-  --    (txt_buf_ready(0) = '1' and txt_buf_ready(1) = '1' and
+  --    (txtb_ready(0) = '1' and txtb_ready(1) = '1' and
   --     txtb_prorities(0) = txtb_prorities(1))
   --    report "Selected Buffer index changed while buffer selected";
   --
   -- Change of buffer from Ready to not Ready but not due to lock (e.g.
   --  set abort). Again one buffer is enough!
   -- psl buf_ready_to_not_ready_cov : cover
-  --    {txt_buf_ready(0) = '1' and select_buf_index = 0 and 
-  --     txtb_hw_cmd.lock = '0'; txt_buf_ready(0) = '0'}
+  --    {txtb_ready(0) = '1' and select_buf_index = 0 and 
+  --     txtb_hw_cmd.lock = '0'; txtb_ready(0) = '0'}
   --    report "Buffer became non-ready but not due to lock command"; 
   --
   -- psl txt_buf_all_ready_cov : cover
-  --    (txt_buf_ready(0) = '1' and txt_buf_ready(1) = '1' and
-  --     txt_buf_ready(2) = '1' and txt_buf_ready(3) = '1')
+  --    (txtb_ready(0) = '1' and txtb_ready(1) = '1' and
+  --     txtb_ready(2) = '1' and txtb_ready(3) = '1')
   --    report "All TXT Buffers ready";
   --
   -- psl txt_buf_change_cov : cover

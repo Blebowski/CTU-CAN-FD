@@ -92,7 +92,7 @@ entity shift_reg_byte is
         -- Status signals
         -----------------------------------------------------------------------
         -- Shift register status
-        reg_stat        : out   std_logic_vector(4 * G_NUM_BYTES - 1 downto 0)
+        reg_stat        : out   std_logic_vector(8 * G_NUM_BYTES - 1 downto 0)
     );
 end shift_reg_byte;
 
@@ -115,9 +115,9 @@ begin
 
         -- Shift register input mux
         next_bytes_gen : if (i > 0) generate
-            shift_reg_in(i) <= shift_reg_stat(i - 1)(7) when (byte_input_sel = '0')
-                                                        else
-                                                 input;
+            shift_reg_in(i) <= shift_reg_q(i - 1)(7) when (byte_input_sel(i) = '0')
+                                                     else
+                                               input;
         end generate;
 
         -----------------------------------------------------------------------
@@ -126,7 +126,7 @@ begin
         shift_reg_proc : process(clk, res_n)
         begin
             if (res_n = G_RESET_POLARITY) then
-                shift_reg_q(i) <= G_RESET_VALUE(i * 8 + 7 downto i * 8);
+                shift_reg_q(i) <= (OTHERS => '0'); -- G_RESET_VALUE(i * 8 + 7 downto i * 8);
             elsif (rising_edge(clk)) then
                 if (byte_clock_ena(i) = '1') then
                     shift_reg_q(i) <= shift_reg_q(i)(6 downto 0) &

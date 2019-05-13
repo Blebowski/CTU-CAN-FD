@@ -59,7 +59,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -224,9 +223,9 @@ begin
    -- RX Error counter, next value calculation
    ----------------------------------------------------------------------------
    -- Set to 120 when counter is more than 127, decrement otherwise!
-   rx_err_ctr_dec <=                120 when (rx_err_ctr_q > 127) else
-                     (rx_err_ctr_q - 1) when (tx_err_ctr_q > 0) else
-                           rx_err_ctr_q;
+   rx_err_ctr_dec <= to_unsigned(120, 9) when (rx_err_ctr_q > 127) else
+                      (rx_err_ctr_q - 1) when (tx_err_ctr_q > 0) else
+                            rx_err_ctr_q;
 
    -- Next value for error counter inctement when any of "inc" commands is
    -- valid. Decrement otherwise!
@@ -314,8 +313,8 @@ begin
    rx_err_ctr  <= std_logic_vector(rx_err_ctr_q);
    tx_err_ctr  <= std_logic_vector(tx_err_ctr_q);
 
-   norm_err_ctr <= nom_err_ctr_q;
-   data_err_ctr <= data_err_ctr_q;
+   norm_err_ctr <= std_logic_vector(nom_err_ctr_q);
+   data_err_ctr <= std_logic_vector(data_err_ctr_q);
 
    ----------------------------------------------------------------------------
    -- Assertions
@@ -335,12 +334,12 @@ begin
    -- report "Unit can't be transmitter and receiver at once"
    -- severity error;
 
-   -- psl rx_ctr_never_mt_262 : assert nevert
+   -- psl rx_ctr_never_mt_262 : assert never
    --  (rx_err_ctr_q > 262)
    --  report "RX Error counter is bigger than 262, node should be Bus off!"
    --  severity error;
 
-   -- psl tx_ctr_never_mt_262 : assert nevert
+   -- psl tx_ctr_never_mt_262 : assert never
    --  (tx_err_ctr_q > 262)
    --  report "TX Error counter is bigger than 262, node should be Bus off!"
    --  severity error;

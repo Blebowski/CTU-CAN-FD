@@ -63,7 +63,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -418,6 +417,8 @@ architecture rtl of can_core is
     signal is_suspend              :     std_logic;
     signal is_overload             :     std_logic;
     
+    signal sof_pulse_i             :     std_logic;
+    
 begin
   
     ----------------------------------------------------------------------------
@@ -483,7 +484,7 @@ begin
         rec_abort               => rec_abort,           -- OUT
         store_data              => store_data,          -- OUT
         store_data_word         => store_data_word,     -- OUT
-        sof_pulse               => sof_pulse,           -- OUT
+        sof_pulse               => sof_pulse_i,         -- OUT
     
         -- Operation control FSM Interface
         is_transmitter          => is_transmitter,      -- IN
@@ -511,6 +512,7 @@ begin
 
         -- CAN Bus serial data stream
         tx_data_nbs             => pc_tx_data_nbs,      -- OUT
+        tx_data_wbs             => tx_data_wbs_i,
         rx_data_nbs             => pc_rx_data_nbs,      -- IN
 
         -- Bit Stuffing Interface
@@ -680,7 +682,7 @@ begin
         data_out            => bst_data_out,            -- OUT
         
         -- Control signals
-        tx_trigger          => bst_trigger,             -- IN
+        bst_trigger         => bst_trigger,             -- IN
         stuff_enable        => stuff_enable,            -- IN
         fixed_stuff         => fixed_stuff,             -- IN
         stuff_length        => stuff_length,            -- IN
@@ -707,7 +709,7 @@ begin
         data_out            => bds_data_out,            -- OUT
 
         -- Control signals
-        rx_trig             => bds_trigger,             -- IN
+        bds_trigger         => bds_trigger,             -- IN
         destuff_enable      => destuff_enable,          -- IN
         stuff_error_enable  => stuff_error_enable,      -- IN
         fixed_stuff         => fixed_stuff,             -- IN
@@ -807,8 +809,8 @@ begin
     ---------------------------------------------------------------------------
     crc_trig_tx_wbs_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -833,8 +835,8 @@ begin
     ---------------------------------------------------------------------------
     crc_data_rx_wbs_reg : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,
@@ -903,7 +905,7 @@ begin
     ----------------------------------------------------------------------------
     -- STATUS Bus Implementation
     ----------------------------------------------------------------------------
-    stat_bus(511 downto 383) <= (OTHERS => '0');
+    stat_bus(511 downto 384) <= (OTHERS => '0');
     stat_bus(299 downto 297) <= (OTHERS => '0');
     stat_bus(187 downto 186) <= (OTHERS => '0');
     stat_bus(98 downto 90)   <= (OTHERS => '0');
@@ -926,6 +928,9 @@ begin
 
     stat_bus(STAT_IS_RECEIVER_INDEX) <=
         is_receiver;
+    
+    stat_bus(STAT_SOF_PULSE_INDEX) <=
+        sof_pulse_i;
     
     stat_bus(STAT_PC_IS_ARBITRATION_INDEX) <=
         is_arbitration;
@@ -1149,10 +1154,10 @@ begin
         bit_error;
 
     stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW) <=
-        std_logic_vector(to_unsigned(bst_ctr, bst_ctr'length));
+        std_logic_vector(to_unsigned(bst_ctr, 3));
           
     stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW) <=
-        std_logic_vector(to_unsigned(dst_ctr, bst_ctr'length)); 
+        std_logic_vector(to_unsigned(dst_ctr, 3)); 
 
     stat_bus(STAT_TS_HIGH downto STAT_TS_LOW) <=
         timestamp;
@@ -1181,5 +1186,6 @@ begin
     ssp_reset <= ssp_reset_i;
     trv_delay_calib <= trv_delay_calib_i;
     is_bus_off <= is_bus_off_i;
+    sof_pulse <= sof_pulse_i;
  
 end architecture;

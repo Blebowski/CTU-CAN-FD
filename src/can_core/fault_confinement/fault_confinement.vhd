@@ -78,7 +78,6 @@ use work.can_components.all;
 use work.can_types.all;
 use work.cmn_lib.all;
 use work.drv_stat_pkg.all;
-use work.endian_swap.all;
 use work.reduce_lib.all;
 
 use work.CAN_FD_register_map.all;
@@ -86,6 +85,7 @@ use work.CAN_FD_frame_format.all;
 
 entity fault_confinement is
     generic(
+        -- Reset polarity
         G_RESET_POLARITY        :     std_logic := '0'
     );
     port(
@@ -187,8 +187,8 @@ architecture rtl of fault_confinement is
     ---------------------------------------------------------------------------
     -- Driving bus aliases
     ---------------------------------------------------------------------------
-    signal drv_ewl               :     std_logic_vector(7 downto 0);
-    signal drv_erp               :     std_logic_vector(7 downto 0);
+    signal drv_ewl               :     std_logic_vector(8 downto 0);
+    signal drv_erp               :     std_logic_vector(8 downto 0);
     signal drv_ctr_val           :     std_logic_vector(8 downto 0);
     signal drv_ctr_sel           :     std_logic_vector(3 downto 0);
     signal drv_clr_err_ctrs      :     std_logic;
@@ -209,16 +209,16 @@ begin
     ---------------------------------------------------------------------------
     -- Driving bus aliases
     ---------------------------------------------------------------------------
-    drv_ewl             <=  drv_bus(DRV_EWL_HIGH downto DRV_EWL_LOW);
-    drv_erp             <=  drv_bus(DRV_ERP_HIGH downto DRV_ERP_LOW);
+    drv_ewl             <=  '0' & drv_bus(DRV_EWL_HIGH downto DRV_EWL_LOW);
+    drv_erp             <=  '0' & drv_bus(DRV_ERP_HIGH downto DRV_ERP_LOW);
     drv_ctr_val         <=  drv_bus(DRV_CTR_VAL_HIGH downto DRV_CTR_VAL_LOW);
     drv_ctr_sel         <=  drv_bus(DRV_CTR_SEL_HIGH downto DRV_CTR_SEL_LOW);
     drv_clr_err_ctrs    <=  drv_bus(DRV_ERR_CTR_CLR);
 
     dff_arst_inst : dff_arst
     generic map(
-        reset_polarity     => G_RESET_POLARITY,
-        rst_val            => '0'
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
     )
     port map(
         arst               => res_n,                -- IN
@@ -273,7 +273,7 @@ begin
         reset_err_counters     => set_err_active_q,     -- IN
         tx_err_ctr_pload       => drv_ctr_sel(0),       -- IN
         rx_err_ctr_pload       => drv_ctr_sel(1),       -- IN
-        err_ctr_pload_val      => drv_ctr_val,          -- IN
+        drv_ctr_val            => drv_ctr_val,          -- IN
         is_transmitter         => is_transmitter,       -- IN
         is_receiver            => is_receiver,          -- IN
 

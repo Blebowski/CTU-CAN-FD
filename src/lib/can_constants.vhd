@@ -77,6 +77,10 @@ package can_constants is
     constant DATA_SAMPLE      : std_logic_vector(1 downto 0) := "01";
     constant SECONDARY_SAMPLE : std_logic_vector(1 downto 0) := "10";
 
+    -- CRC Sources
+    constant C_CRC15_SRC : std_logic_vector(1 downto 0) := "00";     
+    constant C_CRC17_SRC : std_logic_vector(1 downto 0) := "01";
+    constant C_CRC21_SRC : std_logic_vector(1 downto 0) := "10";
 
     ----------------------------------------------------------------------------
     -- Memory Access
@@ -88,8 +92,6 @@ package can_constants is
     -- Address ranges for identifier
     constant ID_ADRESS_HIGHER        : natural := 15;
     constant ID_ADRESS_LOWER         : natural := 12;
-
-    constant CAN_DEVICE_ID : std_logic_vector(31 downto 0) := x"0000CAFD";
   
     ----------------------------------------------------------------------------
     -- Protocol control constants
