@@ -370,7 +370,8 @@ architecture rtl of rx_buffer is
 
     -- Counter for reading the frame. When whole frame is read,
     -- number of frames must be decremented.
-    signal read_frame_counter       :       natural range 0 to 31;
+    signal read_frame_counter_d       :       natural range 0 to 31;
+    signal read_frame_counter_q       :       natural range 0 to 31;
 
 
     ----------------------------------------------------------------------------
@@ -443,6 +444,9 @@ architecture rtl of rx_buffer is
     -- Internal timestamp captured for storing. Captured either in the
     -- beginning or end of frame. 
     signal timestamp_capture        :       std_logic_vector(63 downto 0);
+    
+    -- Clock enable signal for timestamp capture register 
+    signal timestamp_capture_ce     :       std_logic;
 
 
     ----------------------------------------------------------------------------
@@ -682,16 +686,18 @@ begin
     -- Capturing timestamp. Done at the beginning or end of frame based on
     -- SW configuration.
     ----------------------------------------------------------------------------
+    timestamp_capture_ce <= '1' when (drv_rtsopt = RTS_END and rec_valid_f = '1')
+                                else
+                            '1' when (drv_rtsopt = RTS_BEG and sof_pulse = '1')
+                                else
+                            '0';
+                            
     capt_ts_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
             timestamp_capture       <= (OTHERS => '0');
-
         elsif (rising_edge(clk_sys)) then
-            
-            if ((drv_rtsopt = RTS_END and rec_valid_f = '1') or
-                (drv_rtsopt = RTS_BEG and sof_pulse = '1')) 
-            then  
+            if (timestamp_capture_ce = '1') then
                 timestamp_capture   <= timestamp;
             end if;
         end if;
@@ -699,16 +705,26 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Reading counter (read_frame_counter) which is loaded by RWCNT during read
+    -- Reading counter (read_frame_counter_q) which is loaded by RWCNT during read
     -- of frame format word. Then each next read decreases the counter. When 
     -- read counter reaches zero, message count is decreased. If "commit_rx_frame" 
     -- comes, "message_count" is incremented. If both occur at the same time
     -- , "message_count" does not change.
     ----------------------------------------------------------------------------
+    
+    ---------------------------------------------------------------------------
+    -- During the read of FRAME_FORMAT word store the length of the frame to
+    -- "read_frame_counter", thus we know how much we have to read before 
+    -- decrementing the "message_count".
+    ---------------------------------------------------------------------------
+    read_frame_counter_d <= read_frame_counter_q - 1 when (read_frame_counter_q > 0)
+                                                     else
+                            to_integer(unsigned(RAM_data_out(RWCNT_H downto RWCNT_L)));
+    
     read_frame_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
         if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
-            read_frame_counter           <= 0;
+            read_frame_counter_q           <= 0;
 
         elsif (rising_edge(clk_sys)) then
 
@@ -717,28 +733,15 @@ begin
             -- something to read
             --------------------------------------------------------------------
             if (read_increment = '1') then
-
-                ----------------------------------------------------------------
-                -- During the read of FRAME_FORMAT word store the length
-                -- of the frame to "read_frame_counter", thus we know how much
-                -- we have to read before decrementing the "message_count".
-                ----------------------------------------------------------------
-                if (read_frame_counter = 0) then
-                    read_frame_counter    <=
-                        to_integer(unsigned(RAM_data_out(RWCNT_H downto
-                                                            RWCNT_L)));
-                else
-                    read_frame_counter <= read_frame_counter - 1;
-                end if;
+                read_frame_counter_q <= read_frame_counter_d;
             end if;
-
         end if;    
     end process;
 
 
     ---------------------------------------------------------------------------
     -- Manipulation of "message_count". When last word is read from frame
-    -- (read_frame_counter = 1 and read_increment), "message_count" is
+    -- (read_frame_counter_q = 1 and read_increment), "message_count" is
     -- decreased, when new frame is committed, message count is increased.
     -- If both at the same time, no change since one frame is added, next is 
     -- removed!
@@ -751,7 +754,7 @@ begin
         elsif (rising_edge(clk_sys)) then
 
             -- Read of last word, but no new commit
-            if ((read_increment = '1') and (read_frame_counter = 1)) then
+            if ((read_increment = '1') and (read_frame_counter_q = 1)) then
                 if (commit_rx_frame = '0') then
                     message_count           <= message_count - 1;
                 end if;

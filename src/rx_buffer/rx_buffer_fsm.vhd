@@ -358,7 +358,7 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     
     -- psl store_metadata_in_idle_asrt : assert never
-    --  (store_metadata_f = '1' and curr_state /= s_rxb_idle)
+    --  (store_metadata_f = '1' and (curr_state /= s_rxb_idle))
     -- report "RX Buffer: Store metadata command did NOT come when RX buffer " &
     --        "is idle!"
     -- severity error;
@@ -370,14 +370,14 @@ begin
     -- severity error;
 
     -- psl sof_pulse_asrt_asrt : assert never
-    --   (sof_pulse = '1' and curr_state /= s_rxb_idle)
+    --   (sof_pulse = '1' and (curr_state /= s_rxb_idle))
     -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
     -- severity error;
     
-    -- psl rx_buf_cmds_one_hot_asrt : assert never
-    --   (cmd_join /= "0000" and cmd_join /= "0001" and cmd_join /= "0010"
-    --    and cmd_join /= "0100" and cmd_join /= "1000")
-    -- report "RX Buffer: SOF pulse should come when RX Buffer is idle!"
+    -- psl rx_buf_cmds_one_hot_asrt : assert always
+    --   (cmd_join = "0000" or cmd_join = "0001" or cmd_join = "0010"
+    --    and cmd_join = "0100" or cmd_join = "1000")
+    -- report "RX Buffer: RX Buffer commands should be one-hot encoded!"
     -- severity error;
 
 end architecture;

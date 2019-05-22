@@ -151,12 +151,19 @@ end entity;
 
 architecture rtl of rx_buffer_pointers is
 
-    signal read_pointer_int        :       integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal read_pointer_inc_1_int  :       integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal write_pointer_int       :       integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal write_pointer_raw_int   :       integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal write_pointer_extra_ts_int :    integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal rx_mem_free_int_int     :       integer range 0 to G_RX_BUFF_SIZE + 1;
+    signal read_pointer_i        :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal read_pointer_inc_1_i  :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_i       :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    
+    signal write_pointer_raw_i   :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_raw_d   :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_raw_ce  :       std_logic;
+    
+    signal write_pointer_extra_ts_i  :    integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_extra_ts_d  :    integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_extra_ts_ce :    std_logic;
+    
+    signal rx_mem_free_int_i     :       integer range 0 to G_RX_BUFF_SIZE + 1;
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -183,12 +190,12 @@ architecture rtl of rx_buffer_pointers is
     signal rx_mem_free_int_inc_1    :       integer range 0 to G_RX_BUFF_SIZE + 2;
 
 begin
-    read_pointer <= read_pointer_int;
-    read_pointer_inc_1 <= read_pointer_inc_1_int;
-    write_pointer <= write_pointer_int;
-    write_pointer_raw <= write_pointer_raw_int;
-    write_pointer_extra_ts <= write_pointer_extra_ts_int;
-    rx_mem_free_int <= rx_mem_free_int_int;
+    read_pointer <= read_pointer_i;
+    read_pointer_inc_1 <= read_pointer_inc_1_i;
+    write_pointer <= write_pointer_i;
+    write_pointer_raw <= write_pointer_raw_i;
+    write_pointer_extra_ts <= write_pointer_extra_ts_i;
+    rx_mem_free_int <= rx_mem_free_int_i;
 
     ----------------------------------------------------------------------------
     -- Driving bus aliases
@@ -198,62 +205,59 @@ begin
 
     ----------------------------------------------------------------------------
     -- Read pointer, incremented during read from RX Buffer FIFO.
+    -- Moving to next word by reading (if there is sth to read).
     ----------------------------------------------------------------------------
     read_pointer_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
         if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
-            read_pointer_int         <= 0;
-
+            read_pointer_i         <= 0;
         elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Moving to next word by reading (if there is sth to read).
-            --------------------------------------------------------------------
             if (read_increment = '1') then
-                read_pointer_int    <= read_pointer_inc_1_int;
+                read_pointer_i    <= read_pointer_inc_1_i;
             end if;
+        end if;
+    end process;
 
+    ----------------------------------------------------------------------------
+    -- Write pointers available to the user manipulation. Loading 
+    -- "write_pointer_raw_int" to  "write_pointer_int" when frame is committed.
+    ----------------------------------------------------------------------------
+    write_pointer_proc : process(clk_sys, res_n, drv_erase_rx)
+    begin
+        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+            write_pointer_i       <= 0;
+        elsif (rising_edge(clk_sys)) then
+            if (commit_rx_frame = '1') then
+                write_pointer_i   <= write_pointer_raw_i;
+            end if;
         end if;
     end process;
 
 
     ----------------------------------------------------------------------------
-    -- Write pointers manipulation. Following pointers are handled:
-    --   1. Write pointer raw, which is incremented upon each write to RX buffer
-    --      RAM.
-    --   2. Write pointer which is available to user.
-    ----------------------------------------------------------------------------
-    write_pointer_proc : process(clk_sys, res_n, drv_erase_rx)
+    -- Write pointers raw manipulation:
+    --  1. Increment when word is written to memory.
+    --  2. Reset when "rec_abort_f" is active (Error frame) or frame finished
+    --     and overrun occurred meanwhile. Reset to value of last commited write
+    --     pointer.
+    ----------------------------------------------------------------------------    
+    write_pointer_raw_d <= ((write_pointer_raw_i + 1) mod G_RX_BUFF_SIZE)
+                            when (write_raw_OK = '1') else
+                            write_pointer_i;
+    
+    write_pointer_raw_ce <= '1' when (write_raw_OK = '1') else
+                            '1' when (rec_abort_f = '1') else
+                            '1' when (commit_overrun_abort = '1') else
+                            '0';
+    
+    write_pointer_raw_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
         if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
-            write_pointer_int       <= 0;
-            write_pointer_raw_int   <= 0;
-
+           write_pointer_raw_i   <= 0;
         elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Loading "write_pointer_raw_int" to  "write_pointer_int" when frame is
-            -- committed.
-            --------------------------------------------------------------------
-            if (commit_rx_frame = '1') then
-                write_pointer_int   <= write_pointer_raw_int;
+            if (write_pointer_raw_ce = '1') then
+                write_pointer_raw_i <= write_pointer_raw_d;
             end if;
-
-            --------------------------------------------------------------------
-            -- Updating "write_pointer_raw_int":
-            --      1. Increment when word is written to memory.
-            --      2. Reset when "rec_abort_f" is active (Error frame) or 
-            --         frame finished and overrun occurred meanwhile. Reset to
-            --         value of last commited write pointer.
-            --------------------------------------------------------------------
-            if (write_raw_OK = '1') then
-                write_pointer_raw_int<= (write_pointer_raw_int + 1) mod G_RX_BUFF_SIZE;
-                        
-            elsif (rec_abort_f = '1' or commit_overrun_abort = '1') then
-                write_pointer_raw_int <= write_pointer_int;
-
-            end if;
-
         end if;
     end process;
 
@@ -261,28 +265,23 @@ begin
     ----------------------------------------------------------------------------
     -- Extra write pointer for storing value of timestamp from end of frame.
     ----------------------------------------------------------------------------
+    write_pointer_extra_ts_d <= write_pointer_i when (store_extra_wr_ptr = '1')
+                                                else
+                                (write_pointer_extra_ts_i + 1) mod G_RX_BUFF_SIZE;
+
+    -- Tick only when it should be incremented or stored
+    write_pointer_extra_ts_ce <= '1' when (store_extra_wr_ptr = '1') else
+                                 '1' when (inc_extra_wr_ptr = '1') else
+                                 '0';
+
     extra_write_ptr_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
         if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
-            write_pointer_extra_ts_int  <= 0;
-
+            write_pointer_extra_ts_i  <= 0;
         elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Setting extra write pointer for write of timestamp from end of
-            -- frame...
-            -- First timestamp word is offset by 3 from committed write pointer.
-            -- Second one is offset by 4.
-            --------------------------------------------------------------------
-            if (store_extra_wr_ptr = '1') then
-                write_pointer_extra_ts_int <= write_pointer_int;
-
-            elsif (inc_extra_wr_ptr = '1') then
-                write_pointer_extra_ts_int <= (write_pointer_extra_ts_int + 1) mod
-                                              G_RX_BUFF_SIZE;
-
+            if (write_pointer_extra_ts_ce = '1') then
+                write_pointer_extra_ts_i <= write_pointer_extra_ts_d;
             end if;
-
         end if;
     end process;
 
@@ -293,7 +292,7 @@ begin
     mem_free_proc : process(clk_sys, res_n, drv_erase_rx)
     begin
         if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
-            rx_mem_free_int_int     <= G_RX_BUFF_SIZE;
+            rx_mem_free_int_i       <= G_RX_BUFF_SIZE;
             rx_mem_free_raw         <= G_RX_BUFF_SIZE;
 
         elsif (rising_edge(clk_sys)) then
@@ -322,7 +321,7 @@ begin
                 -- Abort, or abort was previously flaged -> Revert last commited
                 -- value.
                 if (rec_abort_f = '1' or commit_overrun_abort = '1') then
-                    rx_mem_free_raw <= rx_mem_free_int_int;
+                    rx_mem_free_raw <= rx_mem_free_int_i;
 
                 -- No read, write only, decrement by 1.
                 elsif (write_raw_OK = '1') then
@@ -337,13 +336,13 @@ begin
             --------------------------------------------------------------------
             if (read_increment = '1') then
                 if (commit_rx_frame = '1') then        
-                    rx_mem_free_int_int <= rx_mem_free_raw_inc_1;
+                    rx_mem_free_int_i <= rx_mem_free_raw_inc_1;
                 else
-                    rx_mem_free_int_int <= rx_mem_free_int_inc_1;
+                    rx_mem_free_int_i <= rx_mem_free_int_inc_1;
                 end if;
     
             elsif (commit_rx_frame = '1') then
-                rx_mem_free_int_int     <= rx_mem_free_raw;
+                rx_mem_free_int_i     <= rx_mem_free_raw;
             end if;
 
         end if;
@@ -353,9 +352,9 @@ begin
     ----------------------------------------------------------------------------
     -- Calculating incremented value of free memory combinationally
     ----------------------------------------------------------------------------
-    mem_free_arith_proc : process(rx_mem_free_int_int, rx_mem_free_raw)
+    mem_free_arith_proc : process(rx_mem_free_int_i, rx_mem_free_raw)
     begin
-        rx_mem_free_int_inc_1   <= rx_mem_free_int_int + 1;
+        rx_mem_free_int_inc_1   <= rx_mem_free_int_i + 1;
         rx_mem_free_raw_inc_1   <= rx_mem_free_raw + 1;
         rx_mem_free_raw_dec_1   <= rx_mem_free_raw - 1;
     end process;
@@ -368,9 +367,9 @@ begin
     --     clock cycle delay on "read_pointer_int" and thus allow bursts on read
     --     from RX_DATA register!
     ----------------------------------------------------------------------------
-    read_pointer_inc_proc : process(read_pointer_int)
+    read_pointer_inc_proc : process(read_pointer_i)
     begin
-        read_pointer_inc_1_int <= (read_pointer_int + 1) mod G_RX_BUFF_SIZE;
+        read_pointer_inc_1_i <= (read_pointer_i + 1) mod G_RX_BUFF_SIZE;
     end process;
     
     
