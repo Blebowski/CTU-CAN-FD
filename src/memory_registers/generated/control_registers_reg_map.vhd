@@ -421,7 +421,7 @@ begin
     end generate FILTER_A_MASK_present_gen_t;
 
     FILTER_A_MASK_present_gen_f : if (SUP_FILT_A = false) generate
-        control_registers_out.filter_a_mask <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_a_mask <= "00000000000000000000000000000000";
     end generate FILTER_A_MASK_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -450,7 +450,7 @@ begin
     end generate FILTER_A_VAL_present_gen_t;
 
     FILTER_A_VAL_present_gen_f : if (SUP_FILT_A = false) generate
-        control_registers_out.filter_a_val <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_a_val <= "00000000000000000000000000000000";
     end generate FILTER_A_VAL_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -479,7 +479,7 @@ begin
     end generate FILTER_B_MASK_present_gen_t;
 
     FILTER_B_MASK_present_gen_f : if (SUP_FILT_B = false) generate
-        control_registers_out.filter_b_mask <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_b_mask <= "00000000000000000000000000000000";
     end generate FILTER_B_MASK_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -508,7 +508,7 @@ begin
     end generate FILTER_B_VAL_present_gen_t;
 
     FILTER_B_VAL_present_gen_f : if (SUP_FILT_B = false) generate
-        control_registers_out.filter_b_val <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_b_val <= "00000000000000000000000000000000";
     end generate FILTER_B_VAL_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -537,7 +537,7 @@ begin
     end generate FILTER_C_MASK_present_gen_t;
 
     FILTER_C_MASK_present_gen_f : if (SUP_FILT_C = false) generate
-        control_registers_out.filter_c_mask <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_c_mask <= "00000000000000000000000000000000";
     end generate FILTER_C_MASK_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -566,7 +566,7 @@ begin
     end generate FILTER_C_VAL_present_gen_t;
 
     FILTER_C_VAL_present_gen_f : if (SUP_FILT_C = false) generate
-        control_registers_out.filter_c_val <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_c_val <= "00000000000000000000000000000000";
     end generate FILTER_C_VAL_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -595,7 +595,7 @@ begin
     end generate FILTER_RAN_LOW_present_gen_t;
 
     FILTER_RAN_LOW_present_gen_f : if (SUP_RANGE = false) generate
-        control_registers_out.filter_ran_low <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_ran_low <= "00000000000000000000000000000000";
     end generate FILTER_RAN_LOW_present_gen_f;
 
     ----------------------------------------------------------------------------
@@ -624,7 +624,7 @@ begin
     end generate FILTER_RAN_HIGH_present_gen_t;
 
     FILTER_RAN_HIGH_present_gen_f : if (SUP_RANGE = false) generate
-        control_registers_out.filter_ran_high <= "00000000000000000000000000000000";
+        control_registers_out_i.filter_ran_high <= "00000000000000000000000000000000";
     end generate FILTER_RAN_HIGH_present_gen_f;
 
     ----------------------------------------------------------------------------
