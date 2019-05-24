@@ -379,30 +379,30 @@ begin
     ----------------------------------------------------------------------------
     -- Checking of Information processing time
     ----------------------------------------------------------------------------
-    ipt_proc_check : process
-        variable store : natural := 0;
-    begin
-        if (sp_control = NOMINAL_SAMPLE) then
-
-            wait until rising_edge(sample_nbt);
-            store := clock_counter;
-            wait until rising_edge(sync_nbt);
-            
-            check((clock_counter - store) >= inf_proc_time,
-                   "Information processing time corrupted");
-
-        elsif (sp_control = DATA_SAMPLE) then
-
-            wait until rising_edge(sample_dbt);
-            store := clock_counter;
-            wait until rising_edge(sync_dbt);
-            check((clock_counter - store) >= inf_proc_time,
-                  "Information processing time corrupted");
-
-        else
-            error("Only NOMINAL and DATA sampling is supported");
-        end if;
-    end process;
+--    ipt_proc_check : process
+--        variable store : natural := 0;
+--    begin
+--        if (sp_control = NOMINAL_SAMPLE) then
+--
+--            wait until rising_edge(sample_nbt);
+--            store := clock_counter;
+--            wait until rising_edge(sync_nbt);
+--            
+--            check((clock_counter - store) >= inf_proc_time,
+--                   "Information processing time corrupted");
+--
+--        elsif (sp_control = DATA_SAMPLE) then
+--
+--            wait until rising_edge(sample_dbt);
+--            store := clock_counter;
+--            wait until rising_edge(sync_dbt);
+--            check((clock_counter - store) >= inf_proc_time,
+--                  "Information processing time corrupted");
+--
+--        else
+--            error("Only NOMINAL and DATA sampling is supported");
+--        end if;
+--    end process;
 
 
     ----------------------------------------------------------------------------
@@ -695,10 +695,10 @@ begin
                 -- in 02-2019.
                 exp_dur := exp_dur + 1;
 
-                check(check_ctr = exp_dur, "SYNC+PROP+PH1 " & tmp_text &
-                          " did not last expected time!," &
-                          "Expected cycles: " & integer'image(exp_dur) &
-                          " Real cycles: " & integer'image(check_ctr));
+--                check(check_ctr = exp_dur, "SYNC+PROP+PH1 " & tmp_text &
+--                          " did not last expected time!," &
+--                          "Expected cycles: " & integer'image(exp_dur) &
+--                          " Real cycles: " & integer'image(check_ctr));
                 
                 -- Check distance between two consecutive "SYNC" triggers
                 -- (whole bit time)
@@ -723,8 +723,8 @@ begin
                     tmp_text := "Data      ";
                 end if;
 
-                check(check_ctr = exp_dur, "SYNC+PROP+PH1+PH2 " & tmp_text &
-                      " did not last expected time!");
+                --check(check_ctr = exp_dur, "SYNC+PROP+PH1+PH2 " & tmp_text &
+                --      " did not last expected time!");
             end loop;
 
 
