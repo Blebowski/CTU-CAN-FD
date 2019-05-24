@@ -275,12 +275,6 @@ architecture rtl of can_core is
     ----------------------------------------------------------------------------
 
     -- TXT Buffer control
-    signal tran_word_i        :   std_logic_vector(31 downto 0);
-    signal tran_dlc_i               :   std_logic_vector(3 downto 0);
-    signal tran_is_rtr_i            :   std_logic;
-    signal tran_ident_type_i        :   std_logic;
-    signal tran_frame_type_i        :   std_logic;
-    signal tran_brs_i               :   std_logic; 
     signal txtb_hw_cmd_i             :   t_txtb_hw_cmd;
     
     -- Received frame
@@ -461,12 +455,12 @@ begin
         is_overload             => is_overload,         -- OUT
         
         -- TXT Buffers interface
-        tran_word               => tran_word_i,         -- IN
-        tran_dlc                => tran_dlc_i,          -- IN
-        tran_is_rtr             => tran_is_rtr_i,       -- IN
-        tran_ident_type         => tran_ident_type_i,   -- IN
-        tran_frame_type         => tran_frame_type_i,   -- IN
-        tran_brs                => tran_brs_i,          -- IN
+        tran_word               => tran_word,           -- IN
+        tran_dlc                => tran_dlc,            -- IN
+        tran_is_rtr             => tran_is_rtr,         -- IN
+        tran_ident_type         => tran_ident_type,     -- IN
+        tran_frame_type         => tran_frame_type,     -- IN
+        tran_brs                => tran_brs,            -- IN
         tran_frame_valid        => tran_frame_valid,    -- IN
         txtb_hw_cmd             => txtb_hw_cmd_i,       -- IN
         txtb_ptr                => txtb_ptr,            -- OUT

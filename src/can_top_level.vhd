@@ -481,7 +481,7 @@ begin
     ---------------------------------------------------------------------------
     -- Reset synchroniser
     ---------------------------------------------------------------------------
-    rst_sync_comp : rst_sync
+    rst_sync_inst : rst_sync
     generic map(
         G_RESET_POLARITY  => C_RESET_POLARITY
     )
