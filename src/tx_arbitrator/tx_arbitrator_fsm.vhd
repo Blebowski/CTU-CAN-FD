@@ -362,9 +362,15 @@ begin
   end process;
 
   ------------------------------------------------------------------------------
-  -- Functional coverage
+  -- Assertions
   ------------------------------------------------------------------------------
   -- psl default clock is rising_edge(clk_sys);
+  --
+
+
+  ------------------------------------------------------------------------------
+  -- Functional coverage
+  ------------------------------------------------------------------------------
   --
   -- psl txt_buf_wait_till_timestamp_cov : cover
   --    (curr_state = s_arb_sel_upp_ts and fsm_wait_state_q = '0' and

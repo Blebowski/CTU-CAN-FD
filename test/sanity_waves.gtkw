@@ -1,0 +1,67 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Sun Mar 17 14:53:57 2019
+[*]
+[dumpfile] "/build/test/build/vunit_out/test_output/lib.tb_sanity.1Mb_10Mb_20_m_Star_19cff8652e0a3d517c03100ae1b1ae07ab78df87/ghdl/wave.ghw"
+[dumpfile_mtime] "Sun Mar 17 14:12:50 2019"
+[dumpfile_size] 123971756
+[savefile] "/build/test/sanity_waves.gtkw"
+[timestart] 198432000000
+[size] 1726 859
+[pos] -1 -1
+*-29.471088 200200000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] top.
+[treeopen] top.tb_sanity.
+[treeopen] top.tb_sanity.t_sanity.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[1].
+[treeopen] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[2].node_1_comp.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[2].node_1_comp.can_core_comp.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[2].node_1_comp.can_core_comp.protocol_control_comp.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[3].node_1_comp.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[3].node_1_comp.can_core_comp.
+[treeopen] top.tb_sanity.t_sanity.comp_gen[4].node_1_comp.
+[sst_width] 446
+[signals_width] 282
+[sst_expanded] 1
+[sst_vpaned_height] 354
+@28
+top.tb_sanity.t_sanity.comp_gen[2].node_1_comp.can_core_comp.protocol_control_comp.clk_sys
+@420
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.pc_state
+top.tb_sanity.t_sanity.comp_gen[4].node_1_comp.can_core_comp.pc_state
+top.tb_sanity.t_sanity.comp_gen[2].node_1_comp.can_core_comp.pc_state
+top.tb_sanity.t_sanity.comp_gen[3].node_1_comp.can_core_comp.pc_state
+@28
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_tx
+top.tb_sanity.t_sanity.comp_gen[2].node_1_comp.can_tx
+top.tb_sanity.t_sanity.comp_gen[3].node_1_comp.can_tx
+top.tb_sanity.t_sanity.comp_gen[4].node_1_comp.can_tx
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.data_tx
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.no_pos_resync
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sync_edge
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.tq_edge_nbt
+@420
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.bt_fsm_out
+@28
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.data_rx
+@420
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.protocol_control_comp.control_pointer
+@28
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.protocol_control_comp.sec_ack
+@29
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.protocol_control_comp.rec_trig
+@28
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.protocol_control_comp.tran_trig
+@420
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.protocol_control_comp.op_state
+@28
+top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.protocol_control_comp.ack_recieved_out
+#{top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.sp_control[1:0]} top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.sp_control[1] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.can_core_comp.sp_control[0]
+@22
+#{top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sjw_nbt[4:0]} top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sjw_nbt[4] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sjw_nbt[3] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sjw_nbt[2] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sjw_nbt[1] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sjw_nbt[0]
+@28
+#{top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sync_control[1:0]} top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sync_control[1] top.tb_sanity.t_sanity.comp_gen[1].node_1_comp.prescaler_comp.sync_control[0]
+[pattern_trace] 1
+[pattern_trace] 0

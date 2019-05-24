@@ -1,0 +1,68 @@
+*-27.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+@200
+-Test details
+@22
+top.tb_presc_unit_test.tb.i_test.iterations
+top.tb_presc_unit_test.tb.i_test.log_level
+top.tb_presc_unit_test.tb.i_test.error_beh
+top.tb_presc_unit_test.tb.i_test.loop_ctr
+@200
+-System
+@22
+top.tb_presc_unit_test.tb.i_test.res_n
+top.tb_presc_unit_test.tb.i_test.clk_sys
+@200
+-DUT inputs (generated)
+@800200
+-Bit time settings
+@24
++{Time quanta (Nominal)} top.tb_presc_unit_test.tb.i_test.drv_tq_nbt[7:0]
++{PROP_SEG (Nominal)} top.tb_presc_unit_test.tb.i_test.drv_prs_nbt[6:0]
++{PH1_SEG (Nominal)} top.tb_presc_unit_test.tb.i_test.drv_ph1_nbt[5:0]
++{PH2_SEG (Nominal)} top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[5:0]
++{Synchron. jump width (Nominal)} top.tb_presc_unit_test.tb.i_test.drv_sjw_nbt[4:0]
++{Time quanta (Data)} top.tb_presc_unit_test.tb.i_test.drv_tq_dbt[7:0]
++{PROP_SEG (Data)} top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[5:0]
++{PH1_SEG (Data)} top.tb_presc_unit_test.tb.i_test.drv_ph1_dbt[4:0]
++{PH2_SEG (Data)} top.tb_presc_unit_test.tb.i_test.drv_ph2_dbt[4:0]
++{Synchron. jump width (Data)} top.tb_presc_unit_test.tb.i_test.drv_sjw_dbt[4:0]
+@1000200
+-Bit time settings
+@22
++{Synchronization edge} top.tb_presc_unit_test.tb.i_test.sync_edge
+@24
++{Sample control} top.tb_presc_unit_test.tb.i_test.sp_control[1:0]
++{Synchronization control} top.tb_presc_unit_test.tb.i_test.sync_control[1:0]
+@200
+-DUT outputs
+@800200
+-Triggerring signals
+@22
++{SYNC (Nominal)} top.tb_presc_unit_test.tb.i_test.sync_nbt
++{SYNC del.1 (Nominal)} top.tb_presc_unit_test.tb.i_test.sync_nbt_del_1
++{SAMPLE (Nominal)} top.tb_presc_unit_test.tb.i_test.sample_nbt
++{SAMPLE del.1 (Nominal)} top.tb_presc_unit_test.tb.i_test.sample_nbt_del_1
++{SAMPLE del.2 (Nominal)} top.tb_presc_unit_test.tb.i_test.sample_nbt_del_2
++{SYNC (Data)} top.tb_presc_unit_test.tb.i_test.sync_dbt
++{SYNC del.1 (Data)} top.tb_presc_unit_test.tb.i_test.sync_dbt_del_1
++{SAMPLE (Data)} top.tb_presc_unit_test.tb.i_test.sample_dbt
++{SAMPLE del.1 (Data)} top.tb_presc_unit_test.tb.i_test.sample_dbt_del_1
++{SAMPLE del.2 (Data)} top.tb_presc_unit_test.tb.i_test.sample_dbt_del_2
+@1000200
+-Triggerring signals
+@22
++{Bit time state} top.tb_presc_unit_test.tb.i_test.bt_fsm_out
++{Hard sync appeared} top.tb_presc_unit_test.tb.i_test.hard_sync_edge_valid
+@200
+-Testbench internals
+@24
++{Expected bit time with resync} top.tb_presc_unit_test.tb.i_test.resync_bit_time_length
+@200
+-Error counters
+@24
++{Inform. proc. time corrupted} top.tb_presc_unit_test.tb.i_test.ipt_err_ctr
++{Coherency checks failed} top.tb_presc_unit_test.tb.i_test.coh_err_ctr
++{Sync signal missed} top.tb_presc_unit_test.tb.i_test.sync_seq_err_ctr
++{Sample signal missed} top.tb_presc_unit_test.tb.i_test.sample_seq_err_ctr
+@200
+-Internal DUT signals

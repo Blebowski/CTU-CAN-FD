@@ -1,5 +1,5 @@
 _default: &default
-    log_level: info
+    log_level: debug
     psl_coverage: true
     error_tolerance: 0
     # seed: 0 # optional; use to reconstruct results from randomized runs
@@ -9,7 +9,7 @@ _default: &default
 unit:
     default:
         <<: *default
-        log_level: warning
+        log_level: info
         iterations: 50
         timeout: 100 ms
     tests:
@@ -30,11 +30,13 @@ unit:
             wave: unit/Prescaler/prsc_unit.tcl
         protocol_control:
             wave: unit/Protocol_Control/pctl_unit.tcl
+            iterations: 100
         rx_buf:
             wave: unit/RX_Buffer/rxbf_unit.tcl
             iterations: 10
         tx_arb:
             wave: unit/TX_Arbitrator/txar_unit.tcl
+            iterations: 1000
         tx_buf:
             wave: unit/TX_Buffer/txbf_unit.tcl
 feature:

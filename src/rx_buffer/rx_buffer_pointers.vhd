@@ -393,9 +393,9 @@ begin
     --      cover (rx_mem_free_int = G_RX_BUFF_SIZE);
     --
     -- psl rx_write_ptr_higher_than_read_ptr_cov : 
-    --      cover (write_pointer_int > read_pointer_int);
+    --      cover (write_pointer_i > read_pointer_i);
     --
     -- psl rx_read_ptr_higher_than_write_ptr_cov : 
-    --      cover (read_pointer_int > write_pointer_int);    
+    --      cover (read_pointer_i > write_pointer_i);    
     
 end architecture;

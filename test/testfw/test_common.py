@@ -221,7 +221,7 @@ def get_default_compile_and_sim_options() -> Tuple[OptionsDict, OptionsDict]:
     sim_options = OptionsDict({
         "ghdl.elab_flags": elab_flags,
         "modelsim.init_files.after_load": common_modelsim_init_files,
-        "ghdl.sim_flags": ["--ieee-asserts=disable-at-0"],
+        "ghdl.sim_flags": ["--ieee-asserts=disable-at-0", "--disp-tree"],
     })
     return compile_options, sim_options
 
