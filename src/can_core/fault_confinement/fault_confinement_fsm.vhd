@@ -126,6 +126,9 @@ architecture rtl of fault_confinement_fsm is
 
     signal tx_err_ctr_mt_erp : std_logic;
     signal rx_err_ctr_mt_erp : std_logic;
+    
+    signal tx_err_ctr_mt_ewl : std_logic;
+    signal rx_err_ctr_mt_ewl : std_logic;
 
     signal tx_err_ctr_mt_255 : std_logic;
     
@@ -137,18 +140,30 @@ architecture rtl of fault_confinement_fsm is
     
 begin
     
-    -- TX Error counter more than Error warning limit
+    -- TX Error counter more than Error Passive Limit
     tx_err_ctr_mt_erp <= '1' when (unsigned(tx_err_ctr) > unsigned(erp)) else
                          '0';
 
-    -- RX Error counter more than Error warning limit
+    -- RX Error counter more than Error Passive Limit
     rx_err_ctr_mt_erp <= '1' when (unsigned(rx_err_ctr) > unsigned(erp)) else
                          '0';
 
     -- TX Error counter more than 255
     tx_err_ctr_mt_255 <= '1' when (unsigned(tx_err_ctr) > 255) else
                          '0';
-    
+
+    -- TX Error counter more than Error Passive Limit
+    tx_err_ctr_mt_ewl <= '1' when (unsigned(tx_err_ctr) > unsigned(ewl)) else
+                         '0';
+
+    -- RX Error counter more than Error Passive Limit
+    rx_err_ctr_mt_ewl <= '1' when (unsigned(rx_err_ctr) > unsigned(ewl)) else
+                         '0';
+
+    error_warning_limit <= '1' when (tx_err_ctr_mt_ewl = '1' or
+                                     rx_err_ctr_mt_ewl = '1')
+                               else
+                           '0';
     
     ---------------------------------------------------------------------------
     -- Next state process

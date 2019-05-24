@@ -124,7 +124,7 @@ begin
     ---------------------------------------------------------------------------
     -- Implementation of a shift register
     ---------------------------------------------------------------------------
-    shift_down_proc : process (clk)
+    shift_down_proc : process (res_n, clk)
     begin
         if (res_n = G_RESET_POLARITY) then
             shift_regs <= G_RESET_VALUE;

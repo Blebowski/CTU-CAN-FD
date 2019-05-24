@@ -88,9 +88,6 @@ entity rx_shift_reg is
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
-        -- Actual TX Data
-        tx_data                 :out  std_logic;
-
         -- Actual RX Data
         rx_data                 :in   std_logic;
 

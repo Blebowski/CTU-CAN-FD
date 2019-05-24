@@ -155,7 +155,8 @@ begin
     -- State machine driving selection of highest priority buffer and load of 
     -- the metadata and identifier words on parallel outputs.
     ----------------------------------------------------------------------------
-    tx_arb_fsm_proc : process(clk_sys, res_n)
+    tx_arb_fsm_proc : process(curr_state, txtb_hw_cmd, select_buf_avail, 
+        select_index_changed, timestamp_valid, fsm_wait_state_q)
     begin
         -- Keeping signals values to avoid latch inference
         next_state                <= curr_state;

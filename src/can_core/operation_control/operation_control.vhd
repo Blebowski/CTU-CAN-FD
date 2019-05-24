@@ -137,7 +137,7 @@ begin
     -- Next state
     ---------------------------------------------------------------------------
     next_state_proc : process(curr_state, set_idle, set_transmitter,
-        set_receiver, arbitration_lost)
+        set_receiver, arbitration_lost, drv_ena)
     begin
         next_state <= curr_state;
         

@@ -145,7 +145,7 @@ entity rx_buffer_pointers is
         write_pointer_extra_ts :out     integer range 0 to G_RX_BUFF_SIZE - 1;
 
         -- Number of free memory words available for user
-        rx_mem_free_int        :out     integer range 0 to G_RX_BUFF_SIZE + 1
+        rx_mem_free_int        :out     integer range -1 to G_RX_BUFF_SIZE + 1
     );
 end entity;
 

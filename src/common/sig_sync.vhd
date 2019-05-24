@@ -81,7 +81,7 @@ architecture rtl of sig_sync is
 begin
 
     -- Signal synchroniser process.
-    sig_sync_proc : process (clk)
+    sig_sync_proc : process (clk, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
             rff     <= G_RESET_VALUE;

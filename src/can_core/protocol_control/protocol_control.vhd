@@ -717,7 +717,7 @@ begin
 
         -- Error detector interface
         form_error              => form_error_i,            -- OUT
-        ack_error               => form_error_i,            -- OUT
+        ack_error               => ack_error_i,             -- OUT
         crc_check               => crc_check,               -- OUT
         bit_error_arb           => bit_error_arb,           -- OUT
         crc_match               => crc_match,               -- IN
@@ -941,7 +941,6 @@ begin
         rx_trigger              => rx_trigger,          -- IN
 
         -- Data-path interface
-        tx_data                 => tx_data_nbs_i,       -- IN
         rx_data                 => rx_data_nbs,         -- IN
 
         -- Protocol control FSM interface
@@ -988,6 +987,7 @@ begin
     is_arbitration <= is_arbitration_i;
     stuff_error_enable <= stuff_error_enable_i;
     fixed_stuff <= fixed_stuff_i;
+    crc_src <= crc_src_i;
     
     ---------------------------------------------------------------------------
     -- Assertions

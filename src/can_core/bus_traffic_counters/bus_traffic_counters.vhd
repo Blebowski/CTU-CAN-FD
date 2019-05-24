@@ -140,7 +140,7 @@ begin
     ----------------------------------------------------------------------------
     -- TX Counter register
     ----------------------------------------------------------------------------
-    tx_ctr_proc : process(clk_sys, res_n)
+    tx_ctr_proc : process(clk_sys, res_n, clear_tx_ctr)
     begin
         if (res_n = G_RESET_POLARITY or clear_tx_ctr = '1') then
             tx_ctr_int        <= (OTHERS => '0');
@@ -156,7 +156,7 @@ begin
     ----------------------------------------------------------------------------
     -- RX Counter register
     ----------------------------------------------------------------------------
-    rx_ctr_proc : process(clk_sys, res_n)
+    rx_ctr_proc : process(clk_sys, res_n, clear_rx_ctr)
     begin
         if (res_n = G_RESET_POLARITY or clear_rx_ctr = '1') then
             rx_ctr_int        <= (OTHERS => '0');

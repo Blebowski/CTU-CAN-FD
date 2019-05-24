@@ -793,7 +793,8 @@ begin
         curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
         drv_fd_type, allow_2bit_crc_delim, allow_2bit_ack, is_receiver,
         is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset,
-        reinteg_ctr_expired, rx_data)
+        reinteg_ctr_expired, rx_data, is_err_active, go_to_stuff_count
+        )
     begin
         next_state <= curr_state;
 
@@ -1162,7 +1163,9 @@ begin
         drv_fd_type, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
         is_receiver, crc_match, drv_ack_forb, drv_self_test_ena, tx_frame_ready,
         go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset,
-        reinteg_ctr_expired, first_err_delim_q)
+        reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
+        crc_length_i, data_length_bits_c, ctrl_ctr_mem_index
+        )
     begin
 
         -----------------------------------------------------------------------
@@ -2568,6 +2571,7 @@ begin
     rx_clear <= rx_clear_q;
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
+    pc_state <= curr_state;
     
     bit_error_enable <= not bit_err_disable;
 
