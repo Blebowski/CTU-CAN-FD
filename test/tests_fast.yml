@@ -18,8 +18,6 @@ unit:
             wave: unit/Bit_Stuffing/bsdt_unit.tcl
         apb:
             iterations: 1
-        bus_sync:
-            wave: unit/Bus_Sampling/bsnc_unit.tcl
         crc:
             wave: unit/CRC/crct_unit.tcl
         int_man:
