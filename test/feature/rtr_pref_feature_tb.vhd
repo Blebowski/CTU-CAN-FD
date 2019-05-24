@@ -101,7 +101,7 @@ package body rtr_pref_feature is
         variable command            :        SW_command := (false, false, false);
         variable status             :        SW_status;
         variable mode               :        SW_mode := (false, false, false,
-                                                false, false, false, false,
+                                                false, false, false,
                                                 false, false, false);
     begin
         o.outcome := true;

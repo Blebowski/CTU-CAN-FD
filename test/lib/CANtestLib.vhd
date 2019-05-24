@@ -150,7 +150,6 @@ package CANtestLib is
         acceptance_filter       :   boolean;
         flexible_data_rate      :   boolean;
         rtr_pref                :   boolean;
-        tripple_sampling        :   boolean;
         acknowledge_forbidden   :   boolean;
         internal_loopback       :   boolean;
         iso_fd_support          :   boolean;
@@ -3851,9 +3850,6 @@ package body CANtestLib is
             data(FDE_IND)       := '1';
         end if;
 
-        if (mode.tripple_sampling) then
-            data(TSM_IND)       := '1';
-        end if;
 
         if (mode.acknowledge_forbidden) then
             data(ACF_IND)       := '1';
@@ -3895,7 +3891,6 @@ package body CANtestLib is
         mode.acceptance_filter          := false;
         mode.flexible_data_rate         := false;
         mode.rtr_pref                   := false;
-        mode.tripple_sampling           := false;
         mode.acknowledge_forbidden      := false;
 
         if (data(RST_IND) = '1') then
@@ -3916,10 +3911,6 @@ package body CANtestLib is
 
         if (data(FDE_IND) = '1') then
             mode.flexible_data_rate     := true;
-        end if;
-
-        if (data(TSM_IND) = '1') then
-            mode.tripple_sampling       := true;
         end if;
 
         if (data(ACF_IND) = '1') then

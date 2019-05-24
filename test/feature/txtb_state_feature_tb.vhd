@@ -118,7 +118,7 @@ package body txtb_state_feature is
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
         variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false, false,
+                                                false, true, false,
                                                 false, false, false);
         variable rx_state           :       SW_RX_Buffer_info;
         variable txt_state          :       SW_TXT_Buffer_state_type;

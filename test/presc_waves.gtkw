@@ -1,85 +1,44 @@
 [*]
 [*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Sat Mar  9 10:56:25 2019
+[*] Fri May 24 15:10:42 2019
 [*]
 [dumpfile] "/build/test/build/vunit_out/test_output/lib.tb_presc_unit_test.all_36c0061843e0ce1efaf3b4915621b15ccda4fdb8/ghdl/wave.ghw"
-[dumpfile_mtime] "Sat Mar  9 10:56:25 2019"
-[dumpfile_size] 33181111
+[dumpfile_mtime] "Fri May 24 15:09:55 2019"
+[dumpfile_size] 1732971
 [savefile] "/build/test/presc_waves.gtkw"
 [timestart] 0
-[size] 1853 1025
-[pos] -1 -1
-*-35.615211 2180100000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1200 729
+[pos] -175 -123
+*-38.615211 2180100000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] top.
 [treeopen] top.tb_presc_unit_test.
 [treeopen] top.tb_presc_unit_test.tb.
 [treeopen] top.tb_presc_unit_test.tb.i_test.
 [treeopen] top.tb_presc_unit_test.tb.i_test.prescaler_comp.
-[treeopen] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.
-[treeopen] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.
-[treeopen] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.
 [treeopen] top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.
 [sst_width] 442
 [signals_width] 257
 [sst_expanded] 1
-[sst_vpaned_height] 629
+[sst_vpaned_height] 294
 @28
 top.tb_presc_unit_test.tb.i_test.prescaler_comp.res_n
 top.tb_presc_unit_test.tb.i_test.prescaler_comp.clk_sys
+@421
+top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.bt_fsm_i
 @420
+top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_fsm_inst.current_state
 top.tb_presc_unit_test.tb.i_test.loop_ctr
 @28
 top.tb_presc_unit_test.tb.i_test.prescaler_comp.drv_ena
-@420
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_fsm_comp.current_state
-top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.bt_fsm_out
-@24
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[9:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[9] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[8] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[0]
-@28
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_fsm_comp.bt_fsm_ce
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.segm_end
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.is_tseg1
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.resync_edge_valid
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.synchronisation_checker_comp.sync_flag
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.synchronisation_checker_comp.sync_flag_ce
 @24
 #{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[8:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[8] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bt_counter_nbt[0]
 @28
 top.tb_presc_unit_test.tb.i_test.prescaler_comp.tq_edge_dbt
 top.tb_presc_unit_test.tb.i_test.prescaler_comp.tq_edge_nbt
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.phase_err_mt_sjw
-@22
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[7:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_counters_nbt_comp.tq_counter_q[0]
-@28
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.resync_edge_valid
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.ipt_ok
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.segm_end
-@22
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[9:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[9] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[8] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.resynchronisation_nbt_comp.exp_seg_length_q[0]
-@28
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_req_flag_d
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_req_flag_q
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_req_flag_dq
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_sr[1:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_sr[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_sr[0]
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sync_sr[0]
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.sample_nbt[2:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.sample_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.sample_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.sample_nbt[0]
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.sync_nbt[1:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.sync_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.sync_nbt[0]
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_req
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sync_req
-top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sync_req_flag_d
 top.tb_presc_unit_test.tb.i_test.sync_nbt
 top.tb_presc_unit_test.tb.i_test.sample_nbt
 top.tb_presc_unit_test.tb.i_test.sample_dbt
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_dbt[2:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_dbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_dbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.trigger_generator_comp.sample_dbt[0]
 @24
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_ph1_nbt[5:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_ph1_nbt[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_ph1_nbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_ph1_nbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_ph1_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_ph1_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_ph1_nbt[0]
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[6:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_prs_nbt[0]
->-750000000
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[7:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_tq_nbt[0]
->0
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[7:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.tseg1_nbt[0]
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[7:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_nbt[0]
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[7:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[7] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[6] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[5] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.brp_dbt[0]
 #{top.tb_presc_unit_test.tb.i_test.drv_ph1_dbt[4:0]} top.tb_presc_unit_test.tb.i_test.drv_ph1_dbt[4] top.tb_presc_unit_test.tb.i_test.drv_ph1_dbt[3] top.tb_presc_unit_test.tb.i_test.drv_ph1_dbt[2] top.tb_presc_unit_test.tb.i_test.drv_ph1_dbt[1] top.tb_presc_unit_test.tb.i_test.drv_ph1_dbt[0]
 #{top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[5:0]} top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[5] top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[4] top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[3] top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[2] top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[1] top.tb_presc_unit_test.tb.i_test.drv_prs_dbt[0]
 @22
@@ -104,10 +63,6 @@ top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.tq_ctr_dbt
 #{top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[5:0]} top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[5] top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[4] top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[3] top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[2] top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[1] top.tb_presc_unit_test.tb.i_test.drv_ph2_nbt[0]
 @22
 #{top.tb_presc_unit_test.tb.i_test.drv_ph2_dbt[4:0]} top.tb_presc_unit_test.tb.i_test.drv_ph2_dbt[4] top.tb_presc_unit_test.tb.i_test.drv_ph2_dbt[3] top.tb_presc_unit_test.tb.i_test.drv_ph2_dbt[2] top.tb_presc_unit_test.tb.i_test.drv_ph2_dbt[1] top.tb_presc_unit_test.tb.i_test.drv_ph2_dbt[0]
-@24
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_nbt[4:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_nbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_nbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_nbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_nbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_nbt[0]
-@22
-#{top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_dbt[4:0]} top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_dbt[4] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_dbt[3] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_dbt[2] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_dbt[1] top.tb_presc_unit_test.tb.i_test.prescaler_comp.bit_time_cfg_capture_comp.drv_sjw_dbt[0]
 @420
 top.tb_presc_unit_test.tb.i_test.mod_check_enabled
 top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.tseg2_dbt_i
@@ -118,9 +73,5 @@ top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.tseg2_dbt_req
 top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.tseg2_dbt_ack
 @28
 top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.tq_edge_dbt
-@420
-top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.edge_occured_s
-@421
-top.tb_presc_unit_test.tb.i_test.prescaler_model_comp.h_sync_occurred_s
 [pattern_trace] 1
 [pattern_trace] 0

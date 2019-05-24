@@ -91,7 +91,7 @@ package body retr_limit_feature is
                                                 (OTHERS => '0');
 
         variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false, false,
+                                                false, true, false,
                                                 false, false, false);
         variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
         variable buf_state          :       SW_TXT_Buffer_state_type;
