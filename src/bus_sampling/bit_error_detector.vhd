@@ -101,11 +101,8 @@ entity bit_error_detector is
         -- Delayed transmitted data (for detection in secondary sampling point)
         data_tx_delayed          :in   std_logic;
         
-        -- Receieved data in Nominal Bit time
-        data_rx_nbt              :in   std_logic;
-
-        -- Received data (both Nominal Bit time and Data Bit time)
-        can_rx_i                 :in   std_logic;
+        -- RX Data (Synchronised)
+        data_rx_synced           :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Status outputs
@@ -122,9 +119,6 @@ architecture rtl of bit_error_detector is
     
     -- Expected bit value (TX, from SYNC)
     signal exp_data         : std_logic;
-    
-    -- Actual data value (RX, from Sample point)
-    signal act_data         : std_logic;
 
     -- Bit error detected value
     signal bit_error_d      : std_logic;
@@ -143,20 +137,14 @@ begin
     ----------------------------------------------------------------------------
     exp_data <= data_tx_delayed when (sp_control = SECONDARY_SAMPLE) else
                 data_tx;
-    
-    ----------------------------------------------------------------------------
-    -- Actual data. Consider tripple sampling for Nominal Bit-rate
-    ----------------------------------------------------------------------------
-    act_data <= data_rx_nbt when (sp_control = NOMINAL_SAMPLE) else
-                can_rx_i;
                 
     ----------------------------------------------------------------------------
     -- Bit Error detection. If expected data is not equal to actual data in
     -- sample point -> Bit Error!
     ----------------------------------------------------------------------------
     bit_error_d <= '0' when (drv_ena = CTU_CAN_DISABLED) else
-                   '1' when (exp_data /= act_data and sample = '1') else
-                   '0' when (exp_data = act_data and sample = '1') else
+                   '1' when (exp_data /= data_rx_synced and sample = '1') else
+                   '0' when (exp_data = data_rx_synced and sample = '1') else
                    bit_error_q;
     
     ----------------------------------------------------------------------------

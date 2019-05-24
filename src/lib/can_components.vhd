@@ -277,11 +277,8 @@ package can_components is
             -- Delayed transmitted data (for detection in secondary sampling point)
             data_tx_delayed          :in   std_logic;
             
-            -- Receieved data in Nominal Bit time
-            data_rx_nbt              :in   std_logic;
-    
-            -- Received data (both Nominal Bit time and Data Bit time)
-            can_rx_i                 :in   std_logic;
+            -- RX Data (Synchronised)
+            data_rx_synced           :in   std_logic;
     
             -----------------------------------------------------------------------
             -- Status outputs
@@ -364,11 +361,8 @@ package can_components is
         -----------------------------------------------------------------------
         -- Datapath
         -----------------------------------------------------------------------
-        -- Receieved data in Nominal Bit time
-        data_rx_nbt          :in   std_logic;
-
-        -- Received data (Nominal Bit Time and Data Bit Time)
-        can_rx_i             :in   std_logic;
+        -- RX Data (Synchronised)
+        data_rx_synced       :in   std_logic;
 
         -- Sampled value of RX pin in Sample point (DFF output)
         prev_sample          :out  std_logic;

@@ -98,32 +98,6 @@
 						</ipxact:enumeratedValues>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>TSM</ipxact:name>
-						<ipxact:displayName>TSM</ipxact:displayName>
-						<ipxact:description>Tripple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. CAN standard reccomends to use tripple sampling at low Bit rates.</ipxact:description>
-						<ipxact:bitOffset>6</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:enumeratedValues>
-							<ipxact:enumeratedValue>
-								<ipxact:name>TSM_ENABLE</ipxact:name>
-								<ipxact:displayName>TSM_ENABLE</ipxact:displayName>
-								<ipxact:description>Tripple sampling mode enabled</ipxact:description>
-								<ipxact:value>1</ipxact:value>
-							</ipxact:enumeratedValue>
-							<ipxact:enumeratedValue>
-								<ipxact:name>TSM_DISABLE</ipxact:name>
-								<ipxact:displayName>TSM_DISABLE</ipxact:displayName>
-								<ipxact:description>Tripple sampling mode disabled</ipxact:description>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:enumeratedValue>
-						</ipxact:enumeratedValues>
-					</ipxact:field>
-					<ipxact:field>
 						<ipxact:name>ACF</ipxact:name>
 						<ipxact:displayName>ACF</ipxact:displayName>
 						<ipxact:description>Acknowledge forbidden mode. When this mode is enabled, acknowledge is not sent even if received CRC matches the calculated one.</ipxact:description>

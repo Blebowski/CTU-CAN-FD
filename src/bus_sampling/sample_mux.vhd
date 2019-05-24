@@ -95,11 +95,8 @@ entity sample_mux is
         -----------------------------------------------------------------------
         -- Datapath
         -----------------------------------------------------------------------
-        -- Receieved data in Nominal Bit time
-        data_rx_nbt          :in   std_logic;
-
-        -- Received data (Nominal Bit Time and Data Bit Time)
-        can_rx_i             :in   std_logic;
+        -- RX Data (synchronised)
+        data_rx_synced       :in   std_logic;
 
         -- Sampled value of RX pin in Sample point (DFF output)
         prev_sample          :out  std_logic;
@@ -113,9 +110,6 @@ architecture rtl of sample_mux is
 
     -- Internal sample signal (muxed for NBT, DBT and SAMPLE)
     signal sample           : std_logic;
-    
-    -- RX Data
-    signal rx_data_i        : std_logic;
 
     -- Bit error detected value
     signal sample_prev_d    : std_logic;
@@ -130,15 +124,9 @@ begin
               rx_trigger;
 
     ----------------------------------------------------------------------------
-    -- RX data mux.
-    ----------------------------------------------------------------------------
-    rx_data_i <= data_rx_nbt when (sp_control = NOMINAL_SAMPLE) else
-                 can_rx_i;
-
-    ----------------------------------------------------------------------------
     -- Previous sample register 
     ----------------------------------------------------------------------------
-    sample_prev_d <= rx_data_i when (sample = '1') else
+    sample_prev_d <= data_rx_synced when (sample = '1') else
                      sample_prev_q;
 
     sample_prev_req_proc : process(clk_sys, res_n)
@@ -155,7 +143,7 @@ begin
     ----------------------------------------------------------------------------
     -- Internal signal to output propagation
     ----------------------------------------------------------------------------
-    rx_data_i <= rx_data_i;
+    data_rx <= data_rx_synced;
     
     -- Internal signal to output propagation
     prev_sample <= sample_prev_q;

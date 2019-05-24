@@ -171,9 +171,6 @@ package drv_stat_pkg is
     constant DRV_INT_MASK_CLR_HIGH   : natural := 875;
     constant DRV_INT_MASK_CLR_LOW    : natural := 864;
 
-    -- Bus sampling indices
-    constant DRV_SAM_INDEX : natural := 372;
-
     constant DRV_SSP_DELAY_SELECT_HIGH : natural := 374;
     constant DRV_SSP_DELAY_SELECT_LOW : natural := 373;
 

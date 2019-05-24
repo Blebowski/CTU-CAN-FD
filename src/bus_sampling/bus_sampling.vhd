@@ -203,9 +203,6 @@ architecture rtl of bus_sampling is
     -- Driving bus aliases
     -----------------------------------------------------------------------------
 
-    -- Tripple sampling (as SJA1000)
-    signal drv_sam              : std_logic;
-
     -- Enable of the whole driver
     signal drv_ena              : std_logic;
 
@@ -219,21 +216,8 @@ architecture rtl of bus_sampling is
     -----------------------------------------------------------------------------
     -- Internal registers and signals
     -----------------------------------------------------------------------------
-
-    -- CAN RX synchronisation chain output
-    signal can_rx_synced        : std_logic;
-
-    -- Internal received CAN Data. Selected between Raw input value and
-    -- synchronised value by signal synchroniser.
-    signal can_rx_i             : std_logic;
-
-    -- Majority value from all three sampled values in tripple sampling shift 
-    -- register
-    signal can_rx_trs_majority  : std_logic; 
-
-    -- CAN RX Data selected between normally sampled data (can_rx_i) and
-    -- Tripple sampled data!
-    signal data_rx_nbt          : std_logic;
+    -- CAN RX Data (Synchronised)
+    signal data_rx_synced       : std_logic;
 
     -- Bus sampling and edge detection, Previously sampled value on CAN bus
     signal prev_Sample          : std_logic;
@@ -284,7 +268,6 @@ begin
     ---------------------------------------------------------------------------
     -- Driving bus aliases
     ---------------------------------------------------------------------------
-    drv_sam               <= drv_bus(DRV_SAM_INDEX);
     drv_ena               <= drv_bus(DRV_ENA_INDEX);
 
     drv_ssp_offset        <= drv_bus(DRV_SSP_OFFSET_HIGH downto
@@ -304,13 +287,8 @@ begin
         res_n   => res_n,
         clk     => clk_sys,
         async   => can_rx,
-        sync    => can_rx_synced
+        sync    => data_rx_synced
     );
-
-    ---------------------------------------------------------------------------
-    -- Synchronisation-chain selection
-    ---------------------------------------------------------------------------
-    can_rx_i <= can_rx_synced;
     
     ---------------------------------------------------------------------------
     -- Component for measurement of transceiver delay and calculation of
@@ -349,17 +327,6 @@ begin
 
 
     ---------------------------------------------------------------------------
-    -- Tripple sampling majority selection
-    ---------------------------------------------------------------------------
-    trs_maj_dec_inst : majority_decoder_3
-    port map(
-        input   => trs_reg,             -- IN
-        
-        output  => can_rx_trs_majority  -- OUT
-    );
-
-
-    ---------------------------------------------------------------------------
     -- Edge detector on TX, RX Data
     ---------------------------------------------------------------------------
     data_edge_detector_inst : data_edge_detector
@@ -370,7 +337,7 @@ begin
         clk_sys             => clk_sys,         -- IN
         res_n               => res_n,           -- IN
         tx_data             => tx_data_wbs,     -- IN
-        rx_data             => can_rx_i,        -- IN
+        rx_data             => data_rx_synced,  -- IN
         prev_rx_sample      => prev_sample,     -- IN
         
         tx_edge             => edge_tx_valid,   -- OUT
@@ -481,40 +448,6 @@ begin
     end process;
 
 
-    ----------------------------------------------------------------------------
-    -- Separate process for tripple sampling with simple shift register. 
-    -- Sampling is continous into shift register of lenth 3. If this option is 
-    -- desired then majority out of whole shift register is selected as sampled
-    -- value!
-    ----------------------------------------------------------------------------
-    trs_shift_reg_inst : shift_reg_preload
-    generic map(
-        G_RESET_POLARITY     => G_RESET_POLARITY,
-        G_RESET_VALUE        => "000",
-        G_WIDTH              => 3,
-        G_SHIFT_DOWN         => false
-    )
-    port map(
-        clk                => clk_sys,      -- IN
-        res_n              => res_n,        -- IN
-        
-        input              => can_rx_i,     -- IN
-        preload            => '0',          -- IN
-        preload_val        => "000",        -- IN
-        enable             => '1',          -- IN
-
-        reg_stat           => trs_reg,      -- OUT
-        output             => open          -- OUT
-    );
-
-
-    ---------------------------------------------------------------------------
-    -- Selection of RX Data sampled in Nominal Bit-rate between Normally
-    -- sampled and tripple sampled data.
-    ---------------------------------------------------------------------------
-    data_rx_nbt <= can_rx_trs_majority when (drv_sam = TSM_ENABLE) else
-                   can_rx_i;
-
     ---------------------------------------------------------------------------
     -- Bit error detector
     ---------------------------------------------------------------------------
@@ -531,8 +464,7 @@ begin
         sample_sec          => sample_sec_i,        -- IN
         data_tx             => tx_data_wbs,         -- IN
         data_tx_delayed     => data_tx_delayed,     -- IN
-        data_rx_nbt         => data_rx_nbt,         -- IN
-        can_rx_i            => can_rx_i,            -- IN
+        data_rx_synced      => data_rx_synced,      -- IN
         
         bit_error           => bit_Error            -- OUT
     );
@@ -551,8 +483,7 @@ begin
         sp_control             => sp_control,       -- IN
         rx_trigger             => rx_trigger,       -- IN
         sample_sec             => sample_sec_i,     -- IN
-        data_rx_nbt            => data_rx_nbt,      -- IN
-        can_rx_i               => can_rx_i,         -- IN
+        data_rx_synced         => data_rx_synced,   -- IN
         
         prev_sample            => prev_sample,      -- OUT
         data_rx                => rx_data_wbs       -- OUT

@@ -564,10 +564,6 @@ begin
     drv_bus(DRV_FILTERS_ENA_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, AFM_IND);
 
-    -- TSM - Tripple sampling mode
-    drv_bus(DRV_SAM_INDEX) <= align_wrd_to_reg(
-        control_registers_out.mode, TSM_IND);
-
     -- ACF - Acknowledge forbidden mode
     drv_bus(DRV_ACK_FORB_INDEX) <= align_wrd_to_reg(
         control_registers_out.mode, ACF_IND);
@@ -1456,6 +1452,7 @@ begin
     drv_bus(551 downto 520) <= (OTHERS => '0');
 
     drv_bus(472)            <= '0';
+    drv_bus(372)            <= '0';
     drv_bus(461)            <= '0';
     drv_bus(367)            <= '0';
     drv_bus(366)            <= '0';
