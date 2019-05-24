@@ -84,7 +84,6 @@ feature:
         tx_arb_time_tran:
         timestamp_options:
         byte_enable:
-        rtr_pref:
         data_length_code:
         bus_start:
         data_overrun_clear:
