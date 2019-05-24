@@ -212,25 +212,6 @@ begin
     --  report "Sync and Sample trigger should no be requested at once!"
     --  severity error;
     ---------------------------------------------------------------------------
-    
-    ---------------------------------------------------------------------------
-    -- If any request for TX trigger is captured, there should not come another 
-    -- request the same trigger! Only RX trigger type request might come!
-    --
-    -- psl sync_req_flag_overrun_asrt : assert never
-    --  (sync_req = '1' and sync_req_flag_q = '1')
-    --  report "Sync request should not occur when previous is not finished!"
-    --  severity error;
-    ---------------------------------------------------------------------------
-    
-    ---------------------------------------------------------------------------
-    -- If any trigger is not yet fully generated (there are non-zeroes in its
-    -- shift register), there should never come other request of the same type.
-    --
-    -- psl sample_req_and_sync_sr_non_zero_asrt : assert never
-    --  (sample_req = '1' and sample_q = '0')
-    --  report "Sample request should not occur if its shift register is not empty!"
-    --  severity error;
-    ---------------------------------------------------------------------------
+
         
 end architecture rtl;

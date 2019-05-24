@@ -482,15 +482,5 @@ begin
     
     -- psl default clock is rising_edge(clk_sys);
     --
-    -- psl no_nbt_bt_overflow_asrt : assert never
-    --      (bt_counter_dbt = C_NBT_ONES and tq_edge_nbt = '1' and
-    --       segment_end = '0' and sp_control = NOMINAL_SAMPLE)
-    --  report "Nominal Bit time counter overflow!" severity error;
-    --
-    -- psl no_dbt_bt_overflow_asrt : assert never
-    --      (bt_counter_dbt = C_DBT_ONES and tq_edge_dbt = '1' and
-    --       segment_end = '0' and
-    --       (sp_control = DATA_SAMPLE or sp_control = SECONDARY_SAMPLE))
-    --  report "Data Bit time counter overflow!" severity error;
 
 end architecture;
