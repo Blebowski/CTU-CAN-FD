@@ -568,6 +568,12 @@ architecture rtl of protocol_control is
   -- RX Stuff count (grey coded) + RX parity
   signal rx_stuff_count          :      std_logic_vector(3 downto 0);
   
+  -- Stuff error enable (internal)
+  signal stuff_error_enable_i    :      std_logic;
+  
+  -- Fixed Stuff (internal)
+  signal fixed_stuff_i           :      std_logic;
+  
 begin
     
     ---------------------------------------------------------------------------
@@ -725,8 +731,8 @@ begin
         stuff_enable            => stuff_enable,            -- OUT
         destuff_enable          => destuff_enable,          -- OUT
         stuff_length            => stuff_length,            -- OUT
-        fixed_stuff             => fixed_stuff,             -- OUT
-        stuff_error_enable      => stuff_error_enable,      -- OUT
+        fixed_stuff             => fixed_stuff_i,           -- OUT
+        stuff_error_enable      => stuff_error_enable_i,    -- OUT
         
         -- Operation control interface
         is_transmitter          => is_transmitter,          -- IN
@@ -866,8 +872,8 @@ begin
 
         -- Control signals
         bit_error_enable        => bit_error_enable,        -- IN
-        stuff_error_enable      => stuff_error_enable,      -- IN
-        fixed_stuff             => fixed_stuff,             -- IN
+        stuff_error_enable      => stuff_error_enable_i,    -- IN
+        fixed_stuff             => fixed_stuff_i,           -- IN
         err_pos                 => err_pos,                 -- IN
         crc_check               => crc_check,               -- IN
         crc_clear_match_flag    => crc_clear_match_flag,    -- IN
@@ -980,6 +986,8 @@ begin
     ack_error <= ack_error_i;
     crc_error <= crc_error_i;
     is_arbitration <= is_arbitration_i;
+    stuff_error_enable <= stuff_error_enable_i;
+    fixed_stuff <= fixed_stuff_i;
     
     ---------------------------------------------------------------------------
     -- Assertions

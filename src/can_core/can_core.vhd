@@ -878,7 +878,6 @@ begin
     --  2. RX Data before Bit destuffing.
     ---------------------------------------------------------------------------
     crc_data_tx_wbs <= bst_data_out;
-    crc_data_rx_wbs <= bds_data_in;
     
     lpb_dominant <= rx_data_wbs and bst_data_out;
     

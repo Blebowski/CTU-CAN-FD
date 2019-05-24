@@ -423,7 +423,7 @@ begin
         clk_sys           => clk_sys,               -- IN
         res_n             => shift_regs_res_q,      -- IN
         write             => rx_trigger,            -- IN
-        read              => sample_sec,            -- IN
+        read              => sample_sec_i,          -- IN
         data_in           => tx_data_wbs,           -- IN
         
         data_out          => data_tx_delayed        -- OUT
@@ -436,7 +436,7 @@ begin
     ssp_gen_proc : process(res_n, clk_sys)
     begin
         if (res_n = G_RESET_POLARITY) then
-            sample_sec          <= '0';
+            sample_sec_i          <= '0';
             
         elsif rising_edge(clk_sys) then  
             if (ssp_reset = '1') then

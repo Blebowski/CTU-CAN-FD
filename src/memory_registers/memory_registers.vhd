@@ -1352,7 +1352,7 @@ begin
 
         -- PC_ACKD field - Protocol control FSM - ACK Delimiter field
         Control_registers_in.debug_register(
-            align_reg_to_wrd(PC_ACK_IND, length)) <=
+            align_reg_to_wrd(PC_ACKD_IND, length)) <=
             stat_bus(STAT_PC_IS_ACK_DELIM_INDEX);
 
         -- PC_EOF field - Protocol control FSM - EOF field

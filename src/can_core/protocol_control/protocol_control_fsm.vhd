@@ -2500,7 +2500,6 @@ begin
                stuff_enable <= '1';
             elsif (stuff_enable_clear = '1') then
                stuff_enable <= '0';
-               stuff_error_enable <= '0';
            end if;
         end if;
     end process;
