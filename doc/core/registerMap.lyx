@@ -7312,7 +7312,7 @@ Field name\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-LFI\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
@@ -7386,7 +7386,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -7473,9 +7473,6 @@ ALI Arbitration lost Interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
 BEI Bus Error interrupt. Interrupt set has priority over clear.
-\end_layout
-\begin_layout Description
-LFI Event logging finished interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
 RXFI Receive Buffer full interrupt. Interrupt set has priority over clear.

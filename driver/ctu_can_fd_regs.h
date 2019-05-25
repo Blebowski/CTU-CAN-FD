@@ -268,7 +268,7 @@ union ctu_can_fd_int_stat {
 		uint32_t epi                     : 1;
 		uint32_t ali                     : 1;
 		uint32_t bei                     : 1;
-		uint32_t lfi                     : 1;
+		uint32_t reserved_7              : 1;
 		uint32_t rxfi                    : 1;
 		uint32_t bsi                     : 1;
 		uint32_t rbnei                   : 1;
@@ -280,7 +280,7 @@ union ctu_can_fd_int_stat {
 		uint32_t rbnei                   : 1;
 		uint32_t bsi                     : 1;
 		uint32_t rxfi                    : 1;
-		uint32_t lfi                     : 1;
+		uint32_t reserved_7              : 1;
 		uint32_t bei                     : 1;
 		uint32_t ali                     : 1;
 		uint32_t epi                     : 1;

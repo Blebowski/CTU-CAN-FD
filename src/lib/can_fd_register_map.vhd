@@ -624,7 +624,6 @@ package can_fd_register_map is
   constant EPI_IND                : natural := 4;
   constant ALI_IND                : natural := 5;
   constant BEI_IND                : natural := 6;
-  constant LFI_IND                : natural := 7;
   constant RXFI_IND               : natural := 8;
   constant BSI_IND                : natural := 9;
   constant RBNEI_IND             : natural := 10;
@@ -638,7 +637,6 @@ package can_fd_register_map is
   constant EPI_RSTVAL         : std_logic := '0';
   constant ALI_RSTVAL         : std_logic := '0';
   constant BEI_RSTVAL         : std_logic := '0';
-  constant LFI_RSTVAL         : std_logic := '0';
   constant RXFI_RSTVAL        : std_logic := '0';
   constant BSI_RSTVAL         : std_logic := '0';
   constant RBNEI_RSTVAL       : std_logic := '0';

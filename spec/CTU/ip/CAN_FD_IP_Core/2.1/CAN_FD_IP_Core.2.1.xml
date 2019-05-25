@@ -608,19 +608,6 @@
 						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>LFI</ipxact:name>
-						<ipxact:displayName>LFI</ipxact:displayName>
-						<ipxact:description>Event logging finished interrupt. Interrupt set has priority over clear.</ipxact:description>
-						<ipxact:bitOffset>7</ipxact:bitOffset>
-						<ipxact:resets>
-							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:reset>
-						</ipxact:resets>
-						<ipxact:bitWidth>1</ipxact:bitWidth>
-						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
-					</ipxact:field>
-					<ipxact:field>
 						<ipxact:name>RXFI</ipxact:name>
 						<ipxact:displayName>RXFI</ipxact:displayName>
 						<ipxact:description>Receive Buffer full interrupt. Interrupt set has priority over clear.</ipxact:description>

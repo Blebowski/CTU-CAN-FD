@@ -255,6 +255,8 @@ begin
     int_input_active(RBNEI_IND)     <= not rx_empty;
     int_input_active(TXBHCI_IND)    <= or_reduce(txtb_hw_cmd_int);
 
+    -- Logger finished interrupt removed after logger was thrown out!
+    int_input_active(7)             <= '0';
 
     ---------------------------------------------------------------------------
     -- Interrupt module instances
