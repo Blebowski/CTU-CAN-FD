@@ -262,7 +262,7 @@ begin
     ----------------------------------------------------------------------------
     -- Register for transceiver delay measurement progress flag.
     ----------------------------------------------------------------------------
-    trv_del_ctr_proc : process(res_n, clk_sys)
+    trv_del_ctr_proc : process(res_n, clk_sys, trv_delay_ctr_rst)
     begin
         if (res_n = G_RESET_POLARITY or trv_delay_ctr_rst = '1') then
             trv_delay_ctr_reg <= (OTHERS => '0');
