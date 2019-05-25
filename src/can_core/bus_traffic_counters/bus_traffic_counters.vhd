@@ -108,46 +108,99 @@ end entity;
 
 architecture rtl of bus_traffic_counters is
 
-    signal tx_ctr_int          :     std_logic_vector(31 downto 0);
-    signal rx_ctr_int          :     std_logic_vector(31 downto 0);
+    signal tx_ctr_i          :     std_logic_vector(31 downto 0);
+    signal rx_ctr_i          :     std_logic_vector(31 downto 0);
 
     -- Input selector
     signal sel                 :     std_logic;   
 
     -- Selected value to increment
-    signal sel_value           :     std_logic_vector(31 downto 0);
+    signal sel_value           :     unsigned(31 downto 0);
 
     -- Incremented value by 1
-    signal inc_value           :     std_logic_vector(31 downto 0);
+    signal inc_value           :     unsigned(31 downto 0);
+    
+    -- Reset signals for counters (registered, to avoid glitches)
+    signal tx_ctr_rst_d        :     std_logic;
+    signal tx_ctr_rst_q        :     std_logic;
+    
+    signal rx_ctr_rst_d        :     std_logic;
+    signal rx_ctr_rst_q        :     std_logic;
 
 begin
 
-    tx_ctr <= tx_ctr_int;
-    rx_ctr <= rx_ctr_int;
+    tx_ctr <= tx_ctr_i;
+    rx_ctr <= rx_ctr_i;
 
     -- Input selector
     sel <= '1' when (inc_tx_ctr = '1') else
            '0';
 
     -- Multiplexor between TX and RX value to increment
-    sel_value <= tx_ctr_int when (sel = '1') else
-                 rx_ctr_int;
+    sel_value <= unsigned(tx_ctr_i) when (sel = '1') else
+                 unsigned(rx_ctr_i);
 
     -- Incremented value of either TX or RX counter
-    inc_value <= std_logic_vector(to_unsigned(
-                    to_integer(unsigned(sel_value)) + 1, sel_value'length));
+    inc_value <= sel_value + 1;
+    
+    ----------------------------------------------------------------------------
+    -- Reset registers
+    ----------------------------------------------------------------------------
+    tx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
+                    G_RESET_POLARITY when (clear_tx_ctr = '1') else
+                    (not G_RESET_POLARITY);
+    
+    rx_ctr_rst_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
+                    G_RESET_POLARITY when (clear_rx_ctr = '1') else
+                    (not G_RESET_POLARITY);                
+    
+    tx_ctr_res_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '1'
+    )
+    port map(
+        -- Keep without reset! We can't use res_n to avoid reset recovery!
+        -- This does not mind, since stable value will be here one clock cycle
+        -- after reset by res_n.
+        arst               => '1',                  -- IN
+        clk                => clk_sys,              -- IN
+
+        input              => tx_ctr_rst_d,         -- IN
+        load               => '1',                  -- IN
+        
+        output             => tx_ctr_rst_q          -- OUT
+    );
+    
+    rx_ctr_res_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '1'
+    )
+    port map(
+        -- Keep without reset! We can't use res_n to avoid reset recovery!
+        -- This does not mind, since stable value will be here one clock cycle
+        -- after reset by res_n.
+        arst               => '1',                  -- IN
+        clk                => clk_sys,              -- IN
+
+        input              => rx_ctr_rst_d,         -- IN
+        load               => '1',                  -- IN
+        
+        output             => rx_ctr_rst_q          -- OUT
+    );
 
     ----------------------------------------------------------------------------
     -- TX Counter register
     ----------------------------------------------------------------------------
-    tx_ctr_proc : process(clk_sys, res_n, clear_tx_ctr)
+    tx_ctr_proc : process(clk_sys, tx_ctr_rst_q)
     begin
-        if (res_n = G_RESET_POLARITY or clear_tx_ctr = '1') then
-            tx_ctr_int        <= (OTHERS => '0');
+        if (tx_ctr_rst_q = G_RESET_POLARITY) then
+            tx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
             if (inc_tx_ctr = '1') then
-                tx_ctr_int <= inc_value;
+                tx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;
     end process;
@@ -156,14 +209,14 @@ begin
     ----------------------------------------------------------------------------
     -- RX Counter register
     ----------------------------------------------------------------------------
-    rx_ctr_proc : process(clk_sys, res_n, clear_rx_ctr)
+    rx_ctr_proc : process(clk_sys, rx_ctr_rst_q)
     begin
-        if (res_n = G_RESET_POLARITY or clear_rx_ctr = '1') then
-            rx_ctr_int        <= (OTHERS => '0');
+        if (rx_ctr_rst_q = G_RESET_POLARITY) then
+            rx_ctr_i        <= (OTHERS => '0');
 
         elsif rising_edge(clk_sys) then
             if (inc_rx_ctr = '1') then
-                rx_ctr_int <= inc_value;
+                rx_ctr_i <= std_logic_vector(inc_value);
             end if;
         end if;
     end process;
