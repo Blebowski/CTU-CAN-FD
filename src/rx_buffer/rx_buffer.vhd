@@ -526,10 +526,11 @@ begin
 
         input              => rx_buf_res_d,         -- IN
         ce                 => '1',                  -- IN
-        
+
         output             => rx_buf_res_q          -- OUT
     );
 
+    
 
     ----------------------------------------------------------------------------
     -- RX Buffer FSM component
@@ -836,7 +837,7 @@ begin
     -- memory, and there is not enough free space, data overrun flag will be
     -- set, and no further writes will be executed.
     ----------------------------------------------------------------------------
-    dor_proc : process(res_n, rx_buf_res_q)
+    dor_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
             data_overrun_r      <= '0';
