@@ -167,7 +167,7 @@ begin
         clk                => clk_sys,              -- IN
 
         input              => tx_ctr_rst_d,         -- IN
-        load               => '1',                  -- IN
+        ce                 => '1',                  -- IN
         
         output             => tx_ctr_rst_q          -- OUT
     );
@@ -185,7 +185,7 @@ begin
         clk                => clk_sys,              -- IN
 
         input              => rx_ctr_rst_d,         -- IN
-        load               => '1',                  -- IN
+        ce                 => '1',                  -- IN
         
         output             => rx_ctr_rst_q          -- OUT
     );

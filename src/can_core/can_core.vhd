@@ -811,7 +811,7 @@ begin
         clk                => clk_sys,
 
         input              => tx_trigger,
-        load               => '1',
+        ce                 => '1',
         output             => tx_trigger_q
     );
 
@@ -837,7 +837,7 @@ begin
         clk                => clk_sys,
 
         input              => bds_data_in,
-        load               => rx_triggers(1),
+        ce                 => rx_triggers(1),
         output             => crc_data_rx_wbs
     );
     

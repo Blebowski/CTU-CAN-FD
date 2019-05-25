@@ -2352,8 +2352,10 @@ begin
     port map(
         arst               => res_n,
         clk                => clk_sys,
+        
         input              => rx_clear_d,
-        load               => '1',
+        ce                 => '1',
+        
         output             => rx_clear_q
     );
 
@@ -2421,8 +2423,10 @@ begin
     port map(
         arst               => res_n,
         clk                => clk_sys,
+        
         input              => ssp_reset_d,
-        load               => '1',
+        ce                 => '1',
+        
         output             => ssp_reset_q
     );
     

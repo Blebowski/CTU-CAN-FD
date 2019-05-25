@@ -69,7 +69,7 @@ entity dff_arst is
         input              : in    std_logic;
         
         -- Clock enable (CE)
-        load               : in    std_logic;
+        ce                 : in    std_logic;
         
         -- Data output (Q)
         output             : out   std_logic
@@ -86,7 +86,7 @@ begin
             output     <= G_RST_VAL;
 
         elsif (rising_edge(clk)) then
-            if (load = '1') then
+            if (ce = '1') then
                 output <= input;
             end if;
         end if;

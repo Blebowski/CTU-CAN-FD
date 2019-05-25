@@ -223,8 +223,9 @@ begin
     port map(
         arst               => res_n,                -- IN
         clk                => clk_sys,              -- IN
+        
         input              => set_err_active,       -- IN
-        load               => '1',                  -- IN
+        ce                 => '1',                  -- IN
         
         output             => set_err_active_q      -- OUT
     );

@@ -222,7 +222,7 @@ begin
         clk                => clk_sys,
 
         input              => destuff_enable,
-        load               => '1',
+        ce                 => '1',
         output             => enable_prev
     );
 
@@ -297,7 +297,7 @@ begin
         clk                => clk_sys,
 
         input              => fixed_prev_d,
-        load               => destuff_enable,
+        ce                 => destuff_enable,
         output             => fixed_prev_q
     );
 
@@ -411,7 +411,7 @@ begin
         clk                => clk_sys,
 
         input              => destuffed_d,
-        load               => '1',
+        ce                 => '1',
         output             => destuffed_q
     );
 
@@ -438,7 +438,7 @@ begin
         clk                => clk_sys,
 
         input              => error_reg_d,
-        load               => '1',
+        ce                 => '1',
         output             => error_reg_q
     );
 
@@ -468,7 +468,7 @@ begin
         clk                => clk_sys,
 
         input              => prev_val_d,
-        load               => '1',
+        ce                 => '1',
         output             => prev_val_q
     );
 

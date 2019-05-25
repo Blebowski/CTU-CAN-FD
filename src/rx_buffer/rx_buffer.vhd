@@ -525,7 +525,7 @@ begin
         clk                => clk_sys,              -- IN
 
         input              => rx_buf_res_d,         -- IN
-        load               => '1',                  -- IN
+        ce                 => '1',                  -- IN
         
         output             => rx_buf_res_q          -- OUT
     );
@@ -836,7 +836,7 @@ begin
     -- memory, and there is not enough free space, data overrun flag will be
     -- set, and no further writes will be executed.
     ----------------------------------------------------------------------------
-    dor_proc : process(res_n, clk_sys, drv_erase_rx)
+    dor_proc : process(res_n, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
             data_overrun_r      <= '0';

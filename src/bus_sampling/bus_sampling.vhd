@@ -368,7 +368,7 @@ begin
         clk                => clk_sys,              -- IN
 
         input              => shift_regs_res_d,     -- IN
-        load               => '1',                  -- IN
+        ce                 => '1',                  -- IN
         
         output             => shift_regs_res_q      -- OUT
     );

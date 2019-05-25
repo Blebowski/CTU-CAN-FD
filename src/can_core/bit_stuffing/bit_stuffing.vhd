@@ -242,7 +242,7 @@ begin
         clk                => clk_sys,
 
         input              => stuff_enable,
-        load               => '1',
+        ce                 => '1',
         output             => enable_prev
     );
 
@@ -278,7 +278,7 @@ begin
         clk                => clk_sys,
 
         input              => fixed_reg_nxt,
-        load               => stuff_enable,
+        ce                 => stuff_enable,
         output             => fixed_reg
     );
 
@@ -435,7 +435,7 @@ begin
         clk                => clk_sys,
 
         input              => data_out_nxt,
-        load               => data_out_load,
+        ce                 => data_out_load,
         output             => data_out_int
     );
 
@@ -467,7 +467,7 @@ begin
         clk                => clk_sys,
 
         input              => halt_reg_nxt,
-        load               => '1',
+        ce                 => '1',
         output             => halt_reg
     );
 

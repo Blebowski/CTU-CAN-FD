@@ -72,7 +72,7 @@ package cmn_lib is
         input              : in    std_logic;
         
         -- Clock enable (CE)
-        load               : in    std_logic;
+        ce                 : in    std_logic;
         
         -- Data output (Q)
         output             : out   std_logic
