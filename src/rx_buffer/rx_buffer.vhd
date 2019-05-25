@@ -336,7 +336,7 @@ architecture rtl of rx_buffer is
     signal memory_write_data        :       std_logic_vector(31 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_int          :       integer range -1 to G_RX_BUFF_SIZE + 1;
+    signal rx_mem_free_int          :       integer range 0 to G_RX_BUFF_SIZE + 1;
 
 
     ----------------------------------------------------------------------------
@@ -465,6 +465,12 @@ architecture rtl of rx_buffer is
     -- Read address (connected to read pointer)
     signal RAM_read_address         :       std_logic_vector(11 downto 0);
 
+    ----------------------------------------------------------------------------
+    -- Common reset signal
+    ----------------------------------------------------------------------------
+    signal rx_buf_res_d             :       std_logic;
+    signal rx_buf_res_q             :       std_logic;
+
 begin
 
     ----------------------------------------------------------------------------
@@ -496,6 +502,34 @@ begin
     rx_mem_free           <= std_logic_vector(to_unsigned(rx_mem_free_int, 13));
     rx_empty              <= rx_empty_int;
 
+    ----------------------------------------------------------------------------
+    -- Common reset signal. Whole buffer can be reset by two ways:
+    --  1. Asynchronous reset - res_n
+    --  2. Release Receive Buffer command - drv_erase_rx.
+    -- To avoid glitches a DFF is inserted after the reset!
+    ----------------------------------------------------------------------------
+    rx_buf_res_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
+                    G_RESET_POLARITY when (drv_erase_rx = '1') else
+                    (not G_RESET_POLARITY);
+
+    res_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '1'
+    )
+    port map(
+        -- Keep without reset! We can't use res_n to avoid reset recovery!
+        -- This does not mind, since stable value will be here one clock cycle
+        -- after reset by res_n.
+        arst               => '1',                  -- IN
+        clk                => clk_sys,              -- IN
+
+        input              => rx_buf_res_d,         -- IN
+        load               => '1',                  -- IN
+        
+        output             => rx_buf_res_q          -- OUT
+    );
+
 
     ----------------------------------------------------------------------------
     -- RX Buffer FSM component
@@ -506,7 +540,7 @@ begin
     )
     port map(
         clk_sys             => clk_sys,             -- IN
-        res_n               => res_n,               -- IN
+        rx_buf_res_q        => rx_buf_res_q,        -- IN
         store_metadata_f    => store_metadata_f,    -- IN
         store_data_f        => store_data_f,        -- IN
         rec_valid_f         => rec_valid_f,         -- IN
@@ -534,7 +568,7 @@ begin
     )
     port map(
         clk_sys                 => clk_sys,                 -- IN
-        res_n                   => res_n,                   -- IN
+        rx_buf_res_q            => rx_buf_res_q,            -- IN
         rec_abort_f             => rec_abort_f,             -- IN
         commit_rx_frame         => commit_rx_frame,         -- IN
         write_raw_OK            => write_raw_OK,            -- IN
@@ -721,9 +755,9 @@ begin
                                                      else
                             to_integer(unsigned(RAM_data_out(RWCNT_H downto RWCNT_L)));
     
-    read_frame_proc : process(clk_sys, res_n, drv_erase_rx)
+    read_frame_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             read_frame_counter_q           <= 0;
 
         elsif (rising_edge(clk_sys)) then
@@ -746,9 +780,9 @@ begin
     -- If both at the same time, no change since one frame is added, next is 
     -- removed!
     ---------------------------------------------------------------------------
-    message_count_ctr_proc : process(res_n, clk_sys, drv_erase_rx)
+    message_count_ctr_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             message_count <= 0;
 
         elsif (rising_edge(clk_sys)) then
@@ -772,9 +806,9 @@ begin
     -- Commit RX Frame when last word was written and overrun did not occur!
     -- This can be either from "rxb_store_data" state or "rxb_store_end_ts_high"
     ----------------------------------------------------------------------------
-    commit_proc : process(res_n, clk_sys, drv_erase_rx)
+    commit_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             commit_rx_frame       <= '0';
             commit_overrun_abort  <= '0';
 
@@ -804,7 +838,7 @@ begin
     ----------------------------------------------------------------------------
     dor_proc : process(res_n, clk_sys, drv_erase_rx)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             data_overrun_r      <= '0';
             data_overrun_int    <= '0';
 
@@ -852,7 +886,7 @@ begin
     )
     port map(
         clk_sys              => clk_sys,                -- IN
-        res_n                => res_n,                  -- IN
+        res_n                => rx_buf_res_q,           -- IN
         addr_A               => RAM_write_address,      -- IN
         write                => RAM_write,              -- IN
         data_in              => memory_write_data,      -- IN

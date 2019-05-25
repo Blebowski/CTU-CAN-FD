@@ -87,8 +87,8 @@ entity rx_buffer_pointers is
         -- System clock
         clk_sys              :in     std_logic;
         
-        -- Asynchronous reset
-        res_n                :in     std_logic;
+        -- RX Buffer Reset (External + Release receive Buffer)
+        rx_buf_res_q         :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals
@@ -145,7 +145,7 @@ entity rx_buffer_pointers is
         write_pointer_extra_ts :out     integer range 0 to G_RX_BUFF_SIZE - 1;
 
         -- Number of free memory words available for user
-        rx_mem_free_int        :out     integer range -1 to G_RX_BUFF_SIZE + 1
+        rx_mem_free_int        :out     integer range 0 to G_RX_BUFF_SIZE + 1
     );
 end entity;
 
@@ -171,9 +171,6 @@ architecture rtl of rx_buffer_pointers is
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
 
-    -- Erase command from driving registers. Resets FIFO pointers!
-    signal drv_erase_rx             :       std_logic;
-
     -- Raw value of number of free memory words.
     signal rx_mem_free_raw          :       integer range 0 to G_RX_BUFF_SIZE + 1;
 
@@ -197,19 +194,14 @@ begin
     write_pointer_extra_ts <= write_pointer_extra_ts_i;
     rx_mem_free_int <= rx_mem_free_int_i;
 
-    ----------------------------------------------------------------------------
-    -- Driving bus aliases
-    ----------------------------------------------------------------------------
-    drv_erase_rx          <= drv_bus(DRV_ERASE_RX_INDEX);
-
 
     ----------------------------------------------------------------------------
     -- Read pointer, incremented during read from RX Buffer FIFO.
     -- Moving to next word by reading (if there is sth to read).
     ----------------------------------------------------------------------------
-    read_pointer_proc : process(clk_sys, res_n, drv_erase_rx)
+    read_pointer_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             read_pointer_i         <= 0;
         elsif (rising_edge(clk_sys)) then
             if (read_increment = '1') then
@@ -222,9 +214,9 @@ begin
     -- Write pointers available to the user manipulation. Loading 
     -- "write_pointer_raw_int" to  "write_pointer_int" when frame is committed.
     ----------------------------------------------------------------------------
-    write_pointer_proc : process(clk_sys, res_n, drv_erase_rx)
+    write_pointer_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             write_pointer_i       <= 0;
         elsif (rising_edge(clk_sys)) then
             if (commit_rx_frame = '1') then
@@ -250,9 +242,9 @@ begin
                             '1' when (commit_overrun_abort = '1') else
                             '0';
     
-    write_pointer_raw_proc : process(clk_sys, res_n, drv_erase_rx)
+    write_pointer_raw_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
            write_pointer_raw_i   <= 0;
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_raw_ce = '1') then
@@ -274,9 +266,9 @@ begin
                                  '1' when (inc_extra_wr_ptr = '1') else
                                  '0';
 
-    extra_write_ptr_proc : process(clk_sys, res_n, drv_erase_rx)
+    extra_write_ptr_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             write_pointer_extra_ts_i  <= 0;
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_extra_ts_ce = '1') then
@@ -289,9 +281,9 @@ begin
     ----------------------------------------------------------------------------
     -- Calculating amount of free memory.
     ----------------------------------------------------------------------------
-    mem_free_proc : process(clk_sys, res_n, drv_erase_rx)
+    mem_free_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             rx_mem_free_int_i       <= G_RX_BUFF_SIZE;
             rx_mem_free_raw         <= G_RX_BUFF_SIZE;
 

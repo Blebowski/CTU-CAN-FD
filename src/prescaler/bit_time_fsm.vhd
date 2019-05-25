@@ -159,7 +159,7 @@ begin
     ----------------------------------------------------------------------------
     -- Current state process (combinational)
     ----------------------------------------------------------------------------
-    curr_state_proc : process(current_state, segm_end)
+    curr_state_proc : process(current_state, segm_end, drv_ena)
     begin
         -- Default values
         is_tseg1       <= '0';

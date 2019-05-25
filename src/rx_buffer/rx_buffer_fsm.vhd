@@ -71,13 +71,13 @@ entity rx_buffer_fsm is
     );
     port(
         ------------------------------------------------------------------------
-        -- Clocks and Asynchronouts reset 
+        -- Clocks and reset 
         ------------------------------------------------------------------------
         -- System clock
         clk_sys              :in     std_logic;
         
-        -- Asynchronous reset
-        res_n                :in     std_logic;
+        -- RX Buffer Reset (External + Release receive Buffer)
+        rx_buf_res_q         :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals from CAN Core (Filtered by Frame filters)
@@ -135,9 +135,6 @@ architecture rtl of rx_buffer_fsm is
     ----------------------------------------------------------------------------
     -- Driving bus signal aliases
     ----------------------------------------------------------------------------
-    -- Erase command from driving registers. Resets FIFO pointers!
-    signal drv_erase_rx             :       std_logic;
-
     -- Receive Timestamp options
     signal drv_rtsopt               :       std_logic;
 
@@ -155,7 +152,6 @@ begin
     ----------------------------------------------------------------------------
     -- Driving bus aliases
     ----------------------------------------------------------------------------
-    drv_erase_rx          <= drv_bus(DRV_ERASE_RX_INDEX);
     drv_rtsopt            <= drv_bus(DRV_RTSOPT_INDEX);    
 
     ----------------------------------------------------------------------------
@@ -334,9 +330,9 @@ begin
     ----------------------------------------------------------------------------
     -- State register process
     ----------------------------------------------------------------------------
-    state_reg_proc : process(clk_sys, res_n, drv_erase_rx)
+    state_reg_proc : process(clk_sys, rx_buf_res_q)
     begin
-        if (res_n = G_RESET_POLARITY or drv_erase_rx = '1') then
+        if (rx_buf_res_q = G_RESET_POLARITY) then
             curr_state <= s_rxb_idle;
         elsif (rising_edge(clk_sys)) then
             if (rx_fsm_ce = '1') then
