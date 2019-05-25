@@ -1233,11 +1233,12 @@ package can_fd_register_map is
   constant ALC_ID_FIELD_H        : natural := 23;
 
   -- "ALC_ID_FIELD" field enumerated values
-  constant ALC_BASE_ID : std_logic_vector(2 downto 0) := "000";
-  constant ALC_SRR_RTR : std_logic_vector(2 downto 0) := "001";
-  constant ALC_IDE : std_logic_vector(2 downto 0) := "010";
-  constant ALC_EXTENSION : std_logic_vector(2 downto 0) := "011";
-  constant ALC_RTR : std_logic_vector(2 downto 0) := "100";
+  constant ALC_RSVD : std_logic_vector(2 downto 0) := "000";
+  constant ALC_BASE_ID : std_logic_vector(2 downto 0) := "001";
+  constant ALC_SRR_RTR : std_logic_vector(2 downto 0) := "010";
+  constant ALC_IDE : std_logic_vector(2 downto 0) := "011";
+  constant ALC_EXTENSION : std_logic_vector(2 downto 0) := "100";
+  constant ALC_RTR : std_logic_vector(2 downto 0) := "101";
 
   -- ALC register reset values
   constant ALC_BIT_RSTVAL : std_logic_vector(4 downto 0) := "00000";

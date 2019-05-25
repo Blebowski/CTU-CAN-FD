@@ -574,6 +574,12 @@ architecture rtl of protocol_control is
   -- Fixed Stuff (internal)
   signal fixed_stuff_i           :      std_logic;
   
+  -- Arbitration lost (internal)
+  signal arbitration_lost_i      :      std_logic;
+  
+  -- Arbitration lost capture - ID field
+  signal alc_id_field            :      std_logic_vector(2 downto 0);
+  
 begin
     
     ---------------------------------------------------------------------------
@@ -704,6 +710,7 @@ begin
         ctrl_counted_byte_index => ctrl_counted_byte_index, -- IN
         ctrl_ctr_mem_index      => ctrl_ctr_mem_index,      -- IN
         compl_ctr_ena           => compl_ctr_ena,           -- OUT
+        alc_id_field            => alc_id_field,            -- OUT
 
         -- Reintegration counter interface
         reinteg_ctr_clr         => reinteg_ctr_clr,         -- OUT
@@ -738,7 +745,7 @@ begin
         is_transmitter          => is_transmitter,          -- IN
         is_receiver             => is_receiver,             -- IN
         is_idle                 => is_idle,                 -- IN
-        arbitration_lost        => arbitration_lost,        -- OUT
+        arbitration_lost        => arbitration_lost_i,      -- OUT
         set_transmitter         => set_transmitter,         -- OUT
         set_receiver            => set_receiver,            -- OUT
         set_idle                => set_idle,                -- OUT
@@ -784,13 +791,16 @@ begin
         ctrl_ctr_pload          => ctrl_ctr_pload,          -- IN
         ctrl_ctr_pload_val      => ctrl_ctr_pload_val,      -- IN
         compl_ctr_ena           => compl_ctr_ena,           -- IN
+        arbitration_lost        => arbitration_lost_i,      -- IN
+        alc_id_field            => alc_id_field,            -- IN
 
         -- Status signals
         ctrl_ctr_zero           => ctrl_ctr_zero,           -- OUT
         ctrl_ctr_one            => ctrl_ctr_one,            -- OUT
         ctrl_counted_byte       => ctrl_counted_byte,       -- OUT
         ctrl_counted_byte_index => ctrl_counted_byte_index, -- OUT
-        ctrl_ctr_mem_index      => ctrl_ctr_mem_index       -- OUT
+        ctrl_ctr_mem_index      => ctrl_ctr_mem_index,      -- OUT
+        alc                     => alc                      -- OUT
     );
 
 
@@ -988,6 +998,7 @@ begin
     stuff_error_enable <= stuff_error_enable_i;
     fixed_stuff <= fixed_stuff_i;
     crc_src <= crc_src_i;
+    arbitration_lost <= arbitration_lost_i;
     
     ---------------------------------------------------------------------------
     -- Assertions

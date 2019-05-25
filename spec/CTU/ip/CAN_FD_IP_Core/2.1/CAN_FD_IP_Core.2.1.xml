@@ -998,31 +998,37 @@
 								<ipxact:name>ALC_BASE_ID</ipxact:name>
 								<ipxact:displayName>ALC_BASE_ID</ipxact:displayName>
 								<ipxact:description>Arbitration was lost during base identifier.</ipxact:description>
-								<ipxact:value>00</ipxact:value>
+								<ipxact:value>01</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ALC_SRR_RTR</ipxact:name>
 								<ipxact:displayName>ALC_SRR_RTR</ipxact:displayName>
 								<ipxact:description>Arbitration was lost during first bit after Base identifier (SRR of  Extended Frame, RTR bit of CAN 2.0 Base Frame)</ipxact:description>
-								<ipxact:value>01</ipxact:value>
+								<ipxact:value>02</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ALC_IDE</ipxact:name>
 								<ipxact:displayName>ALC_IDE</ipxact:displayName>
 								<ipxact:description>Arbitration was lost during IDE bit.</ipxact:description>
-								<ipxact:value>02</ipxact:value>
+								<ipxact:value>03</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ALC_EXTENSION</ipxact:name>
 								<ipxact:displayName>ALC_EXTENSION</ipxact:displayName>
 								<ipxact:description>Arbitration was lost during Identifier extension.</ipxact:description>
-								<ipxact:value>03</ipxact:value>
+								<ipxact:value>04</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>ALC_RTR</ipxact:name>
 								<ipxact:displayName>ALC_RTR</ipxact:displayName>
 								<ipxact:description>Arbitration was lost during RTR bit after Identifier extension!</ipxact:description>
-								<ipxact:value>04</ipxact:value>
+								<ipxact:value>05</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>ALC_RSVD</ipxact:name>
+								<ipxact:displayName>ALC_RSVD</ipxact:displayName>
+								<ipxact:description>Unit did not loose arbitration since last reset.</ipxact:description>
+								<ipxact:value>00</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
 					</ipxact:field>

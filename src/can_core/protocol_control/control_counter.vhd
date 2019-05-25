@@ -97,7 +97,13 @@ entity control_counter is
         ctrl_ctr_pload_val    :in   std_logic_vector(G_CTRL_CTR_WIDTH - 1 downto 0);
         
         -- Complementary counter enable
-        compl_ctr_ena           :in    std_logic;
+        compl_ctr_ena         :in    std_logic;
+        
+        -- Arbitration lost
+        arbitration_lost      :in    std_logic;
+        
+        -- Arbitration lost
+        alc_id_field          :in    std_logic_vector(2 downto 0);
 
         -----------------------------------------------------------------------
         -- Status signals
@@ -115,7 +121,10 @@ entity control_counter is
         ctrl_counted_byte_index :out std_logic_vector(1 downto 0);
         
         -- Index of memory word in TXT Buffer
-        ctrl_ctr_mem_index      :out std_logic_vector(4 downto 0)
+        ctrl_ctr_mem_index      :out std_logic_vector(4 downto 0);
+        
+        -- Arbitration lost capture
+        alc                     :out std_logic_vector(7 downto 0)
     );
 end entity;
 
@@ -169,7 +178,7 @@ begin
             end if;
         end if;
     end process;
-    
+
     ---------------------------------------------------------------------------
     -- Complementary counter.
     --
@@ -182,11 +191,11 @@ begin
     ---------------------------------------------------------------------------   
     compl_ctr_d <= (OTHERS => '0') when (ctrl_ctr_pload = '1') else
                    compl_ctr_q + 1;
-    
+
     compl_ctr_ce <= '1' when (ctrl_ctr_pload = '1') else
                     '1' when (compl_ctr_ena = '1') else
                     '0';
-    
+
     compl_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
@@ -225,10 +234,26 @@ begin
     ---------------------------------------------------------------------------
     ctrl_ctr_mem_index <= std_logic_vector(to_unsigned(compl_ctr_div_32_plus_5, 5));
 
+
+    ---------------------------------------------------------------------------
+    -- Arbitration lost capture register
+    ---------------------------------------------------------------------------
+    alc_capt_reg_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            alc <= (OTHERS => '0');
+        elsif (rising_edge(clk_sys)) then
+            if (arbitration_lost = '1') then
+                alc(4 downto 0) <= std_logic_vector(ctrl_ctr_q(4 downto 0));
+                alc(7 downto 5) <= alc_id_field;
+            end if;
+        end if;
+    end process;
+
+
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
     -- psl default clock is rising_edge(clk_sys);
-
 
 end architecture;

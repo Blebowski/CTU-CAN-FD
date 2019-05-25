@@ -1118,6 +1118,12 @@ package can_components is
         -- Complementary counter enable
         compl_ctr_ena         :in   std_logic;
 
+        -- Arbitration lost
+        arbitration_lost      :in    std_logic;
+        
+        -- Arbitration lost
+        alc_id_field          :in    std_logic_vector(2 downto 0);
+
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
@@ -1134,7 +1140,10 @@ package can_components is
         ctrl_counted_byte_index :out std_logic_vector(1 downto 0);
         
         -- Index of memory word in TXT Buffer
-        ctrl_ctr_mem_index      :out std_logic_vector(4 downto 0)
+        ctrl_ctr_mem_index      :out std_logic_vector(4 downto 0);
+        
+        -- Arbitration lost capture
+        alc                     :out std_logic_vector(7 downto 0)
     );
     end component control_counter;
 
@@ -1517,6 +1526,9 @@ package can_components is
         
         -- Complementary counter enable
         compl_ctr_ena           :out   std_logic;
+
+        -- Arbitration lost capture ID field
+        alc_id_field            :out   std_logic_vector(2 downto 0);
 
         -----------------------------------------------------------------------
         -- Reintegration counter interface

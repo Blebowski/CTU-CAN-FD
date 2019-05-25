@@ -838,11 +838,12 @@ enum ctu_can_fd_err_capt_err_type {
 };
 
 enum ctu_can_fd_alc_alc_id_field {
-	ALC_BASE_ID         = 0x0,
-	ALC_SRR_RTR         = 0x1,
-	ALC_IDE             = 0x2,
-	ALC_EXTENSION       = 0x3,
-	ALC_RTR             = 0x4,
+	ALC_RSVD            = 0x0,
+	ALC_BASE_ID         = 0x1,
+	ALC_SRR_RTR         = 0x2,
+	ALC_IDE             = 0x3,
+	ALC_EXTENSION       = 0x4,
+	ALC_RTR             = 0x5,
 };
 
 union ctu_can_fd_trv_delay_ssp_cfg {

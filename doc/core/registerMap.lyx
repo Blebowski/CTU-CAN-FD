@@ -4210,11 +4210,11 @@ ACF\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-TSM\end_layout
+Reserved\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" leftline="true" multicolumn="1" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4284,7 +4284,7 @@ Reset value\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-0\end_layout
+-\end_layout
 
 \end_inset
 </cell>
@@ -4365,11 +4365,6 @@ AFM Acceptance filters mode. If this mode is enabled, acceptance filters are use
 FDE Enable flexible data rate support. When disabled, receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.\begin_inset Newline newline\end_inset
 		0b0  - FDE_DISABLE - Flexible data-rate support disabled.\begin_inset Newline newline\end_inset
 		0b1  - FDE_ENABLE - Flexible data-rate support enabled.
-\end_layout
-\begin_layout Description
-TSM Tripple sampling mode. Bus value is sampled three times when this mode is enabled. Even if this bit is set, triple sampling is used only during Nominal data rate. CAN standard reccomends to use tripple sampling at low Bit rates.\begin_inset Newline newline\end_inset
-		0b0  - TSM_DISABLE - Tripple sampling mode disabled\begin_inset Newline newline\end_inset
-		0b1  - TSM_ENABLE - Tripple sampling mode enabled
 \end_layout
 \begin_layout Description
 ACF Acknowledge forbidden mode. When this mode is enabled, acknowledge is not sent even if received CRC matches the calculated one.\begin_inset Newline newline\end_inset
@@ -30766,11 +30761,12 @@ ALC_BIT Arbitration lost capture bit position. If ALC_ID_FIELD = ALC_BASE_ID  th
 \end_layout
 \begin_layout Description
 ALC_ID_FIELD Sub field of CAN Identifier in which arbitration was lost.\begin_inset Newline newline\end_inset
-		0b000  - ALC_BASE_ID - Arbitration was lost during base identifier.\begin_inset Newline newline\end_inset
-		0b001  - ALC_SRR_RTR - Arbitration was lost during first bit after Base identifier (SRR of  Extended Frame, RTR bit of CAN 2.0 Base Frame)\begin_inset Newline newline\end_inset
-		0b010  - ALC_IDE - Arbitration was lost during IDE bit.\begin_inset Newline newline\end_inset
-		0b011  - ALC_EXTENSION - Arbitration was lost during Identifier extension.\begin_inset Newline newline\end_inset
-		0b100  - ALC_RTR - Arbitration was lost during RTR bit after Identifier extension!
+		0b000  - ALC_RSVD - Unit did not loose arbitration since last reset.\begin_inset Newline newline\end_inset
+		0b001  - ALC_BASE_ID - Arbitration was lost during base identifier.\begin_inset Newline newline\end_inset
+		0b010  - ALC_SRR_RTR - Arbitration was lost during first bit after Base identifier (SRR of  Extended Frame, RTR bit of CAN 2.0 Base Frame)\begin_inset Newline newline\end_inset
+		0b011  - ALC_IDE - Arbitration was lost during IDE bit.\begin_inset Newline newline\end_inset
+		0b100  - ALC_EXTENSION - Arbitration was lost during Identifier extension.\begin_inset Newline newline\end_inset
+		0b101  - ALC_RTR - Arbitration was lost during RTR bit after Identifier extension!
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

@@ -318,6 +318,9 @@ entity protocol_control_fsm is
         
         -- Complementary counter enable
         compl_ctr_ena           :out   std_logic;
+        
+        -- Arbitration lost capture ID field
+        alc_id_field            :out   std_logic_vector(2 downto 0);
 
         -----------------------------------------------------------------------
         -- Reintegration counter interface
@@ -1171,10 +1174,13 @@ begin
         -----------------------------------------------------------------------
         -- Default values
         -----------------------------------------------------------------------
+        
+        -- Control counter
         ctrl_ctr_pload_i     <= '0';
         ctrl_ctr_pload_val   <= (OTHERS => '0');
         ctrl_ctr_ena         <= '0';
         compl_ctr_ena_i      <= '0';
+        alc_id_field         <= ALC_RSVD; 
         
         -- RX Buffer storing protocol
         store_metadata_d <= '0';
@@ -1372,6 +1378,7 @@ begin
                 err_pos <= ERC_POS_ARB;
                 crc_enable <= '1';
                 txtb_ptr_d <= 1;
+                alc_id_field <= ALC_BASE_ID;
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1403,6 +1410,7 @@ begin
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 txtb_ptr_d <= 1;
+                alc_id_field <= ALC_SRR_RTR;
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1435,6 +1443,7 @@ begin
                 rx_store_ide_i <= '1';
                 crc_enable <= '1';
                 txtb_ptr_d <= 1;
+                alc_id_field <= ALC_IDE;
                 
                 if (rx_data = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
@@ -1486,6 +1495,7 @@ begin
                 err_pos <= ERC_POS_ARB;
                 bit_err_disable <= '1';
                 crc_enable <= '1';
+                alc_id_field <= ALC_EXTENSION;
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
@@ -1516,6 +1526,7 @@ begin
                 crc_enable <= '1';                
                 rx_store_rtr_i <= '1';
                 err_pos <= ERC_POS_ARB;
+                alc_id_field <= ALC_RTR;
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
