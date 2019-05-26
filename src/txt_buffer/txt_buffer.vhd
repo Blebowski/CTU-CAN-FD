@@ -220,23 +220,23 @@ begin
     ----------------------------------------------------------------------------
     -- RAM Memory of TXT Buffer
     ----------------------------------------------------------------------------
-    txt_buf_ram_inst : inf_RAM_wrapper 
-    generic map (
-        G_WORD_WIDTH           => 32,
-        G_DEPTH                => 20,
-        G_ADDRESS_WIDTH        => RAM_read_address'length,
-        G_RESET_POLARITY       => G_RESET_POLARITY,
-        G_SIMULATION_RESET     => true,
-        G_SYNC_READ            => true
+    txt_buffer_ram_inst : txt_buffer_ram
+    generic map(
+        G_RESET_POLARITY     => G_RESET_POLARITY
     )
     port map(
+        -- Clock and Asynchronous reset
         clk_sys              => clk_sys,
         res_n                => res_n,
-        addr_A               => txtb_port_a_address,
-        write                => RAM_write, 
-        data_in              => txtb_port_a_data,
-        addr_B               => RAM_read_address,
-        data_out             => txtb_port_b_data
+
+        -- Port A - Write (from Memory registers)
+        port_a_address       => txtb_port_a_address,
+        port_a_data_in       => txtb_port_a_data,
+        port_a_write         => RAM_write,
+
+        -- Port B - Read (from CAN Core)
+        port_b_address       => RAM_read_address,
+        port_b_data_out      => txtb_port_b_data
     );
 
     

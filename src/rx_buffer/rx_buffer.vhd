@@ -876,24 +876,24 @@ begin
     ----------------------------------------------------------------------------
     -- RAM Memory of RX Buffer
     ----------------------------------------------------------------------------
-    rx_buf_RAM_inst : inf_RAM_wrapper 
-    generic map (
-        G_WORD_WIDTH           => 32,
-        G_DEPTH                => G_RX_BUFF_SIZE,
-        G_ADDRESS_WIDTH        => RAM_write_address'length,
-        G_RESET_POLARITY       => G_RESET_POLARITY,
-        G_SIMULATION_RESET     => true,
-        G_SYNC_READ            => true
+    rx_buffer_ram_inst : rx_buffer_ram
+    generic map(
+        G_RESET_POLARITY     => G_RESET_POLARITY,
+        G_RX_BUFF_SIZE       => G_RX_BUFF_SIZE
     )
     port map(
-        clk_sys              => clk_sys,                -- IN
-        res_n                => rx_buf_res_q,           -- IN
-        addr_A               => RAM_write_address,      -- IN
-        write                => RAM_write,              -- IN
-        data_in              => memory_write_data,      -- IN
-        addr_B               => RAM_read_address,       -- IN
-        
-        data_out             => RAM_data_out            -- OUT
+        -- Clocks and Asynchronous reset 
+        clk_sys              => clk_sys,
+        res_n                => res_n,
+
+        -- Port A - Write (from CAN Core)
+        port_a_address       => RAM_write_address,
+        port_a_data_in       => memory_write_data,
+        port_a_write         => RAM_write,
+
+        -- Port B - Read (from Memory registers)
+        port_b_address       => RAM_read_address,
+        port_b_data_out      => RAM_data_out
     );
 
     -- Memory written either on regular write or Extra timestamp write

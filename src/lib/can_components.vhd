@@ -3627,6 +3627,47 @@ package can_components is
     );
     end component;
 
+    component rx_buffer_ram is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY      :       std_logic := '0';
+        
+        -- RX Buffer size
+        G_RX_BUFF_SIZE        :       natural range 32 to 4096 := 32
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clocks and Asynchronous reset 
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys              :in     std_logic;
+        
+        -- Asynchronous reset
+        res_n                :in     std_logic;
+
+        ------------------------------------------------------------------------
+        -- Port A - Write (from CAN Core)
+        ------------------------------------------------------------------------
+        -- Address
+        port_a_address       :in     std_logic_vector(11 downto 0);
+        
+        -- Data
+        port_a_data_in       :in     std_logic_vector(31 downto 0);
+        
+        -- Write signal
+        port_a_write         :in     std_logic;
+
+        -----------------------------------------------------------------------
+        -- Port B - Read (from Memory registers)
+        -----------------------------------------------------------------------
+        -- Address
+        port_b_address       :in     std_logic_vector(11 downto 0);
+        
+        -- Data
+        port_b_data_out      :out    std_logic_vector(31 downto 0)
+    );
+    end component;
+
 
     component rx_buffer is
     generic(
@@ -3973,6 +4014,44 @@ package can_components is
         -- TXT Buffer is ready to be locked by CAN Core for transmission
         txtb_ready             :out  std_logic
     );             
+    end component;
+
+    component txt_buffer_ram is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY       :     std_logic := '0'
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Port A - Write (from Memory registers)
+        ------------------------------------------------------------------------
+        -- Address
+        port_a_address       :in     std_logic_vector(4 downto 0);
+        
+        -- Data
+        port_a_data_in       :in     std_logic_vector(31 downto 0);
+        
+        -- Write signal
+        port_a_write         :in     std_logic;
+
+        -----------------------------------------------------------------------
+        -- Port B - Read (from CAN Core)
+        -----------------------------------------------------------------------
+        -- Address
+        port_b_address       :in     std_logic_vector(4 downto 0);
+        
+        -- Data
+        port_b_data_out      :out    std_logic_vector(31 downto 0)
+    );
     end component;
 
     component txt_buffer is
