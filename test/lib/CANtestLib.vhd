@@ -4099,10 +4099,6 @@ package body CANtestLib is
             tmp(BEI_IND)        :=  '1';
         end if;
 
-        if (interrupts.logger_finished_int) then
-            tmp(LFI_IND)        :=  '1';
-        end if;
-
         if (interrupts.rx_buffer_full_int) then
             tmp(RXFI_IND)        :=  '1';
         end if;
@@ -4157,10 +4153,6 @@ package body CANtestLib is
 
         if (int_reg(BEI_IND) = '1') then
             tmp.bus_error_int            :=  true;
-        end if;
-
-        if (int_reg(LFI_IND) = '1') then
-            tmp.logger_finished_int      :=  true;
         end if;
 
         if (int_reg(RXFI_IND) = '1') then
