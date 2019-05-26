@@ -408,8 +408,7 @@ begin
     --  3. Pipe the input data upon trigger without stufffing
     --  4. Keep previous value otherwise
     ---------------------------------------------------------------------------
-    data_out_nxt_ena <= RECESSIVE      when (enable_prev = '0') else
-                        (not data_out_int) when (bst_trigger = '1' and insert_stuff_bit = '1') else
+    data_out_nxt_ena <= (not data_out_int) when (bst_trigger = '1' and insert_stuff_bit = '1') else
                         data_in        when (bst_trigger = '1') else
                         data_out_int;
 

@@ -449,8 +449,7 @@ begin
     --  2. Set to RECESSIVE when non-fixed bit stuffing changes to fixed
     --     bit stuffing. TODO: IS THIS OK???
     ---------------------------------------------------------------------------
-    prev_val_d <= RECESSIVE when (destuff_enable = '1' and enable_prev = '0') else
-                  RECESSIVE when (bds_trigger = '1' and non_fix_to_fix_chng = '1') else
+    prev_val_d <= RECESSIVE when (bds_trigger = '1' and non_fix_to_fix_chng = '1') else
                   data_in   when (bds_trigger = '1') else
                   prev_val_q;
 
