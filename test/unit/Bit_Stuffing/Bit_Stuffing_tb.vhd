@@ -254,6 +254,11 @@ architecture bit_stuffing_unit_test of CAN_test is
             -- LCOV_EXCL_STOP
         end if;
 
+        -- Set previous bit to actual input of Bit stuffing. This corresponds
+        -- to previously propagated bit value when bit stuffing was not yet
+        -- enabled! 
+        prev_bit := tx_data;
+
         --------------------------------------
         -- Calculate non-fixed stuffing
         --------------------------------------
