@@ -368,7 +368,6 @@ architecture rtl of can_core is
     signal crc_trig_tx_nbs         :    std_logic;
     signal crc_trig_rx_wbs         :    std_logic;
     signal crc_trig_rx_nbs         :    std_logic;
-    signal tx_trigger_q            :    std_logic;
     
     -- Bit stuffing signals
     signal bst_data_in             :    std_logic;
@@ -740,109 +739,42 @@ begin
                          
     
     ---------------------------------------------------------------------------
+    -- Trigger multiplexor    
     ---------------------------------------------------------------------------
-    -- Trigger signals    
-    ---------------------------------------------------------------------------
-    ---------------------------------------------------------------------------
-    
-    ---------------------------------------------------------------------------
-    -- Protocol control triggers:
-    --  1. TX Trigger which shifts TX Shift register is enabled when
-    --     stuff bit is not inserted!
-    --  2. RX Trigger which shifts RX Shift register is enabled when
-    --     stuff bit is not destuffed!
-    ---------------------------------------------------------------------------
-    pc_tx_trigger <= '1' when (tx_trigger = '1' and data_halt = '0')
-                         else
-                     '0';
-     
-    pc_rx_trigger <= '1' when (rx_triggers(0) = '1' and destuffed = '0')
-                         else
-                     '0';
-                     
-    ---------------------------------------------------------------------------
-    -- Bit stuffing/destuffing triggers:
-    --  1. Bit Stuffing - TX Trigger, stuff bit does not make any change here
-    --     since also stuff bit must be processed by Bit Stuffing.
-    --  2. Bit Destuffing - RX Trigger, one clock cycle in advance of TX
-    --     Trigger for protocol control, since Bit stuffing is pipelined!
-    --     Destuffed bits shall not block bit destuffing since these must also
-    --     be processed by Bit destuffing.
-    ---------------------------------------------------------------------------
-    bst_trigger <= tx_trigger;    
-    bds_trigger <= rx_triggers(1);
-    
-    ---------------------------------------------------------------------------
-    -- CRC Triggers for CRC 15 (no bit stuffing):
-    --  1. CRC RX NBS - Trigger for CRC15 from RX data without bit stuffing.
-    --     The same trigger as for Protocol control reception in sample point.
-    --     Trigger must be gated when bit was destuffed, because CRC15 for 
-    --     CAN 2.0 frames shall not take stuff bits into account!
-    --  2. CRC TX NBS - Trigger for CRC15 from TX data without bit stuffing.
-    --     The same trigger as TX Trigger (inserts stuff bit). Must be gated
-    --     when stuff bit is inserted!
-    ---------------------------------------------------------------------------
-    crc_trig_rx_nbs <= '1' when (rx_triggers(0) = '1' and destuffed = '0')
-                           else
-                       '0';
-
-    crc_trig_tx_nbs <= '1' when (tx_trigger = '1' and data_halt = '0')
-                           else
-                       '0';
-
-    ---------------------------------------------------------------------------
-    -- CRC Trigger for CRC 17, 21 (with bit stuffing):
-    --  1. CRC TX WBS - Trigger for CRC17, CRC21 from TX Data with bit stuffing.
-    --     Trigger one clock cycle delayed from TX Trigger. Note that this
-    --     trigger may be delayed since resynchronisation will never shorten
-    --     phase 1 (between TX and RX triggers). This trigger must be gated
-    --     for fixed stuff bits!!
-    --  2. CRC RX WBS Trigger is the same trigger as the one used to process
-    --     data by bit destuffing (one clock cycle in advance of Protocol 
-    --     control sampling)! Fixed stuff bits must be left out!
-    ---------------------------------------------------------------------------
-    crc_trig_tx_wbs_reg : dff_arst
+    trigger_mux_inst : trigger_mux
     generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '0'
+        G_RESET_POLARITY        => G_RESET_POLARITY,
+        G_SAMPLE_TRIGGER_COUNT  => G_SAMPLE_TRIGGER_COUNT
     )
     port map(
-        arst               => res_n,
-        clk                => clk_sys,
+        -- Clock and Asynchronous reset
+        clk_sys                => clk_sys,
+        res_n                  => res_n,
+        
+        -- Input triggers
+        rx_triggers            => rx_triggers,
+        tx_trigger             => tx_trigger,
 
-        input              => tx_trigger,
-        ce                 => '1',
-        output             => tx_trigger_q
+        -- Control signals
+        data_halt              => data_halt,
+        destuffed              => destuffed,
+        fixed_stuff            => fixed_stuff,
+        bds_data_in            => bds_data_in,
+
+        -- Output triggers
+        pc_tx_trigger          => pc_tx_trigger,
+        pc_rx_trigger          => pc_rx_trigger,
+        bst_trigger            => bst_trigger,
+        bds_trigger            => bds_trigger,
+        crc_trig_rx_nbs        => crc_trig_rx_nbs,
+        crc_trig_tx_nbs        => crc_trig_tx_nbs,
+        crc_trig_rx_wbs        => crc_trig_rx_wbs,
+        crc_trig_tx_wbs        => crc_trig_tx_wbs,
+        
+        -- Status signals
+        crc_data_rx_wbs        => crc_data_rx_wbs
     );
 
-    crc_trig_tx_wbs <= '0' when (fixed_stuff = '1' and data_halt = '1') else
-                       '1' when (tx_trigger_q = '1') else
-                       '0';
-
-    ---------------------------------------------------------------------------
-    -- We must gate fixed stuff bit for CRC from RX With Bit Stuffing. But we
-    -- don't know if it is stuff bit, because this should be calculated at the
-    -- same clock cycle as bit destuffing! So we must belay the information
-    -- here! We sample the data (Bit Destuffing input) to avoid possible change,
-    -- and calculate the CRC with rx_trigger(0) (the same trigger as sample
-    -- point).
-    ---------------------------------------------------------------------------
-    crc_data_rx_wbs_reg : dff_arst
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '0'
-    )
-    port map(
-        arst               => res_n,
-        clk                => clk_sys,
-
-        input              => bds_data_in,
-        ce                 => rx_triggers(1),
-        output             => crc_data_rx_wbs
-    );
-    
-    crc_trig_rx_wbs <= '1' when (rx_triggers(0) = '1' and destuffed = '0') else
-                       '0';
   
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------

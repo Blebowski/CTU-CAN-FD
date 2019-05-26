@@ -1272,6 +1272,84 @@ package can_components is
     );
     end component;
 
+    component trigger_mux is
+    generic(
+        -- Reset polarity
+        G_RESET_POLARITY        :    std_logic := '0';
+        
+        -- Number of Sample Triggers
+        G_SAMPLE_TRIGGER_COUNT  :    natural := 2
+    );
+    port(
+        ------------------------------------------------------------------------
+        -- Clock and Asynchronous reset
+        ------------------------------------------------------------------------
+        -- System clock
+        clk_sys                :in   std_logic;
+        
+        -- Asynchronous reset
+        res_n                  :in   std_logic;
+        
+        ------------------------------------------------------------------------    
+        -- Input triggers
+        ------------------------------------------------------------------------
+        -- RX Triggers
+        rx_triggers            :in   std_logic_vector(G_SAMPLE_TRIGGER_COUNT - 1 downto 0);
+
+        -- TX Trigger
+        tx_trigger             :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Control signals
+        ------------------------------------------------------------------------
+        -- Stuff bit is inserted, Protocol control operation to be halted for
+        -- one bit time
+        data_halt              :in   std_logic;
+        
+        -- Data output is not valid, actual bit is stuff bit.
+        destuffed              :in   std_logic;
+        
+        -- Fixed bit stuffing method is used
+        fixed_stuff            :in   std_logic;
+        
+        -- Bit Destuffing Data input
+        bds_data_in            :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Output triggers
+        ------------------------------------------------------------------------
+        -- Protocol control TX Trigger
+        pc_tx_trigger          :out  std_logic;
+        
+        -- Protocol control RX Trigger
+        pc_rx_trigger          :out  std_logic;
+        
+        -- Bit Stuffing Trigger
+        bst_trigger            :out  std_logic;
+        
+        -- Bit De-Stuffing Trigger
+        bds_trigger            :out  std_logic;
+        
+        -- CRC Trigger RX - No bit stuffing
+        crc_trig_rx_nbs        :out  std_logic;
+        
+        -- CRC Trigger TX - No bit stuffing
+        crc_trig_tx_nbs        :out  std_logic;
+        
+        -- CRC Trigger RX - With bit stuffing
+        crc_trig_rx_wbs        :out  std_logic;
+        
+        -- CRC Trigger TX - With bit stuffing
+        crc_trig_tx_wbs        :out  std_logic;
+        
+        ------------------------------------------------------------------------
+        -- Status signals
+        ------------------------------------------------------------------------
+        -- CRC RX With Bit Stuffing - Data input
+        crc_data_rx_wbs        :out  std_logic
+    );
+    end component;
+
     component protocol_control_fsm is
     generic(
         -- Reset polarity

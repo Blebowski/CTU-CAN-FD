@@ -162,7 +162,7 @@ entity int_manager is
 
         -- Interrupt enable
         int_ena          :out  std_logic_vector(G_INT_COUNT - 1 downto 0)
-    );  
+    );
 end entity;
 
 architecture rtl of int_manager is
@@ -341,13 +341,6 @@ begin
 
     -- psl bei_enable_cov : cover
     --  (int_vect_i(BEI_IND) = '1' and int_ena(BEI_IND) = '1');
-
-
-    -- psl lfi_int_set_cov : cover
-    --  {int_vect_i(LFI_IND) = '0';int_vect_i(LFI_IND) = '1'};
-
-    -- psl lfi_enable_cov : cover
-    --  (int_vect_i(LFI_IND) = '1' and int_ena(LFI_IND) = '1');
 
 
     -- psl rxfi_int_set_cov : cover
