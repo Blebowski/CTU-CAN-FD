@@ -311,6 +311,9 @@ architecture rtl of resynchronisation is
     
     -- SJW more than 0
     signal sjw_mt_zero             : std_logic;
+    
+    -- Choose basic segment length
+    signal use_basic_segm_length   : std_logic;
      
 begin
 
@@ -329,6 +332,7 @@ begin
         resize(unsigned(tseg_2), C_BS_WIDTH);
 
     segm_extension <= 
+               to_unsigned(1, C_EXT_WIDTH) when (h_sync_valid = '1') else
         resize(unsigned(sjw), C_EXT_WIDTH) when (phase_err_mt_sjw = '1') else
         resize(unsigned(bt_counter), C_EXT_WIDTH);
 
@@ -338,19 +342,37 @@ begin
     segm_ext_sub <= resize(basic_segm_length, C_EXP_WIDTH) -
                     resize(segm_extension, C_EXP_WIDTH);
 
-    sync_segm_length <= segm_ext_sub when (is_tseg2 = '1') else
+    sync_segm_length <= segm_ext_sub when (is_tseg2 = '1' or h_sync_valid = '1')
+                                     else
                         segm_ext_add;
+
+    ---------------------------------------------------------------------------
+    -- Use basic segment length:
+    --  1. Circuit start
+    --  2. Segment end, but not due to hard-sync. When segment end due to hard
+    --     sync occurs, we must take TSEG1 - 1 which is calculated in synced
+    --     segment length!
+    ---------------------------------------------------------------------------
+    use_basic_segm_length <= '1' when (start_edge = '1')
+                                 else
+                             '1' when (segm_end = '1' and
+                                       h_sync_valid = '0') 
+                                 else
+                             '0';
     
     ---------------------------------------------------------------------------
     -- Expected length of segment register. Load:
     --  1. Nominal length of next segment
-    --  2. Value post-resynchronisation.
+    --  2. Value post-synchronisation.
     ---------------------------------------------------------------------------
     exp_seg_length_d <=
-        resize(basic_segm_length, C_EXP_WIDTH) when (segm_end = '1' or start_edge = '1') else
+        resize(basic_segm_length, C_EXP_WIDTH) when (use_basic_segm_length = '1')
+                                               else
         resize(sync_segm_length, C_EXP_WIDTH);
 
-    exp_seg_length_ce <= '1' when (segm_end = '1' or resync_edge_valid = '1' or
+    exp_seg_length_ce <= '1' when (segm_end = '1' or 
+                                   resync_edge_valid = '1' or
+                                   h_sync_valid = '1' or
                                    start_edge = '1')
                              else
                          '0';
