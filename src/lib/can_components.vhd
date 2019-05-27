@@ -1442,6 +1442,7 @@ package can_components is
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
+        
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
@@ -2524,6 +2525,9 @@ package can_components is
 
         -- Error warning limit reached
         error_warning_limit    :out  std_logic;
+        
+        -- Overload frame is being transmitted
+        is_overload            :out  std_logic;
 
         ------------------------------------------------------------------------
         -- Prescaler interface 
@@ -2761,6 +2765,9 @@ package can_components is
 
         -- HW command on TXT Buffers interrupt
         txtb_hw_cmd_int  :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        
+        -- Overload frame is being transmitted
+        is_overload      :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers Interface

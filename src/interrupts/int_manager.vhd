@@ -145,6 +145,9 @@ entity int_manager is
 
         -- HW command on TXT Buffers interrupt
         txtb_hw_cmd_int  :in   std_logic_vector(G_TXT_BUFFER_COUNT - 1 downto 0);
+        
+        -- Overload frame is being transmitted
+        is_overload      :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers Interface
@@ -255,8 +258,8 @@ begin
     int_input_active(RBNEI_IND)     <= not rx_empty;
     int_input_active(TXBHCI_IND)    <= or_reduce(txtb_hw_cmd_int);
 
-    -- Logger finished interrupt removed after logger was thrown out!
-    int_input_active(7)             <= '0';
+    -- Overload frame interrupt
+    int_input_active(OFI_IND)       <= is_overload;
 
     ---------------------------------------------------------------------------
     -- Interrupt module instances
@@ -369,5 +372,12 @@ begin
 
     -- psl txbhci_enable_cov : cover
     --  (int_vect_i(TXBHCI_IND) = '1' and int_ena(TXBHCI_IND) = '1');
+
+
+    -- psl ofi_int_set_cov : cover
+    --  {int_vect_i(OFI_IND) = '0';int_vect_i(OFI_IND) = '1'};
+
+    -- psl ofi_enable_cov : cover
+    --  (int_vect_i(OFI_IND) = '1' and int_ena(OFI_IND) = '1');
 
 end architecture;

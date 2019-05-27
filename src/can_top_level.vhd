@@ -417,6 +417,9 @@ architecture rtl of can_top_level is
     -- Bit Rate Was Shifted
     signal br_shifted              :   std_logic;
     
+    -- Overload frame is being transmitted
+    signal is_overload             :   std_logic;
+    
     ------------------------------------------------------------------------
     -- CAN Core <-> Prescaler Interface
     ------------------------------------------------------------------------
@@ -735,6 +738,7 @@ begin
         rx_full                 => rx_full,                 -- IN
         rx_empty                => rx_empty,                -- IN
         txtb_hw_cmd_int         => txtb_hw_cmd_int,         -- IN
+        is_overload             => is_overload,             -- IN
 
         -- Memory registers Interface
         drv_bus                 => drv_bus,                 -- IN
@@ -801,6 +805,7 @@ begin
         err_detected            => err_detected,            -- OUT
         error_passive_changed   => error_passive_changed,   -- OUT
         error_warning_limit     => error_warning_limit,     -- OUT
+        is_overload             => is_overload,             -- OUT
 
         -- Prescaler interface 
         rx_triggers             => rx_triggers,     -- IN

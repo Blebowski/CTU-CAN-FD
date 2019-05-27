@@ -211,6 +211,9 @@ entity can_core is
 
         -- Error warning limit reached
         error_warning_limit    :out  std_logic;
+        
+        -- Overload frame is being transmitted
+        is_overload            :out  std_logic;
 
         ------------------------------------------------------------------------
         -- Prescaler interface 
@@ -408,7 +411,7 @@ architecture rtl of can_core is
     signal is_error                :     std_logic;
     signal is_intermission         :     std_logic;
     signal is_suspend              :     std_logic;
-    signal is_overload             :     std_logic;
+    signal is_overload_i           :     std_logic;
     
     signal sof_pulse_i             :     std_logic;
     
@@ -451,7 +454,7 @@ begin
         is_intermission         => is_intermission,     -- OUT
         is_suspend              => is_suspend,          -- OUT
         is_error                => is_error,            -- OUT
-        is_overload             => is_overload,         -- OUT
+        is_overload             => is_overload_i,       -- OUT
         
         -- TXT Buffers interface
         tran_word               => tran_word,           -- IN
@@ -894,7 +897,7 @@ begin
         is_error;
     
     stat_bus(STAT_PC_IS_OVERLOAD_INDEX) <=
-        is_overload;
+        is_overload_i;
     
     stat_bus(STAT_ARB_LOST_INDEX) <=
         arbitration_lost_i;
@@ -1112,5 +1115,6 @@ begin
     trv_delay_calib <= trv_delay_calib_i;
     is_bus_off <= is_bus_off_i;
     sof_pulse <= sof_pulse_i;
+    is_overload <= is_overload_i;
  
 end architecture;
