@@ -100,6 +100,9 @@ architecture int_man_unit_test of CAN_test is
     -- HW command on TX Buffer
     signal txtb_hw_cmd_int   :   std_logic_vector(C_TXT_BUFFER_COUNT - 1 downto 0);
 
+    -- Overload frame is being transmitted
+    signal is_overload       :   std_logic;
+
     ----------------------------------------------
     -- Status signals
     ----------------------------------------------
@@ -181,8 +184,10 @@ architecture int_man_unit_test of CAN_test is
         signal rx_empty               :inout   std_logic;
 
         -- TXT HW Command
-        signal txtb_hw_cmd_int         :inout   std_logic_vector(C_TXT_BUFFER_COUNT - 1
-                                                                downto 0)
+        signal txtb_hw_cmd_int        :inout   std_logic_vector(C_TXT_BUFFER_COUNT - 1
+                                                                downto 0);
+
+        signal is_overload            :inout   std_logic 
     )is
         variable tmp                  :        std_logic;
     begin
@@ -244,6 +249,12 @@ architecture int_man_unit_test of CAN_test is
             rand_logic_s(rand_ctr, rx_empty, 0.95);
         else
             rand_logic_s(rand_ctr, rx_empty, 0.05);
+        end if;
+        
+        if (is_overload = '1') then
+            rand_logic_s(rand_ctr, is_overload, 0.95);
+        else
+            rand_logic_s(rand_ctr, is_overload, 0.05);            
         end if;
 
         for i in 0 to C_TXT_BUFFER_COUNT - 1 loop
@@ -326,6 +337,7 @@ begin
         rx_data_overrun       =>   rx_data_overrun ,
         rec_valid             =>   rec_valid ,
         rx_full               =>   rx_full,
+        is_overload           =>   is_overload,
         drv_bus               =>   drv_bus ,
         int                   =>   int,
         int_vector            =>   int_vector,
@@ -344,6 +356,7 @@ begin
     int_input(RXFI_IND)           <=  rx_full;
     int_input(BSI_IND)            <=  br_shifted;
     int_input(RBNEI_IND)          <=  not rx_empty;
+    int_input(OFI_IND)            <=  is_overload;
     int_input(TXBHCI_IND)         <=  or_reduce(txtb_hw_cmd_int);
 
 
@@ -369,7 +382,7 @@ begin
             generate_sources(rand_ctr_1, err_detected, error_passive_changed ,
                            error_warning_limit , arbitration_lost, tran_valid,
                            br_shifted, rx_data_overrun , rec_valid ,
-                           rx_full , rx_empty, txtb_hw_cmd_int);
+                           rx_full , rx_empty, txtb_hw_cmd_int, is_overload);
         end loop;
     end process;
 
