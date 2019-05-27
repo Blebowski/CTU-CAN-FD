@@ -249,7 +249,6 @@ architecture func of prescaler_model is
     begin
         
         exp_duration <= nom_dur;
-        i <= 0;
         wait for 0 ns;
         
         while (i < exp_duration) loop
@@ -493,6 +492,17 @@ begin
 
             bt_fsm_i <= s_bt_tseg1;
            
+            -------------------------------------------------------------------
+            -- If Hard synchronisation occured and we are here, TSEG1 must
+            -- start from 1, not zero, since we skip SYNC segment!
+            -------------------------------------------------------------------
+            if (h_sync_occured_tseg1.get) then         
+                tseg1_i <= 1;
+            else
+                tseg1_i <= 0;
+            end if;
+            wait for 0 ns;
+           
             -- Execute segment 1 
             count_segment (
                 clk_sys => clk_sys,
@@ -568,6 +578,8 @@ begin
         if (drv_ena = '1') then
             wait until tseg2_nbt_req = true;
             tseg2_nbt_ack <= false;
+            tseg2_nbt_i <= 0;
+            wait for 0 ns;
             
             count_segment (
                 clk_sys => clk_sys,
@@ -584,7 +596,7 @@ begin
                 h_sync_occured => h_sync_occured_tseg2_nbt,
                 edge_occured => edge_occured_tseg2_nbt
             );
-            
+
             if (drv_ena = '1' and sp_control = NOMINAL_SAMPLE) then
                 tseg2_nbt_ack <= true;
             end if;
@@ -610,6 +622,8 @@ begin
         if (drv_ena = '1') then
             wait until tseg2_dbt_req = true;
             tseg2_dbt_ack <= false;
+            tseg2_dbt_i <= 0;
+            wait for 0 ns;
             
             count_segment (
                 clk_sys => clk_sys,
