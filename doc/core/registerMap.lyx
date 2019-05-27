@@ -8740,7 +8740,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Reserved\end_layout
+OFI\end_layout
 
 \end_inset
 </cell>
@@ -8821,7 +8821,7 @@ cellcolor{cyan}
 \begin_inset Text
 
 \begin_layout Plain Layout
--\end_layout
+0\end_layout
 
 \end_inset
 </cell>
@@ -8908,6 +8908,9 @@ ALI Arbitration lost Interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
 BEI Bus Error interrupt. Interrupt set has priority over clear.
+\end_layout
+\begin_layout Description
+OFI Overload frame Interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
 RXFI Receive Buffer full interrupt. Interrupt set has priority over clear.
