@@ -1423,7 +1423,7 @@
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
-								<ipxact:value>0</ipxact:value>
+								<ipxact:value>4</ipxact:value>
 							</ipxact:reset>
 						</ipxact:resets>
 						<ipxact:bitWidth>7</ipxact:bitWidth>
@@ -1441,19 +1441,19 @@
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_OFFSET</ipxact:name>
-								<ipxact:displayName>TRV_SRC_OFFSET</ipxact:displayName>
+								<ipxact:displayName>SSP_SRC_OFFSET</ipxact:displayName>
 								<ipxact:description>SSP position = SSP_Offset. Measured value is ignored.</ipxact:description>
 								<ipxact:value>2</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_MEAS_N_OFFSET</ipxact:name>
-								<ipxact:displayName>TRV_SRC_MEAS_N_OFFSET</ipxact:displayName>
+								<ipxact:displayName>SSP_SRC_MEAS_N_OFFSET</ipxact:displayName>
 								<ipxact:description>SSP position = TRV_DELAY (Measured Value) + SSP_OFFSET.</ipxact:description>
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
-								<ipxact:name>SSP_NO_SSP</ipxact:name>
-								<ipxact:displayName>SSP_NO_SSP</ipxact:displayName>
+								<ipxact:name>SSP_SRC_NO_SSP</ipxact:name>
+								<ipxact:displayName>SSP_SRC_NO_SSP</ipxact:displayName>
 								<ipxact:description>SSP is not used. Transmitter uses regular Sampling Point during Data Bit-Rate.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>

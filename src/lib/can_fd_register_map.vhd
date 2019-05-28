@@ -304,7 +304,7 @@ package can_fd_register_map is
     (address   => SSP_CFG_ADR,
      size      => 16,
      reg_type  => reg_read_write,
-     reset_val => "00000000000000000000000000000000"),
+     reset_val => "00000000000001000000000000000000"),
     (address   => RX_COUNTER_ADR,
      size      => 32,
      reg_type  => reg_read_only,
@@ -1267,11 +1267,11 @@ package can_fd_register_map is
 
   -- "SSP_SRC" field enumerated values
   constant SSP_SRC_MEAS_N_OFFSET : std_logic_vector(1 downto 0) := "00";
-  constant SSP_NO_SSP : std_logic_vector(1 downto 0) := "01";
+  constant SSP_SRC_NO_SSP : std_logic_vector(1 downto 0) := "01";
   constant SSP_SRC_OFFSET : std_logic_vector(1 downto 0) := "10";
 
   -- SSP_CFG register reset values
-  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0000000";
+  constant SSP_OFFSET_RSTVAL : std_logic_vector(6 downto 0) := "0000100";
   constant SSP_SRC_RSTVAL : std_logic_vector(1 downto 0) := "00";
 
   ------------------------------------------------------------------------------

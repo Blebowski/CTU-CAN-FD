@@ -748,7 +748,7 @@ begin
         data_width                      => 16 ,
         data_mask                       => "0000001101111111" ,
         reset_polarity                  => RESET_POLARITY ,
-        reset_value                     => "0000000000000000" ,
+        reset_value                     => "0000000000000100" ,
         auto_clear                      => "0000000000000000" 
     )
     port map(
