@@ -251,12 +251,12 @@ package CANtestLib is
 
     -- SSP (Secondary Sampling Point) configuration options
     type SSP_set_command_type is (
-        ssp_measured,
         ssp_meas_n_offset,
+        ssp_no_ssp,
         ssp_offset
     );
--- Use only TRV_DELAY
 -- Use TRV_DELAY + fixed offset given by user
+-- Don't use SSP!
 -- Use only offset given by user
 
     -- Protocol control Debug values
@@ -4481,12 +4481,12 @@ package body CANtestLib is
                                             (OTHERS => '0');
     begin
         case ssp_source is
-            when ssp_measured =>
-               data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEASURED;    --"00";
             when ssp_meas_n_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEAS_N_OFFSET;  --"01";
+                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_MEAS_N_OFFSET;
+            when ssp_no_ssp =>
+               data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_NO_SSP;
             when ssp_offset =>
-                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET; --"10";
+                data(SSP_SRC_H downto SSP_SRC_L) := SSP_SRC_OFFSET;
             when others =>
                 error("Unsupported SSP type.");
             end case;
