@@ -103,7 +103,7 @@ package can_config is
     constant C_SJW_DBT_WIDTH        : natural := 5;
     
     -- Secondary sampling point Shift registers length
-    constant C_SSP_SHIFT_LENGTH     : natural := 130;
+    constant C_SSP_SHIFT_LENGTH     : natural := 128;
 
     -- Depth of FIFO Cache for TX Data
     constant C_TX_CACHE_DEPTH       : natural := 8;
