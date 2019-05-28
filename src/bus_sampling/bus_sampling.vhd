@@ -144,7 +144,7 @@ entity bus_sampling is
         can_tx               :out  std_logic;
 
         ------------------------------------------------------------------------
-        -- Memorz registers interface
+        -- Memory registers interface
         ------------------------------------------------------------------------
         -- Driving bus
         drv_bus              :in   std_logic_vector(1023 downto 0);
@@ -155,8 +155,11 @@ entity bus_sampling is
         ------------------------------------------------------------------------
         -- Prescaler interface
         ------------------------------------------------------------------------
-        -- RX Trigger for Nominal Bit Time
+        -- RX Trigger
         rx_trigger           :in   std_logic;
+        
+        -- TX Trigger
+        tx_trigger           :in   std_logic;
         
         -- Valid synchronisation edge appeared (Recessive to Dominant)
         sync_edge            :out  std_logic;
@@ -389,7 +392,7 @@ begin
         clk                => clk_sys,              -- IN
         res_n              => shift_regs_res_q,     -- IN
 
-        input              => rx_trigger,           -- IN
+        input              => tx_trigger,           -- IN
         enable             => ssp_sr_ce,            -- IN
 
         reg_stat           => sample_sec_shift,     -- OUT

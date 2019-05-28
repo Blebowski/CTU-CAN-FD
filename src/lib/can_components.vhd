@@ -206,8 +206,11 @@ package can_components is
             ------------------------------------------------------------------------
             -- Prescaler interface
             ------------------------------------------------------------------------
-            -- RX Trigger for Nominal Bit Time
+            -- RX Trigger
             rx_trigger           :in   std_logic;
+            
+            -- TX Trigger
+            tx_trigger           :in   std_logic;
             
             -- Valid synchronisation edge appeared (Recessive to Dominant)
             sync_edge            :out  std_logic;
@@ -1403,6 +1406,9 @@ package can_components is
         
         -- Reception of CAN FD Frames is enabled
         drv_can_fd_ena          :in   std_logic;
+        
+        -- Secondary sampling point delay select
+        drv_ssp_delay_select    :in   std_logic_vector(1 downto 0);
         
         -- Arbitration field is being transmitted
         is_arbitration          :out  std_logic;

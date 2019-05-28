@@ -120,6 +120,9 @@ entity protocol_control_fsm is
         -- Reception of CAN FD Frames is enabled
         drv_can_fd_ena          :in   std_logic;
         
+        -- Secondary sampling point delay select
+        drv_ssp_delay_select    :in   std_logic_vector(1 downto 0);
+        
         -- Control field is being transmitted
         is_control              :out  std_logic;
 
@@ -601,13 +604,15 @@ architecture rtl of protocol_control_fsm is
     signal sp_control_switch_data    :  std_logic;
     signal sp_control_switch_nominal :  std_logic;
     
+    -- Secondary sampling point is used
+    signal switch_to_ssp             :  std_logic;
+    
     signal sp_control_ce             :  std_logic;
     signal sp_control_d              :  std_logic_vector(1 downto 0);
     signal sp_control_q              :  std_logic_vector(1 downto 0);
 
     -- Secondary sampling point shift register reset
-    signal ssp_reset_d               :  std_logic;
-    signal ssp_reset_q               :  std_logic;
+    signal ssp_reset_i               :  std_logic;
     
     -- Synchronisation control
     signal sync_control_d            :  std_logic_vector(1 downto 0);
@@ -1250,7 +1255,7 @@ begin
         sp_control_switch_nominal <= '0';
         
         -- Secondary sampling point measurement
-        ssp_reset_d <= '0';
+        ssp_reset_i <= '0';
         trv_delay_calib <= '0';
         
         -- Fault confinement
@@ -1565,7 +1570,7 @@ begin
                     if (tran_frame_type = NORMAL_CAN) then
                         tx_dominant <= '1';
                     else
-                        ssp_reset_d <= '1';
+                        ssp_reset_i <= '1';
                     end if;
                 end if;
 
@@ -1632,7 +1637,7 @@ begin
                 if (is_transmitter = '1' and tran_frame_type = NORMAL_CAN) then
                     tx_dominant <= '1';
                 else
-                    ssp_reset_d <= '1';
+                    ssp_reset_i <= '1';
                 end if;
                 
                 if (drv_can_fd_ena = FDE_DISABLE and rx_data = RECESSIVE) then
@@ -2401,12 +2406,19 @@ begin
     -----------------------------------------------------------------------
     -- Switching of Bit-rate
     -----------------------------------------------------------------------
-    sp_control_d <= NOMINAL_SAMPLE when (sp_control_switch_nominal = '1') else
-                    DATA_SAMPLE when (sp_control_switch_data = '1' and
-                                      is_receiver = '1')
-                                else
-                    SECONDARY_SAMPLE when (sp_control_switch_data = '1') else
-                    sp_control_q;
+    switch_to_ssp <= '1' when (sp_control_switch_data = '1' and
+                               is_transmitter = '1' and
+                               drv_ssp_delay_select /= SSP_SRC_NO_SSP)
+                         else
+                     '0';
+    
+    sp_control_d <=   NOMINAL_SAMPLE when (sp_control_switch_nominal = '1')
+                                     else
+                    SECONDARY_SAMPLE when (switch_to_ssp = '1')
+                                     else
+                         DATA_SAMPLE when (sp_control_switch_data = '1')
+                                     else
+                        sp_control_q;
 
     sp_control_ce <= '1' when (sp_control_switch_nominal = '1') else
                      '1' when (sp_control_switch_data = '1') else
@@ -2423,24 +2435,7 @@ begin
         end if;
     end process;
 
-    -----------------------------------------------------------------------
-    -- Secondary sampling point reset
-    -----------------------------------------------------------------------
-    dff_arst_ssp_reset_inst : dff_arst
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '0'
-    )
-    port map(
-        arst               => res_n,
-        clk                => clk_sys,
-        
-        input              => ssp_reset_d,
-        ce                 => '1',
-        
-        output             => ssp_reset_q
-    );
-    
+
     ---------------------------------------------------------------------------
     -- Indicates that Error or Overload flag is being transmitted! Can't
     -- be part of current state, since it must be valid also during
@@ -2582,7 +2577,7 @@ begin
     txtb_hw_cmd <= txtb_hw_cmd_q;
     sp_control <= sp_control_q;
     tran_valid <= txtb_hw_cmd_q.valid;
-    ssp_reset <= ssp_reset_q; 
+    ssp_reset <= ssp_reset_i; 
     rx_clear <= rx_clear_q;
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;

@@ -891,6 +891,7 @@ begin
 
         -- Prescaler interface
         rx_trigger              => rx_triggers(1),  -- IN
+        tx_trigger              => tx_trigger,      -- IN
         sync_edge               => sync_edge,       -- OUT
 
         -- CAN Core Interface

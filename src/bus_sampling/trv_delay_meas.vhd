@@ -77,25 +77,26 @@
 --   |     Flag     |                   |                       |
 --   +------+-------+                   |                       |
 --          |                           |                       |
---          | Measurement progress      |                       |
---          |                           |                       |
---   +------v-------+  Transceiver  XX  |                       |
+--          | Measurement progress      |                       v
+--          |                           |                  |----------|  TRV
+--          |               ------------|------------------|  Shadow  | Delay
+--          |               |           |                  | register |-------->
+--   +------v-------+  Transceiver  XX  |                  |----------|
 --   |  Transceiver |    Delay      | X v                       |
 --   |     Delay    +-------+-----> |  X                        |
 --   |    Counter   |       |       |   X                       v
 --   +--------------+    +--v--+    |    X  |------------|  |----------|  SSP
 --    SSP offset         |     |    |    X  |            |  |  Shadow  | Offset
---  -------------+-----> |  +  +--> |    X+-| Saturation |->+ register |------->
---               |       |     |    |    X  |            |  |          |
---               |       +-----+    |   X   |------------|  |----------|
---               +----------------> |  X                        v
---                          |       | X                     |----------|  TRV
---                          |       XX                      |  Shadow  | Delay
---                          |-------------------------------| register |------>
---                                                          |----------|
+--  -------------------> |  +  +--> |    X+-| Saturation |->+ register |------->
+--                       |     |    |    X  |            |  |          |
+--                       +-----+    |   X   |------------|  |----------|
+--                                  |  X                    
+--                                  | X                     
+--                                  XX 
 --
 --------------------------------------------------------------------------------
---    02.01.2018  Created file
+--    02.01.2019  Created file
+--    28.05.2019  Modified to use only offset and offset + measured value!
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -287,14 +288,12 @@ begin
 
     ----------------------------------------------------------------------------
     -- Multiplexor for selected secondary sampling point delay. Selects:
-    --  1. Measured trv_delay.
-    --  2. Measured trv_delay + ssp_offset
-    --  3. ssp_offset
+    --  1. Measured trv_delay + ssp_offset
+    --  2. ssp_offset only.
     ----------------------------------------------------------------------------
     with ssp_delay_select select ssp_delay_nxt <=
-        '0' & trv_delay_ctr_reg when SSP_SRC_MEASURED ,
                   trv_delay_sum when SSP_SRC_MEAS_N_OFFSET,
-               '0' & ssp_offset when SSP_SRC_OFFSET ,
+               '0' & ssp_offset when SSP_SRC_OFFSET,
                 (OTHERS => '0') when others;
 
     ----------------------------------------------------------------------------

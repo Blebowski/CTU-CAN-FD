@@ -424,6 +424,9 @@ architecture rtl of protocol_control is
   -- Bus off restart
   signal drv_bus_off_reset        :     std_logic;
   
+  -- Secondary sampling point configuration
+  signal drv_ssp_delay_select     :     std_logic_vector(1 downto 0);
+  
   
   -----------------------------------------------------------------------------
   -- Internal signals
@@ -595,6 +598,8 @@ begin
     drv_fd_type           <=  drv_bus(DRV_FD_TYPE_INDEX);
     drv_int_loopback_ena  <=  drv_bus(DRV_INT_LOOBACK_ENA_INDEX);
     drv_bus_off_reset     <=  drv_bus(DRV_ERR_CTR_CLR);
+    drv_ssp_delay_select  <=  drv_bus(DRV_SSP_DELAY_SELECT_HIGH downto
+                                      DRV_SSP_DELAY_SELECT_LOW);
   
     ---------------------------------------------------------------------------
     -- TX Data word endian swapper
@@ -638,6 +643,7 @@ begin
         drv_retr_lim_ena        => drv_retr_lim_ena,    -- IN
         drv_int_loopback_ena    => drv_int_loopback_ena,-- IN
         drv_can_fd_ena          => drv_can_fd_ena,      -- IN
+        drv_ssp_delay_select    => drv_ssp_delay_select,-- IN
         is_control              => is_control,          -- OUT
         is_data                 => is_data,             -- OUT
         is_stuff_count          => is_stuff_count,      -- OUT
