@@ -1411,7 +1411,7 @@
 				</ipxact:register>
 				<ipxact:register>
 					<ipxact:name>SSP_CFG</ipxact:name>
-					<ipxact:description>Configuration of Secondary sampling point which is used for Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
+					<ipxact:description>Configuration of Secondary Sampling Point which is used by Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.</ipxact:description>
 					<ipxact:dim>0</ipxact:dim>
 					<ipxact:addressOffset>'h82</ipxact:addressOffset>
 					<ipxact:size>16</ipxact:size>
@@ -1419,7 +1419,7 @@
 					<ipxact:access>read-write</ipxact:access>
 					<ipxact:field>
 						<ipxact:name>SSP_OFFSET</ipxact:name>
-						<ipxact:description>Secondary sampling point offset.</ipxact:description>
+						<ipxact:description>Secondary sampling point offset. Value is given as multiple of Minimal Data Time Quanta.</ipxact:description>
 						<ipxact:bitOffset>0</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1430,7 +1430,7 @@
 					</ipxact:field>
 					<ipxact:field>
 						<ipxact:name>SSP_SRC</ipxact:name>
-						<ipxact:description>Source of secondary sampling point delay. Measured in clock cycles, not Time quanta! Sampling point is delayed from regular sampling point by a value configured by this register. If configured value exceeds 130, it is saturated on 130. Thus maximal possible delay is 130 clk_sys clock cycles.</ipxact:description>
+						<ipxact:description>Source of Secondary Sampling Point. If configured value exceeds 130 Minimal Time Quanta, it is saturated to 130. Thus maximal possible delay is 130 minimal Time Quanta.</ipxact:description>
 						<ipxact:bitOffset>8</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
@@ -1440,21 +1440,21 @@
 						<ipxact:bitWidth>2</ipxact:bitWidth>
 						<ipxact:enumeratedValues>
 							<ipxact:enumeratedValue>
-								<ipxact:name>SSP_SRC_MEASURED</ipxact:name>
-								<ipxact:displayName>TRV_SRC_MEASURED</ipxact:displayName>
-								<ipxact:description>Use measured value (also available in TRV_DELAY).</ipxact:description>
-								<ipxact:value>0</ipxact:value>
-							</ipxact:enumeratedValue>
-							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_OFFSET</ipxact:name>
 								<ipxact:displayName>TRV_SRC_OFFSET</ipxact:displayName>
-								<ipxact:description>Use SSP_OFFSET value.</ipxact:description>
+								<ipxact:description>SSP position = SSP_Offset. Measured value is ignored.</ipxact:description>
 								<ipxact:value>2</ipxact:value>
 							</ipxact:enumeratedValue>
 							<ipxact:enumeratedValue>
 								<ipxact:name>SSP_SRC_MEAS_N_OFFSET</ipxact:name>
 								<ipxact:displayName>TRV_SRC_MEAS_N_OFFSET</ipxact:displayName>
-								<ipxact:description>Use measured value (available in TRV_DELAY) + SSP_OFFSET.</ipxact:description>
+								<ipxact:description>SSP position = TRV_DELAY (Measured Value) + SSP_OFFSET.</ipxact:description>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:enumeratedValue>
+							<ipxact:enumeratedValue>
+								<ipxact:name>SSP_NO_SSP</ipxact:name>
+								<ipxact:displayName>SSP_NO_SSP</ipxact:displayName>
+								<ipxact:description>SSP is not used. Transmitter uses regular Sampling Point during Data Bit-Rate.</ipxact:description>
 								<ipxact:value>1</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
