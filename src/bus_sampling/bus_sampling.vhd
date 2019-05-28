@@ -200,6 +200,8 @@ architecture rtl of bus_sampling is
                                     (OTHERS => '0');
 
     -- Saturation value of Secondary sampling point delay!
+    -- Saturate the value to one less than length of secondary sampling point
+    -- shift register to avoid overflow!
     constant C_SSP_DELAY_SAT_VAL : natural := G_SSP_SHIFT_LENGTH - 1; 
 
     -----------------------------------------------------------------------------
@@ -227,7 +229,6 @@ architecture rtl of bus_sampling is
 
     -- Secondary sampling signal (sampling with transciever delay compensation)
     signal sample_sec_i         : std_logic;
-    signal sample_sec_comb      : std_logic;
 
     -- Delayed TX Data from TX Data shift register at position of secondary
     -- sampling point.
@@ -407,7 +408,7 @@ begin
     -- Secondary sampling point address decoder. Secondary sampling point
     -- is taken from SSP Shift register at position of transceiver delay.
     ----------------------------------------------------------------------------
-    sample_sec_comb <= sample_sec_shift(to_integer(unsigned(ssp_delay)));
+    sample_sec_i <= sample_sec_shift(to_integer(unsigned(ssp_delay)));
 
 
     ----------------------------------------------------------------------------
@@ -431,24 +432,6 @@ begin
         
         data_out          => data_tx_delayed        -- OUT
     );
-
-
-    ----------------------------------------------------------------------------
-    -- Registering secondary sampling point
-    ----------------------------------------------------------------------------
-    ssp_gen_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = G_RESET_POLARITY) then
-            sample_sec_i          <= '0';
-            
-        elsif rising_edge(clk_sys) then  
-            if (ssp_reset = '1') then
-                sample_sec_i        <= '0';
-            else
-                sample_sec_i        <= sample_sec_comb;
-            end if;
-        end if;
-    end process;
 
 
     ---------------------------------------------------------------------------

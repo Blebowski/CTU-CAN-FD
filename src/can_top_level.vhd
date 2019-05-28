@@ -823,7 +823,7 @@ begin
         ssp_reset               => ssp_reset,       -- OUT
         trv_delay_calib         => trv_delay_calib, -- OUT
         bit_error               => bit_error,       -- IN
-        sample_sec              => sample_sec       -- OUT
+        sample_sec              => sample_sec       -- IN
     );
     
     
