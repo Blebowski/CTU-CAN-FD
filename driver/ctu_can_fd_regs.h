@@ -868,8 +868,8 @@ union ctu_can_fd_trv_delay_ssp_cfg {
 };
 
 enum ctu_can_fd_ssp_cfg_ssp_src {
-	SSP_SRC_MEASURED            = 0x0,
-	SSP_SRC_MEAS_N_OFFSET       = 0x1,
+	SSP_SRC_MEAS_N_OFFSET       = 0x0,
+	SSP_NO_SSP                  = 0x1,
 	SSP_SRC_OFFSET              = 0x2,
 };
 

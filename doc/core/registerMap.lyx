@@ -114,7 +114,7 @@ CTU CAN FD IP Core is designed as 32 bit peripheria with byte enable support for
 \align center
 \begin_inset Tabular
 <lyxtabular columns="2" rows="6" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="4cm">
 <row>
@@ -2877,7 +2877,7 @@ Register contains the identifer of CTU CAN FD IP Core. It can be used to determi
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3197,7 +3197,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3547,7 +3547,7 @@ Version register with IP Core version.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3867,7 +3867,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4219,7 +4219,7 @@ MODE register controls operating modes.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4539,7 +4539,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4913,7 +4913,7 @@ This register enables the whole CAN FD Core, configures FD Type, Internal loopba
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5233,7 +5233,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5602,7 +5602,7 @@ Register signals various states of CTU CAN FD IP Core. Logic 1 signals active st
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5922,7 +5922,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6242,7 +6242,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6562,7 +6562,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6932,7 +6932,7 @@ Writing logic 1 into each bit gives different command to the IP Core. After writ
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7252,7 +7252,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7572,7 +7572,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7892,7 +7892,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8253,7 +8253,7 @@ Reading this register returns logic 1 for each interrupt which was captured (int
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8573,7 +8573,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8955,7 +8955,7 @@ Writing logic 1 to a bit enables according interrupt. Writing logic 0 has no eff
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9275,7 +9275,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9624,7 +9624,7 @@ Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Rea
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9944,7 +9944,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -10293,7 +10293,7 @@ Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Readin
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -10613,7 +10613,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -10962,7 +10962,7 @@ Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Rea
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -11282,7 +11282,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -11631,7 +11631,7 @@ Bit timing register for nominal bit-rate. This register should be modified only 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -11951,7 +11951,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -12271,7 +12271,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -12591,7 +12591,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -12952,7 +12952,7 @@ Bit timing register for data bit-rate. This register should be modified only whe
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -13272,7 +13272,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -13592,7 +13592,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -13912,7 +13912,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -14273,7 +14273,7 @@ Error warning limit register. This register should be modified only when SETTING
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -14622,7 +14622,7 @@ Error passive limit register. This register should be modified only when SETTING
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -14971,7 +14971,7 @@ Fault confinement state of the node. This state can be manipulated by writes to 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -15291,7 +15291,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -15646,7 +15646,7 @@ Counter for received frames.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -15966,7 +15966,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -16315,7 +16315,7 @@ Counter for transcieved frames.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -16635,7 +16635,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -16984,7 +16984,7 @@ Size: 2 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -17304,7 +17304,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -17653,7 +17653,7 @@ Size: 2 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -17973,7 +17973,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -18322,7 +18322,7 @@ Register for manipulation with error counters.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -18642,7 +18642,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -18962,7 +18962,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -19282,7 +19282,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -19635,6 +19635,9 @@ Address: 0x3C
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_filt_A = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Bit mask for acceptance filter A. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtA=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -19643,7 +19646,7 @@ Bit mask for acceptance filter A. The identifier format is the same as transmitt
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -19963,7 +19966,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -20283,7 +20286,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -20603,7 +20606,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -20944,6 +20947,9 @@ Address: 0x40
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_filt_A = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received identifier format. BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtX=false";. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -20952,7 +20958,7 @@ Bit value for acceptance filters. Filters A, B, C are available. The identifier 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -21272,7 +21278,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -21592,7 +21598,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -21912,7 +21918,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -22253,6 +22259,9 @@ Address: 0x44
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_filt_B = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Bit mask for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtB=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -22261,7 +22270,7 @@ Bit mask for acceptance filter B. The identifier format is the same as transmitt
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -22581,7 +22590,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -22901,7 +22910,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -23221,7 +23230,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -23562,6 +23571,9 @@ Address: 0x48
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_filt_B = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Bit value for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtB=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -23570,7 +23582,7 @@ Bit value for acceptance filter B. The identifier format is the same as transmit
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -23890,7 +23902,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -24210,7 +24222,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -24530,7 +24542,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -24871,6 +24883,9 @@ Address: 0x4C
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_filt_C = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Bit mask for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtC=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -24879,7 +24894,7 @@ Bit mask for acceptance filter C. The identifier format is the same as transmitt
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -25199,7 +25214,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -25519,7 +25534,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -25839,7 +25854,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -26180,6 +26195,9 @@ Address: 0x50
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_filt_C = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Bit value for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtC=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -26188,7 +26206,7 @@ Bit value for acceptance filter C. The identifier format is the same as transmit
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -26508,7 +26526,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -26828,7 +26846,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -27148,7 +27166,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -27489,6 +27507,9 @@ Address: 0x54
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_range = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 Low Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_range=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -27497,7 +27518,7 @@ Low Identifier threshold for range filter. The identifier format is the same as 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -27817,7 +27838,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -28137,7 +28158,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -28457,7 +28478,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -28798,6 +28819,9 @@ Address: 0x58
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register is present only when sup_range = true. Otherwise this address is reserved.
+\end_layout
 \begin_layout Standard
 High Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_range=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
@@ -28806,7 +28830,7 @@ High Identifier threshold for range filter. The identifier format is the same as
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -29126,7 +29150,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -29446,7 +29470,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -29766,7 +29790,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -30115,7 +30139,7 @@ Every filter can be configured to accept only selected frame types. Every bit is
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -30435,7 +30459,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -30829,7 +30853,7 @@ This register provides information if the Core is synthesized with fillter suppo
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -31149,7 +31173,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -31507,7 +31531,7 @@ Information register about FIFO memory of RX Buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -31827,7 +31851,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -32147,7 +32171,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -32467,7 +32491,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -32819,7 +32843,7 @@ Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol control F
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -33139,7 +33163,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -33459,7 +33483,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -33779,7 +33803,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -34131,7 +34155,7 @@ Information register one about FIFO Receive buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -34451,7 +34475,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -34806,7 +34830,7 @@ Settings register for FIFO RX Buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -35157,7 +35181,7 @@ Read data word from RX Buffer.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -35477,7 +35501,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -35797,7 +35821,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -36117,7 +36141,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -36466,7 +36490,7 @@ Status of TXT Buffers.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -36786,7 +36810,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -37151,7 +37175,7 @@ Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -37471,7 +37495,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -37838,7 +37862,7 @@ Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals that
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -38158,7 +38182,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -38516,7 +38540,7 @@ Last error frame capture.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -38883,7 +38907,7 @@ Arbitration lost capture register. Determines bit position of last arbitration l
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -39241,7 +39265,7 @@ Size: 2 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -39561,7 +39585,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -39903,14 +39927,14 @@ Address: 0x82
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Configuration of Secondary sampling point which is used for Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
+Configuration of Secondary Sampling Point which is used by Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -40230,7 +40254,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -40546,13 +40570,13 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-SSP_OFFSET Secondary sampling point offset.
+SSP_OFFSET Secondary sampling point offset. Value is given as multiple of Minimal Data Time Quanta.
 \end_layout
 \begin_layout Description
-SSP_SRC Source of secondary sampling point delay. Measured in clock cycles, not Time quanta! Sampling point is delayed from regular sampling point by a value configured by this register. If configured value exceeds 130, it is saturated on 130. Thus maximal possible delay is 130 clk_sys clock cycles.\begin_inset Newline newline\end_inset
-		0b00  - SSP_SRC_MEASURED - Use measured value (also available in TRV_DELAY).\begin_inset Newline newline\end_inset
-		0b01  - SSP_SRC_MEAS_N_OFFSET - Use measured value (available in TRV_DELAY) + SSP_OFFSET.\begin_inset Newline newline\end_inset
-		0b10  - SSP_SRC_OFFSET - Use SSP_OFFSET value.
+SSP_SRC Source of Secondary Sampling Point. If configured value exceeds 130 Minimal Time Quanta, it is saturated to 130. Thus maximal possible delay is 130 minimal Time Quanta.\begin_inset Newline newline\end_inset
+		0b00  - SSP_SRC_MEAS_N_OFFSET - SSP position = TRV_DELAY (Measured Value) + SSP_OFFSET.\begin_inset Newline newline\end_inset
+		0b01  - SSP_NO_SSP - SSP is not used. Transmitter uses regular Sampling Point during Data Bit-Rate.\begin_inset Newline newline\end_inset
+		0b10  - SSP_SRC_OFFSET - SSP position = SSP_Offset. Measured value is ignored.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -40585,7 +40609,7 @@ Counter for received frames to enable bus traffic measurement
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -40905,7 +40929,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -41225,7 +41249,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -41545,7 +41569,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -41894,7 +41918,7 @@ Counter for transmitted frames to enable bus traffic measurement.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -42214,7 +42238,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -42534,7 +42558,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -42854,7 +42878,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -43203,7 +43227,7 @@ Register for reading out state of the controller. This register is only for debu
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -43523,7 +43547,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -43843,7 +43867,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -44163,7 +44187,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -44551,7 +44575,7 @@ Register for fun :)
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -44871,7 +44895,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -45191,7 +45215,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -45511,7 +45535,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -45860,7 +45884,7 @@ Register with mirrored values of timestamp input. Bits 31:0 of timestamp input a
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -46180,7 +46204,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -46500,7 +46524,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -46820,7 +46844,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -47169,7 +47193,7 @@ Register with mirrored values of timestamp input. Bits 63:32 of timestamp input 
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -47489,7 +47513,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -47809,7 +47833,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -48129,7 +48153,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">

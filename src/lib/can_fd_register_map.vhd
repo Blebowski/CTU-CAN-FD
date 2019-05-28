@@ -1257,8 +1257,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- SSP_CFG register
   --
-  -- Configuration of Secondary sampling point which is used for Transmitter in 
-  -- Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
+  -- Configuration of Secondary Sampling Point which is used by Transmitter in D
+  -- ata Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant SSP_OFFSET_L          : natural := 16;
   constant SSP_OFFSET_H          : natural := 22;
@@ -1266,8 +1266,8 @@ package can_fd_register_map is
   constant SSP_SRC_H             : natural := 25;
 
   -- "SSP_SRC" field enumerated values
-  constant SSP_SRC_MEASURED : std_logic_vector(1 downto 0) := "00";
-  constant SSP_SRC_MEAS_N_OFFSET : std_logic_vector(1 downto 0) := "01";
+  constant SSP_SRC_MEAS_N_OFFSET : std_logic_vector(1 downto 0) := "00";
+  constant SSP_NO_SSP : std_logic_vector(1 downto 0) := "01";
   constant SSP_SRC_OFFSET : std_logic_vector(1 downto 0) := "10";
 
   -- SSP_CFG register reset values

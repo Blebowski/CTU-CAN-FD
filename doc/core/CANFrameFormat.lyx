@@ -743,7 +743,7 @@ Frame format word with CAN frame metadata.
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -1063,7 +1063,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -1383,7 +1383,7 @@ cellcolor{cyan}
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -1703,7 +1703,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -2085,7 +2085,7 @@ CAN Identifier
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -2405,7 +2405,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -2725,7 +2725,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3045,7 +3045,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3397,7 +3397,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -3717,7 +3717,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4037,7 +4037,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4357,7 +4357,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -4706,7 +4706,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5026,7 +5026,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5346,7 +5346,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -5666,7 +5666,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6015,7 +6015,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6335,7 +6335,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6655,7 +6655,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -6975,7 +6975,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7333,7 +7333,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7653,7 +7653,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -7973,7 +7973,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8293,7 +8293,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8651,7 +8651,7 @@ Size: 4 bytes
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -8971,7 +8971,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9291,7 +9291,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
@@ -9611,7 +9611,7 @@ X\end_layout
 \align center
 \begin_inset Tabular
 <lyxtabular columns="9" rows="3" version="3">
-<features islongtable="true" longtabularalignment="center">
+<features>
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top" width="1.4cm">
 <column alignment="center" valignment="top" width="1.4cm">
