@@ -226,17 +226,17 @@ begin
     )
     port map(
         -- Clock and Asynchronous reset
-        clk_sys              => clk_sys,
-        res_n                => res_n,
+        clk_sys              => clk_sys,                -- IN
+        res_n                => res_n,                  -- IN
 
         -- Port A - Write (from Memory registers)
-        port_a_address       => txtb_port_a_address,
-        port_a_data_in       => txtb_port_a_data,
-        port_a_write         => RAM_write,
+        port_a_address       => txtb_port_a_address,    -- IN
+        port_a_data_in       => txtb_port_a_data,       -- IN
+        port_a_write         => RAM_write,              -- IN
 
         -- Port B - Read (from CAN Core)
-        port_b_address       => RAM_read_address,
-        port_b_data_out      => txtb_port_b_data
+        port_b_address       => RAM_read_address,       -- IN
+        port_b_data_out      => txtb_port_b_data        -- OUT
     );
 
     
@@ -249,20 +249,20 @@ begin
         G_ID                   => G_ID
     )
     port map(
-        clk_sys                => clk_sys,
-        res_n                  => res_n,
+        clk_sys                => clk_sys,                  -- IN
+        res_n                  => res_n,                    -- IN
 
-        txtb_sw_cmd            => txtb_sw_cmd,
-        sw_cbs                 => sw_cbs,
+        txtb_sw_cmd            => txtb_sw_cmd,              -- IN
+        sw_cbs                 => sw_cbs,                   -- IN
 
-        txtb_hw_cmd            => txtb_hw_cmd,
-        hw_cbs                 => hw_cbs,
-        is_bus_off             => is_bus_off,
+        txtb_hw_cmd            => txtb_hw_cmd,              -- IN
+        hw_cbs                 => hw_cbs,                   -- IN
+        is_bus_off             => is_bus_off,               -- IN
 
-        txtb_user_accessible   => txtb_user_accessible,
-        txtb_hw_cmd_int        => txtb_hw_cmd_int,
-        txtb_state             => txtb_state,
-        txtb_ready             => txtb_ready
+        txtb_user_accessible   => txtb_user_accessible,     -- OUT
+        txtb_hw_cmd_int        => txtb_hw_cmd_int,          -- OUT
+        txtb_state             => txtb_state,               -- OUT
+        txtb_ready             => txtb_ready                -- OUT
     );
 
     

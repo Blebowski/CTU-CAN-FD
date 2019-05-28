@@ -883,17 +883,17 @@ begin
     )
     port map(
         -- Clocks and Asynchronous reset 
-        clk_sys              => clk_sys,
-        res_n                => res_n,
+        clk_sys              => clk_sys,                -- IN
+        res_n                => res_n,                  -- IN
 
         -- Port A - Write (from CAN Core)
-        port_a_address       => RAM_write_address,
-        port_a_data_in       => memory_write_data,
-        port_a_write         => RAM_write,
+        port_a_address       => RAM_write_address,      -- IN
+        port_a_data_in       => memory_write_data,      -- IN
+        port_a_write         => RAM_write,              -- IN
 
         -- Port B - Read (from Memory registers)
-        port_b_address       => RAM_read_address,
-        port_b_data_out      => RAM_data_out
+        port_b_address       => RAM_read_address,       -- IN
+        port_b_data_out      => RAM_data_out            -- OUT
     );
 
     -- Memory written either on regular write or Extra timestamp write
