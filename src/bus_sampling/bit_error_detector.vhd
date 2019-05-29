@@ -109,43 +109,74 @@ entity bit_error_detector is
         -----------------------------------------------------------------------
         -- Bit error detected
         bit_error                : out std_logic
-        );
+    );
 end entity;
 
 architecture rtl of bit_error_detector is
-
-    -- Internal sample signal (muxed for NBT, DBT and SAMPLE)
-    signal sample           : std_logic;
-    
-    -- Expected bit value (TX, from SYNC)
-    signal exp_data         : std_logic;
 
     -- Bit error detected value
     signal bit_error_d      : std_logic;
     signal bit_error_q      : std_logic;
 
+    -- Capture register for Secondary sampling point bit error
+    signal bit_err_ssp_capt_d  : std_logic;
+    signal bit_err_ssp_capt_q  : std_logic;
+    signal bit_err_ssp_capt_dq : std_logic;
+    
+    -- Valid Bit error detected by Secondary sampling
+    signal bit_err_ssp_valid   : std_logic;
+    
+    -- Valid Bit Error detected by regular sampling
+    signal bit_err_norm_valid  : std_logic;
+
 begin
 
     ----------------------------------------------------------------------------
-    -- Sample point multiplexor
+    -- Capture register for secondary sampling point bit error:
+    --  1. Clear upon next regular sample point.
+    --  2. Set when Bit error is detected by secondary sampling point.
     ----------------------------------------------------------------------------
-    sample <= sample_sec when (sp_control = SECONDARY_SAMPLE) else
-              rx_trigger;
+    bit_err_ssp_capt_d <= '0' when (rx_trigger = '1')
+                              else
+                          '1' when (data_tx_delayed /= data_rx_synced and
+                                    sample_sec = '1')
+                              else
+          bit_err_ssp_capt_q;
+
+    bit_error_ssp_capt_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            bit_err_ssp_capt_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            bit_err_ssp_capt_q <= bit_err_ssp_capt_d;
+        end if;
+    end process;
     
-    ----------------------------------------------------------------------------
-    -- Expected data mux. Choose between TX data and delayed TX Data
-    ----------------------------------------------------------------------------
-    exp_data <= data_tx_delayed when (sp_control = SECONDARY_SAMPLE) else
-                data_tx;
-                
+    bit_err_ssp_capt_dq <= '1' when (bit_err_ssp_capt_d = '1' OR
+                                     bit_err_ssp_capt_q = '1')
+                               else
+                           '0';
+    
+    bit_err_ssp_valid <= '1' when (sp_control = SECONDARY_SAMPLE and
+                                   bit_err_ssp_capt_dq = '1' and
+                                   rx_trigger = '1')
+                             else
+                         '0';
+
+    bit_err_norm_valid <= '1' when (sp_control /= SECONDARY_SAMPLE and
+                                    data_rx_synced /= data_tx and
+                                    rx_trigger = '1')      
+                              else
+                          '0';
+
     ----------------------------------------------------------------------------
     -- Bit Error detection. If expected data is not equal to actual data in
     -- sample point -> Bit Error!
     ----------------------------------------------------------------------------
     bit_error_d <= '0' when (drv_ena = CTU_CAN_DISABLED) else
-                   '1' when (exp_data /= data_rx_synced and sample = '1') else
-                   '0' when (exp_data = data_rx_synced and sample = '1') else
-                   bit_error_q;
+                   '1' when (bit_err_ssp_valid = '1') else
+                   '1' when (bit_err_norm_valid = '1') else
+                   '0';
     
     ----------------------------------------------------------------------------
     -- Bit error register
