@@ -1395,6 +1395,21 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
 
+    
+    ----------------------------------------------------------------------------
+    -- Wait until a Node is in Error Active state! Actively polls on Fault state
+    -- register. Can be used after enabling CAN node to wait till integration
+    -- field is over!
+    --
+    -- Arguments:
+    --  ID              Index of CTU CAN FD Core instance
+    --  mem_bus         Avalon memory bus to execute the access on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_bus_on(
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type        
+    );
+
 
     ----------------------------------------------------------------------------
     -- Calculate length of CAN Frame in bits (stuff bits not included).
@@ -3641,6 +3656,19 @@ package body CANtestLib is
             end if;
         end loop;
 
+    end procedure;
+    
+    
+    procedure CAN_wait_bus_on(
+        constant ID             : in    natural range 0 to 15;
+        signal   mem_bus        : inout Avalon_mem_type        
+    )is
+        variable fault_state    :       SW_fault_state;
+    begin
+        get_fault_state(fault_state, ID, mem_bus);
+        while (fault_state /= fc_error_active) loop
+            get_fault_state(fault_state, ID, mem_bus);    
+        end loop;
     end procedure;
 
 

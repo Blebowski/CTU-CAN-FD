@@ -431,6 +431,10 @@ begin
         CAN_enable_retr_limit(true, 0, ID_1, mem_bus(1));
         CAN_enable_retr_limit(true, 0, ID_2, mem_bus(2));
 
+        -- Wait till integration is over!
+        CAN_wait_bus_on(ID_1, mem_bus(1));
+        CAN_wait_bus_on(ID_2, mem_bus(2));
+
         info("RETR limit set");
         -------------------------------------------------
         -- Main test loop

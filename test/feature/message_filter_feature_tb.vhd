@@ -137,8 +137,6 @@ package body message_filter_feature is
         o.outcome := true;
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.brs := '0';
-        
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 1600, 1601);
 
         ------------------------------------------------------------------------
         -- Part 1 (Message filters disabled)

@@ -108,10 +108,6 @@ package body tx_arb_time_tran_feature is
 
         o.outcome := true;
 
-        ------------------------------------------------------------------------
-        -- Wait until unit for sure comes out of integration.
-        ------------------------------------------------------------------------
-        wait_rand_cycles(rand_ctr, mem_bus(1).clk_sys, 1600, 1601);
 
         ------------------------------------------------------------------------
         -- Part 1

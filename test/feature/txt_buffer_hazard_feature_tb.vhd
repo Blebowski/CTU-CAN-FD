@@ -107,10 +107,6 @@ package body txt_buffer_hazard_feature is
   begin
         o.outcome := true;
 
-    -- Wait till Integration phase is over
-    for i in 0 to 3000 loop
-        wait until rising_edge(mem_bus(1).clk_sys);
-    end loop;
 
     -- Generate CAN frame
     CAN_generate_frame(rand_ctr, CAN_frame);
