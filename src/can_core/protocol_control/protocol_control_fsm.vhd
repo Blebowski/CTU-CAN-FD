@@ -2016,6 +2016,12 @@ begin
                     if (tx_frame_ready = '1' and go_to_suspend = '0') then
                         stuff_enable_set <= '1';
                     end if;
+                    
+                    -- If we dont sample dominant, nor we have sth ready for
+                    -- transmission, we go to Idle!
+                    if (rx_data = RECESSIVE and tx_frame_ready = '0') then
+                        set_idle <= '1';
+                    end if;
     
                 -- First or second bit of intermission!
                 elsif (rx_data = DOMINANT) then
