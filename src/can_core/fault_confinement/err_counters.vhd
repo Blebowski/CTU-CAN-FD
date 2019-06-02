@@ -64,7 +64,7 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity error_counters is
+entity err_counters is
     generic(
         -- Reset polarity
         G_RESET_POLARITY       :     std_logic := '0'
@@ -129,7 +129,7 @@ entity error_counters is
     );
 end entity;
 
-architecture rtl of error_counters is
+architecture rtl of err_counters is
 
     -- Error counter registers
     signal tx_err_ctr_d : unsigned(8 downto 0);

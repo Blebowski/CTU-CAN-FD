@@ -207,10 +207,10 @@ entity can_core is
         err_detected           :out  std_logic;
 
         -- Error passive state changed
-        error_passive_changed  :out  std_logic;
+        err_passive_changed    :out  std_logic;
 
         -- Error warning limit reached
-        error_warning_limit    :out  std_logic;
+        err_warning_limit      :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload            :out  std_logic;
@@ -255,7 +255,7 @@ entity can_core is
         trv_delay_calib     :out  std_logic;
 
         -- Bit Error detected 
-        bit_error           :in   std_logic;
+        bit_err             :in   std_logic;
         
         -- Secondary sample signal 
         sample_sec          :in   std_logic
@@ -309,7 +309,7 @@ architecture rtl of can_core is
     signal is_err_passive          :    std_logic;
     signal is_bus_off_i            :    std_logic;
     signal err_detected_i          :    std_logic;
-    signal primary_error           :    std_logic;
+    signal primary_err             :    std_logic;
     signal act_err_ovr_flag        :    std_logic;
     signal err_delim_late          :    std_logic;
     signal set_err_active          :    std_logic;
@@ -320,10 +320,10 @@ architecture rtl of can_core is
     signal destuff_enable          :    std_logic;
     signal fixed_stuff             :    std_logic;
     signal stuff_length            :    std_logic_vector(2 downto 0);
-    signal stuff_error_enable      :    std_logic;
+    signal stuff_err_enable        :    std_logic;
     signal dst_ctr                 :    natural range 0 to 7;
     signal bst_ctr                 :    natural range 0 to 7;
-    signal stuff_error             :    std_logic;
+    signal stuff_err               :    std_logic;
     
     -- CRC Interface
     signal crc_enable              :    std_logic;
@@ -344,8 +344,8 @@ architecture rtl of can_core is
     signal br_shifted_i            :    std_logic;
     
     -- Fault confinement status signals
-    signal error_passive_changed_i :    std_logic;
-    signal error_warning_limit_i   :    std_logic;
+    signal err_passive_changed_i :    std_logic;
+    signal err_warning_limit_i   :    std_logic;
     
     signal tx_err_ctr              :    std_logic_vector(8 downto 0);
     signal rx_err_ctr              :    std_logic_vector(8 downto 0);
@@ -394,9 +394,9 @@ architecture rtl of can_core is
     signal lpb_dominant            :    std_logic;
     
     -- Error indication
-    signal form_error              :    std_logic;
-    signal ack_error               :    std_logic;
-    signal crc_error               :    std_logic;
+    signal form_err                :    std_logic;
+    signal ack_err                 :    std_logic;
+    signal crc_err                 :    std_logic;
     
     -- Protocol control debug  information
     signal is_arbitration          :     std_logic;
@@ -408,7 +408,7 @@ architecture rtl of can_core is
     signal is_ack_field            :     std_logic;
     signal is_ack_delim            :     std_logic;
     signal is_eof                  :     std_logic;
-    signal is_error                :     std_logic;
+    signal is_err_frm              :     std_logic;
     signal is_intermission         :     std_logic;
     signal is_suspend              :     std_logic;
     signal is_overload_i           :     std_logic;
@@ -453,7 +453,7 @@ begin
         is_eof                  => is_eof,              -- OUT
         is_intermission         => is_intermission,     -- OUT
         is_suspend              => is_suspend,          -- OUT
-        is_error                => is_error,            -- OUT
+        is_err_frm              => is_err_frm,          -- OUT
         is_overload             => is_overload_i,       -- OUT
         
         -- TXT Buffers interface
@@ -496,7 +496,7 @@ begin
         is_err_passive          => is_err_passive,      -- IN
         is_bus_off              => is_bus_off_i,        -- IN
         err_detected            => err_detected_i,      -- OUT
-        primary_error           => primary_error,       -- OUT
+        primary_err             => primary_err,         -- OUT
         act_err_ovr_flag        => act_err_ovr_flag,    -- OUT
         err_delim_late          => err_delim_late,      -- OUT
         set_err_active          => set_err_active,      -- OUT
@@ -516,13 +516,13 @@ begin
         destuff_enable          => destuff_enable,      -- OUT
         fixed_stuff             => fixed_stuff,         -- OUT
         stuff_length            => stuff_length,        -- OUT
-        stuff_error_enable      => stuff_error_enable,  -- OUT
+        stuff_err_enable        => stuff_err_enable,    -- OUT
         dst_ctr                 => dst_ctr,             -- IN
         bst_ctr                 => bst_ctr,             -- IN
-        stuff_error             => stuff_error,         -- IN
+        stuff_err               => stuff_err,           -- IN
         
         -- Bus Sampling Interface
-        bit_error               => bit_error,           -- IN
+        bit_err                 => bit_err,             -- IN
         
         -- CRC Interface
         crc_enable              => crc_enable,          -- OUT
@@ -544,9 +544,9 @@ begin
         -- Status signals
         ack_received            => ack_received_i,      -- OUT
         br_shifted              => br_shifted_i,        -- OUT
-        form_error              => form_error,          -- OUT
-        ack_error               => ack_error,           -- OUT
-        crc_error               => crc_error            -- OUT
+        form_err                => form_err,            -- OUT
+        ack_err                 => ack_err,             -- OUT
+        crc_err                 => crc_err              -- OUT
     );
 
 
@@ -590,8 +590,8 @@ begin
         drv_bus                 => drv_bus,                 -- IN
           
         -- Error signalling for interrupts
-        error_passive_changed   => error_passive_changed_i, -- OUT
-        error_warning_limit     => error_warning_limit_i,   -- OUT
+        err_passive_changed     => err_passive_changed_i,   -- OUT
+        err_warning_limit       => err_warning_limit_i,     -- OUT
 
         -- Operation control Interface
         is_transmitter          => is_transmitter,          -- IN
@@ -602,7 +602,7 @@ begin
         set_err_active          => set_err_active,          -- IN
         err_detected            => err_detected_i,          -- IN
         err_ctrs_unchanged      => err_ctrs_unchanged,      -- IN
-        primary_error           => primary_error,           -- IN
+        primary_err             => primary_err,             -- IN
         act_err_ovr_flag        => act_err_ovr_flag,        -- IN
         err_delim_late          => err_delim_late,          -- IN
         tran_valid              => tran_valid_i,            -- IN
@@ -707,12 +707,12 @@ begin
         -- Control signals
         bds_trigger         => bds_trigger,             -- IN
         destuff_enable      => destuff_enable,          -- IN
-        stuff_error_enable  => stuff_error_enable,      -- IN
+        stuff_err_enable    => stuff_err_enable,        -- IN
         fixed_stuff         => fixed_stuff,             -- IN
         destuff_length      => stuff_length,            -- IN
        
         -- Status Outpus
-        stuff_error         => stuff_error,             -- OUT
+        stuff_err           => stuff_err,               -- OUT
         destuffed           => destuffed,               -- OUT
         dst_ctr             => dst_ctr                  -- OUT
     );
@@ -893,8 +893,8 @@ begin
     stat_bus(STAT_PC_IS_SUSPEND_INDEX) <=
         is_suspend;
         
-    stat_bus(STAT_PC_IS_ERROR_INDEX) <=
-        is_error;
+    stat_bus(STAT_PC_IS_ERR_INDEX) <=
+        is_err_frm;
     
     stat_bus(STAT_PC_IS_OVERLOAD_INDEX) <=
         is_overload_i;
@@ -941,8 +941,8 @@ begin
     stat_bus(STAT_BS_LENGTH_HIGH downto STAT_BS_LENGTH_LOW) <=
         stuff_length;
 
-    stat_bus(STAT_STUFF_ERROR_INDEX) <=
-        stuff_error;
+    stat_bus(STAT_STUFF_ERR_INDEX) <=
+        stuff_err;
         
     stat_bus(STAT_DESTUFFED_INDEX) <=
         destuffed;
@@ -950,8 +950,8 @@ begin
     stat_bus(STAT_BDS_ENA_INDEX) <=
         destuff_enable;
 
-    stat_bus(STAT_STUFF_ERRROR_ENA_INDEX) <= 
-        stuff_error_enable;
+    stat_bus(STAT_STUFF_ERR_ENA_INDEX) <= 
+        stuff_err_enable;
 
     stat_bus(STAT_FIXED_DESTUFF_INDEX) <=
         fixed_stuff;
@@ -987,10 +987,10 @@ begin
     stat_bus(STAT_RX_COUNTER_HIGH downto STAT_RX_COUNTER_LOW) <=
         rx_err_ctr;
 
-    stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto STAT_ERROR_COUNTER_NORM_LOW) <=
+    stat_bus(STAT_ERR_COUNTER_NORM_HIGH downto STAT_ERR_COUNTER_NORM_LOW) <=
         norm_err_ctr;
 
-    stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto STAT_ERROR_COUNTER_FD_LOW) <=
+    stat_bus(STAT_ERR_COUNTER_FD_HIGH downto STAT_ERR_COUNTER_FD_LOW) <=
         data_err_ctr;
 
     stat_bus(STAT_IS_ERR_ACTIVE_INDEX) <=
@@ -1002,17 +1002,17 @@ begin
     stat_bus(STAT_IS_BUS_OFF_INDEX) <=
         is_bus_off_i;
    
-    stat_bus(STAT_FORM_ERROR_INDEX) <=
-        form_error;
+    stat_bus(STAT_FORM_ERR_INDEX) <=
+        form_err;
     
-    stat_bus(STAT_CRC_ERROR_INDEX) <=
-        crc_Error;
+    stat_bus(STAT_CRC_ERR_INDEX) <=
+        crc_err;
         
-    stat_bus(STAT_ACK_ERROR_INDEX) <=
-        ack_Error;
+    stat_bus(STAT_ACK_ERR_INDEX) <=
+        ack_err;
         
-    stat_bus(STAT_BIT_STUFF_ERROR_INDEX) <=                 
-        bit_error or stuff_error;
+    stat_bus(STAT_BIT_STUFF_ERR_INDEX) <=                 
+        bit_err or stuff_err;
 
     stat_bus(STAT_REC_VALID_INDEX) <=
         rec_valid_i;
@@ -1067,19 +1067,19 @@ begin
         tx_ctr;
 
     stat_bus(STAT_ERP_CHANGED_INDEX) <=
-        error_passive_changed_i;
+        err_passive_changed_i;
         
     stat_bus(STAT_EWL_REACHED_INDEX) <=
-        error_warning_limit_i;
+        err_warning_limit_i;
 
-    stat_bus(STAT_ERROR_VALID_INDEX) <=
+    stat_bus(STAT_ERR_VALID_INDEX) <=
         err_detected_i;
  
     stat_bus(STAT_ACK_RECIEVED_OUT_INDEX) <=
         ack_received_i;
         
-    stat_bus(STAT_BIT_ERROR_VALID_INDEX) <=
-        bit_error;
+    stat_bus(STAT_BIT_ERR_VALID_INDEX) <=
+        bit_err;
 
     stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW) <=
         std_logic_vector(to_unsigned(bst_ctr, 3));
@@ -1106,8 +1106,8 @@ begin
     tran_valid <= tran_valid_i;
     br_shifted <= br_shifted_i;
     err_detected <= err_detected_i;
-    error_passive_changed <= error_passive_changed_i;
-    error_warning_limit <= error_warning_limit_i;
+    err_passive_changed <= err_passive_changed_i;
+    err_warning_limit <= err_warning_limit_i;
     sync_control <= sync_control_i;
     tx_data_wbs <= tx_data_wbs_i;
     sp_control <= sp_control_i;

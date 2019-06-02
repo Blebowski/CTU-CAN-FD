@@ -237,11 +237,11 @@ package can_components is
             sample_sec           :out  std_logic;
     
             -- Bit error detected
-            bit_error            :out  std_logic 
+            bit_err              :out  std_logic 
         );
     end component bus_sampling;
    
-    component bit_error_detector is
+    component bit_err_detector is
         generic(
             -- Reset polarity
             G_RESET_POLARITY         :     std_logic
@@ -287,7 +287,7 @@ package can_components is
             -- Status outputs
             -----------------------------------------------------------------------
             -- Bit error detected
-            bit_error                : out std_logic
+            bit_err                  : out std_logic
         );
     end component;
    
@@ -514,7 +514,7 @@ package can_components is
         destuff_enable       : in  std_logic;
 
         -- Stuff error detection enabled.
-        stuff_error_enable   : in  std_logic;
+        stuff_err_enable   : in  std_logic;
 
         -- Bit destuffing type (0-Normal, 1-Fixed)    
         fixed_stuff          : in  std_logic;  
@@ -527,7 +527,7 @@ package can_components is
         ------------------------------------------------------------------------
         -- Stuff error detected (more equal consecutive bits than length of
         -- stuff rule.
-        stuff_error          : out std_logic;
+        stuff_err          : out std_logic;
         
         -- Data output is not valid, actual bit is stuff bit.
         destuffed            : out std_logic;
@@ -763,7 +763,7 @@ package can_components is
     end component;
 
 
-    component error_counters is
+    component err_counters is
     generic(
         -- Reset polarity
         G_RESET_POLARITY       :     std_logic := '0'
@@ -826,7 +826,7 @@ package can_components is
         -- Nominal Bit Rate Error counter
         data_err_ctr           :out  std_logic_vector(15 downto 0)
     );
-    end component error_counters;
+    end component err_counters;
 
 
     component fault_confinement_fsm is
@@ -881,10 +881,10 @@ package can_components is
         -- Status outputs
         -----------------------------------------------------------------------
         -- Error passive state changed
-        error_passive_changed   :out  std_logic;
+        err_passive_changed     :out  std_logic;
 
         -- Error warning limit was reached
-        error_warning_limit     :out  std_logic
+        err_warning_limit       :out  std_logic
     );
     end component fault_confinement_fsm;
 
@@ -910,7 +910,7 @@ package can_components is
         err_ctrs_unchanged      :in   std_logic;
         
         -- Primary Error
-        primary_error           :in   std_logic;
+        primary_err           :in   std_logic;
         
         -- Active Error Flag or Overload flag is being tranmsmitted
         act_err_ovr_flag        :in   std_logic;
@@ -963,10 +963,10 @@ package can_components is
         -- Error signalling for interrupts
         -----------------------------------------------------------------------
         -- Error passive state changed
-        error_passive_changed   :out  std_logic;
+        err_passive_changed     :out  std_logic;
 
         -- Error warning limit was reached
-        error_warning_limit     :out  std_logic;
+        err_warning_limit       :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Operation control Interface
@@ -994,7 +994,7 @@ package can_components is
         err_ctrs_unchanged      :in   std_logic;
         
         -- Primary Error
-        primary_error           :in   std_logic;
+        primary_err           :in   std_logic;
         
         -- Active Error Flag or Overload flag is being tranmsmitted
         act_err_ovr_flag        :in   std_logic;
@@ -1150,7 +1150,7 @@ package can_components is
     );
     end component control_counter;
 
-    component error_detector is
+    component err_detector is
     generic(
         -- Reset polarity
         G_RESET_POLARITY        :     std_logic := '0';
@@ -1181,22 +1181,22 @@ package can_components is
         -- Error sources
         -----------------------------------------------------------------------
         -- Bit error (from Bus sampling)
-        bit_error               :in   std_logic;
+        bit_err                 :in   std_logic;
         
         -- Bit error in Arbitration field
-        bit_error_arb           :in   std_logic;
+        bit_err_arb             :in   std_logic;
         
         -- Stuff error
-        stuff_error             :in   std_logic;
+        stuff_err             :in   std_logic;
         
         -- Form Error
-        form_error              :in   std_logic;
+        form_err              :in   std_logic;
         
         -- ACK Error
-        ack_error               :in   std_logic;
+        ack_err               :in   std_logic;
 
         -- CRC Error
-        crc_error               :in   std_logic;
+        crc_err                 :in   std_logic;
         
         -----------------------------------------------------------------------
         -- CRC comparison data
@@ -1223,10 +1223,10 @@ package can_components is
         -- Control signals
         -----------------------------------------------------------------------
         -- Bit error enable
-        bit_error_enable        :in   std_logic;
+        bit_err_enable        :in   std_logic;
 
         -- Stuff error enable
-        stuff_error_enable      :in   std_logic;
+        stuff_err_enable      :in   std_logic;
 
         -- Fixed Bit stuffing method
         fixed_stuff             :in   std_logic;
@@ -1444,7 +1444,7 @@ package can_components is
         is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
-        is_error                :out  std_logic;
+        is_err_frm                :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
@@ -1643,22 +1643,22 @@ package can_components is
         -- Error detector interface
         -----------------------------------------------------------------------
         -- Form Error has occurred
-        form_error              :out   std_logic;
+        form_err              :out   std_logic;
 
         -- ACK Error has occurred
-        ack_error               :out   std_logic;
+        ack_err               :out   std_logic;
 
         -- Perform CRC check
         crc_check               :out   std_logic;
         
         -- Bit Error in arbitration field
-        bit_error_arb           :out   std_logic;
+        bit_err_arb           :out   std_logic;
         
         -- Calculated CRC and Stuff count are matching received ones
         crc_match               :in   std_logic;
 
         -- CRC error signalling
-        crc_error               :out  std_logic;
+        crc_err                 :out  std_logic;
 
         -- Clear CRC Match flag
         crc_clear_match_flag    :out   std_logic;
@@ -1685,7 +1685,7 @@ package can_components is
         fixed_stuff             :out   std_logic;
         
         -- Bit Stuff error detection enabled
-        stuff_error_enable      :out   std_logic;
+        stuff_err_enable      :out   std_logic;
         
         -----------------------------------------------------------------------
         -- Operation control interface
@@ -1715,7 +1715,7 @@ package can_components is
         -- Fault confinement interface
         -----------------------------------------------------------------------
         -- Primary Error
-        primary_error           :out  std_logic;
+        primary_err           :out  std_logic;
         
         -- Active Error or Overload flag is being tranmsmitted
         act_err_ovr_flag        :out  std_logic;
@@ -1770,7 +1770,7 @@ package can_components is
         crc_spec_enable         :out   std_logic;
 
         -- Bit error enable
-        bit_error_enable        :out   std_logic;
+        bit_err_enable        :out   std_logic;
 
         -- Bit rate shifted
         br_shifted              :out   std_logic
@@ -1847,7 +1847,7 @@ package can_components is
         is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
-        is_error                :out  std_logic;
+        is_err_frm              :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
@@ -1964,7 +1964,7 @@ package can_components is
         err_detected            :out  std_logic;
         
         -- Primary Error
-        primary_error           :out  std_logic;
+        primary_err           :out  std_logic;
         
         -- Active Error or Overload flag is being tranmsmitted
         act_err_ovr_flag        :out  std_logic;
@@ -2015,7 +2015,7 @@ package can_components is
         stuff_length            :out  std_logic_vector(2 downto 0);
 
         -- Enable detection of Stuff Error
-        stuff_error_enable      :out  std_logic;
+        stuff_err_enable      :out  std_logic;
 
         -- Number of de-stuffed bits modulo 8
         dst_ctr                 :in   natural range 0 to 7;
@@ -2024,13 +2024,13 @@ package can_components is
         bst_ctr                 :in   natural range 0 to 7;
         
         -- Stuff Error
-        stuff_error             :in   std_logic;
+        stuff_err             :in   std_logic;
         
         ------------------------------------------------------------------------
         -- Bus Sampling Interface
         ------------------------------------------------------------------------
         -- Bit Error detected
-        bit_error               :in   std_logic;
+        bit_err               :in   std_logic;
         
         -----------------------------------------------------------------------
         -- CRC Interface
@@ -2088,13 +2088,13 @@ package can_components is
         br_shifted              :out  std_logic;
         
         -- Form Error has occurred
-        form_error              :out  std_logic;
+        form_err                :out  std_logic;
 
         -- ACK Error has occurred
-        ack_error               :out  std_logic;
+        ack_err                 :out  std_logic;
         
         -- CRC Error has occurred
-        crc_error               :out  std_logic
+        crc_err                 :out  std_logic
     );
     end component protocol_control;
 
@@ -2527,10 +2527,10 @@ package can_components is
         err_detected           :out  std_logic;
 
         -- Error passive state changed
-        error_passive_changed  :out  std_logic;
+        err_passive_changed    :out  std_logic;
 
         -- Error warning limit reached
-        error_warning_limit    :out  std_logic;
+        err_warning_limit      :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload            :out  std_logic;
@@ -2575,7 +2575,7 @@ package can_components is
         trv_delay_calib     :out  std_logic;
 
         -- Bit Error detected 
-        bit_error           :in   std_logic;
+        bit_err             :in   std_logic;
         
         -- Secondary sample signal 
         sample_sec          :in   std_logic
@@ -2743,10 +2743,10 @@ package can_components is
         err_detected            :in   std_logic;
 
         -- Error pasive /Error acitve functionality changed
-        error_passive_changed   :in   std_logic;
+        err_passive_changed     :in   std_logic;
 
         -- Error warning limit reached
-        error_warning_limit     :in   std_logic;
+        err_warning_limit       :in   std_logic;
 
         -- Arbitration was lost input
         arbitration_lost        :in   std_logic;

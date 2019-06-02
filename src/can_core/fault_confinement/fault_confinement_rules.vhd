@@ -84,7 +84,7 @@ entity fault_confinement_rules is
         err_ctrs_unchanged      :in   std_logic;
         
         -- Primary Error
-        primary_error           :in   std_logic;
+        primary_err             :in   std_logic;
         
         -- Active Error Flag or Overload flag is being tranmsmitted
         act_err_ovr_flag        :in   std_logic;
@@ -137,7 +137,7 @@ begin
     --  - Error delimiter comes too late (more than 14 consecutive bits),
     --    (rule "f")
     ---------------------------------------------------------------------------
-    inc_eight <= '1' when (primary_error = '1' and is_receiver = '1') else
+    inc_eight <= '1' when (primary_err = '1' and is_receiver = '1') else
                  '1' when (act_err_ovr_flag = '1' and err_detected = '1') else
                  '1' when (is_transmitter = '1' and 
                            err_detected = '1' and

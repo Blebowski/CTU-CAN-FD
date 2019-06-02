@@ -108,10 +108,10 @@ entity fault_confinement is
         -- Error signalling for interrupts
         -----------------------------------------------------------------------
         -- Error passive state changed
-        error_passive_changed   :out  std_logic;
+        err_passive_changed     :out  std_logic;
 
         -- Error warning limit was reached
-        error_warning_limit     :out  std_logic;
+        err_warning_limit       :out  std_logic;
 
         -----------------------------------------------------------------------
         -- Operation control Interface
@@ -139,7 +139,7 @@ entity fault_confinement is
         err_ctrs_unchanged      :in   std_logic;
         
         -- Primary Error
-        primary_error           :in   std_logic;
+        primary_err             :in   std_logic;
         
         -- Active Error Flag or Overload flag is being tranmsmitted
         act_err_ovr_flag        :in   std_logic;
@@ -252,15 +252,15 @@ begin
         is_err_passive         => is_err_passive,           -- OUT
         is_bus_off             => is_bus_off,               -- OUT
        
-        error_passive_changed  => error_passive_changed,    -- OUT
-        error_warning_limit    => error_warning_limit       -- OUT
+        err_passive_changed    => err_passive_changed,      -- OUT
+        err_warning_limit      => err_warning_limit         -- OUT
     );
 
 
     ---------------------------------------------------------------------------
     -- Error counters
     ---------------------------------------------------------------------------
-    error_counters_inst : error_counters
+    err_counters_inst : err_counters
     generic map(
         G_RESET_POLARITY       => G_RESET_POLARITY
     )
@@ -293,7 +293,7 @@ begin
         is_receiver            => is_receiver,          -- IN
         err_detected           => err_detected,         -- IN
         err_ctrs_unchanged     => err_ctrs_unchanged,   -- IN
-        primary_error          => primary_error,        -- IN
+        primary_err            => primary_err,          -- IN
         act_err_ovr_flag       => act_err_ovr_flag,     -- IN
         err_delim_late         => err_delim_late,       -- IN
         tran_valid             => tran_valid,           -- IN

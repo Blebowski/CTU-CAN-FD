@@ -61,8 +61,8 @@ package can_types is
 
     -- Fault confinement state of node
     type t_fault_conf_state is (
-        s_fc_error_active,
-        s_fc_error_passive,
+        s_fc_err_active,
+        s_fc_err_passive,
         s_fc_bus_off
     );
 

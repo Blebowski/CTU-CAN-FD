@@ -63,7 +63,7 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity error_detector is
+entity err_detector is
     generic(
         -- Reset polarity
         G_RESET_POLARITY        :     std_logic := '0';
@@ -94,22 +94,22 @@ entity error_detector is
         -- Error sources
         -----------------------------------------------------------------------
         -- Bit error (from Bus sampling)
-        bit_error               :in   std_logic;
+        bit_err                 :in   std_logic;
         
         -- Bit error in Arbitration field
-        bit_error_arb           :in   std_logic;
+        bit_err_arb             :in   std_logic;
         
         -- Stuff error
-        stuff_error             :in   std_logic;
+        stuff_err               :in   std_logic;
         
         -- Form Error
-        form_error              :in   std_logic;
+        form_err                :in   std_logic;
         
         -- ACK Error
-        ack_error               :in   std_logic;
+        ack_err                 :in   std_logic;
 
         -- CRC Error
-        crc_error               :in   std_logic;
+        crc_err                 :in   std_logic;
         
         -----------------------------------------------------------------------
         -- CRC comparison data
@@ -136,10 +136,10 @@ entity error_detector is
         -- Control signals
         -----------------------------------------------------------------------
         -- Bit error enable
-        bit_error_enable        :in   std_logic;
+        bit_err_enable          :in   std_logic;
 
         -- Stuff error enable
-        stuff_error_enable      :in   std_logic;
+        stuff_err_enable        :in   std_logic;
 
         -- Fixed Bit stuffing method
         fixed_stuff             :in   std_logic;
@@ -188,7 +188,7 @@ entity error_detector is
     );
 end entity;
 
-architecture rtl of error_detector is
+architecture rtl of err_detector is
 
     -- Internal Error valid
     signal err_frm_req_i  : std_logic;
@@ -199,7 +199,7 @@ architecture rtl of error_detector is
     signal err_pos_q      : std_logic_vector(4 downto 0);
     
     -- Internal form error
-    signal form_error_int : std_logic;
+    signal form_err_i     : std_logic;
 
     -- CRC Match detection
     signal crc_match_c    : std_logic;
@@ -236,18 +236,18 @@ begin
 
     -- Error frame request for any type of error which causes transition to
     -- Error frame in the next bit.
-    err_frm_req_i <= '1' when (bit_error = '1' and bit_error_enable = '1') else
-                     '1' when (stuff_error = '1' and stuff_error_enable = '1') else
-                     '1' when (form_error = '1' or ack_error = '1') else
-                     '1' when (crc_error = '1') else
-                     '1' when (bit_error_arb = '1') else
+    err_frm_req_i <= '1' when (bit_err = '1' and bit_err_enable = '1') else
+                     '1' when (stuff_err = '1' and stuff_err_enable = '1') else
+                     '1' when (form_err = '1' or ack_err = '1') else
+                     '1' when (crc_err = '1') else
+                     '1' when (bit_err_arb = '1') else
                      '0';
 
     -- Fixed stuff error shall be reported as Form Error!
-    form_error_int <= '1' when (form_error = '1') else
-                      '1' when (stuff_error = '1' and stuff_error_enable = '1' and
-                                fixed_stuff = '1') else
-                      '0';
+    form_err_i <= '1' when (form_err = '1') else
+                  '1' when (stuff_err = '1' and stuff_err_enable = '1' and
+                            fixed_stuff = '1') else
+                  '0';
 
     err_pipeline_true_gen : if (G_ERR_VALID_PIPELINE) generate
     begin
@@ -327,7 +327,7 @@ begin
                    crc_match_c when (crc_check = '1') else
                    crc_match_q;
     
-    crc_error_reg_proc : process(clk_sys, res_n)
+    crc_err_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
             crc_match_q <= '0';
@@ -343,10 +343,10 @@ begin
     --  2. Transmitter detects stuff error in Arbitration when bit should
     --     have been recessive, but was transmitted dominant!
     --------------------------------------------------------------------------
-    err_ctrs_unchanged <= '1' when (ack_error = '1' and is_err_passive = '1')
+    err_ctrs_unchanged <= '1' when (ack_err = '1' and is_err_passive = '1')
                               else
-                          '1' when (stuff_error = '1' and
-                                    stuff_error_enable = '1' and
+                          '1' when (stuff_err = '1' and
+                                    stuff_err_enable = '1' and
                                     is_arbitration = '1' and
                                     rx_data = DOMINANT and
                                     tx_data = RECESSIVE)
@@ -360,11 +360,11 @@ begin
     --------------------------------------------------------------------------
     -- Error code, next value
     ---------------------------------------------------------------------------
-    err_type_d <= "000" when (bit_error = '1' and bit_error_enable = '1') else
-                  "001" when (crc_error = '1') else
-                  "010" when (form_error_int = '1') else
-                  "011" when (ack_error = '1') else
-                  "100" when (stuff_error = '1' and stuff_error_enable = '1') else
+    err_type_d <= "000" when (bit_err = '1' and bit_err_enable = '1') else
+                  "001" when (crc_err = '1') else
+                  "010" when (form_err_i = '1') else
+                  "011" when (ack_err = '1') else
+                  "100" when (stuff_err = '1' and stuff_err_enable = '1') else
                   err_type_q;
                   
     ---------------------------------------------------------------------------
@@ -376,7 +376,7 @@ begin
             err_type_q <= "000";
             err_pos_q <= "11111";
         elsif (rising_edge(clk_sys)) then
-            if (err_frm_req_i = '1' or crc_error = '1') then
+            if (err_frm_req_i = '1' or crc_err = '1') then
                 err_type_q <= err_type_d;
                 err_pos_q  <= err_pos;
             end if;

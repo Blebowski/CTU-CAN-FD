@@ -120,13 +120,13 @@ entity bit_destuffing is
         -- Control signals
         ------------------------------------------------------------------------
         -- Bit Destuffing Trigger (in Sample point, from Prescaler).
-        bds_trigger              : in std_logic;
+        bds_trigger          : in std_logic;
 
         -- Bit Destuffing is enabled.
         destuff_enable       : in  std_logic;
 
         -- Stuff error detection enabled.
-        stuff_error_enable   : in  std_logic;
+        stuff_err_enable     : in  std_logic;
 
         -- Bit destuffing type (0-Normal, 1-Fixed)    
         fixed_stuff          : in  std_logic;  
@@ -139,7 +139,7 @@ entity bit_destuffing is
         ------------------------------------------------------------------------
         -- Stuff error detected (more equal consecutive bits than length of
         -- stuff rule.
-        stuff_error          : out std_logic;
+        stuff_err            : out std_logic;
         
         -- Data output is not valid, actual bit is stuff bit.
         destuffed            : out std_logic;
@@ -190,8 +190,8 @@ architecture rtl of bit_destuffing is
     ---------------------------------------------------------------------------
     -- Register with error flag signalling stuff error
     ---------------------------------------------------------------------------
-    signal error_reg_q             : std_logic;
-    signal error_reg_d             : std_logic;
+    signal err_reg_q             : std_logic;
+    signal err_reg_d             : std_logic;
 
     ---------------------------------------------------------------------------
     -- ISO CAN FD destuff bit counter
@@ -277,7 +277,7 @@ begin
     ---------------------------------------------------------------------------
     stuff_rule_violate <= '1' when (discard_stuff_bit = '1' and
                                     prev_val_q = data_in and
-                                    stuff_error_enable = '1')
+                                    stuff_err_enable = '1')
                               else
                           '0';
 
@@ -421,14 +421,14 @@ begin
     --  1. Set when bit should be processed and stuff rule is violated.
     --  2. Cleared otherwise
     ---------------------------------------------------------------------------
-    error_reg_d <= '1' when (bds_trigger = '1' and stuff_rule_violate = '1') else
+    err_reg_d <= '1' when (bds_trigger = '1' and stuff_rule_violate = '1') else
                    '0';
 
 
     ---------------------------------------------------------------------------
     -- Error register - register assignment
     ---------------------------------------------------------------------------
-    dff_error_reg : dff_arst
+    dff_err_reg : dff_arst
     generic map(
         G_RESET_POLARITY   => G_RESET_POLARITY,
         G_RST_VAL          => '0'
@@ -437,9 +437,9 @@ begin
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => error_reg_d,
+        input              => err_reg_d,
         ce                 => '1',
-        output             => error_reg_q
+        output             => err_reg_q
     );
 
 
@@ -481,7 +481,7 @@ begin
     data_out    <= data_in;
 
     destuffed   <= destuffed_q;
-    stuff_error <= error_reg_q;
+    stuff_err   <= err_reg_q;
     dst_ctr     <= dst_bit_ctr_q;
 
 

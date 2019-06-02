@@ -41,7 +41,7 @@
 
 --------------------------------------------------------------------------------
 -- Purpose:
---  Detects bit error.
+--  Detects Bit error.
 --------------------------------------------------------------------------------
 --    28.02.2019  Created file
 --------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ use work.reduce_lib.all;
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
 
-entity bit_error_detector is
+entity bit_err_detector is
     generic(
         -- Reset polarity
         G_RESET_POLARITY         :     std_logic
@@ -108,15 +108,15 @@ entity bit_error_detector is
         -- Status outputs
         -----------------------------------------------------------------------
         -- Bit error detected
-        bit_error                : out std_logic
+        bit_err                  : out std_logic
     );
 end entity;
 
-architecture rtl of bit_error_detector is
+architecture rtl of bit_err_detector is
 
     -- Bit error detected value
-    signal bit_error_d      : std_logic;
-    signal bit_error_q      : std_logic;
+    signal bit_err_d      : std_logic;
+    signal bit_err_q      : std_logic;
 
     -- Capture register for Secondary sampling point bit error
     signal bit_err_ssp_capt_d  : std_logic;
@@ -173,24 +173,24 @@ begin
     -- Bit Error detection. If expected data is not equal to actual data in
     -- sample point -> Bit Error!
     ----------------------------------------------------------------------------
-    bit_error_d <= '0' when (drv_ena = CTU_CAN_DISABLED) else
-                   '1' when (bit_err_ssp_valid = '1') else
-                   '1' when (bit_err_norm_valid = '1') else
-                   '0';
+    bit_err_d <= '0' when (drv_ena = CTU_CAN_DISABLED) else
+                 '1' when (bit_err_ssp_valid = '1') else
+                 '1' when (bit_err_norm_valid = '1') else
+                 '0';
     
     ----------------------------------------------------------------------------
     -- Bit error register
     ----------------------------------------------------------------------------
-    bit_error_reg_proc : process(clk_sys, res_n)
+    bit_err_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            bit_error_q <= '0';
+            bit_err_q <= '0';
         elsif (rising_edge(clk_sys)) then
-            bit_error_q <= bit_error_d;
+            bit_err_q <= bit_err_d;
         end if;
     end process;
     
     -- Propagation to output
-    bit_error <= bit_error_q;
+    bit_err <= bit_err_q;
 
 end architecture;

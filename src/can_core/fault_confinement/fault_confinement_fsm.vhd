@@ -115,10 +115,10 @@ entity fault_confinement_fsm is
         -- Status outputs
         -----------------------------------------------------------------------
         -- Error passive state changed
-        error_passive_changed   :out  std_logic;
+        err_passive_changed     :out  std_logic;
 
         -- Error warning limit was reached
-        error_warning_limit     :out  std_logic
+        err_warning_limit       :out  std_logic
     );
 end entity;
 
@@ -160,10 +160,10 @@ begin
     rx_err_ctr_mt_ewl <= '1' when (unsigned(rx_err_ctr) > unsigned(ewl)) else
                          '0';
 
-    error_warning_limit <= '1' when (tx_err_ctr_mt_ewl = '1' or
-                                     rx_err_ctr_mt_ewl = '1')
-                               else
-                           '0';
+    err_warning_limit <= '1' when (tx_err_ctr_mt_ewl = '1' or
+                                   rx_err_ctr_mt_ewl = '1')
+                             else
+                         '0';
     
     ---------------------------------------------------------------------------
     -- Next state process
@@ -174,21 +174,21 @@ begin
         next_state <= curr_state;
 
         case curr_state is
-        when s_fc_error_active =>
+        when s_fc_err_active =>
             if (tx_err_ctr_mt_erp = '1' or rx_err_ctr_mt_erp = '1') then
-                next_state <= s_fc_error_passive;   
+                next_state <= s_fc_err_passive;   
             end if;
 
-        when s_fc_error_passive =>
+        when s_fc_err_passive =>
             if (tx_err_ctr_mt_255 = '1') then
                 next_state <= s_fc_bus_off;
             elsif (tx_err_ctr_mt_erp = '0' and rx_err_ctr_mt_erp = '0') then
-                next_state <= s_fc_error_active;
+                next_state <= s_fc_err_active;
             end if;
 
         when s_fc_bus_off =>
             if (set_err_active = '1') then
-                next_state <= s_fc_error_active;
+                next_state <= s_fc_err_active;
             end if;
         end case;
         
@@ -215,16 +215,16 @@ begin
         is_err_active     <= '0';
         is_err_passive    <= '0';
         is_bus_off        <= '0';
-        error_passive_changed  <= '0';
+        err_passive_changed  <= '0';
         
         case curr_state is
-        when s_fc_error_active =>
+        when s_fc_err_active =>
             is_err_active <= '1';
             if (tx_err_ctr_mt_erp = '1' or rx_err_ctr_mt_erp = '1') then
-                error_passive_changed <= '1';
+                err_passive_changed <= '1';
             end if;
        
-        when s_fc_error_passive =>
+        when s_fc_err_passive =>
             is_err_passive <= '1';
 
         when s_fc_bus_off =>

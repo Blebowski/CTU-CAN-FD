@@ -159,7 +159,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal is_eof_1                  :  std_logic;
     signal is_intermission_1         :  std_logic;
     signal is_suspend_1              :  std_logic;
-    signal is_error_1                :  std_logic;
+    signal is_err_frm_1                :  std_logic;
     signal is_overload_1             :  std_logic;
     
     -- TXT Buffers interface
@@ -202,7 +202,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal is_err_passive_1          :  std_logic := '0';
     signal is_bus_off_1              :  std_logic := '0';
     signal err_detected_1            :  std_logic;
-    signal primary_error_1           :  std_logic;
+    signal primary_err_1           :  std_logic;
     signal act_err_ovr_flag_1        :  std_logic;
     signal err_delim_late_1          :  std_logic;
     signal set_err_active_1          :  std_logic;
@@ -224,13 +224,13 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal destuff_enable_1          :  std_logic;
     signal fixed_stuff_1             :  std_logic;
     signal stuff_length_1            :  std_logic_vector(2 downto 0);
-    signal stuff_error_enable_1      :  std_logic;
+    signal stuff_err_enable_1      :  std_logic;
     signal dst_ctr_1                 :  natural range 0 to 7;
     signal bst_ctr_1                 :  natural range 0 to 7;
-    signal stuff_error_1             :  std_logic := '0';
+    signal stuff_err_1             :  std_logic := '0';
     
     -- Bus Sampling Interface
-    signal bit_error_1               :  std_logic := '0';
+    signal bit_err_1               :  std_logic := '0';
     
     -- CRC Interface
     signal crc_enable_1              :  std_logic;
@@ -249,9 +249,9 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Status signals
     signal ack_received_1            :  std_logic;
     signal br_shifted_1              :  std_logic;
-    signal form_error_1              :  std_logic;
-    signal ack_error_1               :  std_logic;
-    signal crc_error_1               :  std_logic;
+    signal form_err_1              :  std_logic;
+    signal ack_err_1               :  std_logic;
+    signal crc_err_1               :  std_logic;
  
  
     ----------------------------------------------------------------------------
@@ -270,7 +270,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal is_eof_2                  :  std_logic;
     signal is_intermission_2         :  std_logic;
     signal is_suspend_2              :  std_logic;
-    signal is_error_2                :  std_logic;
+    signal is_err_frm_2                :  std_logic;
     signal is_overload_2             :  std_logic;
     
     -- TXT Buffers interface
@@ -313,7 +313,7 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal is_err_passive_2          :  std_logic := '0';
     signal is_bus_off_2              :  std_logic := '0';
     signal err_detected_2            :  std_logic;
-    signal primary_error_2           :  std_logic;
+    signal primary_err_2           :  std_logic;
     signal act_err_ovr_flag_2        :  std_logic;
     signal err_delim_late_2          :  std_logic;
     signal set_err_active_2          :  std_logic;
@@ -331,13 +331,13 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal destuff_enable_2          :  std_logic;
     signal fixed_stuff_2             :  std_logic;
     signal stuff_length_2            :  std_logic_vector(2 downto 0);
-    signal stuff_error_enable_2      :  std_logic;
+    signal stuff_err_enable_2      :  std_logic;
     signal dst_ctr_2                 :  natural range 0 to 7;
     signal bst_ctr_2                 :  natural range 0 to 7;
-    signal stuff_error_2             :  std_logic := '0';
+    signal stuff_err_2             :  std_logic := '0';
     
     -- Bus Sampling Interface
-    signal bit_error_2               :   std_logic := '0';
+    signal bit_err_2               :   std_logic := '0';
     
     -- CRC Interface
     signal crc_enable_2              :  std_logic;
@@ -356,9 +356,9 @@ architecture Protocol_Control_unit_test of CAN_test is
     -- Status signals
     signal ack_received_2            :  std_logic;
     signal br_shifted_2              :  std_logic;
-    signal form_error_2              :  std_logic;
-    signal ack_error_2               :  std_logic;
-    signal crc_error_2               :  std_logic;
+    signal form_err_2              :  std_logic;
+    signal ack_err_2               :  std_logic;
+    signal crc_err_2               :  std_logic;
     
 
     ----------------------------------------------------------------------------
@@ -668,7 +668,7 @@ begin
         is_eof                  => is_eof_1,
         is_intermission         => is_intermission_1,
         is_suspend              => is_suspend_1,
-        is_error                => is_error_1,
+        is_err_frm                => is_err_frm_1,
         is_overload             => is_overload_1,
         
         -- TXT Buffers interface
@@ -711,7 +711,7 @@ begin
         is_err_passive          => is_err_passive_1,
         is_bus_off              => is_bus_off_1,
         err_detected            => err_detected_1,
-        primary_error           => primary_error_1,
+        primary_err           => primary_err_1,
         act_err_ovr_flag        => act_err_ovr_flag_1,
         err_delim_late          => err_delim_late_1,
         set_err_active          => set_err_active_1,
@@ -731,13 +731,13 @@ begin
         destuff_enable          => destuff_enable_1,
         fixed_stuff             => fixed_stuff_1,
         stuff_length            => stuff_length_1,
-        stuff_error_enable      => stuff_error_enable_1,
+        stuff_err_enable      => stuff_err_enable_1,
         dst_ctr                 => dst_ctr_1,
         bst_ctr                 => bst_ctr_1,
-        stuff_error             => stuff_error_1,
+        stuff_err             => stuff_err_1,
         
         -- Bus Sampling Interface
-        bit_error               => bit_error_1,
+        bit_err               => bit_err_1,
         
         -- CRC Interface
         crc_enable              => crc_enable_1,
@@ -759,9 +759,9 @@ begin
         -- Status signals
         ack_received            => ack_received_1,
         br_shifted              => br_shifted_1,
-        form_error              => form_error_1,
-        ack_error               => ack_error_1,
-        crc_error               => crc_error_1
+        form_err              => form_err_1,
+        ack_err               => ack_err_1,
+        crc_err               => crc_err_1
     );
     
     
@@ -791,7 +791,7 @@ begin
         is_eof                  => is_eof_2,
         is_intermission         => is_intermission_2,
         is_suspend              => is_suspend_2,
-        is_error                => is_error_2,
+        is_err_frm              => is_err_frm_2,
         is_overload             => is_overload_2,
         
         -- TXT Buffers interface
@@ -834,7 +834,7 @@ begin
         is_err_passive          => is_err_passive_2,
         is_bus_off              => is_bus_off_2,
         err_detected            => err_detected_2,
-        primary_error           => primary_error_2,
+        primary_err             => primary_err_2,
         act_err_ovr_flag        => act_err_ovr_flag_2,
         err_delim_late          => err_delim_late_2,
         set_err_active          => set_err_active_2,
@@ -854,13 +854,13 @@ begin
         destuff_enable          => destuff_enable_2,
         fixed_stuff             => fixed_stuff_2,
         stuff_length            => stuff_length_2,
-        stuff_error_enable      => stuff_error_enable_2,
+        stuff_err_enable        => stuff_err_enable_2,
         dst_ctr                 => dst_ctr_2,
         bst_ctr                 => bst_ctr_2,
-        stuff_error             => stuff_error_2,
+        stuff_err               => stuff_err_2,
         
         -- Bus Sampling Interface
-        bit_error               => bit_error_2,
+        bit_err                 => bit_err_2,
         
         -- CRC Interface
         crc_enable              => crc_enable_2,
@@ -882,9 +882,9 @@ begin
         -- Status signals
         ack_received            => ack_received_2,
         br_shifted              => br_shifted_2,
-        form_error              => form_error_2,
-        ack_error               => ack_error_2,
-        crc_error               => crc_error_2
+        form_err                => form_err_2,
+        ack_err                 => ack_err_2,
+        crc_err                 => crc_err_2
     );
     
     ----------------------------------------------------------------------------

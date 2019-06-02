@@ -154,7 +154,7 @@ entity protocol_control_fsm is
         is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
-        is_error                :out  std_logic;
+        is_err_frm              :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
@@ -353,22 +353,22 @@ entity protocol_control_fsm is
         -- Error detector interface
         -----------------------------------------------------------------------
         -- Form Error has occurred
-        form_error              :out   std_logic;
+        form_err                :out   std_logic;
 
         -- ACK Error has occurred
-        ack_error               :out   std_logic;
+        ack_err                 :out   std_logic;
 
         -- Perform CRC check
         crc_check               :out   std_logic;
         
         -- Bit Error in arbitration field
-        bit_error_arb           :out   std_logic;
+        bit_err_arb             :out   std_logic;
         
         -- Calculated CRC and Stuff count are matching received ones
         crc_match               :in   std_logic;
 
         -- CRC error signalling
-        crc_error               :out  std_logic;
+        crc_err                 :out  std_logic;
 
         -- Clear CRC Match flag
         crc_clear_match_flag    :out   std_logic;
@@ -398,7 +398,7 @@ entity protocol_control_fsm is
         fixed_stuff             :out   std_logic;
         
         -- Bit Stuff error detection enabled
-        stuff_error_enable      :out   std_logic;
+        stuff_err_enable        :out   std_logic;
         
         -----------------------------------------------------------------------
         -- Operation control interface
@@ -428,7 +428,7 @@ entity protocol_control_fsm is
         -- Fault confinement interface
         -----------------------------------------------------------------------
         -- Primary Error
-        primary_error           :out  std_logic;
+        primary_err             :out  std_logic;
         
         -- Active Error or Overload flag is being tranmsmitted
         act_err_ovr_flag        :out  std_logic;
@@ -483,7 +483,7 @@ entity protocol_control_fsm is
         crc_spec_enable         :out   std_logic;
 
         -- Bit error enable
-        bit_error_enable        :out   std_logic;
+        bit_err_enable          :out   std_logic;
 
         -- Bit rate shifted
         br_shifted              :out   std_logic
@@ -595,10 +595,10 @@ architecture rtl of protocol_control_fsm is
     signal tx_shift_ena_i            :  std_logic;
 
     -- Internal signals for detected errors
-    signal form_error_i              :  std_logic;
-    signal ack_error_i               :  std_logic;  
-    signal crc_error_i               :  std_logic;
-    signal bit_error_arb_i           :  std_logic;
+    signal form_err_i                :  std_logic;
+    signal ack_err_i                 :  std_logic;  
+    signal crc_err_i                 :  std_logic;
+    signal bit_err_arb_i             :  std_logic;
 
     -- Sample control (Bit Rate) signals
     signal sp_control_switch_data    :  std_logic;
@@ -622,7 +622,7 @@ architecture rtl of protocol_control_fsm is
     signal perform_hsync             :  std_logic;
     
     -- Fault confinemnt interface
-    signal primary_error_i           :  std_logic;
+    signal primary_err_i             :  std_logic;
     signal err_delim_late_i          :  std_logic;
     signal set_err_active_i          :  std_logic;
     
@@ -1242,10 +1242,10 @@ begin
         crc_check      <= '0';
         
         -- Error signalling
-        form_error_i <= '0';
-        ack_error_i <= '0';            
-        crc_error_i <= '0';
-        bit_error_arb_i <= '0';
+        form_err_i <= '0';
+        ack_err_i <= '0';            
+        crc_err_i <= '0';
+        bit_err_arb_i <= '0';
         bit_err_disable <= '0';
         bit_err_disable_receiver <= '0';
         crc_clear_match_flag <= '0';
@@ -1264,7 +1264,7 @@ begin
         trv_delay_calib <= '0';
         
         -- Fault confinement
-        primary_error_i <= '0';
+        primary_err_i <= '0';
         err_delim_late_i <= '0';
         first_err_delim_d <= '0';
         set_err_active_i <= '0';
@@ -1300,7 +1300,7 @@ begin
         is_ack_delim    <= '0';
         is_eof          <= '0';
         is_suspend      <= '0';
-        is_error        <= '0';
+        is_err_frm      <= '0';
         is_overload     <= '0';
         is_intermission <= '0';
 
@@ -1373,7 +1373,7 @@ begin
                 txtb_ptr_d <= 1;
                 
                 if (rx_data = RECESSIVE) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1407,7 +1407,7 @@ begin
                 end if;
                 
                 if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
-                    bit_error_arb_i <= '1';
+                    bit_err_arb_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1443,7 +1443,7 @@ begin
                 end if;
                 
                 if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
-                    bit_error_arb_i <= '1';
+                    bit_err_arb_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1479,7 +1479,7 @@ begin
                     bit_err_disable <= '1';
                     
                     if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
-                        bit_error_arb_i <= '1';
+                        bit_err_arb_i <= '1';
                     end if;
                 else
                     is_control <= '1';
@@ -1525,7 +1525,7 @@ begin
                 end if;
 
                 if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
-                    bit_error_arb_i <= '1';
+                    bit_err_arb_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1560,7 +1560,7 @@ begin
                 end if;
                 
                 if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
-                    bit_error_arb_i <= '1';
+                    bit_err_arb_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1602,7 +1602,7 @@ begin
                 -- protocol (CAN XL in future). Now we don't have protocol
                 -- exception, so we throw error here!
                 if (rx_data = RECESSIVE) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1624,7 +1624,7 @@ begin
                 -- protocol (CAN XL in future). Now we don't have protocol
                 -- exception, so we throw error here!
                 if (rx_data = RECESSIVE) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
                 
             -------------------------------------------------------------------
@@ -1651,7 +1651,7 @@ begin
                 end if;
                 
                 if (drv_can_fd_ena = FDE_DISABLE and rx_data = RECESSIVE) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -1830,7 +1830,7 @@ begin
                 end if;
 
                 if (rx_data = DOMINANT) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
                 
                 if (sp_control_q = DATA_SAMPLE or 
@@ -1864,7 +1864,7 @@ begin
                 if (is_transmitter = '1' and drv_self_test_ena = '0' and
                     rx_data = RECESSIVE)
                 then
-                    ack_error_i <= '1';
+                    ack_err_i <= '1';
                 end if;
                 
                 if (rx_data = DOMINANT) then
@@ -1890,7 +1890,7 @@ begin
                 end if;
 
                 if (is_receiver = '1' and crc_match = '0') then
-                    crc_error_i <= '1';
+                    crc_err_i <= '1';
                 end if;
 
                 if (rx_data = DOMINANT) then
@@ -1913,11 +1913,11 @@ begin
                 is_ack_delim  <= '1';
                 
                 if (rx_data = DOMINANT) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
                 
                 if (is_receiver = '1' and crc_match = '0') then
-                    crc_error_i <= '1';
+                    crc_err_i <= '1';
                 end if;
     
             -------------------------------------------------------------------
@@ -1950,7 +1950,7 @@ begin
                 
                 -- Detecting dominant during EOF is treated as form error!
                 elsif (rx_data = DOMINANT) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
 
                 -- If there is no error (RX Recessive) in one bit before end
@@ -1961,7 +1961,7 @@ begin
                 
                 -- DOMINANT during EOF (apart from last bit) means error!
                 if (rx_data = DOMINANT and ctrl_ctr_zero = '0') then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
     
             -------------------------------------------------------------------
@@ -2147,7 +2147,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_act_err_flag =>
                 ctrl_ctr_ena <= '1';
-                is_error <= '1';
+                is_err_frm <= '1';
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_ERR;
                        
@@ -2158,7 +2158,7 @@ begin
                 end if;
                 
                 if (rx_data = RECESSIVE) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2166,7 +2166,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_pas_err_flag =>
                 ctrl_ctr_ena <= '1';
-                is_error <= '1';
+                is_err_frm <= '1';
                 err_pos <= ERC_POS_ERR;
                 
                 -- Node sending Passive error flag may receive RECESSIVE or
@@ -2183,7 +2183,7 @@ begin
             -- Wait till Error delimiter (detection of recessive bit)
             -------------------------------------------------------------------
             when s_pc_err_delim_wait =>
-                is_error <= '1';
+                is_err_frm <= '1';
                 err_pos <= ERC_POS_ERR;
                 
                 -- When waiting for RECESSIVE bit after Error delimiter, unit
@@ -2208,7 +2208,7 @@ begin
                 -- Node received dominant bit as first bit after Error flag!
                 -- This shall be treated as primamry error
                 if (rx_data = DOMINANT and first_err_delim_q = '1') then
-                    primary_error_i <= '1';
+                    primary_err_i <= '1';
                     first_err_delim_d <= '0';
                 end if;
                 
@@ -2216,7 +2216,7 @@ begin
             -- Error delimiter
             -------------------------------------------------------------------
             when s_pc_err_delim =>
-                is_error <= '1';
+                is_err_frm <= '1';
                 ctrl_ctr_ena <= '1';
                 err_pos <= ERC_POS_ERR;
                                 
@@ -2230,7 +2230,7 @@ begin
                 end if;
 
                 if (rx_data = DOMINANT) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2243,7 +2243,7 @@ begin
                 err_pos <= ERC_POS_OVRL;
                 
                 if (rx_data = RECESSIVE) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
                 
             -------------------------------------------------------------------
@@ -2276,7 +2276,7 @@ begin
                 end if;
                 
                 if (rx_data = DOMINANT) then
-                    form_error_i <= '1';
+                    form_err_i <= '1';
                 end if;
 
             end case;
@@ -2426,10 +2426,10 @@ begin
     -- Error signalling gating. Each command can be active only in sample 
     -- point (rx_trigger = '1')!
     -----------------------------------------------------------------------
-    form_error <= form_error_i and rx_trigger;
-    ack_error <= ack_error_i and rx_trigger; 
-    crc_error <= crc_error_i and rx_trigger;
-    bit_error_arb <= bit_error_arb_i and rx_trigger;
+    form_err <= form_err_i and rx_trigger;
+    ack_err <= ack_err_i and rx_trigger; 
+    crc_err <= crc_err_i and rx_trigger;
+    bit_err_arb <= bit_err_arb_i and rx_trigger;
 
     -----------------------------------------------------------------------
     -- Switching of Bit-rate
@@ -2489,9 +2489,9 @@ begin
     -- Detection of primary error and late error delimiter must be active only
     -- for one clock cycle in Sample point (rx_trigger)!
     ---------------------------------------------------------------------------
-    primary_error <= '1' when (primary_error_i = '1' and rx_trigger = '1')
-                         else
-                     '0';
+    primary_err <= '1' when (primary_err_i = '1' and rx_trigger = '1')
+                       else
+                   '0';
 
     err_delim_late <= '1' when (err_delim_late_i = '1' and rx_trigger = '1')
                           else
@@ -2512,11 +2512,11 @@ begin
     --     transmitting dominant and receiving recessive is trated as bit error.
     --  2. For receiver during control, data, CRC fields!
     ---------------------------------------------------------------------------                 
-    bit_error_enable <= '0' when (bit_err_disable = '1') else
-                        '0' when (bit_err_disable_receiver = '1' and
-                                  is_receiver = '1')
-                            else
-                        '1';
+    bit_err_enable <= '0' when (bit_err_disable = '1') else
+                      '0' when (bit_err_disable_receiver = '1' and
+                                is_receiver = '1')
+                          else
+                      '1';
 
     ---------------------------------------------------------------------------
     -- Retransmitt counter is manipulated only for one clock cycle
@@ -2564,13 +2564,13 @@ begin
     begin
         if (res_n = G_RESET_POLARITY) then
             destuff_enable <= '0';
-            stuff_error_enable <= '0';
+            stuff_err_enable <= '0';
         elsif (rising_edge(clk_sys)) then
             if (destuff_enable_set = '1') then
                 destuff_enable <= '1';
-                stuff_error_enable <= '1';
+                stuff_err_enable <= '1';
             elsif (destuff_enable_clear = '1') then
-                stuff_error_enable <= '0';
+                stuff_err_enable <= '0';
                 destuff_enable <= '0';
             end if;
         end if;    

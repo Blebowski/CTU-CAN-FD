@@ -534,7 +534,7 @@ begin
 
     status_comb(DOR_IND) <= rx_data_overrun;
 
-    status_comb(EFT_IND)  <= stat_bus(STAT_PC_IS_ERROR_INDEX);
+    status_comb(EFT_IND)  <= stat_bus(STAT_PC_IS_ERR_INDEX);
 
     status_comb(31 downto 8) <= (others => '0');
 
@@ -1005,7 +1005,7 @@ begin
         Control_registers_in.err_norm(
             align_reg_to_wrd(ERR_NORM_VAL_H, length) downto
             align_reg_to_wrd(ERR_NORM_VAL_L, length)) <= 
-            stat_bus(STAT_ERROR_COUNTER_NORM_HIGH downto STAT_ERROR_COUNTER_NORM_LOW);
+            stat_bus(STAT_ERR_COUNTER_NORM_HIGH downto STAT_ERR_COUNTER_NORM_LOW);
     end block err_norm_block;
 
 
@@ -1018,7 +1018,7 @@ begin
         Control_registers_in.err_fd(
             align_reg_to_wrd(ERR_FD_VAL_H, length) downto
             align_reg_to_wrd(ERR_FD_VAL_L, length)) <= 
-            stat_bus(STAT_ERROR_COUNTER_FD_HIGH downto STAT_ERROR_COUNTER_FD_LOW);
+            stat_bus(STAT_ERR_COUNTER_FD_HIGH downto STAT_ERR_COUNTER_FD_LOW);
     end block err_fd_block;
 
 

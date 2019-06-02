@@ -186,7 +186,7 @@ entity bus_sampling is
         sample_sec           :out  std_logic;
 
         -- Bit error detected
-        bit_error            :out  std_logic 
+        bit_err              :out  std_logic 
     );
 end entity;
 
@@ -437,7 +437,7 @@ begin
     ---------------------------------------------------------------------------
     -- Bit error detector
     ---------------------------------------------------------------------------
-    bit_error_detector_inst : bit_error_detector
+    bit_err_detector_inst : bit_err_detector
     generic map(
          G_RESET_POLARITY   => G_RESET_POLARITY
     )
@@ -452,7 +452,7 @@ begin
         data_tx_delayed     => data_tx_delayed,     -- IN
         data_rx_synced      => data_rx_synced,      -- IN
         
-        bit_error           => bit_Error            -- OUT
+        bit_err             => bit_err              -- OUT
     );
 
     ----------------------------------------------------------------------------

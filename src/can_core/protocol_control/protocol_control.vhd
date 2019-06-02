@@ -137,7 +137,7 @@ entity protocol_control is
         is_suspend              :out  std_logic;
 
         -- Error frame is being transmitted
-        is_error                :out  std_logic;
+        is_err_frm              :out  std_logic;
         
         -- Overload frame is being transmitted
         is_overload             :out  std_logic;
@@ -254,7 +254,7 @@ entity protocol_control is
         err_detected            :out  std_logic;
         
         -- Primary Error
-        primary_error           :out  std_logic;
+        primary_err             :out  std_logic;
         
         -- Active Error or Overload flag is being tranmsmitted
         act_err_ovr_flag        :out  std_logic;
@@ -305,7 +305,7 @@ entity protocol_control is
         stuff_length            :out  std_logic_vector(2 downto 0);
 
         -- Enable detection of Stuff Error
-        stuff_error_enable      :out  std_logic;
+        stuff_err_enable        :out  std_logic;
 
         -- Number of de-stuffed bits modulo 8
         dst_ctr                 :in   natural range 0 to 7;
@@ -314,13 +314,13 @@ entity protocol_control is
         bst_ctr                 :in   natural range 0 to 7;
         
         -- Stuff Error
-        stuff_error             :in   std_logic;
+        stuff_err               :in   std_logic;
         
         ------------------------------------------------------------------------
         -- Bus Sampling Interface
         ------------------------------------------------------------------------
         -- Bit Error detected
-        bit_error               :in   std_logic;
+        bit_err                 :in   std_logic;
         
         -----------------------------------------------------------------------
         -- CRC Interface
@@ -378,13 +378,13 @@ entity protocol_control is
         br_shifted              :out  std_logic;
         
         -- Form Error has occurred
-        form_error              :out  std_logic;
+        form_err                :out  std_logic;
 
         -- ACK Error has occurred
-        ack_error               :out  std_logic;
+        ack_err                 :out  std_logic;
         
         -- CRC Error has occurred
-        crc_error               :out  std_logic
+        crc_err                 :out  std_logic
     );
 end entity;
 
@@ -530,22 +530,22 @@ architecture rtl of protocol_control is
   signal retr_limit_reached      :      std_logic;
 
   -- Form Error has occurred
-  signal form_error_i            :      std_logic;
+  signal form_err_i              :      std_logic;
 
   -- ACK Error has occurred
-  signal ack_error_i             :      std_logic;
+  signal ack_err_i               :      std_logic;
 
   -- Perform CRC check
   signal crc_check               :      std_logic;
     
   -- Bit Error in arbitration field
-  signal bit_error_arb           :      std_logic;
+  signal bit_err_arb             :      std_logic;
     
   -- Calculated CRC and Stuff count are matching received ones
   signal crc_match               :     std_logic;
 
   -- CRC error signalling
-  signal crc_error_i             :     std_logic;
+  signal crc_err_i               :     std_logic;
 
   -- Clear CRC Match flag
   signal crc_clear_match_flag    :      std_logic;
@@ -560,7 +560,7 @@ architecture rtl of protocol_control is
   signal is_arbitration_i        :      std_logic;
   
   -- Bit error detection enabled
-  signal bit_error_enable        :      std_logic;
+  signal bit_err_enable          :      std_logic;
   
   -- TX Data internal
   signal tx_data_nbs_i           :      std_logic;
@@ -572,7 +572,7 @@ architecture rtl of protocol_control is
   signal rx_stuff_count          :      std_logic_vector(3 downto 0);
   
   -- Stuff error enable (internal)
-  signal stuff_error_enable_i    :      std_logic;
+  signal stuff_err_enable_i      :      std_logic;
   
   -- Fixed Stuff (internal)
   signal fixed_stuff_i           :      std_logic;
@@ -654,7 +654,7 @@ begin
         is_eof                  => is_eof,              -- OUT
         is_intermission         => is_intermission,     -- OUT
         is_suspend              => is_suspend,          -- OUT
-        is_error                => is_error,            -- OUT
+        is_err_frm              => is_err_frm,          -- OUT
         is_overload             => is_overload,         -- OUT
 
         -- Data-path interface
@@ -729,12 +729,12 @@ begin
         retr_limit_reached      => retr_limit_reached,      -- IN
 
         -- Error detector interface
-        form_error              => form_error_i,            -- OUT
-        ack_error               => ack_error_i,             -- OUT
+        form_err                => form_err_i,              -- OUT
+        ack_err                 => ack_err_i,               -- OUT
         crc_check               => crc_check,               -- OUT
-        bit_error_arb           => bit_error_arb,           -- OUT
+        bit_err_arb             => bit_err_arb,             -- OUT
         crc_match               => crc_match,               -- IN
-        crc_error               => crc_error_i,             -- OUT
+        crc_err                 => crc_err_i,               -- OUT
         crc_clear_match_flag    => crc_clear_match_flag,    -- OUT
         crc_src                 => crc_src_i,               -- OUT
         err_pos                 => err_pos,                 -- OUT
@@ -745,7 +745,7 @@ begin
         destuff_enable          => destuff_enable,          -- OUT
         stuff_length            => stuff_length,            -- OUT
         fixed_stuff             => fixed_stuff_i,           -- OUT
-        stuff_error_enable      => stuff_error_enable_i,    -- OUT
+        stuff_err_enable        => stuff_err_enable_i,      -- OUT
         
         -- Operation control interface
         is_transmitter          => is_transmitter,          -- IN
@@ -757,7 +757,7 @@ begin
         set_idle                => set_idle,                -- OUT
 
         -- Fault confinement interface
-        primary_error           => primary_error,           -- OUT
+        primary_err             => primary_err,             -- OUT
         act_err_ovr_flag        => act_err_ovr_flag,        -- OUT
         set_err_active          => set_err_active,          -- OUT
         err_delim_late          => err_delim_late,          -- OUT
@@ -775,7 +775,7 @@ begin
         ack_received            => ack_received,            -- OUT
         crc_enable              => crc_enable,              -- OUT
         crc_spec_enable         => crc_spec_enable,         -- OUT
-        bit_error_enable        => bit_error_enable,        -- OUT
+        bit_err_enable          => bit_err_enable,          -- OUT
         br_shifted              => br_shifted               -- OUT
     );
 
@@ -857,7 +857,7 @@ begin
     ---------------------------------------------------------------------------
     -- Error detector
     ---------------------------------------------------------------------------
-    error_detector_inst : error_detector
+    err_detector_inst : err_detector
     generic map(
         G_RESET_POLARITY        => G_RESET_POLARITY,
         G_ERR_VALID_PIPELINE    => G_ERR_VALID_PIPELINE
@@ -871,12 +871,12 @@ begin
         rx_data                 => rx_data_nbs,         -- IN
         
         -- Error sources
-        bit_error               => bit_error,           -- IN
-        bit_error_arb           => bit_error_arb,       -- IN
-        stuff_error             => stuff_error,         -- IN
-        form_error              => form_error_i,        -- IN
-        ack_error               => ack_error_i,         -- IN
-        crc_error               => crc_error_i,         -- IN
+        bit_err                 => bit_err,             -- IN
+        bit_err_arb             => bit_err_arb,         -- IN
+        stuff_err               => stuff_err,           -- IN
+        form_err                => form_err_i,          -- IN
+        ack_err                 => ack_err_i,           -- IN
+        crc_err                 => crc_err_i,           -- IN
         
         -- CRC comparison data
         rx_crc                  => rx_crc,              -- IN
@@ -887,8 +887,8 @@ begin
         dst_ctr                 => dst_ctr,             -- IN
 
         -- Control signals
-        bit_error_enable        => bit_error_enable,        -- IN
-        stuff_error_enable      => stuff_error_enable_i,    -- IN
+        bit_err_enable          => bit_err_enable,          -- IN
+        stuff_err_enable        => stuff_err_enable_i,      -- IN
         fixed_stuff             => fixed_stuff_i,           -- IN
         err_pos                 => err_pos,                 -- IN
         crc_check               => crc_check,               -- IN
@@ -997,11 +997,11 @@ begin
     rec_frame_type <= rec_frame_type_i;
     rec_is_rtr <= rec_is_rtr_i;
     rec_dlc <= rec_dlc_q;
-    form_error <= form_error_i;
-    ack_error <= ack_error_i;
-    crc_error <= crc_error_i;
+    form_err <= form_err_i;
+    ack_err <= ack_err_i;
+    crc_err <= crc_err_i;
     is_arbitration <= is_arbitration_i;
-    stuff_error_enable <= stuff_error_enable_i;
+    stuff_err_enable <= stuff_err_enable_i;
     fixed_stuff <= fixed_stuff_i;
     crc_src <= crc_src_i;
     arbitration_lost <= arbitration_lost_i;
@@ -1012,8 +1012,8 @@ begin
     -- psl default clock is rising_edge(clk_sys);
         
     -- psl no_invalid_ack_err_asrt : assert never
-    --  ((ack_error = '1' or crc_error = '1' or
-    --    stuff_error = '1' or form_error_i = '1') and (is_error = '1'))
+    --  ((ack_err = '1' or crc_err = '1' or
+    --    stuff_err = '1' or form_err_i = '1') and (is_err_frm = '1'))
     -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag"
     --  severity error;
     

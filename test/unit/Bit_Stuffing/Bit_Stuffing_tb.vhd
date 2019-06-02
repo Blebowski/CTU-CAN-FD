@@ -139,14 +139,14 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal fixed_stuff          :   std_logic := '0';  -- Common for both
     signal stuff_length            :   std_logic_vector(2 downto 0) := "100";
     signal destuff_length            :   std_logic_vector(2 downto 0) := "100";
-    signal stuff_error_enable   :   std_logic := '1';
+    signal stuff_err_enable   :   std_logic := '1';
 
     ----------------------------------------------------------------------------
     -- Status signals
     ----------------------------------------------------------------------------
     signal data_halt            :   std_logic := '0';
     signal destuffed            :   std_logic := '0';
-    signal stuff_error          :   std_logic := '0';
+    signal stuff_err          :   std_logic := '0';
     signal bst_ctr               :   natural range 0 to 7 := 0;
     signal dst_ctr               :   natural range 0 to 7 := 0;
 
@@ -635,10 +635,10 @@ begin
         res_n              =>  res_n,
         data_in            =>  joined_data,
         bds_trigger        =>  bds_trigger,
-        stuff_Error        =>  stuff_error,
+        stuff_err        =>  stuff_err,
         data_out           =>  rx_data,
         destuff_enable     =>  destuff_enable,
-        stuff_Error_enable =>  stuff_error_enable,
+        stuff_err_enable =>  stuff_err_enable,
         fixed_stuff        =>  fixed_stuff,
         destuff_length     =>  destuff_length,
         destuffed          =>  destuffed,
@@ -728,7 +728,7 @@ begin
 
             -- Now stuff error should be fired by bit destuffing, since
             -- bit value was forced to be the same as previous bits!
-            check(stuff_error = '1', "Stuff error not fired!");
+            check(stuff_err = '1', "Stuff error not fired!");
             wait until rising_edge(clk_sys);
             err_data <= '0';
         end if;

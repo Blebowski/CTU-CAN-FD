@@ -117,10 +117,10 @@ entity int_manager is
         err_detected            :in   std_logic;
 
         -- Error pasive /Error acitve functionality changed
-        error_passive_changed   :in   std_logic;
+        err_passive_changed     :in   std_logic;
 
         -- Error warning limit reached
-        error_warning_limit     :in   std_logic;
+        err_warning_limit       :in   std_logic;
 
         -- Arbitration was lost input
         arbitration_lost        :in   std_logic;
@@ -248,9 +248,9 @@ begin
     ---------------------------------------------------------------------------
     int_input_active(RXI_IND)       <= rec_valid;
     int_input_active(TXI_IND)       <= tran_valid;
-    int_input_active(EWLI_IND)      <= error_warning_limit;
+    int_input_active(EWLI_IND)      <= err_warning_limit;
     int_input_active(DOI_IND)       <= rx_data_overrun;
-    int_input_active(EPI_IND)       <= error_passive_changed;
+    int_input_active(EPI_IND)       <= err_passive_changed;
     int_input_active(ALI_IND)       <= arbitration_lost;
     int_input_active(BEI_IND)       <= err_detected;
     int_input_active(RXFI_IND)      <= rx_full;

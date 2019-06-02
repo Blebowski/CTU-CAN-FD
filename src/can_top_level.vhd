@@ -403,10 +403,10 @@ architecture rtl of can_top_level is
     signal err_detected            :   std_logic;
 
     -- Error pasive /Error acitve functionality changed
-    signal error_passive_changed   :   std_logic;
+    signal err_passive_changed   :   std_logic;
 
     -- Error warning limit reached
-    signal error_warning_limit     :   std_logic;
+    signal err_warning_limit     :   std_logic;
 
     -- Arbitration was lost input
     signal arbitration_lost        :   std_logic;
@@ -458,7 +458,7 @@ architecture rtl of can_top_level is
     signal trv_delay_calib      :  std_logic;
 
     -- Bit Error detected 
-    signal bit_error            :  std_logic;
+    signal bit_err              :  std_logic;
         
     -- Secondary sample signal 
     signal sample_sec           :  std_logic;
@@ -728,8 +728,8 @@ begin
 
         -- Interrupt sources
         err_detected            => err_detected,            -- IN
-        error_passive_changed   => error_passive_changed,   -- IN
-        error_warning_limit     => error_warning_limit,     -- IN
+        err_passive_changed     => err_passive_changed,     -- IN
+        err_warning_limit       => err_warning_limit,       -- IN
         arbitration_lost        => arbitration_lost,        -- IN
         tran_valid              => tran_valid,              -- IN
         br_shifted              => br_shifted,              -- IN
@@ -803,8 +803,8 @@ begin
         tran_valid              => tran_valid,              -- OUT
         br_shifted              => br_shifted,              -- OUT
         err_detected            => err_detected,            -- OUT
-        error_passive_changed   => error_passive_changed,   -- OUT
-        error_warning_limit     => error_warning_limit,     -- OUT
+        err_passive_changed     => err_passive_changed,     -- OUT
+        err_warning_limit       => err_warning_limit,       -- OUT
         is_overload             => is_overload,             -- OUT
 
         -- Prescaler interface 
@@ -822,7 +822,7 @@ begin
         sp_control              => sp_control,      -- OUT
         ssp_reset               => ssp_reset,       -- OUT
         trv_delay_calib         => trv_delay_calib, -- OUT
-        bit_error               => bit_error,       -- IN
+        bit_err                 => bit_err,         -- IN
         sample_sec              => sample_sec       -- IN
     );
     
@@ -901,7 +901,7 @@ begin
         ssp_reset               => ssp_reset,       -- IN
         trv_delay_calib         => trv_delay_calib, -- IN
         sample_sec              => sample_sec,      -- OUT
-        bit_error               => bit_error        -- OUT
+        bit_err                 => bit_err          -- OUT
     );
 
 end architecture;
