@@ -1031,5 +1031,10 @@ begin
     --  (is_transmitter = '1' and is_receiver = '1')
     --  report "Unit can't be transmitter and receiver simultaneously!"
     --  severity error;
+    
+    -- psl no_h_sync_in_data_bit_rate_asrt : assert always
+    --  (sync_control = HARD_SYNC) -> (sp_control = NOMINAL_SAMPLE)
+    --  report "Hard synchronisation shall be used in Nominal bit rate only!"
+    --  severity error;
 
 end architecture;
