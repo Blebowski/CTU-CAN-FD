@@ -2623,4 +2623,22 @@ begin
     txtb_ptr <= txtb_ptr_q;
     pc_state <= curr_state;
     
+
+    -----------------------------------------------------------------------
+    -- Assertions
+    -----------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl no_simul_crc_17_crc_21 : assert never
+    --  (crc_use_17 = '1' and crc_use_21 = '1')
+    --  report "Can't use simultaneously CRC 17 and CRC 21"
+    --  severity error;
+    
+    -- psl no_simul_rx_trigger_err_req : assert never
+    --  (rx_trigger = '1' and err_frm_req = '1')
+    --  report "RX Trigger and Error frame request can't be active at once " &
+    --  " since they should occur in different pipeline stages!"
+    --  severity error;
+
 end architecture;

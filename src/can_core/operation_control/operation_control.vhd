@@ -217,5 +217,15 @@ begin
     --  (set_transmitter = '1' or set_receiver = '1') and (curr_state = s_oc_off)
     -- report "Unit which is OFF can't be set to Transmitter or Receiver"
     -- severity error;
+    
+    -- psl no_simul_tx_rx_set_asrt : assert never
+    --  (set_transmitter = '1' and set_receiver = '1')
+    -- report "Unit can't be set to transmitter and receiver simultaneously!"
+    -- severity error;
+    
+    -- psl no_simul_tx_idle_set_asrt : assert never
+    --  (set_transmitter = '1' and set_idle = '1')
+    -- report "Unit can't be set to transmitter and idle simultaneously!"
+    -- severity error;
 
 end architecture;

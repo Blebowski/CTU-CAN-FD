@@ -1005,7 +1005,7 @@ begin
     fixed_stuff <= fixed_stuff_i;
     crc_src <= crc_src_i;
     arbitration_lost <= arbitration_lost_i;
-    
+
     ---------------------------------------------------------------------------
     -- Assertions
     ---------------------------------------------------------------------------
@@ -1019,8 +1019,17 @@ begin
     
     -- psl sample_sec_proper_asrt : assert never
     --  (sp_control = SECONDARY_SAMPLE and is_transmitter = '0')
-    --  report "Secondary sampling is allowed only for transmitter"
+    --  report "Secondary sampling is allowed only for transmitter!"
     --  severity error;
-
+    
+    -- psl no_simul_tx_rx_trigger_asrt : assert never
+    --  (tx_trigger = '1' and rx_trigger = '1')
+    --  report "RX Trigger and TX Trigger can't be active at once!"
+    --  severity error;
+    
+    -- psl no_simul_transmitter_receiver_asrt : assert never
+    --  (is_transmitter = '1' and is_receiver = '1')
+    --  report "Unit can't be transmitter and receiver simultaneously!"
+    --  severity error;
 
 end architecture;
