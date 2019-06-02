@@ -371,8 +371,8 @@ begin
     -- severity error;
     
     -- psl rx_buf_cmds_one_hot_asrt : assert always
-    --   (cmd_join = "0000" or cmd_join = "0001" or cmd_join = "0010"
-    --    or cmd_join = "0100" or cmd_join = "1000")
+    --   (now > 0 ps) -> (cmd_join = "0000" or cmd_join = "0001" or 
+    --    cmd_join = "0010" or cmd_join = "0100" or cmd_join = "1000")
     -- report "RX Buffer: RX Buffer commands should be one-hot encoded!"
     -- severity error;
 

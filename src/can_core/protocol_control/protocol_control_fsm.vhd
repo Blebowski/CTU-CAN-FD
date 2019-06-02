@@ -643,6 +643,9 @@ architecture rtl of protocol_control_fsm is
     -- places than enabled!
     signal bit_err_disable           :  std_logic;
     
+    -- Bit Error is disabled for receiver in most of the frame!
+    signal bit_err_disable_receiver  :  std_logic;
+    
     -- TXT Buffer pointer
     signal txtb_ptr_d             :  natural range 0 to 19;
     signal txtb_ptr_q             :  natural range 0 to 19;
@@ -700,7 +703,8 @@ begin
 
     arbitration_lost_condition <= '1' when (is_transmitter = '1' and 
                                             tx_data_wbs = RECESSIVE and
-                                            rx_data = DOMINANT)
+                                            rx_data = DOMINANT and
+                                            rx_trigger = '1')
                                       else
                                   '0';
 
@@ -1243,6 +1247,7 @@ begin
         crc_error_i <= '0';
         bit_error_arb_i <= '0';
         bit_err_disable <= '0';
+        bit_err_disable_receiver <= '0';
         crc_clear_match_flag <= '0';
         err_pos <= ERC_POS_OTHER;
         
@@ -1446,6 +1451,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_ide =>
                 rx_store_ide_i <= '1';
+                bit_err_disable <= '1';
                 crc_enable <= '1';
                 txtb_ptr_d <= 1;
                 alc_id_field <= ALC_IDE;
@@ -1565,6 +1571,7 @@ begin
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
                 is_control <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 if (is_transmitter = '1') then
                     if (tran_frame_type = NORMAL_CAN) then
@@ -1585,6 +1592,7 @@ begin
                 trv_delay_calib <= '1';
                 crc_enable <= '1';
                 is_control <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
@@ -1606,6 +1614,7 @@ begin
                 perform_hsync <= '1';
                 crc_enable <= '1';
                 is_control <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 if (is_transmitter = '1') then
                     tx_dominant <= '1';
@@ -1627,6 +1636,7 @@ begin
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
                 is_control <= '1';
+                bit_err_disable_receiver <= '1';
             
                 if (rx_data = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
@@ -1652,6 +1662,7 @@ begin
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
                 is_control <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 if (is_transmitter = '1' and tran_brs = BR_NO_SHIFT) then
                     tx_dominant <= '1';
@@ -1673,6 +1684,7 @@ begin
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
                 is_control <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 if (is_transmitter = '1' and is_err_active = '1') then
                     tx_dominant <= '1';
@@ -1688,6 +1700,7 @@ begin
                 err_pos <= ERC_POS_CTRL;
                 crc_enable <= '1';
                 is_control <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 -- Address first Data Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! Do it only when tran-
@@ -1728,6 +1741,7 @@ begin
                 crc_enable <= '1';
                 is_data <= '1';
                 compl_ctr_ena_i <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 -- Address next word (the one after actually transmitted one),
                 -- so that when current word ends, TXT Buffer RAM already
@@ -1772,6 +1786,7 @@ begin
                 err_pos <= ERC_POS_CRC;
                 crc_enable <= '1';
                 is_stuff_count <= '1';
+                bit_err_disable_receiver <= '1';
                 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_val <= crc_length_i;
@@ -1794,6 +1809,7 @@ begin
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_CRC;
                 is_crc <= '1';
+                bit_err_disable_receiver <= '1';
 
                 if (is_fd_frame = '1') then
                     stuff_length <= std_logic_vector(to_unsigned(4, 3));
@@ -2054,6 +2070,7 @@ begin
             when s_pc_idle =>
                 perform_hsync <= '1';
                 crc_spec_enable <= '1';
+                bit_err_disable <= '1';
 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -2339,7 +2356,11 @@ begin
             txtb_hw_cmd_q.arbl    <= '0';
             txtb_hw_cmd_q.failed  <= '0';
         elsif (rising_edge(clk_sys)) then
-            txtb_hw_cmd_q <= txtb_hw_cmd_d;
+            if (rx_trigger = '1') then
+                txtb_hw_cmd_q <= txtb_hw_cmd_d;
+            else
+                txtb_hw_cmd_q <= ('0', '0', '0', '0', '0', '0');
+            end if;
         end if;
     end process;
 
@@ -2477,6 +2498,18 @@ begin
     no_pos_resync <= '1' when (is_transmitter = '1' and tx_data_wbs = DOMINANT)
                          else
                      '0';
+    
+    ---------------------------------------------------------------------------
+    -- Bit error is disabled:
+    --  1. In arbitration field, there it is detected extra since only
+    --     transmitting dominant and receiving recessive is trated as bit error.
+    --  2. For receiver during control, data, CRC fields!
+    ---------------------------------------------------------------------------                 
+    bit_error_enable <= '0' when (bit_err_disable = '1') else
+                        '0' when (bit_err_disable_receiver = '1' and
+                                  is_receiver = '1')
+                            else
+                        '1';
 
     ---------------------------------------------------------------------------
     -- Retransmitt counter is manipulated only for one clock cycle
@@ -2583,6 +2616,4 @@ begin
     txtb_ptr <= txtb_ptr_q;
     pc_state <= curr_state;
     
-    bit_error_enable <= not bit_err_disable;
-
 end architecture;
