@@ -76,8 +76,8 @@ end dlc_decoder;
 
 architecture rtl of dlc_decoder is
 
-    signal data_len_8_to_64     :   std_logic_vector(6 downto 0);
-    signal data_len_8_to_64_int :   natural range 0 to 64;
+    signal data_len_8_to_64         :   std_logic_vector(6 downto 0);
+    signal data_len_8_to_64_integer :   natural range 0 to 64;
     
     -- Data length fot standard CAN 2.0 frame
     signal data_len_can_2_0     :   std_logic_vector(6 downto 0);       
@@ -93,7 +93,7 @@ begin
     dlc_int <= to_integer(unsigned(dlc));
 
     -- Decoder for DLCs higher than 8 in CAN FD Frame
-    data_len_8_to_64_int <=
+    data_len_8_to_64_integer <=
         12 when (dlc = "1001") else
         16 when (dlc = "1010") else
         20 when (dlc = "1011") else
@@ -104,7 +104,7 @@ begin
         0;
 
     -- Typecast byte length in CAN FD frame to vector
-    data_len_8_to_64 <= std_logic_vector(to_unsigned(data_len_8_to_64_int, 7));
+    data_len_8_to_64 <= std_logic_vector(to_unsigned(data_len_8_to_64_integer, 7));
 
 
     -- Mux for CAN 2.0 DLC:

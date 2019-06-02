@@ -176,7 +176,7 @@ end entity;
 architecture rtl of rx_shift_reg is
 
     -- Internal reset
-    signal res_n_internal : std_logic;
+    signal res_n_i : std_logic;
 
     -- Shift register status
     signal rx_shift_reg_q : std_logic_vector(31 downto 0);
@@ -190,10 +190,10 @@ architecture rtl of rx_shift_reg is
 begin
 
      -- Internal reset: Async reset + reset by design!
-    res_n_internal <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY or 
-                                             rx_clear = '1')
-                                       else
-                      not (G_RESET_POLARITY);
+    res_n_i <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY or 
+                                      rx_clear = '1')
+                                else
+               not (G_RESET_POLARITY);
 
     ---------------------------------------------------------------------------
     -- Shift the register when it is enabled and RX Trigger is active!
@@ -227,7 +227,7 @@ begin
     )
     port map(
         clk                  => clk_sys,
-        res_n                => res_n_internal,
+        res_n                => res_n_i,
         input                => rx_data,
         byte_clock_ena       => rx_shift_cmd,
         byte_input_sel       => rx_shift_in_sel_demuxed,
@@ -237,9 +237,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store Identifier
     ---------------------------------------------------------------------------
-    id_store_proc : process(clk_sys, res_n_internal)
+    id_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rec_ident <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_base_id = '1') then
@@ -257,9 +257,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store IDE bit (Identifier type)
     ---------------------------------------------------------------------------
-    ide_store_proc : process(clk_sys, res_n_internal)
+    ide_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rec_ident_type <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_ide = '1') then
@@ -271,9 +271,9 @@ begin
     ---------------------------------------------------------------------------
     -- RX Store RTR bit (Remote transmission request bit)
     ---------------------------------------------------------------------------
-    rx_store_proc : process(clk_sys, res_n_internal)
+    rx_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rec_is_rtr <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_rtr = '1') then
@@ -285,9 +285,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store EDL/FDF bit (Extended data length or Flexible data-rate format)
     ---------------------------------------------------------------------------
-    edl_store_proc : process(clk_sys, res_n_internal)
+    edl_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rec_frame_type <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_edl = '1') then
@@ -299,9 +299,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store ESI bit (Error state indicator)
     ---------------------------------------------------------------------------
-    esi_store_proc : process(clk_sys, res_n_internal)
+    esi_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rec_esi <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_esi = '1') then
@@ -313,9 +313,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store BRS bit (Bit rate shift)
     ---------------------------------------------------------------------------
-    brs_store_proc : process(clk_sys, res_n_internal)
+    brs_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rec_brs <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_brs = '1') then
@@ -327,9 +327,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store DLC (Data length code)
     ---------------------------------------------------------------------------
-    dlc_store_proc : process(clk_sys, res_n_internal)
+    dlc_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rec_dlc <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_dlc = '1') then
@@ -341,9 +341,9 @@ begin
     ---------------------------------------------------------------------------
     -- Store RX Stuff Count
     ---------------------------------------------------------------------------
-    stuff_count_store_proc : process(clk_sys, res_n_internal)
+    stuff_count_store_proc : process(clk_sys, res_n_i)
     begin
-        if (res_n_internal = G_RESET_POLARITY) then
+        if (res_n_i = G_RESET_POLARITY) then
             rx_stuff_count <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (rx_store_stuff_count = '1') then
@@ -387,7 +387,7 @@ begin
     --  severity error;
     
     -- psl no_simul_capture_and_clear : assert never
-    --  (res_n_internal = G_RESET_POLARITY) and
+    --  (res_n_i = G_RESET_POLARITY) and
     --  (rx_store_base_id = '1' or rx_store_ext_id = '1' or 
     --   rx_store_ide = '1' or rx_store_rtr = '1' or rx_store_edl = '1' or
     --   rx_store_dlc = '1' or rx_store_esi = '1' or rx_store_brs = '1' or

@@ -143,7 +143,7 @@ end entity;
 
 architecture rtl of bit_stuffing is
 
-    signal data_out_int        :     std_logic;
+    signal data_out_i        :     std_logic;
 
     ---------------------------------------------------------------------------
     -- Counter with number of equal consequent bits
@@ -227,7 +227,7 @@ architecture rtl of bit_stuffing is
 
 begin
 
-    data_out <= data_out_int;
+    data_out <= data_out_i;
 
     ---------------------------------------------------------------------------
     -- Registering previous value of enable input to detect 0->1 transition.
@@ -325,7 +325,7 @@ begin
     ---------------------------------------------------------------------------
     same_bits_rst_trig <= '1' when (non_fix_to_fix_chng = '1') or
                                    (stuff_lvl_reached = '1') or
-                                   (data_in /= data_out_int and fixed_stuff = '0')
+                                   (data_in /= data_out_i and fixed_stuff = '0')
                               else
                           '0';
 
@@ -408,13 +408,13 @@ begin
     --  3. Pipe the input data upon trigger without stufffing
     --  4. Keep previous value otherwise
     ---------------------------------------------------------------------------
-    data_out_nxt_ena <= (not data_out_int) when (bst_trigger = '1' and insert_stuff_bit = '1') else
+    data_out_nxt_ena <= (not data_out_i) when (bst_trigger = '1' and insert_stuff_bit = '1') else
                         data_in        when (bst_trigger = '1') else
-                        data_out_int;
+                        data_out_i;
 
     data_out_nxt <= data_out_nxt_ena when (stuff_enable = '1') else
                     data_in          when (bst_trigger = '1') else
-                    data_out_int;
+                    data_out_i;
 
     data_out_load <= '1' when (stuff_enable = '1' or bst_trigger = '1') else
                      '0';
@@ -435,7 +435,7 @@ begin
 
         input              => data_out_nxt,
         ce                 => data_out_load,
-        output             => data_out_int
+        output             => data_out_i
     );
 
 

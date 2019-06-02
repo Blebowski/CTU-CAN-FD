@@ -145,7 +145,7 @@ entity rx_buffer_pointers is
         write_pointer_extra_ts :out     integer range 0 to G_RX_BUFF_SIZE - 1;
 
         -- Number of free memory words available for user
-        rx_mem_free_int        :out     integer range 0 to G_RX_BUFF_SIZE + 1
+        rx_mem_free_i          :out     integer range 0 to G_RX_BUFF_SIZE + 1
     );
 end entity;
 
@@ -163,7 +163,7 @@ architecture rtl of rx_buffer_pointers is
     signal write_pointer_extra_ts_d  :    integer range 0 to G_RX_BUFF_SIZE - 1;
     signal write_pointer_extra_ts_ce :    std_logic;
     
-    signal rx_mem_free_int_i     :       integer range 0 to G_RX_BUFF_SIZE + 1;
+    signal rx_mem_free_i_i     :       integer range 0 to G_RX_BUFF_SIZE + 1;
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -184,7 +184,7 @@ architecture rtl of rx_buffer_pointers is
 
     -- Number of free memory words available to SW, combinationally icnremented
     -- by 1.
-    signal rx_mem_free_int_inc_1    :       integer range 0 to G_RX_BUFF_SIZE + 2;
+    signal rx_mem_free_i_inc_1    :       integer range 0 to G_RX_BUFF_SIZE + 2;
 
 begin
     read_pointer <= read_pointer_i;
@@ -192,7 +192,7 @@ begin
     write_pointer <= write_pointer_i;
     write_pointer_raw <= write_pointer_raw_i;
     write_pointer_extra_ts <= write_pointer_extra_ts_i;
-    rx_mem_free_int <= rx_mem_free_int_i;
+    rx_mem_free_i <= rx_mem_free_i_i;
 
 
     ----------------------------------------------------------------------------
@@ -284,7 +284,7 @@ begin
     mem_free_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            rx_mem_free_int_i       <= G_RX_BUFF_SIZE;
+            rx_mem_free_i_i       <= G_RX_BUFF_SIZE;
             rx_mem_free_raw         <= G_RX_BUFF_SIZE;
 
         elsif (rising_edge(clk_sys)) then
@@ -297,7 +297,7 @@ begin
                 -- Read of memory word, and abort at the same time. Revert last
                 -- commited value of read pointer incremented by 1.
                 if (rec_abort_f = '1' or commit_overrun_abort = '1') then
-                    rx_mem_free_raw <= rx_mem_free_int_inc_1;
+                    rx_mem_free_raw <= rx_mem_free_i_inc_1;
 
                 -- Read of memory word and no write of memory word. Load raw
                 -- value incremented by 1.
@@ -313,7 +313,7 @@ begin
                 -- Abort, or abort was previously flaged -> Revert last commited
                 -- value.
                 if (rec_abort_f = '1' or commit_overrun_abort = '1') then
-                    rx_mem_free_raw <= rx_mem_free_int_i;
+                    rx_mem_free_raw <= rx_mem_free_i_i;
 
                 -- No read, write only, decrement by 1.
                 elsif (write_raw_OK = '1') then
@@ -328,13 +328,13 @@ begin
             --------------------------------------------------------------------
             if (read_increment = '1') then
                 if (commit_rx_frame = '1') then        
-                    rx_mem_free_int_i <= rx_mem_free_raw_inc_1;
+                    rx_mem_free_i_i <= rx_mem_free_raw_inc_1;
                 else
-                    rx_mem_free_int_i <= rx_mem_free_int_inc_1;
+                    rx_mem_free_i_i <= rx_mem_free_i_inc_1;
                 end if;
     
             elsif (commit_rx_frame = '1') then
-                rx_mem_free_int_i     <= rx_mem_free_raw;
+                rx_mem_free_i_i     <= rx_mem_free_raw;
             end if;
 
         end if;
@@ -344,9 +344,9 @@ begin
     ----------------------------------------------------------------------------
     -- Calculating incremented value of free memory combinationally
     ----------------------------------------------------------------------------
-    mem_free_arith_proc : process(rx_mem_free_int_i, rx_mem_free_raw)
+    mem_free_arith_proc : process(rx_mem_free_i_i, rx_mem_free_raw)
     begin
-        rx_mem_free_int_inc_1   <= rx_mem_free_int_i + 1;
+        rx_mem_free_i_inc_1   <= rx_mem_free_i_i + 1;
         rx_mem_free_raw_inc_1   <= rx_mem_free_raw + 1;
         rx_mem_free_raw_dec_1   <= rx_mem_free_raw - 1;
     end process;
@@ -379,10 +379,10 @@ begin
     --      cover (rx_mem_free_raw = G_RX_BUFF_SIZE);
     --
     -- psl rx_no_int_mem_free_cov : 
-    --      cover (rx_mem_free_int = 0);
+    --      cover (rx_mem_free_i = 0);
     --
     -- psl rx_all_int_mem_free_cov : 
-    --      cover (rx_mem_free_int = G_RX_BUFF_SIZE);
+    --      cover (rx_mem_free_i = G_RX_BUFF_SIZE);
     --
     -- psl rx_write_ptr_higher_than_read_ptr_cov : 
     --      cover (write_pointer_i > read_pointer_i);

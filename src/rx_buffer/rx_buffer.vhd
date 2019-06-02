@@ -336,7 +336,7 @@ architecture rtl of rx_buffer is
     signal memory_write_data        :       std_logic_vector(31 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_int          :       integer range 0 to G_RX_BUFF_SIZE + 1;
+    signal rx_mem_free_i            :       integer range 0 to G_RX_BUFF_SIZE + 1;
 
 
     ----------------------------------------------------------------------------
@@ -350,17 +350,17 @@ architecture rtl of rx_buffer is
     -- Internal data overrun flag. This flag is not available to SW, but it
     -- is restarted automatically at the beginning of each new frame reception!
     -- This allows to accept next frames when overrun occurred on previous ones!
-    signal data_overrun_int         :       std_logic;
+    signal data_overrun_i           :       std_logic;
 
     -- Combinationally decoded overrun condition. Active when there is intention
     -- to store word to the memory, but there is not enough free space! 
-    signal overrun_condition        :       boolean;
+    signal overrun_condition        :       std_logic;
 
      -- RX Buffer is empty (no frame is stored in it)
-    signal rx_empty_int             :       std_logic;
+    signal rx_empty_i               :       std_logic;
 
     -- Indicator of at least one free word in RX FIFO!
-    signal is_free_word             :       boolean;
+    signal is_free_word             :       std_logic;
 
     -- Number of frames currently stored in RX Buffer. Smallest frame length
     -- stored is 4 (FRAME_FORMAT +  IDENTIFIER + 2 * TIMESTAMP). Since we need
@@ -370,8 +370,8 @@ architecture rtl of rx_buffer is
 
     -- Counter for reading the frame. When whole frame is read,
     -- number of frames must be decremented.
-    signal read_frame_counter_d       :       natural range 0 to 31;
-    signal read_frame_counter_q       :       natural range 0 to 31;
+    signal read_frame_counter_d     :       natural range 0 to 31;
+    signal read_frame_counter_q     :       natural range 0 to 31;
 
 
     ----------------------------------------------------------------------------
@@ -490,17 +490,17 @@ begin
     rx_data_overrun       <= data_overrun_r;
     rx_buf_size           <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
 
-    rx_empty_int          <= '1' when (message_count = 0)
+    rx_empty_i            <= '1' when (message_count = 0)
                                  else
                              '0'; 
 
-    rx_full               <= '1' when (rx_mem_free_int = 0)
+    rx_full               <= '1' when (rx_mem_free_i = 0)
                                  else
                              '0';
 
     rx_message_count      <= std_logic_vector(to_unsigned(message_count, 11)); 
-    rx_mem_free           <= std_logic_vector(to_unsigned(rx_mem_free_int, 13));
-    rx_empty              <= rx_empty_int;
+    rx_mem_free           <= std_logic_vector(to_unsigned(rx_mem_free_i, 13));
+    rx_empty              <= rx_empty_i;
 
     ----------------------------------------------------------------------------
     -- Common reset signal. Whole buffer can be reset by two ways:
@@ -584,7 +584,7 @@ begin
         write_pointer           => write_pointer,           -- OUT
         write_pointer_raw       => write_pointer_raw,       -- OUT
         write_pointer_extra_ts  => write_pointer_extra_ts,  -- OUT
-        rx_mem_free_int         => rx_mem_free_int          -- OUT
+        rx_mem_free_i           => rx_mem_free_i            -- OUT
     );
 
 
@@ -615,19 +615,16 @@ begin
     ----------------------------------------------------------------------------
     -- Signalling that read which came is valid (there is sth to read)
     ----------------------------------------------------------------------------
-    read_increment        <= '1' when (drv_read_start = '1' and
-                                        rx_empty_int = '0')
-                                  else
-                             '0';
-
+    read_increment <= '1' when (drv_read_start = '1' and rx_empty_i = '0') else
+                      '0';
 
     ----------------------------------------------------------------------------
     -- Signalling that FSM may progress with the write (there is enough space
     -- in the buffer, nor any previous data were lost due to overrun)
     ----------------------------------------------------------------------------
     write_raw_OK         <= '1' when (write_raw_intent = '1' and
-                                       overrun_condition = false and
-                                       data_overrun_int = '0')
+                                       overrun_condition = '0' and
+                                       data_overrun_i = '0')
                                 else
                             '0';
 
@@ -639,10 +636,10 @@ begin
     -- are equal, then memory is empty! If there is at least one frame and
     -- pointers are equal, then memory must be full!
     ----------------------------------------------------------------------------
-    is_free_word          <= false when (read_pointer = write_pointer_raw and
-                                         message_count > 0)
-                                   else
-                             true;
+    is_free_word          <= '0' when (read_pointer = write_pointer_raw and
+                                       message_count > 0)
+                                 else
+                             '1';
 
     ----------------------------------------------------------------------------
     -- Overrun condition. Following conditions must be met:
@@ -652,19 +649,18 @@ begin
     --      for overrun!
     --  2. There is no free word in the memory remaining!
     ----------------------------------------------------------------------------
-    overrun_condition    <= true when (write_raw_intent = '1' and 
-                                       (is_free_word = false))
-                                 else
-                            false;
+    overrun_condition <= '1' when (write_raw_intent = '1' and 
+                                  (is_free_word = '0'))
+                             else
+                         '0';
 
 
     ----------------------------------------------------------------------------
     -- When buffer is empty the word on address of read pointer is not valid,
     -- provide zeroes instead
     ----------------------------------------------------------------------------
-    rx_read_buff          <= RAM_data_out when (rx_empty_int = '0')
-                                          else
-                             (OTHERS => '0');
+    rx_read_buff <= RAM_data_out when (rx_empty_i = '0') else
+                    (OTHERS => '0');
 
 
     ----------------------------------------------------------------------------
@@ -818,7 +814,7 @@ begin
             if (((rec_valid_f = '1' and drv_rtsopt = RTS_BEG) or
                  (store_extra_ts_end = '1')))
             then
-                if (data_overrun_int = '0') then
+                if (data_overrun_i = '0') then
                     commit_rx_frame         <= '1';
                 else
                     commit_overrun_abort    <= '1';
@@ -841,7 +837,7 @@ begin
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
             data_overrun_r      <= '0';
-            data_overrun_int    <= '0';
+            data_overrun_i      <= '0';
 
         elsif (rising_edge(clk_sys)) then
 
@@ -849,12 +845,12 @@ begin
             -- Internal Data overrun flag -> cleared by new frame!
             --------------------------------------------------------------------
             if (reset_overrun_flag = '1') then
-                data_overrun_int    <= '0';
+                data_overrun_i    <= '0';
 
-            elsif (overrun_condition) then
-                data_overrun_int    <= '1';
+            elsif (overrun_condition = '1') then
+                data_overrun_i    <= '1';
             else
-                data_overrun_int    <= data_overrun_int;
+                data_overrun_i    <= data_overrun_i;
             end if;
 
             --------------------------------------------------------------------
@@ -863,7 +859,7 @@ begin
             if (drv_clr_ovr = '1') then
                 data_overrun_r  <= '0';
  
-            elsif (overrun_condition) then
+            elsif (overrun_condition = '1') then
                 data_overrun_r  <= '1';
             else
                 data_overrun_r  <= data_overrun_r;
@@ -898,8 +894,8 @@ begin
 
     -- Memory written either on regular write or Extra timestamp write
     RAM_write  <= '1' when (write_raw_OK = '1' or
-                           (write_extra_ts = '1' and data_overrun_int = '0' and
-                            overrun_condition = false))
+                           (write_extra_ts = '1' and data_overrun_i = '0' and
+                            overrun_condition = '0'))
                       else
                   '0';
 
@@ -1016,13 +1012,13 @@ begin
     --      cover {(rx_full = '1'); (rx_full = '0')};
     --
     -- psl rx_buf_overrun_cov :
-    --      cover (overrun_condition = true);
+    --      cover (overrun_condition = '1');
     --
     -- psl rx_buf_commit_overrun_abort_cov :
     --      cover (commit_overrun_abort = '1');
     --
     -- psl rx_buf_overrun_flags_cov :
-    --      cover (data_overrun_int = '1' and data_overrun_r = '1');
+    --      cover (data_overrun_i = '1' and data_overrun_r = '1');
     --
     -- psl rx_buf_overrun_clear_cov :
     --      cover (drv_clr_ovr = '1');
