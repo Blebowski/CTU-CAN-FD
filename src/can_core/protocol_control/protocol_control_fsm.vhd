@@ -1668,7 +1668,7 @@ begin
                     tx_dominant <= '1';
                 end if;
                 
-                if (rx_data = DOMINANT and rx_trigger = '1') then
+                if (rx_data = RECESSIVE and rx_trigger = '1') then
                     sp_control_switch_data <= '1';
                     br_shifted <= '1';
                 end if;
@@ -1834,7 +1834,8 @@ begin
                 end if;
                 
                 if (sp_control_q = DATA_SAMPLE or 
-                    sp_control_q = SECONDARY_SAMPLE)
+                    sp_control_q = SECONDARY_SAMPLE) and
+                    (rx_trigger = '1')
                 then
                     sp_control_switch_nominal <= '1';
                     br_shifted <= '1';

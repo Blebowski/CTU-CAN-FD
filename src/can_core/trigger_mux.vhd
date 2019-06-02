@@ -243,7 +243,8 @@ begin
         output             => crc_data_rx_wbs
     );
     
-    crc_trig_rx_wbs <= '1' when (rx_triggers(0) = '1' and destuffed = '0') else
+    crc_trig_rx_wbs <= '0' when (fixed_stuff = '1' and destuffed = '1') else
+                       '1' when (rx_triggers(0) = '1') else
                        '0';
 
 end architecture;

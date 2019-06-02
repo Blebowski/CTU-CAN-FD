@@ -221,6 +221,11 @@ architecture rtl of error_detector is
 
     -- Destuff counter converted to vector
     signal dst_ctr_vect    : std_logic_vector(2 downto 0);
+    
+    -- Aliases for received CRC (for easier debugging)
+    signal rx_crc_15       : std_logic_vector(14 downto 0);
+    signal rx_crc_17       : std_logic_vector(16 downto 0);
+    signal rx_crc_21       : std_logic_vector(20 downto 0);
 
 begin
 
@@ -288,19 +293,21 @@ begin
                              else
                          '0';
 
+    -- CRC aliases from RX Shift register
+    rx_crc_15 <= rx_crc(14 downto 0);
+    rx_crc_17 <= rx_crc(16 downto 0);
+    rx_crc_21 <= rx_crc(20 downto 0);
+    
     -- CRC 15 bits check
-    crc_15_ok <= '1' when (rx_crc(14 downto 0) = crc_15)
-                     else
+    crc_15_ok <= '1' when (rx_crc_15 = crc_15) else
                  '0';
 
     -- CRC 17 check
-    crc_17_ok <= '1' when (rx_crc(16 downto 0) = crc_17)
-                     else
+    crc_17_ok <= '1' when (rx_crc_17 = crc_17) else
                  '0';
                  
     -- CRC 21 check
-    crc_21_ok <= '1' when (rx_crc(20 downto 0) = crc_21)
-                     else
+    crc_21_ok <= '1' when (rx_crc_21 = crc_21) else
                  '0';
 
     -- Stuff counter OK, including parity!
