@@ -150,7 +150,7 @@ entity bus_sampling is
         drv_bus              :in   std_logic_vector(1023 downto 0);
         
         -- Measured Transceiver delay 
-        trv_delay            :out  std_logic_vector(15 downto 0);
+        trv_delay            :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
           
         ------------------------------------------------------------------------
         -- Prescaler interface
@@ -253,8 +253,6 @@ architecture rtl of bus_sampling is
     -- by ssp_offset.
     signal ssp_delay            : std_logic_vector(7 downto 0);
     
-    -- Measured transceived delay.
-    signal trv_delay_i          : std_logic_vector(6 downto 0);
 
     ---------------------------------------------------------------------------
     -- Reset for shift registers. This is used instead of shift register with
@@ -315,19 +313,9 @@ begin
         ssp_offset             => drv_ssp_offset,           -- IN                    
         ssp_delay_select       => drv_ssp_delay_select,     -- IN
         
-        trv_meas_progress      => open,                     -- OUT
-        trv_delay_shadowed     => trv_delay_i,              -- OUT
+        trv_delay_shadowed     => trv_delay,                -- OUT
         ssp_delay_shadowed     => ssp_delay                 -- OUT
     );
-
-    
-    ---------------------------------------------------------------------------
-    -- Propagate measured transceiver delay to output so that it can be
-    -- read from Memory registers.
-    ---------------------------------------------------------------------------
-    trv_delay(trv_delay'length - 1 downto trv_delay_i'length) <=
-        (OTHERS => '0');
-    trv_delay(trv_delay_i'length - 1 downto 0) <= trv_delay_i;
 
 
     ---------------------------------------------------------------------------

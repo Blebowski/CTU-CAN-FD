@@ -166,8 +166,6 @@ entity trv_delay_measurement is
         ------------------------------------------------------------------------
         -- Status outputs
         ------------------------------------------------------------------------
-        -- Transceiver delay measurement is in progress
-        trv_meas_progress   :out  std_logic;
         
         -- Shadowed value of Transceiver delay. Updated when measurement ends.
         trv_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
@@ -359,10 +357,5 @@ begin
                                 (trv_meas_progress_i = '0')
                            else
                        '0';
-
-    ---------------------------------------------------------------------------
-    -- Propagation of internal signals to output
-    ---------------------------------------------------------------------------
-    trv_meas_progress <= trv_meas_progress_i;
 
 end architecture;

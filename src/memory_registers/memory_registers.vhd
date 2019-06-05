@@ -170,6 +170,9 @@ entity memory_registers is
         -- Number of Interrupts
         G_INT_COUNT         : natural                         := 12;
 
+        -- Width (number of bits) in transceiver delay measurement counter
+        G_TRV_CTR_WIDTH     : natural                         := 7;
+
         -- DEVICE_ID (read from register)
         G_DEVICE_ID         : std_logic_vector(15 downto 0)   := x"CAFD";
 
@@ -286,7 +289,7 @@ entity memory_registers is
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
         -- Measured Transceiver Delay
-        trv_delay            :in   std_logic_vector(15 downto 0);
+        trv_delay            :in   std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
             
         ------------------------------------------------------------------------
         -- Interrrupt Interface
@@ -1261,7 +1264,7 @@ begin
         Control_registers_in.trv_delay(
             align_reg_to_wrd(TRV_DELAY_VALUE_H, length) downto
             align_reg_to_wrd(TRV_DELAY_VALUE_L, length)) <=
-            trv_delay;
+            "00000000" & trv_delay;
  
     end block trv_delay_block;
 

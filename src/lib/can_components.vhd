@@ -203,7 +203,7 @@ package can_components is
             drv_bus              :in   std_logic_vector(1023 downto 0);
             
             -- Measured Transceiver delay 
-            trv_delay            :out  std_logic_vector(15 downto 0);
+            trv_delay            :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
               
             ------------------------------------------------------------------------
             -- Prescaler interface
@@ -429,9 +429,6 @@ package can_components is
         ------------------------------------------------------------------------
         -- Status outputs
         ------------------------------------------------------------------------
-        -- Transceiver delay measurement is in progress
-        trv_meas_progress   :out  std_logic;
-        
         -- Shadowed value of Transceiver delay. Updated when measurement ends.
         trv_delay_shadowed  :out  std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
                                                
@@ -2875,6 +2872,9 @@ package can_components is
 
         -- Number of Interrupts
         G_INT_COUNT         : natural                         := 12;
+        
+        -- Width (number of bits) in transceiver delay measurement counter
+        G_TRV_CTR_WIDTH     : natural                         := 7;
 
         -- DEVICE_ID (read from register)
         G_DEVICE_ID         : std_logic_vector(15 downto 0)   := x"CAFD";
@@ -2992,7 +2992,7 @@ package can_components is
         -- Bus synchroniser interface
         ------------------------------------------------------------------------
         -- Measured Transceiver Delay
-        trv_delay            :in   std_logic_vector(15 downto 0);
+        trv_delay            :in   std_logic_vector(G_TRV_CTR_WIDTH - 1 downto 0);
                     
         ------------------------------------------------------------------------
         -- Interrrupt Interface

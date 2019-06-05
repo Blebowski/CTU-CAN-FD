@@ -440,7 +440,7 @@ architecture rtl of can_top_level is
     -- Bus Sampling <-> Memory Registers Interface
     ------------------------------------------------------------------------
     -- Measured Transceiver delay 
-    signal trv_delay     : std_logic_vector(15 downto 0);
+    signal trv_delay     : std_logic_vector(C_TRV_CTR_WIDTH - 1 downto 0);
     
     ------------------------------------------------------------------------
     -- Bus Sampling <-> CAN Core Interface
@@ -507,6 +507,7 @@ begin
         G_TXT_BUFFER_COUNT  => C_TXT_BUFFER_COUNT, 
         G_ID                => ID,
         G_INT_COUNT         => C_INT_COUNT,
+        G_TRV_CTR_WIDTH     => C_TRV_CTR_WIDTH,
         G_DEVICE_ID         => C_CAN_DEVICE_ID,
         G_VERSION_MINOR     => C_CTU_CAN_FD_VERSION_MINOR,
         G_VERSION_MAJOR     => C_CTU_CAN_FD_VERSION_MAJOR
