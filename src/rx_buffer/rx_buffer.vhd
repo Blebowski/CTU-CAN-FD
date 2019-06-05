@@ -328,10 +328,6 @@ architecture rtl of rx_buffer is
     -- data frame!
     signal write_pointer_extra_ts   : std_logic_vector(11 downto 0);
 
-    -- Final pointer to memory. "write_pointer_raw" and 
-    -- "write_pointer_extra_ts" are multiplexed based on RX FSM! 
-    signal memory_write_pointer     : std_logic_vector(11 downto 0);
-
     -- Number of free memory words available to SW after frame was committed.
     signal rx_mem_free_i            : std_logic_vector(12 downto 0);
 
@@ -593,16 +589,6 @@ begin
         write_pointer_extra_ts  => write_pointer_extra_ts,  -- OUT
         rx_mem_free_i           => rx_mem_free_i            -- OUT
     );
-
-
-    ----------------------------------------------------------------------------
-    -- Final write pointer is multiplexed between "write_pointer_raw" for
-    -- regular writes and "write_pointer_extra_ts" for writes of timestamp
-    -- in the end of frame!
-    ----------------------------------------------------------------------------
-    memory_write_pointer   <= write_pointer_extra_ts when (write_extra_ts = '1')
-                                                     else
-                              write_pointer_raw;
 
 
     ----------------------------------------------------------------------------
@@ -906,11 +892,14 @@ begin
                       else
                   '0';
 
-    ---------------------------------------------------------------------------
-    -- Write address is given by write pointer
-    ---------------------------------------------------------------------------
-    RAM_write_address <= memory_write_pointer;
-
+    ----------------------------------------------------------------------------
+    -- Memory write address is multiplexed between "write_pointer_raw" for
+    -- regular writes and "write_pointer_extra_ts" for writes of timestamp
+    -- in the end of frame!
+    ----------------------------------------------------------------------------
+    RAM_write_address   <= write_pointer_extra_ts when (write_extra_ts = '1')
+                                                  else
+                           write_pointer_raw;
 
     ----------------------------------------------------------------------------
     -- RAM read address is given by read pointers. If no transaction for read
