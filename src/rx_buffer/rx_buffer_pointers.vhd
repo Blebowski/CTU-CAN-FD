@@ -127,72 +127,93 @@ entity rx_buffer_pointers is
         -- Status outputs
         -----------------------------------------------------------------------
         -- Read Pointer (access from SW)
-        read_pointer           :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        read_pointer           :out  std_logic_vector(11 downto 0);
 
         -- Read pointer incremented by 1 (combinationally)
-        read_pointer_inc_1     :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        read_pointer_inc_1     :out  std_logic_vector(11 downto 0);
 
         -- Write pointer (committed, available to SW, after frame was stored)
-        write_pointer          :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        write_pointer          :out  std_logic_vector(11 downto 0);
 
         -- Write pointer RAW. Changing during frame, as frame is continously stored
         -- to the buffer. When frame is sucesfully received, it is updated to
         -- write pointer!
-        write_pointer_raw      :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        write_pointer_raw      :out  std_logic_vector(11 downto 0);
 
         -- Extra write pointer which is used for storing timestamp at the end of
         -- data frame!
-        write_pointer_extra_ts :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        write_pointer_extra_ts :out  std_logic_vector(11 downto 0);
 
         -- Number of free memory words available for user
-        rx_mem_free_i          :out     integer range 0 to G_RX_BUFF_SIZE + 1
+        rx_mem_free_i          :out  std_logic_vector(12 downto 0)
     );
 end entity;
 
 architecture rtl of rx_buffer_pointers is
 
-    signal read_pointer_i        :       integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal read_pointer_inc_1_i  :       integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal write_pointer_i       :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    ----------------------------------------------------------------------------
+    -- Memory pointers
+    ----------------------------------------------------------------------------
+
+    function Log2( input:integer )
+    return integer is
+        variable temp,log:integer;
+    begin
+        temp := input;
+        log := 0;
+        while (temp > 1) loop
+            temp := temp / 2;
+            log := log + 1;
+        end loop;
+        return log;
+    end function log2;
     
-    signal write_pointer_raw_i   :       integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal write_pointer_raw_d   :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    -- Width of memory pointer
+    constant C_PTR_WIDTH         : natural := log2(G_RX_BUFF_SIZE);
+
+    -- Width of free memory
+    constant C_FREE_MEM_WIDTH    : natural := C_PTR_WIDTH + 1;
+
+    signal read_pointer_i        :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal read_pointer_inc_1_i  :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_i       :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    
+    signal write_pointer_raw_i   :       unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_raw_d   :       unsigned(C_PTR_WIDTH - 1 downto 0);
     signal write_pointer_raw_ce  :       std_logic;
     
-    signal write_pointer_extra_ts_i  :    integer range 0 to G_RX_BUFF_SIZE - 1;
-    signal write_pointer_extra_ts_d  :    integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_extra_ts_i  :    unsigned(C_PTR_WIDTH - 1 downto 0);
+    signal write_pointer_extra_ts_d  :    unsigned(C_PTR_WIDTH - 1 downto 0);
     signal write_pointer_extra_ts_ce :    std_logic;
     
-    signal rx_mem_free_i_i     :       integer range 0 to G_RX_BUFF_SIZE + 1;
+    signal rx_mem_free_i_i     :       unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
     ----------------------------------------------------------------------------
+    -- Memory free status signals
     ----------------------------------------------------------------------------
-    -- Driving bus signal aliases
-    ----------------------------------------------------------------------------
-    ----------------------------------------------------------------------------
-
+    
     -- Raw value of number of free memory words.
-    signal rx_mem_free_raw          :       integer range 0 to G_RX_BUFF_SIZE + 1;
+    signal rx_mem_free_raw          :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally incremented by 1.
-    signal rx_mem_free_raw_inc_1    :       integer range 0 to G_RX_BUFF_SIZE + 2;
+    signal rx_mem_free_raw_inc_1    :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
     -- Number of free memory words calculated during frame storing before commit
     -- combinationally decremented by 1.
-    signal rx_mem_free_raw_dec_1    :       integer range -1 to G_RX_BUFF_SIZE + 1;
+    signal rx_mem_free_raw_dec_1    :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
     -- Number of free memory words available to SW, combinationally icnremented
     -- by 1.
-    signal rx_mem_free_i_inc_1    :       integer range 0 to G_RX_BUFF_SIZE + 2;
+    signal rx_mem_free_i_inc_1      :  unsigned(C_FREE_MEM_WIDTH - 1 downto 0);
 
 begin
-    read_pointer <= read_pointer_i;
-    read_pointer_inc_1 <= read_pointer_inc_1_i;
-    write_pointer <= write_pointer_i;
-    write_pointer_raw <= write_pointer_raw_i;
-    write_pointer_extra_ts <= write_pointer_extra_ts_i;
-    rx_mem_free_i <= rx_mem_free_i_i;
+    read_pointer            <= std_logic_vector(resize(read_pointer_i, 12));
+    read_pointer_inc_1      <= std_logic_vector(resize(read_pointer_inc_1_i, 12));
+    write_pointer           <= std_logic_vector(resize(write_pointer_i, 12));
+    write_pointer_raw       <= std_logic_vector(resize(write_pointer_raw_i, 12));
+    write_pointer_extra_ts  <= std_logic_vector(resize(write_pointer_extra_ts_i, 12));
+    rx_mem_free_i           <= std_logic_vector(resize(rx_mem_free_i_i, 13));
 
 
     ----------------------------------------------------------------------------
@@ -202,7 +223,7 @@ begin
     read_pointer_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            read_pointer_i         <= 0;
+            read_pointer_i         <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (read_increment = '1') then
                 read_pointer_i    <= read_pointer_inc_1_i;
@@ -217,7 +238,7 @@ begin
     write_pointer_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            write_pointer_i       <= 0;
+            write_pointer_i       <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (commit_rx_frame = '1') then
                 write_pointer_i   <= write_pointer_raw_i;
@@ -233,9 +254,9 @@ begin
     --     and overrun occurred meanwhile. Reset to value of last commited write
     --     pointer.
     ----------------------------------------------------------------------------    
-    write_pointer_raw_d <= ((write_pointer_raw_i + 1) mod G_RX_BUFF_SIZE)
-                            when (write_raw_OK = '1') else
-                            write_pointer_i;
+    write_pointer_raw_d <= write_pointer_raw_i + 1 when (write_raw_OK = '1')
+                                                   else
+                                   write_pointer_i;
     
     write_pointer_raw_ce <= '1' when (write_raw_OK = '1') else
                             '1' when (rec_abort_f = '1') else
@@ -245,7 +266,7 @@ begin
     write_pointer_raw_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-           write_pointer_raw_i   <= 0;
+           write_pointer_raw_i   <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_raw_ce = '1') then
                 write_pointer_raw_i <= write_pointer_raw_d;
@@ -259,7 +280,7 @@ begin
     ----------------------------------------------------------------------------
     write_pointer_extra_ts_d <= write_pointer_i when (store_extra_wr_ptr = '1')
                                                 else
-                                (write_pointer_extra_ts_i + 1) mod G_RX_BUFF_SIZE;
+                   write_pointer_extra_ts_i + 1;
 
     -- Tick only when it should be incremented or stored
     write_pointer_extra_ts_ce <= '1' when (store_extra_wr_ptr = '1') else
@@ -269,7 +290,7 @@ begin
     extra_write_ptr_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            write_pointer_extra_ts_i  <= 0;
+            write_pointer_extra_ts_i  <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (write_pointer_extra_ts_ce = '1') then
                 write_pointer_extra_ts_i <= write_pointer_extra_ts_d;
@@ -284,8 +305,8 @@ begin
     mem_free_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            rx_mem_free_i_i       <= G_RX_BUFF_SIZE;
-            rx_mem_free_raw         <= G_RX_BUFF_SIZE;
+            rx_mem_free_i_i <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
+            rx_mem_free_raw <= to_unsigned(G_RX_BUFF_SIZE, C_FREE_MEM_WIDTH);
 
         elsif (rising_edge(clk_sys)) then
 
@@ -346,7 +367,7 @@ begin
     ----------------------------------------------------------------------------
     mem_free_arith_proc : process(rx_mem_free_i_i, rx_mem_free_raw)
     begin
-        rx_mem_free_i_inc_1   <= rx_mem_free_i_i + 1;
+        rx_mem_free_i_inc_1     <= rx_mem_free_i_i + 1;
         rx_mem_free_raw_inc_1   <= rx_mem_free_raw + 1;
         rx_mem_free_raw_dec_1   <= rx_mem_free_raw - 1;
     end process;
@@ -361,7 +382,7 @@ begin
     ----------------------------------------------------------------------------
     read_pointer_inc_proc : process(read_pointer_i)
     begin
-        read_pointer_inc_1_i <= (read_pointer_i + 1) mod G_RX_BUFF_SIZE;
+        read_pointer_inc_1_i <= read_pointer_i + 1;
     end process;
     
     
@@ -373,16 +394,16 @@ begin
     -- psl default clock is rising_edge(clk_sys);
     --
     -- psl rx_no_raw_mem_free_cov : 
-    --      cover (rx_mem_free_raw = 0);
+    --      cover (to_integer(unsigned(rx_mem_free_raw)) = 0);
     --
     -- psl rx_all_raw_mem_free_cov : 
-    --      cover (rx_mem_free_raw = G_RX_BUFF_SIZE);
+    --      cover (to_integer(unsigned(rx_mem_free_raw)) = G_RX_BUFF_SIZE);
     --
     -- psl rx_no_int_mem_free_cov : 
-    --      cover (rx_mem_free_i = 0);
+    --      cover (to_integer(unsigned(rx_mem_free_i)) = 0);
     --
     -- psl rx_all_int_mem_free_cov : 
-    --      cover (rx_mem_free_i = G_RX_BUFF_SIZE);
+    --      cover (to_integer(unsigned(rx_mem_free_i)) = G_RX_BUFF_SIZE);
     --
     -- psl rx_write_ptr_higher_than_read_ptr_cov : 
     --      cover (write_pointer_i > read_pointer_i);

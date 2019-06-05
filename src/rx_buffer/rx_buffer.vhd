@@ -309,35 +309,41 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
     -- FIFO  Memory - Pointers
     ----------------------------------------------------------------------------
-    
+        
     -- Read Pointer (access from SW)
-    signal read_pointer             :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal read_pointer             : std_logic_vector(11 downto 0);
 
     -- Read pointer incremented by 1 (combinationally)
-    signal read_pointer_inc_1       :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal read_pointer_inc_1       : std_logic_vector(11 downto 0);
 
     -- Write pointer (committed, available to SW, after frame was stored)
-    signal write_pointer            :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer            : std_logic_vector(11 downto 0);
 
     -- Write pointer RAW. Changing during frame, as frame is continously stored
     -- to the buffer. When frame is sucesfully received, it is updated to
     -- write pointer!
-    signal write_pointer_raw        :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_raw        : std_logic_vector(11 downto 0);
 
     -- Extra write pointer which is used for storing timestamp at the end of
     -- data frame!
-    signal write_pointer_extra_ts   :       integer range 0 to G_RX_BUFF_SIZE - 1;
+    signal write_pointer_extra_ts   : std_logic_vector(11 downto 0);
 
     -- Final pointer to memory. "write_pointer_raw" and 
     -- "write_pointer_extra_ts" are multiplexed based on RX FSM! 
-    signal memory_write_pointer     :       integer range 0 to G_RX_BUFF_SIZE - 1;
-
-    -- Data that will be written to the RX Buffer memory!
-    signal memory_write_data        :       std_logic_vector(31 downto 0);
+    signal memory_write_pointer     : std_logic_vector(11 downto 0);
 
     -- Number of free memory words available to SW after frame was committed.
-    signal rx_mem_free_i            :       integer range 0 to G_RX_BUFF_SIZE + 1;
+    signal rx_mem_free_i            : std_logic_vector(12 downto 0);
 
+    -- Data that will be written to the RX Buffer memory!
+    signal memory_write_data        : std_logic_vector(31 downto 0);
+
+    -- RX Buffer mem free
+    constant C_RX_BUF_MEM_FREE_ZEROES : std_logic_vector(12 downto 0) :=
+        (OTHERS => '0');
+
+    constant C_RX_BUF_PTR_ZEROES : std_logic_vector(11 downto 0) :=
+        (OTHERS => '0');
 
     ----------------------------------------------------------------------------
     -- FIFO  Memory - Free words, Overrun status
@@ -470,6 +476,7 @@ architecture rtl of rx_buffer is
     ----------------------------------------------------------------------------
     signal rx_buf_res_d             :       std_logic;
     signal rx_buf_res_q             :       std_logic;
+    
 
 begin
 
@@ -485,22 +492,22 @@ begin
     ----------------------------------------------------------------------------
     -- Propagating status registers on output
     ----------------------------------------------------------------------------
-    rx_read_pointer_pos   <= std_logic_vector(to_unsigned(read_pointer, 12));
-    rx_write_pointer_pos  <= std_logic_vector(to_unsigned(write_pointer, 12));
-    rx_data_overrun       <= data_overrun_r;
-    rx_buf_size           <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
+    rx_read_pointer_pos  <= read_pointer;
+    rx_write_pointer_pos <= write_pointer;
+    rx_data_overrun      <= data_overrun_r;
+    rx_buf_size          <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
 
-    rx_empty_i            <= '1' when (message_count = 0)
-                                 else
-                             '0'; 
+    rx_empty_i           <= '1' when (message_count = 0)
+                                else
+                            '0'; 
 
-    rx_full               <= '1' when (rx_mem_free_i = 0)
-                                 else
-                             '0';
+    rx_full              <= '1' when (rx_mem_free_i = C_RX_BUF_MEM_FREE_ZEROES)
+                                else
+                           '0';
 
-    rx_message_count      <= std_logic_vector(to_unsigned(message_count, 11)); 
-    rx_mem_free           <= std_logic_vector(to_unsigned(rx_mem_free_i, 13));
-    rx_empty              <= rx_empty_i;
+    rx_message_count     <= std_logic_vector(to_unsigned(message_count, 11)); 
+    rx_mem_free          <= rx_mem_free_i;
+    rx_empty             <= rx_empty_i;
 
     ----------------------------------------------------------------------------
     -- Common reset signal. Whole buffer can be reset by two ways:
@@ -899,9 +906,10 @@ begin
                       else
                   '0';
 
+    ---------------------------------------------------------------------------
     -- Write address is given by write pointer
-    RAM_write_address   <= std_logic_vector(to_unsigned(
-                            memory_write_pointer, RAM_write_address'length));
+    ---------------------------------------------------------------------------
+    RAM_write_address <= memory_write_pointer;
 
 
     ----------------------------------------------------------------------------
@@ -910,12 +918,9 @@ begin
     -- During transaction, Incremented Read pointer is chosen to avoid one clock
     -- cycle delay caused by increment on read pointer!
     ----------------------------------------------------------------------------
-   RAM_read_address <= std_logic_vector(to_unsigned(
-                        read_pointer_inc_1, RAM_read_address'length))
-                       when (read_increment = '1') else
-                       std_logic_vector(to_unsigned(
-                        read_pointer, RAM_read_address'length));
-
+    RAM_read_address <= read_pointer_inc_1 when (read_increment = '1') else
+                              read_pointer;
+                              
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -953,11 +958,11 @@ begin
     --  times (RWCNT - 3). This verifies consistency of storing protocol by
     --  CAN Core, as well as RWCNT field! 
     ----------------------------------------------------------------------------
+    -- pragma translate_off
     rwcnt_assert_proc : process(clk_sys)
         variable exp_data_stores    : natural := 0;
         variable act_data_stores   : natural := 0;
     begin
-        -- pragma translate_off
         if (rising_edge(clk_sys) and now /= 0 fs) then
 
             -- Calculate number of expected "store_data" commands from CAN Core.
@@ -988,8 +993,8 @@ begin
                 severity error;
             end if;
         end if;
-        -- pragma translate_on
     end process;
+    -- pragma translate_on
     
     
     ----------------------------------------------------------------------------

@@ -58,6 +58,8 @@
 
 Library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.ALL;
+
 use work.can_types.all;
 use work.can_constants.all;
 use work.can_registers_pkg.all;
@@ -3618,25 +3620,25 @@ package can_components is
         -- Status outputs
         -----------------------------------------------------------------------
         -- Read Pointer (access from SW)
-        read_pointer           :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        read_pointer           :out     std_logic_vector(11 downto 0);
 
         -- Read pointer incremented by 1 (combinationally)
-        read_pointer_inc_1     :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        read_pointer_inc_1     :out     std_logic_vector(11 downto 0);
 
         -- Write pointer (committed, available to SW, after frame was stored)
-        write_pointer          :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        write_pointer          :out     std_logic_vector(11 downto 0);
 
         -- Write pointer RAW. Changing during frame, as frame is continously stored
         -- to the buffer. When frame is sucesfully received, it is updated to
         -- write pointer!
-        write_pointer_raw      :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        write_pointer_raw      :out     std_logic_vector(11 downto 0);
 
         -- Extra write pointer which is used for storing timestamp at the end of
         -- data frame!
-        write_pointer_extra_ts :out     integer range 0 to G_RX_BUFF_SIZE - 1;
+        write_pointer_extra_ts :out     std_logic_vector(11 downto 0);
 
         -- Number of free memory words available for user
-        rx_mem_free_i          :out     integer range 0 to G_RX_BUFF_SIZE + 1
+        rx_mem_free_i          :out     std_logic_vector(12 downto 0)
     );
     end component;
 
