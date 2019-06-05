@@ -45,33 +45,6 @@
 --  from drv_bus. Interrupt vector provides sources of last interrupts. It is 
 --  erased from driving bus by  drv_int_vect_erase
 --------------------------------------------------------------------------------
--- Revision History:
---    July 2015   Created file
---    4.6.2016    Interrupt active, interrupt length added to keep interrupt ac-
---                tive for dedicated amount of clock cycles! Each interrupt 
---                which comes in between is stored into interrupt mask but not
---                fired as  separate interrupt!!! 
---    6.6.2016    Added edge detection to interrupt sources! This is to be sure
---                that one long active interrupt source will fire only one in-
---                terrupt and not fire interrupts consecutively! THen it could
---                happend that interrupt handler is interrupted by another in-
---                terrupt from the same source signal representing same event...
---                Fast CPU might get cycled in many interrupt handler calls. 
---    27.6.2016   Added bug fix of RX Buffer full interrupt
---    07.3.2018   Reimplemented to support masking, separate set, and clear on
---                interrupt enable and interrupt mask. Interrupts changed to
---                be level based instead of edge based with fixed duration. This
---                is more fitting for SocketCAN implementation.
---    12.3.2018   Implemented RX Buffer not empty and TX Buffer HW command INT.
---    30.8.2018   Moved HW command detection logic to TXT Buffer from here.
---                Thus TXT Buffer can properly filter commands, to avoid
---                overflow of interrupts! Replaced "txt_hw_cmd" with 
---                "txt_hw_cmd_int" signal.
---   11.12.2018   Separated interrupt logic to dedicated sub-module. Added
---                option to have configurable set/clear of interrupt by
---                generic option...
---    23.2.2019   Added PSL functional coverage.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

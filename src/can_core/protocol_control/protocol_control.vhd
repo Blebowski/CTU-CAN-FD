@@ -45,11 +45,6 @@
 --  modules:
 --      TOOD
 --------------------------------------------------------------------------------
--- Revision History:
---
---    July 2015   Created file
---    24.3.2019   Stashed all previous notes due to re-implementation.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

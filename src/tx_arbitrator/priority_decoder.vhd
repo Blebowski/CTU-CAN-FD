@@ -47,10 +47,6 @@
 --  a frame with lower index is selected.
 --                                                                                                                                                   
 --------------------------------------------------------------------------------
--- Revision History:
---    12.02 2018   Created file
---    12.11.2018   Changed output output_valid to std_logic from boolean.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

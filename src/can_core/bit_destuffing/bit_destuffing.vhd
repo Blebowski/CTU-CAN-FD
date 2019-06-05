@@ -48,33 +48,6 @@
 --  bit is not valid data bit, but is destuffed bit taken out from input data
 --  stream!                                                                  
 --------------------------------------------------------------------------------
--- Revision History:
---    July 2015   Created file
---    19.5.2016   1. Added Stuff bit counter to cover ISO FD extra field!
---                2. Edge detection 0->1 added at fixed_stuff input. Once edge 
---                   is detected same_bits counter is erased! This prevents the 
---                   error of inserting stuff bit sooner than fixed length when 
---                   last bit of data field have equal value!
---    6.6.2016    Added fixed stuff bit at the transition from non fixed stuff 
---                to fixed stuff! Thisway bit stuffing also covers the one fixed
---                stuff bit in the beginning of CRC phase!! Added bit stuffing 
---                counter to count the dynamic stuff bits in ISO FD.
---   13.6.2016    1.Added mod 8 into same_bits counter increase
---                2.Added keeping previous value of dst_counter when circuit is 
---                  disabled instead of erasing! This way ciruit is compatible
---                  with bit stuffing!
---                3.Added warning when bit stuffing rule is set to 0 or 1 which
---                  is invalid setting!
---    12.1.2017  Changed priority of fixed bit-destuffing processing. Fixed bit 
---               destuffing should always have higher priority than non-fixed 
---               bit-destuffing and thus be before in the If-elsif condition!
---               This is due to possible conflic of normal and fixed bit destu-
---               ffing in the start of FD CRC. Fixed bit-destuff should win!
---    23.5.2018  Bug-fix of stuff error detection. Stuff error on special
---               stuff-bit in first bit of CRC also must be detected.
---   28.12.2018  Re-worked bit-destuffing to hae the logic separated to several
---               processes.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

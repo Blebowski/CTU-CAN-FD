@@ -51,9 +51,6 @@
 --  Output of Bit time FSM are SYNC and SAMPLE requests for SYNC and SAMPLE
 --  trigger generator.    
 --------------------------------------------------------------------------------
--- Revision History:
---    15.02.2019   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

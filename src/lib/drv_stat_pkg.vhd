@@ -43,9 +43,6 @@
 -- Purpose:
 --  Package with Constants for Driving Bus and Status Bus.
 --------------------------------------------------------------------------------
--- Revision History:
---    28.12.2018  Created file, separated from "can_constants".
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

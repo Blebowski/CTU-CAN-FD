@@ -49,23 +49,6 @@
 --  to error_pssive are also parameters given by driving bus. Default values
 --  are compliant with CAN FD standard.
 --------------------------------------------------------------------------------
--- Revision History:
---    June 2015  Created file
---    19.6.2016  Modified counters for error couting in both FD and NORMAL mode.
---               Counters extended to 16 bits wide, to match the format in the 
---               registers!
---    27.6.2016  Bug fix. Changed error warning limit reached detection to greater
---               than and equal instead of only equal.
---    30.6.2016  Bug fix. Added equal or greater to fault confinement error 
---               passive state. According to CAN spec. error counter value equal
---               or greater than 128 is error passive, not only greater than!
---    05.1.2018  Added "erc_capt_r" register for last error capture.
---    08.5.2018  Added pragmas for one-hot decoding on increment, decrement
---               error counters.
---    12.7.2018  Added counters for erasing error counters upon reception of
---               128 consecutive 11 recessive bits as protocol compliant way
---               to transfer from Bus-off to Error active!
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

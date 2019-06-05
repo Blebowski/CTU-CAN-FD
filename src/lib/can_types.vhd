@@ -43,9 +43,6 @@
 -- Purpose:
 --  Package with type definitions for CTU CAN FD.
 --------------------------------------------------------------------------------
--- Revision History:
---   28.12.2018   Created file, separated from "can_constants" package.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

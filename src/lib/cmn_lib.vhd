@@ -43,10 +43,6 @@
 -- Purpose:
 --  Library with component declarations for common design entities.
 --------------------------------------------------------------------------------
--- Revision History:
---    10.12.2018   Created file
---    20.1.2019    Added endian swapper
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

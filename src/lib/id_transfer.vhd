@@ -46,10 +46,6 @@
 --  tering data based on identifier decimal value. When acessing CAN Controller
 --  from software driver should take care of this conversion!
 --------------------------------------------------------------------------------
--- Revision History:
---    17.1.2016   Created file
---   23.02.2018   Added explicit order on Base and Extended identifiers.
---------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;

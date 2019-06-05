@@ -46,9 +46,6 @@
 --  is signalled on the output. Synchronisation flag is cleared in the end
 --  of PH1 (Sample point).
 --------------------------------------------------------------------------------
--- Revision History:
---    14.02.2019   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

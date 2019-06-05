@@ -43,11 +43,6 @@
 -- Purpose:
 --  Transmitt Frame Buffer FSM.
 --------------------------------------------------------------------------------
--- Revision History:
---
---    07.11.2018   Created file
---    27.02.2019   Added PSL assertions.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

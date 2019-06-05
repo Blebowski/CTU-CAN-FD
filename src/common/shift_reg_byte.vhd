@@ -47,9 +47,6 @@
 --  Schematic diagram of component is following:
 --      TODO 
 --------------------------------------------------------------------------------
--- Revision History:
---    28.3.2019   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

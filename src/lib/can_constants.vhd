@@ -43,19 +43,6 @@
 -- Purpose:
 --  Package with Constants, types and other defintions for CAN FD IP Core.
 --------------------------------------------------------------------------------
--- Revision History:
---    June 2015   Created file
---    08.12.2017  Code formatting. Replaced hexadecimal values with shorter
---                notation
---    19.12.2017  Moved TX_DATA registers into separate memory location
---                TX_DATA_REGION to make the direct addressing inside the TXT
---                buffer easier.
---    27.12.2017  Added "DRV_FRAME_SWAP_INDEX" into driving bus.
---    20.1.2018   Removed CAN Frame constants FRAME_BASIC and FRAME_EXTENDED
---                Properly only signals from CAN_FD_frame_format package
---                BASE and EXTENDED should be used!
---    28.12.2018  Separated "can_types", "drv_stat_pkg".
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

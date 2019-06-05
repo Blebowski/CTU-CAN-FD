@@ -43,36 +43,13 @@
 -- Purpose:
 --  Simple bit stuffing circuit with HandShake protocol. When bit is stuffed 
 --  transciever (CAN Core) has to stop transcieving for one bit time. data_halt 
---  output is set to logic 1 when bit is stuffed.
+--  output is set to logic 1 when bit is stuffed. Enables configurable stuff length. 
+--  Operation starts when enable='1'. Valid data already has to be on data_in 
+--  then. Operates with triggering signal tran_trig_1 Fixed Stuffing method can 
+--  be used by setting logic on fixed_stuff input. In fixed stuff inverse bit is 
+--  inserted after every stuff_length bits, even if their polarity is not equal!                     
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
--- Second version of bit Stuffing circuit. Enables configurable stuff length. 
--- Operation starts when enable='1'. Valid data already has to be on data_in 
--- then. Operates with triggering signal tran_trig_1 Fixed Stuffing method can 
--- be used by setting logic on fixed_stuff input. In fixed stuff inverse bit is 
--- inserted after every stuff_length bits, even if their polarity is not equal!                     
---------------------------------------------------------------------------------
--- Revision History:
---
---    June 2015  Created file
---    July 2015  Created second version of the bitstuffing circuit
---    19.5.2016  same_bits counter erased when edge detection on fixed_stuff 
---               detected. Avoids inserting stuff bit in CRC field after less 
---               than stuff_count bits when last bits of data field were equal!
---    6.6.2016   Added fixed stuff bit at the transition from non fixed stuff to
---               fixed stuff! Thisway bit stuffing also covers the one fixed 
---               stuff bit in the beginning of CRC phase!! Added bit stuffing 
---               counter to count the dynamic stuff bits in ISO FD.
---    13.6.2016  Added mod 8 into same_bits counter increase
---    12.1.2017  Changed priority of fixed bit-stuffing processing. Fixed bit 
---               stuffing should always have higher priority than non-fixed 
---               bit-stuffing and thus be before in the If-elsif condition!
---               This is due to possible conflic of normal and fixed bit stuffing
---               in the start of FD CRC. Fixed bit-stuff should win!
---   22.12.2018  Re-worked bit-stuffing to hae the logic separated to several
---               processes.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

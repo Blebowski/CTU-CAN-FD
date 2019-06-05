@@ -48,14 +48,6 @@
 --  for CAN TX and CAN RX Datapath processing.
 --                                                                          
 --------------------------------------------------------------------------------
--- Revision History:
---
---    June 2015   Version 1 of circuit
---    July 2015   Version 2 and 3 of circuit
---    15.2.2019   Version 4 of the circuit. Complete re-work and splitting into
---                sub-modules. Stashed all the previous messages since these
---                are now obsolete!
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

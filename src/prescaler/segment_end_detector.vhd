@@ -46,12 +46,6 @@
 --  Provides signal for clearing Bit Time counters.
 --
 --------------------------------------------------------------------------------
--- Revision History:
---    15.02.2019   Created file
---    08.03.2019   Separated Segment end and Bit time counter clear. This-way
---                 we can distuinguish between first and second hard-sync
---                 edge in TSEG1.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

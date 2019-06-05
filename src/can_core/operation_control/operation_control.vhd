@@ -47,14 +47,6 @@
 --  set_transciever, set_reciever signals. (in start of frame, lost of 
 --  arbitration)
 --------------------------------------------------------------------------------
--- Revision History:
---    June 2015  Created file
---    30.8.2018  Pulled Operational State to integrating as long as CAN Node
---               is disabled. This makes sure that after Node was turned off,
---               it needs to integrate for 11 recessive bits again, before
---               turning Transceiver or Receiver!
---   01.04.2019  Re-implemented.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

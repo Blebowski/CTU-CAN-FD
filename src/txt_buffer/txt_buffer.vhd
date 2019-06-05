@@ -46,35 +46,6 @@
 --  from HW (HW Commands) as well as SW (SW Commands). Buffer contains 20*32
 --  bit RAM which is inferred by synthesis.
 --------------------------------------------------------------------------------
--- Revision History:
---
---    July 2015   Created file
---    30.11.2017  Changed the buffer implementation from parallel into 32*20 
---                buffer of data. Reading so far left parallel. User is directly
---                accessing the buffer and storing the data to it.
---    04.12.2017  Buffer split to "Frame metadata" (txt_buffer_info) and "Data" 
---                (txt_buffer_data). Frame metadata consists of first 4 words 
---                (Frame format, Timestamps and Identifier). Frame metadata are
---                available combinationally at all times. Frame data are accessed
---                directly from CAN Core by new pointer "txt_data_addr". 
---                txt_buffer_data is synthesized as RAM memory and significant
---                reource reduction was achieved.
---     15.2.2018  Implemented TXT Buffer state machine. Replaced "empty", "ack"
---                and "allow" signals with HW commands from Protocol Control and
---                SW commands from User registers. Hardware commands have always
---                higher priority.
---     24.3.2018  1. Changed TXT Buffer implementation to have both, metadata
---                    and data in CAN frame.
---                2. Added memory protection on the TXT Buffer. It can NOT be
---                    written when in "ready", "tx in progress" or "abort in
---                    progress" states.
---     06.4.2018  Changed output from side of CAN Core to synchronous. Async.
---                output did not allow inferrence of RAM in Altera FPGA.
---     30.8.2018  Added "txtb_hw_cmd_int" output for Interrupt Manager. TXTB HW
---                command Interrupt generated upon move to Done, Failed or
---                Aborted states.
---    10.11.2018  Separated TXT Buffer FSM to a standalone sub-module.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

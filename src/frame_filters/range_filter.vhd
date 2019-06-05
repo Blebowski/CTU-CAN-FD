@@ -44,9 +44,6 @@
 --  Range Filter for CAN identifiers. Interprets input value as decimal value
 --  and compares if it is in range given by upper and lower threshold.
 --------------------------------------------------------------------------------
--- Revision History:
---    14.11.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

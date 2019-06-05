@@ -47,10 +47,6 @@
 --  Logic for switching sampling and synchronisation signals implemented here   
 --  stat_bus assignment implemented here!                                       
 --------------------------------------------------------------------------------
--- Revision History:
---    July 2015  Created file
---    26.4.2019  Stashed all previous notes due to re-implementation.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

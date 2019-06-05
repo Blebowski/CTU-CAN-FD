@@ -43,9 +43,6 @@
 -- Purpose:
 --  General purpose majority decoder with 3 inputs.
 --------------------------------------------------------------------------------
--- Revision History:
---    23.11.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

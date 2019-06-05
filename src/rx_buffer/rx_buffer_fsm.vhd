@@ -44,9 +44,6 @@
 --  Receive Buffer FSM. Reacts on commands from CAN Core and controls storing
 --  of CAN frame continusly to RX Buffer RAM.
 --------------------------------------------------------------------------------
--- Revision History:
---    14.12.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

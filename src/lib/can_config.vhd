@@ -44,9 +44,6 @@
 --  Package with Configuration of CTU CAN FD. Contains all contstants which
 --  drive top level generics.
 --------------------------------------------------------------------------------
--- Revision History:
---    03.02.2019   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

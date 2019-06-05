@@ -44,9 +44,6 @@
 --  Bit Filter for CAN identifiers. Output is valid if masked filter input 
 --  equals masked value to be compared. Output is combinational.
 --------------------------------------------------------------------------------
--- Revision History:
---    14.11.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

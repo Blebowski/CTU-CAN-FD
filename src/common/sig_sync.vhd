@@ -43,9 +43,6 @@
 -- Purpose:
 --  Two Flip-flop asynchronous signal synchroniser.
 --------------------------------------------------------------------------------
--- Revision History:
---    16.11.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

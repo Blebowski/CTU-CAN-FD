@@ -52,28 +52,6 @@
 --      1x Tx Arbitrator
 --      1x Acceptance filters
 --------------------------------------------------------------------------------
--- Revision History:
---    July 2015   Created file
---    22.6.2016   1. Added rec_esi signal for error state propagation into
---                   RX buffer.
---                2. Added explicit architecture selection for each component
---                   (RTL)
---    24.8.2016   Added "use_logger" generic to the registers module.
---    28.11.2017  Added "rst_sync_comp" reset synchroniser.
---    30.11.2017  Changed TXT buffer to registers interface. The user is now
---                directly accessing the buffer by avalon access.
---    10.12.2017  Added "tx_time_sup" to enable/disable transmission at given
---                time and save some LUTs.
---    12.12.2017  Renamed "registers" entity to  "canfd_registers" to avoid
---                possible name conflicts.
---    20.12.2017  Removed obsolete "tran_data_in" signal.
---     10.2.2017  Removed "useFDsize" generic. When TX Buffer goes completely
---                to the Dual port RAM, there is no need to save memory
---                anymore.
---     15.2.2018  Added generic amount of TXT Buffers and support for TXT
---                buffer FSM, HW commands and SW commands.
---     18.3.2019  Remove explicit architecture assignments.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

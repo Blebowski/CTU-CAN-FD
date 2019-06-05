@@ -55,11 +55,6 @@
 --  Simulteneous set/clear of interrupt mask is not allowed!
 --
 --------------------------------------------------------------------------------
--- Revision History:
---    11.12.2018   Created file
---    20.12.2018   Re-worked Interrupt mask and Interrupt enable for better
---                 synthesis.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

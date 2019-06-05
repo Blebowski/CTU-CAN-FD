@@ -45,8 +45,6 @@
 --  stored in time of regular sample point and read at the time of delayed
 --  sample point. Read data are used for bit error detection.
 --------------------------------------------------------------------------------
---    16.01.2019  Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

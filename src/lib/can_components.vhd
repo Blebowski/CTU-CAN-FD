@@ -46,15 +46,6 @@
 --  every time into architecture itself. Do not use comments on signals in this
 --  file, comment the signal in the entity declaration!
 --------------------------------------------------------------------------------
--- Revision History:
---    15.11.2017   Created file
---    27.11.2017   Added "rst_sync" asynchronous rest synchroniser circuit
---    29.11.2017   Removed "rec_data" between Protocol control and RX Buffer,
---                                 replaced with rec_dram_word and
---                 rec_dram_addr as part of resource optimization.
---    30.11.2017   Updated "txt_buffer" for direct access to buffer
---    29.9.2018    Added "inf_RAM_wrapper".
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

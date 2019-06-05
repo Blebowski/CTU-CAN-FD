@@ -43,9 +43,6 @@
 -- Purpose:
 --    Top-level entity using APB4.
 --------------------------------------------------------------------------------
--- Revision History:
---    May 2018   First Implementation
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

@@ -45,9 +45,6 @@
 --  is used and muxed between these two registers since these counters are
 --  never supposed to be incremented simultaneously!
 --------------------------------------------------------------------------------
--- Revision History:
---    24.12.2018  Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

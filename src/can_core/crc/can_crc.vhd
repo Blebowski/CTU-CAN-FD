@@ -54,12 +54,6 @@
 --  switch! Transmitter in Data Bit rate can't calculate CRC from RX Data,
 --  because Data might not yet arrived to RX pin (due to Transceiver delay)!
 --------------------------------------------------------------------------------
--- Revision History:
---    28.12.2018    Created file
---     24.3.2019    Modified to calculate only 5 CRCs instead of 12.
---      1.4.2019    Used only single CRC 17 and CRC 21 according to proposal
---                  by Martin Jerabek.
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

@@ -51,9 +51,6 @@
 --    1. RX mem free internal for control of storing and overrun
 --    2. RX mem free available to user.
 --------------------------------------------------------------------------------
--- Revision History:
---    15.12.2018    Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

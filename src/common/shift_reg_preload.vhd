@@ -43,9 +43,6 @@
 -- Purpose:
 --  Generic shift register with pre-load
 --------------------------------------------------------------------------------
--- Revision History:
---    23.11.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

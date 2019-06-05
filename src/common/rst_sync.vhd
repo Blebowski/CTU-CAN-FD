@@ -43,10 +43,6 @@
 -- Purpose:
 --  Asynchronous reset synchroniser.
 --------------------------------------------------------------------------------
--- Revision History:
---    27.11.2017   Created file
---    16.11.2018   Added generic reset polarity
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

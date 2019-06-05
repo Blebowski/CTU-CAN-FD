@@ -56,9 +56,6 @@
 --  not have sense to insert capture register on SJW (since there is no
 --  combinational logic).
 --------------------------------------------------------------------------------
--- Revision History:
---    03.02.2019   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

@@ -43,9 +43,6 @@
 -- Purpose:
 --  Flip-flop with asynchronous reset template. Single bit version
 --------------------------------------------------------------------------------
--- Revision History:
---    20.12.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

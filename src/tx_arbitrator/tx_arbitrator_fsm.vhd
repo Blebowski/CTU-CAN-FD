@@ -48,9 +48,6 @@
 --  Each FSM state lasts two clock cycles (wait state is inserted), to give
 --  time to TXT Buffer RAM for data read.
 --------------------------------------------------------------------------------
--- Revision History:
---    10.11.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

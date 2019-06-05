@@ -51,14 +51,6 @@
 --  it is considered as valid. Frame type (CAN Basic, CAN Extended, CAN FD Basic)
 --  are also selectable for filtering.
 --------------------------------------------------------------------------------
--- Revision History:
---    July 2015   Created file
---    17.1.2016   Added ID change from register value to decimal value for range
---                filter comparison
---    1.6.2016    Fixed wrong enable decoding from driving bus signals! Filters
---                were disabled but
---                frame was anyway propagated to the output!
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;

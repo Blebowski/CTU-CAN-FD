@@ -46,9 +46,6 @@
 --  Synchronous dual port memory with shared clock. Port A is used for
 --  writes. Port B is used for reads!
 --------------------------------------------------------------------------------
--- Revision History:
---    27.9.2018   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 USE IEEE.std_logic_1164.all;

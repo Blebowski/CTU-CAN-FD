@@ -144,9 +144,6 @@
 --  All data-path inputs are unsigned (direct code)!!
 --     
 --------------------------------------------------------------------------------
--- Revision History:
---    10.02.2019   Created file
---------------------------------------------------------------------------------
 
 Library ieee;
 use ieee.std_logic_1164.all;
