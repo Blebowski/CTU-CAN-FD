@@ -370,10 +370,7 @@ package can_components is
         data_rx_synced       :in   std_logic;
 
         -- Sampled value of RX pin in Sample point (DFF output)
-        prev_sample          :out  std_logic;
-        
-        -- Sampled value of RX pin in Sample point (either DFF or direct output)
-        data_rx              :out  std_logic
+        prev_sample          :out  std_logic        
     );
     end component sample_mux;
    

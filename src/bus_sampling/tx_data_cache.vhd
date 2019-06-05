@@ -114,20 +114,20 @@ architecture rtl of tx_data_cache is
     -- Access pointers
     ---------------------------------------------------------------------------
     -- Write Pointer
-    signal write_pointer        : natural range 0 to G_TX_CACHE_DEPTH - 1;
-    signal write_pointer_nxt    : natural range 0 to G_TX_CACHE_DEPTH - 1;
+    signal write_pointer_q      : natural range 0 to G_TX_CACHE_DEPTH - 1;
+    signal write_pointer_d      : natural range 0 to G_TX_CACHE_DEPTH - 1;
 
     -- Read pointer
-    signal read_pointer         : natural range 0 to G_TX_CACHE_DEPTH - 1;
-    signal read_pointer_nxt     : natural range 0 to G_TX_CACHE_DEPTH - 1; 
+    signal read_pointer_q       : natural range 0 to G_TX_CACHE_DEPTH - 1;
+    signal read_pointer_d       : natural range 0 to G_TX_CACHE_DEPTH - 1; 
 
 begin
     
     ----------------------------------------------------------------------------
     -- Combinationally incrementing write and read pointers
     ----------------------------------------------------------------------------
-    write_pointer_nxt <= (write_pointer + 1) mod G_TX_CACHE_DEPTH;
-    read_pointer_nxt <= (read_pointer + 1) mod G_TX_CACHE_DEPTH;
+    write_pointer_d <= (write_pointer_q + 1) mod G_TX_CACHE_DEPTH;
+    read_pointer_d <= (read_pointer_q + 1) mod G_TX_CACHE_DEPTH;
 
     
     ----------------------------------------------------------------------------
@@ -136,10 +136,10 @@ begin
     write_ptr_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            write_pointer        <= 0;
+            write_pointer_q        <= 0;
         elsif (rising_edge(clk_sys)) then
             if (write = '1') then
-                write_pointer    <= write_pointer_nxt;
+                write_pointer_q    <= write_pointer_d;
             end if;
         end if;
     end process;
@@ -148,10 +148,10 @@ begin
     read_ptr_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            read_pointer         <= 0;
+            read_pointer_q         <= 0;
         elsif (rising_edge(clk_sys)) then
             if (read = '1') then
-                read_pointer     <= read_pointer_nxt;
+                read_pointer_q     <= read_pointer_d;
             end if;
         end if;
     end process;
@@ -166,7 +166,7 @@ begin
             tx_cache_mem <= (OTHERS => G_TX_CACHE_RST_VAL);
         elsif (rising_edge(clk_sys)) then
             if (write = '1') then
-                tx_cache_mem(write_pointer) <= data_in;
+                tx_cache_mem(write_pointer_q) <= data_in;
             end if;
         end if;
     end process;
@@ -176,7 +176,7 @@ begin
     -- Reading data from FIFO combinationally.
     -- We need to have the data available right away, not pipelined!
     ----------------------------------------------------------------------------
-    data_out <= tx_cache_mem(read_pointer);
+    data_out <= tx_cache_mem(read_pointer_q);
 
 
     ----------------------------------------------------------------------------
@@ -187,12 +187,12 @@ begin
     -- Here be stricter to make the check easier! Allow at least one bit free
     -- in the FIFO!
     -- psl no_fifo_overflow_asrt : assert never
-    --  ((read_pointer - 1 = write_pointer) and (write = '1'))
+    --  ((read_pointer_q - 1 = write_pointer_q) and (write = '1'))
     -- report "TX Cache is full, there should be less than 4 bits on the fly!"
     -- severity error;
     
     -- psl no_empty_read : assert never
-    --  (read = '1' and write_pointer = read_pointer)
+    --  (read = '1' and write_pointer_q = read_pointer_q)
     -- report "Read from empty TX CACHE"
     -- severity error;
     --

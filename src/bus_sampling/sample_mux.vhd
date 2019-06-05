@@ -99,10 +99,7 @@ entity sample_mux is
         data_rx_synced       :in   std_logic;
 
         -- Sampled value of RX pin in Sample point (DFF output)
-        prev_sample          :out  std_logic;
-        
-        -- Sampled value of RX pin in Sample point (either DFF or direct output)
-        data_rx              :out  std_logic
+        prev_sample          :out  std_logic
     );
 end entity;
 
@@ -112,8 +109,8 @@ architecture rtl of sample_mux is
     signal sample           : std_logic;
 
     -- Bit error detected value
-    signal sample_prev_d    : std_logic;
-    signal sample_prev_q    : std_logic;
+    signal prev_sample_d    : std_logic;
+    signal prev_sample_q    : std_logic;
 
 begin
 
@@ -126,16 +123,16 @@ begin
     ----------------------------------------------------------------------------
     -- Previous sample register 
     ----------------------------------------------------------------------------
-    sample_prev_d <= data_rx_synced when (sample = '1') else
-                     sample_prev_q;
+    prev_sample_d <= data_rx_synced when (sample = '1') else
+                     prev_sample_q;
 
     sample_prev_req_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            sample_prev_q <= RECESSIVE;
+            prev_sample_q <= RECESSIVE;
         elsif (rising_edge(clk_sys)) then
             if (drv_ena = '1') then
-                sample_prev_q <= sample_prev_d;
+                prev_sample_q <= prev_sample_d;
             end if;
         end if;
     end process;
@@ -143,9 +140,8 @@ begin
     ----------------------------------------------------------------------------
     -- Internal signal to output propagation
     ----------------------------------------------------------------------------
-    data_rx <= data_rx_synced;
     
     -- Internal signal to output propagation
-    prev_sample <= sample_prev_q;
+    prev_sample <= prev_sample_q;
 
 end architecture;

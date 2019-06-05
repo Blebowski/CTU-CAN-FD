@@ -459,12 +459,14 @@ begin
         sample_sec             => sample_sec_i,     -- IN
         data_rx_synced         => data_rx_synced,   -- IN
         
-        prev_sample            => prev_sample,      -- OUT
-        data_rx                => rx_data_wbs       -- OUT
+        prev_sample            => prev_sample       -- OUT
     );
 
     -- Output data propagation - Pipe directly - no delay
     can_tx             <= tx_data_wbs;
+
+    -- RX Data for bit destuffing - Output of re-synchroniser.
+    rx_data_wbs        <= data_rx_synced;
 
     -- As synchroniation edge, valid edge on RX Data is selected!
     sync_edge          <= edge_rx_valid;
