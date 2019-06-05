@@ -304,9 +304,6 @@ entity protocol_control is
         -- Length of Bit Stuffing rule
         stuff_length            :out  std_logic_vector(2 downto 0);
 
-        -- Enable detection of Stuff Error
-        stuff_err_enable        :out  std_logic;
-
         -- Number of de-stuffed bits modulo 8
         dst_ctr                 :in   natural range 0 to 7;
         
@@ -571,9 +568,6 @@ architecture rtl of protocol_control is
   -- RX Stuff count (grey coded) + RX parity
   signal rx_stuff_count          :      std_logic_vector(3 downto 0);
   
-  -- Stuff error enable (internal)
-  signal stuff_err_enable_i      :      std_logic;
-  
   -- Fixed Stuff (internal)
   signal fixed_stuff_i           :      std_logic;
   
@@ -745,7 +739,6 @@ begin
         destuff_enable          => destuff_enable,          -- OUT
         stuff_length            => stuff_length,            -- OUT
         fixed_stuff             => fixed_stuff_i,           -- OUT
-        stuff_err_enable        => stuff_err_enable_i,      -- OUT
         
         -- Operation control interface
         is_transmitter          => is_transmitter,          -- IN
@@ -888,7 +881,6 @@ begin
 
         -- Control signals
         bit_err_enable          => bit_err_enable,          -- IN
-        stuff_err_enable        => stuff_err_enable_i,      -- IN
         fixed_stuff             => fixed_stuff_i,           -- IN
         err_pos                 => err_pos,                 -- IN
         crc_check               => crc_check,               -- IN
@@ -1001,7 +993,6 @@ begin
     ack_err <= ack_err_i;
     crc_err <= crc_err_i;
     is_arbitration <= is_arbitration_i;
-    stuff_err_enable <= stuff_err_enable_i;
     fixed_stuff <= fixed_stuff_i;
     crc_src <= crc_src_i;
     arbitration_lost <= arbitration_lost_i;

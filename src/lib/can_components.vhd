@@ -509,9 +509,6 @@ package can_components is
         -- Bit Destuffing is enabled.
         destuff_enable       : in  std_logic;
 
-        -- Stuff error detection enabled.
-        stuff_err_enable   : in  std_logic;
-
         -- Bit destuffing type (0-Normal, 1-Fixed)    
         fixed_stuff          : in  std_logic;  
 
@@ -1221,9 +1218,6 @@ package can_components is
         -- Bit error enable
         bit_err_enable        :in   std_logic;
 
-        -- Stuff error enable
-        stuff_err_enable      :in   std_logic;
-
         -- Fixed Bit stuffing method
         fixed_stuff             :in   std_logic;
 
@@ -1680,9 +1674,6 @@ package can_components is
         -- Fixed Bit stuffing method
         fixed_stuff             :out   std_logic;
         
-        -- Bit Stuff error detection enabled
-        stuff_err_enable      :out   std_logic;
-        
         -----------------------------------------------------------------------
         -- Operation control interface
         -----------------------------------------------------------------------
@@ -2009,9 +2000,6 @@ package can_components is
 
         -- Length of Bit Stuffing rule
         stuff_length            :out  std_logic_vector(2 downto 0);
-
-        -- Enable detection of Stuff Error
-        stuff_err_enable      :out  std_logic;
 
         -- Number of de-stuffed bits modulo 8
         dst_ctr                 :in   natural range 0 to 7;

@@ -1264,7 +1264,7 @@ begin
         Control_registers_in.trv_delay(
             align_reg_to_wrd(TRV_DELAY_VALUE_H, length) downto
             align_reg_to_wrd(TRV_DELAY_VALUE_L, length)) <=
-            "00000000" & trv_delay;
+            "000000000" & trv_delay;
  
     end block trv_delay_block;
 

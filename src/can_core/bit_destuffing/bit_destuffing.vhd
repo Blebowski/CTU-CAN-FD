@@ -125,9 +125,6 @@ entity bit_destuffing is
         -- Bit Destuffing is enabled.
         destuff_enable       : in  std_logic;
 
-        -- Stuff error detection enabled.
-        stuff_err_enable     : in  std_logic;
-
         -- Bit destuffing type (0-Normal, 1-Fixed)    
         fixed_stuff          : in  std_logic;  
 
@@ -190,16 +187,16 @@ architecture rtl of bit_destuffing is
     ---------------------------------------------------------------------------
     -- Register with error flag signalling stuff error
     ---------------------------------------------------------------------------
-    signal err_reg_q             : std_logic;
-    signal err_reg_d             : std_logic;
+    signal stuff_err_q             : std_logic;
+    signal stuff_err_d             : std_logic;
 
     ---------------------------------------------------------------------------
     -- ISO CAN FD destuff bit counter
     -- Counter of destuffed bits by non-fixed bit stuffing.
     ---------------------------------------------------------------------------
-    signal dst_bit_ctr_q           : natural range 0 to 7;
-    signal dst_bit_ctr_d           : natural range 0 to 7;
-    signal dst_bit_ctr_add         : natural range 0 to 7;
+    signal dst_ctr_q           : natural range 0 to 7;
+    signal dst_ctr_d           : natural range 0 to 7;
+    signal dst_ctr_add         : natural range 0 to 7;
 
     ---------------------------------------------------------------------------
     -- Value of previous processed bit.
@@ -277,7 +274,7 @@ begin
     ---------------------------------------------------------------------------
     stuff_rule_violate <= '1' when (discard_stuff_bit = '1' and
                                     prev_val_q = data_in and
-                                    stuff_err_enable = '1')
+                                    destuff_enable = '1')
                               else
                           '0';
 
@@ -306,7 +303,7 @@ begin
     -- Combinationally incremented valued of counter with number of destuffed
     -- bits.
     ---------------------------------------------------------------------------
-    dst_bit_ctr_add <= (dst_bit_ctr_q + 1) mod 8;
+    dst_ctr_add <= (dst_ctr_q + 1) mod 8;
 
 
     ----------------------------------------------------------------------------
@@ -315,24 +312,24 @@ begin
     --  2. Increment when non-fixed stuff bit is inserted
     --  3. Keep otherwise
     ---------------------------------------------------------------------------
-    dst_bit_ctr_d <= 0                when (enable_prev = '0') else
-                     dst_bit_ctr_add  when (bds_trigger = '1' and 
-                                            stuff_lvl_reached = '1' and
-                                            fixed_stuff = '0') else
-                     dst_bit_ctr_q;
+    dst_ctr_d <=               0  when (enable_prev = '0') else
+                     dst_ctr_add  when (bds_trigger = '1' and 
+                                        stuff_lvl_reached = '1' and
+                                        fixed_stuff = '0') else
+                     dst_ctr_q;
 
 
     ---------------------------------------------------------------------------
     -- Counter with number of de-stuffed bits - register assignment
     ---------------------------------------------------------------------------
-    dst_bit_ctr_proc : process(clk_sys, res_n)
+    dst_ctr_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            dst_bit_ctr_q         <= 0;
+            dst_ctr_q         <= 0;
 
         elsif (rising_edge(clk_sys)) then
             if (destuff_enable = '1') then
-                dst_bit_ctr_q     <= dst_bit_ctr_d;
+                dst_ctr_q     <= dst_ctr_d;
             end if;
         end if;
     end process;
@@ -421,7 +418,7 @@ begin
     --  1. Set when bit should be processed and stuff rule is violated.
     --  2. Cleared otherwise
     ---------------------------------------------------------------------------
-    err_reg_d <= '1' when (bds_trigger = '1' and stuff_rule_violate = '1') else
+    stuff_err_d <= '1' when (bds_trigger = '1' and stuff_rule_violate = '1') else
                    '0';
 
 
@@ -437,9 +434,9 @@ begin
         arst               => res_n,
         clk                => clk_sys,
 
-        input              => err_reg_d,
+        input              => stuff_err_d,
         ce                 => '1',
-        output             => err_reg_q
+        output             => stuff_err_q
     );
 
 
@@ -481,24 +478,18 @@ begin
     data_out    <= data_in;
 
     destuffed   <= destuffed_q;
-    stuff_err   <= err_reg_q;
-    dst_ctr     <= dst_bit_ctr_q;
+    stuff_err   <= stuff_err_q;
+    dst_ctr     <= dst_ctr_q;
 
 
     ----------------------------------------------------------------------------
     -- Assertions on input settings
     ----------------------------------------------------------------------------
-    input_length_assert_proc : process(clk_sys)
-    begin
-        if (rising_edge(clk_sys)) then
-            if ((destuff_length = "000" or destuff_length = "001") and
-                (destuff_enable = '1'))
-            then
-                -- LCOV_EXCL_START
-                report "0 and 1 bit stuffing length is invalid!" severity warning;
-                -- LCOV_EXCL_STOP
-            end if;
-        end if;
-    end process;
 
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl valid_stuff_length_setting_asrt : assert never
+    --   ((destuff_length = "000" or destuff_length = "001") and (destuff_enable = '1'))
+    -- report "0 and 1 bit stuffing length is invalid!" severity error;
+    
 end architecture;

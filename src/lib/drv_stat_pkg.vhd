@@ -282,7 +282,6 @@ package drv_stat_pkg is
     constant STAT_STUFF_ERR_INDEX        : natural := 24;
     constant STAT_DESTUFFED_INDEX        : natural := 25;
     constant STAT_BDS_ENA_INDEX          : natural := 26;
-    constant STAT_STUFF_ERR_ENA_INDEX    : natural := 27;
     constant STAT_FIXED_DESTUFF_INDEX    : natural := 28;
     constant STAT_BDS_LENGTH_HIGH        : natural := 31;
     constant STAT_BDS_LENGTH_LOW         : natural := 29;

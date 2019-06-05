@@ -320,7 +320,6 @@ architecture rtl of can_core is
     signal destuff_enable          :    std_logic;
     signal fixed_stuff             :    std_logic;
     signal stuff_length            :    std_logic_vector(2 downto 0);
-    signal stuff_err_enable        :    std_logic;
     signal dst_ctr                 :    natural range 0 to 7;
     signal bst_ctr                 :    natural range 0 to 7;
     signal stuff_err               :    std_logic;
@@ -516,7 +515,6 @@ begin
         destuff_enable          => destuff_enable,      -- OUT
         fixed_stuff             => fixed_stuff,         -- OUT
         stuff_length            => stuff_length,        -- OUT
-        stuff_err_enable        => stuff_err_enable,    -- OUT
         dst_ctr                 => dst_ctr,             -- IN
         bst_ctr                 => bst_ctr,             -- IN
         stuff_err               => stuff_err,           -- IN
@@ -707,7 +705,6 @@ begin
         -- Control signals
         bds_trigger         => bds_trigger,             -- IN
         destuff_enable      => destuff_enable,          -- IN
-        stuff_err_enable    => stuff_err_enable,        -- IN
         fixed_stuff         => fixed_stuff,             -- IN
         destuff_length      => stuff_length,            -- IN
        
@@ -845,6 +842,8 @@ begin
     stat_bus(178 downto 158) <= (OTHERS => '0');
     stat_bus(5 downto 2)     <= (OTHERS => '0');
 
+    stat_bus(27)             <= '0';
+
     stat_bus(STAT_BR_SHIFTED) <=
         br_shifted_i;
 
@@ -949,9 +948,6 @@ begin
         
     stat_bus(STAT_BDS_ENA_INDEX) <=
         destuff_enable;
-
-    stat_bus(STAT_STUFF_ERR_ENA_INDEX) <= 
-        stuff_err_enable;
 
     stat_bus(STAT_FIXED_DESTUFF_INDEX) <=
         fixed_stuff;

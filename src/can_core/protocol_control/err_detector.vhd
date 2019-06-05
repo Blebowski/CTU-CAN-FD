@@ -138,9 +138,6 @@ entity err_detector is
         -- Bit error enable
         bit_err_enable          :in   std_logic;
 
-        -- Stuff error enable
-        stuff_err_enable        :in   std_logic;
-
         -- Fixed Bit stuffing method
         fixed_stuff             :in   std_logic;
 
@@ -237,7 +234,7 @@ begin
     -- Error frame request for any type of error which causes transition to
     -- Error frame in the next bit.
     err_frm_req_i <= '1' when (bit_err = '1' and bit_err_enable = '1') else
-                     '1' when (stuff_err = '1' and stuff_err_enable = '1') else
+                     '1' when (stuff_err = '1') else
                      '1' when (form_err = '1' or ack_err = '1') else
                      '1' when (crc_err = '1') else
                      '1' when (bit_err_arb = '1') else
@@ -245,8 +242,7 @@ begin
 
     -- Fixed stuff error shall be reported as Form Error!
     form_err_i <= '1' when (form_err = '1') else
-                  '1' when (stuff_err = '1' and stuff_err_enable = '1' and
-                            fixed_stuff = '1') else
+                  '1' when (stuff_err = '1' and fixed_stuff = '1') else
                   '0';
 
     err_pipeline_true_gen : if (G_ERR_VALID_PIPELINE) generate
@@ -346,7 +342,6 @@ begin
     err_ctrs_unchanged <= '1' when (ack_err = '1' and is_err_passive = '1')
                               else
                           '1' when (stuff_err = '1' and
-                                    stuff_err_enable = '1' and
                                     is_arbitration = '1' and
                                     rx_data = DOMINANT and
                                     tx_data = RECESSIVE)
@@ -364,7 +359,7 @@ begin
                   "001" when (crc_err = '1') else
                   "010" when (form_err_i = '1') else
                   "011" when (ack_err = '1') else
-                  "100" when (stuff_err = '1' and stuff_err_enable = '1') else
+                  "100" when (stuff_err = '1') else
                   err_type_q;
                   
     ---------------------------------------------------------------------------

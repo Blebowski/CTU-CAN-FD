@@ -396,10 +396,7 @@ entity protocol_control_fsm is
         
         -- Fixed Bit stuffing method
         fixed_stuff             :out   std_logic;
-        
-        -- Bit Stuff error detection enabled
-        stuff_err_enable        :out   std_logic;
-        
+
         -----------------------------------------------------------------------
         -- Operation control interface
         -----------------------------------------------------------------------
@@ -2564,13 +2561,10 @@ begin
     begin
         if (res_n = G_RESET_POLARITY) then
             destuff_enable <= '0';
-            stuff_err_enable <= '0';
         elsif (rising_edge(clk_sys)) then
             if (destuff_enable_set = '1') then
                 destuff_enable <= '1';
-                stuff_err_enable <= '1';
             elsif (destuff_enable_clear = '1') then
-                stuff_err_enable <= '0';
                 destuff_enable <= '0';
             end if;
         end if;    
