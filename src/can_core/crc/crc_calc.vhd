@@ -118,7 +118,7 @@ architecture rtl of crc_calc is
     -- Internal registers
     ----------------------------------------------------------------------------
     -- CRC register
-    signal crc_reg          :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
+    signal crc_q            :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
     
     -- Holds previous value of enable input. Detects 0 to 1 transition
     signal start_reg        :     std_logic;
@@ -133,22 +133,31 @@ architecture rtl of crc_calc is
     signal crc_shift_n_xor  :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
 
     -- Combinational value of next CRC value
-    signal crc_nxt_val      :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
+    signal crc_d            :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
+
+    -- Clock enable for CRC register
+    signal crc_ce           :     std_logic;
 
 begin
    
     ----------------------------------------------------------------------------
     -- Calculation of next CRC value
     ----------------------------------------------------------------------------
-    crc_nxt         <= data_in xor crc_reg(G_CRC_WIDTH - 1);
+    crc_nxt         <= data_in xor crc_q(G_CRC_WIDTH - 1);
   
-    crc_shift       <= crc_reg(G_CRC_WIDTH - 2 downto 0) & '0';
+    crc_shift       <= crc_q(G_CRC_WIDTH - 2 downto 0) & '0';
     
     crc_shift_n_xor <= crc_shift xor G_POLYNOMIAL(G_CRC_WIDTH - 1 downto 0);
 
-    crc_nxt_val     <= crc_shift_n_xor when (crc_nxt = '1') 
+    crc_d           <=       init_vect when (start_reg = '0' and enable = '1')
                                        else
-                       crc_shift;
+                       crc_shift_n_xor when (crc_nxt = '1') 
+                                       else
+                            crc_shift;
+
+    crc_ce <= '1' when (start_reg = '0' and enable = '1') else
+              '1' when (enable = '1' and trig = '1') else
+              '0';
 
     ----------------------------------------------------------------------------
     -- Registering previous value of enable input to detect 0 to 1 transition
@@ -168,24 +177,15 @@ begin
     crc_calc_proc : process(res_n, clk_sys)
     begin 
         if (res_n = G_RESET_POLARITY) then
-            crc_reg             <= (OTHERS => '0');
+            crc_q             <= (OTHERS => '0');
         elsif rising_edge(clk_sys) then 
-
-            -- Load CRC init vector to CRC register
-            if (start_reg = '0' and enable = '1') then
-                crc_reg         <= init_vect;
-            else
-
-                -- Calculate the next value when triggered
-                if (enable = '1' and trig = '1') then
-                    crc_reg     <= crc_nxt_val;
-                end if;
-
+            if (crc_ce = '1') then
+                crc_q <= crc_d;            
             end if;
         end if;
     end process crc_calc_proc;
 
     -- Register to output propagation.
-    crc <= crc_reg;
+    crc <= crc_q;
 
 end architecture;
