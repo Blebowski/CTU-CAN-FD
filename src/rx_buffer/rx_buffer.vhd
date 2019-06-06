@@ -153,16 +153,16 @@ entity rx_buffer is
         rx_empty             :out    std_logic;
         
         -- Number of frames (messages) stored in recieve buffer
-        rx_message_count     :out    std_logic_vector(10 downto 0);
+        rx_frame_count       :out    std_logic_vector(10 downto 0);
         
         -- Number of free 32 bit wide words
         rx_mem_free          :out    std_logic_vector(12 downto 0);
         
         -- Position of read pointer
-        rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
+        rx_read_pointer      :out    std_logic_vector(11 downto 0);
         
         -- Position of write pointer
-        rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
+        rx_write_pointer     :out    std_logic_vector(11 downto 0);
         
         -- Overrun occurred, data were discarded!
         -- (This is a flag and persists until it is cleared by SW)! 
@@ -242,7 +242,7 @@ architecture rtl of rx_buffer is
 
     -- Data overrun flag. Recieved message was lost, because there was not
     -- enough space in FIFO during storing! Available for SW!
-    signal data_overrun_r           :       std_logic;
+    signal data_overrun_flg           :       std_logic;
 
     -- Internal data overrun flag. This flag is not available to SW, but it
     -- is restarted automatically at the beginning of each new frame reception!
@@ -263,12 +263,12 @@ architecture rtl of rx_buffer is
     -- stored is 4 (FRAME_FORMAT +  IDENTIFIER + 2 * TIMESTAMP). Since we need
     -- to store 0 and also G_RX_BUFF_SIZE / 4 values we need one value more than can
     -- fit into G_RX_BUFF_SIZE / 4 width counter. Use one bit wider counter.
-    signal message_count            :       natural range 0 to (G_RX_BUFF_SIZE / 2) - 1; 
+    signal frame_count              :       natural range 0 to (G_RX_BUFF_SIZE / 2) - 1; 
 
     -- Counter for reading the frame. When whole frame is read,
     -- number of frames must be decremented.
-    signal read_frame_counter_d     :       natural range 0 to 31;
-    signal read_frame_counter_q     :       natural range 0 to 31;
+    signal read_counter_d           :       unsigned(4 downto 0);
+    signal read_counter_q           :       unsigned(4 downto 0);
 
 
     ----------------------------------------------------------------------------
@@ -383,20 +383,20 @@ begin
     ----------------------------------------------------------------------------
     -- Propagating status registers on output
     ----------------------------------------------------------------------------
-    rx_read_pointer_pos  <= read_pointer;
-    rx_write_pointer_pos <= write_pointer;
-    rx_data_overrun      <= data_overrun_r;
+    rx_read_pointer      <= read_pointer;
+    rx_write_pointer     <= write_pointer;
+    rx_data_overrun      <= data_overrun_flg;
     rx_buf_size          <= std_logic_vector(to_unsigned(G_RX_BUFF_SIZE, 13));
 
-    rx_empty_i           <= '1' when (message_count = 0)
+    rx_empty_i           <= '1' when (frame_count = 0)
                                 else
                             '0'; 
 
     rx_full              <= '1' when (rx_mem_free_i = C_RX_BUF_MEM_FREE_ZEROES)
                                 else
-                           '0';
+                            '0';
 
-    rx_message_count     <= std_logic_vector(to_unsigned(message_count, 11)); 
+    rx_frame_count       <= std_logic_vector(to_unsigned(frame_count, 11)); 
     rx_mem_free          <= rx_mem_free_i;
     rx_empty             <= rx_empty_i;
 
@@ -525,7 +525,7 @@ begin
     -- pointers are equal, then memory must be full!
     ----------------------------------------------------------------------------
     is_free_word          <= '0' when (read_pointer = write_pointer_raw and
-                                       message_count > 0)
+                                       frame_count > 0)
                                  else
                              '1';
 
@@ -624,26 +624,25 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Reading counter (read_frame_counter_q) which is loaded by RWCNT during read
+    -- Reading counter (read_counter_q) which is loaded by RWCNT during read
     -- of frame format word. Then each next read decreases the counter. When 
     -- read counter reaches zero, message count is decreased. If "commit_rx_frame" 
-    -- comes, "message_count" is incremented. If both occur at the same time
-    -- , "message_count" does not change.
+    -- comes, "frame_count" is incremented. If both occur at the same time
+    -- , "frame_count" does not change.
     ----------------------------------------------------------------------------
     
     ---------------------------------------------------------------------------
     -- During the read of FRAME_FORMAT word store the length of the frame to
-    -- "read_frame_counter", thus we know how much we have to read before 
-    -- decrementing the "message_count".
+    -- "read_counter", thus we know how much we have to read before 
+    -- decrementing the "frame_count".
     ---------------------------------------------------------------------------
-    read_frame_counter_d <= read_frame_counter_q - 1 when (read_frame_counter_q > 0)
-                                                     else
-                            to_integer(unsigned(RAM_data_out(RWCNT_H downto RWCNT_L)));
+    read_counter_d <= read_counter_q - 1 when (read_counter_q > "00000") else
+                      unsigned(RAM_data_out(RWCNT_H downto RWCNT_L));
     
     read_frame_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            read_frame_counter_q           <= 0;
+            read_counter_q <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
 
@@ -652,35 +651,35 @@ begin
             -- something to read
             --------------------------------------------------------------------
             if (read_increment = '1') then
-                read_frame_counter_q <= read_frame_counter_d;
+                read_counter_q <= read_counter_d;
             end if;
         end if;    
     end process;
 
 
     ---------------------------------------------------------------------------
-    -- Manipulation of "message_count". When last word is read from frame
-    -- (read_frame_counter_q = 1 and read_increment), "message_count" is
+    -- Manipulation of "frame_count". When last word is read from frame
+    -- (read_counter_q = 1 and read_increment), "frame_count" is
     -- decreased, when new frame is committed, message count is increased.
     -- If both at the same time, no change since one frame is added, next is 
     -- removed!
     ---------------------------------------------------------------------------
-    message_count_ctr_proc : process(clk_sys, rx_buf_res_q)
+    frame_count_ctr_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            message_count <= 0;
+            frame_count <= 0;
 
         elsif (rising_edge(clk_sys)) then
 
             -- Read of last word, but no new commit
-            if ((read_increment = '1') and (read_frame_counter_q = 1)) then
+            if ((read_increment = '1') and (read_counter_q = "00001")) then
                 if (commit_rx_frame = '0') then
-                    message_count           <= message_count - 1;
+                    frame_count           <= frame_count - 1;
                 end if;
 
             -- Commit of new frame
             elsif (commit_rx_frame = '1') then
-                message_count               <= message_count + 1;
+                frame_count               <= frame_count + 1;
             end if;
 
         end if;
@@ -724,8 +723,8 @@ begin
     dor_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
-            data_overrun_r      <= '0';
-            data_overrun_i      <= '0';
+            data_overrun_flg      <= '0';
+            data_overrun_i        <= '0';
 
         elsif (rising_edge(clk_sys)) then
 
@@ -745,12 +744,12 @@ begin
             -- SW overrun flag -> Cleared from SW!
             --------------------------------------------------------------------
             if (drv_clr_ovr = '1') then
-                data_overrun_r  <= '0';
+                data_overrun_flg  <= '0';
  
             elsif (overrun_condition = '1') then
-                data_overrun_r  <= '1';
+                data_overrun_flg  <= '1';
             else
-                data_overrun_r  <= data_overrun_r;
+                data_overrun_flg  <= data_overrun_flg;
             end if;
 
         end if;
@@ -880,14 +879,21 @@ begin
     end process;
     -- pragma translate_on
     
+    ----------------------------------------------------------------------------
+    -- Assertions
+    ----------------------------------------------------------------------------
+    -- psl default clock is rising_edge(clk_sys);
+    
+    -- psl read_counter_lt_rwcnt_asrt : assert never
+    --  (read_counter_q > 19)
+    -- report "Read counter higher than longest RWCNT!"
+    -- severity error;
     
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
     -- Functional coverage
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
-    -- psl default clock is rising_edge(clk_sys);
-    --
     -- psl rx_buf_empty_cov : 
     --      cover (rx_empty = '1');
     --
@@ -907,7 +913,7 @@ begin
     --      cover (commit_overrun_abort = '1');
     --
     -- psl rx_buf_overrun_flags_cov :
-    --      cover (data_overrun_i = '1' and data_overrun_r = '1');
+    --      cover (data_overrun_i = '1' and data_overrun_flg = '1');
     --
     -- psl rx_buf_overrun_clear_cov :
     --      cover (drv_clr_ovr = '1');

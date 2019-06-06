@@ -196,17 +196,17 @@ architecture rtl of can_top_level is
     -- Signal whenever buffer is empty (no frame (message) is stored)
     signal rx_empty             :    std_logic;
     
-    -- Number of frames (messages) stored in recieve buffer
-    signal rx_message_count     :    std_logic_vector(10 downto 0);
+    -- Number of frames stored in recieve buffer
+    signal rx_frame_count       :    std_logic_vector(10 downto 0);
     
     -- Number of free 32 bit wide words
     signal rx_mem_free          :    std_logic_vector(12 downto 0);
     
     -- Position of read pointer
-    signal rx_read_pointer_pos  :    std_logic_vector(11 downto 0);
+    signal rx_read_pointer      :    std_logic_vector(11 downto 0);
     
     -- Position of write pointer
-    signal rx_write_pointer_pos :    std_logic_vector(11 downto 0);
+    signal rx_write_pointer     :    std_logic_vector(11 downto 0);
     
     -- Overrun occurred, data were discarded!
     -- (This is a flag and persists until it is cleared by SW)! 
@@ -508,10 +508,10 @@ begin
         rx_buf_size          => rx_buf_size,            -- IN
         rx_full              => rx_full,                -- IN
         rx_empty             => rx_empty,               -- IN
-        rx_message_count     => rx_message_count,       -- IN
+        rx_frame_count       => rx_frame_count,         -- IN
         rx_mem_free          => rx_mem_free,            -- IN
-        rx_read_pointer_pos  => rx_read_pointer_pos,    -- IN
-        rx_write_pointer_pos => rx_write_pointer_pos,   -- IN
+        rx_read_pointer      => rx_read_pointer,        -- IN
+        rx_write_pointer     => rx_write_pointer,       -- IN
         rx_data_overrun      => rx_data_overrun,        -- IN
 
         -- Interface to TXT Buffers
@@ -566,10 +566,10 @@ begin
         rx_buf_size          => rx_buf_size,            -- OUT
         rx_full              => rx_full,                -- OUT
         rx_empty             => rx_empty,               -- OUT
-        rx_message_count     => rx_message_count,       -- OUT
+        rx_frame_count       => rx_frame_count,         -- OUT
         rx_mem_free          => rx_mem_free,            -- OUT
-        rx_read_pointer_pos  => rx_read_pointer_pos,    -- OUT
-        rx_write_pointer_pos => rx_write_pointer_pos,   -- OUT
+        rx_read_pointer      => rx_read_pointer,        -- OUT
+        rx_write_pointer     => rx_write_pointer,       -- OUT
         rx_data_overrun      => rx_data_overrun,        -- OUT
         
         -- External timestamp input

@@ -2920,16 +2920,16 @@ package can_components is
         rx_empty             :in   std_logic;
 
         -- Number of frames in RX buffer
-        rx_message_count     :in   std_logic_vector(10 downto 0);
+        rx_frame_count       :in   std_logic_vector(10 downto 0);
 
         -- Number of free 32 bit words
         rx_mem_free          :in   std_logic_vector(12 downto 0);
 
         -- Position of read pointer
-        rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);
+        rx_read_pointer      :in   std_logic_vector(11 downto 0);
 
         -- Position of write pointer
-        rx_write_pointer_pos :in   std_logic_vector(11 downto 0);
+        rx_write_pointer     :in   std_logic_vector(11 downto 0);
             
         -- Data overrun Flag
         rx_data_overrun      :in   std_logic;
@@ -3734,16 +3734,16 @@ package can_components is
         rx_empty             :out    std_logic;
         
         -- Number of frames (messages) stored in recieve buffer
-        rx_message_count     :out    std_logic_vector(10 downto 0);
+        rx_frame_count       :out    std_logic_vector(10 downto 0);
         
         -- Number of free 32 bit wide words
         rx_mem_free          :out    std_logic_vector(12 downto 0);
         
         -- Position of read pointer
-        rx_read_pointer_pos  :out    std_logic_vector(11 downto 0);
+        rx_read_pointer      :out    std_logic_vector(11 downto 0);
         
         -- Position of write pointer
-        rx_write_pointer_pos :out    std_logic_vector(11 downto 0);
+        rx_write_pointer     :out    std_logic_vector(11 downto 0);
         
         -- Overrun occurred, data were discarded!
         -- (This is a flag and persists until it is cleared by SW)! 

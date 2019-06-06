@@ -100,10 +100,10 @@ architecture rx_buf_unit_test of CAN_test is
     signal rx_buf_size              :    std_logic_vector(12 downto 0);
     signal rx_full                  :    std_logic;
     signal rx_empty                 :    std_logic;
-    signal rx_message_count         :    std_logic_vector(10 downto 0);
+    signal rx_frame_count           :    std_logic_vector(10 downto 0);
     signal rx_mem_free              :    std_logic_vector(12 downto 0);
-    signal rx_read_pointer_pos      :    std_logic_vector(11 downto 0);
-    signal rx_write_pointer_pos     :    std_logic_vector(11 downto 0);
+    signal rx_read_pointer          :    std_logic_vector(11 downto 0);
+    signal rx_write_pointer         :    std_logic_vector(11 downto 0);
     signal rx_data_overrun          :    std_logic;
 
     signal rx_read_buff             :    std_logic_vector(31 downto 0);
@@ -532,10 +532,10 @@ begin
         rx_buf_size              => rx_buf_size,
         rx_full                  => rx_full,
         rx_empty                 => rx_empty,
-        rx_message_count         => rx_message_count,
+        rx_frame_count           => rx_frame_count,
         rx_mem_free              => rx_mem_free,
-        rx_read_pointer_pos      => rx_read_pointer_pos,
-        rx_write_pointer_pos     => rx_write_pointer_pos,
+        rx_read_pointer          => rx_read_pointer,
+        rx_write_pointer         => rx_write_pointer,
         rx_data_overrun          => rx_data_overrun,
         rx_read_buff             => rx_read_buff
     );

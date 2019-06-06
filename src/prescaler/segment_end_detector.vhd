@@ -145,7 +145,7 @@ architecture rtl of segment_end_detector is
     -- Combinational requests to finish segment.
     signal tseg1_end_req_valid      : std_logic;
     signal tseg2_end_req_valid      : std_logic;
-    signal hsync_end_req_valid      : std_logic;
+    signal h_sync_valid_i           : std_logic;
 
     -- End of segment, internal value
     signal segment_end_i            : std_logic;
@@ -278,7 +278,7 @@ begin
     -- Align Hard synchronisation request with Time Quanta. Note that Hard sync.
     -- is only allowed in Nominal Bit-rat, thus use only Nominal Time Quanta edge!
     ---------------------------------------------------------------------------
-    hsync_end_req_valid <=
+    h_sync_valid_i <=
         '1' when ((segm_end_req_capt_dq(0) = '1') and
                   (nbt_tq_active = '1'))
             else
@@ -294,9 +294,9 @@ begin
     --  3. Hard synchronisation induced end of segment in TSEG2! In TSEG1
     --     segment is not ended, only Bit Time counter is restarted!
     ---------------------------------------------------------------------------
-    segment_end_i <= '1' when ((tseg1_end_req_valid = '1' and hsync_end_req_valid = '0') or
+    segment_end_i <= '1' when ((tseg1_end_req_valid = '1' and h_sync_valid_i = '0') or
                                tseg2_end_req_valid = '1' or
-                               (hsync_end_req_valid = '1' and is_tseg2 = '1'))
+                               (h_sync_valid_i = '1' and is_tseg2 = '1'))
                          else
                      '0';
 
@@ -307,12 +307,12 @@ begin
     --     occurs in TSEG1 and TSEG1 does not end, it just gets re-started
     --     (bit time counter will be cleared)!
     ---------------------------------------------------------------------------
-    bt_ctr_clear_i <= '1' when (segment_end_i = '1' or hsync_end_req_valid = '1')
+    bt_ctr_clear_i <= '1' when (segment_end_i = '1' or h_sync_valid_i = '1')
                           else
                       '0';
 
     bt_ctr_clear    <= bt_ctr_clear_i;
     segm_end        <= segment_end_i;
-    h_sync_valid    <= hsync_end_req_valid;
+    h_sync_valid    <= h_sync_valid_i;
  
 end architecture rtl;

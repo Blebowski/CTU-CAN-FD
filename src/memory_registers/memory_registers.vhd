@@ -247,16 +247,16 @@ entity memory_registers is
         rx_empty             :in   std_logic;
 
         -- Number of frames in RX buffer
-        rx_message_count     :in   std_logic_vector(10 downto 0);
+        rx_frame_count       :in   std_logic_vector(10 downto 0);
 
         -- Number of free 32 bit words
         rx_mem_free          :in   std_logic_vector(12 downto 0);
 
         -- Position of read pointer
-        rx_read_pointer_pos  :in   std_logic_vector(11 downto 0);
+        rx_read_pointer      :in   std_logic_vector(11 downto 0);
 
         -- Position of write pointer
-        rx_write_pointer_pos :in   std_logic_vector(11 downto 0);
+        rx_write_pointer     :in   std_logic_vector(11 downto 0);
             
         -- Data overrun Flag
         rx_data_overrun      :in   std_logic;
@@ -1125,13 +1125,13 @@ begin
         Control_registers_in.rx_pointers(
             align_reg_to_wrd(RX_WPP_H, length) downto
             align_reg_to_wrd(RX_WPP_L, length)) <=
-            rx_write_pointer_pos;
+            rx_write_pointer;
 
         -- RX_RPP field - RX Read Pointer position
         Control_registers_in.rx_pointers(
             align_reg_to_wrd(RX_RPP_H, length) downto
             align_reg_to_wrd(RX_RPP_L, length)) <=
-            rx_read_pointer_pos;
+            rx_read_pointer;
 
         -- Padd rest by zeroes
         Control_registers_in.rx_pointers(31 downto 28) <= (OTHERS => '0');
@@ -1161,7 +1161,7 @@ begin
         Control_registers_in.rx_status(
             align_reg_to_wrd(RXFRC_H, length) downto
             align_reg_to_wrd(RXFRC_L, length)) <=
-            rx_message_count;
+            rx_frame_count;
 
         -- Padd rest by zeroes
         Control_registers_in.rx_status(15) <= '0';
