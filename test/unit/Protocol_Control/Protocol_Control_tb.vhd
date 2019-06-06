@@ -224,9 +224,8 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal destuff_enable_1          :  std_logic;
     signal fixed_stuff_1             :  std_logic;
     signal stuff_length_1            :  std_logic_vector(2 downto 0);
-    signal stuff_err_enable_1      :  std_logic;
-    signal dst_ctr_1                 :  natural range 0 to 7;
-    signal bst_ctr_1                 :  natural range 0 to 7;
+    signal dst_ctr_1                 :  std_logic_vector(2 downto 0);
+    signal bst_ctr_1                 :  std_logic_vector(2 downto 0);
     signal stuff_err_1             :  std_logic := '0';
     
     -- Bus Sampling Interface
@@ -331,9 +330,8 @@ architecture Protocol_Control_unit_test of CAN_test is
     signal destuff_enable_2          :  std_logic;
     signal fixed_stuff_2             :  std_logic;
     signal stuff_length_2            :  std_logic_vector(2 downto 0);
-    signal stuff_err_enable_2      :  std_logic;
-    signal dst_ctr_2                 :  natural range 0 to 7;
-    signal bst_ctr_2                 :  natural range 0 to 7;
+    signal dst_ctr_2                 :  std_logic_vector(2 downto 0);
+    signal bst_ctr_2                 :  std_logic_vector(2 downto 0);
     signal stuff_err_2             :  std_logic := '0';
     
     -- Bus Sampling Interface
@@ -731,7 +729,6 @@ begin
         destuff_enable          => destuff_enable_1,
         fixed_stuff             => fixed_stuff_1,
         stuff_length            => stuff_length_1,
-        stuff_err_enable      => stuff_err_enable_1,
         dst_ctr                 => dst_ctr_1,
         bst_ctr                 => bst_ctr_1,
         stuff_err             => stuff_err_1,
@@ -854,7 +851,6 @@ begin
         destuff_enable          => destuff_enable_2,
         fixed_stuff             => fixed_stuff_2,
         stuff_length            => stuff_length_2,
-        stuff_err_enable        => stuff_err_enable_2,
         dst_ctr                 => dst_ctr_2,
         bst_ctr                 => bst_ctr_2,
         stuff_err               => stuff_err_2,
@@ -1101,10 +1097,10 @@ begin
             --------------------------------------------------------------------
             rand_logic_s(rand_ctr, drv_fd_type, 0.5);
             rand_int_v(rand_ctr, 7, stf_length);
-            dst_ctr_2 <= stf_length;
-            dst_ctr_1 <= stf_length;
-            bst_ctr_1 <= stf_length;
-            bst_ctr_2 <= stf_length;
+            dst_ctr_2 <= std_logic_vector(to_unsigned(stf_length, 3));
+            dst_ctr_1 <= std_logic_vector(to_unsigned(stf_length, 3));
+            bst_ctr_1 <= std_logic_vector(to_unsigned(stf_length, 3));
+            bst_ctr_2 <= std_logic_vector(to_unsigned(stf_length, 3));
             wait for 0 ns;
 
             --------------------------------------------------------------------
@@ -1112,7 +1108,7 @@ begin
             --------------------------------------------------------------------
             info("Calculating expected frame by SW CAN");
             gen_sw_CAN(tx_frame, is_err_active_1, drv_fd_type, crc_15, crc_17, crc_21,
-                        dst_ctr_1, sw_seq, seq_length);
+                        to_integer(unsigned(dst_ctr_1)), sw_seq, seq_length);
 
             --------------------------------------------------------------------
             -- Start transmitting by Protocol control 1

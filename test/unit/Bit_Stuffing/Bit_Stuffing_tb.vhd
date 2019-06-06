@@ -139,7 +139,6 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal fixed_stuff          :   std_logic := '0';  -- Common for both
     signal stuff_length            :   std_logic_vector(2 downto 0) := "100";
     signal destuff_length            :   std_logic_vector(2 downto 0) := "100";
-    signal stuff_err_enable   :   std_logic := '1';
 
     ----------------------------------------------------------------------------
     -- Status signals
@@ -147,8 +146,8 @@ architecture bit_stuffing_unit_test of CAN_test is
     signal data_halt            :   std_logic := '0';
     signal destuffed            :   std_logic := '0';
     signal stuff_err          :   std_logic := '0';
-    signal bst_ctr               :   natural range 0 to 7 := 0;
-    signal dst_ctr               :   natural range 0 to 7 := 0;
+    signal bst_ctr               :   std_logic_vector(2 downto 0);
+    signal dst_ctr               :   std_logic_vector(2 downto 0);
 
 
     ----------------------------------------------------------------------------
@@ -635,10 +634,9 @@ begin
         res_n              =>  res_n,
         data_in            =>  joined_data,
         bds_trigger        =>  bds_trigger,
-        stuff_err        =>  stuff_err,
+        stuff_err          =>  stuff_err,
         data_out           =>  rx_data,
         destuff_enable     =>  destuff_enable,
-        stuff_err_enable =>  stuff_err_enable,
         fixed_stuff        =>  fixed_stuff,
         destuff_length     =>  destuff_length,
         destuffed          =>  destuffed,
