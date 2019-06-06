@@ -127,12 +127,6 @@ package can_components is
             can_rx      : in  std_logic;
     
             -----------------------------------------------------------------------
-            -- Synchronisation signals
-            -----------------------------------------------------------------------
-            -- Time Quanta clocks
-            time_quanta_clk : out std_logic;
-    
-            -----------------------------------------------------------------------
             -- Internal signals for testbenches
             -----------------------------------------------------------------------
             -- synthesis translate_off
@@ -3236,8 +3230,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- Status outputs
         -----------------------------------------------------------------------
-        -- Time quanta clock synchronisation output (debug only)
-        time_quanta_clk : out std_logic;
         
         -- Bit Time FSM state
         bt_fsm          : out t_bit_time 
@@ -4213,7 +4205,6 @@ package can_components is
         irq              : out std_logic;
         CAN_tx           : out std_logic;
         CAN_rx           : in  std_logic;
-        time_quanta_clk  : out std_logic;
         timestamp        : in std_logic_vector(63 downto 0);
 
         -- Ports of APB4

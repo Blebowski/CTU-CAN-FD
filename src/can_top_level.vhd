@@ -141,12 +141,6 @@ entity can_top_level is
         can_rx      : in  std_logic;
 
         -----------------------------------------------------------------------
-        -- Synchronisation signals
-        -----------------------------------------------------------------------
-        -- Time Quanta clocks
-        time_quanta_clk : out std_logic;
-
-        -----------------------------------------------------------------------
         -- Internal signals for testbenches
         -----------------------------------------------------------------------
         -- synthesis translate_off
@@ -840,7 +834,6 @@ begin
         tx_trigger              => tx_trigger,      -- OUT
         
         -- Status outputs
-        time_quanta_clk         => time_quanta_clk, -- OUT
         bt_fsm                  => bt_fsm           -- OUT
     );
   

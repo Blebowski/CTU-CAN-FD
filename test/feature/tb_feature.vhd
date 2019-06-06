@@ -115,7 +115,6 @@ architecture feature_env_test of CAN_feature_test is
         int             : std_logic;
         CAN_tx          : std_logic;
         CAN_rx          : std_logic;
-        time_quanta_clk : std_logic;--Time Quantum clocks possible to be used for synchronisation
         timestamp       : std_logic_vector(63 downto 0);
 
         data_in         : std_logic_vector(31 downto 0);
@@ -136,7 +135,6 @@ architecture feature_env_test of CAN_feature_test is
         int             => '0',
         CAN_tx          => RECESSIVE,
         CAN_rx          => RECESSIVE,
-        time_quanta_clk => '0',
         timestamp       => (OTHERS=>'0'),
 
         data_in         => (OTHERS=>'0'),
@@ -170,7 +168,6 @@ begin
             int               => p(i).int,
             CAN_tx            => p(i).CAN_tx,
             CAN_rx            => p(i).CAN_rx,
-            time_quanta_clk   => p(i).time_quanta_clk,
             timestamp         => p(i).timestamp,
             drv_bus_o         => iout(i).drv_bus,
             stat_bus_o        => iout(i).stat_bus

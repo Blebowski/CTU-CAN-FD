@@ -195,9 +195,6 @@ architecture behavioral of sanity_test is
     signal CAN_rx_v             : std_logic_vector(1 to NODE_COUNT) :=
                                     (OTHERS => RECESSIVE);
 
-    signal time_quanta_clk_v    : std_logic_vector(1 to NODE_COUNT) :=
-                                    (OTHERS => '0');
-
     -- Timestamp signals
     type timestamp_arr_type is
         array (1 to NODE_COUNT) of std_logic_vector(63 downto 0);
@@ -476,7 +473,6 @@ begin
              int              => int_v(i),
              CAN_tx           => CAN_tx_v(i),
              CAN_rx           => CAN_rx_v(i),
-             time_quanta_clk  => time_quanta_clk_v(i),
              timestamp        => timestamp_v(i)
         );
 

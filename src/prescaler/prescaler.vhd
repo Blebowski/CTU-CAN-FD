@@ -141,10 +141,7 @@ entity prescaler is
         
         -----------------------------------------------------------------------
         -- Status outputs
-        -----------------------------------------------------------------------
-        -- Time quanta clock synchronisation output (debug only)
-        time_quanta_clk : out std_logic;
-        
+        -----------------------------------------------------------------------        
         -- Bit Time FSM state
         bt_fsm          : out t_bit_time 
   );
@@ -457,14 +454,6 @@ begin
         rx_triggers => rx_triggers,     -- OUT
         tx_trigger  => tx_trigger       -- OUT
     );
-    
-    ---------------------------------------------------------------------------
-    -- Internal signals to output propagation
-    ---------------------------------------------------------------------------
-    -- Time quanta clock output
-    time_quanta_clk <= tq_edge_nbt when (sp_control = NOMINAL_SAMPLE)
-                                   else
-                       tq_edge_dbt;
 
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------

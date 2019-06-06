@@ -66,7 +66,6 @@ architecture apb_unit_test of CAN_test is
             irq              : out std_logic;
             CAN_tx           : out std_logic;
             CAN_rx           : in  std_logic;
-            time_quanta_clk  : out std_logic;
             timestamp        : in std_logic_vector(63 downto 0);
 
             -- Ports of APB4

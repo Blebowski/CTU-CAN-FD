@@ -65,7 +65,6 @@ architecture CAN_reference_test of CAN_test is
     signal int              : std_logic;
     signal CAN_tx           : std_logic;
     signal CAN_rx           : std_logic := RECESSIVE;
-    signal time_quanta_clk  : std_logic;
     signal timestamp        : std_logic_vector(63 downto 0) := (OTHERS => '0');
     signal data_in          : std_logic_vector(31 downto 0) := (OTHERS => '0');
     signal data_out         : std_logic_vector(31 downto 0);
@@ -290,7 +289,6 @@ begin
             int               => int,
             CAN_tx            => CAN_tx,
             CAN_rx            => CAN_rx,
-            time_quanta_clk   => time_quanta_clk,
             timestamp         => timestamp,
             drv_bus_o         => drv_bus,
             stat_bus_o        => stat_bus
