@@ -207,8 +207,8 @@ architecture rtl of prescaler is
         max(G_TSEG1_DBT_WIDTH, G_TSEG2_DBT_WIDTH) + 1;
    
     -- Bit time counter values. 
-    signal bt_counter_nbt       : std_logic_vector(C_BT_NBT_WIDTH - 1 downto 0);
-    signal bt_counter_dbt       : std_logic_vector(C_BT_DBT_WIDTH - 1 downto 0);
+    signal segm_counter_nbt       : std_logic_vector(C_BT_NBT_WIDTH - 1 downto 0);
+    signal segm_counter_dbt       : std_logic_vector(C_BT_DBT_WIDTH - 1 downto 0);
     
     -- Exit segment requests from re-synchronisation circuits
     signal exit_segm_req_nbt    : std_logic;
@@ -314,7 +314,7 @@ begin
         tseg_2               => tseg2_nbt,          -- IN
         sjw                  => sjw_nbt,            -- IN
         start_edge           => start_edge,         -- IN
-        bt_counter           => bt_counter_nbt,     -- IN
+        segm_counter         => segm_counter_nbt,   -- IN
         segm_end             => segment_end,        -- IN
         h_sync_valid         => h_sync_valid,       -- IN
         
@@ -340,7 +340,7 @@ begin
         drv_ena         => drv_ena,         -- IN
         
         tq_edge         => tq_edge_nbt,     -- OUT     
-        bt_counter      => bt_counter_nbt   -- OUT
+        segm_counter    => segm_counter_nbt -- OUT
     );
     
 
@@ -365,7 +365,7 @@ begin
         tseg_2               => tseg2_dbt,          -- IN
         sjw                  => sjw_dbt,            -- IN
         start_edge           => start_edge,         -- IN
-        bt_counter           => bt_counter_dbt,     -- IN
+        segm_counter         => segm_counter_dbt,   -- IN
         segm_end             => segment_end,        -- IN
         h_sync_valid         => h_sync_valid,       -- IN
         
@@ -391,7 +391,7 @@ begin
         drv_ena         => drv_ena,         -- IN
         
         tq_edge         => tq_edge_dbt,     -- OUT
-        bt_counter      => bt_counter_dbt   -- OUT
+        segm_counter    => segm_counter_dbt -- OUT
     );
 
     ---------------------------------------------------------------------------

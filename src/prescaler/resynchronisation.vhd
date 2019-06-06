@@ -222,7 +222,7 @@ entity resynchronisation is
         -- Bit Time counter interface
         -----------------------------------------------------------------------
         -- Bit time counter
-        bt_counter   : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
+        segm_counter : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
 
         -----------------------------------------------------------------------
         -- End of segment detector
@@ -331,7 +331,7 @@ begin
     segm_extension <= 
                to_unsigned(1, C_EXT_WIDTH) when (h_sync_valid = '1') else
         resize(unsigned(sjw), C_EXT_WIDTH) when (phase_err_mt_sjw = '1') else
-        resize(unsigned(bt_counter), C_EXT_WIDTH);
+        resize(unsigned(segm_counter), C_EXT_WIDTH);
 
     segm_ext_add <= resize(basic_segm_length, C_EXP_WIDTH) +
                     resize(segm_extension, C_EXP_WIDTH);
@@ -389,15 +389,15 @@ begin
     -- Phase error calculation:
     --  1. For TSEG2: TSEG2 - Bit Time counter
     --  2. For TSEG1: Only Bit Time counter
-    -- Note that subtraction in unsigned type is safe here since bt_counter
+    -- Note that subtraction in unsigned type is safe here since segm_counter
     -- is never higher than tseg_2 in tseg_2. If we are in tseg_1 neg_phase
     -- err underflows, but we don't care since we don't use it then!
     ---------------------------------------------------------------------------
     neg_phase_err  <= resize(unsigned(tseg_2), C_E_WIDTH) -
-                      resize(unsigned(bt_counter), C_E_WIDTH); 
+                      resize(unsigned(segm_counter), C_E_WIDTH); 
 
     phase_err <= resize(neg_phase_err, C_E_WIDTH) when (is_tseg2 = '1') else
-                 resize(unsigned(bt_counter), C_E_WIDTH);
+                 resize(unsigned(segm_counter), C_E_WIDTH);
 
     phase_err_mt_sjw <= '1' when (resize(phase_err, C_E_SJW_WIDTH) >
                                   resize(unsigned(sjw), C_E_SJW_WIDTH))
@@ -419,7 +419,7 @@ begin
     -- Regular end occurs when Bit time counter reaches expected length of
     -- segment.
     ---------------------------------------------------------------------------
-    exit_segm_regular <= '1' when (resize(unsigned(bt_counter), C_EXP_WIDTH) >=
+    exit_segm_regular <= '1' when (resize(unsigned(segm_counter), C_EXP_WIDTH) >=
                                    resize(unsigned(exp_seg_length_q) - 1, C_EXP_WIDTH))
                              else
                          '0';

@@ -110,8 +110,8 @@ entity bit_time_counters is
         -- Time Quanta edge
         tq_edge         : out   std_logic;
        
-        -- Bit Time counter
-        bt_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
+        -- Segment counter
+        segm_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
     );
 end entity;
 
@@ -130,8 +130,8 @@ architecture rtl of bit_time_counters is
         (0 => '1', OTHERS => '0');
     
     -- Bit Time counter
-    signal bt_counter_d         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
-    signal bt_counter_q         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
+    signal segm_counter_d         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
+    signal segm_counter_q         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
     
     constant bt_zeroes : std_logic_vector(G_BT_WIDTH - 1 downto 0) :=
         (OTHERS => '0');
@@ -180,16 +180,16 @@ begin
     ---------------------------------------------------------------------------
     -- Bit time counter
     ---------------------------------------------------------------------------
-    bt_counter_d <= bt_zeroes when (bt_reset = '1') else
-                    std_logic_vector(unsigned(bt_counter_q) + 1);
+    segm_counter_d <= bt_zeroes when (bt_reset = '1') else
+                    std_logic_vector(unsigned(segm_counter_q) + 1);
 
-    bt_counter_proc : process(clk_sys, res_n)
+    segm_counter_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            bt_counter_q <= (OTHERS => '0');
+            segm_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if ((tq_edge_i = '1' and drv_ena = '1') or bt_reset = '1') then
-                bt_counter_q <= bt_counter_d;
+                segm_counter_q <= segm_counter_d;
             end if;
         end if;
     end process;
@@ -197,7 +197,7 @@ begin
     ---------------------------------------------------------------------------
     -- Internal signals to output propagation
     ---------------------------------------------------------------------------
-    bt_counter <= bt_counter_q;
+    segm_counter <= segm_counter_q;
     tq_edge <= tq_edge_i;
 
 end architecture rtl;

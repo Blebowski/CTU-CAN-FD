@@ -3106,7 +3106,7 @@ package can_components is
         tq_edge         : out   std_logic;
        
         -- Bit Time counter
-        bt_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
+        segm_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
     );
     end component;
 
@@ -3306,7 +3306,7 @@ package can_components is
         -- Bit Time counter interface
         -----------------------------------------------------------------------
         -- Bit time counter
-        bt_counter   : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
+        segm_counter   : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
 
         -----------------------------------------------------------------------
         -- End of segment detector
