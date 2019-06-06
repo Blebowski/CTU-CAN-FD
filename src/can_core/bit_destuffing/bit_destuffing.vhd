@@ -115,7 +115,7 @@ entity bit_destuffing is
         destuffed            : out std_logic;
         
         -- Number of de-stuffed bits with normal bit stuffing method
-        dst_ctr              : out natural range 0 to 7
+        dst_ctr              : out std_logic_vector(2 downto 0)
     );
 end entity;
 
@@ -146,9 +146,9 @@ architecture rtl of bit_destuffing is
     ---------------------------------------------------------------------------
     -- Counter with number of equal consecutive bits on input
     ---------------------------------------------------------------------------
-    signal same_bits_d             : natural range 0 to 7;
-    signal same_bits_q             : natural range 0 to 7;
-    signal same_bits_add           : natural range 0 to 7;
+    signal same_bits_d             : unsigned(2 downto 0);
+    signal same_bits_q             : unsigned(2 downto 0);
+    signal same_bits_add           : unsigned(2 downto 0);
     signal same_bits_erase         : std_logic;
 
     ---------------------------------------------------------------------------
@@ -167,9 +167,9 @@ architecture rtl of bit_destuffing is
     -- ISO CAN FD destuff bit counter
     -- Counter of destuffed bits by non-fixed bit stuffing.
     ---------------------------------------------------------------------------
-    signal dst_ctr_q           : natural range 0 to 7;
-    signal dst_ctr_d           : natural range 0 to 7;
-    signal dst_ctr_add         : natural range 0 to 7;
+    signal dst_ctr_q           : unsigned(2 downto 0);
+    signal dst_ctr_d           : unsigned(2 downto 0);
+    signal dst_ctr_add         : unsigned(2 downto 0);
 
     ---------------------------------------------------------------------------
     -- Value of previous processed bit.
@@ -285,11 +285,11 @@ begin
     --  2. Increment when non-fixed stuff bit is inserted
     --  3. Keep otherwise
     ---------------------------------------------------------------------------
-    dst_ctr_d <=               0  when (enable_prev = '0') else
-                     dst_ctr_add  when (bds_trigger = '1' and 
-                                        stuff_lvl_reached = '1' and
-                                        fixed_stuff = '0') else
-                     dst_ctr_q;
+    dst_ctr_d <=       "000"  when (enable_prev = '0') else
+                 dst_ctr_add  when (bds_trigger = '1' and 
+                                    stuff_lvl_reached = '1' and
+                                    fixed_stuff = '0') else
+                  dst_ctr_q;
 
 
     ---------------------------------------------------------------------------
@@ -298,7 +298,7 @@ begin
     dst_ctr_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            dst_ctr_q         <= 0;
+            dst_ctr_q         <= (OTHERS => '0');
 
         elsif (rising_edge(clk_sys)) then
             if (destuff_enable = '1') then
@@ -335,7 +335,7 @@ begin
     --  2. Increment upon processing of bit.
     --  3. Keep its value otherwise.
     ---------------------------------------------------------------------------
-    same_bits_d   <= 1             when (same_bits_erase = '1') else
+    same_bits_d   <=         "001" when (same_bits_erase = '1') else
                      same_bits_add when (bds_trigger = '1') else
                      same_bits_q;
 
@@ -346,7 +346,7 @@ begin
     same_bits_ctr_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            same_bits_q <= 1;
+            same_bits_q <= "001";
 
         elsif (rising_edge(clk_sys)) then
             same_bits_q <= same_bits_d;
@@ -452,7 +452,7 @@ begin
 
     destuffed   <= destuffed_q;
     stuff_err   <= stuff_err_q;
-    dst_ctr     <= dst_ctr_q;
+    dst_ctr     <= std_logic_vector(dst_ctr_q);
 
 
     ----------------------------------------------------------------------------

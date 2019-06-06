@@ -127,7 +127,7 @@ entity err_detector is
         rx_stuff_count          :in   std_logic_vector(3 downto 0);
         
         -- Destuff counter mod 8
-        dst_ctr                 :in   natural range 0 to 7;
+        dst_ctr                 :in   std_logic_vector(2 downto 0);
 
         -----------------------------------------------------------------------
         -- Control signals
@@ -212,9 +212,6 @@ architecture rtl of err_detector is
     signal crc_17_ok       : std_logic;
     signal crc_21_ok       : std_logic;
     signal stuff_count_ok  : std_logic;
-
-    -- Destuff counter converted to vector
-    signal dst_ctr_vect    : std_logic_vector(2 downto 0);
     
     -- Aliases for received CRC (for easier debugging)
     signal rx_crc_15       : std_logic_vector(14 downto 0);
@@ -264,17 +261,16 @@ begin
     -- De-Stuff counter grey-coding + parity
     ---------------------------------------------------------------------------
     with dst_ctr select dst_ctr_grey <= 
-        "000" when 0,
-        "001" when 1,
-        "011" when 2,
-        "010" when 3,
-        "110" when 4,
-        "111" when 5,
-        "101" when 6,
-        "100" when 7,
+        "000" when "000",
+        "001" when "001",
+        "011" when "010",
+        "010" when "011",
+        "110" when "100",
+        "111" when "101",
+        "101" when "110",
+        "100" when "111",
         "000" when others;
 
-    dst_ctr_vect <= std_logic_vector(to_unsigned(dst_ctr, 3));
     dst_parity <= dst_ctr_grey(0) xor dst_ctr_grey(1) xor dst_ctr_grey(2);
 
     ---------------------------------------------------------------------------

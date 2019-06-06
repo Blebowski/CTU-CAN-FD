@@ -511,13 +511,13 @@ package can_components is
         ------------------------------------------------------------------------
         -- Stuff error detected (more equal consecutive bits than length of
         -- stuff rule.
-        stuff_err          : out std_logic;
+        stuff_err            : out std_logic;
         
         -- Data output is not valid, actual bit is stuff bit.
         destuffed            : out std_logic;
         
         -- Number of de-stuffed bits with normal bit stuffing method
-        dst_ctr              : out natural range 0 to 7
+        dst_ctr              : out std_logic_vector(2 downto 0)
     );
     end component bit_destuffing;
    
@@ -565,7 +565,7 @@ package can_components is
         -- Status signals
         ------------------------------------------------------------------------
         -- Number of stuffed bits with Normal Bit stuffing
-        bst_ctr             :out  natural range 0 to 7;
+        bst_ctr             :out  std_logic_vector(2 downto 0); 
         
         -- Stuff bit is inserted, Protocol control operation to be halted for
         -- one bit time
@@ -1201,7 +1201,7 @@ package can_components is
         rx_stuff_count          :in   std_logic_vector(3 downto 0);
         
         -- Destuff counter mod 8
-        dst_ctr                 :in   natural range 0 to 7;
+        dst_ctr                 :in   std_logic_vector(2 downto 0);
 
         -----------------------------------------------------------------------
         -- Control signals
@@ -1993,13 +1993,13 @@ package can_components is
         stuff_length            :out  std_logic_vector(2 downto 0);
 
         -- Number of de-stuffed bits modulo 8
-        dst_ctr                 :in   natural range 0 to 7;
+        dst_ctr                 :in   std_logic_vector(2 downto 0);
         
         -- Number of stuffed bits modulo 8
-        bst_ctr                 :in   natural range 0 to 7;
+        bst_ctr                 :in   std_logic_vector(2 downto 0);
         
         -- Stuff Error
-        stuff_err             :in   std_logic;
+        stuff_err               :in   std_logic;
         
         ------------------------------------------------------------------------
         -- Bus Sampling Interface
@@ -2346,7 +2346,7 @@ package can_components is
         -- Bit Stuffing / Destuffing Interface
         -----------------------------------------------------------------------
         -- Stuff counter modulo 8
-        bst_ctr                 :in  natural range 0 to 7;
+        bst_ctr                 :in  std_logic_vector(2 downto 0);
 
         -----------------------------------------------------------------------
         -- TXT Buffers interface

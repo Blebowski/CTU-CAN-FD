@@ -316,8 +316,8 @@ architecture rtl of can_core is
     signal destuff_enable          :    std_logic;
     signal fixed_stuff             :    std_logic;
     signal stuff_length            :    std_logic_vector(2 downto 0);
-    signal dst_ctr                 :    natural range 0 to 7;
-    signal bst_ctr                 :    natural range 0 to 7;
+    signal dst_ctr                 :    std_logic_vector(2 downto 0);
+    signal bst_ctr                 :    std_logic_vector(2 downto 0);
     signal stuff_err               :    std_logic;
     
     -- CRC Interface
@@ -1074,10 +1074,10 @@ begin
         bit_err;
 
     stat_bus(STAT_BS_CTR_HIGH downto STAT_BS_CTR_LOW) <=
-        std_logic_vector(to_unsigned(bst_ctr, 3));
+        bst_ctr;
           
     stat_bus(STAT_BD_CTR_HIGH downto STAT_BD_CTR_LOW) <=
-        std_logic_vector(to_unsigned(dst_ctr, 3)); 
+        dst_ctr; 
 
     stat_bus(STAT_TS_HIGH downto STAT_TS_LOW) <=
         timestamp;

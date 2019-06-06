@@ -300,10 +300,10 @@ entity protocol_control is
         stuff_length            :out  std_logic_vector(2 downto 0);
 
         -- Number of de-stuffed bits modulo 8
-        dst_ctr                 :in   natural range 0 to 7;
+        dst_ctr                 :in   std_logic_vector(2 downto 0);
         
         -- Number of stuffed bits modulo 8
-        bst_ctr                 :in   natural range 0 to 7;
+        bst_ctr                 :in   std_logic_vector(2 downto 0);
         
         -- Stuff Error
         stuff_err               :in   std_logic;

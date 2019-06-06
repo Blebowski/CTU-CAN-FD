@@ -145,7 +145,7 @@ entity tx_shift_reg is
         -- Bit Stuffing / Destuffing Interface
         -----------------------------------------------------------------------
         -- Stuff counter modulo 8
-        bst_ctr                 :in   natural range 0 to 7;
+        bst_ctr                 :in   std_logic_vector(2 downto 0);
 
         -----------------------------------------------------------------------
         -- TXT Buffers interface
@@ -212,14 +212,14 @@ begin
                         
     -- Stuff counter grey coding
     with bst_ctr select bst_ctr_grey <=
-        "000" when 0,
-        "001" when 1,
-        "011" when 2,
-        "010" when 3,
-        "110" when 4,
-        "111" when 5,
-        "101" when 6,
-        "100" when 7,
+        "000" when "000",
+        "001" when "001",
+        "011" when "010",
+        "010" when "011",
+        "110" when "100",
+        "111" when "101",
+        "101" when "110",
+        "100" when "111",
         "000" when others;
     
     bst_parity <= bst_ctr_grey(0) xor bst_ctr_grey(1) xor bst_ctr_grey(2);

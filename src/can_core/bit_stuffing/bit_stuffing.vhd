@@ -110,7 +110,7 @@ entity bit_stuffing is
         -- Status signals
         ------------------------------------------------------------------------
         -- Number of stuffed bits with Normal Bit stuffing
-        bst_ctr             :out  natural range 0 to 7;
+        bst_ctr             :out  std_logic_vector(2 downto 0);
         
         -- Stuff bit is inserted, Protocol control operation to be halted for
         -- one bit time
@@ -125,9 +125,9 @@ architecture rtl of bit_stuffing is
     ---------------------------------------------------------------------------
     -- Counter with number of equal consequent bits
     ---------------------------------------------------------------------------
-    signal same_bits_q          :     natural range 0 to 7; 
-    signal same_bits_add        :     natural range 0 to 7;
-    signal same_bits_d          :     natural range 0 to 7;
+    signal same_bits_q          :     unsigned(2 downto 0);
+    signal same_bits_add        :     unsigned(2 downto 0);
+    signal same_bits_d          :     unsigned(2 downto 0);
 
     -- Halt for CAN Core             
     signal data_halt_q          :     std_logic;
@@ -142,9 +142,9 @@ architecture rtl of bit_stuffing is
     ---------------------------------------------------------------------------
     -- Counter with regularly stuffed bits
     ---------------------------------------------------------------------------
-    signal bst_ctr_q          :     natural range 0 to 7;
-    signal bst_ctr_add        :     natural range 0 to 7;
-    signal bst_ctr_d          :     natural range 0 to 7;
+    signal bst_ctr_q            :     unsigned(2 downto 0);
+    signal bst_ctr_add          :     unsigned(2 downto 0);
+    signal bst_ctr_d            :     unsigned(2 downto 0);
 
     ---------------------------------------------------------------------------
     -- Registered value of enable input
@@ -204,8 +204,6 @@ architecture rtl of bit_stuffing is
 
 begin
 
-    data_out <= data_out_i;
-
     ---------------------------------------------------------------------------
     -- Registering previous value of enable input to detect 0->1 transition.
     ---------------------------------------------------------------------------
@@ -227,9 +225,9 @@ begin
     -- Detection of change on fixed stuff settings upon mismatch between
     -- actual and registered value of fixed stuff settings from previous bit.
     ---------------------------------------------------------------------------
-    non_fix_to_fix_chng    <= '1' when (fixed_stuff = '1' and fixed_reg_q = '0')
-                                  else
-                              '0';
+    non_fix_to_fix_chng <= '1' when (fixed_stuff = '1' and fixed_reg_q = '0')
+                               else
+                           '0';
 
     ---------------------------------------------------------------------------
     -- Calculation of next value in fixed stuff register:
@@ -271,7 +269,7 @@ begin
     --  2. Upon insertion of non-fixed stuff bit increment.
     --  3. Keep previous value otherwise.
     ---------------------------------------------------------------------------
-    bst_ctr_d <=  0           when (enable_prev = '0') else
+    bst_ctr_d <=        "000" when (enable_prev = '0') else
                   bst_ctr_add when (bst_trigger = '1' and
                                     stuff_lvl_reached = '1' and
                                     fixed_stuff = '0') else
@@ -283,8 +281,7 @@ begin
     stuff_ctr_proc : process(res_n, clk_sys)
     begin
         if (res_n = G_RESET_POLARITY) then
-            bst_ctr_q           <=  0;
-
+            bst_ctr_q           <= (OTHERS => '0');
         elsif rising_edge(clk_sys) then
             if (stuff_enable = '1') then
                 bst_ctr_q       <= bst_ctr_d;
@@ -331,8 +328,8 @@ begin
     --  2. Increment if not reset when processing bit.
     --  3. Keep original value otherwise.
     ---------------------------------------------------------------------------
-    same_bits_d <= 1             when (same_bits_rst = '1') else
-                     same_bits_add when (bst_trigger = '1') else
+    same_bits_d <=         "001" when (same_bits_rst = '1') else
+                   same_bits_add when (bst_trigger = '1') else
                      same_bits_q;
 
 
@@ -356,13 +353,13 @@ begin
     same_bits_ctr_proc : process(res_n, clk_sys)
     begin
         if (res_n = G_RESET_POLARITY) then
-            same_bits_q           <=  1;
+            same_bits_q           <=  "001";
 
         elsif rising_edge(clk_sys) then
             if (stuff_enable = '1') then
                 same_bits_q       <= same_bits_d;
             else
-                same_bits_q       <= 1;
+                same_bits_q       <= "001";
             end if;
         end if;
     end process;
@@ -451,7 +448,8 @@ begin
     ---------------------------------------------------------------------------
     -- Propagating internal signals to output 
     ---------------------------------------------------------------------------
-    bst_ctr               <= bst_ctr_q;
-    data_halt             <= data_halt_q;
+    bst_ctr         <= std_logic_vector(bst_ctr_q);
+    data_halt       <= data_halt_q;
+    data_out        <= data_out_i;
   
 end architecture;
