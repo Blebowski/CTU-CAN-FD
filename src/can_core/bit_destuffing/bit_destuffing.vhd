@@ -443,12 +443,27 @@ begin
 
 
     ---------------------------------------------------------------------------
+    -- Sampling of data value to output.
+    -- Value is propagated each time, only destuffed bit is marked!
+    ---------------------------------------------------------------------------
+    dff_data_out_val_reg : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => RECESSIVE
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+
+        input              => data_in,
+        ce                 => bds_trigger,
+        output             => data_out
+    );
+
+
+    ---------------------------------------------------------------------------
     -- Propagation to output
     ---------------------------------------------------------------------------
-
-    -- Data output is fed directly from input, only destuffed bits are marked
-    -- via "destuffed".
-    data_out    <= data_in;
 
     destuffed   <= destuffed_q;
     stuff_err   <= stuff_err_q;
