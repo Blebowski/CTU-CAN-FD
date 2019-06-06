@@ -1437,7 +1437,7 @@ package can_components is
         tx_data_wbs             :in   std_logic;
         
         -- Actual RX Data
-        rx_data                 :in   std_logic;
+        rx_data_nbs             :in   std_logic;
         
         -----------------------------------------------------------------------
         -- RX Buffer interface
@@ -2177,7 +2177,7 @@ package can_components is
         -- Data-path interface
         -----------------------------------------------------------------------
         -- Actual RX Data
-        rx_data                 :in   std_logic;
+        rx_data_nbs             :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Protocol control FSM interface
@@ -2285,8 +2285,8 @@ package can_components is
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
-        -- Actual TX Data
-        tx_data                 :out   std_logic;
+        -- Actual TX Data (no bit stuffing)
+        tx_data_nbs             :out   std_logic;
 
         -----------------------------------------------------------------------
         -- Protocol control FSM interface

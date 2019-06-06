@@ -648,7 +648,7 @@ begin
 
         -- Data-path interface
         tx_data_wbs             => tx_data_wbs,         -- IN
-        rx_data                 => rx_data_nbs,         -- IN
+        rx_data_nbs             => rx_data_nbs,         -- IN
 
         -- RX Buffer interface
         store_metadata          => store_metadata,      -- OUT
@@ -904,7 +904,7 @@ begin
         res_n                   => res_n,               -- IN
 
         tx_trigger              => tx_trigger,          -- IN
-        tx_data                 => tx_data_nbs_i,       -- OUT
+        tx_data_nbs             => tx_data_nbs_i,       -- OUT
 
         -- Protocol control FSM interface
         tx_load_base_id         => tx_load_base_id,     -- IN
@@ -944,7 +944,7 @@ begin
         rx_trigger              => rx_trigger,          -- IN
 
         -- Data-path interface
-        rx_data                 => rx_data_nbs,         -- IN
+        rx_data_nbs             => rx_data_nbs,         -- IN
 
         -- Protocol control FSM interface
         rx_clear                => rx_clear,                -- IN

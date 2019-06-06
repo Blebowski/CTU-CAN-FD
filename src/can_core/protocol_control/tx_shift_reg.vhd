@@ -84,8 +84,8 @@ entity tx_shift_reg is
         -----------------------------------------------------------------------
         -- Data-path interface
         -----------------------------------------------------------------------
-        -- Actual TX Data
-        tx_data                 :out   std_logic;
+        -- Actual TX Data (no bit stuffing)
+        tx_data_nbs             :out   std_logic;
 
         -----------------------------------------------------------------------
         -- Protocol control FSM interface
@@ -272,10 +272,10 @@ begin
     ---------------------------------------------------------------------------
     -- Calculation of next data bit value!
     ---------------------------------------------------------------------------
-    tx_data <= DOMINANT when (err_frm_req = '1' and is_err_active = '1') else
-               RECESSIVE when (err_frm_req = '1') else
-               DOMINANT when (tx_dominant = '1') else
-               tx_sr_output when (tx_shift_ena = '1') else
-               RECESSIVE;
+    tx_data_nbs <= DOMINANT when (err_frm_req = '1' and is_err_active = '1') else
+                   RECESSIVE when (err_frm_req = '1') else
+                   DOMINANT when (tx_dominant = '1') else
+                   tx_sr_output when (tx_shift_ena = '1') else
+                   RECESSIVE;
 
 end architecture;

@@ -85,7 +85,7 @@ entity rx_shift_reg is
         -- Data-path interface
         -----------------------------------------------------------------------
         -- Actual RX Data
-        rx_data                 :in   std_logic;
+        rx_data_nbs             :in   std_logic;
 
         -----------------------------------------------------------------------
         -- Protocol control FSM interface
@@ -207,7 +207,7 @@ begin
     -- bit of DLC. Thus it is needed at the same clock cycle as it is stored
     -- so Q value is not yet there! 
     ---------------------------------------------------------------------------
-    rec_dlc_d <= rx_shift_reg_q(2 downto 0) & rx_data;
+    rec_dlc_d <= rx_shift_reg_q(2 downto 0) & rx_data_nbs;
 
     rx_shift_in_sel_demuxed <= rx_shift_in_sel & rx_shift_in_sel &
                                rx_shift_in_sel & rx_shift_in_sel;
@@ -224,7 +224,7 @@ begin
     port map(
         clk                  => clk_sys,
         res_n                => res_n_i,
-        input                => rx_data,
+        input                => rx_data_nbs,
         byte_clock_ena       => rx_shift_cmd,
         byte_input_sel       => rx_shift_in_sel_demuxed,
         reg_stat             => rx_shift_reg_q
@@ -240,12 +240,12 @@ begin
         elsif (rising_edge(clk_sys)) then
             if (rx_store_base_id = '1') then
                 rec_ident(IDENTIFIER_BASE_H downto IDENTIFIER_BASE_L) <=
-                    rx_shift_reg_q(9 downto 0) & rx_data;
+                    rx_shift_reg_q(9 downto 0) & rx_data_nbs;
             end if;
 
             if (rx_store_ext_id = '1') then
                 rec_ident(IDENTIFIER_EXT_H downto IDENTIFIER_EXT_L) <= 
-                    rx_shift_reg_q(16 downto 0) & rx_data;
+                    rx_shift_reg_q(16 downto 0) & rx_data_nbs;
             end if;
         end if;
     end process;
@@ -259,7 +259,7 @@ begin
             rec_ident_type <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_ide = '1') then
-                rec_ident_type <= rx_data;
+                rec_ident_type <= rx_data_nbs;
             end if;
         end if;
     end process;
@@ -273,7 +273,7 @@ begin
             rec_is_rtr <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_rtr = '1') then
-                rec_is_rtr <= rx_data;
+                rec_is_rtr <= rx_data_nbs;
             end if;
         end if;
     end process;
@@ -287,7 +287,7 @@ begin
             rec_frame_type <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_edl = '1') then
-                rec_frame_type <= rx_data;
+                rec_frame_type <= rx_data_nbs;
             end if;
         end if;
     end process;
@@ -301,7 +301,7 @@ begin
             rec_esi <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_esi = '1') then
-                rec_esi <= rx_data;
+                rec_esi <= rx_data_nbs;
             end if;
         end if;
     end process;
@@ -315,7 +315,7 @@ begin
             rec_brs <= '0';    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_brs = '1') then
-                rec_brs <= rx_data;
+                rec_brs <= rx_data_nbs;
             end if;
         end if;
     end process;
@@ -329,7 +329,7 @@ begin
             rec_dlc <= (OTHERS => '0');    
         elsif (rising_edge(clk_sys)) then
             if (rx_store_dlc = '1') then
-                rec_dlc <= rx_shift_reg_q(2 downto 0) & rx_data;
+                rec_dlc <= rx_shift_reg_q(2 downto 0) & rx_data_nbs;
             end if;
         end if;
     end process;
@@ -343,7 +343,7 @@ begin
             rx_stuff_count <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
             if (rx_store_stuff_count = '1') then
-                rx_stuff_count <= rx_shift_reg_q(2 downto 0) & rx_data;
+                rx_stuff_count <= rx_shift_reg_q(2 downto 0) & rx_data_nbs;
             end if;
         end if;
     end process;

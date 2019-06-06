@@ -161,7 +161,7 @@ entity protocol_control_fsm is
         tx_data_wbs             :in   std_logic;
         
         -- Actual RX Data
-        rx_data                 :in   std_logic;
+        rx_data_nbs                 :in   std_logic;
         
         -----------------------------------------------------------------------
         -- RX Buffer interface
@@ -695,7 +695,7 @@ begin
 
     arbitration_lost_condition <= '1' when (is_transmitter = '1' and 
                                             tx_data_wbs = RECESSIVE and
-                                            rx_data = DOMINANT and
+                                            rx_data_nbs = DOMINANT and
                                             rx_trigger = '1')
                                       else
                                   '0';
@@ -715,7 +715,7 @@ begin
                          '0';
 
     frame_start <= '1' when (tx_frame_ready = '1' and go_to_suspend = '0') else
-                   '1' when (rx_data = DOMINANT) else
+                   '1' when (rx_data_nbs = DOMINANT) else
                    '0';
 
     ---------------------------------------------------------------------------
@@ -797,7 +797,7 @@ begin
         curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
         drv_fd_type, allow_2bit_crc_delim, allow_2bit_ack, is_receiver,
         is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset,
-        reinteg_ctr_expired, rx_data, is_err_active, go_to_stuff_count
+        reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count
         )
     begin
         next_state <= curr_state;
@@ -853,7 +853,7 @@ begin
             -- IDE bit
             -------------------------------------------------------------------
             when s_pc_ide =>
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                    next_state <= s_pc_edl_r0;
                 else
                    next_state <= s_pc_ext_id; 
@@ -877,7 +877,7 @@ begin
             -- EDL/r1 bit after RTR/r1 bit in Extended Identifier
             -------------------------------------------------------------------
             when s_pc_edl_r1 =>
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_r0_ext;
                 else
                     next_state <= s_pc_r0_fd; 
@@ -900,7 +900,7 @@ begin
             -- only!
             -------------------------------------------------------------------
             when s_pc_edl_r0 =>
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_dlc;
                 else
                     next_state <= s_pc_r0_fd;
@@ -976,7 +976,7 @@ begin
             -- Secondary CRC Delimiter, or an ACK Slot if DOMINANT.
             -------------------------------------------------------------------
             when s_pc_crc_delim_sec =>
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_ack_sec;
                 else
                     next_state <= s_pc_ack;
@@ -996,7 +996,7 @@ begin
             -- Secondary ACK field (in FD Frames),or ACK Delimiter if RECESSIVE
             -------------------------------------------------------------------
             when s_pc_ack_sec =>
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_ack_delim;
                 else
                     next_state <= s_pc_eof;
@@ -1014,7 +1014,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_eof =>
                 if (ctrl_ctr_zero = '1') then
-                    if (rx_data = RECESSIVE) then
+                    if (rx_data_nbs = RECESSIVE) then
                         next_state <= s_pc_intermission;
                     elsif (is_receiver = '1') then
                         next_state <= s_pc_ovr_flag;
@@ -1030,7 +1030,7 @@ begin
                     
                 -- Last bit of intermission!
                 elsif (ctrl_ctr_zero = '1') then
-                    if (rx_data = DOMINANT) then
+                    if (rx_data_nbs = DOMINANT) then
                         next_state <= s_pc_base_id;
                     elsif (go_to_suspend = '1') then
                         next_state <= s_pc_suspend;
@@ -1041,7 +1041,7 @@ begin
                     end if;
                 
                 -- First or second bit of intermission!
-                elsif (rx_data = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_ovr_flag;
                 end if;
 
@@ -1049,7 +1049,7 @@ begin
             -- Suspend transmission
             -------------------------------------------------------------------
             when s_pc_suspend =>
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     next_state <= s_pc_base_id;
                 elsif (ctrl_ctr_zero = '1') then
                     -- Start transmission after suspend if we have what to
@@ -1066,7 +1066,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_idle =>
                -- Dominant during idle is interpreted as SOF!
-               if (rx_data = DOMINANT) then
+               if (rx_data_nbs = DOMINANT) then
                    next_state <= s_pc_base_id;
                elsif (tx_frame_ready = '1') then
                    next_state <= s_pc_sof;
@@ -1109,7 +1109,7 @@ begin
             -- Wait till Error delimiter (detection of recessive bit)
             -------------------------------------------------------------------
             when s_pc_err_delim_wait =>
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     next_state <= s_pc_err_delim;
                 end if;
             
@@ -1118,7 +1118,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_err_delim =>
                 if (ctrl_ctr_zero = '1') then
-                    if (rx_data = DOMINANT) then
+                    if (rx_data_nbs = DOMINANT) then
                         next_state <= s_pc_ovr_flag;
                     else
                         next_state <= s_pc_intermission;
@@ -1137,7 +1137,7 @@ begin
             -- Wait till overload delimiter.
             -------------------------------------------------------------------
             when s_pc_ovr_delim_wait =>
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     next_state <= s_pc_ovr_delim;
                 end if;
 
@@ -1146,7 +1146,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_ovr_delim  =>
                 if (ctrl_ctr_zero = '1') then
-                    if (rx_data = DOMINANT) then
+                    if (rx_data_nbs = DOMINANT) then
                         next_state <= s_pc_ovr_flag;
                     else
                         next_state <= s_pc_intermission;
@@ -1160,7 +1160,7 @@ begin
     -- Current state process
     ---------------------------------------------------------------------------
     curr_state_proc : process(
-        curr_state, err_frm_req, sp_control_q, tx_failed, drv_ena, rx_data,
+        curr_state, err_frm_req, sp_control_q, tx_failed, drv_ena, rx_data_nbs,
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter,
         tran_ident_type, tran_frame_type, tran_is_rtr, ide_is_arbitration,
         drv_can_fd_ena, tran_brs, rx_trigger, is_err_active, no_data_field,
@@ -1341,7 +1341,7 @@ begin
                 perform_hsync <= '1';
                 
                 -- Restart integration upon reception of DOMINANT bit!
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
@@ -1364,7 +1364,7 @@ begin
                 crc_enable <= '1';
                 txtb_ptr_d <= 1;
                 
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';
                 end if;
 
@@ -1398,7 +1398,7 @@ begin
                     rx_store_base_id_i <= '1';
                 end if;
                 
-                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
                     bit_err_arb_i <= '1';
                 end if;
 
@@ -1434,7 +1434,7 @@ begin
                     end if;
                 end if;
                 
-                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
                     bit_err_arb_i <= '1';
                 end if;
 
@@ -1448,7 +1448,7 @@ begin
                 txtb_ptr_d <= 1;
                 alc_id_field <= ALC_IDE;
                 
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_EXT_ID_DURATION;
                     tx_load_ext_id_i <= '1';
@@ -1470,7 +1470,7 @@ begin
                     is_arbitration <= '1';
                     bit_err_disable <= '1';
                     
-                    if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
+                    if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
                         bit_err_arb_i <= '1';
                     end if;
                 else
@@ -1516,7 +1516,7 @@ begin
                     rx_store_ext_id_i         <= '1';
                 end if;
 
-                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
                     bit_err_arb_i <= '1';
                 end if;
 
@@ -1551,7 +1551,7 @@ begin
                     end if;
                 end if;
                 
-                if (tx_data_wbs = DOMINANT and rx_data = RECESSIVE) then
+                if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
                     bit_err_arb_i <= '1';
                 end if;
 
@@ -1593,7 +1593,7 @@ begin
                 -- Here recessive would mean further extending beyond CAN FD
                 -- protocol (CAN XL in future). Now we don't have protocol
                 -- exception, so we throw error here!
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';
                 end if;
 
@@ -1615,7 +1615,7 @@ begin
                 -- Here recessive would mean further extending beyond CAN FD
                 -- protocol (CAN XL in future). Now we don't have protocol
                 -- exception, so we throw error here!
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';
                 end if;
                 
@@ -1630,7 +1630,7 @@ begin
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
             
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DLC_DURATION;
                     tx_load_dlc_i <= '1';
@@ -1642,7 +1642,7 @@ begin
                     ssp_reset_i <= '1';
                 end if;
                 
-                if (drv_can_fd_ena = FDE_DISABLE and rx_data = RECESSIVE) then
+                if (drv_can_fd_ena = FDE_DISABLE and rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';
                 end if;
 
@@ -1660,7 +1660,7 @@ begin
                     tx_dominant <= '1';
                 end if;
                 
-                if (rx_data = RECESSIVE and rx_trigger = '1') then
+                if (rx_data_nbs = RECESSIVE and rx_trigger = '1') then
                     sp_control_switch_data <= '1';
                     br_shifted <= '1';
                 end if;
@@ -1821,7 +1821,7 @@ begin
                     crc_check <= '1';
                 end if;
 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
                 
@@ -1854,12 +1854,12 @@ begin
                 end if;
                 
                 if (is_transmitter = '1' and drv_self_test_ena = '0' and
-                    rx_data = RECESSIVE)
+                    rx_data_nbs = RECESSIVE)
                 then
                     ack_err_i <= '1';
                 end if;
                 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     ack_received <= '1';
                 end if;
                 
@@ -1876,7 +1876,7 @@ begin
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
                 
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_EOF_DURATION;
                 end if;
@@ -1885,7 +1885,7 @@ begin
                     crc_err_i <= '1';
                 end if;
 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     ack_received <= '1';
                 end if;
                 
@@ -1904,7 +1904,7 @@ begin
                 err_pos <= ERC_POS_ACK;
                 is_ack_delim  <= '1';
                 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
                 
@@ -1923,7 +1923,7 @@ begin
 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
-                    if (rx_data = RECESSIVE) then
+                    if (rx_data_nbs = RECESSIVE) then
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                         
                         -- No Error until the end of EOF means frame is valid
@@ -1941,18 +1941,18 @@ begin
                     crc_clear_match_flag <= '1';
                 
                 -- Detecting dominant during EOF is treated as form error!
-                elsif (rx_data = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
 
                 -- If there is no error (RX Recessive) in one bit before end
                 -- of EOF, signal valid Frame reception!
-                if (ctrl_ctr_one = '1' and rx_data = RECESSIVE) then
+                if (ctrl_ctr_one = '1' and rx_data_nbs = RECESSIVE) then
                     rec_valid_d <= '1';
                 end if;
                 
                 -- DOMINANT during EOF (apart from last bit) means error!
-                if (rx_data = DOMINANT and ctrl_ctr_zero = '0') then
+                if (rx_data_nbs = DOMINANT and ctrl_ctr_zero = '0') then
                     form_err_i <= '1';
                 end if;
     
@@ -1974,7 +1974,7 @@ begin
                     
                     -- Here FSM goes to Base ID (sampling of DOMINANT in the
                     -- third bit of intermission)!
-                    if (rx_data = DOMINANT) then
+                    if (rx_data_nbs = DOMINANT) then
                         ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                         tx_load_base_id_i <= '1';
                         sof_pulse_i <= '1';
@@ -1993,7 +1993,7 @@ begin
                     if (tx_frame_ready = '1' and go_to_suspend = '0') then
                         txtb_hw_cmd_d.lock <= '1';
                         set_transmitter   <= '1';
-                    elsif (rx_data = DOMINANT) then
+                    elsif (rx_data_nbs = DOMINANT) then
                         set_receiver   <= '1';
                     end if;
                     
@@ -2012,12 +2012,12 @@ begin
                     
                     -- If we dont sample dominant, nor we have sth ready for
                     -- transmission, we go to Idle!
-                    if (rx_data = RECESSIVE and tx_frame_ready = '0') then
+                    if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0') then
                         set_idle <= '1';
                     end if;
     
                 -- First or second bit of intermission!
-                elsif (rx_data = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                 end if;
@@ -2040,7 +2040,7 @@ begin
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
                 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
@@ -2075,7 +2075,7 @@ begin
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
                 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
@@ -2086,7 +2086,7 @@ begin
                 if (tx_frame_ready = '1') then
                     txtb_hw_cmd_d.lock <= '1';
                     set_transmitter <= '1';
-                elsif (rx_data = DOMINANT) then
+                elsif (rx_data_nbs = DOMINANT) then
                     set_receiver <= '1';
                 end if;
 
@@ -2149,7 +2149,7 @@ begin
                     first_err_delim_d <= '1';
                 end if;
                 
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';
                 end if;
 
@@ -2186,7 +2186,7 @@ begin
                     ctrl_ctr_ena <= '1';
                 end if;
 
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_ERR_DELIM_DURATION;
                 
@@ -2199,7 +2199,7 @@ begin
 
                 -- Node received dominant bit as first bit after Error flag!
                 -- This shall be treated as primamry error
-                if (rx_data = DOMINANT and first_err_delim_q = '1') then
+                if (rx_data_nbs = DOMINANT and first_err_delim_q = '1') then
                     primary_err_i <= '1';
                     first_err_delim_d <= '0';
                 end if;
@@ -2214,14 +2214,14 @@ begin
                                 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
-                    if (rx_data = DOMINANT) then
+                    if (rx_data_nbs = DOMINANT) then
                         ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
                 end if;
 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
 
@@ -2234,7 +2234,7 @@ begin
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_OVRL;
                 
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     form_err_i <= '1';
                 end if;
                 
@@ -2245,7 +2245,7 @@ begin
                 is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
                 
-                if (rx_data = RECESSIVE) then
+                if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_OVR_DELIM_DURATION;
                 end if;
@@ -2260,14 +2260,14 @@ begin
 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
-                    if (rx_data = DOMINANT) then
+                    if (rx_data_nbs = DOMINANT) then
                         ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
                     end if;
                 end if;
                 
-                if (rx_data = DOMINANT) then
+                if (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
                 end if;
 
