@@ -191,6 +191,9 @@ architecture rtl of int_manager is
          false   -- TXBHCI_IND
         );
 
+    -- Internal value of an interrupt
+    signal int_i                : std_logic;
+
 begin
   
     -- Driving bus aliases
@@ -213,8 +216,8 @@ begin
     -- Driving Interrupt output when there is at least one active interrupt
     -- enabled.
     ---------------------------------------------------------------------------
-    int  <= '0' when (int_vect_i and int_ena_i) = zero_mask else
-            '1';
+    int_i  <= '0' when (int_vect_i and int_ena_i) = zero_mask else
+              '1';
 
     ---------------------------------------------------------------------------
     -- Interrupt register masking and enabling
@@ -262,6 +265,24 @@ begin
             int_ena                => int_ena_i(i)          -- OUT
         );
     end generate int_module_gen;
+
+    ---------------------------------------------------------------------------
+    -- Output interrupt DFF to make sure that interrupt output will be
+    -- glitch free!
+    ---------------------------------------------------------------------------
+    dff_int_output_reg : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
+    )
+    port map(
+        arst               => res_n,
+        clk                => clk_sys,
+
+        input              => int_i,
+        ce                 => '1',
+        output             => int
+    );
 
 
     ---------------------------------------------------------------------------

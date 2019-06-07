@@ -146,6 +146,7 @@ architecture int_man_unit_test of CAN_test is
     signal int_input              :   std_logic_vector(C_INT_COUNT - 1 downto 0)
                                           := (OTHERS =>'0');
 
+    signal int_out_exp            :   std_logic;
 
     ----------------------------------------------------------------------------
     -- Generates random interrupt sources
@@ -410,9 +411,7 @@ begin
     -- Calculate expected outputs
     ----------------------------------------------------------------------------
     int_emu_proc : process
-        variable int_output     : boolean;
         variable outcome        : boolean;
-        variable exp_output     : boolean;
         constant zeroes         : std_logic_vector(C_INT_COUNT - 1 downto 0) :=
                                       (OTHERS => '0');
     begin
@@ -461,27 +460,29 @@ begin
             
         end loop;
 
-        -- Calculating expected interrupt output
-        if ((int_vector AND int_ena_exp) = zeroes) then
-            exp_output      := false;
-        else
-            exp_output      := true;
-        end if;
-
         -- Checking the expected and real outputs
         check(int_ena = int_ena_exp, "Interrupt enable mismatch");
         check(int_mask = int_mask_exp, "Interrupt mask mismatch");
         check(int_vector = int_status_exp, "Interrupt vector mismatch");
         
-        if (int = '0') then
-            int_output := false;
-        elsif (int = '1') then
-            int_output := true;
+        -- Calculating expected interrupt output
+        if ((int_vector AND int_ena_exp) = zeroes) then
+            int_out_exp  <= '0';
         else
-            error("Interrupt value undefined!");
+            int_out_exp  <= '1';
         end if;
-        check(exp_output = int_output, "Interrupt output mismatch");
 
+    end process;
+    
+
+    ---------------------------------------------------------------------------
+    -- Process for checking interrupt output with one DFF delay!
+    ---------------------------------------------------------------------------    
+    int_out_val_proc : process
+    begin
+        wait until int_out_exp;
+        wait until rising_edge(clk_sys);
+        check(int_out_exp = int, "Interrupt output mismatch");
     end process;
 
     -- Error propagation to the output
