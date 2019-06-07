@@ -40,6 +40,9 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  TX Arbitrator
+-- 
 -- Purpose:
 --  Circuit for selecting the valid frame for CAN Core from generic number of 
 --  TXT buffer inputs. Compares priorities of each buffer (SW selected) and
@@ -47,7 +50,8 @@
 --  est priority frame is selected and compared with external timestamp. The
 --  frame is marked as valid for CAN Core only if this timestamp is lower than
 --  value of external Timestamp. This realizes the functionality of transmission
---  at exact time!                                                                                                                                                
+--  at exact time! Metadata of transmitted frame are loaded to output of TX
+--  Arbitrator as part of selection process.
 --------------------------------------------------------------------------------
 
 Library ieee;

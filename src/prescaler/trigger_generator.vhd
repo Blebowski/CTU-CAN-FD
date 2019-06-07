@@ -40,38 +40,40 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Trigger signals generator.
 --
+-- Purpose:
 --  Trigger signals are active for one clock cycle. There are two trigger
---  signals in CTU CAN FD implementation:
---      1. Sync trigger
---      2. Sample trigger
---  Sync trigger is active at the start of bit time and it is used to transmitt
---  Data. Sample trigger is active in last cycle of TSEG1 and it represents
+--  types in CTU CAN FD implementation:
+--      1. RX Triggers - 2 Triggers - Pipeline stages: Destuff and Process
+--      2. TX Trigger - 1 Trigger - Pipeline stage: Stuff
+--  TX trigger is active at the start of bit time and it is used to transmitt
+--  Data. RX trigger is active in last cycle of TSEG1 and it represents
 --  sample point! Both triggers are always aligned with Time Quanta!
---  Each trigger is pipelined to several consecutive clock cycles. Trigger
---  signals are then used for data processing pipeline in CAN Datapath (e.g.
---  Bit Stuffing, Bit Destuffing, Processing by CAN Core).
+--  Trigger signals are then used for data processing pipeline in CAN 
+--  Datapath (e.g. Bit Stuffing, Bit Destuffing, Processing by CAN Core).
 --  Trigger signals are demonstrated in following diagram:
 --
 --             +------+--------------+-----------+----------+
 --             | SYNC |     PROP     |    PH1    |    PH2   |
 --             +------+--------------+-----------+----------+
---    Sync __¯¯____________________________________________¯¯____
+--    TX   __¯¯____________________________________________¯¯____
 --         ______________________________________________________
 --         ____________________________________¯¯________________
---    Sample_____________________________________¯¯______________
+--    RX   ______________________________________¯¯______________
 --         ______________________________________________________
 --    Clock _¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_¯_
 
 --  Note that trigger signal sequence should always be completed. Due to
---  Hard Synchronisation mechanism, Trigger request for e.g. Sync Trigger might
---  occur still during pipelined Sample Trigger signals active.
+--  Hard Synchronisation mechanism, Trigger request for e.g. TX Trigger might
+--  occur still during pipelined RX Trigger signal active. This occurs when
+--  Hard synchronisation occurs just one clock cycle after Sample point.
 --  The main task of trigger generator is to generate Triggers from Trigger
 --  Requests. If a trigger request occurs during previous trigger active,
 --  Trigger generator buffers the request and processes it only after the
---  previous trigger sequence ends.
+--  previous trigger sequence ends. Overall length of bit is maintained, only
+--  next TX trigger is throttled by one clock cycle.
 -- 
 --------------------------------------------------------------------------------
 
@@ -112,11 +114,11 @@ entity trigger_generator is
         -----------------------------------------------------------------------
         -- Control signal
         -----------------------------------------------------------------------
-        -- Sample point Request (RX Trigger request)
-        sample_req       : in    std_logic;
-        
-        -- Sync Trigger Request (TX Trigger request)
-        sync_req         : in    std_logic;
+        -- RX Trigger request (Sample point)
+        rx_trig_req      : in    std_logic;
+
+        -- TX Trigger request (Sync)
+        tx_trig_req      : in    std_logic;
 
         -- Sample control (Nominal, Data, Secondary)
         sp_control       : in    std_logic_vector(1 downto 0);
@@ -135,35 +137,35 @@ end entity;
 architecture rtl of trigger_generator is
 
     -- Register to create delayed version of Sample Trigger by one clock cycle.     
-    signal sample_q           : std_logic;
+    signal rx_trig_req_q           : std_logic;
 
     ---------------------------------------------------------------------------
     -- Trigger request flag. Set when a request for Sync trigger arrives and
     -- another Sample is still in progress
     ---------------------------------------------------------------------------
-    signal sync_req_flag_d    : std_logic;
-    signal sync_req_flag_q    : std_logic;
-    signal sync_req_flag_dq   : std_logic;
+    signal tx_trig_req_flag_d    : std_logic;
+    signal tx_trig_req_flag_q    : std_logic;
+    signal tx_trig_req_flag_dq   : std_logic;
 
 begin
     
     ---------------------------------------------------------------------------
     -- Sync trigger capture register
     ---------------------------------------------------------------------------
-    sync_req_flag_d <= '1' when (sample_q = '1' and sync_req = '1') else
-                       '0' when (sample_q = '0') else
-                       sync_req_flag_q;
+    tx_trig_req_flag_d <= '1' when (rx_trig_req_q = '1' and tx_trig_req = '1') else
+                          '0' when (rx_trig_req_q = '0') else
+                          tx_trig_req_flag_q;
 
-    sync_req_flag_proc : process(clk_sys, res_n)
+    tx_trig_req_flag_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            sync_req_flag_q <= '0';
+            tx_trig_req_flag_q <= '0';
         elsif (rising_edge(clk_sys)) then
-            sync_req_flag_q <= sync_req_flag_d;
+            tx_trig_req_flag_q <= tx_trig_req_flag_d;
         end if;
     end process;
 
-    sync_req_flag_dq <= sync_req or sync_req_flag_q;
+    tx_trig_req_flag_dq <= tx_trig_req or tx_trig_req_flag_q;
 
     ---------------------------------------------------------------------------
     -- Register to create delayed version of RX Trigger (for processing by
@@ -172,9 +174,9 @@ begin
     rx_trig_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            sample_q <= '0';
+            rx_trig_req_q <= '0';
         elsif (rising_edge(clk_sys)) then
-            sample_q <= sample_req;
+            rx_trig_req_q <= rx_trig_req;
         end if;
     end process;
 
@@ -184,13 +186,13 @@ begin
     -- clock cycle, and trigger request might never occur at once, we don't
     -- have to do any capturing!
     ---------------------------------------------------------------------------
-    rx_triggers(1) <= sample_req;
-    rx_triggers(0) <= sample_q;
+    rx_triggers(1) <= rx_trig_req;
+    rx_triggers(0) <= rx_trig_req_q;
 
     ---------------------------------------------------------------------------
     -- TX Trigger is active when either direct trigger or flag is active.
     ---------------------------------------------------------------------------
-    tx_trigger <= sync_req_flag_dq;
+    tx_trigger <= tx_trig_req_flag_dq;
     
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
@@ -205,10 +207,9 @@ begin
     -- This should be handled by Scanner FSM.
     --
     -- psl sync_sample_trig_no_simul_asrt : assert never
-    --  (sample_req = '1' and sync_req = '1')
+    --  (rx_trig_req = '1' and tx_trig_req = '1')
     --  report "Sync and Sample trigger should no be requested at once!"
     --  severity error;
     ---------------------------------------------------------------------------
-
         
 end architecture rtl;

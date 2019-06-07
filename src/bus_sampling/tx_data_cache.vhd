@@ -40,10 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  TX Data Cache.
+--
 -- Purpose:
---  TX Data Cache (FIFO-like). Stores TX Data into FIFO buffer. TX Data are
---  stored in time of regular sample point and read at the time of delayed
---  sample point. Read data are used for bit error detection.
+--  Stores TX Data into FIFO buffer in time of regular sample point and read
+--  at the time of secondary sample point. Output data are used for bit 
+--  error detection.
 --------------------------------------------------------------------------------
 
 Library ieee;

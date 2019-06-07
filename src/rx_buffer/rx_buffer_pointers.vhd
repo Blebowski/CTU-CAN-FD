@@ -40,6 +40,9 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  RX Buffer pointers.
+--
 -- Purpose:
 --  Pointers to RX Buffer RAM in RX Buffer and free memory calculation.
 --  Following pointers are implemented:

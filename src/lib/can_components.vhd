@@ -39,12 +39,13 @@
 -- 
 --------------------------------------------------------------------------------
 
-
 --------------------------------------------------------------------------------
+-- Package:
+--  CAN components.
+--
 -- Purpose:
---  Package for components declarations to avoid writing component declarations
---  every time into architecture itself. Do not use comments on signals in this
---  file, comment the signal in the entity declaration!
+--  Package for component declarations to avoid writing component declarations
+--  every time into architecture itself.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -390,13 +391,13 @@ package can_components is
         -- Transceiver Delay measurement control
         ------------------------------------------------------------------------
         -- Start measurement (on TX Edge)
-        meas_start          :in   std_logic;
+        edge_tx_valid       :in   std_logic;
         
         -- Stop measurement (on RX Edge)
-        meas_stop           :in   std_logic;
+        edge_rx_valid       :in   std_logic;
         
-        -- Measurement enabled (by Protocol control)
-        meas_enable         :in   std_logic;
+        -- Transceiver Delay Measurement enabled (by Protocol control)
+        trv_delay_calib     :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers interface
@@ -3142,10 +3143,10 @@ package can_components is
         is_tseg2            : out   std_logic;
         
         -- Sample signal request (to sample point generator)
-        sample_req          : out   std_logic;
+        rx_trig_req          : out   std_logic;
         
         -- Sync signal request
-        sync_req            : out   std_logic;
+        tx_trig_req            : out   std_logic;
         
         -- Bit Tim FSM Output
         bt_fsm              : out   t_bit_time 
@@ -3447,13 +3448,13 @@ package can_components is
         -- Control signal
         -----------------------------------------------------------------------
         -- Sample point Request (RX Trigger request)
-        sample_req       : in    std_logic;
+        rx_trig_req       : in    std_logic;
         
         -- Sync Trigger Request (TX Trigger request)
-        sync_req         : in    std_logic;
+        tx_trig_req       : in    std_logic;
 
         -- Sample control (Nominal, Data, Secondary)
-        sp_control       : in    std_logic_vector(1 downto 0);
+        sp_control        : in    std_logic_vector(1 downto 0);
         
         -----------------------------------------------------------------------
         -- Trigger outputs

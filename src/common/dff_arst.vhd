@@ -40,8 +40,8 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Flip-flop with asynchronous reset template. Single bit version
+-- Module:
+--  Single Flip-flop with asynchronous reset and clock enable.
 --------------------------------------------------------------------------------
 
 Library ieee;

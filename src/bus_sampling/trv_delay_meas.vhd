@@ -40,27 +40,28 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Transcevier delay measurement.
+--
 -- Purpose:
---  Measurement of Transceiver delay and calculation of secondary sampling
---  point offset.
+--  Measures Transceiver delay and calculates position of secondary sampling
+--  point.
 -- 
---  Measurement is started via "meas_start" signal and stopped via "meas_stop"
---  signal. Measurement is performed only when "meas_enable" is active, otherwise
---  transceiver delay counter remains unchanged even upon "meas_start" or 
---  "meas_stop" signals.
+--  Measurement is started by and edge on TX Data and Stopped by an edge on 
+--  RX Data. Measurement is performed only when it is enabled by Protocol
+--  Control, otherwise measured values remain unchanged.
 -- 
 --  Secondary sampling point is shadowed during measurement and propagated to 
---  output after the measurement. Data are loaded to output register upon the end
---  of transceiver delay measurement and kept stable till the end of next
+--  output after the measurement. Data are loaded to output register upon the 
+--  end of transceiver delay measurement and kept stable till the end of next
 --  measurement. Configurable offset "ssp_offset" is implemented.
 --
 --  Shadowed value is muxed based on "ssp_delay_select":
---    1. Measured value only.
---    2. Measured value + configured offset.
---    3. Configured offset only.
+--    1. Measured value + configured offset.
+--    2. Configured offset only.
 --
 -- Circuit has following diagram:
---  
+--
 --            SSP Delay select
 --  ------------------------------------+
 --                                      |   
@@ -142,13 +143,13 @@ entity trv_delay_measurement is
         -- Transceiver Delay measurement control
         ------------------------------------------------------------------------
         -- Start measurement (on TX Edge)
-        meas_start          :in   std_logic;
+        edge_tx_valid          :in   std_logic;
         
         -- Stop measurement (on RX Edge)
-        meas_stop           :in   std_logic;
+        edge_rx_valid           :in   std_logic;
         
         -- Measurement enabled (by Protocol control)
-        meas_enable         :in   std_logic;
+        trv_delay_calib         :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Memory registers interface
@@ -220,13 +221,13 @@ begin
     ----------------------------------------------------------------------------
     -- Next value of transceiver delay measurment flag:
     --  1. Clear immediately when measurement is disabled.
-    --  2. Start measurement when enabled and "meas_start"
-    --  3. Stop measurement when enabled  and "meas_stop"
+    --  2. Start measurement when enabled and "edge_tx_valid"
+    --  3. Stop measurement when enabled  and "edge_rx_valid"
     --  4. Keep value otherwise.
     ----------------------------------------------------------------------------
-    trv_meas_progress_d <= '0' when (meas_enable = '0') else
-                             '1' when (meas_start = '1') else
-                             '0' when (meas_stop = '1') else
+    trv_meas_progress_d <= '0' when (trv_delay_calib = '0') else
+                             '1' when (edge_tx_valid = '1') else
+                             '0' when (edge_rx_valid = '1') else
                              trv_meas_progress_q;
 
     ----------------------------------------------------------------------------
@@ -246,8 +247,8 @@ begin
     ----------------------------------------------------------------------------
     -- Reset counter for transceiver delay upon start of measurement.
     ----------------------------------------------------------------------------
-    trv_delay_ctr_rst_d <= G_RESET_POLARITY when (meas_enable = '1' and
-                                                  meas_start = '1')
+    trv_delay_ctr_rst_d <= G_RESET_POLARITY when (trv_delay_calib = '1' and
+                                                  edge_tx_valid = '1')
                                             else
                            G_RESET_POLARITY when (res_n = G_RESET_POLARITY)
                                             else

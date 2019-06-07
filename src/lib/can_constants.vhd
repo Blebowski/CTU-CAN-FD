@@ -40,8 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Package:
+--  CAN Constants
+-- 
 -- Purpose:
---  Package with Constants, types and other defintions for CAN FD IP Core.
+--  Package with Constants used in CTU CAN FD IP Core.
 --------------------------------------------------------------------------------
 
 Library ieee;

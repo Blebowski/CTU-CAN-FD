@@ -40,13 +40,21 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
---Purpose:
---  Bit destuffing circuit. Data sampled always with valid bds_trigger signal. 
---  Length of bitStuffing controlled via stuff_length input. Stuff error signa-
---  lises Error when the stuff rule is not valid (stuff_lenght+1) consecutive   
---  bits of the same polarity. Signal destuffed  indicates that current output
---  bit is not valid data bit, but is destuffed bit taken out from input data
---  stream!                                                                  
+-- Module:
+--  Bit Destuffing.
+-- 
+-- Purpose:
+--  Performs bit destuffing from received data stream. Operates in Destuff
+--  pipeline stage with Bit Destuffing trigger. Length of Bit Destuffing rule
+--  is controlled by Protocol control FSM. Implements regular bit stuffing,
+--  as well as Fixed bit stuffing. Upon transition from non-fixed to fixed bit
+--  stuffing, inserts an extra stuff bit. 
+--  Detects stuff error if n+1-th bit is not opposite of previous processed bit. 
+--  Indicates that bit was destuffed when n bits of equal polarity are processed.
+--  Processing of input data always take one clock cycle (output is DFF). When
+--  circuit is disabled, it only propagates data from input to output with Bit
+--  Destuffing Trigger and does not detect Stuff Error, neither performs Bit
+--  destuffing. Counts number of destuffed bits modulo 8.
 --------------------------------------------------------------------------------
 
 Library ieee;

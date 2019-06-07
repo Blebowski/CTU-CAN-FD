@@ -40,8 +40,16 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Control counter.
+--
+-- Purpose:
+--  Measures duration of CAN Frame fields which last more bits. Pre-loaded by
+--  Protocol control FSM and counts till 0. Signals reaching 1 and 0. Contains
+--  complementary counter which counts from 0 and indicates that whole byte
+--  elapsed or whole memory word elapsed (4 bytes). Provides byte index within
+--  a memory word for addressing of CAN Data byte. Contains arbitration lost
+--  capture register which stores bit position in which unit lost arbitration.
 --------------------------------------------------------------------------------
 
 Library ieee;

@@ -40,8 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Re-integration counter.
+--
 -- Purpose:
---  Integration counters
+--  Counts number of ocurrences of 11 consecutive bits to measure re-integration
+--  after unit went bus-off. Controlled by Protocol control FSM.
 --------------------------------------------------------------------------------
 
 Library ieee;

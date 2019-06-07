@@ -40,8 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Package:
+--  Driving Bus, Status Bus Package.
+-- 
 -- Purpose:
---  Package with Constants for Driving Bus and Status Bus.
+--  Package with indices for Driving Bus and Status Bus.
 --------------------------------------------------------------------------------
 
 Library ieee;

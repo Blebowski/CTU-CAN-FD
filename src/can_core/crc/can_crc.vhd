@@ -40,19 +40,23 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  CRC calculation for CTU CAN FD. Contains:
---      1 * CRC 15 from RX Data
---      1 * CRC 17 from RX/TX Data (multiplexed)
---      1 * CRC 21 from RX/TX Data (multiplexed)
+-- Module:
+--  CAN CRC
+-- 
+-- Sub-modules:
+--  CRC 15 - Calculated from data without bit stuffing.
+--  CRC 17 - Calculated from data with bit stuffing.
+--  CRC 21 - Calculated from data with bit stuffing.
 --
---  CRCs are multiplexed combinationally and final CRC is chosen on output.
---  CRCs for 15 are always calculated from RX Data since in CAN 2.0 data will
---  be always settled at latest in sample point of the actual bit.
---  CRCs for 17 and 21 are calculated from TX Data for transmitter and from RX
---  Data for receiver. Thus if unit loses the arbitration, CRC source will
---  switch! Transmitter in Data Bit rate can't calculate CRC from RX Data,
---  because Data might not yet arrived to RX pin (due to Transceiver delay)!
+-- Purpose:
+--  Calculates crc sequences for CAN frame. Transmitter calculates CRC from
+--  transmitted serial sequence. Receiver calculates data from RX sequence.
+--  Final CRC is multiplexed on output. If node loses arbitration, source of
+--  CRC calculation is changed.
+--  Pipeline stages in which input is processed:
+--   CRC 15 - Process (RX) / Stuff (TX)
+--   CRC 17 - Process (RX) / Stuff + 1 clock cycle (TX)
+--   CRC 21 - Process (RX) / Stuff + 1 clock cycle (TX)
 --------------------------------------------------------------------------------
 
 Library ieee;

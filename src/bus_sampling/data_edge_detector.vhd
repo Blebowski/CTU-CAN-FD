@@ -40,6 +40,9 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Data edge detector.
+--
 -- Purpose:
 --  Detection of edge on TX and RX data. Selectable DFF may be inserted on 
 --  output.
@@ -59,7 +62,6 @@
 --
 --  TX Edge is used for TRV DELAY measurement which is in EDL to R0 edge.
 --  Thus only RECESSIVE to DOMINANT edge is needed.
---
 --------------------------------------------------------------------------------
 
 Library ieee;

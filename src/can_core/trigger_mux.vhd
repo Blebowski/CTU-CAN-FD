@@ -40,8 +40,27 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Trigger multiplexor.
+--
 -- Purpose:
---  Trigger multiplexor        
+--  Creates trigger (clock enable) signals for pipeline stages within CAN Core.
+--  Creates following trigger signals:
+--      1. Protocol control TX Trigger - Stuff pipeline stage. Gated when a bit
+--         was stuffed.
+--      2. Protocol control RX Trigger - Process pipeline state. Gated when a
+--         bit was destuffed.
+--      3. Bit stuffing trigger - Stuff pipeline stage.
+--      4. Bit destuffing trigger - Destuff pipeline stage
+--      5. CRC RX With bit stuffing trigger - Process pipeline stage. Gated
+--         when fixed stuff bit is destuffed since CRC 17, 21 shall not be
+--         calculated from fixed stuff bits.
+--      6. CRC RX No bit stuffing trigger - Process pipeline stage. Gated when
+--         a bit is destuffed.
+--      7. CRC TX No bit stuffing trigger - Stuff pipeline stage. Gated when
+--         a stuff bit was inserted after previous bit.
+--      7. CRC TX With bit stuffing trigger - Stuff pipeline stage + 1 clock
+--         cycle. Gated when fixed stuff bit was inserted.
 --------------------------------------------------------------------------------
 
 Library ieee;

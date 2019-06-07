@@ -40,8 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  TX Shift register
+--
+-- Purpose:
+--  Creates TX Serial data stream in multi-bit fields on CAN bus. Controlled
+--  by Protocol control FSM. Preloaded in "Process" pipeline stage. Shifted in
+--  "Stuff" pipeline stage. Single bit fields are transmitted via forcing the
+--  TX output by Protocol control FSM to Dominant value.
 --------------------------------------------------------------------------------
 
 Library ieee;

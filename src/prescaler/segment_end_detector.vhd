@@ -40,11 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  End of segment detector. Detects end of current segment (TSEG1 or TSEG2)
---  as a result of Hard-synchronisation, or request from Re-synchronisation.
---  Provides signal for clearing Bit Time counters.
+-- Module:
+--  End of segment detector.
 --
+-- Purpose:
+--  Detects end of current segment (TSEG1 or TSEG2) as a result of Hard-sync.,
+--  or request from Re-synchronisation. Provides signal for clearing Bit Time 
+--  counters. Only requests from resynchronisation module which matches current
+--  Bit-rate is considered (Nominal resynchronisation is considered in Nominal
+--  Bit-rate, Data resynchronisation is considered in Data Bit-rate).
 --------------------------------------------------------------------------------
 
 Library ieee;

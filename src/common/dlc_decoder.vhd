@@ -40,14 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  DLC Decoder
+-- 
 -- Purpose:
 --  Decode DLC to byte length of Data field in CAN Frame. Support both CAN 2.0
---  and CAN FD.
---  Output signal 'is_valid' shows if the DLC value is meaningful for given
---  frame type, ie. values greater than '1000' are also valid for CAN 2.0 but the 
---  value is marked in any case as 8 bytes. Decoder simply returns '0' if frame
---  type is 'CAN_2_0' and DLC is greater than 8.
---
+--  and CAN FD. Output signal 'is_valid' shows if the DLC value is meaningful 
+--  for given frame type, ie. values greater than '1000' are also valid for 
+--  CAN 2.0 but the value is marked in any case as 8 bytes. Decoder simply 
+--  returns '0' if frame type is 'CAN_2_0' and DLC is greater than 8.
 --------------------------------------------------------------------------------
 
 Library ieee;

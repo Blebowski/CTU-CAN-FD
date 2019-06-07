@@ -40,8 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Package:
+--  Common Library.
+-- 
 -- Purpose:
---  Library with component declarations for common design entities.
+--  Package with component declarations for common design entities.
 --------------------------------------------------------------------------------
 
 Library ieee;

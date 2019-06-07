@@ -40,8 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Transmitt Frame Buffer FSM.
+--
+-- Purpose:
+--  Handles HW commands from Protocol control and SW commands from Memory 
+--  registers.
 --------------------------------------------------------------------------------
 
 Library ieee;

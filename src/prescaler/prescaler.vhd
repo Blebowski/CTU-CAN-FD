@@ -40,13 +40,19 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Prescaler circuit.
 --
---  Implements functionality of Bit Time measurement. Handles Hard Synchroni-
---  sation and Re-synchronisation. Generates SYNC and SAMPLE Triggering signals
---  for CAN TX and CAN RX Datapath processing.
---                                                                          
+-- Sub-modules:
+--  1. Bit time config capture
+--  2. Synchronisation checker
+--  3. Bit time counters (Nominal)
+--  4. Resynchronisation (Nominal)
+--  5. Bit time counters (Data)
+--  6. Resynchronisation (Data)
+--  7. Segment end detector
+--  8. Bit time FSM.
+--  9. Trigger generator.                                          
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -216,10 +222,10 @@ architecture rtl of prescaler is
     signal tq_edge_dbt          : std_logic;
     
     -- Sample trigger request (in sample point)
-    signal sample_req           : std_logic;
+    signal rx_trig_req           : std_logic;
     
     -- Sync trigger request (in beginning of SYNC segment)
-    signal sync_req             : std_logic;   
+    signal tx_trig_req             : std_logic;   
 
     -- Signal that expected semgent length should be loaded after restart!
     signal start_edge           : std_logic;
@@ -431,8 +437,8 @@ begin
         drv_ena          => drv_ena,            -- IN
         is_tseg1         => is_tseg1,           -- OUT
         is_tseg2         => is_tseg2,           -- OUT
-        sample_req       => sample_req,         -- IN
-        sync_req         => sync_req,           -- IN
+        rx_trig_req      => rx_trig_req,        -- IN
+        tx_trig_req      => tx_trig_req,        -- IN
         bt_fsm           => bt_fsm              -- OUT
     );
     
@@ -447,8 +453,8 @@ begin
     port map(
         clk_sys     => clk_sys,         -- IN
         res_n       => res_n,           -- IN
-        sample_req  => sample_req,      -- IN
-        sync_req    => sync_req,        -- IN
+        rx_trig_req => rx_trig_req,     -- IN
+        tx_trig_req => tx_trig_req,     -- IN
         sp_control  => sp_control,      -- IN
         
         rx_triggers => rx_triggers,     -- OUT

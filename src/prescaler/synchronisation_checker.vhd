@@ -40,11 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Synchronisation Checker.
+--
 -- Purpose:
---  Synchronisation Checker. Holds flag that Re-synchronisation or Hard
---  synchronisation occured. Valid Hard synchronisation or Re-synchronisation
---  is signalled on the output. Synchronisation flag is cleared in the end
---  of PH1 (Sample point).
+--  Holds flag that Re-synchronisation or Hard synchronisation occured. 
+--  Valid Hard synchronisation or Re-synchronisation is signalled on the output.
+--  Synchronisation flag is cleared in the end of TSEG1 (Sample point).
 --------------------------------------------------------------------------------
 
 Library ieee;

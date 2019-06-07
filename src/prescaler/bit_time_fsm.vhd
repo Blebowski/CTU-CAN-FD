@@ -40,16 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Bit time FSM.
 --
---  Bit Time FSM has three states:
---      1. Reset
---      2. TSEG1
---      3. TSEG2
---
---  Output of Bit time FSM are SYNC and SAMPLE requests for SYNC and SAMPLE
---  trigger generator.    
+-- Purpose:
+--  Determines segment of a Bit in which unit actually is (TSEG1, TSEG2). 
+--  Generates trigger requests:
+--   TX Trigger request - Last cycle of TSEG2 (end of bit time).
+--   RX Trigger request - Last cycle of TSEG1 (sample point).
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -105,10 +103,10 @@ entity bit_time_fsm is
         is_tseg2            : out   std_logic;
         
         -- Sample signal request (to sample point generator)
-        sample_req          : out   std_logic;
+        rx_trig_req         : out   std_logic;
         
         -- Sync signal request
-        sync_req            : out   std_logic;
+        tx_trig_req         : out   std_logic;
         
         -- Bit Tim FSM Output
         bt_fsm              : out   t_bit_time 
@@ -161,25 +159,25 @@ begin
         -- Default values
         is_tseg1       <= '0';
         is_tseg2       <= '0';
-        sample_req     <= '0';
-        sync_req       <= '0';
+        rx_trig_req    <= '0';
+        tx_trig_req    <= '0';
         
         case current_state is
         when s_bt_reset =>
             if (drv_ena = CTU_CAN_ENABLED) then
-                sync_req <= '1';    
+                tx_trig_req <= '1';    
             end if;
             
         when s_bt_tseg1 =>
             is_tseg1 <= '1';
             if (segm_end = '1') then
-                sample_req <= '1';
+                rx_trig_req <= '1';
             end if;
             
         when s_bt_tseg2 =>
             is_tseg2 <= '1';
             if (segm_end = '1') then
-                sync_req <= '1';
+                tx_trig_req <= '1';
             end if;
             
         end case;

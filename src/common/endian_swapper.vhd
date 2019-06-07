@@ -40,11 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Endian swapper
+-- 
 -- Purpose:
---  Generic endian swapper. Selectable word size, group(byte) size.
---  Selectable generic swapping, or swapping by input signal.
---
---  Output is combinational
+--  Swaps endianity of input vector. Size of byte (group) is configurable. Word
+--  size and selection by generic or input signal is configurable. Output is
+--  combinatorial.
 --------------------------------------------------------------------------------
 
 Library ieee;

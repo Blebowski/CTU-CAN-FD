@@ -40,16 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  ABP Interface
+--
 -- Purpose:
---    Adaptor from APB4 to internal bus.
---    NOTE: This is not strictly APB conformant as the read data stays only
---          for the next cycle; after that they are zeroed.
---------------------------------------------------------------------------------
--- Revision History:
---    May 2018   First Implementation - Martin Jerabek
---    31.08.2018 Ensure that reg_rden_o is always asserted for only one cycle.
---               This is important for reads with side effects, such as
---               reading from FIFO.
+--  Adaptor from APB4 to internal bus of CTU CAN FD.
+--
+-- Note: 
+--  This is not strictly APB conformant as the read data stays only for the
+--  next cycle; after that they are zeroed.
 --------------------------------------------------------------------------------
 
 Library ieee;

@@ -40,9 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Bit Filter for CAN identifiers.
+--
 -- Purpose:
---  Bit Filter for CAN identifiers. Output is valid if masked filter input 
---  equals masked value to be compared. Output is combinational.
+--  Filters out CAN identifier based on bit mask.
 --------------------------------------------------------------------------------
 
 Library ieee;

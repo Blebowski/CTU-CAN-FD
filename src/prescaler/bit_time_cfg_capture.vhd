@@ -40,21 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Bit Time config capture
 --
---  Captures Bit Timing configuration from BTR and BTR_FD registers when 
---  Core is enabled (drv_ena:0->1).
---  This has two advantages:
---      1. Register value is shadowed, thus chaning BTR or BTR FD when it is
---         not desired will avoid possible mal-function. Extra cost of few
---         DFFs is not that high.
---      2. This circuit re-calculates PROP+PH1 to TSEG1. The advantage is that
---         adder will not be in combinational path of bit timing calculation
---         and will thus not screw maximal frequency.
---  Each capture register is optinally configurable by generic. E.g. it might
---  not have sense to insert capture register on SJW (since there is no
---  combinational logic).
+-- Purpose:
+--  Re-calculates Bit time settings as defined in Memory registers (SYNC, PROP,
+--  PH1, PH2), to internal representation of Prescaler (TSEG1 and TSEG2).
+--  TSEG1 = SYNC + PROP + PH1, is captured at moment when core is turned on to
+--  avoid long combinational paths. TSEG2, SJW, BRP are passed directly, only
+--  width is accustomized.
 --------------------------------------------------------------------------------
 
 Library ieee;

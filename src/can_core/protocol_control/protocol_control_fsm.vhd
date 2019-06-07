@@ -40,9 +40,29 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Protocol control FSM.
+--
 -- Purpose:
---  Protocol control state machine according to CAN FD protocol specification. 
---  Processes input data with "rx_trigger" signal (in Sample point of Bit).
+--  State machine handling CAN FD protocol according to CAN FD 1.0 and ISO CAN
+--  FD (ISO 11898-1 2015) standard.
+--  Processes RX Data in "Process" pipeline stage with "rx_trigger". This
+--  corresponds to moment one clock cycle behind sample point. In the same clock
+--  cycle loads TX Shift register. FSM communicates with following modules:
+--    1. TXT Buffers (HW Commands)
+--    2. TX Arbitrator (HW Commands)
+--    3. RX Buffer (Storing protocol)
+--    4. TX Shift Register (Load)
+--    5. RX Shift Register (Store commands)
+--    6. Error detector (Error enabling, CRC check command)
+--    7. Prescaler (Sample control, Synchronisation control)
+--    8. Bus sampling (Transceiver Delay measurement)
+--    9. Bit Stuffing (Stuffing method, Length of Stuff rule, Data halt)
+--   10. Bit De-Stuffing (Stuffing method, Length of Stuff rule, Destuffed bit)
+--   11. CAN CRC (Enable, speculative enable, Calculated CRC sequence)
+--   12. Control, Retransmitt, Re-integration counters.
+--   13. Fault confinement (Fault confinement protocol as in ISO 11898-1 2015.
+--   14. Operation control (Setting transmitter/receiver idle).
 --------------------------------------------------------------------------------
 
 Library ieee;

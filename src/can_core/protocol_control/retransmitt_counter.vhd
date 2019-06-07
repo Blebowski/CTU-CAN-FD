@@ -40,8 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Retransmitt counter.
+--
+-- Purpose:
+--  Counts number of retransmissions on a TX frame from single TXT Buffer.
+--  Signals reaching Retransmitt limit to Protocol Control FSM. Cleared when
+--  selected TXT Buffer changes or transmission was succesfull. Incremented by
+--  1 when Error frame occurs or Arbitration is lost.
 --------------------------------------------------------------------------------
 
 Library ieee;

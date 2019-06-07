@@ -40,12 +40,16 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Byte shift register.
+--
 -- Purpose:
---  Byte shift register. Implements shift register with N bytes. Each byte
---  of shift register has separate clock enable. Input to each byte can be
---  muxed between shift register input and output of previous byte.
---  Schematic diagram of component is following:
---      TODO 
+--  Shift register which is split into bytes. Operates in two modes: Linear mode
+--  and Byte mode. Number of Bytes is configurable. In Linear mode, shift register
+--  forms one long shift register and input to each byte is output from previous
+--  byte. In Byte mode, shift register forms N byte shift regsiters and input to
+--  each byte is directly from input of shift register. Each byte has separate
+--  clock enable. No pre-load is implemented.
 --------------------------------------------------------------------------------
 
 Library ieee;

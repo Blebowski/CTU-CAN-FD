@@ -40,9 +40,19 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Error counters
+-- Module:
+--  Error counters.
 --
+-- Purpose:
+--  Error counters for fault confinement. Following counters are implemented:
+--    RX Error counter - Counts errors of reciver.
+--    TX Error counter - Counts errors of transmitter.
+--    Nominal Error counter - Counts errors in Nominal Bit rate.
+--    Data Error counter - Counts errors in Data Bit rate.
+--  Only RX Error counter and TX Error counter are used for Fault confinement.
+--  Nominal and Data Error counter are used to distuiguish relative error rate
+--  of both bit-rates and are always incremented by 1 when Error frame is
+--  transmitted. All counters can be modified from Driving Bus.
 --------------------------------------------------------------------------------
 
 Library ieee;

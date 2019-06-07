@@ -40,8 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Sample multiplexor.
+--
 -- Purpose:
---  Detects bit error.
+--  Maintains a value sampled in previous sample point. This is then used
+--  by other modules within Bus sampling.
 --------------------------------------------------------------------------------
 
 Library ieee;

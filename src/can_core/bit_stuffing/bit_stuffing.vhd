@@ -40,16 +40,20 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Bit Stuffing.
+-- 
 -- Purpose:
---  Simple bit stuffing circuit with HandShake protocol. When bit is stuffed 
---  transciever (CAN Core) has to stop transcieving for one bit time. data_halt 
---  output is set to logic 1 when bit is stuffed. Enables configurable stuff length. 
---  Operation starts when enable='1'. Valid data already has to be on data_in 
---  then. Operates with triggering signal tran_trig_1 Fixed Stuffing method can 
---  be used by setting logic on fixed_stuff input. In fixed stuff inverse bit is 
---  inserted after every stuff_length bits, even if their polarity is not equal!                     
+--  Inserts Stuff Bits into TX serial stream. Operates in Stuff pipeline stage
+--  with Bit Stuffing Trigger. Signals insertion of Stuff Bit after n bits of 
+--  equal value were processed. Supports regular and fixed bit stuffing.
+--  Inserts extra stuff bit upon transition from regular to fixed bit stuffing.
+--  Length of Stuff rule and bit stuffing method are controlled by Protocol 
+--  control FSM. When disabled, data are only propagated from input to output
+--  with Bit Stuffing Trigger without insertion of Stuff bits. Processing of
+--  Input data always takes one clock cycle. Counts number of Inserted Stuff 
+--  Bits modulo 8.                    
 --------------------------------------------------------------------------------
-
 
 Library ieee;
 use ieee.std_logic_1164.all;

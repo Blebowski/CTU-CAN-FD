@@ -40,12 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Resynchronisation.
+--
 -- Purpose:
---  Re-Synchronisation implementation. This module takes care of measuring
---  segment length (TSEG1 or TSEG2) with respect to Re-synchronisation.
---  Expected segment length is loaded upon the end of segment. Upon Re-
---  synchronisation, new length of segment is loaded. End of segment is
---  requested when input Bit Time counter reaches expected length of segment.
+--  This module measures segment length (TSEG1 or TSEG2) with respect to 
+--  Re-synchronisation. Expected segment length is loaded upon the end of 
+--  previous segment. Upon Resynchronisation, new length of segment is loaded
+--  (shortened or lengthened). End of segment is requested when Segment counter 
+--  reaches expected length of segment.
 --  
 --  To cover immediate re-synchronisation in PH2, where Bit should end
 --  immediately, there is special "immediate" resynchronisation implemented.
@@ -79,20 +82,23 @@
 --   of next segment (TSEG1 or TSEG2) mux, its output is then selected to D
 --   input of Expected segment length register.
 --   Re-synchronisation can be broken down to following parts:
---      1. Phase error > 0 (PROP or PH1) and Phase err > SJW.
---      2. Phase error > 0 (PROP or PH1) and Phase err < SJW.
---      3. Phase error < 0 (PH2) and Phase err > SJW.
---      4. Phase error < 0 (PH2) and Phase err < SJW.
+--      1. Phase error > 0 (TSEG1) and Phase err > SJW.
+--      2. Phase error > 0 (TSEG1) and Phase err < SJW.
+--      3. Phase error < 0 (TSEG2) and Phase err > SJW.
+--      4. Phase error < 0 (TSEG2) and Phase err < SJW.
 --   Following values are loaded to expected segment length in these cases:
 --      1. TSEG1 + SJW (TSEG1 prolonged by SJW)
---      2. TSEG1 + Bit Counter (in this case value in Bit counter is equal
---           to phase error).
+--      2. TSEG1 + Segment Counter (in this case value in Segment counter 
+--           is equal to phase error).
 --      3. TSEG2 - SJW (TSEG1 is shortened by SJW).
 --      4. This case is not handled here, since this requires immediate
 --         end of segment in acutal Time quanta. If Time quanta is 1 this
 --         needs to be in current cycle and we can't afford 1 clock cycle
 --         delay of "expected segment length" register. This is handled
 --         by immediate segment exit described further.
+--
+--  If Hard synchronisation occured, Length of TSEG1 - 1 is loaded to expected
+--  segment length register.
 --
 --  Calculation oh phase error and Detection of immediate segment exit
 --  is shown in following diagram:
@@ -121,7 +127,7 @@
 --   Immediate segment end is detected when Phase error <= SJW and at the same
 --   time we are in TSEG2 and re-synchronisation occurs.
 --
---  End of segment requesting is depicted in following diagram:
+--   End of segment request is depicted in following diagram:
 --                             
 --      Immediate exit +----+ 
 --     +-------------->+    | 

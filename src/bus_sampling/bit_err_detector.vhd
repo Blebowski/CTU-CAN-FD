@@ -40,8 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Bit error detector.
+--
 -- Purpose:
---  Detects Bit error.
+--  Detects bit error in:
+--   1. Regular sampling point (compares actual TX data to actual RX data),
+--      in Nominal Bit Rate.
+--   2. Secondary sampling point (compares actual RX data to delayed TX data),
+--      in Data Bit-Rate of Transmitter (Secondary sampling).
 --------------------------------------------------------------------------------
 
 Library ieee;

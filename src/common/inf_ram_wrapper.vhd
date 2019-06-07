@@ -40,11 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Inferred RAM wrapper.
+-- 
 -- Purpose:
---  RAM memory wrapper intended for use with inferred memories in FPGA
---  technologies. Supports RAM inference in Xilinx and Intel FPGAs.
---  Synchronous dual port memory with shared clock. Port A is used for
---  writes. Port B is used for reads!
+--  Dual port Memory wrapper for inferrence of RAM blocks in Intel and Xilinx 
+--  FPGAs. Port A is write only. Port B is read only. Port A interface is
+--  synchronous. Read interface is either combinatorial (asynchronous) or 
+--  registered (synchronous). Clock is shared between the two ports. If used
+--  on ASIC or FPGA without memories, synthesized as DFFs without Set or Reset.
 --------------------------------------------------------------------------------
 
 Library ieee;

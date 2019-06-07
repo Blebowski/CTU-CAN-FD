@@ -40,11 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  TX arbitrator FSM.
+-- 
 -- Purpose:
---  TX Arbitrator FSM. Reacts on change of selected TXT Buffer, drives loading
---  Timestamp (Timestamp words), metadata (Frame format word) from TXT Buffer.
---  Reacts on LOCK command from CAN Core which locks TXT Buffer for
---  transmission.
+--  Controls selection of CAN frame, comparison of its timestamp and Loading
+--  CAN frame metadata to output. When selected TXT Buffer is changed, selection
+--  process is restarted.  When LOCK command from CAN Core is issued, locks TXT
+--  Buffer for transmission.
 --  Each FSM state lasts two clock cycles (wait state is inserted), to give
 --  time to TXT Buffer RAM for data read.
 --------------------------------------------------------------------------------

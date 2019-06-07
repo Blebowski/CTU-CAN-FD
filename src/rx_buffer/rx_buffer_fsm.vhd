@@ -40,9 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  RX Buffer FSM.
+-- 
 -- Purpose:
---  Receive Buffer FSM. Reacts on commands from CAN Core and controls storing
---  of CAN frame continusly to RX Buffer RAM.
+--  Reacts on commands from CAN Core and controls storing of CAN frame 
+--  continusly to RX Buffer RAM.
 --------------------------------------------------------------------------------
 
 Library ieee;

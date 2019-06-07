@@ -40,8 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Fault confinement rules.
+--
+-- Purpose:
+--  Implement fault confinement rules for incrementing and decrementing Fault
+--  confinement error counters. Controlled by Protocol control via standardized
+--  interface as described in ISO 11898-1 2015.
 --------------------------------------------------------------------------------
 
 Library ieee;

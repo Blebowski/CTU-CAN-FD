@@ -40,90 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Memory registers
+-- 
 -- Purpose:
---  Memory registers which control functionality of CAN FD core. Memory inter-
---  face is 32 bit avalon compatible. Registers create drv_bus signal which is
---  used in whole CAN FD IP function to control all modules. Memory Reads and
---  writes to any location need to be executed as one read, write. No extended
---  cycles are allowed.
---  Write to register as following:
---    1. SCS <= ACT_SCS, data_in <= valid_data, adress <= valid_adress
---    2. SWR <= ACT_SWR, wait at least one clock cycle
---    3. SWR <= not ACT_SWR SCS <= not ACT_SCS
---  Read from register as following:
---    1. SCS <= ACT_SCS, adress<=valid_adress
---    2. SRD <= ACT_SRD, wait at least one clock cycle
---    3. Capture valid data on data_out output
---    4. SRD <= not ACT_SRD, SCS <= not ACT_SCS
---------------------------------------------------------------------------------
--- Note: You must wait at least 1 cycle after deasserting async reset, since
---       a synchronous reset is performed the next cycle.
---------------------------------------------------------------------------------
---Note: All control signals which command any event execution which lasts one
---      clock cycle has negative edge detection. Therefore once srd or swr is
---      active to finish the read or write it has to become inactive!--
--- 2018-04-10 MJ: this looks untrue!
---------------------------------------------------------------------------------
--- Revision History:
---    July 2015   Created file
---    19.12.2015  RETR register changed for settings register, added configura-
---                tion options for enabling and disabling whole controller, and
---                selecting ISO FD option. (Not yet implemented)
---    16.5.2016   Added restart function. Code formatting and constant replace-
---                ment
---    19.6.2016   Changed tx_data reg to be array 5*128 bits instead of 640
---                std_logic vector. This should ease the automatic inference
---                into RAM memory...
---    20.6.2016   Added ET bit in status register to monitor transmittion of
---                error frame!
---    21.6.2016   Fixed SETTINGS registers some of the bits were not read back
---                correctly
---    23.6.2016   Added DEBUG_REG for some additional debugging purposes
---    15.7.2016   Added "RX_buff_read_first" and "aux_data" signals. Changed han-
---                dling of moving to next word in RX buffer RX_DATA. Now first
---                cycle of memory access is detected, here and  "rx_read_start"
---                is set to active value for only one clock cycle! Even if bus
---                access lasts several clock cycles data output is captured only
---                in the first cycle and then held until the end of access.
---                Additionally "rx_read_start" signal is now combinationall, not
---                registered output. Thisway latency is shortened. Without this
---                precaution it was necessary to add empty cycles between reads
---                from RX_DATA!!!
---    24.8.2016   Added "use_logger" generic and LOG_EXIST bit to the LOG_STATUS
---                register to provide way how to find out from SW if logger is
---                actually present. Size is not deciding since HW developer can
---                set the size to e.g. 32 and use_logger to false!
---    1.9.2016    Moved SJW values to separate register! Now SJW has 4 bits
---                instead of two bits! This is compliant with CAN FD specifi-
---                cation.
---    30.11.2017  Changed implementation of TX_DATA registers. Registers removed
---                and access into these registers is now directly accessing RAM
---                in TXT buffer. Note that buffer must be first forbidden in
---                TX_SETTINGS register so that half written frame is not commi-
---                tted to CAN Core for transmission. Added BUF_DIR bit and remo-
---                ved TXT1_COMMIT and TXT2_COMMIT bits
---    12.12.2017  Renamed entity to  "canfd_registers" instead of "registers"
---                to avoid possible name conflicts.
---    20.12.2017  Removed obsolete tran_data_in signal. Removed obsolete
---                tx_data_reg. Added supoort for byte enable signal on register
---                writes and reads.
---    27.12.2017  Added "txt_frame_swap" bit for frame swapping after the
---                frame retransmission.
---    28.12.2017  Added support for "tx_time_suport" and Filter Status register.
---    18.01.2018  Removed txt1_disc, txt2_disc, txt1_commit and txt2_disc
---                obsolete signals
---    21.02.2018  Removed "txt_frame_swap" since it is not needed with new,
---                priority based implementation of TX Buffers.
---      2.6.2018  Removed "tx_time_suport".
---     29.7.2018  Removed "RX_buff_read_first" to have only single clock 
---                Avalon cycles available. Thus now there is no register
---                remaining which would require gap cycle between two cycles!
---                Burst reads are now supported!
---     9.12.2018  Replaced register implementation by Register map generated
---                by Register Map Generator. Two instances (Control Registers
---                and Event Logger Registers) are present. Connected register
---                modules to Driving and Status Bus. Added VERSION generics.
--- 02-05.01.2019  Added SSP_CONFIG, TIMESTAMP_H, TIMESTAMP_L registers.
+--  Configuration and Status registers are implemented here. Access over 32 bit,
+--  Avalon compatible interface. Write in the same clock cycle, read data are
+--  returned in next clock cycle. Driving bus is created here. Memory registers
+--  are generated by Register Map Generation Tool.  
 --------------------------------------------------------------------------------
 
 Library ieee;

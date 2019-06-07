@@ -40,9 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Single Interrupt module.
+--
 -- Purpose:
---  Single Interrupt unit. Contains Interrupt enable, Interrupt mask and
---   Interrupt status.
+--  Contains Interrupt enable, Interrupt mask and Interrupt status.
 --
 --  Interrupt status can be set by "int_set" and cleared by "int_clear".
 --  Preference is selected by "clear_priority". If "clear_priority = true",

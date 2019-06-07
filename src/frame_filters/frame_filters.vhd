@@ -40,16 +40,20 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Frame filters for CAN RX frame.
+-- 
 -- Purpose:
---  Message filter for recieved data. Combinational circuit with valid data re-
---  gister at output of circuit. Filter identifier type, frame type are contro-
---  lled by drv_bus from registers. 13 bit and 29 bit filters can be compared.
---  If 13 bit filters are compared then MSB 16 bits in rec_ident_in has to be 
---  zeros. Also mask for the filter in case of 13-bit filter HAS to have 16 
---  uppest bits equal to zero! It is set by drv_bus signals from control regis-
---  ters. Filters  A,B,C,D are present. If input identifier matches at least one
+--  Filters out commands for RX Buffer based on value of received CAN Identifier.
+--  Filter identifier type, frame type are controlled by Driving Bus.
+--  11 bit and 29 bit filters can be compared. If 13 bit filters are compared,
+--  then MSB 18 bits in Received Identifier has to be zeros. Also mask for the 
+--  filter in case of 16-bit filter HAS to have 16 uppest bits equal to zero!
+--  Filters  A,B,C and Range are present. If input identifier matches at least one
 --  it is considered as valid. Frame type (CAN Basic, CAN Extended, CAN FD Basic)
---  are also selectable for filtering.
+--  are also selectable for filtering. Filters can be optionally left out from
+--  synthesis or disabled in runtime. If filters are disabled, no frame is
+--  filtered out.
 --------------------------------------------------------------------------------
 
 Library ieee;

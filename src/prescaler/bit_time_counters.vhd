@@ -40,16 +40,17 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Bit time counters.
+--
 -- Purpose:
---  Contains two counters:
+--  Contains counters:
 --      1. Time Quanta counter.
---      2. Bit time counter.
+--      2. Segment counter.
 --
 --  Time Quanta counter counts duration of Time quanta segment and provides
---- Time Quanta edge signal.
---  Bit Time counter counts with granularity of Time Quanta and provides value
---  of Bit Time counter to the output.
---
+--- Time Quanta edge signal. Segment counter counts with granularity of Time 
+--  Quanta and measures length of Bit segment (TSEG1, TSEG2).
 --------------------------------------------------------------------------------
 
 Library ieee;

@@ -40,10 +40,11 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Bus traffic counters.
+--
 -- Purpose:
---  Counters for TX and RX frames. Two 32-bit counters are held. Single adder
---  is used and muxed between these two registers since these counters are
---  never supposed to be incremented simultaneously!
+--  Counts number of transmitted and received frames on CAN Bus.
 --------------------------------------------------------------------------------
 
 Library ieee;

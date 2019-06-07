@@ -40,14 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Circuit handling Fault Confinement. Error counters increment is handled 
---  by signals inc_one, inc_eight, dec_one. RX TX counters for fault confinement
---  are availiable. Two more counters are availiable to distinguish between 
---  errors in Data phase and normal phase. All counters are pressetable from
---  driving bus. Treshold for signalling error warning limit and transition
---  to error_pssive are also parameters given by driving bus. Default values
---  are compliant with CAN FD standard.
+-- Module:
+--  Fault confinement
+-- 
+-- Sub-modules:
+--  1. Fault confinement rules
+--  2. Error counters
+--  3. Fault confinement FSM.
 --------------------------------------------------------------------------------
 
 Library ieee;

@@ -40,12 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Operation control FSM.
+-- 
 -- Purpose:
---  Operation control state machine, handling whenever unit is Transciever, 
---  Reciever, Bus is idle or Integrating. Simple logic implemented for integra-
---  ting and possible to set machine into transciever or reciever state by 
---  set_transciever, set_reciever signals. (in start of frame, lost of 
---  arbitration)
+--  Controls operation state of the node (Transmitter, Receiver, Idle).
+--  Controlled by Protocol control FSM.
 --------------------------------------------------------------------------------
 
 Library ieee;

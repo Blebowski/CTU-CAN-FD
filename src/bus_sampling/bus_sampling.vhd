@@ -40,18 +40,17 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  1. Implements Generic Synchronisation chain for incoming data
---  2. Detects appropriate edge for synchronisation!!
---  3. Measure Transciever delay compensation on command
---  4. Sample bus values in sample point of Bit time:
---    a) By normal sampling, at position of sample point (Transciever,reciever)
---    b) In secondary sample point for Transciever of CAN FD Data Phase
---  5. Detect bit Error by comparing transmitted values and Sampled values!
+-- Module:
+--  Bus sampling
 --
---Note: this bit error detection used in the end only for data phase transciever 
---      of CAN FD Phase! In other cases bit error is detected inside CAN-Core by
---      comparing transmitted and recieved bit.
+-- Sub-modules:
+--  1. CAN RX synchronisation chain
+--  2. Transceiver Delay measurement
+--  3. Data edge detector
+--  4. Secondary sampling point shift register.
+--  5. TX Data cache.
+--  6. Bit Error detector.
+--  7. Sample multiplexor.
 --------------------------------------------------------------------------------
 
 Library ieee;
@@ -198,7 +197,7 @@ architecture rtl of bus_sampling is
     signal data_tx_delayed      : std_logic;
 
     -- Shift Register for generating secondary sampling signal
-    signal sample_sec_shift : std_logic_vector(G_SSP_SHIFT_LENGTH - 1 downto 0);
+    signal sample_sec_shift     : std_logic_vector(G_SSP_SHIFT_LENGTH - 1 downto 0);
 
     -- Appropriate edge appeared at recieved data
     signal edge_rx_valid        : std_logic;
@@ -270,9 +269,9 @@ begin
         clk_sys                => clk_sys,                  -- IN
         res_n                  => res_n,                    -- IN
 
-        meas_start             => edge_tx_valid,            -- IN
-        meas_stop              => edge_rx_valid,            -- IN
-        meas_enable            => trv_delay_calib,          -- IN
+        edge_tx_valid          => edge_tx_valid,            -- IN
+        edge_rx_valid          => edge_rx_valid,            -- IN
+        trv_delay_calib        => trv_delay_calib,          -- IN
         ssp_offset             => drv_ssp_offset,           -- IN                    
         ssp_delay_select       => drv_ssp_delay_select,     -- IN
         

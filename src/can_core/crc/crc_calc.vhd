@@ -40,14 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Generic CRC calculation module.
+-- 
 -- Purpose:
---  Generic CRC calculation circuit. Serial Data input. Operation starts with 
---  enable transition from 0 to 1. Valid input data has to be present then.
---  Circuit processes the data on trig signal in logic 1. Circuit operation 
---  finishes when 1 to 0 transition on enable signal appears. The output CRC is
---  valid then. CRC stays valid until following 0 to 1 enable transition. This 
---  also erases CRC registers.
---
+--  Calculates CRC sequence of generic length from Serial Data input. Processes
+--  input data with trigger signal only when enabled. CRC value remains on 
+--  output when module is disabled. Upon start of calculation, CRC register 
+--  is loaded with initial value.
 --------------------------------------------------------------------------------
 
 Library ieee;

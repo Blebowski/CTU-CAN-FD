@@ -40,17 +40,19 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Enity encapsulating all functionality of CAN FD node.
---  Instances:
---      1x Memory registers
---      1x Interrupt manager
---      1x Prescaler (v3)
---      1x Bus synchronizes
---      1x Rx buffer
---      2x TXT buffer
---      1x Tx Arbitrator
---      1x Acceptance filters
+-- Module:
+--  CAN top level
+--
+-- Sub-modules:
+--  1. Memory registers
+--  2. Interrupt manager
+--  3. Prescaler (v3)
+--  4. Bus sampling
+--  5. RX Buffer
+--  6. TXT Buffers
+--  7. TX Arbitrator
+--  8. Frame filters
+--  9. Reset synchroniser
 --------------------------------------------------------------------------------
 
 Library ieee;

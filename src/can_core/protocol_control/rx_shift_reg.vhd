@@ -40,8 +40,17 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  RX Shift register.
+--
 -- Purpose:
---  RX Shift register
+--  Implements 32-bits shift register for reception of CAN serial data stream.
+--  Receives CAN ID (Base, Extended), DLC, Data, Stuff count and CRC.
+--  Controlled by Protocol control FSM, stored sequences are stored into capture
+--  registers (CAN IDs, DLC, flags like RTR, BRS etc...), or RX Buffer FIFO
+--  directly. Operates in Linear mode or Byte mode. Byte mode is used for
+--  reception of Data field. Linear mode is used in all other multi-bit fields.
+--  RX Shift register is shifted in "Process" pipeline stage.
 --------------------------------------------------------------------------------
 
 Library ieee;

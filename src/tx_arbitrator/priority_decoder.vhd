@@ -40,12 +40,14 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Priority decoder.
+-- 
 -- Purpose:
---  Combinational decoder for TXT buffer priority. Considers priority, bufffer
+--  Combinational decoder for TXT BufferS priority. Considers priority, bufffer
 --  validity. Generic amount of buffers is available (up to 8). Decoder consists
 --  of 3 levels of comparators (4+2+1). If two frames have the same priority,
---  a frame with lower index is selected.
---                                                                                                                                                   
+--  a frame with lower index is selected.                                                                                                                                               
 --------------------------------------------------------------------------------
 
 Library ieee;

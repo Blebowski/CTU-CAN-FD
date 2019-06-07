@@ -40,9 +40,13 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Range Filter for CAN identifiers.
+-- 
 -- Purpose:
---  Range Filter for CAN identifiers. Interprets input value as decimal value
---  and compares if it is in range given by upper and lower threshold.
+--  Filters out CAN identifier based on its decimal value. A CAN Identifier
+--  passes the filter when decimal value of Identifier is Higher or Equal than
+--  Lower thresholds and Lower or Equal than Higher threshold.
 --------------------------------------------------------------------------------
 
 Library ieee;

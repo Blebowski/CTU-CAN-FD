@@ -40,8 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Fault confinement FSM.
+--
+-- Purpose:
+--  Implements Fault confinement state of a node. State is changed when Error
+--  Counters reach according threshold. Error warning limit interrupt is 
+--  supported. Error warning limit and Error passive threshold are configurable
+--  from Driving Bus. Protocol control sets node to error active upon the end
+--  of Intefration and Re-integration.
 --------------------------------------------------------------------------------
 
 Library ieee;

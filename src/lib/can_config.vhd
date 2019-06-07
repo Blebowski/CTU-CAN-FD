@@ -40,6 +40,9 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Package:
+--  CAN Configuration
+-- 
 -- Purpose:
 --  Package with Configuration of CTU CAN FD. Contains all contstants which
 --  drive top level generics.

@@ -40,10 +40,16 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  Interrupt Manager
+--
 -- Purpose:
---  Provides interrupt on int output. Interrupt sources are configurable
---  from drv_bus. Interrupt vector provides sources of last interrupts. It is 
---  erased from driving bus by  drv_int_vect_erase
+--  Captures interrupts to Interrupt vector. Maintains Interrupt Enable and 
+--  Interrupt Mask registers. Configured (Set and Clear) from Memory registers.
+--  An edge is detected on each interrupt source. If an interrupt is unmasked,
+--  it is captured to interrupt vector. If an interrupt is enabled and it is
+--  active in Interrupt vector, it causes Interrupt output to be asserted.
+--  Interrupt output is pipelined to make sure it is glitch free.
 --------------------------------------------------------------------------------
 
 Library ieee;

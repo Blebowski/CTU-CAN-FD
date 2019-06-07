@@ -40,8 +40,16 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
+-- Module:
 --  Error detector.
+--
+-- Purpose:
+--  Detects and error condition in Process pipeline stage and provides error
+--  frame request to Protocol control FSM with one clock cycle delay. Performs
+--  CRC check when commanded by Protocol control. Determines special error
+--  conditions during which Fault confinement counters shall not be changed
+--  (e.g. stuff error during arbitration). Maintains Error code capture register
+--  which stores type of last error and its position within CAN frame.
 --------------------------------------------------------------------------------
 
 Library ieee;

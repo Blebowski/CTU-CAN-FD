@@ -40,10 +40,17 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Protocol control module. Implements CAN FD protocol. Consists of following
---  modules:
---      TOOD
+-- Module:
+--  Protocol control module.
+--
+-- Sub-modules:
+--  1. Protocol control FSM.
+--  2. TX Shift register.
+--  3. RX Shift register.
+--  4. Error detector.
+--  5. Control counter
+--  6. Re-integration counter.
+--  7. Retransmitt counter.
 --------------------------------------------------------------------------------
 
 Library ieee;

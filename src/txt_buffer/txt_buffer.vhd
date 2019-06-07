@@ -40,11 +40,12 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
+-- Module:
+--  TXT Buffer
+-- 
 -- Purpose:
---  Transmit message buffer. Buffer is accessed via "tran_data" and "tran_addr"
---  signals from user registers. Buffer contains simple FSM for manipulation
---  from HW (HW Commands) as well as SW (SW Commands). Buffer contains 20*32
---  bit RAM which is inferred by synthesis.
+--  Stores single frame for transmission in internal RAM. Accessed from Memory
+--  registers via memory bus (to store frame) and SW commands.
 --------------------------------------------------------------------------------
 
 Library ieee;

@@ -40,18 +40,15 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Recieve buffer for messages. RAM memory type of N*32 bit words. Reading of 
---  data from registers done word by word. In registers reading implemented in 
---  the way that one read moves to the next word. Storing the message into the
---  buffer is sequential operation started with valid rec_valid for one
---  clock cycle. In following up to 20 clock cycles recieved data has to be va-
---  lid to be fully stored
+-- Module:
+--  RX Buffer
 --
---  Note:This is guaranteed from CAN Core. rec_valid is active in the 
---  end of EOF field. Intermission field follows with 11 bit times (minimum 55 
---  clock cycles) where recieved data are not changed, only overload condition 
---  may be signallised!
+-- Purpose:
+--  Stores RX CAN frame during its reception into RX Buffer RAM. Controlled by
+--  Protocol control FSM. RX Frame is read word by word from Memory registers. 
+--  RX Buffer is continously stored as it is being received. At the end of frame
+--  it is committed to memory, and becomes available to the user. If Overrun
+--  or Release receive Buffer occured meanwhile, frame is reverted.
 --------------------------------------------------------------------------------
 
 Library ieee;

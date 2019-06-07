@@ -40,12 +40,19 @@
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Purpose:
---  Top level entity of CAN Core covering whole functionality of CAN FD Protocol
---  Instantiates: 1*protocol_control, 1*operation_control, 1*bitStuffing_v2,    
---  1*bitDestuffing, 2*CRC, 1* tranBuffer                                       
---  Logic for switching sampling and synchronisation signals implemented here   
---  stat_bus assignment implemented here!                                       
+-- Module:
+--  CAN Core
+--
+-- Sub-modules:
+--   1. Protocol control
+--   2. Bit stuffing
+--   3. Bit destuffing
+--   4. Fault confinement
+--   5. CAN CRC
+--   6. Operation control
+--
+--  Note:
+--   Status bus assignments are implemented in this module.
 --------------------------------------------------------------------------------
 
 Library ieee;
