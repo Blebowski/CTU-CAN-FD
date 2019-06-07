@@ -404,7 +404,6 @@ begin
 
         -- Selected buffer has changed
         elsif (high_prio_buf_index /= high_prio_buf_index_d) then
-            mod_frame_com <= '0';
             del_counter   <= 1;
             wait until rising_edge(clk_sys);
 

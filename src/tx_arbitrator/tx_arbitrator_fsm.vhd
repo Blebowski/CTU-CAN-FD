@@ -308,8 +308,22 @@ begin
     ------------------------------------------------------------------------
     elsif (select_buf_avail = '0' or select_index_changed = '1') then
         load_ts_lw_addr         <= '1';
-        frame_valid_com_clear   <= '1';
-
+        
+        -----------------------------------------------------------------------
+        -- Clear the buffer only when it is not available! Keep output valid
+        -- when buffer changes! Core will either lock old buffer (when 
+        -- loading does not finish in time, or it loads new buffer. This will
+        -- avoid a situation where Buffer A is ready, Buffer B with higher
+        -- priority will be marked as valid, and "frame ready for transmission"
+        -- will drop low for few clock cycles until new buffer metadata are
+        -- loaded for transmission! Possibly just chaning a buffer would cause
+        -- that no frame is selected for transmission even if two buffers
+        -- are marked as ready!
+        -- This option makes sure that either old or new buffer is selected.
+        -----------------------------------------------------------------------
+        if (select_buf_avail = '0') then
+            frame_valid_com_clear   <= '1';
+        end if;
     else
   
         case curr_state is   
