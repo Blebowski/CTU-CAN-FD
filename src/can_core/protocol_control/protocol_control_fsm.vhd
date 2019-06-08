@@ -2589,8 +2589,7 @@ begin
     ---------------------------------------------------------------------------
     -- Synchronisation type
     ---------------------------------------------------------------------------
-    sync_control_d <= NO_SYNC when (is_transmitter = '1' and
-                                    tran_frame_type = '1' and
+    sync_control_d <= NO_SYNC when (switch_to_ssp = '1' or
                                     sp_control_q = SECONDARY_SAMPLE)
                               else
                     HARD_SYNC when (perform_hsync = '1')
