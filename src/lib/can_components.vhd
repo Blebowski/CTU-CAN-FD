@@ -3507,8 +3507,8 @@ package can_components is
         -- System clock
         clk_sys              :in     std_logic;
         
-        -- RX Buffer Reset (External + Release receive Buffer)
-        rx_buf_res_q         :in     std_logic;
+        -- Asynchronous reset
+        res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals from CAN Core (Filtered by Frame filters)

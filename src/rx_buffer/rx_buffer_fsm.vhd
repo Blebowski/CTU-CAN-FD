@@ -76,8 +76,8 @@ entity rx_buffer_fsm is
         -- System clock
         clk_sys              :in     std_logic;
         
-        -- RX Buffer Reset (External + Release receive Buffer)
-        rx_buf_res_q         :in     std_logic;
+        -- Asynchronous reset
+        res_n                :in     std_logic;
 
         ------------------------------------------------------------------------
         -- Control signals from CAN Core (Filtered by Frame filters)
@@ -330,9 +330,9 @@ begin
     ----------------------------------------------------------------------------
     -- State register process
     ----------------------------------------------------------------------------
-    state_reg_proc : process(clk_sys, rx_buf_res_q)
+    state_reg_proc : process(clk_sys, res_n)
     begin
-        if (rx_buf_res_q = G_RESET_POLARITY) then
+        if (res_n = G_RESET_POLARITY) then
             curr_state <= s_rxb_idle;
         elsif (rising_edge(clk_sys)) then
             if (rx_fsm_ce = '1') then

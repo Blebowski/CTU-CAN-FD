@@ -436,7 +436,7 @@ begin
     )
     port map(
         clk_sys             => clk_sys,             -- IN
-        rx_buf_res_q        => rx_buf_res_q,        -- IN
+        res_n               => res_n,               -- IN
         store_metadata_f    => store_metadata_f,    -- IN
         store_data_f        => store_data_f,        -- IN
         rec_valid_f         => rec_valid_f,         -- IN
@@ -713,29 +713,17 @@ begin
 
 
     ----------------------------------------------------------------------------
-    -- Calculation of data overrun flag. If FSM would like to write to the
-    -- memory, and there is not enough free space, data overrun flag will be
-    -- set, and no further writes will be executed.
+    -- Calculation of data overrun flag for user. If FSM would like to write to
+    -- the memory, and there is not enough free space, data overrun flag will be
+    -- set, and no further writes will be executed. Data Overrun flag can be
+    -- cleared from Memory registers via Driving bus.
     ----------------------------------------------------------------------------
-    dor_proc : process(clk_sys, rx_buf_res_q)
+    sw_dor_proc : process(clk_sys, rx_buf_res_q)
     begin
         if (rx_buf_res_q = G_RESET_POLARITY) then
             data_overrun_flg      <= '0';
-            data_overrun_i        <= '0';
-
+            
         elsif (rising_edge(clk_sys)) then
-
-            --------------------------------------------------------------------
-            -- Internal Data overrun flag -> cleared by new frame!
-            --------------------------------------------------------------------
-            if (reset_overrun_flag = '1') then
-                data_overrun_i    <= '0';
-
-            elsif (overrun_condition = '1') then
-                data_overrun_i    <= '1';
-            else
-                data_overrun_i    <= data_overrun_i;
-            end if;
 
             --------------------------------------------------------------------
             -- SW overrun flag -> Cleared from SW!
@@ -749,6 +737,36 @@ begin
                 data_overrun_flg  <= data_overrun_flg;
             end if;
 
+        end if;
+    end process;
+    
+    ----------------------------------------------------------------------------
+    -- Internal data overrun flag. This will be set by two conditions:
+    --  1. When FSM attempts to write to full RAM.
+    --  2. When RRB command is issued and frame storing is in progress! If such
+    --     situation occurs, pointers are erased RX Buffer FSM is erased, while
+    --     Protocol control continues storing the frame (increments Raw write
+    --     pointer). Commiting such a frame would result in inconsistend state
+    --     of RX Buffer. So if RRB during storing occurs, all pointers are 
+    --     erased, RX Buffer FSM keeps storing, and overrun flag is set. At the
+    --     end of storing, flag is erased and raw write pointer is reverted to
+    --     commited pointer (which is zero because it was erased).
+    -- 
+    -- Cleared at the end of frame storing! Note that this register can't be
+    -- reset by RRB, only by res_n! 
+    ----------------------------------------------------------------------------
+    internal_dor_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            data_overrun_i        <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (reset_overrun_flag = '1') then
+                data_overrun_i    <= '0';
+            elsif (overrun_condition = '1' or drv_erase_rx = '1') then
+                data_overrun_i    <= '1';
+            else
+                data_overrun_i    <= data_overrun_i;
+            end if;
         end if;
     end process;
 
