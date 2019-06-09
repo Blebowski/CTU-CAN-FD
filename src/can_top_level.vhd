@@ -410,6 +410,12 @@ architecture rtl of can_top_level is
     -- No positive resynchronisation 
     signal no_pos_resync : std_logic;
     
+    -- Enable Nominal Bit time counters.
+    signal nbt_ctrs_en   : std_logic;
+        
+    -- Enable Data Bit time counters.
+    signal dbt_ctrs_en   : std_logic;
+    
     ------------------------------------------------------------------------
     -- Bus Sampling <-> Memory Registers Interface
     ------------------------------------------------------------------------
@@ -787,6 +793,9 @@ begin
         tx_trigger              => tx_trigger,      -- IN
         sync_control            => sync_control,    -- OUT
         no_pos_resync           => no_pos_resync,   -- OUT
+        sp_control              => sp_control,      -- OUT
+        nbt_ctrs_en             => nbt_ctrs_en,     -- OUT
+        dbt_ctrs_en             => dbt_ctrs_en,     -- OUT
 
         -- CAN Bus serial data stream
         rx_data_wbs             => rx_data_wbs,     -- IN
@@ -794,7 +803,6 @@ begin
 
         -- Others
         timestamp               => timestamp,       -- IN
-        sp_control              => sp_control,      -- OUT
         ssp_reset               => ssp_reset,       -- OUT
         trv_delay_calib         => trv_delay_calib, -- OUT
         bit_err                 => bit_err,         -- IN
@@ -830,6 +838,8 @@ begin
         sp_control              => sp_control,      -- IN
         sync_control            => sync_control,    -- IN
         no_pos_resync           => no_pos_resync,   -- IN
+        nbt_ctrs_en             => nbt_ctrs_en,     -- IN
+        dbt_ctrs_en             => dbt_ctrs_en,     -- IN
         
         -- Trigger signals
         rx_triggers             => rx_triggers,     -- OUT

@@ -105,6 +105,9 @@ entity bit_time_counters is
         -- CTU CAN FD is enabled
         drv_ena          : in    std_logic;
         
+        -- Counters enabled
+        ctrs_en          : in    std_logic;
+        
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
@@ -122,6 +125,8 @@ architecture rtl of bit_time_counters is
     signal tq_counter_d         : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
     signal tq_counter_q         : std_logic_vector(G_BRP_WIDTH - 1 downto 0);
     signal tq_counter_ce        : std_logic;
+    
+    signal tq_counter_allow     : std_logic;
 
     signal tq_edge_i            : std_logic;
 
@@ -133,6 +138,7 @@ architecture rtl of bit_time_counters is
     -- Bit Time counter
     signal segm_counter_d         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
     signal segm_counter_q         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
+    signal segm_counter_ce        : std_logic;
     
     constant bt_zeroes : std_logic_vector(G_BT_WIDTH - 1 downto 0) :=
         (OTHERS => '0');
@@ -143,7 +149,11 @@ begin
     -- If prescaler is defined as 0 or 1, there is no need to run the counter!
     -- Run it only when Prescaler is higher than 1! 
     ---------------------------------------------------------------------------
-    tq_counter_ce <= '1' when (brp > tq_run_th and drv_ena = '1') else
+    tq_counter_allow <= '1' when (brp > tq_run_th and drv_ena = '1') else
+                        '0';
+
+    tq_counter_ce <= '1' when (tq_counter_allow = '1' and ctrs_en = '1')
+                         else
                      '0';
 
     ---------------------------------------------------------------------------
@@ -164,7 +174,7 @@ begin
         if (res_n = G_RESET_POLARITY) then
             tq_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if (tq_counter_ce = '1') then
+            if (tq_counter_allow = '1') then
                 tq_counter_q <= tq_counter_d;
             end if;
         end if;
@@ -173,23 +183,30 @@ begin
     ---------------------------------------------------------------------------
     -- Time quanta edge
     ---------------------------------------------------------------------------
-    tq_edge_i <= '1' when (tq_counter_ce = '0' or 
+    tq_edge_i <= '1' when (tq_counter_allow = '0' or 
                            unsigned(tq_counter_q) = unsigned(brp) - 1)
                      else
                  '0';
 
     ---------------------------------------------------------------------------
-    -- Bit time counter
+    -- Segment counter
     ---------------------------------------------------------------------------
     segm_counter_d <= bt_zeroes when (bt_reset = '1') else
                     std_logic_vector(unsigned(segm_counter_q) + 1);
+
+    segm_counter_ce <= '1' when (bt_reset = '1')
+                           else
+                       '1' when (tq_edge_i = '1' and drv_ena = '1' and
+                                 ctrs_en = '1')
+                           else
+                       '0';
 
     segm_counter_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
             segm_counter_q <= (OTHERS => '0');
         elsif (rising_edge(clk_sys)) then
-            if ((tq_edge_i = '1' and drv_ena = '1') or bt_reset = '1') then
+            if (segm_counter_ce = '1') then
                 segm_counter_q <= segm_counter_d;
             end if;
         end if;

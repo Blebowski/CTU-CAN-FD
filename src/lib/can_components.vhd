@@ -1714,6 +1714,12 @@ package can_components is
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out   std_logic_vector(1 downto 0);
 
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en             :out   std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en             :out   std_logic;
+
         -- Synchronisation control (No synchronisation, Hard Synchronisation,
         -- Resynchronisation)
         sync_control            :out   std_logic_vector(1 downto 0);
@@ -2028,6 +2034,12 @@ package can_components is
         -----------------------------------------------------------------------
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out  std_logic_vector(1 downto 0);
+        
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en             :out   std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en             :out   std_logic;
         
         -- Synchronisation control (No synchronisation, Hard Synchronisation,
         -- Resynchronisation
@@ -2521,6 +2533,16 @@ package can_components is
         -- No positive resynchronisation 
         no_pos_resync :out  std_logic;
 
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control    :out  std_logic_vector(1 downto 0); 
+        
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en   :out   std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en   :out   std_logic;
+
+
         ------------------------------------------------------------------------
         -- CAN Bus serial data stream
         ------------------------------------------------------------------------
@@ -2534,9 +2556,6 @@ package can_components is
         -- Others
         ------------------------------------------------------------------------
         timestamp           :in   std_logic_vector(63 downto 0);
-
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control          :out  std_logic_vector(1 downto 0); 
 
         -- Secondary sample point reset
         ssp_reset           :out  std_logic; 
@@ -3093,7 +3112,10 @@ package can_components is
         
         -- CTU CAN FD is enabled
         drv_ena          : in    std_logic;
-        
+
+        -- Counters enabled
+        ctrs_en          : in    std_logic;
+
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
@@ -3218,6 +3240,12 @@ package can_components is
         -- No re-synchronisation should be executed due to positive phase
         -- error
         no_pos_resync        :in std_logic;
+
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en          :in std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en          :in std_logic;
         
         -----------------------------------------------------------------------
         -- Trigger signals

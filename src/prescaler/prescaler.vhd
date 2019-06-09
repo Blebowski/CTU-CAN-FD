@@ -136,6 +136,12 @@ entity prescaler is
         -- error
         no_pos_resync        :in std_logic;
         
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en          :in std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en          :in std_logic;
+        
         -----------------------------------------------------------------------
         -- Trigger signals
         -----------------------------------------------------------------------
@@ -341,6 +347,7 @@ begin
         tq_reset        => bt_ctr_clear,    -- IN
         bt_reset        => bt_ctr_clear,    -- IN
         drv_ena         => drv_ena,         -- IN
+        ctrs_en         => nbt_ctrs_en,     -- IN
         
         tq_edge         => tq_edge_nbt,     -- OUT     
         segm_counter    => segm_counter_nbt -- OUT
@@ -392,6 +399,7 @@ begin
         tq_reset        => bt_ctr_clear,    -- IN
         bt_reset        => bt_ctr_clear,    -- IN
         drv_ena         => drv_ena,         -- IN
+        ctrs_en         => dbt_ctrs_en,     -- IN
         
         tq_edge         => tq_edge_dbt,     -- OUT
         segm_counter    => segm_counter_dbt -- OUT

@@ -234,6 +234,15 @@ entity can_core is
         -- No positive resynchronisation 
         no_pos_resync :out  std_logic;
 
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control    :out  std_logic_vector(1 downto 0); 
+
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en   :out  std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en   :out  std_logic;
+
         ------------------------------------------------------------------------
         -- CAN Bus serial data stream
         ------------------------------------------------------------------------
@@ -247,9 +256,6 @@ entity can_core is
         -- Others
         ------------------------------------------------------------------------
         timestamp           :in   std_logic_vector(63 downto 0);
-
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control          :out  std_logic_vector(1 downto 0); 
 
         -- Secondary sample point reset
         ssp_reset           :out  std_logic; 
@@ -535,6 +541,8 @@ begin
         
         -- Control signals
         sp_control              => sp_control_i,        -- OUT
+        nbt_ctrs_en             => nbt_ctrs_en,         -- OUT
+        dbt_ctrs_en             => dbt_ctrs_en,         -- OUT
         sync_control            => sync_control_i,      -- OUT
         no_pos_resync           => no_pos_resync,       -- OUT
         ssp_reset               => ssp_reset_i,         -- OUT

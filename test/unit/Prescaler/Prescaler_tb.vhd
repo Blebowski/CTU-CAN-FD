@@ -100,6 +100,9 @@ architecture presc_unit_test of CAN_test is
     signal sync_control         : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
     signal data_tx              : std_logic := RECESSIVE;
+    
+    signal nbt_ctrs_en          : std_logic := '1';
+    signal dbt_ctrs_en          : std_logic := '1';
 
     -- Driving bus aliases
     signal drv_tq_nbt           :   std_logic_vector (7 downto 0) := "00000000";
@@ -307,7 +310,9 @@ begin
         bt_fsm               =>  bt_fsm,
         sp_control           =>  sp_control,
         sync_control         =>  sync_control,
-        no_pos_resync        =>  no_pos_resync
+        no_pos_resync        =>  no_pos_resync,
+        nbt_ctrs_en          =>  nbt_ctrs_en,
+        dbt_ctrs_en          =>  dbt_ctrs_en
     );
 
     -- Connect new vector signals to old signals for backwards compatibility
@@ -607,8 +612,12 @@ begin
             rand_real_v(rand_ctr, rand_real_value);
             if (rand_real_value > 0.5) then
                 sp_control <= DATA_SAMPLE;
+                dbt_ctrs_en <= '1';
+                nbt_ctrs_en <= '0';
             else
                 sp_control <= NOMINAL_SAMPLE;
+                nbt_ctrs_en <= '1';
+                dbt_ctrs_en <= '0';
             end if;
 
 
@@ -758,6 +767,8 @@ begin
             -- Force Nominal sampling, keep model disabled since this
             -- switch is after TSEG2.
             mod_check_enabled <= false;
+            nbt_ctrs_en <= '1';
+            dbt_ctrs_en <= '1';
             sp_control        <= NOMINAL_SAMPLE;
             
             wait until bt_fsm = s_bt_tseg2;
@@ -825,6 +836,8 @@ begin
             
             mod_check_enabled <= false;
             sp_control        <= NOMINAL_SAMPLE;
+            nbt_ctrs_en <= '1';
+            dbt_ctrs_en <= '0';
             
             wait until bt_fsm = s_bt_tseg2;
             wait until bt_fsm = s_bt_tseg1;

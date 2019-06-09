@@ -348,6 +348,12 @@ entity protocol_control is
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out  std_logic_vector(1 downto 0);
         
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en             :out   std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en             :out   std_logic;
+        
         -- Synchronisation control (No synchronisation, Hard Synchronisation,
         -- Resynchronisation
         sync_control            :out  std_logic_vector(1 downto 0); 
@@ -762,6 +768,8 @@ begin
 
         -- Other control signals
         sp_control              => sp_control,              -- OUT
+        nbt_ctrs_en             => nbt_ctrs_en,             -- OUT
+        dbt_ctrs_en             => dbt_ctrs_en,             -- OUT
         sync_control            => sync_control,            -- OUT
         no_pos_resync           => no_pos_resync,           -- OUT
         ssp_reset               => ssp_reset,               -- OUT
