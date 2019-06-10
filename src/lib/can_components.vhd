@@ -4210,6 +4210,7 @@ package can_components is
         signal read                  :in std_logic;
         signal write                 :in std_logic;
         signal be                    :in std_logic_vector(data_width / 8 - 1 downto 0);
+        signal lock                  :in std_logic;
         signal control_registers_out :out Control_registers_out_t;
         signal control_registers_in  :in Control_registers_in_t
     );

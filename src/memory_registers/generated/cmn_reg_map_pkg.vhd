@@ -98,7 +98,8 @@ component memory_reg is
         constant data_mask            :     std_logic_vector;
         constant reset_polarity       :     std_logic := '0';
         constant reset_value          :     std_logic_vector;
-        constant auto_clear           :     std_logic_vector
+        constant auto_clear           :     std_logic_vector;
+        constant is_lockable          :     std_logic     
     );
     port(
         signal clk_sys                :in   std_logic;
@@ -107,7 +108,8 @@ component memory_reg is
         signal write                  :in   std_logic;
         signal cs                     :in   std_logic;
         signal w_be                   :in   std_logic_vector(data_width / 8 - 1 downto 0);
-        signal reg_value              :out  std_logic_vector(data_width - 1 downto 0)
+        signal reg_value              :out  std_logic_vector(data_width - 1 downto 0);
+        signal lock                   :in   std_logic
     );
 end component memory_reg;
 

@@ -3105,7 +3105,7 @@
 			<ipxact:regLock name="CTR_PRES"/>
 			<ipxact:regLock name="EWL"/>
 			<ipxact:regLock name="ERP"/>
-			<ipxact:Description>Register can be only written when MODE[TSTM] = 1.</ipxact:Description>
+			<ipxact:Description>Register can be only written when MODE[TSTM] = 1, otherwise write has no effect.</ipxact:Description>
 		</ipxact:regLocks>
 		<kactus2:license>MIT</kactus2:license>
 	</ipxact:vendorExtensions>

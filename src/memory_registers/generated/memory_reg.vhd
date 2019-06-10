@@ -155,7 +155,7 @@ begin
             --------------------------------------------------------------------
             -- Regular register (DFF)
             --------------------------------------------------------------------
-            reg_regular_gen : if (bit_in_mask(autoclear, i) = '0') generate
+            reg_regular_gen : if (bit_in_mask(auto_clear, i) = '0') generate
                 
                 reg_access_proc : process(clk_sys, res_n)
                 begin
@@ -175,7 +175,7 @@ begin
             -- Autoclear register (no DFF - combinatorial only). When access
             -- is made, put data to output, reset value otherwise.
             --------------------------------------------------------------------
-            reg_autoclear_gen : if (bit_in_mask(autoclear, i) = '0') generate
+            reg_autoclear_gen : if (bit_in_mask(auto_clear, i) = '1') generate
                 
                 reg_value_r(i) <= data_in(i) when wr_select_expanded(i) = '1'
                                              else

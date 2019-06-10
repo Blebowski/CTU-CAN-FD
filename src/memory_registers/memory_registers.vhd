@@ -270,6 +270,9 @@ architecture rtl of memory_registers is
     -- Internal value of output reset. This is combined res_n and MODE[RST]
     signal res_out_i              :     std_logic;
 
+    -- Lock active (inactive only in test mode)
+    signal reg_lock_active        :     std_logic;
+
     ---------------------------------------------------------------------------
     -- 
     ---------------------------------------------------------------------------
