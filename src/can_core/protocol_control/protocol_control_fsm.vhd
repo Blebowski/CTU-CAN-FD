@@ -680,6 +680,10 @@ architecture rtl of protocol_control_fsm is
     -- Complementary counter enable
     signal compl_ctr_ena_i           :  std_logic;
     
+    -- State register will be clocked extra, not only in in Sample point or
+    -- error frame request.
+    signal tick_state_reg            :  std_logic;
+    
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -1312,6 +1316,9 @@ begin
         nbt_ctrs_en <= '0';
         dbt_ctrs_en <= '0';
         
+        -- Always tick FSM state register.
+        tick_state_reg <= '0';
+        
         -- Status signals for debug
         is_control      <= '0';
         is_data         <= '0';
@@ -1363,6 +1370,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_off =>
                 if (drv_ena = CTU_CAN_ENABLED) then
+                    tick_state_reg <= '1';
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
@@ -2376,7 +2384,7 @@ begin
     -----------------------------------------------------------------------
     state_reg_ce <= '1' when (next_state /= curr_state and
                               (rx_trigger = '1' or drv_ena = '0' or
-                               err_frm_req = '1'))
+                               err_frm_req = '1' or tick_state_reg = '1'))
                         else
                     '0';
 
