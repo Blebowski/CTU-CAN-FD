@@ -132,7 +132,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t fde                     : 1;
 		uint32_t reserved_6_5            : 2;
 		uint32_t acf                     : 1;
-		uint32_t reserved_15_8           : 8;
+		uint32_t tstm                    : 1;
+		uint32_t reserved_15_9           : 7;
   /* SETTINGS */
 		uint32_t rtrle                   : 1;
 		uint32_t rtrth                   : 4;
@@ -147,7 +148,8 @@ union ctu_can_fd_mode_settings {
 		uint32_t ilbp                    : 1;
 		uint32_t rtrth                   : 4;
 		uint32_t rtrle                   : 1;
-		uint32_t reserved_15_8           : 8;
+		uint32_t reserved_15_9           : 7;
+		uint32_t tstm                    : 1;
 		uint32_t acf                     : 1;
 		uint32_t reserved_6_5            : 2;
 		uint32_t fde                     : 1;

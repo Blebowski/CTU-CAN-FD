@@ -54,9 +54,14 @@ entity memory_reg is
         -- Reset value of register
         constant reset_value          :     std_logic_vector;
 
-        -- If given bit of the register should be cleared automatically one
-        -- clock cycle after writing.
-        constant auto_clear           :     std_logic_vector
+        -- If given bit of the register should be cleared automatically after 
+        -- writing. In this case no DFF is inserted, output value is decoded
+        -- only combinatorially and lasts as long as chip selec is active!
+        constant auto_clear           :     std_logic_vector;
+        
+        -- When set to 1, Logic 1 on 'lock' input will prevent register
+        -- from being written!
+        constant is_lockable          :     std_logic     
     );
     port(
         ------------------------------------------------------------------------
@@ -72,6 +77,11 @@ entity memory_reg is
         signal write                  :in   std_logic;
         signal cs                     :in   std_logic;
         signal w_be                   :in   std_logic_vector(data_width / 8 - 1 downto 0);
+        
+        ------------------------------------------------------------------------
+        -- Lock control
+        ------------------------------------------------------------------------
+        signal lock                   :in   std_logic;
 
         ------------------------------------------------------------------------
         -- Register outputs
@@ -111,8 +121,21 @@ begin
     -- for each byte!
     ----------------------------------------------------------------------------    
     wr_sel_gen : for i in 0 to (data_width / 8 - 1) generate
-        wr_select(i) <= write and cs and w_be(i);
-
+    
+        ------------------------------------------------------------------------
+        -- Register with write lock
+        ------------------------------------------------------------------------
+        wr_sel_lock_gen : if (is_lockable = '1') generate
+            wr_select(i) <= write and cs and w_be(i) and (not lock);
+        end generate wr_sel_lock_gen;
+    
+        ------------------------------------------------------------------------
+        -- Register without write lock
+        ------------------------------------------------------------------------
+        wr_sel_no_lock_gen : if (is_lockable = '0') generate
+            wr_select(i) <= write and cs and w_be(i);
+        end generate wr_sel_no_lock_gen;
+        
         -- Expand the signal for each index
         wr_sel_exp_gen : for j in 0 to 7 generate
             wr_select_expanded(i * 8 + j) <= wr_select(i);
@@ -129,26 +152,36 @@ begin
         ------------------------------------------------------------------------
         reg_present_gen : if (bit_in_mask(data_mask, i) = '1') generate
 
-            reg_access_proc : process(clk_sys, res_n)
-            begin
-                if (res_n = reset_polarity) then
-                    reg_value_r(i)  <= bit_in_mask(reset_value, i);
-
-                elsif (rising_edge(clk_sys)) then
-
-                    -- Write to the register
-                    if (wr_select_expanded(i) = '1') then
-                        reg_value_r(i)  <= data_in(i);
-
-                    -- Clear the register if autoclear is set and register is
-                    -- set
-                    elsif (bit_in_mask(auto_clear, i) = '1' and
-                           reg_value_r(i) = '1') then
+            --------------------------------------------------------------------
+            -- Regular register (DFF)
+            --------------------------------------------------------------------
+            reg_regular_gen : if (bit_in_mask(autoclear, i) = '0') generate
+                
+                reg_access_proc : process(clk_sys, res_n)
+                begin
+                    if (res_n = reset_polarity) then
                         reg_value_r(i)  <= bit_in_mask(reset_value, i);
+                    elsif (rising_edge(clk_sys)) then                    
+                        if (wr_select_expanded(i) = '1') then
+                            reg_value_r(i)  <= data_in(i);
+                        end if;
                     end if;
+                end process;
+                
+            end generate reg_regular_gen;
+            
+            
+            --------------------------------------------------------------------
+            -- Autoclear register (no DFF - combinatorial only). When access
+            -- is made, put data to output, reset value otherwise.
+            --------------------------------------------------------------------
+            reg_autoclear_gen : if (bit_in_mask(autoclear, i) = '0') generate
+                
+                reg_value_r(i) <= data_in(i) when wr_select_expanded(i) = '1'
+                                             else
+                                  bit_in_mask(reset_value, i);
 
-                end if;
-            end process;
+            end generate reg_autoclear_gen;
 
         end generate reg_present_gen;
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ipxact:component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014" xmlns:kactus2="http://kactus2.cs.tut.fi" xsi:schemaLocation="http://www.accellera.org/XMLSchema/IPXACT/1685-2014 http://www.accellera.org/XMLSchema/IPXACT/1685-2014/index.xsd">
+<ipxact:component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014" xmlns:kactus2="http://kactus2.cs.tut.fi" xmlns:ctuCAN="https://gitlab.fel.cvut.cz/canbus/ctucanfd_ip_core" xsi:schemaLocation="http://www.accellera.org/XMLSchema/IPXACT/1685-2014 http://www.accellera.org/XMLSchema/IPXACT/1685-2014/index.xsd">
 	<ipxact:vendor>CTU</ipxact:vendor>
 	<ipxact:library>ip</ipxact:library>
 	<ipxact:name>CAN_FD_IP_Core</ipxact:name>
@@ -200,6 +200,17 @@
 								<ipxact:value>0</ipxact:value>
 							</ipxact:enumeratedValue>
 						</ipxact:enumeratedValues>
+					</ipxact:field>
+					<ipxact:field>
+						<ipxact:name>TSTM</ipxact:name>
+						<ipxact:description>Device enters test mode.</ipxact:description>
+						<ipxact:bitOffset>8</ipxact:bitOffset>
+						<ipxact:resets>
+							<ipxact:reset>
+								<ipxact:value>0</ipxact:value>
+							</ipxact:reset>
+						</ipxact:resets>
+						<ipxact:bitWidth>1</ipxact:bitWidth>
 					</ipxact:field>
 				</ipxact:register>
 				<ipxact:register>
@@ -3090,6 +3101,12 @@
 			<kactus2:kts_implementation>HW</kactus2:kts_implementation>
 			<kactus2:kts_firmness>Mutable</kactus2:kts_firmness>
 		</kactus2:kts_attributes>
+		<ipxact:regLocks>
+			<ipxact:regLock name="CTR_PRES"/>
+			<ipxact:regLock name="EWL"/>
+			<ipxact:regLock name="ERP"/>
+			<ipxact:Description>Register can be only written when MODE[TSTM] = 1.</ipxact:Description>
+		</ipxact:regLocks>
 		<kactus2:license>MIT</kactus2:license>
 	</ipxact:vendorExtensions>
 </ipxact:component>

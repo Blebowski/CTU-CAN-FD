@@ -399,11 +399,16 @@ begin
         read                  => srd,
         write                 => swr,
         be                    => sbe,
+        lock                  => reg_lock_active,
         control_registers_out => control_registers_out,
         control_registers_in  => control_registers_in
     );
 
-
+    ----------------------------------------------------------------------------
+    -- Several registers are locked and accessible only in Test mode!
+    ----------------------------------------------------------------------------
+    reg_lock_active <= not control_registers_out.mode(TSTM_IND);
+    
     ----------------------------------------------------------------------------
     -- Reset propagation to output
     -- Note: this works only for reset active in logic zero
