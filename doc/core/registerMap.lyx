@@ -14268,6 +14268,8 @@ Address: 0x2C
 \begin_layout Description
 Size: 1 byte
 \end_layout
+\begin_layout Description
+Note: Register can be only written when MODE[TSTM] = 1, otherwise write has no effect.\end_layout
 \begin_layout Standard
 Error warning limit register. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
@@ -14617,6 +14619,8 @@ Address: 0x2D
 \begin_layout Description
 Size: 1 byte
 \end_layout
+\begin_layout Description
+Note: Register can be only written when MODE[TSTM] = 1, otherwise write has no effect.\end_layout
 \begin_layout Standard
 Error passive limit register. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
@@ -18317,6 +18321,8 @@ Address: 0x38
 \begin_layout Description
 Size: 4 bytes
 \end_layout
+\begin_layout Description
+Note: Register can be only written when MODE[TSTM] = 1, otherwise write has no effect.\end_layout
 \begin_layout Standard
 Register for manipulation with error counters.
 \end_layout
