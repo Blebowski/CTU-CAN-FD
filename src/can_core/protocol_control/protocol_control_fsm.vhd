@@ -644,6 +644,11 @@ architecture rtl of protocol_control_fsm is
     signal err_delim_late_i          :  std_logic;
     signal set_err_active_i          :  std_logic;
     
+    -- Operation state handling internal
+    signal set_transmitter_i         :  std_logic;
+    signal set_receiver_i            :  std_logic;
+    signal set_idle_i                :  std_logic;
+    
     -- Flag which holds whether FSM is in first bit of error delimiter 
     signal first_err_delim_d         :  std_logic;
     signal first_err_delim_q         :  std_logic;
@@ -1274,9 +1279,9 @@ begin
         err_pos <= ERC_POS_OTHER;
         
         arbitration_lost <= '0';
-        set_transmitter <= '0';
-        set_receiver <= '0';
-        set_idle <= '0';
+        set_transmitter_i <= '0';
+        set_receiver_i <= '0';
+        set_idle_i <= '0';
         
         sp_control_switch_data <= '0';
         sp_control_switch_nominal <= '0';
@@ -1391,7 +1396,7 @@ begin
                 end if;
                 
                 if (ctrl_ctr_zero = '1') then
-                    set_idle <= '1';
+                    set_idle_i <= '1';
                     set_err_active_i <= '1';
                 end if;
 
@@ -2084,9 +2089,9 @@ begin
                     -- is received, become receiver! 
                     if (tx_frame_ready = '1' and go_to_suspend = '0') then
                         txtb_hw_cmd_d.lock <= '1';
-                        set_transmitter   <= '1';
+                        set_transmitter_i   <= '1';
                     elsif (rx_data_nbs = DOMINANT) then
-                        set_receiver   <= '1';
+                        set_receiver_i   <= '1';
                     end if;
                     
                     -- Transmission/reception started -> Enable Bit stuffing!
@@ -2105,7 +2110,7 @@ begin
                     -- If we dont sample dominant, nor we have sth ready for
                     -- transmission, we go to Idle!
                     if (rx_data_nbs = RECESSIVE and tx_frame_ready = '0') then
-                        set_idle <= '1';
+                        set_idle_i <= '1';
                     end if;
     
                 -- First or second bit of intermission!
@@ -2138,7 +2143,7 @@ begin
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
                     sof_pulse_i <= '1';
-                    set_receiver <= '1';
+                    set_receiver_i <= '1';
                     destuff_enable_set <= '1';
                     rx_clear_d <= '1';
 
@@ -2147,12 +2152,12 @@ begin
                 elsif (ctrl_ctr_zero = '1') then
                     if (tx_frame_ready = '1') then
                         rx_clear_d <= '1';
-                        set_transmitter <= '1';
+                        set_transmitter_i <= '1';
                         destuff_enable_set <= '1';
                         stuff_enable_set <= '1';
                         rx_clear_d <= '1';
                     else
-                        set_idle <= '1';
+                        set_idle_i <= '1';
                     end if;
                 end if;
     
@@ -2179,9 +2184,9 @@ begin
 
                 if (tx_frame_ready = '1') then
                     txtb_hw_cmd_d.lock <= '1';
-                    set_transmitter <= '1';
+                    set_transmitter_i <= '1';
                 elsif (rx_data_nbs = DOMINANT) then
-                    set_receiver <= '1';
+                    set_receiver_i <= '1';
                 end if;
 
                 -- Transmission/reception started -> Enable Bit de-stuffing!
@@ -2226,7 +2231,7 @@ begin
                 end if;
 
                 if (reinteg_ctr_expired = '1') then
-                    set_idle <= '1';
+                    set_idle_i <= '1';
                     set_err_active_i <= '1';
                 end if;
 
@@ -2635,6 +2640,21 @@ begin
     compl_ctr_ena <= '1' when (compl_ctr_ena_i = '1' and rx_trigger = '1')
                          else
                      '0';
+                     
+    ---------------------------------------------------------------------------
+    -- Operation control commands active in Sample point only!
+    ---------------------------------------------------------------------------
+    set_transmitter <= '1' when (set_transmitter_i = '1' and rx_trigger = '1')
+                           else
+                       '0';
+
+    set_receiver <= '1' when (set_receiver_i = '1' and rx_trigger = '1')
+                        else
+                    '0';
+                    
+    set_idle <= '1' when (set_idle_i = '1' and rx_trigger = '1')
+                    else
+                '0';
 
     ---------------------------------------------------------------------------
     -- Bit Stuffing enable
