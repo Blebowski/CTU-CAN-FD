@@ -2096,7 +2096,7 @@ begin
                     
                     -- Transmission/reception started -> Enable Bit stuffing!
                     -- Clear RX Shift Register!
-                    if (frame_start = '1') then
+                    if (frame_start = '1' and rx_trigger = '1') then
                         destuff_enable_set <= '1';
                         rx_clear_d <= '1';
                     end if;
@@ -2138,7 +2138,7 @@ begin
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
                 
-                if (rx_data_nbs = DOMINANT) then
+                if (rx_data_nbs = DOMINANT and rx_trigger = '1') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
@@ -2191,7 +2191,7 @@ begin
 
                 -- Transmission/reception started -> Enable Bit de-stuffing!
                 -- Clear RX Shift register!
-                if (frame_start = '1') then
+                if (frame_start = '1' and rx_trigger = '1') then
                     destuff_enable_set <= '1';
                     rx_clear_d <= '1';
                 end if;
