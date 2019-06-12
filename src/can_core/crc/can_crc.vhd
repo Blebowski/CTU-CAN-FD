@@ -217,11 +217,13 @@ begin
     -- Muxes for CRC 17,21. For Receiver choose crc from RX Stream,
     -- for Transmitter use CRC from TX Stream.
     ---------------------------------------------------------------------------
-    crc_17_21_data_in <= data_rx_wbs when (is_receiver = '1')
+    crc_17_21_data_in <= data_rx_wbs when (is_receiver = '1' or 
+                                           crc_spec_enable = '1')
                                      else
                          data_tx_wbs;
 
-    crc_17_21_trigger <= trig_rx_wbs when (is_receiver = '1')
+    crc_17_21_trigger <= trig_rx_wbs when (is_receiver = '1' or 
+                                           crc_spec_enable = '1')
                                      else
                          trig_tx_wbs;
                          
@@ -229,11 +231,13 @@ begin
     -- Muxes for CRC 15. For Receiver choose crc from RX Stream,
     -- for Transmitter use CRC from TX Stream.
     ---------------------------------------------------------------------------
-    crc_15_data_in <= data_rx_nbs when (is_receiver = '1')
+    crc_15_data_in <= data_rx_nbs when (is_receiver = '1' or
+                                        crc_spec_enable = '1')
                                   else
                       data_tx_nbs;
     
-    crc_15_trigger <= trig_rx_nbs when (is_receiver = '1')
+    crc_15_trigger <= trig_rx_nbs when (is_receiver = '1' or
+                                        crc_spec_enable = '1')
                                   else
                       trig_tx_nbs;
 
