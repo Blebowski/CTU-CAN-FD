@@ -237,11 +237,8 @@ entity can_core is
         -- Sample control (Nominal, Data, Secondary)
         sp_control    :out  std_logic_vector(1 downto 0); 
 
-        -- Enable Nominal Bit time counters.
-        nbt_ctrs_en   :out  std_logic;
-        
-        -- Enable Data Bit time counters.
-        dbt_ctrs_en   :out  std_logic;
+        -- Enable Bit time counters.
+        bt_ctrs_en    :out  std_logic;
 
         ------------------------------------------------------------------------
         -- CAN Bus serial data stream
@@ -343,6 +340,7 @@ architecture rtl of can_core is
 
     -- Protocol control - control outputs
     signal sp_control_i            :    std_logic_vector(1 downto 0);
+    signal sp_control_q            :    std_logic_vector(1 downto 0);
     signal sync_control_i          :    std_logic_vector(1 downto 0); 
     signal ssp_reset_i             :    std_logic;
     signal trv_delay_calib_i       :    std_logic;
@@ -541,8 +539,8 @@ begin
         
         -- Control signals
         sp_control              => sp_control_i,        -- OUT
-        nbt_ctrs_en             => nbt_ctrs_en,         -- OUT
-        dbt_ctrs_en             => dbt_ctrs_en,         -- OUT
+        sp_control_q            => sp_control_q,        -- OUT
+        bt_ctrs_en              => bt_ctrs_en,          -- OUT
         sync_control            => sync_control_i,      -- OUT
         no_pos_resync           => no_pos_resync,       -- OUT
         ssp_reset               => ssp_reset_i,         -- OUT
@@ -823,10 +821,12 @@ begin
     --  1. Bit Destuffing output for secondary sampling. This-way core will
     --     automatically receive what it transmitts without loop over
     --     Transceiver. Bit Error is detected by Bus sampling properly.
+    --     We must use registered value of Sample control, not the final one
+    --     which might combinatorially depend on rx data to avoid timing loops.
     --  2. Looped back dominant Bit for Bus monitoring Mode.
     --  3. Regular RX Data
     ---------------------------------------------------------------------------
-    bds_data_in <= bst_data_out when (sp_control_i = SECONDARY_SAMPLE) else
+    bds_data_in <= bst_data_out when (sp_control_q = SECONDARY_SAMPLE) else
                    lpb_dominant when (drv_bus_mon_ena = '1') else
                     rx_data_wbs;
 

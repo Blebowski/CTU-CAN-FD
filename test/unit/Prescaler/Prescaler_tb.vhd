@@ -97,12 +97,13 @@ architecture presc_unit_test of CAN_test is
     signal bt_fsm               : t_bit_time;
     signal sp_control           : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
+    signal sp_control_prev      : std_logic_vector(1 downto 0) :=
+                                      (OTHERS => '0');
     signal sync_control         : std_logic_vector(1 downto 0) :=
                                       (OTHERS => '0');
     signal data_tx              : std_logic := RECESSIVE;
     
-    signal nbt_ctrs_en          : std_logic := '1';
-    signal dbt_ctrs_en          : std_logic := '1';
+    signal bt_ctrs_en           : std_logic := '1';
 
     -- Driving bus aliases
     signal drv_tq_nbt           :   std_logic_vector (7 downto 0) := "00000000";
@@ -156,6 +157,10 @@ architecture presc_unit_test of CAN_test is
     
     -- No positive re-synchronisation
     signal no_pos_resync          :   std_logic;
+    
+    -- Bit rate was shifted
+    signal br_shifted             :   std_logic := '0';
+    signal br_shifted_prev        :   std_logic := '0';
     
     ---------------------------------------------------------------------------
     -- Model outputs
@@ -309,10 +314,10 @@ begin
         tx_trigger           =>  tx_trigger,
         bt_fsm               =>  bt_fsm,
         sp_control           =>  sp_control,
+        br_shifted           =>  br_shifted,
         sync_control         =>  sync_control,
         no_pos_resync        =>  no_pos_resync,
-        nbt_ctrs_en          =>  nbt_ctrs_en,
-        dbt_ctrs_en          =>  dbt_ctrs_en
+        bt_ctrs_en           =>  bt_ctrs_en
     );
 
     -- Connect new vector signals to old signals for backwards compatibility
@@ -531,7 +536,19 @@ begin
         end if;
     end process;
 
-
+    ---------------------------------------------------------------------------
+    -- Emulate behaviour of Bit-rate shift
+    ---------------------------------------------------------------------------
+    brs_emul_proc : process
+    begin
+        wait until rising_edge(clk_sys);
+        sp_control_prev <= sp_control;
+    end process;
+    
+    br_shifted <= '1' when (sp_control /= sp_control_prev)
+                      else
+                  '0';
+    
     ---------------------------------------------------------------------------
     -- Behavioral model of prescaler
     ---------------------------------------------------------------------------
@@ -612,12 +629,8 @@ begin
             rand_real_v(rand_ctr, rand_real_value);
             if (rand_real_value > 0.5) then
                 sp_control <= DATA_SAMPLE;
-                dbt_ctrs_en <= '1';
-                nbt_ctrs_en <= '0';
             else
                 sp_control <= NOMINAL_SAMPLE;
-                nbt_ctrs_en <= '1';
-                dbt_ctrs_en <= '0';
             end if;
 
 
@@ -767,8 +780,6 @@ begin
             -- Force Nominal sampling, keep model disabled since this
             -- switch is after TSEG2.
             mod_check_enabled <= false;
-            nbt_ctrs_en <= '1';
-            dbt_ctrs_en <= '1';
             sp_control        <= NOMINAL_SAMPLE;
             
             wait until bt_fsm = s_bt_tseg2;
@@ -778,19 +789,6 @@ begin
             
             -- Move to sample point! 
             wait until bt_fsm = s_bt_tseg2;
-            
-            -------------------------------------------------------------------
-            -- Delay for 0 to 3 clock cycles. This accounts for possible
-            -- future implementations of protocol control where number of
-            -- sampling triggers might be decreased!
-            -------------------------------------------------------------------
-            rand_int_s(rand_ctr, 2, rand_val);
-            wait for 0 ns;
-            
-            for i in 0 to rand_val loop 
-                wait until falling_edge(clk_sys);
-            end loop;
-            
             sp_control <= DATA_SAMPLE;
 
             wait until bt_fsm = s_bt_tseg1;
@@ -809,18 +807,6 @@ begin
             info("************************************************");
 
             wait until bt_fsm = s_bt_tseg2;
-
-            -------------------------------------------------------------------
-            -- Delay for 0 to 3 clock cycles. This accounts for possible
-            -- future implementations of protocol control where number of
-            -- sampling triggers might be decreased!
-            -------------------------------------------------------------------
-            rand_int_s(rand_ctr, 2, rand_val);
-            wait for 0 ns;
-            
-            for i in 0 to rand_val loop 
-                wait until falling_edge(clk_sys);
-            end loop;
             
             sp_control <= NOMINAL_SAMPLE;
             
@@ -836,8 +822,6 @@ begin
             
             mod_check_enabled <= false;
             sp_control        <= NOMINAL_SAMPLE;
-            nbt_ctrs_en <= '1';
-            dbt_ctrs_en <= '0';
             
             wait until bt_fsm = s_bt_tseg2;
             wait until bt_fsm = s_bt_tseg1;

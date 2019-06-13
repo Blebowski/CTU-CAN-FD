@@ -85,30 +85,21 @@ entity segment_end_detector is
         -----------------------------------------------------------------------
         -- Control interface
         -----------------------------------------------------------------------
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control         : in    std_logic_vector(1 downto 0);
-        
         -- Hard synchronisation edge is valid
         h_sync_edge_valid  : in    std_logic;
         
-        -- Segment end request (Nominal)
-        exit_segm_req_nbt  : in    std_logic;
+        -- Segment end request
+        exit_segm_req      : in    std_logic;
         
-        -- Segment end request (Data)
-        exit_segm_req_dbt  : in    std_logic;
-
         -- Bit time FSM is in TSEG1
         is_tseg1           : in    std_logic;
         
         -- Bit time FSM is in TSEG2
         is_tseg2           : in    std_logic;
 
-        -- Nominal Time quanta is active
-        tq_edge_nbt        : in    std_logic;
-        
-        -- Data Time quanta is active
-        tq_edge_dbt        : in    std_logic;
-        
+        -- Time quanta reached
+        tq_edge            : in    std_logic;
+
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------
@@ -129,34 +120,27 @@ architecture rtl of segment_end_detector is
     -- Registers to capture requests for Hard-sync (0),
     -- NBT end of segment (1), DBT end of segment (2)
     ---------------------------------------------------------------------------
-    signal req_input                : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_d      : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_q      : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_ce     : std_logic_vector(2 downto 0);
-    signal segm_end_req_capt_clr    : std_logic_vector(2 downto 0);
+    signal req_input                : std_logic_vector(1 downto 0);
+    
+    signal segm_end_req_capt_d      : std_logic_vector(1 downto 0);
+    signal segm_end_req_capt_q      : std_logic_vector(1 downto 0);
+    signal segm_end_req_capt_ce     : std_logic_vector(1 downto 0);
+    signal segm_end_req_capt_clr    : std_logic_vector(1 downto 0);
 
     -- ORed flags and combinational requests
-    signal segm_end_req_capt_dq     : std_logic_vector(2 downto 0);
+    signal segm_end_req_capt_dq     : std_logic_vector(1 downto 0);
     
-    -- Valid requests to end segment for each Sample type (Nominal, Data)
-    signal segm_end_nbt_valid       : std_logic;
-    signal segm_end_dbt_valid       : std_logic;
-    signal segm_end_nbt_dbt_valid   : std_logic;
+    -- Valid requests to end segment from Resynchronisation
+    signal segm_end_resync_valid    : std_logic;
     
     -- Internally generated sample point
     signal sample_point             : std_logic;
  
     -- Combinational requests to finish segment.
-    signal tseg1_end_req_valid      : std_logic;
-    signal tseg2_end_req_valid      : std_logic;
     signal h_sync_valid_i           : std_logic;
 
     -- End of segment, internal value
     signal segment_end_i            : std_logic;
-    
-    -- Nominal / Data Time quanta are active
-    signal nbt_tq_active            : std_logic;
-    signal dbt_tq_active            : std_logic;
     
     -- Bit time clear - internal value
     signal bt_ctr_clear_i           : std_logic;
@@ -166,12 +150,10 @@ begin
     ----------------------------------------------------------------------------
     -- End of segment request capturing:
     --  1. Due to Hard sync.
-    --  2. NBT Resynchronisation requests segment end
-    --  3. DBT Resynchronisation requests segment end
+    --  2. Resynchronisation requests segment end
     ----------------------------------------------------------------------------
     req_input(0) <= h_sync_edge_valid;
-    req_input(1) <= exit_segm_req_nbt;
-    req_input(2) <= exit_segm_req_dbt;
+    req_input(1) <= exit_segm_req;
     
     ----------------------------------------------------------------------------
     -- Clearing requests:
@@ -181,9 +163,8 @@ begin
     ----------------------------------------------------------------------------
     segm_end_req_capt_clr(0) <= bt_ctr_clear_i;
     segm_end_req_capt_clr(1) <= segment_end_i;
-    segm_end_req_capt_clr(2) <= segment_end_i;
 
-    segm_end_req_capture : for i in 0 to 2 generate
+    segm_end_req_capture : for i in 0 to 1 generate
     begin
         
         -- Clear the flag upon real end of segment!
@@ -216,8 +197,8 @@ begin
     segm_end_req_capt_dq(0) <= req_input(0) OR segm_end_req_capt_q(0);
     
     ---------------------------------------------------------------------------
-    -- Segment end request from NBT and DBT resynchronisation is valid
-    -- for each Bit segment differently.
+    -- Segment end request from resynchronisation is valid for each Bit segment
+    -- differently.
     -- For TSEG1:
     --  1. Combinational is valid! Here the request hangs (it is always due
     --     to comparison with Bit time counter, so it does not have to be
@@ -230,53 +211,15 @@ begin
     ---------------------------------------------------------------------------
     segm_end_req_capt_dq(1) <= req_input(1) when (is_tseg1 = '1') else
                                req_input(1) OR segm_end_req_capt_q(1);
-
-    segm_end_req_capt_dq(2) <= req_input(2) when (is_tseg1 = '1') else
-                               req_input(2) OR segm_end_req_capt_q(2);
-
-    ---------------------------------------------------------------------------
-    -- Nominal and Data Time Quanta are active only when corresponding Sample
-    -- type is set!
-    ---------------------------------------------------------------------------
-    nbt_tq_active <= '1' when (sp_control = NOMINAL_SAMPLE and tq_edge_nbt = '1') else
-                     '0';
- 
-    dbt_tq_active <= '1' when (tq_edge_dbt = '1' and (sp_control = DATA_SAMPLE or
-                                                      sp_control = SECONDARY_SAMPLE))
-                         else
-                     '0';
  
     ---------------------------------------------------------------------------
-    -- Request to finish from either Nominal Bit-Rate re-synchronisation
-    -- or Data Re-synchronisation is valid when Sample control has Nominal
-    -- or Data, Secondary sampling set!
+    -- Request to finish from Re-synchronisation is valid when Time Quanta
+    -- is active!
     ---------------------------------------------------------------------------
-    segm_end_nbt_valid <=
-        '1' when (segm_end_req_capt_dq(1) = '1' and nbt_tq_active = '1')
-            else
-        '0';
- 
-    segm_end_dbt_valid <=
-        '1' when (segm_end_req_capt_dq(2) = '1' and dbt_tq_active = '1')
-            else
-        '0';
-    
-    segm_end_nbt_dbt_valid <=
-        '1' when (segm_end_nbt_valid = '1' or segm_end_dbt_valid = '1')
-            else
-        '0';
- 
-    ---------------------------------------------------------------------------
-    -- Time segment end requests.
-    ---------------------------------------------------------------------------
-    tseg1_end_req_valid <=
-        '1' when (is_tseg1 = '1' and segm_end_nbt_dbt_valid = '1') else
-        '0';
-
-    tseg2_end_req_valid <=
-        '1' when (is_tseg2 = '1' and segm_end_nbt_dbt_valid = '1')
-            else
-        '0';
+    segm_end_resync_valid <= '1' when (segm_end_req_capt_dq(1) = '1' and 
+                                       tq_edge = '1' and h_sync_valid_i = '0')
+                                 else
+                             '0';
     
     ---------------------------------------------------------------------------
     -- Align Hard synchronisation request with Time Quanta. Note that Hard sync.
@@ -284,22 +227,17 @@ begin
     ---------------------------------------------------------------------------
     h_sync_valid_i <=
         '1' when ((segm_end_req_capt_dq(0) = '1') and
-                  (nbt_tq_active = '1'))
+                  (tq_edge = '1'))
             else
         '0';
 
     ---------------------------------------------------------------------------
     -- Overall segment end request occurs due to following conditions:
-    --  1. Nominal Bit Time Resynchronisation signals end of segment, Nominal
-    --     Time Quanta edge and Sample control is NOMINAL_SAMPLE.
-    --  2. Data Bit Time Resynchronisation signals end of segment, Data
-    --     Time Quanta edge and Sample control is either DATA_SAMPLE or
-    --     SECONDARY_SAMPLE!
-    --  3. Hard synchronisation induced end of segment in TSEG2! In TSEG1
+    --  1. Resynchronisation signals end of segment.
+    --  2. Hard synchronisation induced end of segment in TSEG2! In TSEG1
     --     segment is not ended, only Bit Time counter is restarted!
     ---------------------------------------------------------------------------
-    segment_end_i <= '1' when ((tseg1_end_req_valid = '1' and h_sync_valid_i = '0') or
-                               tseg2_end_req_valid = '1' or
+    segment_end_i <= '1' when ((segm_end_resync_valid = '1') or
                                (h_sync_valid_i = '1' and is_tseg2 = '1'))
                          else
                      '0';

@@ -181,8 +181,8 @@ entity resynchronisation is
         -- TSEG2 width
         G_TSEG2_WIDTH             :       natural := 8;
         
-        -- Bit counter width
-        G_BT_WIDTH                :       natural := 8
+        -- Segment counter width
+        G_SEGM_CTR_WIDTH          :       natural := 8
     );
     port(
         -----------------------------------------------------------------------
@@ -198,7 +198,10 @@ entity resynchronisation is
         -- Control interface
         -----------------------------------------------------------------------
         -- There is a valid re-synchronisation edge.
-        resync_edge_valid    : in    std_logic;
+        resync_edge_valid    : in   std_logic;
+
+        -- Bit rate shifted
+        br_shifted           : in   std_logic;
 
         -----------------------------------------------------------------------
         -- Bit Time FSM interface
@@ -228,7 +231,7 @@ entity resynchronisation is
         -- Bit Time counter interface
         -----------------------------------------------------------------------
         -- Bit time counter
-        segm_counter : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
+        segm_counter : in    std_logic_vector(G_SEGM_CTR_WIDTH - 1 downto 0);
 
         -----------------------------------------------------------------------
         -- End of segment detector
@@ -265,10 +268,10 @@ architecture rtl of resynchronisation is
     -- Internal constants, calculation of data-path widths.
     ---------------------------------------------------------------------------
     constant C_BS_WIDTH : natural := max(G_TSEG1_WIDTH, G_TSEG2_WIDTH);
-    constant C_EXT_WIDTH : natural := max(G_BT_WIDTH, G_SJW_WIDTH);
+    constant C_EXT_WIDTH : natural := max(G_SEGM_CTR_WIDTH, G_SJW_WIDTH);
     constant C_EXP_WIDTH : natural := max(C_BS_WIDTH, C_EXT_WIDTH) + 1;
     
-    constant C_E_WIDTH     : natural := max(G_BT_WIDTH, G_TSEG2_WIDTH);
+    constant C_E_WIDTH     : natural := max(G_SEGM_CTR_WIDTH, G_TSEG2_WIDTH);
     constant C_E_SJW_WIDTH : natural := max(C_E_WIDTH, G_SJW_WIDTH);
 
     -- Selector between TSEG1 and TSEG2
@@ -325,7 +328,8 @@ begin
     -- Re-synchronisation data-path
     ---------------------------------------------------------------------------
     ---------------------------------------------------------------------------
-    sel_tseg1 <= '1' when (h_sync_valid = '1' or start_edge = '1') else
+    sel_tseg1 <= '0' when (br_shifted = '1' and segm_end = '0') else
+                 '1' when (h_sync_valid = '1' or start_edge = '1') else
                  '1' when (segm_end = '1' and is_tseg2 = '1') else
                  '1' when (segm_end = '0' and is_tseg1 = '1') else
                  '0';
@@ -355,11 +359,17 @@ begin
     --  2. Segment end, but not due to hard-sync. When segment end due to hard
     --     sync occurs, we must take TSEG1 - 1 which is calculated in synced
     --     segment length!
+    --  3. Moment of bit-rate shift. This is in Process segment stage in
+    --     normal bit-rate shift, or one clock cycle later in case of error
+    --     frame. Expected segment length needs to be reloaded since at the
+    --     end of previous segment, expected length in old bit-rate was loaded!
     ---------------------------------------------------------------------------
     use_basic_segm_length <= '1' when (start_edge = '1')
                                  else
                              '1' when (segm_end = '1' and
                                        h_sync_valid = '0') 
+                                 else
+                             '1' when (br_shifted = '1')
                                  else
                              '0';
     
@@ -376,7 +386,8 @@ begin
     exp_seg_length_ce <= '1' when (segm_end = '1' or 
                                    resync_edge_valid = '1' or
                                    h_sync_valid = '1' or
-                                   start_edge = '1')
+                                   start_edge = '1' or
+                                   br_shifted = '1')
                              else
                          '0';
 
@@ -447,8 +458,11 @@ begin
 
     ---------------------------------------------------------------------------
     -- TSEG2 is finished when Bit time counter reached expected value!
+    -- This should not occur when bit-rate shift occurs since Expected segment
+    -- length register might still have old value!
     ---------------------------------------------------------------------------
-    exit_segm_regular_tseg2 <= '1' when (is_tseg2 = '1' and exit_segm_regular = '1')
+    exit_segm_regular_tseg2 <= '1' when (is_tseg2 = '1' and exit_segm_regular = '1'
+                                         and br_shifted = '0')
                                    else
                                '0';
 
@@ -463,5 +477,18 @@ begin
                      '1' when (exit_segm_regular_tseg1 = '1' or
                                exit_segm_regular_tseg2 = '1') else
                      '0';
+                     
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge(clk_sys);
+    --
+    -- no_simul_brshift_and_hsync_asrt : assert never
+    --  (br_shift = '1' and h_sync_valid = '1')
+    -- report "Bit-rate shift and hard-synchronisation are not allowed at once!"
+    -- severity error;
 
 end architecture rtl;
