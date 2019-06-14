@@ -299,7 +299,7 @@ begin
     -- psl default clock is rising_edge(clk_sys);
 
     -- psl no_cmd_in_idle_asrt : assert never
-    -- (inc_one = '1' or inc_eight = '1' or dec_one = '1') and
+    -- (inc_one = '1' or inc_eight = '1') and
     -- (is_transmitter = '0' and is_receiver = '0')
     -- report "Error counters incremented when unit is not Transmitter nor " &
     --   "receiver"
