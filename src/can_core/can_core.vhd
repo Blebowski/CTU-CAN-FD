@@ -343,6 +343,7 @@ architecture rtl of can_core is
 
     -- Protocol control - control outputs
     signal sp_control_i            :    std_logic_vector(1 downto 0);
+    signal sp_control_q            :    std_logic_vector(1 downto 0);
     signal sync_control_i          :    std_logic_vector(1 downto 0); 
     signal ssp_reset_i             :    std_logic;
     signal trv_delay_calib_i       :    std_logic;
@@ -541,6 +542,7 @@ begin
         
         -- Control signals
         sp_control              => sp_control_i,        -- OUT
+        sp_control_q            => sp_control_q,        -- OUT
         nbt_ctrs_en             => nbt_ctrs_en,         -- OUT
         dbt_ctrs_en             => dbt_ctrs_en,         -- OUT
         sync_control            => sync_control_i,      -- OUT
@@ -826,7 +828,7 @@ begin
     --  2. Looped back dominant Bit for Bus monitoring Mode.
     --  3. Regular RX Data
     ---------------------------------------------------------------------------
-    bds_data_in <= bst_data_out when (sp_control_i = SECONDARY_SAMPLE) else
+    bds_data_in <= bst_data_out when (sp_control_q = SECONDARY_SAMPLE) else
                    lpb_dominant when (drv_bus_mon_ena = '1') else
                     rx_data_wbs;
 

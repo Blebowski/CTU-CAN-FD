@@ -466,6 +466,9 @@ entity protocol_control_fsm is
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out   std_logic_vector(1 downto 0);
         
+        -- Sample control (Registered)
+        sp_control_q            :out   std_logic_vector(1 downto 0);
+        
         -- Enable Nominal Bit time counters.
         nbt_ctrs_en             :out   std_logic;
         
@@ -627,7 +630,7 @@ architecture rtl of protocol_control_fsm is
     
     signal sp_control_ce             :  std_logic;
     signal sp_control_d              :  std_logic_vector(1 downto 0);
-    signal sp_control_q              :  std_logic_vector(1 downto 0);
+    signal sp_control_q_i              :  std_logic_vector(1 downto 0);
 
     -- Secondary sampling point shift register reset
     signal ssp_reset_i               :  std_logic;
@@ -688,6 +691,9 @@ architecture rtl of protocol_control_fsm is
     -- State register will be clocked extra, not only in in Sample point or
     -- error frame request.
     signal tick_state_reg            :  std_logic;
+    
+    -- Bit-rate shifted (internal value)
+    signal br_shifted_i              :  std_logic;
     
 begin
 
@@ -1195,7 +1201,7 @@ begin
     -- Current state process
     ---------------------------------------------------------------------------
     curr_state_proc : process(
-        curr_state, err_frm_req, sp_control_q, tx_failed, drv_ena, rx_data_nbs,
+        curr_state, err_frm_req, sp_control_q_i, tx_failed, drv_ena, rx_data_nbs,
         ctrl_ctr_zero, arbitration_lost_condition, tx_data_wbs, is_transmitter,
         tran_ident_type, tran_frame_type, tran_is_rtr, ide_is_arbitration,
         drv_can_fd_ena, tran_brs, rx_trigger, is_err_active, no_data_field,
@@ -1296,7 +1302,7 @@ begin
         first_err_delim_d <= '0';
         set_err_active_i <= '0';
         
-        br_shifted <= '0';
+        br_shifted_i <= '0';
         ack_received <= '0';
 
         -- Bit Stuffing/Destuffing control
@@ -1349,11 +1355,11 @@ begin
             destuff_enable_clear <= '1';
             stuff_enable_clear <= '1';
 
-            if (sp_control_q = DATA_SAMPLE or 
-                sp_control_q = SECONDARY_SAMPLE)
+            if (sp_control_q_i = DATA_SAMPLE or 
+                sp_control_q_i = SECONDARY_SAMPLE)
             then
                 sp_control_switch_nominal <= '1';
-                br_shifted <= '1';
+                br_shifted_i <= '1';
             end if;
 
             if (tx_failed = '1') then
@@ -1723,7 +1729,7 @@ begin
                 
                 if (rx_data_nbs = RECESSIVE and rx_trigger = '1') then
                     sp_control_switch_data <= '1';
-                    br_shifted <= '1';
+                    br_shifted_i <= '1';
                 end if;
                 
             -------------------------------------------------------------------
@@ -1757,7 +1763,7 @@ begin
                 is_control <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q = NOMINAL_SAMPLE) then
+                if (sp_control_q_i = NOMINAL_SAMPLE) then
                     nbt_ctrs_en <= '1';
                 else
                     dbt_ctrs_en <= '1';
@@ -1804,7 +1810,7 @@ begin
                 compl_ctr_ena_i <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q = NOMINAL_SAMPLE) then
+                if (sp_control_q_i = NOMINAL_SAMPLE) then
                     nbt_ctrs_en <= '1';
                 else
                     dbt_ctrs_en <= '1';
@@ -1855,7 +1861,7 @@ begin
                 is_stuff_count <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q = NOMINAL_SAMPLE) then
+                if (sp_control_q_i = NOMINAL_SAMPLE) then
                     nbt_ctrs_en <= '1';
                 else
                     dbt_ctrs_en <= '1';
@@ -1884,7 +1890,7 @@ begin
                 is_crc <= '1';
                 bit_err_disable_receiver <= '1';
                 
-                if (sp_control_q = NOMINAL_SAMPLE) then
+                if (sp_control_q_i = NOMINAL_SAMPLE) then
                     nbt_ctrs_en <= '1';
                 else
                     dbt_ctrs_en <= '1';
@@ -1914,14 +1920,14 @@ begin
                     form_err_i <= '1';
                 end if;
                 
-                if (sp_control_q = DATA_SAMPLE or 
-                    sp_control_q = SECONDARY_SAMPLE) and
+                if (sp_control_q_i = DATA_SAMPLE or 
+                    sp_control_q_i = SECONDARY_SAMPLE) and
                     (rx_trigger = '1')
                 then
                     sp_control_switch_nominal <= '1';
-                    br_shifted <= '1';
+                    br_shifted_i <= '1';
                 end if;
-                
+
             -------------------------------------------------------------------
             -- Secondary CRC Delimiter, or an ACK Slot if DOMINANT.
             -------------------------------------------------------------------
@@ -2546,7 +2552,7 @@ begin
                                      else
                          DATA_SAMPLE when (sp_control_switch_data = '1')
                                      else
-                        sp_control_q;
+                        sp_control_q_i;
 
     sp_control_ce <= '1' when (sp_control_switch_nominal = '1') else
                      '1' when (sp_control_switch_data = '1') else
@@ -2555,14 +2561,16 @@ begin
     sp_control_reg_proc : process(clk_sys, res_n)
     begin
         if (res_n = G_RESET_POLARITY) then
-            sp_control_q <= NOMINAL_SAMPLE;
+            sp_control_q_i <= NOMINAL_SAMPLE;
         elsif (rising_edge(clk_sys)) then
             if (sp_control_ce = '1') then
-                sp_control_q <= sp_control_d;
+                sp_control_q_i <= sp_control_d;
             end if;
         end if;
     end process;
 
+    sp_control <= sp_control_d when (br_shifted_i = '1') else
+                  sp_control_q_i;
 
     ---------------------------------------------------------------------------
     -- Indicates that Error or Overload flag is being transmitted! Can't
@@ -2693,7 +2701,7 @@ begin
     -- Synchronisation type
     ---------------------------------------------------------------------------
     sync_control_d <= NO_SYNC when (switch_to_ssp = '1' or
-                                    sp_control_q = SECONDARY_SAMPLE)
+                                    sp_control_q_i = SECONDARY_SAMPLE)
                               else
                     HARD_SYNC when (perform_hsync = '1')
                               else
@@ -2726,13 +2734,14 @@ begin
     -----------------------------------------------------------------------
     crc_src <= crc_src_i;
     txtb_hw_cmd <= txtb_hw_cmd_q;
-    sp_control <= sp_control_q;
     tran_valid <= txtb_hw_cmd_q.valid;
     ssp_reset <= ssp_reset_i; 
     rx_clear <= rx_clear_q;
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
     pc_state <= curr_state;
+    br_shifted <= br_shifted_i;
+    sp_control_q <= sp_control_q_i;
     
 
     -----------------------------------------------------------------------

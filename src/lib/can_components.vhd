@@ -1713,7 +1713,10 @@ package can_components is
         -----------------------------------------------------------------------
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out   std_logic_vector(1 downto 0);
-
+        
+        -- Sample control (Registered)
+        sp_control_q            :out   std_logic_vector(1 downto 0);
+        
         -- Enable Nominal Bit time counters.
         nbt_ctrs_en             :out   std_logic;
         
@@ -2034,6 +2037,9 @@ package can_components is
         -----------------------------------------------------------------------
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out  std_logic_vector(1 downto 0);
+                
+        -- Sample control (Registered)
+        sp_control_q            :out   std_logic_vector(1 downto 0);
         
         -- Enable Nominal Bit time counters.
         nbt_ctrs_en             :out   std_logic;
