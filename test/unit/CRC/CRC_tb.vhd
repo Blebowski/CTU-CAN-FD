@@ -284,6 +284,7 @@ begin
         -- Control signals. So far don't use speculative calculation
         crc_enable       => enable,
         crc_spec_enable  => '0',
+        crc_calc_from_rx => '0',
         is_receiver      => '0',
 
         -- CRC Outputs
