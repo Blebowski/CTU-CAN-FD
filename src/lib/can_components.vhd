@@ -680,6 +680,9 @@ package can_components is
         -- CRC calculation - speculative enable
         crc_spec_enable  :in   std_logic;
 
+        -- Use RX Data for CRC calculation
+        crc_calc_from_rx :in   std_logic;
+
         -- Unit is receiver of a frame
         is_receiver      :in   std_logic;
 
@@ -1750,9 +1753,12 @@ package can_components is
         
         -- CRC calculation - speculative enable
         crc_spec_enable         :out   std_logic;
+        
+        -- Use RX Data for CRC calculation
+        crc_calc_from_rx        :out   std_logic;
 
         -- Bit error enable
-        bit_err_enable        :out   std_logic;
+        bit_err_enable          :out   std_logic;
 
         -- Bit rate shifted
         br_shifted              :out   std_logic
@@ -2019,6 +2025,9 @@ package can_components is
         
         -- CRC calculation - speculative enable
         crc_spec_enable         :out   std_logic;
+
+        -- Use RX Data for CRC calculation
+        crc_calc_from_rx        :out   std_logic;
         
         -- CRC Source to be used (CRC 15, CRC 17, CRC 21)
         crc_src                 :out  std_logic_vector(1 downto 0);

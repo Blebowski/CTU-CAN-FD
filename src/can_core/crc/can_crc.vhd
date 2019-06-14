@@ -143,6 +143,9 @@ entity can_crc is
 
         -- CRC calculation - speculative enable
         crc_spec_enable  :in   std_logic;
+        
+        -- Use RX Data for CRC calculation
+        crc_calc_from_rx :in   std_logic;
 
         -- Unit is receiver of a frame
         is_receiver      :in   std_logic;
@@ -217,28 +220,20 @@ begin
     -- Muxes for CRC 17,21. For Receiver choose crc from RX Stream,
     -- for Transmitter use CRC from TX Stream.
     ---------------------------------------------------------------------------
-    crc_17_21_data_in <= data_rx_wbs when (is_receiver = '1' or 
-                                           crc_spec_enable = '1')
-                                     else
+    crc_17_21_data_in <= data_rx_wbs when (crc_calc_from_rx = '1') else
                          data_tx_wbs;
 
-    crc_17_21_trigger <= trig_rx_wbs when (is_receiver = '1' or 
-                                           crc_spec_enable = '1')
-                                     else
+    crc_17_21_trigger <= trig_rx_wbs when (crc_calc_from_rx = '1') else
                          trig_tx_wbs;
                          
     ---------------------------------------------------------------------------
     -- Muxes for CRC 15. For Receiver choose crc from RX Stream,
     -- for Transmitter use CRC from TX Stream.
     ---------------------------------------------------------------------------
-    crc_15_data_in <= data_rx_nbs when (is_receiver = '1' or
-                                        crc_spec_enable = '1')
-                                  else
+    crc_15_data_in <= data_rx_nbs when (crc_calc_from_rx = '1') else
                       data_tx_nbs;
     
-    crc_15_trigger <= trig_rx_nbs when (is_receiver = '1' or
-                                        crc_spec_enable = '1')
-                                  else
+    crc_15_trigger <= trig_rx_nbs when (crc_calc_from_rx = '1') else
                       trig_tx_nbs;
 
     ---------------------------------------------------------------------------

@@ -330,6 +330,9 @@ entity protocol_control is
         -- CRC calculation - speculative enable
         crc_spec_enable         :out   std_logic;
         
+        -- Use RX Data for CRC calculation
+        crc_calc_from_rx        :out   std_logic;
+        
         -- CRC Source to be used (CRC 15, CRC 17, CRC 21)
         crc_src                 :out  std_logic_vector(1 downto 0);
 
@@ -782,6 +785,7 @@ begin
         ack_received            => ack_received,            -- OUT
         crc_enable              => crc_enable,              -- OUT
         crc_spec_enable         => crc_spec_enable,         -- OUT
+        crc_calc_from_rx        => crc_calc_from_rx,        -- OUT
         bit_err_enable          => bit_err_enable,          -- OUT
         br_shifted              => br_shifted               -- OUT
     );

@@ -181,7 +181,7 @@ entity protocol_control_fsm is
         tx_data_wbs             :in   std_logic;
         
         -- Actual RX Data
-        rx_data_nbs                 :in   std_logic;
+        rx_data_nbs             :in   std_logic;
         
         -----------------------------------------------------------------------
         -- RX Buffer interface
@@ -502,6 +502,9 @@ entity protocol_control_fsm is
         
         -- CRC calculation - speculative enable
         crc_spec_enable         :out   std_logic;
+        
+        -- Use RX Data for CRC calculation
+        crc_calc_from_rx        :out   std_logic;
 
         -- Bit error enable
         bit_err_enable          :out   std_logic;
@@ -2417,7 +2420,8 @@ begin
     --     gating with RX Trigger in each FSM state!
     -----------------------------------------------------------------------
     ctrl_ctr_pload <= ctrl_ctr_pload_i when (curr_state = s_pc_off) else
-                      ctrl_ctr_pload_i when (rx_trigger = '1') else
+                      ctrl_ctr_pload_i when (rx_trigger = '1' or
+                                             err_frm_req = '1') else
                       '0';
 
     -----------------------------------------------------------------------
@@ -2663,6 +2667,21 @@ begin
     set_idle <= '1' when (set_idle_i = '1' and rx_trigger = '1')
                     else
                 '0';
+
+    ---------------------------------------------------------------------------
+    -- CRC select source for calculation:
+    --  1. When speculative enable is selected, always use RX Data. This is
+    --     in idle/intermission/suspend when dominant is sampled and cosidered
+    --     as SOF.
+    --  2. When we are in arbitration, always use idle. This is to make sure
+    --     that transmitting recessive and receiving dominant (loosing arbi-
+    --     tration) will calculate data from DOMINANT value
+    --  3. In other cases Transmitter uses TX Data, Receiver uses RX Data.
+    ---------------------------------------------------------------------------
+    crc_calc_from_rx <= '1' when (crc_spec_enable = '1') else
+                        '1' when (is_arbitration = '1') else
+                        '1' when (is_receiver = '1') else
+                        '0';
 
     ---------------------------------------------------------------------------
     -- Bit Stuffing enable

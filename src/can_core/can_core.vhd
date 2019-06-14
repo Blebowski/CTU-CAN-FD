@@ -336,6 +336,7 @@ architecture rtl of can_core is
     -- CRC Interface
     signal crc_enable              :    std_logic;
     signal crc_spec_enable         :    std_logic;
+    signal crc_calc_from_rx        :    std_logic;
     signal crc_src                 :    std_logic_vector(1 downto 0);
     signal crc_15                  :    std_logic_vector(14 downto 0);
     signal crc_17                  :    std_logic_vector(16 downto 0);
@@ -535,6 +536,7 @@ begin
         -- CRC Interface
         crc_enable              => crc_enable,          -- OUT
         crc_spec_enable         => crc_spec_enable,     -- OUT
+        crc_calc_from_rx        => crc_calc_from_rx,    -- OUT
         crc_src                 => crc_src,             -- OUT
         crc_15                  => crc_15,              -- IN
         crc_17                  => crc_17,              -- IN
@@ -664,6 +666,7 @@ begin
         -- Control signals
         crc_enable       => crc_enable,                 -- IN
         crc_spec_enable  => crc_spec_enable,            -- IN
+        crc_calc_from_rx => crc_calc_from_rx,           -- IN
         is_receiver      => is_receiver,                -- IN
 
         -- CRC Outputs
