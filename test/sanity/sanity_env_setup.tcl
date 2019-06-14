@@ -117,6 +117,54 @@ add wave -group "Protocol states" \
 	-label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/curr_state \
 	-label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/curr_state
 
+add wave -group "CRC15" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/crc_15 \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/crc_15 \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/crc_15 \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/crc_15 \
+
+add wave -group "CRC17" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/crc_17 \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/crc_17 \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/crc_17 \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/crc_17 \
+
+add wave -group "CRC21" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/crc_21 \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/crc_21 \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/crc_21 \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/crc_21 \
+
+add wave -group "Control counter" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/control_counter_inst/ctrl_ctr_q \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/control_counter_inst/ctrl_ctr_q \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/control_counter_inst/ctrl_ctr_q \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/control_counter_inst/ctrl_ctr_q \
+
+add wave -group "Error frame request" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/err_frm_req \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/err_frm_req \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/err_frm_req \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/err_frm_req
+
+add wave -group "Increment by 1" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/fault_confinement_inst/inc_one \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/fault_confinement_inst/inc_one \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/fault_confinement_inst/inc_one \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/fault_confinement_inst/inc_one
+
+add wave -group "Increment by 8" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/fault_confinement_inst/inc_eight \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/fault_confinement_inst/inc_eight \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/fault_confinement_inst/inc_eight \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/fault_confinement_inst/inc_eight 
+    
+add wave -group "Decrement by 1" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/fault_confinement_inst/dec_one \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/fault_confinement_inst/dec_one \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/fault_confinement_inst/dec_one \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/fault_confinement_inst/dec_one 
+
 if { $SILENT_SANITY == "false" } {
 add wave -group "Bit time state" \
 	-label "Node 1" $WRCOMP/comp_gen__1/can_inst/bt_fsm \
