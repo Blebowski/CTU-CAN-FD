@@ -1714,11 +1714,11 @@ package can_components is
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out   std_logic_vector(1 downto 0);
 
-        -- Sample control (registered)
-        sp_control_q            :out  std_logic_vector(1 downto 0);
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en             :out   std_logic;
         
-        -- Enable Bit time counters.
-        bt_ctrs_en              :out   std_logic;
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en             :out   std_logic;
 
         -- Synchronisation control (No synchronisation, Hard Synchronisation,
         -- Resynchronisation)
@@ -2035,11 +2035,11 @@ package can_components is
         -- Sample control (Nominal, Data, Secondary)
         sp_control              :out  std_logic_vector(1 downto 0);
         
-        -- Sample control (registered)
-        sp_control_q            :out  std_logic_vector(1 downto 0);
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en             :out   std_logic;
         
-        -- Enable Bit time counters.
-        bt_ctrs_en              :out   std_logic;
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en             :out   std_logic;
         
         -- Synchronisation control (No synchronisation, Hard Synchronisation,
         -- Resynchronisation
@@ -2536,8 +2536,12 @@ package can_components is
         -- Sample control (Nominal, Data, Secondary)
         sp_control    :out  std_logic_vector(1 downto 0); 
         
-        -- Enable Bit time counters.
-        bt_ctrs_en   :out   std_logic;
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en   :out   std_logic;
+        
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en   :out   std_logic;
+
 
         ------------------------------------------------------------------------
         -- CAN Bus serial data stream
@@ -3000,17 +3004,29 @@ package can_components is
         -- Reset polarity
         G_RESET_POLARITY   : std_logic := '0';
         
-        -- TSEG1 Width
-        G_TSEG1_WIDTH  : natural := 8;
+        -- TSEG1 Width - Nominal Bit Time
+        G_TSEG1_NBT_WIDTH  : natural := 8;
         
-        -- TSEG2 Width
-        G_TSEG2_WIDTH  : natural := 8;
+        -- TSEG2 Width - Nominal Bit Time
+        G_TSEG2_NBT_WIDTH  : natural := 8;
         
-        -- Baud rate prescaler Width
-        G_BRP_WIDTH    : natural := 8;
+        -- Baud rate prescaler Width - Nominal Bit Time
+        G_BRP_NBT_WIDTH    : natural := 8;
         
-        -- Synchronisation Jump width Width
-        G_SJW_WIDTH    : natural := 5
+        -- Synchronisation Jump width Width - Nominal Bit Time
+        G_SJW_NBT_WIDTH    : natural := 5;
+        
+        -- TSEG1 Width - Data Bit Time
+        G_TSEG1_DBT_WIDTH  : natural := 8;
+        
+        -- TSEG2 Width - Data Bit Time
+        G_TSEG2_DBT_WIDTH  : natural := 8;
+        
+        -- Baud rate prescaler width - Data Bit Time
+        G_BRP_DBT_WIDTH    : natural := 8;
+        
+        -- Synchronisation Jump Width width - Data Bit Time
+        G_SJW_DBT_WIDTH    : natural := 5
     );
     port(
         -----------------------------------------------------------------------
@@ -3029,26 +3045,33 @@ package can_components is
         drv_bus     : in    std_logic_vector(1023 downto 0);
 
         -----------------------------------------------------------------------
-        -- Control signals
-        -----------------------------------------------------------------------
-        -- Sample control (Nominal, Data, Secondary)
-        sp_control  : in    std_logic_vector(1 downto 0);
-
-        -----------------------------------------------------------------------
         -- Output values
         -----------------------------------------------------------------------
-        -- Time segment 1
-        tseg1       : out   std_logic_vector(G_TSEG1_WIDTH - 1 downto 0);
+        -- Time segment 1 - Nominal Bit Time
+        tseg1_nbt   : out   std_logic_vector(G_TSEG1_NBT_WIDTH - 1 downto 0);
         
-        -- Time segment 2
-        tseg2       : out   std_logic_vector(G_TSEG2_WIDTH - 1 downto 0);
+        -- Time segment 2 - Nominal Bit Time
+        tseg2_nbt   : out   std_logic_vector(G_TSEG2_NBT_WIDTH - 1 downto 0);
         
-        -- Baud Rate Prescaler
-        brp         : out   std_logic_vector(G_BRP_WIDTH - 1 downto 0);
+        -- Baud Rate Prescaler - Nominal Bit Time
+        brp_nbt     : out   std_logic_vector(G_BRP_NBT_WIDTH - 1 downto 0);
         
-        -- Synchronisation Jump Width
-        sjw         : out   std_logic_vector(G_SJW_WIDTH - 1 downto 0);
-                -- Signal to load the expected segment length by Bit time counters
+        -- Synchronisation Jump Width - Nominal Bit Time
+        sjw_nbt     : out   std_logic_vector(G_SJW_NBT_WIDTH - 1 downto 0);
+        
+        -- Time segment 1 - Data Bit Time
+        tseg1_dbt   : out   std_logic_vector(G_TSEG1_DBT_WIDTH - 1 downto 0);
+        
+        -- Time segment 2 - Data Bit Time
+        tseg2_dbt   : out   std_logic_vector(G_TSEG2_DBT_WIDTH - 1 downto 0);
+        
+        -- Baud Rate Prescaler - Data Bit Time
+        brp_dbt     : out   std_logic_vector(G_BRP_DBT_WIDTH - 1 downto 0);
+        
+        -- Synchronisation Jump Width - Data Bit Time
+        sjw_dbt     : out   std_logic_vector(G_SJW_DBT_WIDTH - 1 downto 0);
+        
+        -- Signal to load the expected segment length by Bit time counters
         start_edge  : out   std_logic
     );
     end component bit_time_cfg_capture;
@@ -3060,7 +3083,7 @@ package can_components is
         G_RESET_POLARITY  : std_logic := '0';
         
         -- Bit Time counter width
-        G_SEGM_CTR_WIDTH  : natural := 8;
+        G_BT_WIDTH        : natural := 8;
         
         -- Baud rate prescaler width
         G_BRP_WIDTH       : natural := 8
@@ -3081,14 +3104,17 @@ package can_components is
         -- Baud rate Prescaler
         brp              : in    std_logic_vector(G_BRP_WIDTH - 1 downto 0);
         
-        -- Bit Time Counters reset (synchronous)
-        bt_ctr_clear     : in    std_logic;
+        -- Time Quanta Counter reset (synchronous)
+        tq_reset         : in    std_logic;
+        
+        -- Bit Time counter reset (synchronous)
+        bt_reset         : in    std_logic;
         
         -- CTU CAN FD is enabled
         drv_ena          : in    std_logic;
 
         -- Counters enabled
-        bt_ctrs_en       : in    std_logic;
+        ctrs_en          : in    std_logic;
 
         -----------------------------------------------------------------------
         -- Status signals
@@ -3097,7 +3123,7 @@ package can_components is
         tq_edge         : out   std_logic;
        
         -- Bit Time counter
-        segm_counter    : out   std_logic_vector(G_SEGM_CTR_WIDTH - 1 downto 0)
+        segm_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
     );
     end component;
 
@@ -3155,17 +3181,29 @@ package can_components is
         -- Reset polarity
         G_RESET_POLARITY        :   std_logic := '0';
 
-        -- TSEG1 Width
-        G_TSEG1_WIDTH           :   natural := 8;
+        -- TSEG1 Width - Nominal Bit Time
+        G_TSEG1_NBT_WIDTH       :   natural := 8;
         
-        -- TSEG2 Width
-        G_TSEG2_WIDTH           :   natural := 8;
+        -- TSEG2 Width - Nominal Bit Time
+        G_TSEG2_NBT_WIDTH       :   natural := 8;
         
-        -- Baud rate prescaler Width
-        G_BRP_WIDTH             :   natural := 8;
+        -- Baud rate prescaler Width - Nominal Bit Time
+        G_BRP_NBT_WIDTH         :   natural := 8;
         
-        -- Synchronisation Jump width Width
-        G_SJW_WIDTH             :   natural := 5;
+        -- Synchronisation Jump width Width - Nominal Bit Time
+        G_SJW_NBT_WIDTH         :   natural := 5;
+        
+        -- TSEG1 Width - Data Bit Time
+        G_TSEG1_DBT_WIDTH       :   natural := 8;
+        
+        -- TSEG2 Width - Data Bit Time
+        G_TSEG2_DBT_WIDTH       :   natural := 8;
+        
+        -- Baud rate prescaler width - Data Bit Time
+        G_BRP_DBT_WIDTH         :   natural := 8;
+        
+        -- Synchronisation Jump Width width - Data Bit Time
+        G_SJW_DBT_WIDTH         :   natural := 5;
       
         -- Number of signals in Sample trigger
         G_SAMPLE_TRIGGER_COUNT  :   natural range 2 to 8 := 2
@@ -3202,13 +3240,13 @@ package can_components is
         -- No re-synchronisation should be executed due to positive phase
         -- error
         no_pos_resync        :in std_logic;
+
+        -- Enable Nominal Bit time counters.
+        nbt_ctrs_en          :in std_logic;
         
-        -- Enable Bit time counters.
-        bt_ctrs_en           :in std_logic;
+        -- Enable Data Bit time counters.
+        dbt_ctrs_en          :in std_logic;
         
-        -- Bit rate shifted
-        br_shifted           :in std_logic;
-                
         -----------------------------------------------------------------------
         -- Trigger signals
         -----------------------------------------------------------------------
@@ -3220,7 +3258,8 @@ package can_components is
         
         -----------------------------------------------------------------------
         -- Status outputs
-        -----------------------------------------------------------------------        
+        -----------------------------------------------------------------------
+        
         -- Bit Time FSM state
         bt_fsm          : out t_bit_time 
     );
@@ -3242,7 +3281,7 @@ package can_components is
         G_TSEG2_WIDTH             :       natural := 8;
         
         -- Bit counter width
-        G_SEGM_CTR_WIDTH          :       natural := 8
+        G_BT_WIDTH                :       natural := 8
     );
     port(
         -----------------------------------------------------------------------
@@ -3259,9 +3298,6 @@ package can_components is
         -----------------------------------------------------------------------
         -- There is a valid re-synchronisation edge.
         resync_edge_valid    : in    std_logic;
-        
-        -- Bit rate shifted
-        br_shifted           : in    std_logic;
 
         -----------------------------------------------------------------------
         -- Bit Time FSM interface
@@ -3291,7 +3327,7 @@ package can_components is
         -- Bit Time counter interface
         -----------------------------------------------------------------------
         -- Bit time counter
-        segm_counter   : in    std_logic_vector(G_SEGM_CTR_WIDTH - 1 downto 0);
+        segm_counter   : in    std_logic_vector(G_BT_WIDTH - 1 downto 0);
 
         -----------------------------------------------------------------------
         -- End of segment detector
@@ -3329,21 +3365,30 @@ package can_components is
         -----------------------------------------------------------------------
         -- Control interface
         -----------------------------------------------------------------------
+        -- Sample control (Nominal, Data, Secondary)
+        sp_control         : in    std_logic_vector(1 downto 0);
+        
         -- Hard synchronisation edge is valid
         h_sync_edge_valid  : in    std_logic;
         
-        -- Segment end request
-        exit_segm_req      : in    std_logic;
+        -- Segment end request (Nominal)
+        exit_segm_req_nbt  : in    std_logic;
         
+        -- Segment end request (Data)
+        exit_segm_req_dbt  : in    std_logic;
+
         -- Bit time FSM is in TSEG1
         is_tseg1           : in    std_logic;
         
         -- Bit time FSM is in TSEG2
         is_tseg2           : in    std_logic;
 
-        -- Time quanta reached
-        tq_edge            : in    std_logic;
-
+        -- Nominal Time quanta is active
+        tq_edge_nbt        : in    std_logic;
+        
+        -- Data Time quanta is active
+        tq_edge_dbt        : in    std_logic;
+        
         -----------------------------------------------------------------------
         -- Status signals
         -----------------------------------------------------------------------

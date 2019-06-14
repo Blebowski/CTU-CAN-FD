@@ -78,18 +78,30 @@ package can_config is
     -- Insert pipeline on Error valid signal
     constant C_ERR_VALID_PIPELINE   : boolean := true;
     
-    -- TSEG1 Width
-    constant C_TSEG1_WIDTH          : natural := 8;
+    -- TSEG1 Width - Nominal Bit Time
+    constant C_TSEG1_NBT_WIDTH      : natural := 8;
         
-    -- TSEG2 Width
-    constant C_TSEG2_WIDTH          : natural := 8;
+    -- TSEG2 Width - Nominal Bit Time
+    constant C_TSEG2_NBT_WIDTH      : natural := 8;
         
-    -- Baud rate prescaler Width
-    constant C_BRP_WIDTH            : natural := 8;
+    -- Baud rate prescaler Width - Nominal Bit Time
+    constant C_BRP_NBT_WIDTH        : natural := 8;
         
-    -- Synchronisation Jump width Width
-    constant C_SJW_WIDTH            : natural := 5;
-            
+    -- Synchronisation Jump width Width - Nominal Bit Time
+    constant C_SJW_NBT_WIDTH        : natural := 5;
+        
+    -- TSEG1 Width - Data Bit Time
+    constant C_TSEG1_DBT_WIDTH      : natural := 8;
+        
+    -- TSEG2 Width - Data Bit Time
+    constant C_TSEG2_DBT_WIDTH      : natural := 8;
+        
+    -- Baud rate prescaler width - Data Bit Time
+    constant C_BRP_DBT_WIDTH        : natural := 8;
+        
+    -- Synchronisation Jump Width width - Data Bit Time
+    constant C_SJW_DBT_WIDTH        : natural := 5;
+    
     -- Secondary sampling point Shift registers length
     constant C_SSP_SHIFT_LENGTH     : natural := 128;
 

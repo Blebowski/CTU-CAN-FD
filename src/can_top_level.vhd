@@ -410,8 +410,11 @@ architecture rtl of can_top_level is
     -- No positive resynchronisation 
     signal no_pos_resync : std_logic;
     
-    -- Enable Bit time counters.
-    signal bt_ctrs_en    : std_logic;
+    -- Enable Nominal Bit time counters.
+    signal nbt_ctrs_en   : std_logic;
+        
+    -- Enable Data Bit time counters.
+    signal dbt_ctrs_en   : std_logic;
     
     ------------------------------------------------------------------------
     -- Bus Sampling <-> Memory Registers Interface
@@ -791,7 +794,8 @@ begin
         sync_control            => sync_control,    -- OUT
         no_pos_resync           => no_pos_resync,   -- OUT
         sp_control              => sp_control,      -- OUT
-        bt_ctrs_en              => bt_ctrs_en,      -- OUT
+        nbt_ctrs_en             => nbt_ctrs_en,     -- OUT
+        dbt_ctrs_en             => dbt_ctrs_en,     -- OUT
 
         -- CAN Bus serial data stream
         rx_data_wbs             => rx_data_wbs,     -- IN
@@ -812,10 +816,14 @@ begin
     prescaler_inst : prescaler
     generic map(
         G_RESET_POLARITY        => C_RESET_POLARITY,
-        G_TSEG1_WIDTH           => C_TSEG1_WIDTH,
-        G_TSEG2_WIDTH           => C_TSEG2_WIDTH,
-        G_BRP_WIDTH             => C_BRP_WIDTH,
-        G_SJW_WIDTH             => C_SJW_WIDTH,
+        G_TSEG1_NBT_WIDTH       => C_TSEG1_NBT_WIDTH,
+        G_TSEG2_NBT_WIDTH       => C_TSEG2_NBT_WIDTH,
+        G_BRP_NBT_WIDTH         => C_BRP_NBT_WIDTH,
+        G_SJW_NBT_WIDTH         => C_SJW_NBT_WIDTH,
+        G_TSEG1_DBT_WIDTH       => C_TSEG1_DBT_WIDTH,
+        G_TSEG2_DBT_WIDTH       => C_TSEG2_DBT_WIDTH,
+        G_BRP_DBT_WIDTH         => C_BRP_DBT_WIDTH,
+        G_SJW_DBT_WIDTH         => C_SJW_DBT_WIDTH,
         G_SAMPLE_TRIGGER_COUNT  => C_SAMPLE_TRIGGER_COUNT
     )
     port map(
@@ -830,8 +838,8 @@ begin
         sp_control              => sp_control,      -- IN
         sync_control            => sync_control,    -- IN
         no_pos_resync           => no_pos_resync,   -- IN
-        bt_ctrs_en              => bt_ctrs_en,      -- IN
-        br_shifted              => br_shifted,      -- IN
+        nbt_ctrs_en             => nbt_ctrs_en,     -- IN
+        dbt_ctrs_en             => dbt_ctrs_en,     -- IN
         
         -- Trigger signals
         rx_triggers             => rx_triggers,     -- OUT

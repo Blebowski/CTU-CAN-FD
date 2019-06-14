@@ -74,8 +74,8 @@ entity bit_time_counters is
         -- Reset polarity
         G_RESET_POLARITY  : std_logic := '0';
         
-        -- Segment counter width
-        G_SEGM_CTR_WIDTH  : natural := 8;
+        -- Bit Time counter width
+        G_BT_WIDTH        : natural := 8;
         
         -- Baud rate prescaler width
         G_BRP_WIDTH       : natural := 8
@@ -96,14 +96,17 @@ entity bit_time_counters is
         -- Baud rate Prescaler
         brp              : in    std_logic_vector(G_BRP_WIDTH - 1 downto 0);
         
+        -- Time Quanta Counter reset (synchronous)
+        tq_reset         : in    std_logic;
+        
         -- Bit Time counter reset (synchronous)
-        bt_ctr_clear     : in    std_logic;
+        bt_reset         : in    std_logic;
         
         -- CTU CAN FD is enabled
         drv_ena          : in    std_logic;
         
-        -- Bit Time counters enabled
-        bt_ctrs_en       : in    std_logic;
+        -- Counters enabled
+        ctrs_en          : in    std_logic;
         
         -----------------------------------------------------------------------
         -- Status signals
@@ -112,7 +115,7 @@ entity bit_time_counters is
         tq_edge         : out   std_logic;
        
         -- Segment counter
-        segm_counter    : out   std_logic_vector(G_SEGM_CTR_WIDTH - 1 downto 0)
+        segm_counter      : out   std_logic_vector(G_BT_WIDTH - 1 downto 0)
     );
 end entity;
 
@@ -133,11 +136,11 @@ architecture rtl of bit_time_counters is
         (0 => '1', OTHERS => '0');
     
     -- Bit Time counter
-    signal segm_counter_d         : std_logic_vector(G_SEGM_CTR_WIDTH - 1 downto 0);
-    signal segm_counter_q         : std_logic_vector(G_SEGM_CTR_WIDTH - 1 downto 0);
+    signal segm_counter_d         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
+    signal segm_counter_q         : std_logic_vector(G_BT_WIDTH - 1 downto 0);
     signal segm_counter_ce        : std_logic;
     
-    constant bt_zeroes : std_logic_vector(G_SEGM_CTR_WIDTH - 1 downto 0) :=
+    constant bt_zeroes : std_logic_vector(G_BT_WIDTH - 1 downto 0) :=
         (OTHERS => '0');
 
 begin
@@ -149,7 +152,7 @@ begin
     tq_counter_allow <= '1' when (brp > tq_run_th and drv_ena = '1') else
                         '0';
 
-    tq_counter_ce <= '1' when (tq_counter_allow = '1' and bt_ctrs_en = '1')
+    tq_counter_ce <= '1' when (tq_counter_allow = '1' and ctrs_en = '1')
                          else
                      '0';
 
@@ -162,7 +165,7 @@ begin
     tq_counter_d <=
         (OTHERS => '0') when (unsigned(tq_counter_q) = unsigned(brp) - 1)
                         else
-        (OTHERS => '0') when (bt_ctr_clear = '1')
+        (OTHERS => '0') when (tq_reset = '1')
                         else
         std_logic_vector(unsigned(tq_counter_q) + 1);
 
@@ -188,13 +191,13 @@ begin
     ---------------------------------------------------------------------------
     -- Segment counter
     ---------------------------------------------------------------------------
-    segm_counter_d <= bt_zeroes when (bt_ctr_clear = '1') else
+    segm_counter_d <= bt_zeroes when (bt_reset = '1') else
                     std_logic_vector(unsigned(segm_counter_q) + 1);
 
-    segm_counter_ce <= '1' when (bt_ctr_clear = '1')
+    segm_counter_ce <= '1' when (bt_reset = '1')
                            else
                        '1' when (tq_edge_i = '1' and drv_ena = '1' and
-                                 bt_ctrs_en = '1')
+                                 ctrs_en = '1')
                            else
                        '0';
 
