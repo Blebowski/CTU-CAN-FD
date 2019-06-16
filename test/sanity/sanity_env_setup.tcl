@@ -117,6 +117,30 @@ add wave -group "Protocol states" \
 	-label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/curr_state \
 	-label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/protocol_control_fsm_inst/curr_state
 
+add wave -group "Data Halt (Stuff bit) - Data input" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/data_halt \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/data_halt \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/data_halt \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/data_halt \
+
+add wave -group "Stuff counter" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/bst_ctr \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/bst_ctr \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/bst_ctr \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/bst_ctr \
+
+add wave -group "TX Load stuff count" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/tx_load_stuff_count \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/tx_load_stuff_count \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/tx_load_stuff_count \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/tx_load_stuff_count \
+
+add wave -group "TX Shift register status" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/tx_shift_reg_inst/tx_shift_reg_inst/reg_stat \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/tx_shift_reg_inst/tx_shift_reg_inst/reg_stat \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/tx_shift_reg_inst/tx_shift_reg_inst/reg_stat \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/tx_shift_reg_inst/tx_shift_reg_inst/reg_stat \
+
 add wave -group "CRC15" \
     -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/crc_15 \
     -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/crc_15 \
@@ -129,11 +153,59 @@ add wave -group "CRC17" \
     -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/crc_17 \
     -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/crc_17 \
 
+add wave -group "CRC17 - Data input" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/can_crc_inst/crc_17_21_data_in \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/can_crc_inst/crc_17_21_data_in \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/can_crc_inst/crc_17_21_data_in \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/can_crc_inst/crc_17_21_data_in \
+
+add wave -group "CRC17 - Trigger" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/can_crc_inst/crc_17_21_trigger \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/can_crc_inst/crc_17_21_trigger \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/can_crc_inst/crc_17_21_trigger \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/can_crc_inst/crc_17_21_trigger \
+
 add wave -group "CRC21" \
     -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/crc_21 \
     -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/crc_21 \
     -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/crc_21 \
     -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/crc_21 \
+
+add wave -group "CRC Calc from RX" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/crc_calc_from_rx \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/crc_calc_from_rx \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/crc_calc_from_rx \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/crc_calc_from_rx \
+
+add wave -group "CRC Check" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/crc_check \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/crc_check \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/crc_check \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/crc_check \
+
+add wave -group "CRC 17 OK" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_17_ok \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_17_ok \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_17_ok \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_17_ok \
+
+add wave -group "CRC source" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_src \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_src \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_src \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/crc_src \
+
+add wave -group "RX CRC 17" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/rx_crc_17 \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/rx_crc_17 \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/rx_crc_17 \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/err_detector_inst/rx_crc_17 \
+
+add wave -group "TX Load CRC" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/tx_load_crc \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/can_core_inst/protocol_control_inst/tx_load_crc \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/can_core_inst/protocol_control_inst/tx_load_crc \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/can_core_inst/protocol_control_inst/tx_load_crc \
 
 add wave -group "Control counter" \
     -label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/protocol_control_inst/control_counter_inst/ctrl_ctr_q \
@@ -189,6 +261,25 @@ add wave -group "Hard sync edge" \
 	-label "Node 2" $WRCOMP/comp_gen__2/can_inst/prescaler_inst/h_sync_valid \
 	-label "Node 3" $WRCOMP/comp_gen__3/can_inst/prescaler_inst/h_sync_valid \
 	-label "Node 4" $WRCOMP/comp_gen__4/can_inst/prescaler_inst/h_sync_valid
+
+add wave -group "Resync edge" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/prescaler_inst/resync_edge_valid \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/prescaler_inst/resync_edge_valid \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/prescaler_inst/resync_edge_valid \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/prescaler_inst/resync_edge_valid
+
+add wave -group "Segment counter nominal" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/prescaler_inst/segm_counter_nbt \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/prescaler_inst/segm_counter_nbt \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/prescaler_inst/segm_counter_nbt \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/prescaler_inst/segm_counter_nbt
+
+add wave -group "Segment counter data" \
+    -label "Node 1" $WRCOMP/comp_gen__1/can_inst/prescaler_inst/segm_counter_dbt \
+    -label "Node 2" $WRCOMP/comp_gen__2/can_inst/prescaler_inst/segm_counter_dbt \
+    -label "Node 3" $WRCOMP/comp_gen__3/can_inst/prescaler_inst/segm_counter_dbt \
+    -label "Node 4" $WRCOMP/comp_gen__4/can_inst/prescaler_inst/segm_counter_dbt
+
 
 add wave -group "Synchronization type" \
 	-label "Node 1" $WRCOMP/comp_gen__1/can_inst/can_core_inst/sync_control \
