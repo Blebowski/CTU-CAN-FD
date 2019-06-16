@@ -432,6 +432,16 @@ begin
                    data_halt_q;
 
     ---------------------------------------------------------------------------
+    -- Data halt register is updated in Stuff pipeline stage. But information
+    -- that stuff bit is inserted is already needed by TX Shift register in
+    -- the same cycle so that it stalls and does not shift out data (Data would
+    -- get lost). So we bypass data_halt signal if there is a change so that
+    -- this information is available one clock cycle earlier!
+    ---------------------------------------------------------------------------
+    data_halt <= data_halt_q when (data_halt_q = data_halt_d) else
+                 data_halt_d;
+
+    ---------------------------------------------------------------------------
     -- Halt register instance
     ---------------------------------------------------------------------------
     dff_halt_reg : dff_arst
@@ -453,7 +463,6 @@ begin
     -- Propagating internal signals to output 
     ---------------------------------------------------------------------------
     bst_ctr         <= std_logic_vector(bst_ctr_q);
-    data_halt       <= data_halt_q;
     data_out        <= data_out_i;
   
 end architecture;

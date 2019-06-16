@@ -165,10 +165,10 @@ begin
   
       ---------------------------------------------------------------------------
     -- Protocol control triggers:
-    --  1. TX Trigger which shifts TX Shift register is enabled when
-    --     stuff bit is not inserted!
-    --  2. RX Trigger which shifts RX Shift register is enabled when
-    --     stuff bit is not destuffed!
+    --  1. Protocol control trigger (TX) - shifts TX Shift register, is enabled 
+    --     when stuff bit is not inserted! Active in Stuff pipeline stage.
+    --  2. Protocol control trigger (RX) - shifts RX Shift register, is enabled
+    --     when stuff bit is not destuffed! Active in Process pipeline stage. 
     ---------------------------------------------------------------------------
     pc_tx_trigger <= '1' when (tx_trigger = '1' and data_halt = '0')
                          else
@@ -180,25 +180,23 @@ begin
                      
     ---------------------------------------------------------------------------
     -- Bit stuffing/destuffing triggers:
-    --  1. Bit Stuffing - TX Trigger, stuff bit does not make any change here
-    --     since also stuff bit must be processed by Bit Stuffing.
-    --  2. Bit Destuffing - RX Trigger, one clock cycle in advance of TX
-    --     Trigger for protocol control, since Bit stuffing is pipelined!
-    --     Destuffed bits shall not block bit destuffing since these must also
-    --     be processed by Bit destuffing.
+    --  1. Bit Stuffing Trigger (TX) - Processes data on Bit stuffing input,
+    --     active in Stuff pipeline stage.
+    --  2. Bit Destuffing Trigger (RX) - Processes data on Bit Destuffin input,
+    --     active in Destuff pipeline stage.
     ---------------------------------------------------------------------------
-    bst_trigger <= tx_trigger;    
+    bst_trigger <= tx_trigger;
     bds_trigger <= rx_triggers(1);
     
     ---------------------------------------------------------------------------
-    -- CRC Triggers for CRC 15 (no bit stuffing):
+    -- CRC Triggers for CRC 15 (CRC without stuff bits):
     --  1. CRC RX NBS - Trigger for CRC15 from RX data without bit stuffing.
-    --     The same trigger as for Protocol control reception in sample point.
     --     Trigger must be gated when bit was destuffed, because CRC15 for 
-    --     CAN 2.0 frames shall not take stuff bits into account!
+    --     CAN 2.0 frames shall not take stuff bits into account! Active in 
+    --     Process pipeline stage.
     --  2. CRC TX NBS - Trigger for CRC15 from TX data without bit stuffing.
-    --     The same trigger as TX Trigger (inserts stuff bit). Must be gated
-    --     when stuff bit is inserted!
+    --     Must be gated when stuff bit is inserted! Active in Stuff pipeline
+    --     stage.
     ---------------------------------------------------------------------------
     crc_trig_rx_nbs <= '1' when (rx_triggers(0) = '1' and destuffed = '0')
                            else
@@ -211,13 +209,12 @@ begin
     ---------------------------------------------------------------------------
     -- CRC Trigger for CRC 17, 21 (with bit stuffing):
     --  1. CRC TX WBS - Trigger for CRC17, CRC21 from TX Data with bit stuffing.
-    --     Trigger one clock cycle delayed from TX Trigger. Note that this
-    --     trigger may be delayed since resynchronisation will never shorten
-    --     phase 1 (between TX and RX triggers). This trigger must be gated
-    --     for fixed stuff bits!!
-    --  2. CRC RX WBS Trigger is the same trigger as the one used to process
-    --     data by bit destuffing (one clock cycle in advance of Protocol 
-    --     control sampling)! Fixed stuff bits must be left out!
+    --     This trigger must be gated for fixed stuff bits since CRC17, CRC21
+    --     shall not contain fixed stuff bits! Active one clock cycle after
+    --     Stuff pipeline stage.
+    --  2. CRC RX WBS - Trigger for CRC17, CRC21 from RX Data with bit stuffing.
+    --     Fixed stuff bits must be left out! Active in Process pipeline stage.
+    --     (see next comment).
     ---------------------------------------------------------------------------
     crc_trig_tx_wbs_reg : dff_arst
     generic map(
@@ -239,11 +236,10 @@ begin
 
     ---------------------------------------------------------------------------
     -- We must gate fixed stuff bit for CRC from RX With Bit Stuffing. But we
-    -- don't know if it is stuff bit, because this should be calculated at the
-    -- same clock cycle as bit destuffing! So we must belay the information
-    -- here! We sample the data (Bit Destuffing input) to avoid possible change,
-    -- and calculate the CRC with rx_trigger(0) (the same trigger as sample
-    -- point).
+    -- don't know if it is stuff bit in Stuff pipeline stage. So we must delay
+    -- the information to Process pipeline stage. We sample the data 
+    -- (Bit Destuffing input) to avoid possible change, and calculate the CRC
+    -- with rx_trigger(0) (in Process pipeline stage).
     ---------------------------------------------------------------------------
     crc_data_rx_wbs_reg : dff_arst
     generic map(
