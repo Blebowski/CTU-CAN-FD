@@ -107,7 +107,7 @@ sanity:
         wave: sanity/sanity_env_setup.tcl
         dump_all_signals: false
     tests:
-        "1Mb/10Mb 20 m Star":
+        "1Mb/5Mb 20 m Star":
             topology: star
             bus_len_v: [10.0, 10.0, 10.0, 10.0, 0.0, 0.0]
             trv_del_v: [10, 10, 10, 10]
@@ -116,4 +116,4 @@ sanity:
             nw_var: 5.0
             ng_mean: 300000.0
             ng_var:  100000.0
-            timing_config: [4, 1, 8, 8, 8, 3, 3, 1, 5, 2]
+            timing_config: [1, 1, 33, 33, 33, 4, 4, 8, 7, 3]
