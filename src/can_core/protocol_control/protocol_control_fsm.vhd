@@ -698,6 +698,12 @@ architecture rtl of protocol_control_fsm is
     -- Bit-rate shifted (internal value)
     signal br_shifted_i              :  std_logic;
     
+    -- Arbitration field is being transmitted / received
+    signal is_arbitration_i          :  std_logic;
+    
+    -- CRC calculation - speculative enable
+    signal crc_spec_enable_i         :  std_logic;
+    
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -1273,7 +1279,7 @@ begin
         reinteg_ctr_enable   <= '0';
         retr_ctr_clear_i <= '0';
         retr_ctr_add_i <= '0';
-        is_arbitration <= '0';
+        is_arbitration_i <= '0';
         tx_dominant    <= '0';
         crc_check      <= '0';
         
@@ -1324,7 +1330,7 @@ begin
 
         -- CRC control
         crc_enable <= '0';
-        crc_spec_enable <= '0';
+        crc_spec_enable_i <= '0';
         
         -- Bit time counters enabling
         nbt_ctrs_en <= '0';
@@ -1434,7 +1440,7 @@ begin
                 bit_err_disable <= '1';
                 ctrl_ctr_ena <= '1';
                 rx_shift_ena <= "1111";
-                is_arbitration <= '1';
+                is_arbitration_i <= '1';
                 tx_shift_ena_i <= '1';
                 err_pos <= ERC_POS_ARB;
                 crc_enable <= '1';
@@ -1466,7 +1472,7 @@ begin
             -- RTR/SRR/R1 bit. First bit after Base identifier.
             -------------------------------------------------------------------
             when s_pc_rtr_srr_r1 =>
-                is_arbitration <= '1';
+                is_arbitration_i <= '1';
                 bit_err_disable <= '1';
                 crc_enable <= '1';
                 rx_store_rtr_i <= '1';
@@ -1529,7 +1535,7 @@ begin
                 end if;
                 
                 if (ide_is_arbitration = '1') then
-                    is_arbitration <= '1';
+                    is_arbitration_i <= '1';
                     bit_err_disable <= '1';
                     
                     if (tx_data_wbs = DOMINANT and rx_data_nbs = RECESSIVE) then
@@ -1555,7 +1561,7 @@ begin
             when s_pc_ext_id =>
                 ctrl_ctr_ena <= '1';
                 rx_shift_ena <= "1111";
-                is_arbitration <= '1';
+                is_arbitration_i <= '1';
                 tx_shift_ena_i  <= '1';
                 err_pos <= ERC_POS_ARB;
                 bit_err_disable <= '1';
@@ -1587,7 +1593,7 @@ begin
             -- RTR/R1 bit after the Extended identifier
             -------------------------------------------------------------------
             when s_pc_rtr_r1 =>
-                is_arbitration <= '1';
+                is_arbitration_i <= '1';
                 bit_err_disable <= '1';
                 crc_enable <= '1';                
                 rx_store_rtr_i <= '1';
@@ -2084,7 +2090,7 @@ begin
                 -- Last (third) bit of intermission
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
-                    crc_spec_enable <= '1';
+                    crc_spec_enable_i <= '1';
                     
                     -- Here FSM goes to Base ID (sampling of DOMINANT in the
                     -- third bit of intermission)!
@@ -2147,7 +2153,7 @@ begin
             when s_pc_suspend =>
                 ctrl_ctr_ena <= '1';
                 perform_hsync <= '1';
-                crc_spec_enable <= '1';
+                crc_spec_enable_i <= '1';
                 is_suspend <= '1';
                 nbt_ctrs_en <= '1';
                 
@@ -2183,7 +2189,7 @@ begin
             -------------------------------------------------------------------
             when s_pc_idle =>
                 perform_hsync <= '1';
-                crc_spec_enable <= '1';
+                crc_spec_enable_i <= '1';
                 bit_err_disable <= '1';
                 nbt_ctrs_en <= '1';
 
@@ -2688,8 +2694,8 @@ begin
     --     tration) will calculate data from DOMINANT value
     --  3. In other cases Transmitter uses TX Data, Receiver uses RX Data.
     ---------------------------------------------------------------------------
-    crc_calc_from_rx <= '1' when (crc_spec_enable = '1') else
-                        '1' when (is_arbitration = '1') else
+    crc_calc_from_rx <= '1' when (crc_spec_enable_i = '1') else
+                        '1' when (is_arbitration_i = '1') else
                         '1' when (is_receiver = '1') else
                         '0';
 
@@ -2771,6 +2777,8 @@ begin
     pc_state <= curr_state;
     br_shifted <= br_shifted_i;
     sp_control_q <= sp_control_q_i;
+    is_arbitration <= is_arbitration_i;
+    crc_spec_enable <= crc_spec_enable_i;
     
 
     -----------------------------------------------------------------------
