@@ -1940,6 +1940,12 @@ begin
                 nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
                 
+                -- If Transmitter sends ACK, receiving dominant is not bit
+                -- error!
+                if (is_transmitter = '1') then
+                    bit_err_disable <= '1';
+                end if;
+                
             -------------------------------------------------------------------
             -- ACK Slot, or a ACK delim, if previous two bits were recessive!
             -------------------------------------------------------------------
