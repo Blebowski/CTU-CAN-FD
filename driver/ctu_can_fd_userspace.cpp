@@ -201,6 +201,7 @@ int main(int argc, char *argv[])
     int gap = 1000;
     int bitrate = 1000000;
     int dbitrate = 0;
+    int tx_can_id = 0x1ff;
     bool do_periodic_transmit = false;
     bool transmit_fdf = false;
     bool loopback_mode = false;
@@ -211,7 +212,7 @@ int main(int argc, char *argv[])
     int c;
     char *e;
     const char *progname = argv[0];
-    while ((c = getopt(argc, argv, "i:a:g:b:B:fltThpr")) != -1) {
+    while ((c = getopt(argc, argv, "i:a:g:b:B:I:fltThpr")) != -1) {
         switch (c) {
             case 'i':
                 ifc = strtoul(optarg, &e, 0);
@@ -241,6 +242,12 @@ int main(int argc, char *argv[])
                 dbitrate = strtoul(optarg, &e, 0);
                 if (*e != '\0')
                     err(1, "-B expects a number");
+            break;
+
+            case 'I':
+                tx_can_id = strtoul(optarg, &e, 0);
+                if (*e != '\0')
+                    err(1, "-I expects a number");
             break;
 
             case 'l': loopback_mode = true; break;
@@ -402,7 +409,7 @@ int main(int argc, char *argv[])
 
     if (do_transmit) {
         struct canfd_frame txf;
-        txf.can_id = 0x1FF;
+        txf.can_id = tx_can_id;
         txf.flags = 0;
         //u8 d[] = {0xde, 0xad, 0xbe, 0xef};
         u8 d[] = {0xDE, 0xAD, 0xBE, 0xEF};
@@ -454,13 +461,12 @@ int main(int argc, char *argv[])
         if (do_periodic_transmit && (loop_cycle & 1)) {
 	    struct canfd_frame txf;
 	    memset(&txf, 0, sizeof(txf));
-            txf.can_id = 0x1FF;
+            txf.can_id = tx_can_id;
             txf.flags = 0;
 
             if (transmit_fdf) {
                 txf.flags |= CANFD_BRS;
                 u8 dfd[] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee};
-                txf.can_id = 0x123;
                 memcpy(txf.data, dfd, sizeof(dfd));
                 txf.len = sizeof(dfd);
 	    } else {
