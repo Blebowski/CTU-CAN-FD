@@ -1051,7 +1051,7 @@ status open
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="30text%">
 <column alignment="left" valignment="top" width="20text%">
-<column alignment="left" valignment="top" width="40text%">
+<column alignment="left" valignment="top" width="42text%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -1237,7 +1237,7 @@ CTU CAN FD contains memories which are used to store CAN FD frames.
 \begin_layout Standard
 Memories are not initialized, nor reset.
  Each memory is synchronous memory with one clock cycle latency on data
- read and no single cycle write access latency.
+ read and one cycle write access latency.
  Both memories are dual port memories with write-only port A and read-only
  port B.
  An example of memory access is shown in Figure TODO.
@@ -1705,25 +1705,130 @@ name "tab:CAN-ports-common-1"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Timing_diagrams/PDFs/dual_port_mems.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Dual port memories access
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Avalon-read-burst-timing-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 Pipeline architecture and triggers
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD serial stream processing is pipelined into three stages as is
- shown in Table TODO.
- Pipeline architecture meets Information Processing Time as defined in TODO.
+CTU CAN FD serial stream processing is pipelined into three stages which
+ are described in Table TODO.
+ Pipeline architecture meets Maximal Information Processing Time (2 Time
+ Quanta) as defined in TODO.
  A block diagram of CTU CAN FD with demonstration of logic split into each
  pipeline stage is shown in Figure TODO.
- Each stage of pipeline processing is enabled by a trigger signal which
+ 
+\end_layout
+
+\begin_layout Standard
+Each stage of pipeline processing is controlled by a trigger signal which
  is active for one clock cycle.
  Trigger signals are used to synchronise data transfer in exact moments
  to meet Bit Timing requirements on CAN Bus.
+ Trigger signals are used as clock enable signals to process the data in
+ according pipeline stage.
+ If trigger signal is inactive, processed data remain on output and keep
+ their previous value (Data after Bit Destuffing (RX) and Bit Stuffing (TX)).
  An example of pipeline processing is shown in Figure TODO.
- In case of negative re-synchronisation, length of TSEG2 can be shortened
+ Note that Process pipeline stage always occurs one clock cycle after Destuff
+ pipeline stage.
+ Between Process and Stuff pipeline stage there will be number of clock
+ cycles where no data are processed / received nor transmitted.
+ This gap corresponds to TSEG2.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/pipeline_example.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Dual port memories access
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Avalon-read-burst-timing-diagram-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In case of negative re-synchronisation, length of TSEG2 can be shortened
  to less then 2 clock cycles, in such a case following TX Trigger signal
  is throttled by one clock cycle and overall Bit Time length remains unaffected.
- Such a situation is shown in Figure TODO.
+ Such a situation is further described in TODO.
 \end_layout
 
 \begin_layout Standard
@@ -1737,8 +1842,9 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="4" columns="5">
+<lyxtabular version="3" rows="4" columns="6">
 <features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
 <column alignment="left" valignment="top" width="10line%">
 <column alignment="left" valignment="top" width="15line%">
 <column alignment="left" valignment="top" width="15line%">
@@ -1794,6 +1900,28 @@ cellcolor{gray}
 
 \begin_layout Plain Layout
 Trigger signal
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Corresponding moment on CAN Bus
 \begin_inset ERT
 status open
 
@@ -1884,6 +2012,15 @@ RX Trigger (0)
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sample point
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1897,7 +2034,7 @@ Bus Sampling, Bit Destuffing
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Stuff Bits are removed from CAN RX stream.
 \end_layout
 
 \end_inset
@@ -1931,6 +2068,15 @@ RX Trigger (1)
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+One clock cycle after Sample point
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1944,7 +2090,8 @@ Protocol Control
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+RX bus value is processed by Protocol control, following TX bus value is
+ determined.
 \end_layout
 
 \end_inset
@@ -1978,6 +2125,15 @@ TX Trigger
 
 \end_inset
 </cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Start of Bit time
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -1991,7 +2147,7 @@ Bit Stuffing
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Stuff bit is inserted to CAN TX stream.
 \end_layout
 
 \end_inset
@@ -2031,8 +2187,8 @@ name "tab:CAN-ports-common"
 \end_layout
 
 \begin_layout Standard
-A high level algorithm for processing of CAN RX Data stream is described
- in Table TODO.
+A high level algorithm for processing of CAN Data stream is described in
+ Table TODO.
 \end_layout
 
 \begin_layout Standard
@@ -2809,6 +2965,166 @@ Test mode
 \end_layout
 
 \begin_layout Standard
+CTU CAN FD features test mode.
+ Test mode is started by setting MODE[TSTM] = '1'.
+ Features of test mode are listed in Table TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="10text%">
+<column alignment="left" valignment="top" width="60text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Relevant register
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test mode features
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Protocol-control-state-transition-rules-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Newpage pagebreak
 \end_inset
 
@@ -2865,6 +3181,13 @@ filename "entity_docs/can_core.lyx"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Protocol control
 \end_layout
@@ -2874,7 +3197,7 @@ Protocol control implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Transmission and Reception of standard CAN Frames.
+Transmission and Reception of CAN Frames.
 \end_layout
 
 \begin_layout Itemize
@@ -2919,6 +3242,17 @@ Control Bit time switching (Nominal Sample, Data Sample, Secondary Sample)
 LatexCommand input
 filename "entity_docs/protocol_control.lyx"
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Protocol control diagram is shown in Figure TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -3100,7 +3434,8 @@ Process
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+Transition corresponds to regular change of CAN frame field (e.g.
+ Data to CRC).
 \end_layout
 
 \end_inset
@@ -3120,7 +3455,7 @@ Error frame request
 \begin_inset Text
 
 \begin_layout Plain Layout
-Process + 1
+One clock cycle after Process
 \end_layout
 
 \end_inset
@@ -3129,7 +3464,8 @@ Process + 1
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+Transition corresponds to start of Active or Passive Error flag and can
+ occur from any other state of Protocol Control FSM.
 \end_layout
 
 \end_inset
@@ -3158,7 +3494,7 @@ Anytime
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+When CTU CAN FD is disabled, protocol control FSM is held in reset state.
 \end_layout
 
 \end_inset
@@ -3213,6 +3549,9 @@ Control counter controls duration of CAN frame fields which last longer
  When Control counter reaches 1 and 0, this is signalled to Protocol Control
  FSM.
  A current CAN frame field ends when Control counter reaches zero.
+ Control counter is not counting during CAN frame fields which last only
+ 1 bit (e.g.
+ IDE bit), nor during fields which might last arbitrary number of bits (Idle).
  An example of control counter operation during CAN frame is shown in Figure
  TODO.
 \end_layout
@@ -3557,8 +3896,8 @@ Control counter module contains a complementary counter which counts from
  Complementary counter is incremented by 1 each bit time in Process pipeline
  stage.
  Complementary counter counts only during data field.
- Complementary counter provides information that data byte of data elapsed
- (divisible by 8), or whole memory word elapsed (divisible by 32).
+ Complementary counter provides information that data byte has elapsed (divisibl
+e by 8), or whole memory word elapsed (divisible by 32).
  Complementary counter decodes address of Data memory word within TXT Buffer
  according to Table TODO.
 \end_layout
@@ -4631,6 +4970,13 @@ Error detector handles error detection and propagation of Error frame request
  to Protocol Control FSM.
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsection
 Operation control
 \end_layout
@@ -4657,6 +5003,13 @@ filename "entity_docs/operation_control.lyx"
 Operation control implements a FSM whose state transition diagram is shown
  in Figure TODO.
  Operation control FSM is controlled by Protocol control FSM.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -4708,6 +5061,13 @@ State transition diagram of Fault confinement FSM is shown in Figure TODO.
  Threshold for Error warning limit and transition to Error Passive can be
  configured from user registers.
  
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
@@ -4958,7 +5318,7 @@ Counter of equal consecutive bits reaches length of Stuff rule.
  of opposite polarity on the output.
  Bit Stuffing signals halting to Protocol Control for one Bit time.
  Counter of equal consecutive bits is reset.
- Number of Stuff Bits is incremented by 1.
+ Number of Stuff Bits (counter of Stuff Bits) is incremented by 1.
 \end_layout
 
 \end_inset
@@ -5111,6 +5471,13 @@ name "tab:CAN-control-counter-1-3"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -5487,6 +5854,13 @@ name "tab:CAN-control-counter-1-3-1"
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -5903,7 +6277,6 @@ Regular enable
 When CRC module is enabled by regular enable signal, it executes next step
  of calculation in according pipeline stage regardless of input data value
  to be processed.
- 
 \end_layout
 
 \end_inset
@@ -5925,7 +6298,7 @@ Speculative enable
 \begin_layout Plain Layout
 When CRC module is enabled by speculative enable signal, it executes next
  step of calculation in according pipeline stage only when input data value
- to be processed is dominant.
+ to be processed is Dominant (logic 0).
  Recessive value is ignored.
  Speculative enable is used in Suspend Transmission, Last bit of Intermission
  and Bus Idle when dominant value is sampled and this value is interpreted
@@ -5973,6 +6346,13 @@ Trigger multiplexor
 
 \begin_layout Standard
 TODO!
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -7323,6 +7703,13 @@ name "tab:CAN-ports-common-3-1-2"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 TXT Buffer
 \end_layout
@@ -7360,6 +7747,7 @@ TXT Buffer block diagram is shown in Figure TODO.
  HW commands are applied by Protocol Control FSM in CAN Core.
  TXT Buffer contains a FSM which is manipulated by SW and HW commands.
  Both command types are described in Table TODO.
+ State transition diagram of TXT Buffer FSM is shown in Figure TODO.
  If SW and HW commands are applied at the same time, HW command always have
  higher priority.
  If a command is applied in a TXT Buffer FSM, state for which it is not
@@ -8011,7 +8399,8 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control issues HW lock command since it starts transmission from
+TX Arbitrator selects TXT Buffer for transmission.
+ Protocol control issues HW lock command and it starts transmission from
  TXT Buffer.
 \end_layout
 
@@ -8279,7 +8668,8 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control issues HW lock command since it starts transmission from
+TX Arbitrator selects TXT Buffer for transmission.
+ Protocol control issues HW lock command since it starts transmission from
  TXT Buffer.
 \end_layout
 
@@ -8605,7 +8995,8 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control issues HW lock command since it starts transmission from
+TX Arbitrator selects TXT Buffer for transmission.
+ Protocol control issues HW lock command since it starts transmission from
  TXT Buffer.
 \end_layout
 
@@ -8735,6 +9126,13 @@ name "tab:CAN-control-counter-1-3-2-1-1-1-1"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Section
 TX Arbitrator
 \end_layout
@@ -8809,6 +9207,18 @@ Priority decoder combinatorially selects index of highest priority TXT Buffer.
 \end_layout
 
 \begin_layout Subsection
+TX Arbitrator FSM
+\end_layout
+
+\begin_layout Standard
+State transition diagram of TX Arbitrator FSM is shown in Figure TODO.
+ Each state of TX Arbitrator FSM which loads data from TXT Buffer RAM lasts
+ two clock cycles (there is internal wait state) since TXT Buffer RAM is
+ synchronous and it takes one clock cycle to read memory word from this
+ RAM.
+\end_layout
+
+\begin_layout Subsection
 TXT Buffer selection process
 \end_layout
 
@@ -8817,6 +9227,874 @@ TXT Buffer selection process is driven by TX Arbitrator FSM whose state
  transition diagram is shown in Figure TODO.
  Process of loading TX frame metadata and TX frame timestamp is described
  in Table TODO.
+ If a TXT Buffer is already selected and another higher priority TXT Buffer
+ becomes ready, TXT Buffer selection process is restarted.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="12" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="30line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+External action (SW or external components)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No TXT Buffer is ready.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW fills TXT Buffer 1 and issues Set Ready command to this Buffer.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer becomes ready.
+ As this is only TXT Buffer which is ready, priority decoder combinatorially
+ selects this buffer as highest priority TXT Buffer in Ready state.
+ At the moment, TX Arbitrator still does not signal to CAN Core that there
+ is valid TXT Buffer for transmission.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 1 RAM and stores
+ it to auxiliarly register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 1 RAM and executes
+ comparison of External Timestamp and Timestamp of CAN Frame in TXT Buffer
+ 1 (Lower word is in auxiliarly register and Upper word is on output of
+ TXT Buffer 1 RAM).
+ When External Timestamp is lower than Timestamp of CAN frame in TXT Buffer
+ 1, TX Arbitrator waits, otherwise it proceeds to step 6.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+External Timestamp is incrementing and it reaches value of CAN Frame Timestamp
+ in Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator notices External Timestamp is now higher than Timestamp of
+ a Frame in selected TXT Buffer.
+ At this moment TX Arbitrator proceeds.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 1 RAM (Metadata
+ word) to capture registers.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator signals that there is valid TX frame for transmission to CAN
+ Core.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When Protocol control FSM is in Sample point during Intermission or Idle,
+ it issues Lock command to TXT Buffer 1 (TXT Buffer moves to TX in Progress)
+ and TX Arbitrator.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator is locked and it is waiting for unlock command.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control transmitts frame from TXT Buffer 1, when it ends transmission
+ it Issues Unlock - Done command to TXT Buffer 1 (Buffer moves to OK State),
+ TX Arbitrator unlocks and as there is no TXT Buffer in Ready state, it
+ signals that there is no valid TX frame available for transmission to CAN
+ Core.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW reads state of TXT Buffer and finds out whether transmission was aborted
+ or it ended succesfully (or an Interrupt can be fired).
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Arbitrator operation
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CAN-control-counter-1-3-2-1-1-1-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="30line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+External action (SW or external components)
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No TXT Buffer is ready.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No TXT Buffer is ready.
+ SW configures priority 1 to TXT Buffer 1 and priority 2 to TXT Buffer 2.
+ SW fills TXT Buffer 1 and TXT Buffer 2 by CAN frame.
+ SW Issues Set ready command to TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 becomes ready.
+ As this is only TXT Buffer which is Ready, priority decoder combinatorially
+ selects this Buffer as highest priority TXT Buffer in Ready state.
+ At the moment, TX Arbitrator still does not signal to CAN Core that there
+ is valid TXT Buffer for transmission.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 1 RAM and stores
+ it to auxiliarly register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 1 RAM and executes
+ comparison of External Timestamp and Timestamp of CAN Frame in TXT Buffer
+ 1 (Lower word is in auxiliarly register and Upper word is on output of
+ TXT Buffer 1 RAM).
+ When External Timestamp is lower than Timestamp of CAN frame in TXT Buffer
+ 1, TX Arbitrator waits.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW Issues Set ready command to TXT Buffer 2.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 2 becomes ready.
+ As this is buffer has higher priority then TXT Buffer 1, priority decoder
+ selects TXT Buffer 2.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads lower Timestamp word from TXT Buffer 2 RAM and stores
+ it to auxiliarly register.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads upper Timestamp word from TXT Buffer 2 RAM and executes
+ comparison of External Timestamp and Timestamp of CAN Frame in TXT Buffer
+ 2.
+ Assume External Timestamp is lower, TX Arbitrator proceeds.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator FSM loads TX Frame metadata from TXT Buffer 2 RAM (Metadata
+ word) to capture registers.
+ TX Arbitrator marks that there is valid TX frame for transmission to CAN
+ Core.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control Issues Lock command, transmitts frame and issues Unlock
+ command.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Arbitrator - change of TXT Buffer priority during selection
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CAN-control-counter-1-3-2-1-1-1-1-1-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -8828,6 +10106,24 @@ Interrupt Manager
 LatexCommand input
 filename "entity_docs/int_manager.lyx"
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Interrupt manager captures occurence of events within CTU CAN FD to Interrupt
+ status register and generates interrupt on output.
+ Interrupt is captured to Interrupt status register only when it is unmasked.
+ Interrupt causes Interrupt pin to go high only when it is captured in Interrupt
+ Status Register and it is enabled by according Interrupt Enable register.
+ Block diagram of single interrupt processing is shown in Figure TODO.
+ Different Interrupt sources have different priority when simultaneous set/clear
+ commands occur as is shown in Table TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -8871,10 +10167,12 @@ filename "entity_docs/prescaler.lyx"
 
 \begin_layout Standard
 Prescaler block diagram is shown in Figure TODO.
- Prescaler contains separate bit time measurement logic for both Bit-rates
- (Nominal and Data).
- Stage for single Bit-rate consist of Bit Time counters and Resynchronisation
- module.
+ Prescaler contains separate logic for both Bit-rates (Nominal and Data).
+ Stage for single Bit-rate consist of Bit Time Counters module and Resynchronisa
+tion module.
+ Doubled logic for Nominal and Data Bit-rate is implemented to achieve better
+ timing performance (shorter combinatorial paths) with slightly higher resource
+ usage when compared to common logic for Nominal and Data Bit-timing.
 \end_layout
 
 \begin_layout Subsection
@@ -8882,37 +10180,454 @@ Bit time counters
 \end_layout
 
 \begin_layout Standard
-Bit time counters module contains two counters: Time quanta counter (Measures
- length of Time Quanta) and Bit Time counter (Measures length of Bit Segment).
+Bit time counters module contains two counters: Time quanta counter and
+ Segment counter.
+ Time quanta counter measures length of Time Quanta and provides Time quanta
+ edge signal (active for one clock cycle) when Time Quanta has elapsed.
+ When Time Quanta is equal to system clock, Time Quanta counter is not running
+ and Time Quanta edge signal is active continously.
+ Segment counter measures length of Bit time segment.
  Prescaler distuiguishes two Bit Segments: TSEG1 and TSEG2.
- Each Bit time counters module is enabled in different phases of CAN frame
- as shown in Figure TODO.
+ Segment counter counts from 0 and it is restarted upon the end of previos
+ segment or upon hard - synchronisation.
+\end_layout
+
+\begin_layout Standard
+Each Bit time counters module is enabled in different phases of CAN frame
+ as shown in Table TODO.
  When Bit time counter module is disabled, none of its both counters are
  running.
  During bits where Bit-rate is switched, both bit time counter modules are
  running.
- Both counters (Bit time counter and Time Quanta counter) are restarted
- in Sample point to force alignment of Nominal and Data Time Quanta in the
- moment of Bit-rate switch.
+ Both counters (Segment counter and Time Quanta counter) are restarted when
+ Bit time segment ends to force alignment of Nominal and Data Time Quanta
+ in the moment of Bit-rate switch.
 \end_layout
 
 \begin_layout Subsection
 Resynchronisation
 \end_layout
 
-\begin_layout Subsubsection
-2.7.1.1 Prescaler FSM
+\begin_layout Standard
+Resynchronisation module measures length of Bit time segment.
+ Block diagram of Resynchronronisation module is shown in Figure TODO.
+ Resynchronisation module maintains register with Expected Segment Length.
+ Expected segment length is loaded according to rules described in Table
+ TODO.
 \end_layout
 
-\begin_layout Subsubsection
-2.7.1.1 Synchronisation
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="25line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Occurs when
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
 \end_layout
 
-\begin_layout Subsubsection
-2.7.1.1 Trigger generation
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Loaded to value
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Additional action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+End of Segment TSEG1 due to segment counter reached Expected Segment Length.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default lenght of TSEG2.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+None
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+End of Segment TSEG2 due to segment counter reached Expected Segment Length.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default lenght of TSEG1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+None
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Positive resynchronisation with Phase Error smaller than SJW.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default lenght of TSEG1 + Phase Error.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+None
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Positive resynchronisation with Phase Error larger than SJW.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default lenght of TSEG1 + SJW.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+None
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Negative resynchronisation with Phase Error smaller than SJW.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default lenght of TSEG1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Immediate end of segment.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Negative resynchronisation with Phase Error larger than SJW.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default lenght of TSEG2 - SJW.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+None
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Hard synchronisation
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Default lenght of TSEG1 - 1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+None
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Expected segment length manipulation
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CAN-ports-common-3-1-3"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Expected segment length requests end of current segment by following means:
+\end_layout
+
+\begin_layout Itemize
+Segment counter reaches value of Expected segment length.
+\end_layout
+
+\begin_layout Itemize
+Immediate end of segment occurs.
+\end_layout
+
+\begin_layout Standard
+Immediate resynchronisation is signalled when there is negative resynchronisatio
+n (during TSEG2) and Phase error is lower than SJW.
+ Immediate resynchronisation requests end of segment in the same clock cycle
+ when resynchronisation occurs without one clock cycle delay of updating
+ Expected Segment Length register.
 \end_layout
 
 \begin_layout Subsection
+Segment end detector
+\end_layout
+
+\begin_layout Standard
+Segment end detector processes request to end currend Bit time segment as
+ is shown in Table TODO.
+ Segment end detector captures these requests and processes them when Time
+ Quanta has elapsed.
+ If request arrives in the same clock cycle as Time Quanta has elapsed,
+ it is processed immediately.
+ Based on these requests, Segment End Detector detects end of segment.
+\end_layout
+
+\begin_layout Subsection
+Prescaler FSM
+\end_layout
+
+\begin_layout Standard
+Prescaler FSM determines in which Bit time segment Prescaler actually is.
+ Its state transition diagram is shown in Figure TODO.
+ Prescaler FSM issues requests to generate TX Trigger and RX Triggers to
+ Trigger generator when an end of segment is signalled by Segment end detector.
+\end_layout
+
+\begin_layout Subsection
+Trigger generator
+\end_layout
+
+\begin_layout Standard
+Trigger generator processes requests to generate TX Trigger (used to process
+ data in Stuff pipeline stage) and RX Triggers (used to process data in
+ Destuff and Process pipeline stages).
+ As there is no lower limit on length of TSEG2 from TODO, resynchronisation
+ which shortens length of TSEG2 to just one clock cycle can occur.
+ In such a case, RX Trigger for Process pipeline stage and TX trigger pipeline
+ stage would overlap.
+ To avoid this situation, TX Trigger is throttled by one clock cycle as
+ it is shown in Figure TODO, and TSEG2 lasts only one clock cycle.
+ As value of Information Processing Time for CTU CAN FD is 2, this situation
+ corresponds to shortening length of TSEG2 to less than Information Processing
+ Time.
+ Throttling of TX Trigger corresponds to delaying calculation of following
+ bit value after Information Processing Time behind Sample Point.
+\end_layout
+
+\begin_layout Subsection
+Synchronisation checker
+\end_layout
+
+\begin_layout Standard
+Synchronisation checker determines in synchronisation edge is Hard synchronisati
+on edge or Re-synchronisation edge.
+ Synchronisation checker maintains a flag about valid synchronisation edge.
+ Such a flag is set when synchronisation edge occurs and cleared when TSEG1
+ ends (sample point).
+ Based on this flag, synchronisation checker determines if synchronisation
+ edge as provided by Bus Sampling is valid Hard synchronisation edge or
+ Resynchronisation edge.
+ If there are more synchronisation edges between two sample points, only
+ first edge is detected as valid synchronisation edge and other edges are
+ ignored.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Bus sampling
 \end_layout
 
@@ -8926,15 +10641,43 @@ filename "entity_docs/bus_sampling.lyx"
 
 \end_layout
 
-\begin_layout Subsubsection
-2.7.1.1 Transceiver delay
+\begin_layout Standard
+Bus sampling module implements following functionality:
 \end_layout
 
-\begin_layout Subsubsection
-2.7.1.1 Secondary sampling point 
+\begin_layout Itemize
+Sample Bus in Sample point and store it to previous bus value.
 \end_layout
 
-\begin_layout Subsection
+\begin_layout Itemize
+Detect edges on sampled TX and RX Data.
+ Check for valid synchronisation edges.
+\end_layout
+
+\begin_layout Itemize
+Measure Transcevier Delay and calculate Secondary Sample Point offset.
+\end_layout
+
+\begin_layout Itemize
+Create Secondary sample point.
+\end_layout
+
+\begin_layout Itemize
+Detect Bit Error.
+\end_layout
+
+\begin_layout Standard
+Block diagram of Bus sampling is shown in Figure TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
 Memory registers
 \end_layout
 
