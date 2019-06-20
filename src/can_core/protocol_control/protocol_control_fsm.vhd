@@ -1914,27 +1914,30 @@ begin
             -- CRC Delimiter
             -------------------------------------------------------------------
             when s_pc_crc_delim =>
-                destuff_enable_clear <= '1';
-                stuff_enable_clear <= '1';
                 err_pos <= ERC_POS_ACK;
                 is_crc_delim  <= '1';
                 nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
                 
-                if (is_receiver = '1' and rx_trigger = '1') then
-                    crc_check <= '1';
-                end if;
-
-                if (rx_data_nbs = DOMINANT) then
-                    form_err_i <= '1';
-                end if;
-                
-                if (sp_control_q_i = DATA_SAMPLE or 
-                    sp_control_q_i = SECONDARY_SAMPLE) and
-                    (rx_trigger = '1')
-                then
-                    sp_control_switch_nominal <= '1';
-                    br_shifted_i <= '1';
+                if (rx_trigger = '1') then
+                    destuff_enable_clear <= '1';
+                    stuff_enable_clear <= '1';
+                    
+                    if (is_receiver = '1') then
+                        crc_check <= '1';
+                    end if;
+                    
+                    if (rx_data_nbs = DOMINANT) then
+                        form_err_i <= '1';
+                    end if;
+                    
+                    if (sp_control_q_i = DATA_SAMPLE or 
+                        sp_control_q_i = SECONDARY_SAMPLE)
+                    then
+                        sp_control_switch_nominal <= '1';
+                        br_shifted_i <= '1';
+                    end if;
                 end if;
 
             -------------------------------------------------------------------
