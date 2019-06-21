@@ -97,10 +97,13 @@ entity crc_calc is
         trig       :in   std_logic;
  
         -- CRC calculation enabled
-        enable     :in   std_logic; 
+        enable     :in   std_logic;
 
         -- Initialization vector for CRC calculation
         init_vect  :in   std_logic_vector(G_CRC_WIDTH - 1 downto 0);
+
+        -- Load CRC Initialization vector
+        load_init_vect : in std_logic;
 
         ------------------------------------------------------------------------
         -- CRC output
@@ -116,9 +119,6 @@ architecture rtl of crc_calc is
     ----------------------------------------------------------------------------
     -- CRC register
     signal crc_q            :     std_logic_vector(G_CRC_WIDTH - 1 downto 0);
-    
-    -- Holds previous value of enable input. Detects 0 to 1 transition
-    signal start_reg        :     std_logic;
 
     -- Signal if next value of CRC should be shifted and XORed or only shifted!
     signal crc_nxt          :     std_logic;
@@ -146,27 +146,13 @@ begin
     
     crc_shift_n_xor <= crc_shift xor G_POLYNOMIAL(G_CRC_WIDTH - 1 downto 0);
 
-    crc_d           <=       init_vect when (start_reg = '0' and enable = '1')
-                                       else
-                       crc_shift_n_xor when (crc_nxt = '1') 
-                                       else
+    crc_d           <=       init_vect when (load_init_vect = '1') else
+                       crc_shift_n_xor when (crc_nxt = '1') else
                             crc_shift;
 
-    crc_ce <= '1' when (start_reg = '0' and enable = '1') else
+    crc_ce <= '1' when (load_init_vect = '1') else
               '1' when (enable = '1' and trig = '1') else
               '0';
-
-    ----------------------------------------------------------------------------
-    -- Registering previous value of enable input to detect 0 to 1 transition
-    ----------------------------------------------------------------------------
-    start_reg_proc : process(res_n, clk_sys)
-    begin
-        if (res_n = G_RESET_POLARITY) then
-            start_reg       <= '0';
-        elsif rising_edge(clk_sys) then
-            start_reg       <= enable;
-        end if;
-    end process start_reg_proc;
 
     ----------------------------------------------------------------------------
     -- Calculation of CRC value 
@@ -184,5 +170,16 @@ begin
 
     -- Register to output propagation.
     crc <= crc_q;
+
+    ----------------------------------------------------------------------------
+    -- Assertions on input settings
+    ----------------------------------------------------------------------------
+
+    -- psl default clock is rising_edge(clk_sys);
+
+    -- psl no_simul_load_and_calc_asrt : assert never
+    --   (enable = '1' and trig = '1' and load_init_vect = '1')
+    -- report "Can't load CRC init vector and execute CRC calculation at once!"
+    -- severity error;
 
 end architecture;

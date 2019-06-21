@@ -506,6 +506,9 @@ entity protocol_control_fsm is
         -- Use RX Data for CRC calculation
         crc_calc_from_rx        :out   std_logic;
 
+        -- Load CRC Initialization vector
+        load_init_vect          :out   std_logic;
+
         -- Bit error enable
         bit_err_enable          :out   std_logic;
 
@@ -703,6 +706,9 @@ architecture rtl of protocol_control_fsm is
     
     -- CRC calculation - speculative enable
     signal crc_spec_enable_i         :  std_logic;
+    
+    -- CRC Load initialization vector - internal value
+    signal load_init_vect_i          :  std_logic;
     
 begin
 
@@ -1331,6 +1337,7 @@ begin
         -- CRC control
         crc_enable <= '0';
         crc_spec_enable_i <= '0';
+        load_init_vect_i <= '0';
         
         -- Bit time counters enabling
         nbt_ctrs_en <= '0';
@@ -1413,6 +1420,7 @@ begin
                 if (ctrl_ctr_zero = '1') then
                     set_idle_i <= '1';
                     set_err_active_i <= '1';
+                    load_init_vect_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2149,6 +2157,12 @@ begin
                 if (ctrl_ctr_zero = '1' or ctrl_ctr_one = '1') then
                     perform_hsync <= '1';
                 end if;
+                
+                -- First or second bit of Intermission, pre-load CRC Init vector
+                -- for next frame.
+                if (ctrl_ctr_zero = '0') then
+                    load_init_vect_i <= '1';
+                end if;
     
             -------------------------------------------------------------------
             -- Suspend transmission
@@ -2259,6 +2273,7 @@ begin
                 if (reinteg_ctr_expired = '1') then
                     set_idle_i <= '1';
                     set_err_active_i <= '1';
+                    load_init_vect_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2701,6 +2716,10 @@ begin
                         '1' when (is_arbitration_i = '1') else
                         '1' when (is_receiver = '1') else
                         '0';
+
+    load_init_vect <= '1' when (load_init_vect_i = '1' and rx_trigger = '1')
+                          else
+                      '0';
 
     ---------------------------------------------------------------------------
     -- Bit Stuffing enable

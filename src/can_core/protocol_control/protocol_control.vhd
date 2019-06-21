@@ -333,6 +333,9 @@ entity protocol_control is
         -- Use RX Data for CRC calculation
         crc_calc_from_rx        :out   std_logic;
         
+        -- Load CRC Initialization vector
+        load_init_vect          :out   std_logic;
+        
         -- CRC Source to be used (CRC 15, CRC 17, CRC 21)
         crc_src                 :out  std_logic_vector(1 downto 0);
 
@@ -786,6 +789,7 @@ begin
         crc_enable              => crc_enable,              -- OUT
         crc_spec_enable         => crc_spec_enable,         -- OUT
         crc_calc_from_rx        => crc_calc_from_rx,        -- OUT
+        load_init_vect          => load_init_vect,          -- OUT
         bit_err_enable          => bit_err_enable,          -- OUT
         br_shifted              => br_shifted               -- OUT
     );

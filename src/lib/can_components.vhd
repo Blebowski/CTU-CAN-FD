@@ -685,6 +685,9 @@ package can_components is
 
         -- Unit is receiver of a frame
         is_receiver      :in   std_logic;
+        
+        -- Load CRC Initialization vector
+        load_init_vect   :in  std_logic;
 
         ------------------------------------------------------------------------
         -- CRC Outputs
@@ -737,6 +740,9 @@ package can_components is
         -- Initialization vector for CRC calculation
         init_vect  :in   std_logic_vector(G_CRC_WIDTH - 1 downto 0);
 
+        -- Load CRC Initialization vector
+        load_init_vect   :in  std_logic;
+        
         ------------------------------------------------------------------------
         -- CRC output
         ------------------------------------------------------------------------
@@ -1757,6 +1763,9 @@ package can_components is
         -- Use RX Data for CRC calculation
         crc_calc_from_rx        :out   std_logic;
 
+        -- Load CRC Initialization vector
+        load_init_vect          :out   std_logic;
+
         -- Bit error enable
         bit_err_enable          :out   std_logic;
 
@@ -2028,6 +2037,9 @@ package can_components is
 
         -- Use RX Data for CRC calculation
         crc_calc_from_rx        :out   std_logic;
+        
+        -- Load CRC Initialization vector
+        load_init_vect          :out   std_logic;
         
         -- CRC Source to be used (CRC 15, CRC 17, CRC 21)
         crc_src                 :out  std_logic_vector(1 downto 0);

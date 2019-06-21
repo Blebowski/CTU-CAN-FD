@@ -425,6 +425,8 @@ architecture rtl of can_core is
     
     signal sof_pulse_i             :     std_logic;
     
+    signal load_init_vect          :     std_logic;
+    
 begin
   
     ----------------------------------------------------------------------------
@@ -537,6 +539,7 @@ begin
         crc_enable              => crc_enable,          -- OUT
         crc_spec_enable         => crc_spec_enable,     -- OUT
         crc_calc_from_rx        => crc_calc_from_rx,    -- OUT
+        load_init_vect          => load_init_vect,      -- OUT
         crc_src                 => crc_src,             -- OUT
         crc_15                  => crc_15,              -- IN
         crc_17                  => crc_17,              -- IN
@@ -668,6 +671,7 @@ begin
         crc_spec_enable  => crc_spec_enable,            -- IN
         crc_calc_from_rx => crc_calc_from_rx,           -- IN
         is_receiver      => is_receiver,                -- IN
+        load_init_vect   => load_init_vect,             -- IN
 
         -- CRC Outputs
         crc_15           => crc_15,                     -- OUT

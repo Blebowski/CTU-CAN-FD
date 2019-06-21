@@ -185,11 +185,6 @@ architecture rtl of bit_destuffing is
     signal prev_val_q              : std_logic;
     signal prev_val_d              : std_logic;
 
-    ---------------------------------------------------------------------------
-    -- Data output when circuit is enabled
-    ---------------------------------------------------------------------------
-    signal data_out_ena        : std_logic;
-
 begin
 
     ---------------------------------------------------------------------------
@@ -471,16 +466,8 @@ begin
 
         input              => data_in,
         ce                 => bds_trigger,
-        output             => data_out_ena
+        output             => data_out
     );
-    
-    ---------------------------------------------------------------------------
-    -- When Bit destuffing is disabled, data are piped from input to output
-    -- directly (no delay). This is so that CRC17, CRC21 calculation will have
-    -- proper value available when Dominant bit is sampled during Idle!
-    ---------------------------------------------------------------------------
-    data_out <= data_out_ena when (destuff_enable = '1') else
-                data_in;
 
     ---------------------------------------------------------------------------
     -- Propagation to output

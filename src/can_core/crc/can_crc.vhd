@@ -149,6 +149,9 @@ entity can_crc is
 
         -- Unit is receiver of a frame
         is_receiver      :in   std_logic;
+        
+        -- Load CRC Initialization vector
+        load_init_vect   :in   std_logic;
 
         ------------------------------------------------------------------------
         -- CRC Outputs
@@ -274,6 +277,7 @@ begin
         trig            => crc_15_trigger,  -- IN
         enable          => crc_ena_15,      -- IN
         init_vect       => init_vect_15,    -- IN
+        load_init_vect  => load_init_vect,  -- IN
         
         crc             => crc_15           -- OUT
     );
@@ -295,6 +299,7 @@ begin
         trig            => crc_17_21_trigger,   -- IN
         enable          => crc_ena_17_21,       -- IN
         init_vect       => init_vect_17,        -- IN
+        load_init_vect  => load_init_vect,      -- IN
         
         crc             => crc_17               -- OUT
     );
@@ -317,6 +322,7 @@ begin
         trig            => crc_17_21_trigger,   -- IN
         enable          => crc_ena_17_21,       -- IN
         init_vect       => init_vect_21,        -- IN
+        load_init_vect  => load_init_vect,      -- IN
         
         crc             => crc_21               -- OUT
     );

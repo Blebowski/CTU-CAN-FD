@@ -83,6 +83,8 @@ architecture CRC_unit_test of CAN_test is
     signal rnd_ctr_tr  :   natural range 0 to RAND_POOL_SIZE := 0;
     signal drv_fd_type :   std_logic := '0';
 
+    -- Load CRC Initialization vector
+    signal load_init_vect     :   std_logic := '0';
 
     ----------------------------------------------------------------------------
     -- Generate bit sequence for CRC calculation
@@ -286,6 +288,7 @@ begin
         crc_spec_enable  => '0',
         crc_calc_from_rx => '0',
         is_receiver      => '0',
+        load_init_vect   => load_init_vect,
 
         -- CRC Outputs
         crc_15           => crc_15,
@@ -354,6 +357,13 @@ begin
             info("Calculating software CRC");
             calc_crc(bit_seq, gen_length, C_CRC15_POL, C_CRC17_POL, C_CRC21_POL,
                    drv_fd_type, crc_15_mod, crc_17_mod, crc_21_mod);
+                   
+            info("Preloading initialization vector!");
+            load_init_vect <= '1';
+            wait until rising_edge(clk_sys);
+            wait until rising_edge(clk_sys);
+            load_init_vect <= '0';
+            wait until rising_edge(clk_sys);
 
             info("Putting bit sequence to DUT");
             put_to_dut(tx_trig, rx_trig, enable, data_in, clk_sys, bit_seq,
