@@ -1,0 +1,49 @@
+        -:    0:Source:/build/test/coverage_bug/protocol_control_tb.vhd
+        -:    0:Graph:protocol_control_tb.gcno
+        -:    0:Data:protocol_control_tb.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        3:    1:Library ieee;
+        -:    2:use ieee.std_logic_1164.all;
+        -:    3:use ieee.numeric_std.ALL;
+        -:    4:
+        -:    5:Library work;
+        -:    6:
+       29:    7:entity protocol_control_tb is
+        -:    8:end entity;
+        -:    9:
+        -:   10:architecture behav of protocol_control_tb is
+        -:   11:
+        1:   12:    signal tran_frame_valid : std_logic := '0';
+        1:   13:    signal drv_bus_mon_ena : std_logic := '0';
+        2:   14:    signal tx_frame_ready : std_logic;
+        -:   15:
+        -:   16:begin
+        -:   17:
+        1:   18:    tx_frame_ready_proc : process(tran_frame_valid, drv_bus_mon_ena)
+        -:   19:    begin
+       24:   20:        if (tran_frame_valid = '1' and drv_bus_mon_ena = '0') then
+       11:   21:            tx_frame_ready <= '1';
+        -:   22:        else
+       58:   23:            tx_frame_ready <= '0';
+        -:   24:        end if;
+        -:   25:    end process;
+        -:   26:
+        1:   27:    driver_proc : process
+        -:   28:    begin
+        -:   29:        
+        1:   30:        for i in 0 to 10 loop
+       11:   31:            drv_bus_mon_ena <= '1';
+       11:   32:            wait for 10 ns;
+       11:   33:            tran_frame_valid <= '1';
+       11:   34:            wait for 10 ns;
+       11:   35:            drv_bus_mon_ena <= '0';
+       11:   36:            wait for 10 ns;
+       11:   37:            drv_bus_mon_ena <= '0';
+       11:   38:            wait for 10 ns;
+        -:   39:        end loop;
+        -:   40:        
+        2:   41:        report "Test end" severity failure;
+        -:   42:    end process;
+        -:   43:
+        -:   44:end architecture;
