@@ -77,6 +77,7 @@ struct ctucan_priv {
 	unsigned int txb_tail;
 	u32 txb_prio;
 	unsigned int txb_mask;
+	spinlock_t tx_lock;
 
 	struct napi_struct napi;
 	struct device *dev;
@@ -288,6 +289,7 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	struct canfd_frame *cf = (struct canfd_frame *)skb->data;
 	u32 txb_id;
 	bool ok;
+	unsigned long flags;
 
 	if (can_dropped_invalid_skb(ndev, skb))
 		return NETDEV_TX_OK;
@@ -301,7 +303,6 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 
 	txb_id = priv->txb_head & priv->txb_mask;
 	netdev_dbg(ndev, "%s: using TXB#%u", __func__, txb_id);
-	priv->txb_head++;
 	ok = ctu_can_fd_insert_frame(&priv->p, cf, 0, txb_id,
 				     can_is_canfd_skb(skb));
 
@@ -315,9 +316,15 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	if (!(cf->can_id & CAN_RTR_FLAG))
 		stats->tx_bytes += cf->len;
 
+	spin_lock_irqsave(&priv->tx_lock, flags);
+
+	priv->txb_head++;
+
 	/* Check if all TX buffers are full */
 	if (!CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))
 		netif_stop_queue(ndev);
+
+	spin_unlock_irqrestore(&priv->tx_lock, flags);
 
 	return NETDEV_TX_OK;
 }
@@ -572,6 +579,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 	bool first = true;
 	union ctu_can_fd_int_stat icr;
 	bool some_buffers_processed;
+	unsigned long flags;
 
 	netdev_dbg(ndev, "%s", __func__);
 
@@ -585,6 +593,8 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 	icr.u32 = 0;
 	icr.s.txbhci = 1;
 	do {
+		spin_lock_irqsave(&priv->tx_lock, flags);
+
 		some_buffers_processed = false;
 		while ((int)(priv->txb_head - priv->txb_tail) > 0) {
 			u32 txb_idx = priv->txb_tail & priv->txb_mask;
@@ -642,6 +652,8 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 			ctu_can_fd_txt_set_empty(&priv->p, txb_idx);
 		}
 clear:
+		spin_unlock_irqrestore(&priv->tx_lock, flags);
+
 		/* If no buffers were processed this time, wa cannot
 		 * clear - that would introduce a race condition. */
 		if (some_buffers_processed) {
@@ -653,7 +665,14 @@ clear:
 	} while (some_buffers_processed);
 
 	can_led_event(ndev, CAN_LED_EVENT_TX);
-	netif_wake_queue(ndev);
+
+	spin_lock_irqsave(&priv->tx_lock, flags);
+
+	/* Check if at least one TX buffer is free */
+	if (CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))
+		netif_wake_queue(ndev);
+
+	spin_unlock_irqrestore(&priv->tx_lock, flags);
 }
 
 /**
@@ -947,6 +966,7 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 		return -ENOMEM;
 
 	priv = netdev_priv(ndev);
+	spin_lock_init(&priv->tx_lock);
 	INIT_LIST_HEAD(&priv->peers_on_pdev);
 	priv->txb_mask = ntxbufs - 1;
 	priv->dev = dev;
