@@ -393,15 +393,18 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	struct sk_buff *skb;
 	struct can_berr_counter berr;
 	union ctu_can_fd_err_capt_alc err_capt_alc;
+	int dologerr = net_ratelimit();
 
 	ctu_can_fd_read_err_ctrs(&priv->p, &berr);
 
 	err_capt_alc = ctu_can_fd_read_err_capt_alc(&priv->p);
 
-	netdev_info(ndev, "%s: ISR = 0x%08x, rxerr %d, txerr %d, error type %u, pos %u, ALC id_field %u, bit %u\n",
-		    __func__, isr.u32, berr.rxerr, berr.txerr,
-		    err_capt_alc.s.err_type, err_capt_alc.s.err_pos,
-		    err_capt_alc.s.alc_id_field, err_capt_alc.s.alc_bit);
+	if (dologerr)
+		netdev_info(ndev, "%s: ISR = 0x%08x, rxerr %d, txerr %d,"
+			" error type %u, pos %u, ALC id_field %u, bit %u\n",
+			__func__, isr.u32, berr.rxerr, berr.txerr,
+			err_capt_alc.s.err_type, err_capt_alc.s.err_pos,
+			err_capt_alc.s.alc_id_field, err_capt_alc.s.alc_bit);
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
@@ -444,7 +447,8 @@ err_warning:
 		/* error warning */
 		priv->can.state = CAN_STATE_ERROR_WARNING;
 		priv->can.can_stats.error_warning++;
-		netdev_info(ndev, "  error_warning");
+		if (dologerr)
+			netdev_info(ndev, "  error_warning");
 		if (skb) {
 			cf->can_id |= CAN_ERR_CRTL;
 			cf->data[1] |= (berr.txerr > berr.rxerr) ?
@@ -457,7 +461,8 @@ err_warning:
 
 	/* Check for Arbitration Lost interrupt */
 	if (isr.s.ali) {
-		netdev_info(ndev, "  arbitration lost");
+		if (dologerr)
+			netdev_info(ndev, "  arbitration lost");
 		priv->can.can_stats.arbitration_lost++;
 		if (skb) {
 			cf->can_id |= CAN_ERR_LOSTARB;
