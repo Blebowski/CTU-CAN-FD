@@ -191,7 +191,6 @@ timespec_sub (struct timespec *diff, const struct timespec *left,
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     uintptr_t addr_base = 0;
@@ -428,11 +427,16 @@ int main(int argc, char *argv[])
         union ctu_can_fd_rx_mem_info reg;
         reg.u32 = ctu_can_fd_read32(priv, CTU_CAN_FD_RX_MEM_INFO);
         u32 rxsz = reg.s.rx_buff_size - reg.s.rx_mem_free;
+        union ctu_can_fd_status status = ctu_can_get_status(priv);
+        union ctu_can_fd_err_capt_alc err_capt_alc;
+        union ctu_can_fd_int_stat int_stat = ctu_can_fd_int_sts(priv);
+        ctu_can_fd_int_clr(priv, int_stat);
+
 
         printf("%u RX frames, %u words", nrxf, rxsz);
-        printf(", status 0x%08hhx", ctu_can_fd_read32(priv, CTU_CAN_FD_STATUS));
+        printf(", status 0x%08hx", status.u32);
         printf(", settings 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_SETTINGS));
-        printf(", INT_STAT 0x%04hhx", ctu_can_fd_read16(priv, CTU_CAN_FD_INT_STAT));
+        printf(", INT_STAT 0x%04hx", int_stat.u32);
         printf(", INT_ENA_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_ENA_SET));
         printf(", INT_MASK_SET 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_INT_MASK_SET));
         printf(", TX_STATUS 0x%04hx", priv->read_reg(priv, CTU_CAN_FD_TX_STATUS));
@@ -440,6 +444,14 @@ int main(int argc, char *argv[])
         printf(", TRV_DELAY 0x%0hx", priv->read_reg(priv, CTU_CAN_FD_TRV_DELAY));
 
         printf("\n");
+
+        if (status.s.ewl) {
+            err_capt_alc = ctu_can_fd_read_err_capt_alc(priv);
+            printf("ERROR type %u pos %u ALC id_field %u bit %u\n",
+                err_capt_alc.s.err_type, err_capt_alc.s.err_pos,
+                err_capt_alc.s.alc_id_field, err_capt_alc.s.alc_bit);
+	}
+
         /*
         while (rxsz--) {
             u32 data = priv->read_reg(priv, CTU_CAN_FD_RX_DATA);

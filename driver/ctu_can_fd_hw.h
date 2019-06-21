@@ -567,6 +567,22 @@ void ctu_can_fd_set_err_ctrs(struct ctucanfd_priv *priv,
 			     const struct can_berr_counter *ctr);
 
 /*
+ * Read core captured last error or arbitration lost reason.
+ *
+ * Arguments:
+ *	priv	Private info
+ * Returns:
+ *	Error state of the CTU CAN FD.
+ */
+static inline union ctu_can_fd_err_capt_alc
+        ctu_can_fd_read_err_capt_alc(struct ctucanfd_priv *priv)
+{
+	union ctu_can_fd_err_capt_alc res;
+	res.u32 = priv->read_reg(priv, CTU_CAN_FD_ERR_CAPT);
+	return res;
+}
+
+/*
  * Check Mask filters support of given filter.
  *
  * Arguments:
