@@ -2870,7 +2870,7 @@ Address: 0x0
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Register contains the identifer of CTU CAN FD IP Core. It can be used to determine if CTU CAN FD IP Core is mapped correctly on its base address.
+Identifer of CTU CAN FD IP Core. Can be used to check if CTU CAN FD IP Core is accessible correctly on its base address.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -3540,7 +3540,7 @@ Address: 0x2
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Version register with IP Core version.
+Version register. Returns version of CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4212,7 +4212,7 @@ Address: 0x4
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-MODE register controls operating modes.
+Controls operating CTU CAN FD operating modes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -4855,35 +4855,35 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RST Writing logic 1 resets the core. It has the same effect as logic 0 on "res_n" input of the controller. After writing logic 1,  logic 0 does not need to be written, this bit is automatically cleared.
+RST Soft reset. Writing logic 1 resets CTU CAN FD. After writing logic 1,  logic 0 does not need to be written, this bit is automatically cleared.
 \end_layout
 \begin_layout Description
-LOM Listen only mode. In this mode controller only receives data and sends only recessive bits on the bus. When a dominant bus is sent it is rerouted internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!\begin_inset Newline newline\end_inset
+LOM Listen Only Mode. In this mode CTU CAN FD only receives data and sends only recessive bits on the bus. When a dominant bus is sent, it is re-routed internally so that bus value remains the same. Note that when this mode is enabled controller will not transmit any inserted frame!\begin_inset Newline newline\end_inset
 		0b0  - LOM_DISABLED - Listen only mode disabled.\begin_inset Newline newline\end_inset
 		0b1  - LOM_ENABLED - Listen only mode enabled.
 \end_layout
 \begin_layout Description
-STM Self test mode. In this mode transmitted frame is considered valid even if acknowledge was not received.\begin_inset Newline newline\end_inset
+STM Self Test Mode. In this mode transmitted frame is considered valid even if acknowledge was not received.\begin_inset Newline newline\end_inset
 		0b0  - STM_DISABLED - Self test mode disabled.\begin_inset Newline newline\end_inset
 		0b1  - STM_ENABLED - Self test mode enabled.
 \end_layout
 \begin_layout Description
-AFM Acceptance filters mode. If this mode is enabled, acceptance filters are used on  RX Frames . If disabled, every received frame is stored in the RX buffer. This bit has meaning only if there is at least one filter synthesized.\begin_inset Newline newline\end_inset
+AFM Acceptance Filters Mode. If enabled, only RX Frames which pass acceptance filters are stored in RX Buffer. If disabled, every received frame is stored in RX buffer. This bit has meaning only if there is at least one filter synthesized. Otherwise, this bit is reserved.\begin_inset Newline newline\end_inset
 		0b0  - AFM_DISABLED - Acceptance filter mode disabled\begin_inset Newline newline\end_inset
 		0b1  - AFM_ENABLED - Acceptance filter mode enabled
 \end_layout
 \begin_layout Description
-FDE Enable flexible data rate support. When disabled, receiving recessive EDL bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.\begin_inset Newline newline\end_inset
+FDE Flexible Data-rate enable. When disabled, receiving recessive FDF(EDL) bit (Flexible data-rate frame) causes Form error. This bit does not affect capability to transmitt FD Frames.\begin_inset Newline newline\end_inset
 		0b0  - FDE_DISABLE - Flexible data-rate support disabled.\begin_inset Newline newline\end_inset
 		0b1  - FDE_ENABLE - Flexible data-rate support enabled.
 \end_layout
 \begin_layout Description
-ACF Acknowledge forbidden mode. When this mode is enabled, acknowledge is not sent even if received CRC matches the calculated one.\begin_inset Newline newline\end_inset
+ACF Acknowledge Forbidden Mode. When enabled, acknowledge is not sent even if received CRC matches the calculated one.\begin_inset Newline newline\end_inset
 		0b0  - ACF_DISABLED - Acknowledge forbidden mode disabled.\begin_inset Newline newline\end_inset
 		0b1  - ACF_ENABLED - Acknowledge forbidden mode enabled.
 \end_layout
 \begin_layout Description
-TSTM Device enters test mode.
+TSTM Test Mode. In test mode several registers have special features. Reffer to description of Test mode for further details.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -4909,7 +4909,7 @@ Address: 0x6
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-This register enables the whole CAN FD Core, configures FD Type, Internal loopback and retransmission options.
+Settings of CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -5552,25 +5552,25 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RTRLE Retransmitt limit enable. If enabled, the core only attempts to transmitt each frame up to RTR_TH times. If not succesfull, the TXT Buffer will end up in "Failed" state.\begin_inset Newline newline\end_inset
+RTRLE Retransmitt Limit Enable. If enabled, CTU CAN FD only attempts to transmitt each frame up to RTR_TH times.\begin_inset Newline newline\end_inset
 		0b0  - RTRLE_DISABLED - Retransmitt limit is disabled.\begin_inset Newline newline\end_inset
 		0b1  - RTRLE_ENABLED - Retransmitt limit is enabled.
 \end_layout
 \begin_layout Description
-RTRTH The maximal amount of retransmission attempts.
+RTRTH Retransmitt Limit Threshold. Maximal amount of retransmission attempts when SETTINGS[RTRLE] is enabled.
 \end_layout
 \begin_layout Description
-ILBP Internal loop-back option (recommended  only for testing). If internal loopback options is enabled the Core automatically receive any dominant bit it transmitts.\begin_inset Newline newline\end_inset
+ILBP Internal Loop-Back. When enabled, CTU CAN FD receives any frame it transmitts.\begin_inset Newline newline\end_inset
 		0b0  - INT_LOOP_DISABLED - Internal loop-back is disabled.\begin_inset Newline newline\end_inset
 		0b1  - INT_LOOP_ENABLED - Internal loop-back is enabled.
 \end_layout
 \begin_layout Description
-ENA Enable bit for the whole CAN FD Controller. When disabled, IP Core acts as if not connected to the CAN Bus.\begin_inset Newline newline\end_inset
+ENA Enable of CTU CAN FD. When disabled, IP Core acts as if not connected to CAN Bus.\begin_inset Newline newline\end_inset
 		0b0  - CTU_CAN_DISABLED - The CAN Core is disabled.\begin_inset Newline newline\end_inset
 		0b1  - CTU_CAN_ENABLED - The CAN Core is enabled.
 \end_layout
 \begin_layout Description
-NISOFD Selection between two possible CAN FD specifications. This bit should be modified only when SETTINGS[ENA]=0.\begin_inset Newline newline\end_inset
+NISOFD Non ISO FD. When active CTU CAN FD is compliant to NON-ISO CAN FD specification (no stuff count field). This bit should be modified only when SETTINGS[ENA]=0.\begin_inset Newline newline\end_inset
 		0b0  - ISO_FD - The CAN Controller conforms to ISO CAN FD specification.\begin_inset Newline newline\end_inset
 		0b1  - NON_ISO_FD - The CAN Controller conforms to NON ISO CAN FD specification.
 \end_layout
@@ -5598,7 +5598,7 @@ Address: 0x8
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Register signals various states of CTU CAN FD IP Core. Logic 1 signals active status/flag.
+Status register contains state of CTU CAN FD. Logic 1 signals active status/flag.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -6881,28 +6881,28 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RXNE Receive buffer is not empty. At least one frame is stored in RX Buffer.
+RXNE RX Buffer not empty.  Set when at least one frame is stored in RX Buffer.
 \end_layout
 \begin_layout Description
-DOR Data overrun status (flag). A frame was lost due to insufficient space in the Receive buffer. This bit can be cleaned by CDO[RRB] command.
+DOR Data Overrun Status (flag). A frame was lost due to insufficient space in RX Buffer. This bit can be cleared by COMMAND[RRB].
 \end_layout
 \begin_layout Description
-TXNF TXT buffers status. Active if at least one of the TXT Buffers is in "Empty" state.
+TXNF TXT buffers status. Active if at least one  TXT Buffer is in "Empty" state.
 \end_layout
 \begin_layout Description
-EFT Error frame is beeing transmitted at the moment.
+EFT Error frame is beeing transmitted.
 \end_layout
 \begin_layout Description
-RXS CTU CAN FD IP Core is a receiver of CAN Frame.
+RXS CTU CAN FD is receiving CAN Frame.
 \end_layout
 \begin_layout Description
-TXS CTU CAN FD IP Core is a transmitter of CAN Frame.
+TXS CTU CAN FD is transmitting CAN Frame.
 \end_layout
 \begin_layout Description
-EWL Error status. Error warning limit was reached at any of error counters.
+EWL Error warning limit was reached by either TX or RX Error counter.
 \end_layout
 \begin_layout Description
-IDLE Bus status. Bus is "idle", the controller is " integrating" or "bus off". Therefore this bit is active when there is no activity on the bus.
+IDLE Bus is "idle" (no frame being transmitted/received) or CTU CAN FD is "bus off".
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -6928,7 +6928,7 @@ Address: 0xC
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 into each bit gives different command to the IP Core. After writing logic 1, logic 0 does not have to be written.
+Issuing commands to CTU CAN FD. Writing logic 1 into each bit gives a command to CTU CAN FD. After writing logic 1, logic 0 does not need to be written.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -8211,19 +8211,19 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RRB Release Receive buffer. This command deletes all data from the Receive buffer and restarts its memory pointers.
+RRB Release RX Buffer. This command deletes all frames from the RX Buffer and restarts its memory pointers.
 \end_layout
 \begin_layout Description
-CDO Clear data overrun flag. This command will clear data overrun flag on RX Buffer.
+CDO Clear Data Overrun flag in RX Buffer.
 \end_layout
 \begin_layout Description
-ERCRST Error counter reset. Issuing this command will erase TX, RX error counters after 128 conecutive ocurrences of 11 recessive bits. This command can be used as protocol compliant transition from Bus-off to Error Active. Upon completion, TX RX Error counters are erased and fault confinement state is set to Error Active.
+ERCRST Error Counters Reset. When unit is Bus-off, issuing this command will request erase of TX, RX error counters after 128 consecutive ocurrences of 11 recessive bits. Upon completion, TX and RX Error counters are erased and fault confinement state is set to Error Active. When unit is not Bus-off or when unit is Bus-off due to being disabled (SETTINGS[ENA] = '0'), this command has no effect.
 \end_layout
 \begin_layout Description
-RXFCRST Clear RX frames counter.
+RXFCRST Clear RX Bus traffic counter.
 \end_layout
 \begin_layout Description
-TXFCRST Clear TX frames counter.
+TXFCRST Clear TX Bus traffic counter.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -8249,7 +8249,7 @@ Address: 0x10
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Reading this register returns logic 1 for each interrupt which was captured (interrupt vector). Writing logic 1 to any bit clears according bit of captured interrupt. Writing logic 0 has no effect.
+Interrupt Status register. Reading this register returns logic 1 for each interrupt which was captured (interrupt vector). Writing logic 1 to any bit clears according bit in interrupt vector. Writing logic 0 has no effect.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -8892,22 +8892,22 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RXI Frame Received interrupt. Interrupt set has priority over clear. 
+RXI Frame Received Interrupt. Interrupt set has priority over clear. 
 \end_layout
 \begin_layout Description
-TXI Frame Transmitted sucesfully interrupt. Interrupt set has priority over clear.
+TXI Frame Transmitted Interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-EWLI Error warning limit reached interrupt. Interrupt set has priority over clear.
+EWLI Error Warning Limit reached interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-DOI Data overrun on RX Buffer Interrupt. Interrupt clear has priority over set.
+DOI Data Overrun on RX Buffer Interrupt. Interrupt clear has priority over set.
 \end_layout
 \begin_layout Description
-EPI Node became error passive or bus off interrupt. Interrupt set has priority over clear.
+EPI CTU CAN FD became Error Passive or Bus Off interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-ALI Arbitration lost Interrupt. Interrupt set has priority over clear.
+ALI Arbitration Lost Interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
 BEI Bus Error interrupt. Interrupt set has priority over clear.
@@ -8916,13 +8916,13 @@ BEI Bus Error interrupt. Interrupt set has priority over clear.
 OFI Overload frame Interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-RXFI Receive Buffer full interrupt. Interrupt set has priority over clear.
+RXFI Receive Buffer Full interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-BSI Bit-rate shifted interrupt. Interrupt set has priority over clear.
+BSI Bit-Rate shifted interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
-RBNEI Receive Buffer not empty Interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt. Interrupt set has priority over clear.
+RBNEI Receive Buffer not empty interrupt. Clearing this interrupt and not reading out content of RX Buffer via RX_DATA will re-activate the interrupt. Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
 TXBHCI TX Buffer HW command interrupt. Anytime TX Buffer receives HW command from CAN Core which changes TXT Buffer state to TX Ok, Error or Aborted, this interrupt will be acivated. Interrupt set has priority over clear.
@@ -8951,7 +8951,7 @@ Address: 0x14
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 to a bit enables according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each enabled interrupt. If interrupt is captured in INT_STAT, enabled interrupt will cause "int" output to be asserted. Interrupts are level-based. To capture interrupt to INT_STAT register, interrupt must be unmasked.
+Interrupt Enable Set. Writing logic 1 to a bit enables according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each enabled interrupt. If interrupt is captured in INT_STAT, enabled interrupt will cause "int" output to be asserted. Interrupts are level-based. To capture interrupt to INT_STAT register, interrupt must be unmasked.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -9620,7 +9620,7 @@ Address: 0x18
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Disabled interrupt wil not affect "int" output of CAN Core event if it is captured in INT_STAT register.
+Interrupt Enable Clear register. Writing logic 1 disables according interrupt. Writing logic 0 has no effect. Reading this register has no effect. Disabled interrupt wil not affect "int" output of CAN Core event if it is captured in Interrupt vector and can be read out from INT_STAT register.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -10289,7 +10289,7 @@ Address: 0x1C
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each masked interrupt. If particular interrupt is masked, it won't be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).
+Interrupt Mask set. Writing logic 1 masks according interrupt. Writing logic 0 has no effect. Reading this register returns logic 1 for each masked interrupt. If particular interrupt is masked, it won't be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).
 \end_layout
 \begin_layout Standard
 \noindent
@@ -10958,7 +10958,7 @@ Address: 0x20
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. If particular interrupt is un-masked, it will be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).
+Interrupt Mask clear register. Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect. Reading this register has no effect. If particular interrupt is un-masked, it will be captured in INT_STAT register when internal conditions for this interrupt are met (e.g RX Buffer is not empty for RXNEI).
 \end_layout
 \begin_layout Standard
 \noindent
@@ -11627,7 +11627,7 @@ Address: 0x24
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit timing register for nominal bit-rate. This register should be modified only when SETTINGS[ENA]=0.
+Bit Timing Register for Nominal Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -12948,7 +12948,7 @@ Address: 0x28
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Bit timing register for data bit-rate. This register should be modified only when SETTINGS[ENA]=0.
+Bit Timing Register for Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -14271,7 +14271,7 @@ Size: 1 byte
 \begin_layout Description
 Note: Register can be only written when MODE[TSTM] = 1, otherwise write has no effect.\end_layout
 \begin_layout Standard
-Error warning limit register. This register should be modified only when SETTINGS[ENA]=0.
+Error Warning Limit register. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -14594,7 +14594,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-EW_LIMIT Error warning limit.  If an error warning limit is reached interrupt can be called. Error warning limit indicates heavily disturbed bus. Note that according to CAN specification this value is fixed at 96 and should not be configurable! The configuration of this value is one of the extra features of this IP Core.
+EW_LIMIT Error warning limit.  If error warning limit is reached interrupt can be called. Error warning limit indicates heavily disturbed bus.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -14622,7 +14622,7 @@ Size: 1 byte
 \begin_layout Description
 Note: Register can be only written when MODE[TSTM] = 1, otherwise write has no effect.\end_layout
 \begin_layout Standard
-Error passive limit register. This register should be modified only when SETTINGS[ENA]=0.
+Error Passive Limit register. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -14945,7 +14945,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-ERP_LIMIT Error passive limit. When one of error counters (RXC/TXC) exceeds this value, i Fault confinement state changes to error passive. Note that according to CAN specification this value is fixed at 128 and should not be configurable! The configuration of this value is one of the extra features of this IP Core. Note that IP Core always turns to bus_off state once any error counter reaches 255!
+ERP_LIMIT Error Passive Limit. When one of error counters (RXC/TXC) exceeds this value, Fault confinement state changes to Error Passive. Note that CTU CAN FD always turns to bus_off once any error counter reaches 255!
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -14971,7 +14971,7 @@ Address: 0x2E
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Fault confinement state of the node. This state can be manipulated by writes to CTR_PRES register. When these counters are set Fault confinement state changes automatically.
+Fault Confinement state of the CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -15646,7 +15646,7 @@ Address: 0x30
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Counter for received frames.
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -16289,7 +16289,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RXC_VAL Receive error counter. This register determines Fault confiment state (Error active, Error passive, Bus off) according to CAN specification.
+RXC_VAL RX Error counter (REC).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -16315,7 +16315,7 @@ Address: 0x32
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Counter for transcieved frames.
+
 \end_layout
 \begin_layout Standard
 \noindent
@@ -16958,7 +16958,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TXC_VAL Counter for transcieved frames to enable bus traffic measurement.
+TXC_VAL TX Error counter (TEC).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -17627,7 +17627,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-ERR_NORM_VAL Number of errors in the Nominal bit time.
+ERR_NORM_VAL Number of errors which occured in Nominal Bit-Rate.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -18296,7 +18296,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-ERR_FD_VAL Number of errors in the Data bit time.
+ERR_FD_VAL Number of errors which occured in Data Bit-Rate.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -18324,7 +18324,7 @@ Size: 4 bytes
 \begin_layout Description
 Note: Register can be only written when MODE[TSTM] = 1, otherwise write has no effect.\end_layout
 \begin_layout Standard
-Register for manipulation with error counters.
+Counter Preset Register. Enables manipulation with error counters.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -19610,16 +19610,16 @@ cellcolor{cyan}
 CTPV Counter value to set.
 \end_layout
 \begin_layout Description
-PTX Preset value from CTR_PRES_VAL to TX Error counter.
+PTX Preset value from CTPV to TX Error counter (TEC).
 \end_layout
 \begin_layout Description
-PRX Preset value fromCTR_PRES_VAL to RX Error counter.
+PRX Preset value from CTPV to RX Error counter (REC).
 \end_layout
 \begin_layout Description
-ENORM Erase Nominal bit time error counter.
+ENORM Erase Nominal Bit-Rate error counter (ERR_NORM).
 \end_layout
 \begin_layout Description
-EFD Erase Data bit time error counter.
+EFD Erase Nominal Bit-Rate error counter (ERR_FD).
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -19648,7 +19648,7 @@ Size: 4 bytes
 Note: Register is present only when sup_filt_A = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filter A. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtA=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter A Bit mask. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter A is not present, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -20960,7 +20960,7 @@ Size: 4 bytes
 Note: Register is present only when sup_filt_A = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-Bit value for acceptance filters. Filters A, B, C are available. The identifier format is the same as transmitted and received identifier format. BASE Identifier is 11 LSB and Identifier extension are bits 28-12! Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtX=false";. If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter A Bit value. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter A is not present, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -22272,7 +22272,7 @@ Size: 4 bytes
 Note: Register is present only when sup_filt_B = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtB=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter B Bit mask. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter B is not present, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -23584,7 +23584,7 @@ Size: 4 bytes
 Note: Register is present only when sup_filt_B = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-Bit value for acceptance filter B. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtB=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter B Bit value. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter B is not present, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -24896,7 +24896,7 @@ Size: 4 bytes
 Note: Register is present only when sup_filt_C = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-Bit mask for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtC=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter C Bit mask. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter C is not present, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -26208,7 +26208,7 @@ Size: 4 bytes
 Note: Register is present only when sup_filt_C = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-Bit value for acceptance filter C. The identifier format is the same as transmitted and received identifier format. BASE Identifier is  in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_filtC=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter C Bit value. The identifier format is the same as transmitted and received Identifier. BASE Identifier is 11 LSB and Identifier extension are bits 28-12. If filter C is not present, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -27520,7 +27520,7 @@ Size: 4 bytes
 Note: Register is present only when sup_range = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-Low Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_range=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter Range Low threshold. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. If Range filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -28832,7 +28832,7 @@ Size: 4 bytes
 Note: Register is present only when sup_range = true. Otherwise this address is reserved.
 \end_layout
 \begin_layout Standard
-High Identifier threshold for range filter. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. Note that filter support is available by default but it can be left out from synthesis (to save logic) by setting "sup_range=false". If the particular filter is not supported, writes to this register have no effect and read will return all zeroes.
+Filter Range High threshold. The identifier format is the same as transmitted and received identifier format. BASE Identifier is in bits 28 : 18 and Identifier extension are bits 17 : 0. If Range filter is not supported, writes to this register have no effect and read will return all zeroes.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -30141,7 +30141,7 @@ Address: 0x5C
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Every filter can be configured to accept only selected frame types. Every bit is active in logic 1.
+Filter control register. Configures RX Frame filters to accept only selected frame types. Every bit is active in logic 1.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -30784,52 +30784,52 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-FANB CAN Basic Frame should be accepted by filter A.
+FANB CAN Basic Frame is accepted by filter A.
 \end_layout
 \begin_layout Description
-FANE CAN Extended Frame should be accepted by Filter A.
+FANE CAN Extended Frame is accepted by Filter A.
 \end_layout
 \begin_layout Description
-FAFB CAN FD Basic Frame should be accepted by filter A.
+FAFB CAN FD Basic Frame is accepted by filter A.
 \end_layout
 \begin_layout Description
-FAFE CAN FD Extended Frame should be accepted by filter A.
+FAFE CAN FD Extended Frame is accepted by filter A.
 \end_layout
 \begin_layout Description
-FBNB CAN Basic Frame should be accepted by filter B.
+FBNB CAN Basic Frame is accepted by filter B.
 \end_layout
 \begin_layout Description
-FBNE CAN Extended Frame should be accepted by Filter B.
+FBNE CAN Extended Frame is accepted by Filter B.
 \end_layout
 \begin_layout Description
-FBFB CAN FD Basic Frame should be accepted by filter B.
+FBFB CAN FD Basic Frame is accepted by filter B.
 \end_layout
 \begin_layout Description
-FBFE CAN FD Extended Frame should be accepted by filter B.
+FBFE CAN FD Extended Frame is accepted by filter B.
 \end_layout
 \begin_layout Description
-FCNB CAN Basic Frame should be accepted by filter C.
+FCNB CAN Basic Frame is accepted by filter C.
 \end_layout
 \begin_layout Description
-FCNE CAN Extended Frame should be accepted by Filter C.
+FCNE CAN Extended Frame is accepted by Filter C.
 \end_layout
 \begin_layout Description
-FCFB CAN FD Basic Frame should be accepted by filter C.
+FCFB CAN FD Basic Frame is accepted by filter C.
 \end_layout
 \begin_layout Description
-FCFE CAN FD Extended Frame should be accepted by filter C.
+FCFE CAN FD Extended Frame is accepted by filter C.
 \end_layout
 \begin_layout Description
-FRNB CAN Basic Frame should be accepted by Range filter.
+FRNB CAN Basic Frame is accepted by Range filter.
 \end_layout
 \begin_layout Description
-FRNE CAN Extended Frame should be accepted by Range filter.
+FRNE CAN Extended Frame is accepted by Range filter.
 \end_layout
 \begin_layout Description
-FRFB CAN FD Basic Frame should be accepted by Range filter.
+FRFB CAN FD Basic Frame is accepted by Range filter.
 \end_layout
 \begin_layout Description
-FRFE CAN FD Extended Frame should be accepted by Range filter.
+FRFE CAN FD Extended Frame is accepted by Range filter.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -30855,7 +30855,7 @@ Address: 0x5E
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-This register provides information if the Core is synthesized with fillter support.
+Filter Status indicates in RX Frame filters are available.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -31498,16 +31498,16 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-SFA Logic 1 when the Core was synthesized with "sup_filtA = true" Otherwise logic 0.
+SFA Logic 1 when Filter A is available. Otherwise logic 0.
 \end_layout
 \begin_layout Description
-SFB Logic 1 when the Core was synthesized with "sup_filtB = true" Otherwise logic 0.
+SFB Logic 1 when Filter B is available. Otherwise logic 0.
 \end_layout
 \begin_layout Description
-SFC Logic 1 when the Core was synthesized with "sup_filtC = true" Otherwise is logic 0.
+SFC Logic 1 when Filter C is available. Otherwise logic 0.
 \end_layout
 \begin_layout Description
-SFR Logic 1 when the Core was synthesized with "sup_range = true" Otherwise logic 0.
+SFR Logic 1 when Range Filter is available. Otherwise logic 0.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -31533,7 +31533,7 @@ Address: 0x60
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Information register about FIFO memory of RX Buffer.
+RX Buffer FIFO memory information register.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -32816,10 +32816,10 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-RX_BUFF_SIZE Size of th Receive buffer. This parameter is configurable before synthesis.
+RX_BUFF_SIZE Size of RX Buffer in 32-bit words.
 \end_layout
 \begin_layout Description
-RX_MEM_FREE Number of free 32 bit words in the RX Buffer.
+RX_MEM_FREE Number of free 32 bit words in RX Buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -32845,7 +32845,7 @@ Address: 0x64
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol control FSM).
+Pointers in RX Buffer FIFO.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -34128,10 +34128,10 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RX_WPP Write pointer position in Receive buffer. During store of received frame write pointer is updated.
+RX_WPP Write pointer position in RX Buffer. Upon store of received frame write pointer is updated.
 \end_layout
 \begin_layout Description
-RX_RPP Read pointer position in Receive buffer. During read of received frame read pointer is updated.
+RX_RPP Read pointer position in RX Buffer. Upon read of received frame read pointer is updated.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -34157,7 +34157,7 @@ Address: 0x68
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Information register one about FIFO Receive buffer.
+Status register of RX Buffer FIFO.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -34800,13 +34800,13 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RXE Receive Buffer is empty. There is no CAN Frame stored in it.
+RXE RX Buffer is empty. There is no CAN Frame stored in it.
 \end_layout
 \begin_layout Description
-RXF Receive Buffer is full.
+RXF RX Buffer is full.
 \end_layout
 \begin_layout Description
-RXFRC Receive Buffer frame count. Number of CAN Frames stored in the RX Buffer.
+RXFRC RX Buffer frame count. Number of CAN Frames stored in RX Buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -34832,7 +34832,7 @@ Address: 0x6A
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Settings register for FIFO RX Buffer.
+Settings of RX Buffer FIFO.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -35155,9 +35155,9 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RTSOP Receive buffer Timestamp option.\begin_inset Newline newline\end_inset
-		0b0  - RTS_END - Timestamp in on received frame in RX FIFO is captured in the end of the CAN frame (in last bit of EOF field).\begin_inset Newline newline\end_inset
-		0b1  - RTS_BEG - Timestamp in on received frame in RX FIFO is captured in the begining of the CAN frame (in SOF field).
+RTSOP Receive buffer Timestamp option. This register should be modified only when SETTINGS[ENA]=0.\begin_inset Newline newline\end_inset
+		0b0  - RTS_END - Timestamp of received frame in RX FIFO is captured in last bit of EOF field.\begin_inset Newline newline\end_inset
+		0b1  - RTS_BEG - Timestamp of received frame in RX FIFO is captured in SOF field.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -35183,7 +35183,7 @@ Address: 0x6C
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Read data word from RX Buffer.
+Read data from RX Buffer.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -36466,7 +36466,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RX_DATA The recieve buffer data at read pointer position in FIFO. CAN Frame layout in RX buffer is described in Figure 7. By reading data from this register read_pointer is automatically increased, as long as there is next data word stored in the buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. In detail bits of each word have following meaning. If any access is executed (8 bit, 16 bit or 32 bit), the read_pointer automatically increases. It is recomended to use 32 bit acccess on this register.
+RX_DATA RX Buffer data at read pointer position in FIFO. By reading from this register Read Pointer is automatically increased, as long as there is next data word stored in RX Buffer. Next Read from this register returns next word of CAN frame. First stored word in the buffer is FRAME_FORM, next TIMESTAMP_U etc. If any access is executed (8 bit, 16 bit or 32 bit), Read Pointer automatically increases.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -37177,7 +37177,7 @@ Address: 0x74
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Command register for TXT Buffers. Command is activated by setting TXC(E,R,A) bit to logic 1. Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion and 0 does not need to be written. Reffer to description of TXT Buffer circuit for TXT buffer State machine.   If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied, only those which have effect in immediate state of the buffer are applied on a buffer.
+Command register for TXT Buffers. Command is activated by writing logic 1 to TXC(E,R,A) bit. TXT Buffer that receives the command is selected by setting bit TXBI(1..4) to logic 1. Command and index must be set by single access. Register is automatically erased upon the command completion. Reffer to description of TXT Buffer and TXT Buffer State machine. If TXCE and TXCR are applied simultaneously, only TXCE command is applied. If multiple commands are applied at once, only those which have effect in immediate state of TXT Buffer are applied on the buffer.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -37864,7 +37864,7 @@ Address: 0x78
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals that buffer is selected earlier for transmission. If two buffers have equal priorities, the one with lower index is selected.
+Priority of TXT Buffers in TX Arbitrator. Always highest priority TXT Buffer is selected for transmission. If two TXT Buffers have equal priorities, TXT Buffer with lower index is selected.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -38542,7 +38542,7 @@ Address: 0x7C
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Last error frame capture.
+Error code Capture register. Determines position within CAN frame where last error was detected.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -38865,7 +38865,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-ERR_POS Position of the last error.\begin_inset Newline newline\end_inset
+ERR_POS Position of last error.\begin_inset Newline newline\end_inset
 		0b00000  - ERC_POS_SOF - Error in Start of Frame\begin_inset Newline newline\end_inset
 		0b00001  - ERC_POS_ARB - Error in Arbitration Filed\begin_inset Newline newline\end_inset
 		0b00010  - ERC_POS_CTRL - Error in Control field\begin_inset Newline newline\end_inset
@@ -38878,7 +38878,7 @@ ERR_POS Position of the last error.\begin_inset Newline newline\end_inset
 		0b11111  - ERC_POS_OTHER - Other position of error
 \end_layout
 \begin_layout Description
-ERR_TYPE Type of the last error\begin_inset Newline newline\end_inset
+ERR_TYPE Type of last error.\begin_inset Newline newline\end_inset
 		0b000  - ERC_BIT_ERR - Bit Error\begin_inset Newline newline\end_inset
 		0b001  - ERC_CRC_ERR - CRC Error\begin_inset Newline newline\end_inset
 		0b010  - ERC_FRM_ERR - Form Error\begin_inset Newline newline\end_inset
@@ -38909,7 +38909,7 @@ Address: 0x7E
 Size: 1 byte
 \end_layout
 \begin_layout Standard
-Arbitration lost capture register. Determines bit position of last arbitration lost.
+Arbitration Lost Capture register. Determines bit position of last arbitration loss. 
 \end_layout
 \begin_layout Standard
 \noindent
@@ -39267,7 +39267,7 @@ Address: 0x80
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-
+Transceiver Delay register. When transmitting CAN FD Frame with Bit-rate shift, transceiver delay is measured. After the measurement (after EDL bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -39910,7 +39910,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TRV_DELAY_VALUE When sending CAN FD Frame with bit rate shift, transceiver delay is measured. After the measurement (after EDL bit), it can be read out from this register. The value in this register is valid since first transmission of CAN FD frame with bit rate shift. After each next measurement the value is updated. This register can be used for transceiver TXD to RXD delay verifcation.
+TRV_DELAY_VALUE Measured Transceiver Delay in multiple of Minimal Time Quanta.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -39936,7 +39936,7 @@ Address: 0x82
 Size: 2 bytes
 \end_layout
 \begin_layout Standard
-Configuration of Secondary Sampling Point which is used by Transmitter in Data Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
+Secondary Sampling Point configuration register. Used by Transmitter in Data Bit-Rate for calculation of Secondary Sampling Point. This register should be modified only when SETTINGS[ENA]=0.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -40611,7 +40611,7 @@ Address: 0x84
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Counter for received frames to enable bus traffic measurement
+Bus traffic RX counter.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -41894,7 +41894,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-RX_COUNTER_VAL Counter for received frames to enable bus traffic measurement
+RX_COUNTER_VAL Number of received frames by CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -41920,7 +41920,7 @@ Address: 0x88
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-Counter for transmitted frames to enable bus traffic measurement.
+Bus traffic TX counter.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -43203,7 +43203,7 @@ cellcolor{cyan}
 
 \end_layout
 \begin_layout Description
-TX_COUNTER_VAL Counter for transcieved frames to enable bus traffic measurement.
+TX_COUNTER_VAL Number of transmitted frames by CTU CAN FD.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -48492,7 +48492,7 @@ TIMESTAMP_HIGH Bits 63:32 of timestamp input.
 TXT Buffer 1
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT Buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.\end_layout
+Access to this memory region is mapped to TXT Buffer 1.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB1_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB1_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB1_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -49262,7 +49262,7 @@ Reserved\end_layout
 TXT Buffer 3
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT Buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.\end_layout
+Access to this memory region is mapped to TXT Buffer 3.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB3_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB3_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB2_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center
@@ -49647,7 +49647,7 @@ Reserved\end_layout
 TXT Buffer 4
 \end_layout
 \begin_layout Standard
-Access to this memory region is mapped to TXT Buffer 4.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB4_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB4_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB4_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access.\end_layout
+Access to this memory region is mapped to TXT Buffer 4.  CAN FD frame for transmittion can be inserted to this buffer. The frame layout corresponds to the layout described in Chapter "CAN FD frame format". First adress in this region (TXTB4_DATA_1) corresponds to FRAME_FORMAT_W, second address (TXTB4_DATA_2) corresponds to IDENTIFIER_W etc. The last address (TXTB4_DATA_20) corresponds to DATA_61_64_W. The adresses in between correspond linearly. This memory region is write only and read access will return all zeroes. This region supports only 32 bit access. This region is write only.\end_layout
 \begin_layout Standard
 \noindent
 \align center

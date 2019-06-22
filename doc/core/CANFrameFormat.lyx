@@ -107,7 +107,7 @@ label{CAN FD frame format
 \end_inset
 \end_layout
 \begin_layout Standard
-CAN Frame format describtion in as it is stored in TXT Buffers and RX Buffer.
+CAN Frame format describtion as it is stored in TXT Buffers and RX Buffer.
 \end_layout
 \begin_layout Standard
 \begin_inset Newpage newpage
@@ -2019,40 +2019,40 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-DLC Data length code as defined in CAN FD Specification.
+DLC Data Length Code as defined in CAN FD Specification.
 \end_layout
 \begin_layout Description
-RTR Remote transmission request flag. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
+RTR Remote Transmission Request flag. Has meaning only for CAN frames. CAN FD does not have RTR frames.\begin_inset Newline newline\end_inset
 		0b0  - NO_RTR_FRAME - CAN frame is not RTR frame.\begin_inset Newline newline\end_inset
 		0b1  - RTR_FRAME - CAN frame is RTR frame.
 \end_layout
 \begin_layout Description
-IDE Extended Identifier type. Distinguishes between Base and Extended Identifiers.\begin_inset Newline newline\end_inset
+IDE Extended Identifier Type. Distinguishes between Base and Extended Identifiers.\begin_inset Newline newline\end_inset
 		0b0  - BASE - Frame Identifier is Basic (11 bits)\begin_inset Newline newline\end_inset
 		0b1  - EXTENDED - Frame Identifier is Extended (11 + 18 bits)
 \end_layout
 \begin_layout Description
-FDF Frame type. Distinguishes between CAN and CAN FD Frames.\begin_inset Newline newline\end_inset
+FDF Flexible Data-rate Format. Distinguishes between CAN 2.0 and CAN FD Frames.\begin_inset Newline newline\end_inset
 		0b0  - NORMAL_CAN - Frame is CAN frame.\begin_inset Newline newline\end_inset
 		0b1  - FD_CAN - Frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-TBF Time base format. Should be always set to 1.\begin_inset Newline newline\end_inset
+TBF Time Base Format. Shall be always set to 1.\begin_inset Newline newline\end_inset
 		0b0  - NOT_TIME_BASED - TIMESTAMP_L and TIMESTAMP_H does not contain valid timestamp for transmission or reception.\begin_inset Newline newline\end_inset
 		0b1  - TIME_BASED - TIMESTAMP_L and TIMESTAMP_H contain valid timestamp for transmission or reception.
 \end_layout
 \begin_layout Description
-BRS Bit rate shift. In case of CAN FD frames indicates whether Bit-rate should be shifted during Data phase. This bit has no meaning for CAN Frames.\begin_inset Newline newline\end_inset
+BRS Bit Rate Shift. In case of CAN FD frames indicates whether Bit-rate is shifted during for Data field of CAN FD frame. This bit has no meaning for CAN Frames.\begin_inset Newline newline\end_inset
 		0b0  - BR_NO_SHIFT - Bit rate should not be shifted if frame is CAN FD frame.\begin_inset Newline newline\end_inset
 		0b1  - BR_SHIFT - Bit rate should be shifted if frame is CAN FD frame.
 \end_layout
 \begin_layout Description
-ESI_RSV Error state indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames.\begin_inset Newline newline\end_inset
+ESI_RSV Error State Indicator bit for received CAN FD frames. Bit has no meaning for CAN frames nor for transmitted CAN FD frames (in TXT Buffer).\begin_inset Newline newline\end_inset
 		0b0  - ESI_ERR_ACTIVE - Transmitted of received CAN FD frame is error active.\begin_inset Newline newline\end_inset
 		0b1  - ESI_ERR_PASIVE - Transmitted of received CAN FD frame is error passive.
 \end_layout
 \begin_layout Description
-RWCNT Size of the CAN frame in RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT Buffer this field has no meaning.
+RWCNT Size of CAN frame in RX Buffer without FRAME_FORMAT WORD.(E.g RTR frame RWCNT=3, 64 Byte FD frame RWCNT=19). In TXT Buffer this field has no meaning.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip
@@ -2078,7 +2078,7 @@ Address: 0x4
 Size: 4 bytes
 \end_layout
 \begin_layout Standard
-CAN Identifier
+CAN Identifier.
 \end_layout
 \begin_layout Standard
 \noindent
@@ -3361,10 +3361,10 @@ X\end_layout
 
 \end_layout
 \begin_layout Description
-IDENTIFIER_EXT Extended Identifier of CAN frame. Has meaning only if ID_TYPE of FRAME_FORMAT_W is EXTENDED.
+IDENTIFIER_EXT Extended Identifier of CAN frame. Has meaning only if IDE of FRAME_FORMAT_W is EXTENDED.
 \end_layout
 \begin_layout Description
-IDENTIFIER_BASE Base Identifier of CAN frame
+IDENTIFIER_BASE Base Identifier of CAN frame.
 \end_layout
 \begin_layout Standard
 \begin_inset VSpace bigskip

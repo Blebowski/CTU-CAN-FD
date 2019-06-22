@@ -466,8 +466,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- DEVICE_ID register
   --
-  -- Register contains the identifer of CTU CAN FD IP Core. It can be used to de
-  -- termine if CTU CAN FD IP Core is mapped correctly on its base address.
+  -- Identifer of CTU CAN FD IP Core. Can be used to check if CTU CAN FD IP Core
+  --  is accessible correctly on its base address.
   ------------------------------------------------------------------------------
   constant DEVICE_ID_L            : natural := 0;
   constant DEVICE_ID_H           : natural := 15;
@@ -481,7 +481,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- VERSION register
   --
-  -- Version register with IP Core version.
+  -- Version register. Returns version of CTU CAN FD.
   ------------------------------------------------------------------------------
   constant VER_MINOR_L           : natural := 16;
   constant VER_MINOR_H           : natural := 23;
@@ -493,7 +493,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- MODE register
   --
-  -- MODE register controls operating modes.
+  -- Controls operating CTU CAN FD operating modes.
   ------------------------------------------------------------------------------
   constant RST_IND                : natural := 0;
   constant LOM_IND                : natural := 1;
@@ -535,8 +535,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- SETTINGS register
   --
-  -- This register enables the whole CAN FD Core, configures FD Type, Internal l
-  -- oopback and retransmission options.
+  -- Settings of CTU CAN FD.
   ------------------------------------------------------------------------------
   constant RTRLE_IND             : natural := 16;
   constant RTRTH_L               : natural := 17;
@@ -571,8 +570,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- STATUS register
   --
-  -- Register signals various states of CTU CAN FD IP Core. Logic 1 signals acti
-  -- ve status/flag.
+  -- Status register contains state of CTU CAN FD. Logic 1 signals active status
+  -- /flag.
   ------------------------------------------------------------------------------
   constant RXNE_IND               : natural := 0;
   constant DOR_IND                : natural := 1;
@@ -596,8 +595,9 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- COMMAND register
   --
-  -- Writing logic 1 into each bit gives different command to the IP Core. After
-  --  writing logic 1, logic 0 does not have to be written.
+  -- Issuing commands to CTU CAN FD. Writing logic 1 into each bit gives a comma
+  -- nd to CTU CAN FD. After writing logic 1, logic 0 does not need to be writte
+  -- n.
   ------------------------------------------------------------------------------
   constant RRB_IND                : natural := 2;
   constant CDO_IND                : natural := 3;
@@ -615,9 +615,9 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_STAT register
   --
-  -- Reading this register returns logic 1 for each interrupt which was captured
-  --  (interrupt vector). Writing logic 1 to any bit clears according bit of cap
-  -- tured interrupt. Writing logic 0 has no effect.
+  -- Interrupt Status register. Reading this register returns logic 1 for each i
+  -- nterrupt which was captured (interrupt vector). Writing logic 1 to any bit 
+  -- clears according bit in interrupt vector. Writing logic 0 has no effect.
   ------------------------------------------------------------------------------
   constant RXI_IND                : natural := 0;
   constant TXI_IND                : natural := 1;
@@ -649,11 +649,11 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_ENA_SET register
   --
-  -- Writing logic 1 to a bit enables according interrupt. Writing logic 0 has n
-  -- o effect. Reading this register returns logic 1 for each enabled interrupt.
-  --  If interrupt is captured in INT_STAT, enabled interrupt will cause "int" o
-  -- utput to be asserted. Interrupts are level-based. To capture interrupt to I
-  -- NT_STAT register, interrupt must be unmasked.
+  -- Interrupt Enable Set. Writing logic 1 to a bit enables according interrupt.
+  --  Writing logic 0 has no effect. Reading this register returns logic 1 for e
+  -- ach enabled interrupt. If interrupt is captured in INT_STAT, enabled interr
+  -- upt will cause "int" output to be asserted. Interrupts are level-based. To 
+  -- capture interrupt to INT_STAT register, interrupt must be unmasked.
   ------------------------------------------------------------------------------
   constant INT_ENA_SET_L          : natural := 0;
   constant INT_ENA_SET_H         : natural := 11;
@@ -664,9 +664,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_ENA_CLR register
   --
-  -- Writing logic 1 disables according interrupt. Writing logic 0 has no effect
-  -- . Reading this register has no effect. Disabled interrupt wil not affect "i
-  -- nt" output of CAN Core event if it is captured in INT_STAT register.
+  -- Interrupt Enable Clear register. Writing logic 1 disables according interru
+  -- pt. Writing logic 0 has no effect. Reading this register has no effect. Dis
+  -- abled interrupt wil not affect "int" output of CAN Core event if it is capt
+  -- ured in Interrupt vector and can be read out from INT_STAT register.
   ------------------------------------------------------------------------------
   constant INT_ENA_CLR_L          : natural := 0;
   constant INT_ENA_CLR_H         : natural := 11;
@@ -677,11 +678,11 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_MASK_SET register
   --
-  -- Writing logic 1 masks according interrupt. Writing logic 0 has no effect. R
-  -- eading this register returns logic 1 for each masked interrupt. If particul
-  -- ar interrupt is masked, it won't be captured in INT_STAT register when inte
-  -- rnal conditions for this interrupt are met (e.g RX Buffer is not empty for 
-  -- RXNEI).
+  -- Interrupt Mask set. Writing logic 1 masks according interrupt. Writing logi
+  -- c 0 has no effect. Reading this register returns logic 1 for each masked in
+  -- terrupt. If particular interrupt is masked, it won't be captured in INT_STA
+  -- T register when internal conditions for this interrupt are met (e.g RX Buff
+  -- er is not empty for RXNEI).
   ------------------------------------------------------------------------------
   constant INT_MASK_SET_L         : natural := 0;
   constant INT_MASK_SET_H        : natural := 11;
@@ -692,10 +693,11 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- INT_MASK_CLR register
   --
-  -- Writing logic 1 un-masks according interrupt. Writing logic 0 has no effect
-  -- . Reading this register has no effect. If particular interrupt is un-masked
-  -- , it will be captured in INT_STAT register when internal conditions for thi
-  -- s interrupt are met (e.g RX Buffer is not empty for RXNEI).
+  -- Interrupt Mask clear register. Writing logic 1 un-masks according interrupt
+  -- . Writing logic 0 has no effect. Reading this register has no effect. If pa
+  -- rticular interrupt is un-masked, it will be captured in INT_STAT register w
+  -- hen internal conditions for this interrupt are met (e.g RX Buffer is not em
+  -- pty for RXNEI).
   ------------------------------------------------------------------------------
   constant INT_MASK_CLR_L         : natural := 0;
   constant INT_MASK_CLR_H        : natural := 11;
@@ -706,7 +708,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR register
   --
-  -- Bit timing register for nominal bit-rate. This register should be modified 
+  -- Bit Timing Register for Nominal Bit-Rate. This register should be modified 
   -- only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_L                 : natural := 0;
@@ -730,7 +732,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- BTR_FD register
   --
-  -- Bit timing register for data bit-rate. This register should be modified onl
+  -- Bit Timing Register for Data Bit-Rate. This register should be modified onl
   -- y when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant PROP_FD_L              : natural := 0;
@@ -754,7 +756,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- EWL register
   --
-  -- Error warning limit register. This register should be modified only when SE
+  -- Error Warning Limit register. This register should be modified only when SE
   -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant EW_LIMIT_L             : natural := 0;
@@ -766,7 +768,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ERP register
   --
-  -- Error passive limit register. This register should be modified only when SE
+  -- Error Passive Limit register. This register should be modified only when SE
   -- TTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant ERP_LIMIT_L            : natural := 8;
@@ -778,9 +780,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FAULT_STATE register
   --
-  -- Fault confinement state of the node. This state can be manipulated by write
-  -- s to CTR_PRES register. When these counters are set Fault confinement state
-  --  changes automatically.
+  -- Fault Confinement state of the CTU CAN FD.
   ------------------------------------------------------------------------------
   constant ERA_IND               : natural := 16;
   constant ERP_IND               : natural := 17;
@@ -794,7 +794,6 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RXC register
   --
-  -- Counter for received frames.
   ------------------------------------------------------------------------------
   constant RXC_VAL_L              : natural := 0;
   constant RXC_VAL_H             : natural := 15;
@@ -805,7 +804,6 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TXC register
   --
-  -- Counter for transcieved frames.
   ------------------------------------------------------------------------------
   constant TXC_VAL_L             : natural := 16;
   constant TXC_VAL_H             : natural := 31;
@@ -836,7 +834,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- CTR_PRES register
   --
-  -- Register for manipulation with error counters.
+  -- Counter Preset Register. Enables manipulation with error counters.
   ------------------------------------------------------------------------------
   constant CTPV_L                 : natural := 0;
   constant CTPV_H                 : natural := 8;
@@ -855,12 +853,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_A_MASK register
   --
-  -- Bit mask for acceptance filter A. The identifier format is the same as tran
-  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtA=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter A Bit mask. The identifier format is the same as transmitted and rec
+  -- eived Identifier. BASE Identifier is 11 LSB and Identifier extension are bi
+  -- ts 28-12. If filter A is not present, writes to this register have no effec
+  -- t and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_A_VAL_L       : natural := 0;
   constant BIT_MASK_A_VAL_H      : natural := 28;
@@ -872,13 +868,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_A_VAL register
   --
-  -- Bit value for acceptance filters. Filters A, B, C are available. The identi
-  -- fier format is the same as transmitted and received identifier format. BASE
-  --  Identifier is 11 LSB and Identifier extension are bits 28-12! Note that fi
-  -- lter support is available by default but it can be left out from synthesis 
-  -- (to save logic) by setting "sup_filtX=false";. If the particular filter is 
-  -- not supported, writes to this register have no effect and read will return 
-  -- all zeroes.
+  -- Filter A Bit value. The identifier format is the same as transmitted and re
+  -- ceived Identifier. BASE Identifier is 11 LSB and Identifier extension are b
+  -- its 28-12. If filter A is not present, writes to this register have no effe
+  -- ct and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_A_VAL_L        : natural := 0;
   constant BIT_VAL_A_VAL_H       : natural := 28;
@@ -890,12 +883,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_B_MASK register
   --
-  -- Bit mask for acceptance filter B. The identifier format is the same as tran
-  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtB=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter B Bit mask. The identifier format is the same as transmitted and rec
+  -- eived Identifier. BASE Identifier is 11 LSB and Identifier extension are bi
+  -- ts 28-12. If filter B is not present, writes to this register have no effec
+  -- t and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_B_VAL_L       : natural := 0;
   constant BIT_MASK_B_VAL_H      : natural := 28;
@@ -907,12 +898,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_B_VAL register
   --
-  -- Bit value for acceptance filter B. The identifier format is the same as tra
-  -- nsmitted and received identifier format. BASE Identifier is in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtB=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter B Bit value. The identifier format is the same as transmitted and re
+  -- ceived Identifier. BASE Identifier is 11 LSB and Identifier extension are b
+  -- its 28-12. If filter B is not present, writes to this register have no effe
+  -- ct and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_B_VAL_L        : natural := 0;
   constant BIT_VAL_B_VAL_H       : natural := 28;
@@ -924,12 +913,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_C_MASK register
   --
-  -- Bit mask for acceptance filter C. The identifier format is the same as tran
-  -- smitted and received identifier format. BASE Identifier is  in bits 28 : 18
-  --  and Identifier extension are bits 17 : 0. Note that filter support is avai
-  -- lable by default but it can be left out from synthesis (to save logic) by s
-  -- etting "sup_filtC=false". If the particular filter is not supported, writes
-  --  to this register have no effect and read will return all zeroes.
+  -- Filter C Bit mask. The identifier format is the same as transmitted and rec
+  -- eived Identifier. BASE Identifier is 11 LSB and Identifier extension are bi
+  -- ts 28-12. If filter C is not present, writes to this register have no effec
+  -- t and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_MASK_C_VAL_L       : natural := 0;
   constant BIT_MASK_C_VAL_H      : natural := 28;
@@ -941,12 +928,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_C_VAL register
   --
-  -- Bit value for acceptance filter C. The identifier format is the same as tra
-  -- nsmitted and received identifier format. BASE Identifier is  in bits 28 : 1
-  -- 8 and Identifier extension are bits 17 : 0. Note that filter support is ava
-  -- ilable by default but it can be left out from synthesis (to save logic) by 
-  -- setting "sup_filtC=false". If the particular filter is not supported, write
-  -- s to this register have no effect and read will return all zeroes.
+  -- Filter C Bit value. The identifier format is the same as transmitted and re
+  -- ceived Identifier. BASE Identifier is 11 LSB and Identifier extension are b
+  -- its 28-12. If filter C is not present, writes to this register have no effe
+  -- ct and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_VAL_C_VAL_L        : natural := 0;
   constant BIT_VAL_C_VAL_H       : natural := 28;
@@ -958,12 +943,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_RAN_LOW register
   --
-  -- Low Identifier threshold for range filter. The identifier format is the sam
-  -- e as transmitted and received identifier format. BASE Identifier is in bits
-  --  28 : 18 and Identifier extension are bits 17 : 0. Note that filter support
-  --  is available by default but it can be left out from synthesis (to save log
-  -- ic) by setting "sup_range=false". If the particular filter is not supported
-  -- , writes to this register have no effect and read will return all zeroes.
+  -- Filter Range Low threshold. The identifier format is the same as transmitte
+  -- d and received identifier format. BASE Identifier is in bits 28 : 18 and Id
+  -- entifier extension are bits 17 : 0. If Range filter is not supported, write
+  -- s to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_RAN_LOW_VAL_L      : natural := 0;
   constant BIT_RAN_LOW_VAL_H     : natural := 28;
@@ -975,12 +958,10 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_RAN_HIGH register
   --
-  -- High Identifier threshold for range filter. The identifier format is the sa
-  -- me as transmitted and received identifier format. BASE Identifier is in bit
-  -- s 28 : 18 and Identifier extension are bits 17 : 0. Note that filter suppor
-  -- t is available by default but it can be left out from synthesis (to save lo
-  -- gic) by setting "sup_range=false". If the particular filter is not supporte
-  -- d, writes to this register have no effect and read will return all zeroes.
+  -- Filter Range High threshold. The identifier format is the same as transmitt
+  -- ed and received identifier format. BASE Identifier is in bits 28 : 18 and I
+  -- dentifier extension are bits 17 : 0. If Range filter is not supported, writ
+  -- es to this register have no effect and read will return all zeroes.
   ------------------------------------------------------------------------------
   constant BIT_RAN_HIGH_VAL_L     : natural := 0;
   constant BIT_RAN_HIGH_VAL_H    : natural := 28;
@@ -992,8 +973,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_CONTROL register
   --
-  -- Every filter can be configured to accept only selected frame types. Every b
-  -- it is active in logic 1.
+  -- Filter control register. Configures RX Frame filters to accept only selecte
+  -- d frame types. Every bit is active in logic 1.
   ------------------------------------------------------------------------------
   constant FANB_IND               : natural := 0;
   constant FANE_IND               : natural := 1;
@@ -1033,8 +1014,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- FILTER_STATUS register
   --
-  -- This register provides information if the Core is synthesized with fillter 
-  -- support.
+  -- Filter Status indicates in RX Frame filters are available.
   ------------------------------------------------------------------------------
   constant SFA_IND               : natural := 16;
   constant SFB_IND               : natural := 17;
@@ -1046,7 +1026,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_MEM_INFO register
   --
-  -- Information register about FIFO memory of RX Buffer.
+  -- RX Buffer FIFO memory information register.
   ------------------------------------------------------------------------------
   constant RX_BUFF_SIZE_L         : natural := 0;
   constant RX_BUFF_SIZE_H        : natural := 12;
@@ -1058,8 +1038,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_POINTERS register
   --
-  -- Pointers in the RX FIFO buffer for read (by SW) and write (by Protocol cont
-  -- rol FSM).
+  -- Pointers in RX Buffer FIFO.
   ------------------------------------------------------------------------------
   constant RX_WPP_L               : natural := 0;
   constant RX_WPP_H              : natural := 11;
@@ -1073,7 +1052,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_STATUS register
   --
-  -- Information register one about FIFO Receive buffer.
+  -- Status register of RX Buffer FIFO.
   ------------------------------------------------------------------------------
   constant RXE_IND                : natural := 0;
   constant RXF_IND                : natural := 1;
@@ -1088,7 +1067,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_SETTINGS register
   --
-  -- Settings register for FIFO RX Buffer.
+  -- Settings of RX Buffer FIFO.
   ------------------------------------------------------------------------------
   constant RTSOP_IND             : natural := 16;
 
@@ -1102,7 +1081,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_DATA register
   --
-  -- Read data word from RX Buffer.
+  -- Read data from RX Buffer.
   ------------------------------------------------------------------------------
   constant RX_DATA_L              : natural := 0;
   constant RX_DATA_H             : natural := 31;
@@ -1142,14 +1121,14 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TX_COMMAND register
   --
-  -- Command register for TXT Buffers. Command is activated by setting TXC(E,R,A
-  -- ) bit to logic 1. Buffer that receives the command is selected by setting b
-  -- it TXBI(1..4) to logic 1. Command and index must be set by single access. R
-  -- egister is automatically erased upon the command completion and 0 does not 
-  -- need to be written. Reffer to description of TXT Buffer circuit for TXT buf
-  -- fer State machine.   If TXCE and TXCR are applied simultaneously, only TXCE
-  --  command is applied. If multiple commands are applied, only those which hav
-  -- e effect in immediate state of the buffer are applied on a buffer.
+  -- Command register for TXT Buffers. Command is activated by writing logic 1 t
+  -- o TXC(E,R,A) bit. TXT Buffer that receives the command is selected by setti
+  -- ng bit TXBI(1..4) to logic 1. Command and index must be set by single acces
+  -- s. Register is automatically erased upon the command completion. Reffer to 
+  -- description of TXT Buffer and TXT Buffer State machine. If TXCE and TXCR ar
+  -- e applied simultaneously, only TXCE command is applied. If multiple command
+  -- s are applied at once, only those which have effect in immediate state of T
+  -- XT Buffer are applied on the buffer.
   ------------------------------------------------------------------------------
   constant TXCE_IND               : natural := 0;
   constant TXCR_IND               : natural := 1;
@@ -1171,9 +1150,9 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TX_PRIORITY register
   --
-  -- Priority of the TXT Buffers in TX Arbitrator. Higher priority value signals
-  --  that buffer is selected earlier for transmission. If two buffers have equa
-  -- l priorities, the one with lower index is selected.
+  -- Priority of TXT Buffers in TX Arbitrator. Always highest priority TXT Buffe
+  -- r is selected for transmission. If two TXT Buffers have equal priorities, T
+  -- XT Buffer with lower index is selected.
   ------------------------------------------------------------------------------
   constant TXT1P_L                : natural := 0;
   constant TXT1P_H                : natural := 2;
@@ -1193,7 +1172,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ERR_CAPT register
   --
-  -- Last error frame capture.
+  -- Error code Capture register. Determines position within CAN frame where las
+  -- t error was detected.
   ------------------------------------------------------------------------------
   constant ERR_POS_L              : natural := 0;
   constant ERR_POS_H              : natural := 4;
@@ -1226,8 +1206,8 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- ALC register
   --
-  -- Arbitration lost capture register. Determines bit position of last arbitrat
-  -- ion lost.
+  -- Arbitration Lost Capture register. Determines bit position of last arbitrat
+  -- ion loss. 
   ------------------------------------------------------------------------------
   constant ALC_BIT_L             : natural := 16;
   constant ALC_BIT_H             : natural := 20;
@@ -1249,6 +1229,11 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TRV_DELAY register
   --
+  -- Transceiver Delay register. When transmitting CAN FD Frame with Bit-rate sh
+  -- ift, transceiver delay is measured. After the measurement (after EDL bit), 
+  -- it can be read out from this register. The value in this register is valid 
+  -- since first transmission of CAN FD frame with bit rate shift. After each ne
+  -- xt measurement the value is updated.
   ------------------------------------------------------------------------------
   constant TRV_DELAY_VALUE_L      : natural := 0;
   constant TRV_DELAY_VALUE_H     : natural := 15;
@@ -1259,8 +1244,9 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- SSP_CFG register
   --
-  -- Configuration of Secondary Sampling Point which is used by Transmitter in D
-  -- ata Bit-Rate. This register should be modified only when SETTINGS[ENA]=0.
+  -- Secondary Sampling Point configuration register. Used by Transmitter in Dat
+  -- a Bit-Rate for calculation of Secondary Sampling Point. This register shoul
+  -- d be modified only when SETTINGS[ENA]=0.
   ------------------------------------------------------------------------------
   constant SSP_OFFSET_L          : natural := 16;
   constant SSP_OFFSET_H          : natural := 22;
@@ -1279,7 +1265,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- RX_COUNTER register
   --
-  -- Counter for received frames to enable bus traffic measurement
+  -- Bus traffic RX counter.
   ------------------------------------------------------------------------------
   constant RX_COUNTER_VAL_L       : natural := 0;
   constant RX_COUNTER_VAL_H      : natural := 31;
@@ -1291,7 +1277,7 @@ package can_fd_register_map is
   ------------------------------------------------------------------------------
   -- TX_COUNTER register
   --
-  -- Counter for transmitted frames to enable bus traffic measurement.
+  -- Bus traffic TX counter.
   ------------------------------------------------------------------------------
   constant TX_COUNTER_VAL_L       : natural := 0;
   constant TX_COUNTER_VAL_H      : natural := 31;
