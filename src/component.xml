@@ -538,7 +538,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/bit_error_detector.vhd</spirit:name>
+        <spirit:name>bus_sampling/bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
@@ -610,7 +610,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/error_counters.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement/err_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
@@ -646,7 +646,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/error_detector.vhd</spirit:name>
+        <spirit:name>can_core/protocol_control/err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
       </spirit:file>
@@ -1029,7 +1029,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>bus_sampling/bit_error_detector.vhd</spirit:name>
+        <spirit:name>bus_sampling/bit_err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -1113,7 +1113,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/fault_confinement/error_counters.vhd</spirit:name>
+        <spirit:name>can_core/fault_confinement/err_counters.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
@@ -1155,7 +1155,7 @@
       </spirit:file>
 
       <spirit:file>
-        <spirit:name>can_core/protocol_control/error_detector.vhd</spirit:name>
+        <spirit:name>can_core/protocol_control/err_detector.vhd</spirit:name>
         <spirit:fileType>vhdlSource</spirit:fileType>
         <spirit:userFileType>USED_IN_ipstatic</spirit:userFileType>
         <spirit:logicalName>xil_defaultlib</spirit:logicalName>
