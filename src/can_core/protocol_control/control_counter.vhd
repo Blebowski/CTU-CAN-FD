@@ -146,7 +146,8 @@ architecture rtl of control_counter is
     signal compl_ctr_d  : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
     signal compl_ctr_q  : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0);
     signal compl_ctr_div_32 : unsigned(G_CTRL_CTR_WIDTH - 6 downto 0);
-    signal compl_ctr_div_32_plus_5 : integer range 0 to 21;
+    signal compl_ctr_div_32_plus_5 : integer range 0 to 20;
+    signal compl_ctr_div_32_plus_5_sat : integer range 0 to 19;
     signal compl_ctr_ce : std_logic;
     
     constant C_CTRL_CTR_ZEROES : unsigned(G_CTRL_CTR_WIDTH - 1 downto 0) :=
@@ -229,6 +230,11 @@ begin
     -- Complementary counter divided by 32, + 5
     compl_ctr_div_32_plus_5 <= to_integer(compl_ctr_div_32) + 5;
     
+    -- Saturate to 19
+    compl_ctr_div_32_plus_5_sat <=
+        compl_ctr_div_32_plus_5 when (compl_ctr_div_32_plus_5 < 19) else
+        19;
+    
     ---------------------------------------------------------------------------
     -- Index of word in TXT Buffer memory. Always Index one word further than
     -- we are transmitting to allow loading data on TXT Buffer RAM output:
@@ -237,7 +243,8 @@ begin
     --  ...
     --  Data Bytes 61 - 64 () = Address word 19
     ---------------------------------------------------------------------------
-    ctrl_ctr_mem_index <= std_logic_vector(to_unsigned(compl_ctr_div_32_plus_5, 5));
+    ctrl_ctr_mem_index <= 
+        std_logic_vector(to_unsigned(compl_ctr_div_32_plus_5_sat, 5));
 
 
     ---------------------------------------------------------------------------
