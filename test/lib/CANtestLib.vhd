@@ -192,6 +192,10 @@ package CANtestLib is
         rx_buffer_not_empty_int :   boolean;
         tx_buffer_hw_cmd        :   boolean;
     end record;
+    
+    constant SW_interrupts_rst_val : SW_interrupts := (
+        false, false, false, false, false, false, false, false,
+        false, false, false, false);
 
     -- Fault confinement states
     type SW_fault_state is (
@@ -880,6 +884,30 @@ package CANtestLib is
         signal    clk_sys       : in    std_logic;
         signal    seg1          : in    natural;
         signal    seg2          : in    natural
+    );
+    
+    ---------------------------------------------------------------------------
+    -- Force bus level to given value. Applicable in feature tests testbench.
+    --
+    -- Arguments:
+    --  bus_val     Value to be forced
+    --  bl_force    Force bus level signal.
+    --  bl_inject   Force bus level value.
+    ---------------------------------------------------------------------------
+    procedure force_bus_level(
+        constant value           : in    std_logic;
+        signal   bl_force        : out   boolean;
+        signal   bl_inject       : out   std_logic
+    );
+
+    ---------------------------------------------------------------------------
+    -- Release bus level.
+    --
+    -- Arguments:
+    --  bl_force    Bus level force signal
+    ---------------------------------------------------------------------------
+    procedure release_bus_level(
+        signal  bl_force        : out   boolean
     );
 
 
@@ -2472,6 +2500,26 @@ package body CANtestLib is
             end case;
         end if;
     end function;
+   
+    
+    procedure force_bus_level(
+        constant value           : in    std_logic;
+        signal   bl_force        : out   boolean;
+        signal   bl_inject       : out   std_logic
+    ) is
+    begin
+        bl_inject <= value;
+        bl_force  <= true;
+    end procedure;
+
+    
+    procedure release_bus_level(
+        signal  bl_force        : out    boolean
+    ) is
+    begin
+        bl_force <= false;
+    end procedure;
+
 
 
     procedure aval_write(
