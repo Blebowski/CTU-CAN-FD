@@ -75,6 +75,7 @@ feature:
         forbid_fd:
         interrupt:
         int_rx:
+        int_tx:
         invalid_configs:
         overload:
         retr_limit:
