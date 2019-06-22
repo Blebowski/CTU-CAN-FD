@@ -381,7 +381,7 @@ begin
     --  ((txtb_hw_cmd.unlock = '1' and hw_cbs = '1') ->
     --   (curr_state = s_txt_tx_prog or curr_state = s_txt_ab_prog))
     --  report "TXT Buffer " & integer'image(G_ID) &
-    --  " not READY when LOCK command occurred!" severity error;
+    --  " not TX in progress or Abort in progress" severity error;
     ----------------------------------------------------------------------------
     -- HW Lock command should never occur when there was abort in previous cycle!
     --

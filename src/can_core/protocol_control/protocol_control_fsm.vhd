@@ -1365,7 +1365,6 @@ begin
             ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             rec_abort_d <= '1';
             
-            txtb_hw_cmd_d.unlock <= '1';
             retr_ctr_add_i <= '1';
             crc_clear_match_flag <= '1';
             destuff_enable_clear <= '1';
@@ -1378,10 +1377,13 @@ begin
                 br_shifted_i <= '1';
             end if;
 
-            if (tx_failed = '1') then
-                txtb_hw_cmd_d.failed  <= '1';
-            else
-                txtb_hw_cmd_d.err     <= '1';
+            if (is_transmitter = '1') then
+                txtb_hw_cmd_d.unlock <= '1';
+                if (tx_failed = '1') then
+                    txtb_hw_cmd_d.failed  <= '1';
+                else
+                    txtb_hw_cmd_d.err     <= '1';
+                end if;
             end if;
             
             -- Keep both counters enabled to make sure that Error frame starts
@@ -2479,7 +2481,7 @@ begin
             -- or loopback mode is enabled.
             -- Each command is active only for one clock cycle!
             if ((is_receiver = '1' or drv_int_loopback_ena = '1') and
-                (rx_trigger = '1'))
+                ((rx_trigger = '1') or (err_frm_req = '1')))
             then
                 store_metadata     <= store_metadata_d;
                 store_data         <= store_data_d;
@@ -2507,7 +2509,7 @@ begin
             txtb_hw_cmd_q.arbl    <= '0';
             txtb_hw_cmd_q.failed  <= '0';
         elsif (rising_edge(clk_sys)) then
-            if (rx_trigger = '1') then
+            if (rx_trigger = '1' or err_frm_req = '1') then
                 txtb_hw_cmd_q <= txtb_hw_cmd_d;
             else
                 txtb_hw_cmd_q <= ('0', '0', '0', '0', '0', '0');
