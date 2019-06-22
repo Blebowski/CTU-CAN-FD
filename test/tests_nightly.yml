@@ -74,6 +74,7 @@ feature:
         fault_confinement:
         forbid_fd:
         interrupt:
+        int_rx:
         invalid_configs:
         overload:
         retr_limit:
