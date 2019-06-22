@@ -185,7 +185,8 @@ begin
     -- Hard synchronisation is valid at any time, only if there was no
     -- synchronisation before!
     ---------------------------------------------------------------------------
-    h_sync_edge_valid <= '1' when (h_sync_edge = '1' and sync_flag = '0') else
+    h_sync_edge_valid <= '0' when (no_pos_resync = '1' and is_tseg1 = '1') else
+                         '1' when (h_sync_edge = '1' and sync_flag = '0') else
                          '0';
 
 end architecture rtl;
