@@ -145,11 +145,11 @@ architecture rtl of fault_confinement_fsm is
 begin
     
     -- TX Error counter more than Error Passive Limit
-    tx_err_ctr_mt_erp <= '1' when (unsigned(tx_err_ctr) > unsigned(erp)) else
+    tx_err_ctr_mt_erp <= '1' when (unsigned(tx_err_ctr) >= unsigned(erp)) else
                          '0';
 
     -- RX Error counter more than Error Passive Limit
-    rx_err_ctr_mt_erp <= '1' when (unsigned(rx_err_ctr) > unsigned(erp)) else
+    rx_err_ctr_mt_erp <= '1' when (unsigned(rx_err_ctr) >= unsigned(erp)) else
                          '0';
 
     -- TX Error counter more than 255
@@ -157,11 +157,11 @@ begin
                          '0';
 
     -- TX Error counter more than Error Passive Limit
-    tx_err_ctr_mt_ewl <= '1' when (unsigned(tx_err_ctr) > unsigned(ewl)) else
+    tx_err_ctr_mt_ewl <= '1' when (unsigned(tx_err_ctr) >= unsigned(ewl)) else
                          '0';
 
     -- RX Error counter more than Error Passive Limit
-    rx_err_ctr_mt_ewl <= '1' when (unsigned(rx_err_ctr) > unsigned(ewl)) else
+    rx_err_ctr_mt_ewl <= '1' when (unsigned(rx_err_ctr) >= unsigned(ewl)) else
                          '0';
 
     err_warning_limit <= '1' when (tx_err_ctr_mt_ewl = '1' or
