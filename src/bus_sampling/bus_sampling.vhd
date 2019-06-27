@@ -302,9 +302,10 @@ begin
     ----------------------------------------------------------------------------
     -- Reset for shift registers for secondary sampling point
     ----------------------------------------------------------------------------
-    shift_regs_res_d <= '1' when (res_n = G_RESET_POLARITY) or (ssp_reset = '1')
-                            else
-                        '0';
+    shift_regs_res_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY) or
+                                              (ssp_reset = '1')
+                                         else
+                        (not G_RESET_POLARITY);
 
     ----------------------------------------------------------------------------
     -- Pipeline reset for shift registers to avoid glitches!

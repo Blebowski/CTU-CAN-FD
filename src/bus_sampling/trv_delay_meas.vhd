@@ -284,7 +284,7 @@ begin
     ----------------------------------------------------------------------------
     trv_del_ctr_proc : process(clk_sys, trv_delay_ctr_rst_q)
     begin
-        if (trv_delay_ctr_rst_q = '1') then
+        if (trv_delay_ctr_rst_q = G_RESET_POLARITY) then
             trv_delay_ctr_q <= (OTHERS => '0');
             
         elsif (rising_edge(clk_sys)) then
