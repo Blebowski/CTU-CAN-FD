@@ -77,6 +77,7 @@ struct ctucan_priv {
 	unsigned int txb_tail;
 	u32 txb_prio;
 	unsigned int txb_mask;
+	spinlock_t tx_lock;
 
 	struct napi_struct napi;
 	struct device *dev;
@@ -90,7 +91,7 @@ struct ctucan_priv {
 	struct list_head peers_on_pdev;
 };
 
-#define CTUCAN_FLAG_RX_SCHED		1
+// #define CTUCAN_FLAG_RX_SCHED		1
 #define CTUCAN_FLAG_RX_FFW_BUFFERED	2
 
 static int ctucan_reset(struct net_device *ndev)
@@ -223,10 +224,11 @@ static int ctucan_chip_start(struct net_device *ndev)
 
 	int_msk.u32 = ~int_ena.u32; /* mask all disabled interrupts */
 
-	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+	// clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 
-	ctu_can_fd_int_mask(&priv->p, int_msk, int_enamask_mask);
-	ctu_can_fd_int_ena(&priv->p, int_ena, int_enamask_mask);
+	/* It's after reset, so there is no need to clear anything */
+	ctu_can_fd_int_mask_set(&priv->p, int_msk);
+	ctu_can_fd_int_ena_set(&priv->p, int_ena);
 
 	priv->can.state = CAN_STATE_ERROR_ACTIVE;
 
@@ -287,6 +289,7 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	struct canfd_frame *cf = (struct canfd_frame *)skb->data;
 	u32 txb_id;
 	bool ok;
+	unsigned long flags;
 
 	if (can_dropped_invalid_skb(ndev, skb))
 		return NETDEV_TX_OK;
@@ -300,7 +303,6 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 
 	txb_id = priv->txb_head & priv->txb_mask;
 	netdev_dbg(ndev, "%s: using TXB#%u", __func__, txb_id);
-	priv->txb_head++;
 	ok = ctu_can_fd_insert_frame(&priv->p, cf, 0, txb_id,
 				     can_is_canfd_skb(skb));
 
@@ -314,9 +316,15 @@ static int ctucan_start_xmit(struct sk_buff *skb, struct net_device *ndev)
 	if (!(cf->can_id & CAN_RTR_FLAG))
 		stats->tx_bytes += cf->len;
 
+	spin_lock_irqsave(&priv->tx_lock, flags);
+
+	priv->txb_head++;
+
 	/* Check if all TX buffers are full */
 	if (!CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))
 		netif_stop_queue(ndev);
+
+	spin_unlock_irqrestore(&priv->tx_lock, flags);
 
 	return NETDEV_TX_OK;
 }
@@ -384,11 +392,19 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 	struct can_frame *cf;
 	struct sk_buff *skb;
 	struct can_berr_counter berr;
+	union ctu_can_fd_err_capt_alc err_capt_alc;
+	int dologerr = net_ratelimit();
 
 	ctu_can_fd_read_err_ctrs(&priv->p, &berr);
 
-	netdev_info(ndev, "%s: ISR = 0x%08x, rxerr %d, txerr %d",
-		    __func__, isr.u32, berr.rxerr, berr.txerr);
+	err_capt_alc = ctu_can_fd_read_err_capt_alc(&priv->p);
+
+	if (dologerr)
+		netdev_info(ndev, "%s: ISR = 0x%08x, rxerr %d, txerr %d,"
+			" error type %u, pos %u, ALC id_field %u, bit %u\n",
+			__func__, isr.u32, berr.rxerr, berr.txerr,
+			err_capt_alc.s.err_type, err_capt_alc.s.err_pos,
+			err_capt_alc.s.alc_id_field, err_capt_alc.s.alc_bit);
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
@@ -431,7 +447,8 @@ err_warning:
 		/* error warning */
 		priv->can.state = CAN_STATE_ERROR_WARNING;
 		priv->can.can_stats.error_warning++;
-		netdev_info(ndev, "  error_warning");
+		if (dologerr)
+			netdev_info(ndev, "  error_warning");
 		if (skb) {
 			cf->can_id |= CAN_ERR_CRTL;
 			cf->data[1] |= (berr.txerr > berr.rxerr) ?
@@ -444,7 +461,8 @@ err_warning:
 
 	/* Check for Arbitration Lost interrupt */
 	if (isr.s.ali) {
-		netdev_info(ndev, "  arbitration lost");
+		if (dologerr)
+			netdev_info(ndev, "  arbitration lost");
 		priv->can.can_stats.arbitration_lost++;
 		if (skb) {
 			cf->can_id |= CAN_ERR_LOSTARB;
@@ -488,16 +506,13 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	int work_done = 0;
 	union ctu_can_fd_status status;
 	u32 framecnt;
-	u32 i;
 	//netdev_dbg(ndev, "ctucan_rx_poll");
 
 	framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
+	netdev_dbg(ndev, "rx_poll: %d frames in RX FIFO", framecnt);
 	while (framecnt && work_done < quota) {
-		netdev_dbg(ndev, "rx_poll: %d frames in RX FIFO", framecnt);
-		for (i = 0; i < framecnt; ++i) {
-			ctucan_rx(ndev);
-			work_done++;
-		}
+		ctucan_rx(ndev);
+		work_done++;
 		framecnt = ctu_can_fd_get_rx_frame_count(&priv->p);
 	}
 
@@ -527,7 +542,7 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 	if (work_done)
 		can_led_event(ndev, CAN_LED_EVENT_RX);
 
-	if (work_done < quota) {
+	if (!framecnt) {
 		if (napi_complete_done(napi, work_done)) {
 			union ctu_can_fd_int_stat iec;
 			/* Clear and enable RBNEI. It is level-triggered, so
@@ -535,9 +550,9 @@ static int ctucan_rx_poll(struct napi_struct *napi, int quota)
 			 */
 			iec.u32 = 0;
 			iec.s.rbnei = 1;
-			clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			// clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 			ctu_can_fd_int_clr(&priv->p, iec);
-			ctu_can_fd_int_ena_set(&priv->p, iec);
+			ctu_can_fd_int_mask_clr(&priv->p, iec);
 		}
 	}
 
@@ -569,6 +584,7 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 	bool first = true;
 	union ctu_can_fd_int_stat icr;
 	bool some_buffers_processed;
+	unsigned long flags;
 
 	netdev_dbg(ndev, "%s", __func__);
 
@@ -582,6 +598,8 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 	icr.u32 = 0;
 	icr.s.txbhci = 1;
 	do {
+		spin_lock_irqsave(&priv->tx_lock, flags);
+
 		some_buffers_processed = false;
 		while ((int)(priv->txb_head - priv->txb_tail) > 0) {
 			u32 txb_idx = priv->txb_tail & priv->txb_mask;
@@ -627,13 +645,11 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 					/* do not clear nor wake */
 					return;
 				}
-				/* some_buffers_processed is still false */
 				goto clear;
 			}
 			priv->txb_tail++;
 			first = false;
 			some_buffers_processed = true;
-
 			/* Adjust priorities *before* marking the buffer
 			 * as empty.
 			 */
@@ -641,13 +657,27 @@ static void ctucan_tx_interrupt(struct net_device *ndev)
 			ctu_can_fd_txt_set_empty(&priv->p, txb_idx);
 		}
 clear:
-		/* Clear the interrupt again as not to receive it again for
-		 * a buffer we already handled (possibly causing the bug log)
-		 */
-		ctu_can_fd_int_clr(&priv->p, icr);
+		spin_unlock_irqrestore(&priv->tx_lock, flags);
+
+		/* If no buffers were processed this time, wa cannot
+		 * clear - that would introduce a race condition. */
+		if (some_buffers_processed) {
+			/* Clear the interrupt again as not to receive it again
+			 * for a buffer we already handled (possibly causing
+			 * the bug log) */
+			ctu_can_fd_int_clr(&priv->p, icr);
+		}
 	} while (some_buffers_processed);
+
 	can_led_event(ndev, CAN_LED_EVENT_TX);
-	netif_wake_queue(ndev);
+
+	spin_lock_irqsave(&priv->tx_lock, flags);
+
+	/* Check if at least one TX buffer is free */
+	if (CTU_CAN_FD_TXTNF(ctu_can_get_status(&priv->p)))
+		netif_wake_queue(ndev);
+
+	spin_unlock_irqrestore(&priv->tx_lock, flags);
 }
 
 /**
@@ -674,8 +704,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		/* Get the interrupt status */
 		isr = ctu_can_fd_int_sts(&priv->p);
 
-		if (test_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags))
-			isr.s.rbnei = 0;
+		//if (test_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags))
+		//	isr.s.rbnei = 0;
 
 		if (!isr.u32)
 			return irq_loops ? IRQ_HANDLED : IRQ_NONE;
@@ -685,19 +715,20 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 			netdev_dbg(ndev, "RXBNEI");
 			icr.u32 = 0;
 			icr.s.rbnei = 1;
-			/* Clear and disable RXBNEI, schedule NAPI */
+			/* Mask RXBNEI the first then clear interrupt,
+			 * then schedule NAPI. Even if another IRQ fires,
+			 * isr.s.rbnei will always be 0 (masked).
+			 */
+			ctu_can_fd_int_mask_set(&priv->p, icr);
 			ctu_can_fd_int_clr(&priv->p, icr);
-			ctu_can_fd_int_ena_clr(&priv->p, icr);
-			set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+			// set_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 			napi_schedule(&priv->napi);
 		}
 
 		/* TX Buffer HW Command Interrupt */
 		if (isr.s.txbhci) {
 			netdev_dbg(ndev, "TXBHCI");
-			icr.u32 = 0;
-			icr.s.txbhci = 1;
-			ctu_can_fd_int_clr(&priv->p, icr);
+			/* Cleared inside */
 			ctucan_tx_interrupt(ndev);
 		}
 
@@ -722,8 +753,8 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 
 		imask.u32 = 0xffffffff;
 		ival.u32 = 0;
-		ctu_can_fd_int_ena(&priv->p, imask, ival);
-		ctu_can_fd_int_mask(&priv->p, imask, ival);
+		ctu_can_fd_int_ena_clr(&priv->p, ival);
+		ctu_can_fd_int_mask_set(&priv->p, imask);
 	}
 
 	return IRQ_HANDLED;
@@ -739,16 +770,16 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 static void ctucan_chip_stop(struct net_device *ndev)
 {
 	struct ctucan_priv *priv = netdev_priv(ndev);
-	union ctu_can_fd_int_stat ena, mask;
+	union ctu_can_fd_int_stat mask;
 
 	netdev_dbg(ndev, "ctucan_chip_stop");
 
-	ena.u32 = 0;
+	mask.u32 = 0xffffffff;
 
 	/* Disable interrupts and disable can */
-	ctu_can_fd_int_ena(&priv->p, ena, mask);
+	ctu_can_fd_int_mask_set(&priv->p, mask);
 	ctu_can_fd_enable(&priv->p, false);
-	clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
+	// clear_bit(CTUCAN_FLAG_RX_SCHED, &priv->drv_flags);
 	priv->can.state = CAN_STATE_STOPPED;
 }
 
@@ -940,6 +971,7 @@ static int ctucan_probe_common(struct device *dev, void __iomem *addr,
 		return -ENOMEM;
 
 	priv = netdev_priv(ndev);
+	spin_lock_init(&priv->tx_lock);
 	INIT_LIST_HEAD(&priv->peers_on_pdev);
 	priv->txb_mask = ntxbufs - 1;
 	priv->dev = dev;
