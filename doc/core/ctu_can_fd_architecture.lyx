@@ -2965,7 +2965,7 @@ Test mode
 \end_layout
 
 \begin_layout Standard
-CTU CAN FD features test mode.
+CTU CAN FD has test mode.
  Test mode is started by setting MODE[TSTM] = '1'.
  Features of test mode are listed in Table TODO.
 \end_layout
@@ -3339,8 +3339,8 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="4" columns="3">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="10text%">
-<column alignment="left" valignment="top" width="10text%">
+<column alignment="left" valignment="top" width="15text%">
+<column alignment="left" valignment="top" width="17text%">
 <column alignment="left" valignment="top" width="60text%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -3472,7 +3472,7 @@ Transition corresponds to start of Active or Passive Error flag and can
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3481,7 +3481,7 @@ CTU CAN FD disabled
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3490,7 +3490,7 @@ Anytime
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3533,6 +3533,50 @@ name "tab:Protocol-control-state-transition-rules"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_protocol_control.pdf
+	lyxscale 20
+	scale 95
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Protocol control FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Protocol-control-FSM"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Control counter
 \end_layout
@@ -3545,15 +3589,17 @@ Control counter controls duration of CAN frame fields which last longer
  Control counter is preloaded in Process pipeline stage.
  Control counter counts towards zero.
  Control counter counting is controlled by Protocol control FSM.
- Control counter is decremented by 1 each bit time in Process pipeline stage.
- When Control counter reaches 1 and 0, this is signalled to Protocol Control
- FSM.
+ Control counter is decremented by 1 each bit in Process pipeline stage.
+ When Control counter is equal to 1 and 0, this is signalled to Protocol
+ Control FSM.
+ This situation indicates one bit before the end of CAN frame field or last
+ bit of CAN frame field.
  A current CAN frame field ends when Control counter reaches zero.
  Control counter is not counting during CAN frame fields which last only
  1 bit (e.g.
  IDE bit), nor during fields which might last arbitrary number of bits (Idle).
- An example of control counter operation during CAN frame is shown in Figure
- TODO.
+ An example of Control counter operation during Base Identifier in CAN frame
+ is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -3569,8 +3615,8 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="13" columns="2">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="40line%">
-<column alignment="left" valignment="top" width="40line%">
+<column alignment="left" valignment="top" width="47line%">
+<column alignment="left" valignment="top" width="47line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -3891,25 +3937,81 @@ name "tab:CAN-control-counter"
 \end_layout
 
 \begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Control counter operation
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Protocol-control-FSM-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 Control counter module contains a complementary counter which counts from
  0.
  Complementary counter is incremented by 1 each bit time in Process pipeline
  stage.
- Complementary counter counts only during data field.
- Complementary counter provides information that data byte has elapsed (divisibl
-e by 8), or whole memory word elapsed (divisible by 32).
+ Complementary counter counts only during Data field.
+ Complementary counter provides information that data byte has elapsed (counter
+ is divisible by 8), or whole memory word has elapsed (counter is divisible
+ by 32).
+ Contol counter is capable of addressing memory words at addresses 4 (DATA_1_4_W
+) till 19 (DATA_61_64_W).
  Complementary counter decodes address of Data memory word within TXT Buffer
- according to Table TODO.
+ according to following equation:
 \end_layout
 
 \begin_layout Standard
-Control counter module implements Arbitration lost capture register.
- Arbitration lost capture register stores position within CAN frame at which
- loss of arbitration occurred.
+\noindent
+\align center
+\begin_inset Formula $Memory\,word\,index=\left(\frac{Control\,counter}{32}\right)+5$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Control counter module implements Arbitration Lost Capture register.
+ Arbitration Lost Capture register stores position within CAN Arbitration
+ field at which Arbitration was lost.
  Arbitration lost capture register is loaded when Arbitration lost is signalled
  by Protocol Control FSM.
- When arbitration loss occurs within Base Identifier or Identifier Extension,
- bit position is given by current value of control counter.
+ Meaning of values in Arbitration Lost Capture register is given in Table
+ TODO.
 \end_layout
 
 \begin_layout Subsubsection
@@ -3919,18 +4021,229 @@ Retransmitt counter
 \begin_layout Standard
 Retransmitt counter controls number of retransmissions of current CAN frame
  from a dedicated TXT Buffer.
- Retransmitt counter counts from zero and it is controlled by Protocol control
- FSM.
+ Retransmitt counter counts from zero, and it is controlled by Protocol
+ control FSM.
  Retransmitt counter counts only when Retransmitt limitation is enabled
  by user.
- Retransmitt counter is cleared when a TXT Buffer changes between two consecutiv
-e transmissions (another TXT Buffer with another TX Frame selected by TX
- Arbitrator, reffer to TODO).
+ Retransmitt counter is cleared when selected TXT Buffer for transmission
+ changes between two consecutive transmissions (another TXT Buffer with
+ another TX Frame selected by TX Arbitrator, reffer to TODO).
  Retransmitt counter is cleared upon succesfull transmission.
- Retransmitt counter is incremented by 1 when Arbitration is lost or when
+ Retransmitt counter is incremented by 1 when Arbitration is lost, or when
  Error frame transmission is requested by Error detector (reffer to TODO).
- When Retransmitt counter reaches number of retransmissions, it signals
- it to Protocol control FSM.
+ When Retransmitt counter reaches Retransmitt limit, it signals this to
+ Protocol control FSM, and Protocol control FSM.
+ When unit is a receiver without attempt to transmitt a frame (no frame
+ was available during Bus Idle, Intermission or Suspend Transmission), retransmi
+tt counter is not modified during this frame.
+ Possible configurations of Retransmitt limit are shown in Table TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="15text%">
+<column alignment="left" valignment="top" width="17text%">
+<column alignment="left" valignment="top" width="60text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Retransmitt limit value
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Retransmitt limitation enabled
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Behaviour
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+No
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame transmission is attempted without any limitation until unit turns
+ Bus-off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Yes
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame transmission is attempted only once, there is no retransmission attempt
+ after first failed transmission (so called one-shot mode).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1 - 15
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Yes
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame transmission is attempted 1 - 15 times.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Retransmitt limit configuration
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Protocol-control-state-transition-rules-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection*
@@ -3939,14 +4252,14 @@ Reintegration counter
 
 \begin_layout Standard
 Re-integration counter counts 128 consecutive ocurrences of 11 consecutive
- recessive bits after unit turned Bus-off.
+ Recessive bits after unit turned Bus-off.
  Re-integration counter counts only during Re-integration, not during initial
  integration.
  Reffer to TODO for distuinguishing between Integration and Re-integration.
- Re-integration counter is controlled by Scanner FSM.
- Re-integration counter is counts from zero.
+ Re-integration counter is controlled by Protocol control FSM.
+ Re-integration counter counts from zero.
  Re-integration counter is incremented by 1 after each 11 consecutive Recessive
- bits received.
+ bits are received.
  Re-integration counter signals reaching 128 to Protocol control FSM.
 \end_layout
 
@@ -3959,12 +4272,14 @@ TX Shift register is 32 bit shift register which transmitts given bit sequence
  to the output of Protocol control module.
  TX Shift register is preloaded by Protocol control FSM in Process pipeline
  stage when new data sequence is about to be transmitted, thus output value
- is also valid in Process pipeline stage of the same bit.
+ is also valid after Process pipeline stage of the same bit.
  TX Shift register is shifted by one bit in Stuff pipeline stage.
  TX shift register is preloaded according to Table TODO.
- TX Shift register is enabled only as long as unit is transmitter, tx shift
- register is not operating when unit is receiver or after arbitration was
+ TX Shift register is enabled only as long as unit is transmitter, TX shift
+ register is not shifting when unit is receiver or after arbitration was
  lost.
+ In such a case Recessive value is transmitted on its output during whole
+ frame.
  TX shift register shifts from lowest bit index to highest bit index (shifting
  up).
  Transmission of single bits or constant sequences (e.g.
@@ -3986,9 +4301,9 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="3">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="20line%">
-<column alignment="left" valignment="top" width="20line%">
-<column alignment="left" valignment="top" width="20line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="30line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -4034,7 +4349,7 @@ cellcolor{gray}
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4076,7 +4391,7 @@ Base Identifier
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4105,7 +4420,7 @@ Identifier Extension
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4135,7 +4450,7 @@ Data length code
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4165,7 +4480,7 @@ Data word (4 bytes) for transmission.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4195,7 +4510,7 @@ Stuff count and Stuff parity.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4225,7 +4540,7 @@ Calculated CRC.
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4281,8 +4596,8 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="5" columns="2">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="40line%">
-<column alignment="left" valignment="top" width="40line%">
+<column alignment="left" valignment="top" width="47line%">
+<column alignment="left" valignment="top" width="47line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -4483,8 +4798,8 @@ status open
 <lyxtabular version="3" rows="3" columns="4">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="15line%">
-<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="20line%">
+<column alignment="left" valignment="top" width="20line%">
 <column alignment="left" valignment="top" width="40line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -4531,7 +4846,7 @@ cellcolor{gray}
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4595,7 +4910,7 @@ Base identifier, Identifier Extension, DLC, CRC sequence, Stuff count
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4635,7 +4950,7 @@ Data field
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4966,8 +5281,460 @@ Error detector
 \end_layout
 
 \begin_layout Standard
-Error detector handles error detection and propagation of Error frame request
+Error detector manages error detection and propagation of Error frame request
  to Protocol Control FSM.
+ Errors are detected in Process pipeline stage and Error frame request is
+ provided to CAN Core one clock cycle after Process pipeline stage.
+ A DFF is inserted on Error frame request to avoid combinatorial loops between
+ Error detector and Protocol Control FSM.
+ Processing of Errors based on Error type is described in Table TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="5">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="8line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="40line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Error type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN Frame Fields when Error is detected.
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN Frame Fields where Error can't occur!
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Module where error is detected
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="3" alignment="left" valignment="middle" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SOF, Control, Data, Stuff Count, CRC, CRC Delimiter, ACK
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+can occur anywhere
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Error detector in Bus Sampling
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Arbitration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+can occur anywhere
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control FSM
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Stuff Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Arbitration, Control, Data, Stuff Count, CRC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Intermission, Idle, Suspend, Error Frame, Overload Frame, End Of Frame,
+ CRC Delimiter, ACK Field, ACK Delimiter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Destuffing
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Form Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SOF, Control, Stuff Count, CRC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Arbitration, Data field, ACK, Intermission, Suspend, 
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control FSM
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Delimiter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+all fields but CRC Delimiter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Error detector
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ACK Error
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ACK
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+all fields but ACK
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control FSM
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Error processing
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CAN-ports-common-3-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
