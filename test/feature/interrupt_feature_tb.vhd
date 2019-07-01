@@ -44,10 +44,6 @@
 --  Interrupt generation feature test
 --
 --  Test sequence is like so:
---    1. Part 1:
---          1.1 Set TX Interrupt on Node 2, RX interrupt on Node 1
---          1.2 Send CAN Frame by Node 2
---          1.3 Observe that interrupt occurred
 --    2. Part 2:
 --          2.1 Set Interrupt on Error frame on both nodes.
 --          2.2 Send frames with collision and detect that collision ocurred.
@@ -134,42 +130,6 @@ package body interrupt_feature is
         write_int_mask(int_mask, ID_1, mem_bus(1));
         write_int_mask(int_mask, ID_2, mem_bus(2));
 
-        ------------------------------------------------------------------------
-        -- Part 1
-        ------------------------------------------------------------------------
-        ------------------------------------------------------------------------
-        -- Recieve INT node 1, TX int node 2
-        ------------------------------------------------------------------------
-        info("Starting TX RX interrupt");
-        int_ena.receive_int := true;
-        write_int_enable(int_ena, ID_1, mem_bus(1));
-        int_ena.receive_int := false;
-
-        int_ena.transmitt_int := true;
-        write_int_enable(int_ena, ID_2, mem_bus(2));
-        int_ena.transmitt_int := false;
-
-        ------------------------------------------------------------------------
-        -- Send by node 2
-        ------------------------------------------------------------------------
-        CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_send_frame(CAN_frame, 1, ID_2, mem_bus(2), frame_sent);
-
-        wait until rising_edge(iout(1).irq) or rising_edge(iout(2).irq);
-        wait until rising_edge(iout(1).irq) or rising_edge(iout(2).irq);
-
-        CAN_wait_frame_sent(ID_2, mem_bus(2));
-
-        ------------------------------------------------------------------------
-        -- Check that interrupt was generated
-        ------------------------------------------------------------------------
-        read_int_status(int_stat, ID_1, mem_bus(1));
-        check(int_stat.receive_int, "RX Interrupt not present!");
-        clear_int_status(int_stat, ID_1, mem_bus(1));
-
-        read_int_status(int_stat, ID_2, mem_bus(2));
-        check(int_stat.transmitt_int, "TX Interrupt not present");
-        clear_int_status(int_stat, ID_2, mem_bus(2));
 
         ------------------------------------------------------------------------
         -- Part 2
@@ -244,7 +204,6 @@ package body interrupt_feature is
         CAN_frame.frame_format := NORMAL_CAN;
         for i in 0 to (buf_info.rx_buff_size / 4) + 1 loop
             CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
-
             CAN_wait_frame_sent(ID_1, mem_bus(1));
 
             -- On last frame RX Buffer should be full. Check if interrupt was
