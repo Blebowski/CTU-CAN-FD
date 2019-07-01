@@ -50,6 +50,8 @@ feature:
         interrupt:
         int_rx:
         int_tx:
+        int_ewl:
+        int_do:
         invalid_configs:
         overload:
         retr_limit:
