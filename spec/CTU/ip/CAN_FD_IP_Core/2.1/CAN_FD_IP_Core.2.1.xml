@@ -558,7 +558,7 @@
 					<ipxact:field>
 						<ipxact:name>EWLI</ipxact:name>
 						<ipxact:displayName>EWLI</ipxact:displayName>
-						<ipxact:description>Error Warning Limit reached interrupt. When TX Error Counter (TXC) or RX Error Counter (RXC) reaches value in EWL, condition for this interrupt is valid. This interrupt occurs only upon transition from both TXC and RXC being less than EWL to one of them being equal to or more than EWL. At this time, EWL Interrupt must be unmasked to be captured to Interrupt Status register. When one of TXC or RXC is equal to or more than EWL, and Interrupt is unmasked only then, this interrupt is not captured. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:description>Error Warning Limit interrupt. When TX Error Counter (TXC) or RX Error Counter (RXC) is equal or higher than EWL, condition for this interrupt is valid. When Interrupt is cleared and RXC, or TXC are still equal to or higher than EWL, Interrupt is set again. Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>2</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
