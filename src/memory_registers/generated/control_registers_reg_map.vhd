@@ -216,7 +216,7 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" ,
+        auto_clear                      => "0000111111111111" ,
         is_lockable                     => '0' 
     )
     port map(
@@ -240,7 +240,7 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" ,
+        auto_clear                      => "0000111111111111" ,
         is_lockable                     => '0' 
     )
     port map(
@@ -264,7 +264,7 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" ,
+        auto_clear                      => "0000111111111111" ,
         is_lockable                     => '0' 
     )
     port map(
@@ -288,7 +288,7 @@ begin
         data_mask                       => "0000111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "0000000000000000" ,
-        auto_clear                      => "0000011111111111" ,
+        auto_clear                      => "0000111111111111" ,
         is_lockable                     => '0' 
     )
     port map(
@@ -408,7 +408,7 @@ begin
         data_mask                       => "00000000000000000001111111111111" ,
         reset_polarity                  => RESET_POLARITY ,
         reset_value                     => "00000000000000000000000000000000" ,
-        auto_clear                      => "00000000000000000001111011111111" ,
+        auto_clear                      => "00000000000000000001111111111111" ,
         is_lockable                     => '1' 
     )
     port map(
