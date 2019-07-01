@@ -231,10 +231,10 @@ begin
    ----------------------------------------------------------------------------
    -- Set to 120 when counter is more than 127, decrement otherwise!
    rx_err_ctr_dec <= to_unsigned(120, 9) when (rx_err_ctr_q > 127) else
-                      (rx_err_ctr_q - 1) when (tx_err_ctr_q > 0) else
+                      (rx_err_ctr_q - 1) when (rx_err_ctr_q > 0) else
                             rx_err_ctr_q;
 
-   -- Next value for error counter inctement when any of "inc" commands is
+   -- Next value for error counter increment when any of "inc" commands is
    -- valid. Decrement otherwise!
    rx_err_ctr_d <=
              unsigned(drv_ctr_val) when (rx_err_ctr_pload = '1') else
