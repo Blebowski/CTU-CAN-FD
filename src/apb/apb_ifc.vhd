@@ -116,9 +116,7 @@ architecture rtl of apb_ifc is
         end if;
     end function to_std_logic;
 begin
-    -- psl default clock is rising_edge (aclk);
-    -- psl assert_onecycle_rden: assert always reg_rden_o = '1' -> next reg_rden_o = '0';
-
+    
     reg_data_in_o <= s_apb_pwdata;
     s_apb_prdata  <= reg_data_out_i;
 
@@ -164,4 +162,21 @@ begin
     next_apb_pready <= '1' when rst_countdown_reg = 0 else '0';
     s_apb_pready <= next_apb_pready;
     s_apb_pslverr <= '0';
+    
+    
+    -- ASRT_START
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    -- Assertions
+    ---------------------------------------------------------------------------
+    ---------------------------------------------------------------------------
+    
+    -- psl default clock is rising_edge (aclk);
+    
+    -- psl onecycle_rden_asrt : assert always reg_rden_o = '1' -> next reg_rden_o = '0'
+    --  report "Read enable shall be active only for one clock cycle"
+    --  severity error;
+      
+    -- ASRT_END
+    
 end architecture rtl;
