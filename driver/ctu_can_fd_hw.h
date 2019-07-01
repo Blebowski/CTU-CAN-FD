@@ -106,8 +106,8 @@
 // RX Buffer data overrun interrupt
 #define CTU_CAN_FD_OVERRUN_INT(int_stat) (!!(int_stat).s.doi)
 
-// Core turned error passive interrupt
-#define CTU_CAN_FD_ERR_PASSIVE_INT(int_stat) (!!(int_stat).s.epi)
+// Fault confinement changed interrupt
+#define CTU_CAN_FD_FAULT_STATE_CHANGED_INT(int_stat) (!!(int_stat).s.fcsi)
 
 // Error frame transmission started interrupt
 #define CTU_CAN_FD_BUS_ERROR_INT(int_stat) (!!(int_stat).s.bei)
@@ -129,7 +129,7 @@
 
 static inline bool CTU_CAN_FD_INT_ERROR(union ctu_can_fd_int_stat i)
 {
-	return i.s.ewli || i.s.doi || i.s.epi || i.s.ali;
+	return i.s.ewli || i.s.doi || i.s.fcsi || i.s.ali;
 }
 
 struct ctucanfd_priv;

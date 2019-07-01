@@ -204,7 +204,7 @@ static int ctucan_chip_start(struct net_device *ndev)
 	int_ena.s.txbhci = 1;
 
 	int_ena.s.ewli = 1;
-	int_ena.s.epi = 1;
+	int_ena.s.fcsi = 1;
 
 	int_enamask_mask.u32 = 0xFFFFFFFF;
 
@@ -408,16 +408,16 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 
 	skb = alloc_can_err_skb(ndev, &cf);
 
-	/* EWI: error warning
-	 * EPI: error passive or bus off
-	 * ALI: arbitration lost (just informative)
-	 * BEI: bus error interrupt
+	/* EWI:  error warning
+	 * FCSI: Fault confinement State changed
+	 * ALI:  arbitration lost (just informative)
+	 * BEI:  bus error interrupt
 	 */
-	if (isr.s.epi) {
+	if (isr.s.fcsi) {
 		/* error passive or bus off */
 		enum can_state state = ctu_can_fd_read_error_state(&priv->p);
 
-		netdev_info(ndev, "  epi: state = %u", state);
+		netdev_info(ndev, "  Fault conf: state = %u", state);
 		priv->can.state = state;
 		if (state == CAN_STATE_BUS_OFF) {
 			priv->can.can_stats.bus_off++;
@@ -437,7 +437,7 @@ static void ctucan_err_interrupt(struct net_device *ndev,
 				cf->data[7] = berr.rxerr;
 			}
 		} else if (state == CAN_STATE_ERROR_WARNING) {
-			netdev_warn(ndev, "    error_warning, but ISR[EPI] was set! (HW bug?)");
+			netdev_warn(ndev, "    error_warning, but ISR[FCSI] was set! (HW bug?)");
 			goto err_warning;
 		} else {
 			netdev_warn(ndev, "    unhandled error state!");
@@ -733,9 +733,9 @@ static irqreturn_t ctucan_interrupt(int irq, void *dev_id)
 		}
 
 		/* Error interrupts */
-		if (isr.s.ewli || isr.s.epi || isr.s.ali) {
+		if (isr.s.ewli || isr.s.fcsi || isr.s.ali) {
 			union ctu_can_fd_int_stat ierrmask = { .s = {
-				  .ewli = 1, .epi = 1, .ali = 1, .bei = 1 } };
+				  .ewli = 1, .fcsi = 1, .ali = 1, .bei = 1 } };
 			icr.u32 = isr.u32 & ierrmask.u32;
 
 			netdev_dbg(ndev, "some ERR interrupt: clearing 0x%08x",
