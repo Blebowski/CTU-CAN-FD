@@ -256,7 +256,7 @@ begin
            rx_err_ctr_q <= (OTHERS => '0');
        elsif (rising_edge(clk_sys)) then
            if (rx_err_ctr_ce = '1') then
-               rx_err_ctr_q <= rx_err_ctr_q;
+               rx_err_ctr_q <= rx_err_ctr_d;
            end if;
        end if;
    end process;
