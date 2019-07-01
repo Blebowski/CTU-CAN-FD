@@ -146,6 +146,7 @@ package CANtestLib is
     type SW_mode is record
         reset                   :   boolean;
         listen_only             :   boolean;
+        test                    :   boolean;
         self_test               :   boolean;
         acceptance_filter       :   boolean;
         flexible_data_rate      :   boolean;
@@ -154,7 +155,9 @@ package CANtestLib is
         internal_loopback       :   boolean;
         iso_fd_support          :   boolean;
     end record;
-
+    
+    constant SW_mode_rst_val : SW_mode := (false, false, false, false, false,
+        true, false, false, false, false);
 
     -- Controller commands
     type SW_command is record
@@ -3917,6 +3920,10 @@ package body CANtestLib is
         if (mode.self_test) then
             data(STM_IND)       := '1';
         end if;
+        
+        if (mode.test) then
+            data(TSTM_IND)      := '1';
+        end if;
 
         if (mode.acceptance_filter) then
             data(AFM_IND)       := '1';
@@ -3968,6 +3975,7 @@ package body CANtestLib is
         mode.flexible_data_rate         := false;
         mode.rtr_pref                   := false;
         mode.acknowledge_forbidden      := false;
+        mode.test                       := false;
 
         if (data(RST_IND) = '1') then
             mode.reset                  := true;
@@ -3991,6 +3999,10 @@ package body CANtestLib is
 
         if (data(ACF_IND) = '1') then
             mode.acknowledge_forbidden  := true;
+        end if;
+        
+        if (data(TSTM_IND) = '1') then
+            mode.test := true;
         end if;
 
         CAN_read(data, SETTINGS_ADR, ID, mem_bus, BIT_8);

@@ -104,9 +104,7 @@ package body spec_mode_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false,
-                                                false, false, false);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable ctr_1_1            :       SW_traffic_counters;
         variable ctr_1_2            :       SW_traffic_counters;
         variable ctr_2_1            :       SW_traffic_counters;

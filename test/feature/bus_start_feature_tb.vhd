@@ -98,9 +98,7 @@ package body bus_start_feature is
         variable ID_2           	:       natural := 2;
         variable CAN_frame          :       SW_CAN_frame_type;
         variable frame_sent         :       boolean := false;
-        variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false,
-                                                false, false, false);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable rx_state           :       SW_RX_Buffer_info;
     begin
         o.outcome := true;

@@ -98,9 +98,7 @@ package body forbid_fd_feature is
         variable ID_1               :       natural := 1;
         variable ID_2               :       natural := 2;
 
-        variable mode               :       SW_mode := (false, false, false,
-                                             false, false, false, false,
-                                             false, false);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable err_counters_1     :       SW_error_counters;
         variable err_counters_2     :       SW_error_counters;
     begin

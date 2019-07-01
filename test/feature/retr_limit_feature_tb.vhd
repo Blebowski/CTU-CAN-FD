@@ -89,10 +89,7 @@ package body retr_limit_feature is
         variable retr_th            :       natural;
         variable mode_backup        :       std_logic_vector(31 downto 0) :=
                                                 (OTHERS => '0');
-
-        variable mode               :       SW_mode := (false, false, false,
-                                                false, true, false,
-                                                false, false, false);
+        variable mode               :       SW_mode := SW_mode_rst_val;
         variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
         variable buf_state          :       SW_TXT_Buffer_state_type;
     begin
