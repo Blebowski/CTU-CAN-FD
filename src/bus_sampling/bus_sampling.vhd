@@ -215,6 +215,11 @@ architecture rtl of bus_sampling is
     -- by ssp_offset.
     signal ssp_delay            : std_logic_vector(7 downto 0);
     
+    -- TX Trigger delayed by 1 clock cycle
+    signal tx_trigger_q         : std_logic;
+    
+    -- TX Trigger (used for SSP)
+    signal tx_trigger_ssp       : std_logic;
 
     ---------------------------------------------------------------------------
     -- Reset for shift registers. This is used instead of shift register with
@@ -327,11 +332,38 @@ begin
         
         output             => shift_regs_res_q      -- OUT
     );
+    
+    ----------------------------------------------------------------------------
+    -- Create delayed TX Trigger one clock cycle after Stuff pipeline stage.
+    ----------------------------------------------------------------------------
+    tx_trigger_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
+    )
+    port map(
+        arst               => res_n,                -- IN
+        clk                => clk_sys,              -- IN
+
+        input              => tx_trigger,           -- IN
+        ce                 => '1',                  -- IN
+        
+        output             => tx_trigger_q          -- OUT
+    );
+
+    ----------------------------------------------------------------------------
+    -- Secondary sampling point input: Delayed TX Trigger gated and available
+    -- only during secondary sampling!
+    ----------------------------------------------------------------------------
+    tx_trigger_ssp <= '1' when (tx_trigger_q = '1' and
+                                sp_control = SECONDARY_SAMPLE)
+                          else
+                      '0';
 
 
     ----------------------------------------------------------------------------
-    -- Shift register for secondary sampling point. Normal sample point trigger
-    -- is shifted into shift register to generate delayed sampling point.
+    -- Shift register for secondary sampling point. Delayed TX Trigger is
+    -- shifted into shift register to generate delayed sampling point.
     ----------------------------------------------------------------------------
     ssp_shift_reg_inst : shift_reg
     generic map(
@@ -344,7 +376,7 @@ begin
         clk                => clk_sys,              -- IN
         res_n              => shift_regs_res_q,     -- IN
 
-        input              => tx_trigger,           -- IN
+        input              => tx_trigger_ssp,       -- IN
         enable             => ssp_sr_ce,            -- IN
 
         reg_stat           => sample_sec_shift,     -- OUT
@@ -377,7 +409,7 @@ begin
     port map(
         clk_sys           => clk_sys,               -- IN
         res_n             => shift_regs_res_q,      -- IN
-        write             => rx_trigger,            -- IN
+        write             => tx_trigger_ssp,        -- IN
         read              => sample_sec_i,          -- IN
         data_in           => tx_data_wbs,           -- IN
         
