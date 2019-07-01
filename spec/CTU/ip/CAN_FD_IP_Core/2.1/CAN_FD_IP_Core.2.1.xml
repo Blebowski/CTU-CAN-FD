@@ -571,7 +571,7 @@
 					<ipxact:field>
 						<ipxact:name>DOI</ipxact:name>
 						<ipxact:displayName>DOI</ipxact:displayName>
-						<ipxact:description>Data Overrun on RX Buffer Interrupt. Interrupt clear has priority over set.</ipxact:description>
+						<ipxact:description>Data Overrun on RX Buffer Interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again. Interrupt clear has priority over set.</ipxact:description>
 						<ipxact:bitOffset>3</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>
