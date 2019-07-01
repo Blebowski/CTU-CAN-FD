@@ -123,7 +123,7 @@ package body message_filter_feature is
                                                 (0, 0, '0', false, false);
         variable range_filt_config  :       SW_CAN_range_filter_config := 
                                                 (0, 0, '0', false, false);
-        variable command            :       SW_command := (false, false, false);
+        variable command            :       SW_command := SW_command_rst_val;
         variable tmp_int            :       natural := 0;
         variable tmp_log_vect       :       std_logic_vector(28 downto 0);
         variable tmp_log            :       std_logic := '0';

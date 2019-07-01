@@ -110,16 +110,10 @@ package body interrupt_feature is
         variable mode_prev          :     std_logic_vector(31 downto 0);
         variable mode_prev_2        :     std_logic_vector(31 downto 0);
 
-        variable int_mask           :     SW_interrupts := (false, false, false,
-                                            false, false, false, false, false,
-                                            false, false, false, false);
-        variable int_ena            :     SW_interrupts := (false, false, false,
-                                            false, false, false, false, false,
-                                            false, false, false, false);
-        variable int_stat           :     SW_interrupts := (false, false, false,
-                                            false, false, false, false, false,
-                                            false, false, false, false);
-        variable command            :     SW_command := (false, false, false);
+        variable int_mask           :     SW_interrupts := SW_interrupts_rst_val;
+        variable int_ena            :     SW_interrupts := SW_interrupts_rst_val;
+        variable int_stat           :     SW_interrupts := SW_interrupts_rst_val;
+        variable command            :     SW_command := SW_command_rst_val;
         variable buf_info           :     SW_RX_Buffer_info;
     begin
         o.outcome := true;

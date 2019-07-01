@@ -101,7 +101,7 @@ package body txt_buffer_hazard_feature is
         variable bus_config         :       bit_time_config_type;
         variable still_tx           :       boolean := false;
         variable err_counters       :       SW_error_counters;
-        variable command            :       SW_command := (false, false, false);
+        variable command            :       SW_command := SW_command_rst_val;
         variable status             :       SW_status;
 	    variable txt_buf_state	    :	    SW_TXT_Buffer_state_type;	
   begin

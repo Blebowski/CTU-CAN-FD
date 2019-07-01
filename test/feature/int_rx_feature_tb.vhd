@@ -129,7 +129,7 @@ package body int_rx_feature is
         variable int_mask           :     SW_interrupts := SW_interrupts_rst_val;
         variable int_ena            :     SW_interrupts := SW_interrupts_rst_val;
         variable int_stat           :     SW_interrupts := SW_interrupts_rst_val;
-        variable command            :     SW_command := (false, false, false);
+        variable command            :     SW_command := SW_command_rst_val;
         variable mode               :     SW_mode := SW_mode_rst_val;
         variable buf_info           :     SW_RX_Buffer_info;
         variable pc_dbg             :     SW_PC_Debug;  

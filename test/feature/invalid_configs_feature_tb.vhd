@@ -85,7 +85,7 @@ package body invalid_configs_feature is
         variable frame_sent         :       boolean := false;
         variable ID_1           	:       natural := 1;
         variable ID_2           	:       natural := 2;
-        variable command            :       SW_command := (others => false);
+        variable command            :       SW_command := SW_command_rst_val;
     begin
         o.outcome := true;
 

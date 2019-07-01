@@ -161,11 +161,15 @@ package CANtestLib is
 
     -- Controller commands
     type SW_command is record
-        abort_transmission      :   boolean;
         release_rec_buffer      :   boolean;
         clear_data_overrun      :   boolean;
+        err_ctrs_rst            :   boolean;
+        rx_frame_ctr_rst        :   boolean;
+        tx_frame_ctr_rst        :   boolean;
     end record;
 
+    constant SW_command_rst_val : SW_command :=
+        (false, false, false, false, false);
 
     -- Controller status
     type SW_status is record
@@ -4052,6 +4056,18 @@ package body CANtestLib is
 
         if (command.clear_data_overrun) then
             data(CDO_IND)        := '1';
+        end if;
+        
+        if (command.err_ctrs_rst) then
+            data(ERCRST_IND)        := '1';
+        end if;
+        
+        if (command.rx_frame_ctr_rst) then
+            data(RXFCRST_IND)        := '1';
+        end if;
+        
+        if (command.tx_frame_ctr_rst) then
+            data(TXFCRST_IND)        := '1';
         end if;
 
         CAN_write(data, COMMAND_ADR, ID, mem_bus, BIT_32);

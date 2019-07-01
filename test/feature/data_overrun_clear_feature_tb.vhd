@@ -103,7 +103,7 @@ package body data_overrun_clear_feature is
                                                  false, false, false,
                                                  false, false, false,
                                                  false, false, false);
-        variable command            :        SW_command := (false, false, false);
+        variable command            :        SW_command := SW_command_rst_val;
         variable status             :        SW_status;
 
     begin
