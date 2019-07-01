@@ -70,8 +70,8 @@ architecture int_man_unit_test of CAN_test is
     -- Valid Error appeared for interrupt
     signal err_detected            :   std_logic := '0';
 
-    -- Error pasive /Error acitve functionality changed
-    signal err_passive_changed  :   std_logic := '0';
+    -- Fault confinement state changed
+    signal fcs_changed  :   std_logic := '0';
 
     -- Error warning limit reached
     signal err_warning_limit    :   std_logic := '0';
@@ -158,7 +158,7 @@ architecture int_man_unit_test of CAN_test is
         signal err_detected            :inout   std_logic;
 
         -- Error pasive /Error acitve functionality changed
-        signal err_passive_changed  :inout   std_logic;
+        signal fcs_changed  :inout   std_logic;
 
         -- Error warning limit reached
         signal err_warning_limit    :inout   std_logic;
@@ -198,10 +198,10 @@ architecture int_man_unit_test of CAN_test is
             rand_logic_s(rand_ctr, err_detected, 0.1);
         end if;
 
-        if (err_passive_changed = '1') then
-            rand_logic_s(rand_ctr, err_passive_changed, 0.85);
+        if (fcs_changed = '1') then
+            rand_logic_s(rand_ctr, fcs_changed, 0.85);
         else
-            rand_logic_s(rand_ctr, err_passive_changed, 0.05);
+            rand_logic_s(rand_ctr, fcs_changed, 0.05);
         end if;
 
         if (err_warning_limit = '1') then
@@ -328,7 +328,7 @@ begin
         clk_sys               =>   clk_sys,
         res_n                 =>   res_n,
         err_detected          =>   err_detected,
-        err_passive_changed =>   err_passive_changed,
+        fcs_changed =>   fcs_changed,
         err_warning_limit   =>   err_warning_limit,
         arbitration_lost      =>   arbitration_lost,
         tran_valid            =>   tran_valid ,
@@ -349,7 +349,7 @@ begin
     -- Joining interrupt inputs to interrupt status
     int_input(BEI_IND)            <=  err_detected;
     int_input(ALI_IND)            <=  arbitration_lost;
-    int_input(EPI_IND)            <=  err_passive_changed;
+    int_input(FCSI_IND)           <=  fcs_changed;
     int_input(DOI_IND)            <=  rx_data_overrun;
     int_input(EWLI_IND)           <=  err_warning_limit;
     int_input(TXI_IND)            <=  tran_valid;
@@ -380,7 +380,7 @@ begin
 
         while true loop
             wait until falling_edge(clk_sys);
-            generate_sources(rand_ctr_1, err_detected, err_passive_changed ,
+            generate_sources(rand_ctr_1, err_detected, fcs_changed ,
                            err_warning_limit , arbitration_lost, tran_valid,
                            br_shifted, rx_data_overrun , rec_valid ,
                            rx_full , rx_empty, txtb_hw_cmd_int, is_overload);

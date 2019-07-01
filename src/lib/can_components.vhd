@@ -869,7 +869,7 @@ package can_components is
         -- Status outputs
         -----------------------------------------------------------------------
         -- Error passive state changed
-        err_passive_changed     :out  std_logic;
+        fcs_changed             :out  std_logic;
 
         -- Error warning limit was reached
         err_warning_limit       :out  std_logic
@@ -951,7 +951,7 @@ package can_components is
         -- Error signalling for interrupts
         -----------------------------------------------------------------------
         -- Error passive state changed
-        err_passive_changed     :out  std_logic;
+        fcs_changed             :out  std_logic;
 
         -- Error warning limit was reached
         err_warning_limit       :out  std_logic;
@@ -2535,8 +2535,8 @@ package can_components is
         -- Error is detected (Error frame will be transmitted)
         err_detected           :out  std_logic;
 
-        -- Error passive state changed
-        err_passive_changed    :out  std_logic;
+        -- Fault confinement state changed
+        fcs_changed            :out  std_logic;
 
         -- Error warning limit reached
         err_warning_limit      :out  std_logic;
@@ -2758,8 +2758,8 @@ package can_components is
         -- Error appeared
         err_detected            :in   std_logic;
 
-        -- Error pasive /Error acitve functionality changed
-        err_passive_changed     :in   std_logic;
+        -- Fault confinement state changed
+        fcs_changed             :in   std_logic;
 
         -- Error warning limit reached
         err_warning_limit       :in   std_logic;

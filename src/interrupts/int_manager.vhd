@@ -95,8 +95,8 @@ entity int_manager is
         -- Error appeared
         err_detected            :in   std_logic;
 
-        -- Error pasive /Error acitve functionality changed
-        err_passive_changed     :in   std_logic;
+        -- Fault confinement state changed
+        fcs_changed             :in   std_logic;
 
         -- Error warning limit reached
         err_warning_limit       :in   std_logic;
@@ -232,7 +232,7 @@ begin
     int_input_active(TXI_IND)       <= tran_valid;
     int_input_active(EWLI_IND)      <= err_warning_limit;
     int_input_active(DOI_IND)       <= rx_data_overrun;
-    int_input_active(EPI_IND)       <= err_passive_changed;
+    int_input_active(FCSI_IND)      <= fcs_changed;
     int_input_active(ALI_IND)       <= arbitration_lost;
     int_input_active(BEI_IND)       <= err_detected;
     int_input_active(RXFI_IND)      <= rx_full;
@@ -325,11 +325,11 @@ begin
     --  (int_vect_i(DOI_IND) = '1' and int_ena(DOI_IND) = '1');
 
 
-    -- psl epi_int_set_cov : cover
-    --  {int_vect_i(EPI_IND) = '0';int_vect_i(EPI_IND) = '1'};
+    -- psl fcsi_int_set_cov : cover
+    --  {int_vect_i(FCSI_IND) = '0';int_vect_i(FCSI_IND) = '1'};
 
-    -- psl epi_enable_cov : cover
-    --  (int_vect_i(EPI_IND) = '1' and int_ena(EPI_IND) = '1');
+    -- psl fcsi_enable_cov : cover
+    --  (int_vect_i(FCSI_IND) = '1' and int_ena(FCSI_IND) = '1');
 
 
     -- psl ali_int_set_cov : cover

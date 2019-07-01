@@ -8767,7 +8767,7 @@ ALI\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-EPI\end_layout
+FCSI\end_layout
 
 \end_inset
 </cell>
@@ -8904,7 +8904,7 @@ EWLI Error Warning Limit interrupt. When TX Error Counter (TXC) or RX Error Coun
 DOI Data Overrun on RX Buffer Interrupt. Before this interrupt is cleared , STATUS[DOR] must be cleared to avoid setting of this interrupt again. Interrupt clear has priority over set.
 \end_layout
 \begin_layout Description
-EPI CTU CAN FD became Error Passive or Bus Off interrupt. Interrupt set has priority over clear.
+FCSI Fault confinement state changed Interrupt. Interrupt is set when node turns Error Passive (from Error Active), Bus Off (from Error Passive) or Error Active (from Bus off after reintegration or from Error Passive). Interrupt set has priority over clear.
 \end_layout
 \begin_layout Description
 ALI Arbitration Lost Interrupt. Interrupt set has priority over clear.

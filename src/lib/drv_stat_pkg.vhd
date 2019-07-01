@@ -360,7 +360,7 @@ package drv_stat_pkg is
     constant STAT_TX_CTR_HIGH : natural := 251;
     constant STAT_TX_CTR_LOW  : natural := 220;
 
-    constant STAT_ERP_CHANGED_INDEX : natural := 252;
+    constant STAT_FCS_CHANGED_INDEX : natural := 252;
     constant STAT_EWL_REACHED_INDEX : natural := 253;
     constant STAT_ERR_VALID_INDEX : natural := 254;
 

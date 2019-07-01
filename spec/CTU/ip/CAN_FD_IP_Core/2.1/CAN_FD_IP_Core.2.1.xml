@@ -582,9 +582,9 @@
 						<ipxact:modifiedWriteValue>clear</ipxact:modifiedWriteValue>
 					</ipxact:field>
 					<ipxact:field>
-						<ipxact:name>EPI</ipxact:name>
-						<ipxact:displayName>EPI</ipxact:displayName>
-						<ipxact:description>CTU CAN FD became Error Passive or Bus Off interrupt. Interrupt set has priority over clear.</ipxact:description>
+						<ipxact:name>FCSI</ipxact:name>
+						<ipxact:displayName>FCSI</ipxact:displayName>
+						<ipxact:description>Fault confinement state changed Interrupt. Interrupt is set when node turns Error Passive (from Error Active), Bus Off (from Error Passive) or Error Active (from Bus off after reintegration or from Error Passive). Interrupt set has priority over clear.</ipxact:description>
 						<ipxact:bitOffset>4</ipxact:bitOffset>
 						<ipxact:resets>
 							<ipxact:reset>

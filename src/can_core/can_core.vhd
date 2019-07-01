@@ -209,8 +209,8 @@ entity can_core is
         -- Error is detected (Error frame will be transmitted)
         err_detected           :out  std_logic;
 
-        -- Error passive state changed
-        err_passive_changed    :out  std_logic;
+        -- Fault confinement state changed
+        fcs_changed            :out  std_logic;
 
         -- Error warning limit reached
         err_warning_limit      :out  std_logic;
@@ -354,8 +354,8 @@ architecture rtl of can_core is
     signal br_shifted_i            :    std_logic;
     
     -- Fault confinement status signals
-    signal err_passive_changed_i :    std_logic;
-    signal err_warning_limit_i   :    std_logic;
+    signal fcs_changed_i           :    std_logic;
+    signal err_warning_limit_i     :    std_logic;
     
     signal tx_err_ctr              :    std_logic_vector(8 downto 0);
     signal rx_err_ctr              :    std_logic_vector(8 downto 0);
@@ -606,7 +606,7 @@ begin
         drv_bus                 => drv_bus,                 -- IN
           
         -- Error signalling for interrupts
-        err_passive_changed     => err_passive_changed_i,   -- OUT
+        fcs_changed             => fcs_changed_i,           -- OUT
         err_warning_limit       => err_warning_limit_i,     -- OUT
 
         -- Operation control Interface
@@ -1082,8 +1082,8 @@ begin
     stat_bus(STAT_TX_CTR_HIGH downto STAT_TX_CTR_LOW) <=
         tx_ctr;
 
-    stat_bus(STAT_ERP_CHANGED_INDEX) <=
-        err_passive_changed_i;
+    stat_bus(STAT_FCS_CHANGED_INDEX) <=
+        fcs_changed_i;
         
     stat_bus(STAT_EWL_REACHED_INDEX) <=
         err_warning_limit_i;
@@ -1122,7 +1122,7 @@ begin
     tran_valid <= tran_valid_i;
     br_shifted <= br_shifted_i;
     err_detected <= err_detected_i;
-    err_passive_changed <= err_passive_changed_i;
+    fcs_changed <= fcs_changed_i;
     err_warning_limit <= err_warning_limit_i;
     sync_control <= sync_control_i;
     tx_data_wbs <= tx_data_wbs_i;

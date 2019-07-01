@@ -186,7 +186,7 @@ package CANtestLib is
         transmitt_int           :   boolean;
         error_warning_int       :   boolean;
         data_overrun_int        :   boolean;
-        error_passive_int       :   boolean;
+        fcs_changed_int         :   boolean;
         arb_lost_int            :   boolean;
         bus_error_int           :   boolean;
         logger_finished_int     :   boolean;
@@ -4175,8 +4175,8 @@ package body CANtestLib is
             tmp(DOI_IND)        :=  '1';
         end if;
 
-        if (interrupts.error_passive_int) then
-            tmp(EPI_IND)        :=  '1';
+        if (interrupts.fcs_changed_int) then
+            tmp(FCSI_IND)        :=  '1';
         end if;
 
         if (interrupts.arb_lost_int) then
@@ -4231,8 +4231,8 @@ package body CANtestLib is
             tmp.data_overrun_int         :=  true;
         end if;
 
-        if (int_reg(EPI_IND) = '1') then
-            tmp.error_passive_int        :=  true;
+        if (int_reg(FCSI_IND) = '1') then
+            tmp.fcs_changed_int          :=  true;
         end if;
 
         if (int_reg(ALI_IND) = '1') then

@@ -376,11 +376,11 @@ architecture rtl of can_top_level is
     -- Error appeared
     signal err_detected            :   std_logic;
 
-    -- Error pasive /Error acitve functionality changed
-    signal err_passive_changed   :   std_logic;
+    -- Fault confinement state functionality changed
+    signal fcs_changed             :   std_logic;
 
     -- Error warning limit reached
-    signal err_warning_limit     :   std_logic;
+    signal err_warning_limit       :   std_logic;
 
     -- Arbitration was lost input
     signal arbitration_lost        :   std_logic;
@@ -709,7 +709,7 @@ begin
 
         -- Interrupt sources
         err_detected            => err_detected,            -- IN
-        err_passive_changed     => err_passive_changed,     -- IN
+        fcs_changed             => fcs_changed,             -- IN
         err_warning_limit       => err_warning_limit,       -- IN
         arbitration_lost        => arbitration_lost,        -- IN
         tran_valid              => tran_valid,              -- IN
@@ -784,7 +784,7 @@ begin
         tran_valid              => tran_valid,              -- OUT
         br_shifted              => br_shifted,              -- OUT
         err_detected            => err_detected,            -- OUT
-        err_passive_changed     => err_passive_changed,     -- OUT
+        fcs_changed             => fcs_changed,             -- OUT
         err_warning_limit       => err_warning_limit,       -- OUT
         is_overload             => is_overload,             -- OUT
 

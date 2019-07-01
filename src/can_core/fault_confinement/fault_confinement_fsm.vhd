@@ -118,8 +118,8 @@ entity fault_confinement_fsm is
         -----------------------------------------------------------------------
         -- Status outputs
         -----------------------------------------------------------------------
-        -- Error passive state changed
-        err_passive_changed     :out  std_logic;
+        -- Fault confinement state changed
+        fcs_changed             :out  std_logic;
 
         -- Error warning limit was reached
         err_warning_limit       :out  std_logic
@@ -213,21 +213,16 @@ begin
     ---------------------------------------------------------------------------
     -- Current state
     ---------------------------------------------------------------------------
-    fc_fsm_curr_state_proc : process(curr_state, tx_err_ctr_mt_255,
-        tx_err_ctr_mt_erp, rx_err_ctr_mt_erp, set_err_active)
+    fc_fsm_curr_state_proc : process(curr_state)
     begin
         is_err_active     <= '0';
         is_err_passive    <= '0';
         is_bus_off        <= '0';
-        err_passive_changed  <= '0';
         
         case curr_state is
         when s_fc_err_active =>
             is_err_active <= '1';
-            if (tx_err_ctr_mt_erp = '1' or rx_err_ctr_mt_erp = '1') then
-                err_passive_changed <= '1';
-            end if;
-       
+
         when s_fc_err_passive =>
             is_err_passive <= '1';
 
@@ -236,5 +231,9 @@ begin
         end case;
     end process;
 
+    -- Fault confinement state changed when current state is not equal to
+    -- Next state.
+    fcs_changed <= '1' when (curr_state /= next_state) else
+                   '0';
 
 end architecture;
