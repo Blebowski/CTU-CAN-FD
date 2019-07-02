@@ -2262,11 +2262,14 @@ begin
             -------------------------------------------------------------------
             when s_pc_reintegrating =>
                 ctrl_ctr_ena <= '1';
-                reinteg_ctr_enable <= '1';
                 perform_hsync <= '1';
                 bit_err_disable <= '1';
                 nbt_ctrs_en <= '1';
                 
+                if (ctrl_ctr_zero = '1') then
+                    reinteg_ctr_enable <= '1';
+                end if;
+
                 if (ctrl_ctr_zero = '1' and reinteg_ctr_expired = '0') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;    
