@@ -710,6 +710,9 @@ architecture rtl of protocol_control_fsm is
     -- CRC Load initialization vector - internal value
     signal load_init_vect_i          :  std_logic;
     
+    -- Capture register to synchronize Bus off reset request till next Sample point
+    signal drv_bus_off_reset_q       :  std_logic;
+
 begin
 
     tx_frame_ready <= '1' when (tran_frame_valid = '1' and drv_bus_mon_ena = '0')
@@ -847,12 +850,30 @@ begin
             data_length_sub_c(ctrl_ctr_pload_val'length - 1 downto 0));
     
     ---------------------------------------------------------------------------
+    -- Bus off reset request capture register.
+    -- Capture when there is write to memory registers, clear when request is
+    -- processed (in next Sample Point).
+    ---------------------------------------------------------------------------
+    bus_off_req_capt_proc : process(res_n, clk_sys)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            drv_bus_off_reset_q <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (drv_bus_off_reset = '1') then
+                drv_bus_off_reset_q <= '1';
+            elsif (rx_trigger = '1') then
+                drv_bus_off_reset_q <= '0';
+            end if;
+        end if;
+    end process;
+
+    ---------------------------------------------------------------------------
     -- Next state process
     ---------------------------------------------------------------------------
     next_state_proc : process(
         curr_state, drv_ena, err_frm_req, ctrl_ctr_zero, no_data_field,
         drv_fd_type, allow_2bit_crc_delim, allow_2bit_ack, is_receiver,
-        is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset,
+        is_bus_off, go_to_suspend, tx_frame_ready, drv_bus_off_reset_q,
         reinteg_ctr_expired, rx_data_nbs, is_err_active, go_to_stuff_count
         )
     begin
@@ -1121,8 +1142,10 @@ begin
             -- Unit is in Bus idle period.
             -------------------------------------------------------------------
             when s_pc_idle =>
-               -- Dominant during idle is interpreted as SOF!
-               if (rx_data_nbs = DOMINANT) then
+
+               if (is_bus_off = '1') then
+                   next_state <= s_pc_reintegrating_wait;
+               elsif (rx_data_nbs = DOMINANT) then
                    next_state <= s_pc_base_id;
                elsif (tx_frame_ready = '1') then
                    next_state <= s_pc_sof;
@@ -1132,7 +1155,7 @@ begin
             -- Wait till command from User to start re-integration!
             -------------------------------------------------------------------
             when s_pc_reintegrating_wait =>
-                if (drv_bus_off_reset = '1') then
+                if (drv_bus_off_reset_q = '1') then
                     next_state <= s_pc_reintegrating;    
                 end if;
 
@@ -1222,7 +1245,7 @@ begin
         drv_can_fd_ena, tran_brs, rx_trigger, is_err_active, no_data_field,
         drv_fd_type, ctrl_counted_byte, ctrl_counted_byte_index, is_fd_frame,
         is_receiver, crc_match, drv_ack_forb, drv_self_test_ena, tx_frame_ready,
-        go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset,
+        go_to_suspend, frame_start, ctrl_ctr_one, drv_bus_off_reset_q,
         reinteg_ctr_expired, first_err_delim_q, go_to_stuff_count,
         crc_length_i, data_length_bits_c, ctrl_ctr_mem_index
         )
@@ -2216,7 +2239,7 @@ begin
                 -- account for DFF delay and RAM delay! 
                 txtb_ptr_d <= 1;
                 
-                if (rx_data_nbs = DOMINANT) then
+                if (rx_data_nbs = DOMINANT and is_bus_off = '0') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                     tx_load_base_id_i <= '1';
@@ -2224,7 +2247,7 @@ begin
                     crc_enable <= '1';
                 end if;
 
-                if (tx_frame_ready = '1') then
+                if (tx_frame_ready = '1' and is_bus_off = '0') then
                     txtb_hw_cmd_d.lock <= '1';
                     set_transmitter_i <= '1';
                 elsif (rx_data_nbs = DOMINANT) then
@@ -2233,13 +2256,15 @@ begin
 
                 -- Transmission/reception started -> Enable Bit de-stuffing!
                 -- Clear RX Shift register!
-                if (frame_start = '1' and rx_trigger = '1') then
+                if (frame_start = '1' and rx_trigger = '1' and
+                    is_bus_off = '0')
+                then
                     destuff_enable_set <= '1';
                     rx_clear_d <= '1';
                 end if;
                 
                 -- Transmission started -> Enable bit stuffing!
-                if (tx_frame_ready = '1') then
+                if (tx_frame_ready = '1' and is_bus_off = '0') then
                     stuff_enable_set <= '1';
                 end if;
 
@@ -2250,9 +2275,9 @@ begin
                 bit_err_disable <= '1';
                 nbt_ctrs_en <= '1';
                 
-                if (drv_bus_off_reset = '1') then
+                if (drv_bus_off_reset_q = '1') then
                     ctrl_ctr_pload_i <= '1';
-                    reinteg_ctr_clr    <= '1';
+                    reinteg_ctr_clr <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
                     
