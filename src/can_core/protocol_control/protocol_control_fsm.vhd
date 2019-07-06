@@ -682,9 +682,6 @@ architecture rtl of protocol_control_fsm is
     signal txtb_ptr_d             :  natural range 0 to 19;
     signal txtb_ptr_q             :  natural range 0 to 19;
     
-    -- Retransmitt counter, add 1
-    signal retr_ctr_add_i            :  std_logic;
-
     -- Start of frame pulse
     signal sof_pulse_i               :  std_logic;
 
@@ -1307,7 +1304,6 @@ begin
         reinteg_ctr_clr      <= '0';
         reinteg_ctr_enable   <= '0';
         retr_ctr_clear_i <= '0';
-        retr_ctr_add_i <= '0';
         is_arbitration_i <= '0';
         tx_dominant    <= '0';
         crc_check      <= '0';
@@ -1388,7 +1384,6 @@ begin
             ctrl_ctr_pload_val <= C_ERR_FLG_DURATION;
             rec_abort_d <= '1';
             
-            retr_ctr_add_i <= '1';
             crc_clear_match_flag <= '1';
             destuff_enable_clear <= '1';
             stuff_enable_clear <= '1';
@@ -1483,7 +1478,6 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1516,7 +1510,6 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1557,7 +1550,6 @@ begin
                 
                 if (ide_is_arbitration = '1' and arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1604,7 +1596,6 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -1636,7 +1627,6 @@ begin
                 
                 if (arbitration_lost_condition = '1') then
                     txtb_hw_cmd_d.unlock <= '1';
-                    retr_ctr_add_i <= '1';
                     arbitration_lost <= '1';
                     stuff_enable_clear <= '1';
                     if (tx_failed = '1') then
@@ -2695,10 +2685,11 @@ begin
                       '1';
 
     ---------------------------------------------------------------------------
-    -- Retransmitt counter is manipulated only for one clock cycle
+    -- Retransmitt counter is incremented when error frame is detected, or
+    -- when arbitration lost occurs
     ---------------------------------------------------------------------------
-    retr_ctr_add <= '1' when (retr_ctr_add_i = '1' and rx_trigger = '1')
-                        else
+    retr_ctr_add <= '1' when (arbitration_lost = '1' and rx_trigger = '1') else
+                    '1' when (err_frm_req = '1') else
                     '0';
 
     retr_ctr_clear <= '1' when (retr_ctr_clear_i = '1' and rx_trigger = '1')
