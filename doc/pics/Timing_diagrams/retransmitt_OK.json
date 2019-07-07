@@ -1,0 +1,10 @@
+{signal: [
+  {name: 'CAN Bus', 					wave: '13..4.1.3...4.1.3....1.', 	data: ['CAN frame', 'Error frame', 'CAN frame', 'Error frame', 'CAN frame'],			 			node: '.......'},
+  {name: 'Retransmitt counter', 		wave: '=...=.......=........=.', 	data: ['0', '1', '2', '0'], 																		node: '.......'},
+  {name: 'Retransmitt limit', 			wave: '=......................', 	data: ['2'], 																						node: '.......'},
+  {name: 'Transmission type', 			wave: 'x=....x.=.....x.=....x.', 	data: ['Initial transmission', 'First re-transmission', 'Second re-transmission'], 					node: '.......'},
+  {name: 'Operational state', 			wave: '=5....=.5.....=.5....=.', 	data: ['Idle', 'Transmitter', 'Idle', 'Transmitter', 'Idle', 'Transmitter', 'Idle'], 				node: '.......'},
+  {name: 'TXT Buffer state', 			wave: '=4..=...4...=...4....=.', 	data: ['Ready', 'TX in Progress', 'Ready', 'TX in Progress', 'Ready', 'TX in Progress','TX OK'], 	node: '.......'},
+ ],
+  //edge:['a<->b', 'c<->d', 'e~>f Destuff', 'f~>g Process', 'g~>i Stuff'],
+}
