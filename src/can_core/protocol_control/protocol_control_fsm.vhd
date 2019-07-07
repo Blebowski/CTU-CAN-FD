@@ -684,9 +684,6 @@ architecture rtl of protocol_control_fsm is
     
     -- Start of frame pulse
     signal sof_pulse_i               :  std_logic;
-
-    -- Retransmitt counter clear
-    signal retr_ctr_clear_i          :  std_logic;
     
     -- Complementary counter enable
     signal compl_ctr_ena_i           :  std_logic;
@@ -709,6 +706,9 @@ architecture rtl of protocol_control_fsm is
     
     -- Capture register to synchronize Bus off reset request till next Sample point
     signal drv_bus_off_reset_q       :  std_logic;
+    
+    -- Retransmitt counter clear (internal value)
+    signal retr_ctr_clear_i          :  std_logic;
 
 begin
 
@@ -1303,7 +1303,6 @@ begin
         
         reinteg_ctr_clr      <= '0';
         reinteg_ctr_enable   <= '0';
-        retr_ctr_clear_i <= '0';
         is_arbitration_i <= '0';
         tx_dominant    <= '0';
         crc_check      <= '0';
@@ -2076,7 +2075,6 @@ begin
                         if (is_transmitter = '1') then
                             txtb_hw_cmd_d.unlock <= '1';
                             txtb_hw_cmd_d.valid  <= '1';
-                            retr_ctr_clear_i <= '1';
                         end if;
                         
                     elsif (is_receiver = '1') then
@@ -2686,15 +2684,28 @@ begin
 
     ---------------------------------------------------------------------------
     -- Retransmitt counter is incremented when error frame is detected, or
-    -- when arbitration lost occurs
+    -- when arbitration loss occurs!
+    -- Active only when:
+    --  1. Counter is not cleared (clear has priority)
+    --  2. Retransmitt limitation is enabled. Not counting when disabled.
+    --  3. Unit is reciever. Only transmitter counts re-transmissions!
     ---------------------------------------------------------------------------
-    retr_ctr_add <= '1' when (arbitration_lost = '1' and rx_trigger = '1') else
+    retr_ctr_add <= '0' when (retr_ctr_clear_i = '1' or drv_retr_lim_ena = '0'
+                              or is_receiver = '1') else
+                    '1' when (arbitration_lost = '1' and rx_trigger = '1') else
                     '1' when (err_frm_req = '1') else
                     '0';
 
-    retr_ctr_clear <= '1' when (retr_ctr_clear_i = '1' and rx_trigger = '1')
-                          else
-                      '0';
+    ---------------------------------------------------------------------------
+    -- Retransmitt counter is cleared when:
+    --  1. Transmission is valid.
+    --  2. Transmission failed (TXT Buffer is moving to TX Error)!
+    ---------------------------------------------------------------------------
+    retr_ctr_clear_i <= '1' when (txtb_hw_cmd_d.valid = '1' and rx_trigger = '1')
+                            else
+                        '1' when (txtb_hw_cmd_d.failed = '1')
+                            else
+                        '0';
 
     -- Start of frame pulse is active in Sample point of SOF only!
     sof_pulse <= '1' when (sof_pulse_i = '1' and rx_trigger = '1')
@@ -2822,7 +2833,7 @@ begin
     sp_control_q <= sp_control_q_i;
     is_arbitration <= is_arbitration_i;
     crc_spec_enable <= crc_spec_enable_i;
-    
+    retr_ctr_clear <= retr_ctr_clear_i;
 
     -----------------------------------------------------------------------
     -- Assertions
