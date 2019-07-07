@@ -82,6 +82,7 @@ feature:
         invalid_configs:
         overload:
         retr_limit:
+        one_shot:
         rx_status:
         spec_mode:
         traf_meas:
