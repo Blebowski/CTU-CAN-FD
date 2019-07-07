@@ -1804,7 +1804,7 @@ status open
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Dual port memories access
+Datapath pipeline processing
 \begin_inset CommandInset label
 LatexCommand label
 name "fig:Avalon-read-burst-timing-diagram-1"
@@ -2187,13 +2187,13 @@ name "tab:CAN-ports-common"
 \end_layout
 
 \begin_layout Standard
-A high level algorithm for processing of CAN Data stream is described in
+A high level algorithm for processing of CAN data stream is described in
  Table TODO.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -2203,7 +2203,7 @@ status open
 \align center
 \begin_inset Tabular
 <lyxtabular version="3" rows="11" columns="4">
-<features tabularvalignment="middle">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="left" valignment="top" width="3line%">
 <column alignment="left" valignment="top" width="60line%">
 <column alignment="left" valignment="top" width="10line%">
@@ -2737,7 +2737,7 @@ CTU CAN FD contains two parallel buses to reduce number of signals in the
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -2957,7 +2957,392 @@ CAN Frame metadata
 \end_layout
 
 \begin_layout Standard
-TODO
+Through this document, term 
+\begin_inset Quotes eld
+\end_inset
+
+frame metadata
+\begin_inset Quotes erd
+\end_inset
+
+ is used for description of CAN frame information.
+ Related CAN frame information are described in Table TODO.
+ On interface to TXT Buffers anr RX Buffer, metadata are stored in Metadata
+ word as is shown in TODO.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="7" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="7text%">
+<column alignment="left" valignment="top" width="7text%">
+<column alignment="left" valignment="top" width="15text%">
+<column alignment="left" valignment="top" width="40text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Abbreviation
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Possible values 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Identifier type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BASE (0), EXTENDED (1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Distiguishes frame with Base identifier only and frame with Identifier Extension.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame type
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+NORMAL_CAN (0), FD_CAN (1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Distiguishes CAN 2.0 frames and CAN FD frames.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Remote Transmission Request
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RTR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+NO_RTR_FRAME (0), RTR_FRAME (1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Distinguishes between regular frame and RTR frame.
+ When frame is CAN FD frame, RTR bit has no meaning.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Rate Shift flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BR_NO_SHIFT (0), BR_SHIFT (1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Distinguishes if Bit rate will be shifted in CAN FD frame or not.
+ This bit has no meaning in CAN 2.0 frames.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Error State Indicator
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ESI
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ESI_ERR_ACTIVE (0), ESI_ERR_PASSIVE (1)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value of received ESI bit.
+ This bit has no meaning in CAN 2.0 frames.
+ This bit has no meaning on TX Datapath (in TXT Buffers).
+ Value of transmitted ESI bit is always given by actual Fault confinement
+ state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data length code
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+DLC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0 - 15 as defined in TODO.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data length code determines length of Data field within CAN frame.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Test mode features
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Protocol-control-state-transition-rules-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -3036,7 +3421,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+CTR_PRES
 \end_layout
 
 \end_inset
@@ -3045,7 +3430,8 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+In test mode CTR_PRES is writable and allows setting values of TX Error
+ counter, RX Error counter, Nominal Error counter and Data Error counter.
 \end_layout
 
 \end_inset
@@ -3056,7 +3442,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+EWL
 \end_layout
 
 \end_inset
@@ -3065,7 +3451,8 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+In test mode EWL is read-write and Error warning limit is configurable by
+ SW.
 \end_layout
 
 \end_inset
@@ -3076,7 +3463,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+ERP
 \end_layout
 
 \end_inset
@@ -3085,7 +3472,10 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+In test mode ERP is read-write and Error Passive threshold is configurable
+ by SW.
+ When either RX Error counter or TX Error counter Error reaches Error Passive
+ threshold, unit becomes Error Passive.
 \end_layout
 
 \end_inset
@@ -3435,7 +3825,7 @@ Process
 
 \begin_layout Plain Layout
 Transition corresponds to regular change of CAN frame field (e.g.
- Data to CRC).
+ Stuff count to CRC).
 \end_layout
 
 \end_inset
@@ -4009,8 +4399,8 @@ Control counter module implements Arbitration Lost Capture register.
  Arbitration Lost Capture register stores position within CAN Arbitration
  field at which Arbitration was lost.
  Arbitration lost capture register is loaded when Arbitration lost is signalled
- by Protocol Control FSM.
- Meaning of values in Arbitration Lost Capture register is given in Table
+ by Protocol Control FSM in Process pipeline stage.
+ Meaning of values in Arbitration Lost Capture register is described in
  TODO.
 \end_layout
 
@@ -4024,19 +4414,35 @@ Retransmitt counter controls number of retransmissions of current CAN frame
  Retransmitt counter counts from zero, and it is controlled by Protocol
  control FSM.
  Retransmitt counter counts only when Retransmitt limitation is enabled
- by user.
- Retransmitt counter is cleared when selected TXT Buffer for transmission
- changes between two consecutive transmissions (another TXT Buffer with
- another TX Frame selected by TX Arbitrator, reffer to TODO).
- Retransmitt counter is cleared upon succesfull transmission.
+ by user, otherwise it stays at 0.
  Retransmitt counter is incremented by 1 when Arbitration is lost, or when
  Error frame transmission is requested by Error detector (reffer to TODO).
+ When Error frame and Arbitration loss occur in the same frame, retransmitt
+ counter is incremented only once (such a situation is shown in Figure TODO).
+ When multiple Error frames occur in the same frame (e.g.
+ due to error during error frame), retransmitt counter is incremented only
+ once.
+ Retransmitt counter is cleared upon succesfull transmission.
  When Retransmitt counter reaches Retransmitt limit, it signals this to
- Protocol control FSM, and Protocol control FSM.
+ Protocol control FSM as shown in Figure TODO.
+ In case of next arbitration loss or Error frame request, Protocol control
+ FSM stops transmitting actual frame, signals this to TXT Buffer and TXT
+ Buffer moves to TX Error state (see TODO).
  When unit is a receiver without attempt to transmitt a frame (no frame
  was available during Bus Idle, Intermission or Suspend Transmission), retransmi
 tt counter is not modified during this frame.
+ When unit is Error Passive and transmission of a frame is not succesfull,
+ unit becomes receiver of next frame (due to Suspend transmission field)
+ without attempting to transmitt a frame.
+ If error occurs during next frame, retransmitt counter is not incremented.
  Possible configurations of Retransmitt limit are shown in Table TODO.
+\end_layout
+
+\begin_layout Standard
+Retransmitt counter is cleared when selected TXT Buffer for transmission
+ changes between two consecutive transmissions (another TXT Buffer with
+ another TX Frame selected by TX Arbitrator, reffer to TODO), as shown in
+ Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -4246,6 +4652,138 @@ name "tab:Protocol-control-state-transition-rules-2"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Retransmitt counter operation
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:retransmitt-counter-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Retransmitt counter - arbitration loss and Error frame 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:retransmitt-counter-arbitration-loss"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Retransmitt counter - second re-transmission succesfull 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:retransmitt-counter-OK"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection*
 Reintegration counter
 \end_layout
@@ -4258,9 +4796,59 @@ Re-integration counter counts 128 consecutive ocurrences of 11 consecutive
  Reffer to TODO for distuinguishing between Integration and Re-integration.
  Re-integration counter is controlled by Protocol control FSM.
  Re-integration counter counts from zero.
+ Re-integration counter is cleared when unit is Bus-off and it receives
+ Command to Reset Error Counters (see TODO).
  Re-integration counter is incremented by 1 after each 11 consecutive Recessive
  bits are received.
- Re-integration counter signals reaching 128 to Protocol control FSM.
+ When Re-integration counter reaches 128, it signals this to Protocol control
+ FSM (it becomes Idle), unit becomes Error Active again and Operation control
+ state is changed to Idle.
+ An example of Re-integration counter operation is shown in Figure TODO.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Re-integration counter 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:reintegration-counter"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection*
@@ -4276,16 +4864,18 @@ TX Shift register is 32 bit shift register which transmitts given bit sequence
  TX Shift register is shifted by one bit in Stuff pipeline stage.
  TX shift register is preloaded according to Table TODO.
  TX Shift register is enabled only as long as unit is transmitter, TX shift
- register is not shifting when unit is receiver or after arbitration was
- lost.
+ register is not shifting when unit is receiver.
  In such a case Recessive value is transmitted on its output during whole
  frame.
  TX shift register shifts from lowest bit index to highest bit index (shifting
  up).
- Transmission of single bits or constant sequences (e.g.
- Error frame) is handled separately, and has higher priority than transmission
- from TX Shift register.
+ Transmission of single bits (e.g.
+ SOF) or constant sequences (e.g.
+ Active Error Flag) is handled separately, and has higher priority than
+ transmission from TX Shift register.
  Rules for handling of these situations are described in Table TODO.
+ An example of TX Shift register operation during CAN frame is shown in
+ Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -4759,6 +5349,50 @@ name "tab:CAN-control-counter-1-1"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TX Shift register operation 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:tx-shift-register-operation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection*
 RX Shift Register
 \end_layout
@@ -4782,6 +5416,9 @@ RX Shift register is 32 bit shift register which receives bit sequence and
  used for CRC check directly from RX Shift register because after CRC sequence
  RX Shift register is not used till the end of frame and its content remains
  stable.
+ An example of RX shift register operation is shown in Linear mode is shown
+ in Figure TODO.
+ An example of operation in Byte mode is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -5577,7 +6214,7 @@ Form Error
 \begin_inset Text
 
 \begin_layout Plain Layout
-SOF, Control, Stuff Count, CRC
+SOF, Control, Stuff Count, CRC, End of Frame
 \end_layout
 
 \end_inset
@@ -5735,6 +6372,10 @@ name "tab:CAN-ports-common-3-2"
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Detection of 
 \end_layout
 
 \begin_layout Standard
@@ -6013,10 +6654,10 @@ Transmission starts, Bit Stuffing is enabled.
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit stuffing processes equal consecutive bits from Protocol Control and
- processes them in Stuff pipeline stage.
- Processed bit values are propagated to output.
- Counter of equal consecutive bits is incremented.
+Bit stuffing processes equal consecutive bits from Protocol Control in Stuff
+ pipeline stage.
+ Processed bit values are propagated to output with one clock cycle delay.
+ Counter of equal consecutive bits is incremented by 1 for each bit.
 \end_layout
 
 \end_inset
@@ -6058,9 +6699,9 @@ Bit Stuffing processes a bit of different value before counter of equal
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit stuffing processes equal consecutive bits from Protocol Control and
- processes them in Stuff pipeline stage.
- Counter of equal consecutive bits is incremented.
+Bit stuffing processes equal consecutive bits from Protocol Control in Stuff
+ pipeline stage.
+ Counter of equal consecutive bits is incremented by 1 for each bit.
 \end_layout
 
 \end_inset
@@ -6084,7 +6725,7 @@ Counter of equal consecutive bits reaches length of Stuff rule.
  Instead of propagating processed bit to output, Bit Stuffing inserts bit
  of opposite polarity on the output.
  Bit Stuffing signals halting to Protocol Control for one Bit time.
- Counter of equal consecutive bits is reset.
+ Counter of equal consecutive bits is cleared.
  Number of Stuff Bits (counter of Stuff Bits) is incremented by 1.
 \end_layout
 
@@ -8930,7 +9571,7 @@ TX in Progress, Abort in Progress
 
 \begin_layout Plain Layout
 A frame was re-transmitted number of times unsucesfully (either Arbitration
- lost or Error frame occurred) and Retransmitt counter reaches Retransmitt
+ was lost or Error frame occurred) and Retransmitt counter reaches Retransmitt
  threshold.
 \end_layout
 
@@ -10909,7 +11550,7 @@ Measure TSEG1 and TSEG2 segments of bit.
 \end_layout
 
 \begin_layout Itemize
-Check if edge is valid for synchronisation (only one edge between two sample
+Check if edge is valid for synchronisation (only one edge between two Sample
  points).
 \end_layout
 
@@ -10950,22 +11591,28 @@ Bit time counters
 Bit time counters module contains two counters: Time quanta counter and
  Segment counter.
  Time quanta counter measures length of Time Quanta and provides Time quanta
- edge signal (active for one clock cycle) when Time Quanta has elapsed.
- When Time Quanta is equal to system clock, Time Quanta counter is not running
- and Time Quanta edge signal is active continously.
+ edge signal when Time Quanta has elapsed.
+ Time Quanta edge signal is either active continously (when Prescaler is
+ 1), or always just for one clock cycle and it is used as clock enable.
+ When Prescaler is 1, Time Quanta is equal to system clock and Time Quanta
+ counter is not running (in this case Time Quanta edge signal is active
+ continously).
  Segment counter measures length of Bit time segment.
  Prescaler distuiguishes two Bit Segments: TSEG1 and TSEG2.
  Segment counter counts from 0 and it is restarted upon the end of previos
  segment or upon hard - synchronisation.
+ Segment counter for Nominal(Data) Bit-rate shall never overflow when current
+ sampling control is set to Nominal (Data) Bit-rate.
 \end_layout
 
 \begin_layout Standard
-Each Bit time counters module is enabled in different phases of CAN frame
- as shown in Table TODO.
+Nominal Bit time counters module is enabled when node is running with Nominal
+ Bit-rate.
+ Data Bit-time counters is enabled when node is running with Data Bit-rate.
+ During bits of CAN frame where Bit-rate is switched, both Nominal and Data
+ Bit-rate counters are enabled.
  When Bit time counter module is disabled, none of its both counters are
- running.
- During bits where Bit-rate is switched, both bit time counter modules are
- running.
+ running (to save power).
  Both counters (Segment counter and Time Quanta counter) are restarted when
  Bit time segment ends to force alignment of Nominal and Data Time Quanta
  in the moment of Bit-rate switch.
@@ -10981,6 +11628,12 @@ Resynchronisation module measures length of Bit time segment.
  Resynchronisation module maintains register with Expected Segment Length.
  Expected segment length is loaded according to rules described in Table
  TODO.
+ Expected Segment length register is always loaded upon the end of segment,
+ or when re-synchronisation occurs.
+ Loading default length of next segment to Expected segment length regsiter
+ is shown in Figure TODO.
+ Loading Expected segment length without end of segment as a result of re-synchr
+onisation is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -11309,6 +11962,7 @@ Expected segment length requests end of current segment by following means:
 
 \begin_layout Itemize
 Segment counter reaches value of Expected segment length.
+ Such a situation is shown in Figure TODO.
 \end_layout
 
 \begin_layout Itemize
@@ -11316,11 +11970,12 @@ Immediate end of segment occurs.
 \end_layout
 
 \begin_layout Standard
-Immediate resynchronisation is signalled when there is negative resynchronisatio
-n (during TSEG2) and Phase error is lower than SJW.
+Immediate end of segment is signalled when there is negative resynchronisation
+ during TSEG2 and Phase error is smaller than SJW.
  Immediate resynchronisation requests end of segment in the same clock cycle
- when resynchronisation occurs without one clock cycle delay of updating
+ when resynchronisation edge occurs without one clock cycle delay of updating
  Expected Segment Length register.
+ Immediate resynchronisation is shown in Figure TODO.
 \end_layout
 
 \begin_layout Subsection
@@ -11338,14 +11993,35 @@ Segment end detector processes request to end currend Bit time segment as
 \end_layout
 
 \begin_layout Subsection
+Bit rate switch
+\end_layout
+
+\begin_layout Standard
+Since both Bit time counters (Nominal and Data) are running in bits where
+ Bit-rate is switched, length of TSEG2 of these bits is measured by both
+ counters and both resynchronisation modules can signal request to end current
+ segment.
+ Segment end detector only considers requests from the Resynchronisation
+ module of which is given by actual Sample control as given by Protocol
+ Control FSM.
+ This situation is shown in Figure TODO.
+ Note that since Protocol control provides Sample control already in Process
+ pipeline stage (due to speculative forwarding), there might occur negative
+ re-synchronisation which shortens duration of TSEG2 after BRS to just one
+ clock cycle.
+ In this case following TX Trigger is throttled as mentioned in TODO.
+\end_layout
+
+\begin_layout Subsection
 Prescaler FSM
 \end_layout
 
 \begin_layout Standard
-Prescaler FSM determines in which Bit time segment Prescaler actually is.
+Prescaler FSM determines in which Bit time segment (TSEG1, TSEG2) Prescaler
+ actually is.
  Its state transition diagram is shown in Figure TODO.
  Prescaler FSM issues requests to generate TX Trigger and RX Triggers to
- Trigger generator when an end of segment is signalled by Segment end detector.
+ Trigger generator when end of segment is signalled by Segment end detector.
 \end_layout
 
 \begin_layout Subsection
@@ -11356,6 +12032,7 @@ Trigger generator
 Trigger generator processes requests to generate TX Trigger (used to process
  data in Stuff pipeline stage) and RX Triggers (used to process data in
  Destuff and Process pipeline stages).
+ Typical scenarion is shown in Figure TODO.
  As there is no lower limit on length of TSEG2 from TODO, resynchronisation
  which shortens length of TSEG2 to just one clock cycle can occur.
  In such a case, RX Trigger for Process pipeline stage and TX trigger pipeline
@@ -11366,7 +12043,7 @@ Trigger generator processes requests to generate TX Trigger (used to process
  corresponds to shortening length of TSEG2 to less than Information Processing
  Time.
  Throttling of TX Trigger corresponds to delaying calculation of following
- bit value after Information Processing Time behind Sample Point.
+ bit value after Information Processing Time from Sample Point.
 \end_layout
 
 \begin_layout Subsection
@@ -11374,7 +12051,7 @@ Synchronisation checker
 \end_layout
 
 \begin_layout Standard
-Synchronisation checker determines in synchronisation edge is Hard synchronisati
+Synchronisation checker determines if synchronisation edge is Hard synchronisati
 on edge or Re-synchronisation edge.
  Synchronisation checker maintains a flag about valid synchronisation edge.
  Such a flag is set when synchronisation edge occurs and cleared when TSEG1
@@ -11385,6 +12062,8 @@ on edge or Re-synchronisation edge.
  If there are more synchronisation edges between two sample points, only
  first edge is detected as valid synchronisation edge and other edges are
  ignored.
+ A situation where two synchronisation edges are detected (and second one
+ is filtered out) is shown in Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -11413,7 +12092,7 @@ Bus sampling module implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-Sample Bus in Sample point and store it to previous bus value.
+Sample Bus in Sample point and store it to previous bus value register.
 \end_layout
 
 \begin_layout Itemize
