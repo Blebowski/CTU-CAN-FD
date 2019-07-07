@@ -1381,7 +1381,7 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Waits until CAN bus becomes idle (no frame in progress).
+    -- Waits until CAN bus starts transmitting error frame.
     --
     -- Procedure is polling on status of CTU CAN FD Core over Avalon bus!
     --
@@ -1389,7 +1389,7 @@ package CANtestLib is
     --  ID              Index of CTU CAN FD Core instance
     --  mem_bus         Avalon memory bus to execute the access on.
     ----------------------------------------------------------------------------
-    procedure CAN_wait_error_transmitted(
+    procedure CAN_wait_error_frame(
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );
@@ -3633,7 +3633,7 @@ package body CANtestLib is
     end procedure;
 
 
-    procedure CAN_wait_error_transmitted(
+    procedure CAN_wait_error_frame(
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     )is
