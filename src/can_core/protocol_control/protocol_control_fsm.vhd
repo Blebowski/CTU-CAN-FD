@@ -709,6 +709,10 @@ architecture rtl of protocol_control_fsm is
     
     -- Retransmitt counter clear (internal value)
     signal retr_ctr_clear_i          :  std_logic;
+    
+    -- Blocking register for retransmitt counter add signal.
+    signal retr_ctr_add_block        :  std_logic;
+    signal retr_ctr_add_block_clr    :  std_logic;
 
 begin
 
@@ -1363,6 +1367,9 @@ begin
         
         -- Always tick FSM state register.
         tick_state_reg <= '0';
+
+        -- Clear block register for retransmitt counter add signal.
+        retr_ctr_add_block_clr <= '0';
         
         -- Status signals for debug
         is_control      <= '0';
@@ -2106,6 +2113,7 @@ begin
                 ctrl_ctr_ena <= '1';
                 is_intermission <= '1';
                 nbt_ctrs_en <= '1';
+                retr_ctr_add_block_clr <= '1';
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -2691,7 +2699,7 @@ begin
     --  3. Unit is reciever. Only transmitter counts re-transmissions!
     ---------------------------------------------------------------------------
     retr_ctr_add <= '0' when (retr_ctr_clear_i = '1' or drv_retr_lim_ena = '0'
-                              or is_receiver = '1') else
+                              or is_receiver = '1' or retr_ctr_add_block = '1') else
                     '1' when (arbitration_lost = '1' and rx_trigger = '1') else
                     '1' when (err_frm_req = '1') else
                     '0';
@@ -2706,6 +2714,24 @@ begin
                         '1' when (txtb_hw_cmd_d.failed = '1')
                             else
                         '0';
+
+    ---------------------------------------------------------------------------
+    -- Retransmitt counter must be modified only once if multiple Error frames
+    -- are requested during single frame.
+    ---------------------------------------------------------------------------
+    retr_ctr_add_block_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            retr_ctr_add_block <= '0';
+        elsif (rising_edge(clk_sys)) then
+            if (retr_ctr_add = '1') then
+                retr_ctr_add_block <= '1';
+            elsif (retr_ctr_add_block_clr = '1') then
+                retr_ctr_add_block <= '0';
+            end if;
+        end if;
+    end process;
+
 
     -- Start of frame pulse is active in Sample point of SOF only!
     sof_pulse <= '1' when (sof_pulse_i = '1' and rx_trigger = '1')
