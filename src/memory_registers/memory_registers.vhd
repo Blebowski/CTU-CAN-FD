@@ -272,6 +272,10 @@ architecture rtl of memory_registers is
 
     -- Lock active (inactive only in test mode)
     signal reg_lock_active        :     std_logic;
+    
+    -- Soft reset registering
+    signal soft_res_q             :     std_logic;
+    signal soft_res_q_n           :     std_logic;
 
     ---------------------------------------------------------------------------
     -- 
@@ -413,12 +417,36 @@ begin
     reg_lock_active <= not control_registers_out.mode(TSTM_IND);
     
     ----------------------------------------------------------------------------
+    -- Pipeline on Soft reset register.
+    ----------------------------------------------------------------------------
+    soft_res_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
+    )
+    port map(
+        arst               => '1',                                      -- IN
+        clk                => clk_sys,                                  -- IN
+
+        input              => control_registers_out.mode(RST_IND),      -- IN
+        ce                 => '1',                                      -- IN
+
+        output             => soft_res_q                                -- OUT
+    );
+
+    ----------------------------------------------------------------------------
     -- Reset propagation to output
     -- Note: this works only for reset active in logic zero
     ----------------------------------------------------------------------------
-    res_out_i <=  G_RESET_POLARITY when (res_n = G_RESET_POLARITY) else
-                  G_RESET_POLARITY when (control_registers_out.mode(RST_IND) = '1') else
-                  (not G_RESET_POLARITY);
+    res_pol_0_gen : if (G_RESET_POLARITY = '0') generate
+        soft_res_q_n <= NOT soft_res_q;
+        res_out_i <= res_n AND soft_res_q_n;
+    end generate;
+
+    res_pol_1_gen : if (G_RESET_POLARITY = '1') generate
+        res_out_i <= res_n OR soft_res_q;
+    end generate;
+    
     res_out <= res_out_i;
 
     ----------------------------------------------------------------------------
@@ -772,9 +800,9 @@ begin
     -- processing!
     ---------------------------------------------------------------------------
     
-    tx_cmd_reg_proc : process(clk_sys, res_n)
+    tx_cmd_reg_proc : process(clk_sys, res_out_i)
     begin
-        if (res_n = G_RESET_POLARITY) then
+        if (res_out_i = G_RESET_POLARITY) then
             txtb_sw_cmd.set_rdy <= '0';
             txtb_sw_cmd.set_ety <= '0';
             txtb_sw_cmd.set_abt <= '0';
