@@ -766,31 +766,47 @@ begin
     -- TX_COMMAND
     ---------------------------------------------------------------------------
     
-    -- TX SW CMD - Set ready
-    txtb_sw_cmd.set_rdy <= align_wrd_to_reg(
-        control_registers_out.tx_command, TXCR_IND);
-   
-    -- TX SW CMD - Set empty
-    txtb_sw_cmd.set_ety <= align_wrd_to_reg(
-        control_registers_out.tx_command, TXCE_IND);
+    ---------------------------------------------------------------------------
+    -- TX_COMMAND register is pipelined on purpose to meet timing. This does
+    -- not create a problem, only introduces one clock cycle latency on command
+    -- processing!
+    ---------------------------------------------------------------------------
+    
+    tx_cmd_reg_proc : process(clk_sys, res_n)
+    begin
+        if (res_n = G_RESET_POLARITY) then
+            txtb_sw_cmd.set_rdy <= '0';
+            txtb_sw_cmd.set_ety <= '0';
+            txtb_sw_cmd.set_abt <= '0';
+            txtb_sw_cmd_index <= (OTHERS => '0');
+        elsif (rising_edge(clk_sys)) then
+            
+            -- TX SW CMD - Set ready
+            txtb_sw_cmd.set_rdy <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXCR_IND);
+                
+            -- TX SW CMD - Set empty
+            txtb_sw_cmd.set_ety <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXCE_IND);
+                
+            -- TX SW CMD - Set abort
+            txtb_sw_cmd.set_abt <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXCA_IND);
+                
+            -- TXT Buffer command indices
+            txtb_sw_cmd_index(0) <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXB1_IND);
 
-    -- TX SW CMD - Set abort
-    txtb_sw_cmd.set_abt <= align_wrd_to_reg(
-        control_registers_out.tx_command, TXCA_IND);
+            txtb_sw_cmd_index(1) <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXB2_IND);
 
-    -- TXT Buffer command indices
-    txtb_sw_cmd_index(0) <= align_wrd_to_reg(
-        control_registers_out.tx_command, TXB1_IND);
+            txtb_sw_cmd_index(2) <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXB3_IND);
 
-    txtb_sw_cmd_index(1) <= align_wrd_to_reg(
-        control_registers_out.tx_command, TXB2_IND);
-
-    txtb_sw_cmd_index(2) <= align_wrd_to_reg(
-        control_registers_out.tx_command, TXB3_IND);
-
-    txtb_sw_cmd_index(3) <= align_wrd_to_reg(
-        control_registers_out.tx_command, TXB4_IND);
-
+            txtb_sw_cmd_index(3) <= align_wrd_to_reg(
+                control_registers_out.tx_command, TXB4_IND);      
+        end if;
+    end process;
 
     ---------------------------------------------------------------------------
     -- TX_PRIORITY
