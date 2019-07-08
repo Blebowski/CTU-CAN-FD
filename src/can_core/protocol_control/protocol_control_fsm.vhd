@@ -608,8 +608,7 @@ architecture rtl of protocol_control_fsm is
     signal rx_store_brs_i            :  std_logic;
     signal rx_store_stuff_count_i    :  std_logic;
     
-    signal rx_clear_d                :  std_logic;
-    signal rx_clear_q                :  std_logic;
+    signal rx_clear_i                :  std_logic;
 
     -- Internal commands for TX Shift register
     signal tx_load_base_id_i         :  std_logic;
@@ -1292,7 +1291,7 @@ begin
 
         rx_shift_ena            <= "0000";
         rx_shift_in_sel         <= '0';
-        rx_clear_d              <= '0';
+        rx_clear_i              <= '0';
 
         -- TX Shift register interface
         tx_load_base_id_i         <= '0';
@@ -1526,9 +1525,9 @@ begin
                 end if;
                 
                 if (is_transmitter = '1' and tran_ident_type = BASE) then
-                    if (tran_frame_type = FD_CAN) then
-                        tx_dominant <= '1';
-                    elsif (tran_is_rtr = NO_RTR_FRAME) then
+                    if (tran_frame_type = FD_CAN or
+                        tran_is_rtr = NO_RTR_FRAME)
+                    then
                         tx_dominant <= '1';
                     end if;
                 end if;
@@ -2153,7 +2152,7 @@ begin
                     -- Clear RX Shift Register!
                     if (frame_start = '1' and rx_trigger = '1') then
                         destuff_enable_set <= '1';
-                        rx_clear_d <= '1';
+                        rx_clear_i <= '1';
                     end if;
                     
                     -- If we are starting transmission and not going to suspend
@@ -2206,17 +2205,16 @@ begin
                     sof_pulse_i <= '1';
                     set_receiver_i <= '1';
                     destuff_enable_set <= '1';
-                    rx_clear_d <= '1';
+                    rx_clear_i <= '1';
 
                 -- End of Suspend -> Unit goes to IDLE if there is nothing to
                 -- transmitt, otherwise it goes to SOF and transmitts
                 elsif (ctrl_ctr_zero = '1') then
                     if (tx_frame_ready = '1') then
-                        rx_clear_d <= '1';
+                        rx_clear_i <= '1';
                         set_transmitter_i <= '1';
                         destuff_enable_set <= '1';
                         stuff_enable_set <= '1';
-                        rx_clear_d <= '1';
                     else
                         set_idle_i <= '1';
                     end if;
@@ -2256,7 +2254,7 @@ begin
                     is_bus_off = '0')
                 then
                     destuff_enable_set <= '1';
-                    rx_clear_d <= '1';
+                    rx_clear_i <= '1';
                 end if;
                 
                 -- Transmission started -> Enable bit stuffing!
@@ -2554,25 +2552,6 @@ begin
     rx_store_esi <= rx_store_esi_i and rx_trigger;
     rx_store_brs <= rx_store_brs_i and rx_trigger;
     rx_store_stuff_count <= rx_store_stuff_count_i and rx_trigger;
-    
-    -----------------------------------------------------------------------
-    -- RX Shift regsiter clear
-    -----------------------------------------------------------------------
-    rx_shift_reg_clear_inst : dff_arst
-    generic map(
-        G_RESET_POLARITY   => G_RESET_POLARITY,
-        G_RST_VAL          => '0'
-    )
-    port map(
-        arst               => res_n,
-        clk                => clk_sys,
-        
-        input              => rx_clear_d,
-        ce                 => '1',
-        
-        output             => rx_clear_q
-    );
-
 
     -----------------------------------------------------------------------
     -- TX Shift register commands gating. Each command can be active only
@@ -2851,7 +2830,7 @@ begin
     txtb_hw_cmd <= txtb_hw_cmd_q;
     tran_valid <= txtb_hw_cmd_q.valid;
     ssp_reset <= ssp_reset_i; 
-    rx_clear <= rx_clear_q;
+    rx_clear <= rx_clear_i;
     sync_control <= sync_control_q;
     txtb_ptr <= txtb_ptr_q;
     pc_state <= curr_state;

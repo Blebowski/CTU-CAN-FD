@@ -181,7 +181,8 @@ end entity;
 architecture rtl of rx_shift_reg is
 
     -- Internal reset
-    signal res_n_i : std_logic;
+    signal res_n_i      : std_logic;
+    signal res_n_i_d    : std_logic;
 
     -- Shift register status
     signal rx_shift_reg_q : std_logic_vector(31 downto 0);
@@ -195,10 +196,26 @@ architecture rtl of rx_shift_reg is
 begin
 
      -- Internal reset: Async reset + reset by design!
-    res_n_i <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY or 
-                                      rx_clear = '1')
-                                else
-               not (G_RESET_POLARITY);
+    res_n_i_d <= G_RESET_POLARITY when (res_n = G_RESET_POLARITY or 
+                                        rx_clear = '1')
+                                  else
+                 not (G_RESET_POLARITY);
+
+    rx_shift_res_reg_inst : dff_arst
+    generic map(
+        G_RESET_POLARITY   => G_RESET_POLARITY,
+        G_RST_VAL          => '0'
+    )
+    port map(
+        arst               => '1',            -- IN
+        clk                => clk_sys,        -- IN
+
+        input              => res_n_i_d,      -- IN
+        ce                 => '1',            -- IN
+
+        output             => res_n_i         -- OUT
+    );
+
 
     ---------------------------------------------------------------------------
     -- Shift the register when it is enabled and RX Trigger is active!
