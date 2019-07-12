@@ -1029,8 +1029,8 @@ begin
     -- psl default clock is rising_edge(clk_sys);
         
     -- psl no_invalid_ack_err_asrt : assert never
-    --  ((ack_err = '1' or crc_err = '1' or
-    --    stuff_err = '1' or form_err_i = '1') and (is_err_frm = '1'))
+    --  ((ack_err = '1' or crc_err = '1' or stuff_err = '1') and
+    --   (is_err_frm = '1'))
     -- report "ACK, Stuff, CRC Errors can't occur during Error or overload flag"
     --  severity error;
     
