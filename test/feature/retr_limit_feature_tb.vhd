@@ -143,8 +143,15 @@ package body retr_limit_feature is
         variable err_counters       :       SW_error_counters := (0, 0, 0, 0);
         variable buf_state          :       SW_TXT_Buffer_state_type;
         variable status             :       SW_status;
+        variable txt_buf_nr         :       natural range 1 to 4;
     begin
         o.outcome := true;
+
+        ------------------------------------------------------------------------
+        -- Randomize used TXT Buffer
+        ------------------------------------------------------------------------
+        rand_int_v(rand_ctr, 3, txt_buf_nr); 
+        txt_buf_nr := txt_buf_nr + 1;
 
         ------------------------------------------------------------------------
         -- 1. Set retransmitt limit to 0 in Node 1. Enable retransmitt 
@@ -167,7 +174,7 @@ package body retr_limit_feature is
         CAN_generate_frame(rand_ctr, CAN_frame);
         CAN_frame.rtr := RTR_FRAME; -- Use RTR frame to save simulation time
         CAN_frame.frame_format := NORMAL_CAN;
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         for i in 0 to 1 loop
             CAN_wait_error_frame(ID_1, mem_bus(1));
             CAN_wait_bus_idle(ID_1, mem_bus(1));
@@ -178,7 +185,7 @@ package body retr_limit_feature is
         --    "TX Error".
         ------------------------------------------------------------------------
         info("Step 3: Checking transmission failed.");
-        get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
+        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
         check(buf_state = buf_failed, "TXT Buffer failed!");
         
         ------------------------------------------------------------------------
@@ -189,11 +196,11 @@ package body retr_limit_feature is
         ------------------------------------------------------------------------
         info("Step 4: Testing disabled retransmitt limitation");
         CAN_enable_retr_limit(false, 1, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         CAN_wait_error_frame(ID_1, mem_bus(1));
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         CAN_wait_error_frame(ID_1, mem_bus(1));
-        get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
+        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
         check(buf_state = buf_ready, "TXT Buffer ready!");
         
         ------------------------------------------------------------------------
@@ -201,9 +208,9 @@ package body retr_limit_feature is
         ------------------------------------------------------------------------
         info("Step 5: Aborting transmission");
         send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
-        get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
+        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
         while (buf_state /= buf_aborted) loop
-            get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
+            get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
         end loop;        
         CAN_wait_bus_idle(ID_1, mem_bus(1));
 
@@ -225,11 +232,11 @@ package body retr_limit_feature is
         --    "Ready".
         ------------------------------------------------------------------------
         info("Step 7: Checking number of re-transmissions");
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         for i in 0 to retr_th loop
             info("Loop: " & integer'image(i));
             CAN_wait_frame_sent(ID_1, mem_bus(1));
-            get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
+            get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
             if (i /= retr_th) then
                 check(buf_state = buf_ready, "TXT Buffer ready");
             else
@@ -255,7 +262,7 @@ package body retr_limit_feature is
         ------------------------------------------------------------------------
         info("Step 9: Set maximal retransmitt limit (15)");
         CAN_enable_retr_limit(true, 15, ID_1, mem_bus(1));
-        CAN_send_frame(CAN_frame, 1, ID_1, mem_bus(1), frame_sent);
+        CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         err_counters.tx_counter := 0;
         set_error_counters(err_counters, ID_1, mem_bus(1));
         
@@ -268,7 +275,7 @@ package body retr_limit_feature is
         info("Step 10: Checking number of re-transmissions");
         for i in 0 to 15 loop
             CAN_wait_frame_sent(ID_1, mem_bus(1));
-            get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
+            get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
             if (i /= 15) then
                 check(buf_state = buf_ready, "TXT Buffer ready");
             else
@@ -308,7 +315,7 @@ package body retr_limit_feature is
         CAN_wait_pc_state(pc_deb_control, ID_1, mem_bus(1));
         get_controller_status(status, ID_1, mem_bus(1));
         check(status.receiver, "Node 1 lost arbitration");
-        get_tx_buf_state(1, buf_state, ID_1, mem_bus(1));
+        get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
         check(buf_state = buf_failed, "TXT Buffer failed");
         CAN_wait_bus_idle(ID_1, mem_bus(1));
         
