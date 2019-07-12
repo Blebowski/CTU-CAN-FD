@@ -11,7 +11,6 @@
 \usepackage{colortbl}
 \definecolor{gray}{RGB}{230,230, 230}
 \usepackage{subcaption}
-\usepackage{cprotect}
 \usepackage{float}
 \floatstyle{plaintop}
 \restylefloat{table}
@@ -579,7 +578,7 @@ Change description
 \begin_inset Text
 
 \begin_layout Plain Layout
-1.0
+0.1
 \end_layout
 
 \end_inset
@@ -597,7 +596,7 @@ Ondrej Ille
 \begin_inset Text
 
 \begin_layout Plain Layout
-TODO
+07-2019
 \end_layout
 
 \end_inset
@@ -684,31 +683,6 @@ Memory registers are always described with capital letters e.g.
  a register.
 \end_layout
 
-\begin_layout Itemize
-VHDL signal names, Entities, Architectures, Generics and FSM states are
- written with Italic and Roman styled letters e.g.
- 
-\family roman
-\shape italic
-tran_frame_valid or CAN_top_level.
-\end_layout
-
-\begin_layout Itemize
-Important facts are emphasized by Bold letters such as: 
-\begin_inset Quotes eld
-\end_inset
-
-core registers have 
-\series bold
-asynchronous
-\series default
- reset
-\begin_inset Quotes erd
-\end_inset
-
-.
-\end_layout
-
 \begin_layout Chapter
 General Information
 \end_layout
@@ -730,6 +704,23 @@ thispagestyle{fancy}
 \end_layout
 
 \begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+This document describes HW Architecture of CTU CAN FD IP Core along with
+ implementation details of CTU CAN FD.
+ It describes the most important Interfaces within the core and function
+ of each module within CTU CAN FD.
+ This document is not written in specification format (device shall behave
+ like so), rather in description format (device behaves like so).
+ Nevertheless, this document is supposed to function as reference on how
+ shall CTU CAN FD function.
+ This document along with CTU CAN FD Datasheet is supposed to be used as
+ verification reference on how shall the device behave.
+\end_layout
+
+\begin_layout Section
 Development tools
 \end_layout
 
@@ -738,7 +729,7 @@ To develop this IP Core following tools are used:
 \end_layout
 
 \begin_layout Itemize
-Modelsim ALTERA Starter Edition 6.5b and GHDL for RTL simulations.
+GHDL for RTL simulations.
 \end_layout
 
 \begin_layout Itemize
@@ -764,7 +755,7 @@ GitLab of CTU FEE as a remote GIT repository.
 \end_layout
 
 \begin_layout Itemize
-TimingAnalyzer SW for Timing Diagrams.
+Wavedrom for Timing Diagrams.
 \end_layout
 
 \begin_layout Section
@@ -772,12 +763,20 @@ Design automation
 \end_layout
 
 \begin_layout Standard
-To simplify development of CTU CAN FD IP core, achieve scalability and maintaina
-bility of the design, part of CTU CAN FD Core is auto-generated.
- Register map is implemented in Kactus 2 in IP-XACT format.
+To simplify development of CTU CAN FD IP core, part of CTU CAN FD Core is
+ auto-generated.
+ Register map is implemented in Kactus 2 in IP-XACT format (
+\begin_inset Quotes eld
+\end_inset
+
+spec/CTU/ip/CAN_FD_IP_Core/2.1/CAN_FD_IP_Core.2.1.xml
+\begin_inset Quotes erd
+\end_inset
+
+).
  The design in IP-XACT format is considered to be an unified specification
  of user-interface.
- Following design resources are generated from IP-XACT specification:
+ Following resources are generated from IP-XACT specification:
 \end_layout
 
 \begin_layout Itemize
@@ -785,7 +784,7 @@ VHDL packages with address, bit-fields and reset values definitions (
 \begin_inset Quotes eld
 \end_inset
 
-src/Libraries/CAN_FD_Frame_format.vhd
+src/Libraries/can_fd_frame_format.vhd
 \begin_inset Quotes erd
 \end_inset
 
@@ -793,7 +792,7 @@ src/Libraries/CAN_FD_Frame_format.vhd
 \begin_inset Quotes eld
 \end_inset
 
-src/Libraries/CAN_FD_Register_map.vhd
+src/Libraries/can_fd_register_map.vhd
 \begin_inset Quotes erd
 \end_inset
 
@@ -801,7 +800,11 @@ src/Libraries/CAN_FD_Register_map.vhd
 \end_layout
 
 \begin_layout Itemize
-C header file with address map definitions and register descriptions (
+C header file with address map definitions and register descriptions 
+\begin_inset Newline newline
+\end_inset
+
+(
 \begin_inset Quotes eld
 \end_inset
 
@@ -821,63 +824,21 @@ driver/ctu_can_fd_frame.h
 \end_layout
 
 \begin_layout Itemize
-Lyx documentation.
- Chapters: 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[3.
- CAN FD Core memory map]{3.
- CAN FD Core memory map}
-\end_layout
-
-\end_inset
-
- and 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-hyperref[4.
- CAN FD frame format]{4.
- CAN FD frame format}
-\end_layout
-
-\end_inset
-
- are generated (
-\begin_inset Quotes eld
-\end_inset
-
-doc/core/CANFrameformat.lyx
-\begin_inset Quotes erd
-\end_inset
-
-, 
-\begin_inset Quotes eld
-\end_inset
-
-doc/core/registerMap.lyx
-\begin_inset Quotes erd
-\end_inset
-
-).
+Lyx documentation of register map.
+ Reffer to chapters TODO and TODO.
 \end_layout
 
 \begin_layout Itemize
-RTL Code of Control Registers module and Event Logger Registers module.
+RTL Code of Control Registers module (
+\begin_inset Quotes eld
+\end_inset
+
+src/memory_registers/generated/*)
 \end_layout
 
 \begin_layout Standard
-To generate these design materials CTU CAN FD IP Core contains its own IP-XACT
- generator which can be found at 
+To generate these design materials CTU CAN FD IP Core uses IP-XACT register
+ map generator which is accessible at 
 \begin_inset CommandInset href
 LatexCommand href
 name "regmap_gen"
@@ -887,6 +848,54 @@ literal "false"
 \end_inset
 
 .
+ Register map generator is linked as sub-module of CTU CAN FD repository.
+ Clone all the submodules recursively before using register map generator.
+ All of the generated files are considered as don't touch.
+ Part of this document is also auto-generated.
+ Each section which describes list of Generics and Signals of a module is
+ generated from VHDL RTL code.
+\end_layout
+
+\begin_layout Subsection
+Register map generation
+\end_layout
+
+\begin_layout Standard
+When CTU CAN FD GIT repository is clonned, register map can be generated
+ by following script:
+\end_layout
+
+\begin_layout Verbatim
+
+cd scripts
+\end_layout
+
+\begin_layout Verbatim
+
+./update_reg_map
+\end_layout
+
+\begin_layout Subsection
+Documentation generation
+\end_layout
+
+\begin_layout Standard
+Documentation can be exported from VHDL RTL codes by following script:
+\end_layout
+
+\begin_layout Verbatim
+
+cd scripts
+\end_layout
+
+\begin_layout Verbatim
+
+python gen_lyx_tables.py --configPath vhdl_lyx_interface_cfg.yml
+\end_layout
+
+\begin_layout Standard
+vhdl_lyx_interface_cfg.yml is a YAML configuration file which describes source
+ RTL codes and destination LyX files.
 \end_layout
 
 \begin_layout Section
@@ -975,7 +984,61 @@ Block diagram
 \end_layout
 
 \begin_layout Standard
-Detailed block diagram of CTU CAN FD IP Core is shown in Figure TODO.
+Detailed block diagram of CTU CAN FD IP Core is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:CTU-CAN-FD-Block-diagam"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/BD_IP_Core_system.pdf
+	lyxscale 20
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CTU CAN FD - Detailed block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CTU-CAN-FD-Block-diagam"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -992,8 +1055,334 @@ External Reset
 Soft Reset
 \series default
 .
- Architecture of Reset is shown in Figure TODO.
- Both reset signals have the same effect.
+ Both reset sources are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:reset-description"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Both reset cause assertion of System Reset which resets whole IP Core including
+ Memory registers.
+ Reset architecture is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:reset-structure"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Note that DFF which pipelines Soft Reset is a DFF without Set and Reset.
+ Reset on this DFF is de-activated on purpose to avoid timing problems between
+ Q output and CLR pin of this DFF.
+ An example of reset sequence by both External as well as Soft Reset are
+ shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Reset-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Note that all DFF in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:reset-structure"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ are clocked by System clock.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="15text%">
+<column alignment="left" valignment="top" width="25text%">
+<column alignment="left" valignment="top" width="52text%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset Name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Invoked by
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reset description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+External Reset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Pulling 
+\begin_inset Quotes eld
+\end_inset
+
+res_n
+\begin_inset Quotes erd
+\end_inset
+
+ input low.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+To be used by HW reset structure integrating the IP Core (e.g.
+ POR).
+ When this reset is asserted, it takes two clock cycles of System clock
+ before this reset is de-asserted.
+ This reset allows resetting CTU CAN FD even when System clock is not running.
+ System clock is needed only for reset de-assertion.
+ Reset is active low.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Soft Reset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Writing MODE[RST] = '1'.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+To be used by SW for resetting CTU CAN FD.
+ System clock must be running when this reset is asserted (needed for Bus
+ access and pipeline DFF).
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Reset description
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:reset-description"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/Reset_structure.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Reset structure
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:reset-structure"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/reset_sequence.pdf
+	lyxscale 20
+	scale 80
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Reset operation
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Reset-operation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section
@@ -1033,7 +1422,17 @@ Resynchronisers
 \end_layout
 
 \begin_layout Standard
-Resynchronisers within CTU CAN FD IP Core are listed in Table TODO.
+Resynchronisers within CTU CAN FD IP Core are listed in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Resynchronisers-list"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -1225,10 +1624,20 @@ Memories
 CTU CAN FD contains memories which are used to store CAN FD frames.
  These memories are parts of RX Buffer and TXT Buffers.
  Each memory is implemented in a dedicated wrapper.
- List of memories is shown in Table TODO.
+ List of memories is shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:RAM-memories"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Memories are designed to automatically infer dedicated synchronous RAM
- resources on FPGA implementation.
- ASIC implementation can either replace the memories by dedicated memories
+ resources on FPGA.
+ ASIC implementation can either replace the memories by dedicated memories,
  or leave memory implementation to synthesis tool.
  In such a case, each memory cell consists of Flip-Flop without Set and
  Reset.
@@ -1240,7 +1649,18 @@ Memories are not initialized, nor reset.
  read and one cycle write access latency.
  Both memories are dual port memories with write-only port A and read-only
  port B.
- An example of memory access is shown in Figure TODO.
+ An example of memory access is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:dual-port-RAM-access"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ In case of read during write, memories return old data value.
 \end_layout
 
 \begin_layout Standard
@@ -1263,8 +1683,8 @@ status open
 <column alignment="left" valignment="top" width="0pt">
 <column alignment="left" valignment="top" width="1cm">
 <column alignment="left" valignment="top" width="1.1cm">
-<column alignment="left" valignment="top" width="1cm">
-<column alignment="left" valignment="top" width="1cm">
+<column alignment="left" valignment="top" width="1.1cm">
+<column alignment="left" valignment="top" width="1.1cm">
 <column alignment="left" valignment="top" width="0pt">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
@@ -1688,7 +2108,7 @@ Synchronous
 RAM memories
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common-1"
+name "tab:RAM-memories"
 
 \end_inset
 
@@ -1732,7 +2152,7 @@ status open
 Dual port memories access
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Avalon-read-burst-timing-diagram"
+name "fig:dual-port-RAM-access"
 
 \end_inset
 
@@ -1755,9 +2175,21 @@ Pipeline architecture and triggers
 
 \begin_layout Standard
 CTU CAN FD serial stream processing is pipelined into three stages which
- are described in Table TODO.
+ are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:pipeline-stages-description"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Pipeline architecture meets Maximal Information Processing Time (2 Time
- Quanta) as defined in TODO.
+ Quanta) when system clock is equal to Time Quanta clock (processing takes
+ two clock periods).
+ Due to this, Minimal Time Quanta of CTU CAN FD is 2.
  A block diagram of CTU CAN FD with demonstration of logic split into each
  pipeline stage is shown in Figure TODO.
  
@@ -1772,7 +2204,17 @@ Each stage of pipeline processing is controlled by a trigger signal which
  according pipeline stage.
  If trigger signal is inactive, processed data remain on output and keep
  their previous value (Data after Bit Destuffing (RX) and Bit Stuffing (TX)).
- An example of pipeline processing is shown in Figure TODO.
+ An example of pipeline processing is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:data-path-pipeline"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Note that Process pipeline stage always occurs one clock cycle after Destuff
  pipeline stage.
  Between Process and Stuff pipeline stage there will be number of clock
@@ -1807,7 +2249,7 @@ status open
 Datapath pipeline processing
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Avalon-read-burst-timing-diagram-1"
+name "fig:data-path-pipeline"
 
 \end_inset
 
@@ -1829,6 +2271,18 @@ In case of negative re-synchronisation, length of TSEG2 can be shortened
  to less then 2 clock cycles, in such a case following TX Trigger signal
  is throttled by one clock cycle and overall Bit Time length remains unaffected.
  Such a situation is further described in TODO.
+ A high level algorithm for processing of CAN data stream is described in
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:pipeline-stages-algorithm"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2169,7 +2623,7 @@ Stuff bit is inserted to CAN TX stream.
 Pipeline stages
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common"
+name "tab:pipeline-stages-description"
 
 \end_inset
 
@@ -2184,11 +2638,6 @@ name "tab:CAN-ports-common"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-A high level algorithm for processing of CAN data stream is described in
- Table TODO.
 \end_layout
 
 \begin_layout Standard
@@ -2205,7 +2654,7 @@ status open
 <lyxtabular version="3" rows="11" columns="4">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="left" valignment="top" width="3line%">
-<column alignment="left" valignment="top" width="60line%">
+<column alignment="left" valignment="top" width="62line%">
 <column alignment="left" valignment="top" width="10line%">
 <column alignment="left" valignment="top" width="15line%">
 <row>
@@ -2705,10 +3154,10 @@ CAN CRC
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Pipeline stages
+Pipeline stages - algorithm
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common-2"
+name "tab:pipeline-stages-algorithm"
 
 \end_inset
 
@@ -2731,7 +3180,17 @@ Internal Buses
 
 \begin_layout Standard
 CTU CAN FD contains two parallel buses to reduce number of signals in the
- design and maintain code readability as shown in Table TODO.
+ design and maintain code readability as shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Internal-buses"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Signals within these buses are listed in TODO.
 \end_layout
 
@@ -2935,7 +3394,7 @@ Provide status information about CAN Core to Memory Registers.
 Internal buses
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:Resynchronisers-list-1"
+name "tab:Internal-buses"
 
 \end_inset
 
@@ -2966,9 +3425,19 @@ frame metadata
 \end_inset
 
  is used for description of CAN frame information.
- Related CAN frame information are described in Table TODO.
- On interface to TXT Buffers anr RX Buffer, metadata are stored in Metadata
- word as is shown in TODO.
+ Related CAN frame information are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CAN-frame-metadata"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ In TXT Buffers and RX Buffer, metadata are stored in Metadata word as is
+ shown in TODO.
 \end_layout
 
 \begin_layout Standard
@@ -2984,10 +3453,10 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="4">
 <features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="20text%">
 <column alignment="left" valignment="top" width="7text%">
-<column alignment="left" valignment="top" width="7text%">
-<column alignment="left" valignment="top" width="15text%">
-<column alignment="left" valignment="top" width="40text%">
+<column alignment="left" valignment="top" width="20text%">
+<column alignment="left" valignment="top" width="42text%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -3092,7 +3561,7 @@ Identifier type
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+ID_TYPE
 \end_layout
 
 \end_inset
@@ -3130,7 +3599,7 @@ Frame type
 \begin_inset Text
 
 \begin_layout Plain Layout
--
+FR_TYPE
 \end_layout
 
 \end_inset
@@ -3194,7 +3663,7 @@ Distinguishes between regular frame and RTR frame.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3221,7 +3690,7 @@ BR_NO_SHIFT (0), BR_SHIFT (1)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3233,7 +3702,7 @@ Distinguishes if Bit rate will be shifted in CAN FD frame or not.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3260,7 +3729,7 @@ ESI_ERR_ACTIVE (0), ESI_ERR_PASSIVE (1)
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3275,7 +3744,7 @@ Value of received ESI bit.
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3293,7 +3762,7 @@ DLC
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3302,7 +3771,7 @@ DLC
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3325,10 +3794,10 @@ Data length code determines length of Data field within CAN frame.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Test mode features
+CAN frame metadata
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:Protocol-control-state-transition-rules-1-1"
+name "tab:CAN-frame-metadata"
 
 \end_inset
 
@@ -3352,12 +3821,22 @@ Test mode
 \begin_layout Standard
 CTU CAN FD has test mode.
  Test mode is started by setting MODE[TSTM] = '1'.
- Features of test mode are listed in Table TODO.
+ Features of test mode are listed in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:test-mode-features"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -3369,7 +3848,7 @@ status open
 <lyxtabular version="3" rows="4" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="10text%">
-<column alignment="left" valignment="top" width="60text%">
+<column alignment="left" valignment="top" width="82text%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -3468,7 +3947,7 @@ ERP
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3497,7 +3976,7 @@ In test mode ERP is read-write and Error Passive threshold is configurable
 Test mode features
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:Protocol-control-state-transition-rules-1"
+name "tab:test-mode-features"
 
 \end_inset
 
@@ -3559,6 +4038,9 @@ Operation control (Transmitter, Receiver, Bus Idle).
 
 \begin_layout Standard
 CAN Core block diagram is shown in Figure TODO.
+ CAN Core is structural entity which only instantiates other modules and
+ by itself it implements nearly no logic.
+ TODO: Explain feedback mux here!!!
 \end_layout
 
 \begin_layout Standard
@@ -3639,6 +4121,8 @@ filename "entity_docs/protocol_control.lyx"
 
 \begin_layout Standard
 Protocol control diagram is shown in Figure TODO.
+ Protocol control is structural entity which only instantiates other modules
+ and by itself it implements no logic.
 \end_layout
 
 \begin_layout Standard
@@ -3712,8 +4196,28 @@ Performs CAN arbitration.
 \end_layout
 
 \begin_layout Standard
-Protocol control FSM state transition diagam is shown in Figure TODO.
- Rules for Protocol control state transitions are described in Table TODO.
+Protocol control FSM state transition diagam is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Protocol-control-FSM"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Rules for Protocol control state transitions are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Protocol-control-state-transition-rules"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -3975,7 +4479,17 @@ Control counter
 Control counter controls duration of CAN frame fields which last longer
  than 1 bit.
  These fields and according configuration of control counter is shown in
- Table TODO.
+ Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:CAN-control-counter"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Control counter is preloaded in Process pipeline stage.
  Control counter counts towards zero.
  Control counter counting is controlled by Protocol control FSM.
@@ -3989,7 +4503,17 @@ Control counter controls duration of CAN frame fields which last longer
  1 bit (e.g.
  IDE bit), nor during fields which might last arbitrary number of bits (Idle).
  An example of Control counter operation during Base Identifier in CAN frame
- is shown in Figure TODO.
+ is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:control-counter-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -4003,7 +4527,7 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="13" columns="2">
+<lyxtabular version="3" rows="14" columns="2">
 <features tabularvalignment="middle">
 <column alignment="left" valignment="top" width="47line%">
 <column alignment="left" valignment="top" width="47line%">
@@ -4274,7 +4798,7 @@ Error flag, Overload flag
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4283,11 +4807,31 @@ Error delimiter, Overload delimiter
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
 7
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Re-integration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11, preloaded 128 times.
 \end_layout
 
 \end_inset
@@ -4353,7 +4897,7 @@ status open
 Control counter operation
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:Protocol-control-FSM-1"
+name "fig:control-counter-operation"
 
 \end_inset
 
@@ -4400,8 +4944,67 @@ Control counter module implements Arbitration Lost Capture register.
  field at which Arbitration was lost.
  Arbitration lost capture register is loaded when Arbitration lost is signalled
  by Protocol Control FSM in Process pipeline stage.
+ Arbitration lost capture saves current value of Control counter (determines
+ bit at which arbitration was lost) and bit field type within arbitration
+ (Base Identifier, IDE bit, Identifier Extension, etc.) Arbitration lost
+ capture register is readable by SW via Memory registers (ALC register).
  Meaning of values in Arbitration Lost Capture register is described in
  TODO.
+ An example of Arbitration lost capture register is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:arbitration-lost-capture"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/arbitration_lost_capture.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Arbitration lost capture 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:arbitration-lost-capture"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
@@ -4417,14 +5020,31 @@ Retransmitt counter controls number of retransmissions of current CAN frame
  by user, otherwise it stays at 0.
  Retransmitt counter is incremented by 1 when Arbitration is lost, or when
  Error frame transmission is requested by Error detector (reffer to TODO).
- When Error frame and Arbitration loss occur in the same frame, retransmitt
- counter is incremented only once (such a situation is shown in Figure TODO).
+\end_layout
+
+\begin_layout Standard
+When Error frame and Arbitration loss occur in the same frame, retransmitt
+ counter is incremented only once (such a situation is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:retransmitt-counter-arbitration-loss"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+).
  When multiple Error frames occur in the same frame (e.g.
  due to error during error frame), retransmitt counter is incremented only
  once.
  Retransmitt counter is cleared upon succesfull transmission.
- When Retransmitt counter reaches Retransmitt limit, it signals this to
- Protocol control FSM as shown in Figure TODO.
+ 
+\end_layout
+
+\begin_layout Standard
+When Retransmitt counter reaches Retransmitt limit, it signals this to Protocol
+ control FSM.
  In case of next arbitration loss or Error frame request, Protocol control
  FSM stops transmitting actual frame, signals this to TXT Buffer and TXT
  Buffer moves to TX Error state (see TODO).
@@ -4435,14 +5055,27 @@ tt counter is not modified during this frame.
  unit becomes receiver of next frame (due to Suspend transmission field)
  without attempting to transmitt a frame.
  If error occurs during next frame, retransmitt counter is not incremented.
- Possible configurations of Retransmitt limit are shown in Table TODO.
+ Possible configurations of Retransmitt limit are shown in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:retransmitt-counter-configurations"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
 Retransmitt counter is cleared when selected TXT Buffer for transmission
  changes between two consecutive transmissions (another TXT Buffer with
- another TX Frame selected by TX Arbitrator, reffer to TODO), as shown in
- Figure TODO.
+ another TX Frame selected by TX Arbitrator), as is described in TODO.
+\end_layout
+
+\begin_layout Standard
+TODO: solve cornercase with possible abort in between!
 \end_layout
 
 \begin_layout Standard
@@ -4635,7 +5268,7 @@ Frame transmission is attempted 1 - 15 times.
 Retransmitt limit configuration
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:Protocol-control-state-transition-rules-2"
+name "tab:retransmitt-counter-configurations"
 
 \end_inset
 
@@ -4663,9 +5296,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/retransmitt_counter.pdf
 	lyxscale 20
-	scale 90
+	scale 63
 
 \end_inset
 
@@ -4707,9 +5340,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/retransmitt_counter_arbitration.pdf
 	lyxscale 20
-	scale 90
+	scale 61
 
 \end_inset
 
@@ -4751,9 +5384,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/retransmitt_counter_OK.pdf
 	lyxscale 20
-	scale 90
+	scale 61
 
 \end_inset
 
@@ -4792,19 +5425,22 @@ Reintegration counter
 Re-integration counter counts 128 consecutive ocurrences of 11 consecutive
  Recessive bits after unit turned Bus-off.
  Re-integration counter counts only during Re-integration, not during initial
- integration.
+ Integration.
  Reffer to TODO for distuinguishing between Integration and Re-integration.
  Re-integration counter is controlled by Protocol control FSM.
  Re-integration counter counts from zero.
  Re-integration counter is cleared when unit is Bus-off and it receives
- Command to Reset Error Counters (see TODO).
+ Command to Reset Error Counters (by writing logic 1 to COMMAND[ERCRST]
+ register).
  Re-integration counter is incremented by 1 after each 11 consecutive Recessive
  bits are received.
- When Re-integration counter reaches 128, it signals this to Protocol control
- FSM (it becomes Idle), unit becomes Error Active again and Operation control
- state is changed to Idle.
+ 11 consecutive recessive bits are counted by Control counter.
+ If during re-integration Dominant bit is detected, Control counter is pre-loade
+d again to 11.
+ When Re-integration counter reaches 127, it signals this to Protocol control
+ FSM (Protocol control FSM becomes Idle), unit becomes Error Active again
+ and Operation control state is changed to Idle.
  An example of Re-integration counter operation is shown in Figure TODO.
- 
 \end_layout
 
 \begin_layout Standard
@@ -4862,7 +5498,17 @@ TX Shift register is 32 bit shift register which transmitts given bit sequence
  stage when new data sequence is about to be transmitted, thus output value
  is also valid after Process pipeline stage of the same bit.
  TX Shift register is shifted by one bit in Stuff pipeline stage.
- TX shift register is preloaded according to Table TODO.
+ TX shift register is preloaded according to Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:tx-shift-reg-preload"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  TX Shift register is enabled only as long as unit is transmitter, TX shift
  register is not shifting when unit is receiver.
  In such a case Recessive value is transmitted on its output during whole
@@ -4873,9 +5519,29 @@ TX Shift register is 32 bit shift register which transmitts given bit sequence
  SOF) or constant sequences (e.g.
  Active Error Flag) is handled separately, and has higher priority than
  transmission from TX Shift register.
- Rules for handling of these situations are described in Table TODO.
+ Rules for handling of these situations are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:tx-shift-reg-special-rules"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  An example of TX Shift register operation during CAN frame is shown in
- Figure TODO.
+ Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:tx-shift-register-operation"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -5153,10 +5819,10 @@ CRC calculation register in CAN CRC module.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-TX Shift register
+TX Shift register preload rules
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1"
+name "tab:tx-shift-reg-preload"
 
 \end_inset
 
@@ -5332,7 +5998,7 @@ TX Shift register is disabled and none of the above conditions apply.
 TX Shift register - handling of special cases
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-1"
+name "tab:tx-shift-reg-special-rules"
 
 \end_inset
 
@@ -5360,9 +6026,9 @@ status open
 \noindent
 \align center
 \begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/tx_shift_reg.pdf
 	lyxscale 20
-	scale 90
+	scale 60
 
 \end_inset
 
@@ -5402,20 +6068,55 @@ RX Shift register is 32 bit shift register which receives bit sequence and
  stores parts of this sequence to dedicated RX registers when commanded
  by CAN Core.
  RX Shift register operates in two basic modes as it is described in Table
- TODO.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:rx-shift-register-modes"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Mode of RX Shift register determines whether input of each byte in register
  is taken from output of previous byte, or directly from input of RX Shift
  register.
  Diagram of RX shift register is shown in Figure TODO.
- Shifting of each byte of RX Shift register is enabled separately.
+ Shifting of each byte of RX Shift register is enabled separately and it
+ is controlled by Protocol control FSM.
+ This corresponds to reception of Data byte on CAN bus.
  RX Shift register shifts up.
  RX Shift register stores part of its content to either a dedicated capture
  register or RX Buffer memory when signalled to do so by Protocol Control
- FSM as described in Table TODO.
- Note that received CRC is not stored into any capture register and it is
- used for CRC check directly from RX Shift register because after CRC sequence
- RX Shift register is not used till the end of frame and its content remains
+ FSM as described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:rx-buffer-stored-sequences"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Received CRC is not stored into any capture register and it is used for
+ CRC check directly from RX Shift register because after CRC sequence, RX
+ Shift register is not used till the end of frame and its content remains
  stable.
+ Other one bit metadata information are stored to dedicated capture registers
+ directly from input of RX shift register in corresponding fields of CAN
+ frame as described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:rx-buffer-stored-metadata"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  An example of RX shift register operation is shown in Linear mode is shown
  in Figure TODO.
  An example of operation in Byte mode is shown in Figure TODO.
@@ -5465,7 +6166,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit on CAN bus when mode is used.
+Bit fields on CAN bus when mode is used.
 \begin_inset ERT
 status open
 
@@ -5593,7 +6294,6 @@ Data field
 \begin_layout Plain Layout
 Only one byte is enabled at any time.
  Enabled byte is given by Index of actually received Data byte on CAN bus.
- TODO.
 \end_layout
 
 \end_inset
@@ -5626,7 +6326,7 @@ Inputs of each next byte are connected to input of Shift register.
 RX shift register modes
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common-3"
+name "tab:rx-shift-register-modes"
 
 \end_inset
 
@@ -5893,10 +6593,387 @@ Capture register.
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-RX shift register - stored values
+RX shift register - stored sequences
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-control-counter-1-2"
+name "tab:rx-buffer-stored-sequences"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="4">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="20line%">
+<column alignment="left" valignment="top" width="28line%">
+<column alignment="left" valignment="top" width="20line%">
+<column alignment="left" valignment="top" width="20line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control FSM state
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Meaning of stored sequence 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Corresponding Metadata signal
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Destination where value is stored.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value of Bit-Rate Shift Bit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+BRS
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Capture register
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ESI
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value of Error State Indicator Bit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ESI
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Capture register
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+IDE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value of Identifier Extension Bit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ID_TYPE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Capture register
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RTR/SRR/R1, RTR/R1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value of Remote transmission Request Bit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RTR
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Capture register
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+EDL/R0, EDL/R1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Value of Extended Data-length / Flexbile Data-rate format Bit
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+FR_TYPE
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Capture register
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX shift register - stored metadata
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:rx-buffer-stored-metadata"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/rx_shift_reg_linear.pdf
+	lyxscale 20
+	scale 50
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX Shift register - Linear mode 
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-shift-register-linear-mode"
 
 \end_inset
 
@@ -5924,12 +7001,16 @@ Error detector manages error detection and propagation of Error frame request
  provided to CAN Core one clock cycle after Process pipeline stage.
  A DFF is inserted on Error frame request to avoid combinatorial loops between
  Error detector and Protocol Control FSM.
- Processing of Errors based on Error type is described in Table TODO.
+ Detection of Errors based on Error type is described in Table TODO.
+ An example of Error detection (form Error) with details of actions in each
+ pipeline stage is shown in Figure TODO.
+ An example of CRC check mechanism and detection of CRC Error is shown in
+ Figure TODO.
 \end_layout
 
 \begin_layout Standard
 \begin_inset Float table
-placement h
+placement H
 wide false
 sideways false
 status open
@@ -5940,11 +7021,11 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="5">
 <features tabularvalignment="middle">
+<column alignment="left" valignment="middle" width="5line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="10line%">
 <column alignment="left" valignment="top" width="8line%">
-<column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="40line%">
+<column alignment="left" valignment="top" width="54line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -6099,7 +7180,15 @@ Bit Error detector in Bus Sampling
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Bit error is detected by Bus Sampling by comparing transmitted and received
+ value.
+ Bit error is detection in Bus Sampling is enabled always, bit error is
+ only ignored by Error detector in certain fields as controlled by Protocol
+ control FSM.
+ Bit Error in Bus sampling is detected for Nominal Bit-rate as well as Data
+ bit-rate (by Secondary sampling point).
+ Reffer to TODO for description of Secondary Sampling Point generation and
+ Bit Error detection.
 \end_layout
 
 \end_inset
@@ -6142,11 +7231,15 @@ Protocol control FSM
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+In Arbitration, Bit Error is not detected by Bus sampling but by Protocol
+ Control FSM because only transmitting Dominant and receiving Recessive
+ is considered as Bit Error.
+ Bus sampling does not distiguishes value of TX, RX bit, it detect Bit Error
+ upon each mismatch between the two.
 \end_layout
 
 \end_inset
@@ -6190,11 +7283,11 @@ Bit Destuffing
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+Stuff Error is detected 
 \end_layout
 
 \end_inset
@@ -6232,12 +7325,12 @@ Arbitration, Data field, ACK, Intermission, Suspend,
 \begin_inset Text
 
 \begin_layout Plain Layout
-Protocol control FSM
+Protocol control FSM, Bit Destuffing for Fixed Stuff bits.
 \end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6284,7 +7377,7 @@ Error detector
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -6354,7 +7447,7 @@ Protocol control FSM
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Error processing
+Error detection rules
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:CAN-ports-common-3-2"
@@ -6372,10 +7465,6 @@ name "tab:CAN-ports-common-3-2"
 \end_inset
 
 
-\end_layout
-
-\begin_layout Standard
-Detection of 
 \end_layout
 
 \begin_layout Standard
@@ -10403,7 +11492,8 @@ TXT Buffer moves to Ready state.
 \begin_inset Text
 
 \begin_layout Plain Layout
-TX Arbitrator selects TXT Buffer for transmission.
+TX Arbitrator selects TXT Buffer for transmission and signals to Protocol
+ control there is a valid TXT Buffer for transmission.
  Protocol control issues HW lock command since it starts transmission from
  TXT Buffer.
 \end_layout
@@ -10518,6 +11608,398 @@ TXT Buffer Abort
 \begin_inset CommandInset label
 LatexCommand label
 name "tab:CAN-control-counter-1-3-2-1-1-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="10" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="30line%">
+<column alignment="left" valignment="top" width="30line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+HW Action / State
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW fills TXT Buffer RAM 1.
+ SW enables retransmitt limitation and configures Retransmitt limit to 5.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 is in Empty state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW issues Set ready command to TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 1 moves to Ready state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Arbitrator selects TXT Buffer 1 for transmission and signals to Protocol
+ control there is a valid TXT Buffer for transmission.
+ Protocol control issues HW lock command since it starts transmission from
+ TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+An Error frame occurs or arbitration is lost, TXT Buffer moves to Ready
+ state and Retransmitt counter is incremented to 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW fills TXT Buffer RAM 2.
+ SW Issues Set ready command to TXT Buffer 2.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TXT Buffer 2 moves to Ready state.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Now there are two TXT Buffers in Ready state.
+ Assume TXT Buffer 2 has higher priority than TXT Buffer 1.
+ TX Arbitrator selects TXT Buffer 2 for transmission and signals this to
+ protocol control FSM.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control FSM issues HW Lock command, TXT Buffer 2 moves to TX in
+ progress and Protocol control FSM starts transmitting from TXT Buffer 2.
+ Retransmitt counter is cleared because TXT Buffer changed between two consecuti
+ve transmissions.
+ Logically, counting retransmissions on TXT Buffer 2 shall not include one
+ previous failed transmission from TXT Buffer 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control transmitts frame from TXT Buffer 2 succesfully.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW reads state of buffer or is notified by an Interrupt.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+TXT Buffer change between transmissions
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:CAN-control-counter-1"
 
 \end_inset
 
