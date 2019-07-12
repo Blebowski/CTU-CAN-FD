@@ -56,6 +56,7 @@ feature:
         invalid_configs:
         overload:
         retr_limit:
+        retr_limit_2:
         one_shot:
         rx_status:
         spec_mode:
