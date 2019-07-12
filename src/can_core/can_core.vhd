@@ -427,6 +427,8 @@ architecture rtl of can_core is
     
     signal load_init_vect          :     std_logic;
     
+    signal retr_ctr_i              :     std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0);
+    
 begin
   
     ----------------------------------------------------------------------------
@@ -562,7 +564,8 @@ begin
         br_shifted              => br_shifted_i,        -- OUT
         form_err                => form_err,            -- OUT
         ack_err                 => ack_err,             -- OUT
-        crc_err                 => crc_err              -- OUT
+        crc_err                 => crc_err,             -- OUT
+        retr_ctr                => retr_ctr_i           -- OUT
     );
 
 
@@ -860,7 +863,6 @@ begin
     stat_bus(183)            <= '0';
     stat_bus(120 downto 118) <= (OTHERS => '0');
     stat_bus(178 downto 158) <= (OTHERS => '0');
-    stat_bus(5 downto 2)     <= (OTHERS => '0');
 
     stat_bus(27)             <= '0';
 
@@ -1105,6 +1107,10 @@ begin
 
     stat_bus(STAT_TS_HIGH downto STAT_TS_LOW) <=
         timestamp;
+        
+    stat_bus(STAT_RETR_CTR_HIGH downto STAT_RETR_CTR_LOW) <=
+        retr_ctr_i;
+
 
     ---------------------------------------------------------------------------
     -- Internal signals to output propagation

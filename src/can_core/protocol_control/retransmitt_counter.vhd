@@ -103,7 +103,10 @@ entity retransmitt_counter is
         -- Status signals
         -----------------------------------------------------------------------
         -- Retransmitt limit was reached
-        retr_limit_reached  :out  std_logic
+        retr_limit_reached  :out  std_logic;
+        
+        -- Status of retransmit counter (for observation purpose)
+        retr_ctr            :out  std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0)
     );
 end entity;
 
@@ -148,6 +151,9 @@ begin
     -- Retransmitt limit reached indication
     retr_limit_reached <= '1' when (unsigned(retr_limit) = retr_ctr_q) else
                           '0';
+
+    -- Counter status propagation to output
+    retr_ctr <= std_logic_vector(retr_ctr_q);
 
     ---------------------------------------------------------------------------
     -- Assertions

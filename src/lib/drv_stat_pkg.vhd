@@ -256,6 +256,9 @@ package drv_stat_pkg is
     constant STAT_IS_TRANSMITTER_INDEX    : natural := 0;
     constant STAT_IS_RECEIVER_INDEX       : natural := 1;
 
+    constant STAT_RETR_CTR_HIGH  : natural := 5;
+    constant STAT_RETR_CTR_LOW   : natural := 2;
+
     constant STAT_ARB_LOST_INDEX : natural := 6;
 
     constant STAT_SET_TRANSC_INDEX : natural := 7;

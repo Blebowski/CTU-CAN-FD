@@ -398,7 +398,10 @@ entity protocol_control is
         ack_err                 :out  std_logic;
         
         -- CRC Error has occurred
-        crc_err                 :out  std_logic
+        crc_err                 :out  std_logic;
+        
+        -- Status of retransmit counter (for observation purpose)
+        retr_ctr            :out  std_logic_vector(G_RETR_LIM_CTR_WIDTH - 1 downto 0)
     );
 end entity;
 
@@ -865,7 +868,8 @@ begin
         retr_limit          => drv_retr_th,         -- IN
 
         -- Status signals
-        retr_limit_reached  => retr_limit_reached   -- OUT
+        retr_limit_reached  => retr_limit_reached,  -- OUT
+        retr_ctr            => retr_ctr             -- OUT
     );
 
 
