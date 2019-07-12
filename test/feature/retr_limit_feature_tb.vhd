@@ -172,8 +172,6 @@ package body retr_limit_feature is
         ------------------------------------------------------------------------
         info("Step 2: Sending frame by Node 1");
         CAN_generate_frame(rand_ctr, CAN_frame);
-        CAN_frame.rtr := RTR_FRAME; -- Use RTR frame to save simulation time
-        CAN_frame.frame_format := NORMAL_CAN;
         CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         for i in 0 to 1 loop
             CAN_wait_error_frame(ID_1, mem_bus(1));
