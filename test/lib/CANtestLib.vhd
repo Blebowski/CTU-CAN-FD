@@ -83,6 +83,7 @@ use IEEE.std_logic_textio.all;
 USE ieee.math_real.ALL;
 USE work.randomLib.All;
 use work.can_constants.all;
+use work.drv_stat_pkg.all;
 
 use work.CAN_FD_register_map.all;
 use work.CAN_FD_frame_format.all;
@@ -1417,7 +1418,6 @@ package CANtestLib is
     -- Waits until transmission or reception is started by a Node.
     --
     -- Arguments:
-    --  bits            Number of Bit times to wait for
     --  exit_trans      Exit when unit turns transceiver.
     --  exit_rec        Exit when unit turns receiver.
     --  ID              Index of CTU CAN FD Core instance
@@ -1910,7 +1910,7 @@ package CANtestLib is
     ----------------------------------------------------------------------------
     procedure CAN_configure_tx_priority(
         constant buff_number    : in    natural range 1 to 4;
-        variable priority       : in    natural range 0 to 7;   
+        constant priority       : in    natural range 0 to 7;   
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
     );    
@@ -1961,6 +1961,27 @@ package CANtestLib is
         signal   mem_bus        : inout Avalon_mem_type
     );
     
+    ----------------------------------------------------------------------------
+    -- Read Retransmitt counter value (from Status Bus). No latency is inserted
+    -- by this function.
+    --
+    -- Arguments:
+    --  stat_bus        Status bus signal          
+    ----------------------------------------------------------------------------
+    function CAN_spy_retr_ctr(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0)
+    ) return natural;
+
+
+    ----------------------------------------------------------------------------
+    -- Wait until sample point (from Status Bus).
+    --
+    -- Arguments:
+    --  pc_dbg          State to poll on.
+    ----------------------------------------------------------------------------
+    procedure CAN_wait_sample_point(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0) 
+    );
 
     ----------------------------------------------------------------------------
     ----------------------------------------------------------------------------
@@ -4765,11 +4786,9 @@ package body CANtestLib is
     end procedure;
     
 
-
-
     procedure CAN_configure_tx_priority(
         constant buff_number    : in    natural range 1 to 4;
-        variable priority       : in    natural range 0 to 7;   
+        constant priority       : in    natural range 0 to 7;   
         constant ID             : in    natural range 0 to 15;
         signal   mem_bus        : inout Avalon_mem_type
    ) is
@@ -4802,6 +4821,25 @@ package body CANtestLib is
         address := TX_PRIORITY_ADR;
         CAN_write(data, address, ID, mem_bus, BIT_16);
     end procedure;
+    
+    
+    function CAN_spy_retr_ctr(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0)
+    ) return natural is
+    begin
+        return to_integer(unsigned(
+                stat_bus(STAT_RETR_CTR_HIGH downto STAT_RETR_CTR_LOW)));
+    end function;
+    
+    
+    procedure CAN_wait_sample_point(
+        signal   stat_bus         : in    std_logic_vector(511 downto 0) 
+    ) is
+    begin
+        wait until stat_bus(STAT_REC_TRIG) = '1';
+    end procedure;
+
+
 end package body;
 
 
