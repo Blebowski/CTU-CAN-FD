@@ -294,7 +294,7 @@ const struct can_bittiming_const ctu_can_fd_bit_timing_max = {
 	.tseg2_max = 63,
 	.sjw_max = 31,
 	.brp_min = 1,
-	.brp_max = 255,
+	.brp_max = 8,
 	.brp_inc = 1,
 };
 
@@ -306,7 +306,7 @@ const struct can_bittiming_const ctu_can_fd_bit_timing_data_max = {
 	.tseg2_max = 31,
 	.sjw_max = 31,
 	.brp_min = 1,
-	.brp_max = 255,
+	.brp_max = 2,
 	.brp_inc = 1,
 };
 
