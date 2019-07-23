@@ -175,7 +175,7 @@ package body retr_limit_feature is
         CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         for i in 0 to 1 loop
             CAN_wait_error_frame(ID_1, mem_bus(1));
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
+            CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
         end loop;
 
         ------------------------------------------------------------------------
@@ -196,7 +196,7 @@ package body retr_limit_feature is
         CAN_enable_retr_limit(false, 1, ID_1, mem_bus(1));
         CAN_send_frame(CAN_frame, txt_buf_nr, ID_1, mem_bus(1), frame_sent);
         CAN_wait_error_frame(ID_1, mem_bus(1));
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
         CAN_wait_error_frame(ID_1, mem_bus(1));
         get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
         check(buf_state = buf_ready, "TXT Buffer ready!");
@@ -205,7 +205,7 @@ package body retr_limit_feature is
         -- 5. Abort transmission by Node 1. Wait until transmission was aborted.
         ------------------------------------------------------------------------
         info("Step 5: Aborting transmission");
-        send_TXT_buf_cmd(buf_set_abort, 1, ID_1, mem_bus(1));
+        send_TXT_buf_cmd(buf_set_abort, txt_buf_nr, ID_1, mem_bus(1));
         get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
         while (buf_state /= buf_aborted) loop
             get_tx_buf_state(txt_buf_nr, buf_state, ID_1, mem_bus(1));
