@@ -2087,7 +2087,6 @@ begin
                     
                     if (rx_data_nbs = RECESSIVE) then
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
-                        set_idle_i <= '1';
                         
                         -- No Error until the end of EOF means frame is valid
                         -- for transmitter!
@@ -2401,7 +2400,6 @@ begin
                         ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
-                        set_idle_i <= '1';
                     end if;
                 end if;
 
@@ -2451,7 +2449,6 @@ begin
                         ctrl_ctr_pload_val <= C_OVR_FLG_DURATION;
                     else
                         ctrl_ctr_pload_val <= C_INTERMISSION_DURATION;
-                        set_idle_i <= '1';
                     end if;
                 end if;
                 
