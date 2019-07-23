@@ -270,6 +270,7 @@ package CANtestLib is
 
     -- Protocol control Debug values
     type SW_PC_Debug is (
+        pc_deb_none,
         pc_deb_arbitration,
         pc_deb_control,
         pc_deb_data,
@@ -3716,13 +3717,13 @@ package body CANtestLib is
         -- Wait until unit starts to transmitt or recieve
         CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
 
         -- Wait until error frame is not being transmitted
         CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         while (r_data(EFT_IND) = '0') loop
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
+            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
         end loop;
     end procedure;
 
@@ -4728,6 +4729,7 @@ package body CANtestLib is
     begin
         CAN_read(data, DEBUG_REGISTER_ADR, ID, mem_bus);
     
+        pc_dbg := pc_deb_none;
         if (data(PC_ARB_IND) = '1') then
             pc_dbg := pc_deb_arbitration;
         elsif (data(PC_CON_IND) = '1') then
