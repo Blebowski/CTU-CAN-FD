@@ -57,6 +57,7 @@ feature:
         overload:
         retr_limit:
         retr_limit_2:
+        retr_limit_3:
         one_shot:
         rx_status:
         spec_mode:
