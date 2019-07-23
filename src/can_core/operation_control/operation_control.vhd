@@ -157,7 +157,7 @@ begin
                 if (set_idle = '1') then
                     next_state <= s_oc_idle;
                 elsif (set_transmitter = '1') then
-                    next_state <= s_oc_receiver;
+                    next_state <= s_oc_transmitter;
                 end if;
             end case;
         end if;
