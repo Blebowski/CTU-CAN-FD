@@ -2203,6 +2203,7 @@ begin
                 ctrl_ctr_ena <= '1';
                 perform_hsync <= '1';
                 crc_spec_enable_i <= '1';
+                bit_err_disable <= '1';
                 is_suspend <= '1';
                 nbt_ctrs_en <= '1';
                 
