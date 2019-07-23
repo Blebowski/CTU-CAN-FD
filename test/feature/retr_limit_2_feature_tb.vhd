@@ -180,12 +180,13 @@ package body retr_limit_2_feature is
 
         for i in 0 to 1 loop
             CAN_wait_error_frame(ID_1, mem_bus(1));
-            CAN_wait_bus_idle(ID_1, mem_bus(1));
+            CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
         end loop;
-
+        
         CAN_send_frame(CAN_frame, 2, ID_1, mem_bus(1), frame_sent);
         retr_ctr := CAN_spy_retr_ctr(iout(1).stat_bus);
         check(retr_ctr = 2, "Retransmitt counter equal to 2!");
+        CAN_wait_not_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
 
         ------------------------------------------------------------------------
         -- 3. Wait until transmission starts by Node 1. Check that TXT Buffer 2
@@ -274,7 +275,7 @@ package body retr_limit_2_feature is
         --    Bus is idle.
         ------------------------------------------------------------------------
         info("Step 8: Checking Error counters!");
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
         retr_ctr := CAN_spy_retr_ctr(iout(1).stat_bus);
         check(retr_ctr = 1,
             "Retransmitt counter incremented only once during multiple error frames!");
@@ -352,7 +353,7 @@ package body retr_limit_2_feature is
         get_controller_status(status, ID_1, mem_bus(1));
         check(status.error_transmission, "Error frame being transmitted!");
         
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        CAN_wait_pc_state(pc_deb_intermission, ID_1, mem_bus(1));
         retr_ctr := CAN_spy_retr_ctr(iout(1).stat_bus);
         check(retr_ctr = 1,
             "Retransmitt counter incremented only once during arbitration loss" &
