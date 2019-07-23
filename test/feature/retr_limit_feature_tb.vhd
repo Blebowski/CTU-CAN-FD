@@ -280,7 +280,11 @@ package body retr_limit_feature is
                 check(buf_state = buf_failed, "TXT Buffer failed");
             end if;
         end loop;
-        CAN_wait_bus_idle(ID_1, mem_bus(1));
+        
+        -- Error counters must be erased because unit is already Error Passive!
+        err_counters.tx_counter := 0;
+        set_error_counters(err_counters, ID_1, mem_bus(1));
+        wait for 100 ns;
 
         ------------------------------------------------------------------------
         -- 11. Set retransmitt limit to 1 in Node 1. Insert frames for 
