@@ -1352,8 +1352,10 @@ package CANtestLib is
 
 
     ----------------------------------------------------------------------------
-    -- Waits until frame starts (unit turns transceiver or receiver),
-    -- and then waits until frame finishes (bus becomes idle).
+    -- Waits until frame starts (arbitration field),
+    -- and then waits until frame finishes (Intermission). Note that this
+    -- does not wait until Idle, because bus does not need to be Idle due to
+    -- two immediately consecutive frames!
     --
     -- Procedure is polling on status of CTU CAN FD Core over Avalon bus!
     --
@@ -3676,19 +3678,11 @@ package body CANtestLib is
         variable r_data         :       std_logic_vector(31 downto 0) :=
                                         (OTHERS => '0');
     begin
-
-        -- Wait until unit starts to transmitt or reciesve
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        while (r_data(RXS_IND) = '0' and r_data(TXS_IND) = '0') loop
-            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        end loop;
-
-        -- Wait until bus is idle now
-        CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        while (r_data(IDLE_IND) = '0') loop
-            CAN_read(r_data, STATUS_ADR, ID, mem_bus);
-        end loop;
-
+        -- Wait until Base ID
+        CAN_wait_pc_state(pc_deb_arbitration, ID, mem_bus);
+        
+        -- Wait until Intermission
+        CAN_wait_pc_state(pc_deb_intermission, ID, mem_bus);
     end procedure;
 
 
