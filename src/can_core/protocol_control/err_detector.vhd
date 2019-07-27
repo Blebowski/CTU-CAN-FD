@@ -357,6 +357,7 @@ begin
     -- Error code, next value
     ---------------------------------------------------------------------------
     err_type_d <= "000" when (bit_err = '1' and bit_err_enable = '1') else
+                  "000" when (bit_err_arb = '1') else
                   "001" when (crc_err = '1') else
                   "010" when (form_err_i = '1') else
                   "011" when (ack_err = '1') else
