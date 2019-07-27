@@ -1429,7 +1429,7 @@ begin
 
         else
             case curr_state is
-    
+
             -------------------------------------------------------------------
             -- Unit is Off (drv_ena = '0')
             -------------------------------------------------------------------
@@ -1465,6 +1465,7 @@ begin
             -- Start of frame
             -------------------------------------------------------------------
             when s_pc_sof =>
+                bit_err_disable <= '1';
                 ctrl_ctr_pload_i <= '1';
                 ctrl_ctr_pload_val <= C_BASE_ID_DURATION;
                 tx_load_base_id_i <= '1';
@@ -1989,12 +1990,7 @@ begin
                 is_crc_delim  <= '1';
                 nbt_ctrs_en <= '1';
                 dbt_ctrs_en <= '1';
-                
-                -- If Transmitter sends ACK, receiving dominant is not bit
-                -- error!
-                if (is_transmitter = '1') then
-                    bit_err_disable <= '1';
-                end if;
+                bit_err_disable <= '1';
                 
             -------------------------------------------------------------------
             -- ACK Slot, or a ACK delim, if previous two bits were recessive!
@@ -2009,6 +2005,11 @@ begin
                     drv_ack_forb = '0')
                 then
                     tx_dominant <= '1';
+                
+                -- Bit Error still shall be detected when unit sends dominant
+                -- (receiver) and receives recessive!
+                else
+                    bit_err_disable <= '1';
                 end if;
                 
                 if (is_transmitter = '1' and drv_self_test_ena = '0' and
@@ -2020,12 +2021,6 @@ begin
                 if (rx_data_nbs = DOMINANT) then
                     ack_received <= '1';
                 end if;
-                
-                -- If Transmitter sends ACK, receiving dominant is not bit
-                -- error!
-                if (is_transmitter = '1') then
-                    bit_err_disable <= '1';
-                end if;
 
             -------------------------------------------------------------------
             -- Secondary ACK field (in FD Frames),or ACK Delimiter if RECESSIVE
@@ -2034,6 +2029,7 @@ begin
                 err_pos <= ERC_POS_ACK;
                 is_ack_field  <= '1';
                 nbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
                 
                 if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
@@ -2047,12 +2043,6 @@ begin
                 if (rx_data_nbs = DOMINANT) then
                     ack_received <= '1';
                 end if;
-                
-                -- If Transmitter sends ACK, receiving dominant is not bit
-                -- error!
-                if (is_transmitter = '1') then
-                    bit_err_disable <= '1';
-                end if;
 
             -------------------------------------------------------------------
             -- ACK Delimiter
@@ -2063,6 +2053,7 @@ begin
                 err_pos <= ERC_POS_ACK;
                 is_ack_delim  <= '1';
                 nbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
                 
                 if (rx_data_nbs = DOMINANT) then
                     form_err_i <= '1';
@@ -2081,6 +2072,7 @@ begin
                 is_eof <= '1';
                 err_pos <= ERC_POS_INTF;
                 nbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
@@ -2100,10 +2092,6 @@ begin
                     end if;
                     
                     crc_clear_match_flag <= '1';
-                
-                -- Detecting dominant during EOF is treated as form error!
-                elsif (rx_data_nbs = DOMINANT) then
-                    form_err_i <= '1';
                 end if;
 
                 -- If there is no error (RX Recessive) in one bit before end
@@ -2125,6 +2113,7 @@ begin
                 is_intermission <= '1';
                 nbt_ctrs_en <= '1';
                 retr_ctr_add_block_clr <= '1';
+                bit_err_disable <= '1';
                 
                 -- Address Identifier Word in TXT Buffer RAM in advance to
                 -- account for DFF delay and RAM delay! 
@@ -2287,7 +2276,7 @@ begin
                     reinteg_ctr_clr <= '1';
                     ctrl_ctr_pload_val <= C_INTEGRATION_DURATION;
                 end if;
-                    
+
             -------------------------------------------------------------------
             -- Unit is re-integrating, waiting till re-integration counter
             -- expires!
@@ -2322,15 +2311,11 @@ begin
                 tx_dominant <= '1';
                 err_pos <= ERC_POS_ERR;
                 nbt_ctrs_en <= '1';
-                       
+
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
                     ctrl_ctr_pload_val <= C_DELIM_WAIT_DURATION;
                     first_err_delim_d <= '1';
-                end if;
-                
-                if (rx_data_nbs = RECESSIVE) then
-                    form_err_i <= '1';
                 end if;
 
             -------------------------------------------------------------------
@@ -2360,7 +2345,7 @@ begin
                 err_pos <= ERC_POS_ERR;
                 nbt_ctrs_en <= '1';
                 
-                -- When waiting for RECESSIVE bit after Error delimiter, unit
+                -- When waiting for RECESSIVE bit after Error flag, unit
                 -- may receive DOMINANT and not interpret this as Bit error!
                 bit_err_disable <= '1';
                 
@@ -2394,6 +2379,7 @@ begin
                 ctrl_ctr_ena <= '1';
                 err_pos <= ERC_POS_ERR;
                 nbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
                                 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
@@ -2418,10 +2404,6 @@ begin
                 err_pos <= ERC_POS_OVRL;
                 nbt_ctrs_en <= '1';
                 
-                if (rx_data_nbs = RECESSIVE) then
-                    form_err_i <= '1';
-                end if;
-                
             -------------------------------------------------------------------
             -- Wait till overload delimiter.
             -------------------------------------------------------------------
@@ -2429,6 +2411,10 @@ begin
                 is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
                 nbt_ctrs_en <= '1';
+                
+                -- When waiting for RECESSIVE bit after Overload flag, unit
+                -- may receive DOMINANT and not interpret this as Bit error!
+                bit_err_disable <= '1';
                 
                 if (rx_data_nbs = RECESSIVE) then
                     ctrl_ctr_pload_i <= '1';
@@ -2443,6 +2429,7 @@ begin
                 is_overload <= '1';
                 err_pos <= ERC_POS_OVRL;
                 nbt_ctrs_en <= '1';
+                bit_err_disable <= '1';
 
                 if (ctrl_ctr_zero = '1') then
                     ctrl_ctr_pload_i <= '1';
