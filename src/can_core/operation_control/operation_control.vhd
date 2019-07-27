@@ -86,6 +86,18 @@ entity operation_control is
         drv_bus              :in   std_logic_vector(1023 downto 0);
 
         ------------------------------------------------------------------------
+        -- Prescaler Interface
+        ------------------------------------------------------------------------
+        -- RX Trigger
+        rx_trigger           :in   std_logic;
+
+        ------------------------------------------------------------------------
+        -- Fault confinement Interface
+        ------------------------------------------------------------------------
+        -- Unit is Bus-off
+        is_bus_off           :in   std_logic;
+
+        ------------------------------------------------------------------------
         -- Protocol Control Interface
         ------------------------------------------------------------------------
         -- Arbitration lost
@@ -120,8 +132,19 @@ architecture rtl of operation_control is
     signal curr_state        :     t_operation_control_state;
     signal next_state        :     t_operation_control_state;
 
+    -- Unit is off the bus
+    signal go_to_off         :     std_logic;
+
 begin
-  
+
+    -- Unit should go to off when it turned Error Passive or when it is disabled.
+    -- Gated by RX Trigger (delayed till next sample point) to avoid transiting
+    -- back to off directly after end of integration/reintegration.
+    go_to_off <= '1' when (is_bus_off = '1' or drv_ena = CTU_CAN_DISABLED) and
+                          (rx_trigger = '1')
+                     else
+                 '0';
+
     -- Driving bus aliases
     drv_ena <= drv_bus(DRV_ENA_INDEX);
 
@@ -129,38 +152,44 @@ begin
     -- Next state
     ---------------------------------------------------------------------------
     next_state_proc : process(curr_state, set_idle, set_transmitter,
-        set_receiver, arbitration_lost, drv_ena)
+        set_receiver, arbitration_lost, go_to_off)
     begin
         next_state <= curr_state;
         
-        if (drv_ena = CTU_CAN_DISABLED) then
-            next_state <= s_oc_off; 
-        else
-            case curr_state is
-            when s_oc_off =>
-                if (set_idle = '1') then
-                    next_state <= s_oc_idle;
-                end if;
-            when s_oc_idle =>
-                if (set_transmitter = '1') then
-                    next_state <= s_oc_transmitter;
-                elsif (set_receiver = '1') then
-                    next_state <= s_oc_receiver;
-                end if;
-            when s_oc_transmitter =>
-                if (set_idle = '1') then
-                    next_state <= s_oc_idle;
-                elsif (set_receiver = '1' or arbitration_lost = '1') then
-                    next_state <= s_oc_receiver;
-                end if;
-            when s_oc_receiver =>
-                if (set_idle = '1') then
-                    next_state <= s_oc_idle;
-                elsif (set_transmitter = '1') then
-                    next_state <= s_oc_transmitter;
-                end if;
-            end case;
-        end if;
+        case curr_state is
+        when s_oc_off =>
+            if (set_idle = '1') then
+                next_state <= s_oc_idle;
+            end if;
+            
+        when s_oc_idle =>
+            if (go_to_off = '1') then
+                next_state <= s_oc_off; 
+            elsif (set_transmitter = '1') then
+                next_state <= s_oc_transmitter;
+            elsif (set_receiver = '1') then
+                next_state <= s_oc_receiver;
+            end if;
+            
+        when s_oc_transmitter =>
+            if (go_to_off = '1') then
+                next_state <= s_oc_off; 
+            elsif (set_idle = '1') then
+                next_state <= s_oc_idle;
+            elsif (set_receiver = '1' or arbitration_lost = '1') then
+                next_state <= s_oc_receiver;
+            end if;
+            
+        when s_oc_receiver =>
+            if (go_to_off = '1') then
+                next_state <= s_oc_off;
+            elsif (set_idle = '1') then
+                next_state <= s_oc_idle;
+            elsif (set_transmitter = '1') then
+                next_state <= s_oc_transmitter;
+            end if;
+        end case;
+    
     end process;
 
     ---------------------------------------------------------------------------

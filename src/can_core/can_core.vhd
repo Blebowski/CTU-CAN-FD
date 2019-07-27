@@ -582,6 +582,12 @@ begin
 
         -- Memory registers Interface
         drv_bus              => drv_bus,                -- IN
+        
+        -- Prescaler Interface
+        rx_trigger           => pc_rx_trigger,          -- IN
+        
+        -- Fault confinement Interface
+        is_bus_off           => is_bus_off_i,           -- IN
 
         -- Protocol Control Interface
         arbitration_lost     => arbitration_lost_i,     -- IN
