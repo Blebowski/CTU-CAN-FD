@@ -11567,7 +11567,7 @@ Fault confinement implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-TX, RX error counters according to CAN FD standard.
+TX, RX error counters according to CAN FD standard (TEC, REC).
 \end_layout
 
 \begin_layout Itemize
@@ -11575,12 +11575,70 @@ Rules for manipulation of TX, RX error counters.
 \end_layout
 
 \begin_layout Itemize
-Fault confinement state of node (Error active, Error passive, Bus-off).
+Fault confinement state of node (Error Active, Error Passive, Bus-Off).
 \end_layout
 
 \begin_layout Itemize
 Set of special error counters to distuinguish between Errors in Nominal
  Bit-rate and Data Bit-rate.
+\end_layout
+
+\begin_layout Standard
+Fault confinement block diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:fault-confinement-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/BD_Fault_confinement.pdf
+	lyxscale 20
+	scale 90
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fault confinement block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:fault-confinement-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -11594,19 +11652,328 @@ filename "entity_docs/fault_confinement.lyx"
 \end_layout
 
 \begin_layout Standard
-Fault confinement block diagram is shown in Figure TODO.
- Fault confinement counters are controlled by Protocol control FSM via interface
+Fault Confinement counters are controlled by Protocol control FSM via interface
  standardized in TODOISO.
- Description of this interface is shown in Table TODO.
- Fault confinement counters are also configurable from Memory registers
- via Driving Bus.
+ Detection of special conditions stated in TODOISOEXCEPTIONS is realized
+ in 
+\begin_inset Quotes eld
+\end_inset
+
+Fault confinement rules
+\begin_inset Quotes erd
+\end_inset
+
+ module.
+ Error counters module implements counters as described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:error-counters"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Counters can be modified from Memory registers via CTR_PRES register when
+ CTU CAN FD is in Test mode (MODE[TSTM] = '1').
+ Fault Confinement state as defined in TODOISO is implemented by Fault confineme
+nt FSM.
+ State transition diagram of Fault confinement FSM is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:fsm-fault-confinement"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Threshold for Error warning limit detection (EWL) and transition to Error
+ Passive (ERP) can be configured from Memory registers when device is in
+ Test mode (MODE[TSTM] = '1').
 \end_layout
 
 \begin_layout Standard
-State transition diagram of Fault confinement FSM is shown in Figure TODO.
- Threshold for Error warning limit and transition to Error Passive can be
- configured from user registers.
- 
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_fault_confinement.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Fault confinement FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:fsm-fault-confinement"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="71line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Counter Name
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN FD standard name
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RX Error counter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+REC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Incremented, decremented as described in TODOISO.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TX Error counter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+TEC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Incremented, decremented as described in TODOISO.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Nominal Error counter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Incremented by 1 for each Error detected during Nominal Bit-rate.
+ Does not influence Fault confinement state of CTU CAN FD.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Data Error counter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Incremented by 1 for each Error detected during Data Bit-rate.
+ Does not influence Fault confinement state of CTU CAN FD.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Error counters
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:error-counters"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
