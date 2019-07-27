@@ -1397,11 +1397,12 @@ System clock
 .
  Each other timing related information (e.g.
  Time quanta) is derived from System clock via Clock Enable signals.
+ This makes CTU CAN FD fully synchronous design with no clock domain crossing.
+ CTU CAN FD is assumed to be implemented in single power domain, all parts
+ of CTU CAN FD must be either turned on or off.
  To reduce dynamic power consumption, majority of registers is written to
  allow inference of Clock Enables (FPGAs) or automated Clock Gating (ASIC).
  There is no explicit clock gating used within the IP Core.
- List of registers which are candidates for Clock Enable to Gated clock
- conversion is shown in Table TODO.
 \end_layout
 
 \begin_layout Section
@@ -1660,7 +1661,16 @@ noprefix "false"
 \end_inset
 
 .
- In case of read during write, memories return old data value.
+ In case of read during write, memories return old data value, there is
+ no 
+\begin_inset Quotes eld
+\end_inset
+
+bypassing
+\begin_inset Quotes erd
+\end_inset
+
+ implemented.
 \end_layout
 
 \begin_layout Standard
@@ -2190,9 +2200,6 @@ noprefix "false"
  Quanta) when system clock is equal to Time Quanta clock (processing takes
  two clock periods).
  Due to this, Minimal Time Quanta of CTU CAN FD is 2.
- A block diagram of CTU CAN FD with demonstration of logic split into each
- pipeline stage is shown in Figure TODO.
- 
 \end_layout
 
 \begin_layout Standard
@@ -3453,8 +3460,8 @@ status open
 \begin_inset Tabular
 <lyxtabular version="3" rows="7" columns="4">
 <features tabularvalignment="middle">
-<column alignment="left" valignment="top" width="20text%">
-<column alignment="left" valignment="top" width="7text%">
+<column alignment="left" valignment="top" width="17text%">
+<column alignment="left" valignment="top" width="10text%">
 <column alignment="left" valignment="top" width="20text%">
 <column alignment="left" valignment="top" width="42text%">
 <row>
@@ -3480,7 +3487,7 @@ cellcolor{gray}
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3557,7 +3564,7 @@ Identifier type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3595,7 +3602,7 @@ Frame type
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3633,7 +3640,7 @@ Remote Transmission Request
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3672,7 +3679,7 @@ Bit Rate Shift flag
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3711,7 +3718,7 @@ Error State Indicator
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -3753,7 +3760,7 @@ Data length code
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -4037,10 +4044,84 @@ Operation control (Transmitter, Receiver, Bus Idle).
 \end_layout
 
 \begin_layout Standard
-CAN Core block diagram is shown in Figure TODO.
+CAN Core block diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:CAN-Core-Block-diagam-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  CAN Core is structural entity which only instantiates other modules and
  by itself it implements nearly no logic.
- TODO: Explain feedback mux here!!!
+ An exception to this rule are two multiplexers as shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:CAN-Core-Block-diagam-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Multiplexor on TX Datapath (green color) multiplexes between regularly
+ send data (post bit stuffing) or constant Recessive value.
+ Constant Recessive value is sent to the bus in Bus Monitoring mode.
+ Multiplexor on RX Datapath (red color) multiplexes input data to Bit Destuffing.
+ During normal operation, RX Data from input of CAN Core are taken.
+ When Secondary sampling is used, transmitted data are taken.
+ In Bus Monitoring mode, post bit-stuffing data logically ORed with RX Data
+ from input of CAN Core (this corresponds to re-routing transmitted bit
+ value internally as defined in TODO).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/BD_CAN_Core.pdf
+	lyxscale 20
+	scale 60
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CAN Core - Block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:CAN-Core-Block-diagam-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -4073,7 +4154,7 @@ Transmission and Reception of CAN Frames.
 \end_layout
 
 \begin_layout Itemize
-CAN Arbitration.
+Handling of CAN Arbitration.
 \end_layout
 
 \begin_layout Itemize
@@ -4106,13 +4187,63 @@ ation)
 \end_layout
 
 \begin_layout Itemize
-Control Bit time switching (Nominal Sample, Data Sample, Secondary Sample)
+Control Bit-rate switching (Nominal Sample, Data Sample, Secondary Sample)
 \end_layout
 
 \begin_layout Standard
-\begin_inset CommandInset include
-LatexCommand input
-filename "entity_docs/protocol_control.lyx"
+Protocol control diagram is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Protocol-Control-Block-diagam-1-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Protocol control is structural entity which only instantiates other modules
+ and by itself it implements no logic.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/BD_Protocol_control.pdf
+	lyxscale 20
+	scale 57
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Protocol control - Block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Protocol-Control-Block-diagam-1-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
 
 \end_inset
 
@@ -4120,13 +4251,10 @@ filename "entity_docs/protocol_control.lyx"
 \end_layout
 
 \begin_layout Standard
-Protocol control diagram is shown in Figure TODO.
- Protocol control is structural entity which only instantiates other modules
- and by itself it implements no logic.
-\end_layout
+\begin_inset CommandInset include
+LatexCommand input
+filename "entity_docs/protocol_control.lyx"
 
-\begin_layout Standard
-\begin_inset Newpage pagebreak
 \end_inset
 
 
@@ -4141,7 +4269,7 @@ Protocol control FSM implements following functionality:
 \end_layout
 
 \begin_layout Itemize
-CAN Frame format.
+Realizes CAN Frame format.
 \end_layout
 
 \begin_layout Itemize
@@ -4184,7 +4312,7 @@ Controls Bit time switching (Nominal Sample, Data Sample, Secondary Sample).
 \end_layout
 
 \begin_layout Itemize
-Performs Form Error detection
+Performs Form Error detection.
 \end_layout
 
 \begin_layout Itemize
@@ -4192,7 +4320,7 @@ Controls CRC checking.
 \end_layout
 
 \begin_layout Itemize
-Performs CAN arbitration.
+Handles CAN arbitration.
 \end_layout
 
 \begin_layout Standard
@@ -4218,6 +4346,11 @@ noprefix "false"
 \end_inset
 
 .
+ Protocol control does not change its state in any other moment.
+ Note that regular change of Protocol Control corresponding to e.g.
+ transition from Control to Data occurs one clock cycle after Sample Point
+ (in Process pipeline stage).
+ 
 \end_layout
 
 \begin_layout Standard
@@ -4476,9 +4609,9 @@ Control counter
 \end_layout
 
 \begin_layout Standard
-Control counter controls duration of CAN frame fields which last longer
+Control counter measures duration of CAN frame fields which last longer
  than 1 bit.
- These fields and according configuration of control counter is shown in
+ These fields and according configuration of control counter are shown in
  Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -4923,8 +5056,8 @@ Control counter module contains a complementary counter which counts from
  Complementary counter provides information that data byte has elapsed (counter
  is divisible by 8), or whole memory word has elapsed (counter is divisible
  by 32).
- Contol counter is capable of addressing memory words at addresses 4 (DATA_1_4_W
-) till 19 (DATA_61_64_W).
+ Complementary counter is capable of addressing memory words at addresses
+ 4 (DATA_1_4_W) till 19 (DATA_61_64_W) in TXT Buffer.
  Complementary counter decodes address of Data memory word within TXT Buffer
  according to following equation:
 \end_layout
@@ -4944,10 +5077,12 @@ Control counter module implements Arbitration Lost Capture register.
  field at which Arbitration was lost.
  Arbitration lost capture register is loaded when Arbitration lost is signalled
  by Protocol Control FSM in Process pipeline stage.
- Arbitration lost capture saves current value of Control counter (determines
+ Arbitration Lost Capture saves current value of Control counter (determines
  bit at which arbitration was lost) and bit field type within arbitration
- (Base Identifier, IDE bit, Identifier Extension, etc.) Arbitration lost
- capture register is readable by SW via Memory registers (ALC register).
+ (Base Identifier, IDE bit, Identifier Extension, etc.) when arbitration
+ was lost.
+ Arbitration lost capture register is readable by SW via Memory registers
+ (ALC register).
  Meaning of values in Arbitration Lost Capture register is described in
  TODO.
  An example of Arbitration lost capture register is shown in Figure 
@@ -5017,13 +5152,13 @@ Retransmitt counter controls number of retransmissions of current CAN frame
  Retransmitt counter counts from zero, and it is controlled by Protocol
  control FSM.
  Retransmitt counter counts only when Retransmitt limitation is enabled
- by user, otherwise it stays at 0.
+ by user (SETTINGS[RTRLE] = '1'), otherwise it stays at 0.
  Retransmitt counter is incremented by 1 when Arbitration is lost, or when
  Error frame transmission is requested by Error detector (reffer to TODO).
 \end_layout
 
 \begin_layout Standard
-When Error frame and Arbitration loss occur in the same frame, retransmitt
+When Error Frame and Arbitration loss occur in the same frame, retransmitt
  counter is incremented only once (such a situation is shown in Figure 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -5036,7 +5171,7 @@ noprefix "false"
 
 ).
  When multiple Error frames occur in the same frame (e.g.
- due to error during error frame), retransmitt counter is incremented only
+ due to error during Error Frame), retransmitt counter is incremented only
  once.
  Retransmitt counter is cleared upon succesfull transmission.
  
@@ -5045,7 +5180,7 @@ noprefix "false"
 \begin_layout Standard
 When Retransmitt counter reaches Retransmitt limit, it signals this to Protocol
  control FSM.
- In case of next arbitration loss or Error frame request, Protocol control
+ In case of next arbitration loss or Error Frame request, Protocol control
  FSM stops transmitting actual frame, signals this to TXT Buffer and TXT
  Buffer moves to TX Error state (see TODO).
  When unit is a receiver without attempt to transmitt a frame (no frame
@@ -5426,7 +5561,6 @@ Re-integration counter counts 128 consecutive ocurrences of 11 consecutive
  Recessive bits after unit turned Bus-off.
  Re-integration counter counts only during Re-integration, not during initial
  Integration.
- Reffer to TODO for distuinguishing between Integration and Re-integration.
  Re-integration counter is controlled by Protocol control FSM.
  Re-integration counter counts from zero.
  Re-integration counter is cleared when unit is Bus-off and it receives
@@ -5434,18 +5568,30 @@ Re-integration counter counts 128 consecutive ocurrences of 11 consecutive
  register).
  Re-integration counter is incremented by 1 after each 11 consecutive Recessive
  bits are received.
- 11 consecutive recessive bits are counted by Control counter.
- If during re-integration Dominant bit is detected, Control counter is pre-loade
-d again to 11.
+ 11 consecutive recessive bits are measured by Control counter.
+ If during Re-integration dominant bit is detected, Control counter is pre-loade
+d again to 11 (there was dominant bit before 11 consecutive recessive bits
+ were reached).
  When Re-integration counter reaches 127, it signals this to Protocol control
  FSM (Protocol control FSM becomes Idle), unit becomes Error Active again
  and Operation control state is changed to Idle.
- An example of Re-integration counter operation is shown in Figure TODO.
+ An example use case of Reintegration counter operation is shown in Table
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:reintegration-counter"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-placement H
+\begin_inset Float table
+placement h
 wide false
 sideways false
 status open
@@ -5453,10 +5599,288 @@ status open
 \begin_layout Plain Layout
 \noindent
 \align center
-\begin_inset Graphics
-	filename /DOKUMENTY/Skola/CVUT-FEL/ctu_can_fd_2/doc/pics/Timing_diagrams/PDFs/control_counter.pdf
-	lyxscale 20
-	scale 90
+\begin_inset Tabular
+<lyxtabular version="3" rows="11" columns="2">
+<features tabularvalignment="middle">
+<column alignment="left" valignment="top" width="5line%">
+<column alignment="left" valignment="top" width="90line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Step 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Action
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD is enabled by writing SETTINGS[ENA] = '1'.
+ After Integration is over, unit becomes Error Active.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CTU CAN FD takes part in bus communication.
+ Due to Error frames, it turns first Error Passive and then Bus-off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW is notified of such an event by FCS Interrupt, then SW reads FAULT_STATE
+ register and finds out that unit is Bus-off.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+SW decides that it wants the unit to join the network again.
+ SW writes logic 1 to COMMAND[ERCRST] (so called 
+\begin_inset Quotes eld
+\end_inset
+
+Error counter reset
+\begin_inset Quotes erd
+\end_inset
+
+ or 
+\begin_inset Quotes eld
+\end_inset
+
+Reintegration request
+\begin_inset Quotes erd
+\end_inset
+
+)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reintegration counter is cleared.
+ Control counter is preloaded to 10.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Control counter is being decremented by 1 for each Recessive bit received
+ by Protocol Control FSM.
+ If Dominant bit is detected, Control Counter is preloaded to 10 again.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+After 11 consecutive Recessive bits are received, Control counter is 0,
+ it signals this to Protocol control FSM.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control FSM increments Reintegration counter by 1.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+After 128 repetitions of 11 consecutive Recessive bits (note that there
+ can be CAN frames between consecutive sequences of 11 consecutive Recessive
+ Bits, these frames are ignored by CTU CAN FD), Reintegration counter is
+ 128.
+ Reintegration counter signals this to Protocol Control FSM.
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control FSM becomes Idle, CTU CAN FD becomes Error Active and it
+ is ready to receive/transmitt frames again.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
 
 \end_inset
 
@@ -5464,13 +5888,15 @@ status open
 \end_layout
 
 \begin_layout Plain Layout
+\noindent
+\align center
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Re-integration counter 
+Reintegration counter - use case
 \begin_inset CommandInset label
 LatexCommand label
-name "fig:reintegration-counter"
+name "tab:reintegration-counter"
 
 \end_inset
 
@@ -5493,11 +5919,12 @@ TX Shift Register
 
 \begin_layout Standard
 TX Shift register is 32 bit shift register which transmitts given bit sequence
- to the output of Protocol control module.
- TX Shift register is preloaded by Protocol control FSM in Process pipeline
+ to the output of Protocol Control module.
+ TX Shift register is preloaded by Protocol Control FSM in Process pipeline
  stage when new data sequence is about to be transmitted, thus output value
  is also valid after Process pipeline stage of the same bit.
- TX Shift register is shifted by one bit in Stuff pipeline stage.
+ TX Shift register is shifted by one position in Stuff pipeline stage of
+ each bit on CAN bus during multi-bit frame fields.
  TX shift register is preloaded according to Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -5516,9 +5943,9 @@ noprefix "false"
  TX shift register shifts from lowest bit index to highest bit index (shifting
  up).
  Transmission of single bits (e.g.
- SOF) or constant sequences (e.g.
- Active Error Flag) is handled separately, and has higher priority than
- transmission from TX Shift register.
+ SOF, ACK) or constant sequences (e.g.
+ Active Error Flag, EOF) is handled separately, and has higher priority
+ than transmission from TX Shift register.
  Rules for handling of these situations are described in Table 
 \begin_inset CommandInset ref
 LatexCommand ref
@@ -6082,9 +6509,21 @@ noprefix "false"
  Mode of RX Shift register determines whether input of each byte in register
  is taken from output of previous byte, or directly from input of RX Shift
  register.
- Diagram of RX shift register is shown in Figure TODO.
+ Diagram of RX shift register is shown in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:rx-shift-reg-block-diagram"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  Shifting of each byte of RX Shift register is enabled separately and it
  is controlled by Protocol control FSM.
+ RX Shift register is shifting during multi-bit fields on CAN Bus and it
+ shifts by one position each bit in Process pipeline stage.
  This corresponds to reception of Data byte on CAN bus.
  RX Shift register shifts up.
  RX Shift register stores part of its content to either a dedicated capture
@@ -6118,7 +6557,17 @@ noprefix "false"
 
 .
  An example of RX shift register operation is shown in Linear mode is shown
- in Figure TODO.
+ in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:rx-shift-register-linear-mode"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
  An example of operation in Byte mode is shown in Figure TODO.
 \end_layout
 
@@ -6990,22 +7439,87 @@ name "fig:rx-shift-register-linear-mode"
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/BD_RX_Shift_reg.pdf
+	lyxscale 20
+	scale 85
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+RX Shift register - Block diagram
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:rx-shift-reg-block-diagram"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
 \begin_layout Subsubsection
 Error detector
 \end_layout
 
 \begin_layout Standard
-Error detector manages error detection and propagation of Error frame request
- to Protocol Control FSM.
+Error detector processes Error frame requests from other modules, decides
+ whether these requests are valid and creates Error frame request to Protocol
+ Control FSM.
  Errors are detected in Process pipeline stage and Error frame request is
  provided to CAN Core one clock cycle after Process pipeline stage.
- A DFF is inserted on Error frame request to avoid combinatorial loops between
- Error detector and Protocol Control FSM.
- Detection of Errors based on Error type is described in Table TODO.
- An example of Error detection (form Error) with details of actions in each
+ Error frame request is pipelined to avoid combinatorial loops between Error
+ detector and Protocol Control FSM.
+ Error types and modules of their origin are described in Table 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Error-detection-rules-1"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Error detector containts Error Code Capture register which stores type
+ and position of last error.
+ Error Code capture register is loaded when Error detector creates Error
+ Frame request to Protocol control FSM.
+ Reffer to TODO for description of Error Code Capture register.
+ An example of Error detection (Form Error) with details of actions in each
  pipeline stage is shown in Figure TODO.
- An example of CRC check mechanism and detection of CRC Error is shown in
- Figure TODO.
 \end_layout
 
 \begin_layout Standard
@@ -7019,13 +7533,13 @@ status open
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="7" columns="5">
-<features tabularvalignment="middle">
+<lyxtabular version="3" rows="5" columns="5">
+<features islongtable="true" longtabularalignment="center">
 <column alignment="left" valignment="middle" width="5line%">
 <column alignment="left" valignment="top" width="10line%">
-<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="15line%">
 <column alignment="left" valignment="top" width="8line%">
-<column alignment="left" valignment="top" width="54line%">
+<column alignment="left" valignment="top" width="48line%">
 <row>
 <cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -7076,7 +7590,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-CAN Frame Fields where Error can't occur!
+CAN Frame Fields where Error can't occur.
 \begin_inset ERT
 status open
 
@@ -7180,15 +7694,31 @@ Bit Error detector in Bus Sampling
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit error is detected by Bus Sampling by comparing transmitted and received
- value.
- Bit error is detection in Bus Sampling is enabled always, bit error is
- only ignored by Error detector in certain fields as controlled by Protocol
- control FSM.
- Bit Error in Bus sampling is detected for Nominal Bit-rate as well as Data
- bit-rate (by Secondary sampling point).
- Reffer to TODO for description of Secondary Sampling Point generation and
- Bit Error detection.
+Bit error is detected by Bus Sampling module by comparing transmitted and
+ received value of bit on CAN Bus.
+ Reffer to 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sec:Bus-sampling"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ for details of Bit Error detection by Bus Sampling module.
+ Bit Error detection by Bus Sampling module is enabled always, it is only
+ ignored in bit fields as described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Bit-error-exceptions"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
 \end_layout
 
 \end_inset
@@ -7204,7 +7734,7 @@ Bit error is detected by Bus Sampling by comparing transmitted and received
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7235,11 +7765,11 @@ Protocol control FSM
 \begin_inset Text
 
 \begin_layout Plain Layout
-In Arbitration, Bit Error is not detected by Bus sampling but by Protocol
- Control FSM because only transmitting Dominant and receiving Recessive
- is considered as Bit Error.
- Bus sampling does not distiguishes value of TX, RX bit, it detect Bit Error
- upon each mismatch between the two.
+In Arbitration field, Bit Error detected by Bus Sampling is ignored by Error
+ Detector.
+ Instead Bit Error detected by Protocol Control FSM is considered.
+ Protocol control FSM detects Bit Error during Arbitration field only when
+ transmitted bit was Dominant and received bit is Recessive.
 \end_layout
 
 \end_inset
@@ -7287,14 +7817,27 @@ Bit Destuffing
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stuff Error is detected 
+Stuff Error is detected by Bit Destuffing as described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:Bit-Destuffing"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ If Fixed Stuff bit does not have oposite value as previous bit, this error
+ is detected as Stuff Error by Bit-Stuffing, but error is stored as Form
+ Error in Error Code Capture register.
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7303,7 +7846,7 @@ Form Error
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7312,7 +7855,7 @@ SOF, Control, Stuff Count, CRC, End of Frame
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7321,7 +7864,7 @@ Arbitration, Data field, ACK, Intermission, Suspend,
 
 \end_inset
 </cell>
-<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -7330,10 +7873,188 @@ Protocol control FSM, Bit Destuffing for Fixed Stuff bits.
 
 \end_inset
 </cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Form Error is detected by Protocol Control FSM by explicitely checking value
+ RX bit during fixed frame fields as described in 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:Form-error-detection"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Protocol control signals Form error to Error Detector and based on this,
+ Error frame request is signalled one clock cycle after Process pipeline
+ stage.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Error detection rules 1
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Error-detection-rules-1"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="5">
+<features islongtable="true" longtabularalignment="center">
+<column alignment="left" valignment="middle" width="5line%">
+<column alignment="left" valignment="top" width="10line%">
+<column alignment="left" valignment="top" width="15line%">
+<column alignment="left" valignment="top" width="8line%">
+<column alignment="left" valignment="top" width="48line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Error type
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN Frame Fields when Error is detected.
+ 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CAN Frame Fields where Error can't occur.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Module where error is detected
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -7381,7 +8102,34 @@ Error detector
 \begin_inset Text
 
 \begin_layout Plain Layout
+Comparison of RX CRC with calculated CRC is executed in Error Detector.
+ Since after CRC field, RX Shift register is not shifting and CRC module
+ is not calculating CRC anymore, comparison shows valid result from CRC
+ Delimiter further.
+ Based on result of comparison 
+\begin_inset Quotes eld
+\end_inset
 
+CRC match
+\begin_inset Quotes erd
+\end_inset
+
+ is signalled to Protocol control FSM.
+ If unit is Receiver and 
+\begin_inset Quotes eld
+\end_inset
+
+CRC match
+\begin_inset Quotes erd
+\end_inset
+
+ is not signalled to Protocol control FSM in ACK Delimiter, Protocol control
+ detects CRC Error (in Process pipeline stage of ACK Delimiter) and propagates
+ it back to Error detector.
+ Error detector forms Error frame request for Protocol control FSM.
+ An example of CRC check mechanism and detection of CRC Error is shown in
+ Figure TODO.
+ 
 \end_layout
 
 \end_inset
@@ -7428,7 +8176,9 @@ Protocol control FSM
 \begin_inset Text
 
 \begin_layout Plain Layout
-
+ACK Error is detected by Protocol control FSM when unit is transmitter,
+ Recessive bit is received and unit is not in Self Test Mode (frame valid
+ also without ACK).
 \end_layout
 
 \end_inset
@@ -7447,10 +8197,564 @@ Protocol control FSM
 \begin_inset Caption Standard
 
 \begin_layout Plain Layout
-Error detection rules
+Error detection rules 2
 \begin_inset CommandInset label
 LatexCommand label
-name "tab:CAN-ports-common-3-2"
+name "tab:Error-detection-rules-2"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features islongtable="true" longtabularalignment="center">
+<column alignment="left" valignment="middle" width="30line%">
+<column alignment="left" valignment="top" width="63line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame Field
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Condition
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Start of Frame
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+If Recessive bit is received, Form Error is detected.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+r0 bit after EDL/r1 bit in frame with Extended Identifier
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+If Recessive bit is received, Form Error is detected.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+r0 bit in CAN FD Frames
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+If Recessive bit is received, Form Error is detected.
+ Protocol exception is not implemented on further extensions beyond CAN
+ FD protocol.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Delimiter, ACK Delimiter, End of Frame, Error Delimiter, Overload Delimiter.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+If Dominant bit is received, Form Error is detected.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Form Error detection
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Form-error-detection"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float table
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="14" columns="2">
+<features islongtable="true" longtabularalignment="center">
+<column alignment="left" valignment="middle" width="10line%">
+<column alignment="left" valignment="top" width="85line%">
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Frame Field
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Description
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+cellcolor{gray}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Start of Frame
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dominant bit is Transmitted.
+ Bit Error would be detected when Recessive value was received.
+ Such a situation is treated as Form error, and Bit Error is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Integration, Reintegration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Recessive value is transmitted, receiving Dominant is not detected as Bit
+ Error since these might represent a frame between other units while CTU
+ CAN FD is integrating.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Arbitration
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Error is detected by Protocol control FSM, thus Bit Error detected by
+ Bus Sampling is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="left" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Control, Data, Stuff Count, CRC
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Error detected by Bus sampling is ignored if unit is receiver.
+ Receiver in these fields transmitts only recessive bits and reception of
+ Dominant bit is not treated as Bit Error since unit is receiving data from
+ other Transmitter.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Delimiter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Receiving Dominant bit during is interpreted as Form Error, due to this
+ reason Bit Error detected by Bus sampling is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ACK Slot
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Error is ignored, since this is defined in TODOCANFDSPEC.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+ACK Delimiter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+During ACK Delimiter, Recessive value is transmitted and reception of Dominant
+ value is considered as Form Error.
+ Due to this reason Bit Error is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+End of Frame
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reception of Dominant bit during EOF is treated as Form Error due to this
+ Bit Error is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Intermission
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Recessive value is sent to the bus.
+ Receiving Dominant bit during first or second bit of Intermission is interprete
+d as Overload Frame.
+ Receiving Dominant bit during third bit of Intermission is interpreted
+ as SOF of next frame.
+ Due to these reasons, Bit Error during Intermission is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Suspend, Idle
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Recessive value is sent to the bus.
+ Receiving Dominant bit is interpreted as SOF of next frame.
+ Due to this reason Bit Error during Suspend and Idle is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Reintegration Wait
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+When unit turned Bus-off, it is de-facto off the bus, It shall not transmitt
+ anything unless it re-intagrates.
+ Due to this reason Bit Error is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Passive Error flag
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Detecting Dominant bit during Passive Error flag is not interpreted as Bit
+ Error since it is defined like so in TODOCANFDSPEC.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Error Delimiter, Overload Delimiter
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Recessive bit is sent to the bus.
+ Receiving Dominant bit is interpreted as Form Error.
+ Due to this Bit Error is ignored.
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Bit Error by Bus Sampling exceptions
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:Bit-error-exceptions"
 
 \end_inset
 
@@ -7498,8 +8802,62 @@ filename "entity_docs/operation_control.lyx"
 
 \begin_layout Standard
 Operation control implements a FSM whose state transition diagram is shown
- in Figure TODO.
- Operation control FSM is controlled by Protocol control FSM.
+ in Figure 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:fsm-operation-control"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+.
+ Operation control FSM is controlled by Protocol control FSM and Fault confineme
+nt FSM.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Graphics
+	filename ../pics/Visio_generated/FSM_operation_control.pdf
+	lyxscale 20
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Operation control FSM
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:fsm-operation-control"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -7610,11 +8968,11 @@ Bit stuffing processes input data in Stuff pipeline stage.
  it processed sequence of equal consecutive bits with length of Stuff rule.
  Length of Stuff rule is controlled by Protocol control FSM and it is TODO
  when Regular bit Stuffing is used and TODO when fixed bit stuffing is used.
- When Bit Stuffing is disabled it propagates data from input to output without
- insertion of stuff bits.
- Input data are processed by Bit Stuffing in Stuff pipeline stage regardless
- of the fact if Bit Stuffing is enabled or disabled.
- Block diagram of bit stuffing is shown in Figure TODO.
+ When Bit Stuffing is disabled, it propagates data from input to output
+ without insertion of stuff bits.
+ Input data are processed in Stuff pipeline stage regardless of the fact
+ if Bit Stuffing is enabled or disabled.
+ Block diagram of Bit Stuffing is shown in Figure TODO.
  Bit Stuffing maintains a counter of equal consecutive bits which is manipulated
  according to pseudo-algorithm described in Table TODO.
  Bit stuffing is enabled only when unit is a transmitter of CAN Frame.
@@ -7982,6 +9340,13 @@ name "tab:CAN-control-counter-1-3"
 
 \begin_layout Subsection
 Bit Destuffing
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:Bit-Destuffing"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -8005,6 +9370,10 @@ Holds counter with number of De-Stuff bits modulo 8 for comparison of Stuff
 \begin_layout Itemize
 Discarding Stuff bit in the beginning of Stuff Count or CRC field of CAN
  FD Frame.
+\end_layout
+
+\begin_layout Itemize
+Detection of Stuff Error
 \end_layout
 
 \begin_layout Standard
@@ -13557,6 +14926,13 @@ on edge or Re-synchronisation edge.
 
 \begin_layout Section
 Bus sampling
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:Bus-sampling"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
