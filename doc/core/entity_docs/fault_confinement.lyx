@@ -96,7 +96,7 @@ customHeadersFooters
 \end_header
 
 \begin_body
-\begin_layout Subsection
+\begin_layout Description
 Generics\end_layout
 \begin_layout Standard
 \noindent
@@ -210,7 +210,7 @@ Reset polarity\end_layout
 
 
 \end_layout
-\begin_layout Subsection
+\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent
@@ -581,7 +581,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-error_passive_changed\end_layout
+fcs_changed\end_layout
 
 \end_inset
 </cell>
@@ -605,7 +605,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Error passive state changed\end_layout
+Fault confinement state changed\end_layout
 
 \end_inset
 </cell>
@@ -615,7 +615,7 @@ Error passive state changed\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-error_warning_limit\end_layout
+err_warning_limit\end_layout
 
 \end_inset
 </cell>
@@ -981,7 +981,7 @@ Error counter should remain unchanged\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-primary_error\end_layout
+primary_err\end_layout
 
 \end_inset
 </cell>

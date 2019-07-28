@@ -96,7 +96,7 @@ customHeadersFooters
 \end_header
 
 \begin_body
-\begin_layout Subsection
+\begin_layout Description
 Generics\end_layout
 \begin_layout Standard
 \noindent
@@ -278,7 +278,7 @@ TXT Buffer ID\end_layout
 
 
 \end_layout
-\begin_layout Subsection
+\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent

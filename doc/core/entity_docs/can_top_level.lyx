@@ -96,7 +96,7 @@ customHeadersFooters
 \end_header
 
 \begin_body
-\begin_layout Subsection
+\begin_layout Description
 Generics\end_layout
 \begin_layout Standard
 \noindent
@@ -380,13 +380,13 @@ Insert Range Filter\end_layout
 
 
 \end_layout
-\begin_layout Subsection
+\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="24" version="3">
+<lyxtabular columns="4" rows="22" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -1122,102 +1122,6 @@ in  std_logic\end_layout
 
 \begin_layout Plain Layout
 RX signal from CAN bus\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Synchronisation signals\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{gray}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Synchronisation signals\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{gray}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Synchronisation signals\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{gray}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Synchronisation signals\begin_inset ERT
-status open
-\begin_layout Plain Layout
-\backslash
-cellcolor{gray}
-\end_layout
-\end_inset
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-time_quanta_clk\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-out std_logic\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Time Quanta clocks\end_layout
 
 \end_inset
 </cell>

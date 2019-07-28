@@ -96,7 +96,7 @@ customHeadersFooters
 \end_header
 
 \begin_body
-\begin_layout Subsection
+\begin_layout Description
 Generics\end_layout
 \begin_layout Standard
 \noindent
@@ -448,13 +448,13 @@ CRC 15 polynomial\end_layout
 
 
 \end_layout
-\begin_layout Subsection
+\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="55" version="3">
+<lyxtabular columns="4" rows="58" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -1953,7 +1953,7 @@ Error is detected (Error frame will be transmitted)\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-error_passive_changed\end_layout
+fcs_changed\end_layout
 
 \end_inset
 </cell>
@@ -1977,7 +1977,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Error passive state changed\end_layout
+Fault confinement state changed\end_layout
 
 \end_inset
 </cell>
@@ -1987,7 +1987,7 @@ Error passive state changed\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-error_warning_limit\end_layout
+err_warning_limit\end_layout
 
 \end_inset
 </cell>
@@ -2012,6 +2012,40 @@ std_logic\end_layout
 
 \begin_layout Plain Layout
 Error warning limit reached\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+is_overload\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Overload frame is being transmitted\end_layout
 
 \end_inset
 </cell>
@@ -2218,6 +2252,112 @@ std_logic\end_layout
 
 \begin_layout Plain Layout
 No positive resynchronisation\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sp_control\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(1 downto 0)\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sample control (Nominal, Data, Secondary)\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+nbt_ctrs_en\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Enable Nominal Bit time counters.\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+dbt_ctrs_en\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Enable Data Bit time counters.\end_layout
 
 \end_inset
 </cell>
@@ -2457,44 +2597,6 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-sp_control\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-out\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic_vector 
-\begin_inset Newline newline
-\end_inset
-
-(1 downto 0)\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Sample control (Nominal, Data, Secondary)\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 ssp_reset\end_layout
 
 \end_inset
@@ -2563,7 +2665,7 @@ Enable measurement of Transciever delay\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-bit_error\end_layout
+bit_err\end_layout
 
 \end_inset
 </cell>

@@ -102,7 +102,7 @@ Generics\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="2" version="3">
+<lyxtabular columns="4" rows="3" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="3.5cm">
@@ -171,7 +171,7 @@ cellcolor{cyan}
 </cell>
 </row>
 <row>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -179,7 +179,7 @@ G_RESET_POLARITY\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -187,7 +187,7 @@ std_logic\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -195,11 +195,45 @@ std_logic\end_layout
 
 \end_inset
 </cell>
-<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
 Reset polarity\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+G_SAMPLE_TRIGGER_COUNT\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+natural\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" bottomline="true" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Number of Sample Triggers\end_layout
 
 \end_inset
 </cell>
@@ -216,7 +250,7 @@ Ports\end_layout
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="15" version="3">
+<lyxtabular columns="4" rows="23" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -419,7 +453,7 @@ Asynchronous reset\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data-path\begin_inset ERT
+Input triggers\begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
@@ -434,7 +468,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data-path\begin_inset ERT
+Input triggers\begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
@@ -449,7 +483,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data-path\begin_inset ERT
+Input triggers\begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
@@ -464,7 +498,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data-path\begin_inset ERT
+Input triggers\begin_inset ERT
 status open
 \begin_layout Plain Layout
 \backslash
@@ -481,7 +515,45 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-data_in\end_layout
+rx_triggers\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+in\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(G_SAMPLE_TRIGGER_COUNT - 1 downto 0)\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+RX Triggers\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+tx_trigger\end_layout
 
 \end_inset
 </cell>
@@ -505,41 +577,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Data Input (from Protocol Control)\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-data_out\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-out\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Data Output (to CAN Bus)\end_layout
+TX Trigger\end_layout
 
 \end_inset
 </cell>
@@ -611,7 +649,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-bst_trigger\end_layout
+data_halt\end_layout
 
 \end_inset
 </cell>
@@ -635,7 +673,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit Stuffing Trigger (in SYNC segment)\end_layout
+Stuff bit is inserted, Protocol control operation to be halted forone bit time\end_layout
 
 \end_inset
 </cell>
@@ -645,7 +683,7 @@ Bit Stuffing Trigger (in SYNC segment)\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-stuff_enable\end_layout
+destuffed\end_layout
 
 \end_inset
 </cell>
@@ -669,7 +707,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit Stuffing enabled. If not, data are only passed to the output\end_layout
+Data output is not valid, actual bit is stuff bit.\end_layout
 
 \end_inset
 </cell>
@@ -703,7 +741,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Bit Stuffing type (0-Normal, 1-Fixed)\end_layout
+Fixed bit stuffing method is used\end_layout
 
 \end_inset
 </cell>
@@ -713,7 +751,7 @@ Bit Stuffing type (0-Normal, 1-Fixed)\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-stuff_length\end_layout
+bds_data_in\end_layout
 
 \end_inset
 </cell>
@@ -729,11 +767,7 @@ in\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic_vector 
-\begin_inset Newline newline
-\end_inset
-
-(2 downto 0)\end_layout
+std_logic\end_layout
 
 \end_inset
 </cell>
@@ -741,7 +775,341 @@ std_logic_vector
 \begin_inset Text
 
 \begin_layout Plain Layout
-Length of Bit Stuffing rule\end_layout
+Bit Destuffing Data input\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" multicolumn="1" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Output triggers\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Output triggers\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Output triggers\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" multicolumn="2" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Output triggers\begin_inset ERT
+status open
+\begin_layout Plain Layout
+\backslash
+cellcolor{gray}
+\end_layout
+\end_inset
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pc_tx_trigger\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control TX Trigger\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+pc_rx_trigger\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Protocol control RX Trigger\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+bst_trigger\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit Stuffing Trigger\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+bds_trigger\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Bit De-Stuffing Trigger\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crc_trig_rx_nbs\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Trigger RX - No bit stuffing\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crc_trig_tx_nbs\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Trigger TX - No bit stuffing\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crc_trig_rx_wbs\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Trigger RX - With bit stuffing\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crc_trig_tx_wbs\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Trigger TX - With bit stuffing\end_layout
 
 \end_inset
 </cell>
@@ -809,49 +1177,11 @@ cellcolor{gray}
 </cell>
 </row>
 <row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-bst_ctr\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-out\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic_vector 
-\begin_inset Newline newline
-\end_inset
-
-(2 downto 0)\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Number of stuffed bits with Normal Bit stuffing\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-data_halt\end_layout
+crc_data_rx_wbs\end_layout
 
 \end_inset
 </cell>
@@ -875,7 +1205,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-Stuff bit is inserted, Protocol control operation to be halted forone bit time\end_layout
+CRC RX With Bit Stuffing - Data input\end_layout
 
 \end_inset
 </cell>

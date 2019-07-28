@@ -96,7 +96,7 @@ customHeadersFooters
 \end_header
 
 \begin_body
-\begin_layout Subsection
+\begin_layout Description
 Generics\end_layout
 \begin_layout Standard
 \noindent
@@ -312,13 +312,13 @@ Insert pipeline on "error_valid"\end_layout
 
 
 \end_layout
-\begin_layout Subsection
+\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent
 \align center
 \begin_inset Tabular
-<lyxtabular columns="4" rows="102" version="3">
+<lyxtabular columns="4" rows="107" version="3">
 <features islongtable="true" longtabularalignment="center">
 <column alignment="center" valignment="top" width="4cm">
 <column alignment="center" valignment="top" width="1.2cm">
@@ -1071,7 +1071,7 @@ Suspend transmission is being transmitted\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-is_error\end_layout
+is_err_frm\end_layout
 
 \end_inset
 </cell>
@@ -2529,7 +2529,7 @@ Error detected\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-primary_error\end_layout
+primary_err\end_layout
 
 \end_inset
 </cell>
@@ -3195,40 +3195,6 @@ Length of Bit Stuffing rule\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-stuff_error_enable\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-out\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-std_logic\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
-Enable detection of Stuff Error\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
-<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
-\begin_inset Text
-
-\begin_layout Plain Layout
 dst_ctr\end_layout
 
 \end_inset
@@ -3245,7 +3211,11 @@ in\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-natural range 0 to 7\end_layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(2 downto 0)\end_layout
 
 \end_inset
 </cell>
@@ -3279,7 +3249,11 @@ in\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-natural range 0 to 7\end_layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(2 downto 0)\end_layout
 
 \end_inset
 </cell>
@@ -3297,7 +3271,7 @@ Number of stuffed bits modulo 8\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-stuff_error\end_layout
+stuff_err\end_layout
 
 \end_inset
 </cell>
@@ -3393,7 +3367,7 @@ cellcolor{gray}
 \begin_inset Text
 
 \begin_layout Plain Layout
-bit_error\end_layout
+bit_err\end_layout
 
 \end_inset
 </cell>
@@ -3548,6 +3522,74 @@ std_logic\end_layout
 
 \begin_layout Plain Layout
 CRC calculation - speculative enable\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crc_calc_from_rx\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Use RX Data for CRC calculation\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+load_init_vect\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Load CRC Initialization vector\end_layout
 
 \end_inset
 </cell>
@@ -3800,6 +3842,112 @@ std_logic_vector
 
 \begin_layout Plain Layout
 Sample control (Nominal, Data, Secondary)\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+sp_control_q\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(1 downto 0)\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Sample control (Registered)\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+nbt_ctrs_en\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Enable Nominal Bit time counters.\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+dbt_ctrs_en\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Enable Data Bit time counters.\end_layout
 
 \end_inset
 </cell>
@@ -4147,7 +4295,7 @@ Bit rate shifted\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-form_error\end_layout
+form_err\end_layout
 
 \end_inset
 </cell>
@@ -4181,7 +4329,7 @@ Form Error has occurred\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-ack_error\end_layout
+ack_err\end_layout
 
 \end_inset
 </cell>
@@ -4211,11 +4359,45 @@ ACK Error has occurred\end_layout
 </cell>
 </row>
 <row>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+crc_err\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+out\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+std_logic\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" leftline="true" rightline="true" topline="true" usebox="none" valignment="top">
+\begin_inset Text
+
+\begin_layout Plain Layout
+CRC Error has occurred\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
 <cell alignment="center" bottomline="true" leftline="true" topline="true" usebox="none" valignment="top">
 \begin_inset Text
 
 \begin_layout Plain Layout
-crc_error\end_layout
+retr_ctr\end_layout
 
 \end_inset
 </cell>
@@ -4231,7 +4413,11 @@ out\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-std_logic\end_layout
+std_logic_vector 
+\begin_inset Newline newline
+\end_inset
+
+(G_RETR_LIM_CTR_WIDTH - 1 downto 0)\end_layout
 
 \end_inset
 </cell>
@@ -4239,7 +4425,7 @@ std_logic\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-CRC Error has occurred\end_layout
+Status of retransmit counter (for observation purpose)\end_layout
 
 \end_inset
 </cell>

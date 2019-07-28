@@ -96,7 +96,7 @@ customHeadersFooters
 \end_header
 
 \begin_body
-\begin_layout Subsection
+\begin_layout Description
 Generics\end_layout
 \begin_layout Standard
 \noindent
@@ -244,7 +244,7 @@ RX Buffer size\end_layout
 
 
 \end_layout
-\begin_layout Subsection
+\begin_layout Description
 Ports\end_layout
 \begin_layout Standard
 \noindent
@@ -1199,7 +1199,7 @@ Signal whenever buffer is empty (no frame (message) is stored)\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-rx_message_count\end_layout
+rx_frame_count\end_layout
 
 \end_inset
 </cell>
@@ -1275,7 +1275,7 @@ Number of free 32 bit wide words\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-rx_read_pointer_pos\end_layout
+rx_read_pointer\end_layout
 
 \end_inset
 </cell>
@@ -1313,7 +1313,7 @@ Position of read pointer\end_layout
 \begin_inset Text
 
 \begin_layout Plain Layout
-rx_write_pointer_pos\end_layout
+rx_write_pointer\end_layout
 
 \end_inset
 </cell>

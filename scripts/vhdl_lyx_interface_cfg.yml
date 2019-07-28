@@ -51,4 +51,7 @@ source_list:
     int_manager:
         vhdl_file: "../src/interrupts/int_manager.vhd"
         lyx_output: "../doc/core/entity_docs/int_manager.lyx"
-
+    trigger_mux:
+        vhdl_file: "../src/can_core/trigger_mux.vhd"
+        lyx_output: "../doc/core/entity_docs/trigger_mux.lyx"
+    
